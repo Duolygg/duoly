@@ -1,5 +1,13 @@
 # Setup checkpoints
 
+## Public release checkpoint
+
+Owner-approved public demo: **https://duoly-pi.vercel.app**, with no Vercel login required. PRs #7 and #8 are merged into `main`. Released code commit: `9370d9c6fa8cdaebf48ab3ef248e9b17a180acae`; production deployment: `dpl_EhBubZytDjfgPkuyLvPGjKod8J7c`. It has the same source tree as the reviewed design preview. The squash-merge ancestry was reconciled without changing source files or rewriting published history.
+
+Vercel authentication now applies to previews only. Custom-domain auto-assignment remains disabled. Only `duoly-pi.vercel.app` was explicitly assigned; no `duoly.gg` DNS or existing-site cutover was performed. Sample-data warnings, noindex HTML metadata and disallow-all robots remain. Real marketplace services remain disconnected. Production deployment remains manual.
+
+The protected-preview checks below are historical checkpoints. Public acceptance and final CI evidence are recorded in the release handover on [PR #8](https://github.com/Duolygg/duoly/pull/8).
+
 Updated 21 October 2026. Verified results and remaining gates are recorded separately.
 
 ## Repository and collaboration
