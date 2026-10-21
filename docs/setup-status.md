@@ -19,7 +19,7 @@ GitHub Free returned HTTP 403 for private branch protection. Required reviews/st
 
 Astro 7.4.2, Vercel adapter 11.0.16, React integration 7.1.1. Node 24.21.0 development/CI pin, Vercel 24.x, pnpm 12.6.0. Narrow security/compatibility overrides are explained in docs/dependencies.md.
 
-Executed successfully: frozen install, types (zero errors/warnings/hints), lint, formatting, adapter build, 14 unit tests, 6 desktop/mobile browser tests. Full dependency audit reports no known vulnerabilities; peer check reports no issues. Secret-pattern and staged-path checks passed. .env.example is tracked; real env files, tokens and generated artifacts are ignored.
+Executed successfully: frozen install, types (zero errors/warnings/hints), lint, formatting, adapter build, 15 unit tests, 6 desktop/mobile browser tests. Full dependency audit reports no known vulnerabilities; peer check reports no issues. Secret-pattern and staged-path checks passed. .env.example is tracked; real env files, tokens and generated artifacts are ignored.
 
 Independent review passed after the pnpm action annotated tag was resolved to a verified commit. Follow-up review found no blocking issues.
 
@@ -52,7 +52,7 @@ Existing provider configuration was recovered from other projects/Keychain witho
 
 - Resend account access verified. Separate duoly.gg domain created/read back: c6c7296d-0736-4ce8-9e9b-f2d7ff83691a, eu-west-1, sending/receiving enabled, open/click tracking off, enforced TLS. DNS unverified; exact public records in docs/runbooks/email-dns.json. Domain uses registrar-servers.com nameservers and is absent from the current Vercel account. No DNS changed, mail sent or webhook activated.
 - PostHog EU reporting key reads Pet to Portrait project 233929 but cannot list/create projects (HTTP 403). A separate Duoly project needs owner-authorized access. Never mix Duoly events into Pet to Portrait.
-- Supabase CLI 2.121.0 pinned/installed; local config initialized with signup/OAuth disabled. Stored CLI credential returned HTTP 401. Fresh authentication needed. Docker-compatible runtime absent, so DB startup, migration replay, hosted project and restore remain unverified. No invented product schema.
+- Supabase CLI 2.121.0 pinned/installed and fresh login verified. Created a separate Duoly organization (`vbrxnajhjbbkclijigxi`) and `duoly-dev` project (`omnejesspybaxuacjlah`) in Frankfurt (`eu-central-1`). Exact organization readback confirmed **Free before and after provisioning**; paid upgrades/add-ons are prohibited by owner decision. Project readback is `ACTIVE_HEALTHY`. Real read-only SQL returned PostgreSQL 17.11 and zero public base tables. SSL enforcement enabled/applied; signup and all external auth providers disabled, confirmed through public auth settings. No SMTP, product schema, production database or application cloud credentials activated. Administrator password stored/read back in macOS Keychain without disclosure. CLI link and remote TypeScript generation succeeded; linked status read back. Existing paused projects untouched. Docker-compatible runtime absent, so local startup/migration replay, RLS tests, collaborator membership, backups and restore remain unverified. See docs/runbooks/database.md.
 
 ## Other gates
 

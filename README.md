@@ -34,7 +34,7 @@ pnpm test:e2e
 
 ## Database
 
-Use `pnpm exec supabase --version` for the pinned CLI. A Docker-compatible runtime is required for `pnpm exec supabase start`. Local configuration is in `supabase/`; no product schema or hosted project is implied. See [database workflow](docs/runbooks/database.md). Do not put product migrations in a second migrations directory.
+Use `pnpm exec supabase --version` for the pinned CLI. Shared hosted development is provisioned as `duoly-dev` in the separate Duoly organization, on the verified **Free plan** in Frankfurt. Paid Supabase resources are prohibited. The cloud connection is verified, but there is no product schema or application database integration yet. A Docker-compatible runtime is required for `pnpm exec supabase start`; local configuration is in `supabase/`. See [database workflow and access](docs/runbooks/database.md). Do not put product migrations in a second migrations directory.
 
 ## Collaboration
 
