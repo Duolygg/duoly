@@ -1,0 +1,5 @@
+# Bootstrap owner. Add coworker's individual account/team after accepted access.
+* @sebastianschrottenbach
+/.github/ @sebastianschrottenbach
+/supabase/ @sebastianschrottenbach
+/src/server/ @sebastianschrottenbach
