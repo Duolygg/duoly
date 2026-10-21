@@ -35,6 +35,13 @@ it('rejects unchecked dynamic imports in browser-safe modules', async () => {
   ).toBe(true);
 });
 
+it('disables automatic main deployment while retaining branch previews', () => {
+  const config = JSON.parse(
+    readFileSync(new URL('../../vercel.json', import.meta.url), 'utf8'),
+  );
+  expect(config.git?.deploymentEnabled).toEqual({ main: false });
+});
+
 it('configures static Vercel security headers to match SSR policy', () => {
   const config = JSON.parse(
     readFileSync(new URL('../../vercel.json', import.meta.url), 'utf8'),

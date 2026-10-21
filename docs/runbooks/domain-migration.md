@@ -9,6 +9,7 @@ Recorded 21 October 2026. No authoritative DNS changes made.
 - Added www.duoly.gg with a 308 redirect to duoly.gg, exact readback confirmed.
 - Both remain DNS-misconfigured in Vercel because current authoritative web records still point elsewhere.
 - All-deployment Vercel Authentication remains enabled. Custom-domain automatic assignment remains disabled. No production promotion or customer-domain cutover performed.
+- Git-based preview creation is explicitly enabled in project settings. Production branch auto-deploy is disabled by `git.deploymentEnabled.main = false` in vercel.json, with a regression test. Other branches retain Vercel's documented default of enabled. Do not remove this gate until release approval.
 
 ## Current DNS and rollback data
 
