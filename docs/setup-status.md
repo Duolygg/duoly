@@ -64,3 +64,16 @@ Existing provider configuration was recovered from other projects/Keychain witho
 ## Resume
 
 Read this file and the PR, inspect live state, then resume the next incomplete issue. Checkpoint each chunk with actual commands/results. No blind recreation, unapproved upgrades, live email, DNS changes or production activation.
+
+## Astro design preview verification
+
+Local acceptance on 2026-10-21 is complete on `feat/astro-design-preview`:
+
+- All 13 original UI page families and all 12 admin sections are ported with explicitly synthetic data.
+- `pnpm verify`: passed check, lint, formatting, 29 unit tests, production build and 92 desktop/mobile browser tests. Astro reports zero errors, zero warnings and 15 unused-declaration hints in quarantined source.
+- A separate screenshot and browser-console pass verified all 13 pages at desktop and mobile widths: 26 views, no errors, broken loaded images or horizontal overflow. It caught two mobile sizing defects that were fixed and reverified.
+- Original asset inventory: 302 files, zero missing files and zero byte mismatches against the pinned source.
+- Production accounts, payments, submissions and persistence are not connected. No provider SDKs or credentials are introduced by this port.
+- Independent safety review passed after an API-anchor regression was reproduced and fixed. The [protected Astro preview](https://duoly-9v75q33kl-sebastianschrottenbach-gmailcoms-projects.vercel.app) at code commit `d3b92ee92943ed208490669423237480d882dcdc` passed 19 deployed HTTP checks and 26 deployed desktop/mobile browser views. Unauthenticated access returns HTTP 302. See [deployment handover](deployments/2026-10-21-design-preview.md) and [PR #8](https://github.com/Duolygg/duoly/pull/8). No customer-domain cutover is authorized by this checkpoint.
+
+See [design port](design-port.md) for route mapping, compatibility boundaries and remaining production implementation.

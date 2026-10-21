@@ -1,0 +1,13 @@
+---
+import DesignLayout from '../layouts/DesignLayout.astro';
+import LegalPage from '../design-reference/components/LegalPage.jsx';
+import { PRIVACY } from '../design-reference/lib/legal';
+---
+
+<DesignLayout title="Privacy draft | Duoly preview">
+  <p role="note" style="padding:1rem;color:#FFD27A;font-family:system-ui">
+    Unapproved legal draft copied from the design reference. Not launch-ready
+    terms or privacy disclosures.
+  </p>
+  <LegalPage doc={PRIVACY} client:load />
+</DesignLayout>

@@ -1,0 +1,19 @@
+---
+import DesignLayout from '../../layouts/DesignLayout.astro';
+import QueueRoom from '../../design-reference/components/QueueRoom.jsx';
+import { SAMPLE_USER } from '../../design-preview/sample-data';
+const valid = Astro.params.id === 'preview-order';
+if (!valid) Astro.response.status = 404;
+---
+
+<DesignLayout title="Order queue | Duoly preview">
+  {valid ? (
+    <QueueRoom user={SAMPLE_USER} id="preview-order" client:load />
+  ) : (
+    <main style="padding: 3rem; color: white">
+      <h1>Preview not found</h1>
+      <p>This identifier is not a sample record.</p>
+      <a href="/">Back to home</a>
+    </main>
+  )}
+</DesignLayout>

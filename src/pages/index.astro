@@ -1,22 +1,8 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import DesignLayout from '../layouts/DesignLayout.astro';
+import HomePreview from '../design-preview/HomePreview';
 ---
 
-<BaseLayout
-  title="Duoly | Foundation"
-  description="Duoly technical foundation. The product has not launched."
->
-  <main>
-    <h1>Duoly foundation</h1>
-    <p>Not launched. Product features are not available.</p>
-    <p>
-      This page confirms the application foundation is in place. It is not a
-      product demo.
-    </p>
-    <ul>
-      <li>Account access, payments and email are not connected.</li>
-      <li>Analytics is disabled. Provider integration is pending.</li>
-      <li>Database services have not been started locally.</li>
-    </ul>
-  </main>
-</BaseLayout>
+<DesignLayout>
+  <HomePreview client:load />
+</DesignLayout>

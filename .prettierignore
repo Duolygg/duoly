@@ -6,3 +6,7 @@ pnpm-lock.yaml
 playwright-report
 test-results
 supabase/.temp
+# Preserve the pinned design and third-party assets byte-for-byte where unadapted.
+src/design-reference
+public/assets
+.superdesign

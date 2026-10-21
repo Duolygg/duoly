@@ -1,0 +1,19 @@
+---
+import DesignLayout from '../../layouts/DesignLayout.astro';
+import Claim from '../../design-reference/components/Claim.jsx';
+import { SAMPLE_TEAMMATE } from '../../design-preview/sample-data';
+const valid = Astro.params.token === 'preview-handover';
+if (!valid) Astro.response.status = 404;
+---
+
+<DesignLayout title="Handover | Duoly preview">
+  {valid ? (
+    <Claim user={SAMPLE_TEAMMATE} token="preview-handover" client:load />
+  ) : (
+    <main style="padding: 3rem; color: white">
+      <h1>Preview not found</h1>
+      <p>This identifier is not a sample record.</p>
+      <a href="/">Back to home</a>
+    </main>
+  )}
+</DesignLayout>
