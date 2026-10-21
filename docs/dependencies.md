@@ -14,4 +14,4 @@ The first Vercel build on Node22.x used22.23.3, below Astro7's minimum22.23.4, a
 
 Revisit these overrides on dependency updates. Remove only after upstream resolution provides patched compatible versions and frozen install, peer checks, full audit, build and browser smoke pass. Do not suppress the audit or declare an ignored vulnerability safe merely because a mock test passes.
 
-Current real local verification after updates: `pnpm verify` passes with14 unit tests and6 desktop/mobile browser tests; `pnpm audit --audit-level high` reports no known vulnerabilities; `pnpm peers check` reports no peer issues. Hosted verification is recorded separately in setup-status.md.
+Current real local verification after updates: `pnpm verify` passes with 14 unit tests and 6 desktop/mobile browser tests; `pnpm audit --audit-level high` reports no known vulnerabilities; `pnpm peers check` reports no peer issues. Hosted verification is recorded separately in setup-status.md.

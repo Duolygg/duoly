@@ -4,7 +4,7 @@ Vercel project duoly: prj_jxy8Z8IWlcQdMcYp4AYGznrddL5A.
 
 Owner scope: sebastianschrottenbach-gmailcoms-projects, the account's existing Pro team. No paid team/seat/plan changes made. Confirm shared operational ownership before adding potentially billable collaborators.
 
-Configured: Astro, Node24.x, frozen pnpm install, pnpm build, fra1 functions, basic fixed build machine, elastic concurrency off, all deployments behind Vercel Authentication, fork protection on, protected source maps, directory listing off, automatic custom-domain assignment off. No customer domain attached. See setup-status.md for Git connection and deployment acceptance.
+Configured: Astro, Node24.x, frozen pnpm install, pnpm build, fra1 functions, basic fixed build machine, elastic concurrency off, all deployments behind Vercel Authentication, fork protection on, protected source maps, directory listing off, automatic custom-domain assignment off. No customer domain attached. See setup-status.md for Git connection and deployment acceptance. The authenticated Node24 preview dpl_92SkQNFhfTyTQ2B2MB1JFpdYX5wN reached READY and its actual homepage, health, robots, 404 and security headers passed HTTP checks. No customer domain or production launch.
 
 ## Environments and releases
 

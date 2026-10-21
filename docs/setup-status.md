@@ -1,41 +1,66 @@
 # Setup checkpoints
 
-Updated 21 October 2026. Implemented configuration is distinct from external acceptance.
+Updated 21 October 2026. Verified results and remaining gates are recorded separately.
 
-## Repository
+## Repository and collaboration
 
-Private https://github.com/Duolygg/duoly created. Design repo untouched. Organization default permission corrected from admin to none; non-owner repository creation disabled. Squash merge only, merged branch deletion on, auto-merge off, issues on, wiki/discussions off.
+Private production repository: https://github.com/Duolygg/duoly.
+Foundation PR: https://github.com/Duolygg/duoly/pull/7, open for human review and not merged. main contains the documented README bootstrap; application work remains in the PR. The design sandbox is unchanged.
 
-Actions read-only token, no PR self-approval, SHA pinning required; GitHub-owned actions and pnpm/action-setup allowlisted. duoly-admin has a pending write invitation; organization invitation also pending at inspection. Only Sebastian is a verified active organization owner.
+Organization base permission corrected from admin to none; non-owner repository creation disabled. Developers team has Write, maintainers team has Maintain. Sebastian is the verified active owner. duoly-admin organization/repository invitations remain pending.
 
-main contains bootstrap README only. Application work belongs in the foundation PR.
+Squash merge only, merged branch deletion on, auto-merge off, issues on, wiki/discussions off. Actions has read-only tokens, no PR self-approval, full commit-SHA pinning and an action allowlist. Dependabot alerts and automated security fixes enabled and read back.
 
-## Protection blocker
+## Protection gate
 
-GitHub Free on this private org repo returned HTTP403 for branch protection, requesting upgrade. Required reviews and status checks are NOT enforced. Desired ruleset is versioned at .github/settings/main-ruleset.json. Owner must approve/perform qualifying upgrade, apply rules and test a failing/unreviewed PR is blocked. No paid upgrade performed.
+GitHub Free returned HTTP 403 for private branch protection. Required reviews/status checks are NOT enforced. No paid upgrade performed. Before relying on enforcement, approve/perform a qualifying upgrade, confirm another active reviewer, update CODEOWNERS, apply .github/settings/main-ruleset.json and test failing/unreviewed PRs and direct pushes are blocked.
 
-## Application and CI
+## Local foundation and CI
 
-Local quality verified on the updated Astro7.4.2 foundation:14 unit tests and6 desktop/mobile browser tests pass; lint/format/types/build pass. Full dependency audit reports zero known vulnerabilities and peer check reports no issues. CI action annotation SHA was corrected to its verified underlying commit after independent review. Follow-up review and remote CI pending. Product functionality remains unimplemented.
+Astro 7.4.2, Vercel adapter 11.0.16, React integration 7.1.1. Node 24.21.0 development/CI pin, Vercel 24.x, pnpm 12.6.0. Narrow security/compatibility overrides are explained in docs/dependencies.md.
 
-## Supabase
+Executed successfully: frozen install, types (zero errors/warnings/hints), lint, formatting, adapter build, 14 unit tests, 6 desktop/mobile browser tests. Full dependency audit reports no known vulnerabilities; peer check reports no issues. Secret-pattern and staged-path checks passed. .env.example is tracked; real env files, tokens and generated artifacts are ignored.
 
-Pinned CLI/local configuration being prepared. No Docker-compatible runtime installed locally. No Supabase access token available in process environment. No hosted project, migration replay or restore verified. No invented product schema.
+Independent review passed after the pnpm action annotated tag was resolved to a verified commit. Follow-up review found no blocking issues.
 
-## External services
+Remote CI Quality and Browser smoke passed for foundation commit 95fd3207cc991a1755198adcfb509dbaae0736cb. Later documentation/trigger refinements require current-head checks. CI now runs on PRs and main pushes to avoid duplicate feature-push/PR jobs.
 
-Vercel project exists with authentication and custom-domain auto-assignment disabled. A deployment policy is saved to block production sources, but enforcement is unverified: the first explicit preview request was reclassified production and attempted a build. It failed because platform Node22.23.3 was below Astro7 requirements, with no alias assigned. Runtime is now Node24.x with local/CI pin24.21.0. The second preview deployment dpl_7AMxsnZ9mgLWfjLRoP2AVYXipwDC is BLOCKED (TEAM_ACCESS_REQUIRED) because the old HEAD commit author used an unlinked Proton address. Repository-local Git identity has been corrected to the verified GitHub noreply address; global identity unchanged. A fresh authored commit/deploy is still required. Local CLI link succeeded; generated .env.local contains a short-lived Vercel token and is ignored, not committed. No customer domain or live service credentials. Git connection failed because Vercel cannot access this private organization repo; authorize the Vercel GitHub app for Duolygg/duoly before retrying. No deployment verified.
+This is a technical foundation, not accounts, bookings, payments, chat or live tracking. Browser smoke uses the Astro dev server; deployed acceptance below is separate.
 
-Existing provider configuration was recovered through the other projects and Keychain without printing secrets. Resend account access is verified (HTTP200); Pet to Portrait is left unchanged. A separate duoly.gg sending/receiving domain was created and read back, IDc6c7296d-0736-4ce8-9e9b-f2d7ff83691a, eu-west-1, click/open tracking off, enforced TLS. DNS records are pending in docs/runbooks/email-dns.json; authoritative DNS is at registrar-servers.com, outside this Vercel account. No DNS changed or mail sent. PostHog EU project233929 Pet to Portrait is accessible with the existing reporting key, but that key is restricted to that project and cannot list/create Duoly projects (HTTP403). Existing Supabase CLI credential returned HTTP401. Browser session inspection remains unavailable because the current default browser is unsupported; no preference changes made. Existing account access is distinct from permission to create a Duoly-specific project.
+## Verified protected Vercel preview
 
-## Project board
+Account: sebastian.schrottenbach@gmail.com. Existing team: sebastianschrottenbach-gmailcoms-projects. No paid team/seat/plan changes.
+Project: prj_jxy8Z8IWlcQdMcYp4AYGznrddL5A.
 
-GitHub Projects access is blocked because the current CLI token lacks read:project/project scopes. Issues 1 through 6 are created and verified as the chunked backlog. No token permission expansion performed.
+READY preview:
+https://duoly-h80l1agcc-sebastianschrottenbach-gmailcoms-projects.vercel.app
 
-## Protected instruction file
+Deployment: dpl_92SkQNFhfTyTQ2B2MB1JFpdYX5wN.
+Source: 95fd3207cc991a1755198adcfb509dbaae0736cb. Preview target, Node 24.x, verified GitHub noreply author. No customer domain or production activation.
 
-AGENTS.md creation was blocked by an approval prompt that timed out. It was not written or retried. Agent-instruction setup remains pending explicit approval.
+Actual authorized HTTP checks: homepage 200 with foundation/noindex markup; /api/health 200 with exact status ok JSON and no-store; robots 200 with Disallow:/; missing route 404. All returned baseline security headers and X-Robots-Tag:noindex. Unauthenticated access redirects to authentication (302). CLI curl used an authorized protection bypass without exposing it in Git/logs.
+
+Historical failures: first deployment failed on the platform's Node 22.23.3; second was BLOCKED because the bootstrap commit used an unlinked Proton author address. Node 24.x and repository-local verified GitHub noreply identity fixed both. Global Git identity unchanged.
+
+A deploymentSources policy is saved, but enforcement is not established: the first explicit preview was reclassified production and attempted despite it. Keep all-deployment authentication, no customer domain and no live service credentials as the prelaunch boundary. Custom-domain auto-assignment is disabled.
+
+Git integration still needs Vercel GitHub app access to the new private organization repo. CLI deployment works; automatic PR previews are not connected yet.
+
+## Provider reuse and remaining acceptance
+
+Existing provider configuration was recovered from other projects/Keychain without printing credentials or changing those projects.
+
+- Resend account access verified. Separate duoly.gg domain created/read back: c6c7296d-0736-4ce8-9e9b-f2d7ff83691a, eu-west-1, sending/receiving enabled, open/click tracking off, enforced TLS. DNS unverified; exact public records in docs/runbooks/email-dns.json. Domain uses registrar-servers.com nameservers and is absent from the current Vercel account. No DNS changed, mail sent or webhook activated.
+- PostHog EU reporting key reads Pet to Portrait project 233929 but cannot list/create projects (HTTP 403). A separate Duoly project needs owner-authorized access. Never mix Duoly events into Pet to Portrait.
+- Supabase CLI 2.121.0 pinned/installed; local config initialized with signup/OAuth disabled. Stored CLI credential returned HTTP 401. Fresh authentication needed. Docker-compatible runtime absent, so DB startup, migration replay, hosted project and restore remain unverified. No invented product schema.
+
+## Other gates
+
+- AGENTS.md creation approval timed out. It was not written or retried; explicit approval is required.
+- GitHub Projects board requires additional project scope. No credential scope expansion made. Issues 1 through 6 form the verified chunked backlog.
+- Browser account inspection is blocked by unsupported default-browser integration; no browser preferences changed.
+- MFA/recovery, a second active owner, provider ownership, domain access, MVP rules and production release require owner confirmation.
 
 ## Resume
 
-Read this file, inspect current repo/PR/provider state and resume the next incomplete chunk. Do not recreate resources blindly. Keep each chunk checkpointed with exact commands/results. No paid upgrades, production activation or live email without approval.
+Read this file and the PR, inspect live state, then resume the next incomplete issue. Checkpoint each chunk with actual commands/results. No blind recreation, unapproved upgrades, live email, DNS changes or production activation.
