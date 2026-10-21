@@ -74,6 +74,6 @@ Local acceptance on 2026-10-21 is complete on `feat/astro-design-preview`:
 - A separate screenshot and browser-console pass verified all 13 pages at desktop and mobile widths: 26 views, no errors, broken loaded images or horizontal overflow. It caught two mobile sizing defects that were fixed and reverified.
 - Original asset inventory: 302 files, zero missing files and zero byte mismatches against the pinned source.
 - Production accounts, payments, submissions and persistence are not connected. No provider SDKs or credentials are introduced by this port.
-- Independent safety review passed after an API-anchor regression was reproduced and fixed. Protected Vercel deployment verification remains pending. No customer-domain cutover is authorized by this checkpoint.
+- Independent safety review passed after an API-anchor regression was reproduced and fixed. The [protected Astro preview](https://duoly-9v75q33kl-sebastianschrottenbach-gmailcoms-projects.vercel.app) at code commit `d3b92ee92943ed208490669423237480d882dcdc` passed 19 deployed HTTP checks and 26 deployed desktop/mobile browser views. Unauthenticated access returns HTTP 302. See [deployment handover](deployments/2026-10-21-design-preview.md) and [PR #8](https://github.com/Duolygg/duoly/pull/8). No customer-domain cutover is authorized by this checkpoint.
 
 See [design port](design-port.md) for route mapping, compatibility boundaries and remaining production implementation.
