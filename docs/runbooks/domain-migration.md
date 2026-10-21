@@ -1,5 +1,25 @@
 # Duoly domain migration checkpoint
 
+## Completed cutover: 2026-10-21T22:36:43+0200
+
+The owner approved the domain cutover and saved the Namecheap web DNS records. The agent rechecked Vercel's live recommendations, then activated both aliases and certificates against production deployment `dpl_EhBubZytDjfgPkuyLvPGjKod8J7c`, released code `9370d9c6fa8cdaebf48ab3ef248e9b17a180acae`.
+
+- Primary public URL: **https://duoly.gg**. The new Astro design demo is served without Vercel login.
+- `https://www.duoly.gg` returns HTTP 308 to the apex, preserving paths and query strings. HTTP redirects to HTTPS. Both certificates validate.
+- Authoritative apex A records: `216.150.1.1` and `216.150.16.1`. Both Cloudflare and Google public resolvers return this set.
+- `www` CNAME: `56a5b35a0a5c88d7.vercel-dns-016.com.`
+- Apex MX, TXT and nameservers match the pre-cutover snapshot exactly. No nameserver migration or mail-provider change was made.
+- Actual anonymous acceptance on duoly.gg passed 19 HTTP checks and 26 desktop/mobile browser views with no runtime/console errors, broken loaded imagery or horizontal overflow. Robots meta remains noindex/nofollow and robots.txt disallows all indexing.
+- Both custom aliases were read back against the exact production deployment ID. Vercel reports both DNS configurations as not misconfigured.
+- The secondary public URL https://duoly-pi.vercel.app remains available. Developer previews remain authenticated. Future production releases and custom-domain promotion remain manual.
+- The site is still a sample-data design demo. Accounts, payments and persistent business operations remain disconnected. Domain cutover did not activate those services.
+
+### Rollback
+
+The previous apex A was `34.111.179.208`. Restore that web record only with owner approval and first confirm the old Replit deployment is still healthy. The old app was not deleted. Preserve mail and nameserver records. There was no www web record in the initial snapshot. DNS rollback may take time to propagate and is separate from rolling back a Vercel deployment.
+
+## Historical preparation snapshot
+
 Recorded 21 October 2026. No authoritative DNS changes made.
 
 ## Completed

@@ -2,9 +2,9 @@
 
 ## Current public demo
 
-Owner-approved public URL: **https://duoly-pi.vercel.app**. Production deployment `dpl_EhBubZytDjfgPkuyLvPGjKod8J7c` serves code commit `9370d9c6fa8cdaebf48ab3ef248e9b17a180acae`. Source is on `main`; GitHub remains private. This is a sample-data design demo, with no live marketplace backend.
+Owner-approved primary public URL: **https://duoly.gg**; `www.duoly.gg` redirects to it. https://duoly-pi.vercel.app remains a secondary URL. Production deployment `dpl_EhBubZytDjfgPkuyLvPGjKod8J7c` serves code commit `9370d9c6fa8cdaebf48ab3ef248e9b17a180acae`. Source is on `main`; GitHub remains private. This is a sample-data design demo, with no live marketplace backend.
 
-Authentication applies to previews only (`ssoProtection.deploymentType: preview`). Public production was deployed with `--prod --skip-domain`, then only the existing `duoly-pi.vercel.app` alias was explicitly assigned. Keep automatic custom-domain assignment disabled and automatic Git production deployment disabled. A public Vercel demo does not authorize `duoly.gg` DNS cutover or enable real account/payment operations.
+Authentication applies to previews only (`ssoProtection.deploymentType: preview`). Public production was deployed with `--prod --skip-domain`, then only the existing `duoly-pi.vercel.app` alias was explicitly assigned. Keep automatic custom-domain assignment disabled and automatic Git production deployment disabled. The owner subsequently approved and completed the `duoly.gg` cutover; see [verified domain migration](domain-migration.md). This does not enable real account/payment operations.
 
 For the next approved release, require passing current-commit checks and review, deploy production without automatic domain promotion, verify anonymous HTTP and browser behavior, then assign only the explicitly approved Vercel alias. Check actual alias readback. Public indexing remains blocked by the application robots meta and robots.txt; production does not inherit Vercel’s preview-only X-Robots-Tag header.
 
