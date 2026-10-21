@@ -1,0 +1,3 @@
+-- Intentionally empty. No product schema or sample user data is approved.
+-- Add deterministic local fixtures only after the corresponding schema is approved.
+-- Never seed real identities, credentials, payments or customer records.

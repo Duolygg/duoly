@@ -1,0 +1,56 @@
+{
+  "id": "c6c7296d-0736-4ce8-9e9b-f2d7ff83691a",
+  "name": "duoly.gg",
+  "status": "not_started",
+  "region": "eu-west-1",
+  "open_tracking": false,
+  "click_tracking": false,
+  "capabilities": {
+    "sending": "enabled",
+    "receiving": "enabled"
+  },
+  "records": [
+    {
+      "record": "DKIM",
+      "name": "resend._domainkey",
+      "value": "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDMHXnMaiOLjg6kzQxW/7zsA7EDbKbVyaz6InQMbWFvVrec2d0aD6aUQnjQnvkVhuPSjEVHwDxCdyp+1Wxf/hZluvPjaRGl6sn3GXe3uLV4SN75Nt+WySqc/V5lhG5Bkr1JXr83PrattU+/WX6I3kLtmXRH9Jwbb1VAddYuwkbiXwIDAQAB",
+      "type": "TXT",
+      "status": "not_started",
+      "ttl": "Auto"
+    },
+    {
+      "record": "SPF",
+      "name": "send",
+      "type": "MX",
+      "ttl": "Auto",
+      "status": "not_started",
+      "value": "feedback-smtp.eu-west-1.amazonses.com",
+      "priority": 10
+    },
+    {
+      "record": "SPF",
+      "name": "send",
+      "value": "v=spf1 include:amazonses.com ~all",
+      "type": "TXT",
+      "ttl": "Auto",
+      "status": "not_started"
+    },
+    {
+      "record": "SPF",
+      "name": "rsend",
+      "value": "send.forge.rmta.net",
+      "type": "CNAME",
+      "status": "not_started",
+      "ttl": "Auto"
+    },
+    {
+      "record": "Receiving",
+      "name": "",
+      "value": "receive-euw1.forge.rmta.net",
+      "type": "MX",
+      "priority": 9,
+      "status": "not_started",
+      "ttl": "Auto"
+    }
+  ]
+}
