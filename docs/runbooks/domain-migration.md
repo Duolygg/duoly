@@ -13,6 +13,7 @@ Recorded 21 October 2026. No authoritative DNS changes made.
 ## Current DNS and rollback data
 
 Authoritative nameservers:
+
 - dns1.registrar-servers.com.
 - dns2.registrar-servers.com.
 
@@ -20,6 +21,7 @@ Current apex A: 34.111.179.208 (existing Replit-connected site). HTTPS returned2
 No apex AAAA returned. No www CNAME or A returned in the initial check. No CAA returned.
 
 Current apex MX, preserve:
+
 - priority10 eforward1.registrar-servers.com.
 - priority10 eforward2.registrar-servers.com.
 - priority10 eforward3.registrar-servers.com.
@@ -27,6 +29,7 @@ Current apex MX, preserve:
 - priority20 eforward5.registrar-servers.com.
 
 Current apex TXT, preserve until migration explicitly reviewed:
+
 - replit-verify=ed6e4205-c57e-478e-8982-1729ab319f69
 - v=spf1 include:spf.efwd.registrar-servers.com ~all
 
