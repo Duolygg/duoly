@@ -1,5 +1,9 @@
 # Setup checkpoints
 
+## Domain cutover completed
+
+**https://duoly.gg** now serves the public Astro design demo. `www.duoly.gg` redirects to the apex, with valid HTTPS and preserved paths/query strings. Owner-saved DNS records were verified against Vercel, aliases were activated on the accepted production deployment, and 19 HTTP checks plus 26 desktop/mobile browser views passed without authentication. MX, TXT and nameservers are unchanged. See [verified cutover and rollback](runbooks/domain-migration.md). Earlier no-cutover statements below are historical checkpoints. Real marketplace operations remain disconnected.
+
 ## Public release checkpoint
 
 Owner-approved public demo: **https://duoly-pi.vercel.app**, with no Vercel login required. PRs #7 and #8 are merged into `main`. Released code commit: `9370d9c6fa8cdaebf48ab3ef248e9b17a180acae`; production deployment: `dpl_EhBubZytDjfgPkuyLvPGjKod8J7c`. It has the same source tree as the reviewed design preview. The squash-merge ancestry was reconciled without changing source files or rewriting published history.

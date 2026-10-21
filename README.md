@@ -8,9 +8,9 @@ This repository establishes the production foundation. It does not yet implement
 
 ## Public demo and shared coding baseline
 
-The current sample-data site is public at **https://duoly-pi.vercel.app**. No Vercel login is required to view it. The foundation and Astro port are merged into `main`, so developers can use the normal clone instructions below. GitHub source remains private and requires individual repository access.
+The current sample-data site is public at **https://duoly.gg**. `www.duoly.gg` redirects to it; https://duoly-pi.vercel.app remains a secondary URL. No Vercel login is required to view it. The foundation and Astro port are merged into `main`, so developers can use the normal clone instructions below. GitHub source remains private and requires individual repository access.
 
-This is a public design demo, not a working marketplace. Accounts, payments and persistent orders remain disconnected. Preview deployments remain authenticated. Production releases remain manual; `duoly.gg`, its DNS and the existing site have not been cut over.
+This is a public design demo, not a working marketplace. Accounts, payments and persistent orders remain disconnected. Preview deployments remain authenticated. Production releases remain manual. The owner-approved domain cutover is complete; see [domain migration and rollback](docs/runbooks/domain-migration.md).
 
 ## Start locally
 
