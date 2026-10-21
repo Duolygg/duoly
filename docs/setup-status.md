@@ -44,7 +44,7 @@ Historical failures: first deployment failed on the platform's Node 22.23.3; sec
 
 A deploymentSources policy is saved, but enforcement is not established: the first explicit preview was reclassified production and attempted despite it. Keep all-deployment authentication, no customer domain and no live service credentials as the prelaunch boundary. Custom-domain auto-assignment is disabled.
 
-Git integration still needs Vercel GitHub app access to the new private organization repo. CLI deployment works; automatic PR previews are not connected yet.
+Git integration is now connected and provider readback confirms GitHub Duolygg/duoly, production branch main. A docs-only push exercises the new automatic preview connection; current-head PR checks establish acceptance. duoly.gg and www.duoly.gg are prepared in Vercel, with www configured to redirect308 to the apex. Authoritative DNS remains on the current registrar and the Replit site is unchanged. Owner explicitly chose to defer cutover until the new site is ready. See docs/runbooks/domain-migration.md.
 
 ## Provider reuse and remaining acceptance
 
