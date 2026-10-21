@@ -6,6 +6,12 @@ Private production application owned by the Duolygg GitHub organization.
 
 This repository establishes the production foundation. It does not yet implement customer accounts, bookings, payments, chat or a live product. External services remain disabled until configured and verified.
 
+## Public demo and shared coding baseline
+
+The current sample-data site is public at **https://duoly-pi.vercel.app**. No Vercel login is required to view it. The foundation and Astro port are merged into `main`, so developers can use the normal clone instructions below. GitHub source remains private and requires individual repository access.
+
+This is a public design demo, not a working marketplace. Accounts, payments and persistent orders remain disconnected. Preview deployments remain authenticated. Production releases remain manual; `duoly.gg`, its DNS and the existing site have not been cut over.
+
 ## Start locally
 
 Prerequisites: Node **24.21.0**, pnpm **12.6.0**, Git and individual GitHub repository access. Use your preferred Node version manager with `.node-version`. Install/activate the exact pnpm version listed in `package.json` through your package manager or Corepack.
