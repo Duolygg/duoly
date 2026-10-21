@@ -1,0 +1,193 @@
+---
+import '../design-reference/globals.css';
+import PreviewControls from '../design-preview/PreviewControls';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Duoly — Duo up in under 2 minutes',
+  description = 'Protected Duoly design preview with deterministic sample data. Login, payments and order actions are not connected.',
+} = Astro.props;
+
+const previewLinks = [
+  ['/', 'Home'],
+  ['/dashboard', 'Customer'],
+  ['/teammate', 'Teammate'],
+  ['/admin', 'Admin'],
+  ['/queue/preview-order', 'Queue'],
+  ['/claim/preview-handover', 'Handover'],
+  ['/apply', 'Apply'],
+  ['/contact', 'Contact'],
+  ['/creators', 'Creators'],
+  ['/profile', 'Profile'],
+  ['/privacy', 'Privacy'],
+  ['/rules', 'Rules'],
+  ['/terms', 'Terms'],
+] as const;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <script is:inline>
+      // Guard native actions before any React island or module has hydrated.
+      const blockPreviewAction = (event) => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        window.dispatchEvent(
+          new CustomEvent('duoly:preview-unavailable', {
+            detail: {
+              message:
+                'Design preview: this action is unavailable. Nothing was sent or changed.',
+            },
+          }),
+        );
+      };
+      document.addEventListener('submit', blockPreviewAction, true);
+      const guardApiLink = (event) => {
+        if (!(event.target instanceof Element)) return;
+        const anchor = event.target.closest('a[href]');
+        if (!anchor) return;
+        const url = new URL(anchor.href, window.location.origin);
+        if (
+          url.origin === window.location.origin &&
+          (url.pathname === '/api' || url.pathname.startsWith('/api/'))
+        ) {
+          blockPreviewAction(event);
+        }
+      };
+      document.addEventListener('click', guardApiLink, true);
+      document.addEventListener('auxclick', guardApiLink, true);
+    </script>
+  </head>
+  <body>
+    <aside
+      class="design-preview-toolbar"
+      aria-label="Design preview navigation"
+    >
+      <div class="design-preview-notice">
+        <strong>Design preview</strong>
+        <span>
+          Sample data. Login, payments and order actions are not connected.
+        </span>
+      </div>
+      <nav aria-label="Preview pages">
+        {previewLinks.map(([href, label]) => (
+          <a
+            href={href}
+            aria-current={Astro.url.pathname === href ? 'page' : undefined}
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+    </aside>
+    <slot />
+    <PreviewControls client:load />
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: 'Bricolage Grotesque';
+    src: url('/fonts/bricolage-grotesque-latin.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 600 800;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Geist';
+    src: url('/fonts/geist-latin.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+  }
+
+  html {
+    background: #090414;
+    color-scheme: dark;
+    scroll-padding-top: 24px;
+  }
+
+  body {
+    min-width: 320px;
+  }
+
+  .design-preview-toolbar {
+    position: relative;
+    z-index: 40;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    border-bottom: 1px solid #6f5799;
+    background: #f3eeff;
+    color: #17092e;
+    font-family: Geist, system-ui, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .design-preview-notice {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    align-items: baseline;
+    max-width: 1240px;
+    margin: 0 auto 8px;
+  }
+
+  .design-preview-notice strong {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 15px;
+  }
+
+  .design-preview-toolbar nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    max-width: 1240px;
+    margin: auto;
+  }
+
+  .design-preview-toolbar a {
+    color: #402363;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .design-preview-toolbar a:hover,
+  .design-preview-toolbar a[aria-current='page'] {
+    color: #090414;
+    font-weight: 700;
+  }
+
+  @media (max-width: 560px) {
+    .design-preview-toolbar {
+      padding: 9px 14px;
+      font-size: 12px;
+    }
+
+    .design-preview-toolbar nav {
+      gap: 3px 11px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>

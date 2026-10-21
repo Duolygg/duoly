@@ -1,0 +1,11 @@
+---
+import DesignLayout from '../layouts/DesignLayout.astro';
+import DashboardPreview from '../design-preview/DashboardPreview';
+---
+
+<DesignLayout title="Customer dashboard — Duoly design preview">
+  <p class="preview-role">
+    Sample customer view — not an authenticated account.
+  </p>
+  <DashboardPreview client:load />
+</DesignLayout>

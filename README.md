@@ -30,7 +30,7 @@ pnpm verify
 pnpm test:e2e
 ```
 
-`verify` runs types, lint, formatting, unit tests, build and browser smoke. The standalone `test:e2e` command is useful for focused reruns. CI runs the quality and browser jobs separately. The homepage is an honest foundation status page. `/api/health` tests server routing, not database/provider readiness. Pre-launch indexing is blocked.
+`verify` runs types, lint, formatting, unit tests, build and browser smoke. The standalone `test:e2e` command is useful for focused reruns. CI runs the quality and browser jobs separately. The homepage and original screen families are now a visibly labeled, offline design preview. `/api/health` tests server routing, not database/provider readiness. Pre-launch indexing is blocked. See [design port and boundaries](docs/design-port.md) and [screen-to-backend integration map](docs/product/integration-map.md).
 
 ## Database
 

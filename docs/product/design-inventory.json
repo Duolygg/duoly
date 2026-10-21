@@ -1,0 +1,484 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/duoly-admin/duoly",
+  "source_commit": "7f0299fe35d4ebbba1ebea36f1ecd46bab5f0280",
+  "scope": "Complete page/API-route file inventory; source evidence, not approved production contracts or a full UI-state audit.",
+  "counts": {
+    "page_routes": 13,
+    "api_route_files": 31,
+    "admin_sections": 12
+  },
+  "page_routes": [
+    {
+      "route": "/admin",
+      "source": "app/admin/page.jsx",
+      "components": [
+        {
+          "name": "AdminApp",
+          "path": "components/admin/AdminApp.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/apply",
+      "source": "app/apply/page.jsx",
+      "components": [
+        {
+          "name": "Apply",
+          "path": "components/Apply.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/claim/[token]",
+      "source": "app/claim/[token]/page.jsx",
+      "components": [
+        {
+          "name": "Claim",
+          "path": "components/Claim.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/contact",
+      "source": "app/contact/page.jsx",
+      "components": [
+        {
+          "name": "Contact",
+          "path": "components/Contact.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/creators",
+      "source": "app/creators/page.jsx",
+      "components": [
+        {
+          "name": "Creators",
+          "path": "components/Creators.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/dashboard",
+      "source": "app/dashboard/page.jsx",
+      "components": [
+        {
+          "name": "Dashboard",
+          "path": "components/Dashboard.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "source": "app/page.jsx",
+      "components": [
+        {
+          "name": "HomeWithAuth",
+          "path": "components/HomeWithAuth.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/privacy",
+      "source": "app/privacy/page.jsx",
+      "components": [
+        {
+          "name": "LegalPage",
+          "path": "components/LegalPage.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/profile",
+      "source": "app/profile/page.jsx",
+      "components": [
+        {
+          "name": "Profile",
+          "path": "components/Profile.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/queue/[id]",
+      "source": "app/queue/[id]/page.jsx",
+      "components": [
+        {
+          "name": "QueueRoom",
+          "path": "components/QueueRoom.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/rules",
+      "source": "app/rules/page.jsx",
+      "components": [
+        {
+          "name": "Rules",
+          "path": "components/Rules.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/teammate",
+      "source": "app/teammate/page.jsx",
+      "components": [
+        {
+          "name": "Teammate",
+          "path": "components/Teammate.jsx"
+        }
+      ]
+    },
+    {
+      "route": "/terms",
+      "source": "app/terms/page.jsx",
+      "components": [
+        {
+          "name": "LegalPage",
+          "path": "components/LegalPage.jsx"
+        }
+      ]
+    }
+  ],
+  "api_routes": [
+    {
+      "route": "/api/admin/applications",
+      "source": "app/api/admin/applications/route.js",
+      "methods": ["POST"],
+      "domain_modules": ["lib/apiUser", "lib/roles", "lib/applications"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/audit",
+      "source": "app/api/admin/audit/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": ["lib/apiUser", "lib/audit"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/flags",
+      "source": "app/api/admin/flags/route.js",
+      "methods": ["POST"],
+      "domain_modules": ["lib/apiUser", "lib/flags"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/orders",
+      "source": "app/api/admin/orders/route.js",
+      "methods": ["POST"],
+      "domain_modules": ["lib/apiUser", "lib/orders"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/payouts",
+      "source": "app/api/admin/payouts/route.js",
+      "methods": ["POST"],
+      "domain_modules": ["lib/apiUser", "lib/payouts"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/people",
+      "source": "app/api/admin/people/route.js",
+      "methods": ["POST"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/roles",
+        "lib/adjustments",
+        "lib/presence",
+        "lib/orders",
+        "lib/adminPeople"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/presence",
+      "source": "app/api/admin/presence/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/presence",
+        "lib/orders",
+        "lib/penalty"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/priority",
+      "source": "app/api/admin/priority/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/roles",
+        "lib/presence",
+        "lib/priority",
+        "lib/penalty"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/reports",
+      "source": "app/api/admin/reports/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": ["lib/apiUser", "lib/reports"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/stats",
+      "source": "app/api/admin/stats/route.js",
+      "methods": ["GET"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/orders",
+        "lib/payouts",
+        "lib/adminPeople",
+        "lib/applications",
+        "lib/flags",
+        "lib/reports",
+        "lib/support"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/support",
+      "source": "app/api/admin/support/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/support",
+        "lib/adminPeople",
+        "lib/orders",
+        "lib/supportTeam"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/admin/users",
+      "source": "app/api/admin/users/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/roles",
+        "lib/presence",
+        "lib/orders"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/apply",
+      "source": "app/api/apply/route.js",
+      "methods": ["POST"],
+      "domain_modules": ["lib/applications"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/auth/[...nextauth]",
+      "source": "app/api/auth/[...nextauth]/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": ["lib/auth"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/avatars/[file]",
+      "source": "app/api/avatars/[file]/route.js",
+      "methods": ["GET"],
+      "domain_modules": ["lib/avatars"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/claim/[token]",
+      "source": "app/api/claim/[token]/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/orders",
+        "lib/roles",
+        "lib/access",
+        "lib/games"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/contact",
+      "source": "app/api/contact/route.js",
+      "methods": ["POST"],
+      "domain_modules": ["lib/apiUser", "lib/support", "lib/supportTeam"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/desk",
+      "source": "app/api/desk/route.js",
+      "methods": ["POST"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/orders",
+        "lib/presence",
+        "lib/penalty",
+        "lib/roles"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/discord/link/callback",
+      "source": "app/api/discord/link/callback/route.js",
+      "methods": ["GET"],
+      "domain_modules": ["lib/apiUser", "lib/roles", "lib/discordRoles"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/discord/link",
+      "source": "app/api/discord/link/route.js",
+      "methods": ["DELETE", "GET"],
+      "domain_modules": ["lib/apiUser", "lib/roles", "lib/discordRoles"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/fx",
+      "source": "app/api/fx/route.js",
+      "methods": ["GET"],
+      "domain_modules": ["lib/fx"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/me/currency",
+      "source": "app/api/me/currency/route.js",
+      "methods": ["POST"],
+      "domain_modules": ["lib/apiUser", "lib/roles"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/me/history",
+      "source": "app/api/me/history/route.js",
+      "methods": ["GET"],
+      "domain_modules": ["lib/apiUser", "lib/orders"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/me/profile",
+      "source": "app/api/me/profile/route.js",
+      "methods": ["POST"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/roles",
+        "lib/countries",
+        "lib/avatars"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/orders/[id]/chat",
+      "source": "app/api/orders/[id]/chat/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": ["lib/apiUser", "lib/orders"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/orders/[id]",
+      "source": "app/api/orders/[id]/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": ["lib/apiUser", "lib/orders", "lib/penalty"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/orders",
+      "source": "app/api/orders/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": ["lib/apiUser", "lib/orders"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/register",
+      "source": "app/api/register/route.js",
+      "methods": ["POST"],
+      "domain_modules": ["lib/users"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/support",
+      "source": "app/api/support/route.js",
+      "methods": ["GET", "POST"],
+      "domain_modules": [
+        "lib/apiUser",
+        "lib/support",
+        "lib/sparky",
+        "lib/supportTeam"
+      ],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/teammate/stats",
+      "source": "app/api/teammate/stats/route.js",
+      "methods": ["GET"],
+      "domain_modules": ["lib/apiUser", "lib/ledger", "lib/adjustments"],
+      "production_status": "not_ported; requires approved backend contracts"
+    },
+    {
+      "route": "/api/uploads/[file]",
+      "source": "app/api/uploads/[file]/route.js",
+      "methods": ["GET"],
+      "domain_modules": ["lib/apiUser", "lib/orders", "lib/uploads"],
+      "production_status": "not_ported; requires approved backend contracts"
+    }
+  ],
+  "admin_sections": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "route": "/admin#overview"
+    },
+    {
+      "id": "live",
+      "label": "Live desk",
+      "route": "/admin#live"
+    },
+    {
+      "id": "priority",
+      "label": "Priority",
+      "route": "/admin#priority"
+    },
+    {
+      "id": "users",
+      "label": "Users & roles",
+      "route": "/admin#users"
+    },
+    {
+      "id": "orders",
+      "label": "Orders",
+      "route": "/admin#orders"
+    },
+    {
+      "id": "teammates",
+      "label": "Teammates",
+      "route": "/admin#teammates"
+    },
+    {
+      "id": "customers",
+      "label": "Customers",
+      "route": "/admin#customers"
+    },
+    {
+      "id": "payouts",
+      "label": "Payouts",
+      "route": "/admin#payouts"
+    },
+    {
+      "id": "support",
+      "label": "Support chat",
+      "route": "/admin#support"
+    },
+    {
+      "id": "safety",
+      "label": "Reports & safety",
+      "route": "/admin#safety"
+    },
+    {
+      "id": "audit",
+      "label": "Audit log",
+      "route": "/admin#audit"
+    },
+    {
+      "id": "settings",
+      "label": "Settings",
+      "route": "/admin#settings"
+    }
+  ]
+}

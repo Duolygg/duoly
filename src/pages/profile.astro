@@ -1,0 +1,38 @@
+---
+import DesignLayout from '../layouts/DesignLayout.astro';
+import Profile from '../design-reference/components/Profile.jsx';
+import { SAMPLE_USER } from '../design-preview/sample-data';
+---
+
+<DesignLayout title="Profile | Duoly preview">
+  <Profile
+    user={SAMPLE_USER}
+    profile={{
+      country: 'at',
+      bio: 'Sample profile only.',
+      languages: ['English'],
+    }}
+    home="/dashboard"
+    languages={[
+      'English',
+      'German',
+      'French',
+      'Spanish',
+      'Portuguese',
+      'Italian',
+      'Dutch',
+      'Polish',
+      'Swedish',
+      'Turkish',
+      'Russian',
+      'Ukrainian',
+      'Arabic',
+      'Japanese',
+      'Korean',
+      'Chinese',
+    ]}
+    discord={null}
+    discordResult=""
+    client:load
+  />
+</DesignLayout>

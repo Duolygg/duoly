@@ -12,6 +12,10 @@ export default [
       'node_modules/**',
       'test-results/**',
       'playwright-report/**',
+      // Pinned legacy design source is checked by the explicit compatibility-boundary tests.
+      // Newly authored adapters remain fully linted and type-checked.
+      'src/design-reference/**',
+      '.superdesign/**',
     ],
   },
   js.configs.recommended,
@@ -26,6 +30,7 @@ export default [
       'src/client/**/*.{ts,tsx}',
       'src/components/**/*.{ts,tsx}',
       'src/lib/**/*.{ts,tsx}',
+      'src/design-preview/**/*.{ts,tsx}',
     ],
     rules: {
       'no-restricted-syntax': [
