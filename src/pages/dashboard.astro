@@ -1,6 +1,6 @@
 ---
 import ProductLayout from '../layouts/ProductLayout.astro';
-import EmptyDashboard from '../components/account/EmptyDashboard.astro';
+import CustomerOrders from '../components/account/CustomerOrders';
 import { accountContext } from '../server/auth/context';
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
@@ -17,6 +17,8 @@ if (identity && identity.viewer.role !== 'customer')
   return account.redirect(
     identity.viewer.role === 'admin' ? '/admin' : '/teammate',
   );
+for (const [name, value] of account.headers)
+  Astro.response.headers.set(name, value);
 const csrf = account.csrf();
 ---
 
@@ -26,7 +28,7 @@ const csrf = account.csrf();
   csrf={csrf}
 >
   {identity ? (
-    <EmptyDashboard viewer={identity.viewer} />
+    <CustomerOrders name={identity.viewer.name} client:load />
   ) : (
     <section role="alert">
       <h1>Account temporarily unavailable</h1>

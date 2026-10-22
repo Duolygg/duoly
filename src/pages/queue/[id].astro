@@ -2,18 +2,86 @@
 import DesignLayout from '../../layouts/DesignLayout.astro';
 import QueueRoom from '../../design-reference/components/QueueRoom.jsx';
 import { SAMPLE_USER } from '../../design-preview/sample-data';
+import ProductLayout from '../../layouts/ProductLayout.astro';
+import CustomerOrderRoom from '../../components/account/CustomerOrderRoom';
+import { OrderCommandSchema, type CustomerOrder } from '../../contracts/orders';
+import { accountContext } from '../../server/auth/context';
+import { decodeOrderRpcResult } from '../../server/orders/results';
 const valid = Astro.params.id === 'preview-order';
-if (!valid) Astro.response.status = 404;
+const command = OrderCommandSchema.safeParse({ order_id: Astro.params.id });
+const operational = !valid && command.success;
+let identity = null;
+let order: CustomerOrder | null = null;
+let csrf = '';
+let message = 'Order not found.';
+if (operational) {
+  const account = accountContext(Astro.request, Astro.cookies);
+  try {
+    identity = await account.identity();
+    if (!identity) return account.redirect('/login');
+    if (identity.viewer.role !== 'customer')
+      return account.redirect(
+        identity.viewer.role === 'admin' ? '/admin' : '/teammate',
+      );
+    if (!account.client) throw new Error('Account unavailable');
+    const { data, error } = await account.client.rpc('customer_order', {
+      p_order_id: command.data.order_id,
+    });
+    const result = decodeOrderRpcResult('customerOrder', data, error);
+    if (result.ok && result.payload.order.id === command.data.order_id) {
+      order = result.payload.order;
+      csrf = account.csrf();
+    } else if (!result.ok) {
+      Astro.response.status = result.status;
+      message =
+        result.status === 404
+          ? 'Order not found.'
+          : 'Order temporarily unavailable. Please refresh to try again.';
+    } else {
+      Astro.response.status = 502;
+      message = 'Order temporarily unavailable. Please refresh to try again.';
+    }
+  } catch {
+    Astro.response.status = 503;
+    message =
+      'Account or order temporarily unavailable. Please try again shortly.';
+  }
+  // Copy after identity/RPC so refreshed authentication headers are preserved.
+  for (const [name, value] of account.headers)
+    Astro.response.headers.set(name, value);
+} else if (!valid) Astro.response.status = 404;
 ---
 
-<DesignLayout title="Order queue | Duoly preview">
-  {valid ? (
-    <QueueRoom user={SAMPLE_USER} id="preview-order" client:load />
-  ) : (
-    <main style="padding: 3rem; color: white">
-      <h1>Preview not found</h1>
-      <p>This identifier is not a sample record.</p>
-      <a href="/">Back to home</a>
-    </main>
-  )}
-</DesignLayout>
+{operational ? (
+  <ProductLayout
+    title="Your order | Duoly"
+    viewer={identity?.viewer}
+    csrf={csrf}
+  >
+    {order ? (
+      <CustomerOrderRoom initialOrder={order} csrf={csrf} client:load />
+    ) : (
+      <section class="customer-orders" role="alert">
+        <h1>
+          {Astro.response.status === 404
+            ? 'Order not found'
+            : 'Order unavailable'}
+        </h1>
+        <p>{message}</p>
+        <a href="/dashboard">Back to dashboard</a>
+      </section>
+    )}
+  </ProductLayout>
+) : (
+  <DesignLayout title="Order queue | Duoly preview">
+    {valid ? (
+      <QueueRoom user={SAMPLE_USER} id="preview-order" client:load />
+    ) : (
+      <main style="padding: 3rem; color: white">
+        <h1>Preview not found</h1>
+        <p>This identifier is not a sample record.</p>
+        <a href="/">Back to home</a>
+      </main>
+    )}
+  </DesignLayout>
+)}

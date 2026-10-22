@@ -1,5 +1,6 @@
 ---
 import ProductLayout from '../layouts/ProductLayout.astro';
+import OrderDesk from '../components/teammate/OrderDesk';
 import { accountContext } from '../server/auth/context';
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
@@ -23,12 +24,5 @@ if (identity.viewer.role !== 'teammate')
   viewer={identity.viewer}
   csrf={account.csrf()}
 >
-  <section style="max-width:960px;margin:32px auto;padding:24px">
-    <h1>Teammate desk</h1>
-    <p>
-      Welcome, {identity.viewer.name}. Live queue, Discord linking and payouts
-      are not connected yet. You cannot accept an order or go online here.
-    </p>
-    <a href="/profile">Manage your profile</a>
-  </section>
+  <OrderDesk csrf={account.csrf()} client:load />
 </ProductLayout>
