@@ -1,19 +1,20 @@
 ---
-import DesignLayout from '../../layouts/DesignLayout.astro';
-import Claim from '../../design-reference/components/Claim.jsx';
-import { SAMPLE_TEAMMATE } from '../../design-preview/sample-data';
-const valid = Astro.params.token === 'preview-handover';
-if (!valid) Astro.response.status = 404;
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageIntro from '../../components/site/PageIntro.astro';
+import { pageViewer } from '../../site/viewer';
+const { viewer, csrf } = await pageViewer(Astro);
+Astro.response.status = 404;
 ---
 
-<DesignLayout title="Handover | Duoly preview">
-  {valid ? (
-    <Claim user={SAMPLE_TEAMMATE} token="preview-handover" client:load />
-  ) : (
-    <main style="padding: 3rem; color: white">
-      <h1>Preview not found</h1>
-      <p>This identifier is not a sample record.</p>
-      <a href="/">Back to home</a>
-    </main>
-  )}
-</DesignLayout>
+<SiteLayout title="Handover | Duoly" viewer={viewer} csrf={csrf}>
+  <PageIntro
+    eyebrow="Handover"
+    title="This handover link isn’t active."
+    lead="Handover links are created by the Duoly team for a specific order. Ask whoever sent it for a new one."
+    narrow
+  >
+    <a class="cta" href={viewer ? '/teammate' : '/login'}>
+      {viewer ? 'Open the teammate desk' : 'Sign in'}
+    </a>
+  </PageIntro>
+</SiteLayout>

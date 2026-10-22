@@ -1,0 +1,20 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageIntro from '../../components/site/PageIntro.astro';
+import { pageViewer } from '../../site/viewer';
+import { DISCORD_INVITE } from '../../site/nav';
+const { viewer, csrf } = await pageViewer(Astro);
+---
+
+<SiteLayout title="Blog | Duoly" viewer={viewer} csrf={csrf}>
+  <PageIntro
+    eyebrow="Blog"
+    title="Guides, patch notes and climbing tips"
+    lead="Our first articles are being written. Join the Discord to hear when they’re out."
+    narrow
+  >
+    <a class="cta" href={DISCORD_INVITE} rel="noopener">
+      Join our Discord
+    </a>
+  </PageIntro>
+</SiteLayout>

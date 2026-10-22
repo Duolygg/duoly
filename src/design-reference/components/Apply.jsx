@@ -4,6 +4,7 @@ import { previewFetch as fetch } from '../../design-preview/preview-transport';
 
 
 import React from 'react';
+import ClosedNotice from './ClosedNotice.jsx';
 import { GAMES as GAME_LIST } from '../lib/games';
 
 // Turns a CSS declaration string ("color: red; margin-top: 4px") into a React style object.
@@ -185,6 +186,7 @@ export default class Apply extends React.Component {
     const v = this.renderVals();
     return (
       <div style={{ minHeight: "100vh", background: "#090414", color: "#F3EEFF", fontFamily: "Geist, system-ui, sans-serif", fontSize: "15px", lineHeight: "1.5", fontVariantNumeric: "tabular-nums" }}>
+        {this.props.chrome === false ? null : (
         <header style={{ position: "sticky", top: "0", zIndex: "6", background: "rgba(9, 4, 20, .8)", backdropFilter: "blur(14px)", borderBottom: "1px solid rgba(196, 170, 255, .08)" }}>
           <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "10px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 32px" }}>
             <a href="/" aria-label="Duoly home" style={{ display: "flex", alignItems: "center" }}>
@@ -202,6 +204,7 @@ export default class Apply extends React.Component {
             </a>
           </div>
         </header>
+        )}
         <main>
           <section aria-labelledby="ap-h" style={{ maxWidth: "1240px", margin: "0 auto", padding: "72px 24px 40px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
             <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", padding: "6px 14px 6px 6px", borderRadius: "999px", border: "1px solid rgba(94, 234, 168, .3)", background: "rgba(94, 234, 168, .08)", fontSize: "13px", fontWeight: "600", color: "#5EEAA8" }}>
@@ -482,7 +485,7 @@ export default class Apply extends React.Component {
             </section>
             <section id="apply" aria-labelledby="form-h" style={{ marginTop: "88px", paddingBottom: "96px" }}>
               <div style={{ maxWidth: "760px", margin: "0 auto", borderRadius: "28px", background: "#120B22", border: "1px solid rgba(214, 187, 255, .18)", overflow: "hidden" }}>
-                {v.notDone ? (
+                {this.props.closed ? <ClosedNotice title="Applications open soon" text="We’re onboarding our first teammates through Discord right now. Join the server and say hi in the applications channel, or email us with your game, rank and Discord name." /> : v.notDone ? (
                   <>
                     <div style={{ padding: "28px 32px 0" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
@@ -755,6 +758,7 @@ export default class Apply extends React.Component {
             </section>
           </div>
         </main>
+        {this.props.chrome === false ? null : (
         <footer style={{ borderTop: "1px solid rgba(196, 170, 255, .08)" }}>
           <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "28px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px", fontSize: "13px", color: "#6A6086" }}>
             <img src="/assets/brand/logo-wordmark.webp" alt="Duoly" width="96" height="36" style={{ width: "96px", height: "36px" }} />
@@ -774,6 +778,7 @@ export default class Apply extends React.Component {
             </span>
           </div>
         </footer>
+        )}
       </div>
     );
   }

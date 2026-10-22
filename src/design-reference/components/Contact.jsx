@@ -3,6 +3,7 @@
 import { previewFetch as fetch } from '../../design-preview/preview-transport';
 
 import React from 'react';
+import ClosedNotice from './ClosedNotice.jsx';
 import SupportChat from './SupportChat';
 import { LegalHeader, LegalFooter, Icon } from './LegalPage';
 import { SITE } from '../lib/site';
@@ -91,7 +92,7 @@ export default class Contact extends React.Component {
 
     return (
       <div className="lg-page">
-        <LegalHeader active="contact" />
+        {this.props.chrome === false ? null : <LegalHeader active="contact" />}
         <main>
           <section className="lg-hero ct-hero">
             <div className="lg-hero-in">
@@ -133,7 +134,7 @@ export default class Contact extends React.Component {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={this.send} noValidate>
+                this.props.closed ? <ClosedNotice title="Talk to us" text="The contact form is being connected. Until then, email us or ask in our Discord. We usually reply within a few hours." /> : <form onSubmit={this.send} noValidate>
                   <h2 id="ct-form-h">Send us a message</h2>
                   <p className="ct-sub">Usually answered within minutes while we’re online, always within 24 hours.</p>
 
@@ -212,7 +213,7 @@ export default class Contact extends React.Component {
             </aside>
           </section>
         </main>
-        <LegalFooter />
+        {this.props.chrome === false ? null : <LegalFooter />}
         <SupportChat />
       </div>
     );

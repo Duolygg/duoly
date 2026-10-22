@@ -1,0 +1,55 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageIntro from '../../components/site/PageIntro.astro';
+import { pageViewer } from '../../site/viewer';
+import { SITE_GAMES } from '../../site/games';
+const { viewer, csrf } = await pageViewer(Astro);
+---
+
+<SiteLayout title="Games | Duoly" viewer={viewer} csrf={csrf}>
+  <PageIntro
+    eyebrow="Games"
+    title="Every game we play"
+    lead="Rank-verified teammates for 15 games. Pick one to see services and prices."
+  >
+    <ul class="grid">
+      {SITE_GAMES.map((game) => (
+        <li>
+          <a href={`/games/${game.slug}`}>
+            <img src={game.img} alt="" width="56" height="56" loading="lazy" />
+            <span>{game.name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </PageIntro>
+</SiteLayout>
+
+<style>
+  .grid {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .grid a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 18px;
+    background: #120b22;
+    border: 1px solid rgba(214, 187, 255, 0.12);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .grid a:hover {
+    border-color: rgba(214, 187, 255, 0.4);
+  }
+  .grid img {
+    border-radius: 12px;
+  }
+</style>

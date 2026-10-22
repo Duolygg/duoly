@@ -83,6 +83,8 @@ export const callback: APIRoute = async (context) => {
   // Connect Discord returns here with ?next=profile|teammate (identity linking).
   const next = params.get('next');
   const linking = next === 'profile' || next === 'teammate' ? next : null;
+  // Password recovery links return here with ?next=reset.
+  const recovery = next === 'reset';
   if (linking && (params.has('error') || params.has('error_code')))
     return account.redirect(`/${linking}?discord=${linkErrorResult(params)}`);
   const fail = linking ? `/${linking}?discord=failed` : '/login?error=callback';
@@ -113,6 +115,7 @@ export const callback: APIRoute = async (context) => {
       return account.redirect('/login?error=eligibility');
     }
     if (linking) return account.redirect(`/${linking}?discord=linked`);
+    if (recovery) return account.redirect('/reset-password?step=new');
     context.cookies.delete(account.names.csrf, account.cookieOptions);
     return account.redirect(afterLoginPath(context.cookies));
   } catch {

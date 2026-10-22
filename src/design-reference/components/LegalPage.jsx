@@ -109,7 +109,7 @@ export default class LegalPage extends React.Component {
     const num = (i) => String(i + 1).padStart(2, '0');
     return (
       <div className="lg-page">
-        <LegalHeader active={doc.slug} />
+        {this.props.chrome === false ? null : <LegalHeader active={doc.slug} />}
         <main>
           <section className="lg-hero">
             <div className="lg-hero-in">
@@ -162,7 +162,7 @@ export default class LegalPage extends React.Component {
             </article>
           </div>
         </main>
-        <LegalFooter />
+        {this.props.chrome === false ? null : <LegalFooter />}
         <SupportChat />
       </div>
     );
