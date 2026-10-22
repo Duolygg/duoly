@@ -91,8 +91,20 @@ export const registerPassword: APIRoute = async (context) => {
       password: parsed.credentials.password,
       options: { emailRedirectTo: account.config.origin + '/auth/callback' },
     });
-    // Every nonfatal outcome shares one generic notice: never reveal whether
-    // the address already exists and never claim a confirmation mail was sent.
+    // Owner decision: tell people when an address is already registered.
+    // Supabase hides it by returning a user without identities (or a 422
+    // when confirmations are off), and sends no email in that case.
+    const alreadyRegistered = error
+      ? /already registered|already exists/i.test(error.message ?? '')
+      : !!data?.user && (data.user.identities?.length ?? 1) === 0;
+    if (alreadyRegistered) {
+      // Short-lived, httpOnly: lets /login prefill the address once.
+      context.cookies.set(account.names.pending, parsed.credentials.email, {
+        ...account.cookieOptions,
+        maxAge: 300,
+      });
+      return account.redirect('/login?notice=registered');
+    }
     if (error || !data?.session)
       return account.redirect('/login?notice=confirmation');
     const identity = await account.identity();
