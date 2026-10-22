@@ -224,6 +224,7 @@ export default class Rules extends React.Component {
 
     return (
       <div className="rl-page">
+        {this.props.chrome === false ? null : (
         <header className="rl-header">
           <div className="rl-header-in">
             <a href="/" aria-label="Duoly home" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
@@ -237,6 +238,7 @@ export default class Rules extends React.Component {
           </div>
           <span aria-hidden="true" className="rl-progress" style={{ transform: 'scaleX(' + s.progress + ')' }} />
         </header>
+        )}
 
         {/* hero */}
         <section className="rl-hero">

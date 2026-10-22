@@ -1,15 +1,11 @@
 ---
-import DesignLayout from '../../layouts/DesignLayout.astro';
-import QueueRoom from '../../design-reference/components/QueueRoom.jsx';
-import { SAMPLE_USER } from '../../design-preview/sample-data';
 import ProductLayout from '../../layouts/ProductLayout.astro';
 import CustomerOrderRoom from '../../components/account/CustomerOrderRoom';
 import { OrderCommandSchema, type CustomerOrder } from '../../contracts/orders';
 import { accountContext } from '../../server/auth/context';
 import { decodeOrderRpcResult } from '../../server/orders/results';
-const valid = Astro.params.id === 'preview-order';
 const command = OrderCommandSchema.safeParse({ order_id: Astro.params.id });
-const operational = !valid && command.success;
+const operational = command.success;
 let identity = null;
 let order: CustomerOrder | null = null;
 let csrf = '';
@@ -49,10 +45,10 @@ if (operational) {
   // Copy after identity/RPC so refreshed authentication headers are preserved.
   for (const [name, value] of account.headers)
     Astro.response.headers.set(name, value);
-} else if (!valid) Astro.response.status = 404;
+} else return Astro.rewrite('/404');
 ---
 
-{operational ? (
+{operational && (
   <ProductLayout
     title="Your order | Duoly"
     viewer={identity?.viewer}
@@ -72,16 +68,4 @@ if (operational) {
       </section>
     )}
   </ProductLayout>
-) : (
-  <DesignLayout title="Order queue | Duoly preview">
-    {valid ? (
-      <QueueRoom user={SAMPLE_USER} id="preview-order" client:load />
-    ) : (
-      <main style="padding: 3rem; color: white">
-        <h1>Preview not found</h1>
-        <p>This identifier is not a sample record.</p>
-        <a href="/">Back to home</a>
-      </main>
-    )}
-  </DesignLayout>
 )}

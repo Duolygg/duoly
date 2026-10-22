@@ -3,6 +3,7 @@
 import { previewFetch as fetch } from '../../design-preview/preview-transport';
 
 import React from 'react';
+import ClosedNotice from './ClosedNotice.jsx';
 import SupportChat from './SupportChat';
 import { LegalFooter, Icon } from './LegalPage';
 import { GAMES } from '../lib/games';
@@ -112,6 +113,7 @@ export default class Creators extends React.Component {
     const games = GAMES.concat(GAMES);
     return (
       <div className="lg-page cr-page">
+        {this.props.chrome === false ? null : (
         <header className="lg-header">
           <div className="lg-header-in">
             <a href="/" aria-label="Duoly home" className="lg-logo"><img src="/assets/brand/logo-wordmark.webp" alt="Duoly" width="96" height="36" /></a>
@@ -122,6 +124,7 @@ export default class Creators extends React.Component {
             <a href="#apply" className="lg-btn cr-head-cta">Apply now</a>
           </div>
         </header>
+        )}
 
         <main>
           <section className="cr-hero">
@@ -254,7 +257,7 @@ export default class Creators extends React.Component {
                     <p>Thanks, {f.name.split(' ')[0]}. We’ll check out your channel and get back to you at {f.email}. You can also follow up in the chat bubble on Duoly.</p>
                   </div>
                 ) : (
-                  <form onSubmit={this.apply} noValidate>
+                  this.props.closed ? <ClosedNotice title="Creator applications open soon" text="Send us your channel link by email or in Discord and we’ll get back to you." /> : <form onSubmit={this.apply} noValidate>
                     <div className="ct-grid">
                       <label className="ct-field"><span>Your name</span><input type="text" value={f.name} onChange={this.setF('name')} autoComplete="name" maxLength={60} placeholder="Alex" aria-invalid={s.field === 'name' ? 'true' : 'false'} /></label>
                       <label className="ct-field"><span>Email</span><input type="email" value={f.email} onChange={this.setF('email')} autoComplete="email" maxLength={120} placeholder="you@example.com" aria-invalid={s.field === 'email' ? 'true' : 'false'} /></label>
@@ -292,7 +295,7 @@ export default class Creators extends React.Component {
             </div>
           </section>
         </main>
-        <LegalFooter />
+        {this.props.chrome === false ? null : <LegalFooter />}
         <SupportChat />
       </div>
     );

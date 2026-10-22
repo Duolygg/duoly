@@ -1,0 +1,624 @@
+---
+import '../design-reference/globals.css';
+import type { Viewer } from '../contracts/account';
+import {
+  ADMIN_SECTIONS,
+  DISCORD_INVITE,
+  FOOTER_COLUMNS,
+  MAIN_NAV,
+  ROLE_HOME,
+} from '../site/nav';
+
+interface Props {
+  title: string;
+  description?: string;
+  viewer?: Viewer | undefined;
+  csrf?: string;
+  /** Home renders its own header and footer from the design. */
+  bare?: boolean;
+  /** Admin pages get the section sidebar. */
+  admin?: boolean;
+  /** Mark live pages so no design-preview guard ever blocks real forms. */
+  live?: boolean;
+}
+
+const {
+  title,
+  description = 'Book a rank-verified teammate for your game. Duo up in under 2 minutes.',
+  viewer,
+  csrf = '',
+  bare = false,
+  admin = false,
+  live = true,
+} = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const home = viewer ? ROLE_HOME[viewer.role] : null;
+const initial = (viewer?.name || 'P').trim().charAt(0).toUpperCase();
+const avatar = viewer?.image?.startsWith('/assets/avatars/')
+  ? viewer.image
+  : null;
+const external = (href: string) => href.startsWith('http');
+---
+
+<!doctype html>
+<html lang="en" data-live={live ? 'true' : undefined}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.ico" />
+  </head>
+  <body class={bare ? 'site bare' : 'site'}>
+    <a class="skip-link" href="#main-content">
+      Skip to content
+    </a>
+    {!bare && (
+      <header class="site-header">
+        <div class="site-header-in">
+          <a class="brand" href="/" aria-label="Duoly home">
+            <img
+              src="/assets/brand/logo-wordmark.webp"
+              alt="Duoly"
+              width="104"
+              height="39"
+            />
+          </a>
+          <nav class="main-nav" aria-label="Main">
+            {MAIN_NAV.map((item) => (
+              <a
+                href={item.href}
+                aria-current={path === item.href ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            ))}
+            {(!viewer || viewer.role === 'customer') && (
+              <a
+                href="/apply"
+                aria-current={path === '/apply' ? 'page' : undefined}
+              >
+                Become a teammate
+              </a>
+            )}
+          </nav>
+          <div class="header-actions">
+            {viewer?.role === 'customer' && (
+              <a class="active-pill" href="/dashboard" hidden data-active-pill>
+                <span class="pulse" aria-hidden="true" />
+                Active order
+              </a>
+            )}
+            {viewer && home ? (
+              <details class="account">
+                <summary aria-label={`Account menu for ${viewer.name}`}>
+                  {avatar ? (
+                    <img src={avatar} alt="" width="32" height="32" />
+                  ) : (
+                    <span class="initial" aria-hidden="true">
+                      {initial}
+                    </span>
+                  )}
+                  <span class="account-name">{viewer.name}</span>
+                </summary>
+                <div class="menu" role="menu">
+                  <p class="menu-who">
+                    <strong>{viewer.name}</strong>
+                    <span>{viewer.email ?? viewer.provider}</span>
+                  </p>
+                  <a role="menuitem" href={home.href} class="menu-home">
+                    {home.label}
+                  </a>
+                  <a role="menuitem" href="/profile">
+                    Edit profile
+                  </a>
+                  <a role="menuitem" href="/rules">
+                    Rules
+                  </a>
+                  <a role="menuitem" href="/contact">
+                    Help
+                  </a>
+                  <form method="POST" action="/auth/logout">
+                    <input type="hidden" name="csrf" value={csrf} />
+                    <button type="submit" role="menuitem">
+                      Sign out
+                    </button>
+                  </form>
+                </div>
+              </details>
+            ) : (
+              <a class="signin" href="/login">
+                Sign in
+              </a>
+            )}
+            <details class="mobile-nav">
+              <summary aria-label="Menu">
+                <svg
+                  aria-hidden="true"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                >
+                  <path d="M4 7h16M4 12h16M4 17h16" />
+                </svg>
+              </summary>
+              <nav class="menu" aria-label="Mobile">
+                {MAIN_NAV.map((item) => (
+                  <a href={item.href}>{item.label}</a>
+                ))}
+                <a href="/apply">Become a teammate</a>
+                <a href="/contact">Contact</a>
+              </nav>
+            </details>
+          </div>
+        </div>
+      </header>
+    )}
+    <main id="main-content" tabindex="-1">
+      {admin ? (
+        <div class="admin-shell">
+          <nav class="admin-nav" aria-label="Admin sections">
+            {ADMIN_SECTIONS.map((section) => {
+              const href = section.slug ? `/admin/${section.slug}` : '/admin';
+              return (
+                <a
+                  href={href}
+                  aria-current={path === href ? 'page' : undefined}
+                >
+                  {section.label}
+                </a>
+              );
+            })}
+          </nav>
+          <div class="admin-main">
+            <slot />
+          </div>
+        </div>
+      ) : (
+        <slot />
+      )}
+    </main>
+    {!bare && (
+      <footer class="site-footer">
+        <div class="site-footer-in">
+          <div class="footer-brand">
+            <img
+              src="/assets/brand/logo-wordmark.webp"
+              alt="Duoly"
+              width="120"
+              height="45"
+            />
+            <p>Made in Vienna, Austria.</p>
+            <a class="discord" href={DISCORD_INVITE} rel="noopener">
+              Join our Discord
+            </a>
+            <small>
+              © 2026 Duoly. Not affiliated with Riot Games, Valve, Epic Games,
+              Activision Blizzard, EA, Ubisoft, NetEase, Mojang or The Pokémon
+              Company.
+            </small>
+          </div>
+          <div class="footer-cols">
+            {FOOTER_COLUMNS.map((column) => (
+              <div>
+                <span>{column.title}</span>
+                {column.links.map((link) => (
+                  <a
+                    href={link.href}
+                    rel={external(link.href) ? 'noopener' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </footer>
+    )}
+    {viewer?.role === 'customer' && !bare && <script is:inline>
+      fetch('/api/orders/active', {
+        credentials: 'same-origin',
+        cache: 'no-store',
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          const order = data && data.order;
+          const pill = document.querySelector('[data-active-pill]');
+          if (!order || !pill || !/^[0-9a-f-]{36}$/i.test(order.id)) return;
+          pill.href = '/queue/' + order.id;
+          pill.hidden = false;
+        })
+        .catch(() => {});
+    </script>}
+    <script is:inline>
+      // Close open header menus on outside click or Escape.
+      document.addEventListener('click', (event) => {
+        document.querySelectorAll('.site-header details[open]').forEach((d) => {
+          if (!d.contains(event.target)) d.removeAttribute('open');
+        });
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        document
+          .querySelectorAll('.site-header details[open]')
+          .forEach((d) => d.removeAttribute('open'));
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: 'Bricolage Grotesque';
+    src: url('/fonts/bricolage-grotesque-latin.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 600 800;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('/fonts/geist-latin.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+  }
+  html {
+    background: #090414;
+    color-scheme: dark;
+  }
+  body.site {
+    min-width: 320px;
+    margin: 0;
+    color: #f3eeff;
+    font-family: Geist, system-ui, sans-serif;
+    line-height: 1.55;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+<style>
+  .skip-link {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    z-index: 40;
+    padding: 10px;
+    background: #120b22;
+    transform: translateY(-160%);
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgba(9, 4, 20, 0.82);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(196, 170, 255, 0.08);
+  }
+  .site-header-in {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px 32px;
+  }
+  .brand,
+  .brand img {
+    display: block;
+  }
+  .main-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 26px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .main-nav a {
+    padding: 10px 0;
+    text-decoration: none;
+    color: #cfc4ea;
+  }
+  .main-nav a:hover,
+  .main-nav a[aria-current] {
+    color: #fff;
+  }
+  .header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .signin {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background: #f3eeff;
+    color: #17092e;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .active-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: rgba(126, 231, 166, 0.12);
+    color: #7ee7a6;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .active-pill[hidden] {
+    display: none;
+  }
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #7ee7a6;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    50% {
+      opacity: 0.35;
+    }
+  }
+  details {
+    position: relative;
+  }
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .account summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 12px 0 6px;
+    border-radius: 12px;
+    border: 1px solid rgba(196, 170, 255, 0.14);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .account summary img,
+  .initial {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+  .initial {
+    display: grid;
+    place-items: center;
+    background: rgba(214, 187, 255, 0.14);
+    color: #d6bbff;
+    font-weight: 800;
+  }
+  .account-name {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 40;
+    width: 240px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 18px;
+    background: #170e2c;
+    border: 1px solid rgba(214, 187, 255, 0.14);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  }
+  .menu a,
+  .menu button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 42px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #f3eeff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .menu a:hover,
+  .menu button:hover {
+    background: rgba(214, 187, 255, 0.08);
+  }
+  .menu .menu-home {
+    background: rgba(214, 187, 255, 0.08);
+    color: #d6bbff;
+  }
+  .menu form {
+    margin: 0;
+  }
+  .menu-who {
+    margin: 0 0 6px;
+    padding: 8px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid rgba(196, 170, 255, 0.1);
+    font-size: 12px;
+    color: #8e84ab;
+    overflow: hidden;
+  }
+  .menu-who strong {
+    color: #fff;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mobile-nav {
+    display: none;
+  }
+  .mobile-nav summary {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid rgba(196, 170, 255, 0.14);
+  }
+  main {
+    display: block;
+    min-height: calc(100vh - 320px);
+  }
+  .site-footer {
+    margin-top: 48px;
+    border-top: 1px solid rgba(196, 170, 255, 0.08);
+  }
+  .site-footer-in {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 380px;
+  }
+  .footer-brand p {
+    margin: 0;
+    color: #f0a6ff;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .footer-brand small {
+    color: #6a6086;
+    font-size: 12px;
+  }
+  .discord {
+    align-self: flex-start;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: #5865f2;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .footer-cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px 48px;
+    font-size: 14px;
+  }
+  .footer-cols div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .footer-cols span {
+    color: #fff;
+    font-weight: 600;
+  }
+  .footer-cols a {
+    color: #a79dc4;
+    text-decoration: none;
+  }
+  .footer-cols a:hover {
+    color: #fff;
+  }
+  .admin-shell {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 32px;
+  }
+  .admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: sticky;
+    top: 80px;
+    align-self: start;
+  }
+  .admin-nav a {
+    padding: 9px 12px;
+    border-radius: 10px;
+    color: #a79dc4;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .admin-nav a[aria-current] {
+    background: rgba(214, 187, 255, 0.1);
+    color: #fff;
+  }
+  @media (max-width: 900px) {
+    .main-nav {
+      display: none;
+    }
+    .mobile-nav {
+      display: block;
+    }
+    .account-name {
+      display: none;
+    }
+    .admin-shell {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .admin-nav {
+      position: static;
+      flex-direction: row;
+      overflow-x: auto;
+    }
+    .admin-nav a {
+      white-space: nowrap;
+    }
+  }
+  @media (max-width: 480px) {
+    .site-header-in,
+    .site-footer-in {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    .active-pill {
+      padding: 0 10px;
+      font-size: 12px;
+    }
+  }
+</style>

@@ -179,6 +179,11 @@ const unconfigured =
         ? 'Use at least 8 characters. Confirm your email before signing in.'
         : 'Keep your password private. Duoly teammates never need access to your account.'}
     </p>
+    {!register && providers.email && (
+      <a class="back-link" href="/reset-password">
+        Forgot your password?
+      </a>
+    )}
     <a class="back-link" href={register ? '/login' : '/login?mode=register'}>
       {register ? 'Already have an account? Sign in' : 'Create an account'}
     </a>

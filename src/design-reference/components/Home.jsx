@@ -6,6 +6,7 @@ import { previewFetch as fetch } from '../../design-preview/preview-transport';
 import React from 'react';
 import { IGN_LABEL, GAME, byDemand } from '../lib/games';
 import { FAQ_TABS } from '../lib/faq';
+import { FOOTER_COLUMNS } from '../../site/nav';
 import SupportChat from './SupportChat';
 import { servicesFor } from '../lib/catalog';
 import { ranksOf, defaultRank, isRanked, rankPrice } from '../lib/ranks';
@@ -1664,49 +1665,22 @@ export default class Home extends React.Component {
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <img src="/assets/brand/logo-wordmark.webp" alt="Duoly" width="144" height="54" style={{ width: "144px", height: "54px" }} />
               <span style={{ fontSize: "13px", color: "#6A6086", maxWidth: "360px" }}>
-                © 2026 Duoly. Not affiliated with Riot Games, NetEase, Blizzard or The Pokémon Company.
+                © 2026 Duoly. Not affiliated with Riot Games, Valve, Epic Games, Activision Blizzard, EA, Ubisoft, NetEase, Mojang or The Pokémon Company.
               </span>
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "48px", fontSize: "14px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <span style={{ fontWeight: "600", color: "#FFFFFF" }}>
-                  Duoly
-                </span>
-                <a href="#" style={{ textDecoration: "none" }}>
-                  Blog
-                </a>
-                <a href="#" style={{ textDecoration: "none" }}>
-                  Guides
-                </a>
-                <a href="#" style={{ textDecoration: "none" }}>
-                  Jobs
-                </a>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <span style={{ fontWeight: "600", color: "#FFFFFF" }}>
-                  Teammates
-                </span>
-                <a href="/apply" style={{ textDecoration: "none" }}>
-                  Apply
-                </a>
-                <a href="/creators" style={{ textDecoration: "none" }}>
-                  Creator program
-                </a>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <span style={{ fontWeight: "600", color: "#FFFFFF" }}>
-                  Legal
-                </span>
-                <a href="/terms" style={{ textDecoration: "none" }}>
-                  Terms
-                </a>
-                <a href="/privacy" style={{ textDecoration: "none" }}>
-                  Privacy
-                </a>
-                <a href="/contact" style={{ textDecoration: "none" }}>
-                  Contact
-                </a>
-              </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "40px", fontSize: "14px" }}>
+              {FOOTER_COLUMNS.map((col) => (
+                <div key={col.title} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <span style={{ fontWeight: "600", color: "#FFFFFF" }}>
+                    {col.title}
+                  </span>
+                  {col.links.map((l) => (
+                    <a key={l.href} href={l.href} rel={l.href.startsWith('http') ? 'noopener' : undefined} style={{ textDecoration: "none" }}>
+                      {l.label}
+                    </a>
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </footer>

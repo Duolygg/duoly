@@ -1,8 +1,10 @@
 ---
-import DesignLayout from '../layouts/DesignLayout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 import Apply from '../design-reference/components/Apply.jsx';
+import { pageViewer } from '../site/viewer';
+const { viewer, csrf } = await pageViewer(Astro);
 ---
 
-<DesignLayout title="Apply | Duoly preview">
-  <Apply client:load />
-</DesignLayout>
+<SiteLayout title="Become a teammate | Duoly" viewer={viewer} csrf={csrf}>
+  <Apply chrome={false} closed client:load />
+</SiteLayout>

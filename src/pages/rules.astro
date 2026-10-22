@@ -1,8 +1,14 @@
 ---
-import DesignLayout from '../layouts/DesignLayout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 import Rules from '../design-reference/components/Rules.jsx';
+import { pageViewer } from '../site/viewer';
+const { viewer, csrf } = await pageViewer(Astro);
 ---
 
-<DesignLayout title="Rules | Duoly preview">
-  <Rules back={{ href: '/teammate', label: 'Back to orders' }} client:load />
-</DesignLayout>
+<SiteLayout title="Rules | Duoly" viewer={viewer} csrf={csrf}>
+  <Rules
+    chrome={false}
+    back={{ href: '/', label: 'Back to Duoly' }}
+    client:load
+  />
+</SiteLayout>

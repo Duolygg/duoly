@@ -1,0 +1,50 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageIntro from '../../components/site/PageIntro.astro';
+import { pageViewer } from '../../site/viewer';
+import { gameBySlug } from '../../site/games';
+const game = gameBySlug(Astro.params.game);
+if (!game) return Astro.rewrite('/404');
+const { viewer, csrf } = await pageViewer(Astro);
+---
+
+<SiteLayout
+  title={`${game.name} teammates | Duoly`}
+  description={`Book a rank-verified ${game.name} teammate on Duoly.`}
+  viewer={viewer}
+  csrf={csrf}
+>
+  <PageIntro
+    eyebrow="Games"
+    title={`${game.name} teammates`}
+    lead={`Book a rank-verified ${game.name} teammate who joins your lobby in minutes.`}
+  >
+    <img class="art" src={game.img} alt="" width="88" height="88" />
+    <div class="card">
+      <p>
+        A full guide to {game.name} services, ranks and prices is on the way.
+        For now, everything is bookable from the homepage.
+      </p>
+    </div>
+    <a class="cta" href="/#games">
+      Book a {game.name} teammate
+    </a>
+    <p class="back">
+      <a href="/games">All games</a>
+    </p>
+  </PageIntro>
+</SiteLayout>
+
+<style>
+  .art {
+    margin-top: 24px;
+    border-radius: 20px;
+  }
+  .card p {
+    margin: 0;
+    color: #cfc4ea;
+  }
+  .back {
+    margin-top: 16px;
+  }
+</style>

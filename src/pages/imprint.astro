@@ -1,0 +1,120 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageIntro from '../components/site/PageIntro.astro';
+import { pageViewer } from '../site/viewer';
+import { SUPPORT_EMAIL } from '../site/nav';
+const { viewer, csrf } = await pageViewer(Astro);
+// Operator details per §5 ECG, §14 UGB, §63 GewO and §25 MedienG.
+const rows: [string, string][] = [
+  ['Website', 'duoly.gg'],
+  ['Operator', 'Fabian Nöbauer'],
+  ['Legal form', 'Sole proprietorship (Einzelunternehmen)'],
+  ['Address', 'Jesuitenmühlstraße 10, 2320 Schwechat, Austria'],
+  ['Email', SUPPORT_EMAIL],
+  [
+    'Business purpose',
+    'Online gaming services: teammates, coaching and social play',
+  ],
+  ['GISA number', '38381850'],
+  ['Trade', 'Online Gaming Service Provider (awarded in Austria)'],
+  ['Chamber', 'Member of the Lower Austria Economic Chamber (WKNÖ)'],
+  ['Supervisory authority', 'District Authority of Bruck an der Leitha'],
+  [
+    'Applicable law',
+    'Austrian Trade Regulation Act (Gewerbeordnung), www.ris.bka.gv.at',
+  ],
+];
+---
+
+<SiteLayout title="Imprint | Duoly" viewer={viewer} csrf={csrf}>
+  <PageIntro
+    eyebrow="Legal notice"
+    title="Imprint"
+    lead="Who runs Duoly, as required by Austrian law."
+    narrow
+  >
+    <dl class="card facts">
+      {rows.map(([label, value]) => (
+        <div>
+          <dt>{label}</dt>
+          <dd>
+            {label === 'Email' ? (
+              <a href={`mailto:${value}`}>{value}</a>
+            ) : (
+              value
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
+    <div class="prose">
+      <h2>Liability for content</h2>
+      <p>
+        We are responsible for our own content on these pages under general law.
+        We are not obliged to monitor third-party information that is
+        transmitted or stored here. Once we become aware of a specific legal
+        violation, we remove the content concerned without delay.
+      </p>
+      <h2>Liability for links</h2>
+      <p>
+        Our pages link to external websites whose content we do not control. The
+        respective provider is responsible for linked pages. If we learn of a
+        legal violation on a linked page, we remove the link.
+      </p>
+      <h2>Copyright</h2>
+      <p>
+        Content created by us on these pages is subject to Austrian copyright
+        law. Game names, logos and artwork belong to their respective owners.
+        Duoly is not affiliated with or endorsed by any game publisher.
+      </p>
+      <h2>Data protection</h2>
+      <p>
+        How we handle personal data is described in our{' '}
+        <a href="/privacy">Privacy Policy</a>.
+      </p>
+    </div>
+  </PageIntro>
+</SiteLayout>
+
+<style>
+  .facts {
+    display: grid;
+    gap: 0;
+    padding: 8px 24px;
+  }
+  .facts div {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 4px 20px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(196, 170, 255, 0.08);
+  }
+  .facts div:last-child {
+    border-bottom: 0;
+  }
+  dt {
+    color: #a79dc4;
+    font-size: 14px;
+  }
+  dd {
+    margin: 0;
+    color: #f3eeff;
+  }
+  .prose {
+    max-width: 68ch;
+    margin-top: 40px;
+    color: #cfc4ea;
+  }
+  .prose h2 {
+    margin: 28px 0 8px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 20px;
+    color: #fff;
+  }
+  @media (max-width: 600px) {
+    .facts div {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

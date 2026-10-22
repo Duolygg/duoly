@@ -1,0 +1,23 @@
+import type { AstroGlobal } from 'astro';
+import type { Viewer } from '../contracts/account';
+import { accountContext } from '../server/auth/context';
+
+/**
+ * Resolves the signed-in viewer for public pages so the shared header shows the
+ * right account menu. Call it in page frontmatter (cookies must be set before
+ * streaming starts). Never throws: a failure renders the signed-out header.
+ */
+export async function pageViewer(
+  Astro: AstroGlobal,
+): Promise<{ viewer: Viewer | undefined; csrf: string }> {
+  const account = accountContext(Astro.request, Astro.cookies);
+  if (!account.config) return { viewer: undefined, csrf: '' };
+  try {
+    const viewer = (await account.identity())?.viewer;
+    for (const [name, value] of account.headers)
+      Astro.response.headers.set(name, value);
+    return { viewer, csrf: viewer ? account.csrf() : '' };
+  } catch {
+    return { viewer: undefined, csrf: '' };
+  }
+}

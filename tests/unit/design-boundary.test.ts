@@ -42,7 +42,9 @@ describe('design compatibility boundary', () => {
         const permitted =
           target.startsWith(root + '/') ||
           target === resolve('src/design-preview/preview-transport') ||
-          target === resolve('src/design-preview/preview-auth');
+          target === resolve('src/design-preview/preview-auth') ||
+          // Static site links only (no network, no secrets).
+          target === resolve('src/site/nav');
         if (
           !permitted ||
           !['', '.ts', '.js', '.jsx', '.tsx'].some((suffix) =>
