@@ -1,13 +1,17 @@
 import Home from '../../design-reference/components/Home.jsx';
-import type { Viewer } from '../../contracts/account';
+import type { LoginProviders, Viewer } from '../../contracts/account';
 export default function AccountHome({
   viewer,
   csrf,
   checkoutEnabled = false,
+  providers,
+  signup = false,
 }: {
   viewer: Viewer | null;
   csrf: string;
   checkoutEnabled?: boolean;
+  providers: LoginProviders;
+  signup?: boolean;
 }) {
   const signOut = async () => {
     const response = await fetch('/auth/logout', {
@@ -56,10 +60,9 @@ export default function AccountHome({
       initialCurrency="EUR"
       authError={null}
       askLogin={false}
-      onOpenLogin={() => window.location.assign('/login')}
-      onSignIn={() => window.location.assign('/login')}
+      // Sign in and checkout both open Home's popup, which posts to the real account routes.
+      authForms={{ csrf, providers, signup }}
       onSignOut={signOut}
-      onEmailAuth={async () => 'Use the account sign-in page.'}
       onCheckout={checkoutEnabled ? onCheckout : undefined}
     />
   );

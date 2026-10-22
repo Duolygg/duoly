@@ -1,15 +1,23 @@
 import { useEffect, useState } from 'react';
 import { announcePreviewUnavailable } from './preview-auth';
 
-export default function PreviewControls() {
+export default function PreviewControls({
+  allowAccountForms = false,
+}: {
+  allowAccountForms?: boolean;
+}) {
   const [message, setMessage] = useState('');
   useEffect(() => {
+    // With accounts enabled, the sign-in popup's forms post to the real /auth/ routes.
+    const isAccountForm = (form: HTMLFormElement | null | undefined) =>
+      allowAccountForms && !!form?.getAttribute('action')?.startsWith('/auth/');
     const disableSensitive = () => {
       document
         .querySelectorAll<HTMLInputElement>(
           'input[type="password"], input[type="file"], input#dl-pass',
         )
         .forEach((input) => {
+          if (isAccountForm(input.form)) return;
           input.disabled = true;
           input.title =
             'Unavailable in the design preview. Do not enter real credentials or upload files.';
@@ -26,6 +34,11 @@ export default function PreviewControls() {
         setMessage(detail.message.slice(0, 500));
     };
     const block = (event: Event) => {
+      if (
+        event.target instanceof Element &&
+        isAccountForm(event.target.closest('form'))
+      )
+        return;
       event.preventDefault();
       event.stopImmediatePropagation();
       announcePreviewUnavailable();
@@ -67,7 +80,7 @@ export default function PreviewControls() {
       document.removeEventListener('click', onClick, true);
       document.removeEventListener('auxclick', onClick, true);
     };
-  }, []);
+  }, [allowAccountForms]);
   if (!message) return null;
   return (
     <aside

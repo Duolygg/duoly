@@ -32,7 +32,7 @@ const previewLinks = [
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-account-forms={accountEnabled ? '' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -42,6 +42,14 @@ const previewLinks = [
     <script is:inline>
       // Guard native actions before any React island or module has hydrated.
       const blockPreviewAction = (event) => {
+        // With accounts enabled, the sign-in popup posts to the real /auth/ routes.
+        const form =
+          event.target instanceof Element ? event.target.closest('form') : null;
+        if (
+          document.documentElement.hasAttribute('data-account-forms') &&
+          form?.getAttribute('action')?.startsWith('/auth/')
+        )
+          return;
         event.preventDefault();
         event.stopImmediatePropagation();
         window.dispatchEvent(
@@ -100,7 +108,7 @@ const previewLinks = [
       </nav>
     </aside>
     <slot />
-    <PreviewControls client:load />
+    <PreviewControls allowAccountForms={accountEnabled} client:load />
   </body>
 </html>
 

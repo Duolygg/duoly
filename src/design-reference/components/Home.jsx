@@ -169,7 +169,11 @@ export default class Home extends React.Component {
     const via = real ? (real.provider || '') : '';
     const viaName = via === 'discord' ? 'Discord' : via === 'google' ? 'Google' : 'email';
     const busy = s.authBusy;
-    const login = (provider) => () => {
+    // With authForms (csrf + enabled providers) the popup's forms post to the real account routes.
+    const forms = P.authForms || null;
+    const login = (provider) => (e) => {
+      if (forms) { this.setState({ authBusy: provider }); return; }
+      if (e) e.preventDefault();
       this.setState({ authBusy: null, authNote: 'Design preview: login and account creation are not connected.' });
       if (P.onSignIn) P.onSignIn(provider);
     };
@@ -202,6 +206,9 @@ export default class Home extends React.Component {
       },
       loginDiscord: login('discord'),
       loginGoogle: login('google'),
+      authCsrf: forms ? forms.csrf : '',
+      discordOff: !!forms && !forms.providers.discord,
+      googleOff: !!forms && !forms.providers.google,
       ...this.emailVals(s, P),
       signOut: () => {
         this.setState({ accountMenu: false });
@@ -215,7 +222,11 @@ export default class Home extends React.Component {
     const field = (k) => (e) => this.setState({ [k]: e.target.value, authNote: '' });
     const tab = (a) => 'flex: 1; min-height: 40px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; ' +
       (a ? 'background: #F3EEFF; color: #17092E;' : 'background: transparent; color: #A79DC4;');
+    const forms = P.authForms || null;
+    const emailOff = !!forms && (!forms.providers.email || (register && !forms.signup));
     const submit = async (e) => {
+      // Real mode: let the browser post the form; the account routes redirect from there.
+      if (forms) { this.setState({ emailBusy: true }); return; }
       if (e) e.preventDefault();
       this.setState({ emailBusy: false, emailPass: '', authNote: 'Design preview: login and account creation are not connected.' });
     };
@@ -226,7 +237,12 @@ export default class Home extends React.Component {
     return {
       emailRegister: register,
       authTitle: register ? 'Create your account' : 'Welcome back',
-      authSub: 'Design preview only. Login and account creation are not connected. Do not enter real credentials.',
+      authSub: forms
+        ? (emailOff && register ? 'Registration is currently closed. Log in, or continue with Discord or Google.' : 'Your account, your teammates.')
+        : 'Design preview only. Login and account creation are not connected. Do not enter real credentials.',
+      emailAction: register ? '/auth/password/register' : '/auth/password/login',
+      emailOff,
+      passOff: forms ? emailOff : true,
       switchText: register ? 'Already have an account?' : 'New to Duoly?',
       switchLabel: register ? 'Log in' : 'Create an account',
       switchMode: () => this.setState({ emailMode: register ? 'login' : 'register', authNote: '' }),
@@ -1786,22 +1802,32 @@ export default class Home extends React.Component {
                     {v.authSub}
                   </p>
                   <div style={{ marginTop: "22px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-                    <button type="button" onClick={v.loginDiscord} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", minHeight: "50px", borderRadius: "14px", border: "none", background: "#5865F2", color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                      <img src="/assets/social/discord-white.png" alt="" width="22" height="17" style={{ width: "22px", height: "17px" }} />
-                      {v.discordLabel}
-                    </button>
-                    <button type="button" onClick={v.loginGoogle} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", minHeight: "50px", borderRadius: "14px", border: "none", background: "#FFFFFF", color: "#1F1F1F", fontSize: "15px", fontWeight: "600" }}>
-                      <img src="/assets/social/google-g.png" alt="" width="18" height="19" style={{ width: "18px", height: "19px" }} />
-                      {v.googleLabel}
-                    </button>
+                    <form method="POST" action="/auth/oauth" onSubmit={v.loginDiscord} style={{ display: "contents" }}>
+                      {v.authCsrf ? <input type="hidden" name="csrf" value={v.authCsrf} /> : null}
+                      <input type="hidden" name="provider" value="discord" />
+                      <button type="submit" disabled={v.discordOff} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", minHeight: "50px", borderRadius: "14px", border: "none", background: "#5865F2", color: "#FFFFFF", fontSize: "15px", fontWeight: "600", opacity: v.discordOff ? ".5" : "1" }}>
+                        <img src="/assets/social/discord-white.png" alt="" width="22" height="17" style={{ width: "22px", height: "17px" }} />
+                        {v.discordLabel}
+                      </button>
+                    </form>
+                    <form method="POST" action="/auth/oauth" onSubmit={v.loginGoogle} style={{ display: "contents" }}>
+                      {v.authCsrf ? <input type="hidden" name="csrf" value={v.authCsrf} /> : null}
+                      <input type="hidden" name="provider" value="google" />
+                      <button type="submit" disabled={v.googleOff} title={v.googleOff ? 'Google sign-in is not connected yet.' : undefined} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", minHeight: "50px", borderRadius: "14px", border: "none", background: "#FFFFFF", color: "#1F1F1F", fontSize: "15px", fontWeight: "600", opacity: v.googleOff ? ".5" : "1" }}>
+                        <img src="/assets/social/google-g.png" alt="" width="18" height="19" style={{ width: "18px", height: "19px" }} />
+                        {v.googleLabel}
+                      </button>
+                    </form>
                   </div>
                   <div style={{ margin: "20px 0 16px", display: "flex", alignItems: "center", gap: "12px", fontSize: "12.5px", color: "#6A6086" }}>
                     <span style={{ flex: "1", height: "1px", background: "rgba(196, 170, 255, .12)" }} />
                     or with email
                     <span style={{ flex: "1", height: "1px", background: "rgba(196, 170, 255, .12)" }} />
                   </div>
-                  <form onSubmit={v.submitEmail} noValidate style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    {v.emailRegister ? (
+                  <form method="POST" action={v.emailAction} onSubmit={v.submitEmail} noValidate={!v.authCsrf} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    {v.authCsrf ? <input type="hidden" name="csrf" value={v.authCsrf} /> : null}
+                    {/* The account API takes email and password only, so the name field is preview-only. */}
+                    {v.emailRegister && !v.authCsrf ? (
                       <>
                         <label className="dl-field" htmlFor="dl-name">
                           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1823,7 +1849,7 @@ export default class Home extends React.Component {
                       <span style={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)" }}>
                         Email
                       </span>
-                      <input id="dl-email" type="email" placeholder="you@email.com" autoComplete="email" value={v.emailAddr} onChange={v.setEmailAddr} />
+                      <input id="dl-email" name="email" type="email" placeholder="you@email.com" autoComplete="email" maxLength={254} required={!!v.authCsrf} disabled={v.emailOff} value={v.emailAddr} onChange={v.setEmailAddr} />
                     </label>
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                       <label className="dl-field" htmlFor="dl-pass">
@@ -1834,7 +1860,7 @@ export default class Home extends React.Component {
                         <span style={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)" }}>
                           Password
                         </span>
-                        <input disabled title="Unavailable in the design preview. Do not enter real credentials or upload files." id="dl-pass" type={v.passType} placeholder="Password (8+ characters)" autoComplete={v.passAutocomplete} value={v.emailPass} onChange={v.setEmailPass} />
+                        <input disabled={v.passOff} title={v.authCsrf ? undefined : 'Unavailable in the design preview. Do not enter real credentials or upload files.'} id="dl-pass" name="password" minLength={8} maxLength={128} required={!!v.authCsrf} type={v.passType} placeholder="Password (8+ characters)" autoComplete={v.passAutocomplete} value={v.emailPass} onChange={v.setEmailPass} />
                         <button type="button" onClick={v.togglePass} aria-label={v.passToggleLabel} aria-pressed={v.passShown ? 'true' : 'false'} style={{ flex: "0 0 auto", width: "40px", height: "40px", borderRadius: "10px", border: "none", background: "transparent", color: "#8E84AB", display: "flex", alignItems: "center", justifyContent: "center", transform: "none" }}>
                           {v.passShown ? (
                             <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1872,7 +1898,7 @@ export default class Home extends React.Component {
                         {v.authNote}
                       </div>
                     ) : null}
-                    <button type="submit" disabled={v.emailBusy} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", minHeight: "54px", marginTop: "2px", borderRadius: "14px", border: "none", background: "#D6BBFF", color: "#17092E", fontSize: "15.5px", fontWeight: "700", opacity: v.emailBusy ? ".7" : "1" }}>
+                    <button type="submit" disabled={v.emailBusy || v.emailOff} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", minHeight: "54px", marginTop: "2px", borderRadius: "14px", border: "none", background: "#D6BBFF", color: "#17092E", fontSize: "15.5px", fontWeight: "700", opacity: v.emailBusy || v.emailOff ? ".7" : "1" }}>
                       {v.emailSubmitLabel}
                       <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M5 12h14" />

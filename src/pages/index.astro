@@ -19,6 +19,12 @@ if (accountEnabled) {
 }
 const csrf = accountEnabled ? account.csrf() : '';
 const checkoutEnabled = accountEnabled && paymentsConfig() !== null;
+const providers = account.config?.providers ?? {
+  google: false,
+  discord: false,
+  email: false,
+};
+const signup = account.config?.signup ?? false;
 ---
 
 <DesignLayout accountEnabled={accountEnabled}>
@@ -27,6 +33,8 @@ const checkoutEnabled = accountEnabled && paymentsConfig() !== null;
       viewer={viewer}
       csrf={csrf}
       checkoutEnabled={checkoutEnabled}
+      providers={providers}
+      signup={signup}
       client:load
     />
   ) : (
