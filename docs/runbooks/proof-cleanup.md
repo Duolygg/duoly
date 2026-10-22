@@ -20,16 +20,16 @@ The reserved Edge `SUPABASE_SERVICE_ROLE_KEY` can differ from the legacy service
 
 Approved project: `omnejesspybaxuacjlah`. The deployed function is ACTIVE with `verify_jwt: true`.
 
-Migration `20261023200000_proof_cleanup_schedule.sql` installs the previously absent `pg_cron` and `pg_net`, restricts their schema/table/function access from application roles, and schedules these PostgreSQL-owner jobs:
+Migration `20261023210000_proof_cleanup_sync_http.sql` supersedes the initial pg_net transport with bounded synchronous HTTP. Runtime ACL checks found that Supabase-admin-owned net queues retain PUBLIC grants that postgres cannot revoke. The final scheduler never puts credentials in those queues. It uses an operator-only invoker function and an RLS-protected counts-only `order_proof_cleanup_runs` table; application roles cannot invoke or read either. These PostgreSQL-owner jobs remain active:
 
 | Job                               | UTC schedule   | Purpose                                                            |
 | --------------------------------- | -------------- | ------------------------------------------------------------------ |
 | `private-proof-cleanup`           | `*/15 * * * *` | Fixed empty-object POST to the function                            |
 | `private-proof-cleanup-log-prune` | `25 3 * * *`   | Delete only these owned jobs' completed logs older than seven days |
 
-Vault contains unique names `duoly_private_proof_cleanup_service_role_key` and `duoly_private_proof_cleanup_url`. Provision their values over the authenticated management channel, in memory; never put credentials in command arguments, logs, repository files or cron command text. Verify the URL is exactly this project's `/functions/v1/private-proof-cleanup` endpoint and the key belongs to the same project. The SQL destination regex validates URL shape, not project ownership; privileged Vault provisioning is a trust boundary.
+Vault contains unique names `duoly_private_proof_cleanup_service_role_key` and `duoly_private_proof_cleanup_url`. Provision their values over the authenticated management channel, in memory; never put credentials in command arguments, logs, repository files or cron command text. Verify the URL is exactly this project's `/functions/v1/private-proof-cleanup` endpoint and the key belongs to the same project. The scheduler also checks the URL against the trusted provisioned JWT's project reference. Vault provisioning remains a privileged trust boundary. The installed pgsql-http 1.6 library follows at most five redirects and cannot disable that behavior; only the exact project-bound, operator-controlled function endpoint receives credentials. The Edge handler's own provider fetches separately reject redirects.
 
-The guarded schedule queues nothing if either unique configuration value is absent or invalid. Cron SQL success therefore does not establish HTTP delivery. Read both `cron.job_run_details` and the matching `net._http_response` status/count body. Do not query decrypted keys or record request headers. Runtime authorization headers enter the protected transient net request queue.
+The guarded scheduler performs no HTTP request if its unique configuration is missing, malformed or project-mismatched. Check both `cron.job_run_details` and matching `order_proof_cleanup_runs` records. An `ok` outcome with HTTP 200 verifies delivery; inspect `failed` separately for per-object errors. Other fixed outcomes identify configuration, transport, HTTP or invalid-response failures without storing response bodies, credentials or request headers. No pg_net response table is used by the final scheduler.
 
 Cadence is 96 cleanup calls per day. The fixed worst-case per-call request bound is 51; ordinary empty calls make only the claim RPC. No paid plan, always-on worker or automatic upgrade is configured. A temporary one-minute cadence was used for acceptance and restored to the verified 15-minute schedule.
 
@@ -41,7 +41,7 @@ Deployment readback confirmed gateway JWT verification. Missing and anon credent
 
 Rotate the same project's service-role credential consistently in the function secret, Vault and production application's sensitive Vercel variable. Securely read back only digests/metadata and test exact-auth denial, a service call and a scheduled HTTP response again. If rotation temporarily mismatches, cleanup must fail closed.
 
-To pause, disable only the named `private-proof-cleanup` job owned by `postgres`; do not delete unrelated jobs. Disable application uploads with `ORDER_PROOFS_ENABLED=false` and deploy that setting if cleanup health is uncertain. Keep metadata bindings until provider absence is proven. Investigate nonzero failed counts, HTTP errors, missing responses and scheduler gaps; do not interpret SQL queueing success as deletion success.
+To pause, disable only the named `private-proof-cleanup` job owned by `postgres`; do not delete unrelated jobs. Disable application uploads with `ORDER_PROOFS_ENABLED=false` and deploy that setting if cleanup health is uncertain. Keep metadata bindings until provider absence is proven. Investigate nonzero failed counts, HTTP errors, missing responses and scheduler gaps; do not interpret SQL job success as deletion success. Complete outcome and failed-count checks are required.
 
 Failed runs can revisit abandoned rows, including already absent objects. Idempotent rechecks consume calls but cannot delete ready proofs. Retention/deletion of ready evidence remains a separate owner-approved operation.
 
