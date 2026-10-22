@@ -1,5 +1,9 @@
 # Backend rebuild checkpoint
 
+## Current private-proof slice
+
+Private screenshot uploads, authorized reads and trusted scheduled stale-object cleanup are implemented and accepted against real PostgreSQL, Storage and authenticated browsers. See [private-proof-status.md](private-proof-status.md) and [the cleanup runbook](../runbooks/proof-cleanup.md) for scope, evidence and operations. Older checkpoints below describing proofs as unimplemented are superseded. Completion and all financial transitions remain separate, unimplemented work. Exact-head CI and production release evidence belong in the integrating PR.
+
 The owner's `BACKEND_REBUILD_PROMPT.md` is the behavioral target for the Astro migration. Preserve useful source behavior and record deliberate changes. Email and password was explicitly selected over the earlier email-code implementation. Supabase Auth owns credentials and hashing; do not reproduce NextAuth's local password store.
 
 ## Integration order
