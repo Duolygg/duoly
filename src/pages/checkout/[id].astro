@@ -65,7 +65,7 @@ const total = new Intl.NumberFormat('en-IE', {
 
 <style>
   .checkout {
-    max-width: 720px;
+    max-width: 1040px;
     margin: 32px auto 64px;
     padding: 0 16px;
   }
@@ -83,6 +83,9 @@ const total = new Intl.NumberFormat('en-IE', {
     font-size: 32px;
     letter-spacing: -0.03em;
     color: #fff;
+  }
+  header {
+    max-width: 720px;
   }
   .summary {
     display: flex;
@@ -105,10 +108,17 @@ const total = new Intl.NumberFormat('en-IE', {
     font-size: 13.5px;
     color: #a79dc4;
   }
+  /* Islands render inline by default; Stripe sizes its layout from this width. */
+  .checkout-mount,
+  .checkout-mount :global(astro-island) {
+    display: block;
+    width: 100%;
+  }
   :global(.checkout-frame) {
-    min-height: 480px;
-    border-radius: 20px;
-    overflow: hidden;
+    width: 100%;
+    min-height: 560px;
+    padding: 8px 0;
+    border-radius: 24px;
     background: #fff;
   }
   :global(.checkout-error) {
