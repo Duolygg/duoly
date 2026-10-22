@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('login preview never collects a password or starts OAuth', async ({
+test('public sign-in uses the real account page and explains unavailable Google login', async ({
   page,
 }) => {
   const writes: string[] = [];
@@ -15,17 +15,17 @@ test('login preview never collects a password or starts OAuth', async ({
   await page.goto('/');
   await expect.poll(() => page.locator('astro-island[ssr]').count()).toBe(0);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(
+    page.getByRole('heading', { name: 'Sign in to Duoly' }),
+  ).toBeVisible();
   await expect(page.locator('input[type="password"]')).toBeDisabled();
-  await page.getByRole('button', { name: 'Google', exact: true }).click();
   await expect(
-    page
-      .getByRole('complementary', { name: 'Preview action notice' })
-      .getByRole('status'),
-  ).toContainText('not connected');
+    page.getByRole('button', { name: 'Continue with Google', exact: true }),
+  ).toBeDisabled();
   await expect(
-    page.getByRole('button', { name: 'Google', exact: true }),
-  ).toBeEnabled();
-  expect(new URL(page.url()).pathname).toBe('/');
+    page.getByText('Google sign-in is not connected yet.', { exact: true }),
+  ).toBeVisible();
   expect(writes).toEqual([]);
   expect(dialogs).toEqual([]);
 });

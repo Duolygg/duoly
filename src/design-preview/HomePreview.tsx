@@ -1,8 +1,5 @@
 import Home from '../design-reference/components/Home.jsx';
-import {
-  announcePreviewUnavailable,
-  PREVIEW_AUTH_UNAVAILABLE,
-} from './preview-auth';
+import { PREVIEW_AUTH_UNAVAILABLE } from './preview-auth';
 
 const unavailable = PREVIEW_AUTH_UNAVAILABLE;
 
@@ -19,7 +16,8 @@ export default function HomePreview() {
         // Local currency selection is optional in the design preview.
       }
     },
-    onSignIn: () => announcePreviewUnavailable(unavailable),
+    onOpenLogin: () => window.location.assign('/login'),
+    onSignIn: () => window.location.assign('/login'),
     onSignOut: () => undefined,
     onEmailAuth: async () => unavailable,
   };
