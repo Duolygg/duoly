@@ -197,7 +197,7 @@ export function orderConfirmed(
         type: 'note',
         tone: 'safe',
         title: 'Not matched within 5 minutes?',
-        text: 'The order cancels itself and the full amount goes back to your Duoly balance, ready for your next order.',
+        text: 'The order cancels itself and you pay nothing: a card, wallet or PayPal hold is released, and any other payment is refunded in full.',
       },
     ],
     reason: 'You’re getting this because you placed an order on Duoly.',

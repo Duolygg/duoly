@@ -76,6 +76,8 @@ export default class Home extends React.Component {
   // the signed-in customer's Duoly balance (EUR), so checkout can use it
   async loadWallet() {
     const user = this.props.session && this.props.session.user;
+    // Live checkout: the wallet is not connected yet, never show sample balances.
+    if (this.props.onCheckout) return;
     if (!user || (user.role && user.role !== 'customer')) return;
     try {
       const r = await fetch('/api/me/history');
@@ -562,6 +564,27 @@ export default class Home extends React.Component {
       if (byName && mcServer.length < 2) return this.setState({ placeErr: 'Add the server you play on (or “my own world”).' });
       const region = byName ? mcServer + ' · ' + (st.mcEdition || MC_EDITIONS[0]) : st.region;
       this.setState({ placing: true, placeErr: '' });
+      if (this.props.onCheckout) {
+        // Live: the server prices the order and opens Stripe checkout.
+        const result = await this.props.onCheckout({
+          gameId: g.id, serviceId: sel.id, units: st.qty,
+          server: byName ? mcServer : server[0],
+          ...(rank ? { rank } : {}),
+          ...(byName ? { edition: st.mcEdition || MC_EDITIONS[0] } : {}),
+          ign, note: (st.orderNote || '').trim(), voice: !!st.voice
+        });
+        if (result && result.url) {
+          try {
+            window.localStorage.setItem('duoly-ign-' + g.id, ign);
+            if (byName) window.localStorage.setItem('duoly-mc-server', mcServer);
+            else window.localStorage.setItem('duoly-server-' + g.id, st.region);
+          } catch (err) {}
+          window.location.href = result.url;
+          return;
+        }
+        if (result && result.orderId) { window.location.href = '/queue/' + result.orderId; return; }
+        return this.setState({ placing: false, placeErr: (result && result.error) || 'Couldn’t start checkout. Please try again.' });
+      }
       try {
         const res = await fetch('/api/orders', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -590,8 +613,8 @@ export default class Home extends React.Component {
       closeConfirm: () => { if (!this.state.placing) this.setState({ confirmOpen: false }); },
       confirmTotal: money(amount), confirmPay: payLabel, confirmCur: cur,
       // step 1 of "what happens next": exactly where the money comes from, once
-      chargeTitle: allWallet ? money(amount) + ' comes from your Duoly balance' : walletUse > 0 ? 'We charge ' + money(due) + ' to your ' + payLabel : 'We charge ' + money(amount) + ' to your ' + payLabel,
-      chargeText: (walletUse > 0 && !allWallet ? 'The other ' + money(walletUse) + ' comes from your Duoly balance. ' : '') +
+      chargeTitle: this.props.onCheckout ? 'Pay ' + money(amount) + ' securely with Stripe' : allWallet ? money(amount) + ' comes from your Duoly balance' : walletUse > 0 ? 'We charge ' + money(due) + ' to your ' + payLabel : 'We charge ' + money(amount) + ' to your ' + payLabel,
+      chargeText: this.props.onCheckout ? 'Apple Pay, Google Pay, PayPal, cards and 20+ local methods. Cards, wallets and PayPal are only charged when a teammate accepts.' : (walletUse > 0 && !allWallet ? 'The other ' + money(walletUse) + ' comes from your Duoly balance. ' : '') +
         'One payment for all ' + s.qty + ' ' + (s.qty === 1 ? unit : unit + 's') + ', nothing is charged later. Cancel for free until a teammate accepts.',
       confirmLine: s.qty + ' ' + (s.qty === 1 ? unit : unit + 's') + (rank ? ' · from ' + rank : '') + ' · ' + (s.voice ? 'voice on Discord' : 'text chat'),
       ignLabel, ignPlaceholder: g.id === 'lol' || g.id === 'val' || g.id === 'tft' ? 'Name#TAG' : g.id === 'ow' ? 'Name#1234' : g.id === 'cod' ? 'Name#1234567' : 'Your ' + ignLabel,
@@ -612,7 +635,7 @@ export default class Home extends React.Component {
       mcEditions: MC_EDITIONS.map((ed) => ({ ed, on: (s.mcEdition || MC_EDITIONS[0]) === ed, pick: () => this.setState({ mcEdition: ed }) })),
       region: byName ? ((s.mcServer || '').trim() || 'your server') : server[0],
       placing: !!s.placing, placeErr: s.placeErr || '',
-      placeLabel: s.placing ? (allWallet ? 'Paying with your balance…' : 'Charging ' + payLabel + '…') : 'Pay ' + money(allWallet ? amount : due) + ' & queue',
+      placeLabel: this.props.onCheckout ? (s.placing ? 'Opening checkout…' : 'Continue to payment · ' + money(amount)) : s.placing ? (allWallet ? 'Paying with your balance…' : 'Charging ' + payLabel + '…') : 'Pay ' + money(allWallet ? amount : due) + ' & queue',
       placeOrder: place
     };
   }
@@ -1232,7 +1255,8 @@ export default class Home extends React.Component {
                       Your Duoly balance covers the whole order. No card needed.
                     </div>
                   ) : null}
-                  {v.allWallet ? null : <div role="radiogroup" aria-label="Payment method" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "8px" }}>
+                  {this.props.onCheckout ? <div style={{ fontSize: "13px", lineHeight: "1.5", color: "#A79DC4" }}>Apple Pay, Google Pay, PayPal, cards, Klarna and 20+ local payment methods. You choose on the next step.</div> : null}
+                  {v.allWallet || this.props.onCheckout ? null : <div role="radiogroup" aria-label="Payment method" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "8px" }}>
                     {v.pays.map((p, $index) => (
                       <React.Fragment key={$index}>
                         <button type="button" role="radio" aria-checked={p.pressed} aria-label={p.label} onClick={p.pick} style={css(p.style)}>
@@ -1990,7 +2014,7 @@ export default class Home extends React.Component {
                     {[
                       [v.chargeTitle, v.chargeText],
                       ['Your order goes live on ' + v.region, 'Rank-verified teammates for ' + v.game.name + ' see it right away. Most orders are taken in under 2 minutes.'],
-                      ['You get matched and play', 'You’ll see who took it on the next page. Nobody free within 5 minutes? The full ' + v.confirmTotal + ' goes back to your Duoly balance, automatically.']
+                      ['You get matched and play', (this.props.onCheckout ? 'You’ll see who took it on the next page. Nobody free within 5 minutes? You pay nothing: the hold on your card or wallet is released automatically.' : 'You’ll see who took it on the next page. Nobody free within 5 minutes? The full ' + v.confirmTotal + ' goes back to your Duoly balance, automatically.')]
                     ].map(([t, d], i) => (
                       <li key={i} style={{ position: "relative", display: "flex", gap: "14px", paddingBottom: i < 2 ? "16px" : "0" }}>
                         {i < 2 ? <span aria-hidden="true" style={{ position: "absolute", left: "13px", top: "30px", bottom: "2px", width: "2px", borderRadius: "2px", background: "linear-gradient(#D6BBFF55, rgba(214, 187, 255, .08))" }} /> : null}
