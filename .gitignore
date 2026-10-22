@@ -12,3 +12,5 @@ coverage/
 supabase/.temp/
 supabase/.branches/
 .superdesign/
+__pycache__/
+*.py[cod]

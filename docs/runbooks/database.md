@@ -1,21 +1,21 @@
 # Database
 
-Selected: Supabase PostgreSQL. The shared development project is provisioned and verified. The account foundation is applied to development and exercised through real provider/browser integration. The owner supplied the rebuild brief as the behavioral target. Orders, payments and other product schemas remain unimplemented. See [backend rebuild status](../product/backend-rebuild-status.md).
+Selected: Supabase PostgreSQL on the Free plan. Account and shared-order foundations are applied to development. The order HTTP adapter is in progress; payments, completion/proof and realtime remain unavailable. Google OAuth initiation is verified on the protected login preview, but the owner must complete consent/session/logout acceptance. See [backend rebuild status](../product/backend-rebuild-status.md) and [order foundation](../product/order-foundation-contract.md).
 
 ## Hosted development
 
-| Setting                  | Verified value                                                |
-| ------------------------ | ------------------------------------------------------------- |
-| Organization             | Duoly, `vbrxnajhjbbkclijigxi`                                 |
-| Organization plan        | Free, read back before and after provisioning                 |
-| Project                  | `duoly-dev`, `omnejesspybaxuacjlah`                           |
-| Region                   | `eu-central-1`, Frankfurt                                     |
-| Database                 | PostgreSQL 17.11                                              |
-| Console                  | <https://supabase.com/dashboard/project/omnejesspybaxuacjlah> |
-| Database SSL enforcement | Enabled and applied successfully                              |
-| Product tables           | profiles and account_roles, both RLS enabled                  |
-| Customer auth            | Email enabled; signup closed; social, phone and anonymous off |
-| SMTP                     | Resend configured; verification blocks successful sending     |
+| Setting                  | Verified value                                                       |
+| ------------------------ | -------------------------------------------------------------------- |
+| Organization             | Duoly, `vbrxnajhjbbkclijigxi`                                        |
+| Organization plan        | Free, read back before and after provisioning                        |
+| Project                  | `duoly-dev`, `omnejesspybaxuacjlah`                                  |
+| Region                   | `eu-central-1`, Frankfurt                                            |
+| Database                 | PostgreSQL 17.11                                                     |
+| Console                  | <https://supabase.com/dashboard/project/omnejesspybaxuacjlah>        |
+| Database SSL enforcement | Enabled and applied successfully                                     |
+| Product tables           | profiles, account_roles and four order tables, all RLS enabled       |
+| Customer auth            | Email and Google enabled; signup closed; Discord/phone/anonymous off |
+| SMTP                     | Resend configured; verification blocks successful sending            |
 
 Supabase is **free-only** by owner decision. Do not upgrade the organization, enable paid branching, select paid compute or enable paid add-ons. If quotas prevent work, stop and raise the exact limitation. Paused projects do not count toward the active free-project allowance; unrelated paused projects were preserved. Do not delete other projects as routine cleanup.
 
@@ -31,6 +31,21 @@ Provide database credentials only through a secure prompt or secret manager. Do 
 The shared pooler discovered from the provider is `aws-1-eu-central-1.pooler.supabase.com`; transaction mode uses port `6543` and user `postgres.omnejesspybaxuacjlah`. Do not construct a pooler hostname from the region. Future serverless clients need TLS, small connection pools and transaction-pooler-compatible prepared-statement settings. Use a least-privilege application identity once the schema and authorization contracts exist. Never give browsers an administrator password, secret API key or service-role key.
 
 No database password, management token, secret API key or connection URL has been added to GitHub or Vercel. The scaffold still builds without Supabase credentials. Production has no database yet. Development and previews must never use future production credentials. With a shared development project, coordinate migrations with one integrator; do not assume paid per-PR database branches exist.
+
+## Current order development acceptance
+
+- Migration `20261022093000_order_foundation.sql` was applied using native `supabase db push --linked --project-ref omnejesspybaxuacjlah --skip-vault --yes`. Remote migration history matches local account and order migrations. No roles, seeds or vault secrets were pushed.
+- Actual schema readback verified RLS on orders, order_assignments, teammate_order_access and refund_credits, with raw client SELECT/INSERT denied. Both role-switched authorization and deadline rollback SQL suites passed after migration. Order, assignment and refund tables were verified empty afterward; temporary fixtures were removed and the approved Google test customer was preserved.
+- Generated TypeScript types were refreshed from the actual development schema. No development credentials or migration were applied to production. HTTP/session integration and deployment acceptance for orders are still pending.
+- The repaired concurrency runner uses unique owned resources, guarded cleanup and explicit confirmation. Real PostgreSQL races, instrumented overlapping sweeps, an old-ordering deadlock negative control and ownership/ambiguous-commit recovery checks passed. Run its offline safety tests before cloud acceptance:
+
+```sh
+python3 -m unittest discover -s supabase/tests -p test_order_concurrency.py
+python3 -O -m unittest discover -s supabase/tests -p test_order_concurrency.py
+python3 supabase/tests/order_concurrency.py --project-ref omnejesspybaxuacjlah --confirm-development
+```
+
+This runner is development-only and writes temporary fixtures. Never point it at production. `pg_cron` 1.6.4 is available but not installed or scheduled; the bounded service-only expiry RPC is implemented.
 
 ## Local development
 
@@ -64,7 +79,7 @@ Hosted migration push, backups, retention/deletion, object backup and isolated r
 - CLI link succeeded and a subsequent project listing identified the exact project as linked.
 - Hosted TypeScript type generation succeeded.
 
-Not yet accepted: application database integration, product schema, local migration replay, RLS tests, collaborator membership, production project, backups and isolated restore.
+The initial provisioning evidence above is historical. Account and order schema/RLS acceptance has since advanced as recorded in the current section. Still pending: complete Google browser acceptance, order HTTP integration/deployment, local migration replay, collaborator membership, production project, backups and isolated restore.
 
 ## References
 
