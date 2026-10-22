@@ -4,6 +4,8 @@ import { announcePreviewUnavailable } from './preview-auth';
 export default function PreviewControls() {
   const [message, setMessage] = useState('');
   useEffect(() => {
+    // Pages with live actions (homepage checkout) opt out of every guard.
+    if (document.documentElement.dataset.live === 'true') return;
     const disableSensitive = () => {
       document
         .querySelectorAll<HTMLInputElement>(
