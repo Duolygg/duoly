@@ -134,11 +134,11 @@ export default class SupportChat extends React.Component {
                 )}
                 <div style={{ flex: "1", minWidth: "0", lineHeight: "1.3" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: "700", color: "#FFFFFF" }}>
-                    {agent ? agent.name : 'Sparky'}
-                    <span style={{ fontSize: "10.5px", fontWeight: "700", letterSpacing: ".06em", padding: "2px 6px", borderRadius: "6px", background: agent ? "rgba(94, 234, 168, .16)" : "#D6BBFF", color: agent ? "#5EEAA8" : "#17092E" }}>{agent ? 'TEAM' : 'AI'}</span>
+                    {agent ? agent.name : this.props.contactOnly ? 'Duoly support' : 'Sparky'}
+                    <span style={{ fontSize: "10.5px", fontWeight: "700", letterSpacing: ".06em", padding: "2px 6px", borderRadius: "6px", background: agent ? "rgba(94, 234, 168, .16)" : "#D6BBFF", color: agent ? "#5EEAA8" : "#17092E" }}>{agent || this.props.contactOnly ? 'TEAM' : 'AI'}</span>
                   </div>
                   <div style={{ fontSize: "12.5px", color: "#A79DC4" }}>
-                    {agent ? 'Duoly support · replies here' : d.role === 'teammate' ? 'Teammate support · answers instantly' : 'Answers instantly · humans on standby'}
+                    {this.props.contactOnly ? 'Real people · usually within a few hours' : agent ? 'Duoly support · replies here' : d.role === 'teammate' ? 'Teammate support · answers instantly' : 'Answers instantly · humans on standby'}
                   </div>
                 </div>
                 {c && c.status !== 'closed' ? (
@@ -228,7 +228,7 @@ export default class SupportChat extends React.Component {
 
         {s.teaser && !s.open ? (
           <div style={{ position: "fixed", right: "24px", bottom: (bottom + 76) + "px", zIndex: "39", display: "flex", alignItems: "center", gap: "10px", padding: "10px 8px 10px 14px", borderRadius: "16px 16px 4px 16px", background: "#F3EEFF", color: "#17092E", boxShadow: "0 16px 40px rgba(0, 0, 0, .45)", animation: "dlpop .3s ease-out", fontSize: "13.5px", fontWeight: "600" }}>
-            Need a hand? Sparky answers in seconds.
+            {this.props.contactOnly ? 'Need a hand? Talk to the Duoly team.' : 'Need a hand? Sparky answers in seconds.'}
             <button type="button" aria-label="Dismiss" onClick={() => this.setState({ teaser: false })} style={{ width: "26px", height: "26px", borderRadius: "8px", border: "none", background: "rgba(23, 9, 46, .08)", color: "#17092E", display: "flex", alignItems: "center", justifyContent: "center", transform: "none" }}>
               <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
             </button>
