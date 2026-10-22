@@ -1,5 +1,7 @@
 # Deployment and recovery
 
+> **Current policy (2026-10-22, owner approved):** every merge to `main` deploys to production automatically and is assigned to duoly.gg, www.duoly.gg and duoly-pi.vercel.app. Branches still get protected previews. Older text below describing manual promotion is historical. Rollback: `vercel promote <previous deployment URL>` or `vercel rollback`.
+
 ## Current public demo
 
 Owner-approved primary public URL: **https://duoly.gg**; `www.duoly.gg` redirects to it. https://duoly-pi.vercel.app remains a secondary URL. Production deployment `dpl_EhBubZytDjfgPkuyLvPGjKod8J7c` serves code commit `9370d9c6fa8cdaebf48ab3ef248e9b17a180acae`. Source is on `main`; GitHub remains private. This is a sample-data design demo, with no live marketplace backend.
