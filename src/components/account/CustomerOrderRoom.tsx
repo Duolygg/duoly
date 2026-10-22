@@ -7,6 +7,7 @@ import {
   orderRequest,
   orderStatus,
 } from './customer-orders';
+import PrivateProofs from '../proofs/PrivateProofs';
 import './customer-orders.css';
 
 // QueueRoom's purple card language, without prototype chat/payment/polling behavior.
@@ -225,9 +226,15 @@ export default function CustomerOrderRoom({
             </>
           )}
           <p>
-            Chat, proof, reviews, tips and completion actions are not available
-            here.
+            Chat, reviews, tips and completion actions are not available here.
           </p>
+          {!pending && !stale && (
+            <PrivateProofs
+              orderId={order.id}
+              assignmentId={order.current_assignment_id ?? undefined}
+              mode="customer"
+            />
+          )}
         </aside>
       </div>
     </div>

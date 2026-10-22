@@ -77,7 +77,11 @@ it('renders approved queue details, pending lock and explicit own assignment', (
   expect(active).toContain('Assigned to you');
   expect(active).toContain('Player#EUW');
   expect(active).toContain(
-    'Completion, proof uploads, chat and payout withdrawals are unavailable',
+    'Completion, chat and payout withdrawals are unavailable',
+  );
+  expect(active).toContain('Private evidence');
+  expect(active).toContain(
+    'Evidence only. Order completion is not available yet.',
   );
 });
 import {

@@ -22,6 +22,29 @@ export default [
   ...tseslint.configs.recommended,
   ...astro.configs.recommended,
   {
+    files: ['supabase/tests/proof_http_acceptance*.cjs'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: Object.fromEntries(
+        [
+          'require',
+          'module',
+          '__dirname',
+          'global',
+          'process',
+          'fetch',
+          'AbortSignal',
+          'setTimeout',
+          'Buffer',
+          'console',
+          'document',
+          'window',
+        ].map((name) => [name, 'readonly']),
+      ),
+    },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
+  {
     files: ['**/*.mjs'],
     languageOptions: { globals: { process: 'readonly' } },
   },

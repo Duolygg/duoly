@@ -1,0 +1,59 @@
+/* Match the existing customer order / teammate desk card language. */
+.private-proofs {
+  min-width: 0;
+  margin-top: 24px;
+  overflow-wrap: anywhere;
+}
+.private-proofs * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+.proof-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.proof-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  padding: 0;
+  gap: 16px;
+  list-style: none;
+}
+.proof-images img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 13px;
+}
+.proof-images a {
+  color: #d6bbff;
+}
+.proof-images p,
+.proof-upload p {
+  font-size: 13px;
+}
+.proof-upload {
+  display: grid;
+  gap: 12px;
+}
+.proof-upload input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  color: inherit;
+}
+.proof-error {
+  padding: 16px;
+  border: 1px solid #f0a6ff;
+  border-radius: 13px;
+  color: #f3eeff;
+}
+.private-proofs :focus-visible {
+  outline: 3px solid #d6bbff;
+  outline-offset: 4px;
+}
