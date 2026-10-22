@@ -21,7 +21,7 @@ const csrf = accountEnabled ? account.csrf() : '';
 const checkoutEnabled = accountEnabled && paymentsConfig() !== null;
 ---
 
-<DesignLayout accountEnabled={accountEnabled}>
+<DesignLayout accountEnabled={accountEnabled} live={checkoutEnabled}>
   {accountEnabled ? (
     <AccountHome
       viewer={viewer}

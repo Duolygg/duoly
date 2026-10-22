@@ -6,11 +6,14 @@ interface Props {
   title?: string;
   description?: string;
   accountEnabled?: boolean;
+  /** Live checkout on this page: forms submit for real. */
+  live?: boolean;
 }
 
 const {
   title = 'Duoly — Duo up in under 2 minutes',
   accountEnabled = false,
+  live = false,
   description = 'Protected Duoly design preview with deterministic sample data. Login, payments and order actions are not connected.',
 } = Astro.props;
 
@@ -32,7 +35,7 @@ const previewLinks = [
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-live={live ? 'true' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -42,6 +45,7 @@ const previewLinks = [
     <script is:inline>
       // Guard native actions before any React island or module has hydrated.
       const blockPreviewAction = (event) => {
+        if (document.documentElement.dataset.live === 'true') return;
         event.preventDefault();
         event.stopImmediatePropagation();
         window.dispatchEvent(
