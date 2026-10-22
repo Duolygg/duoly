@@ -106,8 +106,14 @@ export default class Home extends React.Component {
     if (!this.signedIn()) {
       const s = this.state;
       try {
-        window.sessionStorage.setItem(PENDING_KEY, JSON.stringify({ game: s.game, mode: s.mode, bundle: s.bundle || null, tab: s.tab, qty: s.qty, rank: s.rank, voice: s.voice, pay: s.pay, at: Date.now() }));
+        window.localStorage.setItem(PENDING_KEY, JSON.stringify({ game: s.game, mode: s.mode, bundle: s.bundle || null, tab: s.tab, qty: s.qty, rank: s.rank, voice: s.voice, pay: s.pay, at: Date.now() }));
       } catch (e) {}
+      if (this.props.onCheckout && this.props.onOpenLogin) {
+        // Live: real sign-in page, then straight back here to pay.
+        try { document.cookie = 'duoly_resume=checkout; Max-Age=1800; Path=/; SameSite=Lax; Secure'; } catch (e) {}
+        this.props.onOpenLogin();
+        return;
+      }
       this.setState({ auth: true, authNote: '', authWhy: 'Log in or create a free account first. That’s how we match the order to you and keep you posted.', emailMode: this.state.emailMode || 'register' });
       return;
     }
@@ -123,8 +129,8 @@ export default class Home extends React.Component {
     if (!this.signedIn()) return;
     let p = null;
     try {
-      p = JSON.parse(window.sessionStorage.getItem(PENDING_KEY) || 'null');
-      window.sessionStorage.removeItem(PENDING_KEY);
+      p = JSON.parse(window.localStorage.getItem(PENDING_KEY) || 'null');
+      window.localStorage.removeItem(PENDING_KEY);
     } catch (e) {}
     if (!p || Date.now() - (p.at || 0) > 30 * 60000) return;
     const { at, ...pick } = p;
@@ -197,7 +203,7 @@ export default class Home extends React.Component {
       googleLabel: busy === 'google' ? 'Connecting…' : 'Google',
       openAuth: () => { if (P.onOpenLogin) { P.onOpenLogin(); return; } this.setState({ auth: true, authNote: '', authWhy: '' }); },
       closeAuth: () => {
-        try { window.sessionStorage.removeItem(PENDING_KEY); } catch (e) {}
+        try { window.localStorage.removeItem(PENDING_KEY); } catch (e) {}
         this.setState({ auth: false, authErrDismissed: true, authBusy: null, authWhy: '' });
       },
       loginDiscord: login('discord'),
