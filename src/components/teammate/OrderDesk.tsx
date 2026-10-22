@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import PrivateProofs from '../proofs/PrivateProofs';
 import './order-desk.css';
 import {
   OrderCommandSchema,
@@ -241,11 +242,13 @@ export function DeskView({
   pending,
   canAccept,
   onAccept,
+  csrf = '',
 }: {
   state: DeskState;
   pending: boolean;
   canAccept: boolean;
   onAccept?: (id: string) => void;
+  csrf?: string;
 }) {
   return (
     <div className="td-columns" aria-busy={pending}>
@@ -254,15 +257,27 @@ export function DeskView({
         <ReadNotice state={state.assignment} assignment />
         {state.assignment.kind === 'ready' &&
           (state.assignment.value ? (
-            <OrderCard order={state.assignment.value} active disabled />
+            <>
+              <OrderCard order={state.assignment.value} active disabled />
+              {!pending &&
+                state.assignment.value.status === 'in_progress' &&
+                state.assignment.value.current_assignment_id && (
+                  <PrivateProofs
+                    orderId={state.assignment.value.id}
+                    assignmentId={state.assignment.value.current_assignment_id}
+                    mode="teammate"
+                    csrf={csrf}
+                  />
+                )}
+            </>
           ) : (
             <p className="td-notice" role="status">
               No current assignment.
             </p>
           ))}
         <p className="td-muted td-limits">
-          Completion, proof uploads, chat and payout withdrawals are unavailable
-          in this foundation. No completion or payment action can be taken here.
+          Completion, chat and payout withdrawals are unavailable. No completion
+          or payment action can be taken here.
         </p>
       </section>
       <section className="td-panel" aria-labelledby="td-queue">
@@ -414,6 +429,7 @@ export default function OrderDesk({ csrf }: { csrf: string }) {
         state={state}
         pending={pending}
         canAccept={canAccept}
+        csrf={csrf}
         onAccept={(id) => void accept(id)}
       />
     </div>

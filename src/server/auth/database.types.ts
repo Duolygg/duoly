@@ -317,6 +317,36 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      begin_order_proof_upload: {
+        Args: {
+          p_order_id: string;
+          p_assignment_id: string;
+          p_request_id: string;
+        };
+        Returns: Json;
+      };
+      finalize_order_proof_upload: {
+        Args: {
+          p_proof_id: string;
+          p_mime: string;
+          p_byte_size: number;
+          p_sha256: string;
+        };
+        Returns: Json;
+      };
+      abandon_order_proof_upload: {
+        Args: { p_proof_id: string };
+        Returns: Json;
+      };
+      list_order_proofs: { Args: { p_order_id: string }; Returns: Json };
+      get_order_proof: {
+        Args: { p_order_id: string; p_proof_id: string };
+        Returns: Json;
+      };
+      claim_stale_order_proof_uploads: {
+        Args: { p_limit?: number };
+        Returns: Json;
+      };
       accept_order: { Args: { p_order_id: string }; Returns: Json };
       cancel_queued_order: { Args: { p_order_id: string }; Returns: Json };
       customer_active_order: { Args: never; Returns: Json };
