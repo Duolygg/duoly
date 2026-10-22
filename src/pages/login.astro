@@ -1,0 +1,46 @@
+---
+import ProductLayout from '../layouts/ProductLayout.astro';
+import LoginCard from '../components/auth/LoginCard.astro';
+import { accountContext } from '../server/auth/context';
+const account = accountContext(Astro.request, Astro.cookies);
+for (const [name, value] of account.headers)
+  Astro.response.headers.set(name, value);
+let identity = null;
+try {
+  identity = await account.identity();
+} catch {
+  /* The sign-in screen remains available for recovery. */
+}
+if (identity) return account.redirect('/dashboard');
+const errors: Record<string, string> = {
+  callback: 'Sign-in could not be completed. Please start again.',
+  provider: 'That sign-in provider is temporarily unavailable.',
+  credentials:
+    'Sign-in failed. Check your email and password and confirm your email.',
+  email: 'Email sign-in is temporarily unavailable. Please try later.',
+  account: 'Your account could not be loaded. Please try again.',
+  eligibility: 'This environment is restricted to its approved test account.',
+};
+const register = Astro.url.searchParams.get('mode') === 'register';
+const error = errors[Astro.url.searchParams.get('error') ?? ''];
+const notice =
+  Astro.url.searchParams.get('notice') === 'confirmation'
+    ? 'If this address is eligible, a confirmation email will be sent. Check your inbox before signing in.'
+    : undefined;
+const providers = account.config?.providers ?? {
+  google: false,
+  discord: false,
+  email: false,
+};
+---
+
+<ProductLayout title={register ? 'Create account | Duoly' : 'Sign in | Duoly'}>
+  <LoginCard
+    csrf={account.csrf()}
+    providers={providers}
+    register={register}
+    signup={account.config?.signup ?? false}
+    error={error}
+    notice={notice}
+  />
+</ProductLayout>

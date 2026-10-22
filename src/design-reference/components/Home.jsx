@@ -193,7 +193,7 @@ export default class Home extends React.Component {
       authNote: s.authNote || (errorOpen ? 'That login didn’t work. Please try again.' : ''),
       discordLabel: busy === 'discord' ? 'Connecting…' : 'Discord',
       googleLabel: busy === 'google' ? 'Connecting…' : 'Google',
-      openAuth: () => this.setState({ auth: true, authNote: '', authWhy: '' }),
+      openAuth: () => { if (P.onOpenLogin) { P.onOpenLogin(); return; } this.setState({ auth: true, authNote: '', authWhy: '' }); },
       closeAuth: () => {
         try { window.sessionStorage.removeItem(PENDING_KEY); } catch (e) {}
         this.setState({ auth: false, authErrDismissed: true, authBusy: null, authWhy: '' });

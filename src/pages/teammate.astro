@@ -1,8 +1,34 @@
 ---
-import DesignLayout from '../layouts/DesignLayout.astro';
-import TeammatePreview from '../design-preview/TeammatePreview';
+import ProductLayout from '../layouts/ProductLayout.astro';
+import { accountContext } from '../server/auth/context';
+const account = accountContext(Astro.request, Astro.cookies);
+for (const [name, value] of account.headers)
+  Astro.response.headers.set(name, value);
+let identity = null;
+try {
+  identity = await account.identity();
+} catch {
+  return new Response('Temporarily unavailable', {
+    status: 503,
+    headers: account.headers,
+  });
+}
+if (!identity) return account.redirect('/login');
+if (identity.viewer.role !== 'teammate')
+  return new Response('Not found', { status: 404, headers: account.headers });
 ---
 
-<DesignLayout title="Teammate dashboard | Duoly preview">
-  <TeammatePreview client:load />
-</DesignLayout>
+<ProductLayout
+  title="Teammate desk | Duoly"
+  viewer={identity.viewer}
+  csrf={account.csrf()}
+>
+  <section style="max-width:960px;margin:32px auto;padding:24px">
+    <h1>Teammate desk</h1>
+    <p>
+      Welcome, {identity.viewer.name}. Live queue, Discord linking and payouts
+      are not connected yet. You cannot accept an order or go online here.
+    </p>
+    <a href="/profile">Manage your profile</a>
+  </section>
+</ProductLayout>

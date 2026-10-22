@@ -1,8 +1,28 @@
 ---
 import DesignLayout from '../layouts/DesignLayout.astro';
 import HomePreview from '../design-preview/HomePreview';
+import AccountHome from '../components/account/AccountHome';
+import { accountContext } from '../server/auth/context';
+const account = accountContext(Astro.request, Astro.cookies);
+const accountEnabled =
+  !!account.config && Object.values(account.config.providers).some(Boolean);
+let viewer = null;
+if (accountEnabled) {
+  for (const [name, value] of account.headers)
+    Astro.response.headers.set(name, value);
+  try {
+    viewer = (await account.identity())?.viewer ?? null;
+  } catch {
+    /* Account routes report loading errors; ordering remains unavailable. */
+  }
+}
+const csrf = accountEnabled ? account.csrf() : '';
 ---
 
-<DesignLayout>
-  <HomePreview client:load />
+<DesignLayout accountEnabled={accountEnabled}>
+  {accountEnabled ? (
+    <AccountHome viewer={viewer} csrf={csrf} client:load />
+  ) : (
+    <HomePreview client:load />
+  )}
 </DesignLayout>

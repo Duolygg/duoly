@@ -20,7 +20,7 @@ for (const [id, title] of Object.entries(sections)) {
   }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
-    await page.goto('/admin#' + id);
+    await page.goto('/preview/admin#' + id);
     await expect(
       page.getByRole('heading', { level: 1, name: title, exact: true }),
     ).toBeVisible();
@@ -35,14 +35,14 @@ for (const [id, title] of Object.entries(sections)) {
 
 const paths = [
   '/',
-  '/dashboard',
-  '/teammate',
-  '/admin',
+  '/preview/dashboard',
+  '/preview/teammate',
+  '/preview/admin',
   '/apply',
   '/claim/preview-handover',
   '/contact',
   '/creators',
-  '/profile',
+  '/preview/profile',
   '/queue/preview-order',
   '/privacy',
   '/rules',

@@ -1,0 +1,188 @@
+---
+import '../design-reference/globals.css';
+import type { Viewer } from '../contracts/account';
+
+interface Props {
+  title: string;
+  viewer?: Viewer;
+  csrf?: string;
+}
+
+const { title, viewer, csrf = '' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">
+      Skip to content
+    </a>
+    <header class="product-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label="Duoly home">
+          <img
+            src="/assets/brand/logo-wordmark.webp"
+            alt="Duoly"
+            width="104"
+            height="39"
+          />
+        </a>
+        <nav aria-label="Account navigation">
+          {viewer ? (
+            <>
+              <a
+                href="/dashboard"
+                aria-current={
+                  Astro.url.pathname === '/dashboard' ? 'page' : undefined
+                }
+              >
+                Dashboard
+              </a>
+              <a
+                href="/profile"
+                aria-current={
+                  Astro.url.pathname === '/profile' ? 'page' : undefined
+                }
+              >
+                Profile
+              </a>
+              <form method="POST" action="/auth/logout">
+                <input type="hidden" name="csrf" value={csrf} />
+                <button type="submit">Sign out</button>
+              </form>
+            </>
+          ) : (
+            <a href="/login">Sign in</a>
+          )}
+        </nav>
+      </div>
+    </header>
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <footer>
+      <a href="/preview/dashboard">design preview</a>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: 'Bricolage Grotesque';
+    src: url('/fonts/bricolage-grotesque-latin.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 600 800;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('/fonts/geist-latin.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+  }
+  html {
+    background: #090414;
+    color-scheme: dark;
+  }
+  body {
+    min-width: 320px;
+    color: #f3eeff;
+    font-family: Geist, system-ui, sans-serif;
+    line-height: 1.55;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+<style>
+  .skip-link {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    z-index: 20;
+    padding: 10px;
+    background: #120b22;
+    transform: translateY(-160%);
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+  .product-header {
+    background: rgba(9, 4, 20, 0.8);
+    border-bottom: 1px solid rgba(196, 170, 255, 0.08);
+  }
+  .header-inner {
+    max-width: 1240px;
+    margin: auto;
+    padding: 10px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+  }
+  .brand,
+  .brand img {
+    display: block;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-size: 14px;
+  }
+  nav a {
+    padding: 10px 0;
+    text-decoration: none;
+  }
+  nav a[aria-current] {
+    color: #fff;
+    font-weight: 700;
+  }
+  form {
+    margin: 0;
+  }
+  button {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid rgba(214, 187, 255, 0.2);
+    border-radius: 13px;
+    background: transparent;
+    color: #f3eeff;
+    font-size: 14px;
+  }
+  main {
+    min-height: calc(100vh - 160px);
+  }
+  footer {
+    max-width: 1240px;
+    margin: auto;
+    padding: 24px;
+    font-size: 13px;
+    border-top: 1px solid rgba(196, 170, 255, 0.08);
+  }
+  @media (max-width: 480px) {
+    .header-inner,
+    footer {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    nav {
+      gap: 8px 14px;
+    }
+  }
+</style>

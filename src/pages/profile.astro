@@ -1,38 +1,37 @@
 ---
-import DesignLayout from '../layouts/DesignLayout.astro';
-import Profile from '../design-reference/components/Profile.jsx';
-import { SAMPLE_USER } from '../design-preview/sample-data';
+import ProductLayout from '../layouts/ProductLayout.astro';
+import LiveProfile from '../components/account/LiveProfile';
+import { accountContext } from '../server/auth/context';
+const account = accountContext(Astro.request, Astro.cookies);
+for (const [name, value] of account.headers)
+  Astro.response.headers.set(name, value);
+let identity = null;
+try {
+  identity = await account.identity();
+} catch {
+  Astro.response.status = 503;
+}
+if (!identity && Astro.response.status !== 503)
+  return account.redirect('/login');
+const csrf = account.csrf();
 ---
 
-<DesignLayout title="Profile | Duoly preview">
-  <Profile
-    user={SAMPLE_USER}
-    profile={{
-      country: 'at',
-      bio: 'Sample profile only.',
-      languages: ['English'],
-    }}
-    home="/dashboard"
-    languages={[
-      'English',
-      'German',
-      'French',
-      'Spanish',
-      'Portuguese',
-      'Italian',
-      'Dutch',
-      'Polish',
-      'Swedish',
-      'Turkish',
-      'Russian',
-      'Ukrainian',
-      'Arabic',
-      'Japanese',
-      'Korean',
-      'Chinese',
-    ]}
-    discord={null}
-    discordResult=""
-    client:load
-  />
-</DesignLayout>
+<ProductLayout
+  title="Your profile | Duoly"
+  viewer={identity?.viewer}
+  csrf={csrf}
+>
+  {identity ? (
+    <LiveProfile
+      viewer={identity.viewer}
+      profile={identity.profile}
+      csrf={csrf}
+      client:load
+    />
+  ) : (
+    <section role="alert">
+      <h1>Account temporarily unavailable</h1>
+      <p>We could not load your profile. Please try again shortly.</p>
+    </section>
+  )}
+</ProductLayout>

@@ -1,0 +1,278 @@
+---
+import type { LoginProviders } from '../../contracts/account';
+interface Props {
+  csrf: string;
+  providers: LoginProviders;
+  register: boolean;
+  signup: boolean;
+  error?: string;
+  notice?: string;
+}
+const { csrf, providers, register, signup, error, notice } = Astro.props;
+const unconfigured =
+  !providers.google && !providers.discord && !providers.email;
+---
+
+<section class="login-card dl-auth" aria-labelledby="login-heading">
+  <div class="dl-auth-side brand-panel" aria-hidden="true">
+    <img src="/assets/brand/logo-wordmark.webp" alt="" width="96" height="36" />
+    <img
+      class="mascots"
+      src="/assets/brand/logo-mascots.webp"
+      alt=""
+      width="250"
+      height="158"
+    />
+    <p>
+      Never solo
+      <br />
+      <span>queue again.</span>
+    </p>
+  </div>
+  <div class="login-content">
+    <h1 id="login-heading">
+      {register ? 'Create your Duoly account' : 'Sign in to Duoly'}
+    </h1>
+    <p class="intro">Your account, your teammates.</p>
+    {unconfigured && (
+      <p class="notice">Account sign-in is not configured yet.</p>
+    )}
+    {register && !signup && (
+      <p class="notice">Registration is currently closed.</p>
+    )}
+    {error && (
+      <p class="error" id="login-error" role="alert">
+        {error}
+      </p>
+    )}
+    {notice && (
+      <p class="notice" role="status">
+        {notice}
+      </p>
+    )}
+    <div class="providers">
+      <form method="POST" action="/auth/oauth">
+        <input type="hidden" name="csrf" value={csrf} />
+        <input type="hidden" name="provider" value="google" />
+        <button class="provider" type="submit" disabled={!providers.google}>
+          Continue with Google
+        </button>
+      </form>
+      <form method="POST" action="/auth/oauth">
+        <input type="hidden" name="csrf" value={csrf} />
+        <input type="hidden" name="provider" value="discord" />
+        <button
+          class="provider discord"
+          type="submit"
+          disabled={!providers.discord}
+        >
+          Continue with Discord
+        </button>
+      </form>
+    </div>
+    <p class="divider">or use email</p>
+    <form
+      method="POST"
+      action={register ? '/auth/password/register' : '/auth/password/login'}
+      aria-describedby={error ? 'login-error' : undefined}
+    >
+      <input type="hidden" name="csrf" value={csrf} />
+      <label for="signin-email">Email address</label>
+      <div class="dl-field">
+        <input
+          id="signin-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          maxlength="254"
+          required
+          disabled={!providers.email || (register && !signup)}
+        />
+      </div>
+      <label for="signin-password">Password</label>
+      <div class="dl-field">
+        <input
+          id="signin-password"
+          name="password"
+          type="password"
+          autocomplete={register ? 'new-password' : 'current-password'}
+          minlength="8"
+          maxlength="128"
+          required
+          disabled={!providers.email || (register && !signup)}
+        />
+      </div>
+      <button
+        class="primary"
+        type="submit"
+        disabled={!providers.email || (register && !signup)}
+      >
+        {register ? 'Create account' : 'Sign in with email'}
+      </button>
+    </form>
+    <p class="delivery">
+      {register
+        ? 'Use at least 8 characters. Confirm your email before signing in.'
+        : 'Keep your password private. Duoly teammates never need access to your account.'}
+    </p>
+    <a class="back-link" href={register ? '/login' : '/login?mode=register'}>
+      {register ? 'Already have an account? Sign in' : 'Create an account'}
+    </a>
+  </div>
+</section>
+<style>
+  .login-card {
+    max-width: 880px;
+    margin: 48px auto;
+    border-radius: 30px;
+    overflow: hidden;
+    background: #120b22;
+    border: 1px solid rgba(214, 187, 255, 0.16);
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.4);
+  }
+  .brand-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    background:
+      radial-gradient(
+        120% 80% at 20% 0%,
+        rgba(240, 166, 255, 0.16),
+        transparent 60%
+      ),
+      radial-gradient(
+        90% 70% at 100% 100%,
+        rgba(214, 187, 255, 0.14),
+        transparent 60%
+      ),
+      #1b1033;
+    border-right: 1px solid rgba(214, 187, 255, 0.12);
+  }
+  .mascots {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    margin: auto;
+    padding: 32px 0;
+  }
+  .brand-panel p {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin: 0;
+  }
+  .brand-panel span {
+    color: #d6bbff;
+  }
+  .login-content {
+    padding: 32px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: clamp(26px, 4vw, 32px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin: 0;
+  }
+  .intro {
+    color: #a79dc4;
+    margin: 10px 0 24px;
+  }
+  .providers {
+    display: grid;
+    gap: 10px;
+  }
+  form {
+    margin: 0;
+  }
+  button {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .provider {
+    background: #f3eeff;
+    border: 1px solid transparent;
+    color: #17092e;
+  }
+  .discord {
+    background: #5865f2;
+    color: #fff;
+  }
+  .primary {
+    background: #d6bbff;
+    color: #17092e;
+    border: none;
+    margin-top: 14px;
+  }
+  button:disabled {
+    opacity: 0.5;
+  }
+  button:disabled:hover {
+    filter: none;
+  }
+  label {
+    display: block;
+    margin: 12px 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #a79dc4;
+    font-size: 13px;
+    margin: 22px 0;
+  }
+  .divider::before,
+  .divider::after {
+    content: '';
+    height: 1px;
+    flex: 1;
+    background: rgba(196, 170, 255, 0.16);
+  }
+  .notice,
+  .error {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(214, 187, 255, 0.25);
+    background: #1b1033;
+  }
+  .error {
+    color: #ffb2be;
+    border-color: rgba(255, 138, 155, 0.4);
+  }
+  .delivery {
+    color: #a79dc4;
+    font-size: 13px;
+    margin: 14px 0 0;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 14px;
+  }
+  @media (max-width: 920px) {
+    .login-card {
+      margin: 32px 16px;
+    }
+  }
+  @media (max-width: 480px) {
+    .login-content {
+      padding: 24px 20px;
+    }
+    .login-card {
+      border-radius: 24px;
+    }
+  }
+</style>
