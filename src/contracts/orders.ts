@@ -1,0 +1,123 @@
+import { z } from 'zod';
+
+const TimestampSchema = z.iso.datetime({ offset: true });
+const AvatarSchema = z
+  .string()
+  .regex(/^(?:|\/assets\/avatars\/avatar-([1-9]|10)\.png)$/);
+const CountrySchema = z.string().regex(/^(?:|[a-z]{2})$/);
+const OrderFields = {
+  id: z.uuid(),
+  public_reference: z.string().regex(/^DL-[0-9]+$/),
+  status: z.enum(['queued', 'in_progress', 'completed', 'cancelled']),
+  game: z.enum([
+    'lol',
+    'val',
+    'cs2',
+    'fn',
+    'cod',
+    'apex',
+    'r6',
+    'mr',
+    'ow',
+    'rl',
+    'tft',
+    'fc',
+    'arc',
+    'mc',
+    'pu',
+  ]),
+  service: z.string().min(1).max(64),
+  title: z.string().min(1).max(80),
+  units: z.number().int().min(1).max(10),
+  unit: z.enum(['game', 'hour']),
+  gg: z.boolean(),
+  rank: z.string().max(40),
+  region: z.string().min(2).max(80),
+  ign: z.string().min(2).max(40),
+  note: z.string().max(200),
+  voice: z.boolean(),
+};
+
+/** Exact public.order_customer_dto projection, never a raw orders row. */
+export const CustomerOrderSchema = z.strictObject({
+  ...OrderFields,
+  amount_eur_cents: z.number().int().min(99).max(100000),
+  created_at: TimestampSchema,
+  queued_at: TimestampSchema,
+  accepted_at: TimestampSchema.nullable(),
+  completed_at: TimestampSchema.nullable(),
+  cancelled_at: TimestampSchema.nullable(),
+  cancel_reason: z.enum(['queue_expired', 'customer_cancelled']).nullable(),
+  rerolls: z.number().int().min(0).max(2),
+  current_assignment_id: z.uuid().nullable(),
+  teammate: z
+    .strictObject({ name: z.string(), image: z.string(), country: z.string() })
+    .nullable(),
+});
+
+/** Exact privacy-safe public.order_teammate_dto projection. */
+export const TeammateOrderSchema = z.strictObject({
+  ...OrderFields,
+  customer_name: z.string().min(1).max(40),
+  customer_image: AvatarSchema,
+  customer_country: CountrySchema,
+  payout_usd_cents: z.number().int().min(99).max(10000000),
+  current_assignment_id: z.uuid().nullable(),
+});
+
+export const RefundCreditSchema = z.strictObject({
+  id: z.uuid(),
+  order_id: z.uuid(),
+  kind: z.literal('queued_refund'),
+  amount_eur_cents: z.number().int().min(99).max(100000),
+  created_at: TimestampSchema,
+});
+
+/** Public command input; callers translate order_id to the RPC p_order_id. */
+export const OrderCommandSchema = z.strictObject({ order_id: z.uuid() });
+export const OrderPaginationSchema = z.strictObject({
+  limit: z.number().int().min(1).max(100).default(50),
+  offset: z.number().int().min(0).max(100000).default(0),
+});
+
+export const OrderRpcErrorSchema = z.strictObject({
+  error: z.strictObject({
+    code: z.union([
+      z.literal(400),
+      z.literal(401),
+      z.literal(403),
+      z.literal(404),
+      z.literal(409),
+      z.literal(410),
+    ]),
+    message: z.string().min(1).max(200),
+  }),
+});
+
+/** Success envelopes; active reads require an explicit order:null when absent. */
+export const OrderResponseSchemas = {
+  customerOrder: z.strictObject({ order: CustomerOrderSchema }),
+  customerActive: z.strictObject({ order: CustomerOrderSchema.nullable() }),
+  customerHistory: z.strictObject({
+    orders: z.array(CustomerOrderSchema).max(100),
+  }),
+  refundCredits: z.strictObject({
+    credits: z.array(RefundCreditSchema).max(100),
+  }),
+  teammateOrder: z.strictObject({ order: TeammateOrderSchema }),
+  teammateQueue: z.strictObject({
+    orders: z.array(TeammateOrderSchema).max(100),
+  }),
+  teammateAssignment: z.strictObject({ order: TeammateOrderSchema.nullable() }),
+} as const;
+
+export type CustomerOrder = z.infer<typeof CustomerOrderSchema>;
+export type TeammateOrder = z.infer<typeof TeammateOrderSchema>;
+export type RefundCredit = z.infer<typeof RefundCreditSchema>;
+export type OrderCommand = z.infer<typeof OrderCommandSchema>;
+export type OrderPagination = z.infer<typeof OrderPaginationSchema>;
+export type OrderRpcError = z.infer<typeof OrderRpcErrorSchema>;
+export type OrderResponseKind = keyof typeof OrderResponseSchemas;
+export type OrderResponse<K extends OrderResponseKind> = z.infer<
+  (typeof OrderResponseSchemas)[K]
+>;
