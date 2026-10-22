@@ -109,8 +109,16 @@ export default class Profile extends React.Component {
   async unlinkDiscord() {
     this.setState({ dcBusy: true, dcNote: '' });
     try {
-      const res = await fetch('/api/discord/link', { method: 'DELETE' });
-      if (!res.ok) throw new Error();
+      const res = await fetch('/api/discord/unlink', {
+        method: 'POST', credentials: 'same-origin', redirect: 'error',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csrf: this.props.csrf })
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        this.setState({ dcBusy: false, dcNote: data.error || 'Couldn’t disconnect. Please try again.' });
+        return;
+      }
       this.setState({ dcBusy: false, discord: null, dcNote: this.props.user.role === 'admin' ? 'Disconnected. The bot removes your Online role in a few seconds.' : 'Disconnected. The bot removes your server roles in a few seconds, and you need to connect again before you can take orders.' });
     } catch (e) {
       this.setState({ dcBusy: false, dcNote: 'Couldn’t disconnect. Please try again.' });
@@ -149,7 +157,15 @@ export default class Profile extends React.Component {
               )}
             </>
           ) : (
-            <a aria-disabled="true" role="link" title="Unavailable in the design preview" style={discordBtn}>Connect Discord</a>
+            this.props.csrf && this.props.discordEnabled ? (
+              <form method="POST" action="/api/discord/link" style={{ margin: 0 }}>
+                <input type="hidden" name="csrf" value={this.props.csrf} />
+                <input type="hidden" name="next" value="profile" />
+                <button type="submit" style={{ ...discordBtn, cursor: "pointer" }}>Connect Discord</button>
+              </form>
+            ) : (
+              <a aria-disabled="true" role="link" title={this.props.csrf ? 'Discord isn’t set up on this site yet' : 'Unavailable in the design preview'} style={discordBtn}>Connect Discord</a>
+            )
           )}
         </div>
         {note ? <p role="status" style={{ margin: "12px 0 0", fontSize: "13.5px", fontWeight: "600", color: note[1] }}>{note[0]}</p> : null}
@@ -371,7 +387,7 @@ export default class Profile extends React.Component {
               </section>
 
               {/* Discord: teammates connect it so the bot can show Online / In Session in the server */}
-              {!this.props.accountOnly && (teammate || u.role === 'admin') ? this.renderDiscord(card, h2, help, ghost) : null}
+              {(this.props.accountOnly ? (u.role === 'teammate' || u.role === 'admin' || this.props.discord) : (teammate || u.role === 'admin')) ? this.renderDiscord(card, h2, help, ghost) : null}
 
               {/* account */}
               <section aria-labelledby="pf-acc" style={card}>

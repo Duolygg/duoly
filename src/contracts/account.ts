@@ -43,6 +43,23 @@ export const ViewerSchema = z
     role: RoleSchema,
   })
   .strict();
+export const DiscordLinkSchema = z
+  .object({
+    id: z.string().regex(/^[0-9]{17,20}$/),
+    username: z.string().max(64),
+    /** Signs in with Discord only, so the link cannot be removed. */
+    auto: z.boolean(),
+  })
+  .strict();
+export type DiscordLink = z.infer<typeof DiscordLinkSchema>;
+export const DiscordResultSchema = z.enum([
+  'linked',
+  'cancelled',
+  'taken',
+  'failed',
+  'unavailable',
+]);
+export type DiscordResult = z.infer<typeof DiscordResultSchema>;
 export type Viewer = z.infer<typeof ViewerSchema>;
 export type Profile = z.infer<typeof ProfileSchema>;
 export type ProfileUpdate = z.infer<typeof ProfileUpdateSchema>;

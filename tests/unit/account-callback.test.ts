@@ -71,6 +71,7 @@ function setup({
   const from = vi.fn((table: string) => ({
     select: () => ({
       eq: () => ({
+        maybeSingle: async () => ({ data: null, error: null }),
         single: async () => ({
           data:
             table === 'account_roles'

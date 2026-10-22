@@ -29,6 +29,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      discord_accounts: {
+        Row: {
+          discord_id: string;
+          linked_at: string;
+          user_id: string;
+          username: string;
+        };
+        Insert: {
+          discord_id: string;
+          linked_at?: string;
+          user_id: string;
+          username?: string;
+        };
+        Update: {
+          discord_id?: string;
+          linked_at?: string;
+          user_id?: string;
+          username?: string;
+        };
+        Relationships: [];
+      };
       order_assignments: {
         Row: {
           accepted_at: string;
