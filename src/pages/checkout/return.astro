@@ -1,0 +1,82 @@
+---
+import ProductLayout from '../../layouts/ProductLayout.astro';
+import ReturnStatus from '../../components/checkout/ReturnStatus';
+import { accountContext } from '../../server/auth/context';
+import { paymentsConfig, stripeFor } from '../../server/payments/config';
+const account = accountContext(Astro.request, Astro.cookies);
+for (const [name, value] of account.headers)
+  Astro.response.headers.set(name, value);
+const identity = await account.identity().catch(() => null);
+if (!identity) return account.redirect('/login');
+const config = paymentsConfig();
+const sessionId = Astro.url.searchParams.get('session_id') ?? '';
+if (!config || !/^cs_(test|live)_[A-Za-z0-9]+$/.test(sessionId))
+  return account.redirect('/dashboard');
+let intentId: string;
+let initial: 'waiting' | 'failed' | 'expired' = 'waiting';
+try {
+  const session = await stripeFor(config).checkout.sessions.retrieve(sessionId);
+  if (session.metadata?.customer_id !== identity.viewer.id)
+    return account.redirect('/dashboard');
+  intentId = session.client_reference_id ?? '';
+  if (session.status === 'expired') initial = 'expired';
+  else if (session.status === 'open') initial = 'failed';
+} catch {
+  return account.redirect('/dashboard');
+}
+---
+
+<ProductLayout
+  title="Payment | Duoly"
+  viewer={identity.viewer}
+  csrf={account.csrf()}
+>
+  <ReturnStatus intentId={intentId} initial={initial} client:load />
+</ProductLayout>
+
+<style>
+  :global(.return-card) {
+    max-width: 520px;
+    margin: 72px auto;
+    padding: 32px;
+    text-align: center;
+    border-radius: 28px;
+    background: #120b22;
+    border: 1px solid rgba(214, 187, 255, 0.16);
+  }
+  :global(.return-card h1) {
+    margin: 16px 0 0;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 28px;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+  :global(.return-card p) {
+    color: #a79dc4;
+    line-height: 1.5;
+  }
+  :global(.return-link) {
+    display: inline-block;
+    margin-top: 12px;
+    font-weight: 700;
+  }
+  :global(.return-spinner) {
+    display: inline-block;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 4px solid rgba(214, 187, 255, 0.2);
+    border-top-color: #d6bbff;
+    animation: return-spin 0.9s linear infinite;
+  }
+  @keyframes return-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.return-spinner) {
+      animation: none;
+    }
+  }
+</style>

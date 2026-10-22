@@ -14,6 +14,7 @@ minimumReleaseAgeExclude:
   - '@astrojs/react@7.1.1'
   - '@astrojs/telemetry@3.4.1'
   - astro@7.4.2
+  - stripe@23.0.1
 onlyBuiltDependencies:
   - esbuild
   - sharp

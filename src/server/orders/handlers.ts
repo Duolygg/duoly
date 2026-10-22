@@ -3,6 +3,7 @@ import type { AccountContext } from '../auth/context';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { decodeOrderRpcResult } from './results';
+import { settleSoon } from '../payments/webhook';
 import {
   OrderCommandSchema,
   OrderPaginationSchema,
@@ -110,20 +111,33 @@ export const queue = route(
   (client) => client.rpc('teammate_order_queue'),
   { role: 'teammate' },
 );
-export const cancel = route(
-  'customerOrder',
-  (client, { p_order_id }) => client.rpc('cancel_queued_order', { p_order_id }),
-  { input: 'id', method: 'POST' },
+/** Accept captures and cancel releases the payment right away; the tick is the backstop. */
+function withSettlement(handler: APIRoute): APIRoute {
+  return async (context) => {
+    const response = await handler(context);
+    if (response.status === 200) await settleSoon().catch(() => undefined);
+    return response;
+  };
+}
+export const cancel = withSettlement(
+  route(
+    'customerOrder',
+    (client, { p_order_id }) =>
+      client.rpc('cancel_queued_order', { p_order_id }),
+    { input: 'id', method: 'POST' },
+  ),
 );
 export const reroll = route(
   'customerOrder',
   (client, { p_order_id }) => client.rpc('reroll_order', { p_order_id }),
   { input: 'id', method: 'POST' },
 );
-export const accept = route(
-  'teammateOrder',
-  (client, { p_order_id }) => client.rpc('accept_order', { p_order_id }),
-  { input: 'id', method: 'POST', role: 'teammate' },
+export const accept = withSettlement(
+  route(
+    'teammateOrder',
+    (client, { p_order_id }) => client.rpc('accept_order', { p_order_id }),
+    { input: 'id', method: 'POST', role: 'teammate' },
+  ),
 );
 export const assignment = route(
   'teammateAssignment',

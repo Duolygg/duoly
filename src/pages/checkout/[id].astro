@@ -1,0 +1,117 @@
+---
+import ProductLayout from '../../layouts/ProductLayout.astro';
+import EmbeddedCheckout from '../../components/checkout/EmbeddedCheckout';
+import { accountContext } from '../../server/auth/context';
+import { adminFor, paymentsConfig } from '../../server/payments/config';
+const account = accountContext(Astro.request, Astro.cookies);
+for (const [name, value] of account.headers)
+  Astro.response.headers.set(name, value);
+const identity = await account.identity().catch(() => null);
+if (!identity) return account.redirect('/login');
+const config = paymentsConfig();
+const id = Astro.params.id ?? '';
+if (!config || !/^[0-9a-f-]{36}$/i.test(id))
+  return new Response('Not found', { status: 404, headers: account.headers });
+const { data: intent } = await adminFor(config)
+  .from('checkout_intents')
+  .select(
+    'id, customer_id, status, order_id, stripe_client_secret, title, units, unit, amount_eur_cents, game, region',
+  )
+  .eq('id', id)
+  .maybeSingle();
+if (!intent || intent.customer_id !== identity.viewer.id)
+  return new Response('Not found', { status: 404, headers: account.headers });
+if (intent.status === 'paid' && intent.order_id)
+  return account.redirect(`/queue/${intent.order_id}`);
+const open = intent.status === 'open' && !!intent.stripe_client_secret;
+const total = new Intl.NumberFormat('en-IE', {
+  style: 'currency',
+  currency: 'EUR',
+}).format(intent.amount_eur_cents / 100);
+---
+
+<ProductLayout
+  title="Checkout | Duoly"
+  viewer={identity.viewer}
+  csrf={account.csrf()}
+>
+  <section class="checkout">
+    <header>
+      <p class="eyebrow">Last step</p>
+      <h1>Pay and queue</h1>
+      <p class="summary">
+        {intent.title} · {intent.units} {intent.unit}
+        {intent.units === 1 ? '' : 's'} · {intent.region}
+        <strong>{total}</strong>
+      </p>
+      <p class="hint">
+        Cards, wallets and PayPal are only charged when a teammate accepts.
+        Nobody within 5 minutes? You pay nothing.
+      </p>
+    </header>
+    {open ? (
+      <EmbeddedCheckout
+        publishableKey={config.publishableKey}
+        clientSecret={intent.stripe_client_secret!}
+        client:only="react"
+      />
+    ) : (
+      <p class="checkout-error">
+        This checkout has ended. <a href="/#games">Start a new order</a>.
+      </p>
+    )}
+  </section>
+</ProductLayout>
+
+<style>
+  .checkout {
+    max-width: 720px;
+    margin: 32px auto 64px;
+    padding: 0 16px;
+  }
+  .eyebrow {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #d6bbff;
+  }
+  h1 {
+    margin: 6px 0 0;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 32px;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+  .summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 14px 0 0;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: #1b1033;
+    border: 1px solid rgba(214, 187, 255, 0.16);
+    color: #cfc4ea;
+  }
+  .summary strong {
+    color: #fff;
+    font-size: 18px;
+  }
+  .hint {
+    margin: 10px 0 20px;
+    font-size: 13.5px;
+    color: #a79dc4;
+  }
+  :global(.checkout-frame) {
+    min-height: 480px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+  }
+  :global(.checkout-error) {
+    color: #ffb2be;
+  }
+</style>

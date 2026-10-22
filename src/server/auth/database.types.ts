@@ -350,6 +350,10 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
+      customer_checkout_status: {
+        Args: { p_intent_id: string };
+        Returns: Json;
+      };
       order_customer_dto: {
         Args: { p_order: Database['public']['Tables']['orders']['Row'] };
         Returns: Json;
