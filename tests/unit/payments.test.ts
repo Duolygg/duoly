@@ -70,7 +70,7 @@ describe('checkout session', () => {
     nowSeconds: 1_000_000,
   });
   it('lets Stripe show every enabled method and authorizes where possible', () => {
-    expect(params.payment_method_types).toBeUndefined();
+    expect('payment_method_types' in params).toBe(false);
     expect(params.payment_method_options).toMatchObject({
       card: { capture_method: 'manual' },
       paypal: { capture_method: 'manual' },
