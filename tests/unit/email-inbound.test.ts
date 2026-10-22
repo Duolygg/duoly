@@ -180,3 +180,35 @@ describe('inbound forwarding', () => {
     expect(calls).toHaveLength(0);
   });
 });
+
+describe('resend webhook route', () => {
+  it('rejects unsigned calls and acknowledges other domains without fetching', async () => {
+    process.env.RESEND_INBOUND_API_KEY = config.apiKey;
+    process.env.RESEND_WEBHOOK_SECRET = secret;
+    process.env.INBOUND_FORWARD_TO = config.forwardTo;
+    process.env.INBOUND_FORWARD_FROM = config.forwardFrom;
+    const { POST } = await import('../../src/pages/api/webhooks/resend');
+    const call = (body: string, headers: Record<string, string>) =>
+      POST({
+        request: new Request('https://duoly.gg/api/webhooks/resend', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', ...headers },
+          body,
+        }),
+      } as never) as Promise<Response>;
+    const body = JSON.stringify({
+      type: 'email.received',
+      data: { email_id: 'abc12345', to: ['hello@pettoportrait.art'] },
+    });
+    expect((await call(body, {})).status).toBe(401);
+    const now = Math.floor(Date.now() / 1000);
+    const h = sign(body, 'msg_route', now);
+    const response = await call(body, {
+      'svix-id': h.id,
+      'svix-timestamp': h.timestamp,
+      'svix-signature': h.signature,
+    });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ ignored: 'other_domain' });
+  });
+});
