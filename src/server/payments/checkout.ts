@@ -17,6 +17,8 @@ import {
 export const FALLBACK_EUR_TO_USD = 1.08;
 /** Stripe's minimum Checkout Session lifetime. */
 const SESSION_MINUTES = 30;
+/** Stripe Tax product code "General - Services". */
+const SERVICES_TAX_CODE = 'txcd_20030000';
 
 export const CheckoutRequestSchema = z.strictObject({
   gameId: z.string().max(8),
@@ -96,7 +98,29 @@ export function sessionParams(input: {
   productName: string;
   description: string;
   nowSeconds: number;
+  /** Stripe Tax and post-purchase invoices; test mode only until VAT is registered. */
+  taxAndInvoices: boolean;
 }): Stripe.Checkout.SessionCreateParams {
+  const metadata = { intent_id: input.intentId, customer_id: input.customerId };
+  // Prices stay tax-inclusive so the customer pays exactly our quote and the
+  // webhook's amount check still holds; Stripe carves VAT out of the total.
+  const taxAndInvoices: Partial<Stripe.Checkout.SessionCreateParams> =
+    input.taxAndInvoices
+      ? {
+          automatic_tax: { enabled: true },
+          tax_id_collection: { enabled: true },
+          invoice_creation: {
+            enabled: true,
+            invoice_data: {
+              description: `Duoly · ${input.productName}`,
+              metadata,
+              rendering_options: {
+                amount_tax_display: 'include_inclusive_tax',
+              },
+            },
+          },
+        }
+      : {};
   const authorizeOnly = Object.fromEntries(
     AUTHORIZE_ONLY_METHODS.map((method) => [
       method,
@@ -115,9 +139,13 @@ export function sessionParams(input: {
         price_data: {
           currency: 'eur',
           unit_amount: input.amountEurCents,
+          ...(input.taxAndInvoices
+            ? { tax_behavior: 'inclusive' as const }
+            : {}),
           product_data: {
             name: input.productName,
             description: input.description,
+            ...(input.taxAndInvoices ? { tax_code: SERVICES_TAX_CODE } : {}),
           },
         },
       },
@@ -125,12 +153,13 @@ export function sessionParams(input: {
     payment_method_options: authorizeOnly,
     payment_intent_data: {
       description: `Duoly · ${input.productName}`,
-      metadata: { intent_id: input.intentId, customer_id: input.customerId },
+      metadata,
       ...(input.email ? { receipt_email: input.email } : {}),
     },
-    metadata: { intent_id: input.intentId, customer_id: input.customerId },
+    metadata,
     expires_at: input.nowSeconds + SESSION_MINUTES * 60 + 60,
     locale: 'auto',
+    ...taxAndInvoices,
   };
 }
 
@@ -201,6 +230,7 @@ export const createCheckout: APIRoute = async (context) => {
         productName: built.productName,
         description: built.description,
         nowSeconds: now,
+        taxAndInvoices: config.testMode,
       }),
       { idempotencyKey: `checkout_${intent.id}` },
     );

@@ -18,6 +18,8 @@ export interface PaymentsConfig {
   supabaseUrl: string;
   supabaseSecretKey: string;
   origin: string;
+  /** True for sk_/rk_test_ keys; gates features not yet approved for live mode. */
+  testMode: boolean;
 }
 
 export function paymentsConfig(): PaymentsConfig | null {
@@ -45,6 +47,7 @@ export function paymentsConfig(): PaymentsConfig | null {
     supabaseUrl,
     supabaseSecretKey,
     origin: origin.replace(/\/$/, ''),
+    testMode: !secretKey.includes('_live_'),
   };
 }
 

@@ -59,7 +59,7 @@ describe('checkout pricing', () => {
 });
 
 describe('checkout session', () => {
-  const params = sessionParams({
+  const input = {
     intentId: '5e1a0000-0000-4000-8000-000000000001',
     customerId: 'c',
     email: 'p@example.com',
@@ -68,6 +68,26 @@ describe('checkout session', () => {
     productName: 'Duo Pro · 3 games',
     description: 'League of Legends · EUW',
     nowSeconds: 1_000_000,
+  };
+  const params = sessionParams({ ...input, taxAndInvoices: false });
+  it('leaves tax and invoices off unless asked (live mode)', () => {
+    expect(params.automatic_tax).toBeUndefined();
+    expect(params.invoice_creation).toBeUndefined();
+    expect(params.tax_id_collection).toBeUndefined();
+    expect(params.line_items?.[0]?.price_data?.tax_behavior).toBeUndefined();
+  });
+  it('adds Stripe Tax and invoices without changing what the customer pays', () => {
+    const taxed = sessionParams({ ...input, taxAndInvoices: true });
+    expect(taxed.automatic_tax).toEqual({ enabled: true });
+    expect(taxed.tax_id_collection).toEqual({ enabled: true });
+    expect(taxed.invoice_creation).toMatchObject({
+      enabled: true,
+      invoice_data: { metadata: { intent_id: input.intentId } },
+    });
+    const price = taxed.line_items?.[0]?.price_data;
+    expect(price?.unit_amount).toBe(1617);
+    expect(price?.tax_behavior).toBe('inclusive');
+    expect(price?.product_data?.tax_code).toBe('txcd_20030000');
   });
   it('lets Stripe show every enabled method and authorizes where possible', () => {
     expect('payment_method_types' in params).toBe(false);

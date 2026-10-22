@@ -2,6 +2,8 @@
 
 Owner decisions (2026-10-22): every payment method Stripe offers, Stripe receipts (no invoices), no VAT yet (no Stripe Tax), Duoly-branded order emails, refunds only as the exception.
 
+Update (2026-10-22): Stripe Tax and post-purchase invoices are switched on in **test mode only** (`config.testMode`, i.e. an `sk_test_`/`rk_test_` key). Live keys keep the receipts-only, no-VAT behaviour above. In test mode the session adds `automatic_tax`, `tax_id_collection` and `invoice_creation`; the line item is `tax_behavior: inclusive` with tax code `txcd_20030000` (General - Services), so the customer still pays exactly the quoted EUR amount and the webhook amount check is unchanged.
+
 ## Flow
 
 1. Home → "Continue to payment" → `POST /api/checkout` (signed-in customer, CSRF, one open order). The server prices the selection (`src/server/pricing`), stores a `checkout_intents` row and creates an Embedded Checkout Session (`ui_mode=embedded_page`, EUR, inline `price_data`, `client_reference_id` = intent id, idempotency key `checkout_<intent>`).
@@ -23,10 +25,10 @@ The order state machine requests money actions by trigger (`order_payments.settl
 
 Vercel (production): `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_SECRET_KEY`, `PAYMENTS_TICK_SECRET`, `RESEND_API_KEY`, `EMAIL_MODE`, `EMAIL_FROM`, `EMAIL_REPLY_TO`, `EMAIL_SITE_URL`. Without the Stripe/Supabase values the homepage keeps the sample flow.
 
-Stripe (test mode, account `acct_1UQsy7QtXk6y39Ra`): webhook `we_1UTS0QQtXk6y39RaQ94C402e` → `https://duoly.gg/api/webhooks/stripe` for `checkout.session.completed`, `.async_payment_succeeded`, `.async_payment_failed`, `.expired`. All available payment methods are switched on in the default payment method configuration.
+Stripe (test mode, account `acct_1UQsy7QtXk6y39Ra`): webhook `we_1UTS0QQtXk6y39RaQ94C402e` → `https://duoly.gg/api/webhooks/stripe` for `checkout.session.completed`, `.async_payment_succeeded`, `.async_payment_failed`, `.expired`. All available payment methods are switched on in the default payment method configuration. Test-mode tax and invoices need, in the test Dashboard: Tax settings with a head-office address (otherwise session creation fails), a test VAT registration (otherwise tax is 0), and Settings → Customer emails → successful payments on (otherwise invoices aren't emailed). Invoices for Checkout one-off payments are billed per invoice in live mode.
 
 Secrets live in macOS Keychain (`duoly-stripe-*`, `duoly-supabase-secret-key`, `duoly-payments-tick-secret`, `duoly-resend-send-key`), Vercel and Supabase Vault, never in the repo.
 
 ## Before live mode
 
-Activate the Stripe account (business details), create live keys and a live webhook, swap the secret key for a restricted key, revisit VAT/Stripe Tax once registered, persist an ECB FX rate (payouts use the 1.08 fallback today), and decide how a failed capture is handled operationally (currently `capture_failed`, visible in `order_payments`).
+Activate the Stripe account (business details), create live keys and a live webhook, swap the secret key for a restricted key, register for VAT (OSS) and then drop the `testMode` gate on tax and invoices, persist an ECB FX rate (payouts use the 1.08 fallback today), and decide how a failed capture is handled operationally (currently `capture_failed`, visible in `order_payments`).
