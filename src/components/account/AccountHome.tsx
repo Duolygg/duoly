@@ -4,10 +4,12 @@ export default function AccountHome({
   viewer,
   csrf,
   checkoutEnabled = false,
+  usdRate,
 }: {
   viewer: Viewer | null;
   csrf: string;
   checkoutEnabled?: boolean;
+  usdRate?: number;
 }) {
   const signOut = async () => {
     const response = await fetch('/auth/logout', {
@@ -61,6 +63,7 @@ export default function AccountHome({
       onSignOut={signOut}
       onEmailAuth={async () => 'Use the account sign-in page.'}
       onCheckout={checkoutEnabled ? onCheckout : undefined}
+      usdRate={usdRate}
     />
   );
 }

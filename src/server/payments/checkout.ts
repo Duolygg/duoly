@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import type Stripe from 'stripe';
 import { z } from 'zod';
+import { eurToUsd, FALLBACK_EUR_TO_USD } from '../fx';
 import { mutation } from '../auth/handlers';
 import { accountContext } from '../auth/context';
 import { calculateQuote } from '../pricing';
@@ -13,8 +14,6 @@ import {
   stripeFor,
 } from './config';
 
-/** Until a persisted ECB rate exists, payouts use the brief's fallback rate. */
-export const FALLBACK_EUR_TO_USD = 1.08;
 /** Stripe's minimum Checkout Session lifetime. */
 const SESSION_MINUTES = 30;
 
@@ -39,7 +38,10 @@ interface CatalogMode {
 }
 
 /** Pure: everything the intent row and Checkout Session need, priced on the server. */
-export function buildCheckout(request: CheckoutRequest) {
+export function buildCheckout(
+  request: CheckoutRequest,
+  rate: number = FALLBACK_EUR_TO_USD,
+) {
   const quote = calculateQuote(
     {
       gameId: request.gameId,
@@ -50,7 +52,7 @@ export function buildCheckout(request: CheckoutRequest) {
       ...(request.edition ? { edition: request.edition } : {}),
       ign: request.ign,
     },
-    { eurToUsd: FALLBACK_EUR_TO_USD, customerCurrency: 'EUR' },
+    { eurToUsd: rate, customerCurrency: 'EUR' },
   );
   const service = (
     servicesFor(request.gameId) as { modes: CatalogMode[] }
@@ -78,7 +80,7 @@ export function buildCheckout(request: CheckoutRequest) {
       voice: request.voice ?? false,
       amount_eur_cents: quote.amountEurMinor,
       payout_usd_cents: quote.teammate.amountMinor,
-      booking_fx: FALLBACK_EUR_TO_USD,
+      booking_fx: rate,
     },
     productName: `${service.title} · ${units}`,
     description: [game.name, region, request.rank ? `from ${request.rank}` : '']
@@ -156,7 +158,7 @@ export const createCheckout: APIRoute = async (context) => {
       return account.json({ error: 'Check your order details.' }, 400);
     let built: ReturnType<typeof buildCheckout>;
     try {
-      built = buildCheckout(parsed.data);
+      built = buildCheckout(parsed.data, (await eurToUsd()).rate);
     } catch {
       return account.json({ error: 'That option isn’t available.' }, 400);
     }

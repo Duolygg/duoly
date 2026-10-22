@@ -12,7 +12,13 @@ import { newChatPing, playChatPing } from '../lib/sounds';
 // Props: teaser (show the little "Need a hand?" bubble), bottom (px from the bottom, default 24)
 const MASCOT = '/assets/brand/logo-mascots.webp';
 const POLL_OPEN = 3000;   // while the panel is open and a human is involved
-const POLL_CLOSED = 12000; // panel closed: only to show an unread badge when the team replies
+const POLL_CLOSED = 12000;
+// Until the live support desk ships: the bubble points to the channels that work today.
+const CONTACT_ONLY = {
+  greeting: 'Hey! Need a hand? Message us on Discord or email hello@duoly.gg. We usually reply within a few hours.',
+  team: [], chips: [], suggest: [], conversation: null,
+};
+const DISCORD_URL = 'https://discord.gg/xkKGf9bKz'; // panel closed: only to show an unread badge when the team replies
 
 export default class SupportChat extends React.Component {
   constructor(props) {
@@ -41,6 +47,10 @@ export default class SupportChat extends React.Component {
     this._t = setTimeout(async () => { await this.load(); this.schedule(); }, this.state.open && human ? POLL_OPEN : POLL_CLOSED);
   }
   async load() {
+    if (this.props.contactOnly) {
+      if (!this.state.data) this.setState({ data: CONTACT_ONLY });
+      return;
+    }
     try {
       const r = await fetch('/api/support', { cache: 'no-store' });
       if (!r.ok) return;
@@ -100,7 +110,8 @@ export default class SupportChat extends React.Component {
     const chips = !c ? (d.chips || []) : (c.status === 'bot' && !s.sending ? (d.suggest || []) : []);
     const avatar = (img, size, round) => <img src={img || '/assets/avatars/avatar-1.png'} alt="" width={size} height={size} referrerPolicy="no-referrer" style={{ width: size + 'px', height: size + 'px', borderRadius: round ? '50%' : '9px', objectFit: "cover", flex: "0 0 auto" }} />;
     const bot = <span style={{ flex: "0 0 auto", width: "28px", height: "28px", borderRadius: "9px", background: "#1B1033", display: "flex", alignItems: "center", justifyContent: "center" }}><img src={MASCOT} alt="" width="24" height="15" style={{ width: "24px", height: "15px" }} /></span>;
-    const status = !c || c.status === 'bot' ? 'Sparky can make mistakes · say “human” anytime'
+    const status = this.props.contactOnly ? 'The Duoly team answers on Discord and by email'
+      : !c || c.status === 'bot' ? 'Sparky can make mistakes · say “human” anytime'
       : c.status === 'waiting' ? 'Waiting for the team · their replies show up right here'
         : c.status === 'open' ? 'You’re chatting with ' + (agent ? agent.name : 'the team') + ' from Duoly'
           : 'Chat closed · write to start a new one';
@@ -194,6 +205,12 @@ export default class SupportChat extends React.Component {
               ) : null}
             </div>
 
+            {this.props.contactOnly ? (
+              <div style={{ padding: "12px", borderTop: "1px solid rgba(196, 170, 255, .1)", background: "#0F0A1C", display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                <a href={DISCORD_URL} rel="noopener" style={{ flex: "1 1 auto", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "42px", borderRadius: "12px", background: "#5865F2", color: "#FFFFFF", fontWeight: "700", fontSize: "14px", textDecoration: "none" }}>Message us on Discord</a>
+                <a href="mailto:hello@duoly.gg" style={{ flex: "1 1 auto", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "42px", borderRadius: "12px", border: "1px solid rgba(214, 187, 255, .2)", color: "#F3EEFF", fontWeight: "600", fontSize: "14px", textDecoration: "none" }}>hello@duoly.gg</a>
+              </div>
+            ) : (
             <form onSubmit={(e) => { e.preventDefault(); this.send({ text: s.draft }); }} style={{ padding: "12px", borderTop: "1px solid rgba(196, 170, 255, .1)", background: "#0F0A1C" }}>
               {s.error ? <div role="alert" style={{ marginBottom: "8px", fontSize: "12.5px", color: "#FF8A9B" }}>{s.error}</div> : null}
               <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 6px 6px 14px", borderRadius: "16px", background: "#1A1230", border: "1px solid rgba(196, 170, 255, .14)" }}>
@@ -205,6 +222,7 @@ export default class SupportChat extends React.Component {
               </div>
               <div style={{ marginTop: "8px", textAlign: "center", fontSize: "11px", color: "#6A6086" }}>{status}</div>
             </form>
+            )}
           </section>
         ) : null}
 

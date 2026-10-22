@@ -68,6 +68,8 @@ export default class Home extends React.Component {
   }
   // today's EUR → USD rate for customers (ECB rate + a small margin, lib/fx.js); until it loads, a close default
   async loadFx() {
+    // Live: the server passes today's ECB rate in.
+    if (this.props.usdRate > 0.5 && this.props.usdRate < 2) return this.setState({ usdRate: this.props.usdRate });
     try {
       const r = await fetch('/api/fx');
       const j = await r.json();
@@ -109,7 +111,7 @@ export default class Home extends React.Component {
       try {
         window.localStorage.setItem(PENDING_KEY, JSON.stringify({ game: s.game, mode: s.mode, bundle: s.bundle || null, tab: s.tab, qty: s.qty, rank: s.rank, voice: s.voice, pay: s.pay, at: Date.now() }));
       } catch (e) {}
-      if (this.props.onCheckout && this.props.onOpenLogin) {
+      if (this.props.onOpenLogin) {
         // Live: real sign-in page, then straight back here to pay.
         try { document.cookie = 'duoly_resume=checkout; Max-Age=1800; Path=/; SameSite=Lax; Secure'; } catch (e) {}
         this.props.onOpenLogin();
@@ -177,7 +179,7 @@ export default class Home extends React.Component {
     const viaName = via === 'discord' ? 'Discord' : via === 'google' ? 'Google' : 'email';
     const busy = s.authBusy;
     const login = (provider) => () => {
-      this.setState({ authBusy: null, authNote: 'Design preview: login and account creation are not connected.' });
+      this.setState({ authBusy: null, authNote: 'Sign-in isn’t available here. Use the sign-in page.' });
       if (P.onSignIn) P.onSignIn(provider);
     };
     const errorOpen = !!P.authError && !s.authErrDismissed;
@@ -224,7 +226,7 @@ export default class Home extends React.Component {
       (a ? 'background: #F3EEFF; color: #17092E;' : 'background: transparent; color: #A79DC4;');
     const submit = async (e) => {
       if (e) e.preventDefault();
-      this.setState({ emailBusy: false, emailPass: '', authNote: 'Design preview: login and account creation are not connected.' });
+      this.setState({ emailBusy: false, emailPass: '', authNote: 'Sign-in isn’t available here. Use the sign-in page.' });
     };
     // Password strength for the create-account form: length, mixed case, digit, symbol.
     const pw = s.emailPass || '';
@@ -233,7 +235,7 @@ export default class Home extends React.Component {
     return {
       emailRegister: register,
       authTitle: register ? 'Create your account' : 'Welcome back',
-      authSub: 'Design preview only. Login and account creation are not connected. Do not enter real credentials.',
+      authSub: 'Use the sign-in page to log in or create an account.',
       switchText: register ? 'Already have an account?' : 'New to Duoly?',
       switchLabel: register ? 'Log in' : 'Create an account',
       switchMode: () => this.setState({ emailMode: register ? 'login' : 'register', authNote: '' }),
@@ -1685,7 +1687,7 @@ export default class Home extends React.Component {
           </div>
         </footer>
         {/* support chat: Sparky + the real admins (components/SupportChat.jsx) */}
-        <SupportChat teaser />
+        <SupportChat teaser contactOnly />
         {v.showAuth ? (
           <>
             <div role="dialog" aria-modal="true" aria-labelledby="auth-h" style={{ position: "fixed", inset: "0", zIndex: "50", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", overflowY: "auto" }}>

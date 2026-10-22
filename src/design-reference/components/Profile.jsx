@@ -71,7 +71,7 @@ export default class Profile extends React.Component {
   }
 
   async pickFile(file) {
-    if (this.props.accountOnly) return this.setState({ error: 'Uploads are not available yet. Choose an avatar below.' });
+    if (this.props.accountOnly && !this.props.allowUpload) return this.setState({ error: 'Uploads are not available yet. Choose an avatar below.' });
     this.setState({ error: '' });
     try {
       const upload = await toAvatar(file);
@@ -164,7 +164,7 @@ export default class Profile extends React.Component {
                 <button type="submit" style={{ ...discordBtn, cursor: "pointer" }}>Connect Discord</button>
               </form>
             ) : (
-              <a aria-disabled="true" role="link" title={this.props.csrf ? 'Discord isn’t set up on this site yet' : 'Unavailable in the design preview'} style={discordBtn}>Connect Discord</a>
+              <a aria-disabled="true" role="link" title="Discord isn’t set up on this site yet" style={discordBtn}>Connect Discord</a>
             )
           )}
         </div>
@@ -266,7 +266,7 @@ export default class Profile extends React.Component {
                 <p style={help}>{this.props.accountOnly ? 'Choose one of the avatars below. Uploads are not available yet.' : 'JPG, PNG or WebP. We crop it to a square for you.'}</p>
                 <div style={{ marginTop: "18px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "18px" }}>
                   <button
-                    type="button" disabled={!!this.props.accountOnly} aria-label="Upload a new profile picture" onClick={() => this.fileRef.current && this.fileRef.current.click()}
+                    type="button" disabled={!!this.props.accountOnly && !this.props.allowUpload} aria-label="Upload a new profile picture" onClick={() => this.fileRef.current && this.fileRef.current.click()}
                     onDragOver={(e) => { e.preventDefault(); if (!s.drag) this.setState({ drag: true }); }}
                     onDragLeave={() => this.setState({ drag: false })}
                     onDrop={(e) => { e.preventDefault(); this.setState({ drag: false }); this.pickFile(e.dataTransfer.files[0]); }}
@@ -290,7 +290,7 @@ export default class Profile extends React.Component {
                     </div>
                     <span style={{ fontSize: "12.5px", color: "#6A6086" }}>Or drag a picture onto your avatar.</span>
                   </div>
-                  <input disabled title="Unavailable in the design preview. Do not enter real credentials or upload files." ref={this.fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(e) => { this.pickFile(e.target.files[0]); e.target.value = ''; }} style={{ display: "none" }} />
+                  <input disabled={!!this.props.accountOnly && !this.props.allowUpload} ref={this.fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(e) => { this.pickFile(e.target.files[0]); e.target.value = ''; }} style={{ display: "none" }} />
                 </div>
 
                 <div style={{ marginTop: "20px", fontSize: "13px", fontWeight: "600", color: "#A79DC4" }}>Or pick one of ours</div>

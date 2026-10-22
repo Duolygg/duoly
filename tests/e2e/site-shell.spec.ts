@@ -199,3 +199,19 @@ test('reset password asks for an email and confirms without revealing accounts',
   await page.goto('/reset-password?sent=1');
   await expect(page.getByRole('status')).toContainText('reset link');
 });
+
+test('support bubble points to real channels, never a preview', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await settle(page);
+  const bubble = page
+    .locator('button[aria-label*="chat" i], button[aria-label*="support" i]')
+    .first();
+  await bubble.click();
+  const chat = page.getByRole('dialog', { name: 'Duoly support chat' });
+  await expect(
+    chat.getByRole('link', { name: 'Message us on Discord' }),
+  ).toHaveAttribute('href', 'https://discord.gg/xkKGf9bKz');
+  await expect(page.getByText(/design preview/i)).toHaveCount(0);
+});
