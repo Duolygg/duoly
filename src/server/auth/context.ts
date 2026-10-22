@@ -1,9 +1,11 @@
 import type { AstroCookies } from 'astro';
 import { createServerClient, parseCookieHeader } from '@supabase/ssr';
 import {
+  DiscordLinkSchema,
   ProfileSchema,
   RoleSchema,
   ViewerSchema,
+  type DiscordLink,
   type Profile,
   type Viewer,
 } from '../../contracts/account';
@@ -90,6 +92,7 @@ export function accountContext(request: Request, cookies: AstroCookies) {
   const identity = async (): Promise<{
     viewer: Viewer;
     profile: Profile;
+    discord: DiscordLink | null;
   } | null> => {
     if (
       !client ||
@@ -106,15 +109,20 @@ export function accountContext(request: Request, cookies: AstroCookies) {
     )
       return null;
     const id = data.user.id;
-    const [profileResult, roleResult] = await Promise.all([
+    const [profileResult, roleResult, discordResult] = await Promise.all([
       client
         .from('profiles')
         .select('id,name,country,image')
         .eq('id', id)
         .single(),
       client.from('account_roles').select('role').eq('user_id', id).single(),
+      client
+        .from('discord_accounts')
+        .select('discord_id,username')
+        .eq('user_id', id)
+        .maybeSingle(),
     ]);
-    if (profileResult.error || roleResult.error)
+    if (profileResult.error || roleResult.error || discordResult.error)
       throw new Error('Your account could not be loaded. Please try again.');
     const profile = ProfileSchema.parse(profileResult.data);
     const role = RoleSchema.parse(roleResult.data.role);
@@ -128,7 +136,17 @@ export function accountContext(request: Request, cookies: AstroCookies) {
       provider:
         provider === 'google' || provider === 'discord' ? provider : 'email',
     });
-    return { viewer, profile };
+    const identities = data.user.identities ?? [];
+    const discord = discordResult.data
+      ? DiscordLinkSchema.parse({
+          id: discordResult.data.discord_id,
+          username: discordResult.data.username,
+          auto:
+            identities.length > 0 &&
+            identities.every((entry) => entry.provider === 'discord'),
+        })
+      : null;
+    return { viewer, profile, discord };
   };
   return {
     config,

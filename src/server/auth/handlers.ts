@@ -2,6 +2,7 @@ import type { APIContext, APIRoute } from 'astro';
 import { ProfileUpdateSchema, ProviderSchema } from '../../contracts/account';
 import { accountContext } from './context';
 import { readBoundedBody, verifyCsrf } from './security';
+import { linkErrorResult } from '../discord/oauth';
 
 export async function mutation(context: APIContext) {
   const account = accountContext(context.request, context.cookies);
@@ -76,7 +77,14 @@ export const oauth: APIRoute = async (context) => {
 };
 export const callback: APIRoute = async (context) => {
   const account = accountContext(context.request, context.cookies);
-  const code = context.url.searchParams.get('code');
+  const params = context.url.searchParams;
+  const code = params.get('code');
+  // Connect Discord returns here with ?next=profile|teammate (identity linking).
+  const next = params.get('next');
+  const linking = next === 'profile' || next === 'teammate' ? next : null;
+  if (linking && (params.has('error') || params.has('error_code')))
+    return account.redirect(`/${linking}?discord=${linkErrorResult(params)}`);
+  const fail = linking ? `/${linking}?discord=failed` : '/login?error=callback';
   if (
     !account.config ||
     !account.client ||
@@ -84,10 +92,10 @@ export const callback: APIRoute = async (context) => {
     code.length > 2048 ||
     context.url.origin !== account.config.origin
   )
-    return account.redirect('/login?error=callback');
+    return account.redirect(fail);
   try {
     const { error } = await account.client.auth.exchangeCodeForSession(code);
-    if (error) return account.redirect('/login?error=callback');
+    if (error) return account.redirect(fail);
     const identity = await account.identity();
     if (!identity) {
       try {
@@ -103,6 +111,7 @@ export const callback: APIRoute = async (context) => {
       account.clear();
       return account.redirect('/login?error=eligibility');
     }
+    if (linking) return account.redirect(`/${linking}?discord=linked`);
     context.cookies.delete(account.names.csrf, account.cookieOptions);
     return account.redirect('/dashboard');
   } catch {

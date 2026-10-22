@@ -2,6 +2,7 @@
 import ProductLayout from '../layouts/ProductLayout.astro';
 import LiveProfile from '../components/account/LiveProfile';
 import { accountContext } from '../server/auth/context';
+import { DiscordResultSchema } from '../contracts/account';
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
@@ -14,6 +15,11 @@ try {
 if (!identity && Astro.response.status !== 503)
   return account.redirect('/login');
 const csrf = account.csrf();
+const discordParam = DiscordResultSchema.safeParse(
+  Astro.url.searchParams.get('discord'),
+);
+const discordResult = discordParam.success ? discordParam.data : '';
+const discordEnabled = !!account.config?.providers.discord;
 ---
 
 <ProductLayout
@@ -26,6 +32,9 @@ const csrf = account.csrf();
       viewer={identity.viewer}
       profile={identity.profile}
       csrf={csrf}
+      discord={identity.discord}
+      discordResult={discordResult}
+      discordEnabled={discordEnabled}
       client:load
     />
   ) : (
