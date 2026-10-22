@@ -14,7 +14,9 @@ try {
 if (!identity && Astro.response.status !== 503)
   return account.redirect('/login');
 if (identity && identity.viewer.role !== 'customer')
-  return account.redirect(identity.viewer.role === 'admin' ? '/admin' : '/teammate');
+  return account.redirect(
+    identity.viewer.role === 'admin' ? '/admin' : '/teammate',
+  );
 const csrf = account.csrf();
 ---
 
