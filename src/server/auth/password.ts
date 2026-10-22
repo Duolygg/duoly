@@ -1,3 +1,4 @@
+import { afterLoginPath } from './after-login';
 import type { APIRoute } from 'astro';
 import { PasswordCredentialsSchema } from '../../contracts/password';
 import { mutation } from './handlers';
@@ -61,7 +62,7 @@ export const loginPassword: APIRoute = async (context) => {
       return account.redirect('/login?error=eligibility');
     }
     context.cookies.delete(account.names.csrf, account.cookieOptions);
-    return account.redirect('/dashboard');
+    return account.redirect(afterLoginPath(context.cookies));
   } catch {
     account.clear();
     return account.redirect('/login?error=credentials');
@@ -121,7 +122,7 @@ export const registerPassword: APIRoute = async (context) => {
       return account.redirect('/login?notice=confirmation');
     }
     context.cookies.delete(account.names.csrf, account.cookieOptions);
-    return account.redirect('/dashboard');
+    return account.redirect(afterLoginPath(context.cookies));
   } catch {
     account.clear();
     return account.redirect('/login?notice=confirmation');

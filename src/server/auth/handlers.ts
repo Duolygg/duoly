@@ -1,3 +1,4 @@
+import { afterLoginPath } from './after-login';
 import type { APIContext, APIRoute } from 'astro';
 import { ProfileUpdateSchema, ProviderSchema } from '../../contracts/account';
 import { accountContext } from './context';
@@ -113,7 +114,7 @@ export const callback: APIRoute = async (context) => {
     }
     if (linking) return account.redirect(`/${linking}?discord=linked`);
     context.cookies.delete(account.names.csrf, account.cookieOptions);
-    return account.redirect('/dashboard');
+    return account.redirect(afterLoginPath(context.cookies));
   } catch {
     account.clear();
     return account.redirect('/login?error=callback');
