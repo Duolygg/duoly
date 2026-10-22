@@ -84,6 +84,7 @@ export function adminFor(config: PaymentsConfig): SupabaseClient {
  */
 export const AUTHORIZE_ONLY_METHODS = [
   'card',
+  'link',
   'paypal',
   'klarna',
   'amazon_pay',

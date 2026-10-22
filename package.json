@@ -10,6 +10,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "stripe:listen": "stripe listen --forward-to localhost:4321/api/webhooks/stripe --events checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed,checkout.session.expired",
     "check": "astro check",
     "lint": "eslint .",
     "format:check": "prettier --check .",

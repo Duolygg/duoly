@@ -93,6 +93,7 @@ describe('checkout session', () => {
     expect('payment_method_types' in params).toBe(false);
     expect(params.payment_method_options).toMatchObject({
       card: { capture_method: 'manual' },
+      link: { capture_method: 'manual' },
       paypal: { capture_method: 'manual' },
     });
     expect(params.ui_mode).toBe('embedded_page');
@@ -161,18 +162,57 @@ describe('webhook facts', () => {
 });
 
 describe('settlement', () => {
-  const stripe = (status: string) => {
+  type FakeInvoice = {
+    id: string;
+    status: string;
+    total: number;
+    post_payment_credit_notes_amount: number;
+  };
+  const stripe = (
+    status: string,
+    invoice: FakeInvoice | null = null,
+    creditNoteError?: Error,
+  ) => {
     const calls: string[] = [];
+    const creditNotes = {
+      create: vi.fn(async () => {
+        if (creditNoteError) throw creditNoteError;
+        calls.push('credit_note');
+      }),
+    };
     const client = {
       paymentIntents: {
         retrieve: vi.fn(async () => ({ id: 'pi_1', status })),
         capture: vi.fn(async () => calls.push('capture')),
         cancel: vi.fn(async () => calls.push('cancel')),
       },
-      refunds: { create: vi.fn(async () => calls.push('refund')) },
+      refunds: {
+        create: vi.fn(async () => {
+          calls.push('refund');
+          return { id: 're_1' };
+        }),
+      },
+      checkout: {
+        sessions: {
+          list: vi.fn(async () => ({
+            data: [{ invoice: invoice?.id ?? null }],
+          })),
+        },
+      },
+      invoices: {
+        retrieve: vi.fn(async () => invoice),
+        voidInvoice: vi.fn(async () => calls.push('invoice_void')),
+      },
+      creditNotes,
     } as unknown as Stripe;
-    return { client, calls };
+    return { client, calls, creditNotes };
   };
+  const paid = (credited = 0): FakeInvoice => ({
+    id: 'in_1',
+    status: 'paid',
+    total: 1617,
+    post_payment_credit_notes_amount: credited,
+  });
   const row = (settle: 'capture' | 'release') => ({
     order_id: 'o1',
     stripe_payment_intent_id: 'pi_1',
@@ -200,5 +240,60 @@ describe('settlement', () => {
     const s = stripe('processing');
     expect((await settleOne(s.client, row('release'))).state).toBe('retry');
     expect(s.calls).toEqual([]);
+  });
+  it('credits an invoiced refund against that refund', async () => {
+    const s = stripe('succeeded', paid());
+    expect(await settleOne(s.client, row('release'))).toEqual({
+      state: 'refunded',
+    });
+    expect(s.calls).toEqual(['refund', 'credit_note']);
+    expect(s.creditNotes.create).toHaveBeenCalledWith(
+      {
+        invoice: 'in_1',
+        amount: 1617,
+        reason: 'order_change',
+        refunds: [{ refund: 're_1', amount_refunded: 1617 }],
+        metadata: { payment_intent: 'pi_1' },
+      },
+      { idempotencyKey: 'credit_note_o1' },
+    );
+  });
+  it('credits a paid invoice out of band when the hold is released', async () => {
+    const s = stripe('requires_capture', paid());
+    expect((await settleOne(s.client, row('release'))).state).toBe('voided');
+    expect(s.calls).toEqual(['cancel', 'credit_note']);
+    expect(s.creditNotes.create).toHaveBeenCalledWith(
+      expect.objectContaining({ out_of_band_amount: 1617, amount: 1617 }),
+      expect.anything(),
+    );
+  });
+  it('voids an invoice that is still open instead of crediting it', async () => {
+    const s = stripe('requires_capture', { ...paid(), status: 'open' });
+    expect((await settleOne(s.client, row('release'))).state).toBe('voided');
+    expect(s.calls).toEqual(['cancel', 'invoice_void']);
+  });
+  it('fixes the invoice on a retry after the void already went through', async () => {
+    const s = stripe('canceled', paid());
+    expect((await settleOne(s.client, row('release'))).state).toBe('voided');
+    expect(s.calls).toEqual(['credit_note']);
+  });
+  it('does not credit an invoice twice', async () => {
+    const s = stripe('canceled', paid(1617));
+    expect((await settleOne(s.client, row('release'))).state).toBe('voided');
+    expect(s.calls).toEqual([]);
+  });
+  it('leaves payments without an invoice alone (live mode)', async () => {
+    const s = stripe('succeeded');
+    expect(await settleOne(s.client, row('release'))).toEqual({
+      state: 'refunded',
+    });
+    expect(s.calls).toEqual(['refund']);
+  });
+  it('keeps the refund final when the credit note fails', async () => {
+    const s = stripe('succeeded', paid(), new Error('credit note rejected'));
+    expect(await settleOne(s.client, row('release'))).toEqual({
+      state: 'refunded',
+      error: 'invoice: credit note rejected',
+    });
   });
 });

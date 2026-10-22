@@ -3,6 +3,7 @@ import type Stripe from 'stripe';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { adminFor, paymentsConfig, stripeFor } from './config';
 import { settlePending } from './settle';
+import { releaseInvoice, type InvoiceRelease } from './invoice';
 import { sendEmail } from '../email/send';
 import { GAME } from '../../design-reference/lib/games.js';
 
@@ -188,17 +189,27 @@ async function fulfil(
   };
   if (outcome.conflict) {
     // Second paid checkout while an order is open: give the money back at once.
-    if (intent.status === 'requires_capture')
+    let release: InvoiceRelease | null = null;
+    if (intent.status === 'requires_capture') {
       await stripe.paymentIntents.cancel(
         intent.id,
         { cancellation_reason: 'duplicate' },
         { idempotencyKey: `void_conflict_${row.id}` },
       );
-    else if (intent.status === 'succeeded')
-      await stripe.refunds.create(
+      release = { kind: 'void' };
+    } else if (intent.status === 'succeeded') {
+      const refund = await stripe.refunds.create(
         { payment_intent: intent.id, reason: 'duplicate' },
         { idempotencyKey: `refund_conflict_${row.id}` },
       );
+      release = { kind: 'refund', refundId: refund.id };
+    }
+    // Best effort: the money is back; a failure here must not make Stripe retry.
+    if (release)
+      await releaseInvoice(stripe, intent.id, release, {
+        key: `conflict_${row.id}`,
+        reason: 'duplicate',
+      }).catch(() => undefined);
     return 'conflict_released';
   }
   if (outcome.created && outcome.order_id)

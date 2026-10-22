@@ -1,11 +1,13 @@
 import type Stripe from 'stripe';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { releaseInvoice, type InvoiceRelease } from './invoice';
 
 /**
  * Applies pending money actions that the order state machine requested:
  * accept → capture the authorization; cancel → release (void, or refund when the
- * method was charged at checkout). Idempotent: Stripe calls carry idempotency keys
- * and rows stay pending until a terminal state is written.
+ * method was charged at checkout) and correct the invoice if Checkout issued one.
+ * Idempotent: Stripe calls carry idempotency keys and rows stay pending until a
+ * terminal state is written.
  */
 interface PendingPayment {
   order_id: string;
@@ -21,6 +23,29 @@ export type SettleOutcome =
   | 'capture_failed'
   | 'release_failed'
   | 'retry';
+
+/**
+ * The money already moved, so an invoice failure never turns into a retry (that
+ * would repeat the refund); it is kept in `last_error` for follow-up instead.
+ */
+async function withInvoice(
+  stripe: Stripe,
+  row: PendingPayment,
+  state: 'voided' | 'refunded',
+  release: InvoiceRelease,
+): Promise<{ state: SettleOutcome; error?: string }> {
+  try {
+    await releaseInvoice(stripe, row.stripe_payment_intent_id, release, {
+      key: row.order_id,
+      reason: 'order_change',
+    });
+    return { state };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message.slice(0, 180) : 'stripe error';
+    return { state, error: `invoice: ${message}` };
+  }
+}
 
 export async function settleOne(
   stripe: Stripe,
@@ -44,17 +69,19 @@ export async function settleOne(
       return { state: 'captured' };
     }
     if (row.settle === 'release') {
-      if (intent.status === 'canceled') return { state: 'voided' };
+      // Also reached on a retry after the void itself went through.
+      if (intent.status === 'canceled')
+        return withInvoice(stripe, row, 'voided', { kind: 'void' });
       if (intent.status === 'requires_capture') {
         await stripe.paymentIntents.cancel(
           id,
           { cancellation_reason: 'abandoned' },
           { idempotencyKey: `void_${row.order_id}` },
         );
-        return { state: 'voided' };
+        return withInvoice(stripe, row, 'voided', { kind: 'void' });
       }
       if (intent.status === 'succeeded') {
-        await stripe.refunds.create(
+        const refund = await stripe.refunds.create(
           {
             payment_intent: id,
             reason: 'requested_by_customer',
@@ -62,7 +89,10 @@ export async function settleOne(
           },
           { idempotencyKey: `refund_${row.order_id}` },
         );
-        return { state: 'refunded' };
+        return withInvoice(stripe, row, 'refunded', {
+          kind: 'refund',
+          refundId: refund.id,
+        });
       }
       return { state: 'retry', error: `payment intent is ${intent.status}` };
     }
