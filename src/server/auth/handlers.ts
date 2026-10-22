@@ -1,16 +1,7 @@
 import type { APIContext, APIRoute } from 'astro';
-import {
-  EmailSchema,
-  ProfileUpdateSchema,
-  ProviderSchema,
-} from '../../contracts/account';
+import { ProfileUpdateSchema, ProviderSchema } from '../../contracts/account';
 import { accountContext } from './context';
-import {
-  readBoundedBody,
-  readPendingEmail,
-  sealPendingEmail,
-  verifyCsrf,
-} from './security';
+import { readBoundedBody, verifyCsrf } from './security';
 
 export async function mutation(context: APIContext) {
   const account = accountContext(context.request, context.cookies);
@@ -98,7 +89,14 @@ export const callback: APIRoute = async (context) => {
     const { error } = await account.client.auth.exchangeCodeForSession(code);
     if (error) return account.redirect('/login?error=callback');
     const identity = await account.identity();
-    if (!identity) return account.redirect('/login?error=callback');
+    if (!identity) {
+      try {
+        await account.client.auth.signOut({ scope: 'local' });
+      } finally {
+        account.clear();
+      }
+      return account.redirect('/login?error=callback');
+    }
     const testEmail = account.config.testEmail;
     if (testEmail && identity.viewer.email?.toLowerCase() !== testEmail) {
       await account.client.auth.signOut({ scope: 'local' });
@@ -110,78 +108,6 @@ export const callback: APIRoute = async (context) => {
   } catch {
     account.clear();
     return account.redirect('/login?error=callback');
-  }
-};
-export const requestEmail: APIRoute = async (context) => {
-  const { account, body, failure } = await mutation(context);
-  if (failure || !body) return failure!;
-  if (!account.client || !account.config?.providers.email)
-    return account.json({ error: 'Email sign-in is not configured.' }, 503);
-  const email = EmailSchema.safeParse(body.email);
-  if (!email.success)
-    return account.json({ error: 'Enter a valid email address.' }, 400);
-  const testEmail = account.config.testEmail;
-  if (testEmail && email.data !== testEmail)
-    return account.json(
-      { error: 'This environment is restricted to its approved test account.' },
-      403,
-    );
-  const csrf = account.csrf();
-  const now = Date.now();
-  const last = Number(context.cookies.get(account.names.cooldown)?.value ?? 0);
-  if (Number.isFinite(last) && now - last < 60_000)
-    return account.json(
-      { error: 'Wait a minute before requesting another code.' },
-      429,
-    );
-  context.cookies.set(account.names.cooldown, String(now), {
-    ...account.cookieOptions,
-    maxAge: 60,
-  });
-  try {
-    // Do not reveal whether the address exists. The provider enforces delivery/verification limits.
-    await account.client.auth.signInWithOtp({
-      email: email.data,
-      options: { shouldCreateUser: account.config.signup },
-    });
-  } catch {
-    return account.redirect('/login?error=email');
-  }
-  context.cookies.set(
-    account.names.pending,
-    sealPendingEmail(email.data, csrf, account.config.signingKey, now),
-    { ...account.cookieOptions, maxAge: 600 },
-  );
-  return account.redirect('/login?step=verify');
-};
-export const verifyEmail: APIRoute = async (context) => {
-  const { account, body, failure } = await mutation(context);
-  if (failure || !body) return failure!;
-  if (!account.client || !account.config?.providers.email)
-    return account.json({ error: 'Email sign-in is not configured.' }, 503);
-  const csrf = context.cookies.get(account.names.csrf)?.value ?? '';
-  const email = readPendingEmail(
-    context.cookies.get(account.names.pending)?.value,
-    csrf,
-    account.config.signingKey,
-  );
-  if (!email || typeof body.code !== 'string' || !/^\d{6}$/.test(body.code))
-    return account.redirect('/login?error=code');
-  try {
-    const { error } = await account.client.auth.verifyOtp({
-      email,
-      token: body.code,
-      type: 'email',
-    });
-    if (error) return account.redirect('/login?step=verify&error=code');
-    const identity = await account.identity();
-    if (!identity) return account.redirect('/login?error=account');
-    context.cookies.delete(account.names.pending, account.cookieOptions);
-    context.cookies.delete(account.names.csrf, account.cookieOptions);
-    return account.redirect('/dashboard');
-  } catch {
-    account.clear();
-    return account.redirect('/login?error=code');
   }
 };
 export const logout: APIRoute = async (context) => {
