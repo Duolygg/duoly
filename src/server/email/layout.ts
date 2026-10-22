@@ -25,6 +25,47 @@ function asset(ctx: EmailContext, path: string): string {
   return `${ctx.assetOrigin.replace(/\/$/, '')}${path.startsWith('/') ? '' : '/'}${path}`;
 }
 
+/**
+ * Gmail's iOS and Android apps invert colours in dark mode, which turns this dark design light.
+ * They leave background images alone, so every solid surface also gets a same-colour gradient,
+ * and text is wrapped in the blend-mode pair below, which only Gmail matches (`u + .body`).
+ * The rules live in their own <style> block because Gmail drops a whole block it cannot parse.
+ * Technique: https://www.hteumeuleu.com/2021/fixing-gmail-dark-mode-css-blend-modes/
+ */
+const GMAIL_STYLE =
+  '<style>u + .body .gm-s{background:#000;mix-blend-mode:screen}u + .body .gm-d{background:#000;mix-blend-mode:difference}</style>';
+
+const BLANK_TEXT = /^(?:\s|&nbsp;|&#8199;|&#847;)*$/;
+
+export function gmailDarkMode(doc: string): string {
+  const start = doc.indexOf('<body');
+  if (start < 0) return doc;
+  const head = doc
+    .slice(0, start)
+    .replace('</head>', `${GMAIL_STYLE}\n</head>`);
+  const body = doc
+    .slice(start)
+    .split(/(<!--[\s\S]*?-->)/)
+    .map((part) =>
+      part.startsWith('<!--')
+        ? part
+        : part
+            .replace(/style="([^"]*)"/g, (all, style: string) => {
+              const solid =
+                /background(?:-color)?:(#[0-9A-Fa-f]{6})(?=;|$)/.exec(style);
+              if (!solid || /background-image|gradient/.test(style)) return all;
+              return `style="${style.replace(/;?$/, ';')}background-image:linear-gradient(${solid[1]},${solid[1]});"`;
+            })
+            .replace(/>([^<>]+)</g, (all, text: string) =>
+              BLANK_TEXT.test(text)
+                ? all
+                : `><span class="gm-s"><span class="gm-d">${text}</span></span><`,
+            ),
+    )
+    .join('');
+  return head + body;
+}
+
 function styleBlock(ctx: EmailContext): SafeHtml {
   const fonts = asset(ctx, '/fonts');
   // Author-controlled CSS only. Keyframes mirror the site (dlonline, dlfloat, lbshine).
@@ -48,6 +89,7 @@ a{color:${color.link}}
 .dl-shine{background-image:linear-gradient(110deg,rgba(255,255,255,0) 35%,rgba(255,255,255,.45) 50%,rgba(255,255,255,0) 65%)!important;background-size:250% 100%!important;background-repeat:no-repeat!important;animation:dlshine 3.6s ease-in-out infinite}
 .dl-scan{background-image:linear-gradient(90deg,rgba(214,187,255,0),rgba(214,187,255,.9),rgba(214,187,255,0))!important;background-size:40% 100%!important;background-repeat:no-repeat!important;animation:dlscan 1.8s linear infinite}
 .dl-pop{animation:dlpop .6s ease-out both}
+.dl-bg{background-image:radial-gradient(70% 340px at 50% 0%,rgba(214,187,255,.13),rgba(9,4,20,0)),linear-gradient(${color.page},${color.page})!important}
 @supports (-webkit-background-clip:text){.dl-grad{background:linear-gradient(90deg,${color.lavender},${color.pink} 55%,${color.gold});-webkit-background-clip:text;background-clip:text;color:transparent!important}}
 @media (prefers-reduced-motion:reduce){.dl-online,.dl-ping,.dl-twinkle,.dl-shine,.dl-scan,.dl-pop{animation:none!important}}
 @media only screen and (max-width:620px){
@@ -352,9 +394,9 @@ export function renderHtml(content: EmailContent, ctx: EmailContext): string {
 <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
 ${styleBlock(ctx)}
 </head>
-<body style="margin:0;padding:0;background:${color.page};">
+<body class="body" style="margin:0;padding:0;background-color:${color.page};">
 <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:${color.page};opacity:0;">${content.preheader}${raw(PREHEADER_PAD)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${color.page}" style="background-color:${color.page};background-image:radial-gradient(70% 340px at 50% 0%,rgba(214,187,255,.13),rgba(9,4,20,0));">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${color.page}" class="dl-bg" style="background-color:${color.page};">
 <tr><td align="center" style="padding:0 12px;">
 <!--[if mso]><table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
 <table role="presentation" class="dl-shell" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
@@ -371,7 +413,7 @@ ${footer(ctx, content)}
 </td></tr></table>
 </body>
 </html>`;
-  return doc.value;
+  return gmailDarkMode(doc.value);
 }
 
 /** Plain-text alternative built from the same content. */

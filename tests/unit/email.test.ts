@@ -119,6 +119,35 @@ describe('email templates', () => {
     }
   });
 
+  it('keeps the dark design in Gmail dark mode', () => {
+    const { html: markup } = renderTransactional(
+      'order_confirmed',
+      samples.order_confirmed,
+      ctx,
+    );
+    const head = markup.slice(0, markup.indexOf('<body'));
+    expect(head).toContain(
+      'u + .body .gm-s{background:#000;mix-blend-mode:screen}',
+    );
+    expect(markup).toContain('<body class="body"');
+    // Every solid surface also carries a same-colour gradient, which Gmail does not invert.
+    const solid = [
+      ...markup.matchAll(
+        /style="([^"]*background(?:-color)?:#[0-9A-Fa-f]{6}[^"]*)"/g,
+      ),
+    ];
+    expect(solid.length).toBeGreaterThan(10);
+    for (const [, style] of solid)
+      expect(style).toMatch(/background-image|gradient/);
+    // Visible text is wrapped; Outlook conditional comments are untouched.
+    expect(markup).toContain(
+      '<span class="gm-s"><span class="gm-d">You’re in the queue.</span></span>',
+    );
+    expect(markup).toMatch(
+      /<!--\[if mso\]><v:roundrect[^]*?<center[^>]*>Open order room &#8594;<\/center>/,
+    );
+  });
+
   it('formats money from minor units', () => {
     expect(formatMoney({ cents: 1617, currency: 'EUR' })).toBe('€16.17');
     expect(formatMoney({ cents: -180, currency: 'EUR' })).toBe('\u2212€1.80');

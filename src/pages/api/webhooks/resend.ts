@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import {
   forwardReceivedEmail,
   inboundConfig,
+  isForDomain,
   verifyWebhook,
 } from '../../../server/email/inbound';
 
@@ -49,6 +50,13 @@ export const POST: APIRoute = async ({ request }) => {
   const emailId = event.data?.email_id;
   if (typeof emailId !== 'string')
     return json(400, { error: 'missing_email_id' });
+  // Resend webhooks are account-wide: acknowledge other domains' mail without touching it.
+  if (
+    event.data?.to !== undefined &&
+    !isForDomain(event.data.to, config.forwardFrom)
+  ) {
+    return json(200, { ignored: 'other_domain' });
+  }
 
   const result = await forwardReceivedEmail(emailId, config);
   if (result.status === 'failed') {
