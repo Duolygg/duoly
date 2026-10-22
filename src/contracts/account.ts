@@ -10,6 +10,9 @@ export const EmailSchema = z
   .max(254)
   .toLowerCase()
   .pipe(z.email());
+/** Avatars uploaded through /api/me/profile (public Supabase Storage bucket). */
+export const UPLOADED_AVATAR =
+  /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/avatars\/[0-9a-f-]{36}\/[0-9a-f]{16}\.(webp|jpg)$/;
 export const ProfileUpdateSchema = z
   .object({
     name: z
@@ -29,6 +32,7 @@ export const ProfileUpdateSchema = z
     image: z.union([
       z.literal(''),
       z.string().regex(/^\/assets\/avatars\/avatar-([1-9]|10)\.png$/),
+      z.string().regex(UPLOADED_AVATAR),
     ]),
   })
   .strict();

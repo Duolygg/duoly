@@ -1,6 +1,6 @@
 ---
 import '../design-reference/globals.css';
-import type { Viewer } from '../contracts/account';
+import { UPLOADED_AVATAR, type Viewer } from '../contracts/account';
 import {
   ADMIN_SECTIONS,
   DISCORD_INVITE,
@@ -34,9 +34,12 @@ const {
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const home = viewer ? ROLE_HOME[viewer.role] : null;
 const initial = (viewer?.name || 'P').trim().charAt(0).toUpperCase();
-const avatar = viewer?.image?.startsWith('/assets/avatars/')
-  ? viewer.image
-  : null;
+const avatar =
+  viewer?.image &&
+  (viewer.image.startsWith('/assets/avatars/') ||
+    UPLOADED_AVATAR.test(viewer.image))
+    ? viewer.image
+    : null;
 const external = (href: string) => href.startsWith('http');
 ---
 

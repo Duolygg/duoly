@@ -42,6 +42,7 @@ export default function LiveProfile({
       discordEnabled={discordEnabled}
       csrf={csrf}
       accountOnly
+      allowUpload
       onSave={onSave}
     />
   );

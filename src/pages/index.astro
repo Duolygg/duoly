@@ -3,6 +3,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import AccountHome from '../components/account/AccountHome';
 import { accountContext } from '../server/auth/context';
 import { paymentsConfig } from '../server/payments/config';
+import { eurToUsd } from '../server/fx';
 const account = accountContext(Astro.request, Astro.cookies);
 let viewer = null;
 if (account.config) {
@@ -16,6 +17,7 @@ if (account.config) {
 }
 const csrf = account.config ? account.csrf() : '';
 const checkoutEnabled = !!account.config && paymentsConfig() !== null;
+const { rate: usdRate } = await eurToUsd();
 ---
 
 <SiteLayout title="Duoly | Duo up in under 2 minutes" bare>
@@ -23,6 +25,7 @@ const checkoutEnabled = !!account.config && paymentsConfig() !== null;
     viewer={viewer}
     csrf={csrf}
     checkoutEnabled={checkoutEnabled}
+    usdRate={usdRate}
     client:load
   />
 </SiteLayout>

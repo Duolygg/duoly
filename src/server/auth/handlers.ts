@@ -1,3 +1,4 @@
+import { decodeAvatar, storeAvatar } from './avatar';
 import { afterLoginPath } from './after-login';
 import type { APIContext, APIRoute } from 'astro';
 import { ProfileUpdateSchema, ProviderSchema } from '../../contracts/account';
@@ -5,11 +6,11 @@ import { accountContext } from './context';
 import { readBoundedBody, verifyCsrf } from './security';
 import { linkErrorResult } from '../discord/oauth';
 
-export async function mutation(context: APIContext) {
+export async function mutation(context: APIContext, maxBytes = 4096) {
   const account = accountContext(context.request, context.cookies);
   let body: Record<string, unknown>;
   try {
-    body = await readBoundedBody(context.request);
+    body = await readBoundedBody(context.request, maxBytes);
   } catch {
     return {
       account,
@@ -146,7 +147,8 @@ export const getProfile: APIRoute = async (context) => {
   }
 };
 export const saveProfile: APIRoute = async (context) => {
-  const { account, body, failure } = await mutation(context);
+  // Room for one cropped 256×256 avatar as a data URL.
+  const { account, body, failure } = await mutation(context, 160_000);
   if (failure || !body) return failure!;
   if (!account.client)
     return account.json({ error: 'Sign in to update your profile.' }, 401);
@@ -154,12 +156,27 @@ export const saveProfile: APIRoute = async (context) => {
     const identity = await account.identity();
     if (!identity)
       return account.json({ error: 'Sign in to update your profile.' }, 401);
-    const { csrf: _csrf, ...input } = body;
+    const { csrf: _csrf, upload, ...input } = body;
     void _csrf;
+    if (upload !== undefined) {
+      const avatar = decodeAvatar(upload);
+      if (!avatar)
+        return account.json(
+          { error: 'That picture couldn’t be used. Try a JPG or PNG.' },
+          400,
+        );
+      const url = await storeAvatar(identity.viewer.id, avatar);
+      if (!url)
+        return account.json(
+          { error: 'Your picture couldn’t be uploaded. Please try again.' },
+          503,
+        );
+      input.image = url;
+    }
     const update = ProfileUpdateSchema.safeParse(input);
     if (!update.success)
       return account.json(
-        { error: 'Choose a valid name, country and avatar preset.' },
+        { error: 'Choose a valid name, country and avatar.' },
         400,
       );
     const { data, error } = await account.client

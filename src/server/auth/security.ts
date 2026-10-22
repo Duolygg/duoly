@@ -82,6 +82,7 @@ export function readPendingEmail(
 }
 export async function readBoundedBody(
   request: Request,
+  maxBytes = 4096,
 ): Promise<Record<string, unknown>> {
   const kind = request.headers.get('content-type')?.split(';')[0]?.trim();
   if (
@@ -99,7 +100,7 @@ export async function readBoundedBody(
       const { value, done } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > 4096) {
+      if (size > maxBytes) {
         await reader.cancel();
         throw new Error('Request too large.');
       }
