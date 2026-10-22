@@ -2,6 +2,7 @@
 import ProductLayout from '../layouts/ProductLayout.astro';
 import LoginCard from '../components/auth/LoginCard.astro';
 import { accountContext } from '../server/auth/context';
+import { EmailSchema } from '../contracts/account';
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
@@ -21,7 +22,17 @@ const errors: Record<string, string> = {
   account: 'Your account could not be loaded. Please try again.',
   eligibility: 'This environment is restricted to its approved test account.',
 };
-const register = Astro.url.searchParams.get('mode') === 'register';
+const registered = Astro.url.searchParams.get('notice') === 'registered';
+const register =
+  !registered && Astro.url.searchParams.get('mode') === 'register';
+// One-time prefill after "already registered"; the cookie is consumed here.
+const pendingEmail = Astro.cookies.get(account.names.pending)?.value;
+const prefill =
+  registered && pendingEmail
+    ? EmailSchema.safeParse(pendingEmail).data
+    : undefined;
+if (pendingEmail && registered)
+  Astro.cookies.delete(account.names.pending, account.cookieOptions);
 const error = errors[Astro.url.searchParams.get('error') ?? ''];
 const notice =
   Astro.url.searchParams.get('notice') === 'confirmation'
@@ -42,5 +53,7 @@ const providers = account.config?.providers ?? {
     signup={account.config?.signup ?? false}
     error={error}
     notice={notice}
+    registered={registered}
+    prefill={prefill}
   />
 </ProductLayout>

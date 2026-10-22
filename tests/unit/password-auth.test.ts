@@ -469,21 +469,47 @@ describe('registerPassword', () => {
       options: { emailRedirectTo: ORIGIN + '/auth/callback' },
     });
   });
+  it('tells people an address is already registered and prefills it once', async () => {
+    for (const result of [
+      // Confirmations on: Supabase returns a user without identities.
+      {
+        data: { user: { id: 'u', identities: [] }, session: null },
+        error: null,
+      },
+      // Confirmations off: Supabase answers 422.
+      {
+        data: { user: null, session: null },
+        error: { message: 'User already registered', status: 422 },
+      },
+    ]) {
+      const account = fakeAccount();
+      account.client.auth.signUp.mockResolvedValue(result);
+      const { response, cookies } = await call(
+        registerPassword,
+        account,
+        post(validCredentials),
+      );
+      expect(response.headers.get('location')).toBe('/login?notice=registered');
+      expect(cookies.store.get('duoly-pending-email')).toBe(
+        'player@example.com',
+      );
+      expect(account.identity).not.toHaveBeenCalled();
+    }
+  });
   it('answers provider refusals and missing sessions with the same generic confirmation notice', async () => {
     const locations: (string | null)[] = [];
     const refusal = fakeAccount();
     refusal.client.auth.signUp.mockResolvedValue({
       data: { user: null, session: null },
-      error: { message: 'User already registered', status: 422 },
+      error: { message: 'Signup rate limit exceeded', status: 429 },
     });
     const first = await call(registerPassword, refusal, post(validCredentials));
     expect(first.response.status).toBe(303);
-    expect(await first.response.text()).not.toContain('already registered');
     locations.push(first.response.headers.get('location'));
 
     const pending = fakeAccount();
     pending.client.auth.signUp.mockResolvedValue({
-      data: { user: { id: 'u' }, session: null },
+      data: { user: { id: 'u', identities: [{ id: 'i' }] }, session: null },
       error: null,
     });
     const second = await call(
