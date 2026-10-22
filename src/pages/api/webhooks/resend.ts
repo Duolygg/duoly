@@ -39,7 +39,7 @@ export const POST: APIRoute = async ({ request }) => {
   );
   if (!valid) return json(401, { error: 'invalid_signature' });
 
-  let event: { type?: unknown; data?: { email_id?: unknown } };
+  let event: { type?: unknown; data?: { email_id?: unknown; to?: unknown } };
   try {
     event = JSON.parse(body);
   } catch {

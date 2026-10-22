@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   forwardReceivedEmail,
   inboundConfig,
+  isForDomain,
   verifyWebhook,
   type InboundConfig,
 } from '../../src/server/email/inbound';
@@ -149,6 +150,24 @@ describe('inbound forwarding', () => {
     expect(calls.some((c) => c.url === 'https://api.resend.com/emails')).toBe(
       false,
     );
+  });
+
+  it('leaves mail for other domains on the shared Resend account alone', async () => {
+    const calls: { url: string; init?: RequestInit }[] = [];
+    const result = await forwardReceivedEmail(
+      'abc12345',
+      config,
+      fakeFetch({ ...received, to: ['hello@pettoportrait.art'] }, calls),
+    );
+    expect(result).toEqual({ status: 'skipped', reason: 'other_domain' });
+    expect(calls.some((c) => c.url === 'https://api.resend.com/emails')).toBe(
+      false,
+    );
+    expect(isForDomain(['Team <Support@Duoly.gg>'], config.forwardFrom)).toBe(
+      true,
+    );
+    expect(isForDomain(['x@notduoly.gg'], config.forwardFrom)).toBe(false);
+    expect(isForDomain('x@duoly.gg', config.forwardFrom)).toBe(false);
   });
 
   it('rejects malformed ids without calling the provider', async () => {

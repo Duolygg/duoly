@@ -48,6 +48,20 @@ export function inboundConfig(
   return { apiKey, webhookSecret, forwardTo, forwardFrom };
 }
 
+/**
+ * Resend webhooks are account-wide, so this endpoint also sees mail for other domains on the
+ * same Resend account. Only mail addressed to the forwarder's own domain is handled.
+ */
+export function isForDomain(recipients: unknown, forwardFrom: string): boolean {
+  const domain = addressOf(forwardFrom).split('@')[1];
+  if (!domain || !Array.isArray(recipients)) return false;
+  return recipients.some(
+    (recipient) =>
+      typeof recipient === 'string' &&
+      addressOf(recipient).endsWith(`@${domain}`),
+  );
+}
+
 /** Svix signature check: HMAC-SHA256 over `${id}.${timestamp}.${body}` with the decoded secret. */
 export function verifyWebhook(
   secret: string,
@@ -98,7 +112,7 @@ function escape(value: string): string {
 
 export type ForwardResult =
   | { status: 'forwarded'; id: string }
-  | { status: 'skipped'; reason: 'loop' }
+  | { status: 'skipped'; reason: 'loop' | 'other_domain' }
   | { status: 'failed'; step: 'fetch' | 'raw' | 'send'; httpStatus: number };
 
 export async function forwardReceivedEmail(
@@ -116,6 +130,8 @@ export async function forwardReceivedEmail(
   if (!fetched.ok)
     return { status: 'failed', step: 'fetch', httpStatus: fetched.status };
   const email = (await fetched.json()) as ReceivedEmail;
+  if (!isForDomain(email.to, config.forwardFrom))
+    return { status: 'skipped', reason: 'other_domain' };
 
   // Never re-forward our own forwards or mail from the team inbox back to itself.
   const sender = addressOf(email.from ?? '');
