@@ -5,24 +5,26 @@ import PreviewControls from '../design-preview/PreviewControls';
 interface Props {
   title?: string;
   description?: string;
+  accountEnabled?: boolean;
 }
 
 const {
   title = 'Duoly — Duo up in under 2 minutes',
+  accountEnabled = false,
   description = 'Protected Duoly design preview with deterministic sample data. Login, payments and order actions are not connected.',
 } = Astro.props;
 
 const previewLinks = [
   ['/', 'Home'],
-  ['/dashboard', 'Customer'],
-  ['/teammate', 'Teammate'],
-  ['/admin', 'Admin'],
+  ['/preview/dashboard', 'Customer'],
+  ['/preview/teammate', 'Teammate'],
+  ['/preview/admin', 'Admin'],
   ['/queue/preview-order', 'Queue'],
   ['/claim/preview-handover', 'Handover'],
   ['/apply', 'Apply'],
   ['/contact', 'Contact'],
   ['/creators', 'Creators'],
-  ['/profile', 'Profile'],
+  ['/preview/profile', 'Profile'],
   ['/privacy', 'Privacy'],
   ['/rules', 'Rules'],
   ['/terms', 'Terms'],
@@ -76,18 +78,25 @@ const previewLinks = [
       <div class="design-preview-notice">
         <strong>Design preview</strong>
         <span>
-          Sample data. Login, payments and order actions are not connected.
+          {accountEnabled
+            ? 'Sample ordering data. Payments and order actions are not connected.'
+            : 'Sample data. Login, payments and order actions are not connected.'}
         </span>
       </div>
       <nav aria-label="Preview pages">
-        {previewLinks.map(([href, label]) => (
-          <a
-            href={href}
-            aria-current={Astro.url.pathname === href ? 'page' : undefined}
-          >
-            {label}
-          </a>
-        ))}
+        {previewLinks
+          .filter(
+            ([, label]) =>
+              !accountEnabled || !['Customer', 'Profile'].includes(label),
+          )
+          .map(([href, label]) => (
+            <a
+              href={href}
+              aria-current={Astro.url.pathname === href ? 'page' : undefined}
+            >
+              {label}
+            </a>
+          ))}
       </nav>
     </aside>
     <slot />

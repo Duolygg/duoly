@@ -56,7 +56,7 @@ test('server-rendered profile has no API links and keeps uploads disabled withou
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();
-    await page.goto(new URL('/profile', baseURL).href);
+    await page.goto(new URL('/preview/profile', baseURL).href);
     await expect(page.locator('a[href^="/api/"]')).toHaveCount(0);
     await expect(page.locator('input[type="file"]')).toBeDisabled();
   } finally {
@@ -72,7 +72,7 @@ test('early API guard cancels middle-click before React hydration', async ({
       ? route.abort()
       : route.continue(),
   );
-  await page.goto('/profile');
+  await page.goto('/preview/profile');
   await expect(page.locator('html')).not.toHaveAttribute(
     'data-preview-guards',
     'ready',
@@ -91,7 +91,7 @@ test('early API guard cancels middle-click before React hydration', async ({
     );
   });
   expect(allowed).toBe(false);
-  expect(new URL(page.url()).pathname).toBe('/profile');
+  expect(new URL(page.url()).pathname).toBe('/preview/profile');
 });
 
 test('invalid identifiers do not reveal a sample as a real order', async ({

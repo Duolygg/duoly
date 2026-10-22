@@ -1,0 +1,223 @@
+---
+import type { Viewer } from '../../contracts/account';
+
+interface Props {
+  viewer: Viewer;
+}
+const { viewer } = Astro.props;
+---
+
+<div class="dashboard">
+  <header class="welcome">
+    <div>
+      <p class="eyebrow">Duoly account</p>
+      <h1>Your dashboard</h1>
+      <p class="greeting">
+        Welcome, <strong>{viewer.name}</strong>.
+      </p>
+    </div>
+    <a class="button primary" href="/profile">
+      Manage your profile
+    </a>
+  </header>
+
+  <div class="account-overview" aria-label="Account overview">
+    <section class="card summary" aria-labelledby="account-name-heading">
+      <h2 id="account-name-heading">Your account</h2>
+      <p class="account-name">{viewer.name}</p>
+      <p class="muted">Your personal Duoly space</p>
+    </section>
+    <section class="card summary" aria-labelledby="booking-status-heading">
+      <h2 id="booking-status-heading">Order booking</h2>
+      <p class="status">Not available yet</p>
+      <p class="muted">No booking actions are enabled.</p>
+    </section>
+    <section class="card summary" aria-labelledby="payment-status-heading">
+      <h2 id="payment-status-heading">Payments</h2>
+      <p class="status">Not available yet</p>
+      <p class="muted">No payment actions are enabled.</p>
+    </section>
+  </div>
+
+  <div class="db-grid details">
+    <section class="card empty-state" aria-labelledby="next-heading">
+      <img
+        src="/assets/brand/logo-mascots.webp"
+        alt=""
+        width="160"
+        height="101"
+      />
+      <h2 id="next-heading">Make yourself at home</h2>
+      <p>
+        Your account is ready for your profile. Order booking and payments are
+        not available yet. There are no order, wallet, rewards or review
+        features to use here yet.
+      </p>
+      <a class="button primary" href="/profile">
+        View your profile
+      </a>
+    </section>
+    <aside class="card profile-card" aria-labelledby="profile-heading">
+      <p class="eyebrow">Your space</p>
+      <h2 id="profile-heading">Keep your profile up to date</h2>
+      <p>Review your name and profile details in your account settings.</p>
+      <a href="/profile">Open profile settings →</a>
+      <a class="home-link" href="/">
+        Back to home
+      </a>
+    </aside>
+  </div>
+</div>
+
+<style>
+  .dashboard {
+    max-width: 1240px;
+    margin: auto;
+    padding: 40px 24px 64px;
+    overflow-wrap: anywhere;
+  }
+  .welcome {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .eyebrow {
+    color: #d6bbff;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+  }
+  h1,
+  h2,
+  .account-name,
+  .status {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    color: #fff;
+  }
+  h1 {
+    font-size: clamp(32px, 4.4vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    margin: 0;
+  }
+  h2 {
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin: 0;
+  }
+  p {
+    color: #a79dc4;
+  }
+  .greeting {
+    margin: 12px 0 0;
+  }
+  .greeting strong {
+    color: #f3eeff;
+  }
+  .account-overview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .card {
+    min-width: 0;
+    padding: 24px;
+    border-radius: 24px;
+    background: #120b22;
+    border: 1px solid rgba(196, 170, 255, 0.1);
+  }
+  .summary h2 {
+    color: #a79dc4;
+    font-family: Geist, system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: normal;
+  }
+  .account-name,
+  .status {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 14px 0 8px;
+  }
+  .status {
+    color: #d6bbff;
+  }
+  .muted {
+    font-size: 13px;
+    margin: 0;
+  }
+  .details {
+    margin-top: 20px;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 40px 24px;
+  }
+  .empty-state img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+  }
+  .empty-state p {
+    max-width: 510px;
+    margin: 14px auto 24px;
+  }
+  .button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 46px;
+    max-width: 100%;
+    padding: 10px 18px;
+    border-radius: 13px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .primary {
+    background: #d6bbff;
+    color: #17092e;
+  }
+  .primary:hover {
+    background: #e4d3ff;
+    color: #17092e;
+  }
+  .profile-card {
+    background:
+      radial-gradient(
+        100% 90% at 0 0,
+        rgba(214, 187, 255, 0.1),
+        transparent 70%
+      ),
+      #120b22;
+  }
+  .profile-card a {
+    display: block;
+    width: fit-content;
+    padding: 8px 0;
+  }
+  .home-link {
+    margin-top: 12px;
+  }
+  @media (max-width: 760px) {
+    .account-overview {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .dashboard {
+      padding: 28px 16px 40px;
+    }
+    .card {
+      padding: 20px;
+    }
+  }
+</style>

@@ -1,21 +1,21 @@
 # Database
 
-Selected: Supabase PostgreSQL. The shared development project is provisioned and verified. The application does not use cloud database credentials yet, and no product schema is approved.
+Selected: Supabase PostgreSQL. The shared development project is provisioned and verified. The account foundation is applied to development and exercised through real provider/browser integration. The owner supplied the rebuild brief as the behavioral target. Orders, payments and other product schemas remain unimplemented. See [backend rebuild status](../product/backend-rebuild-status.md).
 
 ## Hosted development
 
-| Setting                  | Verified value                                                  |
-| ------------------------ | --------------------------------------------------------------- |
-| Organization             | Duoly, `vbrxnajhjbbkclijigxi`                                   |
-| Organization plan        | Free, read back before and after provisioning                   |
-| Project                  | `duoly-dev`, `omnejesspybaxuacjlah`                             |
-| Region                   | `eu-central-1`, Frankfurt                                       |
-| Database                 | PostgreSQL 17.11                                                |
-| Console                  | <https://supabase.com/dashboard/project/omnejesspybaxuacjlah>   |
-| Database SSL enforcement | Enabled and applied successfully                                |
-| Product tables           | None                                                            |
-| Customer auth            | Signup, email, anonymous, phone and external providers disabled |
-| SMTP                     | Not configured                                                  |
+| Setting                  | Verified value                                                |
+| ------------------------ | ------------------------------------------------------------- |
+| Organization             | Duoly, `vbrxnajhjbbkclijigxi`                                 |
+| Organization plan        | Free, read back before and after provisioning                 |
+| Project                  | `duoly-dev`, `omnejesspybaxuacjlah`                           |
+| Region                   | `eu-central-1`, Frankfurt                                     |
+| Database                 | PostgreSQL 17.11                                              |
+| Console                  | <https://supabase.com/dashboard/project/omnejesspybaxuacjlah> |
+| Database SSL enforcement | Enabled and applied successfully                              |
+| Product tables           | profiles and account_roles, both RLS enabled                  |
+| Customer auth            | Email enabled; signup closed; social, phone and anonymous off |
+| SMTP                     | Resend configured; verification blocks successful sending     |
 
 Supabase is **free-only** by owner decision. Do not upgrade the organization, enable paid branching, select paid compute or enable paid add-ons. If quotas prevent work, stop and raise the exact limitation. Paused projects do not count toward the active free-project allowance; unrelated paused projects were preserved. Do not delete other projects as routine cleanup.
 

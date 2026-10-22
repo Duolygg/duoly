@@ -14,7 +14,7 @@ const ROLE = {
   teammate: { label: 'Teammate', back: 'Back to orders' },
   admin: { label: 'Admin', back: 'Back to admin' }
 };
-const PROVIDER = { discord: 'Discord', google: 'Google', password: 'email and password' };
+const PROVIDER = { email: 'email code', discord: 'Discord', google: 'Google', password: 'email and password' };
 
 // Crops a picked image to a centred square and shrinks it to 256×256, so uploads stay small (~20 KB).
 async function toAvatar(file) {
@@ -71,6 +71,7 @@ export default class Profile extends React.Component {
   }
 
   async pickFile(file) {
+    if (this.props.accountOnly) return this.setState({ error: 'Uploads are not available yet. Choose an avatar below.' });
     this.setState({ error: '' });
     try {
       const upload = await toAvatar(file);
@@ -86,9 +87,9 @@ export default class Profile extends React.Component {
     this.setState({ saving: true, error: '' });
     const body = { name: s.name.trim(), country: s.country };
     if (s.upload) body.upload = s.upload; else body.image = s.image;
-    if (this.props.user.role === 'teammate') { body.bio = s.bio; body.languages = s.languages; }
+    if (!this.props.accountOnly && this.props.user.role === 'teammate') { body.bio = s.bio; body.languages = s.languages; }
     try {
-      const res = await fetch('/api/me/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const res = this.props.onSave ? await this.props.onSave(body) : await fetch('/api/me/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) return this.setState({ saving: false, error: data.error || 'Couldn’t save. Please try again.' });
       const p = data.profile || {};
@@ -178,7 +179,7 @@ export default class Profile extends React.Component {
     const s = this.state;
     const u = this.props.user;
     const role = ROLE[u.role] || ROLE.customer;
-    const teammate = u.role === 'teammate';
+    const teammate = !this.props.accountOnly && u.role === 'teammate';
     const avatar = s.upload || s.image || u.providerImage || PRESETS[0];
     const custom = !!(s.upload || s.image);
     const dirty = this.dirty();
@@ -246,10 +247,10 @@ export default class Profile extends React.Component {
               {/* picture */}
               <section aria-labelledby="pf-pic" style={card}>
                 <h2 id="pf-pic" style={h2}>Profile picture</h2>
-                <p style={help}>JPG, PNG or WebP. We crop it to a square for you.</p>
+                <p style={help}>{this.props.accountOnly ? 'Choose one of the avatars below. Uploads are not available yet.' : 'JPG, PNG or WebP. We crop it to a square for you.'}</p>
                 <div style={{ marginTop: "18px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "18px" }}>
                   <button
-                    type="button" aria-label="Upload a new profile picture" onClick={() => this.fileRef.current && this.fileRef.current.click()}
+                    type="button" disabled={!!this.props.accountOnly} aria-label="Upload a new profile picture" onClick={() => this.fileRef.current && this.fileRef.current.click()}
                     onDragOver={(e) => { e.preventDefault(); if (!s.drag) this.setState({ drag: true }); }}
                     onDragLeave={() => this.setState({ drag: false })}
                     onDrop={(e) => { e.preventDefault(); this.setState({ drag: false }); this.pickFile(e.dataTransfer.files[0]); }}
@@ -370,7 +371,7 @@ export default class Profile extends React.Component {
               </section>
 
               {/* Discord: teammates connect it so the bot can show Online / In Session in the server */}
-              {teammate || u.role === 'admin' ? this.renderDiscord(card, h2, help, ghost) : null}
+              {!this.props.accountOnly && (teammate || u.role === 'admin') ? this.renderDiscord(card, h2, help, ghost) : null}
 
               {/* account */}
               <section aria-labelledby="pf-acc" style={card}>

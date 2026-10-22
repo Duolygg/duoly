@@ -1,0 +1,9 @@
+---
+import DesignLayout from '../../layouts/DesignLayout.astro';
+import AdminApp from '../../design-reference/components/admin/AdminApp.jsx';
+import { SAMPLE_ADMIN, SAMPLE_NOW } from '../../design-preview/sample-data';
+---
+
+<DesignLayout title="Admin | Duoly preview">
+  <AdminApp admin={SAMPLE_ADMIN} now={SAMPLE_NOW} client:load />
+</DesignLayout>

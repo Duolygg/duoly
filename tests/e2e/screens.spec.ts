@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('customer dashboard renders the original sample order view', async ({
   page,
 }) => {
-  const response = await page.goto('/dashboard');
+  const response = await page.goto('/preview/dashboard');
   expect(response?.status()).toBe(200);
   await expect(page.getByText('Design preview', { exact: true })).toBeVisible();
   await expect(
@@ -20,7 +20,7 @@ test('teammate preview shows the shared sample queue without network writes', as
     if (!['GET', 'HEAD'].includes(request.method())) writes.push(request.url());
   });
   page.on('pageerror', (error) => errors.push(error.message));
-  const response = await page.goto('/teammate');
+  const response = await page.goto('/preview/teammate');
   expect(response?.status()).toBe(200);
   await expect(page.getByText('Design preview', { exact: true })).toBeVisible();
   await expect(
@@ -47,7 +47,7 @@ test('ported /admin preserves the original view and preview boundary', async ({
     if (new URL(request.url()).pathname.startsWith('/api/'))
       apiCalls.push(request.url());
   });
-  const response = await page.goto('/admin');
+  const response = await page.goto('/preview/admin');
   expect(response?.status()).toBe(200);
   await expect(page.getByText('Design preview', { exact: true })).toBeVisible();
   await expect
@@ -173,7 +173,7 @@ test('ported /profile preserves the original view and preview boundary', async (
     if (new URL(request.url()).pathname.startsWith('/api/'))
       apiCalls.push(request.url());
   });
-  const response = await page.goto('/profile');
+  const response = await page.goto('/preview/profile');
   expect(response?.status()).toBe(200);
   await expect(page.getByText('Design preview', { exact: true })).toBeVisible();
   await expect
@@ -242,7 +242,7 @@ test('ported /terms preserves the original view and preview boundary', async ({
 test('accepting a sample order fails explicitly without removing it or opening a session', async ({
   page,
 }) => {
-  await page.goto('/teammate');
+  await page.goto('/preview/teammate');
   await expect(
     page
       .getByRole('region', { name: 'Available orders' })

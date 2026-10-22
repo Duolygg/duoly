@@ -1,11 +1,36 @@
 ---
-import DesignLayout from '../layouts/DesignLayout.astro';
-import DashboardPreview from '../design-preview/DashboardPreview';
+import ProductLayout from '../layouts/ProductLayout.astro';
+import EmptyDashboard from '../components/account/EmptyDashboard.astro';
+import { accountContext } from '../server/auth/context';
+const account = accountContext(Astro.request, Astro.cookies);
+for (const [name, value] of account.headers)
+  Astro.response.headers.set(name, value);
+let identity = null;
+try {
+  identity = await account.identity();
+} catch {
+  Astro.response.status = 503;
+}
+if (!identity && Astro.response.status !== 503)
+  return account.redirect('/login');
+if (identity && identity.viewer.role !== 'customer')
+  return account.redirect(
+    identity.viewer.role === 'admin' ? '/admin' : '/teammate',
+  );
+const csrf = account.csrf();
 ---
 
-<DesignLayout title="Customer dashboard — Duoly design preview">
-  <p class="preview-role">
-    Sample customer view — not an authenticated account.
-  </p>
-  <DashboardPreview client:load />
-</DesignLayout>
+<ProductLayout
+  title="Your dashboard | Duoly"
+  viewer={identity?.viewer}
+  csrf={csrf}
+>
+  {identity ? (
+    <EmptyDashboard viewer={identity.viewer} />
+  ) : (
+    <section role="alert">
+      <h1>Account temporarily unavailable</h1>
+      <p>We could not load your account. Please try again shortly.</p>
+    </section>
+  )}
+</ProductLayout>
