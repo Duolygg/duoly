@@ -2,7 +2,6 @@
 import '../design-reference/globals.css';
 import { UPLOADED_AVATAR, type Viewer } from '../contracts/account';
 import {
-  ADMIN_SECTIONS,
   DISCORD_INVITE,
   FOOTER_COLUMNS,
   MAIN_NAV,
@@ -16,8 +15,6 @@ interface Props {
   csrf?: string;
   /** Home renders its own header and footer from the design. */
   bare?: boolean;
-  /** Admin pages get the section sidebar. */
-  admin?: boolean;
   /** Mark live pages so no design-preview guard ever blocks real forms. */
   live?: boolean;
 }
@@ -28,7 +25,6 @@ const {
   viewer,
   csrf = '',
   bare = false,
-  admin = false,
   live = true,
 } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -166,28 +162,7 @@ const external = (href: string) => href.startsWith('http');
       </header>
     )}
     <main id="main-content" tabindex="-1">
-      {admin ? (
-        <div class="admin-shell">
-          <nav class="admin-nav" aria-label="Admin sections">
-            {ADMIN_SECTIONS.map((section) => {
-              const href = section.slug ? `/admin/${section.slug}` : '/admin';
-              return (
-                <a
-                  href={href}
-                  aria-current={path === href ? 'page' : undefined}
-                >
-                  {section.label}
-                </a>
-              );
-            })}
-          </nav>
-          <div class="admin-main">
-            <slot />
-          </div>
-        </div>
-      ) : (
-        <slot />
-      )}
+      <slot />
     </main>
     {!bare && (
       <footer class="site-footer">
@@ -566,34 +541,6 @@ const external = (href: string) => href.startsWith('http');
   .footer-cols a:hover {
     color: #fff;
   }
-  .admin-shell {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 24px;
-    display: grid;
-    grid-template-columns: 200px minmax(0, 1fr);
-    gap: 32px;
-  }
-  .admin-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    position: sticky;
-    top: 80px;
-    align-self: start;
-  }
-  .admin-nav a {
-    padding: 9px 12px;
-    border-radius: 10px;
-    color: #a79dc4;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-  }
-  .admin-nav a[aria-current] {
-    background: rgba(214, 187, 255, 0.1);
-    color: #fff;
-  }
   @media (max-width: 900px) {
     .main-nav {
       display: none;
@@ -603,17 +550,6 @@ const external = (href: string) => href.startsWith('http');
     }
     .account-name {
       display: none;
-    }
-    .admin-shell {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .admin-nav {
-      position: static;
-      flex-direction: row;
-      overflow-x: auto;
-    }
-    .admin-nav a {
-      white-space: nowrap;
     }
   }
   @media (max-width: 480px) {
