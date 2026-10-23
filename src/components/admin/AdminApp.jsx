@@ -172,12 +172,22 @@ export default class AdminApp extends React.Component {
     window.addEventListener('popstate', this._pop);
     this.loadAudit();
     this.loadCounts();
+    this.revealNav();
     this._counts = setInterval(this.loadCounts, 30000);
   }
   componentWillUnmount() {
     window.removeEventListener('popstate', this._pop);
     clearInterval(this._counts);
     (this._toastTimers || []).forEach(clearTimeout);
+  }
+  // On phones the sidebar is a scrolling tab row: keep the current section in view.
+  revealNav = () => {
+    const el = document.querySelector('.ad-nav [aria-current="page"]');
+    if (el && el.scrollIntoView)
+      el.scrollIntoView({ block: 'nearest', inline: 'center' });
+  };
+  componentDidUpdate(_, prev) {
+    if (prev.section !== this.state.section) this.revealNav();
   }
   go = (section) => {
     const path = pathOf(section);
