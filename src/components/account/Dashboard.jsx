@@ -1,6 +1,6 @@
 import React from 'react';
 import Rewards, { levelFor } from '../../design-reference/components/Rewards';
-import SupportChat from '../../design-reference/components/SupportChat';
+import SupportChat from '../support/SupportChat';
 import { GAME } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
 import { dashboardFetch as fetch } from './dashboard-data';
@@ -13,7 +13,7 @@ const FEATURES = {
   wallet: false,
   rewards: false,
   reviews: false,
-  support: false,
+  support: true,
   pro: false,
 };
 
@@ -1895,7 +1895,7 @@ export default class Dashboard extends React.Component {
             </div>
           </div>
         </main>
-        {FEATURES.support ? <SupportChat /> : null}
+        {FEATURES.support ? <SupportChat csrf={this.props.csrf} /> : null}
       </div>
     );
   }

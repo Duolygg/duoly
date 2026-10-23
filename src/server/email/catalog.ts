@@ -98,6 +98,10 @@ export const transactionalEmails = {
     trigger: 'Weekly payout marked paid or put on hold',
     build: t.payout,
   },
+  support_handoff: {
+    trigger: 'Sparky handed a conversation to a human',
+    build: (data: t.SupportHandoffData) => t.supportHandoff(data),
+  },
   support_reply: {
     trigger: 'Support agent replied to a conversation',
     build: (data: t.SupportReplyData) => t.supportReply(data),

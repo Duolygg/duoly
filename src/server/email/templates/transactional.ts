@@ -765,6 +765,31 @@ export function payout(data: PayoutData, site: string): EmailContent {
 // ---------------------------------------------------------------------------------------------
 // Support
 
+export interface SupportHandoffData {
+  requesterName: string;
+  requesterRole: string;
+  message: string;
+  inboxUrl: string;
+}
+
+export function supportHandoff(data: SupportHandoffData): EmailContent {
+  return {
+    subject: `${data.requesterName} needs support`,
+    preheader: data.message.slice(0, 110),
+    eyebrow: 'Human handoff',
+    title: `${data.requesterName} is`,
+    titleAccent: 'waiting for the team.',
+    blocks: [
+      {
+        type: 'paragraph',
+        text: `${data.requesterRole}: ${data.message || 'Asked to talk to a person.'}`,
+      },
+      { type: 'button', label: 'Open support inbox', url: data.inboxUrl },
+    ],
+    reason: 'You’re getting this because you are a Duoly administrator.',
+  };
+}
+
 export interface SupportReplyData {
   firstName: string;
   agentName: string;

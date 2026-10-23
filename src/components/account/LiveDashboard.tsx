@@ -18,5 +18,5 @@ export default function LiveDashboard({
     });
     if (response.ok) window.location.assign('/');
   };
-  return <Dashboard user={viewer} onSignOut={onSignOut} />;
+  return <Dashboard user={viewer} csrf={csrf} onSignOut={onSignOut} />;
 }

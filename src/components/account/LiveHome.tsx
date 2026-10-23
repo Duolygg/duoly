@@ -131,6 +131,7 @@ export default function LiveHome({
   };
   return (
     <Home
+      csrf={csrf}
       session={viewer ? { user: viewer } : null}
       initialCurrency="EUR"
       authError={authError}
