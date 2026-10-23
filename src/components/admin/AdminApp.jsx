@@ -10,6 +10,7 @@ import Users from './Users';
 import Applications from './Applications';
 import AuditLog from './AuditLog';
 import Orders from './Orders';
+import LiveDesk from './LiveDesk';
 import NotConnected from './NotConnected';
 
 // Port of the original admin shell (components/admin/AdminApp.jsx): same sidebar, groups,
@@ -108,7 +109,7 @@ const TITLES = {
   overview: ['Overview', 'How Duoly is doing right now'],
   live: [
     'Live desk',
-    'Watch every order in the shared queue and hand them to teammates. Admins don’t play and are always online here.',
+    'The shared queue right now: who’s waiting, who’s in game and what finished today. Admins don’t play orders.',
   ],
   priority: [
     'Priority',
@@ -138,7 +139,7 @@ const TITLES = {
   settings: ['Settings', 'The rules the platform runs on'],
 };
 // Sections wired to the database. The rest show what they will do, never sample data.
-const LIVE = ['users', 'applications', 'orders', 'audit'];
+const LIVE = ['live', 'users', 'applications', 'orders', 'audit'];
 
 export const sectionFromPath = (path) => {
   const slug = String(path || '')
@@ -448,6 +449,7 @@ export default class AdminApp extends React.Component {
     let body = null;
     if (s.section === 'users') body = <Users {...props} />;
     else if (s.section === 'applications') body = <Applications {...props} />;
+    else if (s.section === 'live') body = <LiveDesk {...props} />;
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
     else if (s.section === 'audit') body = <AuditLog {...props} />;
@@ -625,7 +627,7 @@ export default class AdminApp extends React.Component {
           </div>
         </aside>
 
-        <main className="ad-main" id="main-content" tabIndex={-1}>
+        <div className="ad-main">
           <header
             style={{
               display: 'flex',
@@ -703,7 +705,7 @@ export default class AdminApp extends React.Component {
             )}
           </header>
           {body}
-        </main>
+        </div>
 
         {this.renderConfirm()}
 
