@@ -164,6 +164,35 @@ export type Database = {
           },
         ];
       };
+      customer_blocks: {
+        Row: {
+          blocked_at: string;
+          blocked_by: string | null;
+          reason: string;
+          user_id: string;
+        };
+        Insert: {
+          blocked_at?: string;
+          blocked_by?: string | null;
+          reason: string;
+          user_id: string;
+        };
+        Update: {
+          blocked_at?: string;
+          blocked_by?: string | null;
+          reason?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'customer_blocks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       discord_accounts: {
         Row: {
           discord_id: string;
@@ -1041,6 +1070,7 @@ export type Database = {
           name: string;
         }[];
       };
+      admin_customers: { Args: never; Returns: Json };
       admin_decide_application: {
         Args: {
           p_application_id: string;
@@ -1062,6 +1092,10 @@ export type Database = {
       admin_orders: { Args: { p_limit?: number }; Returns: Json };
       admin_set_access: {
         Args: { p_games: string[]; p_gg: boolean; p_user_id: string };
+        Returns: Json;
+      };
+      admin_set_blocked: {
+        Args: { p_blocked: boolean; p_reason?: string; p_user_id: string };
         Returns: Json;
       };
       admin_set_role: {

@@ -8,6 +8,7 @@ import {
   APPLICATION_SERVICES,
   DecideApplicationSchema,
   SetAccessSchema,
+  SetBlockedSchema,
   SetRoleSchema,
   SetSuspendedSchema,
   applicationError,
@@ -155,6 +156,21 @@ export const teammates = adminRoute(
         client.rpc('admin_set_suspended', {
           p_user_id: body.userId as string,
           p_suspended: body.suspended as boolean,
+          p_reason: (body.reason as string | undefined) ?? '',
+        }),
+    },
+  ],
+);
+
+export const customers = adminRoute(
+  (client) => client.rpc('admin_customers'),
+  [
+    {
+      schema: SetBlockedSchema,
+      call: (client, body) =>
+        client.rpc('admin_set_blocked', {
+          p_user_id: body.userId as string,
+          p_blocked: body.blocked as boolean,
           p_reason: (body.reason as string | undefined) ?? '',
         }),
     },

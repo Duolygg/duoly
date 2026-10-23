@@ -13,6 +13,7 @@ import Orders from './Orders';
 import LiveDesk from './LiveDesk';
 import Overview from './Overview';
 import Teammates from './Teammates';
+import Customers from './Customers';
 import NotConnected from './NotConnected';
 import ChatModeration from './ChatModeration';
 
@@ -149,6 +150,7 @@ const LIVE = [
   'applications',
   'orders',
   'teammates',
+  'customers',
   'audit',
 ];
 
@@ -466,6 +468,7 @@ export default class AdminApp extends React.Component {
       body = <Overview {...props} chatEnabled={this.props.chatEnabled} />;
     else if (s.section === 'live') body = <LiveDesk {...props} />;
     else if (s.section === 'teammates') body = <Teammates {...props} />;
+    else if (s.section === 'customers') body = <Customers {...props} />;
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
     else if (s.section === 'audit') body = <AuditLog {...props} />;
