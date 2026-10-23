@@ -796,6 +796,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      admin_orders: { Args: { p_limit?: number }; Returns: Json };
       admin_set_access: {
         Args: { p_games: string[]; p_gg: boolean; p_user_id: string };
         Returns: Json;

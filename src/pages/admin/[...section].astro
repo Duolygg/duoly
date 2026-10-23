@@ -41,5 +41,8 @@ const csrf = account.csrf();
     owner={isOwnerEmail(identity.viewer.email)}
     csrf={csrf}
     section={section}
+    stripeTest={String(
+      process.env.STRIPE_SECRET_KEY ?? import.meta.env.STRIPE_SECRET_KEY ?? '',
+    ).startsWith('sk_test_')}
   />
 </SiteLayout>

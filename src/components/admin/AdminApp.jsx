@@ -9,6 +9,7 @@ import { adminApi, auditEntry } from './api';
 import Users from './Users';
 import Applications from './Applications';
 import AuditLog from './AuditLog';
+import Orders from './Orders';
 import NotConnected from './NotConnected';
 
 // Port of the original admin shell (components/admin/AdminApp.jsx): same sidebar, groups,
@@ -137,7 +138,7 @@ const TITLES = {
   settings: ['Settings', 'The rules the platform runs on'],
 };
 // Sections wired to the database. The rest show what they will do, never sample data.
-const LIVE = ['users', 'applications', 'audit'];
+const LIVE = ['users', 'applications', 'orders', 'audit'];
 
 export const sectionFromPath = (path) => {
   const slug = String(path || '')
@@ -447,6 +448,8 @@ export default class AdminApp extends React.Component {
     let body = null;
     if (s.section === 'users') body = <Users {...props} />;
     else if (s.section === 'applications') body = <Applications {...props} />;
+    else if (s.section === 'orders')
+      body = <Orders {...props} stripeTest={this.props.stripeTest} />;
     else if (s.section === 'audit') body = <AuditLog {...props} />;
     else body = <NotConnected section={s.section} go={this.go} />;
     return (
