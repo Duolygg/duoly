@@ -1,5 +1,9 @@
 # Backend rebuild checkpoint
 
+## Current completion slice
+
+Order completion, permanent USD earning/deposit snapshots and the native teammate UI are implemented and locally verified on `feat/order-completion`. This is not live: the completion migration has only been exercised in hosted rollback-only transactions and a disposable local PostgreSQL server. Reviews, cashback, loyalty gifts, deposit release and withdrawals remain out of scope. See [order-completion.md](order-completion.md) for the exact contract, acceptance evidence and activation gate.
+
 ## Current private-proof slice
 
 Private screenshot uploads, authorized reads and trusted scheduled stale-object cleanup are implemented and accepted against real PostgreSQL, Storage and authenticated browsers. See [private-proof-status.md](private-proof-status.md) and [the cleanup runbook](../runbooks/proof-cleanup.md) for scope, evidence and operations. Older checkpoints below describing proofs as unimplemented are superseded. Completion and all financial transitions remain separate, unimplemented work. Exact-head CI and production release evidence belong in the integrating PR.

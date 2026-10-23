@@ -5,6 +5,8 @@ import {
   ProofSession,
   type ProofState,
 } from './proof-session';
+import { CompletionControls } from '../teammate/completion-ui';
+import type { Completion } from '../../contracts/completion';
 import './proofs.css';
 
 type ProofProps = {
@@ -13,6 +15,8 @@ type ProofProps = {
   mode: 'customer' | 'teammate';
   csrf?: string;
   disabled?: boolean;
+  onCompleted?: (entry: Completion) => void | Promise<void>;
+  onCompletionBusyChange?: (busy: boolean) => void;
 };
 export function ProofView({
   orderId,
@@ -51,7 +55,7 @@ export function ProofView({
           Refresh evidence
         </button>
       </div>
-      <p>Evidence only. Order completion is not available yet.</p>
+      <p>Private screenshots are visible only to authorized participants.</p>
       {state.kind === 'loading' && (
         <p role="status">Loading private evidence…</p>
       )}
@@ -158,6 +162,8 @@ export function ProofView({
 }
 function ProofScope(props: ProofProps) {
   const [state, setState] = useState<ProofState>(initialProofState);
+  const [completionLocked, setCompletionLocked] = useState(false);
+  const completionLock = useRef(false);
   const session = useRef<ProofSession | null>(null);
   useEffect(() => {
     const current = new ProofSession(
@@ -175,13 +181,37 @@ function ProofScope(props: ProofProps) {
     };
   }, [props.orderId, props.assignmentId, props.mode, props.csrf]);
   return (
-    <ProofView
-      {...props}
-      state={state}
-      onRefresh={() => void session.current?.refresh()}
-      onSelect={(files) => session.current?.select(files)}
-      onUpload={() => void session.current?.upload()}
-    />
+    <>
+      <ProofView
+        {...props}
+        disabled={props.disabled || completionLocked}
+        state={state}
+        onRefresh={() => {
+          if (!completionLock.current) void session.current?.refresh();
+        }}
+        onSelect={(files) => {
+          if (!completionLock.current) session.current?.select(files);
+        }}
+        onUpload={() => {
+          if (!completionLock.current) void session.current?.upload();
+        }}
+      />
+      {props.mode === 'teammate' && props.assignmentId && props.onCompleted && (
+        <CompletionControls
+          orderId={props.orderId}
+          assignmentId={props.assignmentId}
+          csrf={props.csrf ?? ''}
+          state={state}
+          disabled={props.disabled}
+          onCompleted={props.onCompleted}
+          onBusyChange={(locked) => {
+            completionLock.current = locked;
+            setCompletionLocked(locked);
+            props.onCompletionBusyChange?.(locked);
+          }}
+        />
+      )}
+    </>
   );
 }
 export default function PrivateProofs(props: ProofProps) {

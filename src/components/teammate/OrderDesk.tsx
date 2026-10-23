@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import PrivateProofs from '../proofs/PrivateProofs';
 import OrderChat from '../chat/OrderChat';
 import './order-desk.css';
+import type { Completion } from '../../contracts/completion';
+import { matchesCompletion, readEarnings } from './completion-client';
+import { CompletionReceipt, RecentEarnings } from './completion-ui';
 import {
   OrderCommandSchema,
   OrderResponseSchemas,
@@ -245,6 +248,9 @@ export function DeskView({
   onAccept,
   csrf = '',
   chatEnabled = false,
+  onCompleted,
+  onCompletionBusyChange,
+  completionBusy = false,
 }: {
   state: DeskState;
   pending: boolean;
@@ -252,6 +258,9 @@ export function DeskView({
   onAccept?: (id: string) => void;
   csrf?: string;
   chatEnabled?: boolean;
+  onCompleted?: (entry: Completion) => void | Promise<void>;
+  onCompletionBusyChange?: (busy: boolean) => void;
+  completionBusy?: boolean;
 }) {
   return (
     <div
@@ -271,7 +280,7 @@ export function DeskView({
                   state.assignment.value.status === 'in_progress' &&
                   state.assignment.value.current_assignment_id && (
                     <OrderChat
-                      key={`${state.assignment.value.id}:${state.assignment.value.current_assignment_id}`}
+                      key={`chat:${state.assignment.value.id}:${state.assignment.value.current_assignment_id}`}
                       orderId={state.assignment.value.id}
                       assignmentId={
                         state.assignment.value.current_assignment_id
@@ -291,6 +300,8 @@ export function DeskView({
                       }
                       mode="teammate"
                       csrf={csrf}
+                      onCompleted={onCompleted}
+                      onCompletionBusyChange={onCompletionBusyChange}
                     />
                   )}
               </div>
@@ -301,10 +312,11 @@ export function DeskView({
             </p>
           ))}
         <p className="td-muted td-limits">
-          {chatEnabled
-            ? 'Completion and payout withdrawals are unavailable.'
-            : 'Completion, chat and payout withdrawals are unavailable.'}{' '}
-          No completion or payment action can be taken here.
+          {!onCompleted &&
+            (chatEnabled
+              ? 'Completion and payout withdrawals are unavailable. '
+              : 'Completion, chat and payout withdrawals are unavailable. ')}
+          Withdrawals and deposit releases are not available yet.
         </p>
       </section>
       <section className="td-panel" aria-labelledby="td-queue">
@@ -321,7 +333,7 @@ export function DeskView({
                 <OrderCard
                   key={order.id}
                   order={order}
-                  disabled={pending || !canAccept}
+                  disabled={pending || completionBusy || !canAccept}
                   onAccept={onAccept}
                 />
               ))}
@@ -365,9 +377,19 @@ export default function OrderDesk({
   const [pending, setPending] = useState(true);
   const [notice, setNotice] = useState('');
   const [blocked, setBlocked] = useState(false);
+  const [completionBusy, setCompletionBusy] = useState(false);
+  const [receipt, setReceipt] = useState<Completion | null>(null);
+  const [earnings, setEarnings] = useState<ReadState<Completion[]>>({
+    kind: 'loading',
+  });
+  const mounted = useRef(true);
   const busy = useRef(true);
   useEffect(() => {
+    mounted.current = true;
     let cancelled = false;
+    void readEarnings(fetch).then((next) => {
+      if (!cancelled) setEarnings(next);
+    });
     void readDesk(fetch).then((next) => {
       if (!cancelled) {
         setState(next);
@@ -377,6 +399,7 @@ export default function OrderDesk({
     });
     return () => {
       cancelled = true;
+      mounted.current = false;
     };
   }, []);
 
@@ -386,7 +409,14 @@ export default function OrderDesk({
     setPending(true);
     setState(loadingDesk);
     setNotice('');
-    const next = await readDesk(fetch);
+    setReceipt(null);
+    setEarnings({ kind: 'loading' });
+    const [next, records] = await Promise.all([
+      readDesk(fetch),
+      readEarnings(fetch),
+    ]);
+    if (!mounted.current) return;
+    setEarnings(records);
     setState(next);
     setBlocked(false);
     setPending(false);
@@ -394,6 +424,7 @@ export default function OrderDesk({
   }
   const canAccept =
     !!csrf &&
+    !completionBusy &&
     !blocked &&
     state.queue.kind === 'ready' &&
     state.assignment.kind === 'ready' &&
@@ -433,7 +464,11 @@ export default function OrderDesk({
             service.
           </p>
         </div>
-        <button type="button" disabled={pending} onClick={() => void refresh()}>
+        <button
+          type="button"
+          disabled={pending || completionBusy}
+          onClick={() => void refresh()}
+        >
           Refresh desk
         </button>
       </div>
@@ -455,7 +490,6 @@ export default function OrderDesk({
         state.assignment.value && (
           <p className="td-notice">
             Finish your current assignment before accepting another order.
-            Completion is not available here yet.
           </p>
         )}
       <DeskView
@@ -465,7 +499,51 @@ export default function OrderDesk({
         csrf={csrf}
         chatEnabled={chatEnabled}
         onAccept={(id) => void accept(id)}
+        completionBusy={completionBusy}
+        onCompletionBusyChange={(locked) => {
+          busy.current = locked;
+          setCompletionBusy(locked);
+        }}
+        onCompleted={async (entry) => {
+          if (
+            !mounted.current ||
+            state.assignment.kind !== 'ready' ||
+            state.assignment.value?.id !== entry.order_id ||
+            state.assignment.value.current_assignment_id !== entry.assignment_id
+          )
+            return;
+          setReceipt(entry);
+          setBlocked(true);
+          setNotice('Completion recorded. Reading your current assignment...');
+          const [next, records] = await Promise.all([
+            readDesk(fetch),
+            readEarnings(fetch),
+          ]);
+          if (!mounted.current) return;
+          setState(next);
+          setEarnings(records);
+          const clear =
+            next.assignment.kind === 'ready' && next.assignment.value === null;
+          setBlocked(!clear);
+          setNotice(
+            clear
+              ? 'Completion recorded. Your assignment is finished.'
+              : 'Completion recorded, but the current assignment is not confirmed clear. Refresh the desk before accepting another order.',
+          );
+          busy.current = false;
+          setCompletionBusy(false);
+        }}
       />
+      {receipt &&
+        !(
+          earnings.kind === 'ready' &&
+          earnings.value.some((entry) => matchesCompletion(entry, receipt))
+        ) && (
+          <div className="td-completion-notice" role="status">
+            <CompletionReceipt entry={receipt} />
+          </div>
+        )}
+      <RecentEarnings state={earnings} />
     </div>
   );
 }
