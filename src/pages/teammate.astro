@@ -1,6 +1,6 @@
 ---
-import ProductLayout from '../layouts/ProductLayout.astro';
-import OrderDesk from '../components/teammate/OrderDesk';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import LiveTeammate from '../components/teammate/LiveTeammate';
 import { accountContext } from '../server/auth/context';
 import { orderChatEnabled } from '../server/chat/config';
 const chatEnabled = orderChatEnabled();
@@ -20,108 +20,21 @@ if (!identity) return account.redirect('/login');
 if (identity.viewer.role !== 'teammate')
   return new Response('Not found', { status: 404, headers: account.headers });
 const csrf = account.csrf();
-const discordEnabled = !!account.config?.providers.discord;
-const RESULT: Record<string, string> = {
-  cancelled: 'You cancelled on Discord. Connect it to unlock your dashboard.',
-  taken:
-    'That Discord account is already connected to another Duoly account. Use your own.',
-  failed: 'Connecting didn’t work. Please try again.',
-  unavailable: 'Discord isn’t set up on this site yet. Ask an admin.',
-};
-const discordNotice = RESULT[Astro.url.searchParams.get('discord') ?? ''] ?? '';
-const justLinked = Astro.url.searchParams.get('discord') === 'linked';
 ---
 
-<ProductLayout
+<SiteLayout
   title="Teammate desk | Duoly"
   viewer={identity.viewer}
   csrf={csrf}
+  bare
 >
-  {identity.discord ? (
-    justLinked && (
-      <p class="dc-linked" role="status">
-        Discord connected as {identity.discord.username || 'you'}. Your roles in
-        the Duoly server now follow what you do here.
-      </p>
-    )
-  ) : (
-    <section class="dc-gate" aria-labelledby="dc-gate-h">
-      <h2 id="dc-gate-h">Connect your Discord to start</h2>
-      <p>
-        Every Duoly teammate is linked to Discord. It takes ten seconds, and
-        then you can go online and take orders.
-      </p>
-      {discordEnabled ? (
-        <form method="POST" action="/api/discord/link">
-          <input type="hidden" name="csrf" value={csrf} />
-          <input type="hidden" name="next" value="teammate" />
-          <button type="submit">Connect Discord</button>
-        </form>
-      ) : (
-        <p class="dc-error">
-          Discord isn’t set up on this site yet. Ask an admin.
-        </p>
-      )}
-      {discordNotice && (
-        <p class="dc-error" role="alert">
-          {discordNotice}
-        </p>
-      )}
-      <p class="dc-small">
-        We only see your Discord name and ID. Nothing is ever posted for you.
-      </p>
-    </section>
-  )}
-  <OrderDesk csrf={csrf} chatEnabled={chatEnabled} client:load />
-</ProductLayout>
-
-<style>
-  .dc-gate {
-    max-width: 640px;
-    margin: 24px auto 0;
-    padding: 24px;
-    border-radius: 20px;
-    background: rgba(88, 101, 242, 0.1);
-    border: 1px solid rgba(88, 101, 242, 0.4);
-    color: #f3eeff;
-  }
-  .dc-gate h2 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-  }
-  .dc-gate p {
-    margin: 10px 0 0;
-    color: #c9bfe6;
-    line-height: 1.5;
-  }
-  .dc-gate form {
-    margin: 16px 0 0;
-  }
-  .dc-gate button {
-    min-height: 44px;
-    padding: 0 20px;
-    border: none;
-    border-radius: 12px;
-    background: #5865f2;
-    color: #fff;
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  .dc-gate .dc-error {
-    color: #ff8a9b;
-    font-weight: 600;
-  }
-  .dc-gate .dc-small {
-    font-size: 12.5px;
-    color: #8e84ab;
-  }
-  .dc-linked {
-    max-width: 640px;
-    margin: 24px auto 0;
-    color: #5eeaa8;
-    font-weight: 600;
-  }
-</style>
+  <LiveTeammate
+    viewer={identity.viewer}
+    csrf={csrf}
+    discordLinked={!!identity.discord}
+    discordEnabled={!!account.config?.providers.discord}
+    discordResult={Astro.url.searchParams.get('discord') ?? ''}
+    chatEnabled={chatEnabled}
+    client:load
+  />
+</SiteLayout>
