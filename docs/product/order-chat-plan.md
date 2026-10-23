@@ -2,6 +2,14 @@
 
 Base: origin/main 6323542. Work only in the dedicated feat/order-chat worktree. Do not touch the primary checkout or the unrelated Stripe worktree. This is implementation authorization, not permission to change payment behavior, paid plans, production credentials or deploy unreviewed work.
 
+## Release checkpoint
+
+Owner authorized merge and deployment. Integrated current main through `3c5730b`, preserving its new admin console, Orders/payment trail, wallet checkout and email fixes. Chat moderation now lives in the existing `/admin/safety` section. Renumbered the chat migration to `20261024110000_order_chat.sql` because admin had already used `20261024090000`.
+
+Hosted migration dry-run passed and rolled back cleanly. Migration `20261024110000` was then applied to `omnejesspybaxuacjlah` and its exact history/table state read back. Actual authenticated hosted acceptance passed for user-scoped reads, unrelated denial, direct-table denial, private WebSocket join and message-free invalidation delivery, immutable retry/conflict, blocked nondelivery, idempotent admin warning resolution, typing expiry, and 21 concurrent requests yielding 20 successes and one rate limit. Owned test accounts and synthetic order/chat rows were deleted and zero remaining fixtures verified. Supabase adds its own event UUID to the fixed invalidation payload; clients ignore all payload content.
+
+Local checks on the integrated source passed 1002 unit tests, lint, format, type checking and Vercel build. PR/deployment and final browser evidence are recorded on the release PR to avoid repeatedly changing the release commit merely to record provider handles.
+
 ## Original authority and scope
 
 BACKEND_REBUILD_PROMPT.md lines 19, 47, 51 and 53 govern this feature. Reuse the original QueueRoom.jsx and Teammate.jsx visual behavior and lib/chatRules.js patterns, adapting persistence and transport. Chat is customer to assigned teammate, writes only while in_progress, 500 Unicode code points, last 200 delivered messages per assignment, typing expires after four seconds, at most 20 message attempts per account in a rolling minute, system messages on accept/complete/rate. Blocked messages never reach recipients and produce private admin flags. Admins may investigate and mark Warned or Dismissed, but never impersonate a player. Reroll creates a fresh conversation for the replacement; customer and admin may inspect archived assignments, former/replacement teammates never inspect each other's history. Do not add completion, reviews, tips or money transitions to implement their system messages: provide the completion transition hook; review integration remains inactive until that real domain event exists.

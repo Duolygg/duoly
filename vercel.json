@@ -25,6 +25,10 @@
           "value": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'"
         }
       ]
+    },
+    {
+      "source": "/api/orders/(.*)",
+      "headers": [{ "key": "Referrer-Policy", "value": "no-referrer" }]
     }
   ]
 }
