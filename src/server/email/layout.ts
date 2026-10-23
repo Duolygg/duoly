@@ -134,8 +134,8 @@ function paragraph(block: Extract<Block, { type: 'paragraph' }>): SafeHtml {
 function button(block: Extract<Block, { type: 'button' }>): SafeHtml {
   const url = safeUrl(block.url);
   const primary = m`<td class="dl-btn dl-full dl-stack dl-stack-gap" style="padding:0 10px 0 0;">
-<!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:52px;v-text-anchor:middle;width:260px;" arcsize="25%" stroke="f" fillcolor="${color.lavender}"><w:anchorlock/><center style="color:${color.onLavender};font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">${block.label} &#8594;</center></v:roundrect><![endif]-->
-<!--[if !mso]><!--><a href="${url}" class="dl-shine" style="display:inline-block;background-color:${color.lavender};color:${color.onLavender};font-family:${font.body};font-size:16px;line-height:20px;font-weight:700;text-decoration:none;padding:16px 26px;border-radius:13px;mso-hide:all;">${block.label}&nbsp;&#8594;</a><!--<![endif]-->
+<!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:52px;v-text-anchor:middle;width:260px;" arcsize="25%" stroke="f" fillcolor="${color.action}"><w:anchorlock/><center style="color:${color.white};font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">${block.label} &#8594;</center></v:roundrect><![endif]-->
+<!--[if !mso]><!--><a href="${url}" class="dl-shine" style="display:inline-block;background-color:${color.action};background-image:linear-gradient(135deg,${color.action},${color.actionTo});color:${color.white};font-family:${font.body};font-size:16px;line-height:20px;font-weight:700;text-decoration:none;padding:16px 26px;border-radius:13px;box-shadow:0 10px 26px -10px rgba(124,77,255,.7);mso-hide:all;">${block.label}&nbsp;&#8594;</a><!--<![endif]-->
 </td>`;
   const secondary = block.secondary
     ? m`<td class="dl-full dl-stack" style="padding:0;"><a href="${safeUrl(block.secondary.url)}" style="display:inline-block;background-color:${color.page};color:${color.text};font-family:${font.body};font-size:16px;line-height:20px;font-weight:600;text-decoration:none;padding:15px 22px;border-radius:13px;border:1px solid #3A2C5C;">${block.secondary.label}</a></td>`
@@ -195,13 +195,10 @@ function steps(block: Extract<Block, { type: 'steps' }>): SafeHtml {
   const cells = block.steps.map((step, index) => {
     const isDone = step.state === 'done';
     const isActive = step.state === 'active';
-    const bg = isDone ? color.green : isActive ? color.lavender : color.page;
+    // Deep fills with white glyphs: survives Gmail's dark-mode inversion.
+    const bg = isDone ? color.doneFill : isActive ? color.action : color.page;
     const border = isDone ? color.green : isActive ? color.lavender : '#3A2C5C';
-    const ink = isDone
-      ? color.greenInk
-      : isActive
-        ? color.onLavender
-        : color.muted;
+    const ink = isDone || isActive ? color.white : color.muted;
     const glyph = isDone ? raw('&#10003;') : String(index + 1);
     const labelColor = isDone || isActive ? color.text : color.muted;
     const left =
@@ -213,7 +210,7 @@ function steps(block: Extract<Block, { type: 'steps' }>): SafeHtml {
         ? m`<td width="50%"></td>`
         : m`<td width="50%" style="padding:0;"><div ${isActive ? raw('class="dl-scan"') : ''} style="height:2px;line-height:2px;font-size:1px;background-color:${isDone ? color.green : '#2A1F45'};">&nbsp;</div></td>`;
     return m`<td width="${width}%" align="center" valign="top" style="padding:0;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${left}<td width="30" style="padding:0;"><div class="${isActive ? 'dl-ping' : ''}" style="width:28px;height:28px;border-radius:50%;background:${bg};border:1px solid ${border};font-family:${font.body};font-size:13px;line-height:28px;font-weight:800;color:${ink};text-align:center;">${glyph}</div></td>${right}</tr></table>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${left}<td width="30" style="padding:0;"><div class="${isActive ? 'dl-ping' : ''}" style="width:28px;height:28px;border-radius:50%;background-color:${bg};background-image:linear-gradient(${bg},${bg});border:1px solid ${border};font-family:${font.body};font-size:13px;line-height:28px;font-weight:800;color:${ink};text-align:center;">${glyph}</div></td>${right}</tr></table>
 <div class="dl-step-label" style="${td(`margin-top:9px;font-size:12.5px;line-height:16px;font-weight:${isActive ? 700 : 500};color:${labelColor};`)}">${step.label}</div></td>`;
   });
   return m`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:26px;"><tr>${cells}</tr></table>`;
@@ -265,15 +262,16 @@ function tier(
 ): SafeHtml {
   const t = loyaltyTiers[block.tier];
   const gift = block.gift
-    ? m`<span style="display:inline-block;padding:7px 12px;border-radius:999px;background:${t.ink};font-family:${font.body};font-size:13px;line-height:16px;font-weight:800;color:${t.from};">&#10022; ${block.gift}</span>`
+    ? m`<span style="display:inline-block;padding:7px 12px;border-radius:999px;background-color:${color.raised};background-image:linear-gradient(${color.raised},${color.raised});border:1px solid ${t.to}99;font-family:${font.body};font-size:13px;line-height:16px;font-weight:800;color:${t.from};">&#10022; ${block.gift}</span>`
     : '';
-  return m`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:26px;border-radius:22px;border:1px solid rgba(255,255,255,.35);background-color:${t.to};background-image:linear-gradient(125deg,${t.from} 0%,${t.to} 48%,${t.from} 78%,${t.to} 100%);">
+  // Dark card, light type: Gmail inverts text but not gradients, so pastel fills with dark ink vanish.
+  return m`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:26px;border-radius:22px;border:1px solid ${t.to}80;background-color:${color.raised};background-image:radial-gradient(130% 110% at 100% 0%,${t.to}88 0%,${t.to}22 38%,rgba(27,16,51,0) 70%),linear-gradient(135deg,#241640 0%,${color.raised} 55%,#140B26 100%);">
 <tr><td class="dl-shine" style="padding:0;border-radius:22px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td valign="top" style="padding:22px 0 0 22px;"><img src="${asset(ctx, '/email/wordmark-ink.png')}" width="84" height="32" alt="Duoly" style="display:block;width:84px;height:32px;"></td>
-<td rowspan="4" align="right" valign="bottom" style="padding:0 18px 0 0;font-family:${font.display};font-size:150px;line-height:150px;font-weight:800;letter-spacing:-6px;color:${t.ink};opacity:.13;">${t.level}</td></tr>
-<tr><td style="padding:30px 22px 0;font-family:${font.body};font-size:11.5px;line-height:14px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:${t.ink};opacity:.7;">Level ${t.level} of 5 · Duoly Rewards</td></tr>
-<tr><td style="padding:4px 22px 0;font-family:${font.display};font-size:42px;line-height:46px;font-weight:800;letter-spacing:-1.3px;color:${t.ink};">${t.name}</td></tr>
-<tr><td style="padding:6px 22px 22px;font-family:${font.body};font-size:15px;line-height:21px;font-weight:600;color:${t.ink};">${block.headline}<div style="margin-top:14px;">${gift}</div></td></tr>
+<tr><td valign="top" style="padding:22px 0 0 22px;"><img src="${asset(ctx, '/email/wordmark.png')}" width="84" height="32" alt="Duoly" style="display:block;width:84px;height:32px;"></td>
+<td rowspan="4" align="right" valign="bottom" style="padding:0 18px 0 0;font-family:${font.display};font-size:150px;line-height:150px;font-weight:800;letter-spacing:-6px;color:${t.to};opacity:.22;">${t.level}</td></tr>
+<tr><td style="padding:30px 22px 0;font-family:${font.body};font-size:11.5px;line-height:14px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:${color.link};">Level ${t.level} of 5</td></tr>
+<tr><td style="padding:4px 22px 0;font-family:${font.display};font-size:42px;line-height:46px;font-weight:800;letter-spacing:-1.3px;color:${t.from};">${t.name}</td></tr>
+<tr><td style="padding:6px 22px 22px;font-family:${font.body};font-size:15px;line-height:21px;font-weight:600;color:${color.text};">${block.headline}<div style="margin-top:14px;">${gift}</div></td></tr>
 </table></td></tr></table>`;
 }
 

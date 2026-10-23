@@ -17,6 +17,14 @@ export const color = {
   pink: '#F0A6FF',
   gold: '#FFD27A',
   green: '#5EEAA8',
+  /**
+   * Filled surfaces that carry text. Gmail's mobile apps invert text colours in dark mode
+   * but keep gradients, so text on a filled surface must be light on a deep colour: dark
+   * ink on a pastel fill turns invisible. White passes on both of these.
+   */
+  action: '#7C4DFF',
+  actionTo: '#C25CF0',
+  doneFill: '#16855A',
   greenInk: '#062A1B',
   red: '#FF8A9B',
   sky: '#9EE6FF',
