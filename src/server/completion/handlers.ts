@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import type { CompletionClient } from './database';
 import {
   CompletionInputSchema,
   CompletionResponseSchema,
@@ -45,7 +44,7 @@ export const complete: APIRoute = async (context) => {
       return fail(400);
     const result = CompletionResponseSchema.parse(
       proofRpcData(
-        await (account.client as CompletionClient).rpc('complete_order', {
+        await account.client.rpc('complete_order', {
           p_order_id: input.data.order_id,
           p_assignment_id: input.data.assignment_id,
           p_proof_ids: input.data.proof_ids,
@@ -105,7 +104,7 @@ export const earnings: APIRoute = async (context) => {
     if (!pagination.success) return fail(400);
     const result = EarningsResponseSchema.parse(
       proofRpcData(
-        await (account.client as CompletionClient).rpc('teammate_earnings', {
+        await account.client.rpc('teammate_earnings', {
           p_limit: pagination.data.limit,
           p_offset: pagination.data.offset,
         }),

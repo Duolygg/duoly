@@ -2,7 +2,7 @@
 
 ## Current completion slice
 
-Order completion, permanent USD earning/deposit snapshots and the native teammate UI are implemented and locally verified on `feat/order-completion`. This is not live: the completion migration has only been exercised in hosted rollback-only transactions and a disposable local PostgreSQL server. Reviews, cashback, loyalty gifts, deposit release and withdrawals remain out of scope. See [order-completion.md](order-completion.md) for the exact contract, acceptance evidence and activation gate.
+Order completion, permanent USD earning/deposit snapshots and the native teammate UI are implemented on `feat/order-completion`. The owner authorized merge in PR [#51](https://github.com/Duolygg/duoly/pull/51), and migration `20261024130000` is applied and verified. Exact-head CI and deployed acceptance are recorded on that PR. Reviews, cashback, loyalty gifts, deposit release and withdrawals remain out of scope. See [order-completion.md](order-completion.md) for the contract, acceptance evidence and release history.
 
 ## Current private-proof slice
 

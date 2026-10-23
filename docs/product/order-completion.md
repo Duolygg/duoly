@@ -1,5 +1,13 @@
 # Order completion and immutable USD earnings
 
+## Release activation
+
+The owner authorized merge on 23 October 2026. PR [#51](https://github.com/Duolygg/duoly/pull/51) preserves the merged admin Teammates work and leaves the other agent's Customers worktree untouched. Migration `20261024130000_order_completion` was applied through the pinned Supabase CLI, using a scratch copy of the fetched remote migration history so already-applied parallel migrations were neither copied into this PR nor replayed. Readback confirmed the migration record, RPCs, immutable ledger, authenticated RPC execution and denied raw ledger inserts. All eleven behavioral SQL suites passed again against the installed schema in a transaction ending rollback.
+
+Database types were regenerated from the hosted schema and the temporary migration-RPC type extension was removed. Type check, lint, 1,066 unit tests, build and desktop/mobile chat and completion tests passed. One local chat run lost its development server; reruns on worktree-isolated ports passed all ten chat and eight completion cases. Exact-head GitHub checks and deployed acceptance are recorded on PR #51; local or CI success alone does not claim a completed production booking.
+
+The remaining sections preserve the implementation and pre-activation evidence. Statements below that no migration was applied describe that earlier checkpoint, not the release state above.
+
 ## Scope and authority
 
 This is the owner-approved **no-rewards completion slice**, not a complete financial product. It narrowly supersedes the blocking statements in `proof-completion-contract.md` §Authority and §Later completion boundary **only** for: assigned-teammate completion with existing ready proof, permanent booked-USD earning/security-deposit snapshots, assignment closure, and closed historical chat. That older document remains authoritative for private proof and deferred financial ambiguities.
