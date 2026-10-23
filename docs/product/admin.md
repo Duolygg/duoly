@@ -33,7 +33,7 @@ Emails: `application_received` on submit, `application_approved` or `application
 
 ## Not connected yet
 
-Overview, Live desk, Orders, Teammates roster, Customers and Settings can be built on the existing orders, payments and refund credits. Priority needs missed-order tracking. Payouts needs the payout ledger and Stripe Connect. Support and Safety need the support chat, order chat and reports backends. These sections render an honest "not connected yet" panel, never sample data.
+Overview, Live desk (plus cancel, refund and handover on orders), Teammates roster, Customers and Settings can be built on the existing orders, payments and refund credits. Priority needs missed-order tracking. Payouts needs the payout ledger and Stripe Connect. Support and Safety need the support chat, order chat and reports backends. These sections render an honest "not connected yet" panel, never sample data.
 
 ## Tests
 

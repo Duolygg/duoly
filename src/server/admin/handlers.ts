@@ -145,6 +145,11 @@ export const applications = adminRoute(
   ],
 );
 
+export const orders = adminRoute(
+  (client) => client.rpc('admin_orders', { p_limit: 1000 }),
+  [],
+);
+
 export const audit = adminRoute(
   (client) => client.rpc('admin_audit', { p_limit: 500 }),
   [],
