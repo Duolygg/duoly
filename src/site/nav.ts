@@ -51,59 +51,6 @@ export const ROLE_HOME: Record<Role, { href: string; label: string }> = {
   admin: { href: '/admin', label: 'Admin' },
 };
 
-/** Admin sections, each at its own URL so links can be shared. */
-export const ADMIN_SECTIONS = [
-  {
-    slug: '',
-    label: 'Overview',
-    note: 'Today at a glance: orders, revenue, teammates online.',
-  },
-  {
-    slug: 'live',
-    label: 'Live desk',
-    note: 'Orders waiting and in progress, with handover links.',
-  },
-  {
-    slug: 'orders',
-    label: 'Orders',
-    note: 'Search, cancel and refund orders.',
-  },
-  {
-    slug: 'teammates',
-    label: 'Teammates',
-    note: 'Game access, trust levels and status.',
-  },
-  {
-    slug: 'customers',
-    label: 'Customers',
-    note: 'Accounts, balances and blocks.',
-  },
-  {
-    slug: 'users',
-    label: 'Users',
-    note: 'Roles and sign-in methods for every account.',
-  },
-  {
-    slug: 'applications',
-    label: 'Applications',
-    note: 'Review teammate applications.',
-  },
-  { slug: 'priority', label: 'Priority', note: 'Who sees new orders first.' },
-  { slug: 'payouts', label: 'Payouts', note: 'Weekly teammate payouts.' },
-  { slug: 'safety', label: 'Safety', note: 'Reports and flagged chats.' },
-  { slug: 'support', label: 'Support', note: 'Contact form conversations.' },
-  {
-    slug: 'audit',
-    label: 'Audit log',
-    note: 'Every admin action, who and when.',
-  },
-  {
-    slug: 'settings',
-    label: 'Settings',
-    note: 'Prices, games and site switches.',
-  },
-] as const;
-
 /** Public, indexable routes once the site launches (sitemap.xml). */
 export const PUBLIC_ROUTES = [
   '/',
