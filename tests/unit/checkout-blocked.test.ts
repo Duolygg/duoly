@@ -83,7 +83,9 @@ describe('checkout refuses blocked customers', () => {
 
   it('lets an unblocked customer through to Stripe', async () => {
     void buildCheckout;
-    const res = await createCheckout({} as never).catch(() => null);
+    const res = await Promise.resolve(createCheckout({} as never)).catch(
+      () => null,
+    );
     expect(res === null || res.status !== 403).toBe(true);
     expect(state.stripeCalls).toBe(1);
   });
