@@ -87,14 +87,14 @@ export default class Orders extends React.Component {
     );
 
     return (
-      <div role="dialog" aria-modal="true" aria-labelledby="ad-order-h" style={{ position: "fixed", inset: "0", zIndex: "60", display: "flex", justifyContent: "flex-end" }}>
+      <div role="dialog" aria-modal="true" aria-labelledby="ops-order-h" style={{ position: "fixed", inset: "0", zIndex: "60", display: "flex", justifyContent: "flex-end" }}>
         <button type="button" aria-label="Close order" onClick={close} style={{ position: "absolute", inset: "0", border: "none", background: "rgba(5, 2, 12, .6)", backdropFilter: "blur(4px)", cursor: "default", transform: "none", animation: "dlfade .15s ease-out" }} />
         <div ref={(el) => { this._drawer = el; }} tabIndex={-1} onKeyDown={(e) => { if (e.key === 'Escape') close(); }} style={{ position: "relative", width: "min(540px, 100%)", height: "100%", overflowY: "auto", background: C.panel, borderLeft: "1px solid rgba(214, 187, 255, .16)", boxShadow: "-30px 0 80px rgba(0, 0, 0, .5)", padding: "22px", animation: "adin .2s ease-out", outline: "none" }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
             <img src={GAMES[o.game].img} alt={GAMES[o.game].name} width="48" height="48" style={{ width: "48px", height: "48px", borderRadius: "14px" }} />
             <div style={{ flex: "1", minWidth: "0" }}>
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px" }}>
-                <h2 id="ad-order-h" style={{ ...h2, fontSize: "22px" }}>{o.id}</h2>
+                <h2 id="ops-order-h" style={{ ...h2, fontSize: "22px" }}>{o.id}</h2>
                 <span style={pill(o.status)}>{o.status}</span>
               </div>
               <div style={{ fontSize: "13.5px", color: C.muted }}>{o.service}{o.games > 1 ? ' ×' + o.games : ''} · {GAMES[o.game].name} · {o.region}</div>
@@ -167,8 +167,8 @@ export default class Orders extends React.Component {
     const shown = list.slice(page * PAGE, page * PAGE + PAGE);
     const count = (st) => (st === 'All' ? data.orders.length : data.orders.filter((o) => o.status === st).length);
     return (
-      <section aria-labelledby="ad-orders-h" style={{ ...card, padding: "18px" }}>
-        <h2 id="ad-orders-h" style={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)" }}>Orders</h2>
+      <section aria-labelledby="ops-orders-h" style={{ ...card, padding: "18px" }}>
+        <h2 id="ops-orders-h" style={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)" }}>Orders</h2>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", alignItems: "center" }}>
           <label style={{ flex: "1 1 240px", display: "flex", alignItems: "center", gap: "8px", ...input, padding: "0 12px" }}>
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.dim} strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
@@ -198,8 +198,8 @@ export default class Orders extends React.Component {
           ))}
         </div>
 
-        <div className="ad-table-wrap" style={{ marginTop: "12px" }}>
-          <table className="ad-table">
+        <div className="ops-table-wrap" style={{ marginTop: "12px" }}>
+          <table className="ops-table">
             <thead>
               <tr>
                 <th style={th}>Order</th><th style={th}>Customer</th><th style={th}>Teammate</th><th style={th}>Service</th>
@@ -208,7 +208,7 @@ export default class Orders extends React.Component {
             </thead>
             <tbody>
               {shown.map((o) => (
-                <tr key={o.id} className="ad-tr" tabIndex={0} onClick={() => this.setState({ open: o.id })} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState({ open: o.id }); } }} aria-label={'Open order ' + o.id}>
+                <tr key={o.id} className="ops-tr" tabIndex={0} onClick={() => this.setState({ open: o.id })} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState({ open: o.id }); } }} aria-label={'Open order ' + o.id}>
                   <td style={{ ...td, fontWeight: "600", color: C.white, fontFamily: "ui-monospace, Consolas, monospace", fontSize: "13px" }}>{o.id}</td>
                   <td style={td}>
                     <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>

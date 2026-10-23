@@ -186,7 +186,7 @@ export default class Priority extends React.Component {
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <section aria-label="Priority at a glance" className="ad-kpis">
+        <section aria-label="Priority at a glance" className="ops-kpis">
           {tiles.map(([v, l, color]) => (
             <div key={l} style={{ ...card, padding: "16px 18px" }}>
               <div style={{ fontFamily: DISPLAY, fontSize: "26px", fontWeight: "700", color }}>{v}</div>

@@ -326,10 +326,10 @@ export default class AdminApp extends React.Component {
     if (!c) return null;
     const f = c.field, f2 = c.field2;
     return (
-      <div role="dialog" aria-modal="true" aria-labelledby="ad-confirm-h" style={{ position: "fixed", inset: "0", zIndex: "80", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+      <div role="dialog" aria-modal="true" aria-labelledby="ops-confirm-h" style={{ position: "fixed", inset: "0", zIndex: "80", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
         <button type="button" aria-label="Cancel" onClick={this.closeAsk} style={{ position: "absolute", inset: "0", border: "none", background: "rgba(5, 2, 12, .72)", backdropFilter: "blur(8px)", cursor: "default", transform: "none", animation: "dlfade .15s ease-out" }} />
         <form onSubmit={this.submitAsk} style={{ position: "relative", width: "100%", maxWidth: "440px", padding: "24px", borderRadius: "22px", background: C.panel, border: "1px solid rgba(214, 187, 255, .18)", boxShadow: "0 30px 90px rgba(0, 0, 0, .7)", animation: "dlpop .18s ease-out" }}>
-          <h2 id="ad-confirm-h" style={{ margin: "0", fontFamily: DISPLAY, fontSize: "22px", fontWeight: "800", letterSpacing: "-.02em", color: C.white }}>{c.title}</h2>
+          <h2 id="ops-confirm-h" style={{ margin: "0", fontFamily: DISPLAY, fontSize: "22px", fontWeight: "800", letterSpacing: "-.02em", color: C.white }}>{c.title}</h2>
           {c.body ? <p style={{ margin: "8px 0 0", fontSize: "14px", lineHeight: "1.5", color: C.muted }}>{c.body}</p> : null}
           {f ? (
             <label style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "16px", fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
@@ -392,50 +392,50 @@ export default class AdminApp extends React.Component {
       if (s.section === 'settings') body = <Settings {...props} />;
     }
     return (
-      <div className="ad-shell" style={{ background: C.bg, color: C.text, fontFamily: "Geist, system-ui, sans-serif", fontSize: "15px", lineHeight: "1.5", fontVariantNumeric: "tabular-nums" }}>
-        <aside className="ad-side" aria-label="Admin">
+      <div className="ops-shell" style={{ background: C.bg, color: C.text, fontFamily: "Geist, system-ui, sans-serif", fontSize: "15px", lineHeight: "1.5", fontVariantNumeric: "tabular-nums" }}>
+        <aside className="ops-side" aria-label="Admin">
           {/* logo stays at the top, the links scroll, your profile stays at the bottom: nothing gets cut off */}
-          <a href="/" aria-label="Duoly home" className="ad-side-title">
+          <a href="/" aria-label="Duoly home" className="ops-side-title">
             <img src="/assets/brand/logo-wordmark.webp" alt="Duoly" width="92" height="34" style={{ width: "92px", height: "34px", display: "block" }} />
-            <span className="ad-side-chip">ADMIN</span>
+            <span className="ops-side-chip">ADMIN</span>
           </a>
-          <nav className="ad-nav" aria-label="Admin sections">
+          <nav className="ops-nav" aria-label="Admin sections">
             {GROUPS.map((g) => (
-              <div key={g.label} className="ad-group" role="group" aria-label={g.label}>
-                <span className="ad-group-label" aria-hidden="true">{g.label}</span>
+              <div key={g.label} className="ops-group" role="group" aria-label={g.label}>
+                <span className="ops-group-label" aria-hidden="true">{g.label}</span>
                 {SECTIONS.filter((x) => g.ids.includes(x.id)).map((x) => (
-                  <button key={x.id} type="button" className="ad-navbtn" aria-current={s.section === x.id ? 'page' : undefined} onClick={() => this.go(x.id)}>
+                  <button key={x.id} type="button" className="ops-navbtn" aria-current={s.section === x.id ? 'page' : undefined} onClick={() => this.go(x.id)}>
                     <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={x.icon} /></svg>
-                    <span className="ad-navlabel">{x.label}</span>
-                    {counts[x.id] ? <span className={'ad-count' + (x.id === 'safety' ? ' ad-count-hot' : '')}>{counts[x.id]}</span> : null}
+                    <span className="ops-navlabel">{x.label}</span>
+                    {counts[x.id] ? <span className={'ops-count' + (x.id === 'safety' ? ' ops-count-hot' : '')}>{counts[x.id]}</span> : null}
                   </button>
                 ))}
               </div>
             ))}
           </nav>
-          <div className="ad-side-foot">
-            <a href="/profile" aria-label="Your profile" className="ad-me">
+          <div className="ops-side-foot">
+            <a href="/profile" aria-label="Your profile" className="ops-me">
               <img src={a.image || '/assets/avatars/avatar-1.png'} alt="" width="36" height="36" referrerPolicy="no-referrer" />
-              <span className="ad-me-text">
-                <span className="ad-me-name">{a.name || a.email}</span>
-                <span className="ad-me-sub">Admin</span>
+              <span className="ops-me-text">
+                <span className="ops-me-name">{a.name || a.email}</span>
+                <span className="ops-me-sub">Admin</span>
               </span>
             </a>
-            <div className="ad-me-actions">
-              <a href="/" className="ad-iconbtn" title="Open the site" aria-label="Open the site">
+            <div className="ops-me-actions">
+              <a href="/" className="ops-iconbtn" title="Open the site" aria-label="Open the site">
                 <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /></svg>
               </a>
-              <a href="/rules" className="ad-iconbtn" title="Teammate rules" aria-label="Teammate rules">
+              <a href="/rules" className="ops-iconbtn" title="Teammate rules" aria-label="Teammate rules">
                 <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5" /></svg>
               </a>
-              <button type="button" className="ad-iconbtn ad-iconbtn-out" title="Sign out" aria-label="Sign out" onClick={() => signOut({ callbackUrl: '/' })}>
+              <button type="button" className="ops-iconbtn ops-iconbtn-out" title="Sign out" aria-label="Sign out" onClick={() => signOut({ callbackUrl: '/' })}>
                 <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>
               </button>
             </div>
           </div>
         </aside>
 
-        <main className="ad-main">
+        <main className="ops-main">
           <header style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "12px", marginBottom: "22px" }}>
             <div>
               <h1 style={{ margin: "0", fontFamily: DISPLAY, fontWeight: "800", fontSize: "clamp(28px, 3.4vw, 38px)", lineHeight: "1.05", letterSpacing: "-.035em", color: C.white }}>{title}</h1>

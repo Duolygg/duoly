@@ -26,8 +26,8 @@ export default class AuditLog extends React.Component {
           <input type="search" aria-label="Search the audit log" placeholder="Search actions, targets, admins…" value={this.state.q} onChange={(e) => this.setState({ q: e.target.value })} style={{ ...input, flex: "1 1 240px" }} />
           <button type="button" disabled={!list.length} onClick={() => this.exportCsv(list)} style={{ ...btn(), opacity: list.length ? "1" : ".4" }}>Export CSV</button>
         </div>
-        <div className="ad-table-wrap" style={{ marginTop: "12px" }}>
-          <table className="ad-table">
+        <div className="ops-table-wrap" style={{ marginTop: "12px" }}>
+          <table className="ops-table">
             <thead><tr><th style={th}>When</th><th style={th}>Admin</th><th style={th}>Action</th><th style={th}>Target</th><th style={th}>Details</th></tr></thead>
             <tbody>
               {list.map((x) => (

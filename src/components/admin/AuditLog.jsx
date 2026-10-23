@@ -71,8 +71,8 @@ export default class AuditLog extends React.Component {
             Export CSV
           </button>
         </div>
-        <div className="ad-table-wrap" style={{ marginTop: '12px' }}>
-          <table className="ad-table">
+        <div className="ops-table-wrap" style={{ marginTop: '12px' }}>
+          <table className="ops-table">
             <thead>
               <tr>
                 <th style={th}>When</th>

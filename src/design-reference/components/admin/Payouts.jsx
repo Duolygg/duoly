@@ -32,7 +32,7 @@ export default class Payouts extends React.Component {
     ];
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <section aria-label="Payout totals" className="ad-kpis">
+        <section aria-label="Payout totals" className="ops-kpis">
           {tiles.map(([v, l, color]) => (
             <div key={l} style={{ ...card, padding: "16px 18px" }}>
               <div style={{ fontFamily: DISPLAY, fontSize: "26px", fontWeight: "700", color }}>{v}</div>
@@ -54,8 +54,8 @@ export default class Payouts extends React.Component {
               confirm: 'Pay all scheduled', onConfirm: () => actions.payAll()
             })}>Pay all scheduled</button>
           </div>
-          <div className="ad-table-wrap" style={{ marginTop: "12px" }}>
-            <table className="ad-table">
+          <div className="ops-table-wrap" style={{ marginTop: "12px" }}>
+            <table className="ops-table">
               <thead>
                 <tr>
                   <th style={th}>Teammate</th><th style={th}>Week</th><th style={th}>Level</th><th style={{ ...th, textAlign: "right" }}>Earned + tips</th><th style={{ ...th, textAlign: "right" }}>Deposit held</th>

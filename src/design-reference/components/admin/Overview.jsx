@@ -74,7 +74,7 @@ export default class Overview extends React.Component {
           <span style={{ fontSize: "13px", color: C.dim }}>compared with the {s.range} days before</span>
         </div>
 
-        <section aria-label="Key numbers" className="ad-kpis">
+        <section aria-label="Key numbers" className="ops-kpis">
           {this.kpis().map((k) => {
             const up = k.delta >= 0;
             const mx = Math.max.apply(null, k.spark), mn = Math.min.apply(null, k.spark);
@@ -94,7 +94,7 @@ export default class Overview extends React.Component {
           })}
         </section>
 
-        <div className="ad-2col">
+        <div className="ops-2col">
           <section aria-labelledby="ov-chart-h" style={{ ...card, padding: "20px" }}>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
               <h2 id="ov-chart-h" style={h2}>{key === 'revenue' ? 'Revenue' : 'Orders'} per day</h2>
@@ -170,7 +170,7 @@ export default class Overview extends React.Component {
           </section>
         </div>
 
-        <div className="ad-2col">
+        <div className="ops-2col">
           <section aria-labelledby="ov-attn-h" style={{ ...card, padding: "20px" }}>
             <h2 id="ov-attn-h" style={h2}>Needs your attention</h2>
             <div style={{ marginTop: "14px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "10px" }}>

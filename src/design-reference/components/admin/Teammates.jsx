@@ -35,8 +35,8 @@ export default class Teammates extends React.Component {
             <option value="newest">Newest</option>
           </select>
         </div>
-        <div className="ad-table-wrap" style={{ marginTop: "12px" }}>
-          <table className="ad-table">
+        <div className="ops-table-wrap" style={{ marginTop: "12px" }}>
+          <table className="ops-table">
             <thead>
               <tr>
                 <th style={th}>Teammate</th><th style={th}>Games</th><th style={th}>Trust level</th><th style={{ ...th, textAlign: "right" }}>Rating</th>
@@ -122,7 +122,7 @@ export default class Teammates extends React.Component {
             </button>
           ))}
         </div>
-        <div className="ad-cards" style={{ marginTop: "14px" }}>
+        <div className="ops-cards" style={{ marginTop: "14px" }}>
           {list.map((a) => (
             <article key={a.id} style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "18px", borderRadius: "18px", background: C.bg, border: "1px solid " + (a.status === 'Pending' ? 'rgba(255, 210, 122, .25)' : C.line) }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>

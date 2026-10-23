@@ -24,7 +24,7 @@ export default class Customers extends React.Component {
     const totalWallet = data.customers.reduce((a, c) => a + c.wallet, 0);
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <section aria-label="Customer totals" className="ad-kpis">
+        <section aria-label="Customer totals" className="ops-kpis">
           {[
             [data.customers.length.toLocaleString('en-US'), 'customers'],
             [data.customers.filter((c) => c.orders > 0).length.toLocaleString('en-US'), 'have finished an order'],
@@ -60,8 +60,8 @@ export default class Customers extends React.Component {
               );
             })}
           </div>
-          <div className="ad-table-wrap" style={{ marginTop: "12px" }}>
-            <table className="ad-table">
+          <div className="ops-table-wrap" style={{ marginTop: "12px" }}>
+            <table className="ops-table">
               <thead>
                 <tr>
                   <th style={th}>Customer</th><th style={th}>Level</th><th style={{ ...th, textAlign: "right" }}>Orders</th><th style={{ ...th, textAlign: "right" }}>Spent</th>

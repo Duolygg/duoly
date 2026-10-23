@@ -278,7 +278,7 @@ export default class Orders extends React.Component {
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="ad-order-h"
+        aria-labelledby="ops-order-h"
         style={{
           position: 'fixed',
           inset: '0',
@@ -342,7 +342,7 @@ export default class Orders extends React.Component {
                   gap: '8px',
                 }}
               >
-                <h2 id="ad-order-h" style={{ ...h2, fontSize: '22px' }}>
+                <h2 id="ops-order-h" style={{ ...h2, fontSize: '22px' }}>
                   {o.id}
                 </h2>
                 <span style={pill(o.status)}>{o.status}</span>
@@ -555,11 +555,11 @@ export default class Orders extends React.Component {
         : s.orders.filter((o) => o.status === st).length;
     return (
       <section
-        aria-labelledby="ad-orders-h"
+        aria-labelledby="ops-orders-h"
         style={{ ...card, padding: '18px' }}
       >
         <h2
-          id="ad-orders-h"
+          id="ops-orders-h"
           style={{
             position: 'absolute',
             width: '1px',
@@ -700,8 +700,8 @@ export default class Orders extends React.Component {
           ))}
         </div>
 
-        <div className="ad-table-wrap" style={{ marginTop: '12px' }}>
-          <table className="ad-table">
+        <div className="ops-table-wrap" style={{ marginTop: '12px' }}>
+          <table className="ops-table">
             <thead>
               <tr>
                 <th style={th}>Order</th>
@@ -717,7 +717,7 @@ export default class Orders extends React.Component {
               {shown.map((o) => (
                 <tr
                   key={o.id}
-                  className="ad-tr"
+                  className="ops-tr"
                   tabIndex={0}
                   onClick={() => this.setState({ open: o.id })}
                   onKeyDown={(e) => {
