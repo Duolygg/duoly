@@ -281,7 +281,7 @@ it('wires chat safety into the current admin shell behind SSR role denial and th
   expect(route).toContain('chatEnabled={orderChatEnabled()}');
   expect(route).toContain('csrf={csrf}');
   expect(route.indexOf("identity?.viewer.role !== 'admin'")).toBeLessThan(
-    route.indexOf('<AdminApp'),
+    route.indexOf('<AdminRoot'),
   );
   expect(shell).toContain("s.section === 'safety' && this.props.chatEnabled");
   expect(shell).toContain('<ChatModeration csrf={this.props.csrf}');

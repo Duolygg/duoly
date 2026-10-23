@@ -1,9 +1,7 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import AdminApp, {
-  SECTIONS,
-  sectionFromPath,
-} from '../../components/admin/AdminApp.jsx';
+import { SECTIONS, sectionFromPath } from '../../components/admin/AdminApp.jsx';
+import AdminRoot from '../../components/admin/AdminRoot.jsx';
 import { accountContext } from '../../server/auth/context';
 import { isOwnerEmail } from '../../server/admin/owners';
 import { orderChatEnabled } from '../../server/chat/config';
@@ -36,7 +34,9 @@ const csrf = account.csrf();
   csrf={csrf}
   bare
 >
-  <AdminApp
+  <!-- Browser translation rewrites React-managed text and crashes the admin; it's internal. -->
+  <meta slot="head" name="google" content="notranslate" />
+  <AdminRoot
     client:load
     admin={identity.viewer}
     owner={isOwnerEmail(identity.viewer.email)}
