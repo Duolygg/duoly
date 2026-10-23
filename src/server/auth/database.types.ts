@@ -235,6 +235,260 @@ export type Database = {
           },
         ];
       };
+      order_chat_attempts: {
+        Row: {
+          actor_id: string;
+          assignment_id: string;
+          body_digest: string;
+          created_at: string;
+          request_id: string;
+          result: Json;
+        };
+        Insert: {
+          actor_id: string;
+          assignment_id: string;
+          body_digest: string;
+          created_at?: string;
+          request_id: string;
+          result: Json;
+        };
+        Update: {
+          actor_id?: string;
+          assignment_id?: string;
+          body_digest?: string;
+          created_at?: string;
+          request_id?: string;
+          result?: Json;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_chat_attempts_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_chat_rate_accounts';
+            referencedColumns: ['actor_id'];
+          },
+          {
+            foreignKeyName: 'order_chat_attempts_assignment_id_fkey';
+            columns: ['assignment_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_chat_rooms';
+            referencedColumns: ['assignment_id'];
+          },
+        ];
+      };
+      order_chat_flags: {
+        Row: {
+          actor_id: string;
+          assignment_id: string;
+          body: string;
+          created_at: string;
+          id: string;
+          order_id: string;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          rule: string;
+          sender_name: string;
+          status: string;
+        };
+        Insert: {
+          actor_id: string;
+          assignment_id: string;
+          body: string;
+          created_at?: string;
+          id?: string;
+          order_id: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          rule: string;
+          sender_name: string;
+          status?: string;
+        };
+        Update: {
+          actor_id?: string;
+          assignment_id?: string;
+          body?: string;
+          created_at?: string;
+          id?: string;
+          order_id?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          rule?: string;
+          sender_name?: string;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_chat_flags_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_chat_flags_assignment_id_order_id_fkey';
+            columns: ['assignment_id', 'order_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_chat_rooms';
+            referencedColumns: ['assignment_id', 'order_id'];
+          },
+          {
+            foreignKeyName: 'order_chat_flags_reviewed_by_fkey';
+            columns: ['reviewed_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_chat_messages: {
+        Row: {
+          assignment_id: string;
+          body: string;
+          created_at: string;
+          id: string;
+          image: string;
+          kind: string;
+          name: string;
+          request_id: string | null;
+          sender: string;
+          sequence: number;
+          system_event: string | null;
+        };
+        Insert: {
+          assignment_id: string;
+          body: string;
+          created_at?: string;
+          id?: string;
+          image?: string;
+          kind: string;
+          name: string;
+          request_id?: string | null;
+          sender: string;
+          sequence: number;
+          system_event?: string | null;
+        };
+        Update: {
+          assignment_id?: string;
+          body?: string;
+          created_at?: string;
+          id?: string;
+          image?: string;
+          kind?: string;
+          name?: string;
+          request_id?: string | null;
+          sender?: string;
+          sequence?: number;
+          system_event?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_chat_messages_assignment_id_fkey';
+            columns: ['assignment_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_chat_rooms';
+            referencedColumns: ['assignment_id'];
+          },
+        ];
+      };
+      order_chat_rate_accounts: {
+        Row: {
+          actor_id: string;
+        };
+        Insert: {
+          actor_id: string;
+        };
+        Update: {
+          actor_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_chat_rate_accounts_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_chat_rooms: {
+        Row: {
+          accepted_emitted: boolean;
+          assignment_id: string;
+          completed_emitted: boolean;
+          next_sequence: number;
+          order_id: string;
+        };
+        Insert: {
+          accepted_emitted?: boolean;
+          assignment_id: string;
+          completed_emitted?: boolean;
+          next_sequence?: number;
+          order_id: string;
+        };
+        Update: {
+          accepted_emitted?: boolean;
+          assignment_id?: string;
+          completed_emitted?: boolean;
+          next_sequence?: number;
+          order_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_chat_rooms_assignment_id_fkey';
+            columns: ['assignment_id'];
+            isOneToOne: true;
+            referencedRelation: 'order_assignments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_chat_rooms_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_chat_typing: {
+        Row: {
+          actor_id: string;
+          assignment_id: string;
+          emitted_at: string;
+          expires_at: string;
+          role: string;
+        };
+        Insert: {
+          actor_id: string;
+          assignment_id: string;
+          emitted_at: string;
+          expires_at: string;
+          role: string;
+        };
+        Update: {
+          actor_id?: string;
+          assignment_id?: string;
+          emitted_at?: string;
+          expires_at?: string;
+          role?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_chat_typing_actor_id_fkey';
+            columns: ['actor_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_chat_typing_assignment_id_fkey';
+            columns: ['assignment_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_chat_rooms';
+            referencedColumns: ['assignment_id'];
+          },
+        ];
+      };
       order_payments: {
         Row: {
           amount_eur_cents: number;
@@ -850,28 +1104,6 @@ export type Database = {
         Args: { p_limit?: number };
         Returns: Json;
       };
-      get_order_chat: {
-        Args: { p_order_id: string; p_assignment_id?: string };
-        Returns: Json;
-      };
-      send_order_chat_message: {
-        Args: {
-          p_order_id: string;
-          p_assignment_id: string;
-          p_request_id: string;
-          p_body: string;
-        };
-        Returns: Json;
-      };
-      set_order_chat_typing: {
-        Args: { p_order_id: string; p_assignment_id: string };
-        Returns: Json;
-      };
-      list_order_chat_flags: { Args: never; Returns: Json };
-      resolve_order_chat_flag: {
-        Args: { p_flag_id: string; p_status: string };
-        Returns: Json;
-      };
       create_paid_order: {
         Args: {
           p_amount_minor: number;
@@ -910,11 +1142,60 @@ export type Database = {
         Args: { p_error?: string; p_order_id: string; p_state: string };
         Returns: undefined;
       };
+      get_order_chat: {
+        Args: { p_assignment_id?: string; p_order_id: string };
+        Returns: Json;
+      };
       get_order_proof: {
         Args: { p_order_id: string; p_proof_id: string };
         Returns: Json;
       };
+      list_order_chat_flags: { Args: never; Returns: Json };
       list_order_proofs: { Args: { p_order_id: string }; Returns: Json };
+      order_chat_append: {
+        Args: {
+          p_assignment_id: string;
+          p_body: string;
+          p_event?: string;
+          p_image: string;
+          p_name: string;
+          p_request_id: string;
+          p_sender: string;
+        };
+        Returns: Json;
+      };
+      order_chat_block_rule: { Args: { p_body: string }; Returns: string };
+      order_chat_can_receive_topic: {
+        Args: { p_topic: string };
+        Returns: boolean;
+      };
+      order_chat_flag_dto: {
+        Args: {
+          p_flag: Database['public']['Tables']['order_chat_flags']['Row'];
+        };
+        Returns: Json;
+      };
+      order_chat_invalidate: {
+        Args: { p_assignment_id: string };
+        Returns: undefined;
+      };
+      order_chat_message_dto: {
+        Args: {
+          p_message: Database['public']['Tables']['order_chat_messages']['Row'];
+        };
+        Returns: Json;
+      };
+      order_chat_system_events: {
+        Args: { p_order: Database['public']['Tables']['orders']['Row'] };
+        Returns: undefined;
+      };
+      order_chat_viewer: {
+        Args: {
+          p_assignment_id: string;
+          p_order: Database['public']['Tables']['orders']['Row'];
+        };
+        Returns: string;
+      };
       order_customer_dto: {
         Args: { p_order: Database['public']['Tables']['orders']['Row'] };
         Returns: Json;
@@ -956,7 +1237,24 @@ export type Database = {
       };
       refresh_discord_link: { Args: { p_user: string }; Returns: undefined };
       reroll_order: { Args: { p_order_id: string }; Returns: Json };
+      resolve_order_chat_flag: {
+        Args: { p_flag_id: string; p_status: string };
+        Returns: Json;
+      };
       run_order_proof_cleanup: { Args: never; Returns: undefined };
+      send_order_chat_message: {
+        Args: {
+          p_assignment_id: string;
+          p_body: string;
+          p_order_id: string;
+          p_request_id: string;
+        };
+        Returns: Json;
+      };
+      set_order_chat_typing: {
+        Args: { p_assignment_id: string; p_order_id: string };
+        Returns: Json;
+      };
       submit_teammate_application: {
         Args: {
           p_country: string;
