@@ -16,18 +16,153 @@ export type Database = {
     Tables: {
       account_roles: {
         Row: {
+          owner: boolean;
           role: string;
+          role_set_at: string | null;
+          role_set_by: string | null;
           user_id: string;
         };
         Insert: {
+          owner?: boolean;
           role?: string;
+          role_set_at?: string | null;
+          role_set_by?: string | null;
           user_id: string;
         };
         Update: {
+          owner?: boolean;
           role?: string;
+          role_set_at?: string | null;
+          role_set_by?: string | null;
           user_id?: string;
         };
         Relationships: [];
+      };
+      admin_audit_log: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          actor_name: string;
+          at: string;
+          detail: string;
+          id: number;
+          target: string;
+        };
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          actor_name: string;
+          at?: string;
+          detail?: string;
+          id?: never;
+          target?: string;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          actor_name?: string;
+          at?: string;
+          detail?: string;
+          id?: never;
+          target?: string;
+        };
+        Relationships: [];
+      };
+      checkout_intents: {
+        Row: {
+          amount_eur_cents: number;
+          booking_fx: number;
+          created_at: string;
+          customer_id: string;
+          expires_at: string;
+          game: string;
+          gg: boolean;
+          id: string;
+          ign: string;
+          note: string;
+          order_id: string | null;
+          payout_usd_cents: number;
+          rank: string;
+          region: string;
+          service: string;
+          status: string;
+          stripe_client_secret: string | null;
+          stripe_payment_intent_id: string | null;
+          stripe_session_id: string | null;
+          title: string;
+          unit: string;
+          units: number;
+          updated_at: string;
+          voice: boolean;
+        };
+        Insert: {
+          amount_eur_cents: number;
+          booking_fx: number;
+          created_at?: string;
+          customer_id: string;
+          expires_at: string;
+          game: string;
+          gg?: boolean;
+          id?: string;
+          ign: string;
+          note?: string;
+          order_id?: string | null;
+          payout_usd_cents: number;
+          rank?: string;
+          region: string;
+          service: string;
+          status?: string;
+          stripe_client_secret?: string | null;
+          stripe_payment_intent_id?: string | null;
+          stripe_session_id?: string | null;
+          title: string;
+          unit: string;
+          units: number;
+          updated_at?: string;
+          voice?: boolean;
+        };
+        Update: {
+          amount_eur_cents?: number;
+          booking_fx?: number;
+          created_at?: string;
+          customer_id?: string;
+          expires_at?: string;
+          game?: string;
+          gg?: boolean;
+          id?: string;
+          ign?: string;
+          note?: string;
+          order_id?: string | null;
+          payout_usd_cents?: number;
+          rank?: string;
+          region?: string;
+          service?: string;
+          status?: string;
+          stripe_client_secret?: string | null;
+          stripe_payment_intent_id?: string | null;
+          stripe_session_id?: string | null;
+          title?: string;
+          unit?: string;
+          units?: number;
+          updated_at?: string;
+          voice?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'checkout_intents_customer_id_fkey';
+            columns: ['customer_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'checkout_intents_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: true;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       discord_accounts: {
         Row: {
@@ -48,7 +183,15 @@ export type Database = {
           user_id?: string;
           username?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'discord_accounts_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       order_assignments: {
         Row: {
@@ -89,6 +232,179 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_payments: {
+        Row: {
+          amount_eur_cents: number;
+          amount_minor: number;
+          attempts: number;
+          created_at: string;
+          currency: string;
+          intent_id: string;
+          last_error: string | null;
+          order_id: string;
+          payment_method_type: string;
+          settle: string;
+          state: string;
+          stripe_payment_intent_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          amount_eur_cents: number;
+          amount_minor: number;
+          attempts?: number;
+          created_at?: string;
+          currency: string;
+          intent_id: string;
+          last_error?: string | null;
+          order_id: string;
+          payment_method_type?: string;
+          settle?: string;
+          state: string;
+          stripe_payment_intent_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          amount_eur_cents?: number;
+          amount_minor?: number;
+          attempts?: number;
+          created_at?: string;
+          currency?: string;
+          intent_id?: string;
+          last_error?: string | null;
+          order_id?: string;
+          payment_method_type?: string;
+          settle?: string;
+          state?: string;
+          stripe_payment_intent_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_payments_intent_id_fkey';
+            columns: ['intent_id'];
+            isOneToOne: true;
+            referencedRelation: 'checkout_intents';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_payments_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: true;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_proof_cleanup_cursor: {
+        Row: {
+          cycle_cutoff: string;
+          last_created_at: string | null;
+          last_id: string | null;
+          singleton: boolean;
+        };
+        Insert: {
+          cycle_cutoff?: string;
+          last_created_at?: string | null;
+          last_id?: string | null;
+          singleton?: boolean;
+        };
+        Update: {
+          cycle_cutoff?: string;
+          last_created_at?: string | null;
+          last_id?: string | null;
+          singleton?: boolean;
+        };
+        Relationships: [];
+      };
+      order_proof_cleanup_runs: {
+        Row: {
+          called_at: string;
+          claimed: number | null;
+          deleted: number | null;
+          failed: number | null;
+          http_status: number | null;
+          id: number;
+          outcome: string;
+        };
+        Insert: {
+          called_at?: string;
+          claimed?: number | null;
+          deleted?: number | null;
+          failed?: number | null;
+          http_status?: number | null;
+          id?: never;
+          outcome: string;
+        };
+        Update: {
+          called_at?: string;
+          claimed?: number | null;
+          deleted?: number | null;
+          failed?: number | null;
+          http_status?: number | null;
+          id?: never;
+          outcome?: string;
+        };
+        Relationships: [];
+      };
+      order_proof_uploads: {
+        Row: {
+          abandoned_at: string | null;
+          assignment_id: string;
+          byte_size: number | null;
+          cleanup_claimed_at: string | null;
+          created_at: string;
+          id: string;
+          mime: string | null;
+          order_id: string;
+          ready_at: string | null;
+          request_id: string;
+          sha256: string | null;
+          state: string;
+          storage_key: string | null;
+          uploader_id: string;
+        };
+        Insert: {
+          abandoned_at?: string | null;
+          assignment_id: string;
+          byte_size?: number | null;
+          cleanup_claimed_at?: string | null;
+          created_at?: string;
+          id?: string;
+          mime?: string | null;
+          order_id: string;
+          ready_at?: string | null;
+          request_id: string;
+          sha256?: string | null;
+          state?: string;
+          storage_key?: string | null;
+          uploader_id: string;
+        };
+        Update: {
+          abandoned_at?: string | null;
+          assignment_id?: string;
+          byte_size?: number | null;
+          cleanup_claimed_at?: string | null;
+          created_at?: string;
+          id?: string;
+          mime?: string | null;
+          order_id?: string;
+          ready_at?: string | null;
+          request_id?: string;
+          sha256?: string | null;
+          state?: string;
+          storage_key?: string | null;
+          uploader_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_proof_uploads_assignment_id_order_id_uploader_id_fkey';
+            columns: ['assignment_id', 'order_id', 'uploader_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_assignments';
+            referencedColumns: ['id', 'order_id', 'teammate_id'];
           },
         ];
       };
@@ -289,6 +605,96 @@ export type Database = {
           },
         ];
       };
+      stripe_events: {
+        Row: {
+          id: string;
+          received_at: string;
+          type: string;
+        };
+        Insert: {
+          id: string;
+          received_at?: string;
+          type: string;
+        };
+        Update: {
+          id?: string;
+          received_at?: string;
+          type?: string;
+        };
+        Relationships: [];
+      };
+      teammate_applications: {
+        Row: {
+          account_id: string | null;
+          country: string;
+          decided_at: string | null;
+          decided_by: string | null;
+          decided_by_name: string;
+          discord: string;
+          email: string;
+          game: string;
+          hours: string;
+          id: string;
+          link: string;
+          name: string;
+          rank: string;
+          reason: string;
+          reference: string;
+          region: string;
+          role: string;
+          services: string[];
+          status: string;
+          submitted_at: string;
+          why: string;
+        };
+        Insert: {
+          account_id?: string | null;
+          country?: string;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          decided_by_name?: string;
+          discord: string;
+          email: string;
+          game: string;
+          hours: string;
+          id?: string;
+          link?: string;
+          name: string;
+          rank: string;
+          reason?: string;
+          reference?: string;
+          region: string;
+          role?: string;
+          services: string[];
+          status?: string;
+          submitted_at?: string;
+          why?: string;
+        };
+        Update: {
+          account_id?: string | null;
+          country?: string;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          decided_by_name?: string;
+          discord?: string;
+          email?: string;
+          game?: string;
+          hours?: string;
+          id?: string;
+          link?: string;
+          name?: string;
+          rank?: string;
+          reason?: string;
+          reference?: string;
+          region?: string;
+          role?: string;
+          services?: string[];
+          status?: string;
+          submitted_at?: string;
+          why?: string;
+        };
+        Relationships: [];
+      };
       teammate_order_access: {
         Row: {
           approved_games: string[];
@@ -338,31 +744,107 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      begin_order_proof_upload: {
-        Args: {
-          p_order_id: string;
-          p_assignment_id: string;
-          p_request_id: string;
-        };
-        Returns: Json;
-      };
-      finalize_order_proof_upload: {
-        Args: {
-          p_proof_id: string;
-          p_mime: string;
-          p_byte_size: number;
-          p_sha256: string;
-        };
-        Returns: Json;
-      };
       abandon_order_proof_upload: {
         Args: { p_proof_id: string };
         Returns: Json;
       };
-      list_order_proofs: { Args: { p_order_id: string }; Returns: Json };
-      get_order_proof: {
-        Args: { p_order_id: string; p_proof_id: string };
+      accept_order: { Args: { p_order_id: string }; Returns: Json };
+      admin_account_dto: {
+        Args: { p_user: string; p_viewer: string };
         Returns: Json;
+      };
+      admin_accounts: { Args: never; Returns: Json };
+      admin_application_dto: {
+        Args: {
+          p: Database['public']['Tables']['teammate_applications']['Row'];
+        };
+        Returns: Json;
+      };
+      admin_applications: { Args: never; Returns: Json };
+      admin_apply_role: {
+        Args: {
+          p_actor: string;
+          p_actor_name: string;
+          p_role: string;
+          p_target: string;
+        };
+        Returns: Json;
+      };
+      admin_audit: { Args: { p_limit?: number }; Returns: Json };
+      admin_caller: {
+        Args: never;
+        Returns: {
+          id: string;
+          name: string;
+        }[];
+      };
+      admin_decide_application: {
+        Args: {
+          p_application_id: string;
+          p_decision: string;
+          p_reason?: string;
+        };
+        Returns: Json;
+      };
+      admin_log: {
+        Args: {
+          p_action: string;
+          p_actor: string;
+          p_actor_name: string;
+          p_detail: string;
+          p_target: string;
+        };
+        Returns: undefined;
+      };
+      admin_orders: { Args: { p_limit?: number }; Returns: Json };
+      admin_set_access: {
+        Args: { p_games: string[]; p_gg: boolean; p_user_id: string };
+        Returns: Json;
+      };
+      admin_set_role: {
+        Args: { p_role: string; p_user_id: string };
+        Returns: Json;
+      };
+      authorize_order_proof_upload: {
+        Args: { p_assignment_id: string; p_order_id: string };
+        Returns: Json;
+      };
+      begin_order_proof_upload: {
+        Args: {
+          p_assignment_id: string;
+          p_order_id: string;
+          p_request_id: string;
+        };
+        Returns: Json;
+      };
+      cancel_queued_order: { Args: { p_order_id: string }; Returns: Json };
+      claim_approved_application: {
+        Args: { p_user: string };
+        Returns: undefined;
+      };
+      claim_payment_settlements: {
+        Args: { p_limit?: number };
+        Returns: {
+          amount_eur_cents: number;
+          amount_minor: number;
+          attempts: number;
+          created_at: string;
+          currency: string;
+          intent_id: string;
+          last_error: string | null;
+          order_id: string;
+          payment_method_type: string;
+          settle: string;
+          state: string;
+          stripe_payment_intent_id: string;
+          updated_at: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'order_payments';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       claim_stale_order_proof_uploads: {
         Args: { p_limit?: number };
@@ -390,9 +872,22 @@ export type Database = {
         Args: { p_flag_id: string; p_status: string };
         Returns: Json;
       };
-      accept_order: { Args: { p_order_id: string }; Returns: Json };
-      cancel_queued_order: { Args: { p_order_id: string }; Returns: Json };
+      create_paid_order: {
+        Args: {
+          p_amount_minor: number;
+          p_currency: string;
+          p_intent_id: string;
+          p_method: string;
+          p_payment_intent: string;
+          p_state: string;
+        };
+        Returns: Json;
+      };
       customer_active_order: { Args: never; Returns: Json };
+      customer_checkout_status: {
+        Args: { p_intent_id: string };
+        Returns: Json;
+      };
       customer_order: { Args: { p_order_id: string }; Returns: Json };
       customer_order_history: {
         Args: { p_limit?: number; p_offset?: number };
@@ -402,10 +897,24 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
-      customer_checkout_status: {
-        Args: { p_intent_id: string };
+      finalize_order_proof_upload: {
+        Args: {
+          p_byte_size: number;
+          p_mime: string;
+          p_proof_id: string;
+          p_sha256: string;
+        };
         Returns: Json;
       };
+      finish_payment_settlement: {
+        Args: { p_error?: string; p_order_id: string; p_state: string };
+        Returns: undefined;
+      };
+      get_order_proof: {
+        Args: { p_order_id: string; p_proof_id: string };
+        Returns: Json;
+      };
+      list_order_proofs: { Args: { p_order_id: string }; Returns: Json };
       order_customer_dto: {
         Args: { p_order: Database['public']['Tables']['orders']['Row'] };
         Returns: Json;
@@ -422,18 +931,55 @@ export type Database = {
         Returns: Json;
       };
       order_expire_locked: { Args: { p_id: string }; Returns: boolean };
+      order_proof_dto: {
+        Args: { p: Database['public']['Tables']['order_proof_uploads']['Row'] };
+        Returns: Json;
+      };
+      order_proof_observer: {
+        Args: {
+          p_actor: string;
+          p_order: Database['public']['Tables']['orders']['Row'];
+        };
+        Returns: boolean;
+      };
+      order_proof_player: {
+        Args: {
+          p_actor: string;
+          p_order: Database['public']['Tables']['orders']['Row'];
+        };
+        Returns: boolean;
+      };
       order_sweep: { Args: { p_limit: number }; Returns: number };
       order_teammate_dto: {
         Args: { p_order: Database['public']['Tables']['orders']['Row'] };
         Returns: Json;
       };
+      refresh_discord_link: { Args: { p_user: string }; Returns: undefined };
       reroll_order: { Args: { p_order_id: string }; Returns: Json };
-      sweep_expired_orders: { Args: { p_limit?: number }; Returns: Json };
-      teammate_current_assignment: { Args: never; Returns: Json };
-      authorize_order_proof_upload: {
-        Args: { p_order_id: string; p_assignment_id: string };
+      run_order_proof_cleanup: { Args: never; Returns: undefined };
+      submit_teammate_application: {
+        Args: {
+          p_country: string;
+          p_discord: string;
+          p_email: string;
+          p_game: string;
+          p_hours: string;
+          p_link: string;
+          p_name: string;
+          p_rank: string;
+          p_region: string;
+          p_role: string;
+          p_services: string[];
+          p_why: string;
+        };
         Returns: Json;
       };
+      sweep_expired_orders: { Args: { p_limit?: number }; Returns: Json };
+      sync_account_owner: {
+        Args: { p_owner: boolean; p_user_id: string };
+        Returns: undefined;
+      };
+      teammate_current_assignment: { Args: never; Returns: Json };
       teammate_order_queue: { Args: never; Returns: Json };
     };
     Enums: {

@@ -1,0 +1,206 @@
+import type { APIContext, APIRoute } from 'astro';
+import type { z } from 'zod';
+import type { AccountContext } from '../auth/context';
+import { accountContext } from '../auth/context';
+import { mutation } from '../auth/handlers';
+import {
+  ApplicationSchema,
+  APPLICATION_SERVICES,
+  DecideApplicationSchema,
+  SetAccessSchema,
+  SetRoleSchema,
+  applicationError,
+} from '../../contracts/admin';
+import { sendApplicationDecision, sendApplicationReceived } from './notify';
+
+type Client = NonNullable<AccountContext['client']>;
+type Rpc = PromiseLike<{ data: unknown; error: unknown }>;
+
+/**
+ * Admin RPCs answer `{ error: { code, message } }` for refusals and a plain payload otherwise.
+ * Maps that envelope to an HTTP response with the message the screen shows as a toast.
+ */
+export function rpcResponse(
+  account: AccountContext,
+  data: unknown,
+  error: unknown,
+): Response {
+  if (error || !data || typeof data !== 'object')
+    return account.json({ error: 'Admin service unavailable.' }, 503);
+  const refusal = (data as { error?: { code?: unknown; message?: unknown } })
+    .error;
+  if (refusal) {
+    const code = Number(refusal.code);
+    return account.json(
+      {
+        error:
+          typeof refusal.message === 'string'
+            ? refusal.message
+            : 'That didn’t work.',
+      },
+      code >= 400 && code < 600 ? code : 400,
+    );
+  }
+  return account.json(data);
+}
+
+type Command = {
+  schema: z.ZodType<Record<string, unknown> & { csrf: string }>;
+  call: (client: Client, body: Record<string, unknown>) => Rpc;
+  /** Side effect after a successful command (emails). Never fails the request. */
+  after?: (data: Record<string, unknown>) => Promise<void>;
+};
+
+/**
+ * One admin endpoint. GET reads, POST runs the first command whose schema matches.
+ * Non-admins get 404, like /admin itself; the database re-checks the role on every call.
+ */
+function adminRoute(get: ((client: Client) => Rpc) | null, post: Command[]) {
+  const handler: APIRoute = async (context: APIContext) => {
+    let account = accountContext(context.request, context.cookies);
+    try {
+      const method = context.request.method;
+      if (method !== 'GET' && method !== 'POST') {
+        const response = account.json({ error: 'Method not allowed.' }, 405);
+        response.headers.set('Allow', get ? 'GET, POST' : 'POST');
+        return response;
+      }
+      let body: Record<string, unknown> | null = null;
+      if (method === 'POST') {
+        const prepared = await mutation(context, 8192);
+        account = prepared.account;
+        if (prepared.failure) return prepared.failure;
+        body = prepared.body;
+      }
+      const identity = await account.identity();
+      if (!identity || !account.client)
+        return account.json({ error: 'Authentication required.' }, 401);
+      if (identity.viewer.role !== 'admin')
+        return account.json({ error: 'Not found.' }, 404);
+      if (method === 'GET') {
+        if (!get) return account.json({ error: 'Method not allowed.' }, 405);
+        const { data, error } = await get(account.client);
+        return rpcResponse(account, data, error);
+      }
+      for (const command of post) {
+        const parsed = command.schema.safeParse(body);
+        if (!parsed.success) continue;
+        const { data, error } = await command.call(account.client, parsed.data);
+        const response = rpcResponse(account, data, error);
+        if (response.status === 200 && command.after)
+          await command
+            .after(data as Record<string, unknown>)
+            .catch(() => undefined);
+        return response;
+      }
+      return account.json({ error: 'Invalid admin request.' }, 400);
+    } catch {
+      return account.json({ error: 'Admin service unavailable.' }, 503);
+    }
+  };
+  return handler;
+}
+
+export const users = adminRoute(
+  (client) => client.rpc('admin_accounts'),
+  [
+    {
+      schema: SetRoleSchema,
+      call: (client, body) =>
+        client.rpc('admin_set_role', {
+          p_user_id: body.userId as string,
+          p_role: body.role as string,
+        }),
+    },
+    {
+      schema: SetAccessSchema,
+      call: (client, body) => {
+        const access = body.access as { games: string[]; gg: boolean };
+        return client.rpc('admin_set_access', {
+          p_user_id: body.userId as string,
+          p_games: access.games,
+          p_gg: access.gg,
+        });
+      },
+    },
+  ],
+);
+
+export const applications = adminRoute(
+  (client) => client.rpc('admin_applications'),
+  [
+    {
+      schema: DecideApplicationSchema,
+      call: (client, body) =>
+        client.rpc('admin_decide_application', {
+          p_application_id: body.id as string,
+          p_decision: body.decision as string,
+          p_reason: (body.reason as string | undefined) ?? '',
+        }),
+      after: (data) =>
+        sendApplicationDecision(
+          data.application as Parameters<typeof sendApplicationDecision>[0],
+        ),
+    },
+  ],
+);
+
+export const orders = adminRoute(
+  (client) => client.rpc('admin_orders', { p_limit: 1000 }),
+  [],
+);
+
+export const audit = adminRoute(
+  (client) => client.rpc('admin_audit', { p_limit: 500 }),
+  [],
+);
+
+/** POST /api/apply: the public teammate application (no account needed). */
+export const apply: APIRoute = async (context) => {
+  const { account, body, failure } = await mutation(context, 8192);
+  if (failure) return failure;
+  if (!account.client)
+    return account.json({ error: 'Applications are closed right now.' }, 503);
+  const parsed = ApplicationSchema.safeParse(body);
+  if (!parsed.success)
+    return account.json({ error: applicationError(parsed.error) }, 400);
+  const f = parsed.data;
+  try {
+    const { data, error } = await account.client.rpc(
+      'submit_teammate_application',
+      {
+        p_name: f.name,
+        p_email: f.email,
+        p_discord: f.discord,
+        p_country: f.country,
+        p_game: f.game,
+        p_rank: f.rank,
+        p_region: f.region,
+        p_role: f.role,
+        p_link: f.link,
+        p_hours: f.hours,
+        p_why: f.why,
+        p_services: (
+          Object.keys(APPLICATION_SERVICES) as (keyof typeof f.svc)[]
+        )
+          .filter((key) => f.svc[key])
+          .map((key) => APPLICATION_SERVICES[key]),
+      },
+    );
+    const response = rpcResponse(account, data, error);
+    if (response.status === 200) {
+      const application = (data as { application: { reference: string } })
+        .application;
+      await sendApplicationReceived(f, application.reference).catch(
+        () => undefined,
+      );
+      return account.json({ application }, 201);
+    }
+    return response;
+  } catch {
+    return account.json(
+      { error: 'Couldn’t send your application. Please try again.' },
+      503,
+    );
+  }
+};

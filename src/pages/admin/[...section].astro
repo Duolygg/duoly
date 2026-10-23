@@ -1,0 +1,50 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import AdminApp, {
+  SECTIONS,
+  sectionFromPath,
+} from '../../components/admin/AdminApp.jsx';
+import { accountContext } from '../../server/auth/context';
+import { isOwnerEmail } from '../../server/admin/owners';
+import { orderChatEnabled } from '../../server/chat/config';
+
+const account = accountContext(Astro.request, Astro.cookies);
+let identity: Awaited<ReturnType<typeof account.identity>>;
+try {
+  identity = await account.identity();
+} catch {
+  return new Response('Temporarily unavailable', {
+    status: 503,
+    headers: account.headers,
+  });
+}
+for (const [name, value] of account.headers)
+  Astro.response.headers.set(name, value);
+// Admin is invisible to everyone else.
+if (identity?.viewer.role !== 'admin') return Astro.rewrite('/404');
+const slug = (Astro.params.section ?? '').replace(/\/$/, '');
+if (!SECTIONS.some((entry) => entry.slug === slug))
+  return Astro.rewrite('/404');
+const section = sectionFromPath(Astro.url.pathname);
+const label = SECTIONS.find((entry) => entry.id === section)?.label ?? 'Admin';
+const csrf = account.csrf();
+---
+
+<SiteLayout
+  title={`${label} | Duoly admin`}
+  viewer={identity.viewer}
+  csrf={csrf}
+  bare
+>
+  <AdminApp
+    client:load
+    admin={identity.viewer}
+    owner={isOwnerEmail(identity.viewer.email)}
+    csrf={csrf}
+    section={section}
+    chatEnabled={orderChatEnabled()}
+    stripeTest={String(
+      process.env.STRIPE_SECRET_KEY ?? import.meta.env.STRIPE_SECRET_KEY ?? '',
+    ).startsWith('sk_test_')}
+  />
+</SiteLayout>
