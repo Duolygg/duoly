@@ -452,7 +452,8 @@ export default class AdminApp extends React.Component {
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
     else if (s.section === 'audit') body = <AuditLog {...props} />;
-    else if (s.section === 'safety' && this.props.chatEnabled) body = <ChatModeration csrf={this.props.csrf} />;
+    else if (s.section === 'safety' && this.props.chatEnabled)
+      body = <ChatModeration csrf={this.props.csrf} />;
     else body = <NotConnected section={s.section} go={this.go} />;
     return (
       <div

@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const migrationPath = 'supabase/migrations/20261024090000_order_chat.sql';
+const migrationPath = 'supabase/migrations/20261024110000_order_chat.sql';
 const migration = () =>
   existsSync(migrationPath) ? readFileSync(migrationPath, 'utf8') : '';
 

@@ -268,19 +268,23 @@ it('never renders stale private state after denial, and distinguishes a real emp
   expect(render({ flags: [] })).toContain('No flagged messages');
 });
 
-it('wires only the existing admin route behind SSR role denial and the false-default server flag', () => {
+it('wires chat safety into the current admin shell behind SSR role denial and the false-default flag', () => {
   const route = readFileSync(
-    new URL('../../src/pages/admin/index.astro', import.meta.url),
+    new URL('../../src/pages/admin/[...section].astro', import.meta.url),
+    'utf8',
+  );
+  const shell = readFileSync(
+    new URL('../../src/components/admin/AdminApp.jsx', import.meta.url),
     'utf8',
   );
   expect(route).toContain("from '../../server/chat/config'");
-  expect(route).toContain('orderChatEnabled()');
-  expect(route).toContain('<ChatModeration');
-  expect(route).toContain('csrf={account.csrf()}');
+  expect(route).toContain('chatEnabled={orderChatEnabled()}');
+  expect(route).toContain('csrf={csrf}');
   expect(route.indexOf("identity?.viewer.role !== 'admin'")).toBeLessThan(
-    route.indexOf('<ChatModeration'),
+    route.indexOf('<AdminApp'),
   );
-  expect(route).toContain('Not connected yet.');
+  expect(shell).toContain("s.section === 'safety' && this.props.chatEnabled");
+  expect(shell).toContain('<ChatModeration csrf={this.props.csrf}');
 });
 
 it('SSR exposes only a loading shell without flags, credentials or fabricated counts', () => {
