@@ -11,6 +11,7 @@ import Applications from './Applications';
 import AuditLog from './AuditLog';
 import Orders from './Orders';
 import LiveDesk from './LiveDesk';
+import Overview from './Overview';
 import NotConnected from './NotConnected';
 import ChatModeration from './ChatModeration';
 
@@ -140,7 +141,7 @@ const TITLES = {
   settings: ['Settings', 'The rules the platform runs on'],
 };
 // Sections wired to the database. The rest show what they will do, never sample data.
-const LIVE = ['live', 'users', 'applications', 'orders', 'audit'];
+const LIVE = ['overview', 'live', 'users', 'applications', 'orders', 'audit'];
 
 export const sectionFromPath = (path) => {
   const slug = String(path || '')
@@ -452,6 +453,8 @@ export default class AdminApp extends React.Component {
     let body = null;
     if (s.section === 'users') body = <Users {...props} />;
     else if (s.section === 'applications') body = <Applications {...props} />;
+    else if (s.section === 'overview')
+      body = <Overview {...props} chatEnabled={this.props.chatEnabled} />;
     else if (s.section === 'live') body = <LiveDesk {...props} />;
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
