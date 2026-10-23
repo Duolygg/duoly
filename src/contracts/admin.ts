@@ -120,3 +120,12 @@ export function applicationError(error: z.ZodError): string {
   };
   return message[field] ?? 'Please check the form and try again.';
 }
+
+export const SetSuspendedSchema = z
+  .object({
+    csrf,
+    userId: z.uuid(),
+    suspended: z.boolean(),
+    reason: z.string().trim().max(200).optional(),
+  })
+  .strict();

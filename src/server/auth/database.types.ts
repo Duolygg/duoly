@@ -959,6 +959,9 @@ export type Database = {
           priority_adjustment_expires_at: string | null;
           priority_base: number;
           suspended: boolean;
+          suspended_at: string | null;
+          suspended_by: string | null;
+          suspended_reason: string;
           user_id: string;
         };
         Insert: {
@@ -970,6 +973,9 @@ export type Database = {
           priority_adjustment_expires_at?: string | null;
           priority_base?: number;
           suspended?: boolean;
+          suspended_at?: string | null;
+          suspended_by?: string | null;
+          suspended_reason?: string;
           user_id: string;
         };
         Update: {
@@ -981,6 +987,9 @@ export type Database = {
           priority_adjustment_expires_at?: string | null;
           priority_base?: number;
           suspended?: boolean;
+          suspended_at?: string | null;
+          suspended_by?: string | null;
+          suspended_reason?: string;
           user_id?: string;
         };
         Relationships: [
@@ -1059,6 +1068,11 @@ export type Database = {
         Args: { p_role: string; p_user_id: string };
         Returns: Json;
       };
+      admin_set_suspended: {
+        Args: { p_reason?: string; p_suspended: boolean; p_user_id: string };
+        Returns: Json;
+      };
+      admin_teammates: { Args: never; Returns: Json };
       authorize_order_proof_upload: {
         Args: { p_assignment_id: string; p_order_id: string };
         Returns: Json;
