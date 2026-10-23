@@ -242,7 +242,7 @@ export default class LiveDesk extends React.Component {
             {s.error}
           </p>
         ) : null}
-        <div className="ad-kpis">
+        <div className="ops-kpis">
           {this.kpi(
             'Waiting now',
             queued.length,
@@ -268,7 +268,7 @@ export default class LiveDesk extends React.Component {
             expired ? C.red : C.white,
           )}
         </div>
-        <div className="ad-3col">
+        <div className="ops-3col">
           {this.column(
             'ld-q',
             'Waiting',

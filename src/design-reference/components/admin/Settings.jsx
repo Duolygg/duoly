@@ -44,12 +44,12 @@ export default class Settings extends React.Component {
           </div>
         </section>
 
-        <div className="ad-2eq">
+        <div className="ops-2eq">
           <section aria-labelledby="st-trust" style={{ ...card, padding: "18px" }}>
             <h2 id="st-trust" style={h2}>Teammate trust levels</h2>
             <p style={{ margin: "4px 0 10px", fontSize: "13px", color: C.dim }}>Security deposit held from each payout, by completed orders. {where('components/TrustScore.jsx → TIERS')}</p>
-            <div className="ad-table-wrap">
-              <table className="ad-table" style={{ minWidth: "380px" }}>
+            <div className="ops-table-wrap">
+              <table className="ops-table" style={{ minWidth: "380px" }}>
                 <thead><tr><th style={th}>Level</th><th style={th}>From</th><th style={{ ...th, textAlign: "right" }}>Deposit</th></tr></thead>
                 <tbody>
                   {TIERS.map((t) => (
@@ -66,8 +66,8 @@ export default class Settings extends React.Component {
           <section aria-labelledby="st-rewards" style={{ ...card, padding: "18px" }}>
             <h2 id="st-rewards" style={h2}>Customer reward levels</h2>
             <p style={{ margin: "4px 0 10px", fontSize: "13px", color: C.dim }}>Cashback paid as gifted balance, plus a one-off gift per level. {where('components/Rewards.jsx → LEVELS')}</p>
-            <div className="ad-table-wrap">
-              <table className="ad-table" style={{ minWidth: "380px" }}>
+            <div className="ops-table-wrap">
+              <table className="ops-table" style={{ minWidth: "380px" }}>
                 <thead><tr><th style={th}>Level</th><th style={th}>From</th><th style={{ ...th, textAlign: "right" }}>Cashback</th><th style={{ ...th, textAlign: "right" }}>Gift</th></tr></thead>
                 <tbody>
                   {LEVELS.map((l) => (
@@ -84,7 +84,7 @@ export default class Settings extends React.Component {
           </section>
         </div>
 
-        <div className="ad-2eq">
+        <div className="ops-2eq">
           <section aria-labelledby="st-safety" style={{ ...card, padding: "18px" }}>
             <h2 id="st-safety" style={h2}>Chat safety filter</h2>
             <p style={{ margin: "4px 0 10px", fontSize: "13px", color: C.dim }}>Messages matching these are stopped before they’re sent. {where('components/Teammate.jsx → BLOCKED')}</p>

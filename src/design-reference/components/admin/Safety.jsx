@@ -62,7 +62,7 @@ class CustomerReports extends React.Component {
           Off-platform attempts and toxicity reported by customers, with their proof. Approve only with solid evidence: the customer is then owed the {s.bounty} bounty.
         </p>
         {s.error ? <p role="status" style={{ margin: "0 0 12px", fontSize: "13.5px", color: C.pink }}>{s.error}</p> : null}
-        <div className="ad-cards">
+        <div className="ops-cards">
           {list.map((r) => {
             const st = status[r.status] || status.open;
             return (

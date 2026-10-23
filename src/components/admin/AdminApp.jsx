@@ -185,7 +185,7 @@ export default class AdminApp extends React.Component {
   }
   // On phones the sidebar is a scrolling tab row: keep the current section in view.
   revealNav = () => {
-    const el = document.querySelector('.ad-nav [aria-current="page"]');
+    const el = document.querySelector('.ops-nav [aria-current="page"]');
     if (el && el.scrollIntoView)
       el.scrollIntoView({ block: 'nearest', inline: 'center' });
   };
@@ -271,7 +271,7 @@ export default class AdminApp extends React.Component {
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="ad-confirm-h"
+        aria-labelledby="ops-confirm-h"
         style={{
           position: 'fixed',
           inset: '0',
@@ -312,7 +312,7 @@ export default class AdminApp extends React.Component {
           }}
         >
           <h2
-            id="ad-confirm-h"
+            id="ops-confirm-h"
             style={{
               margin: '0',
               fontFamily: DISPLAY,
@@ -461,7 +461,7 @@ export default class AdminApp extends React.Component {
     else body = <NotConnected section={s.section} go={this.go} />;
     return (
       <div
-        className="ad-shell"
+        className="ops-shell"
         style={{
           background: C.bg,
           color: C.text,
@@ -471,8 +471,8 @@ export default class AdminApp extends React.Component {
           fontVariantNumeric: 'tabular-nums',
         }}
       >
-        <aside className="ad-side" aria-label="Admin">
-          <a href="/" aria-label="Duoly home" className="ad-side-title">
+        <aside className="ops-side" aria-label="Admin">
+          <a href="/" aria-label="Duoly home" className="ops-side-title">
             <img
               src="/assets/brand/logo-wordmark.webp"
               alt="Duoly"
@@ -480,24 +480,24 @@ export default class AdminApp extends React.Component {
               height="34"
               style={{ width: '92px', height: '34px', display: 'block' }}
             />
-            <span className="ad-side-chip">ADMIN</span>
+            <span className="ops-side-chip">ADMIN</span>
           </a>
-          <nav className="ad-nav" aria-label="Admin sections">
+          <nav className="ops-nav" aria-label="Admin sections">
             {GROUPS.map((g) => (
               <div
                 key={g.label}
-                className="ad-group"
+                className="ops-group"
                 role="group"
                 aria-label={g.label}
               >
-                <span className="ad-group-label" aria-hidden="true">
+                <span className="ops-group-label" aria-hidden="true">
                   {g.label}
                 </span>
                 {SECTIONS.filter((x) => g.ids.includes(x.id)).map((x) => (
                   <a
                     key={x.id}
                     href={pathOf(x.id)}
-                    className="ad-navbtn"
+                    className="ops-navbtn"
                     aria-current={s.section === x.id ? 'page' : undefined}
                     onClick={(e) => {
                       if (
@@ -532,9 +532,9 @@ export default class AdminApp extends React.Component {
                     >
                       <path d={x.icon} />
                     </svg>
-                    <span className="ad-navlabel">{x.label}</span>
+                    <span className="ops-navlabel">{x.label}</span>
                     {counts[x.id] ? (
-                      <span className="ad-count ad-count-hot">
+                      <span className="ops-count ops-count-hot">
                         {counts[x.id]}
                       </span>
                     ) : null}
@@ -543,8 +543,8 @@ export default class AdminApp extends React.Component {
               </div>
             ))}
           </nav>
-          <div className="ad-side-foot">
-            <a href="/profile" aria-label="Your profile" className="ad-me">
+          <div className="ops-side-foot">
+            <a href="/profile" aria-label="Your profile" className="ops-me">
               <img
                 src={a.image || '/assets/avatars/avatar-1.png'}
                 alt=""
@@ -552,19 +552,19 @@ export default class AdminApp extends React.Component {
                 height="36"
                 referrerPolicy="no-referrer"
               />
-              <span className="ad-me-text">
-                <span className="ad-me-name">
+              <span className="ops-me-text">
+                <span className="ops-me-name">
                   {a.name && a.name !== 'Player' ? a.name : a.email}
                 </span>
-                <span className="ad-me-sub">
+                <span className="ops-me-sub">
                   {this.props.owner ? 'Owner' : 'Admin'}
                 </span>
               </span>
             </a>
-            <div className="ad-me-actions">
+            <div className="ops-me-actions">
               <a
                 href="/"
-                className="ad-iconbtn"
+                className="ops-iconbtn"
                 title="Open the site"
                 aria-label="Open the site"
               >
@@ -585,7 +585,7 @@ export default class AdminApp extends React.Component {
               </a>
               <a
                 href="/rules"
-                className="ad-iconbtn"
+                className="ops-iconbtn"
                 title="Teammate rules"
                 aria-label="Teammate rules"
               >
@@ -611,7 +611,7 @@ export default class AdminApp extends React.Component {
                 <input type="hidden" name="csrf" value={this.props.csrf} />
                 <button
                   type="submit"
-                  className="ad-iconbtn ad-iconbtn-out"
+                  className="ops-iconbtn ops-iconbtn-out"
                   title="Sign out"
                   aria-label="Sign out"
                 >
@@ -636,7 +636,7 @@ export default class AdminApp extends React.Component {
           </div>
         </aside>
 
-        <div className="ad-main">
+        <div className="ops-main">
           <header
             style={{
               display: 'flex',

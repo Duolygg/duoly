@@ -132,7 +132,7 @@ export default class Applications extends React.Component {
             {s.error}
           </p>
         ) : null}
-        <div className="ad-cards" style={{ marginTop: '14px' }}>
+        <div className="ops-cards" style={{ marginTop: '14px' }}>
           {list.map((a) => {
             const g = GAME[a.game] || { name: a.game, img: '' };
             return (

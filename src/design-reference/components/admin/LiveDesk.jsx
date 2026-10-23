@@ -99,7 +99,7 @@ export default class LiveDesk extends React.Component {
           </div>
           {this.state.error ? <p role="status" style={{ margin: "12px 0 0", fontSize: "13.5px", color: C.pink }}>{this.state.error}</p> : null}
 
-          <ul className="ad-cards" style={{ listStyle: "none", margin: "14px 0 0", padding: "0", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 320px), 1fr))" }}>
+          <ul className="ops-cards" style={{ listStyle: "none", margin: "14px 0 0", padding: "0", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 320px), 1fr))" }}>
             {shown.map((p) => (
               <li key={p.id} style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "14px", borderRadius: "16px", background: C.bg, border: "1px solid " + (p.state === 'idle' ? 'rgba(240, 166, 255, .35)' : C.line) }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: "0" }}>
