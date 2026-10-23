@@ -129,3 +129,12 @@ export const SetSuspendedSchema = z
     reason: z.string().trim().max(200).optional(),
   })
   .strict();
+
+export const SetBlockedSchema = z
+  .object({
+    csrf,
+    userId: z.uuid(),
+    blocked: z.boolean(),
+    reason: z.string().trim().max(200).optional(),
+  })
+  .strict();

@@ -175,6 +175,25 @@ export const createCheckout: APIRoute = async (context) => {
         409,
       );
     const admin = adminFor(config);
+    // Blocked by an admin (Customers): no new bookings, checked before any Stripe session exists.
+    const blocked = await admin
+      .from('customer_blocks')
+      .select('user_id')
+      .eq('user_id', identity.viewer.id)
+      .maybeSingle();
+    if (blocked.error)
+      return account.json(
+        { error: 'Checkout is unavailable. Try again.' },
+        503,
+      );
+    if (blocked.data)
+      return account.json(
+        {
+          error:
+            'Your account can’t book right now. Contact us at hello@duoly.gg.',
+        },
+        403,
+      );
     const stripe = stripeFor(config);
     const now = Math.floor(Date.now() / 1000);
     const { data: intent, error } = await admin
