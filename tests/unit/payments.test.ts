@@ -75,7 +75,7 @@ describe('checkout session', () => {
       card: { capture_method: 'manual' },
       paypal: { capture_method: 'manual' },
     });
-    expect(params.ui_mode).toBe('embedded_page');
+    expect(params.ui_mode).toBe('elements');
     expect(params.line_items?.[0]?.price_data?.unit_amount).toBe(1617);
     expect(params.client_reference_id).toBe(
       '5e1a0000-0000-4000-8000-000000000001',

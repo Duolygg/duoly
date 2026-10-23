@@ -1,127 +1,450 @@
 ---
-import ProductLayout from '../../layouts/ProductLayout.astro';
-import EmbeddedCheckout from '../../components/checkout/EmbeddedCheckout';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import CheckoutPanel from '../../components/checkout/CheckoutPanel';
 import { accountContext } from '../../server/auth/context';
 import { adminFor, paymentsConfig } from '../../server/payments/config';
+import { calculateQuote } from '../../server/pricing';
+import { FALLBACK_EUR_TO_USD } from '../../server/fx';
+import { GAME, IGN_LABEL } from '../../design-reference/lib/games.js';
+
 const account = accountContext(Astro.request, Astro.cookies);
+const identity = await account.identity().catch(() => null);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
-const identity = await account.identity().catch(() => null);
 if (!identity) return account.redirect('/login');
 const config = paymentsConfig();
 const id = Astro.params.id ?? '';
-if (!config || !/^[0-9a-f-]{36}$/i.test(id))
-  return new Response('Not found', { status: 404, headers: account.headers });
+if (!config || !/^[0-9a-f-]{36}$/i.test(id)) return Astro.rewrite('/404');
 const { data: intent } = await adminFor(config)
   .from('checkout_intents')
   .select(
-    'id, customer_id, status, order_id, stripe_client_secret, title, units, unit, amount_eur_cents, game, region',
+    'id, customer_id, status, order_id, stripe_client_secret, game, service, title, units, unit, rank, region, ign, voice, amount_eur_cents',
   )
   .eq('id', id)
   .maybeSingle();
 if (!intent || intent.customer_id !== identity.viewer.id)
-  return new Response('Not found', { status: 404, headers: account.headers });
+  return Astro.rewrite('/404');
 if (intent.status === 'paid' && intent.order_id)
   return account.redirect(`/queue/${intent.order_id}`);
 const open = intent.status === 'open' && !!intent.stripe_client_secret;
-const total = new Intl.NumberFormat('en-IE', {
-  style: 'currency',
-  currency: 'EUR',
-}).format(intent.amount_eur_cents / 100);
+
+const eur = (cents: number) =>
+  new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' }).format(
+    cents / 100,
+  );
+const game = (GAME as Record<string, { name: string; img: string }>)[
+  intent.game
+];
+const unitWord = (n: number) => `${intent.unit}${n === 1 ? '' : 's'}`;
+
+// Re-price the stored selection for the breakdown; if prices changed since the
+// intent was created, only the (authoritative) total is shown.
+let breakdown: { label: string; value: string; accent?: boolean }[] = [];
+try {
+  const [server, edition] = intent.region.split(' · ');
+  const quote = calculateQuote(
+    {
+      gameId: intent.game,
+      serviceId: intent.service,
+      units: intent.units,
+      server: intent.game === 'mc' ? server : intent.region,
+      ...(intent.rank ? { rank: intent.rank } : {}),
+      ...(intent.game === 'mc' && edition ? { edition } : {}),
+      ign: intent.ign,
+    },
+    { eurToUsd: FALLBACK_EUR_TO_USD, customerCurrency: 'EUR' },
+  );
+  if (quote.amountEurMinor === intent.amount_eur_cents) {
+    breakdown = [
+      {
+        label: `${eur(quote.unitPriceEurMinor)} × ${intent.units} ${unitWord(intent.units)}`,
+        value: eur(quote.subtotalEurMinor),
+      },
+    ];
+    if (quote.discountEurMinor > 0)
+      breakdown.push({
+        label: `Bundle discount (${quote.quantityDiscountPercent}%)`,
+        value: `−${eur(quote.discountEurMinor)}`,
+        accent: true,
+      });
+    if (quote.firstSessionDiscountEurMinor > 0)
+      breakdown.push({
+        label: 'First session discount',
+        value: `−${eur(quote.firstSessionDiscountEurMinor)}`,
+        accent: true,
+      });
+  }
+} catch {
+  breakdown = [];
+}
+const total = eur(intent.amount_eur_cents);
+const facts = [
+  `${intent.units} ${unitWord(intent.units)}`,
+  intent.region,
+  intent.rank ? `from ${intent.rank}` : '',
+  intent.voice ? 'Voice on Discord' : '',
+].filter(Boolean);
+const ignLabel =
+  (IGN_LABEL as Record<string, string>)[intent.game] ?? 'In-game name';
+const fontUrl = new URL('/fonts/geist-latin.woff2', Astro.url).href;
 ---
 
-<ProductLayout
+<SiteLayout
   title="Checkout | Duoly"
   viewer={identity.viewer}
   csrf={account.csrf()}
 >
-  <section class="checkout">
-    <header>
-      <p class="eyebrow">Last step</p>
-      <h1>Pay and queue</h1>
-      <p class="summary">
-        {intent.title} · {intent.units} {intent.unit}
-        {intent.units === 1 ? '' : 's'} · {intent.region}
-        <strong>{total}</strong>
-      </p>
-      <p class="hint">
-        Cards, wallets and PayPal are only charged when a teammate accepts.
-        Nobody within 5 minutes? You pay nothing.
-      </p>
-    </header>
-    {open ? (
-      <EmbeddedCheckout
-        publishableKey={config.publishableKey}
-        clientSecret={intent.stripe_client_secret!}
-        client:only="react"
-      />
-    ) : (
-      <p class="checkout-error">
-        This checkout has ended. <a href="/#games">Start a new order</a>.
-      </p>
-    )}
-  </section>
-</ProductLayout>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://js.stripe.com" />
+    <link rel="preconnect" href="https://api.stripe.com" />
+    <link rel="preconnect" href="https://m.stripe.network" />
+  </Fragment>
+  <div class="checkout">
+    <a class="back" href="/#games">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24">
+        <path
+          d="M15 6l-6 6 6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+      </svg>
+      Change order
+    </a>
+    <div class="grid">
+      <section class="order" aria-labelledby="order-h">
+        <p class="eyebrow">
+          <span class="dot"></span>Last step
+        </p>
+        <h1 id="order-h">Pay and queue</h1>
+        <div class="summary">
+          <div class="item">
+            {game && (
+              <img class="art" src={game.img} alt="" width="64" height="64" />
+            )}
+            <div class="item-text">
+              <strong>{intent.title}</strong>
+              <span>{game?.name ?? intent.game}</span>
+            </div>
+          </div>
+          <ul class="chips" aria-label="Order details">
+            {facts.map((fact) => (
+              <li>{fact}</li>
+            ))}
+            <li class="ign">
+              <span>{ignLabel}</span>
+              {intent.ign}
+            </li>
+          </ul>
+          {breakdown.length > 0 && (
+            <dl class="lines">
+              {breakdown.map((line) => (
+                <div class:list={{ accent: line.accent }}>
+                  <dt>{line.label}</dt>
+                  <dd>{line.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          <div class="total">
+            <span>Total</span>
+            <strong>{total}</strong>
+          </div>
+        </div>
+        <ol class="next" aria-label="What happens next">
+          <li>
+            <b>Pay now, charged when matched</b>
+            <span>
+              Cards, wallets, PayPal, Klarna and Revolut Pay are only held until
+              a teammate accepts.
+            </span>
+          </li>
+          <li>
+            <b>Matched in minutes</b>
+            <span>
+              Rank-verified {game?.name ?? ''} teammates see your order right
+              away.
+            </span>
+          </li>
+          <li>
+            <b>Nobody free in 5 minutes?</b>
+            <span>
+              Holds are released and anything already charged is refunded in
+              full. You pay nothing.
+            </span>
+          </li>
+        </ol>
+      </section>
+      <section class="payment" aria-label="Payment">
+        {open ? (
+          <CheckoutPanel
+            publishableKey={config.publishableKey}
+            clientSecret={intent.stripe_client_secret!}
+            intentId={intent.id}
+            totalLabel={total}
+            fontUrl={fontUrl}
+            client:load
+          />
+        ) : (
+          <div class="ended" role="alert">
+            <h2>This checkout has ended</h2>
+            <p>Nothing was charged. Start a new order to pay.</p>
+            <a href="/#games">Start a new order</a>
+          </div>
+        )}
+      </section>
+    </div>
+  </div>
+</SiteLayout>
 
 <style>
   .checkout {
-    max-width: 1040px;
-    margin: 32px auto 64px;
-    padding: 0 16px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 20px 24px 24px;
+  }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #a79dc4;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .back:hover {
+    color: #fff;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+    gap: 40px;
+    align-items: start;
+    margin-top: 14px;
   }
   .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin: 0;
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #d6bbff;
   }
-  h1 {
-    margin: 6px 0 0;
-    font-family: 'Bricolage Grotesque', sans-serif;
-    font-size: 32px;
-    letter-spacing: -0.03em;
-    color: #fff;
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #5eeaa8;
+    box-shadow: 0 0 0 4px rgba(94, 234, 168, 0.15);
   }
-  header {
-    max-width: 720px;
+  h1 {
+    margin: 10px 0 22px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: clamp(34px, 4.6vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+    color: #fff;
   }
   .summary {
+    padding: 22px;
+    border-radius: 24px;
+    background: #120b22;
+    border: 1px solid rgba(214, 187, 255, 0.12);
+  }
+  .item {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 8px;
-    margin: 14px 0 0;
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: #1b1033;
-    border: 1px solid rgba(214, 187, 255, 0.16);
-    color: #cfc4ea;
+    align-items: center;
+    gap: 14px;
   }
-  .summary strong {
+  .art {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px -10px rgba(214, 187, 255, 0.45);
+  }
+  .item-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .item-text strong {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 22px;
+    letter-spacing: -0.02em;
     color: #fff;
-    font-size: 18px;
   }
-  .hint {
-    margin: 10px 0 20px;
-    font-size: 13.5px;
+  .item-text span {
     color: #a79dc4;
   }
-  /* Islands render inline by default; Stripe sizes its layout from this width. */
-  .checkout-mount,
-  .checkout-mount :global(astro-island) {
-    display: block;
-    width: 100%;
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
   }
-  :global(.checkout-frame) {
-    width: 100%;
-    min-height: 560px;
-    padding: 8px 0;
-    border-radius: 24px;
-    background: #fff;
+  .chips li {
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(214, 187, 255, 0.08);
+    color: #cfc4ea;
+    font-size: 13px;
+    font-weight: 600;
   }
-  :global(.checkout-error) {
-    color: #ffb2be;
+  .chips .ign {
+    color: #f3eeff;
+  }
+  .chips .ign span {
+    margin-right: 6px;
+    color: #8e84ab;
+    font-weight: 500;
+  }
+  .lines {
+    margin: 18px 0 0;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(214, 187, 255, 0.14);
+  }
+  .lines div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 0;
+    color: #a79dc4;
+    font-size: 14.5px;
+  }
+  .lines dt,
+  .lines dd {
+    margin: 0;
+  }
+  .lines .accent dd {
+    color: #5eeaa8;
+    font-weight: 600;
+  }
+  .total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(214, 187, 255, 0.12);
+  }
+  .total span {
+    color: #cfc4ea;
+    font-weight: 600;
+  }
+  .total strong {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 30px;
+    letter-spacing: -0.03em;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+  .next {
+    margin: 26px 0 0;
+    padding: 0 0 0 4px;
+    list-style: none;
+    counter-reset: step;
+  }
+  .next li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 0 18px 40px;
+    counter-increment: step;
+  }
+  .next li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(214, 187, 255, 0.12);
+    color: #d6bbff;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .next li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 12.5px;
+    top: 30px;
+    bottom: 4px;
+    width: 1px;
+    background: rgba(214, 187, 255, 0.16);
+  }
+  .next b {
+    color: #fff;
+    font-size: 15px;
+  }
+  .next span {
+    color: #a79dc4;
+    font-size: 14px;
+  }
+  .order {
+    position: sticky;
+    top: 84px;
+  }
+  .ended {
+    padding: 28px;
+    border-radius: 28px;
+    background: #120b22;
+    border: 1px solid rgba(214, 187, 255, 0.16);
+  }
+  .ended h2 {
+    margin: 0;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    color: #fff;
+  }
+  .ended p {
+    color: #a79dc4;
+  }
+  .ended a {
+    color: #d6bbff;
+    font-weight: 700;
+  }
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    /* Phones: summary, then payment, then the explainer. */
+    .order {
+      position: static;
+      display: contents;
+    }
+    .summary {
+      order: 1;
+      margin-bottom: 16px;
+    }
+    .payment {
+      order: 2;
+    }
+    .next {
+      order: 3;
+    }
+    h1 {
+      margin-bottom: 16px;
+    }
+  }
+  @media (max-width: 560px) {
+    .checkout {
+      padding: 18px 16px 8px;
+    }
+    .summary {
+      padding: 16px;
+      border-radius: 20px;
+    }
   }
 </style>
