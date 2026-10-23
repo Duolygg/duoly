@@ -67,6 +67,45 @@
 .pay-express.none {
   display: none;
 }
+.pay-express.wallet {
+  animation: pay-in 0.35s ease-out;
+}
+.pay-wallet-note {
+  margin: -6px 0 0;
+  color: #a79dc4;
+  font-size: 13px;
+  text-align: center;
+  text-wrap: balance;
+}
+.pay-other {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  align-self: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(214, 187, 255, 0.18);
+  border-radius: 12px;
+  background: transparent;
+  color: #e9dcff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+.pay-other:hover {
+  background: rgba(214, 187, 255, 0.08);
+  border-color: rgba(214, 187, 255, 0.32);
+}
+/* Wallet-first: keep Stripe's fields mounted but out of the way. */
+.pay-element.folded,
+.pay-btn.folded {
+  display: none;
+}
 .pay-or {
   display: flex;
   align-items: center;

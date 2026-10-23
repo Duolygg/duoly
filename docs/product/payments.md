@@ -25,6 +25,8 @@ Vercel (production): `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBH
 
 Stripe (test mode, account `acct_1UQsy7QtXk6y39Ra`): webhook `we_1UTS0QQtXk6y39RaQ94C402e` → `https://duoly.gg/api/webhooks/stripe` for `checkout.session.completed`, `.async_payment_succeeded`, `.async_payment_failed`, `.expired`. All available payment methods are switched on in the default payment method configuration.
 
+Apple Pay and Google Pay need the site's domains registered as payment method domains: `duoly.gg` (`pmd_1UTcjvQtXk6y39Ra6JhwlKmJ`) and `www.duoly.gg` (`pmd_1UTcjwQtXk6y39RaJZJ13f75`) in test mode. Register them again in live mode. When the device has Apple Pay or Google Pay, the checkout leads with that one button and folds the card form behind "Pay another way".
+
 Secrets live in macOS Keychain (`duoly-stripe-*`, `duoly-supabase-secret-key`, `duoly-payments-tick-secret`, `duoly-resend-send-key`), Vercel and Supabase Vault, never in the repo.
 
 ## Before live mode
