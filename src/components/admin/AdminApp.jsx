@@ -434,7 +434,9 @@ export default class AdminApp extends React.Component {
     const s = this.state;
     const a = this.props.admin || {};
     const [title, sub] = TITLES[s.section];
-    const live = LIVE.includes(s.section);
+    const live =
+      LIVE.includes(s.section) ||
+      (s.section === 'safety' && this.props.chatEnabled);
     const counts = { applications: s.pendingApps };
     const props = {
       api: this.api,
@@ -508,7 +510,11 @@ export default class AdminApp extends React.Component {
                     }}
                     style={{
                       textDecoration: 'none',
-                      opacity: LIVE.includes(x.id) ? 1 : 0.62,
+                      opacity:
+                        LIVE.includes(x.id) ||
+                        (x.id === 'safety' && this.props.chatEnabled)
+                          ? 1
+                          : 0.62,
                     }}
                   >
                     <svg
