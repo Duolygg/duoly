@@ -55,7 +55,7 @@ language plpgsql security definer set search_path = '' as $$
 declare v_calls integer;
 begin
   if p_limit < 1 or p_limit > 10000 then return false; end if;
-  insert into public.support_ai_daily_usage(day, calls) values (pg_catalog.current_date, 1)
+  insert into public.support_ai_daily_usage(day, calls) values (current_date, 1)
     on conflict (day) do update set calls = public.support_ai_daily_usage.calls + 1
       where public.support_ai_daily_usage.calls < p_limit
     returning calls into v_calls;

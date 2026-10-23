@@ -200,9 +200,23 @@ test('reset password asks for an email and confirms without revealing accounts',
   await expect(page.getByRole('status')).toContainText('reset link');
 });
 
-test('support bubble points to real channels, never a preview', async ({
+test('support bubble opens Sparky with prepared answers, never Discord or a preview', async ({
   page,
 }) => {
+  await page.route('**/api/support', (route) =>
+    route.request().method() === 'GET'
+      ? route.fulfill({
+          json: {
+            csrf: 'token',
+            role: 'guest',
+            chips: ['How does it work?'],
+            greeting: 'Hey, I am Sparky.',
+            team: [],
+            conversation: null,
+          },
+        })
+      : route.abort(),
+  );
   await page.goto('/');
   await settle(page);
   const bubble = page
@@ -210,8 +224,10 @@ test('support bubble points to real channels, never a preview', async ({
     .first();
   await bubble.click();
   const chat = page.getByRole('dialog', { name: 'Duoly support chat' });
+  await expect(chat.getByText('Hey, I am Sparky.')).toBeVisible();
   await expect(
-    chat.getByRole('link', { name: 'Message us on Discord' }),
-  ).toHaveAttribute('href', 'https://discord.gg/xkKGf9bKz');
+    chat.getByRole('button', { name: 'How does it work?' }),
+  ).toBeVisible();
+  await expect(chat.getByRole('link', { name: /discord/i })).toHaveCount(0);
   await expect(page.getByText(/design preview/i)).toHaveCount(0);
 });

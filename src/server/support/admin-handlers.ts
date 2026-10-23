@@ -58,8 +58,7 @@ export const postAdminSupport: APIRoute = async (context) => {
       const open = (data as { open?: Record<string, unknown> }).open;
       const messages = Array.isArray(open?.messages) ? open.messages : [];
       const last = messages[messages.length - 1] as
-        | { id?: unknown; by?: { image?: unknown } }
-        | undefined;
+        { id?: unknown; by?: { image?: unknown } } | undefined;
       await notifySupportReply({
         email: typeof open?.email === 'string' ? open.email : '',
         firstName: typeof open?.name === 'string' ? open.name : 'there',

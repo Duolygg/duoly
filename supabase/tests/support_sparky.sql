@@ -42,7 +42,8 @@ reset role;
 set local role service_role;
 do $$ declare r jsonb; begin
  update public.support_conversations set status='bot' where id='5a100000-0000-4000-8000-000000000001';
- for i in 1..12 loop
+ -- The fixture already holds one user message inside the minute, so 11 more fill the limit of 12.
+ for i in 1..11 loop
    r := public.support_add_user_message('5a100000-0000-4000-8000-000000000001','message ' || i,12);
    if r ? 'error' then raise exception 'message % refused early: %',i,r; end if;
  end loop;

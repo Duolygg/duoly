@@ -8,7 +8,9 @@ export function canSendMessage(
   return userMessageTimes.filter((at) => now - at < 60_000).length < limit;
 }
 
-export function dailyAiLimit(value = process.env.SUPPORT_AI_DAILY_LIMIT): number {
+export function dailyAiLimit(
+  value = process.env.SUPPORT_AI_DAILY_LIMIT,
+): number {
   const parsed = Number.parseInt(value ?? '', 10);
   if (!Number.isFinite(parsed) || parsed < 1) return 500;
   return Math.min(parsed, 10_000);

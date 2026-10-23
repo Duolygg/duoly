@@ -74,7 +74,8 @@ const human =
   /\b(human|agent|admin|person|real person|someone|support team|staff|mensch|mitarbeiter)\b|talk to (a|an|the)|speak to/i;
 const moneyDispute =
   /chargeback|charged wrong|money dispute|stolen|fraud|refund refused|abgebucht|geld zurück/i;
-const safety = /unsafe|threat|harass|stalk|dox|suicid|violence|sexually|bedroh|beläst/i;
+const safety =
+  /unsafe|threat|harass|stalk|dox|suicid|violence|sexually|bedroh|beläst/i;
 const upset = /furious|angry|scam|hate|terrible|unacceptable|wütend|betrug/i;
 
 const CURRENT_FACTS = [
@@ -130,7 +131,9 @@ function chipAnswer(person: SupportPerson, chip: string): string {
 }
 
 export function preparedAnswers(person: SupportPerson): string[] {
-  return CHIPS[person.role].map((chip) => `${chip}\n${chipAnswer(person, chip)}`);
+  return CHIPS[person.role].map(
+    (chip) => `${chip}\n${chipAnswer(person, chip)}`,
+  );
 }
 
 const normalise = (value: string) =>
@@ -150,30 +153,44 @@ export function preparedReply(
   );
   if (exact && /talk to/i.test(exact)) return { text: '', handoff: true };
   if (exact) return { text: chipAnswer(person, exact) };
-  if (human.test(text) || moneyDispute.test(text) || safety.test(text) || upset.test(text))
+  if (
+    human.test(text) ||
+    moneyDispute.test(text) ||
+    safety.test(text) ||
+    upset.test(text)
+  )
     return { text: '', handoff: true };
   const x = normalise(text);
   let chip: string | undefined;
   if (/cancel|refund|charge|money back|hold/.test(x)) chip = 'Cancel or refund';
-  else if (/where|status|queue|teammate|order/.test(x) && person.role === 'customer')
+  else if (
+    /where|status|queue|teammate|order/.test(x) &&
+    person.role === 'customer'
+  )
     chip = 'Where’s my teammate?';
   else if (/toxic|rude|reroll|re-roll|bad teammate|left|afk/.test(x))
     chip = 'My teammate isn’t great';
   else if (/price|cost|how much/.test(x)) chip = 'How much does it cost?';
   else if (/safe|password|account|ban/.test(x)) chip = 'Is my account safe?';
-  else if (/how.*work|what is duoly|book|order/.test(x)) chip = 'How does Duoly work?';
+  else if (/how.*work|what is duoly|book|order/.test(x))
+    chip = 'How does Duoly work?';
   else if (/paid|payout|earn|money/.test(x) && person.role === 'teammate')
     chip = 'When do I get paid?';
   else if (/online|offline|toggle/.test(x) && person.role === 'teammate')
     chip = 'Why can’t I go online?';
-  else if (/orders|getting|notification|bell/.test(x) && person.role === 'teammate')
+  else if (
+    /orders|getting|notification|bell/.test(x) &&
+    person.role === 'teammate'
+  )
     chip = 'Why am I not getting orders?';
   else if (/deposit|trust|tier/.test(x) && person.role === 'teammate')
     chip = 'How does the deposit work?';
   if (chip) return { text: chipAnswer(person, chip) };
   return {
     text: 'I’m not sure about that one. I can get someone from the team.',
-    chips: [person.role === 'teammate' ? 'Talk to an admin' : 'Talk to a human'],
+    chips: [
+      person.role === 'teammate' ? 'Talk to an admin' : 'Talk to a human',
+    ],
   };
 }
 

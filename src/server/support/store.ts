@@ -132,7 +132,8 @@ export async function appendUserMessage(
   });
   if (error || !data || typeof data !== 'object')
     return { ok: false, status: 503, error: 'Support is unavailable.' };
-  const refusal = (data as { error?: { code?: number; message?: string } }).error;
+  const refusal = (data as { error?: { code?: number; message?: string } })
+    .error;
   if (refusal)
     return {
       ok: false,
@@ -194,7 +195,8 @@ export async function conversationView(
     messages(service, conversation.id),
     supportTeam(service),
   ]);
-  const agent = team.find((member) => member.id === conversation.claimed_by) ?? null;
+  const agent =
+    team.find((member) => member.id === conversation.claimed_by) ?? null;
   return {
     id: conversation.id,
     status: conversation.status === 'human' ? 'open' : conversation.status,

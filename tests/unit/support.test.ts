@@ -6,14 +6,8 @@ import {
   preparedAnswers,
   type SupportPerson,
 } from '../../src/server/support/sparky';
-import {
-  answerWithAi,
-  parseAiResponse,
-} from '../../src/server/support/ai';
-import {
-  canSendMessage,
-  dailyAiLimit,
-} from '../../src/server/support/limits';
+import { answerWithAi, parseAiResponse } from '../../src/server/support/ai';
+import { canSendMessage, dailyAiLimit } from '../../src/server/support/limits';
 
 const guest: SupportPerson = { role: 'guest', name: 'Guest' };
 const customer: SupportPerson = {
@@ -91,7 +85,10 @@ describe('Sparky prepared replies', () => {
     expect(customerAnswer.text).toContain('Ranked Duo');
     expect(customerAnswer.text).not.toContain('assignment-order');
 
-    const teammateAnswer = preparedReply(teammate, 'Why am I not getting orders?');
+    const teammateAnswer = preparedReply(
+      teammate,
+      'Why am I not getting orders?',
+    );
     expect(teammateAnswer.text).toContain('Valorant');
     expect(teammateAnswer.text).not.toContain('DL-90001');
 
@@ -132,10 +129,12 @@ describe('grounding context', () => {
 
 describe('AI response handling', () => {
   it('parses the required JSON response and rejects loose text', () => {
-    expect(parseAiResponse('{"reply":"Short answer","handoff":false}')).toEqual({
-      reply: 'Short answer',
-      handoff: false,
-    });
+    expect(parseAiResponse('{"reply":"Short answer","handoff":false}')).toEqual(
+      {
+        reply: 'Short answer',
+        handoff: false,
+      },
+    );
     expect(parseAiResponse('Sure, here you go')).toBeNull();
     expect(parseAiResponse('{"reply":"","handoff":false}')).toBeNull();
   });
@@ -155,7 +154,9 @@ describe('AI response handling', () => {
 
   it('treats malformed model output as a fallback', async () => {
     const fetcher = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ output_text: 'not json' }), { status: 200 }),
+      new Response(JSON.stringify({ output_text: 'not json' }), {
+        status: 200,
+      }),
     );
     const answer = await answerWithAi({
       person: guest,
@@ -174,7 +175,9 @@ describe('support limits', () => {
     const recent = Array.from({ length: 12 }, (_, index) => now - index * 1000);
     expect(canSendMessage(recent, now)).toBe(false);
     expect(canSendMessage(recent.slice(0, 11), now)).toBe(true);
-    expect(canSendMessage([now - 61_000, ...recent.slice(0, 11)], now)).toBe(true);
+    expect(canSendMessage([now - 61_000, ...recent.slice(0, 11)], now)).toBe(
+      true,
+    );
   });
 
   it('uses a safe configurable daily AI cap', () => {

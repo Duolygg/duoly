@@ -1209,6 +1209,14 @@ export type Database = {
         Args: { p_reason?: string; p_suspended: boolean; p_user_id: string };
         Returns: Json;
       };
+      admin_support_command: {
+        Args: { p_action: string; p_conversation_id: string; p_text?: string };
+        Returns: Json;
+      };
+      admin_support_inbox: {
+        Args: { p_conversation_id?: string };
+        Returns: Json;
+      };
       admin_teammates: { Args: never; Returns: Json };
       authorize_order_proof_upload: {
         Args: { p_assignment_id: string; p_order_id: string };
@@ -1436,6 +1444,11 @@ export type Database = {
         };
         Returns: Json;
       };
+      support_add_user_message: {
+        Args: { p_body: string; p_conversation_id: string; p_limit?: number };
+        Returns: Json;
+      };
+      support_take_ai_slot: { Args: { p_limit: number }; Returns: boolean };
       sweep_expired_orders: { Args: { p_limit?: number }; Returns: Json };
       sync_account_owner: {
         Args: { p_owner: boolean; p_user_id: string };

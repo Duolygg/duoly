@@ -7,6 +7,7 @@ Repo worktree: `~/Desktop/Duoly/duoly-support`, branch `feat/support-sparky` (fr
 Port Fabian's support chat ("Sparky") from `duoly-admin/duoly@7f0299f` and make it work on the live stack, with one upgrade the owner approved: free-text questions are answered by an AI model that may only use Fabian's prepared answers, the FAQ and the asker's own data. Nobody gets sent to Discord. Done = his widget and his admin Support screen are what users see, fully functional on Supabase.
 
 Original sources (fetch with `gh api "repos/duoly-admin/duoly/contents/<path>?ref=7f0299f" -q .content | base64 -d`; already copied ones are in `src/design-reference/`):
+
 - `components/SupportChat.jsx` (also at `src/design-reference/components/SupportChat.jsx`), `components/admin/Support.jsx` (also in design-reference)
 - `lib/sparky.js` (the prepared replies and chips), `lib/faq.js` (in design-reference/lib), `lib/support.js`, `lib/supportTeam.js`, `app/api/support/route.js`, `app/api/admin/support/route.js`
 

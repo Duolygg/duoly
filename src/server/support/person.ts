@@ -36,10 +36,10 @@ export async function supportPerson(
   service: SupabaseClient,
   identity: Identity,
 ): Promise<SupportPerson> {
-  if (!identity)
-    return { role: 'guest', name: 'Guest' };
+  if (!identity) return { role: 'guest', name: 'Guest' };
   const viewer = identity.viewer;
-  const role: SupportRole = viewer.role === 'teammate' ? 'teammate' : 'customer';
+  const role: SupportRole =
+    viewer.role === 'teammate' ? 'teammate' : 'customer';
   const base = {
     role,
     userId: viewer.id,
@@ -131,7 +131,9 @@ export async function supportPerson(
   ])
     if (result.error) throw result.error;
   const order = orderResult.data as Record<string, unknown> | null;
-  const completed = (completedResult.data ?? []) as { payout_usd_cents: number }[];
+  const completed = (completedResult.data ?? []) as {
+    payout_usd_cents: number;
+  }[];
   return {
     ...base,
     teammate: {

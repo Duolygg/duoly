@@ -55,7 +55,8 @@ function outputText(payload: unknown): string | null {
 
 function fallback(person: SupportPerson, question: string): AiAnswer {
   const routed = preparedReply(person, question);
-  const label = person.role === 'teammate' ? 'Talk to an admin' : 'Talk to a human';
+  const label =
+    person.role === 'teammate' ? 'Talk to an admin' : 'Talk to a human';
   if (routed.handoff)
     return {
       reply: 'I’ll get someone from the Duoly team to help.',

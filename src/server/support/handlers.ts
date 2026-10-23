@@ -134,7 +134,11 @@ async function handoff(
     ),
     notifySupportDiscordHook(conversation.id),
   ]);
-  return { ...conversation, status: 'waiting', waiting_since: now } as ConversationRow;
+  return {
+    ...conversation,
+    status: 'waiting',
+    waiting_since: now,
+  } as ConversationRow;
 }
 
 export const postSupport: APIRoute = async (context) => {
@@ -154,8 +158,15 @@ export const postSupport: APIRoute = async (context) => {
     let conversation = await currentConversation(service, person, guestHash);
     if ('action' in parsed.data && parsed.data.action === 'close') {
       if (conversation) {
-        await addMessage(service, conversation.id, 'system', 'You ended this chat.');
-        await updateConversation(service, conversation.id, { status: 'closed' });
+        await addMessage(
+          service,
+          conversation.id,
+          'system',
+          'You ended this chat.',
+        );
+        await updateConversation(service, conversation.id, {
+          status: 'closed',
+        });
       }
       return prepared.account.json(
         await payload(prepared.account, service, person, null),
@@ -170,7 +181,10 @@ export const postSupport: APIRoute = async (context) => {
     if (text) {
       const appended = await appendUserMessage(service, conversation.id, text);
       if (!appended.ok)
-        return prepared.account.json({ error: appended.error }, appended.status);
+        return prepared.account.json(
+          { error: appended.error },
+          appended.status,
+        );
     }
     if (conversation.status !== 'bot')
       return prepared.account.json(
@@ -186,7 +200,8 @@ export const postSupport: APIRoute = async (context) => {
 
     if ('chip' in parsed.data && parsed.data.chip) {
       const reply = preparedReply(person, text);
-      if (reply.handoff) conversation = await handoff(service, person, conversation, text);
+      if (reply.handoff)
+        conversation = await handoff(service, person, conversation, text);
       else {
         await addMessage(service, conversation.id, 'bot', reply.text);
         return prepared.account.json(

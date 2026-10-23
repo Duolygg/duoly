@@ -83,6 +83,7 @@ export async function notifySupportReply({
 }
 
 /** Discord notification hook. Intentionally empty until the Discord support slice is built. */
-export async function notifySupportDiscordHook(_conversationId: string) {
+export async function notifySupportDiscordHook(conversationId: string) {
+  void conversationId; // Ledger #40/#42: post the waiting conversation to the Discord support channel here.
   return false;
 }
