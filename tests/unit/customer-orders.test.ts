@@ -1,7 +1,6 @@
 import { expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import CustomerOrders from '../../src/components/account/CustomerOrders';
 import CustomerOrderRoom from '../../src/components/account/CustomerOrderRoom';
 import type { CustomerOrder } from '../../src/contracts/orders';
 import {
@@ -56,15 +55,6 @@ const order: CustomerOrder = {
   current_assignment_id: null,
   teammate: null,
 };
-it('renders distinct initial loading states, not empty orders or fabricated totals', () => {
-  const html = renderToStaticMarkup(
-    createElement(CustomerOrders, { name: 'Player' }),
-  );
-  expect(html).toContain('Loading active order');
-  expect(html).toContain('Loading order history');
-  expect(html).toContain('Loading refund credit postings');
-  expect(html).not.toMatch(/No active order|wallet balance|Book a duo/);
-});
 it('renders own order safely and only offers queued cancellation', () => {
   const html = renderToStaticMarkup(
     createElement(CustomerOrderRoom, {

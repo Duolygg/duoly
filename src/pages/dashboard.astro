@@ -1,6 +1,7 @@
 ---
+import SiteLayout from '../layouts/SiteLayout.astro';
 import ProductLayout from '../layouts/ProductLayout.astro';
-import CustomerOrders from '../components/account/CustomerOrders';
+import LiveDashboard from '../components/account/LiveDashboard';
 import { accountContext } from '../server/auth/context';
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
@@ -22,17 +23,20 @@ for (const [name, value] of account.headers)
 const csrf = account.csrf();
 ---
 
-<ProductLayout
-  title="Your dashboard | Duoly"
-  viewer={identity?.viewer}
-  csrf={csrf}
->
-  {identity ? (
-    <CustomerOrders name={identity.viewer.name} client:load />
-  ) : (
+{identity ? (
+  <SiteLayout
+    title="Your dashboard | Duoly"
+    viewer={identity.viewer}
+    csrf={csrf}
+    bare
+  >
+    <LiveDashboard viewer={identity.viewer} csrf={csrf} client:load />
+  </SiteLayout>
+) : (
+  <ProductLayout title="Your dashboard | Duoly">
     <section role="alert">
       <h1>Account temporarily unavailable</h1>
       <p>We could not load your account. Please try again shortly.</p>
     </section>
-  )}
-</ProductLayout>
+  </ProductLayout>
+)}
