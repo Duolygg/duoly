@@ -25,6 +25,7 @@
     "@stripe/stripe-js": "10.1.0",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.118.0",
+    "@vercel/analytics": "^2.0.1",
     "astro": "7.4.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",

@@ -4,7 +4,11 @@ import react from '@astrojs/react';
 
 export default defineConfig({
   output: 'server',
-  adapter: vercel(),
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true,
+    },
+  }),
   integrations: [react()],
   site: process.env.SITE_URL || undefined,
 });
