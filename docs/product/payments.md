@@ -4,8 +4,8 @@ Owner decisions (2026-10-22): every payment method Stripe offers, Stripe receipt
 
 ## Flow
 
-1. Home → "Continue to payment" → `POST /api/checkout` (signed-in customer, CSRF, one open order). The server prices the selection (`src/server/pricing`), stores a `checkout_intents` row and creates an Embedded Checkout Session (`ui_mode=embedded_page`, EUR, inline `price_data`, `client_reference_id` = intent id, idempotency key `checkout_<intent>`).
-2. `/checkout/<intent>` mounts Stripe's form. Stripe decides which methods to show (dynamic payment methods, Adaptive Pricing for non-EUR customers).
+1. Home → "Continue to payment" → `POST /api/checkout` (signed-in customer, CSRF, one open order). The server prices the selection (`src/server/pricing`), stores a `checkout_intents` row and creates a Checkout Session in Elements mode (`ui_mode=elements`, EUR, inline `price_data`, `client_reference_id` = intent id, idempotency key `checkout_<intent>`).
+2. `/checkout/<intent>` is Duoly's own page: a server-rendered order summary plus `CheckoutPanel`, which mounts Stripe's Express Checkout Element (Apple Pay, Google Pay, PayPal, Link) and Payment Element, themed through the Appearance API, with our own pay button. Stripe decides which methods to show (dynamic payment methods, Adaptive Pricing for non-EUR customers). Card-like methods confirm in place and the page polls `/api/checkout/<intent>/status` until the webhook has queued the order; redirect methods (Klarna, EPS, iDEAL…) come back through `/checkout/return`.
 3. Stripe → `/checkout/return?session_id=…` polls `GET /api/checkout/<intent>/status` and forwards to `/queue/<order>`.
 4. Webhook `POST /api/webhooks/stripe` (signature verified, `stripe_events` dedupe) → `create_paid_order()` → order `queued` + `order_payments` row → order-confirmed email via Resend.
 

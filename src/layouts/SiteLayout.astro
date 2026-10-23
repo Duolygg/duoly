@@ -52,6 +52,7 @@ const external = (href: string) => href.startsWith('http');
     <meta name="description" content={description} />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="/favicon.ico" />
+    <slot name="head" />
   </head>
   <body class={bare ? 'site bare' : 'site'}>
     <a class="skip-link" href="#main-content">

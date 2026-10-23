@@ -106,7 +106,8 @@ export function sessionParams(input: {
     ]),
   ) as Stripe.Checkout.SessionCreateParams.PaymentMethodOptions;
   return {
-    ui_mode: 'embedded_page',
+    // Our own UI around Stripe's Payment and Express Checkout Elements.
+    ui_mode: 'elements',
     mode: 'payment',
     return_url: `${input.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
     client_reference_id: input.intentId,
@@ -132,7 +133,6 @@ export function sessionParams(input: {
     },
     metadata: { intent_id: input.intentId, customer_id: input.customerId },
     expires_at: input.nowSeconds + SESSION_MINUTES * 60 + 60,
-    locale: 'auto',
   };
 }
 
