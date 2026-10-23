@@ -368,6 +368,28 @@ export type Database = {
         Args: { p_limit?: number };
         Returns: Json;
       };
+      get_order_chat: {
+        Args: { p_order_id: string; p_assignment_id?: string };
+        Returns: Json;
+      };
+      send_order_chat_message: {
+        Args: {
+          p_order_id: string;
+          p_assignment_id: string;
+          p_request_id: string;
+          p_body: string;
+        };
+        Returns: Json;
+      };
+      set_order_chat_typing: {
+        Args: { p_order_id: string; p_assignment_id: string };
+        Returns: Json;
+      };
+      list_order_chat_flags: { Args: never; Returns: Json };
+      resolve_order_chat_flag: {
+        Args: { p_flag_id: string; p_status: string };
+        Returns: Json;
+      };
       accept_order: { Args: { p_order_id: string }; Returns: Json };
       cancel_queued_order: { Args: { p_order_id: string }; Returns: Json };
       customer_active_order: { Args: never; Returns: Json };

@@ -72,6 +72,43 @@
   background: #120b22;
   border: 1px solid rgba(196, 170, 255, 0.1);
 }
+.co-legacy-sidebar {
+  display: contents;
+}
+.co-chat-layout {
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+}
+.co-chat-layout .co-card {
+  padding: 20px;
+}
+.co-sidebar,
+.co-conversation {
+  min-width: 0;
+}
+.co-conversation {
+  display: grid;
+  gap: 20px;
+}
+.co-chat-layout .co-booking-summary {
+  margin: 8px 0 16px;
+  font-size: 14px;
+}
+.co-booking-disclosure summary {
+  cursor: pointer;
+  color: #d6bbff;
+  font-size: 14px;
+  padding: 12px 0;
+}
+.co-chat-layout .co-details {
+  font-size: 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 10px;
+  margin: 12px 0;
+}
+.co-chat-layout .co-sidebar p:not(.co-eyebrow) {
+  font-size: 13px;
+  line-height: 1.5;
+}
 .co-order {
   padding: 18px 0;
   border-top: 1px solid rgba(196, 170, 255, 0.12);
@@ -87,7 +124,7 @@
   margin: 6px 0;
   font-size: 14px;
 }
-.customer-orders button,
+.customer-orders button:not(:where(.order-chat *)),
 .co-button {
   display: inline-flex;
   align-items: center;

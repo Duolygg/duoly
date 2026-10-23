@@ -13,6 +13,12 @@ const securityHeaders = {
 export const onRequest = defineMiddleware(async (_context, next) => {
   const response = await next();
   for (const [name, value] of Object.entries(securityHeaders)) {
+    // Private auth/chat handlers deliberately choose the stricter policy.
+    if (
+      name === 'Referrer-Policy' &&
+      response.headers.get(name) === 'no-referrer'
+    )
+      continue;
     response.headers.set(name, value);
   }
   return response;

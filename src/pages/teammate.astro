@@ -2,6 +2,8 @@
 import ProductLayout from '../layouts/ProductLayout.astro';
 import OrderDesk from '../components/teammate/OrderDesk';
 import { accountContext } from '../server/auth/context';
+import { orderChatEnabled } from '../server/chat/config';
+const chatEnabled = orderChatEnabled();
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
@@ -70,7 +72,7 @@ const justLinked = Astro.url.searchParams.get('discord') === 'linked';
       </p>
     </section>
   )}
-  <OrderDesk csrf={csrf} client:load />
+  <OrderDesk csrf={csrf} chatEnabled={chatEnabled} client:load />
 </ProductLayout>
 
 <style>

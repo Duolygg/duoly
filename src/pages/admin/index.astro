@@ -2,6 +2,8 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { accountContext } from '../../server/auth/context';
 import { ADMIN_SECTIONS } from '../../site/nav';
+import ChatModeration from '../../components/admin/ChatModeration';
+import { orderChatEnabled } from '../../server/chat/config';
 const account = accountContext(Astro.request, Astro.cookies);
 let identity: Awaited<ReturnType<typeof account.identity>>;
 try {
@@ -34,6 +36,7 @@ const section = ADMIN_SECTIONS[0];
       This section is part of the admin build-out. No sample data is shown.
     </span>
   </div>
+  {orderChatEnabled() && <ChatModeration csrf={account.csrf()} client:load />}
 </SiteLayout>
 
 <style>
