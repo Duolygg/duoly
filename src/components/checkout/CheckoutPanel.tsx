@@ -101,6 +101,10 @@ export default function CheckoutPanel({
   const paymentRef = useRef<HTMLDivElement>(null);
   const actionsRef = useRef<StripeCheckoutLoadActionsSuccess | null>(null);
   const [phase, setPhase] = useState<Phase>('loading');
+  // Apple Pay / Google Pay available: lead with one big wallet button.
+  const [wallet, setWallet] = useState<'' | 'Apple Pay' | 'Google Pay'>('');
+  const [showOther, setShowOther] = useState(false);
+  const [paymentReady, setPaymentReady] = useState(false);
   const [express, setExpress] = useState<'pending' | 'shown' | 'none'>(
     'pending',
   );
@@ -151,16 +155,25 @@ export default function CheckoutPanel({
             paypal: 'white',
           },
           buttonType: { applePay: 'plain', googlePay: 'plain', paypal: 'pay' },
-          layout: { maxColumns: 2, maxRows: 2, overflow: 'auto' },
+          // One button per row: the wallet gets the full width.
+          layout: { maxColumns: 1, maxRows: 2, overflow: 'auto' },
           paymentMethodOrder: ['apple_pay', 'google_pay', 'paypal', 'link'],
           paymentMethods: undefined,
         });
         expressElement.on('ready', (event) => {
           const methods = event.availablePaymentMethods;
+          setWallet(
+            methods?.applePay
+              ? 'Apple Pay'
+              : methods?.googlePay
+                ? 'Google Pay'
+                : '',
+          );
           setExpress(
             methods && Object.values(methods).some(Boolean) ? 'shown' : 'none',
           );
         });
+        expressElement.on('loaderror', () => setExpress('none'));
         expressElement.on('confirm', async (event) => {
           const actions = actionsRef.current;
           if (!actions) return;
@@ -191,7 +204,7 @@ export default function CheckoutPanel({
         // Any edit clears a previous error: never show a stale message.
         paymentElement.on('change', () => setError(''));
         paymentElement.on('ready', () => {
-          if (!cancelled) setPhase((p) => (p === 'loading' ? 'ready' : p));
+          if (!cancelled) setPaymentReady(true);
         });
         paymentElement.on('loaderror', () => {
           setFatal('The payment form couldn’t load. Reload the page.');
@@ -213,6 +226,17 @@ export default function CheckoutPanel({
       checkout?.getExpressCheckoutElement()?.destroy();
     };
   }, [publishableKey, clientSecret, fontUrl]);
+
+  // Reveal only once both elements have decided, so the layout settles once.
+  useEffect(() => {
+    if (!paymentReady || phase !== 'loading') return;
+    if (express !== 'pending') {
+      setPhase('ready');
+      return;
+    }
+    const fallback = setTimeout(() => setExpress('none'), 2500);
+    return () => clearTimeout(fallback);
+  }, [paymentReady, express, phase]);
 
   // After a successful confirm: wait for our webhook to queue the order.
   useEffect(() => {
@@ -276,6 +300,7 @@ export default function CheckoutPanel({
     );
 
   const busy = phase === 'paying';
+  const walletFirst = !!wallet && !showOther && phase !== 'loading';
   return (
     <form
       className={`pay-card is-${phase}`}
@@ -296,16 +321,41 @@ export default function CheckoutPanel({
         </span>
       </div>
 
-      <div className={`pay-express ${express}`}>
+      <div className={`pay-express ${express}${wallet ? ' wallet' : ''}`}>
         <div ref={expressRef} />
       </div>
-      {express !== 'none' && (
+      {walletFirst && (
+        <>
+          <p className="pay-wallet-note">
+            One tap with {wallet}. Charged only when a teammate accepts.
+          </p>
+          <button
+            type="button"
+            className="pay-other"
+            aria-expanded={false}
+            onClick={() => setShowOther(true)}
+          >
+            Pay another way
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24">
+              <path
+                d="M6 9l6 6 6-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </>
+      )}
+      {express !== 'none' && !walletFirst && (
         <div className="pay-or" aria-hidden="true">
           <span>or pay another way</span>
         </div>
       )}
 
-      <div className="pay-element">
+      <div className={`pay-element${walletFirst ? ' folded' : ''}`}>
         {phase === 'loading' && (
           <div className="pay-skeleton" aria-hidden="true">
             <i />
@@ -323,13 +373,21 @@ export default function CheckoutPanel({
         </p>
       )}
 
-      <button className="pay-btn" type="submit" disabled={phase !== 'ready'}>
+      <button
+        className={`pay-btn${walletFirst ? ' folded' : ''}`}
+        type="submit"
+        disabled={phase !== 'ready'}
+      >
         <span className="pay-btn-label">
           {busy ? 'Confirming…' : `Pay ${total}`}
         </span>
         {busy && <span className="pay-spinner" aria-hidden="true" />}
       </button>
-      <p className="pay-fine">No teammate within 5 minutes? You pay nothing.</p>
+      {!walletFirst && (
+        <p className="pay-fine">
+          No teammate within 5 minutes? You pay nothing.
+        </p>
+      )}
 
       {phase === 'held' && (
         <div className="pay-held" role="status" aria-live="polite">
