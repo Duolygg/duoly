@@ -88,7 +88,7 @@ function deskHtml(state = ready, chatEnabled?: boolean, pending = false) {
 
 it('evaluates the server flag only in SSR and passes a boolean into both islands', () => {
   for (const [path, component] of [
-    ['src/pages/queue/[id].astro', 'CustomerOrderRoom'],
+    ['src/pages/queue/[id].astro', 'LiveQueueRoom'],
     ['src/pages/teammate.astro', 'OrderDesk'],
   ] as const) {
     const source = readFileSync(path, 'utf8');
@@ -100,6 +100,9 @@ it('evaluates the server flag only in SSR and passes a boolean into both islands
   }
   for (const path of [
     'src/components/account/CustomerOrderRoom.tsx',
+    'src/components/account/LiveQueueRoom.tsx',
+    'src/components/account/QueueRoom.jsx',
+    'src/components/account/queue-room-data.js',
     'src/components/teammate/OrderDesk.tsx',
   ]) {
     expect(readFileSync(path, 'utf8')).not.toMatch(

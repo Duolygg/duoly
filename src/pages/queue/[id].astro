@@ -1,6 +1,7 @@
 ---
 import ProductLayout from '../../layouts/ProductLayout.astro';
-import CustomerOrderRoom from '../../components/account/CustomerOrderRoom';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import LiveQueueRoom from '../../components/account/LiveQueueRoom';
 import { OrderCommandSchema, type CustomerOrder } from '../../contracts/orders';
 import { accountContext } from '../../server/auth/context';
 import { decodeOrderRpcResult } from '../../server/orders/results';
@@ -50,29 +51,35 @@ if (operational) {
 } else return Astro.rewrite('/404');
 ---
 
-{operational && (
+{operational && order && identity ? (
+  <SiteLayout
+    title="Your order | Duoly"
+    viewer={identity.viewer}
+    csrf={csrf}
+    bare
+  >
+    <LiveQueueRoom
+      id={order.id}
+      viewer={identity.viewer}
+      csrf={csrf}
+      chatEnabled={chatEnabled}
+      client:load
+    />
+  </SiteLayout>
+) : (
   <ProductLayout
     title="Your order | Duoly"
     viewer={identity?.viewer}
     csrf={csrf}
   >
-    {order ? (
-      <CustomerOrderRoom
-        initialOrder={order}
-        csrf={csrf}
-        chatEnabled={chatEnabled}
-        client:load
-      />
-    ) : (
-      <section class="customer-orders" role="alert">
-        <h1>
-          {Astro.response.status === 404
-            ? 'Order not found'
-            : 'Order unavailable'}
-        </h1>
-        <p>{message}</p>
-        <a href="/dashboard">Back to dashboard</a>
-      </section>
-    )}
+    <section class="customer-orders" role="alert">
+      <h1>
+        {Astro.response.status === 404
+          ? 'Order not found'
+          : 'Order unavailable'}
+      </h1>
+      <p>{message}</p>
+      <a href="/dashboard">Back to dashboard</a>
+    </section>
   </ProductLayout>
 )}
