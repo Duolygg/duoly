@@ -199,6 +199,28 @@
   color: #d6bbff;
   overflow-wrap: anywhere;
 }
+.td-completion {
+  padding: 20px;
+  border: 1px solid rgba(196, 170, 255, 0.12);
+  border-radius: 18px;
+  background: #090414;
+  margin-top: 20px;
+  overflow-wrap: anywhere;
+}
+.td-completion-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.td-earnings,
+.td-completion-notice {
+  margin-top: 24px;
+}
+.td-completion-receipt time {
+  overflow-wrap: anywhere;
+  color: #a79dc4;
+  font-size: 13px;
+}
 @media (max-width: 800px) {
   .td-columns,
   .td-assignment-layout {

@@ -164,6 +164,35 @@ export type Database = {
           },
         ];
       };
+      customer_blocks: {
+        Row: {
+          blocked_at: string;
+          blocked_by: string | null;
+          reason: string;
+          user_id: string;
+        };
+        Insert: {
+          blocked_at?: string;
+          blocked_by?: string | null;
+          reason: string;
+          user_id: string;
+        };
+        Update: {
+          blocked_at?: string;
+          blocked_by?: string | null;
+          reason?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'customer_blocks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       discord_accounts: {
         Row: {
           discord_id: string;
@@ -486,6 +515,36 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'order_chat_rooms';
             referencedColumns: ['assignment_id'];
+          },
+        ];
+      };
+      order_completion_proofs: {
+        Row: {
+          order_id: string;
+          proof_id: string;
+        };
+        Insert: {
+          order_id: string;
+          proof_id: string;
+        };
+        Update: {
+          order_id?: string;
+          proof_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_completion_proofs_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'teammate_earning_entries';
+            referencedColumns: ['order_id'];
+          },
+          {
+            foreignKeyName: 'order_completion_proofs_proof_id_fkey';
+            columns: ['proof_id'];
+            isOneToOne: true;
+            referencedRelation: 'order_proof_uploads';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -949,6 +1008,79 @@ export type Database = {
         };
         Relationships: [];
       };
+      teammate_earning_entries: {
+        Row: {
+          assignment_id: string;
+          completed_at: string;
+          deposit_percent: number;
+          held_usd_cents: number;
+          net_usd_cents: number;
+          order_id: string;
+          payout_usd_cents: number;
+          prior_completed_count: number;
+          proof_ids: string[];
+          request_id: string;
+          result: Json;
+          source_snapshot: Json;
+          teammate_id: string;
+          trust_tier: string;
+        };
+        Insert: {
+          assignment_id: string;
+          completed_at: string;
+          deposit_percent: number;
+          held_usd_cents: number;
+          net_usd_cents: number;
+          order_id: string;
+          payout_usd_cents: number;
+          prior_completed_count: number;
+          proof_ids: string[];
+          request_id: string;
+          result: Json;
+          source_snapshot: Json;
+          teammate_id: string;
+          trust_tier: string;
+        };
+        Update: {
+          assignment_id?: string;
+          completed_at?: string;
+          deposit_percent?: number;
+          held_usd_cents?: number;
+          net_usd_cents?: number;
+          order_id?: string;
+          payout_usd_cents?: number;
+          prior_completed_count?: number;
+          proof_ids?: string[];
+          request_id?: string;
+          result?: Json;
+          source_snapshot?: Json;
+          teammate_id?: string;
+          trust_tier?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'teammate_earning_entries_assignment_id_order_id_teammate_i_fkey';
+            columns: ['assignment_id', 'order_id', 'teammate_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_assignments';
+            referencedColumns: ['id', 'order_id', 'teammate_id'];
+          },
+          {
+            foreignKeyName: 'teammate_earning_entries_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: true;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'teammate_earning_entries_teammate_id_fkey';
+            columns: ['teammate_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       teammate_order_access: {
         Row: {
           approved_games: string[];
@@ -1041,6 +1173,7 @@ export type Database = {
           name: string;
         }[];
       };
+      admin_customers: { Args: never; Returns: Json };
       admin_decide_application: {
         Args: {
           p_application_id: string;
@@ -1062,6 +1195,10 @@ export type Database = {
       admin_orders: { Args: { p_limit?: number }; Returns: Json };
       admin_set_access: {
         Args: { p_games: string[]; p_gg: boolean; p_user_id: string };
+        Returns: Json;
+      };
+      admin_set_blocked: {
+        Args: { p_blocked: boolean; p_reason?: string; p_user_id: string };
         Returns: Json;
       };
       admin_set_role: {
@@ -1116,6 +1253,19 @@ export type Database = {
       };
       claim_stale_order_proof_uploads: {
         Args: { p_limit?: number };
+        Returns: Json;
+      };
+      complete_order: {
+        Args: {
+          p_assignment_id: string;
+          p_order_id: string;
+          p_proof_ids: string[];
+          p_request_id: string;
+        };
+        Returns: Json;
+      };
+      completion_trust: {
+        Args: { p_prior_completed_count: number };
         Returns: Json;
       };
       create_paid_order: {
@@ -1292,6 +1442,10 @@ export type Database = {
         Returns: undefined;
       };
       teammate_current_assignment: { Args: never; Returns: Json };
+      teammate_earnings: {
+        Args: { p_limit?: number; p_offset?: number };
+        Returns: Json;
+      };
       teammate_order_queue: { Args: never; Returns: Json };
     };
     Enums: {

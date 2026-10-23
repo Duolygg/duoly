@@ -103,7 +103,7 @@ it('renders accessible private evidence controls, native images, honest loading 
     }),
   );
   expect(loading).toContain(
-    'Evidence only. Order completion is not available yet.',
+    'Private screenshots are visible only to authorized participants.',
   );
   expect(loading).toContain('Loading private evidence');
   expect(loading).not.toContain('No evidence uploaded');
