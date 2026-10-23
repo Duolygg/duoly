@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import AccountHome from '../components/account/AccountHome';
+import LiveHome from '../components/account/LiveHome';
 import { accountContext } from '../server/auth/context';
 import { paymentsConfig } from '../server/payments/config';
 import { eurToUsd } from '../server/fx';
@@ -21,7 +21,7 @@ const { rate: usdRate } = await eurToUsd();
 ---
 
 <SiteLayout title="Duoly | Duo up in under 2 minutes" bare>
-  <AccountHome
+  <LiveHome
     viewer={viewer}
     csrf={csrf}
     checkoutEnabled={checkoutEnabled}

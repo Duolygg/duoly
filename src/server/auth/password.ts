@@ -27,9 +27,44 @@ function parseCredentials(
   return { credentials: credentials.data, failure: null };
 }
 
+// The homepage sign-in popup (original Home.jsx) asks for a JSON answer so it can show the
+// message in place; the /login form keeps the redirects. Same outcomes, same messages.
+const POPUP_MESSAGES: Record<string, { error?: string; notice?: string }> = {
+  '/login?error=credentials': {
+    error:
+      'That email and password don’t match. Try again or reset your password.',
+  },
+  '/login?error=eligibility': {
+    error: 'This environment is restricted to its approved test account.',
+  },
+  '/login?notice=registered': {
+    error: 'This email already has an account. Log in instead.',
+  },
+  '/login?notice=confirmation': {
+    notice: 'Check your inbox and confirm your email, then log in.',
+  },
+};
+function responder(
+  context: Parameters<APIRoute>[0],
+  account: {
+    redirect: (path: string) => Response;
+    json: (body: unknown, status?: number) => Response;
+  },
+) {
+  const popup = context.request.headers.get('x-duoly-auth') === 'popup';
+  return (path: string) => {
+    if (!popup) return account.redirect(path);
+    const message = POPUP_MESSAGES[path];
+    if (message?.error) return account.json({ error: message.error }, 400);
+    if (message?.notice) return account.json({ notice: message.notice });
+    return account.json({ redirect: path });
+  };
+}
+
 export const loginPassword: APIRoute = async (context) => {
   const { account, body, failure } = await mutation(context);
   if (failure || !body) return failure!;
+  const done = responder(context, account);
   if (!account.client || !account.config?.providers.email)
     return account.json({ error: 'Email sign-in is not configured.' }, 503);
   const parsed = parseCredentials(account, body);
@@ -40,7 +75,7 @@ export const loginPassword: APIRoute = async (context) => {
       email: parsed.credentials.email,
       password: parsed.credentials.password,
     });
-    if (error) return account.redirect('/login?error=credentials');
+    if (error) return done('/login?error=credentials');
     const identity = await account.identity();
     const testEmail = account.config.testEmail;
     if (!identity) {
@@ -50,7 +85,7 @@ export const loginPassword: APIRoute = async (context) => {
         /* Local session cookies are cleared below regardless. */
       }
       account.clear();
-      return account.redirect('/login?error=credentials');
+      return done('/login?error=credentials');
     }
     if (testEmail && identity.viewer.email?.toLowerCase() !== testEmail) {
       try {
@@ -59,19 +94,20 @@ export const loginPassword: APIRoute = async (context) => {
         /* Local session cookies are cleared below regardless. */
       }
       account.clear();
-      return account.redirect('/login?error=eligibility');
+      return done('/login?error=eligibility');
     }
     context.cookies.delete(account.names.csrf, account.cookieOptions);
-    return account.redirect(afterLoginPath(context.cookies));
+    return done(afterLoginPath(context.cookies));
   } catch {
     account.clear();
-    return account.redirect('/login?error=credentials');
+    return done('/login?error=credentials');
   }
 };
 
 export const registerPassword: APIRoute = async (context) => {
   const { account, body, failure } = await mutation(context);
   if (failure || !body) return failure!;
+  const done = responder(context, account);
   if (!account.client || !account.config?.providers.email)
     return account.json({ error: 'Email sign-in is not configured.' }, 503);
   if (!account.config.signup)
@@ -104,10 +140,9 @@ export const registerPassword: APIRoute = async (context) => {
         ...account.cookieOptions,
         maxAge: 300,
       });
-      return account.redirect('/login?notice=registered');
+      return done('/login?notice=registered');
     }
-    if (error || !data?.session)
-      return account.redirect('/login?notice=confirmation');
+    if (error || !data?.session) return done('/login?notice=confirmation');
     const identity = await account.identity();
     if (
       !identity ||
@@ -119,12 +154,12 @@ export const registerPassword: APIRoute = async (context) => {
         /* Local session cookies are cleared below regardless. */
       }
       account.clear();
-      return account.redirect('/login?notice=confirmation');
+      return done('/login?notice=confirmation');
     }
     context.cookies.delete(account.names.csrf, account.cookieOptions);
-    return account.redirect(afterLoginPath(context.cookies));
+    return done(afterLoginPath(context.cookies));
   } catch {
     account.clear();
-    return account.redirect('/login?notice=confirmation');
+    return done('/login?notice=confirmation');
   }
 };
