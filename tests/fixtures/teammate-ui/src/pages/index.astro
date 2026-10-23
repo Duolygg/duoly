@@ -1,0 +1,25 @@
+---
+// Isolated fictional browser fixture, never a production route.
+import SiteLayout from '../../../../../src/layouts/SiteLayout.astro';
+import LiveTeammate from '../../../../../src/components/teammate/LiveTeammate';
+const viewer = {
+  id: '44444444-4444-4444-8444-444444444444',
+  name: 'Fabian',
+  email: null,
+  image: '/assets/avatars/avatar-1.png',
+  country: 'at',
+  role: 'teammate' as const,
+  provider: 'email' as const,
+};
+---
+
+<SiteLayout title="Local teammate fixture | Duoly" bare>
+  <LiveTeammate
+    viewer={viewer}
+    csrf="fixture-csrf"
+    discordLinked={Astro.url.searchParams.get('discord') !== 'missing'}
+    discordEnabled={true}
+    chatEnabled={true}
+    client:load
+  />
+</SiteLayout>

@@ -89,7 +89,7 @@ function deskHtml(state = ready, chatEnabled?: boolean, pending = false) {
 it('evaluates the server flag only in SSR and passes a boolean into both islands', () => {
   for (const [path, component] of [
     ['src/pages/queue/[id].astro', 'LiveQueueRoom'],
-    ['src/pages/teammate.astro', 'OrderDesk'],
+    ['src/pages/teammate.astro', 'LiveTeammate'],
   ] as const) {
     const source = readFileSync(path, 'utf8');
     expect(source).toContain('server/chat/config');
