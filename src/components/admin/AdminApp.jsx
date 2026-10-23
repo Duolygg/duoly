@@ -12,6 +12,7 @@ import AuditLog from './AuditLog';
 import Orders from './Orders';
 import LiveDesk from './LiveDesk';
 import Overview from './Overview';
+import Teammates from './Teammates';
 import NotConnected from './NotConnected';
 import ChatModeration from './ChatModeration';
 
@@ -141,7 +142,15 @@ const TITLES = {
   settings: ['Settings', 'The rules the platform runs on'],
 };
 // Sections wired to the database. The rest show what they will do, never sample data.
-const LIVE = ['overview', 'live', 'users', 'applications', 'orders', 'audit'];
+const LIVE = [
+  'overview',
+  'live',
+  'users',
+  'applications',
+  'orders',
+  'teammates',
+  'audit',
+];
 
 export const sectionFromPath = (path) => {
   const slug = String(path || '')
@@ -456,6 +465,7 @@ export default class AdminApp extends React.Component {
     else if (s.section === 'overview')
       body = <Overview {...props} chatEnabled={this.props.chatEnabled} />;
     else if (s.section === 'live') body = <LiveDesk {...props} />;
+    else if (s.section === 'teammates') body = <Teammates {...props} />;
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
     else if (s.section === 'audit') body = <AuditLog {...props} />;

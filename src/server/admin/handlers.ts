@@ -9,6 +9,7 @@ import {
   DecideApplicationSchema,
   SetAccessSchema,
   SetRoleSchema,
+  SetSuspendedSchema,
   applicationError,
 } from '../../contracts/admin';
 import { sendApplicationDecision, sendApplicationReceived } from './notify';
@@ -141,6 +142,21 @@ export const applications = adminRoute(
         sendApplicationDecision(
           data.application as Parameters<typeof sendApplicationDecision>[0],
         ),
+    },
+  ],
+);
+
+export const teammates = adminRoute(
+  (client) => client.rpc('admin_teammates'),
+  [
+    {
+      schema: SetSuspendedSchema,
+      call: (client, body) =>
+        client.rpc('admin_set_suspended', {
+          p_user_id: body.userId as string,
+          p_suspended: body.suspended as boolean,
+          p_reason: (body.reason as string | undefined) ?? '',
+        }),
     },
   ],
 );
