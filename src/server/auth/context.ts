@@ -12,6 +12,7 @@ import {
 import type { Database } from './database.types';
 import { authConfig } from './config';
 import { createCsrf } from './security';
+import { isOwnerEmail, ownerEmails, syncOwner } from '../admin/owners';
 
 export function accountContext(request: Request, cookies: AstroCookies) {
   const config = authConfig();
@@ -115,7 +116,11 @@ export function accountContext(request: Request, cookies: AstroCookies) {
         .select('id,name,country,image')
         .eq('id', id)
         .single(),
-      client.from('account_roles').select('role').eq('user_id', id).single(),
+      client
+        .from('account_roles')
+        .select('role,owner')
+        .eq('user_id', id)
+        .single(),
       client
         .from('discord_accounts')
         .select('discord_id,username')
@@ -125,7 +130,19 @@ export function accountContext(request: Request, cookies: AstroCookies) {
     if (profileResult.error || roleResult.error || discordResult.error)
       throw new Error('Your account could not be loaded. Please try again.');
     const profile = ProfileSchema.parse(profileResult.data);
-    const role = RoleSchema.parse(roleResult.data.role);
+    let role = RoleSchema.parse(roleResult.data.role);
+    // Owners (ADMIN_EMAILS) are always admin. Only sync when the list is configured, so a
+    // deployment without it never strips owners from the shared database.
+    if (ownerEmails().length) {
+      const owner = isOwnerEmail(data.user.email);
+      const stored = roleResult.data.owner === true;
+      if (
+        (owner !== stored || (owner && role !== 'admin')) &&
+        (await syncOwner(id, owner)) &&
+        owner
+      )
+        role = 'admin';
+    }
     const provider = data.user.app_metadata.provider;
     const viewer = ViewerSchema.parse({
       id,

@@ -33,7 +33,8 @@ export default class Apply extends React.Component {
   async send() {
     this.setState({ sending: true, sendError: '' });
     try {
-      const res = await fetch('/api/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(this.state.f) });
+      // Live site: the page passes onSend (real API with CSRF). Design preview: sample transport.
+      const res = this.props.onSend ? await this.props.onSend(this.state.f) : await fetch('/api/apply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(this.state.f) });
       const d = await res.json().catch(() => ({}));
       if (!res.ok) return this.setState({ sending: false, sendError: d.error || 'Couldn’t send your application. Please try again.' });
       this.setState({ sending: false, done: true });

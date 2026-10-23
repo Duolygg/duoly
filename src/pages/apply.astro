@@ -1,10 +1,20 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Apply from '../design-reference/components/Apply.jsx';
+import LiveApply from '../components/apply/LiveApply';
 import { pageViewer } from '../site/viewer';
+import { accountContext } from '../server/auth/context';
+
 const { viewer, csrf } = await pageViewer(Astro);
+// Applying needs no account, so signed-out visitors get a CSRF token too.
+const account = accountContext(Astro.request, Astro.cookies);
+const formCsrf = account.config ? csrf || account.csrf() : '';
 ---
 
 <SiteLayout title="Become a teammate | Duoly" viewer={viewer} csrf={csrf}>
-  <Apply chrome={false} closed client:load />
+  {formCsrf ? (
+    <LiveApply csrf={formCsrf} client:load />
+  ) : (
+    <Apply chrome={false} closed client:load />
+  )}
 </SiteLayout>
