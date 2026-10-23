@@ -604,8 +604,8 @@ export default class Users extends React.Component {
                 style={{ margin: '4px 0 0', fontSize: '13.5px', color: C.dim }}
               >
                 Everyone who signed up or logged in. New accounts are customers.
-                Owners (ADMIN_EMAILS) are always admins and can’t be changed
-                here.
+                Owners are always admins and can’t be changed here, and nobody
+                can change their own role.
               </p>
             </div>
             <input
@@ -759,7 +759,7 @@ export default class Users extends React.Component {
                         ) : null}
                         {a.owner ? (
                           <span
-                            title="Set in ADMIN_EMAILS on the server"
+                            title="Owners are always admins"
                             style={{
                               flex: '0 0 auto',
                               fontSize: '10.5px',
@@ -816,7 +816,8 @@ export default class Users extends React.Component {
                           whiteSpace: 'nowrap',
                         }}
                       >
-                        {a.email || 'no email'} · {VIA[a.provider] || 'Email'}
+                        {a.name ? (a.email || 'no email') + ' · ' : ''}via{' '}
+                        {VIA[a.provider] || 'Email'}
                         {a.lastSeen
                           ? ' · signed in ' + ago(a.lastSeen, now)
                           : ' · never logged in'}
@@ -829,7 +830,7 @@ export default class Users extends React.Component {
                     aria-label={'Role for ' + (a.name || a.email)}
                     title={
                       a.owner
-                        ? 'Owners are set in ADMIN_EMAILS'
+                        ? 'Owners are always admins'
                         : a.you
                           ? 'You can’t change your own role'
                           : ''

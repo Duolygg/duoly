@@ -256,17 +256,39 @@ export default class Applications extends React.Component {
                     lineHeight: '1.5',
                   }}
                 >
-                  {a.email} · Discord{' '}
-                  <b style={{ color: C.white, fontWeight: '600' }}>
-                    {a.discord}
-                  </b>
-                  <br />
-                  {a.reference} · applied {ago(a.submittedAt, Date.now())}
-                  {a.decidedBy
-                    ? ' · ' + a.status.toLowerCase() + ' by ' + a.decidedBy
-                    : ''}
-                  {a.reason ? ': ' + a.reason : ''}
+                  <span style={{ display: 'block', overflowWrap: 'anywhere' }}>
+                    {a.email}
+                  </span>
+                  <span style={{ display: 'block' }}>
+                    Discord{' '}
+                    <b style={{ color: C.white, fontWeight: '600' }}>
+                      {a.discord}
+                    </b>
+                  </span>
+                  <span style={{ display: 'block' }}>
+                    {a.reference} · applied {ago(a.submittedAt, Date.now())}
+                  </span>
                 </div>
+                {a.decidedBy ? (
+                  <div
+                    style={{
+                      padding: '10px 12px',
+                      borderRadius: '12px',
+                      background: C.panel,
+                      border: '1px solid ' + C.line,
+                      fontSize: '13px',
+                      color: C.muted,
+                    }}
+                  >
+                    {a.reason ? (
+                      <b style={{ color: C.white, fontWeight: '600' }}>
+                        {a.reason + ' · '}
+                      </b>
+                    ) : null}
+                    {a.status.toLowerCase() + ' by ' + a.decidedBy}
+                    {a.decidedAt ? ' ' + ago(a.decidedAt, Date.now()) : ''}
+                  </div>
+                ) : null}
                 {a.status === 'Pending' ? (
                   <div
                     style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}
