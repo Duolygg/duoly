@@ -8,15 +8,18 @@ import {
   orderStatus,
 } from './customer-orders';
 import PrivateProofs from '../proofs/PrivateProofs';
+import OrderChat from '../chat/OrderChat';
 import './customer-orders.css';
 
-// QueueRoom's purple card language, without prototype chat/payment/polling behavior.
+// Native order room; lifecycle commands remain server-authoritative.
 export default function CustomerOrderRoom({
   initialOrder,
   csrf,
+  chatEnabled = false,
 }: {
   initialOrder: CustomerOrder;
   csrf: string;
+  chatEnabled?: boolean;
 }): React.ReactElement {
   const [order, setOrder] = useState(initialOrder);
   const [pending, setPending] = useState(false);
@@ -66,7 +69,10 @@ export default function CustomerOrderRoom({
             'This action is no longer available. Latest state requested.';
         } else {
           try {
-            await orderCommand(order.id, action, csrf);
+            const confirmed = await orderCommand(order.id, action, csrf);
+            // Apply the validated command response immediately. A failed follow-up
+            // read must never leave the previous assignment's chat mounted.
+            setOrder(confirmed.order);
           } catch (failure) {
             actionError =
               failure instanceof Error
@@ -130,112 +136,157 @@ export default function CustomerOrderRoom({
           Stale order details — actions disabled until a successful refresh.
         </p>
       )}
-      <div className="co-grid">
-        <section
-          className="co-card"
-          aria-label="Order details"
-          aria-busy={pending}
-        >
-          <p className="co-eyebrow">{orderStatus[order.status]}</p>
-          <h2>{order.title}</h2>
-          <dl className="co-details">
-            <dt>Game</dt>
-            <dd>{order.game.toUpperCase()}</dd>
-            <dt>Service</dt>
-            <dd>{order.service}</dd>
-            <dt>Units</dt>
-            <dd>
-              {order.units} {order.unit}
-              {order.units === 1 ? '' : 's'}
-            </dd>
-            <dt>Order amount</dt>
-            <dd>{euro(order.amount_eur_cents)}</dd>
-            <dt>Created</dt>
-            <dd>
-              <time dateTime={order.created_at}>
-                {order.created_at.replace('T', ' ')}
-              </time>
-            </dd>
-            <dt>Region</dt>
-            <dd>{order.region}</dd>
-            <dt>Rank</dt>
-            <dd>{order.rank || 'Not specified'}</dd>
-            <dt>Your in-game name</dt>
-            <dd>{order.ign}</dd>
-            <dt>Your note</dt>
-            <dd>{order.note || 'No note'}</dd>
-            <dt>Voice preference</dt>
-            <dd>{order.voice ? 'Voice requested' : 'No voice requested'}</dd>
-            <dt>GG service</dt>
-            <dd>{order.gg ? 'Yes' : 'No'}</dd>
-            <dt>Rerolls used</dt>
-            <dd>{order.rerolls} / 2</dd>
-          </dl>
-          {order.cancel_reason && (
-            <p>
-              Cancellation:{' '}
-              {order.cancel_reason === 'queue_expired'
-                ? 'Queue expired'
-                : 'Customer cancelled'}
-              . Any refund credit posting is listed on your dashboard; this is
-              not a provider refund.
-            </p>
-          )}
-          <div className="co-actions">
-            {order.status === 'queued' && (
-              <button
-                disabled={pending || stale}
-                onClick={() => void run('cancel')}
-              >
-                Cancel queued order
-              </button>
+      <div className={`co-grid${chatEnabled ? ' co-chat-layout' : ''}`}>
+        <div className={chatEnabled ? 'co-sidebar' : 'co-legacy-sidebar'}>
+          <section
+            className="co-card"
+            aria-label="Order details"
+            aria-busy={pending}
+          >
+            <p className="co-eyebrow">{orderStatus[order.status]}</p>
+            <h2>{order.title}</h2>
+            {chatEnabled && (
+              <p className="co-booking-summary">
+                {order.units} {order.unit}
+                {order.units === 1 ? '' : 's'} · {order.service}
+              </p>
             )}
-            {eligible && (
-              <button
-                disabled={pending || stale}
-                onClick={() => void run('reroll')}
-              >
-                Switch teammate
-              </button>
+            <details
+              className="co-booking-disclosure"
+              open={chatEnabled ? undefined : true}
+            >
+              <summary hidden={!chatEnabled}>More booking details</summary>
+              <dl className="co-details">
+                <dt>Game</dt>
+                <dd>{order.game.toUpperCase()}</dd>
+                <dt>Service</dt>
+                <dd>{order.service}</dd>
+                <dt>Units</dt>
+                <dd>
+                  {order.units} {order.unit}
+                  {order.units === 1 ? '' : 's'}
+                </dd>
+                <dt>Order amount</dt>
+                <dd>{euro(order.amount_eur_cents)}</dd>
+                <dt>Created</dt>
+                <dd>
+                  <time dateTime={order.created_at}>
+                    {order.created_at.replace('T', ' ')}
+                  </time>
+                </dd>
+                <dt>Region</dt>
+                <dd>{order.region}</dd>
+                <dt>Rank</dt>
+                <dd>{order.rank || 'Not specified'}</dd>
+                <dt>Your in-game name</dt>
+                <dd>{order.ign}</dd>
+                <dt>Your note</dt>
+                <dd>{order.note || 'No note'}</dd>
+                <dt>Voice preference</dt>
+                <dd>
+                  {order.voice ? 'Voice requested' : 'No voice requested'}
+                </dd>
+                <dt>GG service</dt>
+                <dd>{order.gg ? 'Yes' : 'No'}</dd>
+                <dt>Rerolls used</dt>
+                <dd>{order.rerolls} / 2</dd>
+              </dl>
+            </details>
+            {order.cancel_reason && (
+              <p>
+                Cancellation:{' '}
+                {order.cancel_reason === 'queue_expired'
+                  ? 'Queue expired'
+                  : 'Customer cancelled'}
+                . Any refund credit posting is listed on your dashboard; this is
+                not a provider refund.
+              </p>
+            )}
+            <div className="co-actions">
+              {order.status === 'queued' && (
+                <button
+                  disabled={pending || stale}
+                  onClick={() => void run('cancel')}
+                >
+                  Cancel queued order
+                </button>
+              )}
+              {eligible && (
+                <button
+                  disabled={pending || stale}
+                  onClick={() => void run('reroll')}
+                >
+                  Switch teammate
+                </button>
+              )}
+            </div>
+            <p>
+              Cancellation is available only while queued. Switching teammates
+              is limited to two rerolls, within five minutes of acceptance.
+              Server eligibility is final.
+            </p>
+          </section>
+          <aside className="co-card">
+            <p className="co-eyebrow">Your teammate</p>
+            <h2>{order.teammate?.name ?? 'Waiting for assignment'}</h2>
+            {order.teammate ? (
+              <p>Country: {order.teammate.country || 'Not specified'}</p>
+            ) : (
+              <>
+                <img
+                  src="/assets/brand/logo-mascots.webp"
+                  alt=""
+                  width="160"
+                  height="101"
+                />
+                <p>
+                  {order.status === 'queued'
+                    ? 'Your order is queued. Refresh to check for a teammate.'
+                    : 'No teammate assigned.'}
+                </p>
+              </>
+            )}
+            <p>
+              {chatEnabled
+                ? 'Reviews, tips and completion actions are not available here.'
+                : 'Chat, reviews, tips and completion actions are not available here.'}
+            </p>
+            {!chatEnabled && !pending && !stale && (
+              <PrivateProofs
+                orderId={order.id}
+                assignmentId={order.current_assignment_id ?? undefined}
+                mode="customer"
+              />
+            )}
+          </aside>
+        </div>
+        {chatEnabled && (
+          <div className="co-conversation">
+            {!stale ? (
+              <OrderChat
+                key={`${order.id}:${order.current_assignment_id ?? 'waiting'}`}
+                orderId={order.id}
+                assignmentId={order.current_assignment_id ?? undefined}
+                csrf={csrf}
+                view="customer"
+              />
+            ) : (
+              <p className="co-error" role="status">
+                Refresh this order to reopen its conversation.
+              </p>
+            )}
+            {!pending && !stale && (
+              <div className="co-card co-evidence">
+                <PrivateProofs
+                  key={`${order.id}:${order.current_assignment_id ?? 'waiting'}`}
+                  orderId={order.id}
+                  assignmentId={order.current_assignment_id ?? undefined}
+                  mode="customer"
+                />
+              </div>
             )}
           </div>
-          <p>
-            Cancellation is available only while queued. Switching teammates is
-            limited to two rerolls, within five minutes of acceptance. Server
-            eligibility is final.
-          </p>
-        </section>
-        <aside className="co-card">
-          <p className="co-eyebrow">Your teammate</p>
-          <h2>{order.teammate?.name ?? 'Waiting for assignment'}</h2>
-          {order.teammate ? (
-            <p>Country: {order.teammate.country || 'Not specified'}</p>
-          ) : (
-            <>
-              <img
-                src="/assets/brand/logo-mascots.webp"
-                alt=""
-                width="160"
-                height="101"
-              />
-              <p>
-                {order.status === 'queued'
-                  ? 'Your order is queued. Refresh to check for a teammate.'
-                  : 'No teammate assigned.'}
-              </p>
-            </>
-          )}
-          <p>
-            Chat, reviews, tips and completion actions are not available here.
-          </p>
-          {!pending && !stale && (
-            <PrivateProofs
-              orderId={order.id}
-              assignmentId={order.current_assignment_id ?? undefined}
-              mode="customer"
-            />
-          )}
-        </aside>
+        )}
       </div>
     </div>
   );

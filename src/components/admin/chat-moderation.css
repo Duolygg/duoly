@@ -1,0 +1,130 @@
+.chat-moderation {
+  margin-top: 28px;
+  min-width: 0;
+  padding: clamp(16px, 3vw, 28px);
+  border: 1px solid #413451;
+  border-radius: 22px;
+  background: #17121f;
+  color: #ece5f7;
+  font-family: 'DM Sans', sans-serif;
+}
+.chat-moderation h2,
+.chat-moderation h3 {
+  margin: 0;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  color: #fff;
+}
+.chat-moderation p,
+.chat-moderation time,
+.chat-moderation dt {
+  color: #c2b5d6;
+}
+.chat-moderation .cm-heading,
+.chat-moderation .cm-investigation > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.chat-moderation .cm-heading p {
+  margin-bottom: 0;
+}
+.chat-moderation .cm-notice {
+  min-height: 1.5em;
+}
+.chat-moderation .cm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+.chat-moderation .cm-flag {
+  min-width: 0;
+  border: 1px solid #493b5c;
+  border-radius: 16px;
+  padding: 18px;
+  background: #21192c;
+}
+.chat-moderation .cm-meta,
+.chat-moderation .cm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.chat-moderation .cm-meta {
+  font-size: 14px;
+}
+.chat-moderation .cm-status {
+  border-radius: 8px;
+  padding: 4px 8px;
+  background: #3d2e50;
+}
+.chat-moderation blockquote {
+  margin: 16px 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.chat-moderation time {
+  font-size: 13px;
+}
+.chat-moderation .cm-source {
+  font-size: 12px;
+  display: grid;
+  gap: 6px;
+}
+.chat-moderation .cm-source > div {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chat-moderation dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.chat-moderation button {
+  min-height: 44px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid #75608d;
+  background: #32243f;
+  color: #f5edff;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.chat-moderation button:hover:not(:disabled) {
+  background: #49345e;
+}
+.chat-moderation button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.chat-moderation button:focus-visible {
+  outline: 3px solid #d8afff;
+  outline-offset: 3px;
+}
+.chat-moderation .cm-investigation {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #514061;
+  min-width: 0;
+}
+.chat-moderation .cm-investigation > p {
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+@media (max-width: 540px) {
+  .chat-moderation {
+    padding: 14px;
+  }
+  .chat-moderation .cm-flag {
+    padding: 14px;
+  }
+  .chat-moderation .cm-actions > button {
+    flex: 1 1 140px;
+  }
+}

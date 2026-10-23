@@ -12,6 +12,7 @@ import AuditLog from './AuditLog';
 import Orders from './Orders';
 import LiveDesk from './LiveDesk';
 import NotConnected from './NotConnected';
+import ChatModeration from './ChatModeration';
 
 // Port of the original admin shell (components/admin/AdminApp.jsx): same sidebar, groups,
 // titles, confirm dialog and toasts. Sections are real URLs (/admin/users) so they can be
@@ -434,7 +435,9 @@ export default class AdminApp extends React.Component {
     const s = this.state;
     const a = this.props.admin || {};
     const [title, sub] = TITLES[s.section];
-    const live = LIVE.includes(s.section);
+    const live =
+      LIVE.includes(s.section) ||
+      (s.section === 'safety' && this.props.chatEnabled);
     const counts = { applications: s.pendingApps };
     const props = {
       api: this.api,
@@ -453,6 +456,8 @@ export default class AdminApp extends React.Component {
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
     else if (s.section === 'audit') body = <AuditLog {...props} />;
+    else if (s.section === 'safety' && this.props.chatEnabled)
+      body = <ChatModeration csrf={this.props.csrf} />;
     else body = <NotConnected section={s.section} go={this.go} />;
     return (
       <div
@@ -507,7 +512,11 @@ export default class AdminApp extends React.Component {
                     }}
                     style={{
                       textDecoration: 'none',
-                      opacity: LIVE.includes(x.id) ? 1 : 0.62,
+                      opacity:
+                        LIVE.includes(x.id) ||
+                        (x.id === 'safety' && this.props.chatEnabled)
+                          ? 1
+                          : 0.62,
                     }}
                   >
                     <svg

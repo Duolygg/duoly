@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import PrivateProofs from '../proofs/PrivateProofs';
+import OrderChat from '../chat/OrderChat';
 import './order-desk.css';
 import {
   OrderCommandSchema,
@@ -243,41 +244,67 @@ export function DeskView({
   canAccept,
   onAccept,
   csrf = '',
+  chatEnabled = false,
 }: {
   state: DeskState;
   pending: boolean;
   canAccept: boolean;
   onAccept?: (id: string) => void;
   csrf?: string;
+  chatEnabled?: boolean;
 }) {
   return (
-    <div className="td-columns" aria-busy={pending}>
+    <div
+      className={`td-columns${chatEnabled ? ' td-chat-enabled' : ''}`}
+      aria-busy={pending}
+    >
       <section className="td-panel" aria-labelledby="td-assignment">
         <h2 id="td-assignment">Your assignment</h2>
         <ReadNotice state={state.assignment} assignment />
         {state.assignment.kind === 'ready' &&
           (state.assignment.value ? (
-            <>
+            <div className={chatEnabled ? 'td-assignment-layout' : undefined}>
               <OrderCard order={state.assignment.value} active disabled />
-              {!pending &&
-                state.assignment.value.status === 'in_progress' &&
-                state.assignment.value.current_assignment_id && (
-                  <PrivateProofs
-                    orderId={state.assignment.value.id}
-                    assignmentId={state.assignment.value.current_assignment_id}
-                    mode="teammate"
-                    csrf={csrf}
-                  />
-                )}
-            </>
+              <div className={chatEnabled ? 'td-conversation' : undefined}>
+                {chatEnabled &&
+                  !pending &&
+                  state.assignment.value.status === 'in_progress' &&
+                  state.assignment.value.current_assignment_id && (
+                    <OrderChat
+                      key={`${state.assignment.value.id}:${state.assignment.value.current_assignment_id}`}
+                      orderId={state.assignment.value.id}
+                      assignmentId={
+                        state.assignment.value.current_assignment_id
+                      }
+                      csrf={csrf}
+                      view="teammate"
+                    />
+                  )}
+                {!pending &&
+                  state.assignment.value.status === 'in_progress' &&
+                  state.assignment.value.current_assignment_id && (
+                    <PrivateProofs
+                      orderId={state.assignment.value.id}
+                      key={`${state.assignment.value.id}:${state.assignment.value.current_assignment_id}`}
+                      assignmentId={
+                        state.assignment.value.current_assignment_id
+                      }
+                      mode="teammate"
+                      csrf={csrf}
+                    />
+                  )}
+              </div>
+            </div>
           ) : (
             <p className="td-notice" role="status">
               No current assignment.
             </p>
           ))}
         <p className="td-muted td-limits">
-          Completion, chat and payout withdrawals are unavailable. No completion
-          or payment action can be taken here.
+          {chatEnabled
+            ? 'Completion and payout withdrawals are unavailable.'
+            : 'Completion, chat and payout withdrawals are unavailable.'}{' '}
+          No completion or payment action can be taken here.
         </p>
       </section>
       <section className="td-panel" aria-labelledby="td-queue">
@@ -327,7 +354,13 @@ const acceptMessages: Record<AcceptResult, string> = {
     'Acceptance is unavailable. Refresh or sign in again before trying.',
 };
 
-export default function OrderDesk({ csrf }: { csrf: string }) {
+export default function OrderDesk({
+  csrf,
+  chatEnabled = false,
+}: {
+  csrf: string;
+  chatEnabled?: boolean;
+}) {
   const [state, setState] = useState<DeskState>(loadingDesk);
   const [pending, setPending] = useState(true);
   const [notice, setNotice] = useState('');
@@ -430,6 +463,7 @@ export default function OrderDesk({ csrf }: { csrf: string }) {
         pending={pending}
         canAccept={canAccept}
         csrf={csrf}
+        chatEnabled={chatEnabled}
         onAccept={(id) => void accept(id)}
       />
     </div>

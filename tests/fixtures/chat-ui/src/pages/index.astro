@@ -1,0 +1,58 @@
+---
+// Separate test application. This is NOT a route in the production src/pages tree.
+import ProductLayout from '../../../../../src/layouts/ProductLayout.astro';
+import OrderChat from '../../../../../src/components/chat/OrderChat';
+import CustomerOrderRoom from '../../../../../src/components/account/CustomerOrderRoom';
+import OrderDesk from '../../../../../src/components/teammate/OrderDesk';
+import { CustomerOrderSchema } from '../../../../../src/contracts/orders';
+const order = CustomerOrderSchema.parse({
+  id: '11111111-1111-4111-8111-111111111111',
+  public_reference: 'DL-90001',
+  status: 'in_progress',
+  game: 'val',
+  service: 'Ranked duo',
+  title: 'VALORANT ×3',
+  units: 3,
+  unit: 'game',
+  gg: false,
+  rank: 'Gold III',
+  region: 'EU West',
+  ign: 'Alex#EUW',
+  note: 'Ready for ranked games',
+  voice: false,
+  amount_eur_cents: 2599,
+  created_at: '2026-10-23T08:00:00Z',
+  queued_at: '2026-10-23T08:00:00Z',
+  accepted_at: new Date().toISOString(),
+  completed_at: null,
+  cancelled_at: null,
+  cancel_reason: null,
+  rerolls: 0,
+  current_assignment_id: '22222222-2222-4222-8222-222222222222',
+  teammate: {
+    name: 'Mina',
+    country: 'at',
+    image: '/assets/avatars/avatar-3.png',
+  },
+});
+const mode = Astro.url.searchParams.get('mode');
+const view =
+  Astro.url.searchParams.get('view') === 'teammate' ? 'teammate' : 'customer';
+---
+
+<ProductLayout title="Chat browser test fixture | Duoly">
+  <p role="note" style="padding:16px;color:#e6c4ff">
+    LOCAL TEST FIXTURE. Fictional order and mocked API. No live messages or
+    payment actions.
+  </p>
+  {mode === 'chat' ? (
+    <OrderChat orderId={order.id} csrf="fixture-csrf" view={view} client:load />
+  ) : view === 'teammate' ? (
+    <OrderDesk {...{ csrf: 'fixture-csrf', chatEnabled: true }} client:load />
+  ) : (
+    <CustomerOrderRoom
+      {...{ initialOrder: order, csrf: 'fixture-csrf', chatEnabled: true }}
+      client:load
+    />
+  )}
+</ProductLayout>

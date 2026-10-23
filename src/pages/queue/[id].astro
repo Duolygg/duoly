@@ -4,6 +4,8 @@ import CustomerOrderRoom from '../../components/account/CustomerOrderRoom';
 import { OrderCommandSchema, type CustomerOrder } from '../../contracts/orders';
 import { accountContext } from '../../server/auth/context';
 import { decodeOrderRpcResult } from '../../server/orders/results';
+import { orderChatEnabled } from '../../server/chat/config';
+const chatEnabled = orderChatEnabled();
 const command = OrderCommandSchema.safeParse({ order_id: Astro.params.id });
 const operational = command.success;
 let identity = null;
@@ -55,7 +57,12 @@ if (operational) {
     csrf={csrf}
   >
     {order ? (
-      <CustomerOrderRoom initialOrder={order} csrf={csrf} client:load />
+      <CustomerOrderRoom
+        initialOrder={order}
+        csrf={csrf}
+        chatEnabled={chatEnabled}
+        client:load
+      />
     ) : (
       <section class="customer-orders" role="alert">
         <h1>
