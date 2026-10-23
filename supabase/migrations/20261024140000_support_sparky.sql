@@ -76,8 +76,10 @@ begin
   end if;
   insert into public.support_messages(conversation_id, sender, body) values (p_conversation_id, 'user', v_text) returning * into v_message;
   update public.support_conversations set updated_at = v_message.created_at,
-    status = case when status = 'closed' then 'waiting' else status end,
-    waiting_since = case when status = 'closed' then v_message.created_at else waiting_since end
+    -- A closed chat reopens with Sparky ("Write again anytime"), not straight into the admin queue.
+    status = case when status = 'closed' then 'bot' else status end,
+    claimed_by = case when status = 'closed' then null else claimed_by end,
+    waiting_since = case when status = 'closed' then null else waiting_since end
     where id = p_conversation_id;
   return pg_catalog.jsonb_build_object('message', pg_catalog.to_jsonb(v_message));
 end;

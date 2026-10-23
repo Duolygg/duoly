@@ -1,4 +1,4 @@
--- Rollback-only checks for 20261024127500_support_sparky.sql.
+-- Rollback-only checks for 20261024140000_support_sparky.sql.
 begin;
 insert into auth.users (id,aud,role,email,raw_user_meta_data,raw_app_meta_data) values
  ('5a000000-0000-4000-8000-000000000001','authenticated','authenticated','support-admin@example.invalid','{}','{}'),
@@ -37,6 +37,15 @@ do $$ declare r jsonb; begin
  if (public.admin_audit(4)->'audit'->0->>'action') <> 'Closed support chat' then raise exception 'support commands not audited'; end if;
 end $$;
 reset role;
+
+-- Writing into a closed chat reopens it with Sparky, never straight into the admin queue.
+do $$ declare r jsonb; begin
+ update public.support_conversations set status='closed', claimed_by='5a000000-0000-4000-8000-000000000001' where id='5a100000-0000-4000-8000-000000000001';
+ r := public.support_add_user_message('5a100000-0000-4000-8000-000000000001','back again',12);
+ if r ? 'error' or (select status from public.support_conversations where id='5a100000-0000-4000-8000-000000000001') <> 'bot'
+   or (select claimed_by from public.support_conversations where id='5a100000-0000-4000-8000-000000000001') is not null then raise exception 'closed chat did not reopen with Sparky: %', r; end if;
+ delete from public.support_messages where id = (r->'message'->>'id')::uuid;
+end $$;
 
 -- Service-only message limiter and daily AI cap are atomic.
 set local role service_role;
