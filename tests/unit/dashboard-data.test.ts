@@ -88,6 +88,6 @@ describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
       expect.objectContaining({ name: 'Mika Star', orders: 2, online: null }),
     ]);
     expect(h.wallet).toBe(5);
-    expect(h.orders.map((o) => o.status)).toHaveLength(3);
+    expect(h.orders).toHaveLength(3);
   });
 });
