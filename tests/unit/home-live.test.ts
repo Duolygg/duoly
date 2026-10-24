@@ -1,4 +1,7 @@
 import { readFileSync } from 'node:fs';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import Home from '../../src/components/home/Home.jsx';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   HOME_LIVE_CACHE_CONTROL,
@@ -168,5 +171,43 @@ describe('home live: wiring', () => {
       'email',
     ])
       expect(sql).not.toMatch(new RegExp(`'${field}'`));
+  });
+});
+
+describe('home live: Home.jsx ticker render', () => {
+  const ticker = (html: string) =>
+    /aria-label="Recent matches"[\s\S]*?<\/div><\/div>/.exec(html)?.[0] ?? '';
+
+  it('shows his sample rows when there are no real matches', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(Home, { onlineNow: 2, recentMatches: [] }),
+    );
+    expect(ticker(html)).toContain('Jonas');
+    expect(html).toContain('2 teammates');
+  });
+
+  it('replaces the samples with real matches, repeated to fill the strip, with the rating', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(Home, {
+        onlineNow: 1,
+        recentMatches: [
+          {
+            game: 'val',
+            who: 'Zelda',
+            what: 'Duo Pro',
+            time: '58s',
+            rating: 4,
+          },
+          { game: 'xx', who: 'Ghost', what: 'Duo', time: '1s', rating: null },
+        ],
+      }),
+    );
+    const strip = ticker(html);
+    expect(strip).toContain('Zelda');
+    expect(strip).not.toContain('Jonas');
+    expect(strip).not.toContain('Ghost');
+    expect(strip.match(/Zelda/g)?.length).toBeGreaterThanOrEqual(10);
+    expect(strip).toContain('Rated 4 out of 5');
+    expect(html).toContain('1 teammate online');
   });
 });
