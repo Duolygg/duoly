@@ -55,6 +55,8 @@ export default class Teammates extends React.Component {
       lastSeen: toMs(t.lastSeen),
       lifetime: Number(t.completed) || 0,
       earned30: (Number(t.earned30UsdCents) || 0) / 100,
+      rating: t.rating == null ? null : Number(t.rating),
+      reviews: Number(t.reviews) || 0,
       warnings: Number(t.warnings) || 0,
       suspended: t.suspended
         ? { ...t.suspended, at: toMs(t.suspended.at) }
@@ -365,7 +367,16 @@ export default class Teammates extends React.Component {
                     </span>
                   </td>
                   <td style={td}>{dash}</td>
-                  <td style={{ ...td, textAlign: 'right' }}>{dash}</td>
+                  <td
+                    style={{ ...td, textAlign: 'right' }}
+                    title={
+                      t.reviews
+                        ? t.reviews + (t.reviews === 1 ? ' review' : ' reviews')
+                        : 'No reviews yet'
+                    }
+                  >
+                    {t.rating == null ? dash : '★ ' + t.rating.toFixed(2)}
+                  </td>
                   <td
                     style={{ ...td, textAlign: 'right' }}
                     title={t.accepted + ' accepted in total'}
@@ -493,9 +504,8 @@ export default class Teammates extends React.Component {
           </table>
         </div>
         <p style={{ margin: '12px 0 0', fontSize: '13px', color: C.dim }}>
-          Trust level, rating, deposit and amount owed fill in once order
-          completion and payouts are live. Game access and roles are edited in
-          Users & roles.
+          Trust level, deposit and amount owed fill in once order completion and
+          payouts are live. Game access and roles are edited in Users & roles.
         </p>
       </section>
     );

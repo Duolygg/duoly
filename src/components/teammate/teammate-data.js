@@ -3,6 +3,7 @@ import {
   TeammateOrderSchema,
   OrderResponseSchemas,
 } from '../../contracts/orders';
+import { TeammateStatsResponseSchema } from '../../contracts/reviews';
 import { z } from 'zod';
 import { canTake } from '../../design-reference/lib/access';
 const PresenceSchema = z
@@ -66,6 +67,10 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
             : null,
         });
       }
+      if (path === '/api/teammate/stats')
+        return json(
+          await request('/api/teammate/stats', TeammateStatsResponseSchema),
+        );
       if (path.startsWith('/api/orders/')) {
         const id = path.slice('/api/orders/'.length);
         const parsedId = TeammateOrderSchema.shape.id.safeParse(id);

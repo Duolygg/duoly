@@ -86,10 +86,14 @@ it('retains the original layout with live presence and unsupported controls stil
     'Waiting for orders!',
   ])
     expect(html).not.toContain(text);
-  const { support, presence, notifications, ...gated } = FEATURES;
+  const { support, presence, notifications, reviews, ...gated } = FEATURES;
   expect(support).toBe(true);
   expect(presence).toBe(true);
   expect(notifications).toBe(true);
+  expect(reviews).toBe(true);
+  expect(FEATURES.tips).toBe(false);
+  expect(html).not.toContain('Tips received');
+  expect(html).not.toContain('Rating');
   expect(Object.values(gated).every((v) => v === false)).toBe(true);
 });
 it('acceptance re-reads authoritative assignment and never trusts an uncertain response', async () => {

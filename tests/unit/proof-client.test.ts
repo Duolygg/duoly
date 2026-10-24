@@ -64,6 +64,7 @@ it('integrates only own customer order and current assignment, never the generic
     cancel_reason: null,
     rerolls: 0,
     teammate: { name: 'Mate', image: '', country: 'at' },
+    review: null,
   };
   expect(
     renderToStaticMarkup(

@@ -38,6 +38,7 @@ export const order = {
     country: 'at',
     image: '/assets/avatars/avatar-3.png',
   },
+  review: null,
 };
 export function state() {
   return {
@@ -183,6 +184,7 @@ export async function mockChat(
         cancel_reason: cancel,
         rerolls,
         teammate,
+        review,
         ...shared
       } = order;
       void [
@@ -195,6 +197,7 @@ export async function mockChat(
         cancel,
         rerolls,
         teammate,
+        review,
       ];
       return reply({
         order: {

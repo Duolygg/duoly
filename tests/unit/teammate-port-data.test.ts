@@ -29,6 +29,56 @@ export const order = {
   current_assignment_id: null,
 };
 describe('original teammate adapter', () => {
+  it('passes validated rating stats through and rejects unexpected fields', async () => {
+    const stats = {
+      now: 1792843200000,
+      me: id,
+      stats: {
+        completed: 1,
+        tier: { name: 'Rookie', deposit: 10 },
+        held: 0.6,
+        saved: 0,
+        rating: 4.5,
+        reviews: 2,
+        tipsTotal: 0,
+        recent: [],
+        latestReviews: [
+          {
+            rating: 5,
+            text: 'GG',
+            tags: ['Patient'],
+            customer: 'Alex',
+            game: 'lol',
+            at: 1792843200000,
+          },
+        ],
+        adjustments: [],
+      },
+      leaderboard: {},
+    };
+    const ok = createTeammateFetch({
+      csrf: 'token',
+      fetcher: vi.fn(async () => Response.json(stats)),
+    });
+    const res = await ok('/api/teammate/stats');
+    expect(res.ok).toBe(true);
+    expect(await res.json()).toEqual(stats);
+    const leaky = createTeammateFetch({
+      csrf: 'token',
+      fetcher: vi.fn(async () =>
+        Response.json({
+          ...stats,
+          stats: {
+            ...stats.stats,
+            latestReviews: [
+              { ...stats.stats.latestReviews[0], customerId: id },
+            ],
+          },
+        }),
+      ),
+    });
+    expect((await leaky('/api/teammate/stats')).ok).toBe(false);
+  });
   it('accepts only UUID accept commands with CSRF and validates the exact assignment result', async () => {
     const accepted = {
       ...order,

@@ -33,6 +33,7 @@ const base = {
     image: '/assets/avatars/avatar-2.png',
     country: 'de',
   },
+  review: null,
 };
 
 describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
@@ -46,6 +47,25 @@ describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
       review: null,
     });
     expect(o.createdAt).toBe(Date.parse(base.created_at));
+  });
+  it('maps reviews and computes the customer view of a teammate rating', () => {
+    const reviewed = {
+      ...base,
+      review: {
+        rating: 5,
+        text: 'Great teammate',
+        tags: ['Great comms'],
+        at: '2026-10-24T12:00:00.000Z',
+      },
+    };
+    expect(toOriginalOrder(reviewed).review).toEqual({
+      ...reviewed.review,
+      at: Date.parse(reviewed.review.at),
+    });
+    expect(
+      toOriginalHistory([reviewed], [], Date.parse('2026-10-24T13:00:00.000Z'))
+        .mates[0].rating,
+    ).toBe(5);
   });
   it('labels cancelled orders as not charged', () => {
     const o = toOriginalOrder({

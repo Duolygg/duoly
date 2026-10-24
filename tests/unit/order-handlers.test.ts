@@ -269,6 +269,7 @@ const customer = {
   cancel_reason: null,
   rerolls: 0,
   teammate: null,
+  review: null,
 };
 const teammate = {
   ...selection,

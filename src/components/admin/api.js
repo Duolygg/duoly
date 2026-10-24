@@ -110,6 +110,7 @@ export function order(o) {
     acceptedAt: accepted,
     completedAt: toMs(o.completedAt),
     cancelledAt: toMs(o.cancelledAt),
+    review: o.review ? { ...o.review, at: toMs(o.review.at) } : null,
     waitSec: accepted
       ? Math.max(0, Math.round((accepted - toMs(o.queuedAt)) / 1000))
       : 0,

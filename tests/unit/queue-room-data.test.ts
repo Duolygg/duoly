@@ -26,6 +26,7 @@ const order = {
   rerolls: 1,
   current_assignment_id: '22222222-2222-4222-8222-222222222222',
   teammate: { name: 'Mika Star', image: '', country: 'de' },
+  review: null,
 };
 
 describe('order room adapter (original QueueRoom.jsx shape)', () => {
@@ -45,6 +46,20 @@ describe('order room adapter (original QueueRoom.jsx shape)', () => {
       currency: 'EUR',
       total: 8.49,
       method: 'Stripe checkout',
+    });
+  });
+  it('maps a saved review into the original room shape', () => {
+    const review = {
+      rating: 5,
+      text: 'Great teammate',
+      tags: ['Great comms'],
+      at: '2026-10-24T12:00:00.000Z',
+    };
+    expect(
+      toRoomOrder({ ...order, status: 'completed', review }).review,
+    ).toEqual({
+      ...review,
+      at: Date.parse(review.at),
     });
   });
   it('keeps the raw cancel reason so the room can tell who cancelled', () => {

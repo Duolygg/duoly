@@ -57,6 +57,8 @@ export const FEATURES = {
   preferences: false,
   trust: false,
   stats: false,
+  reviews: true,
+  tips: false,
   leaderboard: false,
   handovers: false,
   cancelled: false,
@@ -66,6 +68,111 @@ export const FEATURES = {
 };
 
 const DISPLAY = "'Bricolage Grotesque', sans-serif";
+
+// Latest customer reviews (stars, text, tags). Only customer display names are shown.
+function LatestReviews({ reviews }) {
+  if (!reviews.length) return null;
+  return (
+    <div style={{ marginTop: '16px' }}>
+      <div
+        style={{
+          fontSize: '12px',
+          fontWeight: '700',
+          letterSpacing: '.08em',
+          textTransform: 'uppercase',
+          color: '#6A6086',
+        }}
+      >
+        Latest reviews
+      </div>
+      <ul
+        style={{
+          listStyle: 'none',
+          margin: '8px 0 0',
+          padding: '0',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}
+      >
+        {reviews.map((r, i) => (
+          <li
+            key={i}
+            style={{
+              padding: '10px 12px',
+              borderRadius: '14px',
+              background: '#090414',
+              fontSize: '13.5px',
+              lineHeight: '1.45',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: '#FFD27A',
+                fontWeight: '700',
+              }}
+            >
+              {'★'.repeat(r.rating)}
+              <span style={{ color: '#6A6086' }}>
+                {'★'.repeat(5 - r.rating)}
+              </span>
+              <span
+                style={{
+                  marginLeft: 'auto',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  color: '#8E84AB',
+                }}
+              >
+                {r.customer}
+              </span>
+            </div>
+            {r.text ? (
+              <div
+                style={{
+                  marginTop: '4px',
+                  color: '#D9D1F0',
+                  overflowWrap: 'anywhere',
+                }}
+              >
+                “{r.text}”
+              </div>
+            ) : null}
+            {r.tags && r.tags.length ? (
+              <div
+                style={{
+                  marginTop: '6px',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '4px',
+                }}
+              >
+                {r.tags.map((t) => (
+                  <span
+                    key={t}
+                    style={{
+                      fontSize: '11.5px',
+                      padding: '2px 8px',
+                      borderRadius: '999px',
+                      background: 'rgba(214, 187, 255, .1)',
+                      color: '#D6BBFF',
+                    }}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 const GREEN = '#5EEAA8';
 
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
@@ -405,14 +512,19 @@ export default class Teammate extends React.Component {
     });
     this.checkIn();
     this.checkMine();
-    if (FEATURES.stats) {
+    if (FEATURES.stats || FEATURES.reviews) {
       this.loadStats();
       this._stats = setInterval(() => this.loadStats(), STATS_MS);
     }
   }
   // Real numbers from the earnings ledger (and the leaderboard).
   async loadStats() {
-    if (!FEATURES.stats) return;
+    if (
+      !(FEATURES.stats || FEATURES.reviews) ||
+      this.props.admin ||
+      this.state.needDiscord
+    )
+      return;
     try {
       const res = await this._fetch('/api/teammate/stats', {
         cache: 'no-store',
@@ -2883,7 +2995,8 @@ export default class Teammate extends React.Component {
             </section>
           )}
 
-          {v.admin || !FEATURES.stats ? null : (
+          {v.admin ||
+          !(FEATURES.stats || (FEATURES.reviews && v.statsLoaded)) ? null : (
             <section
               aria-label="Your numbers"
               style={{
@@ -2893,44 +3006,52 @@ export default class Teammate extends React.Component {
                 gap: '12px',
               }}
             >
-              <div
-                style={{
-                  ...card,
-                  padding: '20px 22px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px',
-                }}
-              >
-                <span style={label}>Earned today</span>
-                <span style={statNum}>{v.today}</span>
-                <span
-                  style={{ fontSize: '13px', fontWeight: '600', color: GREEN }}
-                >
-                  {v.todayOrders}
-                </span>
-              </div>
-              <div
-                style={{
-                  ...card,
-                  padding: '20px 22px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px',
-                }}
-              >
-                <span style={label}>Last 7 days</span>
-                <span style={statNum}>{v.weekTotal}</span>
-                <span
+              {FEATURES.stats ? (
+                <div
                   style={{
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    color: '#D6BBFF',
+                    ...card,
+                    padding: '20px 22px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '6px',
                   }}
                 >
-                  {v.completedLabel}
-                </span>
-              </div>
+                  <span style={label}>Earned today</span>
+                  <span style={statNum}>{v.today}</span>
+                  <span
+                    style={{
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      color: GREEN,
+                    }}
+                  >
+                    {v.todayOrders}
+                  </span>
+                </div>
+              ) : null}
+              {FEATURES.stats ? (
+                <div
+                  style={{
+                    ...card,
+                    padding: '20px 22px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '6px',
+                  }}
+                >
+                  <span style={label}>Last 7 days</span>
+                  <span style={statNum}>{v.weekTotal}</span>
+                  <span
+                    style={{
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      color: '#D6BBFF',
+                    }}
+                  >
+                    {v.completedLabel}
+                  </span>
+                </div>
+              ) : null}
               <div
                 style={{
                   ...card,
@@ -2952,27 +3073,29 @@ export default class Teammate extends React.Component {
                   {v.reviewsLabel}
                 </span>
               </div>
-              <div
-                style={{
-                  ...card,
-                  padding: '20px 22px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px',
-                }}
-              >
-                <span style={label}>Tips received</span>
-                <span style={statNum}>{v.tipsLabel}</span>
-                <span
+              {FEATURES.stats && FEATURES.tips ? (
+                <div
                   style={{
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    color: '#8E84AB',
+                    ...card,
+                    padding: '20px 22px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '6px',
                   }}
                 >
-                  100% yours, paid with your earnings
-                </span>
-              </div>
+                  <span style={label}>Tips received</span>
+                  <span style={statNum}>{v.tipsLabel}</span>
+                  <span
+                    style={{
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      color: '#8E84AB',
+                    }}
+                  >
+                    100% yours, paid with your earnings
+                  </span>
+                </div>
+              ) : null}
             </section>
           )}
 
@@ -4625,7 +4748,12 @@ export default class Teammate extends React.Component {
               ) : null}
             </div>
 
-            {v.admin || !(FEATURES.stats || FEATURES.preferences) ? null : (
+            {v.admin ||
+            !(
+              FEATURES.stats ||
+              FEATURES.preferences ||
+              FEATURES.reviews
+            ) ? null : (
               <div
                 style={{
                   display: 'flex',
@@ -4793,105 +4921,16 @@ export default class Teammate extends React.Component {
                         ))}
                       </ul>
                     ) : null}
-                    {v.latestReviews.length ? (
-                      <div style={{ marginTop: '16px' }}>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            letterSpacing: '.08em',
-                            textTransform: 'uppercase',
-                            color: '#6A6086',
-                          }}
-                        >
-                          Latest reviews
-                        </div>
-                        <ul
-                          style={{
-                            listStyle: 'none',
-                            margin: '8px 0 0',
-                            padding: '0',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '8px',
-                          }}
-                        >
-                          {v.latestReviews.map((r, i) => (
-                            <li
-                              key={i}
-                              style={{
-                                padding: '10px 12px',
-                                borderRadius: '14px',
-                                background: '#090414',
-                                fontSize: '13.5px',
-                                lineHeight: '1.45',
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '6px',
-                                  color: '#FFD27A',
-                                  fontWeight: '700',
-                                }}
-                              >
-                                {'★'.repeat(r.rating)}
-                                <span style={{ color: '#6A6086' }}>
-                                  {'★'.repeat(5 - r.rating)}
-                                </span>
-                                <span
-                                  style={{
-                                    marginLeft: 'auto',
-                                    fontSize: '12px',
-                                    fontWeight: '500',
-                                    color: '#8E84AB',
-                                  }}
-                                >
-                                  {r.customer}
-                                </span>
-                              </div>
-                              {r.text ? (
-                                <div
-                                  style={{
-                                    marginTop: '4px',
-                                    color: '#D9D1F0',
-                                    overflowWrap: 'anywhere',
-                                  }}
-                                >
-                                  “{r.text}”
-                                </div>
-                              ) : null}
-                              {r.tags && r.tags.length ? (
-                                <div
-                                  style={{
-                                    marginTop: '6px',
-                                    display: 'flex',
-                                    flexWrap: 'wrap',
-                                    gap: '4px',
-                                  }}
-                                >
-                                  {r.tags.map((t) => (
-                                    <span
-                                      key={t}
-                                      style={{
-                                        fontSize: '11.5px',
-                                        padding: '2px 8px',
-                                        borderRadius: '999px',
-                                        background: 'rgba(214, 187, 255, .1)',
-                                        color: '#D6BBFF',
-                                      }}
-                                    >
-                                      {t}
-                                    </span>
-                                  ))}
-                                </div>
-                              ) : null}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : null}
+                    <LatestReviews reviews={v.latestReviews} />
+                  </section>
+                ) : FEATURES.reviews &&
+                  v.statsLoaded &&
+                  v.latestReviews.length ? (
+                  <section
+                    aria-label="Latest reviews"
+                    style={{ ...card, padding: '24px' }}
+                  >
+                    <LatestReviews reviews={v.latestReviews} />
                   </section>
                 ) : null}
 

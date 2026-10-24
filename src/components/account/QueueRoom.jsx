@@ -15,7 +15,7 @@ import { createRoomFetch } from './queue-room-data';
 // Port of the original components/QueueRoom.jsx (duoly-admin/duoly@7f0299f): layout and copy are
 // his. Data and commands go through queue-room-data.js to the real order, chat and proof APIs.
 // Report with bounty (#9), review and tip (#7/#10) stay in the file and switch on here.
-const FEATURES = { reports: false, reviews: false };
+const FEATURES = { reports: false, reviews: true, tips: false };
 
 // what customers can do once matched (kept in sync with lib/orders.js REVIEW_TAGS and lib/reports.js)
 const REVIEW_TAGS = [
@@ -508,10 +508,11 @@ export default class QueueRoom extends React.Component {
       return this.setState({
         rv: { ...rv, err: 'Tap a star to rate your teammate.' },
       });
-    const tip =
-      rv.tip === 'custom'
+    const tip = FEATURES.tips
+      ? rv.tip === 'custom'
         ? Number(String(rv.custom).replace(',', '.')) || 0
-        : Number(rv.tip) || 0;
+        : Number(rv.tip) || 0
+      : 0;
     if (tip < 0 || tip > 100)
       return this.setState({ rv: { ...rv, err: 'Tips can be up to 100.' } });
     this.setState({ busy: 'review', rv: { ...rv, err: '' } });
@@ -521,7 +522,6 @@ export default class QueueRoom extends React.Component {
         rating: rv.rating,
         tags: rv.tags,
         text: rv.text,
-        tip,
       });
       if (!ok)
         return this.setState({
@@ -1844,10 +1844,11 @@ export default class QueueRoom extends React.Component {
       'Great',
       'Amazing!',
     ];
-    const tipVal =
-      rv.tip === 'custom'
+    const tipVal = FEATURES.tips
+      ? rv.tip === 'custom'
         ? Number(String(rv.custom).replace(',', '.')) || 0
-        : Number(rv.tip) || 0;
+        : Number(rv.tip) || 0
+      : 0;
     const chip = (on) => ({
       minHeight: '36px',
       padding: '0 13px',
@@ -1949,113 +1950,119 @@ export default class QueueRoom extends React.Component {
               }}
             />
 
-            <div className="q-tip">
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '10px',
-                }}
-              >
-                <span style={{ fontWeight: '700', color: '#FFFFFF' }}>
-                  Leave a tip for {name}
-                </span>
-                <span
+            {FEATURES.tips ? (
+              <div className="q-tip">
+                <div
                   style={{
-                    fontSize: '12.5px',
-                    color: GREEN,
-                    fontWeight: '600',
-                  }}
-                >
-                  100% goes to {name}
-                </span>
-              </div>
-              <div
-                role="radiogroup"
-                aria-label="Tip"
-                style={{
-                  marginTop: '10px',
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
-                  gap: '6px',
-                }}
-              >
-                {[
-                  [0, 'No tip'],
-                  [2, sym + '2'],
-                  [5, sym + '5'],
-                  [10, sym + '10'],
-                  ['custom', 'Other'],
-                ].map(([val, label]) => {
-                  const on = rv.tip === val;
-                  return (
-                    <button
-                      key={label}
-                      type="button"
-                      role="radio"
-                      aria-checked={on ? 'true' : 'false'}
-                      onClick={() => this.editRv(() => ({ tip: val, err: '' }))}
-                      style={{
-                        ...chip(on),
-                        padding: '0 4px',
-                        minHeight: '44px',
-                        borderRadius: '12px',
-                        fontWeight: '700',
-                        ...(on && val
-                          ? {
-                              borderColor: GREEN,
-                              background: 'rgba(94, 234, 168, .1)',
-                              color: GREEN,
-                            }
-                          : {}),
-                      }}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-              {rv.tip === 'custom' ? (
-                <label
-                  style={{
-                    marginTop: '8px',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
-                    padding: '0 14px',
-                    minHeight: '44px',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(196, 170, 255, .16)',
-                    background: '#090414',
+                    justifyContent: 'space-between',
+                    gap: '10px',
                   }}
                 >
-                  <span style={{ color: MUTED, fontWeight: '700' }}>{sym}</span>
-                  <input
-                    inputMode="decimal"
-                    value={rv.custom}
-                    onChange={(e) => {
-                      const custom = e.target.value
-                        .replace(/[^\d.,]/g, '')
-                        .slice(0, 6);
-                      this.editRv(() => ({ custom }));
-                    }}
-                    placeholder="Amount"
-                    aria-label="Tip amount"
+                  <span style={{ fontWeight: '700', color: '#FFFFFF' }}>
+                    Leave a tip for {name}
+                  </span>
+                  <span
                     style={{
-                      flex: '1',
-                      minWidth: '0',
-                      border: 'none',
-                      background: 'transparent',
-                      color: '#FFFFFF',
-                      font: 'inherit',
-                      fontSize: '15px',
-                      outline: 'none',
+                      fontSize: '12.5px',
+                      color: GREEN,
+                      fontWeight: '600',
                     }}
-                  />
-                </label>
-              ) : null}
-            </div>
+                  >
+                    100% goes to {name}
+                  </span>
+                </div>
+                <div
+                  role="radiogroup"
+                  aria-label="Tip"
+                  style={{
+                    marginTop: '10px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+                    gap: '6px',
+                  }}
+                >
+                  {[
+                    [0, 'No tip'],
+                    [2, sym + '2'],
+                    [5, sym + '5'],
+                    [10, sym + '10'],
+                    ['custom', 'Other'],
+                  ].map(([val, label]) => {
+                    const on = rv.tip === val;
+                    return (
+                      <button
+                        key={label}
+                        type="button"
+                        role="radio"
+                        aria-checked={on ? 'true' : 'false'}
+                        onClick={() =>
+                          this.editRv(() => ({ tip: val, err: '' }))
+                        }
+                        style={{
+                          ...chip(on),
+                          padding: '0 4px',
+                          minHeight: '44px',
+                          borderRadius: '12px',
+                          fontWeight: '700',
+                          ...(on && val
+                            ? {
+                                borderColor: GREEN,
+                                background: 'rgba(94, 234, 168, .1)',
+                                color: GREEN,
+                              }
+                            : {}),
+                        }}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {rv.tip === 'custom' ? (
+                  <label
+                    style={{
+                      marginTop: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '0 14px',
+                      minHeight: '44px',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(196, 170, 255, .16)',
+                      background: '#090414',
+                    }}
+                  >
+                    <span style={{ color: MUTED, fontWeight: '700' }}>
+                      {sym}
+                    </span>
+                    <input
+                      inputMode="decimal"
+                      value={rv.custom}
+                      onChange={(e) => {
+                        const custom = e.target.value
+                          .replace(/[^\d.,]/g, '')
+                          .slice(0, 6);
+                        this.editRv(() => ({ custom }));
+                      }}
+                      placeholder="Amount"
+                      aria-label="Tip amount"
+                      style={{
+                        flex: '1',
+                        minWidth: '0',
+                        border: 'none',
+                        background: 'transparent',
+                        color: '#FFFFFF',
+                        font: 'inherit',
+                        fontSize: '15px',
+                        outline: 'none',
+                      }}
+                    />
+                  </label>
+                ) : null}
+              </div>
+            ) : null}
 
             {rv.err ? (
               <p
