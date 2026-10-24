@@ -3,29 +3,33 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import LiveHome from '../components/account/LiveHome';
 import { accountContext } from '../server/auth/context';
 import { paymentsConfig } from '../server/payments/config';
-import { eurToUsd } from '../server/fx';
+import { customerUsdRate, eurToUsd } from '../server/fx';
+import { CurrencySchema } from '../contracts/account';
+import { homeLive } from '../server/home/live';
 const account = accountContext(Astro.request, Astro.cookies);
 let viewer = null;
-let onlineNow = 0;
+let accountCurrency = null;
 if (account.config) {
   try {
-    viewer = (await account.identity())?.viewer ?? null;
+    const identity = await account.identity();
+    viewer = identity?.viewer ?? null;
+    accountCurrency = identity?.profile.currency ?? null;
   } catch {
     /* Signed-out header; account routes report their own errors. */
-  }
-  try {
-    const presence = await account.client?.rpc('presence_public_count');
-    if (!presence?.error && typeof presence?.data === 'number')
-      onlineNow = presence.data;
-  } catch {
-    /* The figure stays at zero until the presence migration is available. */
   }
   for (const [name, value] of account.headers)
     Astro.response.headers.set(name, value);
 }
 const csrf = account.config ? account.csrf() : '';
 const checkoutEnabled = !!account.config && paymentsConfig() !== null;
-const { rate: usdRate } = await eurToUsd();
+const { rate } = await eurToUsd();
+const usdRate = customerUsdRate(rate);
+// Original app/page.jsx: the account's currency wins, then the cookie; none means auto-detect.
+const cookieCurrency = CurrencySchema.safeParse(
+  Astro.cookies.get('duoly-currency')?.value,
+);
+// Teammates online and recent matches: public, cached per instance (src/server/home/live.ts).
+const { onlineNow, recentMatches } = await homeLive();
 ---
 
 <SiteLayout title="Duoly | Duo up in under 2 minutes" bare>
@@ -34,7 +38,10 @@ const { rate: usdRate } = await eurToUsd();
     csrf={csrf}
     checkoutEnabled={checkoutEnabled}
     usdRate={usdRate}
+    accountCurrency={accountCurrency}
+    cookieCurrency={cookieCurrency.success ? cookieCurrency.data : null}
     onlineNow={onlineNow}
+    recentMatches={recentMatches}
     client:load
   />
 </SiteLayout>

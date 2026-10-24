@@ -965,26 +965,35 @@ export type Database = {
       };
       profiles: {
         Row: {
+          bio: string;
           country: string;
           created_at: string;
+          currency: string | null;
           id: string;
           image: string;
+          languages: string[];
           name: string;
           updated_at: string;
         };
         Insert: {
+          bio?: string;
           country?: string;
           created_at?: string;
+          currency?: string | null;
           id: string;
           image?: string;
+          languages?: string[];
           name?: string;
           updated_at?: string;
         };
         Update: {
+          bio?: string;
           country?: string;
           created_at?: string;
+          currency?: string | null;
           id?: string;
           image?: string;
+          languages?: string[];
           name?: string;
           updated_at?: string;
         };
@@ -1625,6 +1634,7 @@ export type Database = {
         Returns: Json;
       };
       handover_info: { Args: { p_token_hash: string }; Returns: Json };
+      home_recent_matches: { Args: never; Returns: Json };
       list_order_chat_flags: { Args: never; Returns: Json };
       list_order_proofs: { Args: { p_order_id: string }; Returns: Json };
       order_chat_append: {
@@ -1728,6 +1738,10 @@ export type Database = {
       presence_desk_result: { Args: { p_user: string }; Returns: Json };
       presence_public_count: { Args: never; Returns: number };
       presence_teammate_ready: { Args: { p_user: string }; Returns: boolean };
+      profile_languages_valid: {
+        Args: { p_languages: string[] };
+        Returns: boolean;
+      };
       record_payment_refund: {
         Args: { p_payment_intent: string; p_reason?: string };
         Returns: Json;
@@ -1793,6 +1807,7 @@ export type Database = {
         Returns: Json;
       };
       teammate_order_queue: { Args: never; Returns: Json };
+      teammate_leaderboard: { Args: { p_now: string }; Returns: Json };
       teammate_stats: { Args: never; Returns: Json };
     };
     Enums: {

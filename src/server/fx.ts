@@ -45,6 +45,15 @@ export async function eurToUsd(
   return { rate: FALLBACK_EUR_TO_USD, source: 'fallback' };
 }
 
+/**
+ * What a USD customer pays per EUR 1 (original lib/fx.js customerUsdRate):
+ * mid rate plus the 1% currency margin, rounded to four decimals. Same formula
+ * as the server quote in src/server/pricing.
+ */
+export function customerUsdRate(eurToUsdRate: number): number {
+  return Math.round(eurToUsdRate * 1.01 * 10000) / 10000;
+}
+
 export function resetFxCache() {
   cached = null;
 }

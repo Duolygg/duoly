@@ -987,11 +987,19 @@ export default class Home extends React.Component {
       };
     });
     const carousel = players.concat(players);
-    const row = tk.map((t) => ({
+    // Ledger #36: real completed orders (LiveHome, public.home_recent_matches) replace the
+    // sample rows once there are any. Short lists repeat so the strip still fills the screen.
+    const live = (this.props.recentMatches || [])
+      .filter((m) => all.some((x) => x.id === m.game))
+      .map((m) => [m.game, m.who, m.what, m.time, m.rating]);
+    let src = live.length ? live : tk;
+    while (live.length && src.length < 10) src = src.concat(live);
+    const row = src.map((t) => ({
       img: imgOf(t[0]),
       who: t[1],
       what: t[2],
       time: 'in ' + t[3],
+      rating: t[4] || null,
     }));
     const ticker = row.concat(row);
 
@@ -1420,15 +1428,22 @@ export default class Home extends React.Component {
       confirmPay: payLabel,
       confirmCur: cur,
       // step 1 of "what happens next": exactly where the money comes from, once
+      // Live checkout charges the euro price; a dollar figure is a conversion, so say so.
       chargeTitle: this.props.onCheckout
-        ? 'Pay ' + money(amount) + ' securely with Stripe'
+        ? 'Pay ' +
+          (cur === 'USD' ? 'about ' : '') +
+          money(amount) +
+          ' securely with Stripe'
         : allWallet
           ? money(amount) + ' comes from your Duoly balance'
           : walletUse > 0
             ? 'We charge ' + money(due) + ' to your ' + payLabel
             : 'We charge ' + money(amount) + ' to your ' + payLabel,
       chargeText: this.props.onCheckout
-        ? 'Apple Pay, Google Pay, PayPal, cards and 20+ local methods. Cards, wallets and PayPal are only charged when a teammate accepts.'
+        ? (cur === 'USD'
+            ? 'Prices are set in euros and shown in dollars at today’s ECB rate plus 1%. Checkout shows the exact amount. '
+            : '') +
+          'Apple Pay, Google Pay, PayPal, cards and 20+ local methods. Cards, wallets and PayPal are only charged when a teammate accepts.'
         : (walletUse > 0 && !allWallet
             ? 'The other ' +
               money(walletUse) +
@@ -2510,6 +2525,14 @@ export default class Home extends React.Component {
                     </span>{' '}
                     got a {t.what}
                     <span style={{ color: '#5EEAA8' }}>{t.time}</span>
+                    {t.rating ? (
+                      <span
+                        aria-label={'Rated ' + t.rating + ' out of 5'}
+                        style={{ color: '#FFD27A' }}
+                      >
+                        ★ {t.rating}
+                      </span>
+                    ) : null}
                     <svg
                       aria-hidden="true"
                       width="10"

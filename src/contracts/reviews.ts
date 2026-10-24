@@ -62,9 +62,36 @@ const ReviewStatsSchema = z.strictObject({
   adjustments: z.array(z.never()),
 });
 
+// One public leaderboard row (lib/ledger.js leaderboard()). Only public fields: no email, country or earnings.
+export const LeaderboardRowSchema = z.strictObject({
+  id: z.uuid(),
+  name: z.string().min(1).max(200),
+  image: z.string().max(2048),
+  orders: z.number().int().positive(),
+  main: z.string().min(1).max(32),
+  rating: z.number().min(1).max(5).nullable(),
+  fives: z.number().int().nonnegative(),
+  points: z.number().int().nonnegative(),
+});
+
+const LeaderboardTabsSchema = z.record(
+  z.string().min(1).max(32),
+  z.array(LeaderboardRowSchema),
+);
+
+// Empty until 20261024200000_leaderboard.sql is applied; then always week, month and all.
+export const LeaderboardSchema = z.union([
+  z.strictObject({}),
+  z.strictObject({
+    week: LeaderboardTabsSchema,
+    month: LeaderboardTabsSchema,
+    all: LeaderboardTabsSchema,
+  }),
+]);
+
 export const TeammateStatsResponseSchema = z.strictObject({
   now: z.number().int(),
   me: z.uuid(),
   stats: ReviewStatsSchema,
-  leaderboard: z.record(z.string(), z.unknown()),
+  leaderboard: LeaderboardSchema,
 });

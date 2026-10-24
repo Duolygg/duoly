@@ -50,7 +50,11 @@ export function toRoomOrder(o) {
       method: 'Stripe checkout',
     },
     teammate: base.teammate
-      ? { ...base.teammate, bio: '', languages: [] }
+      ? {
+          ...base.teammate,
+          bio: o.teammate.bio || '',
+          languages: o.teammate.languages || [],
+        }
       : null,
     tip: null,
     reports: [],

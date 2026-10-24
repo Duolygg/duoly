@@ -31,6 +31,46 @@ const presence = (online: boolean) => ({
   online_since: online ? '2026-10-24T10:00:00.000Z' : null,
   forced_offline: null,
 });
+const me = '44444444-4444-4444-8444-444444444444';
+const leader = (n: number, points: number, extra = {}) => ({
+  id: `55555555-5555-4555-8555-55555555555${n}`,
+  name: 'Leader ' + n,
+  image: '',
+  orders: points / 10,
+  main: 'lol',
+  rating: 5,
+  fives: 0,
+  points,
+  ...extra,
+});
+const board = [
+  leader(1, 120, { name: 'A very long teammate display name for phones' }),
+  leader(2, 90),
+  leader(3, 60, { main: 'val', rating: null }),
+  leader(4, 40),
+  { ...leader(5, 20), id: me },
+];
+const stats = {
+  now: 1,
+  me,
+  stats: {
+    completed: 2,
+    tier: { name: 'Rookie', deposit: 10 },
+    held: 0,
+    saved: 0,
+    rating: null,
+    reviews: 0,
+    tipsTotal: 0,
+    recent: [],
+    latestReviews: [],
+    adjustments: [],
+  },
+  leaderboard: {
+    week: { global: board, lol: board.filter((r) => r.main === 'lol') },
+    month: { global: board },
+    all: { global: board },
+  },
+};
 const settle = async (page: Page) => {
   await expect.poll(() => page.locator('astro-island[ssr]').count()).toBe(0);
 };
@@ -53,6 +93,8 @@ test('original layout, server queue, real chat transport and private completion 
       if (command.action === 'set') online = command.online;
       return r.fulfill({ json: presence(online) });
     }
+    if (url.pathname === '/api/teammate/stats')
+      return r.fulfill({ json: stats });
     if (url.pathname === '/api/teammate/queue')
       return r.fulfill({ json: { orders: accepted ? [] : [order] } });
     if (url.pathname === '/api/teammate/order')
@@ -157,6 +199,27 @@ test('original layout, server queue, real chat transport and private completion 
     path: info.outputPath('teammate-queue.png'),
     fullPage: true,
   });
+  const lb = page.locator('#leaderboard');
+  await expect(
+    lb.getByRole('heading', { name: 'Duoly Leaderboard' }),
+  ).toBeVisible();
+  await expect(lb.getByText('Fabian', { exact: true })).toBeVisible();
+  await expect(lb.getByText('Leader 5')).toHaveCount(0);
+  await expect(lb.getByText('to pass Leader 4')).toBeVisible();
+  await lb.getByRole('tab', { name: 'Valorant' }).click();
+  await expect(
+    lb.getByText(
+      'No completed Valorant orders this week yet. Complete one to take the top spot.',
+    ),
+  ).toBeVisible();
+  await lb.getByRole('tab', { name: 'Global' }).click();
+  await lb.getByRole('button', { name: 'All time' }).click();
+  await expect(lb.getByText('All time · Global')).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
   await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(
     page.getByText('Finish with proof', { exact: true }),
