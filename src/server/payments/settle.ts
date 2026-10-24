@@ -11,7 +11,7 @@ interface PendingPayment {
   order_id: string;
   stripe_payment_intent_id: string;
   state: string;
-  settle: 'capture' | 'release' | 'none';
+  settle: 'capture' | 'release' | 'refund' | 'none';
 }
 
 export type SettleOutcome =
@@ -61,6 +61,29 @@ export async function settleOne(
             metadata: { order_id: row.order_id },
           },
           { idempotencyKey: `refund_${row.order_id}` },
+        );
+        return { state: 'refunded' };
+      }
+      return { state: 'retry', error: `payment intent is ${intent.status}` };
+    }
+    if (row.settle === 'refund') {
+      if (intent.status === 'canceled') return { state: 'voided' };
+      if (intent.status === 'requires_capture') {
+        await stripe.paymentIntents.cancel(
+          id,
+          { cancellation_reason: 'requested_by_customer' },
+          { idempotencyKey: `admin_void_${row.order_id}` },
+        );
+        return { state: 'voided' };
+      }
+      if (intent.status === 'succeeded') {
+        await stripe.refunds.create(
+          {
+            payment_intent: id,
+            reason: 'requested_by_customer',
+            metadata: { order_id: row.order_id, source: 'admin' },
+          },
+          { idempotencyKey: `admin_refund_${row.order_id}` },
         );
         return { state: 'refunded' };
       }

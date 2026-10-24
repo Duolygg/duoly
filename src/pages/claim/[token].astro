@@ -1,20 +1,13 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import PageIntro from '../../components/site/PageIntro.astro';
+import Claim from '../../components/teammate/Claim.jsx';
 import { pageViewer } from '../../site/viewer';
+
 const { viewer, csrf } = await pageViewer(Astro);
-Astro.response.status = 404;
+const token = Astro.params.token ?? '';
+const user = { name: viewer?.name || 'Teammate' };
 ---
 
-<SiteLayout title="Handover | Duoly" viewer={viewer} csrf={csrf}>
-  <PageIntro
-    eyebrow="Handover"
-    title="This handover link isn’t active."
-    lead="Handover links are created by the Duoly team for a specific order. Ask whoever sent it for a new one."
-    narrow
-  >
-    <a class="cta" href={viewer ? '/teammate' : '/login'}>
-      {viewer ? 'Open the teammate desk' : 'Sign in'}
-    </a>
-  </PageIntro>
+<SiteLayout title="Handover | Duoly" viewer={viewer} csrf={csrf} bare>
+  <Claim client:load token={token} user={user} csrf={csrf} />
 </SiteLayout>

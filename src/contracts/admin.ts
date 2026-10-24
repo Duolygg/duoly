@@ -138,3 +138,20 @@ export const SetBlockedSchema = z
     reason: z.string().trim().max(200).optional(),
   })
   .strict();
+
+const orderAction = {
+  csrf,
+  orderId: z.uuid(),
+};
+
+export const AdminCreateHandoverSchema = z
+  .object({ ...orderAction, action: z.literal('handover') })
+  .strict();
+
+const reason = z.string().trim().min(3).max(200);
+export const AdminCancelOrderSchema = z
+  .object({ ...orderAction, action: z.literal('cancel'), reason })
+  .strict();
+export const AdminRefundOrderSchema = z
+  .object({ ...orderAction, action: z.literal('refund'), reason })
+  .strict();

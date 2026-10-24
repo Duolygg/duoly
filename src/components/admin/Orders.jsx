@@ -23,6 +23,7 @@ const REFRESH_MS = 15000;
 const CANCEL = {
   queue_expired: 'No teammate within 5 minutes',
   customer_cancelled: 'Cancelled by the customer',
+  admin_cancelled: 'Cancelled by an admin',
 };
 const PAY_STATE = {
   authorized: ['Card authorized, not charged yet', C.gold],
@@ -50,6 +51,8 @@ export default class Orders extends React.Component {
       sort: 'new',
       page: 0,
       open: null,
+      actionBusy: '',
+      handovers: {},
     };
   }
   async load() {
@@ -133,6 +136,51 @@ export default class Orders extends React.Component {
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     this.props.toast('Exported ' + list.length + ' orders');
+  }
+
+  async command(o, action, reason = '') {
+    this.setState({ actionBusy: action + ':' + o.orderId });
+    const res = await this.props.api.post('/api/admin/orders', {
+      action,
+      orderId: o.orderId,
+      ...(reason ? { reason } : {}),
+    });
+    this.setState({ actionBusy: '' });
+    if (!res.ok) return this.props.toast(res.error, 'warn');
+    if (action === 'handover') {
+      const url = new URL(
+        '/claim/' + encodeURIComponent(res.data.token),
+        window.location.origin,
+      ).toString();
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {}
+      this.setState({
+        handovers: {
+          ...this.state.handovers,
+          [o.orderId]: { url, expiresAt: Date.parse(res.data.expiresAt) },
+        },
+      });
+      return this.props.toast(
+        'Handover link for ' + o.id + ' copied. Send it to a teammate.',
+      );
+    }
+    this.props.toast(
+      action === 'cancel'
+        ? 'Order ' + o.id + ' cancelled. The payment release is processing.'
+        : 'Full refund for ' + o.id + ' is processing.',
+    );
+    await this.load();
+  }
+  async copyHandover(o) {
+    const link = this.state.handovers[o.orderId];
+    if (!link) return this.command(o, 'handover');
+    try {
+      await navigator.clipboard.writeText(link.url);
+      this.props.toast('Handover link copied.');
+    } catch {
+      this.props.toast('Copy failed. Select the link below.', 'warn');
+    }
   }
 
   renderDrawer() {
@@ -562,9 +610,118 @@ export default class Orders extends React.Component {
               </li>
             ))}
           </ol>
-          <p style={{ marginTop: '24px', fontSize: '13px', color: C.dim }}>
-            Cancel, refund and handover links arrive with the Live desk.
-          </p>
+          <div
+            style={{
+              marginTop: '24px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '8px',
+            }}
+          >
+            {o.status === 'Queued' ? (
+              <>
+                <button
+                  type="button"
+                  disabled={!!s.actionBusy}
+                  style={btn('good')}
+                  onClick={() => this.copyHandover(o)}
+                >
+                  {s.handovers[o.orderId]
+                    ? 'Copy handover link'
+                    : 'Handover link'}
+                </button>
+                <button
+                  type="button"
+                  disabled={!!s.actionBusy}
+                  style={btn('danger')}
+                  onClick={() =>
+                    this.props.ask({
+                      title: 'Cancel ' + o.id + '?',
+                      body: 'The order stops and the card authorization is released. If the payment was already captured, Stripe sends the full amount back.',
+                      confirm: 'Cancel order',
+                      kind: 'danger',
+                      field: {
+                        label: 'Reason (shown in the audit log)',
+                        placeholder: 'e.g. customer asked to cancel',
+                        required: true,
+                      },
+                      onConfirm: (reason) => this.command(o, 'cancel', reason),
+                    })
+                  }
+                >
+                  Cancel order
+                </button>
+              </>
+            ) : null}
+            {['In progress', 'Completed'].includes(o.status) &&
+            o.payment &&
+            o.payment.state !== 'refunded' ? (
+              <button
+                type="button"
+                disabled={!!s.actionBusy}
+                style={btn('danger')}
+                onClick={() =>
+                  this.props.ask({
+                    title: 'Refund ' + eur(o.amount) + '?',
+                    body:
+                      o.customer +
+                      ' gets the full amount back through Stripe. Refunds are exceptional and the reason is saved in the audit log.',
+                    confirm: 'Refund ' + eur(o.amount),
+                    kind: 'danger',
+                    field: {
+                      label: 'Reason (shown in the audit log)',
+                      placeholder: 'e.g. teammate left mid-game',
+                      required: true,
+                    },
+                    onConfirm: (reason) => this.command(o, 'refund', reason),
+                  })
+                }
+              >
+                Refund
+              </button>
+            ) : null}
+            {o.status !== 'Queued' &&
+            !(
+              ['In progress', 'Completed'].includes(o.status) &&
+              o.payment &&
+              o.payment.state !== 'refunded'
+            ) ? (
+              <span style={{ fontSize: '13.5px', color: C.dim }}>
+                No actions available for a {o.status.toLowerCase()} order.
+              </span>
+            ) : null}
+          </div>
+          {s.handovers[o.orderId] ? (
+            <div
+              style={{
+                marginTop: '12px',
+                padding: '10px',
+                borderRadius: '14px',
+                background: C.bg,
+                border: '1px dashed ' + C.line2,
+              }}
+            >
+              <label
+                htmlFor={'handover-' + o.orderId}
+                style={{ fontSize: '12px', color: C.dim }}
+              >
+                Send this link to a teammate. It works until the order is taken
+                or auto-cancels.
+              </label>
+              <input
+                id={'handover-' + o.orderId}
+                readOnly
+                value={s.handovers[o.orderId].url}
+                onFocus={(event) => event.target.select()}
+                style={{
+                  ...input,
+                  width: '100%',
+                  marginTop: '6px',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     );
