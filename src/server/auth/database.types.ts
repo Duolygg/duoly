@@ -1793,6 +1793,7 @@ export type Database = {
         Returns: Json;
       };
       teammate_order_queue: { Args: never; Returns: Json };
+      teammate_leaderboard: { Args: { p_now: string }; Returns: Json };
       teammate_stats: { Args: never; Returns: Json };
     };
     Enums: {

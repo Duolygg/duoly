@@ -9,6 +9,7 @@ afterEach(() => vi.clearAllMocks());
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Teammate, { FEATURES } from '../../src/components/teammate/Teammate.jsx';
+import Leaderboard from '../../src/components/teammate/Leaderboard.jsx';
 const id = '11111111-1111-4111-8111-111111111111',
   assignmentId = '22222222-2222-4222-8222-222222222222';
 function desk() {
@@ -86,7 +87,9 @@ it('retains the original layout with live presence and unsupported controls stil
     'Waiting for orders!',
   ])
     expect(html).not.toContain(text);
-  const { support, presence, notifications, reviews, ...gated } = FEATURES;
+  const { support, presence, notifications, reviews, leaderboard, ...gated } =
+    FEATURES;
+  expect(leaderboard).toBe(true);
   expect(support).toBe(true);
   expect(presence).toBe(true);
   expect(notifications).toBe(true);
@@ -380,4 +383,68 @@ it('loads the eligible server queue only while online without client game prefer
   expect(c.state.queue).toEqual([]);
   expect(c.state.notice).toContain('access');
   expect(c.renderVals().waiting).toBe(false);
+});
+
+const tm = (n: number) => `7b000000-0000-4000-8000-00000000000${n}`;
+const row = (n: number, points: number, extra = {}) => ({
+  id: tm(n),
+  name: 'Player ' + n,
+  image: '',
+  orders: points / 10,
+  main: 'val',
+  rating: null,
+  fives: 0,
+  points,
+  ...extra,
+});
+it('shows the original leaderboard only after the server sends real periods, with the viewer row and points gap', () => {
+  const c = desk();
+  c.state.meId = tm(3);
+  c.state.board = {};
+  expect(c.renderVals().boardReady).toBe(false);
+  const board = {
+    week: {
+      global: [
+        row(1, 40, { rating: 4.67, fives: 2, orders: 3, main: 'lol' }),
+        row(2, 20, { rating: 3 }),
+        row(3, 10),
+      ],
+      val: [row(2, 20, { rating: 3 }), row(3, 10)],
+    },
+    month: { global: [] },
+    all: { global: [] },
+  };
+  c.state.board = board;
+  const v = c.renderVals();
+  expect(v.boardReady).toBe(true);
+  const html = renderToStaticMarkup(
+    React.createElement(Leaderboard, {
+      board: v.board,
+      meId: v.meId,
+      me: { name: 'Fabian', avatar: '/assets/avatars/avatar-4.png' },
+    }),
+  );
+  expect(html).toContain('Duoly Leaderboard');
+  expect(html).toContain(
+    'Points: +10 per completed order, +5 for every five-star review.',
+  );
+  expect(html).toContain('Player 1');
+  expect(html).toContain('★ 4.67');
+  expect(html).toContain('★ New');
+  // the viewer row uses the viewer's own name and picture
+  expect(html).toContain('Fabian');
+  expect(html).not.toContain('Player 3');
+  expect(html).toContain('/assets/avatars/avatar-4.png');
+  expect(html).toContain('pts</b> to pass');
+  expect(html).not.toMatch(/[\u2013\u2014]/);
+  const empty = renderToStaticMarkup(
+    React.createElement(Leaderboard, {
+      board: { ...board, week: { global: [] } },
+      meId: tm(3),
+      me: null,
+    }),
+  );
+  expect(empty).toContain(
+    'No completed orders this week yet. Complete one to take the top spot.',
+  );
 });
