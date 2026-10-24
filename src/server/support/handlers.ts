@@ -41,7 +41,7 @@ function guestCookie(context: APIContext, secure: boolean) {
   return token;
 }
 
-async function identify(
+export async function identify(
   context: APIContext,
   account = accountContext(context.request, context.cookies),
 ) {
