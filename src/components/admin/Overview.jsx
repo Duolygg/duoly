@@ -19,7 +19,7 @@ import { order } from './api';
 // Port of the original components/admin/Overview.jsx. Data: /api/admin/orders, applications
 // and (when order chat is on) chat flags. Improvement on the original: Duoly's earnings are the
 // real margin per order (paid amount minus the teammate payout at the booked rate) instead of a
-// flat 40%. Numbers that aren't tracked yet (teammates online, reports, payouts) show a dash.
+// flat 40%. Reports and payouts still show a dash.
 const DAY = 86400000;
 const POLL_MS = 30000;
 
@@ -66,9 +66,10 @@ export default class Overview extends React.Component {
   }
   async load() {
     const { api, chatEnabled } = this.props;
-    const [o, a, f] = await Promise.all([
+    const [o, a, p, f] = await Promise.all([
       api.get('/api/admin/orders'),
       api.get('/api/admin/applications'),
+      api.get('/api/admin/presence'),
       chatEnabled ? api.get('/api/admin/chat-flags') : Promise.resolve(null),
     ]);
     if (!o.ok) return this.setState({ error: o.error });
@@ -84,8 +85,10 @@ export default class Overview extends React.Component {
         orders,
         daily: daily(orders, now),
         live: {
-          queue: 0,
-          online: null,
+          queue: orders.filter((x) => x.status === 'Queued').length,
+          online: p.ok
+            ? (p.data.online || []).filter((person) => !person.admin).length
+            : null,
           avgWait: week.length
             ? Math.round(week.reduce((t, x) => t + x.waitSec, 0) / week.length)
             : null,

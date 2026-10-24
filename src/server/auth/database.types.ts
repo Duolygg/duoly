@@ -1265,6 +1265,36 @@ export type Database = {
           },
         ];
       };
+      teammate_presence: {
+        Row: {
+          last_active_at: string | null;
+          last_seen_at: string | null;
+          online: boolean;
+          online_since: string | null;
+          set_offline_by: string | null;
+          set_offline_reason: string;
+          user_id: string;
+        };
+        Insert: {
+          last_active_at?: string | null;
+          last_seen_at?: string | null;
+          online?: boolean;
+          online_since?: string | null;
+          set_offline_by?: string | null;
+          set_offline_reason?: string;
+          user_id: string;
+        };
+        Update: {
+          last_active_at?: string | null;
+          last_seen_at?: string | null;
+          online?: boolean;
+          online_since?: string | null;
+          set_offline_by?: string | null;
+          set_offline_reason?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -1324,6 +1354,11 @@ export type Database = {
         Returns: undefined;
       };
       admin_orders: { Args: { p_limit?: number }; Returns: Json };
+      admin_presence: { Args: never; Returns: Json };
+      admin_presence_check_in: {
+        Args: { p_online?: boolean };
+        Returns: Json;
+      };
       admin_set_access: {
         Args: { p_games: string[]; p_gg: boolean; p_user_id: string };
         Returns: Json;
@@ -1334,6 +1369,10 @@ export type Database = {
       };
       admin_set_role: {
         Args: { p_role: string; p_user_id: string };
+        Returns: Json;
+      };
+      admin_set_teammate_offline: {
+        Args: { p_reason: string; p_user: string };
         Returns: Json;
       };
       admin_set_suspended: {
@@ -1432,6 +1471,11 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
+      desk_check_in: {
+        Args: { p_last_active?: string };
+        Returns: Json;
+      };
+      desk_set_online: { Args: { p_online: boolean }; Returns: Json };
       finalize_order_proof_upload: {
         Args: {
           p_byte_size: number;
@@ -1538,6 +1582,7 @@ export type Database = {
         Args: { p_order: Database['public']['Tables']['orders']['Row'] };
         Returns: Json;
       };
+      presence_public_count: { Args: never; Returns: number };
       refresh_discord_link: { Args: { p_user: string }; Returns: undefined };
       reroll_order: { Args: { p_order_id: string }; Returns: Json };
       resolve_order_chat_flag: {
@@ -1579,6 +1624,7 @@ export type Database = {
         Args: { p_body: string; p_conversation_id: string; p_limit?: number };
         Returns: Json;
       };
+      support_online_admins: { Args: never; Returns: Json };
       support_take_ai_slot: {
         Args: {
           p_identity_key: string;

@@ -1,13 +1,16 @@
 'use client';
 
-import { createTeammateFetch } from './teammate-data';
+import { createTeammateFetch, newEligibleOrders } from './teammate-data';
 import PrivateProofs from '../proofs/PrivateProofs';
 import {
   readChat,
   sendChat as sendRealChat,
   setTyping,
 } from '../../client/order-chat';
-const previewPermission = () => Promise.resolve('unsupported');
+const previewPermission = () =>
+  typeof Notification === 'undefined'
+    ? Promise.resolve('unsupported')
+    : Notification.requestPermission();
 
 import React from 'react';
 // Session commands are supplied by the live wrapper.
@@ -49,8 +52,8 @@ function css(str) {
 }
 
 export const FEATURES = {
-  presence: false,
-  notifications: false,
+  presence: true,
+  notifications: true,
   preferences: false,
   trust: false,
   stats: false,
@@ -68,6 +71,7 @@ const GREEN = '#5EEAA8';
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 // Orders come from the one shared queue on the server (lib/orders.js); every dashboard polls it.
 const POLL_MS = 3000;
+const PRESENCE_MS = 10000;
 // Trust level history (sample): orders completed before this session, deposit currently held, saved vs Rookie rate
 // Earnings, trust level, rating and the leaderboard come from the server's earnings ledger
 // (lib/ledger.js → /api/teammate/stats), refreshed on load, every minute and after each completed order.
@@ -175,6 +179,7 @@ export default class Teammate extends React.Component {
     };
     this._chatTimers = [];
     this._seen = null; // order ids already shown; null until the first poll so existing orders don't ring
+    this._presenceVersion = 0;
     this._lastActive = Date.now();
   }
   async post(url, body) {
@@ -360,6 +365,7 @@ export default class Teammate extends React.Component {
       );
     this._tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
     this._poll = setInterval(() => this.poll(), POLL_MS);
+    this._presencePoll = setInterval(() => this.checkIn(), PRESENCE_MS);
     this._chatPoll = setInterval(() => this.pollChat(), CHAT_POLL_MS);
     // last activity, so admins can see who's AFK with the dashboard left open
     this._activity = () => {
@@ -369,7 +375,24 @@ export default class Teammate extends React.Component {
       window.addEventListener(ev, this._activity, { passive: true }),
     );
     // closing the tab: tell the server right away instead of waiting for the timeout
-    this._leave = () => {}; // Preview has no presence writes or unload beacon.
+    this._leave = () => {
+      if (!FEATURES.presence || this.props.admin || !this.state.online) return;
+      try {
+        navigator.sendBeacon(
+          '/api/teammate/presence',
+          new Blob(
+            [
+              JSON.stringify({
+                csrf: this.props.csrf,
+                action: 'set',
+                online: false,
+              }),
+            ],
+            { type: 'application/json' },
+          ),
+        );
+      } catch {}
+    };
     window.addEventListener('pagehide', this._leave);
     this._bell = new Audio('/assets/sounds/order-bell.wav');
     this._bell.preload = 'auto';
@@ -380,7 +403,8 @@ export default class Teammate extends React.Component {
           ? 'unsupported'
           : Notification.permission,
     });
-    this.poll();
+    this.checkIn();
+    this.checkMine();
     if (FEATURES.stats) {
       this.loadStats();
       this._stats = setInterval(() => this.loadStats(), STATS_MS);
@@ -403,25 +427,70 @@ export default class Teammate extends React.Component {
       });
     } catch (e) {}
   }
+  async checkIn() {
+    if (!FEATURES.presence || this.props.admin || this.state.needDiscord)
+      return;
+    const presenceVersion = this._presenceVersion;
+    try {
+      const { ok, data } = await this.post('/api/presence', {
+        action: 'check-in',
+        lastActive: this._lastActive,
+      });
+      if (!ok || this._disposed || presenceVersion !== this._presenceVersion)
+        return;
+      if (data.online) {
+        this.setState(
+          {
+            online: true,
+            onlineSince: data.onlineSince || Date.now(),
+            forced: null,
+          },
+          () => this.poll(),
+        );
+      } else if (this.state.online || data.forcedOffline) {
+        this._seen = null;
+        this.setState({
+          online: false,
+          queue: [],
+          forced: data.forcedOffline,
+        });
+      }
+    } catch {}
+  }
   // On load: if this teammate already owns an order (claimed through a handover link, or before
   // a reload), go online and open it.
   async checkMine() {
+    if (this.state.needDiscord) return;
     try {
       const { ok, data } = await this.post('/api/desk', {
         online: false,
         lastActive: this._lastActive,
       });
-      if (ok && data.mine)
-        this.setState({ online: true, onlineSince: Date.now() }, () => {
-          this.startActive(data.mine, true);
-          this.poll();
+      if (ok && data.mine) {
+        const presence = await this.post('/api/presence', {
+          action: 'set',
+          online: true,
         });
+        if (!presence.ok) return;
+        this.setState(
+          {
+            online: true,
+            onlineSince: presence.data.onlineSince || Date.now(),
+            forced: null,
+          },
+          () => {
+            this.startActive(data.mine, true);
+            this.poll();
+          },
+        );
+      }
     } catch (e) {}
   }
   componentWillUnmount() {
     this._disposed = true;
     clearInterval(this._tick);
     clearInterval(this._poll);
+    clearInterval(this._presencePoll);
     clearInterval(this._chatPoll);
     clearInterval(this._stats);
     ['pointerdown', 'pointermove', 'keydown', 'wheel'].forEach((ev) =>
@@ -529,6 +598,7 @@ export default class Teammate extends React.Component {
     if (
       this.props.admin ||
       this.state.needDiscord ||
+      (FEATURES.presence && !this.state.online && !this.state.active) ||
       this._completionBusy ||
       this._polling ||
       (this._accepting && !force)
@@ -560,6 +630,14 @@ export default class Teammate extends React.Component {
         return;
       }
       this._acceptReadback = false;
+      const fresh = this.state.online
+        ? newEligibleOrders(this._seen, data.queue, this.state.access)
+        : [];
+      this._seen = data.queue.map((order) => order.id);
+      if (fresh.length) {
+        this.playBell();
+        fresh.forEach((order) => this.notify(order));
+      }
       this.setState({
         queue: data.queue,
         loaded: true,
@@ -843,26 +921,42 @@ export default class Teammate extends React.Component {
       handovers: { ...this.state.handovers, [id]: { ...h, copied: true } },
     });
   }
-  setOnline(on) {
+  async setOnline(on) {
     if (this.props.admin && !on) return; // admins are always online
     if (on && this.state.needDiscord) return; // connect Discord first (popup)
     if (!on && this.state.active)
       return this.setState({ offlineBlocked: true });
-    if (on) {
-      this.askNotifications();
-      this._seen = null;
-      this.setState(
-        {
-          online: true,
-          onlineSince: Date.now(),
-          offlineBlocked: false,
-          forced: null,
-        },
-        () => this.poll(),
-      );
-    } else {
-      this.setState({ online: false, queue: [], offlineBlocked: false });
-      this.post('/api/desk', { online: false }).catch(() => {});
+    const presenceVersion = ++this._presenceVersion;
+    try {
+      const { ok, data } = await this.post('/api/presence', {
+        action: 'set',
+        online: on,
+      });
+      if (this._disposed || presenceVersion !== this._presenceVersion) return;
+      if (!ok) {
+        this.setState({
+          notice: data.error || 'Could not change your online status.',
+        });
+        return;
+      }
+      if (on) {
+        this.askNotifications();
+        this._seen = null;
+        this.setState(
+          {
+            online: true,
+            onlineSince: data.onlineSince || Date.now(),
+            offlineBlocked: false,
+            forced: null,
+          },
+          () => this.poll(),
+        );
+      } else {
+        this._seen = null;
+        this.setState({ online: false, queue: [], offlineBlocked: false });
+      }
+    } catch {
+      this.setState({ notice: 'Could not change your online status.' });
     }
   }
   renderVals() {
@@ -3272,20 +3366,7 @@ export default class Teammate extends React.Component {
                               display: 'block',
                             }}
                           />
-                          {FEATURES.presence ? (
-                            <span
-                              style={{
-                                position: 'absolute',
-                                right: '-1px',
-                                bottom: '-1px',
-                                width: '11px',
-                                height: '11px',
-                                borderRadius: '50%',
-                                background: GREEN,
-                                boxShadow: '0 0 0 2.5px #0F0A1C',
-                              }}
-                            />
-                          ) : null}
+                          {/* Customer presence is not tracked. Do not invent an online dot. */}
                         </span>
                         <span
                           style={{

@@ -18,11 +18,10 @@ import {
 
 // Port of the roster tab of the original components/admin/Teammates.jsx on /api/admin/teammates
 // (RPCs admin_teammates, admin_set_suspended). Applications have their own section. Trust level,
-// rating, deposit held and amount owed come with order completion and payouts; until then
-// they show a dash rather than invented numbers. Online status needs presence (not built yet),
-// so status is Playing (has an order in progress) or Not playing.
+// rating, deposit held and amount owed come with order completion and payouts. Presence is
+// durable: Playing wins, then Online, then Offline.
 const REFRESH_MS = 20000;
-const FILTERS = ['All', 'Playing', 'Suspended', 'No Discord'];
+const FILTERS = ['All', 'Online', 'Playing', 'Suspended', 'No Discord'];
 const toMs = (v) => (v ? Date.parse(v) : null);
 
 export default class Teammates extends React.Component {
@@ -87,6 +86,7 @@ export default class Teammates extends React.Component {
     const q = s.q.trim().toLowerCase();
     const is = (t, f) =>
       f === 'All' ||
+      (f === 'Online' && t.online) ||
       (f === 'Playing' && t.playing) ||
       (f === 'Suspended' && t.suspended) ||
       (f === 'No Discord' && !t.discord);
@@ -400,14 +400,18 @@ export default class Teammates extends React.Component {
                           ? 'Suspended'
                           : t.playing
                             ? 'online'
-                            : 'offline',
+                            : t.online
+                              ? 'online'
+                              : 'offline',
                       )}
                     >
                       {t.suspended
                         ? 'Suspended'
                         : t.playing
                           ? 'Playing'
-                          : 'Not playing'}
+                          : t.online
+                            ? 'Online'
+                            : 'Offline'}
                     </span>
                   </td>
                   <td style={{ ...td, textAlign: 'right' }}>

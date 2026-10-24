@@ -1,6 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
   createTeammateFetch,
+  newEligibleOrders,
+  toOriginalPresence,
   toOriginalTeammateOrder,
 } from '../../src/components/teammate/teammate-data';
 const id = '11111111-1111-4111-8111-111111111111';
@@ -117,6 +119,58 @@ describe('original teammate adapter', () => {
         })('/api/desk')
       ).status,
     ).toBe(403);
+  });
+  it('maps presence timestamps and forced-offline details without inventing state', () => {
+    expect(
+      toOriginalPresence({
+        online: true,
+        online_since: '2026-10-24T12:00:00.000Z',
+        forced_offline: null,
+      }),
+    ).toEqual({
+      online: true,
+      onlineSince: 1792843200000,
+      forcedOffline: null,
+    });
+    expect(
+      toOriginalPresence({
+        online: false,
+        online_since: null,
+        forced_offline: { reason: 'AFK / dashboard left open', by: 'Admin' },
+      }),
+    ).toEqual({
+      online: false,
+      onlineSince: null,
+      forcedOffline: { reason: 'AFK / dashboard left open', by: 'Admin' },
+    });
+  });
+  it('rings only for newly appearing orders the teammate can take', () => {
+    const regular = { games: ['lol'], gg: false };
+    const gg = { games: [], gg: true };
+    const orders = [
+      { ...toOriginalTeammateOrder(order), id },
+      {
+        ...toOriginalTeammateOrder(order),
+        id: '33333333-3333-4333-8333-333333333333',
+        game: 'val',
+      },
+      {
+        ...toOriginalTeammateOrder(order),
+        id: '44444444-4444-4444-8444-444444444444',
+        game: 'val',
+        gg: true,
+      },
+    ];
+    expect(
+      newEligibleOrders([id], orders, regular).map((o: { id: string }) => o.id),
+    ).toEqual([]);
+    expect(
+      newEligibleOrders([], orders, regular).map((o: { id: string }) => o.id),
+    ).toEqual([id]);
+    expect(
+      newEligibleOrders([], orders, gg).map((o: { id: string }) => o.id),
+    ).toEqual(['44444444-4444-4444-8444-444444444444']);
+    expect(newEligibleOrders(null, orders, regular)).toEqual([]);
   });
   it('maps only authoritative privacy-safe fields without invented timestamps or payment', () => {
     expect(toOriginalTeammateOrder(order)).toEqual({

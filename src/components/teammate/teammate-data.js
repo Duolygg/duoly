@@ -3,6 +3,15 @@ import {
   TeammateOrderSchema,
   OrderResponseSchemas,
 } from '../../contracts/orders';
+import { z } from 'zod';
+import { canTake } from '../../design-reference/lib/access';
+const PresenceSchema = z
+  .object({
+    online: z.boolean(),
+    online_since: z.string().datetime().nullable(),
+    forced_offline: z.object({ reason: z.string(), by: z.string() }).nullable(),
+  })
+  .strict();
 const json = (data, status = 200) => Response.json(data, { status });
 /** @param {{ csrf: string, fetcher?: (url: string, init?: RequestInit) => Promise<Response> }} options */
 export function createTeammateFetch({ csrf, fetcher = fetch }) {
@@ -19,6 +28,22 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
   };
   return async (path, init = {}) => {
     try {
+      if (path === '/api/presence') {
+        let command;
+        try {
+          command = JSON.parse(init.body || '{}');
+        } catch {
+          return json({ error: 'Invalid presence command' }, 400);
+        }
+        if (!csrf || init.method !== 'POST')
+          return json({ error: 'Invalid presence command' }, 400);
+        const result = await request('/api/teammate/presence', PresenceSchema, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...command, csrf }),
+        });
+        return json(toOriginalPresence(result));
+      }
       if (path === '/api/desk') {
         const [queue, assignment] = await Promise.all([
           request('/api/teammate/queue', OrderResponseSchemas.teammateQueue),
@@ -83,6 +108,26 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
       );
     }
   };
+}
+
+export function toOriginalPresence(raw) {
+  const presence = PresenceSchema.parse(raw);
+  return {
+    online: presence.online,
+    onlineSince: presence.online_since
+      ? Date.parse(presence.online_since)
+      : null,
+    forcedOffline: presence.forced_offline,
+  };
+}
+
+/** Null means the first queue snapshot, which must stay silent. */
+export function newEligibleOrders(previousIds, orders, access) {
+  if (previousIds === null) return [];
+  const seen = new Set(previousIds);
+  return orders.filter(
+    (order) => !seen.has(order.id) && canTake(order, access),
+  );
 }
 
 /** Privacy-safe DTO to Fabian's display shape. UUIDs remain command bindings. */

@@ -6,6 +6,7 @@ import {
   card,
   h2,
   pill,
+  btn,
   eur,
   ago,
 } from '../../design-reference/components/admin/ui';
@@ -30,7 +31,13 @@ const mmss = (ms) => {
 export default class LiveDesk extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { orders: [], loaded: false, error: '', now: Date.now() };
+    this.state = {
+      orders: [],
+      online: [],
+      loaded: false,
+      error: '',
+      now: Date.now(),
+    };
   }
   componentDidMount() {
     this.load();
@@ -43,14 +50,33 @@ export default class LiveDesk extends React.Component {
   }
   async load() {
     if (document.hidden) return;
-    const res = await this.props.api.get('/api/admin/orders');
-    if (!res.ok) return this.setState({ error: res.error, loaded: true });
+    const [orders, presence] = await Promise.all([
+      this.props.api.get('/api/admin/orders'),
+      this.props.api.get('/api/admin/presence'),
+    ]);
+    if (!orders.ok || !presence.ok)
+      return this.setState({
+        error: orders.error || presence.error,
+        loaded: true,
+      });
     this.setState({
-      orders: (res.data.orders || []).map(order),
+      orders: (orders.data.orders || []).map(order),
+      online: presence.data.online || [],
       error: '',
       loaded: true,
-      now: Date.now(),
+      now: Number(presence.data.now) || Date.now(),
     });
+  }
+  async setOffline(person, reason) {
+    const result = await this.props.api.post('/api/admin/presence', {
+      action: 'set-offline',
+      userId: person.id,
+      reason,
+    });
+    if (!result.ok) return this.props.toast(result.error, 'warn');
+    this.props.toast(person.name + ' set offline');
+    this.props.log();
+    this.load();
   }
   kpi(label, value, sub, color) {
     return (
@@ -340,6 +366,97 @@ export default class LiveDesk extends React.Component {
               ),
           )}
         </div>
+        <section
+          aria-labelledby="ld-online"
+          style={{ ...card, padding: '18px' }}
+        >
+          <h2 id="ld-online" style={h2}>
+            Online right now
+          </h2>
+          <p style={{ margin: '4px 0 0', fontSize: '13px', color: C.dim }}>
+            Teammates checking in, everyone playing, and admins with this panel
+            open.
+          </p>
+          <ul
+            className="ops-cards"
+            style={{ listStyle: 'none', margin: '14px 0 0', padding: 0 }}
+          >
+            {s.online.map((person) => (
+              <li
+                key={person.id}
+                style={{
+                  ...card,
+                  padding: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                <img
+                  src={person.image || '/assets/avatars/avatar-1.png'}
+                  alt=""
+                  width="36"
+                  height="36"
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                  }}
+                />
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <strong style={{ display: 'block', color: C.white }}>
+                    {person.name}
+                  </strong>
+                  <span
+                    style={{
+                      fontSize: '12.5px',
+                      color: person.playing ? C.cyan : C.green,
+                    }}
+                  >
+                    {person.playing
+                      ? 'Playing ' + person.order?.id
+                      : person.admin
+                        ? 'Admin online'
+                        : 'Waiting for orders'}
+                  </span>
+                </span>
+                {!person.admin && !person.playing ? (
+                  <button
+                    type="button"
+                    style={btn('danger')}
+                    onClick={() =>
+                      this.props.ask({
+                        title: 'Set ' + person.name + ' offline?',
+                        body: 'Their dashboard switches off within a few seconds. They can go online again when they’re back.',
+                        confirm: 'Set offline',
+                        kind: 'danger',
+                        field: {
+                          label: 'Reason',
+                          options: [
+                            'AFK / dashboard left open',
+                            'Not answering orders',
+                            'Asked to be set offline',
+                            'Other',
+                          ],
+                          value: 'AFK / dashboard left open',
+                        },
+                        onConfirm: (reason) => this.setOffline(person, reason),
+                      })
+                    }
+                  >
+                    Set offline
+                  </button>
+                ) : null}
+              </li>
+            ))}
+            {!s.online.length ? (
+              <li style={{ color: C.dim, fontSize: '14px' }}>
+                Nobody else is online right now.
+              </li>
+            ) : null}
+          </ul>
+        </section>
         <p style={{ margin: '0', fontSize: '13px', color: C.dim }}>
           Updates every 5 seconds. Cancel, refund and handover links to a
           specific teammate come next.

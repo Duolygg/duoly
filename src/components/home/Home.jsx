@@ -2262,7 +2262,7 @@ export default class Home extends React.Component {
                         animation: 'dlpulse 1.6s ease-in-out infinite',
                       }}
                     />
-                    1,284
+                    {Number(this.props.onlineNow || 0).toLocaleString('en-US')}
                   </dd>
                 </div>
                 <div
@@ -3986,7 +3986,11 @@ export default class Home extends React.Component {
                       color: '#FFFFFF',
                     }}
                   >
-                    1,284 teammates online, all over the world.
+                    {Number(this.props.onlineNow || 0).toLocaleString('en-US')}{' '}
+                    {Number(this.props.onlineNow || 0) === 1
+                      ? 'teammate'
+                      : 'teammates'}{' '}
+                    online, all over the world.
                   </h2>
                   <p
                     style={{

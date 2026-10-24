@@ -171,11 +171,15 @@ export async function messages(
 }
 
 export async function supportTeam(service: SupabaseClient) {
-  const { data: roles, error } = await service
-    .from('account_roles')
-    .select('user_id')
-    .eq('role', 'admin');
-  if (error) throw error;
+  const [{ data: roles, error }, onlineResult] = await Promise.all([
+    service.from('account_roles').select('user_id').eq('role', 'admin'),
+    service.rpc('support_online_admins'),
+  ]);
+  if (error || onlineResult.error) throw error ?? onlineResult.error;
+  const online = new Set(
+    ((onlineResult.data as { ids?: unknown } | null)?.ids as
+      string[] | undefined) ?? [],
+  );
   const ids = (roles ?? []).map((row) => row.user_id as string);
   if (!ids.length) return [];
   const { data: profiles, error: profileError } = await service
@@ -187,7 +191,7 @@ export async function supportTeam(service: SupabaseClient) {
     id: profile.id,
     name: firstName(profile.name || 'Duoly team'),
     image: profile.image || '',
-    online: false,
+    online: online.has(profile.id),
   }));
 }
 
