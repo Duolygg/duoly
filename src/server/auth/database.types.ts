@@ -592,6 +592,35 @@ export type Database = {
           },
         ];
       };
+      order_misses: {
+        Row: {
+          missed_at: string;
+          order_id: string;
+          seen_sec: number;
+          teammate_id: string;
+        };
+        Insert: {
+          missed_at?: string;
+          order_id: string;
+          seen_sec: number;
+          teammate_id: string;
+        };
+        Update: {
+          missed_at?: string;
+          order_id?: string;
+          seen_sec?: number;
+          teammate_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_misses_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       order_payments: {
         Row: {
           amount_eur_cents: number;
@@ -1350,7 +1379,13 @@ export type Database = {
           gg_access: boolean;
           priority_adjustment: number;
           priority_adjustment_expires_at: string | null;
+          priority_adjustment_reason: string;
+          priority_adjustment_set_at: string | null;
+          priority_adjustment_set_by: string;
           priority_base: number;
+          priority_base_set_at: string | null;
+          priority_base_set_by: string;
+          priority_forgiven_at: string | null;
           suspended: boolean;
           suspended_at: string | null;
           suspended_by: string | null;
@@ -1364,7 +1399,13 @@ export type Database = {
           gg_access?: boolean;
           priority_adjustment?: number;
           priority_adjustment_expires_at?: string | null;
+          priority_adjustment_reason?: string;
+          priority_adjustment_set_at?: string | null;
+          priority_adjustment_set_by?: string;
           priority_base?: number;
+          priority_base_set_at?: string | null;
+          priority_base_set_by?: string;
+          priority_forgiven_at?: string | null;
           suspended?: boolean;
           suspended_at?: string | null;
           suspended_by?: string | null;
@@ -1378,7 +1419,13 @@ export type Database = {
           gg_access?: boolean;
           priority_adjustment?: number;
           priority_adjustment_expires_at?: string | null;
+          priority_adjustment_reason?: string;
+          priority_adjustment_set_at?: string | null;
+          priority_adjustment_set_by?: string;
           priority_base?: number;
+          priority_base_set_at?: string | null;
+          priority_base_set_by?: string;
+          priority_forgiven_at?: string | null;
           suspended?: boolean;
           suspended_at?: string | null;
           suspended_by?: string | null;
@@ -1499,6 +1546,23 @@ export type Database = {
       admin_presence_check_in: { Args: { p_online?: boolean }; Returns: Json };
       admin_refund_order: {
         Args: { p_order_id: string; p_reason: string };
+        Returns: Json;
+      };
+      admin_priority: { Args: never; Returns: Json };
+      admin_clear_adjustment: { Args: { p_user: string }; Returns: Json };
+      admin_adjust_priority: {
+        Args: {
+          p_duration: string;
+          p_points: number;
+          p_reason: string;
+          p_user: string;
+        };
+        Returns: Json;
+      };
+      admin_forgive_misses: { Args: { p_user: string }; Returns: Json };
+      admin_reset_priority: { Args: { p_user: string }; Returns: Json };
+      admin_set_priority: {
+        Args: { p_base: number; p_user: string };
         Returns: Json;
       };
       admin_set_access: {
