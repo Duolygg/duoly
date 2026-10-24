@@ -277,14 +277,20 @@ it('wires chat safety into the current admin shell behind SSR role denial and th
     new URL('../../src/components/admin/AdminApp.jsx', import.meta.url),
     'utf8',
   );
+  const safety = readFileSync(
+    new URL('../../src/components/admin/Safety.jsx', import.meta.url),
+    'utf8',
+  );
   expect(route).toContain("from '../../server/chat/config'");
   expect(route).toContain('chatEnabled={orderChatEnabled()}');
   expect(route).toContain('csrf={csrf}');
   expect(route.indexOf("identity?.viewer.role !== 'admin'")).toBeLessThan(
     route.indexOf('<AdminRoot'),
   );
-  expect(shell).toContain("s.section === 'safety' && this.props.chatEnabled");
-  expect(shell).toContain('<ChatModeration csrf={this.props.csrf}');
+  expect(shell).toContain("s.section === 'safety'");
+  expect(shell).toContain('<Safety');
+  expect(safety).toContain('props.chatEnabled ?');
+  expect(safety).toContain('<ChatModeration csrf={props.csrf}');
 });
 
 it('SSR exposes only a loading shell without flags, credentials or fabricated counts', () => {
