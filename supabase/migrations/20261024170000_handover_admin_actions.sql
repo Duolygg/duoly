@@ -1,3 +1,4 @@
+-- Requires 20261024160000_order_reviews.sql (order_review_dto) to be applied first.
 -- Handover links and audited admin order actions.
 -- Raw handover tokens are returned once and only their SHA-256 hashes are stored.
 begin;
@@ -284,6 +285,7 @@ begin
       'adminCancelNote', o.admin_cancel_note, 'adminRefundedAt', o.admin_refunded_at, 'adminRefundReason', o.admin_refund_reason,
       'rerolls', o.rerolls, 'customerId', o.customer_id, 'customer', o.customer_name, 'customerAv', o.customer_image,
       'teammateId', o.assigned_teammate_id, 'teammate', tp.name, 'teammateAv', tp.image,
+      'review', (select public.order_review_dto(r) from public.order_reviews as r where r.order_id = o.id),
       'payment', case when pay.order_id is null then null else pg_catalog.jsonb_build_object(
         'method', pay.payment_method_type, 'state', pay.state, 'settle', pay.settle,
         'currency', pay.currency, 'amountMinor', pay.amount_minor, 'error', pay.last_error,
