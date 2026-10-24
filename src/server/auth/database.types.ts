@@ -800,6 +800,183 @@ export type Database = {
           },
         ];
       };
+      order_report_bounties: {
+        Row: {
+          amount_eur_cents: number;
+          customer_id: string;
+          paid_at: string | null;
+          paid_by: string | null;
+          payment_note: string | null;
+          recorded_at: string;
+          report_id: string;
+          status: string;
+        };
+        Insert: {
+          amount_eur_cents: number;
+          customer_id: string;
+          paid_at?: string | null;
+          paid_by?: string | null;
+          payment_note?: string | null;
+          recorded_at?: string;
+          report_id: string;
+          status?: string;
+        };
+        Update: {
+          amount_eur_cents?: number;
+          customer_id?: string;
+          paid_at?: string | null;
+          paid_by?: string | null;
+          payment_note?: string | null;
+          recorded_at?: string;
+          report_id?: string;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_report_bounties_customer_id_fkey';
+            columns: ['customer_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_report_bounties_paid_by_fkey';
+            columns: ['paid_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_report_bounties_report_id_fkey';
+            columns: ['report_id'];
+            isOneToOne: true;
+            referencedRelation: 'order_reports';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_report_evidence: {
+        Row: {
+          byte_size: number;
+          created_at: string;
+          id: string;
+          mime: string;
+          report_id: string;
+          sha256: string;
+          storage_key: string;
+        };
+        Insert: {
+          byte_size: number;
+          created_at?: string;
+          id: string;
+          mime: string;
+          report_id: string;
+          sha256: string;
+          storage_key: string;
+        };
+        Update: {
+          byte_size?: number;
+          created_at?: string;
+          id?: string;
+          mime?: string;
+          report_id?: string;
+          sha256?: string;
+          storage_key?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_report_evidence_report_id_fkey';
+            columns: ['report_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_reports';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_reports: {
+        Row: {
+          assignment_id: string;
+          bounty_eur_cents: number;
+          created_at: string;
+          customer_id: string;
+          decided_at: string | null;
+          decided_by: string | null;
+          decision_reason: string | null;
+          description: string;
+          id: string;
+          order_id: string;
+          status: string;
+          teammate_id: string;
+          type: string;
+        };
+        Insert: {
+          assignment_id: string;
+          bounty_eur_cents?: number;
+          created_at?: string;
+          customer_id: string;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          decision_reason?: string | null;
+          description: string;
+          id: string;
+          order_id: string;
+          status?: string;
+          teammate_id: string;
+          type: string;
+        };
+        Update: {
+          assignment_id?: string;
+          bounty_eur_cents?: number;
+          created_at?: string;
+          customer_id?: string;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          decision_reason?: string | null;
+          description?: string;
+          id?: string;
+          order_id?: string;
+          status?: string;
+          teammate_id?: string;
+          type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_reports_assignment_id_order_id_teammate_id_fkey';
+            columns: ['assignment_id', 'order_id', 'teammate_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_assignments';
+            referencedColumns: ['id', 'order_id', 'teammate_id'];
+          },
+          {
+            foreignKeyName: 'order_reports_customer_id_fkey';
+            columns: ['customer_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_reports_decided_by_fkey';
+            columns: ['decided_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_reports_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_reports_teammate_id_fkey';
+            columns: ['teammate_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       order_reviews: {
         Row: {
           assignment_id: string;
@@ -1376,6 +1553,7 @@ export type Database = {
           approved_games: string[];
           discord_id: string | null;
           discord_verified_at: string | null;
+          enabled_games: string[];
           gg_access: boolean;
           priority_adjustment: number;
           priority_adjustment_expires_at: string | null;
@@ -1391,11 +1569,13 @@ export type Database = {
           suspended_by: string | null;
           suspended_reason: string;
           user_id: string;
+          voice_opt_in: boolean;
         };
         Insert: {
           approved_games?: string[];
           discord_id?: string | null;
           discord_verified_at?: string | null;
+          enabled_games?: string[];
           gg_access?: boolean;
           priority_adjustment?: number;
           priority_adjustment_expires_at?: string | null;
@@ -1411,11 +1591,13 @@ export type Database = {
           suspended_by?: string | null;
           suspended_reason?: string;
           user_id: string;
+          voice_opt_in?: boolean;
         };
         Update: {
           approved_games?: string[];
           discord_id?: string | null;
           discord_verified_at?: string | null;
+          enabled_games?: string[];
           gg_access?: boolean;
           priority_adjustment?: number;
           priority_adjustment_expires_at?: string | null;
@@ -1431,6 +1613,7 @@ export type Database = {
           suspended_by?: string | null;
           suspended_reason?: string;
           user_id?: string;
+          voice_opt_in?: boolean;
         };
         Relationships: [
           {
@@ -1488,6 +1671,15 @@ export type Database = {
         Returns: Json;
       };
       admin_accounts: { Args: never; Returns: Json };
+      admin_adjust_priority: {
+        Args: {
+          p_duration: string;
+          p_points: number;
+          p_reason: string;
+          p_user: string;
+        };
+        Returns: Json;
+      };
       admin_application_dto: {
         Args: {
           p: Database['public']['Tables']['teammate_applications']['Row'];
@@ -1516,6 +1708,7 @@ export type Database = {
         Args: { p_order_id: string; p_reason: string };
         Returns: Json;
       };
+      admin_clear_adjustment: { Args: { p_user: string }; Returns: Json };
       admin_create_handover: { Args: { p_order_id: string }; Returns: Json };
       admin_customers: { Args: never; Returns: Json };
       admin_decide_application: {
@@ -1526,6 +1719,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      admin_forgive_misses: { Args: { p_user: string }; Returns: Json };
       admin_log: {
         Args: {
           p_action: string;
@@ -1536,41 +1730,35 @@ export type Database = {
         };
         Returns: undefined;
       };
-      admin_orders: { Args: { p_limit?: number }; Returns: Json };
       admin_order_report_decide: {
         Args: { p_decision: string; p_reason: string; p_report_id: string };
         Returns: Json;
       };
       admin_order_reports: { Args: never; Returns: Json };
+      admin_orders: { Args: { p_limit?: number }; Returns: Json };
       admin_presence: { Args: never; Returns: Json };
       admin_presence_check_in: { Args: { p_online?: boolean }; Returns: Json };
+      admin_priority: { Args: never; Returns: Json };
+      admin_priority_dto: {
+        Args: { p_now: string; p_user: string };
+        Returns: Json;
+      };
+      admin_priority_target: { Args: { p_user: string }; Returns: string };
       admin_refund_order: {
         Args: { p_order_id: string; p_reason: string };
         Returns: Json;
       };
-      admin_priority: { Args: never; Returns: Json };
-      admin_clear_adjustment: { Args: { p_user: string }; Returns: Json };
-      admin_adjust_priority: {
-        Args: {
-          p_duration: string;
-          p_points: number;
-          p_reason: string;
-          p_user: string;
-        };
-        Returns: Json;
-      };
-      admin_forgive_misses: { Args: { p_user: string }; Returns: Json };
       admin_reset_priority: { Args: { p_user: string }; Returns: Json };
-      admin_set_priority: {
-        Args: { p_base: number; p_user: string };
-        Returns: Json;
-      };
       admin_set_access: {
         Args: { p_games: string[]; p_gg: boolean; p_user_id: string };
         Returns: Json;
       };
       admin_set_blocked: {
         Args: { p_blocked: boolean; p_reason?: string; p_user_id: string };
+        Returns: Json;
+      };
+      admin_set_priority: {
+        Args: { p_base: number; p_user: string };
         Returns: Json;
       };
       admin_set_role: {
@@ -1794,6 +1982,12 @@ export type Database = {
         };
         Returns: Json;
       };
+      order_report_customer_dto: {
+        Args: {
+          p_report: Database['public']['Tables']['order_reports']['Row'];
+        };
+        Returns: Json;
+      };
       order_review: {
         Args: {
           p_order_id: string;
@@ -1817,6 +2011,10 @@ export type Database = {
       presence_desk_result: { Args: { p_user: string }; Returns: Json };
       presence_public_count: { Args: never; Returns: number };
       presence_teammate_ready: { Args: { p_user: string }; Returns: boolean };
+      priority_penalty: {
+        Args: { p_now: string; p_user: string };
+        Returns: number;
+      };
       profile_languages_valid: {
         Args: { p_languages: string[] };
         Returns: boolean;
@@ -1843,6 +2041,10 @@ export type Database = {
       };
       set_order_chat_typing: {
         Args: { p_assignment_id: string; p_order_id: string };
+        Returns: Json;
+      };
+      set_teammate_queue_settings: {
+        Args: { p_enabled_games: string[]; p_voice_opt_in: boolean };
         Returns: Json;
       };
       submit_teammate_application: {
@@ -1885,13 +2087,16 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
-      set_teammate_queue_settings: {
-        Args: { p_enabled_games: string[]; p_voice_opt_in: boolean };
-        Returns: Json;
+      teammate_leaderboard: { Args: { p_now: string }; Returns: Json };
+      teammate_order_queue: { Args: never; Returns: Json };
+      teammate_queue_personal_eligible: {
+        Args: {
+          p_order: Database['public']['Tables']['orders']['Row'];
+          p_user: string;
+        };
+        Returns: boolean;
       };
       teammate_queue_settings: { Args: never; Returns: Json };
-      teammate_order_queue: { Args: never; Returns: Json };
-      teammate_leaderboard: { Args: { p_now: string }; Returns: Json };
       teammate_stats: { Args: never; Returns: Json };
     };
     Enums: {
