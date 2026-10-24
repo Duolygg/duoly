@@ -1324,6 +1324,21 @@ export type Database = {
         Returns: undefined;
       };
       admin_orders: { Args: { p_limit?: number }; Returns: Json };
+      admin_cancel_order: {
+        Args: { p_order_id: string; p_reason: string };
+        Returns: Json;
+      };
+      admin_create_handover: { Args: { p_order_id: string }; Returns: Json };
+      admin_refund_order: {
+        Args: { p_order_id: string; p_reason: string };
+        Returns: Json;
+      };
+      accept_handover: { Args: { p_token_hash: string }; Returns: Json };
+      handover_info: { Args: { p_token_hash: string }; Returns: Json };
+      record_payment_refund: {
+        Args: { p_payment_intent: string; p_reason?: string };
+        Returns: Json;
+      };
       admin_set_access: {
         Args: { p_games: string[]; p_gg: boolean; p_user_id: string };
         Returns: Json;

@@ -38,6 +38,27 @@ const METHOD_LABELS: Record<string, string> = {
   pay_by_bank: 'Pay by Bank',
 };
 
+export function refundedPaymentIntentId(
+  type: string,
+  object: unknown,
+): string | null {
+  if (!object || typeof object !== 'object') return null;
+  const value = object as {
+    status?: unknown;
+    refunded?: unknown;
+    payment_intent?: unknown;
+  };
+  if (type.startsWith('refund.') && value.status !== 'succeeded') return null;
+  if (type === 'charge.refunded' && value.refunded !== true) return null;
+  const intent = value.payment_intent;
+  if (typeof intent === 'string') return intent;
+  if (intent && typeof intent === 'object' && 'id' in intent) {
+    const id = (intent as { id?: unknown }).id;
+    return typeof id === 'string' ? id : null;
+  }
+  return null;
+}
+
 export interface PaymentFacts {
   intentId: string;
   paymentIntentId: string;
@@ -259,6 +280,22 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
           .eq('status', 'open');
         outcome = 'expired';
         break;
+      case 'charge.refunded':
+      case 'refund.created':
+      case 'refund.updated': {
+        const paymentIntent = refundedPaymentIntentId(
+          event.type,
+          event.data.object,
+        );
+        if (!paymentIntent) break;
+        const result = await admin.rpc('record_payment_refund', {
+          p_payment_intent: paymentIntent,
+          p_reason: 'Refund received from Stripe',
+        });
+        if (result.error) throw new Error('record_payment_refund failed');
+        outcome = 'refund_recorded';
+        break;
+      }
       default:
         break;
     }
