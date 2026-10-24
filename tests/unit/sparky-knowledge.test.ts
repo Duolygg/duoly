@@ -110,7 +110,9 @@ describe('Sparky identity, offer and memory', () => {
     );
     expect(admin).toContain('Duoly admin');
     const anon = buildGroundingContext({ role: 'guest', name: 'Guest' });
-    expect(anon).toMatch(/Signed in: no\nAccount role: guest/);
+    expect(anon).toMatch(
+      /Signed in: no \(a visitor without an account; never say they are signed in\)\nAccount role: guest/,
+    );
     expect(anon).not.toContain('Duoly admin');
   });
 
