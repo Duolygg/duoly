@@ -14,7 +14,7 @@ const previewPermission = () =>
 
 import React from 'react';
 // Session commands are supplied by the live wrapper.
-import Leaderboard from '../../design-reference/components/Leaderboard';
+import Leaderboard from './Leaderboard';
 import SupportChat from '../support/SupportChat';
 import TrustScore, {
   tierFor,
@@ -59,7 +59,7 @@ export const FEATURES = {
   stats: false,
   reviews: true,
   tips: false,
-  leaderboard: false,
+  leaderboard: true,
   handovers: false,
   cancelled: false,
   support: true,
@@ -1457,6 +1457,8 @@ export default class Teammate extends React.Component {
         saved: st ? st.saved : 0,
       },
       board: s.board,
+      // The server sends week, month and all once the leaderboard migration is live.
+      boardReady: !!(s.board && s.board.week),
       meId: s.meId,
       leaderMe: { name, avatar: u.image || '/assets/avatars/avatar-1.png' },
       // order chat
@@ -2232,7 +2234,7 @@ export default class Teammate extends React.Component {
                   Teammate
                 </span>
               </a>
-              {FEATURES.leaderboard ? (
+              {FEATURES.leaderboard && v.boardReady ? (
                 <a
                   href="#leaderboard"
                   className="db-nav"
@@ -5144,7 +5146,7 @@ export default class Teammate extends React.Component {
                   saved={v.trust.saved}
                 />
               ) : null}
-              {FEATURES.leaderboard ? (
+              {FEATURES.leaderboard && v.boardReady ? (
                 <Leaderboard board={v.board} meId={v.meId} me={v.leaderMe} />
               ) : null}
             </>

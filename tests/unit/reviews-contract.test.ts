@@ -94,4 +94,53 @@ describe('review contracts', () => {
     };
     expect(TeammateStatsResponseSchema.parse(payload)).toEqual(payload);
   });
+  it('accepts only public leaderboard rows for week, month and all', () => {
+    const base = {
+      now: 1,
+      me: '11111111-1111-4111-8111-111111111111',
+      stats: {
+        completed: 0,
+        tier: { name: 'Rookie', deposit: 10 },
+        held: 0,
+        saved: 0,
+        rating: null,
+        reviews: 0,
+        tipsTotal: 0,
+        recent: [],
+        latestReviews: [],
+        adjustments: [],
+      },
+    };
+    const entry = {
+      id: '11111111-1111-4111-8111-111111111111',
+      name: 'Fabian',
+      image: '/assets/avatars/avatar-1.png',
+      orders: 3,
+      main: 'lol',
+      rating: 4.67,
+      fives: 2,
+      points: 40,
+    };
+    const board = {
+      week: { global: [entry], lol: [entry] },
+      month: { global: [] },
+      all: { global: [{ ...entry, rating: null }] },
+    };
+    const parse = (leaderboard: unknown) =>
+      TeammateStatsResponseSchema.safeParse({ ...base, leaderboard }).success;
+    expect(parse(board)).toBe(true);
+    expect(parse({})).toBe(true);
+    expect(parse({ week: board.week })).toBe(false);
+    for (const extra of [
+      { email: 'x@y.z' },
+      { country: 'de' },
+      { earnings: 10 },
+    ])
+      expect(
+        parse({ ...board, week: { global: [{ ...entry, ...extra }] } }),
+      ).toBe(false);
+    expect(
+      parse({ ...board, week: { global: [{ ...entry, rating: 6 }] } }),
+    ).toBe(false);
+  });
 });
