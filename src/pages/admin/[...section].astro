@@ -43,6 +43,7 @@ const csrf = account.csrf();
     csrf={csrf}
     section={section}
     chatEnabled={orderChatEnabled()}
+    reportsEnabled={process.env.REPORTS_ENABLED === 'true'}
     stripeTest={String(
       process.env.STRIPE_SECRET_KEY ?? import.meta.env.STRIPE_SECRET_KEY ?? '',
     ).startsWith('sk_test_')}

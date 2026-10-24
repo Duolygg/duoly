@@ -7,13 +7,21 @@ export default function LiveQueueRoom({
   viewer,
   csrf,
   chatEnabled,
+  reportsEnabled,
 }: {
   id: string;
   viewer: Viewer;
   csrf: string;
   chatEnabled: boolean;
+  reportsEnabled: boolean;
 }) {
   return (
-    <QueueRoom id={id} user={viewer} csrf={csrf} chatEnabled={chatEnabled} />
+    <QueueRoom
+      id={id}
+      user={viewer}
+      csrf={csrf}
+      chatEnabled={chatEnabled}
+      reportsEnabled={reportsEnabled}
+    />
   );
 }

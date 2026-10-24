@@ -80,6 +80,31 @@ describe('order room adapter (original QueueRoom.jsx shape)', () => {
       languages: ['English', 'German'],
     });
   });
+  it('maps report status into the original room shape', () => {
+    const reports = [
+      {
+        id: '33333333-3333-4333-8333-333333333333',
+        reference: 'R-33333333',
+        type: 'toxic',
+        status: 'approved',
+        bounty_eur_cents: 5000,
+        created_at: '2026-10-24T12:00:00.000Z',
+        decided_at: '2026-10-24T13:00:00.000Z',
+        bounty_owed: true,
+      },
+    ];
+    expect(toRoomOrder({ ...order, reports }).reports).toEqual([
+      {
+        id: 'R-33333333',
+        type: 'toxic',
+        status: 'approved',
+        bounty: 50,
+        at: Date.parse(reports[0]!.created_at),
+        decidedAt: Date.parse(reports[0]!.decided_at),
+        bountyOwed: true,
+      },
+    ]);
+  });
   it('keeps the raw cancel reason so the room can tell who cancelled', () => {
     const o = toRoomOrder({
       ...order,

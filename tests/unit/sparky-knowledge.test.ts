@@ -92,6 +92,9 @@ describe('Sparky knowledge from the original assistant', () => {
     expect(forTeammate).toContain('The exact numbers are internal');
     expect(forTeammate).not.toMatch(/presence.{0,40}coming later/i);
     expect(forTeammate).not.toMatch(/star reviews.{0,60}coming later/i);
+    expect(forTeammate).not.toContain(
+      'Coming later: tips, reports with a bounty',
+    );
   });
 });
 

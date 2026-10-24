@@ -146,6 +146,23 @@ describe('pure RPC result decoder', () => {
 });
 
 describe('strict SQL order contracts', () => {
+  it('accepts the migrated customer report projection without requiring it before deploy', () => {
+    expect(CustomerOrderSchema.parse(customer).reports).toBeUndefined();
+    const report = {
+      id,
+      reference: 'R-ABCDEF12',
+      type: 'toxic',
+      status: 'approved',
+      bounty_eur_cents: 5000,
+      created_at: timestamp,
+      decided_at: timestamp,
+      bounty_owed: true,
+    };
+    expect(
+      CustomerOrderSchema.parse({ ...customer, reports: [report] }).reports,
+    ).toEqual([report]);
+  });
+
   it('uses a distinct privacy-safe teammate projection', () => {
     expect(TeammateOrderSchema.parse(teammate)).toEqual(teammate);
     for (const field of [

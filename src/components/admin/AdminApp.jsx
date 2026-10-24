@@ -15,8 +15,9 @@ import Overview from './Overview';
 import Teammates from './Teammates';
 import Customers from './Customers';
 import NotConnected from './NotConnected';
-import ChatModeration from './ChatModeration';
+import Priority from './Priority';
 import Support from './Support';
+import Safety from './Safety';
 
 // Port of the original admin shell (components/admin/AdminApp.jsx): same sidebar, groups,
 // titles, confirm dialog and toasts. Sections are real URLs (/admin/users) so they can be
@@ -147,12 +148,14 @@ const TITLES = {
 const LIVE = [
   'overview',
   'live',
+  'priority',
   'users',
   'applications',
   'orders',
   'teammates',
   'customers',
   'support',
+  'safety',
   'audit',
 ];
 
@@ -488,6 +491,7 @@ export default class AdminApp extends React.Component {
       audit: s.audit,
       auditLoaded: s.auditLoaded,
       onApplications: (n) => this.setState({ pendingApps: n }),
+      csrf: this.props.csrf,
     };
     let body = null;
     if (s.section === 'users') body = <Users {...props} />;
@@ -495,14 +499,21 @@ export default class AdminApp extends React.Component {
     else if (s.section === 'overview')
       body = <Overview {...props} chatEnabled={this.props.chatEnabled} />;
     else if (s.section === 'live') body = <LiveDesk {...props} />;
+    else if (s.section === 'priority') body = <Priority {...props} />;
     else if (s.section === 'teammates') body = <Teammates {...props} />;
     else if (s.section === 'customers') body = <Customers {...props} />;
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
     else if (s.section === 'support') body = <Support {...props} />;
     else if (s.section === 'audit') body = <AuditLog {...props} />;
-    else if (s.section === 'safety' && this.props.chatEnabled)
-      body = <ChatModeration csrf={this.props.csrf} />;
+    else if (s.section === 'safety')
+      body = (
+        <Safety
+          {...props}
+          chatEnabled={this.props.chatEnabled}
+          reportsEnabled={this.props.reportsEnabled}
+        />
+      );
     else body = <NotConnected section={s.section} go={this.go} />;
     return (
       <div

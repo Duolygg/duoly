@@ -4,6 +4,7 @@ import {
   OrderResponseSchemas,
 } from '../../contracts/orders';
 import { TeammateStatsResponseSchema } from '../../contracts/reviews';
+import { QueueSettingsResponseSchema } from '../../contracts/queue-settings';
 import { z } from 'zod';
 import { canTake } from '../../design-reference/lib/access';
 const PresenceSchema = z
@@ -44,6 +45,40 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
           body: JSON.stringify({ ...command, csrf }),
         });
         return json(toOriginalPresence(result));
+      }
+      if (path === '/api/queue-settings') {
+        let body;
+        if (init.method === 'POST') {
+          try {
+            body = JSON.parse(init.body || '{}');
+          } catch {
+            return json({ error: 'Invalid queue settings' }, 400);
+          }
+          if (
+            !csrf ||
+            !Array.isArray(body.enabledGames) ||
+            typeof body.voiceOptIn !== 'boolean' ||
+            Object.keys(body).length !== 2
+          )
+            return json({ error: 'Invalid queue settings' }, 400);
+        }
+        const settings = await request(
+          '/api/teammate/queue-settings',
+          QueueSettingsResponseSchema,
+          init.method === 'POST'
+            ? {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ csrf, ...body }),
+              }
+            : {},
+        );
+        return json({
+          allowedGames: settings.allowed_games,
+          enabledGames: settings.enabled_games,
+          ggAccess: settings.gg_access,
+          voiceOptIn: settings.voice_opt_in,
+        });
       }
       if (path === '/api/desk') {
         const [queue, assignment] = await Promise.all([
@@ -127,11 +162,16 @@ export function toOriginalPresence(raw) {
 }
 
 /** Null means the first queue snapshot, which must stay silent. */
-export function newEligibleOrders(previousIds, orders, access) {
+export function newEligibleOrders(previousIds, orders, access, settings) {
   if (previousIds === null) return [];
   const seen = new Set(previousIds);
+  const enabled = new Set(settings?.enabledGames || []);
   return orders.filter(
-    (order) => !seen.has(order.id) && canTake(order, access),
+    (order) =>
+      !seen.has(order.id) &&
+      canTake(order, access) &&
+      enabled.has(order.game) &&
+      (settings?.voiceOptIn || !order.voice),
   );
 }
 

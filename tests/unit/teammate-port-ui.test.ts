@@ -18,6 +18,7 @@ function desk() {
     discordLinked: true,
     user: { name: 'Fabian' },
     chatEnabled: true,
+    access: { games: ['lol'], gg: false },
   });
   // The port is intentionally JavaScript. The harness permits authoritative state fixtures.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,17 +79,26 @@ it('retains the original layout with live presence and unsupported controls stil
   expect(html).toContain('Available orders');
   expect(html).toContain('Loading your desk');
   expect(html).toContain('You’re offline');
+  expect(html).toContain('Queue settings');
+  expect(html).toContain('Voice comms');
   for (const text of [
     'Online ·',
     'Earned today',
-    'Queue settings',
     'Leaderboard',
     'No games are unlocked',
     'Waiting for orders!',
   ])
     expect(html).not.toContain(text);
-  const { support, presence, notifications, reviews, leaderboard, ...gated } =
-    FEATURES;
+  const {
+    support,
+    presence,
+    notifications,
+    reviews,
+    leaderboard,
+    preferences,
+    ...gated
+  } = FEATURES;
+  expect(preferences).toBe(true);
   expect(leaderboard).toBe(true);
   expect(support).toBe(true);
   expect(presence).toBe(true);

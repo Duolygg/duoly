@@ -194,9 +194,48 @@ describe('original teammate adapter', () => {
       forcedOffline: { reason: 'AFK / dashboard left open', by: 'Admin' },
     });
   });
-  it('rings only for newly appearing orders the teammate can take', () => {
+  it('loads and saves durable queue settings through the live endpoint', async () => {
+    const transport = vi.fn(async (url: string, init?: RequestInit) => {
+      if (init?.method === 'POST') {
+        expect(JSON.parse(String(init.body))).toEqual({
+          csrf: 'token',
+          enabledGames: ['lol'],
+          voiceOptIn: false,
+        });
+      }
+      expect(url).toBe('/api/teammate/queue-settings');
+      return Response.json({
+        allowed_games: ['lol', 'val'],
+        enabled_games: ['lol'],
+        gg_access: false,
+        voice_opt_in: false,
+      });
+    });
+    const api = createTeammateFetch({ csrf: 'token', fetcher: transport });
+    expect(await (await api('/api/queue-settings')).json()).toEqual({
+      allowedGames: ['lol', 'val'],
+      enabledGames: ['lol'],
+      ggAccess: false,
+      voiceOptIn: false,
+    });
+    expect(
+      await (
+        await api('/api/queue-settings', {
+          method: 'POST',
+          body: JSON.stringify({ enabledGames: ['lol'], voiceOptIn: false }),
+        })
+      ).json(),
+    ).toEqual({
+      allowedGames: ['lol', 'val'],
+      enabledGames: ['lol'],
+      ggAccess: false,
+      voiceOptIn: false,
+    });
+  });
+  it('rings only for newly appearing orders allowed by game and voice settings', () => {
     const regular = { games: ['lol'], gg: false };
     const gg = { games: [], gg: true };
+    const settings = { enabledGames: ['lol'], voiceOptIn: false };
     const orders = [
       { ...toOriginalTeammateOrder(order), id },
       {
@@ -212,15 +251,25 @@ describe('original teammate adapter', () => {
       },
     ];
     expect(
-      newEligibleOrders([id], orders, regular).map((o: { id: string }) => o.id),
+      newEligibleOrders([id], orders, regular, settings).map(
+        (o: { id: string }) => o.id,
+      ),
     ).toEqual([]);
     expect(
-      newEligibleOrders([], orders, regular).map((o: { id: string }) => o.id),
+      newEligibleOrders([], orders, regular, settings).map(
+        (o: { id: string }) => o.id,
+      ),
     ).toEqual([id]);
     expect(
-      newEligibleOrders([], orders, gg).map((o: { id: string }) => o.id),
+      newEligibleOrders([], orders, gg, {
+        enabledGames: ['val'],
+        voiceOptIn: true,
+      }).map((o: { id: string }) => o.id),
     ).toEqual(['44444444-4444-4444-8444-444444444444']);
-    expect(newEligibleOrders(null, orders, regular)).toEqual([]);
+    expect(
+      newEligibleOrders([], [{ ...orders[0], voice: true }], regular, settings),
+    ).toEqual([]);
+    expect(newEligibleOrders(null, orders, regular, settings)).toEqual([]);
   });
   it('maps only authoritative privacy-safe fields without invented timestamps or payment', () => {
     expect(toOriginalTeammateOrder(order)).toEqual({

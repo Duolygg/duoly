@@ -8,6 +8,7 @@ const reads = [
   `/api/orders/${id}`,
   '/api/teammate/queue',
   '/api/teammate/order',
+  '/api/teammate/queue-settings',
 ];
 const writes = [
   `/api/orders/${id}/cancel`,
@@ -44,6 +45,21 @@ for (const path of writes) {
     expect(wrongMethod.headers().allow).toBe('POST');
   });
 }
+test('untrusted queue settings cannot mutate', async ({ request }) => {
+  const path = '/api/teammate/queue-settings';
+  const untrusted = await request.post(path, {
+    headers: { Origin: 'https://untrusted.invalid' },
+    data: { csrf: 'a'.repeat(64), enabledGames: ['lol'], voiceOptIn: false },
+  });
+  expect(untrusted.status()).toBe(403);
+  expect(untrusted.headers()['cache-control']).toContain('no-store');
+  const malformed = await request.post(path, {
+    headers: { 'Content-Type': 'application/json' },
+    data: '{',
+  });
+  expect(malformed.status()).toBe(400);
+});
+
 test('no public order creation endpoint exists', async ({ request }) => {
   for (const path of ['/api/orders', '/api/orders/create']) {
     const response = await request.post(path, {
