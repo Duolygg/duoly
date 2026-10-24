@@ -965,26 +965,35 @@ export type Database = {
       };
       profiles: {
         Row: {
+          bio: string;
           country: string;
           created_at: string;
+          currency: string | null;
           id: string;
           image: string;
+          languages: string[];
           name: string;
           updated_at: string;
         };
         Insert: {
+          bio?: string;
           country?: string;
           created_at?: string;
+          currency?: string | null;
           id: string;
           image?: string;
+          languages?: string[];
           name?: string;
           updated_at?: string;
         };
         Update: {
+          bio?: string;
           country?: string;
           created_at?: string;
+          currency?: string | null;
           id?: string;
           image?: string;
+          languages?: string[];
           name?: string;
           updated_at?: string;
         };
@@ -1728,6 +1737,10 @@ export type Database = {
       presence_desk_result: { Args: { p_user: string }; Returns: Json };
       presence_public_count: { Args: never; Returns: number };
       presence_teammate_ready: { Args: { p_user: string }; Returns: boolean };
+      profile_languages_valid: {
+        Args: { p_languages: string[] };
+        Returns: boolean;
+      };
       record_payment_refund: {
         Args: { p_payment_intent: string; p_reason?: string };
         Returns: Json;

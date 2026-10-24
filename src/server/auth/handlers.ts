@@ -1,7 +1,13 @@
 import { decodeAvatar, storeAvatar } from './avatar';
 import { afterLoginPath } from './after-login';
 import type { APIContext, APIRoute } from 'astro';
-import { ProfileUpdateSchema, ProviderSchema } from '../../contracts/account';
+import {
+  CurrencySchema,
+  ProfileUpdateSchema,
+  ProviderSchema,
+  normalizeBio,
+  normalizeLanguages,
+} from '../../contracts/account';
 import { accountContext } from './context';
 import { readBoundedBody, verifyCsrf } from './security';
 import { linkErrorResult } from '../discord/oauth';
@@ -156,8 +162,15 @@ export const saveProfile: APIRoute = async (context) => {
     const identity = await account.identity();
     if (!identity)
       return account.json({ error: 'Sign in to update your profile.' }, 401);
-    const { csrf: _csrf, upload, ...input } = body;
+    const { csrf: _csrf, upload, bio, languages, ...input } = body;
     void _csrf;
+    // Original api/me/profile: bio and languages are shown to customers, so only
+    // teammates have them; for everyone else they are ignored.
+    const teammate = identity.viewer.role === 'teammate';
+    const extra: { bio?: string; languages?: string[] } = {};
+    if (teammate && bio !== undefined) extra.bio = normalizeBio(bio);
+    if (teammate && languages !== undefined)
+      extra.languages = normalizeLanguages(languages);
     if (upload !== undefined) {
       const avatar = decodeAvatar(upload);
       if (!avatar)
@@ -181,25 +194,58 @@ export const saveProfile: APIRoute = async (context) => {
       );
     const { data, error } = await account.client
       .from('profiles')
-      .update(update.data)
+      .update({ ...update.data, ...extra })
       .eq('id', identity.viewer.id)
-      .select('id,name,country,image')
+      .select('*')
       .single();
     if (error || !data)
       return account.json(
         { error: 'Your profile could not be saved. Please try again.' },
         503,
       );
+    const row = data as Record<string, unknown>;
     return account.json({
-      profile: ProfileUpdateSchema.parse({
-        name: data.name,
-        country: data.country,
-        image: data.image,
-      }),
+      profile: {
+        ...ProfileUpdateSchema.parse({
+          name: row.name,
+          country: row.country,
+          image: row.image,
+        }),
+        bio: typeof row.bio === 'string' ? row.bio : '',
+        languages: Array.isArray(row.languages) ? row.languages : [],
+      },
     });
   } catch {
     return account.json(
       { error: 'Your profile could not be saved. Please try again.' },
+      503,
+    );
+  }
+};
+/** Original api/me/currency: saves the display currency on the account. */
+export const saveCurrency: APIRoute = async (context) => {
+  const { account, body, failure } = await mutation(context);
+  if (failure || !body) return failure!;
+  if (!account.client) return account.json({ error: 'Sign in first.' }, 401);
+  const currency = CurrencySchema.safeParse(body.currency);
+  if (!currency.success)
+    return account.json({ error: 'Unknown currency.' }, 400);
+  try {
+    const identity = await account.identity();
+    if (!identity) return account.json({ error: 'Sign in first.' }, 401);
+    const { error } = await account.client
+      .from('profiles')
+      .update({ currency: currency.data })
+      .eq('id', identity.viewer.id);
+    if (error)
+      return account.json(
+        { error: 'Your currency could not be saved. Please try again.' },
+        503,
+      );
+    return account.json({ currency: currency.data });
+  } catch {
+    return account.json(
+      { error: 'Your currency could not be saved. Please try again.' },
       503,
     );
   }

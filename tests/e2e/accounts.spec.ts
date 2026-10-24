@@ -68,6 +68,7 @@ test('untrusted POSTs cannot mutate account state', async ({ request }) => {
     '/auth/password/register',
     '/auth/logout',
     '/api/me/profile',
+    '/api/me/currency',
   ]) {
     const response = await request.post(path, {
       headers: {
