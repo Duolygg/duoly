@@ -951,6 +951,24 @@ export type Database = {
         };
         Relationships: [];
       };
+      support_ai_identity_usage: {
+        Row: {
+          calls: number;
+          day: string;
+          identity_key: string;
+        };
+        Insert: {
+          calls?: number;
+          day: string;
+          identity_key: string;
+        };
+        Update: {
+          calls?: number;
+          day?: string;
+          identity_key?: string;
+        };
+        Relationships: [];
+      };
       support_conversations: {
         Row: {
           admin_seen_at: string | null;
@@ -1561,7 +1579,14 @@ export type Database = {
         Args: { p_body: string; p_conversation_id: string; p_limit?: number };
         Returns: Json;
       };
-      support_take_ai_slot: { Args: { p_limit: number }; Returns: boolean };
+      support_take_ai_slot: {
+        Args: {
+          p_identity_key: string;
+          p_identity_limit: number;
+          p_limit: number;
+        };
+        Returns: boolean;
+      };
       sweep_expired_orders: { Args: { p_limit?: number }; Returns: Json };
       sync_account_owner: {
         Args: { p_owner: boolean; p_user_id: string };

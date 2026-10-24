@@ -58,7 +58,7 @@ do $$ declare r jsonb; begin
  end loop;
  r := public.support_add_user_message('5a100000-0000-4000-8000-000000000001','too many',12);
  if (r->'error'->>'code')::int <> 429 then raise exception 'rate limit missing: %',r; end if;
- if not public.support_take_ai_slot(2) or not public.support_take_ai_slot(2) or public.support_take_ai_slot(2) then raise exception 'daily AI cap wrong'; end if;
+ if not public.support_take_ai_slot(2,'t',30) or not public.support_take_ai_slot(2,'t',30) or public.support_take_ai_slot(2,'t',30) then raise exception 'daily AI cap wrong'; end if;
 end $$;
 reset role;
 select 'support_sparky: all checks passed' as result;

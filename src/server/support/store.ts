@@ -143,9 +143,16 @@ export async function appendUserMessage(
   return { ok: true };
 }
 
-export async function takeAiSlot(service: SupabaseClient, limit: number) {
+export async function takeAiSlot(
+  service: SupabaseClient,
+  limit: number,
+  identityKey: string,
+  identityLimit: number,
+) {
   const { data, error } = await service.rpc('support_take_ai_slot', {
     p_limit: limit,
+    p_identity_key: identityKey,
+    p_identity_limit: identityLimit,
   });
   return !error && data === true;
 }

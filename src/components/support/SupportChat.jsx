@@ -165,7 +165,11 @@ export default class SupportChat extends React.Component {
     const team = d.team || [];
     const online = team.filter((a) => a.online);
     const bottom = this.props.bottom || 24;
-    const agent = c && c.status === 'open' && c.agent ? c.agent : null;
+    // A claimed chat always shows a person, even if the claiming admin left the team list.
+    const agent =
+      c && c.status === 'open'
+        ? c.agent || { name: 'Duoly team', image: null }
+        : null;
     const msgs = c
       ? c.messages
       : d.greeting
@@ -432,7 +436,7 @@ export default class SupportChat extends React.Component {
                         .replace(/, ([^,]*)$/, ' and $1') +
                       (online.length === 1 ? ' is' : ' are') +
                       ' online'
-                    : 'The team is away · Sparky answers 24/7'}
+                    : 'Sparky answers 24/7 · the team replies right here'}
                 </div>
               ) : null}
             </header>

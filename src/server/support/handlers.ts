@@ -3,7 +3,6 @@ import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { SupportPostSchema } from '../../contracts/support';
 import { answerWithAi } from './ai';
-import { dailyAiLimit } from './limits';
 import { notifySupportAdmins, notifySupportDiscordHook } from './notify';
 import { supportPerson } from './person';
 import { CHIPS, greeting, preparedReply, type SupportPerson } from './sparky';
@@ -22,6 +21,7 @@ import {
   updateConversation,
   type ConversationRow,
 } from './store';
+import { dailyAiLimit, perUserDailyAiLimit } from './limits';
 
 const validGuestToken = (value: string | undefined) =>
   value && /^[A-Za-z0-9_-]{32}$/.test(value) ? value : null;
@@ -132,7 +132,7 @@ async function handoff(
       message || 'Asked to talk to a person.',
       now.replace(/[^0-9]/g, '').slice(0, 14),
     ),
-    notifySupportDiscordHook(conversation.id),
+    notifySupportDiscordHook(person, message),
   ]);
   return {
     ...conversation,
@@ -166,6 +166,8 @@ export const postSupport: APIRoute = async (context) => {
         );
         await updateConversation(service, conversation.id, {
           status: 'closed',
+          claimed_by: null,
+          waiting_since: null,
         });
       }
       return prepared.account.json(
@@ -173,8 +175,22 @@ export const postSupport: APIRoute = async (context) => {
       );
     }
     if (!conversation) {
-      conversation = await startConversation(service, person, guestHash);
-      await addMessage(service, conversation.id, 'bot', greeting(person));
+      try {
+        conversation = await startConversation(service, person, guestHash);
+        await addMessage(service, conversation.id, 'bot', greeting(person));
+      } catch (err) {
+        // Unique-index violation: another request already created the open
+        // conversation for this user/guest. Re-select it and continue.
+        // Supabase errors are plain objects; 23505 is Postgres unique_violation.
+        const code =
+          err && typeof err === 'object' && 'code' in err ? err.code : null;
+        if (code === '23505') {
+          conversation = await currentConversation(service, person, guestHash);
+          if (!conversation) throw err;
+        } else {
+          throw err;
+        }
+      }
     }
     await refreshPerson(service, conversation, person);
     const text = 'text' in parsed.data ? (parsed.data.text ?? '') : '';
@@ -185,6 +201,10 @@ export const postSupport: APIRoute = async (context) => {
           { error: appended.error },
           appended.status,
         );
+      // The RPC may have changed the conversation (e.g. a closed chat reopens
+      // with Sparky). Re-read so the status check below sees the real state.
+      conversation =
+        (await currentConversation(service, person, guestHash)) ?? conversation;
     }
     if (conversation.status !== 'bot')
       return prepared.account.json(
@@ -215,7 +235,13 @@ export const postSupport: APIRoute = async (context) => {
         );
       }
     } else {
-      const canUseAi = await takeAiSlot(service, dailyAiLimit());
+      const identityKey = person.userId ?? guestHash;
+      const canUseAi = await takeAiSlot(
+        service,
+        dailyAiLimit(),
+        identityKey,
+        perUserDailyAiLimit(),
+      );
       const answer = canUseAi
         ? await answerWithAi({
             person,

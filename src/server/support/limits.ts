@@ -15,3 +15,11 @@ export function dailyAiLimit(
   if (!Number.isFinite(parsed) || parsed < 1) return 500;
   return Math.min(parsed, 10_000);
 }
+
+export function perUserDailyAiLimit(
+  value = process.env.SUPPORT_AI_PER_USER_DAILY,
+): number {
+  const parsed = Number.parseInt(value ?? '', 10);
+  if (!Number.isFinite(parsed) || parsed < 1) return 30;
+  return Math.min(parsed, 1_000);
+}

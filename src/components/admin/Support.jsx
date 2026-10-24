@@ -310,6 +310,7 @@ export default class Support extends React.Component {
                   C.cyan,
                 )
               : row('Open order', 'none', C.dim)}
+            {x.order ? row('Units', x.order.units, C.dim) : null}
           </>
         ) : null}
         {x && x.kind === 'teammate' ? (
