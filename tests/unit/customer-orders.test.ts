@@ -54,6 +54,7 @@ const order: CustomerOrder = {
   rerolls: 0,
   current_assignment_id: null,
   teammate: null,
+  review: null,
 };
 it('renders own order safely and only offers queued cancellation', () => {
   const html = renderToStaticMarkup(

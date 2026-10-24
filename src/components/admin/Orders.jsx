@@ -455,6 +455,34 @@ export default class Orders extends React.Component {
             </p>
           ) : null}
 
+          {o.review ? (
+            <>
+              <h3
+                style={{
+                  margin: '22px 0 4px',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  letterSpacing: '.06em',
+                  textTransform: 'uppercase',
+                  color: C.faint,
+                }}
+              >
+                Customer review
+              </h3>
+              {row(
+                'Rating',
+                '★'.repeat(o.review.rating) + ' ' + o.review.rating + '/5',
+                C.gold,
+                true,
+              )}
+              {o.review.tags.length
+                ? row('Tags', o.review.tags.join(', '))
+                : null}
+              {o.review.text ? row('Review', o.review.text) : null}
+              {row('Received', dateTime(o.review.at))}
+            </>
+          ) : null}
+
           <h3
             style={{
               margin: '22px 0 8px',

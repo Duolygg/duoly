@@ -3,6 +3,7 @@ import {
   TeammateOrderSchema,
   OrderResponseSchemas,
 } from '../../contracts/orders';
+import { TeammateStatsResponseSchema } from '../../contracts/reviews';
 const json = (data, status = 200) => Response.json(data, { status });
 /** @param {{ csrf: string, fetcher?: (url: string, init?: RequestInit) => Promise<Response> }} options */
 export function createTeammateFetch({ csrf, fetcher = fetch }) {
@@ -41,6 +42,10 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
             : null,
         });
       }
+      if (path === '/api/teammate/stats')
+        return json(
+          await request('/api/teammate/stats', TeammateStatsResponseSchema),
+        );
       if (path.startsWith('/api/orders/')) {
         const id = path.slice('/api/orders/'.length);
         const parsedId = TeammateOrderSchema.shape.id.safeParse(id);

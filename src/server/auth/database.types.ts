@@ -1539,6 +1539,15 @@ export type Database = {
         Returns: Json;
       };
       refresh_discord_link: { Args: { p_user: string }; Returns: undefined };
+      order_review: {
+        Args: {
+          p_order_id: string;
+          p_rating: number;
+          p_tags?: string[];
+          p_text?: string;
+        };
+        Returns: Json;
+      };
       reroll_order: { Args: { p_order_id: string }; Returns: Json };
       resolve_order_chat_flag: {
         Args: { p_flag_id: string; p_status: string };
@@ -1597,6 +1606,7 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
+      teammate_stats: { Args: never; Returns: Json };
       teammate_order_queue: { Args: never; Returns: Json };
     };
     Enums: {

@@ -41,6 +41,7 @@ const customer = {
   rerolls: 0,
   current_assignment_id: null,
   teammate: null,
+  review: null,
 };
 
 const teammate = {

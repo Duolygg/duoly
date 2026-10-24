@@ -46,6 +46,7 @@ const customer = CustomerOrderSchema.parse({
     image: '/assets/avatars/avatar-3.png',
     country: 'at',
   },
+  review: null,
 });
 const teammate = TeammateOrderSchema.parse({
   ...booking,

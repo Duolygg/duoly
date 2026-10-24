@@ -42,7 +42,14 @@ export function toOriginalOrder(o) {
         }
       : null,
     lastTeammate: null,
-    review: null,
+    review: o.review
+      ? {
+          rating: o.review.rating,
+          text: o.review.text,
+          tags: o.review.tags,
+          at: ms(o.review.at),
+        }
+      : null,
     createdAt: ms(o.created_at),
     completedAt: ms(o.completed_at),
     amountEur: o.amount_eur_cents / 100,
@@ -82,6 +89,10 @@ export function toOriginalHistory(orders, credits, now = Date.now()) {
       online: null,
     };
     m.orders += 1;
+    if (o.review) {
+      m.ratingSum = (m.ratingSum || 0) + o.review.rating;
+      m.rated = (m.rated || 0) + 1;
+    }
     m.byGame[o.game] = (m.byGame[o.game] || 0) + 1;
     mates.set(key, m);
   }
@@ -95,6 +106,9 @@ export function toOriginalHistory(orders, credits, now = Date.now()) {
     mates: [...mates.values()]
       .map(({ byGame, ...m }) => ({
         ...m,
+        rating: m.rated
+          ? Math.round((m.ratingSum / m.rated) * 100) / 100
+          : null,
         main: Object.entries(byGame).sort((a, b) => b[1] - a[1])[0][0],
       }))
       .sort((a, b) => b.orders - a.orders),

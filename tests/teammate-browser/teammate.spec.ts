@@ -152,10 +152,12 @@ test('original layout, server queue, real chat transport and private completion 
   await expect(page.getByText('Hello customer', { exact: true })).toBeVisible();
   await expect(page.getByText('Sent', { exact: false })).toBeVisible();
   expect(
-    requests.some((p) =>
-      /stats|heartbeat|leaderboard|settings|preview/.test(p),
-    ),
+    requests.some((p) => /heartbeat|leaderboard|settings|preview/.test(p)),
   ).toBe(false);
+  // Reviews are live: only the scoped rating read is allowed, never earnings stats UI.
+  expect(requests.filter((p) => /stats/.test(p))).toEqual(
+    requests.filter((p) => p.endsWith('/api/teammate/stats')),
+  );
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

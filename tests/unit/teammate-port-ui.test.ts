@@ -86,8 +86,12 @@ it('retains original layout with honest loading, no fabricated presence or unsup
     'Waiting for orders!',
   ])
     expect(html).not.toContain(text);
-  const { support, ...gated } = FEATURES;
+  const { support, reviews, ...gated } = FEATURES;
   expect(support).toBe(true);
+  expect(reviews).toBe(true);
+  expect(FEATURES.tips).toBe(false);
+  expect(html).not.toContain('Tips received');
+  expect(html).not.toContain('Rating');
   expect(Object.values(gated).every((v) => v === false)).toBe(true);
 });
 it('acceptance re-reads authoritative assignment and never trusts an uncertain response', async () => {

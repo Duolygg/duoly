@@ -82,9 +82,18 @@ export function createRoomFetch({ orderId, csrf }) {
         return json({ order: toRoomOrder(data.order), now: Date.now() });
       }
       if (path === base && method === 'POST') {
-        if (body.action !== 'cancel' && body.action !== 'reroll')
+        if (!['cancel', 'reroll', 'review'].includes(body.action))
           return json({ error: 'That isn’t available yet.' }, 501);
-        const { res, data } = await call(base + '/' + body.action, { csrf });
+        const payload =
+          body.action === 'review'
+            ? {
+                csrf,
+                rating: body.rating,
+                tags: Array.isArray(body.tags) ? body.tags : [],
+                text: typeof body.text === 'string' ? body.text : '',
+              }
+            : { csrf };
+        const { res, data } = await call(base + '/' + body.action, payload);
         if (!res.ok || !data.order)
           return json(
             { error: data.error || 'That didn’t work. Try again.' },
