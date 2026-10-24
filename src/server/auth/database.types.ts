@@ -1625,6 +1625,7 @@ export type Database = {
         Returns: Json;
       };
       handover_info: { Args: { p_token_hash: string }; Returns: Json };
+      home_recent_matches: { Args: never; Returns: Json };
       list_order_chat_flags: { Args: never; Returns: Json };
       list_order_proofs: { Args: { p_order_id: string }; Returns: Json };
       order_chat_append: {

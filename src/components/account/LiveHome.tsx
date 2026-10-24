@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
 import type { Viewer } from '../../contracts/account';
+import type { RecentMatch } from '../../contracts/home';
 
 const PENDING_KEY = 'duoly-pending-queue';
 
@@ -20,7 +22,8 @@ export default function LiveHome({
   csrf,
   checkoutEnabled = false,
   usdRate,
-  onlineNow = 0,
+  onlineNow: initialOnline = 0,
+  recentMatches: initialMatches = [],
   authError = null,
 }: {
   viewer: Viewer | null;
@@ -28,8 +31,42 @@ export default function LiveHome({
   checkoutEnabled?: boolean;
   usdRate?: number;
   onlineNow?: number;
+  recentMatches?: RecentMatch[];
   authError?: string | null;
 }) {
+  const [live, setLive] = useState({
+    onlineNow: initialOnline,
+    recentMatches: initialMatches,
+  });
+  // Keeps the figures fresh on an open tab. The endpoint is CDN-cached, so this is cheap.
+  useEffect(() => {
+    const refresh = async () => {
+      if (document.visibilityState !== 'visible') return;
+      try {
+        const response = await fetch('/api/home/live', {
+          credentials: 'omit',
+        });
+        if (!response.ok) return;
+        const data = (await response.json()) as {
+          onlineNow?: unknown;
+          recentMatches?: unknown;
+        };
+        setLive((current) => ({
+          onlineNow:
+            typeof data.onlineNow === 'number'
+              ? data.onlineNow
+              : current.onlineNow,
+          recentMatches: Array.isArray(data.recentMatches)
+            ? (data.recentMatches as RecentMatch[])
+            : current.recentMatches,
+        }));
+      } catch {
+        /* Keep the last figures. */
+      }
+    };
+    const timer = window.setInterval(() => void refresh(), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
   const signOut = async () => {
     const response = await fetch('/auth/logout', {
       method: 'POST',
@@ -143,7 +180,8 @@ export default function LiveHome({
       onEmailAuth={onEmailAuth}
       onCheckout={checkoutEnabled ? onCheckout : undefined}
       usdRate={usdRate}
-      onlineNow={onlineNow}
+      onlineNow={live.onlineNow}
+      recentMatches={live.recentMatches}
     />
   );
 }
