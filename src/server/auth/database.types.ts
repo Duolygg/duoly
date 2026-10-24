@@ -548,6 +548,50 @@ export type Database = {
           },
         ];
       };
+      order_handovers: {
+        Row: {
+          created_at: string;
+          created_by: string;
+          created_by_name: string;
+          expires_at: string;
+          id: string;
+          order_id: string;
+          revoke_reason: string | null;
+          revoked_at: string | null;
+          token_hash: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by: string;
+          created_by_name: string;
+          expires_at: string;
+          id?: string;
+          order_id: string;
+          revoke_reason?: string | null;
+          revoked_at?: string | null;
+          token_hash: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string;
+          created_by_name?: string;
+          expires_at?: string;
+          id?: string;
+          order_id?: string;
+          revoke_reason?: string | null;
+          revoked_at?: string | null;
+          token_hash?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_handovers_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: false;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       order_payments: {
         Row: {
           amount_eur_cents: number;
@@ -559,6 +603,8 @@ export type Database = {
           last_error: string | null;
           order_id: string;
           payment_method_type: string;
+          refund_reason: string | null;
+          refunded_at: string | null;
           settle: string;
           state: string;
           stripe_payment_intent_id: string;
@@ -574,6 +620,8 @@ export type Database = {
           last_error?: string | null;
           order_id: string;
           payment_method_type?: string;
+          refund_reason?: string | null;
+          refunded_at?: string | null;
           settle?: string;
           state: string;
           stripe_payment_intent_id: string;
@@ -589,6 +637,8 @@ export type Database = {
           last_error?: string | null;
           order_id?: string;
           payment_method_type?: string;
+          refund_reason?: string | null;
+          refunded_at?: string | null;
           settle?: string;
           state?: string;
           stripe_payment_intent_id?: string;
@@ -721,9 +771,74 @@ export type Database = {
           },
         ];
       };
+      order_reviews: {
+        Row: {
+          assignment_id: string;
+          created_at: string;
+          customer_id: string;
+          order_id: string;
+          rating: number;
+          tags: string[];
+          teammate_id: string;
+          text: string;
+        };
+        Insert: {
+          assignment_id: string;
+          created_at?: string;
+          customer_id: string;
+          order_id: string;
+          rating: number;
+          tags?: string[];
+          teammate_id: string;
+          text?: string;
+        };
+        Update: {
+          assignment_id?: string;
+          created_at?: string;
+          customer_id?: string;
+          order_id?: string;
+          rating?: number;
+          tags?: string[];
+          teammate_id?: string;
+          text?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_reviews_assignment_id_order_id_teammate_id_fkey';
+            columns: ['assignment_id', 'order_id', 'teammate_id'];
+            isOneToOne: false;
+            referencedRelation: 'order_assignments';
+            referencedColumns: ['id', 'order_id', 'teammate_id'];
+          },
+          {
+            foreignKeyName: 'order_reviews_customer_id_fkey';
+            columns: ['customer_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_reviews_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: true;
+            referencedRelation: 'teammate_earning_entries';
+            referencedColumns: ['order_id'];
+          },
+          {
+            foreignKeyName: 'order_reviews_teammate_id_fkey';
+            columns: ['teammate_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       orders: {
         Row: {
           accepted_at: string | null;
+          admin_cancel_note: string | null;
+          admin_refund_reason: string | null;
+          admin_refunded_at: string | null;
           amount_eur_cents: number;
           assigned_teammate_id: string | null;
           booking_fx: number;
@@ -756,6 +871,9 @@ export type Database = {
         };
         Insert: {
           accepted_at?: string | null;
+          admin_cancel_note?: string | null;
+          admin_refund_reason?: string | null;
+          admin_refunded_at?: string | null;
           amount_eur_cents: number;
           assigned_teammate_id?: string | null;
           booking_fx: number;
@@ -788,6 +906,9 @@ export type Database = {
         };
         Update: {
           accepted_at?: string | null;
+          admin_cancel_note?: string | null;
+          admin_refund_reason?: string | null;
+          admin_refunded_at?: string | null;
           amount_eur_cents?: number;
           assigned_teammate_id?: string | null;
           booking_fx?: number;
@@ -1304,6 +1425,7 @@ export type Database = {
         Args: { p_proof_id: string };
         Returns: Json;
       };
+      accept_handover: { Args: { p_token_hash: string }; Returns: Json };
       accept_order: { Args: { p_order_id: string }; Returns: Json };
       admin_account_dto: {
         Args: { p_user: string; p_viewer: string };
@@ -1334,6 +1456,11 @@ export type Database = {
           name: string;
         }[];
       };
+      admin_cancel_order: {
+        Args: { p_order_id: string; p_reason: string };
+        Returns: Json;
+      };
+      admin_create_handover: { Args: { p_order_id: string }; Returns: Json };
       admin_customers: { Args: never; Returns: Json };
       admin_decide_application: {
         Args: {
@@ -1355,8 +1482,9 @@ export type Database = {
       };
       admin_orders: { Args: { p_limit?: number }; Returns: Json };
       admin_presence: { Args: never; Returns: Json };
-      admin_presence_check_in: {
-        Args: { p_online?: boolean };
+      admin_presence_check_in: { Args: { p_online?: boolean }; Returns: Json };
+      admin_refund_order: {
+        Args: { p_order_id: string; p_reason: string };
         Returns: Json;
       };
       admin_set_access: {
@@ -1371,12 +1499,12 @@ export type Database = {
         Args: { p_role: string; p_user_id: string };
         Returns: Json;
       };
-      admin_set_teammate_offline: {
-        Args: { p_reason: string; p_user: string };
-        Returns: Json;
-      };
       admin_set_suspended: {
         Args: { p_reason?: string; p_suspended: boolean; p_user_id: string };
+        Returns: Json;
+      };
+      admin_set_teammate_offline: {
+        Args: { p_reason: string; p_user: string };
         Returns: Json;
       };
       admin_support_command: {
@@ -1417,6 +1545,8 @@ export type Database = {
           last_error: string | null;
           order_id: string;
           payment_method_type: string;
+          refund_reason: string | null;
+          refunded_at: string | null;
           settle: string;
           state: string;
           stripe_payment_intent_id: string;
@@ -1471,10 +1601,7 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
-      desk_check_in: {
-        Args: { p_last_active?: string };
-        Returns: Json;
-      };
+      desk_check_in: { Args: { p_last_active?: string }; Returns: Json };
       desk_set_online: { Args: { p_online: boolean }; Returns: Json };
       finalize_order_proof_upload: {
         Args: {
@@ -1497,6 +1624,7 @@ export type Database = {
         Args: { p_order_id: string; p_proof_id: string };
         Returns: Json;
       };
+      handover_info: { Args: { p_token_hash: string }; Returns: Json };
       list_order_chat_flags: { Args: never; Returns: Json };
       list_order_proofs: { Args: { p_order_id: string }; Returns: Json };
       order_chat_append: {
@@ -1577,13 +1705,6 @@ export type Database = {
         };
         Returns: boolean;
       };
-      order_sweep: { Args: { p_limit: number }; Returns: number };
-      order_teammate_dto: {
-        Args: { p_order: Database['public']['Tables']['orders']['Row'] };
-        Returns: Json;
-      };
-      presence_public_count: { Args: never; Returns: number };
-      refresh_discord_link: { Args: { p_user: string }; Returns: undefined };
       order_review: {
         Args: {
           p_order_id: string;
@@ -1593,6 +1714,25 @@ export type Database = {
         };
         Returns: Json;
       };
+      order_review_dto: {
+        Args: {
+          p_review: Database['public']['Tables']['order_reviews']['Row'];
+        };
+        Returns: Json;
+      };
+      order_sweep: { Args: { p_limit: number }; Returns: number };
+      order_teammate_dto: {
+        Args: { p_order: Database['public']['Tables']['orders']['Row'] };
+        Returns: Json;
+      };
+      presence_desk_result: { Args: { p_user: string }; Returns: Json };
+      presence_public_count: { Args: never; Returns: number };
+      presence_teammate_ready: { Args: { p_user: string }; Returns: boolean };
+      record_payment_refund: {
+        Args: { p_payment_intent: string; p_reason?: string };
+        Returns: Json;
+      };
+      refresh_discord_link: { Args: { p_user: string }; Returns: undefined };
       reroll_order: { Args: { p_order_id: string }; Returns: Json };
       resolve_order_chat_flag: {
         Args: { p_flag_id: string; p_status: string };
@@ -1652,8 +1792,8 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
-      teammate_stats: { Args: never; Returns: Json };
       teammate_order_queue: { Args: never; Returns: Json };
+      teammate_stats: { Args: never; Returns: Json };
     };
     Enums: {
       [_ in never]: never;
