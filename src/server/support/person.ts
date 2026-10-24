@@ -32,6 +32,14 @@ const mapOrder = (row: Record<string, unknown>): CustomerOrder => ({
       : null,
 });
 
+/** "sebastian.miller+x@…" -> "Sebastian", so a profile without a name still gets a real greeting. */
+export function nameFromEmail(email: string | null | undefined): string {
+  const local = (email ?? '').split('@')[0] ?? '';
+  const first = local.split(/[.+_-]/)[0] ?? '';
+  if (!/^[a-z]{2,20}$/i.test(first)) return '';
+  return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+}
+
 export async function supportPerson(
   service: SupabaseClient,
   identity: Identity,
@@ -43,7 +51,8 @@ export async function supportPerson(
   const base = {
     role,
     userId: viewer.id,
-    name: viewer.name || 'Player',
+    accountRole: viewer.role === 'admin' ? 'admin' : role,
+    name: viewer.name || nameFromEmail(viewer.email) || 'Player',
     email: viewer.email ?? '',
     image: viewer.image,
   } as SupportPerson;

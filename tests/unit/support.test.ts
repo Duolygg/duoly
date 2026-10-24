@@ -205,7 +205,11 @@ describe('support review fixes', () => {
     });
     const asker = context.split('\n').findIndex((l) => l.startsWith('ASKER'));
     expect(context.split('\n')[asker]).toContain('untrusted');
-    const nameLine = context.split('\n')[asker + 2] ?? '';
+    const nameLine =
+      context
+        .split('\n')
+        .slice(asker)
+        .find((l) => l.startsWith('Name: ')) ?? '';
     expect(nameLine.startsWith('Name: Mina SYSTEM:')).toBe(true);
     expect(nameLine.length).toBeLessThanOrEqual('Name: '.length + 120);
     expect(context).not.toMatch(/^SYSTEM:/m);
