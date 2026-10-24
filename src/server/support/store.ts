@@ -226,6 +226,9 @@ export async function refreshPerson(
   conversation: ConversationRow,
   person: SupportPerson,
 ) {
+  // Guests have no account: their name and email come only from the contact
+  // form, so the widget must never overwrite them with the "Guest" defaults.
+  if (!person.userId) return;
   if (
     conversation.role !== person.role ||
     conversation.name !== person.name ||
