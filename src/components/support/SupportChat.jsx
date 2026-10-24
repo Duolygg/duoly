@@ -10,6 +10,21 @@ import { createSupportFetch } from './support-data';
 // Props: teaser (show the little "Need a hand?" bubble), bottom (px from the bottom, default 24)
 const MASCOT = '/assets/brand/logo-mascots.webp';
 const POLL_OPEN = 3000; // while the panel is open and a human is involved
+const ACTIVE_KEY = 'duoly-support-active';
+const hasActiveChat = () => {
+  try {
+    return window.localStorage.getItem(ACTIVE_KEY) === '1';
+  } catch (e) {
+    return false;
+  }
+};
+const rememberActiveChat = (c) => {
+  try {
+    if (c && c.status !== 'closed')
+      window.localStorage.setItem(ACTIVE_KEY, '1');
+    else window.localStorage.removeItem(ACTIVE_KEY);
+  } catch (e) {}
+};
 const POLL_CLOSED = 12000; // panel closed: only to show an unread badge when the team replies
 
 export default class SupportChat extends React.Component {
@@ -30,8 +45,9 @@ export default class SupportChat extends React.Component {
   }
   componentDidMount() {
     this.ping = newChatPing();
-    this.load();
-    this.schedule();
+    // Only visitors with a live chat poll in the background (for the unread
+    // badge). Everyone else makes no request until they open the widget.
+    if (hasActiveChat()) this.load().then(() => this.schedule());
     // other parts of the page can open the chat: window.dispatchEvent(new Event('duoly:chat')) (e.g. /contact)
     window.addEventListener('duoly:chat', this.openFromPage);
   }
@@ -60,7 +76,9 @@ export default class SupportChat extends React.Component {
     try {
       const r = await this.fetch('/api/support', { cache: 'no-store' });
       if (!r.ok) return;
-      this.take(await r.json());
+      const d = await r.json();
+      rememberActiveChat(d.conversation);
+      this.take(d);
     } catch (e) {}
   }
   // new data from the server: count new team messages (sound + badge when closed)
@@ -87,6 +105,7 @@ export default class SupportChat extends React.Component {
     const open = !this.state.open;
     this.setState({ open, teaser: false, unread: 0 }, () => {
       this.schedule();
+      if (open && !this.state.data) this.load();
       if (open) {
         this.toBottom();
         setTimeout(
@@ -145,6 +164,7 @@ export default class SupportChat extends React.Component {
       const wait = Math.max(0, 650 - (Date.now() - started));
       setTimeout(() => {
         this.setState({ sending: false });
+        rememberActiveChat(j.conversation);
         this.take(j);
         this.schedule();
       }, wait);
