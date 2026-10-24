@@ -1,10 +1,17 @@
-import Profile from '../../design-reference/components/Profile.jsx';
+import Profile from './Profile.jsx';
+import { PROFILE_LANGUAGES } from '../../contracts/account';
 import type {
   DiscordLink,
   DiscordResult,
   Profile as ProfileData,
   Viewer,
 } from '../../contracts/account';
+// Original lib/roles.js HOME: where "Back to ..." leads for each role.
+const HOME = {
+  customer: '/dashboard',
+  teammate: '/teammate',
+  admin: '/admin',
+} as const;
 export default function LiveProfile({
   viewer,
   profile,
@@ -34,9 +41,9 @@ export default function LiveProfile({
   return (
     <Profile
       user={{ ...viewer, providerImage: null }}
-      profile={{ ...profile, bio: '', languages: [] }}
-      home="/dashboard"
-      languages={[]}
+      profile={profile}
+      home={HOME[viewer.role]}
+      languages={PROFILE_LANGUAGES}
       discord={discord}
       discordResult={discordResult}
       discordEnabled={discordEnabled}

@@ -52,7 +52,14 @@ export const CustomerOrderSchema = z.strictObject({
   rerolls: z.number().int().min(0).max(2),
   current_assignment_id: z.uuid().nullable(),
   teammate: z
-    .strictObject({ name: z.string(), image: z.string(), country: z.string() })
+    .strictObject({
+      name: z.string(),
+      image: z.string(),
+      country: z.string(),
+      // Added by 20261024190000; optional so either side can ship first.
+      bio: z.string().max(160).optional(),
+      languages: z.array(z.string().max(32)).max(6).optional(),
+    })
     .nullable(),
   review: ReviewSchema.nullable(),
 });

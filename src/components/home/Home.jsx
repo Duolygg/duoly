@@ -1428,15 +1428,22 @@ export default class Home extends React.Component {
       confirmPay: payLabel,
       confirmCur: cur,
       // step 1 of "what happens next": exactly where the money comes from, once
+      // Live checkout charges the euro price; a dollar figure is a conversion, so say so.
       chargeTitle: this.props.onCheckout
-        ? 'Pay ' + money(amount) + ' securely with Stripe'
+        ? 'Pay ' +
+          (cur === 'USD' ? 'about ' : '') +
+          money(amount) +
+          ' securely with Stripe'
         : allWallet
           ? money(amount) + ' comes from your Duoly balance'
           : walletUse > 0
             ? 'We charge ' + money(due) + ' to your ' + payLabel
             : 'We charge ' + money(amount) + ' to your ' + payLabel,
       chargeText: this.props.onCheckout
-        ? 'Apple Pay, Google Pay, PayPal, cards and 20+ local methods. Cards, wallets and PayPal are only charged when a teammate accepts.'
+        ? (cur === 'USD'
+            ? 'Prices are set in euros and shown in dollars at today’s ECB rate plus 1%. Checkout shows the exact amount. '
+            : '') +
+          'Apple Pay, Google Pay, PayPal, cards and 20+ local methods. Cards, wallets and PayPal are only charged when a teammate accepts.'
         : (walletUse > 0 && !allWallet
             ? 'The other ' +
               money(walletUse) +

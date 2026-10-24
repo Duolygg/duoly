@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
-import type { Viewer } from '../../contracts/account';
+import type { Currency, Viewer } from '../../contracts/account';
 import type { RecentMatch } from '../../contracts/home';
 
 const PENDING_KEY = 'duoly-pending-queue';
@@ -22,6 +22,8 @@ export default function LiveHome({
   csrf,
   checkoutEnabled = false,
   usdRate,
+  accountCurrency = null,
+  cookieCurrency = null,
   onlineNow: initialOnline = 0,
   recentMatches: initialMatches = [],
   authError = null,
@@ -30,6 +32,8 @@ export default function LiveHome({
   csrf: string;
   checkoutEnabled?: boolean;
   usdRate?: number;
+  accountCurrency?: Currency | null;
+  cookieCurrency?: Currency | null;
   onlineNow?: number;
   recentMatches?: RecentMatch[];
   authError?: string | null;
@@ -66,6 +70,28 @@ export default function LiveHome({
     };
     const timer = window.setInterval(() => void refresh(), 60_000);
     return () => window.clearInterval(timer);
+  }, []);
+  // Original HomeWithAuth saveCurrency: a cookie so the next visit knows it (also
+  // signed out), plus the account when signed in so it follows the user to other devices.
+  const saveCurrency = (code: Currency) => {
+    document.cookie =
+      'duoly-currency=' +
+      code +
+      '; Path=/; Max-Age=31536000; SameSite=Lax; Secure';
+    if (!viewer) return;
+    fetch('/api/me/currency', {
+      method: 'POST',
+      credentials: 'same-origin',
+      redirect: 'error',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currency: code, csrf }),
+    }).catch(() => {});
+  };
+  // Just signed in: the account's currency wins; if it has none yet, keep the one picked here.
+  useEffect(() => {
+    if (viewer && !accountCurrency && cookieCurrency)
+      saveCurrency(cookieCurrency);
+    // Runs once per page load with the server-rendered values.
   }, []);
   const signOut = async () => {
     const response = await fetch('/auth/logout', {
@@ -172,7 +198,8 @@ export default function LiveHome({
     <Home
       csrf={csrf}
       session={viewer ? { user: viewer } : null}
-      initialCurrency="EUR"
+      initialCurrency={accountCurrency ?? cookieCurrency}
+      onCurrency={saveCurrency}
       authError={authError}
       askLogin={false}
       onSignIn={onSignIn}

@@ -62,6 +62,24 @@ describe('order room adapter (original QueueRoom.jsx shape)', () => {
       at: Date.parse(review.at),
     });
   });
+  it('shows the teammate bio and languages when the order DTO has them', () => {
+    expect(toRoomOrder(order).teammate).toMatchObject({
+      name: 'Mika Star',
+      bio: '',
+      languages: [],
+    });
+    const mate = {
+      name: 'Mika Star',
+      image: '',
+      country: 'de',
+      bio: 'Calm comms',
+      languages: ['English', 'German'],
+    };
+    expect(toRoomOrder({ ...order, teammate: mate }).teammate).toMatchObject({
+      bio: 'Calm comms',
+      languages: ['English', 'German'],
+    });
+  });
   it('keeps the raw cancel reason so the room can tell who cancelled', () => {
     const o = toRoomOrder({
       ...order,

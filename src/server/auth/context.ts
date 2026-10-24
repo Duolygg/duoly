@@ -113,7 +113,9 @@ export function accountContext(request: Request, cookies: AstroCookies) {
     const [profileResult, roleResult, discordResult] = await Promise.all([
       client
         .from('profiles')
-        .select('id,name,country,image')
+        // '*' so bio, languages and currency are read once migration
+        // 20261024190000 is applied, without breaking sign-in before it.
+        .select('*')
         .eq('id', id)
         .single(),
       client
@@ -129,7 +131,16 @@ export function accountContext(request: Request, cookies: AstroCookies) {
     ]);
     if (profileResult.error || roleResult.error || discordResult.error)
       throw new Error('Your account could not be loaded. Please try again.');
-    const profile = ProfileSchema.parse(profileResult.data);
+    const row = profileResult.data as Record<string, unknown>;
+    const profile = ProfileSchema.parse({
+      id: row.id,
+      name: row.name,
+      country: row.country,
+      image: row.image,
+      bio: row.bio ?? '',
+      languages: row.languages ?? [],
+      currency: row.currency ?? null,
+    });
     let role = RoleSchema.parse(roleResult.data.role);
     // Owners (ADMIN_EMAILS) are always admin. Only sync when the list is configured, so a
     // deployment without it never strips owners from the shared database.
