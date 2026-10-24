@@ -1,4 +1,4 @@
-/* global Response, fetch, crypto */
+/* global Response, fetch, crypto, FormData */
 // Serves the endpoints the original QueueRoom.jsx calls (/api/orders/:id GET + POST {action},
 // /api/orders/:id/chat GET + POST {text}|{typing}) from the real ones, in the original's shape.
 // Pure mapping: lifecycle rules stay server-side (customer_order, cancel, reroll, chat RPCs).
@@ -26,6 +26,15 @@ const call = async (url, body) => {
   return { res, data };
 };
 const ms = (iso) => (iso ? Date.parse(iso) : null);
+const toRoomReport = (report) => ({
+  id: report.reference,
+  type: report.type,
+  status: report.status,
+  bounty: report.bounty_eur_cents / 100,
+  at: ms(report.created_at),
+  decidedAt: ms(report.decided_at),
+  bountyOwed: !!report.bounty_owed,
+});
 
 /** Our customer order DTO in the original QueueRoom shape. */
 export function toRoomOrder(o) {
@@ -57,7 +66,7 @@ export function toRoomOrder(o) {
         }
       : null,
     tip: null,
-    reports: [],
+    reports: (o.reports || []).map(toRoomReport),
     proof: [],
   };
 }
@@ -86,8 +95,36 @@ export function createRoomFetch({ orderId, csrf }) {
         return json({ order: toRoomOrder(data.order), now: Date.now() });
       }
       if (path === base && method === 'POST') {
-        if (!['cancel', 'reroll', 'review'].includes(body.action))
+        if (!['cancel', 'reroll', 'review', 'report'].includes(body.action))
           return json({ error: 'That isn’t available yet.' }, 501);
+        if (body.action === 'report') {
+          const form = new FormData();
+          form.set('type', body.type);
+          form.set('description', body.text);
+          for (const [index, dataUrl] of (body.evidence || []).entries()) {
+            const blob = await (await fetch(dataUrl)).blob();
+            form.append(
+              'evidence',
+              blob,
+              `evidence-${index + 1}.${blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : 'jpg'}`,
+            );
+          }
+          const res = await fetch(base + '/report', {
+            method: 'POST',
+            credentials: 'same-origin',
+            cache: 'no-store',
+            redirect: 'error',
+            headers: { 'X-CSRF-Token': csrf },
+            body: form,
+          });
+          const data = await res.json().catch(() => ({}));
+          return json(
+            res.ok && data.report
+              ? { report: toRoomReport(data.report) }
+              : data,
+            res.status,
+          );
+        }
         const payload =
           body.action === 'review'
             ? {

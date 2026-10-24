@@ -1490,6 +1490,11 @@ export type Database = {
         Returns: undefined;
       };
       admin_orders: { Args: { p_limit?: number }; Returns: Json };
+      admin_order_report_decide: {
+        Args: { p_decision: string; p_reason: string; p_report_id: string };
+        Returns: Json;
+      };
+      admin_order_reports: { Args: never; Returns: Json };
       admin_presence: { Args: never; Returns: Json };
       admin_presence_check_in: { Args: { p_online?: boolean }; Returns: Json };
       admin_refund_order: {
@@ -1714,6 +1719,16 @@ export type Database = {
           p_order: Database['public']['Tables']['orders']['Row'];
         };
         Returns: boolean;
+      };
+      order_report_create: {
+        Args: {
+          p_description: string;
+          p_evidence: Json;
+          p_order_id: string;
+          p_report_id: string;
+          p_type: string;
+        };
+        Returns: Json;
       };
       order_review: {
         Args: {

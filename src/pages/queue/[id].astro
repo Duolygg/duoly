@@ -7,6 +7,7 @@ import { accountContext } from '../../server/auth/context';
 import { decodeOrderRpcResult } from '../../server/orders/results';
 import { orderChatEnabled } from '../../server/chat/config';
 const chatEnabled = orderChatEnabled();
+const reportsEnabled = process.env.REPORTS_ENABLED === 'true';
 const command = OrderCommandSchema.safeParse({ order_id: Astro.params.id });
 const operational = command.success;
 let identity = null;
@@ -63,6 +64,7 @@ if (operational) {
       viewer={identity.viewer}
       csrf={csrf}
       chatEnabled={chatEnabled}
+      reportsEnabled={reportsEnabled}
       client:load
     />
   </SiteLayout>

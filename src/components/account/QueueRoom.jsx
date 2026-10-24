@@ -15,7 +15,7 @@ import { createRoomFetch } from './queue-room-data';
 // Port of the original components/QueueRoom.jsx (duoly-admin/duoly@7f0299f): layout and copy are
 // his. Data and commands go through queue-room-data.js to the real order, chat and proof APIs.
 // Report with bounty (#9), review and tip (#7/#10) stay in the file and switch on here.
-const FEATURES = { reports: false, reviews: true, tips: false };
+const FEATURES = { reviews: true, tips: false };
 
 // what customers can do once matched (kept in sync with lib/orders.js REVIEW_TAGS and lib/reports.js)
 const REVIEW_TAGS = [
@@ -1625,7 +1625,7 @@ export default class QueueRoom extends React.Component {
               locked || left <= 0,
             ),
           )}
-          {FEATURES.reports
+          {this.props.reportsEnabled
             ? row(
                 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2zM9 10h6',
                 GOLD,
@@ -1642,7 +1642,7 @@ export default class QueueRoom extends React.Component {
                 ),
               )
             : null}
-          {FEATURES.reports
+          {this.props.reportsEnabled
             ? row(
                 'M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z',
                 PINK,
@@ -1657,7 +1657,7 @@ export default class QueueRoom extends React.Component {
               )
             : null}
         </ul>
-        {FEATURES.reports ? (
+        {this.props.reportsEnabled ? (
           <p
             style={{
               margin: '14px 0 0',
@@ -2132,7 +2132,7 @@ export default class QueueRoom extends React.Component {
           >
             Proof from your teammate
           </h2>
-          {FEATURES.reports ? (
+          {this.props.reportsEnabled ? (
             <button
               type="button"
               onClick={() => this.openReport('')}
@@ -3248,7 +3248,9 @@ export default class QueueRoom extends React.Component {
               (phase === 'matched' || phase === 'done')
                 ? this.renderChat(v)
                 : null}
-              {phase === 'matched' ? this.renderProtect(v) : null}
+              {phase === 'matched' || phase === 'done'
+                ? this.renderProtect(v)
+                : null}
               {phase === 'done' ? this.renderProof(v) : null}
               {phase === 'matched' || phase === 'done' ? null : o ? (
                 this.renderOrderCard(v)

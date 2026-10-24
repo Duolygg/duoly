@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CustomerReportSchema } from './reports';
 import { ReviewSchema } from './reviews';
 
 const TimestampSchema = z.iso.datetime({ offset: true });
@@ -62,6 +63,8 @@ export const CustomerOrderSchema = z.strictObject({
     })
     .nullable(),
   review: ReviewSchema.nullable(),
+  // Added by 20261024220000; optional so code can deploy before the migration.
+  reports: z.array(CustomerReportSchema).max(2).optional(),
 });
 
 /** Exact privacy-safe public.order_teammate_dto projection. */
