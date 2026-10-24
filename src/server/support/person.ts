@@ -106,38 +106,27 @@ export async function supportPerson(
       },
     };
   }
-  const [orderResult, accessResult, discordResult, completedResult] =
-    await Promise.all([
-      service
-        .from('orders')
-        .select(
-          'id,public_reference,title,game,units,customer_name,accepted_at',
-        )
-        .eq('assigned_teammate_id', viewer.id)
-        .eq('status', 'in_progress')
-        .maybeSingle(),
-      service
-        .from('teammate_order_access')
-        .select('approved_games,suspended')
-        .eq('user_id', viewer.id)
-        .maybeSingle(),
-      service
-        .from('discord_accounts')
-        .select('user_id')
-        .eq('user_id', viewer.id)
-        .maybeSingle(),
-      service
-        .from('orders')
-        .select('payout_usd_cents')
-        .eq('assigned_teammate_id', viewer.id)
-        .eq('status', 'completed'),
-    ]);
-  for (const result of [
-    orderResult,
-    accessResult,
-    discordResult,
-    completedResult,
-  ])
+  // Discord link from teammate_order_access.discord_id (mirrored by a trigger
+  // from the linked identity): the service role cannot read discord_accounts.
+  const [orderResult, accessResult, completedResult] = await Promise.all([
+    service
+      .from('orders')
+      .select('id,public_reference,title,game,units,customer_name,accepted_at')
+      .eq('assigned_teammate_id', viewer.id)
+      .eq('status', 'in_progress')
+      .maybeSingle(),
+    service
+      .from('teammate_order_access')
+      .select('approved_games,suspended,discord_id')
+      .eq('user_id', viewer.id)
+      .maybeSingle(),
+    service
+      .from('orders')
+      .select('payout_usd_cents')
+      .eq('assigned_teammate_id', viewer.id)
+      .eq('status', 'completed'),
+  ]);
+  for (const result of [orderResult, accessResult, completedResult])
     if (result.error) throw result.error;
   const order = orderResult.data as Record<string, unknown> | null;
   const completed = (completedResult.data ?? []) as {
@@ -166,7 +155,9 @@ export async function supportPerson(
         (accessResult.data as { approved_games?: string[] } | null)
           ?.approved_games ?? []
       ).map(gameName),
-      discordConnected: !!discordResult.data,
+      discordConnected: !!(
+        accessResult.data as { discord_id?: string | null } | null
+      )?.discord_id,
       suspended:
         (accessResult.data as { suspended?: boolean } | null)?.suspended ===
         true,

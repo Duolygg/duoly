@@ -2,7 +2,8 @@ import type { APIContext, APIRoute } from 'astro';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { SupportPostSchema } from '../../contracts/support';
-import { answerWithAi } from './ai';
+import { answerMetadata, answerWithAi } from './ai';
+import { sparkyLookup } from './lookup';
 import { notifySupportAdmins, notifySupportDiscordHook } from './notify';
 import { supportPerson } from './person';
 import { CHIPS, greeting, preparedReply, type SupportPerson } from './sparky';
@@ -253,6 +254,8 @@ export const postSupport: APIRoute = async (context) => {
               .filter((m) => m.sender !== 'system'),
             apiKey:
               process.env.OPENAI_API_KEY ?? import.meta.env?.OPENAI_API_KEY,
+            // Bound to the session user id, never to anything the model sends.
+            lookup: person.userId ? sparkyLookup(service, person.userId) : null,
           })
         : (() => {
             const routed = preparedReply(person, text);
@@ -264,9 +267,13 @@ export const postSupport: APIRoute = async (context) => {
             };
           })();
       if (answer.reply)
-        await addMessage(service, conversation.id, 'bot', answer.reply, {
-          source: answer.source,
-        });
+        await addMessage(
+          service,
+          conversation.id,
+          'bot',
+          answer.reply,
+          answerMetadata(answer),
+        );
       if (answer.handoff)
         conversation = await handoff(service, person, conversation, text);
       else

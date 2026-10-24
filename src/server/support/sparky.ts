@@ -98,7 +98,7 @@ const sanitize = (value: string, max = 120): string => {
   return out.replace(/\s+/g, ' ').trim().slice(0, max);
 };
 
-const CURRENT_FACTS = [
+export const CURRENT_FACTS = [
   'Stripe authorises a card or wallet payment at checkout. It charges only when a teammate accepts.',
   'If nobody accepts within 5 minutes, or the customer cancels before acceptance, nothing is charged. Stripe releases the hold. A bank may take a few days to show that release.',
   'Refunds after acceptance are decided by an admin and go back to the card through Stripe. There is no Duoly wallet or balance. There is no cashback or reward level system yet.',
