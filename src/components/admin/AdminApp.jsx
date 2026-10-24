@@ -15,6 +15,7 @@ import Overview from './Overview';
 import Teammates from './Teammates';
 import Customers from './Customers';
 import NotConnected from './NotConnected';
+import Priority from './Priority';
 import ChatModeration from './ChatModeration';
 import Support from './Support';
 
@@ -147,6 +148,7 @@ const TITLES = {
 const LIVE = [
   'overview',
   'live',
+  'priority',
   'users',
   'applications',
   'orders',
@@ -495,6 +497,7 @@ export default class AdminApp extends React.Component {
     else if (s.section === 'overview')
       body = <Overview {...props} chatEnabled={this.props.chatEnabled} />;
     else if (s.section === 'live') body = <LiveDesk {...props} />;
+    else if (s.section === 'priority') body = <Priority {...props} />;
     else if (s.section === 'teammates') body = <Teammates {...props} />;
     else if (s.section === 'customers') body = <Customers {...props} />;
     else if (s.section === 'orders')

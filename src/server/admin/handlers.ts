@@ -16,6 +16,7 @@ import {
   SetSuspendedSchema,
   applicationError,
 } from '../../contracts/admin';
+import { AdminPriorityCommandSchema, tierById } from '../../contracts/priority';
 import { sendApplicationDecision, sendApplicationReceived } from './notify';
 import { settleSoon } from '../payments/webhook';
 
@@ -215,6 +216,39 @@ export const orders = adminRoute(
 export const audit = adminRoute(
   (client) => client.rpc('admin_audit', { p_limit: 500 }),
   [],
+);
+
+/** GET lists teammates with their breakdown; POST runs one priority command. */
+export const priority = adminRoute(
+  (client) => client.rpc('admin_priority'),
+  [
+    {
+      schema: AdminPriorityCommandSchema,
+      call: (client, body) => {
+        const p_user = body.userId as string;
+        switch (body.action as string) {
+          case 'set':
+            return client.rpc('admin_set_priority', {
+              p_user,
+              p_base: body.prio as number,
+            });
+          case 'reset':
+            return client.rpc('admin_reset_priority', { p_user });
+          case 'adjust':
+            return client.rpc('admin_adjust_priority', {
+              p_user,
+              p_points: tierById(body.tier as string)?.points ?? 0,
+              p_duration: body.duration as string,
+              p_reason: (body.reason as string | undefined) ?? '',
+            });
+          case 'clearAdjust':
+            return client.rpc('admin_clear_adjustment', { p_user });
+          default:
+            return client.rpc('admin_forgive_misses', { p_user });
+        }
+      },
+    },
+  ],
 );
 
 /** POST /api/apply: the public teammate application (no account needed). */
