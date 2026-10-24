@@ -54,7 +54,7 @@ function css(str) {
 export const FEATURES = {
   presence: true,
   notifications: true,
-  preferences: false,
+  preferences: true,
   trust: false,
   stats: false,
   reviews: true,
@@ -274,6 +274,8 @@ export default class Teammate extends React.Component {
       // every game starts switched on; which ones can actually bring orders is decided by `access` below
       enabled: Object.fromEntries(GAME_IDS.map((id) => [id, true])),
       voiceOk: true,
+      settingsSaving: false,
+      settingsLoaded: admin,
       // which orders an admin approved this teammate for (games, or Gamer Girl); the server sends updates with every poll
       access: props.access || NO_ACCESS,
       menu: false,
@@ -456,6 +458,65 @@ export default class Teammate extends React.Component {
     this._typedAt = Date.now();
     setTyping(fetch, a.id, this.props.csrf, a.assignmentId).catch(() => {});
   }
+  queueSettingsState(
+    enabled = this.state.enabled,
+    voiceOk = this.state.voiceOk,
+  ) {
+    return {
+      enabledGames: GAME_IDS.filter((id) => enabled[id]),
+      voiceOptIn: voiceOk,
+    };
+  }
+  applyQueueSettings(settings) {
+    this.setState({
+      enabled: Object.fromEntries(
+        GAME_IDS.map((id) => [id, settings.enabledGames.includes(id)]),
+      ),
+      voiceOk: settings.voiceOptIn,
+      ...(settings.allowedGames
+        ? { access: { games: settings.allowedGames, gg: settings.ggAccess } }
+        : {}),
+      settingsSaving: false,
+      settingsLoaded: true,
+    });
+  }
+  async loadQueueSettings() {
+    if (!FEATURES.preferences || this.props.admin || this.state.needDiscord)
+      return;
+    try {
+      const response = await this._fetch('/api/queue-settings');
+      if (!response.ok || this._disposed) return;
+      this.applyQueueSettings(await response.json());
+    } catch {}
+  }
+  async saveQueueSettings(enabled, voiceOk) {
+    if (
+      this.state.settingsSaving ||
+      !this.state.settingsLoaded ||
+      this.props.admin
+    )
+      return;
+    const previous = this.queueSettingsState();
+    const next = this.queueSettingsState(enabled, voiceOk);
+    this.setState({ enabled, voiceOk, settingsSaving: true, notice: '' });
+    try {
+      const response = await this._fetch('/api/queue-settings', {
+        method: 'POST',
+        body: JSON.stringify(next),
+      });
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.error || 'Could not save queue settings.');
+      if (!this._disposed) this.applyQueueSettings(data);
+    } catch (error) {
+      if (!this._disposed) {
+        this.applyQueueSettings(previous);
+        this.setState({
+          notice: error.message || 'Could not save queue settings.',
+        });
+      }
+    }
+  }
   componentDidMount() {
     const now = Date.now();
     this.setState(
@@ -510,6 +571,7 @@ export default class Teammate extends React.Component {
           ? 'unsupported'
           : Notification.permission,
     });
+    this.loadQueueSettings();
     this.checkIn();
     this.checkMine();
     if (FEATURES.stats || FEATURES.reviews) {
@@ -743,7 +805,10 @@ export default class Teammate extends React.Component {
       }
       this._acceptReadback = false;
       const fresh = this.state.online
-        ? newEligibleOrders(this._seen, data.queue, this.state.access)
+        ? newEligibleOrders(this._seen, data.queue, this.state.access, {
+            enabledGames: GAME_IDS.filter((id) => this.state.enabled[id]),
+            voiceOptIn: this.state.voiceOk,
+          })
         : [];
       this._seen = data.queue.map((order) => order.id);
       if (fresh.length) {
@@ -1337,8 +1402,12 @@ export default class Teammate extends React.Component {
         imgStyle:
           'width: 34px; height: 34px; border-radius: 10px; transition: filter .2s; ' +
           (on ? '' : 'filter: grayscale(1) brightness(.6);'),
+        saving: s.settingsSaving || !s.settingsLoaded,
         toggle: () =>
-          this.setState({ enabled: { ...this.state.enabled, [g.id]: !on } }),
+          this.saveQueueSettings(
+            { ...this.state.enabled, [g.id]: !on },
+            this.state.voiceOk,
+          ),
       };
     });
     const enabledCount = mine.filter((g) => s.enabled[g.id]).length;
@@ -1554,7 +1623,9 @@ export default class Teammate extends React.Component {
         'px; width: 18px; height: 18px; border-radius: 50%; transition: left .2s; background: ' +
         (s.voiceOk ? '#17092E' : '#8E84AB') +
         ';',
-      toggleVoice: () => this.setState({ voiceOk: !this.state.voiceOk }),
+      settingsSaving: s.settingsSaving || !s.settingsLoaded,
+      toggleVoice: () =>
+        this.saveQueueSettings(this.state.enabled, !this.state.voiceOk),
       menuOpen: s.menu,
       menuOpenStr: s.menu ? 'true' : 'false',
       toggleMenu: () => this.setState({ menu: !this.state.menu }),
@@ -4981,6 +5052,7 @@ export default class Teammate extends React.Component {
                           key={g.id}
                           type="button"
                           aria-pressed={g.pressed}
+                          disabled={g.saving}
                           onClick={g.toggle}
                           style={css(g.style)}
                         >
@@ -5042,6 +5114,7 @@ export default class Teammate extends React.Component {
                         role="switch"
                         aria-checked={v.voiceStr}
                         aria-label="Voice comms"
+                        disabled={v.settingsSaving}
                         onClick={v.toggleVoice}
                         style={css(v.voiceTrack)}
                       >

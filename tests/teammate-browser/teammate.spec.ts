@@ -82,6 +82,8 @@ test('original layout, server queue, real chat transport and private completion 
   page.on('pageerror', (e) => errors.push(e.message));
   let accepted = false;
   let online = false;
+  let voiceOptIn = true;
+  const settingsWrites: object[] = [];
   const messages: object[] = [];
   const requests: string[] = [];
   await page.route('**/api/**', async (r) => {
@@ -92,6 +94,22 @@ test('original layout, server queue, real chat transport and private completion 
       const command = req.postDataJSON();
       if (command.action === 'set') online = command.online;
       return r.fulfill({ json: presence(online) });
+    }
+    if (url.pathname === '/api/teammate/queue-settings') {
+      if (req.method() === 'POST') {
+        const body = req.postDataJSON();
+        expect(body.csrf).toBe('fixture-csrf');
+        settingsWrites.push(body);
+        voiceOptIn = body.voiceOptIn;
+      }
+      return r.fulfill({
+        json: {
+          allowed_games: ['lol'],
+          enabled_games: ['lol'],
+          gg_access: false,
+          voice_opt_in: voiceOptIn,
+        },
+      });
     }
     if (url.pathname === '/api/teammate/stats')
       return r.fulfill({ json: stats });
@@ -189,10 +207,15 @@ test('original layout, server queue, real chat transport and private completion 
     page.getByRole('heading', { name: 'You’re online' }),
   ).toBeVisible();
   await expect(page.getByText('DL-42', { exact: true })).toBeVisible();
-  await expect(page.getByRole('switch')).toHaveCount(2);
-  await expect(page.getByText('Queue settings', { exact: true })).toHaveCount(
-    0,
-  );
+  await expect(page.getByRole('switch')).toHaveCount(3);
+  await expect(page.getByText('Queue settings', { exact: true })).toBeVisible();
+  const voice = page.getByRole('switch', { name: 'Voice comms' });
+  await expect(voice).toHaveAttribute('aria-checked', 'true');
+  await voice.click();
+  await expect(voice).toHaveAttribute('aria-checked', 'false');
+  expect(settingsWrites).toEqual([
+    { csrf: 'fixture-csrf', enabledGames: ['lol'], voiceOptIn: false },
+  ]);
   await expect(page.getByText('Earned today', { exact: true })).toHaveCount(0);
   await expect(page.locator('header')).toHaveCount(1);
   await page.screenshot({
@@ -234,9 +257,9 @@ test('original layout, server queue, real chat transport and private completion 
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect(page.getByText('Hello customer', { exact: true })).toBeVisible();
   await expect(page.getByText('Sent', { exact: false })).toBeVisible();
-  expect(
-    requests.some((p) => /heartbeat|leaderboard|settings|preview/.test(p)),
-  ).toBe(false);
+  expect(requests.some((p) => /heartbeat|leaderboard|preview/.test(p))).toBe(
+    false,
+  );
   // Reviews are live: only the scoped rating read is allowed, never earnings stats UI.
   expect(requests.filter((p) => /stats/.test(p))).toEqual(
     requests.filter((p) => p.endsWith('/api/teammate/stats')),
@@ -490,6 +513,15 @@ for (const failure of ['503', 'network']) {
         if (command.action === 'set') online = command.online;
         return route.fulfill({ json: presence(online) });
       }
+      if (path === '/api/teammate/queue-settings')
+        return route.fulfill({
+          json: {
+            allowed_games: ['lol'],
+            enabled_games: ['lol'],
+            gg_access: false,
+            voice_opt_in: true,
+          },
+        });
       if (path === '/api/teammate/queue')
         return route.fulfill({
           json: {
