@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 const image = readFileSync(
   new URL('../../public/assets/avatars/avatar-1.png', import.meta.url),
@@ -26,18 +26,33 @@ const order = {
   payout_usd_cents: 1234,
   current_assignment_id: null,
 };
+const presence = (online: boolean) => ({
+  online,
+  online_since: online ? '2026-10-24T10:00:00.000Z' : null,
+  forced_offline: null,
+});
+const settle = async (page: Page) => {
+  await expect.poll(() => page.locator('astro-island[ssr]').count()).toBe(0);
+};
+
 test('original layout, server queue, real chat transport and private completion stay connected', async ({
   page,
 }, info) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   let accepted = false;
+  let online = false;
   const messages: object[] = [];
   const requests: string[] = [];
   await page.route('**/api/**', async (r) => {
     const req = r.request(),
       url = new URL(req.url());
     requests.push(url.pathname);
+    if (url.pathname === '/api/teammate/presence') {
+      const command = req.postDataJSON();
+      if (command.action === 'set') online = command.online;
+      return r.fulfill({ json: presence(online) });
+    }
     if (url.pathname === '/api/teammate/queue')
       return r.fulfill({ json: { orders: accepted ? [] : [order] } });
     if (url.pathname === '/api/teammate/order')
@@ -123,11 +138,16 @@ test('original layout, server queue, real chat transport and private completion 
     return r.fulfill({ status: 404, json: { error: 'Unexpected endpoint' } });
   });
   await page.goto('/');
+  await settle(page);
   await expect(
-    page.getByRole('heading', { name: 'Ready to play?' }),
+    page.getByRole('heading', { name: 'You’re offline' }),
+  ).toBeVisible();
+  await page.getByRole('switch', { name: 'Go online' }).first().click();
+  await expect(
+    page.getByRole('heading', { name: 'You’re online' }),
   ).toBeVisible();
   await expect(page.getByText('DL-42', { exact: true })).toBeVisible();
-  await expect(page.getByRole('switch')).toHaveCount(0);
+  await expect(page.getByRole('switch')).toHaveCount(2);
   await expect(page.getByText('Queue settings', { exact: true })).toHaveCount(
     0,
   );
@@ -152,10 +172,12 @@ test('original layout, server queue, real chat transport and private completion 
   await expect(page.getByText('Hello customer', { exact: true })).toBeVisible();
   await expect(page.getByText('Sent', { exact: false })).toBeVisible();
   expect(
-    requests.some((p) =>
-      /stats|heartbeat|leaderboard|settings|preview/.test(p),
-    ),
+    requests.some((p) => /heartbeat|leaderboard|settings|preview/.test(p)),
   ).toBe(false);
+  // Reviews are live: only the scoped rating read is allowed, never earnings stats UI.
+  expect(requests.filter((p) => /stats/.test(p))).toEqual(
+    requests.filter((p) => p.endsWith('/api/teammate/stats')),
+  );
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -194,6 +216,8 @@ test('uploads private evidence then freezes completion across uncertain retry an
   await page.route('**/api/**', async (r) => {
     const req = r.request(),
       path = new URL(req.url()).pathname;
+    if (path === '/api/teammate/presence')
+      return r.fulfill({ json: presence(true) });
     if (path === '/api/teammate/order') {
       orderReads++;
       return denyReadback && completed
@@ -320,6 +344,8 @@ test('desk 401 removes mounted private assignment, chat and evidence controls', 
   let signedOut = false;
   await page.route('**/api/**', async (route) => {
     const path = new URL(route.request().url()).pathname;
+    if (path === '/api/teammate/presence')
+      return route.fulfill({ json: presence(true) });
     if (path === '/api/teammate/queue')
       return route.fulfill({ json: { orders: [] } });
     if (path === '/api/teammate/order')
@@ -392,9 +418,15 @@ for (const failure of ['503', 'network']) {
   }) => {
     let uncertain = false;
     let recovered = false;
+    let online = false;
     const mutations: string[] = [];
     await page.route('**/api/**', async (route) => {
       const path = new URL(route.request().url()).pathname;
+      if (path === '/api/teammate/presence') {
+        const command = route.request().postDataJSON();
+        if (command.action === 'set') online = command.online;
+        return route.fulfill({ json: presence(online) });
+      }
       if (path === '/api/teammate/queue')
         return route.fulfill({
           json: {
@@ -422,6 +454,8 @@ for (const failure of ['503', 'network']) {
       return route.fulfill({ status: 404, json: {} });
     });
     await page.goto('/');
+    await settle(page);
+    await page.getByRole('switch', { name: 'Go online' }).first().click();
     await expect(
       page.getByRole('button', { name: 'Accept', exact: true }),
     ).toHaveCount(2);

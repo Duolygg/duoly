@@ -6,6 +6,7 @@ import {
   card,
   h2,
   pill,
+  btn,
   eur,
   ago,
 } from '../../design-reference/components/admin/ui';
@@ -20,6 +21,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const CANCEL = {
   queue_expired: 'No teammate in 5 min',
   customer_cancelled: 'Customer cancelled',
+  admin_cancelled: 'Admin cancelled',
 };
 
 const mmss = (ms) => {
@@ -30,7 +32,15 @@ const mmss = (ms) => {
 export default class LiveDesk extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { orders: [], loaded: false, error: '', now: Date.now() };
+    this.state = {
+      orders: [],
+      online: [],
+      loaded: false,
+      error: '',
+      now: Date.now(),
+      actionBusy: '',
+      handovers: {},
+    };
   }
   componentDidMount() {
     this.load();
@@ -43,14 +53,147 @@ export default class LiveDesk extends React.Component {
   }
   async load() {
     if (document.hidden) return;
-    const res = await this.props.api.get('/api/admin/orders');
-    if (!res.ok) return this.setState({ error: res.error, loaded: true });
+    const [orders, presence] = await Promise.all([
+      this.props.api.get('/api/admin/orders'),
+      this.props.api.get('/api/admin/presence'),
+    ]);
+    if (!orders.ok || !presence.ok)
+      return this.setState({
+        error: orders.error || presence.error,
+        loaded: true,
+      });
     this.setState({
-      orders: (res.data.orders || []).map(order),
+      orders: (orders.data.orders || []).map(order),
+      online: presence.data.online || [],
       error: '',
       loaded: true,
-      now: Date.now(),
+      now: Number(presence.data.now) || Date.now(),
     });
+  }
+  async setOffline(person, reason) {
+    const result = await this.props.api.post('/api/admin/presence', {
+      action: 'set-offline',
+      userId: person.id,
+      reason,
+    });
+    if (!result.ok) return this.props.toast(result.error, 'warn');
+    this.props.toast(person.name + ' set offline');
+    this.props.log();
+    this.load();
+  }
+  async command(o, action, reason = '') {
+    this.setState({ actionBusy: action + ':' + o.orderId });
+    const res = await this.props.api.post('/api/admin/orders', {
+      action,
+      orderId: o.orderId,
+      ...(reason ? { reason } : {}),
+    });
+    this.setState({ actionBusy: '' });
+    if (!res.ok) return this.props.toast(res.error, 'warn');
+    if (action === 'handover') {
+      const url = new URL(
+        '/claim/' + encodeURIComponent(res.data.token),
+        window.location.origin,
+      ).toString();
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {}
+      this.setState({
+        handovers: {
+          ...this.state.handovers,
+          [o.orderId]: url,
+        },
+      });
+      return this.props.toast(
+        'Handover link for ' + o.id + ' copied. Send it to a teammate.',
+      );
+    }
+    this.props.toast(
+      action === 'cancel'
+        ? 'Order ' + o.id + ' cancelled. The payment release is processing.'
+        : 'Full refund for ' + o.id + ' is processing.',
+    );
+    await this.load();
+  }
+  copyOrCreate(o) {
+    const url = this.state.handovers[o.orderId];
+    if (!url) return this.command(o, 'handover');
+    return navigator.clipboard
+      .writeText(url)
+      .then(() => this.props.toast('Handover link copied.'))
+      .catch(() =>
+        this.props.toast(
+          'Copy failed. Use the Orders screen to select the link.',
+          'warn',
+        ),
+      );
+  }
+  actions(o) {
+    const busy = !!this.state.actionBusy;
+    return (
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+        {o.status === 'Queued' ? (
+          <>
+            <button
+              type="button"
+              disabled={busy}
+              style={btn('good')}
+              onClick={() => this.copyOrCreate(o)}
+            >
+              {this.state.handovers[o.orderId] ? 'Copy link' : 'Handover link'}
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              style={btn('danger')}
+              onClick={() =>
+                this.props.ask({
+                  title: 'Cancel ' + o.id + '?',
+                  body: 'The order stops and the payment authorization is released.',
+                  confirm: 'Cancel order',
+                  kind: 'danger',
+                  field: {
+                    label: 'Reason (shown in the audit log)',
+                    placeholder: 'e.g. customer asked to cancel',
+                    required: true,
+                  },
+                  onConfirm: (reason) => this.command(o, 'cancel', reason),
+                })
+              }
+            >
+              Cancel
+            </button>
+          </>
+        ) : null}
+        {['In progress', 'Completed'].includes(o.status) &&
+        o.payment &&
+        o.payment.state !== 'refunded' ? (
+          <button
+            type="button"
+            disabled={busy}
+            style={btn('danger')}
+            onClick={() =>
+              this.props.ask({
+                title: 'Refund ' + eur(o.amount) + '?',
+                body:
+                  o.customer +
+                  ' gets the full amount back through Stripe. Refunds are exceptional and audited.',
+                confirm: 'Refund ' + eur(o.amount),
+                kind: 'danger',
+                field: {
+                  label: 'Reason (shown in the audit log)',
+                  placeholder: 'e.g. teammate left mid-game',
+                  required: true,
+                },
+                onConfirm: (reason) => this.command(o, 'refund', reason),
+              })
+            }
+          >
+            Refund
+          </button>
+        ) : null}
+      </div>
+    );
   }
   kpi(label, value, sub, color) {
     return (
@@ -284,24 +427,52 @@ export default class LiveDesk extends React.Component {
                 o,
                 left > 0 ? mmss(left) : 'expiring',
                 <div
-                  aria-label={'Time left ' + mmss(left)}
                   style={{
-                    height: '6px',
-                    borderRadius: '999px',
-                    background: C.raised,
-                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
                   }}
                 >
                   <div
+                    aria-label={'Time left ' + mmss(left)}
                     style={{
-                      width: pct + '%',
-                      height: '100%',
+                      height: '6px',
                       borderRadius: '999px',
-                      background:
-                        pct > 80 ? C.red : pct > 50 ? C.gold : C.green,
-                      transition: 'width 1s linear',
+                      background: C.raised,
+                      overflow: 'hidden',
                     }}
-                  />
+                  >
+                    <div
+                      style={{
+                        width: pct + '%',
+                        height: '100%',
+                        borderRadius: '999px',
+                        background:
+                          pct > 80 ? C.red : pct > 50 ? C.gold : C.green,
+                        transition: 'width 1s linear',
+                      }}
+                    />
+                  </div>
+                  {this.actions(o)}
+                  {this.state.handovers[o.orderId] ? (
+                    <input
+                      aria-label={'Handover link for ' + o.id}
+                      readOnly
+                      value={this.state.handovers[o.orderId]}
+                      onFocus={(event) => event.target.select()}
+                      style={{
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        minHeight: '34px',
+                        borderRadius: '9px',
+                        border: '1px solid ' + C.line2,
+                        background: C.panel,
+                        color: C.white,
+                        padding: '0 8px',
+                        fontSize: '12px',
+                      }}
+                    />
+                  ) : null}
                 </div>,
               );
             },
@@ -311,7 +482,7 @@ export default class LiveDesk extends React.Component {
             'In game',
             playing,
             'No orders being played right now.',
-            (o) => this.line(o, mmss(now - o.acceptedAt)),
+            (o) => this.line(o, mmss(now - o.acceptedAt), this.actions(o)),
           )}
           {this.column(
             'ld-r',
@@ -325,21 +496,121 @@ export default class LiveDesk extends React.Component {
                 <div
                   style={{
                     display: 'flex',
-                    alignItems: 'center',
+                    flexDirection: 'column',
                     gap: '8px',
-                    fontSize: '12.5px',
-                    color: C.dim,
                   }}
                 >
-                  <span style={pill(o.status)}>{o.status}</span>
-                  {o.status === 'Cancelled'
-                    ? CANCEL[o.cancelReason] || 'Cancelled'
-                    : 'completed'}{' '}
-                  {ago(o.completedAt || o.cancelledAt, now)}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '12.5px',
+                      color: C.dim,
+                    }}
+                  >
+                    <span style={pill(o.status)}>{o.status}</span>
+                    {o.status === 'Cancelled'
+                      ? CANCEL[o.cancelReason] || 'Cancelled'
+                      : 'completed'}{' '}
+                    {ago(o.completedAt || o.cancelledAt, now)}
+                  </div>
+                  {this.actions(o)}
                 </div>,
               ),
           )}
         </div>
+        <section
+          aria-labelledby="ld-online"
+          style={{ ...card, padding: '18px' }}
+        >
+          <h2 id="ld-online" style={h2}>
+            Online right now
+          </h2>
+          <p style={{ margin: '4px 0 0', fontSize: '13px', color: C.dim }}>
+            Teammates checking in, everyone playing, and admins with this panel
+            open.
+          </p>
+          <ul
+            className="ops-cards"
+            style={{ listStyle: 'none', margin: '14px 0 0', padding: 0 }}
+          >
+            {s.online.map((person) => (
+              <li
+                key={person.id}
+                style={{
+                  ...card,
+                  padding: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                <img
+                  src={person.image || '/assets/avatars/avatar-1.png'}
+                  alt=""
+                  width="36"
+                  height="36"
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                  }}
+                />
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <strong style={{ display: 'block', color: C.white }}>
+                    {person.name}
+                  </strong>
+                  <span
+                    style={{
+                      fontSize: '12.5px',
+                      color: person.playing ? C.cyan : C.green,
+                    }}
+                  >
+                    {person.playing
+                      ? 'Playing ' + person.order?.id
+                      : person.admin
+                        ? 'Admin online'
+                        : 'Waiting for orders'}
+                  </span>
+                </span>
+                {!person.admin && !person.playing ? (
+                  <button
+                    type="button"
+                    style={btn('danger')}
+                    onClick={() =>
+                      this.props.ask({
+                        title: 'Set ' + person.name + ' offline?',
+                        body: 'Their dashboard switches off within a few seconds. They can go online again when they’re back.',
+                        confirm: 'Set offline',
+                        kind: 'danger',
+                        field: {
+                          label: 'Reason',
+                          options: [
+                            'AFK / dashboard left open',
+                            'Not answering orders',
+                            'Asked to be set offline',
+                            'Other',
+                          ],
+                          value: 'AFK / dashboard left open',
+                        },
+                        onConfirm: (reason) => this.setOffline(person, reason),
+                      })
+                    }
+                  >
+                    Set offline
+                  </button>
+                ) : null}
+              </li>
+            ))}
+            {!s.online.length ? (
+              <li style={{ color: C.dim, fontSize: '14px' }}>
+                Nobody else is online right now.
+              </li>
+            ) : null}
+          </ul>
+        </section>
         <p style={{ margin: '0', fontSize: '13px', color: C.dim }}>
           Updates every 5 seconds. Cancel, refund and handover links to a
           specific teammate come next.

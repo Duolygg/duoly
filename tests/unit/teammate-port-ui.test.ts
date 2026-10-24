@@ -65,7 +65,7 @@ it('does not claim that the customer is online when only assignment data exists'
   const html = renderToStaticMarkup(c.render());
   expect(html).not.toContain('box-shadow:0 0 0 2.5px');
 });
-it('retains original layout with honest loading, no fabricated presence or unsupported controls', () => {
+it('retains the original layout with live presence and unsupported controls still gated', () => {
   const html = renderToStaticMarkup(
     React.createElement(Teammate, {
       user: { name: 'Fabian' },
@@ -76,8 +76,8 @@ it('retains original layout with honest loading, no fabricated presence or unsup
   expect(html).toContain('tm-status');
   expect(html).toContain('Available orders');
   expect(html).toContain('Loading your desk');
+  expect(html).toContain('You’re offline');
   for (const text of [
-    'You’re offline',
     'Online ·',
     'Earned today',
     'Queue settings',
@@ -86,8 +86,14 @@ it('retains original layout with honest loading, no fabricated presence or unsup
     'Waiting for orders!',
   ])
     expect(html).not.toContain(text);
-  const { support, ...gated } = FEATURES;
+  const { support, presence, notifications, reviews, ...gated } = FEATURES;
   expect(support).toBe(true);
+  expect(presence).toBe(true);
+  expect(notifications).toBe(true);
+  expect(reviews).toBe(true);
+  expect(FEATURES.tips).toBe(false);
+  expect(html).not.toContain('Tips received');
+  expect(html).not.toContain('Rating');
   expect(Object.values(gated).every((v) => v === false)).toBe(true);
 });
 it('acceptance re-reads authoritative assignment and never trusts an uncertain response', async () => {
@@ -136,6 +142,7 @@ it.each(['503', 'network', 'malformed', 'readback failure'])(
     expect(c.state.queue).toEqual([]);
     expect(c.renderVals().showFeed).toBe(false);
     // Failed/denied reads do not release the mutation lock.
+    c.state.online = true;
     for (const status of [503, 403]) {
       c._fetch = vi.fn(async () =>
         Response.json({ error: 'unavailable' }, { status }),
@@ -356,8 +363,9 @@ it.each([401, 403, 404])(
     expect(c.state.notice).not.toContain('Completion recorded');
   },
 );
-it('loads the eligible server queue without online or client game approval', async () => {
+it('loads the eligible server queue only while online without client game preferences', async () => {
   const c = desk();
+  c.state.online = true;
   c._fetch = vi.fn(async () =>
     Response.json({ queue: [{ id, game: 'lol' }], mine: null }),
   );

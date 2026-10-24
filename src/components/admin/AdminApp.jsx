@@ -189,12 +189,34 @@ export default class AdminApp extends React.Component {
     window.addEventListener('popstate', this._pop);
     this.loadAudit();
     this.loadCounts();
+    this.presenceCheckIn();
     this.revealNav();
     this._counts = setInterval(this.loadCounts, 30000);
+    this._presence = setInterval(this.presenceCheckIn, 10000);
+    this._leave = () => {
+      try {
+        navigator.sendBeacon(
+          '/api/admin/presence',
+          new Blob(
+            [
+              JSON.stringify({
+                csrf: this.props.csrf,
+                action: 'check-in',
+                online: false,
+              }),
+            ],
+            { type: 'application/json' },
+          ),
+        );
+      } catch {}
+    };
+    window.addEventListener('pagehide', this._leave);
   }
   componentWillUnmount() {
     window.removeEventListener('popstate', this._pop);
+    window.removeEventListener('pagehide', this._leave);
     clearInterval(this._counts);
+    clearInterval(this._presence);
     (this._toastTimers || []).forEach(clearTimeout);
   }
   // On phones the sidebar is a scrolling tab row: keep the current section in view.
@@ -241,6 +263,10 @@ export default class AdminApp extends React.Component {
         auditLoaded: true,
       });
   };
+  presenceCheckIn = () =>
+    this.api
+      .post('/api/admin/presence', { action: 'check-in', online: true })
+      .catch(() => undefined);
   loadCounts = async () => {
     const r = await this.api.get('/api/admin/applications');
     if (r.ok)

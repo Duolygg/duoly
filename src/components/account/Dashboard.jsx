@@ -12,7 +12,7 @@ import { dashboardFetch as fetch } from './dashboard-data';
 const FEATURES = {
   wallet: false,
   rewards: false,
-  reviews: false,
+  reviews: true,
   support: true,
   pro: false,
 };

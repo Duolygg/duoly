@@ -152,7 +152,6 @@ test('removed preview routes and unknown pages are branded 404s', async ({
     '/preview/dashboard',
     '/preview/admin',
     '/queue/preview-order',
-    '/claim/preview-handover',
     '/games/not-a-game',
     '/blog/not-an-article',
     '/missing',

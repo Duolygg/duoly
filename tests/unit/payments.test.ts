@@ -5,7 +5,10 @@ import {
   CheckoutRequestSchema,
   sessionParams,
 } from '../../src/server/payments/checkout';
-import { paymentFacts } from '../../src/server/payments/webhook';
+import {
+  paymentFacts,
+  refundedPaymentIntentId,
+} from '../../src/server/payments/webhook';
 import { settleOne } from '../../src/server/payments/settle';
 
 const lol = {
@@ -140,6 +143,31 @@ describe('webhook facts', () => {
   });
 });
 
+describe('refund webhook facts', () => {
+  it('extracts payment intents from succeeded refunds and refunded charges', () => {
+    expect(
+      refundedPaymentIntentId('refund.updated', {
+        status: 'succeeded',
+        payment_intent: 'pi_refund',
+      }),
+    ).toBe('pi_refund');
+    expect(
+      refundedPaymentIntentId('charge.refunded', {
+        refunded: true,
+        payment_intent: { id: 'pi_charge' },
+      }),
+    ).toBe('pi_charge');
+  });
+  it('ignores refunds that have not succeeded', () => {
+    expect(
+      refundedPaymentIntentId('refund.updated', {
+        status: 'pending',
+        payment_intent: 'pi_pending',
+      }),
+    ).toBeNull();
+  });
+});
+
 describe('settlement', () => {
   const stripe = (status: string) => {
     const calls: string[] = [];
@@ -153,7 +181,7 @@ describe('settlement', () => {
     } as unknown as Stripe;
     return { client, calls };
   };
-  const row = (settle: 'capture' | 'release') => ({
+  const row = (settle: 'capture' | 'release' | 'refund') => ({
     order_id: 'o1',
     stripe_payment_intent_id: 'pi_1',
     state: 'authorized',
@@ -175,6 +203,15 @@ describe('settlement', () => {
     const s = stripe('succeeded');
     expect((await settleOne(s.client, row('release'))).state).toBe('refunded');
     expect(s.calls).toEqual(['refund']);
+  });
+  it('refunds an accepted or completed order with an admin-specific idempotency key', async () => {
+    const s = stripe('succeeded');
+    expect((await settleOne(s.client, row('refund'))).state).toBe('refunded');
+    expect(s.calls).toEqual(['refund']);
+    expect(s.client.refunds.create).toHaveBeenCalledWith(
+      expect.objectContaining({ payment_intent: 'pi_1' }),
+      { idempotencyKey: 'admin_refund_o1' },
+    );
   });
   it('retries while an async payment is still processing', async () => {
     const s = stripe('processing');

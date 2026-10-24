@@ -1,10 +1,27 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import Creators from '../design-reference/components/Creators.jsx';
+import Creators from '../components/site/Creators.jsx';
 import { pageViewer } from '../site/viewer';
+import { accountContext } from '../server/auth/context';
+import { supportService, supportTeam } from '../server/support/store';
+
 const { viewer, csrf } = await pageViewer(Astro);
+// The form needs no account, so signed-out visitors get a CSRF token too.
+// Without auth configured (previews, tests) the original "closed" notice shows.
+const account = accountContext(Astro.request, Astro.cookies);
+const formCsrf = account.config ? csrf || account.csrf() : '';
+const service = formCsrf ? supportService() : null;
+const team = service ? await supportTeam(service).catch(() => []) : [];
+const me = viewer ? { name: viewer.name, email: viewer.email ?? '' } : {};
 ---
 
 <SiteLayout title="Creator program | Duoly" viewer={viewer} csrf={csrf}>
-  <Creators chrome={false} closed client:load />
+  <Creators
+    chrome={false}
+    closed={!service}
+    csrf={formCsrf}
+    me={me}
+    team={team}
+    client:load
+  />
 </SiteLayout>

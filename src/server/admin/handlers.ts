@@ -4,6 +4,9 @@ import type { AccountContext } from '../auth/context';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import {
+  AdminCancelOrderSchema,
+  AdminCreateHandoverSchema,
+  AdminRefundOrderSchema,
   ApplicationSchema,
   APPLICATION_SERVICES,
   DecideApplicationSchema,
@@ -14,6 +17,7 @@ import {
   applicationError,
 } from '../../contracts/admin';
 import { sendApplicationDecision, sendApplicationReceived } from './notify';
+import { settleSoon } from '../payments/webhook';
 
 type Client = NonNullable<AccountContext['client']>;
 type Rpc = PromiseLike<{ data: unknown; error: unknown }>;
@@ -179,7 +183,33 @@ export const customers = adminRoute(
 
 export const orders = adminRoute(
   (client) => client.rpc('admin_orders', { p_limit: 1000 }),
-  [],
+  [
+    {
+      schema: AdminCreateHandoverSchema,
+      call: (client, body) =>
+        client.rpc('admin_create_handover', {
+          p_order_id: body.orderId as string,
+        }),
+    },
+    {
+      schema: AdminCancelOrderSchema,
+      call: (client, body) =>
+        client.rpc('admin_cancel_order', {
+          p_order_id: body.orderId as string,
+          p_reason: body.reason as string,
+        }),
+      after: () => settleSoon(),
+    },
+    {
+      schema: AdminRefundOrderSchema,
+      call: (client, body) =>
+        client.rpc('admin_refund_order', {
+          p_order_id: body.orderId as string,
+          p_reason: body.reason as string,
+        }),
+      after: () => settleSoon(),
+    },
+  ],
 );
 
 export const audit = adminRoute(

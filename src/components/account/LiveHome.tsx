@@ -20,12 +20,14 @@ export default function LiveHome({
   csrf,
   checkoutEnabled = false,
   usdRate,
+  onlineNow = 0,
   authError = null,
 }: {
   viewer: Viewer | null;
   csrf: string;
   checkoutEnabled?: boolean;
   usdRate?: number;
+  onlineNow?: number;
   authError?: string | null;
 }) {
   const signOut = async () => {
@@ -141,6 +143,7 @@ export default function LiveHome({
       onEmailAuth={onEmailAuth}
       onCheckout={checkoutEnabled ? onCheckout : undefined}
       usdRate={usdRate}
+      onlineNow={onlineNow}
     />
   );
 }

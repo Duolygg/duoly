@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ReviewSchema } from './reviews';
 
 const TimestampSchema = z.iso.datetime({ offset: true });
 const AvatarSchema = z
@@ -53,6 +54,7 @@ export const CustomerOrderSchema = z.strictObject({
   teammate: z
     .strictObject({ name: z.string(), image: z.string(), country: z.string() })
     .nullable(),
+  review: ReviewSchema.nullable(),
 });
 
 /** Exact privacy-safe public.order_teammate_dto projection. */
