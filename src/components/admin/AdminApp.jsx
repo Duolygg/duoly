@@ -16,6 +16,7 @@ import Teammates from './Teammates';
 import Customers from './Customers';
 import NotConnected from './NotConnected';
 import ChatModeration from './ChatModeration';
+import Support from './Support';
 
 // Port of the original admin shell (components/admin/AdminApp.jsx): same sidebar, groups,
 // titles, confirm dialog and toasts. Sections are real URLs (/admin/users) so they can be
@@ -151,6 +152,7 @@ const LIVE = [
   'orders',
   'teammates',
   'customers',
+  'support',
   'audit',
 ];
 
@@ -471,6 +473,7 @@ export default class AdminApp extends React.Component {
     else if (s.section === 'customers') body = <Customers {...props} />;
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
+    else if (s.section === 'support') body = <Support {...props} />;
     else if (s.section === 'audit') body = <AuditLog {...props} />;
     else if (s.section === 'safety' && this.props.chatEnabled)
       body = <ChatModeration csrf={this.props.csrf} />;

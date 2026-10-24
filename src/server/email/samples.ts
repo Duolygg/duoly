@@ -106,6 +106,12 @@ export const samples: {
     total: usd(42036),
     heldNow: { amount: usd(3957), releases: '6 Nov' },
   },
+  support_handoff: {
+    requesterName: 'Lea',
+    requesterRole: 'Customer',
+    message: 'My teammate has not joined the lobby yet. Can someone check?',
+    inboxUrl: 'https://duoly.gg/admin/support',
+  },
   support_reply: {
     firstName: 'Lea',
     agentName: 'Mira',

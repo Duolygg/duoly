@@ -12,7 +12,7 @@ const previewPermission = () => Promise.resolve('unsupported');
 import React from 'react';
 // Session commands are supplied by the live wrapper.
 import Leaderboard from '../../design-reference/components/Leaderboard';
-import SupportChat from '../../design-reference/components/SupportChat';
+import SupportChat from '../support/SupportChat';
 import TrustScore, {
   tierFor,
 } from '../../design-reference/components/TrustScore';
@@ -57,7 +57,7 @@ export const FEATURES = {
   leaderboard: false,
   handovers: false,
   cancelled: false,
-  support: false,
+  support: true,
   legacyProof: false,
   simulation: false,
 };
@@ -1969,7 +1969,9 @@ export default class Teammate extends React.Component {
           .tm-live-proof input::file-selector-button { min-height: 44px; border: 1px solid rgba(214,187,255,.2); border-radius: 12px; background: #120B22; color: #D6BBFF; font: inherit; }
         `}</style>
         {/* support chat with teammate answers (Sparky knows their payouts, deposit and games) */}
-        {FEATURES.support && !v.admin ? <SupportChat /> : null}
+        {FEATURES.support && !v.admin ? (
+          <SupportChat csrf={this.props.csrf} />
+        ) : null}
         {v.admin ? null : (
           <header
             style={{

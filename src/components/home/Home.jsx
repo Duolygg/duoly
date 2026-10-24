@@ -10,7 +10,7 @@ import React from 'react';
 import { IGN_LABEL, GAME, byDemand } from '../../design-reference/lib/games';
 import { FAQ_TABS } from '../../design-reference/lib/faq';
 import { FOOTER_COLUMNS } from '../../site/nav';
-import SupportChat from '../../design-reference/components/SupportChat';
+import SupportChat from '../support/SupportChat';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import {
   ranksOf,
@@ -5186,7 +5186,7 @@ export default class Home extends React.Component {
           </div>
         </footer>
         {/* support chat: Sparky + the real admins (components/SupportChat.jsx) */}
-        <SupportChat teaser contactOnly />
+        <SupportChat teaser csrf={this.props.csrf} />
         {v.showAuth ? (
           <>
             <div

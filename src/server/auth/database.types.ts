@@ -936,6 +936,137 @@ export type Database = {
         };
         Relationships: [];
       };
+      support_ai_daily_usage: {
+        Row: {
+          calls: number;
+          day: string;
+        };
+        Insert: {
+          calls?: number;
+          day: string;
+        };
+        Update: {
+          calls?: number;
+          day?: string;
+        };
+        Relationships: [];
+      };
+      support_ai_identity_usage: {
+        Row: {
+          calls: number;
+          day: string;
+          identity_key: string;
+        };
+        Insert: {
+          calls?: number;
+          day: string;
+          identity_key: string;
+        };
+        Update: {
+          calls?: number;
+          day?: string;
+          identity_key?: string;
+        };
+        Relationships: [];
+      };
+      support_conversations: {
+        Row: {
+          admin_seen_at: string | null;
+          claimed_by: string | null;
+          created_at: string;
+          email: string;
+          guest_token_hash: string | null;
+          id: string;
+          image: string;
+          name: string;
+          reference: string;
+          role: string;
+          status: string;
+          updated_at: string;
+          user_id: string | null;
+          user_seen_at: string;
+          waiting_since: string | null;
+        };
+        Insert: {
+          admin_seen_at?: string | null;
+          claimed_by?: string | null;
+          created_at?: string;
+          email?: string;
+          guest_token_hash?: string | null;
+          id?: string;
+          image?: string;
+          name?: string;
+          reference?: string;
+          role: string;
+          status?: string;
+          updated_at?: string;
+          user_id?: string | null;
+          user_seen_at?: string;
+          waiting_since?: string | null;
+        };
+        Update: {
+          admin_seen_at?: string | null;
+          claimed_by?: string | null;
+          created_at?: string;
+          email?: string;
+          guest_token_hash?: string | null;
+          id?: string;
+          image?: string;
+          name?: string;
+          reference?: string;
+          role?: string;
+          status?: string;
+          updated_at?: string;
+          user_id?: string | null;
+          user_seen_at?: string;
+          waiting_since?: string | null;
+        };
+        Relationships: [];
+      };
+      support_messages: {
+        Row: {
+          admin_id: string | null;
+          admin_image: string;
+          admin_name: string;
+          body: string;
+          conversation_id: string;
+          created_at: string;
+          id: string;
+          metadata: Json;
+          sender: string;
+        };
+        Insert: {
+          admin_id?: string | null;
+          admin_image?: string;
+          admin_name?: string;
+          body: string;
+          conversation_id: string;
+          created_at?: string;
+          id?: string;
+          metadata?: Json;
+          sender: string;
+        };
+        Update: {
+          admin_id?: string | null;
+          admin_image?: string;
+          admin_name?: string;
+          body?: string;
+          conversation_id?: string;
+          created_at?: string;
+          id?: string;
+          metadata?: Json;
+          sender?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'support_messages_conversation_id_fkey';
+            columns: ['conversation_id'];
+            isOneToOne: false;
+            referencedRelation: 'support_conversations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       teammate_applications: {
         Row: {
           account_id: string | null;
@@ -1209,6 +1340,14 @@ export type Database = {
         Args: { p_reason?: string; p_suspended: boolean; p_user_id: string };
         Returns: Json;
       };
+      admin_support_command: {
+        Args: { p_action: string; p_conversation_id: string; p_text?: string };
+        Returns: Json;
+      };
+      admin_support_inbox: {
+        Args: { p_conversation_id?: string };
+        Returns: Json;
+      };
       admin_teammates: { Args: never; Returns: Json };
       authorize_order_proof_upload: {
         Args: { p_assignment_id: string; p_order_id: string };
@@ -1435,6 +1574,18 @@ export type Database = {
           p_why: string;
         };
         Returns: Json;
+      };
+      support_add_user_message: {
+        Args: { p_body: string; p_conversation_id: string; p_limit?: number };
+        Returns: Json;
+      };
+      support_take_ai_slot: {
+        Args: {
+          p_identity_key: string;
+          p_identity_limit: number;
+          p_limit: number;
+        };
+        Returns: boolean;
       };
       sweep_expired_orders: { Args: { p_limit?: number }; Returns: Json };
       sync_account_owner: {
