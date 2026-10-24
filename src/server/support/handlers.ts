@@ -11,6 +11,7 @@ import {
   appendUserMessage,
   conversationView,
   currentConversation,
+  messages,
   guestTokenHash,
   newGuestToken,
   refreshPerson,
@@ -246,6 +247,10 @@ export const postSupport: APIRoute = async (context) => {
         ? await answerWithAi({
             person,
             question: text,
+            // The new message is already stored; send only the turns before it.
+            history: (await messages(service, conversation.id))
+              .slice(0, -1)
+              .filter((m) => m.sender !== 'system'),
             apiKey:
               process.env.OPENAI_API_KEY ?? import.meta.env?.OPENAI_API_KEY,
           })
