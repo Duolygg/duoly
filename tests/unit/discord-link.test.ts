@@ -8,6 +8,11 @@ import {
   isDiscordAuthorizeUrl,
   linkErrorResult,
 } from '../../src/server/discord/oauth';
+import { syncRolesAfter } from '../../src/server/discord/role-hooks';
+
+vi.mock('../../src/server/discord/role-hooks', () => ({
+  syncRolesAfter: vi.fn(async () => undefined),
+}));
 
 vi.mock('@supabase/ssr', async (original) => ({
   ...(await original<typeof import('@supabase/ssr')>()),
@@ -199,6 +204,8 @@ describe('callback while linking', () => {
     const s = setup();
     const res = await s.back('/auth/callback?code=abc&next=teammate');
     expect(res.headers.get('location')).toBe('/teammate?discord=linked');
+    // A teammate who just linked gets the Discord server roles right away (#40).
+    expect(syncRolesAfter).toHaveBeenCalledExactlyOnceWith({ users: [USER] });
   });
   it('reports a Discord account used elsewhere as taken', async () => {
     const s = setup();
@@ -225,6 +232,7 @@ describe('disconnect', () => {
     );
     expect(res.status).toBe(200);
     expect(s.unlinkIdentity).toHaveBeenCalledWith({ provider: 'discord' });
+    expect(syncRolesAfter).toHaveBeenCalledExactlyOnceWith({ users: [USER] });
   });
   it('keeps Discord when it is the only sign-in method', async () => {
     const s = setup({ identities: [{ provider: 'discord' }] });
@@ -235,5 +243,6 @@ describe('disconnect', () => {
     );
     expect(res.status).toBe(409);
     expect(s.unlinkIdentity).not.toHaveBeenCalled();
+    expect(syncRolesAfter).not.toHaveBeenCalled();
   });
 });

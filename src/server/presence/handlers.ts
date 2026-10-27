@@ -5,6 +5,7 @@ import {
   AdminPresenceSchema,
   TeammatePresenceSchema,
 } from '../../contracts/presence';
+import { syncRolesAfter } from '../discord/role-hooks';
 
 function rpcResponse(
   account: ReturnType<typeof accountContext>,
@@ -26,6 +27,22 @@ function rpcResponse(
     },
     code >= 400 && code < 600 ? code : 400,
   );
+}
+
+/**
+ * The admin panel checks in every 10 seconds. Only the check-ins that open the panel (a new
+ * online_since) or close it change the admin's Discord Online role; the rest are skipped.
+ */
+export function adminPresenceChanged(
+  online: boolean,
+  data: unknown,
+  now = Date.now(),
+): boolean {
+  if (!online) return true;
+  const since = Date.parse(
+    String((data as { online_since?: unknown } | null)?.online_since ?? ''),
+  );
+  return Number.isFinite(since) && Math.abs(now - since) < 5000;
 }
 
 export const teammatePresence: APIRoute = async (context) => {
@@ -57,7 +74,12 @@ export const teammatePresence: APIRoute = async (context) => {
               ? new Date(parsed.data.lastActive).toISOString()
               : undefined,
           });
-    return rpcResponse(account, result.data, result.error);
+    const response = rpcResponse(account, result.data, result.error);
+    // Turning the desk on or off moves the Discord Online role right away (#40); check-ins
+    // that went stale are picked up by the sweep.
+    if (parsed.data.action === 'set' && response.status === 200)
+      await syncRolesAfter({ users: [identity.viewer.id] });
+    return response;
   } catch {
     return account.json({ error: 'Presence service unavailable.' }, 503);
   }
@@ -99,7 +121,14 @@ export const adminPresence: APIRoute = async (context: APIContext) => {
             p_user: parsed.data.userId,
             p_reason: parsed.data.reason,
           });
-    return rpcResponse(account, result.data, result.error);
+    const response = rpcResponse(account, result.data, result.error);
+    if (response.status === 200) {
+      if (parsed.data.action === 'set-offline')
+        await syncRolesAfter({ users: [parsed.data.userId] });
+      else if (adminPresenceChanged(parsed.data.online, result.data))
+        await syncRolesAfter({ users: [identity.viewer.id] });
+    }
+    return response;
   } catch {
     return account.json({ error: 'Presence service unavailable.' }, 503);
   }

@@ -23,6 +23,7 @@ import { referralsEnabled } from '../referrals';
 import { ownerEmails } from './owners';
 import { sendApplicationDecision, sendApplicationReceived } from './notify';
 import { settleSoon } from '../payments/webhook';
+import { syncRolesAfter } from '../discord/role-hooks';
 
 type Client = NonNullable<AccountContext['client']>;
 type Rpc = PromiseLike<{ data: unknown; error: unknown }>;
@@ -58,8 +59,11 @@ export function rpcResponse(
 type Command = {
   schema: z.ZodType<Record<string, unknown> & { csrf: string }>;
   call: (client: Client, body: Record<string, unknown>) => Rpc;
-  /** Side effect after a successful command (emails). Never fails the request. */
-  after?: (data: Record<string, unknown>) => Promise<void>;
+  /** Side effect after a successful command (emails, Discord roles). Never fails the request. */
+  after?: (
+    data: Record<string, unknown>,
+    body: Record<string, unknown>,
+  ) => Promise<void>;
 };
 
 /**
@@ -100,7 +104,7 @@ function adminRoute(get: ((client: Client) => Rpc) | null, post: Command[]) {
         const response = rpcResponse(account, data, error);
         if (response.status === 200 && command.after)
           await command
-            .after(data as Record<string, unknown>)
+            .after(data as Record<string, unknown>, parsed.data)
             .catch(() => undefined);
         return response;
       }
@@ -122,6 +126,8 @@ export const users = adminRoute(
           p_user_id: body.userId as string,
           p_role: body.role as string,
         }),
+      after: (_data, body) =>
+        syncRolesAfter({ users: [body.userId as string] }),
     },
     {
       schema: SetAccessSchema,
@@ -167,6 +173,8 @@ export const teammates = adminRoute(
           p_suspended: body.suspended as boolean,
           p_reason: (body.reason as string | undefined) ?? '',
         }),
+      after: (_data, body) =>
+        syncRolesAfter({ users: [body.userId as string] }),
     },
   ],
 );
@@ -195,6 +203,7 @@ export const orders = adminRoute(
         client.rpc('admin_create_handover', {
           p_order_id: body.orderId as string,
         }),
+      after: (_data, body) => syncRolesAfter({ order: body.orderId as string }),
     },
     {
       schema: AdminCancelOrderSchema,
@@ -203,7 +212,10 @@ export const orders = adminRoute(
           p_order_id: body.orderId as string,
           p_reason: body.reason as string,
         }),
-      after: () => settleSoon(),
+      after: async (_data, body) => {
+        await settleSoon().catch(() => undefined);
+        await syncRolesAfter({ order: body.orderId as string });
+      },
     },
     {
       schema: AdminRefundOrderSchema,
