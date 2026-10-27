@@ -6,8 +6,8 @@ import {
   input,
 } from '../../design-reference/components/admin/ui';
 import { adminApi, auditEntry } from './api';
+import { supportInbox } from './support-data';
 import Users from './Users';
-import Applications from './Applications';
 import AuditLog from './AuditLog';
 import Orders from './Orders';
 import LiveDesk from './LiveDesk';
@@ -116,17 +116,15 @@ const GROUPS = [
     label: 'Business',
     ids: ['orders', 'payouts', 'customers', 'teammates', 'creators'],
   },
-  {
-    label: 'People & safety',
-    ids: ['applications', 'users', 'support', 'safety'],
-  },
+  // Applications live inside Teammates (a tab), like the original; /admin/applications opens it.
+  { label: 'People & safety', ids: ['support', 'users', 'safety'] },
   { label: 'System', ids: ['audit', 'settings'] },
 ];
 const TITLES = {
   overview: ['Overview', 'How Duoly is doing right now'],
   live: [
     'Live desk',
-    'The shared queue right now: who’s waiting, who’s in game and what finished today. Admins don’t play orders.',
+    'Watch every order in the shared queue and hand them to teammates. Admins don’t play and are always online here.',
   ],
   priority: [
     'Priority',
@@ -136,17 +134,14 @@ const TITLES = {
     'Users & roles',
     'Who’s a customer, a teammate or an admin. Changes apply right away.',
   ],
-  applications: [
-    'Applications',
-    'People who want to play on Duoly. Approving makes them a teammate for their game.',
-  ],
+  applications: ['Teammates', 'Your contractors and new applications'],
   orders: ['Orders', 'Every order, its money trail and what happened'],
-  teammates: ['Teammates', 'Your contractors: games, status and earnings'],
+  teammates: ['Teammates', 'Your contractors and new applications'],
   customers: ['Customers', 'Who’s booking, their level and wallet'],
   payouts: ['Payouts', 'What each teammate is owed, week by week (USD)'],
   support: [
     'Support chat',
-    'Everyone who wrote to support. Reply to the ones waiting for a human.',
+    'Everyone who wrote to Sparky. Reply to the ones waiting for a human.',
   ],
   safety: [
     'Reports & safety',
@@ -159,7 +154,7 @@ const TITLES = {
   ],
   settings: ['Settings', 'The rules the platform runs on'],
 };
-// Sections wired to the database. The rest show what they will do, never sample data.
+// Sections wired to the database. Payouts shows what it will do, never sample data.
 const LIVE = [
   'overview',
   'live',
@@ -175,6 +170,47 @@ const LIVE = [
   'settings',
   'creators',
 ];
+// Live sections where some of the original columns wait on a backend that isn't live yet
+// (trust levels, deposits, weekly payouts, wallet). They say so instead of plain "Live".
+const PARTLY = {
+  teammates:
+    'Roster, games, status and earnings are live. Trust level, deposit held and amount owed come with trust levels and weekly payouts.',
+  applications:
+    'Roster, games, status and earnings are live. Trust level, deposit held and amount owed come with trust levels and weekly payouts.',
+  customers:
+    'Customers, orders and spend are live. Wallet balances and adjustments come with the customer wallet.',
+};
+// The header badge, worded like the original per section.
+export const badgeFor = (section, chatEnabled) => {
+  if (!(LIVE.includes(section) || (section === 'safety' && chatEnabled)))
+    return { live: false, label: 'Not connected yet', title: '' };
+  if (section === 'live')
+    return {
+      live: true,
+      label: 'Live · shared with teammates',
+      title:
+        'The order queue and who’s online come from the server and are shared with every teammate dashboard.',
+    };
+  if (section === 'settings')
+    return {
+      live: true,
+      label: 'Live config',
+      title: 'The rules the platform runs on, read from the server.',
+    };
+  if (PARTLY[section])
+    return {
+      live: true,
+      partly: true,
+      label: 'Live · partly connected',
+      title: PARTLY[section],
+    };
+  return {
+    live: true,
+    label: 'Live · saved on the server',
+    title:
+      'Real data from the server. Every action is saved and goes into the audit log.',
+  };
+};
 
 export const sectionFromPath = (path) => {
   const slug = String(path || '')
@@ -201,6 +237,10 @@ export default class AdminApp extends React.Component {
       audit: [],
       auditLoaded: false,
       pendingApps: 0,
+      queued: 0,
+      active: 0,
+      supportWaiting: 0,
+      openReports: 0,
     };
   }
   componentDidMount() {
@@ -248,13 +288,13 @@ export default class AdminApp extends React.Component {
   componentDidUpdate(_, prev) {
     if (prev.section !== this.state.section) this.revealNav();
   }
-  go = (section) => {
+  go = (section, opts) => {
     const path = pathOf(section);
     if (window.location.pathname !== path)
       window.history.pushState(null, '', path);
     document.title = TITLES[section][0] + ' | Duoly admin';
     this.setState({ section });
-    window.scrollTo(0, 0);
+    if (!(opts && opts.keepScroll)) window.scrollTo(0, 0);
   };
 
   // ---- feedback
@@ -287,14 +327,38 @@ export default class AdminApp extends React.Component {
     this.api
       .post('/api/admin/presence', { action: 'check-in', online: true })
       .catch(() => undefined);
+  // Sidebar counts like the original: queue on Live desk, open orders, pending applications on
+  // Teammates, chats waiting for a human, open reports (hot) on Reports & safety.
   loadCounts = async () => {
-    const r = await this.api.get('/api/admin/applications');
-    if (r.ok)
-      this.setState({
-        pendingApps: (r.data.applications || []).filter(
-          (a) => a.status === 'pending',
-        ).length,
-      });
+    const [apps, orders, support, reports] = await Promise.all([
+      this.api.get('/api/admin/applications'),
+      this.api.get('/api/admin/orders'),
+      this.api.get('/api/admin/support'),
+      this.props.reportsEnabled
+        ? this.api.get('/api/admin/reports')
+        : Promise.resolve({ ok: false }),
+    ]);
+    const next = {};
+    if (apps.ok)
+      next.pendingApps = (apps.data.applications || []).filter(
+        (a) => a.status === 'pending',
+      ).length;
+    if (orders.ok) {
+      const list = orders.data.orders || [];
+      next.queued = list.filter((o) => o.status === 'queued').length;
+      next.active = list.filter(
+        (o) => o.status === 'queued' || o.status === 'in_progress',
+      ).length;
+    }
+    if (support.ok)
+      next.supportWaiting = supportInbox(support.data).conversations.filter(
+        (c) => c.status === 'waiting' || (c.status === 'open' && c.unread > 0),
+      ).length;
+    if (reports.ok)
+      next.openReports = (reports.data.reports || []).filter(
+        (r) => r.status === 'open',
+      ).length;
+    this.setState(next);
   };
   // Confirmation dialog. opts: { title, body, confirm, kind, field: { label, placeholder, type, options }, field2, onConfirm(value, value2) }
   ask = (opts) =>
@@ -495,10 +559,14 @@ export default class AdminApp extends React.Component {
     const s = this.state;
     const a = this.props.admin || {};
     const [title, sub] = TITLES[s.section];
-    const live =
-      LIVE.includes(s.section) ||
-      (s.section === 'safety' && this.props.chatEnabled);
-    const counts = { applications: s.pendingApps };
+    const badge = badgeFor(s.section, this.props.chatEnabled);
+    const counts = {
+      live: s.queued,
+      orders: s.active,
+      teammates: s.pendingApps,
+      support: s.supportWaiting,
+      safety: s.openReports,
+    };
     const props = {
       api: this.api,
       ask: this.ask,
@@ -512,12 +580,23 @@ export default class AdminApp extends React.Component {
     };
     let body = null;
     if (s.section === 'users') body = <Users {...props} />;
-    else if (s.section === 'applications') body = <Applications {...props} />;
+    else if (s.section === 'teammates' || s.section === 'applications')
+      body = (
+        <Teammates
+          {...props}
+          tab={s.section === 'applications' ? 'apps' : 'roster'}
+          pendingApps={s.pendingApps}
+          onTab={(tab) =>
+            this.go(tab === 'apps' ? 'applications' : 'teammates', {
+              keepScroll: true,
+            })
+          }
+        />
+      );
     else if (s.section === 'overview')
       body = <Overview {...props} chatEnabled={this.props.chatEnabled} />;
     else if (s.section === 'live') body = <LiveDesk {...props} />;
     else if (s.section === 'priority') body = <Priority {...props} />;
-    else if (s.section === 'teammates') body = <Teammates {...props} />;
     else if (s.section === 'customers') body = <Customers {...props} />;
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
@@ -573,7 +652,12 @@ export default class AdminApp extends React.Component {
                     key={x.id}
                     href={pathOf(x.id)}
                     className="ops-navbtn"
-                    aria-current={s.section === x.id ? 'page' : undefined}
+                    aria-current={
+                      s.section === x.id ||
+                      (x.id === 'teammates' && s.section === 'applications')
+                        ? 'page'
+                        : undefined
+                    }
                     onClick={(e) => {
                       if (
                         e.metaKey ||
@@ -609,7 +693,12 @@ export default class AdminApp extends React.Component {
                     </svg>
                     <span className="ops-navlabel">{x.label}</span>
                     {counts[x.id] ? (
-                      <span className="ops-count ops-count-hot">
+                      <span
+                        className={
+                          'ops-count' +
+                          (x.id === 'safety' ? ' ops-count-hot' : '')
+                        }
+                      >
                         {counts[x.id]}
                       </span>
                     ) : null}
@@ -742,9 +831,10 @@ export default class AdminApp extends React.Component {
                 {sub}
               </p>
             </div>
-            {live ? (
+            {badge.live ? (
               <span
-                title="Real data from the database. Every action is saved and goes into the audit log."
+                title={badge.title}
+                data-badge={badge.partly ? 'partly' : 'live'}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -752,8 +842,12 @@ export default class AdminApp extends React.Component {
                   minHeight: '32px',
                   padding: '0 12px',
                   borderRadius: '999px',
-                  border: '1px solid rgba(94, 234, 168, .35)',
-                  color: C.green,
+                  border:
+                    '1px solid ' +
+                    (badge.partly
+                      ? 'rgba(255, 210, 122, .35)'
+                      : 'rgba(94, 234, 168, .35)'),
+                  color: badge.partly ? C.gold : C.green,
                   fontSize: '12.5px',
                   fontWeight: '600',
                 }}
@@ -763,11 +857,11 @@ export default class AdminApp extends React.Component {
                     width: '7px',
                     height: '7px',
                     borderRadius: '50%',
-                    background: C.green,
+                    background: badge.partly ? C.gold : C.green,
                     animation: 'dlpulse 1.4s ease-in-out infinite',
                   }}
                 />
-                Live · saved on the server
+                {badge.label}
               </span>
             ) : (
               <span
@@ -784,7 +878,7 @@ export default class AdminApp extends React.Component {
                   fontWeight: '600',
                 }}
               >
-                Not connected yet
+                {badge.label}
               </span>
             )}
           </header>

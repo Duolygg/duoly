@@ -12,7 +12,7 @@ import { GAME } from '../../design-reference/lib/games';
 import { application } from './api';
 
 // Port of the Applications tab of the original components/admin/Teammates.jsx, wired to
-// /api/admin/applications. Approving makes the account with that email a teammate for the
+// /api/admin/applications. Rendered inside the Teammates card (embedded), like the original. Approving makes the account with that email a teammate for the
 // game; without an account yet, they become one as soon as they sign up with that email.
 const REFRESH_MS = 20000;
 const REASONS = [
@@ -102,8 +102,12 @@ export default class Applications extends React.Component {
     const s = this.state;
     const all = s.list;
     const list = all.filter((a) => s.filter === 'All' || a.status === s.filter);
+    const Wrap = this.props.embedded ? React.Fragment : 'section';
+    const wrapProps = this.props.embedded
+      ? {}
+      : { style: { ...card, padding: '18px' } };
     return (
-      <section style={{ ...card, padding: '18px' }}>
+      <Wrap {...wrapProps}>
         <div
           role="group"
           aria-label="Filter applications"
@@ -254,41 +258,23 @@ export default class Applications extends React.Component {
                     fontSize: '12.5px',
                     color: C.dim,
                     lineHeight: '1.5',
+                    overflowWrap: 'anywhere',
                   }}
                 >
-                  <span style={{ display: 'block', overflowWrap: 'anywhere' }}>
-                    {a.email}
-                  </span>
-                  <span style={{ display: 'block' }}>
-                    Discord{' '}
-                    <b style={{ color: C.white, fontWeight: '600' }}>
-                      {a.discord}
-                    </b>
-                  </span>
-                  <span style={{ display: 'block' }}>
-                    {a.reference} · applied {ago(a.submittedAt, Date.now())}
-                  </span>
+                  {a.email} · Discord{' '}
+                  <b style={{ color: C.white, fontWeight: '600' }}>
+                    {a.discord}
+                  </b>
+                  <br />
+                  Applied {ago(a.submittedAt, Date.now())}
+                  {a.decidedBy
+                    ? ' · ' + a.status.toLowerCase() + ' by ' + a.decidedBy
+                    : ''}
+                  {a.reason ? ': ' + a.reason : ''}
+                  {a.reference ? (
+                    <span style={{ color: C.faint }}> · {a.reference}</span>
+                  ) : null}
                 </div>
-                {a.decidedBy ? (
-                  <div
-                    style={{
-                      padding: '10px 12px',
-                      borderRadius: '12px',
-                      background: C.panel,
-                      border: '1px solid ' + C.line,
-                      fontSize: '13px',
-                      color: C.muted,
-                    }}
-                  >
-                    {a.reason ? (
-                      <b style={{ color: C.white, fontWeight: '600' }}>
-                        {a.reason + ' · '}
-                      </b>
-                    ) : null}
-                    {a.status.toLowerCase() + ' by ' + a.decidedBy}
-                    {a.decidedAt ? ' ' + ago(a.decidedAt, Date.now()) : ''}
-                  </div>
-                ) : null}
                 {a.status === 'Pending' ? (
                   <div
                     style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}
@@ -349,7 +335,7 @@ export default class Applications extends React.Component {
             </p>
           ) : null}
         </div>
-      </section>
+      </Wrap>
     );
   }
 }
