@@ -9,8 +9,9 @@ import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { proofRpcData } from '../proofs/results';
 import { ProofFailure } from '../proofs/storage';
+import { withRoleSync } from '../discord/role-hooks';
 
-export const complete: APIRoute = async (context) => {
+const completeOrder: APIRoute = async (context) => {
   let account = accountContext(context.request, context.cookies);
   const fail = (status: number) =>
     account.json(
@@ -66,6 +67,11 @@ export const complete: APIRoute = async (context) => {
     return fail(error instanceof ProofFailure ? error.status : 503);
   }
 };
+
+/** In Session goes away (and Online follows the desk toggle) right after completion (#40). */
+export const complete = withRoleSync(completeOrder, (context) =>
+  context.params.id ? { order: context.params.id } : null,
+);
 
 export const earnings: APIRoute = async (context) => {
   const account = accountContext(context.request, context.cookies);

@@ -1,0 +1,28 @@
+---
+// Isolated fictional browser fixture for admin screens, never a production route.
+import SiteLayout from '../../../../../../src/layouts/SiteLayout.astro';
+import AdminRoot from '../../../../../../src/components/admin/AdminRoot.jsx';
+import { sectionFromPath } from '../../../../../../src/components/admin/AdminApp.jsx';
+const admin = {
+  id: '66666666-6666-4666-8666-666666666666',
+  name: 'Fixture Admin',
+  email: null,
+  image: '/assets/avatars/avatar-1.png',
+  country: 'at',
+  role: 'admin' as const,
+  provider: 'email' as const,
+};
+---
+
+<SiteLayout title="Local admin fixture | Duoly" bare>
+  <AdminRoot
+    client:load
+    admin={admin}
+    owner={false}
+    csrf="fixture-csrf"
+    section={sectionFromPath(Astro.url.pathname)}
+    chatEnabled={false}
+    reportsEnabled={false}
+    stripeTest={false}
+  />
+</SiteLayout>

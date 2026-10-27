@@ -11,6 +11,7 @@ import {
 import { accountContext } from './context';
 import { readBoundedBody, verifyCsrf } from './security';
 import { linkErrorResult } from '../discord/oauth';
+import { syncRolesAfter } from '../discord/role-hooks';
 
 export async function mutation(context: APIContext, maxBytes = 4096) {
   const account = accountContext(context.request, context.cookies);
@@ -121,6 +122,9 @@ export const callback: APIRoute = async (context) => {
       account.clear();
       return account.redirect('/login?error=eligibility');
     }
+    // A Discord link or sign-in can change the server roles of teammates and admins (#40).
+    if (identity.viewer.role !== 'customer')
+      await syncRolesAfter({ users: [identity.viewer.id] });
     if (linking) return account.redirect(`/${linking}?discord=linked`);
     if (recovery) return account.redirect('/reset-password?step=new');
     context.cookies.delete(account.names.csrf, account.cookieOptions);

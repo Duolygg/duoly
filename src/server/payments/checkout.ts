@@ -5,6 +5,7 @@ import { eurToUsd, FALLBACK_EUR_TO_USD } from '../fx';
 import { mutation } from '../auth/handlers';
 import { accountContext } from '../auth/context';
 import { calculateQuote } from '../pricing';
+import { checkoutRefCode } from '../referrals';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { GAMES } from '../../design-reference/lib/games.js';
 import {
@@ -196,10 +197,17 @@ export const createCheckout: APIRoute = async (context) => {
       );
     const stripe = stripeFor(config);
     const now = Math.floor(Date.now() / 1000);
+    // Creator code from the server-set referral cookie only; the database resolves it to an
+    // active creator and attributes the customer once the order is paid (ledger #28).
+    const refCode = checkoutRefCode(
+      context.cookies,
+      config.origin.startsWith('https:'),
+    );
     const { data: intent, error } = await admin
       .from('checkout_intents')
       .insert({
         ...built.row,
+        ...(refCode ? { ref_code: refCode } : {}),
         customer_id: identity.viewer.id,
         expires_at: new Date(
           (now + SESSION_MINUTES * 60 + 60) * 1000,

@@ -17,8 +17,13 @@ import {
   applicationError,
 } from '../../contracts/admin';
 import { AdminPriorityCommandSchema, tierById } from '../../contracts/priority';
+import { AdminCreatorCommandSchema } from '../../contracts/creators';
+import { customerUsdRate, eurToUsd } from '../fx';
+import { referralsEnabled } from '../referrals';
+import { ownerEmails } from './owners';
 import { sendApplicationDecision, sendApplicationReceived } from './notify';
 import { settleSoon } from '../payments/webhook';
+import { syncRolesAfter } from '../discord/role-hooks';
 
 type Client = NonNullable<AccountContext['client']>;
 type Rpc = PromiseLike<{ data: unknown; error: unknown }>;
@@ -54,8 +59,11 @@ export function rpcResponse(
 type Command = {
   schema: z.ZodType<Record<string, unknown> & { csrf: string }>;
   call: (client: Client, body: Record<string, unknown>) => Rpc;
-  /** Side effect after a successful command (emails). Never fails the request. */
-  after?: (data: Record<string, unknown>) => Promise<void>;
+  /** Side effect after a successful command (emails, Discord roles). Never fails the request. */
+  after?: (
+    data: Record<string, unknown>,
+    body: Record<string, unknown>,
+  ) => Promise<void>;
 };
 
 /**
@@ -96,7 +104,7 @@ function adminRoute(get: ((client: Client) => Rpc) | null, post: Command[]) {
         const response = rpcResponse(account, data, error);
         if (response.status === 200 && command.after)
           await command
-            .after(data as Record<string, unknown>)
+            .after(data as Record<string, unknown>, parsed.data)
             .catch(() => undefined);
         return response;
       }
@@ -118,6 +126,8 @@ export const users = adminRoute(
           p_user_id: body.userId as string,
           p_role: body.role as string,
         }),
+      after: (_data, body) =>
+        syncRolesAfter({ users: [body.userId as string] }),
     },
     {
       schema: SetAccessSchema,
@@ -163,6 +173,8 @@ export const teammates = adminRoute(
           p_suspended: body.suspended as boolean,
           p_reason: (body.reason as string | undefined) ?? '',
         }),
+      after: (_data, body) =>
+        syncRolesAfter({ users: [body.userId as string] }),
     },
   ],
 );
@@ -191,6 +203,7 @@ export const orders = adminRoute(
         client.rpc('admin_create_handover', {
           p_order_id: body.orderId as string,
         }),
+      after: (_data, body) => syncRolesAfter({ order: body.orderId as string }),
     },
     {
       schema: AdminCancelOrderSchema,
@@ -199,7 +212,10 @@ export const orders = adminRoute(
           p_order_id: body.orderId as string,
           p_reason: body.reason as string,
         }),
-      after: () => settleSoon(),
+      after: async (_data, body) => {
+        await settleSoon().catch(() => undefined);
+        await syncRolesAfter({ order: body.orderId as string });
+      },
     },
     {
       schema: AdminRefundOrderSchema,
@@ -249,6 +265,51 @@ export const priority = adminRoute(
       },
     },
   ],
+);
+
+/** GET lists creators with attributed orders and commission owed; POST adds or pauses one. */
+export const creators = adminRoute(
+  (client) => client.rpc('admin_creators'),
+  [
+    {
+      schema: AdminCreatorCommandSchema,
+      call: (client, body) =>
+        body.action === 'create'
+          ? client.rpc('admin_create_creator', {
+              p_code: body.code as string,
+              p_name: body.name as string,
+              p_channel: (body.channel as string | undefined) ?? '',
+            })
+          : client.rpc('admin_set_creator_active', {
+              p_id: body.creatorId as string,
+              p_active: body.active as boolean,
+            }),
+    },
+  ],
+);
+
+/**
+ * What the read-only Settings screen needs from the server: today's ECB rate (original
+ * lib/fx.js), whether owners are configured and whether referral capture is switched on.
+ * No env values or names are returned.
+ */
+export async function settingsSnapshot(fx = eurToUsd) {
+  const { rate, source } = await fx();
+  return {
+    fx: {
+      rate,
+      customerRate: customerUsdRate(rate),
+      markup: 0.01,
+      live: source === 'ecb',
+    },
+    ownersConfigured: ownerEmails().length > 0,
+    referralsEnabled: referralsEnabled(),
+  };
+}
+
+export const settings = adminRoute(
+  () => settingsSnapshot().then((data) => ({ data, error: null })),
+  [],
 );
 
 /** POST /api/apply: the public teammate application (no account needed). */

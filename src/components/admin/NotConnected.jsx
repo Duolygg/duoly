@@ -45,10 +45,6 @@ const PLAN = {
     'Customer reports (bounty decisions) and chat messages the safety filter stopped.',
     'Waits on order chat and reports.',
   ],
-  settings: [
-    'The rules the platform runs on: prices, games, timers and limits.',
-    'Next up: read-only view of the live configuration.',
-  ],
 };
 
 export default function NotConnected({ section, go }) {

@@ -73,6 +73,7 @@ export type Database = {
           amount_eur_cents: number;
           booking_fx: number;
           created_at: string;
+          creator_id: string | null;
           customer_id: string;
           expires_at: string;
           game: string;
@@ -83,6 +84,7 @@ export type Database = {
           order_id: string | null;
           payout_usd_cents: number;
           rank: string;
+          ref_code: string | null;
           region: string;
           service: string;
           status: string;
@@ -99,6 +101,7 @@ export type Database = {
           amount_eur_cents: number;
           booking_fx: number;
           created_at?: string;
+          creator_id?: string | null;
           customer_id: string;
           expires_at: string;
           game: string;
@@ -109,6 +112,7 @@ export type Database = {
           order_id?: string | null;
           payout_usd_cents: number;
           rank?: string;
+          ref_code?: string | null;
           region: string;
           service: string;
           status?: string;
@@ -125,6 +129,7 @@ export type Database = {
           amount_eur_cents?: number;
           booking_fx?: number;
           created_at?: string;
+          creator_id?: string | null;
           customer_id?: string;
           expires_at?: string;
           game?: string;
@@ -135,6 +140,7 @@ export type Database = {
           order_id?: string | null;
           payout_usd_cents?: number;
           rank?: string;
+          ref_code?: string | null;
           region?: string;
           service?: string;
           status?: string;
@@ -148,6 +154,13 @@ export type Database = {
           voice?: boolean;
         };
         Relationships: [
+          {
+            foreignKeyName: 'checkout_intents_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'creators';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'checkout_intents_customer_id_fkey';
             columns: ['customer_id'];
@@ -163,6 +176,39 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      creators: {
+        Row: {
+          active: boolean;
+          channel: string;
+          code: string;
+          created_at: string;
+          created_by: string;
+          id: string;
+          name: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          channel?: string;
+          code: string;
+          created_at?: string;
+          created_by?: string;
+          id?: string;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          channel?: string;
+          code?: string;
+          created_at?: string;
+          created_by?: string;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       customer_blocks: {
         Row: {
@@ -189,6 +235,52 @@ export type Database = {
             columns: ['user_id'];
             isOneToOne: true;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      customer_referrals: {
+        Row: {
+          attributed_at: string;
+          code: string;
+          creator_id: string;
+          customer_id: string;
+          first_order_id: string;
+        };
+        Insert: {
+          attributed_at?: string;
+          code: string;
+          creator_id: string;
+          customer_id: string;
+          first_order_id: string;
+        };
+        Update: {
+          attributed_at?: string;
+          code?: string;
+          creator_id?: string;
+          customer_id?: string;
+          first_order_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'customer_referrals_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'creators';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'customer_referrals_customer_id_fkey';
+            columns: ['customer_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'customer_referrals_first_order_id_fkey';
+            columns: ['first_order_id'];
+            isOneToOne: true;
+            referencedRelation: 'orders';
             referencedColumns: ['id'];
           },
         ];
@@ -683,6 +775,52 @@ export type Database = {
           },
           {
             foreignKeyName: 'order_payments_order_id_fkey';
+            columns: ['order_id'];
+            isOneToOne: true;
+            referencedRelation: 'orders';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      order_referrals: {
+        Row: {
+          amount_eur_cents: number;
+          attributed_at: string;
+          creator_id: string;
+          customer_id: string;
+          order_id: string;
+        };
+        Insert: {
+          amount_eur_cents: number;
+          attributed_at?: string;
+          creator_id: string;
+          customer_id: string;
+          order_id: string;
+        };
+        Update: {
+          amount_eur_cents?: number;
+          attributed_at?: string;
+          creator_id?: string;
+          customer_id?: string;
+          order_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'order_referrals_creator_id_fkey';
+            columns: ['creator_id'];
+            isOneToOne: false;
+            referencedRelation: 'creators';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'order_referrals_customer_id_fkey';
+            columns: ['customer_id'];
+            isOneToOne: false;
+            referencedRelation: 'customer_referrals';
+            referencedColumns: ['customer_id'];
+          },
+          {
+            foreignKeyName: 'order_referrals_order_id_fkey';
             columns: ['order_id'];
             isOneToOne: true;
             referencedRelation: 'orders';
@@ -1709,7 +1847,12 @@ export type Database = {
         Returns: Json;
       };
       admin_clear_adjustment: { Args: { p_user: string }; Returns: Json };
+      admin_create_creator: {
+        Args: { p_channel: string; p_code: string; p_name: string };
+        Returns: Json;
+      };
       admin_create_handover: { Args: { p_order_id: string }; Returns: Json };
+      admin_creators: { Args: never; Returns: Json };
       admin_customers: { Args: never; Returns: Json };
       admin_decide_application: {
         Args: {
@@ -1755,6 +1898,10 @@ export type Database = {
       };
       admin_set_blocked: {
         Args: { p_blocked: boolean; p_reason?: string; p_user_id: string };
+        Returns: Json;
+      };
+      admin_set_creator_active: {
+        Args: { p_active: boolean; p_id: string };
         Returns: Json;
       };
       admin_set_priority: {

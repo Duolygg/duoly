@@ -3,6 +3,7 @@ import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { handoverTokenHash, validHandoverToken } from './handover';
 import { settleSoon } from '../payments/webhook';
+import { syncRolesAfter } from '../discord/role-hooks';
 
 function result(
   account: ReturnType<typeof accountContext>,
@@ -65,8 +66,10 @@ export const claim: APIRoute = async (context) => {
       { p_token_hash: hash },
     );
     const response = result(account, data, error);
-    if (method === 'POST' && response.status === 200)
+    if (method === 'POST' && response.status === 200) {
       await settleSoon().catch(() => undefined);
+      await syncRolesAfter({ users: [identity.viewer.id] });
+    }
     return response;
   } catch {
     return account.json({ error: 'Handover service unavailable.' }, 503);
