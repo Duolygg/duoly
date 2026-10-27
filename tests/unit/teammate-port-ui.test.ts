@@ -96,8 +96,10 @@ it('retains the original layout with live presence and unsupported controls stil
     reviews,
     leaderboard,
     preferences,
+    trust,
     ...gated
   } = FEATURES;
+  expect(trust).toBe(true);
   expect(preferences).toBe(true);
   expect(leaderboard).toBe(true);
   expect(support).toBe(true);

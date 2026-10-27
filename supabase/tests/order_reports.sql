@@ -42,7 +42,9 @@ do $$ declare r jsonb; begin
 end $$;
 reset role;
 do $$ begin
- if (select count(*) from public.order_report_bounties where report_id='9a300000-0000-4000-8000-000000000001' and status='owed' and amount_eur_cents=5000)<>1 then raise exception 'manual bounty owed row missing'; end if;
+ -- Since the wallet ledger (20261025140000) the bounty is paid at once as promo wallet credit.
+ if (select count(*) from public.order_report_bounties where report_id='9a300000-0000-4000-8000-000000000001' and status='paid' and payment_note='Wallet credit' and amount_eur_cents=5000)<>1 then raise exception 'bounty not paid as wallet credit'; end if;
+ if (select count(*) from public.wallet_entries where kind='bounty' and amount_eur_cents=5000 and not cashable)<>1 then raise exception 'bounty wallet entry missing'; end if;
  if exists(select 1 from public.refund_credits where order_id='9a100000-0000-4000-8000-000000000001') then raise exception 'report moved customer money'; end if;
  begin update public.order_report_bounties set amount_eur_cents=4000; raise exception 'bounty row mutable'; exception when sqlstate 'PT409' then null; end;
 end $$;

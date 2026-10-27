@@ -61,12 +61,49 @@ export default class Customers extends React.Component {
         placed: Number(c.placed) || 0,
         spent: (Number(c.spentCents) || 0) / 100,
         wallet: (Number(c.walletCents) || 0) / 100,
+        cashable: (Number(c.walletCashableCents) || 0) / 100,
+        promo: (Number(c.walletPromoCents) || 0) / 100,
+        gifted: (Number(c.giftedCents) || 0) / 100,
+        adjustments: Number(c.adjustments) || 0,
         warnings: Number(c.warnings) || 0,
         level: level.name,
         levelColor: level.color,
       };
     });
     this.setState({ customers, error: '', loaded: true });
+  }
+  async adjustWallet(c, amount, reason) {
+    const euros = Number(amount);
+    const amountCents = Math.round(euros * 100);
+    if (
+      !Number.isFinite(euros) ||
+      !Number.isInteger(amountCents) ||
+      amountCents === 0 ||
+      Math.abs(amountCents) > 100000
+    ) {
+      return this.props.toast(
+        'Use an amount from -1000 to 1000 EUR, excluding zero.',
+        'warn',
+      );
+    }
+    this.setState({ busy: c.id });
+    const res = await this.props.api.post('/api/admin/customers', {
+      action: 'adjustWallet',
+      userId: c.id,
+      amountCents,
+      reason,
+    });
+    this.setState({ busy: '' });
+    if (!res.ok) return this.props.toast(res.error, 'warn');
+    this.props.toast(
+      (amountCents > 0 ? 'Added ' : 'Removed ') +
+        eur(Math.abs(amountCents) / 100) +
+        (amountCents > 0 ? ' to ' : ' from ') +
+        c.name +
+        '’s wallet.',
+    );
+    this.props.log();
+    this.load();
   }
   async setBlocked(c, blocked, reason) {
     this.setState({ busy: c.id });
@@ -368,9 +405,33 @@ export default class Customers extends React.Component {
                     </td>
                     <td
                       style={{ ...td, textAlign: 'right' }}
-                      title="Credit from orders that were cancelled or expired"
+                      title={
+                        eur(c.cashable) +
+                        ' cashable, ' +
+                        eur(c.promo) +
+                        ' promo'
+                      }
                     >
                       {eur(c.wallet)}
+                      {c.gifted ? (
+                        <span
+                          title={
+                            c.adjustments +
+                            ' admin adjustment' +
+                            (c.adjustments === 1 ? '' : 's')
+                          }
+                          style={{
+                            display: 'block',
+                            fontSize: '11.5px',
+                            color: c.gifted < 0 ? C.red : C.green,
+                          }}
+                        >
+                          {c.gifted < 0
+                            ? '−' + eur(-c.gifted)
+                            : '+' + eur(c.gifted)}{' '}
+                          adjusted
+                        </span>
+                      ) : null}
                     </td>
                     <td style={{ ...td, color: C.dim }}>
                       {c.joined ? dateOnly(c.joined) : '—'}
@@ -390,50 +451,83 @@ export default class Customers extends React.Component {
                       </span>
                     </td>
                     <td style={{ ...td, textAlign: 'right' }}>
-                      {c.blocked ? (
+                      <span style={{ display: 'inline-flex', gap: '6px' }}>
                         <button
                           type="button"
                           disabled={s.busy === c.id}
                           style={btn()}
                           onClick={() =>
                             ask({
-                              title: 'Unblock ' + c.name + '?',
+                              title: 'Adjust ' + c.name + '’s wallet',
                               body:
-                                'They can book teammates again.' +
-                                (c.blocked.reason
-                                  ? ' Blocked for: ' + c.blocked.reason + '.'
-                                  : ''),
-                              confirm: 'Unblock',
-                              onConfirm: () => this.setBlocked(c, false),
-                            })
-                          }
-                        >
-                          Unblock
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled={s.busy === c.id}
-                          style={btn('danger')}
-                          onClick={() =>
-                            ask({
-                              title: 'Block ' + c.name + '?',
-                              body: 'They can’t book new orders until unblocked. An order they already have keeps running. Their wallet stays as it is.',
-                              confirm: 'Block',
-                              kind: 'danger',
+                                'Now ' +
+                                eur(c.wallet) +
+                                '. Use a plus amount to add promo credit or a minus amount to remove balance. The wallet cannot go below €0.',
+                              confirm: 'Adjust wallet',
                               field: {
-                                label: 'Reason (shown in the audit log)',
-                                placeholder: 'e.g. chargeback fraud',
+                                label: 'Amount in € (+ or −)',
+                                type: 'number',
+                                signed: true,
+                                placeholder: '5 or -5',
                                 required: true,
                               },
-                              onConfirm: (reason) =>
-                                this.setBlocked(c, true, reason),
+                              field2: {
+                                label: 'Reason (shown in the audit log)',
+                                placeholder: 'e.g. goodwill credit',
+                                required: true,
+                              },
+                              onConfirm: (amount, reason) =>
+                                this.adjustWallet(c, amount, reason),
                             })
                           }
                         >
-                          Block
+                          Adjust balance
                         </button>
-                      )}
+                        {c.blocked ? (
+                          <button
+                            type="button"
+                            disabled={s.busy === c.id}
+                            style={btn()}
+                            onClick={() =>
+                              ask({
+                                title: 'Unblock ' + c.name + '?',
+                                body:
+                                  'They can book teammates again.' +
+                                  (c.blocked.reason
+                                    ? ' Blocked for: ' + c.blocked.reason + '.'
+                                    : ''),
+                                confirm: 'Unblock',
+                                onConfirm: () => this.setBlocked(c, false),
+                              })
+                            }
+                          >
+                            Unblock
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={s.busy === c.id}
+                            style={btn('danger')}
+                            onClick={() =>
+                              ask({
+                                title: 'Block ' + c.name + '?',
+                                body: 'They can’t book new orders until unblocked. An order they already have keeps running. Their wallet stays as it is.',
+                                confirm: 'Block',
+                                kind: 'danger',
+                                field: {
+                                  label: 'Reason (shown in the audit log)',
+                                  placeholder: 'e.g. chargeback fraud',
+                                  required: true,
+                                },
+                                onConfirm: (reason) =>
+                                  this.setBlocked(c, true, reason),
+                              })
+                            }
+                          >
+                            Block
+                          </button>
+                        )}
+                      </span>
                     </td>
                   </tr>
                 ))}
