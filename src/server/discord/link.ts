@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { discordReturn, isDiscordAuthorizeUrl } from './oauth';
+import { syncRolesAfter } from './role-hooks';
 
 /**
  * Connect Discord (port of the original app/api/discord/link routes).
@@ -73,6 +74,8 @@ export const disconnect: APIRoute = async (context) => {
         { error: 'Couldn’t disconnect. Please try again.' },
         503,
       );
+    // The bot takes its roles back from the Discord account that was just disconnected (#40).
+    await syncRolesAfter({ users: [identity.viewer.id] });
     return account.json({ ok: true });
   } catch {
     return account.json(

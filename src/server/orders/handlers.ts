@@ -4,6 +4,7 @@ import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { decodeOrderRpcResult } from './results';
 import { settleSoon } from '../payments/webhook';
+import { withRoleSync } from '../discord/role-hooks';
 import {
   OrderCommandSchema,
   OrderPaginationSchema,
@@ -127,17 +128,26 @@ export const cancel = withSettlement(
     { input: 'id', method: 'POST' },
   ),
 );
-export const reroll = route(
-  'customerOrder',
-  (client, { p_order_id }) => client.rpc('reroll_order', { p_order_id }),
-  { input: 'id', method: 'POST' },
-);
-export const accept = withSettlement(
+/** Discord roles of the order's teammates (current and re-rolled) follow right away (#40). */
+const orderRoles = (context: Parameters<APIRoute>[0]) =>
+  context.params.id ? { order: context.params.id } : null;
+export const reroll = withRoleSync(
   route(
-    'teammateOrder',
-    (client, { p_order_id }) => client.rpc('accept_order', { p_order_id }),
-    { input: 'id', method: 'POST', role: 'teammate' },
+    'customerOrder',
+    (client, { p_order_id }) => client.rpc('reroll_order', { p_order_id }),
+    { input: 'id', method: 'POST' },
   ),
+  orderRoles,
+);
+export const accept = withRoleSync(
+  withSettlement(
+    route(
+      'teammateOrder',
+      (client, { p_order_id }) => client.rpc('accept_order', { p_order_id }),
+      { input: 'id', method: 'POST', role: 'teammate' },
+    ),
+  ),
+  orderRoles,
 );
 export const assignment = route(
   'teammateAssignment',

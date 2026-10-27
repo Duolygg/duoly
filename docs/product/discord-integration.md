@@ -21,11 +21,25 @@ Discord developer portal → OAuth2 → Redirects must contain `https://omnejess
 
 ## Phase 2: bot over HTTP (needs bot token and server id)
 
-Vercel functions cannot hold the original gateway WebSocket or the in-process `setInterval` loops, so the loops become a scheduled tick:
+Vercel functions cannot hold the original gateway WebSocket or the in-process `setInterval` loops, so the loops become event hooks plus a scheduled tick.
 
-- **Scheduler:** Supabase `pg_cron` + `pg_net` (free tier) calls `POST /api/discord/tick` every 10 seconds with a shared secret. Replaces `instrumentation.js`.
-- **Role sync** (`lib/discordRoles.js`): Teammate, Online, In Session computed from the database; only changes are sent. Also triggered right after link/unlink/accept/complete.
-- **Queue posts** (`lib/discordQueue.js`): order waiting 100 s → embed in the game category's `general` channel mentioning @Teammate; edited when taken, cancelled or re-rolled. Post ids stored in a `discord_order_posts` table instead of on the order object.
+### Role sync (ledger #40, migration `20261025100000_discord_role_sync.sql`)
+
+Port of `lib/discordRoles.js` in `src/server/discord/role-sync.ts` (engine) and `src/server/discord/role-hooks.ts` (hooks and tick endpoint).
+
+- **Rules** (unchanged from the original): Teammate = every teammate with Discord linked, removed when they stop being a teammate. Online = desk toggle on and checking in within 20 seconds, or playing an order. In Session = an order in progress. Admins get Online while the admin panel checks in, never In Session, and the bot never touches an admin's Teammate role. Suspended teammates keep Teammate and never get Online. Only linked accounts that are members of the server get roles.
+- **Roles by name**: `GET /guilds/{id}/roles`, case-insensitive `teammate`, `online`, `in session`, cached 10 minutes per instance. Without Online or In Session the sync pauses; without Teammate only the other two are synced. The bot only ever calls `PUT`/`DELETE /guilds/{id}/members/{user}/roles/{role}` for those three ids, so every other role (games, modes, Admin, Bot) is never touched.
+- **Only changes**: the applied state lives in `public.discord_role_sync` (service role only). A member is read from Discord when unknown, every 10 minutes to catch hand-made changes, and every 2 minutes while not in the server (404). `429` waits `retry_after` (at most 3 tries), `403` is logged once ("give the bot Manage Roles and drag its role above Teammate, Online and In Session"), `404` marks the account as not a member. Unknown role (code 10011) refreshes the role lookup.
+- **Wanted state** comes from `public.discord_role_facts(p_users, p_order)`, a security-definer function only `service_role` may call.
+- **Events** (sync of the affected people right after the action succeeded, capped at about 3 seconds, never changes the response): Discord link or sign-in callback, unlink, admin role change, suspend or reinstate, admin set offline, desk on or off, admin panel open or close, accept, complete, reroll, handover claim, admin cancel and handover link.
+- **Sweep**: pg_cron job `duoly-discord-roles-tick` (every 30 seconds, same pg_net pattern as `duoly-payments-tick`) posts to `POST /api/discord/roles/tick` with `Authorization: Bearer <Vault discord_roles_tick_secret>`. It reconciles every linked teammate and admin plus everyone the bot gave roles to (unlinked accounts lose them). Presence going stale therefore drops Online within about 50 seconds. `duoly-discord-roles-log-prune` keeps a week of that job's run log.
+- **Switch**: nothing happens unless `DISCORD_ROLE_SYNC_ENABLED=true`, `DISCORD_BOT_TOKEN`, `DISCORD_GUILD_ID`, `SUPABASE_URL` and `SUPABASE_SECRET_KEY` are set. The tick additionally needs `DISCORD_ROLES_TICK_SECRET` (at least 32 characters) in Vercel and the same value as Vault secret `discord_roles_tick_secret`. The token is never logged or returned.
+
+Release: deploy the code first (feature off), apply the migration, add the Vault secret and the Vercel env, then switch `DISCORD_ROLE_SYNC_ENABLED=true`. Rollback-only checks: `supabase/tests/discord_role_sync.sql`; unit tests: `tests/unit/discord-role-sync.test.ts`, `tests/unit/discord-role-hooks.test.ts`.
+
+### Still to do
+
+- **Queue posts** (`lib/discordQueue.js`, #41): order waiting 100 s → embed in the game category's `general` channel mentioning @Teammate; edited when taken, cancelled or re-rolled. Post ids stored in a `discord_order_posts` table instead of on the order object.
 - **Interactions endpoint** (new): `/api/discord/interactions`, Ed25519-verified. Buttons to claim an order directly from the post, slash commands (`/queue`, `/online`).
 
 ## Phase 3: always-on gateway worker (optional, separate host)
