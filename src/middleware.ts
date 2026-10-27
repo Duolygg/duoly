@@ -1,4 +1,5 @@
 import { defineMiddleware } from 'astro:middleware';
+import { captureReferral } from './server/referrals';
 
 // Baseline protections, not a complete script-source CSP.
 const securityHeaders = {
@@ -11,6 +12,8 @@ const securityHeaders = {
 };
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  // Creator links (?ref=CODE): remember the code in an httpOnly cookie for checkout.
+  captureReferral(context.url, context.request?.method, context.cookies);
   const response = await next();
   // Private API and auth endpoints may choose the stricter no-referrer policy. Pages never do:
   // a page served with no-referrer makes browsers send `Origin: null` on its form posts

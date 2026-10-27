@@ -18,6 +18,8 @@ import NotConnected from './NotConnected';
 import Priority from './Priority';
 import Support from './Support';
 import Safety from './Safety';
+import Settings from './Settings';
+import Creators from './Creators';
 
 // Port of the original admin shell (components/admin/AdminApp.jsx): same sidebar, groups,
 // titles, confirm dialog and toasts. Sections are real URLs (/admin/users) so they can be
@@ -72,6 +74,12 @@ export const SECTIONS = [
     icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
   },
   {
+    id: 'creators',
+    slug: 'creators',
+    label: 'Creators',
+    icon: 'M23 7l-7 5 7 5V7zM14 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z',
+  },
+  {
     id: 'payouts',
     slug: 'payouts',
     label: 'Payouts',
@@ -104,7 +112,10 @@ export const SECTIONS = [
 ];
 const GROUPS = [
   { label: 'Live', ids: ['overview', 'live', 'priority'] },
-  { label: 'Business', ids: ['orders', 'payouts', 'customers', 'teammates'] },
+  {
+    label: 'Business',
+    ids: ['orders', 'payouts', 'customers', 'teammates', 'creators'],
+  },
   {
     label: 'People & safety',
     ids: ['applications', 'users', 'support', 'safety'],
@@ -142,6 +153,10 @@ const TITLES = {
     'Customer reports and chat messages the safety filter stopped',
   ],
   audit: ['Audit log', 'Every action taken in this admin, newest first'],
+  creators: [
+    'Creators',
+    'Creator codes, the customers they brought and the commission they earned',
+  ],
   settings: ['Settings', 'The rules the platform runs on'],
 };
 // Sections wired to the database. The rest show what they will do, never sample data.
@@ -157,6 +172,8 @@ const LIVE = [
   'support',
   'safety',
   'audit',
+  'settings',
+  'creators',
 ];
 
 export const sectionFromPath = (path) => {
@@ -506,6 +523,8 @@ export default class AdminApp extends React.Component {
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
     else if (s.section === 'support') body = <Support {...props} />;
     else if (s.section === 'audit') body = <AuditLog {...props} />;
+    else if (s.section === 'settings') body = <Settings {...props} />;
+    else if (s.section === 'creators') body = <Creators {...props} />;
     else if (s.section === 'safety')
       body = (
         <Safety

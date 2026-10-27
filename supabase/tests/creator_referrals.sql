@@ -101,7 +101,7 @@ do $$ begin
 end $$;
 
 -- The checkout's creator is resolved from the code server side; a passed creator_id is ignored.
-do $$ declare i uuid; o uuid; beta uuid; v public.checkout_intents; begin
+do $$ declare i uuid; o uuid; beta uuid; spoof uuid; v public.checkout_intents; begin
  select id into beta from public.creators where code='BETA';
  i := pg_temp.intent('6c000000-0000-4000-8000-000000000002','ALPHA10',1887,beta);
  select * into v from public.checkout_intents where id=i;
@@ -109,6 +109,9 @@ do $$ declare i uuid; o uuid; beta uuid; v public.checkout_intents; begin
  if pg_temp.intent('6c000000-0000-4000-8000-000000000003','NOSUCH',1000,beta) is null then raise exception 'unknown code broke checkout'; end if;
  if (select creator_id from public.checkout_intents where customer_id='6c000000-0000-4000-8000-000000000003' and ref_code='NOSUCH') is not null then
    raise exception 'unknown code resolved'; end if;
+ spoof := pg_temp.intent('6c000000-0000-4000-8000-000000000003',null,1000,beta);
+ if (select creator_id from public.checkout_intents where id = spoof) is not null then
+   raise exception 'passed creator_id kept without a code'; end if;
  -- The code on a checkout cannot change afterwards.
  begin
    update public.checkout_intents set ref_code='BETA' where id=i;
