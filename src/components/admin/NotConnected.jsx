@@ -60,7 +60,7 @@ export default function NotConnected({ section, go }) {
           style={btn('primary')}
           onClick={() => go('users')}
         >
-          Users & roles
+          Users and roles
         </button>
         <button type="button" style={btn()} onClick={() => go('teammates')}>
           Teammates

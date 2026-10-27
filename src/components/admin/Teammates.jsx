@@ -123,8 +123,8 @@ export default class Teammates extends React.Component {
       );
     const n = (f) => s.list.filter((t) => is(t, f)).length;
     const soon = (title) => (
-      <span style={{ color: C.faint }} title={title}>
-        —
+      <span style={{ color: C.faint, fontSize: '12.5px' }} title={title}>
+        Soon
       </span>
     );
     return (
@@ -378,7 +378,7 @@ export default class Teammates extends React.Component {
                         : 'No reviews yet'
                     }
                   >
-                    {t.rating == null ? '—' : '★ ' + t.rating.toFixed(2)}
+                    {t.rating == null ? 'New' : '★ ' + t.rating.toFixed(2)}
                   </td>
                   <td
                     style={{ ...td, textAlign: 'right' }}
@@ -519,7 +519,7 @@ export default class Teammates extends React.Component {
                   >
                     {s.list.length
                       ? 'No teammates match.'
-                      : 'No teammates yet. Approve an application or make someone a teammate in Users & roles.'}
+                      : 'No teammates yet. Approve an application or make someone a teammate in Users and roles.'}
                   </td>
                 </tr>
               ) : null}

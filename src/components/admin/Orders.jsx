@@ -254,10 +254,9 @@ export default class Orders extends React.Component {
       timeline.push([
         'Refunded to the card' +
           (o.adminRefundReason ? ': ' + o.adminRefundReason : ''),
-        o.adminRefundedAt ||
-          (o.payment && o.payment.refundedAt
-            ? Date.parse(o.payment.refundedAt)
-            : null),
+        Date.parse(
+          o.adminRefundedAt || (o.payment && o.payment.refundedAt) || '',
+        ) || null,
         true,
       ]);
     if (o.status === 'Cancelled')

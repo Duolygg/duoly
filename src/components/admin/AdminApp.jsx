@@ -46,7 +46,7 @@ export const SECTIONS = [
   {
     id: 'users',
     slug: 'users',
-    label: 'Users & roles',
+    label: 'Users and roles',
     icon: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM16 11l2 2 4-4',
   },
   {
@@ -94,7 +94,7 @@ export const SECTIONS = [
   {
     id: 'safety',
     slug: 'safety',
-    label: 'Reports & safety',
+    label: 'Reports and safety',
     icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM12 8v4M12 16h.01',
   },
   {
@@ -117,7 +117,7 @@ const GROUPS = [
     ids: ['orders', 'payouts', 'customers', 'teammates', 'creators'],
   },
   // Applications live inside Teammates (a tab), like the original; /admin/applications opens it.
-  { label: 'People & safety', ids: ['support', 'users', 'safety'] },
+  { label: 'People and safety', ids: ['support', 'users', 'safety'] },
   { label: 'System', ids: ['audit', 'settings'] },
 ];
 const TITLES = {
@@ -131,7 +131,7 @@ const TITLES = {
     'Who sees new orders first. Admins only: teammates never see their own score.',
   ],
   users: [
-    'Users & roles',
+    'Users and roles',
     'Who’s a customer, a teammate or an admin. Changes apply right away.',
   ],
   applications: ['Teammates', 'Your contractors and new applications'],
@@ -144,7 +144,7 @@ const TITLES = {
     'Everyone who wrote to Sparky. Reply to the ones waiting for a human.',
   ],
   safety: [
-    'Reports & safety',
+    'Reports and safety',
     'Customer reports and chat messages the safety filter stopped',
   ],
   audit: ['Audit log', 'Every action taken in this admin, newest first'],
@@ -328,7 +328,7 @@ export default class AdminApp extends React.Component {
       .post('/api/admin/presence', { action: 'check-in', online: true })
       .catch(() => undefined);
   // Sidebar counts like the original: queue on Live desk, open orders, pending applications on
-  // Teammates, chats waiting for a human, open reports (hot) on Reports & safety.
+  // Teammates, chats waiting for a human, open reports (hot) on Reports and safety.
   loadCounts = async () => {
     const [apps, orders, support, reports] = await Promise.all([
       this.api.get('/api/admin/applications'),
@@ -577,6 +577,7 @@ export default class AdminApp extends React.Component {
       auditLoaded: s.auditLoaded,
       onApplications: (n) => this.setState({ pendingApps: n }),
       csrf: this.props.csrf,
+      admin: this.props.admin,
     };
     let body = null;
     if (s.section === 'users') body = <Users {...props} />;
