@@ -6,6 +6,7 @@ import {
   sessionParams,
 } from '../../src/server/payments/checkout';
 import {
+  disputeFacts,
   paymentFacts,
   refundedPaymentIntentId,
 } from '../../src/server/payments/webhook';
@@ -165,6 +166,40 @@ describe('refund webhook facts', () => {
         payment_intent: 'pi_pending',
       }),
     ).toBeNull();
+  });
+});
+
+describe('dispute webhook facts', () => {
+  it('maps open, won and lost dispute events to deposit actions', () => {
+    const base = {
+      id: 'dp_123',
+      charge: 'ch_123',
+      payment_intent: 'pi_123',
+      reason: 'fraudulent',
+    };
+    expect(disputeFacts({ ...base, status: 'needs_response' })).toEqual({
+      disputeId: 'dp_123',
+      chargeId: 'ch_123',
+      paymentIntentId: 'pi_123',
+      status: 'needs_response',
+      reason: 'fraudulent',
+      action: 'block',
+    });
+    expect(disputeFacts({ ...base, status: 'won' })?.action).toBe('unblock');
+    expect(disputeFacts({ ...base, status: 'lost' })?.action).toBe('forfeit');
+  });
+
+  it('accepts expanded charge and payment intent objects and rejects malformed events', () => {
+    expect(
+      disputeFacts({
+        id: 'dp_456',
+        charge: { id: 'ch_456' },
+        payment_intent: { id: 'pi_456' },
+        status: 'under_review',
+        reason: 'general',
+      }),
+    ).toMatchObject({ chargeId: 'ch_456', paymentIntentId: 'pi_456' });
+    expect(disputeFacts({ id: 'dp_bad', status: 'lost' })).toBeNull();
   });
 });
 

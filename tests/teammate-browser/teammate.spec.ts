@@ -56,8 +56,11 @@ const stats = {
   stats: {
     completed: 2,
     tier: { name: 'Rookie', deposit: 10 },
-    held: 0,
-    saved: 0,
+    held: 3.21,
+    released: 4.56,
+    forfeited: 1.23,
+    saved: 7.89,
+    progress: { current: 2, next: 100, remaining: 98, percent: 2 },
     rating: null,
     reviews: 0,
     tipsTotal: 0,
@@ -217,6 +220,27 @@ test('original layout, server queue, real chat transport and private completion 
     { csrf: 'fixture-csrf', enabledGames: ['lol'], voiceOptIn: false },
   ]);
   await expect(page.getByText('Earned today', { exact: true })).toHaveCount(0);
+  const trust = page.locator('#trust');
+  await expect(
+    trust.getByRole('heading', { name: 'Loyalty lowers your deposit' }),
+  ).toBeVisible();
+  await expect(trust.getByText('$3.21', { exact: true })).toBeVisible();
+  await expect(trust.getByText('$7.89', { exact: true })).toBeVisible();
+  await expect(
+    trust.getByText('98 more orders', { exact: false }),
+  ).toBeVisible();
+  await expect(
+    trust.getByText('Trusted badge on your profile', { exact: true }),
+  ).toBeVisible();
+  await expect(
+    trust.getByText('High-value matching coming soon', { exact: true }),
+  ).toBeVisible();
+  await expect(
+    trust.getByText('Priority matching coming soon', { exact: true }),
+  ).toBeVisible();
+  await expect(
+    trust.getByText('No deposit plus Legend badge', { exact: true }),
+  ).toBeVisible();
   await expect(page.locator('header')).toHaveCount(1);
   await page.screenshot({
     path: info.outputPath('teammate-queue.png'),

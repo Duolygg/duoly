@@ -16,9 +16,7 @@ import React from 'react';
 // Session commands are supplied by the live wrapper.
 import Leaderboard from './Leaderboard';
 import SupportChat from '../support/SupportChat';
-import TrustScore, {
-  tierFor,
-} from '../../design-reference/components/TrustScore';
+import TrustScore, { tierFor } from './TrustScore';
 import {
   GAMES,
   GAME_IDS,
@@ -55,7 +53,7 @@ export const FEATURES = {
   presence: true,
   notifications: true,
   preferences: true,
-  trust: false,
+  trust: true,
   stats: false,
   reviews: true,
   tips: false,

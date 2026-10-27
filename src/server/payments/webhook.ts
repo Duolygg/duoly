@@ -59,6 +59,62 @@ export function refundedPaymentIntentId(
   return null;
 }
 
+export type DisputeAction = 'block' | 'unblock' | 'forfeit';
+
+export interface DisputeFacts {
+  disputeId: string;
+  chargeId: string;
+  paymentIntentId: string;
+  status: string;
+  reason: string;
+  action: DisputeAction;
+}
+
+const stripeId = (value: unknown): string | null => {
+  if (typeof value === 'string') return value;
+  if (value && typeof value === 'object' && 'id' in value) {
+    const id = (value as { id?: unknown }).id;
+    return typeof id === 'string' ? id : null;
+  }
+  return null;
+};
+
+/** Pure: reduce a Stripe dispute into the database action it requires. */
+export function disputeFacts(object: unknown): DisputeFacts | null {
+  if (!object || typeof object !== 'object') return null;
+  const value = object as {
+    id?: unknown;
+    charge?: unknown;
+    payment_intent?: unknown;
+    status?: unknown;
+    reason?: unknown;
+  };
+  const disputeId = stripeId(value.id);
+  const chargeId = stripeId(value.charge);
+  const paymentIntentId = stripeId(value.payment_intent);
+  if (
+    !disputeId?.startsWith('dp_') ||
+    !chargeId?.startsWith('ch_') ||
+    !paymentIntentId?.startsWith('pi_') ||
+    typeof value.status !== 'string'
+  )
+    return null;
+  const action: DisputeAction =
+    value.status === 'lost'
+      ? 'forfeit'
+      : value.status === 'won' || value.status === 'warning_closed'
+        ? 'unblock'
+        : 'block';
+  return {
+    disputeId,
+    chargeId,
+    paymentIntentId,
+    status: value.status,
+    reason: typeof value.reason === 'string' ? value.reason : 'unknown',
+    action,
+  };
+}
+
 export interface PaymentFacts {
   intentId: string;
   paymentIntentId: string;
@@ -280,6 +336,22 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
           .eq('status', 'open');
         outcome = 'expired';
         break;
+      case 'charge.dispute.created':
+      case 'charge.dispute.updated':
+      case 'charge.dispute.closed': {
+        const dispute = disputeFacts(event.data.object);
+        if (!dispute) break;
+        const result = await admin.rpc('record_stripe_dispute', {
+          p_dispute_id: dispute.disputeId,
+          p_charge_id: dispute.chargeId,
+          p_payment_intent: dispute.paymentIntentId,
+          p_status: dispute.status,
+          p_reason: dispute.reason,
+        });
+        if (result.error) throw new Error('record_stripe_dispute failed');
+        outcome = `dispute_${dispute.action}`;
+        break;
+      }
       case 'charge.refunded':
       case 'refund.created':
       case 'refund.updated': {

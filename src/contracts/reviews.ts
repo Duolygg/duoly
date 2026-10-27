@@ -34,7 +34,18 @@ const ReviewStatsSchema = z.strictObject({
     deposit: z.number().int().min(0).max(10),
   }),
   held: z.number().nonnegative(),
+  // Added by 20261025130000_trust_deposits.sql; optional so code can deploy first.
+  released: z.number().nonnegative().optional(),
+  forfeited: z.number().nonnegative().optional(),
   saved: z.number().nonnegative(),
+  progress: z
+    .strictObject({
+      current: z.number().int().nonnegative(),
+      next: z.number().int().positive().nullable(),
+      remaining: z.number().int().nonnegative(),
+      percent: z.number().int().min(0).max(100),
+    })
+    .optional(),
   rating: z.number().min(1).max(5).nullable(),
   reviews: z.number().int().nonnegative(),
   tipsTotal: z.literal(0),
