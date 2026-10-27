@@ -130,6 +130,21 @@ export const SetSuspendedSchema = z
   })
   .strict();
 
+export const WalletAdjustSchema = z
+  .object({
+    csrf,
+    action: z.literal('adjustWallet'),
+    userId: z.uuid(),
+    amountCents: z
+      .number()
+      .int()
+      .min(-100000)
+      .max(100000)
+      .refine((value) => value !== 0),
+    reason: z.string().trim().min(1).max(200),
+  })
+  .strict();
+
 export const SetBlockedSchema = z
   .object({
     csrf,

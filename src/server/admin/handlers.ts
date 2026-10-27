@@ -14,6 +14,7 @@ import {
   SetBlockedSchema,
   SetRoleSchema,
   SetSuspendedSchema,
+  WalletAdjustSchema,
   applicationError,
 } from '../../contracts/admin';
 import { AdminPriorityCommandSchema, tierById } from '../../contracts/priority';
@@ -182,6 +183,15 @@ export const teammates = adminRoute(
 export const customers = adminRoute(
   (client) => client.rpc('admin_customers'),
   [
+    {
+      schema: WalletAdjustSchema,
+      call: (client, body) =>
+        client.rpc('admin_wallet_adjust', {
+          p_user_id: body.userId as string,
+          p_amount_eur_cents: body.amountCents as number,
+          p_reason: body.reason as string,
+        }),
+    },
     {
       schema: SetBlockedSchema,
       call: (client, body) =>

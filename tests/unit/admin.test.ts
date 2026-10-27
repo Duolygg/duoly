@@ -8,6 +8,7 @@ import {
   ApplicationSchema,
   SetAccessSchema,
   SetRoleSchema,
+  WalletAdjustSchema,
   applicationError,
 } from '../../src/contracts/admin';
 import { rpcResponse } from '../../src/server/admin/handlers';
@@ -76,6 +77,36 @@ describe('admin contracts', () => {
         owner: true,
       }).success,
     ).toBe(false);
+  });
+
+  it('accepts bounded wallet adjustments with a reason', () => {
+    expect(
+      WalletAdjustSchema.safeParse({
+        csrf: 'x',
+        action: 'adjustWallet',
+        userId: id,
+        amountCents: -100000,
+        reason: 'Remove abuse credit',
+      }).success,
+    ).toBe(true);
+    for (const patch of [
+      { amountCents: 0 },
+      { amountCents: 100001 },
+      { amountCents: 1.5 },
+      { reason: ' ' },
+      { reason: 'x'.repeat(201) },
+    ]) {
+      expect(
+        WalletAdjustSchema.safeParse({
+          csrf: 'x',
+          action: 'adjustWallet',
+          userId: id,
+          amountCents: 500,
+          reason: 'Goodwill',
+          ...patch,
+        }).success,
+      ).toBe(false);
+    }
   });
 
   const form = {
