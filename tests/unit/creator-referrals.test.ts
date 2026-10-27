@@ -62,14 +62,18 @@ describe('creator program rules (original lib/creators.js)', () => {
   });
   it('replaces no existing function and grants the tables to nobody but the service role', () => {
     expect(migration).not.toMatch(/create or replace/i);
-    expect(migration).not.toMatch(/grant [^;]* on table [^;]* to authenticated/i);
+    expect(migration).not.toMatch(
+      /grant [^;]* on table [^;]* to authenticated/i,
+    );
     expect(migration).toMatch(
       /grant execute on function public\.admin_creators\(\), public\.admin_create_creator\(text,text,text\),\s+public\.admin_set_creator_active\(uuid,boolean\) to authenticated;/,
     );
   });
   it('never applies a discount or moves money', () => {
     expect(migration).not.toMatch(/update public\.(orders|order_payments)/i);
-    expect(migration).not.toMatch(/insert into public\.(refund_credits|order_payments)/i);
+    expect(migration).not.toMatch(
+      /insert into public\.(refund_credits|order_payments)/i,
+    );
   });
 });
 
@@ -282,7 +286,9 @@ describe('admin creators and settings endpoints', () => {
       ownersConfigured: expect.any(Boolean),
       referralsEnabled: expect.any(Boolean),
     });
-    expect(JSON.stringify(body)).not.toMatch(/ADMIN_EMAILS|REFERRALS_ENABLED|@/);
+    expect(JSON.stringify(body)).not.toMatch(
+      /ADMIN_EMAILS|REFERRALS_ENABLED|@/,
+    );
     const fallback = await settingsSnapshot(async () => ({
       rate: 1.08,
       source: 'fallback' as const,
@@ -328,8 +334,7 @@ describe('admin Creators screen mapping', () => {
         .counts,
     ).toBe('When completed');
     expect(
-      referralOrder({ ...base, status: 'cancelled', payment: 'voided' })
-        .counts,
+      referralOrder({ ...base, status: 'cancelled', payment: 'voided' }).counts,
     ).toBe('No');
   });
 });

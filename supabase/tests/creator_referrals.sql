@@ -159,10 +159,13 @@ do $$ declare o uuid; begin
  if exists (select 1 from public.order_referrals where order_id=o) then raise exception 'existing customer order counted'; end if;
 end $$;
 
--- A paused creator's code attributes nobody.
-do $$ declare o uuid; begin
- o := pg_temp.pay(pg_temp.intent('6c000000-0000-4000-8000-000000000004','PAUSED',1000));
- if exists (select 1 from public.customer_referrals where customer_id='6c000000-0000-4000-8000-000000000004') then raise exception 'paused code attributed'; end if;
+-- Pausing after checkout creation still blocks a new attribution when payment arrives.
+do $$ declare i uuid; o uuid; begin
+ update public.creators set active=true where code='PAUSED';
+ i := pg_temp.intent('6c000000-0000-4000-8000-000000000004','PAUSED',1000);
+ update public.creators set active=false where code='PAUSED';
+ o := pg_temp.pay(i);
+ if exists (select 1 from public.customer_referrals where customer_id='6c000000-0000-4000-8000-000000000004') then raise exception 'creator paused before payment attributed'; end if;
 end $$;
 
 -- Orders after the 12 months do not count.

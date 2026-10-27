@@ -130,7 +130,9 @@ test('settings shows the live rules read-only, with honest not-live labels', asy
   await expect(main.getByText('Referral links:')).toContainText('Off');
   await expect(main.getByText('Owners configured:')).toContainText('Yes');
   // Read-only: no inputs, toggles or save buttons; no env names leak.
-  await expect(main.locator('section input, section select, section textarea')).toHaveCount(0);
+  await expect(
+    main.locator('section input, section select, section textarea'),
+  ).toHaveCount(0);
   await expect(main.getByRole('button', { name: /save/i })).toHaveCount(0);
   await expect(main).not.toContainText('ADMIN_EMAILS');
   await expect(main).not.toContainText('.env');
@@ -151,17 +153,27 @@ test('creators lists codes, months and orders, and adds and pauses with audit', 
   await expect(main.getByText('Commission earned')).toBeVisible();
   await expect(main.getByText('Links are not tracked yet')).toBeVisible();
   await row.getByRole('button', { name: 'Months' }).click();
-  await expect(main.getByRole('cell', { name: 'October 2026', exact: true })).toBeVisible();
-  await expect(main.getByRole('cell', { name: 'Rising · 8%', exact: true })).toBeVisible();
   await expect(
-    main.getByRole('row', { name: /DL-1001/ }).getByRole('cell').last(),
+    main.getByRole('cell', { name: 'October 2026', exact: true }),
+  ).toBeVisible();
+  await expect(
+    main.getByRole('cell', { name: 'Rising · 8%', exact: true }),
+  ).toBeVisible();
+  await expect(
+    main
+      .getByRole('row', { name: /DL-1001/ })
+      .getByRole('cell')
+      .last(),
   ).toHaveText('Yes');
   await expect(
-    main.getByRole('row', { name: /DL-1002/ }).getByRole('cell').last(),
+    main
+      .getByRole('row', { name: /DL-1002/ })
+      .getByRole('cell')
+      .last(),
   ).toHaveText('When completed');
 
   // Client-side validation stops a bad code before any request.
-  await main.getByLabel('Code').fill('no');
+  await main.getByRole('textbox', { name: 'Code', exact: true }).fill('no');
   await main.getByLabel('Name', { exact: true }).fill('Beta');
   await main.getByRole('button', { name: 'Add creator' }).click();
   await expect(main.getByRole('alert')).toHaveText(
@@ -169,7 +181,7 @@ test('creators lists codes, months and orders, and adds and pauses with audit', 
   );
   expect(writes).toHaveLength(0);
 
-  await main.getByLabel('Code').fill('beta5');
+  await main.getByRole('textbox', { name: 'Code', exact: true }).fill('beta5');
   await main.getByRole('button', { name: 'Add creator' }).click();
   await expect(main.getByRole('row', { name: /BETA5 Beta/ })).toBeVisible();
   expect(writes[0]).toEqual({
@@ -181,7 +193,9 @@ test('creators lists codes, months and orders, and adds and pauses with audit', 
   });
 
   // Duplicate code: the server refusal is shown.
-  await main.getByLabel('Code').fill('ALPHA10');
+  await main
+    .getByRole('textbox', { name: 'Code', exact: true })
+    .fill('ALPHA10');
   await main.getByLabel('Name', { exact: true }).fill('Copy');
   await main.getByRole('button', { name: 'Add creator' }).click();
   await expect(main.getByRole('alert')).toHaveText('That code is taken.');

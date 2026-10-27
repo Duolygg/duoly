@@ -106,6 +106,8 @@ begin
     select o.* into v_order from public.orders as o where o.id = new.order_id;
     select r.* into v_ref from public.customer_referrals as r where r.customer_id = new.customer_id;
     if v_ref.customer_id is null and new.creator_id is not null
+       and exists (select 1 from public.creators as c
+                    where c.id = new.creator_id and c.code = new.ref_code and c.active)
        and not exists (select 1 from public.orders as o where o.customer_id = new.customer_id and o.id <> new.order_id) then
       insert into public.customer_referrals(customer_id, creator_id, code, first_order_id)
         values (new.customer_id, new.creator_id, new.ref_code, new.order_id)
