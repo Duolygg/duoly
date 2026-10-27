@@ -1711,6 +1711,14 @@ export type Database = {
       admin_clear_adjustment: { Args: { p_user: string }; Returns: Json };
       admin_create_handover: { Args: { p_order_id: string }; Returns: Json };
       admin_customers: { Args: never; Returns: Json };
+      admin_wallet_adjust: {
+        Args: {
+          p_amount_eur_cents: number;
+          p_reason: string;
+          p_user_id: string;
+        };
+        Returns: Json;
+      };
       admin_decide_application: {
         Args: {
           p_application_id: string;

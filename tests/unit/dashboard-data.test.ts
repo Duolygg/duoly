@@ -98,7 +98,20 @@ describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
           cancel_reason: 'customer_cancelled',
         },
       ],
-      [{ amount_eur_cents: 500 }],
+      {
+        credits: [{ amount_eur_cents: 500 }],
+        balance: {
+          total_eur_cents: 6500,
+          cashable_eur_cents: 500,
+          promo_eur_cents: 6000,
+          refunds_eur_cents: 500,
+          cashback_eur_cents: 0,
+          level_gifts_eur_cents: 0,
+          bounty_eur_cents: 5000,
+          admin_eur_cents: 1000,
+          spent_eur_cents: 0,
+        },
+      },
       now,
     );
     expect(h.lifetimeOrders).toBe(2);
@@ -107,7 +120,11 @@ describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
     expect(h.mates).toEqual([
       expect.objectContaining({ name: 'Mika Star', orders: 2, online: null }),
     ]);
-    expect(h.wallet).toBe(5);
+    expect(h.wallet).toBe(65);
+    expect(h.walletCashable).toBe(5);
+    expect(h.walletPromo).toBe(60);
+    expect(h.refunds).toBe(5);
+    expect(h.gifted).toBe(10);
     expect(h.orders).toHaveLength(3);
   });
 });

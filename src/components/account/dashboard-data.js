@@ -64,7 +64,7 @@ export function toOriginalOrder(o) {
 }
 
 /** The original /api/me/history payload, computed from the customer's real orders. */
-export function toOriginalHistory(orders, credits, now = Date.now()) {
+export function toOriginalHistory(orders, walletData, now = Date.now()) {
   const list = orders
     .map(toOriginalOrder)
     .sort((a, b) => b.createdAt - a.createdAt);
@@ -96,7 +96,15 @@ export function toOriginalHistory(orders, credits, now = Date.now()) {
     m.byGame[o.game] = (m.byGame[o.game] || 0) + 1;
     mates.set(key, m);
   }
+  const credits = Array.isArray(walletData)
+    ? walletData
+    : walletData?.credits || [];
+  const balance = Array.isArray(walletData) ? null : walletData?.balance;
   const credit = credits.reduce((t, c) => t + c.amount_eur_cents, 0) / 100;
+  const cents = (key, fallback = 0) =>
+    balance && Number.isFinite(Number(balance[key]))
+      ? Number(balance[key])
+      : fallback;
   return {
     now,
     orders: list,
@@ -112,13 +120,15 @@ export function toOriginalHistory(orders, credits, now = Date.now()) {
         main: Object.entries(byGame).sort((a, b) => b[1] - a[1])[0][0],
       }))
       .sort((a, b) => b.orders - a.orders),
-    wallet: credit,
-    refunds: credit,
-    cashbackTotal: 0,
+    wallet: cents('total_eur_cents', credit * 100) / 100,
+    walletCashable: cents('cashable_eur_cents', credit * 100) / 100,
+    walletPromo: cents('promo_eur_cents') / 100,
+    refunds: cents('refunds_eur_cents', credit * 100) / 100,
+    cashbackTotal: cents('cashback_eur_cents') / 100,
     cashbackMonth: 0,
-    levelGifts: 0,
-    gifted: 0,
-    walletSpent: 0,
+    levelGifts: cents('level_gifts_eur_cents') / 100,
+    gifted: cents('admin_eur_cents') / 100,
+    walletSpent: cents('spent_eur_cents') / 100,
   };
 }
 
@@ -134,7 +144,7 @@ export async function dashboardFetch(input) {
         get('/api/orders/history?limit=100'),
         get('/api/orders/credits').catch(() => ({ credits: [] })),
       ]);
-      return json(toOriginalHistory(h.orders || [], c.credits || []));
+      return json(toOriginalHistory(h.orders || [], c));
     }
   } catch {
     return json({ error: 'unavailable' }, 503);

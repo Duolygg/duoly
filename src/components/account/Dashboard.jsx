@@ -10,7 +10,7 @@ import { dashboardFetch as fetch } from './dashboard-data';
 // Sections whose feature isn't live yet stay in the file and switch on here when it ships
 // (ledger: wallet #11, rewards #12, reviews and tips #7/#10, Sparky #25, PRO design-only).
 const FEATURES = {
-  wallet: false,
+  wallet: true,
   rewards: false,
   reviews: true,
   support: true,
@@ -513,6 +513,12 @@ export default class Dashboard extends React.Component {
         ],
       ],
       giftedNote: walletParts.length ? walletParts.join(' · ') : '',
+      walletBucketNote: h
+        ? eur(h.walletCashable || 0) +
+          ' cashable refunds · ' +
+          eur(h.walletPromo || 0) +
+          ' promotional credit'
+        : '',
       // level-up gifts go into the balance automatically (lib/orders.js moneyOf), nothing to claim
       rewards: {
         orders: h ? h.lifetimeOrders : 0,
@@ -1773,9 +1779,20 @@ export default class Dashboard extends React.Component {
                       color: '#A79DC4',
                     }}
                   >
-                    Refunds, cashback and level-up gifts land here. Switch on
-                    “Use my Duoly balance” at checkout to pay for part or all of
-                    an order, any game. It never expires.
+                    Refunds, cashback and level-up gifts land here. Your balance
+                    never expires. Paying with it at checkout is coming soon.
+                    {v.walletBucketNote ? (
+                      <span
+                        style={{
+                          display: 'block',
+                          marginTop: '6px',
+                          color: '#CFC4EA',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {v.walletBucketNote}
+                      </span>
+                    ) : null}
                     {v.giftedNote ? (
                       <span
                         style={{
@@ -1789,8 +1806,10 @@ export default class Dashboard extends React.Component {
                       </span>
                     ) : null}
                   </p>
-                  <a
-                    href="/#checkout"
+                  <button
+                    type="button"
+                    disabled
+                    aria-label="Book with my balance, coming soon"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1798,15 +1817,17 @@ export default class Dashboard extends React.Component {
                       width: '100%',
                       minHeight: '50px',
                       borderRadius: '14px',
+                      border: '0',
                       background: '#D6BBFF',
                       color: '#17092E',
                       fontSize: '15px',
                       fontWeight: '700',
-                      textDecoration: 'none',
+                      opacity: '.58',
+                      cursor: 'not-allowed',
                     }}
                   >
-                    Book with my balance
-                  </a>
+                    Book with my balance · coming soon
+                  </button>
                 </section>
               ) : null}
 
