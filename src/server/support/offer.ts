@@ -72,3 +72,50 @@ export function offerSummary(): string {
   cached = [...lines, ...bundles].join('\n');
   return cached;
 }
+
+export type CatalogEntry = {
+  category: string;
+  service: string;
+  teammate: string;
+  priceFromEur: number;
+  per: 'game' | 'hour';
+  laterSessionsEur?: number;
+  bundleTotalsEur?: Record<string, number>;
+};
+
+/** One game's services from the checkout catalog, by game id or name. */
+export function catalogFor(
+  game: string,
+): { game: string; services: CatalogEntry[] } | null {
+  const wanted = game.trim().toLowerCase();
+  const match = GAMES.find(
+    (g) =>
+      g.id === wanted ||
+      g.name.toLowerCase() === wanted ||
+      g.short.toLowerCase() === wanted,
+  );
+  if (!match) return null;
+  const { modes } = servicesFor(match.id) as { modes: Mode[] };
+  return {
+    game: match.name,
+    services: modes.map((mode) => ({
+      category: TABS[mode.cat] ?? mode.cat,
+      service: mode.title,
+      teammate: mode.tier,
+      priceFromEur: mode.price,
+      per: mode.unit,
+      ...(mode.was && mode.was > mode.price
+        ? { laterSessionsEur: mode.was }
+        : {}),
+      ...(mode.cat === 'duo'
+        ? {
+            bundleTotalsEur: Object.fromEntries(
+              [3, 5, 10].map((n) => [`${n}x`, bundleTotal(mode.price, n)]),
+            ),
+          }
+        : {}),
+    })),
+  };
+}
+
+export const gameNames = () => GAMES.map((g) => g.name);
