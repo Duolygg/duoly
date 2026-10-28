@@ -1,0 +1,14 @@
+// Deploy: see docs/product/discord-gateway.md. Free plan: one SQLite-backed Durable Object.
+{
+  "name": "duoly-discord-gateway",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "durable_objects": {
+    "bindings": [{ "name": "BOT", "class_name": "DiscordGateway" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DiscordGateway"] }],
+  "triggers": { "crons": ["* * * * *"] },
+  "observability": { "enabled": true },
+}
