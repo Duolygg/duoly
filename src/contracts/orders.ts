@@ -76,6 +76,8 @@ export const CustomerOrderSchema = z.strictObject({
   tip: TipSchema.nullable().optional(),
   // Added by 20261024220000; optional so code can deploy before the migration.
   reports: z.array(CustomerReportSchema).max(2).optional(),
+  // Added by 20261026160000: the free monthly Play and Learn order (customer paid 0).
+  free_perk: z.boolean().optional(),
 });
 
 /** Exact privacy-safe public.order_teammate_dto projection. */
@@ -86,6 +88,9 @@ export const TeammateOrderSchema = z.strictObject({
   customer_country: CountrySchema,
   payout_usd_cents: z.number().int().min(99).max(10000000),
   current_assignment_id: z.uuid().nullable(),
+  // Added by 20261026160000 (queue rows only): a Diamond customer picked this teammate, so
+  // the order is theirs alone for a moment. Never a delay or priority number.
+  picked_for_you: z.boolean().optional(),
 });
 
 export const RefundCreditSchema = z.strictObject({
@@ -95,6 +100,36 @@ export const RefundCreditSchema = z.strictObject({
   amount_eur_cents: z.number().int().min(99).max(100000),
   created_at: TimestampSchema,
 });
+
+/** public.customer_perks_for: what the customer's loyalty level unlocks right now. */
+export const CustomerPerksSchema = z.strictObject({
+  level: z.enum(['bronze', 'silver', 'gold', 'platinum', 'diamond']),
+  freeCoaching: z.strictObject({
+    eligible: z.boolean(),
+    used: z.boolean(),
+    available: z.boolean(),
+    month: z.string().regex(/^[0-9]{4}-[0-9]{2}$/),
+  }),
+  pickTeammate: z.strictObject({ eligible: z.boolean() }),
+});
+export type CustomerPerks = z.infer<typeof CustomerPerksSchema>;
+
+/** public.customer_pickable_teammates: a handle is the customer's own order id, never a user id. */
+export const PickableTeammatesSchema = z.strictObject({
+  eligible: z.boolean(),
+  teammates: z
+    .array(
+      z.strictObject({
+        handle: z.uuid(),
+        name: z.string().max(80),
+        image: z.string().max(200),
+        country: z.string().max(8),
+        orders: z.number().int().min(1),
+      }),
+    )
+    .max(200),
+});
+export type PickableTeammates = z.infer<typeof PickableTeammatesSchema>;
 
 const LoyaltyLevelSchema = z.strictObject({
   index: z.number().int().min(0).max(4),
@@ -155,6 +190,8 @@ export const CustomerRewardsSchema = z.strictObject({
       }),
     )
     .max(100),
+  // Added by 20261026160000; optional so code can deploy before the migration.
+  perks: CustomerPerksSchema.optional(),
 });
 
 /** Public command input; callers translate order_id to the RPC p_order_id. */
@@ -189,6 +226,9 @@ export const OrderResponseSchemas = {
     credits: z.array(RefundCreditSchema).max(100),
   }),
   customerRewards: CustomerRewardsSchema,
+  customerPerks: CustomerPerksSchema,
+  pickableTeammates: PickableTeammatesSchema,
+  pickedPass: z.strictObject({ passed: z.literal(true) }),
   teammateOrder: z.strictObject({ order: TeammateOrderSchema }),
   teammateQueue: z.strictObject({
     orders: z.array(TeammateOrderSchema).max(100),

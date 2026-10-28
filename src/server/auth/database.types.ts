@@ -76,6 +76,7 @@ export type Database = {
           creator_id: string | null;
           customer_id: string;
           first_order_discount_cents: number;
+          free_coaching: boolean;
           expires_at: string;
           game: string;
           gg: boolean;
@@ -84,6 +85,7 @@ export type Database = {
           note: string;
           order_id: string | null;
           payout_usd_cents: number;
+          pick_source_order_id: string | null;
           rank: string;
           ref_code: string | null;
           region: string;
@@ -106,6 +108,7 @@ export type Database = {
           creator_id?: string | null;
           customer_id: string;
           first_order_discount_cents?: number;
+          free_coaching?: boolean;
           expires_at: string;
           game: string;
           gg?: boolean;
@@ -114,6 +117,7 @@ export type Database = {
           note?: string;
           order_id?: string | null;
           payout_usd_cents: number;
+          pick_source_order_id?: string | null;
           rank?: string;
           ref_code?: string | null;
           region: string;
@@ -136,6 +140,7 @@ export type Database = {
           creator_id?: string | null;
           customer_id?: string;
           first_order_discount_cents?: number;
+          free_coaching?: boolean;
           expires_at?: string;
           game?: string;
           gg?: boolean;
@@ -144,6 +149,7 @@ export type Database = {
           note?: string;
           order_id?: string | null;
           payout_usd_cents?: number;
+          pick_source_order_id?: string | null;
           rank?: string;
           ref_code?: string | null;
           region?: string;
@@ -319,6 +325,51 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      free_coaching_claims: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+          id: string;
+          intent_id: string;
+          list_eur_cents: number;
+          loyalty_level: string;
+          month: string;
+          order_id: string;
+          prior_completed_count: number;
+          return_reason: string | null;
+          returned_at: string | null;
+          state: string;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+          id?: string;
+          intent_id: string;
+          list_eur_cents: number;
+          loyalty_level: string;
+          month: string;
+          order_id: string;
+          prior_completed_count: number;
+          return_reason?: string | null;
+          returned_at?: string | null;
+          state?: string;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+          id?: string;
+          intent_id?: string;
+          list_eur_cents?: number;
+          loyalty_level?: string;
+          month?: string;
+          order_id?: string;
+          prior_completed_count?: number;
+          return_reason?: string | null;
+          returned_at?: string | null;
+          state?: string;
+        };
+        Relationships: [];
       };
       order_assignments: {
         Row: {
@@ -1185,6 +1236,42 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      order_teammate_picks: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+          order_id: string;
+          queue_key: string;
+          release_reason: string | null;
+          released_at: string | null;
+          source_order_id: string;
+          teammate_id: string;
+          window_ends_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+          order_id: string;
+          queue_key: string;
+          release_reason?: string | null;
+          released_at?: string | null;
+          source_order_id: string;
+          teammate_id: string;
+          window_ends_at: string;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+          order_id?: string;
+          queue_key?: string;
+          release_reason?: string | null;
+          released_at?: string | null;
+          source_order_id?: string;
+          teammate_id?: string;
+          window_ends_at?: string;
+        };
+        Relationships: [];
       };
       orders: {
         Row: {
@@ -2087,6 +2174,15 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
+      create_free_coaching_order: {
+        Args: { p_intent_id: string };
+        Returns: Json;
+      };
+      customer_perks: { Args: never; Returns: Json };
+      customer_pickable_teammates: {
+        Args: { p_game: string; p_gg: boolean; p_voice: boolean };
+        Returns: Json;
+      };
       customer_rewards: { Args: never; Returns: Json };
       desk_check_in: { Args: { p_last_active?: string }; Returns: Json };
       desk_set_online: { Args: { p_online: boolean }; Returns: Json };
@@ -2311,6 +2407,10 @@ export type Database = {
       };
       teammate_leaderboard: { Args: { p_now: string }; Returns: Json };
       teammate_order_queue: { Args: never; Returns: Json };
+      teammate_pass_picked_order: {
+        Args: { p_order_id: string };
+        Returns: Json;
+      };
       teammate_queue_personal_eligible: {
         Args: {
           p_order: Database['public']['Tables']['orders']['Row'];
