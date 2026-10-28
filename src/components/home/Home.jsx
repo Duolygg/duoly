@@ -1616,7 +1616,7 @@ export default class Home extends React.Component {
             ? allWallet
               ? 'Paying with your balance…'
               : 'Charging ' + payLabel + '…'
-            : 'Pay ' + money(allWallet ? amount : due) + ' & queue',
+            : 'Pay ' + money(allWallet ? amount : due) + ' and queue',
       placeOrder: place,
     };
   }
