@@ -55,11 +55,13 @@ export function toRoomOrder(o, { proMember = false } = {}) {
     rerollsLeft: proMember ? 1 : Math.max(0, MAX_REROLLS - o.rerolls),
     rerollsUnlimited: !!proMember,
     rerollUntil: accepted ? accepted + REROLL_WINDOW_MS : null,
-    paid: {
-      currency: 'EUR',
-      total: o.amount_eur_cents / 100,
-      method: 'Stripe checkout',
-    },
+    paid: o.free_perk
+      ? { currency: 'EUR', total: 0, method: 'Free with your perk' }
+      : {
+          currency: 'EUR',
+          total: o.amount_eur_cents / 100,
+          method: 'Stripe checkout',
+        },
     teammate: base.teammate
       ? {
           ...base.teammate,

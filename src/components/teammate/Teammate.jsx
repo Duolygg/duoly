@@ -666,6 +666,7 @@ export default class Teammate extends React.Component {
     clearInterval(this._presencePoll);
     clearInterval(this._chatPoll);
     clearInterval(this._stats);
+    clearTimeout(this._toastT);
     ['pointerdown', 'pointermove', 'keydown', 'wheel'].forEach((ev) =>
       window.removeEventListener(ev, this._activity),
     );
@@ -888,6 +889,35 @@ export default class Teammate extends React.Component {
         this.pollChat();
       },
     );
+  }
+  // A Diamond customer picked this teammate. Passing sends the order to everyone right away.
+  async pass(o) {
+    if (this.props.admin || this._passing || !o.pickedForYou) return;
+    this._passing = true;
+    try {
+      const { ok } = await this.post(
+        '/api/orders/' + encodeURIComponent(o.id),
+        { action: 'pass' },
+      );
+      if (!ok) {
+        this.setState({
+          notice: 'Could not pass this order. Refresh your desk and try again.',
+        });
+        return;
+      }
+      clearTimeout(this._toastT);
+      this.setState({ toast: 'Passed. It went to everyone.' });
+      this._toastT = setTimeout(() => {
+        if (!this._disposed) this.setState({ toast: '' });
+      }, 4000);
+      this.poll(true);
+    } catch {
+      this.setState({
+        notice: 'Could not pass this order. Refresh your desk and try again.',
+      });
+    } finally {
+      this._passing = false;
+    }
   }
   // First to accept gets it: the server says no if someone else was quicker.
   async accept(o) {
@@ -1248,8 +1278,11 @@ export default class Teammate extends React.Component {
           makeHandover: () => this.handover(o),
           copyHandover: () => this.copyHandover(o.id),
           accept: () => this.accept(o),
+          pass: () => this.pass(o),
         };
-      });
+      })
+      // Picked for you first (the server sorts them first too).
+      .sort((a, b) => (b.pickedForYou ? 1 : 0) - (a.pickedForYou ? 1 : 0));
     // admins: orders that hit 5 minutes without a teammate (customer got wallet credit)
     const cancelledOrders = admin
       ? s.cancelled.map((o) => ({
@@ -1465,6 +1498,7 @@ export default class Teammate extends React.Component {
           '. Go online again when you’re back.'
         : '',
       notice: s.notice,
+      toast: s.toast || '',
       clearNotice: () => this.setState({ notice: '' }),
       pill:
         'display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 8px 0 14px; border-radius: 999px; font-size: 13.5px; font-weight: 600; ' +
@@ -3989,6 +4023,23 @@ export default class Teammate extends React.Component {
                     Refresh desk
                   </button>
                 ) : null}
+                {v.toast ? (
+                  <div
+                    role="status"
+                    data-toast
+                    style={{
+                      marginBottom: '12px',
+                      padding: '10px 12px',
+                      borderRadius: '12px',
+                      background: 'rgba(94, 234, 168, .1)',
+                      border: '1px solid rgba(94, 234, 168, .3)',
+                      fontSize: '13.5px',
+                      color: '#C9F7E2',
+                    }}
+                  >
+                    {v.toast}
+                  </div>
+                ) : null}
                 {v.notice ? (
                   <div
                     role="status"
@@ -4153,14 +4204,50 @@ export default class Teammate extends React.Component {
                     {v.available.map((o) => (
                       <li
                         key={o.key}
+                        data-picked={o.pickedForYou ? 'true' : undefined}
                         style={{
                           padding: '16px',
                           borderRadius: '18px',
-                          background: '#090414',
-                          border: '1px solid rgba(214, 187, 255, .16)',
+                          background: o.pickedForYou ? '#160C2A' : '#090414',
+                          border: o.pickedForYou
+                            ? '1.5px solid #FFD27A'
+                            : '1px solid rgba(214, 187, 255, .16)',
+                          boxShadow: o.pickedForYou
+                            ? '0 0 30px rgba(255, 210, 122, .14)'
+                            : 'none',
                           animation: 'tmin .35s ease-out',
                         }}
                       >
+                        {o.pickedForYou ? (
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              alignItems: 'center',
+                              gap: '6px 10px',
+                              marginBottom: '12px',
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: '700',
+                                padding: '3px 9px',
+                                borderRadius: '7px',
+                                background: 'rgba(255, 210, 122, .16)',
+                                color: '#FFD27A',
+                              }}
+                            >
+                              Picked for you
+                            </span>
+                            <span
+                              style={{ fontSize: '13px', color: '#CFC4EA' }}
+                            >
+                              A past customer asked for you. Only you can take
+                              this for a moment.
+                            </span>
+                          </div>
+                        ) : null}
                         <div className="tm-order">
                           <img
                             src={o.img}
@@ -4400,29 +4487,50 @@ export default class Teammate extends React.Component {
                                   : 'Handover link'}
                               </button>
                             ) : (
-                              <button
-                                type="button"
-                                onClick={o.accept}
-                                disabled={v.busy}
-                                title={
-                                  v.busy
-                                    ? 'Finish your current order first'
-                                    : undefined
-                                }
-                                style={{
-                                  minHeight: '44px',
-                                  padding: '0 20px',
-                                  borderRadius: '12px',
-                                  border: 'none',
-                                  background: '#D6BBFF',
-                                  color: '#17092E',
-                                  fontSize: '14.5px',
-                                  fontWeight: '700',
-                                  opacity: v.busy ? '.4' : '1',
-                                }}
-                              >
-                                Accept
-                              </button>
+                              <>
+                                {o.pickedForYou ? (
+                                  <button
+                                    type="button"
+                                    onClick={o.pass}
+                                    style={{
+                                      minHeight: '44px',
+                                      padding: '0 16px',
+                                      borderRadius: '12px',
+                                      background: 'transparent',
+                                      border:
+                                        '1px solid rgba(196, 170, 255, .24)',
+                                      color: '#F3EEFF',
+                                      fontSize: '14.5px',
+                                      fontWeight: '600',
+                                    }}
+                                  >
+                                    Pass
+                                  </button>
+                                ) : null}
+                                <button
+                                  type="button"
+                                  onClick={o.accept}
+                                  disabled={v.busy}
+                                  title={
+                                    v.busy
+                                      ? 'Finish your current order first'
+                                      : undefined
+                                  }
+                                  style={{
+                                    minHeight: '44px',
+                                    padding: '0 20px',
+                                    borderRadius: '12px',
+                                    border: 'none',
+                                    background: '#D6BBFF',
+                                    color: '#17092E',
+                                    fontSize: '14.5px',
+                                    fontWeight: '700',
+                                    opacity: v.busy ? '.4' : '1',
+                                  }}
+                                >
+                                  Accept
+                                </button>
+                              </>
                             )}
                           </div>
                         </div>

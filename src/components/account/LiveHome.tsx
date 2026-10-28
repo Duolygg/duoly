@@ -3,6 +3,12 @@ import Home from '../home/Home.jsx';
 import type { Currency, Viewer } from '../../contracts/account';
 import type { HomeStats, RecentMatch } from '../../contracts/home';
 import type { ProView } from '../../contracts/pro';
+import {
+  CustomerPerksSchema,
+  PickableTeammatesSchema,
+  type CustomerPerks,
+  type PickableTeammates,
+} from '../../contracts/orders';
 
 const PENDING_KEY = 'duoly-pending-queue';
 
@@ -197,6 +203,42 @@ export default function LiveHome({
       return 'Can’t reach Duoly right now. Check your connection and try again.';
     }
   };
+  // Perks (migration 20261026160000): null hides every perk control (not live or not allowed).
+  const loadPerks = async (): Promise<CustomerPerks | null> => {
+    try {
+      const response = await fetch('/api/orders/perks', {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        redirect: 'error',
+      });
+      if (!response.ok) return null;
+      const parsed = CustomerPerksSchema.safeParse(
+        ((await response.json()) as { perks?: unknown }).perks,
+      );
+      return parsed.success ? parsed.data : null;
+    } catch {
+      return null;
+    }
+  };
+  // Diamond: past teammates free for this game, Gamer Girl and voice choice right now.
+  const loadPickable = async (
+    query: string,
+  ): Promise<PickableTeammates['teammates']> => {
+    try {
+      const response = await fetch('/api/orders/pickable-teammates?' + query, {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        redirect: 'error',
+      });
+      if (!response.ok) return [];
+      const parsed = PickableTeammatesSchema.safeParse(await response.json());
+      return parsed.success && parsed.data.eligible
+        ? parsed.data.teammates
+        : [];
+    } catch {
+      return [];
+    }
+  };
   const onCheckout = async (selection: Record<string, unknown>) => {
     try {
       const response = await fetch('/api/checkout', {
@@ -241,6 +283,8 @@ export default function LiveHome({
       onSignOut={signOut}
       onEmailAuth={onEmailAuth}
       onCheckout={checkoutEnabled ? onCheckout : undefined}
+      loadPerks={loadPerks}
+      loadPickable={loadPickable}
       walletEur={walletEur}
       usdRate={usdRate}
       onlineNow={live.onlineNow}

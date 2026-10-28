@@ -61,6 +61,8 @@ export function toOriginalOrder(o) {
       o.status === 'cancelled'
         ? CANCELLED[o.cancel_reason] || 'Cancelled · not charged'
         : '',
+    // Free monthly coaching (migration 20261026160000): the customer paid nothing.
+    ...(o.free_perk === true ? { freePerk: true } : {}),
   };
 }
 
@@ -144,6 +146,8 @@ export function toOriginalRewards(rewards) {
     pendingOrders: Number(cashback.pendingOrders) || 0,
     gifts: Array.isArray(rewards?.gifts) ? rewards.gifts : [],
     giftClaimed: true,
+    // Added by 20261026160000; absent until then, which keeps those perks "coming soon".
+    perks: rewards?.perks || null,
   };
 }
 

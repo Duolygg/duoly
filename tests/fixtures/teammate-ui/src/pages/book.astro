@@ -1,0 +1,25 @@
+---
+// Isolated fictional browser fixture, never a production route: the original homepage
+// checkout for a signed-in customer, with every API answer mocked by the browser test.
+import SiteLayout from '../../../../../src/layouts/SiteLayout.astro';
+import LiveHome from '../../../../../src/components/account/LiveHome';
+const viewer = {
+  id: '66666666-6666-4666-8666-666666666666',
+  name: 'Dana',
+  email: 'dana@example.invalid',
+  image: '/assets/avatars/avatar-2.png',
+  role: 'customer' as const,
+  provider: 'email' as const,
+};
+---
+
+<SiteLayout title="Local checkout fixture | Duoly" bare>
+  <LiveHome
+    viewer={viewer}
+    csrf="fixture-csrf"
+    checkoutEnabled={true}
+    usdRate={1.1}
+    accountCurrency="EUR"
+    client:load
+  />
+</SiteLayout>
