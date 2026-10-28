@@ -8,8 +8,6 @@ import { readChat, sendChat, setTyping } from '../../client/order-chat';
 const REROLL_WINDOW_MS = 5 * 60 * 1000;
 const QUEUE_MS = 5 * 60 * 1000;
 const MAX_REROLLS = 2;
-// R2 (ledger #39): PRO members have no limit of 2; the database keeps an abuse ceiling of 20.
-const PRO_MAX_REROLLS = 20;
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -53,10 +51,8 @@ export function toRoomOrder(o, { proMember = false } = {}) {
     // QueueRoom tells 'you cancelled' from 'nobody took it' by the raw reason.
     cancelReason: o.cancel_reason || '',
     autoCancelMs: QUEUE_MS,
-    rerollsLeft: Math.max(
-      0,
-      (proMember ? PRO_MAX_REROLLS : MAX_REROLLS) - o.rerolls,
-    ),
+    // R2 (ledger #39): PRO members have no limit of 2 (reroll_order checks is_pro too).
+    rerollsLeft: proMember ? 1 : Math.max(0, MAX_REROLLS - o.rerolls),
     rerollsUnlimited: !!proMember,
     rerollUntil: accepted ? accepted + REROLL_WINDOW_MS : null,
     paid: {
@@ -98,7 +94,10 @@ export function createRoomFetch({ orderId, csrf, proMember = false }) {
         const { res, data } = await call(base);
         if (!res.ok || !data.order)
           return json({ error: data.error }, res.status || 503);
-        return json({ order: toRoomOrder(data.order), now: Date.now() });
+        return json({
+          order: toRoomOrder(data.order, { proMember }),
+          now: Date.now(),
+        });
       }
       if (path === base && method === 'POST') {
         if (!['cancel', 'reroll', 'review', 'report'].includes(body.action))
@@ -150,7 +149,7 @@ export function createRoomFetch({ orderId, csrf, proMember = false }) {
             res.status || 503,
           );
         return json({
-          order: toRoomOrder(data.order),
+          order: toRoomOrder(data.order, { proMember }),
           tipPayment: data.tipPayment || null,
           tipError: data.tipError || '',
         });

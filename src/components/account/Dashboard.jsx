@@ -5,17 +5,19 @@ import { GAME } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
 import { dashboardFetch as fetch } from './dashboard-data';
 import TrustBadge from '../shared/TrustBadge';
+import { proStatusLine } from '../../contracts/pro';
 
 // Port of the original components/Dashboard.jsx (duoly-admin/duoly@7f0299f). Layout and copy are
 // his; data comes from /api/orders/active, /history and /credits through dashboard-data.js.
 // Sections whose feature isn't live yet stay in the file and switch on here when it ships
-// (ledger: wallet #11, rewards #12, reviews and tips #7/#10, Sparky #25, PRO design-only).
+// (ledger: wallet #11, rewards #12, reviews and tips #7/#10, Sparky #25, PRO #39).
+// The PRO card also needs this.props.pro, which the server sends only while PRO_ENABLED is on.
 const FEATURES = {
   wallet: true,
   rewards: true,
   reviews: true,
   support: true,
-  pro: false,
+  pro: true,
 };
 
 // Turns a CSS declaration string ("color: red; margin-top: 4px") into a React style object.
@@ -50,7 +52,37 @@ export default class Dashboard extends React.Component {
       showAll: false,
       live: null,
       history: null,
+      proBusy: false,
+      proError: '',
     };
+  }
+  // Duoly PRO: the Stripe Customer Portal for cancelling or changing the card (ledger #39).
+  async openProPortal(event) {
+    event.preventDefault();
+    if (this.state.proBusy) return;
+    this.setState({ proBusy: true, proError: '' });
+    try {
+      const res = await window.fetch('/api/pro/portal', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csrf: this.props.csrf }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.url) {
+        window.location.assign(data.url);
+        return;
+      }
+      this.setState({
+        proBusy: false,
+        proError: data.error || 'Couldn’t open PRO settings. Try again.',
+      });
+    } catch {
+      this.setState({
+        proBusy: false,
+        proError: 'Couldn’t open PRO settings. Try again.',
+      });
+    }
   }
   componentDidMount() {
     this.loadLive();
@@ -1834,8 +1866,9 @@ export default class Dashboard extends React.Component {
                 </section>
               ) : null}
 
-              {FEATURES.pro ? (
+              {FEATURES.pro && this.props.pro ? (
                 <section
+                  id="pro"
                   aria-labelledby="pro-h"
                   style={{
                     ...card,
@@ -1879,8 +1912,36 @@ export default class Dashboard extends React.Component {
                     id="pro-h"
                     style={{ ...h2, marginTop: '10px', maxWidth: '200px' }}
                   >
-                    Save 10% on every game
+                    {this.props.pro.member
+                      ? 'You’re saving 10% on every game'
+                      : 'Save 10% on every game'}
                   </h2>
+                  {this.props.proWelcome && !this.props.pro.member ? (
+                    <p
+                      role="status"
+                      style={{
+                        margin: '10px 0 0',
+                        fontSize: '13.5px',
+                        color: '#F0A6FF',
+                      }}
+                    >
+                      Welcome to PRO. It switches on in a few seconds; reload if
+                      it hasn’t yet.
+                    </p>
+                  ) : null}
+                  {proStatusLine(this.props.pro) ? (
+                    <p
+                      data-pro-status
+                      style={{
+                        margin: '10px 0 0',
+                        fontSize: '13.5px',
+                        color: '#CFC4EA',
+                        maxWidth: '240px',
+                      }}
+                    >
+                      {proStatusLine(this.props.pro)}
+                    </p>
+                  ) : null}
                   <ul
                     style={{
                       margin: '12px 0 16px',
@@ -1895,10 +1956,32 @@ export default class Dashboard extends React.Component {
                   >
                     <li>✓ Priority matching</li>
                     <li>✓ Free re-rolls on every game</li>
-                    <li>✓ 7 days free, cancel anytime</li>
+                    <li>
+                      {this.props.pro.member || !this.props.pro.trialEligible
+                        ? '✓ Cancel anytime'
+                        : '✓ 7 days free, cancel anytime'}
+                    </li>
                   </ul>
+                  {this.state.proError ? (
+                    <p
+                      role="alert"
+                      style={{
+                        margin: '0 0 10px',
+                        fontSize: '13px',
+                        color: '#FF8A9B',
+                      }}
+                    >
+                      {this.state.proError}
+                    </p>
+                  ) : null}
                   <a
-                    href="/#games"
+                    href={this.props.pro.manage ? '/dashboard#pro' : '/pro'}
+                    onClick={
+                      this.props.pro.manage
+                        ? (e) => this.openProPortal(e)
+                        : null
+                    }
+                    aria-busy={this.state.proBusy || undefined}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1912,7 +1995,11 @@ export default class Dashboard extends React.Component {
                       fontWeight: '700',
                     }}
                   >
-                    Try PRO · €4.99/month
+                    {this.props.pro.manage
+                      ? 'Manage PRO'
+                      : this.props.pro.trialEligible
+                        ? 'Try PRO · €4.99/month'
+                        : 'Get PRO · €4.99/month'}
                   </a>
                 </section>
               ) : null}

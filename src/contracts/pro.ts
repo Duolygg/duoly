@@ -73,3 +73,28 @@ export const PRO_OFFER: ProView = {
   graceUntil: null,
   manage: false,
 };
+
+const proDate = (value: number | null) =>
+  value
+    ? new Date(value).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        timeZone: 'UTC',
+      })
+    : '';
+
+/** One line under the dashboard PRO heading for members and memberships that need the portal. */
+export function proStatusLine(pro: ProView | null | undefined): string {
+  if (!pro) return '';
+  if (pro.status === 'past_due')
+    return pro.member && pro.graceUntil
+      ? `Your last payment failed. PRO stays on until ${proDate(pro.graceUntil)}. Update your card to keep it.`
+      : 'Your last payment failed. Update your card to switch PRO back on.';
+  if (!pro.member)
+    return pro.manage ? 'Update your card to switch PRO back on.' : '';
+  if (pro.cancelAtPeriodEnd)
+    return `PRO ends on ${proDate(pro.periodEnd ?? pro.trialEnd)}.`;
+  if (pro.status === 'trialing')
+    return `Free trial until ${proDate(pro.trialEnd)}, then €4.99/month. Cancel anytime.`;
+  return pro.periodEnd ? `Renews on ${proDate(pro.periodEnd)}.` : '';
+}

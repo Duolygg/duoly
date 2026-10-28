@@ -1,0 +1,151 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import ProCheckoutPanel from '../components/checkout/ProCheckoutPanel';
+import { accountContext } from '../server/auth/context';
+import { paymentsConfig } from '../server/payments/config';
+import { proEnabled } from '../server/pro/config';
+import { loadProView } from '../server/pro/status';
+
+// Duoly PRO sign-up (ledger #39). Off (404) unless PRO_ENABLED is on.
+const account = accountContext(Astro.request, Astro.cookies);
+const identity = await account.identity().catch(() => null);
+for (const [name, value] of account.headers)
+  Astro.response.headers.set(name, value);
+const config = paymentsConfig();
+if (!proEnabled() || !config) return Astro.rewrite('/404');
+if (!identity) return account.redirect('/login');
+if (identity.viewer.role !== 'customer') return account.redirect('/dashboard');
+const pro = await loadProView(account.client, identity.viewer.role);
+if (!pro) return Astro.rewrite('/404');
+// Members and memberships waiting for a card update are handled in Manage PRO.
+if (pro.manage) return account.redirect('/dashboard#pro');
+const fontUrl = new URL('/fonts/geist-latin.woff2', Astro.url).href;
+const csrf = account.csrf();
+---
+
+<SiteLayout title="Duoly PRO | Duoly" viewer={identity.viewer} csrf={csrf}>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://js.stripe.com" />
+    <link rel="preconnect" href="https://api.stripe.com" />
+  </Fragment>
+  <div class="pro">
+    <a class="back" href="/dashboard">
+      Back to your dashboard
+    </a>
+    <div class="grid">
+      <section class="offer" aria-labelledby="pro-h">
+        <span class="badge">Duoly PRO</span>
+        <h1 id="pro-h">Save 10% on every game</h1>
+        <ul>
+          <li>✓ Priority matching</li>
+          <li>✓ Free re-rolls on every game</li>
+          <li>
+            {pro.trialEligible
+              ? '✓ 7 days free, cancel anytime'
+              : '✓ Cancel anytime'}
+          </li>
+        </ul>
+        <p class="price">
+          <strong>€4.99</strong>/month
+          {pro.trialEligible && <span> after your 7 free days</span>}
+        </p>
+        <p class="fine">
+          The 10% comes off every order on top of bundle discounts. Re-rolls
+          still work in the first 5 minutes after a teammate accepts. Cancel
+          anytime in Manage PRO on your dashboard; PRO then stays on until the
+          end of the period you paid for. See the <a href="/terms">terms</a>.
+        </p>
+      </section>
+      <section class="payment" aria-label="Payment">
+        <ProCheckoutPanel
+          publishableKey={config.publishableKey}
+          csrf={csrf}
+          trial={pro.trialEligible}
+          fontUrl={fontUrl}
+          client:load
+        />
+      </section>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .pro {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 20px 24px 40px;
+  }
+  .back {
+    color: #a79dc4;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .back:hover {
+    color: #fff;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+    gap: 40px;
+    margin-top: 20px;
+  }
+  .offer {
+    background: #1b1033;
+    border: 1px solid rgba(214, 187, 255, 0.22);
+    border-radius: 20px;
+    padding: 28px;
+    align-self: start;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 8px;
+    background: rgba(240, 166, 255, 0.14);
+    color: #f0a6ff;
+  }
+  h1 {
+    margin: 12px 0 0;
+    font-size: 30px;
+    line-height: 1.15;
+    color: #fff;
+  }
+  ul {
+    margin: 16px 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 15px;
+    color: #cfc4ea;
+  }
+  .price {
+    margin: 0;
+    color: #cfc4ea;
+    font-size: 15px;
+  }
+  .price strong {
+    color: #fff;
+    font-size: 26px;
+  }
+  .fine {
+    margin: 14px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #a79dc4;
+  }
+  .fine a {
+    color: #d6bbff;
+  }
+  @media (max-width: 860px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+  }
+</style>

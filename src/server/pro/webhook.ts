@@ -38,14 +38,11 @@ const iso = (seconds: unknown): string | null =>
     : null;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** True for a Checkout Session we created for PRO (subscription mode). */
+/** True for a Checkout Session we created for PRO (marked by metadata, never by mode alone). */
 export function isProCheckoutSession(object: unknown): boolean {
   if (!object || typeof object !== 'object') return false;
-  const session = object as { mode?: unknown; metadata?: { kind?: unknown } };
-  return (
-    session.mode === 'subscription' ||
-    session.metadata?.kind === PRO_METADATA_KIND
-  );
+  const session = object as { metadata?: { kind?: unknown } };
+  return session.metadata?.kind === PRO_METADATA_KIND;
 }
 
 export interface SubscriptionFacts {
@@ -78,14 +75,15 @@ export function subscriptionFacts(
     return null;
   // Since API 2025-03-31 the period lives on the item; older payloads keep it on the root.
   const item = sub.items?.data?.[0] as
-    | (Stripe.SubscriptionItem & { current_period_end?: number })
-    | undefined;
+    (Stripe.SubscriptionItem & { current_period_end?: number }) | undefined;
   const periodEnd = item?.current_period_end ?? sub.current_period_end ?? null;
   const method =
     sub.default_payment_method && typeof sub.default_payment_method === 'object'
       ? sub.default_payment_method
       : null;
-  const fingerprint = method?.card?.fingerprint ?? null;
+  // R4 per card: cards (also Apple Pay and Google Pay) and SEPA debits carry a fingerprint.
+  const fingerprint =
+    method?.card?.fingerprint ?? method?.sepa_debit?.fingerprint ?? null;
   const metadataUser = sub.metadata?.user_id ?? null;
   return {
     subscriptionId: sub.id,
@@ -98,8 +96,7 @@ export function subscriptionFacts(
     cancelAtPeriodEnd: sub.cancel_at_period_end === true || !!sub.cancel_at,
     canceledAt: iso(sub.canceled_at),
     endedAt: iso(sub.ended_at),
-    metadataUser:
-      metadataUser && UUID.test(metadataUser) ? metadataUser : null,
+    metadataUser: metadataUser && UUID.test(metadataUser) ? metadataUser : null,
     cardFingerprint:
       fingerprint && /^[A-Za-z0-9]{8,64}$/.test(fingerprint)
         ? fingerprint
@@ -165,6 +162,8 @@ async function syncSubscription(
   }
   if (result.trial_check_needed) {
     // R4, one trial per card: a card that already had a trial on another account pays now.
+    // Without a card yet, a later event (with the card attached) runs the check.
+    if (!facts.cardFingerprint) return 'pro_trial_card_pending';
     const claim = await rpc('pro_claim_trial_card', {
       p_subscription: facts.subscriptionId,
       p_fingerprint: facts.cardFingerprint,
@@ -218,8 +217,7 @@ export async function handleProEvent(
       currency?: unknown;
     };
     const invoiceId = idOf(invoice.id);
-    if (!subscriptionId || !invoiceId?.startsWith('in_'))
-      return 'pro_not_ours';
+    if (!subscriptionId || !invoiceId?.startsWith('in_')) return 'pro_not_ours';
     const synced = await syncSubscription(
       stripe,
       admin,

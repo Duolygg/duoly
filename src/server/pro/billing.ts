@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import type Stripe from 'stripe';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { mutation } from '../auth/handlers';
+import type { Viewer } from '../../contracts/account';
 import { adminFor, paymentsConfig, stripeFor } from '../payments/config';
 import {
   PRO_METADATA_KIND,
@@ -46,7 +47,7 @@ export async function proPriceId(stripe: Stripe): Promise<string | null> {
   return price!.id;
 }
 
-/** Pure: the subscription Checkout Session (Stripe hosted page). */
+/** Pure: the subscription Checkout Session, rendered on /pro with Checkout Elements. */
 export function proSessionParams(input: {
   customerId: string;
   userId: string;
@@ -56,6 +57,7 @@ export function proSessionParams(input: {
 }): Stripe.Checkout.SessionCreateParams {
   const metadata = { kind: PRO_METADATA_KIND, user_id: input.userId };
   return {
+    ui_mode: 'elements',
     mode: 'subscription',
     customer: input.customerId,
     line_items: [{ price: input.priceId, quantity: 1 }],
@@ -73,15 +75,7 @@ export function proSessionParams(input: {
         : {}),
     },
     metadata,
-    custom_text: {
-      submit: {
-        message: input.trial
-          ? 'Free for 7 days, then €4.99 a month until you cancel. Cancel anytime from your dashboard.'
-          : '€4.99 a month until you cancel. Cancel anytime from your dashboard.',
-      },
-    },
-    success_url: `${input.origin}/dashboard?pro=welcome#pro`,
-    cancel_url: `${input.origin}/dashboard#pro`,
+    return_url: `${input.origin}/dashboard?pro=welcome#pro`,
   };
 }
 
@@ -109,34 +103,46 @@ async function proCustomer(
   return linked.data;
 }
 
-async function customerRequest(context: Parameters<APIRoute>[0]) {
+type CustomerRequest =
+  | { failure: Response }
+  | {
+      failure: null;
+      account: Awaited<ReturnType<typeof mutation>>['account'];
+      config: NonNullable<ReturnType<typeof paymentsConfig>>;
+      viewer: Viewer;
+    };
+
+async function customerRequest(
+  context: Parameters<APIRoute>[0],
+): Promise<CustomerRequest> {
   const { account, body, failure } = await mutation(context);
-  if (failure || !body) return { failure: failure! } as const;
+  // mutation() always sets failure when there is no body.
+  if (failure || !body) return { failure: failure as Response };
   const config = paymentsConfig();
   if (!proEnabled() || !config)
     return {
       failure: account.json({ error: 'Duoly PRO isn’t available yet.' }, 404),
-    } as const;
+    };
   const identity = await account.identity();
   if (!identity)
     return {
       failure: account.json({ error: 'Sign in to get Duoly PRO.' }, 401),
-    } as const;
+    };
   if (identity.viewer.role !== 'customer')
     return {
       failure: account.json(
         { error: 'Duoly PRO is for customer accounts.' },
         403,
       ),
-    } as const;
-  return { account, config, viewer: identity.viewer } as const;
+    };
+  return { failure: null, account, config, viewer: identity.viewer };
 }
 
-/** POST /api/pro/checkout: start (or restart) a PRO membership on Stripe's hosted page. */
+/** POST /api/pro/checkout: a subscription Checkout Session for the /pro page (client secret). */
 export const proCheckout: APIRoute = async (context) => {
   try {
     const request = await customerRequest(context);
-    if ('failure' in request) return request.failure;
+    if (request.failure) return request.failure;
     const { account, config, viewer } = request;
     const admin = adminFor(config);
     const status = await rpcOf(admin)('pro_status_dto', { p_user: viewer.id });
@@ -146,7 +152,10 @@ export const proCheckout: APIRoute = async (context) => {
       subscription?: { status?: string } | null;
     } | null;
     if (status.error || !state)
-      return account.json({ error: 'Duoly PRO is unavailable. Try again.' }, 503);
+      return account.json(
+        { error: 'Duoly PRO is unavailable. Try again.' },
+        503,
+      );
     if (state.member)
       return account.json({ error: 'You already have Duoly PRO.' }, 409);
     // A subscription waiting for a card update is fixed in the portal, never doubled.
@@ -162,10 +171,16 @@ export const proCheckout: APIRoute = async (context) => {
     const stripe = stripeFor(config);
     const priceId = await proPriceId(stripe);
     if (!priceId)
-      return account.json({ error: 'Duoly PRO is unavailable. Try again.' }, 503);
+      return account.json(
+        { error: 'Duoly PRO is unavailable. Try again.' },
+        503,
+      );
     const customerId = await proCustomer(stripe, admin, viewer);
     if (!customerId)
-      return account.json({ error: 'Duoly PRO is unavailable. Try again.' }, 503);
+      return account.json(
+        { error: 'Duoly PRO is unavailable. Try again.' },
+        503,
+      );
     const session = await stripe.checkout.sessions.create(
       proSessionParams({
         customerId,
@@ -175,9 +190,15 @@ export const proCheckout: APIRoute = async (context) => {
         trial: state.trial_eligible === true,
       }),
     );
-    if (!session.url)
-      return account.json({ error: 'Duoly PRO is unavailable. Try again.' }, 503);
-    return account.json({ url: session.url });
+    if (!session.client_secret)
+      return account.json(
+        { error: 'Duoly PRO is unavailable. Try again.' },
+        503,
+      );
+    return account.json({
+      client_secret: session.client_secret,
+      trial: state.trial_eligible === true,
+    });
   } catch {
     return new Response(
       JSON.stringify({ error: 'Duoly PRO is unavailable. Try again.' }),
@@ -190,14 +211,17 @@ export const proCheckout: APIRoute = async (context) => {
 export const proPortal: APIRoute = async (context) => {
   try {
     const request = await customerRequest(context);
-    if ('failure' in request) return request.failure;
+    if (request.failure) return request.failure;
     const { account, config, viewer } = request;
     const admin = adminFor(config);
     const customer = await rpcOf(admin)('pro_billing_customer', {
       p_user: viewer.id,
     });
     if (customer.error)
-      return account.json({ error: 'Duoly PRO is unavailable. Try again.' }, 503);
+      return account.json(
+        { error: 'Duoly PRO is unavailable. Try again.' },
+        503,
+      );
     if (typeof customer.data !== 'string' || !customer.data)
       return account.json({ error: 'You don’t have Duoly PRO yet.' }, 404);
     const configuration = proPortalConfiguration();

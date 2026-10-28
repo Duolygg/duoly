@@ -10,7 +10,7 @@ export const PRO_DISCOUNT_PERCENT = 10;
 /** R6: perks continue this many days after a renewal payment fails. Mirrors is_pro(). */
 export const PRO_GRACE_DAYS = 3;
 /** The Stripe Price is found by lookup key (scripts/stripe/setup-pro.mjs creates it). */
-export const PRO_PRICE_LOOKUP_KEY = 'duoly_pro_monthly_eur';
+export const PRO_PRICE_LOOKUP_KEY = 'duoly_pro_monthly';
 /** Marks our subscriptions and sessions so other Stripe objects are never mistaken for PRO. */
 export const PRO_METADATA_KIND = 'duoly_pro';
 

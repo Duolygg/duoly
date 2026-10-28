@@ -83,7 +83,11 @@ const moneyOf = (paid) =>
 export default class QueueRoom extends React.Component {
   constructor(props) {
     super(props);
-    this._fetch = createRoomFetch({ orderId: props.id, csrf: props.csrf });
+    this._fetch = createRoomFetch({
+      orderId: props.id,
+      csrf: props.csrf,
+      proMember: !!props.proMember,
+    });
     this.state = {
       order: null,
       offset: 0,
@@ -1524,8 +1528,9 @@ export default class QueueRoom extends React.Component {
           : 'Switch to a new teammate for free in the first 5 minutes · ' +
             clock(msLeft) +
             ' left. ' +
-            left +
-            ' of 2 re-rolls left.';
+            (o.rerollsUnlimited
+              ? 'Unlimited re-rolls with Duoly PRO.'
+              : left + ' of 2 re-rolls left.');
     const sent = o.reports || [];
     const row = (icon, color, title, text, action) => (
       <li className="q-protect-row">
@@ -2284,9 +2289,11 @@ export default class QueueRoom extends React.Component {
             {name} leaves your order and it goes straight back into the queue.
             It’s free, you keep everything you paid for, and {name} can’t pick
             it up again.{' '}
-            {o.rerollsLeft === 1
-              ? 'This is your last re-roll on this order.'
-              : 'You have ' + o.rerollsLeft + ' re-rolls left.'}
+            {o.rerollsUnlimited
+              ? 'Duoly PRO gives you unlimited re-rolls in the first 5 minutes.'
+              : o.rerollsLeft === 1
+                ? 'This is your last re-roll on this order.'
+                : 'You have ' + o.rerollsLeft + ' re-rolls left.'}
           </p>
           <p className="q-modal-text" style={{ marginTop: '8px' }}>
             If {name} broke a rule, report them instead (or as well) so we can

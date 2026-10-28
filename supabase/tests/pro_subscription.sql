@@ -1,6 +1,6 @@
 -- Rollback-only checks for 20261026120000_pro_subscription.sql (Duoly PRO, ledger #39, R1 to R6).
--- Run after the migration body in one transaction, with a savepoint before this body:
---   python3 ../run_rollback.py supabase/migrations/20261026120000_pro_subscription.sql -- supabase/tests/pro_subscription.sql
+-- Run as one transaction: begin; migration body without its begin/commit; savepoint s; this file;
+-- rollback; (node_modules/.bin/supabase db query --linked -f <combined file>). Never applied live.
 create function pg_temp.pro_assert(ok boolean, message text) returns void language plpgsql as $$
 begin if ok is not true then raise exception '%', message; end if; end $$;
 
@@ -61,6 +61,10 @@ do $$ declare r jsonb; begin
 end $$;
 
 -- R4 per card: first account keeps the fingerprint, a second account's trial is refused.
+-- No card attached yet: no claim, the row stays unchecked for the next webhook.
+select pg_temp.pro_assert(public.pro_claim_trial_card('sub_proA', null), 'missing card refused');
+select pg_temp.pro_assert(not (select trial_card_checked from public.pro_subscriptions where stripe_subscription_id = 'sub_proA'),
+  'trial marked checked without a card');
 select pg_temp.pro_assert(public.pro_claim_trial_card('sub_proA', 'fpCardAAAA1111'), 'own card refused');
 select pg_temp.pro_assert(public.pro_claim_trial_card('sub_proA', 'fpCardAAAA1111'), 'repeat claim refused');
 select public.pro_apply_subscription(clock_timestamp() - interval '5 minutes', 'sub_proB', 'cus_proB', 'trialing',
@@ -146,12 +150,12 @@ insert into public.order_assignments(id,order_id,teammate_id,accepted_at) values
 update public.orders set status='in_progress', assigned_teammate_id='b9000000-0000-4000-8000-000000000003',
   current_assignment_id='b9200000-0000-4000-8000-000000000001', accepted_at=clock_timestamp()-interval '1 minute', rerolls=2
  where id='b9100000-0000-4000-8000-000000000001';
-do $$ begin
-  begin
-    update public.orders set rerolls = 21 where id = 'b9100000-0000-4000-8000-000000000001';
-    raise exception 'rerolls above 20 accepted';
-  exception when check_violation then null; end;
-end $$;
+-- R1 priority matching: the PRO order got the M7 head start with reason 'pro'; the plain one did not.
+select pg_temp.pro_assert((select reason = 'pro' and customer_level = 'bronze' from public.order_priority_boosts
+  where order_id = 'b9100000-0000-4000-8000-000000000001'), 'PRO order has no pro head start');
+select pg_temp.pro_assert(not exists (select 1 from public.order_priority_boosts
+  where order_id = 'b9100000-0000-4000-8000-000000000004'), 'plain Bronze order got a head start');
+select pg_temp.pro_assert(public.order_has_head_start('b9100000-0000-4000-8000-000000000001'), 'queue does not see the PRO head start');
 
 -- Browser role: own status only, no tables, no service functions.
 set local role authenticated;
@@ -175,6 +179,38 @@ do $$ declare v jsonb; begin
   begin perform 1 from public.pro_invoices; raise exception 'browser read invoices'; exception when insufficient_privilege then null; end;
 end $$;
 reset role;
+-- The re-roll put the order back in the queue with the PRO head start again.
+select pg_temp.pro_assert((select reason = 'pro' from public.order_priority_boosts
+  where order_id = 'b9100000-0000-4000-8000-000000000001'), 'requeued PRO order lost its head start');
+
+-- R2: no limit for PRO (a sixth re-roll), but still only within 5 minutes of accept.
+insert into public.order_assignments(id,order_id,teammate_id,accepted_at) values
+ ('b9200000-0000-4000-8000-000000000002','b9100000-0000-4000-8000-000000000001','b9000000-0000-4000-8000-000000000003',clock_timestamp()-interval '1 minute');
+update public.orders set status='in_progress', assigned_teammate_id='b9000000-0000-4000-8000-000000000003',
+  current_assignment_id='b9200000-0000-4000-8000-000000000002', queued_at=clock_timestamp()-interval '2 minutes',
+  accepted_at=clock_timestamp()-interval '1 minute', rerolls=5
+ where id='b9100000-0000-4000-8000-000000000001';
+set local role authenticated;
+select pg_catalog.set_config('request.jwt.claims','{"role":"authenticated","sub":"b9000000-0000-4000-8000-000000000001"}',true);
+select pg_catalog.set_config('request.jwt.claim.sub','b9000000-0000-4000-8000-000000000001',true);
+select pg_temp.pro_assert((public.reroll_order('b9100000-0000-4000-8000-000000000001') #>> '{order,rerolls}')::int = 6, 'PRO sixth re-roll refused');
+reset role;
+insert into public.order_assignments(id,order_id,teammate_id,accepted_at) values
+ ('b9200000-0000-4000-8000-000000000003','b9100000-0000-4000-8000-000000000001','b9000000-0000-4000-8000-000000000003',clock_timestamp()-interval '6 minutes');
+update public.orders set status='in_progress', assigned_teammate_id='b9000000-0000-4000-8000-000000000003',
+  current_assignment_id='b9200000-0000-4000-8000-000000000003', created_at=clock_timestamp()-interval '8 minutes', queued_at=clock_timestamp()-interval '7 minutes',
+  accepted_at=clock_timestamp()-interval '6 minutes'
+ where id='b9100000-0000-4000-8000-000000000001';
+set local role authenticated;
+select pg_catalog.set_config('request.jwt.claims','{"role":"authenticated","sub":"b9000000-0000-4000-8000-000000000001"}',true);
+select pg_catalog.set_config('request.jwt.claim.sub','b9000000-0000-4000-8000-000000000001',true);
+select pg_temp.pro_assert((public.reroll_order('b9100000-0000-4000-8000-000000000001') #>> '{error,code}')::int = 409, 'PRO re-roll allowed after 5 minutes');
+reset role;
+-- Free the fixture teammate for the next order.
+update public.order_assignments set ended_at = clock_timestamp(), end_reason = 'customer_reroll'
+ where id = 'b9200000-0000-4000-8000-000000000003';
+update public.orders set status='queued', queued_at=clock_timestamp(), accepted_at=null, assigned_teammate_id=null, current_assignment_id=null
+ where id='b9100000-0000-4000-8000-000000000001';
 
 -- Non-member: the limit of 2 stays.
 insert into public.order_assignments(id,order_id,teammate_id,accepted_at) values
@@ -188,6 +224,32 @@ select pg_catalog.set_config('request.jwt.claim.sub','b9000000-0000-4000-8000-00
 select pg_temp.pro_assert((public.pro_my_status()->>'member')::boolean = false, 'plain customer is PRO');
 select pg_temp.pro_assert((public.reroll_order('b9100000-0000-4000-8000-000000000004') #>> '{error,code}')::int = 409, 'non-member third re-roll allowed');
 reset role;
+
+-- 10% on top of bundles, paid with the wallet (M4), teammate pay unchanged (R3).
+-- 3 x 5.99 = 17.97, bundle 10% = 16.17, PRO 10% = 1.62, customer pays 14.55; payout stays the
+-- full-price payout the server computed before the discount.
+insert into public.wallet_entries(customer_id, amount_eur_cents, kind, cashable, created_by, reason)
+  values ('b9000000-0000-4000-8000-000000000002', 2000, 'admin_credit', false,
+    'b9000000-0000-4000-8000-000000000004', 'PRO test credit');
+do $$ declare v_intent uuid; r jsonb; o public.orders; begin
+  insert into public.checkout_intents(customer_id,game,service,title,units,unit,region,ign,amount_eur_cents,payout_usd_cents,booking_fx,pro_discount_cents,expires_at)
+  values('b9000000-0000-4000-8000-000000000002','lol','duo2','Duo Pro',3,'game','EUW','ProB#EUW',1455,1200,1.1,162,clock_timestamp()+interval '30 minutes')
+  returning id into v_intent;
+  r := public.checkout_reserve_wallet(v_intent);
+  if (r->>'wallet_eur_cents')::int <> 1455 or (r->>'card_eur_cents')::int <> 0 then raise exception 'wallet split wrong: %', r; end if;
+  r := public.create_wallet_order(v_intent);
+  select * into o from public.orders where id = (r->>'order_id')::uuid;
+  if o.id is null then raise exception 'wallet order not created: %', r; end if;
+  if o.amount_eur_cents <> 1455 or o.payout_usd_cents <> 1200 or o.wallet_eur_cents <> 1455 then
+    raise exception 'PRO order money wrong: amount %, payout %, wallet %', o.amount_eur_cents, o.payout_usd_cents, o.wallet_eur_cents; end if;
+  if not exists (select 1 from public.order_priority_boosts b where b.order_id = o.id and b.reason = 'pro') then
+    raise exception 'wallet PRO order has no head start'; end if;
+end $$;
+
+-- R5: the PRO fee never counts for loyalty and never earns cashback.
+select pg_temp.pro_assert(public.loyalty_valid_count('b9000000-0000-4000-8000-000000000001') = 0, 'PRO fee counted for loyalty');
+select pg_temp.pro_assert(not exists (select 1 from public.wallet_entries
+  where customer_id in ('b9000000-0000-4000-8000-000000000001','b9000000-0000-4000-8000-000000000002') and kind = 'cashback'), 'PRO fee earned cashback');
 
 -- Anonymous: nothing.
 set local role anon;

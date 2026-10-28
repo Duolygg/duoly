@@ -19,10 +19,21 @@
 -- below refuses a PRO discount for anyone is_pro() does not accept.
 --
 -- R2: PRO customers have no limit of 2 re-rolls, still only within 5 minutes of accept.
--- orders.rerolls is widened to 20 as an abuse ceiling.
 --
--- Deploy order: apply this migration first, then deploy the code. The current code keeps
--- working against it (new column defaults to 0, reroll_order keeps its signature).
+-- R1 priority matching: PRO orders get the M7 Gold head start. order_priority_boosts gains the
+-- reason 'pro' (taken before 'loyalty_gold' when both apply); teammate_order_queue is unchanged
+-- because it already sorts every boosted order first.
+--
+-- R3: payout_usd_cents is never touched by the discount. R5: the PRO fee is recorded only in
+-- pro_invoices; it never creates wallet_entries, cashback or an order, so it cannot count for loyalty.
+--
+-- create or replace targets start from their latest definitions on origin/main (96d26c0):
+--   reroll_order                   20261022093000_order_foundation.sql
+--   order_priority_boost_snapshot  20261026110000_gold_priority_badges.sql
+--
+-- Deploy order: apply this migration first, then deploy the code. The code calls the new RPCs;
+-- the current code keeps working against this schema (new column defaults to 0, reroll_order and
+-- the trigger keep their signatures).
 begin;
 
 create table public.pro_billing_customers (
@@ -77,8 +88,6 @@ alter table public.pro_trial_cards enable row level security;
 alter table public.pro_invoices enable row level security;
 revoke all on table public.pro_billing_customers, public.pro_subscriptions, public.pro_trial_cards,
   public.pro_invoices from public, anon, authenticated, service_role;
-grant select on table public.pro_billing_customers, public.pro_subscriptions, public.pro_trial_cards,
-  public.pro_invoices to service_role;
 
 -- The one rule for PRO perks. Read by checkout pricing (service role), the checkout guard and
 -- reroll_order.
@@ -200,7 +209,7 @@ begin
   values (
     p_subscription, v_user, p_customer, p_status, p_trial_start, p_trial_end,
     p_current_period_end, coalesce(p_cancel_at_period_end, false), p_canceled_at, p_ended_at,
-    case when p_status = 'past_due' then v_now end, p_event_created)
+    case when p_status = 'past_due' then p_event_created end, p_event_created)
   on conflict (stripe_subscription_id) do update set
     status = excluded.status,
     trial_start = excluded.trial_start,
@@ -210,7 +219,7 @@ begin
     canceled_at = excluded.canceled_at,
     ended_at = excluded.ended_at,
     past_due_since = case
-      when excluded.status = 'past_due' then coalesce(s.past_due_since, v_now)
+      when excluded.status = 'past_due' then coalesce(s.past_due_since, excluded.last_event_at)
       when excluded.status in ('trialing','active') then null
       else s.past_due_since end,
     last_event_at = excluded.last_event_at,
@@ -233,12 +242,12 @@ declare v public.pro_subscriptions; v_owner uuid;
 begin
   select * into v from public.pro_subscriptions where stripe_subscription_id = p_subscription for update;
   if v.stripe_subscription_id is null then raise sqlstate 'PT404' using message = 'Subscription not found.'; end if;
-  if p_fingerprint is not null then
-    insert into public.pro_trial_cards(fingerprint, user_id, stripe_subscription_id)
-      values (p_fingerprint, v.user_id, v.stripe_subscription_id)
-      on conflict (fingerprint) do nothing;
-    select c.user_id into v_owner from public.pro_trial_cards as c where c.fingerprint = p_fingerprint;
-  end if;
+  -- No card yet: stay unchecked so a later webhook (with the card attached) runs the check.
+  if p_fingerprint is null then return true; end if;
+  insert into public.pro_trial_cards(fingerprint, user_id, stripe_subscription_id)
+    values (p_fingerprint, v.user_id, v.stripe_subscription_id)
+    on conflict (fingerprint) do nothing;
+  select c.user_id into v_owner from public.pro_trial_cards as c where c.fingerprint = p_fingerprint;
   update public.pro_subscriptions set trial_card_checked = true, updated_at = pg_catalog.clock_timestamp()
     where stripe_subscription_id = v.stripe_subscription_id;
   return v_owner is null or v_owner = v.user_id;
@@ -303,11 +312,11 @@ create trigger checkout_intents_pro_discount_guard
   before insert or update of pro_discount_cents on public.checkout_intents
   for each row execute function public.checkout_pro_discount_guard();
 
--- R2: PRO re-rolls. Latest definition: 20261022093000_order_foundation.sql (unchanged since);
--- only the limit line differs.
+-- R2: PRO re-rolls. Latest definition: 20261022093000_order_foundation.sql (unchanged since).
+-- Only the limit check differs: the limit of 2 applies to customers who are not PRO.
 alter table public.orders
   drop constraint orders_rerolls_check,
-  add constraint orders_rerolls_check check (rerolls between 0 and 20);
+  add constraint orders_rerolls_check check (rerolls >= 0);
 
 create or replace function public.reroll_order(p_order_id uuid) returns jsonb
 language plpgsql security definer set search_path = '' as $$
@@ -320,7 +329,7 @@ begin
   if public.order_expire_locked(v.id) or v.status = 'cancelled' then return public.order_error(410, 'Order expired or cancelled.'); end if;
   perform public.order_sweep(100);
   v_now := pg_catalog.clock_timestamp();
-  if v.status <> 'in_progress' or v.rerolls >= 20 or (v.rerolls >= 2 and not public.is_pro(v_actor)) or v.accepted_at + interval '5 minutes' < v_now then return public.order_error(409, 'Reroll unavailable.'); end if;
+  if v.status <> 'in_progress' or (v.rerolls >= 2 and not public.is_pro(v_actor)) or v.accepted_at + interval '5 minutes' < v_now then return public.order_error(409, 'Reroll unavailable.'); end if;
   update public.order_assignments set ended_at = v_now, end_reason = 'customer_reroll' where id = v.current_assignment_id;
   update public.orders set status = 'queued', queued_at = v_now, accepted_at = null, assigned_teammate_id = null, current_assignment_id = null, rerolls = rerolls + 1 where id = v.id returning * into v;
   return pg_catalog.jsonb_build_object('order', public.order_customer_dto(v));
@@ -328,5 +337,39 @@ end;
 $$;
 revoke all on function public.reroll_order(uuid) from public, anon, authenticated, service_role;
 grant execute on function public.reroll_order(uuid) to authenticated;
+
+-- R1 priority matching: PRO orders get the same head start as Gold+ (M7).
+alter table public.order_priority_boosts
+  drop constraint order_priority_boosts_reason_check,
+  drop constraint order_priority_boosts_customer_level_check,
+  drop constraint order_priority_boosts_prior_completed_count_check,
+  add constraint order_priority_boosts_reason_check check (reason in ('loyalty_gold','pro')),
+  add constraint order_priority_boosts_level_check check (
+    (reason = 'loyalty_gold' and customer_level in ('gold','platinum','diamond') and prior_completed_count >= 250)
+    or (reason = 'pro' and customer_level in ('bronze','silver','gold','platinum','diamond') and prior_completed_count >= 0));
+
+-- Latest definition from 20261026110000_gold_priority_badges.sql. Only the PRO branch is added.
+create or replace function public.order_priority_boost_snapshot() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare v_count bigint; v_level jsonb; v_reason text;
+begin
+  if new.status <> 'queued' then return new; end if;
+  v_count := public.loyalty_valid_count(new.customer_id);
+  v_level := public.loyalty_level(v_count);
+  v_reason := case when public.is_pro(new.customer_id) then 'pro'
+                   when (v_level->>'index')::integer >= 2 then 'loyalty_gold' end;
+  if v_reason is not null then
+    insert into public.order_priority_boosts(order_id,customer_id,reason,customer_level,prior_completed_count,queued_at)
+      values(new.id,new.customer_id,v_reason,v_level->>'id',v_count,new.queued_at)
+      on conflict(order_id) do update set customer_id=excluded.customer_id,reason=excluded.reason,
+        customer_level=excluded.customer_level,prior_completed_count=excluded.prior_completed_count,
+        queued_at=excluded.queued_at,created_at=pg_catalog.clock_timestamp();
+  else
+    delete from public.order_priority_boosts where order_id=new.id;
+  end if;
+  return new;
+end;
+$$;
+revoke all on function public.order_priority_boost_snapshot() from public, anon, authenticated, service_role;
 
 commit;
