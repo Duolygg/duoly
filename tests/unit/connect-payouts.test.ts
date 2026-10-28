@@ -32,10 +32,8 @@ vi.mock('../../src/server/payments/config', async () => {
   const stripe = {
     webhooks: real.webhooks,
     transfers: { create: calls.transfersCreate, list: calls.transfersList },
-    accounts: {
-      create: calls.accountsCreate,
-      retrieve: calls.accountsRetrieve,
-    },
+    accounts: { retrieve: calls.accountsRetrieve },
+    v2: { core: { accounts: { create: calls.accountsCreate } } },
     accountLinks: { create: calls.accountLinksCreate },
   };
   const admin = {
@@ -275,20 +273,35 @@ describe('connect helpers', () => {
     expect(accountFacts({ id: 'cus_1' })).toBeNull();
     expect(accountFacts(null)).toBeNull();
   });
-  it('creates individual Express accounts with transfers only', () => {
+  it('creates individual Express (Accounts v2) recipients with transfers only', () => {
     const params = accountCreateParams({
       teammateId: TEAMMATE,
-      email: null,
+      email: 'tm@example.com',
       country: 'AT',
     });
-    expect(params).toMatchObject({
-      type: 'express',
-      country: 'AT',
-      business_type: 'individual',
-      capabilities: { transfers: { requested: true } },
-      metadata: { teammate_id: TEAMMATE },
+    expect(params).toEqual({
+      contact_email: 'tm@example.com',
+      dashboard: 'express',
+      identity: { country: 'at', entity_type: 'individual' },
+      defaults: {
+        responsibilities: {
+          fees_collector: 'application',
+          losses_collector: 'application',
+        },
+      },
+      configuration: {
+        recipient: {
+          capabilities: {
+            stripe_balance: { stripe_transfers: { requested: true } },
+          },
+        },
+      },
+      metadata: { kind: 'duoly_teammate', teammate_id: TEAMMATE },
     });
-    expect(params).not.toHaveProperty('email');
+    expect(params).not.toHaveProperty('type');
+    expect(
+      accountCreateParams({ teammateId: TEAMMATE, email: null, country: 'AT' }),
+    ).toBeNull();
   });
   it('validates the prepared transfer and builds the Transfer', () => {
     const p = preparedTransfer(prepared())!;
@@ -509,7 +522,10 @@ describe('teammate onboarding', () => {
       body: { url: 'https://connect.stripe.com/setup/e/x' },
     });
     expect(calls.accountsCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'express', country: 'AT' }),
+      expect.objectContaining({
+        dashboard: 'express',
+        identity: { country: 'at', entity_type: 'individual' },
+      }),
       { idempotencyKey: `duoly-connect-account-${TEAMMATE}-AT` },
     );
     expect(calls.rpc).toHaveBeenCalledWith('connect_account_link', {

@@ -144,14 +144,22 @@ export const teammateConnect: APIRoute = async (context: APIContext) => {
           );
         // One account per teammate even on a double click: same idempotency key for a day,
         // and the database refuses a second account id.
-        const created = await stripe.accounts.create(
-          accountCreateParams({
-            teammateId,
-            email: identity.viewer.email,
-            country,
-          }),
-          { idempotencyKey: `duoly-connect-account-${teammateId}-${country}` },
-        );
+        const params = accountCreateParams({
+          teammateId,
+          email: identity.viewer.email,
+          country,
+        });
+        if (!params)
+          return account.json(
+            {
+              error:
+                'Add an email address to your Duoly account first, Stripe needs one.',
+            },
+            409,
+          );
+        const created = await stripe.v2.core.accounts.create(params, {
+          idempotencyKey: `duoly-connect-account-${teammateId}-${country}`,
+        });
         const linked = await rpcOf(admin)('connect_account_link', {
           p_teammate: teammateId,
           p_account_id: created.id,
