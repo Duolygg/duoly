@@ -18,7 +18,7 @@ if (!config || !/^[0-9a-f-]{36}$/i.test(id)) return Astro.rewrite('/404');
 const { data: intent } = await adminFor(config)
   .from('checkout_intents')
   .select(
-    'id, customer_id, status, order_id, stripe_client_secret, game, service, title, units, unit, rank, region, ign, voice, amount_eur_cents, first_order_discount_cents',
+    'id, customer_id, status, order_id, stripe_client_secret, game, service, title, units, unit, rank, region, ign, voice, amount_eur_cents, first_order_discount_cents, wallet_eur_cents',
   )
   .eq('id', id)
   .maybeSingle();
@@ -86,7 +86,15 @@ try {
 } catch {
   breakdown = [];
 }
-const total = eur(intent.amount_eur_cents);
+const walletPart =
+  (intent as { wallet_eur_cents?: number }).wallet_eur_cents ?? 0;
+if (walletPart > 0)
+  breakdown.push({
+    label: 'Paid from your Duoly balance',
+    value: `−${eur(walletPart)}`,
+    accent: true,
+  });
+const total = eur(intent.amount_eur_cents - walletPart);
 const facts = [
   `${intent.units} ${unitWord(intent.units)}`,
   intent.region,
@@ -158,7 +166,7 @@ const fontUrl = new URL('/fonts/geist-latin.woff2', Astro.url).href;
             </dl>
           )}
           <div class="total">
-            <span>Total</span>
+            <span>{walletPart > 0 ? 'Card pays' : 'Total'}</span>
             <strong>{total}</strong>
           </div>
         </div>

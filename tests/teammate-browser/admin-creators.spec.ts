@@ -56,9 +56,12 @@ const orders = [
   },
 ];
 
-async function mock(page: import('@playwright/test').Page) {
+async function mock(
+  page: import('@playwright/test').Page,
+  start: (typeof alpha)[] = [alpha],
+) {
   const writes: Record<string, unknown>[] = [];
-  let creators = [alpha];
+  let creators = start;
   await page.route('**/api/**', async (r) => {
     const req = r.request(),
       url = new URL(req.url());
@@ -97,6 +100,16 @@ async function mock(page: import('@playwright/test').Page) {
           return r.fulfill({ json: { creator: c } });
         }
         const c = creators.find((x) => x.id === body.creatorId)!;
+        if (body.action === 'pay') {
+          const m = c.months.find((x) => x.month === body.month)!;
+          Object.assign(m, {
+            paid: true,
+            paidAt: '2026-10-28T10:00:00.000Z',
+            reference: body.reference,
+          });
+          c.owedCents -= m.commissionCents;
+          return r.fulfill({ json: { creator: c } });
+        }
         c.active = body.active;
         return r.fulfill({ json: { creator: c } });
       }
@@ -150,7 +163,7 @@ test('creators lists codes, months and orders, and adds and pauses with audit', 
   await expect(row).toContainText('Active');
   await expect(row).toContainText('€3.51');
   await expect(row).toContainText('below €50 minimum');
-  await expect(main.getByText('Commission earned')).toBeVisible();
+  await expect(main.getByText('Commission owed')).toBeVisible();
   await expect(main.getByText('Links are not tracked yet')).toBeVisible();
   await row.getByRole('button', { name: 'Months' }).click();
   await expect(
@@ -210,6 +223,47 @@ test('creators lists codes, months and orders, and adds and pauses with audit', 
     action: 'setActive',
     creatorId: alpha.id,
     active: false,
+    csrf: 'fixture-csrf',
+  });
+});
+
+test('creators marks a finished month paid once owed reaches the minimum', async ({
+  page,
+}) => {
+  const big = {
+    ...alpha,
+    id: '6c000000-0000-4000-8000-0000000000c3',
+    code: 'GAMMA10',
+    name: 'Gamma Streams',
+    owedCents: 6000,
+    months: [
+      {
+        month: '2026-09',
+        orders: 30,
+        baseCents: 60000,
+        tier: 'partner',
+        commission: 10,
+        commissionCents: 6000,
+      },
+    ],
+  };
+  const writes = await mock(page, [big]);
+  await page.goto('/admin/creators');
+  const main = page.getByRole('main');
+  const row = main.getByRole('row', { name: /GAMMA10 Gamma Streams/ });
+  await row.getByRole('button', { name: 'Months' }).click();
+  await main.getByRole('button', { name: 'Mark paid' }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toContainText('Mark September 2026 paid?');
+  await dialog.getByLabel('Transfer reference').fill('BANK-77');
+  await dialog.getByRole('button', { name: 'Mark paid' }).click();
+  await expect(main.getByText(/Paid .*BANK-77/)).toBeVisible();
+  expect(writes.at(-1)).toEqual({
+    action: 'pay',
+    creatorId: big.id,
+    month: '2026-09',
+    method: 'bank',
+    reference: 'BANK-77',
     csrf: 'fixture-csrf',
   });
 });

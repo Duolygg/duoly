@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   toOriginalHistory,
   toOriginalOrder,
+  toOriginalRewards,
 } from '../../src/components/account/dashboard-data.js';
 
 const base = {
@@ -126,5 +127,37 @@ describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
     expect(h.refunds).toBe(5);
     expect(h.gifted).toBe(10);
     expect(h.orders).toHaveLength(3);
+  });
+
+  it('maps the customer rewards RPC into Fabian’s Rewards props', () => {
+    expect(
+      toOriginalRewards({
+        orders: 250,
+        level: { id: 'gold', name: 'Gold', cashback: 3 },
+        remaining: 250,
+        percent: 0,
+        cashback: {
+          earnedEurCents: 1234,
+          monthEurCents: 234,
+          pendingEurCents: 99,
+          pendingOrders: 2,
+        },
+        gifts: [
+          { level: 'silver', amountEurCents: 500 },
+          { level: 'gold', amountEurCents: 1500 },
+        ],
+      }),
+    ).toEqual({
+      orders: 250,
+      cashbackTotal: 12.34,
+      cashbackMonth: 2.34,
+      cashbackPending: 0.99,
+      pendingOrders: 2,
+      gifts: [
+        { level: 'silver', amountEurCents: 500 },
+        { level: 'gold', amountEurCents: 1500 },
+      ],
+      giftClaimed: true,
+    });
   });
 });

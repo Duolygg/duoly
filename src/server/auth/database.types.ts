@@ -97,6 +97,7 @@ export type Database = {
           units: number;
           updated_at: string;
           voice: boolean;
+          wallet_eur_cents: number;
         };
         Insert: {
           amount_eur_cents: number;
@@ -126,6 +127,7 @@ export type Database = {
           units: number;
           updated_at?: string;
           voice?: boolean;
+          wallet_eur_cents?: number;
         };
         Update: {
           amount_eur_cents?: number;
@@ -155,6 +157,7 @@ export type Database = {
           units?: number;
           updated_at?: string;
           voice?: boolean;
+          wallet_eur_cents?: number;
         };
         Relationships: [
           {
@@ -1215,6 +1218,7 @@ export type Database = {
           unit: string;
           units: number;
           voice: boolean;
+          wallet_eur_cents: number;
         };
         Insert: {
           accepted_at?: string | null;
@@ -1250,6 +1254,7 @@ export type Database = {
           unit: string;
           units: number;
           voice?: boolean;
+          wallet_eur_cents?: number;
         };
         Update: {
           accepted_at?: string | null;
@@ -1285,6 +1290,7 @@ export type Database = {
           unit?: string;
           units?: number;
           voice?: boolean;
+          wallet_eur_cents?: number;
         };
         Relationships: [
           {
@@ -1911,6 +1917,29 @@ export type Database = {
         Args: { p_blocked: boolean; p_reason?: string; p_user_id: string };
         Returns: Json;
       };
+      admin_creator_payout_pay: {
+        Args: {
+          p_creator_id: string;
+          p_method: string;
+          p_month: string;
+          p_reference: string;
+        };
+        Returns: Json;
+      };
+      admin_payout_hold: {
+        Args: { p_line_id: string; p_reason: string };
+        Returns: Json;
+      };
+      admin_payout_pay: {
+        Args: { p_line_id: string; p_method: string; p_reference: string };
+        Returns: Json;
+      };
+      admin_payout_pay_all: {
+        Args: { p_method: string; p_reference: string };
+        Returns: Json;
+      };
+      admin_payout_release: { Args: { p_line_id: string }; Returns: Json };
+      admin_payouts: { Args: never; Returns: Json };
       admin_set_creator_active: {
         Args: { p_active: boolean; p_id: string };
         Returns: Json;
@@ -1937,6 +1966,14 @@ export type Database = {
       };
       admin_support_inbox: {
         Args: { p_conversation_id?: string };
+        Returns: Json;
+      };
+      admin_teammate_adjust: {
+        Args: {
+          p_amount_usd_cents: number;
+          p_reason: string;
+          p_teammate_id: string;
+        };
         Returns: Json;
       };
       admin_teammates: { Args: never; Returns: Json };
@@ -2025,6 +2062,7 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
+      customer_rewards: { Args: never; Returns: Json };
       desk_check_in: { Args: { p_last_active?: string }; Returns: Json };
       desk_set_online: { Args: { p_online: boolean }; Returns: Json };
       finalize_order_proof_upload: {
@@ -2254,7 +2292,20 @@ export type Database = {
         };
         Returns: boolean;
       };
+      teammate_payout_details: { Args: never; Returns: Json };
       teammate_queue_settings: { Args: never; Returns: Json };
+      teammate_save_payout_details: {
+        Args: {
+          p_account: string;
+          p_address: string;
+          p_country: string;
+          p_date_of_birth: string;
+          p_legal_name: string;
+          p_method: string;
+          p_tax_number: string;
+        };
+        Returns: Json;
+      };
       teammate_stats: { Args: never; Returns: Json };
     };
     Enums: {

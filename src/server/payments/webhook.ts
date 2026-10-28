@@ -165,6 +165,24 @@ export function paymentFacts(
   };
 }
 
+async function releaseSessionWallet(
+  admin: SupabaseClient,
+  sessionId: string,
+  status: 'expired' | 'failed',
+) {
+  const { data } = await admin
+    .from('checkout_intents')
+    .select('id')
+    .eq('stripe_session_id', sessionId)
+    .maybeSingle();
+  if (!data?.id) return;
+  const result = await admin.rpc('checkout_release_wallet', {
+    p_intent_id: data.id,
+    p_status: status,
+  });
+  if (result.error) throw new Error('checkout_release_wallet failed');
+}
+
 async function confirmEmail(
   admin: SupabaseClient,
   orderId: string,
@@ -230,7 +248,7 @@ async function fulfil(
   if (!facts) return 'unknown_intent';
   const { data: row } = await admin
     .from('checkout_intents')
-    .select('id, amount_eur_cents, status, stripe_session_id')
+    .select('id, amount_eur_cents, wallet_eur_cents, status, stripe_session_id')
     .eq('id', facts.intentId)
     .single();
   if (!row || row.stripe_session_id !== session.id) return 'intent_mismatch';
@@ -246,9 +264,16 @@ async function fulfil(
       .eq('status', 'open');
     return 'processing';
   }
-  if (facts.state === 'failed') return 'payment_failed';
-  // The price is ours; Stripe must have collected exactly that.
-  if (facts.eurAmountCents !== row.amount_eur_cents) return 'amount_mismatch';
+  if (facts.state === 'failed') {
+    await admin.rpc('checkout_release_wallet', {
+      p_intent_id: row.id,
+      p_status: 'failed',
+    });
+    return 'payment_failed';
+  }
+  // The price is ours; Stripe must have collected exactly the card part.
+  if (facts.eurAmountCents !== row.amount_eur_cents - row.wallet_eur_cents)
+    return 'amount_mismatch';
   const { data: result, error } = await admin.rpc('create_paid_order', {
     p_intent_id: row.id,
     p_payment_intent: facts.paymentIntentId,
@@ -321,19 +346,11 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
         outcome = await fulfil(stripe, admin, event.data.object.id);
         break;
       case 'checkout.session.async_payment_failed':
-        await admin
-          .from('checkout_intents')
-          .update({ status: 'failed', updated_at: new Date().toISOString() })
-          .eq('stripe_session_id', event.data.object.id)
-          .in('status', ['open', 'processing']);
+        await releaseSessionWallet(admin, event.data.object.id, 'failed');
         outcome = 'failed';
         break;
       case 'checkout.session.expired':
-        await admin
-          .from('checkout_intents')
-          .update({ status: 'expired', updated_at: new Date().toISOString() })
-          .eq('stripe_session_id', event.data.object.id)
-          .eq('status', 'open');
+        await releaseSessionWallet(admin, event.data.object.id, 'expired');
         outcome = 'expired';
         break;
       case 'charge.dispute.created':
@@ -386,9 +403,28 @@ export const paymentsTick: APIRoute = async ({ request }) => {
   if (!config?.tickSecret || auth !== `Bearer ${config.tickSecret}`)
     return json({ error: 'unauthorized' }, 401);
   const admin = adminFor(config);
+  const stripe = stripeFor(config);
   const sweep = await admin.rpc('sweep_expired_orders', { p_limit: 100 });
-  const settled = await settlePending(stripeFor(config), admin, 50);
-  return json({ expired: sweep.data ?? null, settled: settled.processed });
+  const stale = await admin.rpc('checkout_stale_wallet_holds', { p_limit: 20 });
+  const staleRows = Array.isArray(stale.data)
+    ? (stale.data as { id: string; stripe_session_id?: string | null }[])
+    : [];
+  for (const row of staleRows) {
+    if (row.stripe_session_id)
+      await stripe.checkout.sessions
+        .expire(row.stripe_session_id)
+        .catch(() => undefined);
+    await admin.rpc('checkout_release_wallet', {
+      p_intent_id: row.id,
+      p_status: 'expired',
+    });
+  }
+  const settled = await settlePending(stripe, admin, 50);
+  return json({
+    expired: sweep.data ?? null,
+    walletHoldsReleased: staleRows.length,
+    settled: settled.processed,
+  });
 };
 
 /** Best-effort immediate settlement after accept/cancel; the tick is the backstop. */

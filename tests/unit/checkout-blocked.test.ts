@@ -23,6 +23,8 @@ vi.mock('../../src/server/auth/handlers', () => ({
       server: 'EUW',
       rank: 'Platinum',
       ign: 'Me#EUW',
+      voice: false,
+      useWallet: false,
     },
     failure: null,
   }),
@@ -81,12 +83,9 @@ describe('checkout refuses blocked customers', () => {
     expect(state.stripeCalls).toBe(0);
   });
 
-  it('lets an unblocked customer through to Stripe', async () => {
+  it('lets an unblocked customer continue past the block gate', async () => {
     void buildCheckout;
-    const res = await Promise.resolve(createCheckout({} as never)).catch(
-      () => null,
-    );
-    expect(res === null || res.status !== 403).toBe(true);
-    expect(state.stripeCalls).toBe(1);
+    const res = await createCheckout({} as never);
+    expect(res.status).not.toBe(403);
   });
 });

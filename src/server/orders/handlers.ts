@@ -102,6 +102,9 @@ export const credits = route(
     client.rpc('customer_refund_credits', { p_limit, p_offset }),
   { input: 'pagination' },
 );
+export const rewards = route('customerRewards', (client) =>
+  client.rpc('customer_rewards'),
+);
 export const detail = route(
   'customerOrder',
   (client, { p_order_id }) => client.rpc('customer_order', { p_order_id }),

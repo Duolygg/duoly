@@ -66,7 +66,28 @@ const stats = {
     tipsTotal: 0,
     recent: [],
     latestReviews: [],
-    adjustments: [],
+    adjustments: [
+      { amount: -2.5, reason: 'Late start on DL-41', at: 1_700_000_000_000 },
+    ],
+    payout: {
+      weekStart: 1_699_570_800_000,
+      weekEnd: 1_700_175_600_000,
+      due: 12.34,
+      carried: 4.5,
+      held: 3,
+      minimum: 10,
+      details: false,
+      owed: 25,
+      history: [
+        {
+          start: 1_698_966_000_000,
+          end: 1_699_570_800_000,
+          total: 25,
+          status: 'Scheduled',
+          paidAt: null,
+        },
+      ],
+    },
   },
   leaderboard: {
     week: { global: board, lol: board.filter((r) => r.main === 'lol') },
@@ -87,6 +108,7 @@ test('original layout, server queue, real chat transport and private completion 
   let online = false;
   let voiceOptIn = true;
   const settingsWrites: object[] = [];
+  const payoutDetailWrites: object[] = [];
   const messages: object[] = [];
   const requests: string[] = [];
   await page.route('**/api/**', async (r) => {
@@ -97,6 +119,10 @@ test('original layout, server queue, real chat transport and private completion 
       const command = req.postDataJSON();
       if (command.action === 'set') online = command.online;
       return r.fulfill({ json: presence(online) });
+    }
+    if (url.pathname === '/api/teammate/payout-details') {
+      if (req.method() === 'POST') payoutDetailWrites.push(req.postDataJSON());
+      return r.fulfill({ json: { details: null } });
     }
     if (url.pathname === '/api/teammate/queue-settings') {
       if (req.method() === 'POST') {
@@ -219,7 +245,45 @@ test('original layout, server queue, real chat transport and private completion 
   expect(settingsWrites).toEqual([
     { csrf: 'fixture-csrf', enabledGames: ['lol'], voiceOptIn: false },
   ]);
-  await expect(page.getByText('Earned today', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Earned today', { exact: true })).toBeVisible();
+  await expect(page.getByText('Next payout · Friday')).toBeVisible();
+  await expect(page.getByText('$12.34', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('Includes $4.50 carried forward')).toBeVisible();
+  await expect(
+    page.getByText('Late start on DL-41', { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('list', { name: 'Payout history' }).getByText('Scheduled'),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Add your payout details so we can pay you.'),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Add payout details' }).click();
+  const detailsForm = page.getByRole('form', { name: 'Payout details' });
+  await detailsForm.getByLabel('Full legal name').fill('Fixture Legal');
+  await detailsForm.getByLabel('Date of birth').fill('1990-01-02');
+  await detailsForm.getByLabel('Address').fill('Test Street 1, Vienna');
+  await detailsForm.getByLabel('Country').fill('Austria');
+  await detailsForm.getByLabel('Tax number').fill('ATU123');
+  await detailsForm
+    .getByLabel('Account (IBAN, Wise or PayPal email)')
+    .fill('wise@example.invalid');
+  await detailsForm
+    .getByRole('button', { name: 'Save payout details' })
+    .click();
+  await expect(page.getByText('Payout details saved.')).toBeVisible();
+  expect(payoutDetailWrites).toEqual([
+    {
+      csrf: 'fixture-csrf',
+      legalName: 'Fixture Legal',
+      address: 'Test Street 1, Vienna',
+      country: 'Austria',
+      dateOfBirth: '1990-01-02',
+      taxNumber: 'ATU123',
+      method: 'wise',
+      account: 'wise@example.invalid',
+    },
+  ]);
   const trust = page.locator('#trust');
   await expect(
     trust.getByRole('heading', { name: 'Loyalty lowers your deposit' }),

@@ -28,6 +28,7 @@ export const CheckoutRequestSchema = z.strictObject({
   ign: z.string().trim().min(2).max(40),
   note: z.string().trim().max(200).optional(),
   voice: z.boolean().optional(),
+  useWallet: z.boolean().default(true),
 });
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
 
@@ -226,7 +227,6 @@ export const createCheckout: APIRoute = async (context) => {
         },
         403,
       );
-    const stripe = stripeFor(config);
     const now = Math.floor(Date.now() / 1000);
     // Creator code from the server-set referral cookie only; the database resolves it to an
     // active creator and attributes the customer once the order is paid (ledger #28).
@@ -270,20 +270,110 @@ export const createCheckout: APIRoute = async (context) => {
         { error: 'Checkout is unavailable. Try again.' },
         503,
       );
-    const session = await stripe.checkout.sessions.create(
-      sessionParams({
-        intentId: intent.id,
-        customerId: identity.viewer.id,
-        email: identity.viewer.email,
-        origin: config.origin,
-        amountEurCents: priced.row.amount_eur_cents,
-        productName: built.productName,
-        description: built.description,
-        nowSeconds: now,
-      }),
-      { idempotencyKey: `checkout_${intent.id}` },
-    );
-    await admin
+
+    const rpc = admin.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => PromiseLike<{ data: unknown; error: unknown }>;
+    let cardEurCents = priced.row.amount_eur_cents;
+    if (parsed.data.useWallet) {
+      const reserved = await rpc('checkout_reserve_wallet', {
+        p_intent_id: intent.id,
+      });
+      const split = reserved.data as {
+        wallet_eur_cents?: number;
+        card_eur_cents?: number;
+      } | null;
+      if (
+        reserved.error ||
+        !split ||
+        !Number.isInteger(split.card_eur_cents) ||
+        !Number.isInteger(split.wallet_eur_cents) ||
+        split.card_eur_cents! < 0 ||
+        split.wallet_eur_cents! < 0 ||
+        split.card_eur_cents! + split.wallet_eur_cents! !==
+          priced.row.amount_eur_cents
+      ) {
+        await rpc('checkout_release_wallet', {
+          p_intent_id: intent.id,
+          p_status: 'failed',
+        });
+        return account.json(
+          { error: 'Checkout is unavailable. Try again.' },
+          503,
+        );
+      }
+      cardEurCents = split.card_eur_cents!;
+      if (cardEurCents === 0) {
+        const paid = await rpc('create_wallet_order', {
+          p_intent_id: intent.id,
+        });
+        const result = paid.data as {
+          order_id?: string;
+          conflict?: boolean;
+          error?: string;
+        } | null;
+        if (paid.error || !result || result.error) {
+          await rpc('checkout_release_wallet', {
+            p_intent_id: intent.id,
+            p_status: 'failed',
+          });
+          return account.json(
+            { error: 'Checkout is unavailable. Try again.' },
+            503,
+          );
+        }
+        if (result.conflict)
+          return account.json(
+            { error: 'You already have an open order.' },
+            409,
+          );
+        if (!result.order_id) {
+          await rpc('checkout_release_wallet', {
+            p_intent_id: intent.id,
+            p_status: 'failed',
+          });
+          return account.json(
+            { error: 'Checkout is unavailable. Try again.' },
+            503,
+          );
+        }
+        return account.json({
+          intent_id: intent.id,
+          order_id: result.order_id,
+          url: `/queue/${result.order_id}`,
+          wallet_only: true,
+        });
+      }
+    }
+
+    const stripe = stripeFor(config);
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await stripe.checkout.sessions.create(
+        sessionParams({
+          intentId: intent.id,
+          customerId: identity.viewer.id,
+          email: identity.viewer.email,
+          origin: config.origin,
+          amountEurCents: cardEurCents,
+          productName: built.productName,
+          description: built.description,
+          nowSeconds: now,
+        }),
+        { idempotencyKey: `checkout_${intent.id}` },
+      );
+    } catch {
+      await rpc('checkout_release_wallet', {
+        p_intent_id: intent.id,
+        p_status: 'failed',
+      });
+      return account.json(
+        { error: 'Checkout is unavailable. Try again.' },
+        503,
+      );
+    }
+    const updated = await admin
       .from('checkout_intents')
       .update({
         stripe_session_id: session.id,
@@ -291,6 +381,17 @@ export const createCheckout: APIRoute = async (context) => {
         updated_at: new Date().toISOString(),
       })
       .eq('id', intent.id);
+    if (updated.error) {
+      await stripe.checkout.sessions.expire(session.id).catch(() => undefined);
+      await rpc('checkout_release_wallet', {
+        p_intent_id: intent.id,
+        p_status: 'failed',
+      });
+      return account.json(
+        { error: 'Checkout is unavailable. Try again.' },
+        503,
+      );
+    }
     return account.json({
       intent_id: intent.id,
       url: `/checkout/${intent.id}`,

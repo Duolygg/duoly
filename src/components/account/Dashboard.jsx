@@ -1,5 +1,5 @@
 import React from 'react';
-import Rewards, { levelFor } from '../../design-reference/components/Rewards';
+import Rewards from './Rewards';
 import SupportChat from '../support/SupportChat';
 import { GAME } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
@@ -11,7 +11,7 @@ import { dashboardFetch as fetch } from './dashboard-data';
 // (ledger: wallet #11, rewards #12, reviews and tips #7/#10, Sparky #25, PRO design-only).
 const FEATURES = {
   wallet: true,
-  rewards: false,
+  rewards: true,
   reviews: true,
   support: true,
   pro: false,
@@ -365,7 +365,6 @@ export default class Dashboard extends React.Component {
       style: chip(s.filter === id),
       pick: () => this.setState({ filter: id, showAll: false }),
     }));
-    const level = levelFor(h ? h.lifetimeOrders : 0);
     const today = new Date(now || 0);
     today.setHours(0, 0, 0, 0);
     const when = (t) => {
@@ -520,10 +519,13 @@ export default class Dashboard extends React.Component {
           ' promotional credit'
         : '',
       // level-up gifts go into the balance automatically (lib/orders.js moneyOf), nothing to claim
-      rewards: {
+      rewards: h?.rewards || {
         orders: h ? h.lifetimeOrders : 0,
         cashbackTotal: h ? h.cashbackTotal : 0,
         cashbackMonth: h ? h.cashbackMonth : 0,
+        cashbackPending: 0,
+        pendingOrders: 0,
+        gifts: [],
         giftClaimed: true,
       },
       claimGift: () => {},
@@ -1130,8 +1132,9 @@ export default class Dashboard extends React.Component {
               orders={v.rewards.orders}
               cashbackTotal={v.rewards.cashbackTotal}
               cashbackMonth={v.rewards.cashbackMonth}
+              cashbackPending={v.rewards.cashbackPending}
+              pendingOrders={v.rewards.pendingOrders}
               giftClaimed={v.rewards.giftClaimed}
-              onClaim={v.claimGift}
             />
           ) : null}
 
@@ -1806,10 +1809,9 @@ export default class Dashboard extends React.Component {
                       </span>
                     ) : null}
                   </p>
-                  <button
-                    type="button"
-                    disabled
-                    aria-label="Book with my balance, coming soon"
+                  <a
+                    href="/?wallet=1#checkout"
+                    aria-label="Book with my balance"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1822,12 +1824,11 @@ export default class Dashboard extends React.Component {
                       color: '#17092E',
                       fontSize: '15px',
                       fontWeight: '700',
-                      opacity: '.58',
-                      cursor: 'not-allowed',
+                      textDecoration: 'none',
                     }}
                   >
-                    Book with my balance · coming soon
-                  </button>
+                    Book with my balance
+                  </a>
                 </section>
               ) : null}
 

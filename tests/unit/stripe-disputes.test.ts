@@ -15,7 +15,13 @@ vi.mock('../../src/server/payments/config', () => {
       const chain = {
         select: () => chain,
         eq: () => chain,
-        maybeSingle: async () => ({ data: null, error: null }),
+        maybeSingle: async () => ({
+          data:
+            table === 'checkout_intents'
+              ? { id: 'b4200000-0000-4000-8000-000000000001' }
+              : null,
+          error: null,
+        }),
         insert: async (row: unknown) => {
           calls.inserts.push({ table, row });
           return { data: null, error: null };
@@ -65,6 +71,29 @@ const signed = (type: string, status: string) => {
   });
 };
 
+const signedCheckout = (type: string) => {
+  const body = JSON.stringify({
+    id: `evt_${type.replaceAll('.', '_')}`,
+    object: 'event',
+    api_version: '2026-09-30.clover',
+    created: 1_800_000_000,
+    livemode: false,
+    pending_webhooks: 1,
+    request: null,
+    type,
+    data: { object: { id: 'cs_test_wallet_1', object: 'checkout.session' } },
+  });
+  const signature = Stripe.webhooks.generateTestHeaderString({
+    payload: body,
+    secret,
+  });
+  return new Request('https://duoly.gg/api/webhooks/stripe', {
+    method: 'POST',
+    headers: { 'stripe-signature': signature },
+    body,
+  });
+};
+
 describe('signed Stripe dispute webhooks', () => {
   beforeEach(() => {
     calls.rpc.mockReset();
@@ -100,6 +129,21 @@ describe('signed Stripe dispute webhooks', () => {
       });
     });
   }
+
+  it('releases wallet holds for a signed expired checkout event', async () => {
+    const response = await stripeWebhook({
+      request: signedCheckout('checkout.session.expired'),
+    } as never);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      received: true,
+      outcome: 'expired',
+    });
+    expect(calls.rpc).toHaveBeenCalledWith('checkout_release_wallet', {
+      p_intent_id: 'b4200000-0000-4000-8000-000000000001',
+      p_status: 'expired',
+    });
+  });
 
   it('rejects a tampered dispute payload', async () => {
     const request = signed('charge.dispute.created', 'needs_response');

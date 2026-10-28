@@ -50,13 +50,23 @@ const ReviewStatsSchema = z.strictObject({
   reviews: z.number().int().nonnegative(),
   tipsTotal: z.literal(0),
   recent: z.array(
-    z.strictObject({
-      orderId: z.uuid(),
-      at: z.number().int(),
-      net: z.number().nonnegative(),
-      tip: z.literal(0),
-      game: z.string(),
-    }),
+    z.union([
+      z.strictObject({
+        orderId: z.uuid(),
+        at: z.number().int(),
+        net: z.number().nonnegative(),
+        tip: z.literal(0),
+        game: z.string(),
+      }),
+      z.strictObject({
+        orderId: z.null(),
+        at: z.number().int(),
+        net: z.number(),
+        tip: z.literal(0),
+        game: z.null(),
+        adjustment: z.literal(true),
+      }),
+    ]),
   ),
   latestReviews: z
     .array(
@@ -70,7 +80,35 @@ const ReviewStatsSchema = z.strictObject({
       }),
     )
     .max(5),
-  adjustments: z.array(z.never()),
+  adjustments: z.array(
+    z.strictObject({
+      amount: z.number(),
+      reason: z.string().min(1).max(200),
+      at: z.number().int(),
+    }),
+  ),
+  // Added by 20261025250000_weekly_payouts.sql; optional so code can deploy first.
+  payout: z
+    .strictObject({
+      weekStart: z.number().int(),
+      weekEnd: z.number().int(),
+      due: z.number(),
+      carried: z.number(),
+      held: z.number().nonnegative(),
+      minimum: z.literal(10),
+      details: z.boolean(),
+      owed: z.number(),
+      history: z.array(
+        z.strictObject({
+          start: z.number().int(),
+          end: z.number().int(),
+          total: z.number(),
+          status: z.enum(['Scheduled', 'On hold', 'Paid', 'Carried']),
+          paidAt: z.number().int().nullable(),
+        }),
+      ),
+    })
+    .optional(),
 });
 
 // One public leaderboard row (lib/ledger.js leaderboard()). Only public fields: no email, country or earnings.

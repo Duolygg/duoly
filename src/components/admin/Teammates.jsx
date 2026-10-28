@@ -90,6 +90,25 @@ export default class Teammates extends React.Component {
     this.props.log();
     this.load();
   }
+  async adjustBalance(t, amount, reason) {
+    const dollars = Number(amount);
+    if (!Number.isFinite(dollars) || !dollars || Math.abs(dollars) > 1000)
+      return this.props.toast(
+        'Enter an amount from -1000 to 1000 USD, excluding 0.',
+        'warn',
+      );
+    this.setState({ busy: t.id });
+    const res = await this.props.api.post('/api/admin/payouts', {
+      action: 'adjust',
+      teammateId: t.id,
+      amountCents: Math.round(dollars * 100),
+      reason,
+    });
+    this.setState({ busy: '' });
+    if (!res.ok) return this.props.toast(res.error, 'warn');
+    this.props.toast('Adjusted ' + t.name + ' by ' + usd(dollars) + '.');
+    this.props.log();
+  }
   renderRoster() {
     const { ask } = this.props;
     const s = this.state;
@@ -436,13 +455,28 @@ export default class Teammates extends React.Component {
                     <span style={{ display: 'inline-flex', gap: '6px' }}>
                       <button
                         type="button"
-                        disabled
-                        title={SOON_PAYOUTS}
-                        style={{
-                          ...btn(),
-                          opacity: '.45',
-                          cursor: 'not-allowed',
-                        }}
+                        disabled={s.busy === t.id}
+                        style={btn()}
+                        onClick={() =>
+                          ask({
+                            title: 'Adjust ' + t.name + '’s payout balance',
+                            body: 'Use a positive or negative USD amount. The reason is visible to the teammate and counts in this payout week.',
+                            confirm: 'Add adjustment',
+                            field: {
+                              label: 'Amount in USD',
+                              placeholder: '25.00 or -25.00',
+                              type: 'number',
+                              required: true,
+                            },
+                            field2: {
+                              label: 'Reason shown to the teammate',
+                              placeholder: 'Why this adjustment was made',
+                              required: true,
+                            },
+                            onConfirm: (amount, reason) =>
+                              this.adjustBalance(t, amount, reason),
+                          })
+                        }
                       >
                         Adjust balance
                       </button>

@@ -19,6 +19,7 @@ import {
 } from '../../contracts/admin';
 import { AdminPriorityCommandSchema, tierById } from '../../contracts/priority';
 import { AdminCreatorCommandSchema } from '../../contracts/creators';
+import { AdminPayoutCommandSchema } from '../../contracts/payouts';
 import { customerUsdRate, eurToUsd } from '../fx';
 import { referralsEnabled } from '../referrals';
 import { ownerEmails } from './owners';
@@ -283,17 +284,64 @@ export const creators = adminRoute(
   [
     {
       schema: AdminCreatorCommandSchema,
-      call: (client, body) =>
-        body.action === 'create'
-          ? client.rpc('admin_create_creator', {
-              p_code: body.code as string,
-              p_name: body.name as string,
-              p_channel: (body.channel as string | undefined) ?? '',
-            })
-          : client.rpc('admin_set_creator_active', {
-              p_id: body.creatorId as string,
-              p_active: body.active as boolean,
-            }),
+      call: (client, body) => {
+        if (body.action === 'create')
+          return client.rpc('admin_create_creator', {
+            p_code: body.code as string,
+            p_name: body.name as string,
+            p_channel: (body.channel as string | undefined) ?? '',
+          });
+        if (body.action === 'pay')
+          return client.rpc('admin_creator_payout_pay', {
+            p_creator_id: body.creatorId as string,
+            p_month: body.month as string,
+            p_method: body.method as string,
+            p_reference: body.reference as string,
+          });
+        return client.rpc('admin_set_creator_active', {
+          p_id: body.creatorId as string,
+          p_active: body.active as boolean,
+        });
+      },
+    },
+  ],
+);
+
+export const payouts = adminRoute(
+  (client) => client.rpc('admin_payouts'),
+  [
+    {
+      schema: AdminPayoutCommandSchema,
+      call: (client, body) => {
+        switch (body.action as string) {
+          case 'adjust':
+            return client.rpc('admin_teammate_adjust', {
+              p_teammate_id: body.teammateId as string,
+              p_amount_usd_cents: body.amountCents as number,
+              p_reason: body.reason as string,
+            });
+          case 'pay':
+            return client.rpc('admin_payout_pay', {
+              p_line_id: body.payoutId as string,
+              p_method: body.method as string,
+              p_reference: body.reference as string,
+            });
+          case 'payAll':
+            return client.rpc('admin_payout_pay_all', {
+              p_method: body.method as string,
+              p_reference: body.reference as string,
+            });
+          case 'hold':
+            return client.rpc('admin_payout_hold', {
+              p_line_id: body.payoutId as string,
+              p_reason: body.reason as string,
+            });
+          default:
+            return client.rpc('admin_payout_release', {
+              p_line_id: body.payoutId as string,
+            });
+        }
+      },
     },
   ],
 );

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Dashboard from '../../src/components/account/Dashboard.jsx';
+import Home from '../../src/components/home/Home.jsx';
 import Customers from '../../src/components/admin/Customers.jsx';
 
 const customer = {
@@ -25,7 +26,7 @@ const customer = {
   flag: '',
 };
 
-test('balance card shows live breakdown and keeps spending disabled', async ({
+test('balance card shows live breakdown and enables wallet booking', async ({
   page,
 }) => {
   const dashboard = new Dashboard({
@@ -59,11 +60,33 @@ test('balance card shows live breakdown and keeps spending disabled', async ({
   await expect(card).toContainText('€60.00 promotional credit');
   await expect(card).toContainText('€5.00 refunded');
   await expect(card).toContainText('€10.00 from Duoly');
-  const spend = page.getByRole('button', {
-    name: /Book with my balance, coming soon/,
+  const spend = page.getByRole('link', { name: 'Book with my balance' });
+  await expect(spend).toHaveAttribute('href', '/?wallet=1#checkout');
+  await expect(spend).not.toContainText('coming soon');
+});
+
+test('checkout shows the wallet toggle on by default for a full-wallet booking', async ({
+  page,
+}) => {
+  const home = new Home({
+    session: {
+      user: { id: customer.id, role: 'customer', name: customer.name },
+    },
+    walletEur: 100,
+    usdRate: 1.1,
+    stats: null,
+    recentMatches: [],
+    onlineNow: 0,
+    onCheckout: async () => ({ url: '/queue/order-1' }),
   });
-  await expect(spend).toBeDisabled();
-  await expect(spend).toContainText('coming soon');
+  home.state = { ...home.state, wallet: 100 };
+  await page.setContent(renderToStaticMarkup(home.render()));
+  const toggle = page.getByRole('switch', { name: /Use my Duoly balance/ });
+  await expect(toggle).toHaveAttribute('aria-checked', 'true');
+  await expect(toggle).toContainText('€100.00 available');
+  await expect(
+    page.getByRole('button', { name: /Pay .* with Duoly balance/ }).first(),
+  ).toBeVisible();
 });
 
 test('admin customer row exposes the original wallet adjustment control', async ({

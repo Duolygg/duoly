@@ -83,7 +83,6 @@ it('retains the original layout with live presence and unsupported controls stil
   expect(html).toContain('Voice comms');
   for (const text of [
     'Online ·',
-    'Earned today',
     'Leaderboard',
     'No games are unlocked',
     'Waiting for orders!',
@@ -97,9 +96,11 @@ it('retains the original layout with live presence and unsupported controls stil
     leaderboard,
     preferences,
     trust,
+    stats,
     ...gated
   } = FEATURES;
   expect(trust).toBe(true);
+  expect(stats).toBe(true);
   expect(preferences).toBe(true);
   expect(leaderboard).toBe(true);
   expect(support).toBe(true);
@@ -108,7 +109,7 @@ it('retains the original layout with live presence and unsupported controls stil
   expect(reviews).toBe(true);
   expect(FEATURES.tips).toBe(false);
   expect(html).not.toContain('Tips received');
-  expect(html).not.toContain('Rating');
+  expect(html).toContain('Earned today');
   expect(Object.values(gated).every((v) => v === false)).toBe(true);
 });
 it('acceptance re-reads authoritative assignment and never trusts an uncertain response', async () => {
