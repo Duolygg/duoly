@@ -9,6 +9,7 @@ import {
   formatMatchTime,
   homeLive,
   mapRecentMatches,
+  mapHomeStats,
   resetHomeLiveCache,
 } from '../../src/server/home/live';
 
@@ -128,7 +129,36 @@ describe('home live: cache', () => {
       await homeLive(async () => {
         throw new Error('down');
       }, 0),
-    ).toEqual({ onlineNow: 0, recentMatches: [] });
+    ).toEqual({ onlineNow: 0, recentMatches: [], stats: null });
+  });
+});
+
+describe('home live: real figures (ledger #43)', () => {
+  it('maps the public stats and drops anything malformed', () => {
+    expect(
+      mapHomeStats({
+        online: 2,
+        onlineByGame: { lol: 2, val: 0, xx: 9, cs2: -1 },
+        onlineByRegion: { eu: 2, na: 0, ao: 'x', sa: 0 },
+        sessions: 1500,
+        reviews: 3,
+        rating: 4.67,
+        matchSeconds: 84,
+      }),
+    ).toEqual({
+      onlineByGame: { lol: 2, val: 0 },
+      onlineByRegion: { eu: 2, na: 0, ao: 0, sa: 0 },
+      sessions: 1500,
+      reviews: 3,
+      rating: 4.7,
+      matchSeconds: 84,
+    });
+    expect(mapHomeStats(null)).toBeNull();
+    expect(mapHomeStats({ sessions: 'a', reviews: 0 })).toBeNull();
+    expect(
+      mapHomeStats({ sessions: 0, reviews: 0, rating: 5, matchSeconds: null })
+        ?.rating,
+    ).toBeNull();
   });
 });
 
@@ -143,13 +173,14 @@ describe('home live: wiring', () => {
     expect(route).not.toMatch(/cookies|accountContext/);
   });
 
-  it('feeds Home.jsx from the cached reader, and the ticker keeps his samples until real matches exist', () => {
+  it('feeds Home.jsx from the cached reader, and the ticker shows real matches only', () => {
     const page = read('src/pages/index.astro');
     expect(page).toContain('homeLive()');
     expect(page).not.toContain("rpc('presence_public_count')");
     const home = read('src/components/home/Home.jsx');
     expect(home).toContain('this.props.recentMatches');
-    expect(home).toContain('live.length ? live : tk');
+    expect(home).toContain('let src = live;');
+    expect(home).not.toContain('Jonas');
     expect(read('src/components/account/LiveHome.tsx')).toContain(
       "fetch('/api/home/live'",
     );
@@ -178,12 +209,36 @@ describe('home live: Home.jsx ticker render', () => {
   const ticker = (html: string) =>
     /aria-label="Recent matches"[\s\S]*?<\/div><\/div>/.exec(html)?.[0] ?? '';
 
-  it('shows his sample rows when there are no real matches', () => {
+  it('shows no ticker and no invented figures without real data', () => {
     const html = renderToStaticMarkup(
       React.createElement(Home, { onlineNow: 2, recentMatches: [] }),
     );
-    expect(ticker(html)).toContain('Jonas');
+    expect(html).not.toContain('aria-label="Recent matches"');
     expect(html).toContain('2 teammates');
+    for (const sample of ['38k', '212k', '1m 42s', '4.9 / 5', 'Kairo', '612'])
+      expect(html).not.toContain(sample);
+  });
+
+  it('shows the real figures when there are any', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(Home, {
+        onlineNow: 3,
+        recentMatches: [],
+        stats: {
+          onlineByGame: { lol: 3 },
+          onlineByRegion: { eu: 3, na: 0, ao: 0, sa: 0 },
+          sessions: 1234,
+          reviews: 12,
+          rating: 4.8,
+          matchSeconds: 95,
+        },
+      }),
+    );
+    expect(html).toContain('1m 35s');
+    expect(html).toContain('12 reviews');
+    expect(html).toContain('4.8 / 5');
+    expect(html).toContain('1.2k');
+    expect(html).toContain('3 online');
   });
 
   it('replaces the samples with real matches, repeated to fill the strip, with the rating', () => {

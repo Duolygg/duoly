@@ -514,153 +514,48 @@ export default class Home extends React.Component {
     return [
       {
         id: 'lol',
-        online: '214',
-        mates: [
-          ['Kairo', 'Master 214 LP', 'Mid', '4.97', '1,204'],
-          ['Nyx', 'Grandmaster', 'Jungle', '4.95', '862'],
-          ['Tavi', 'Master 88 LP', 'Support', '4.99', '2,011'],
-          ['Ren', 'Diamond 1', 'ADC', '4.92', '540'],
-        ],
       },
       {
         id: 'val',
-        online: '158',
-        mates: [
-          ['Vexa', 'Immortal 3', 'Controller', '4.96', '931'],
-          ['Juno', 'Radiant', 'Duelist', '4.94', '612'],
-          ['Otto', 'Immortal 1', 'Sentinel', '4.98', '1,377'],
-          ['Mika', 'Ascendant 3', 'Initiator', '4.91', '402'],
-        ],
       },
       {
         id: 'fn',
-        online: '118',
-        mates: [
-          ['Blitz', 'Unreal', 'IGL', '4.97', '1,318'],
-          ['Nova', 'Champion', 'Fragger', '4.95', '744'],
-          ['Rook', 'Unreal', 'Builder', '4.98', '956'],
-          ['Kiko', 'Elite', 'Support', '4.91', '402'],
-        ],
       },
       {
         id: 'apex',
-        online: '81',
-        mates: [
-          ['Vale', 'Apex Predator', 'IGL', '4.96', '1,026'],
-          ['Rhea', 'Master', 'Fragger', '4.94', '688'],
-          ['Cass', 'Master', 'Support', '4.97', '812'],
-          ['Odin', 'Diamond 1', 'Recon', '4.90', '377'],
-        ],
       },
       {
         id: 'rl',
-        online: '57',
-        mates: [
-          ['Ace', 'Grand Champion 2', 'Striker', '4.97', '903'],
-          ['Pip', 'Supersonic Legend', 'Defender', '4.98', '1,211'],
-          ['Moss', 'Grand Champion 1', 'Midfield', '4.93', '466'],
-          ['Rex', 'Champion 3', 'Striker', '4.91', '281'],
-        ],
       },
       {
         id: 'mr',
-        online: '63',
-        mates: [
-          ['Sol', 'Celestial 2', 'Strategist', '4.97', '388'],
-          ['Brix', 'Grandmaster 1', 'Vanguard', '4.93', '290'],
-          ['Lumi', 'Eternity', 'Duelist', '4.95', '511'],
-          ['Dax', 'Grandmaster 3', 'Strategist', '4.90', '174'],
-        ],
       },
       {
         id: 'ow',
-        online: '61',
-        mates: [
-          ['Wren', 'Grandmaster 2', 'Support', '4.98', '1,044'],
-          ['Bo', 'Master 1', 'Tank', '4.94', '603'],
-          ['Isa', 'Champion 5', 'DPS', '4.96', '722'],
-          ['Pax', 'Master 3', 'Support', '4.92', '318'],
-        ],
       },
       {
         id: 'arc',
-        online: '49',
-        mates: [
-          ['Hex', 'Elite', 'Scout', '4.96', '412'],
-          ['Lark', 'Veteran', 'Support', '4.95', '287'],
-          ['Brann', 'Elite', 'Fragger', '4.93', '330'],
-          ['Wynn', 'Veteran', 'Looter', '4.92', '198'],
-        ],
       },
       {
         id: 'mc',
-        online: '44',
-        mates: [
-          ['Pixel', 'Top PvPer', 'Duels', '4.97', '734'],
-          ['Ivo', 'SMP expert', 'Builder', '4.96', '512'],
-          ['Echo', 'Bedwars 1000★', 'Rusher', '4.94', '389'],
-          ['Fern', 'SMP expert', 'Redstone', '4.98', '226'],
-        ],
       },
       {
         id: 'pu',
-        online: '38',
-        mates: [
-          ['Momo', 'Master 1712', 'Attacker', '4.97', '466'],
-          ['Rio', 'Master 1630', 'Support', '4.95', '301'],
-          ['Kit', 'Master 1588', 'Defender', '4.93', '257'],
-          ['Ash', 'Ultra 1', 'All-rounder', '4.90', '149'],
-        ],
       },
       {
         id: 'cs2',
-        online: '142',
-        mates: [
-          ['Kaz', 'FACEIT Level 10', 'AWPer', '4.97', '1,102'],
-          ['Dima', 'Premier 24,800', 'Entry', '4.95', '734'],
-          ['Lex', 'Global Elite', 'IGL', '4.96', '866'],
-          ['Tomo', 'Premier 19,300', 'Support', '4.92', '341'],
-        ],
       },
       {
         id: 'cod',
-        online: '104',
-        mates: [
-          ['Ghost', 'Iridescent', 'Slayer', '4.96', '958'],
-          ['Riva', 'Crimson 2', 'Objective', '4.94', '571'],
-          ['Jax', 'Iridescent', 'Anchor', '4.97', '804'],
-          ['Tess', 'Diamond 3', 'Support', '4.91', '288'],
-        ],
       },
       {
         id: 'r6',
-        online: '67',
-        mates: [
-          ['Sable', 'Champion', 'IGL', '4.97', '903'],
-          ['Kova', 'Champion', 'Entry', '4.96', '844'],
-          ['Thorn', 'Diamond 1', 'Support', '4.95', '612'],
-          ['Milo', 'Emerald 1', 'Flex', '4.91', '287'],
-        ],
       },
       {
         id: 'tft',
-        online: '54',
-        mates: [
-          ['Nami', 'Challenger', 'Fast 8', '4.98', '517'],
-          ['Sora', 'Grandmaster', 'Flex comps', '4.97', '688'],
-          ['Elio', 'Master 312 LP', 'Reroll', '4.95', '421'],
-          ['Bram', 'Diamond 1', 'Econ', '4.90', '203'],
-        ],
       },
       {
         id: 'fc',
-        online: '52',
-        mates: [
-          ['Leo', 'Elite', 'Possession', '4.96', '598'],
-          ['Iker', 'Elite', 'Counter', '4.95', '377'],
-          ['Matti', 'Division 1', 'Skiller', '4.94', '412'],
-          ['Cruz', 'Division 2', 'All-round', '4.90', '166'],
-        ],
       },
       // name and icon come from the shared list (lib/games.js), so they match every other page.
       // Shown by teammates online, most first (ties keep the demand order), so busy games lead.
@@ -669,6 +564,11 @@ export default class Home extends React.Component {
         ...x,
         name: GAME[x.id].name,
         img: GAME[x.id].img,
+        // Ledger #43 (owner decision 2026-10-27): real numbers only. Teammates online for
+        // this game from public.home_public_stats(); unknown until the figures are read once.
+        online: this.props.stats
+          ? String(this.props.stats.onlineByGame[x.id] || 0)
+          : '',
         // services, bundles and units per game come from lib/catalog.js, ranks and rank prices from lib/ranks.js
         ...servicesFor(x.id),
       }))
@@ -874,76 +774,85 @@ export default class Home extends React.Component {
       NL: '/assets/flags/nl.png',
     };
     const CCS = ['DE', 'FR', 'SE', 'ES', 'JP', 'US', 'BR', 'PL', 'KR', 'NL'];
-    const gi = all.indexOf(g);
-    const mates = g.mates.map((m, i) => {
-      const cc = CCS[(gi * 3 + i * 2) % 10];
-      return {
-        name: m[0],
-        rank: m[1],
-        role: m[2],
-        rating: m[3],
-        games: m[4],
-        av: AV[(gi * 2 + i) % 10],
-        cc,
-        flag: FLAG[cc],
-      };
-    });
+    // Ledger #43: real figures only. Each block shows only when there is a real number for it.
+    const st = this.props.stats || null;
+    const fmtWait = (sec) =>
+      sec < 60
+        ? sec + 's'
+        : Math.floor(sec / 60) + 'm ' + String(sec % 60).padStart(2, '0') + 's';
+    const compact = (n) =>
+      n >= 10000
+        ? Math.round(n / 1000) + 'k'
+        : n >= 1000
+          ? (Math.round(n / 100) / 10).toLocaleString('en-US') + 'k'
+          : n.toLocaleString('en-US');
+    const stat = {
+      wait: st && st.matchSeconds !== null ? fmtWait(st.matchSeconds) : null,
+      reviews:
+        st && st.reviews > 0 && st.rating !== null
+          ? compact(st.reviews) + (st.reviews === 1 ? ' review' : ' reviews')
+          : null,
+      rating:
+        st && st.reviews > 0 && st.rating !== null
+          ? st.rating.toFixed(1)
+          : null,
+      sessions: st && st.sessions > 0 ? compact(st.sessions) : null,
+      regions: st
+        ? [
+            ['Europe', st.onlineByRegion.eu],
+            ['North America', st.onlineByRegion.na],
+            ['Asia and Oceania', st.onlineByRegion.ao],
+            ['South America', st.onlineByRegion.sa],
+          ]
+        : [],
+    };
+    const gameOnline = Number(g.online || 0);
+    const gameOnlineText = !this.props.stats
+      ? 'Live numbers are loading.'
+      : gameOnline
+        ? gameOnline +
+          (gameOnline === 1 ? ' teammate is' : ' teammates are') +
+          ' online for ' +
+          g.name +
+          ' right now. Book now and the first free teammate takes your order.'
+        : 'Nobody is online for ' +
+          g.name +
+          ' right now. You can still book: if nobody takes it within 5 minutes, you pay nothing.';
 
     const imgOf = (id) => all.find((x) => x.id === id).img;
-    const tk = [
-      ['lol', 'Sam', 'Duo Pro', '58s'],
-      ['cs2', 'Jan', '5-Stack Premier', '1m 08s'],
-      ['val', 'Lea', 'Duo Apex', '1m 12s'],
-      ['fn', 'Zoe', 'Duo Pro', '49s'],
-      ['cod', 'Max', 'Ranked 4-Stack', '1m 19s'],
-      ['ow', 'Jonas', 'Play & Learn', '44s'],
-      ['r6', 'Elif', 'Duo Pro', '1m 02s'],
-      ['mr', 'Ari', 'Rank Rush ×5', '1m 31s'],
-      ['tft', 'Ivy', 'Double Up', '55s'],
-      ['pu', 'Noah', 'Duo Pro', '2m 03s'],
-      ['lol', 'Mia', 'All-Nighter ×10', '37s'],
-      ['fc', 'Luca', 'Co-op Rivals', '1m 27s'],
-      ['fn', 'Leo', 'Squads & Trios', '1m 05s'],
-      ['apex', 'Nina', 'Duo Pro', '52s'],
-      ['cs2', 'Oskar', 'Duo Apex', '1m 40s'],
-      ['rl', 'Theo', 'Duo Apex', '1m 14s'],
-      ['mc', 'Ava', 'PvP Duo', '41s'],
-      ['arc', 'Kian', 'Full Squad Raids', '1m 22s'],
-      ['val', 'Finn', '5-stack', '1m 50s'],
-    ];
+    const nameOf = (id) => all.find((x) => x.id === id).name;
     // Teammates in the carousel and on the globe: at least one per game, so every game shows up with its own icon
     // (the first 7 are the globe pins: the seven most-booked games)
     const players = [
-      ['Kairo', 'DE', 'lol', 'Master 214 LP', '4.97'],
-      ['Vexa', 'FR', 'val', 'Immortal 3', '4.96'],
-      ['Kaz', 'PL', 'cs2', 'FACEIT Level 10', '4.97'],
-      ['Blitz', 'BR', 'fn', 'Unreal', '4.97'],
-      ['Ghost', 'US', 'cod', 'Iridescent', '4.96'],
-      ['Vale', 'SE', 'apex', 'Apex Predator', '4.96'],
-      ['Sable', 'FR', 'r6', 'Champion', '4.97'],
-      ['Sol', 'ES', 'mr', 'Celestial 2', '4.97'],
-      ['Wren', 'SE', 'ow', 'Grandmaster 2', '4.98'],
-      ['Pip', 'NL', 'rl', 'Supersonic Legend', '4.98'],
-      ['Nami', 'KR', 'tft', 'Challenger', '4.98'],
-      ['Leo', 'ES', 'fc', 'Elite', '4.96'],
-      ['Hex', 'DE', 'arc', 'Elite', '4.96'],
-      ['Pixel', 'BR', 'mc', 'Top PvPer', '4.97'],
-      ['Momo', 'JP', 'pu', 'Master 1712', '4.97'],
-      ['Nyx', 'US', 'lol', 'Grandmaster', '4.95'],
-      ['Dima', 'DE', 'cs2', 'Premier 24,800', '4.95'],
-      ['Rhea', 'FR', 'apex', 'Master', '4.94'],
-      ['Isa', 'PL', 'ow', 'Champion 5', '4.96'],
-      ['Ace', 'US', 'rl', 'Grand Champion 2', '4.97'],
-      ['Lumi', 'KR', 'mr', 'Eternity', '4.95'],
-      ['Tavi', 'NL', 'lol', 'Master 88 LP', '4.99'],
+      ['DE', 'lol'],
+      ['FR', 'val'],
+      ['PL', 'cs2'],
+      ['BR', 'fn'],
+      ['US', 'cod'],
+      ['SE', 'apex'],
+      ['FR', 'r6'],
+      ['ES', 'mr'],
+      ['SE', 'ow'],
+      ['NL', 'rl'],
+      ['KR', 'tft'],
+      ['ES', 'fc'],
+      ['DE', 'arc'],
+      ['BR', 'mc'],
+      ['JP', 'pu'],
+      ['US', 'lol'],
+      ['DE', 'cs2'],
+      ['FR', 'apex'],
+      ['PL', 'ow'],
+      ['US', 'rl'],
+      ['KR', 'mr'],
+      ['NL', 'lol'],
     ].map((p, i) => ({
-      name: p[0],
-      cc: p[1],
-      img: imgOf(p[2]),
-      rank: p[3],
-      rating: p[4],
+      // Ledger #43: the globe is an illustration of the games played, not invented people.
+      name: nameOf(p[1]),
+      cc: p[0],
+      img: imgOf(p[1]),
       av: AV[i % AV.length],
-      flag: FLAG[p[1]],
+      flag: FLAG[p[0]],
     }));
     const pinPos = [
       [24, 30],
@@ -962,7 +871,6 @@ export default class Home extends React.Component {
         cc: p.cc,
         img: p.img,
         name: p.name,
-        rank: p.rank,
         showTag: i === 1 || i === 3 || i === 6,
         wrap:
           'position: absolute; left: ' +
@@ -986,13 +894,13 @@ export default class Home extends React.Component {
           's infinite;',
       };
     });
-    const carousel = players.concat(players);
     // Ledger #36: real completed orders (LiveHome, public.home_recent_matches) replace the
     // sample rows once there are any. Short lists repeat so the strip still fills the screen.
     const live = (this.props.recentMatches || [])
       .filter((m) => all.some((x) => x.id === m.game))
       .map((m) => [m.game, m.who, m.what, m.time, m.rating]);
-    let src = live.length ? live : tk;
+    // Ledger #43: real matches only; without any the strip is not shown.
+    let src = live;
     while (live.length && src.length < 10) src = src.concat(live);
     const row = src.map((t) => ({
       img: imgOf(t[0]),
@@ -1190,10 +1098,10 @@ export default class Home extends React.Component {
       games,
       tabs,
       cards: sets[curTab],
-      mates,
+      gameOnlineText,
+      stat,
       ticker,
       pins,
-      carousel,
       qtys,
       toggles,
       pays,
@@ -2246,11 +2154,15 @@ export default class Home extends React.Component {
                 }}
               >
                 <div
-                  style={{
-                    paddingRight: '28px',
-                    marginRight: '28px',
-                    borderRight: '1px solid rgba(196, 170, 255, .14)',
-                  }}
+                  style={
+                    v.stat.wait || v.stat.rating
+                      ? {
+                          paddingRight: '28px',
+                          marginRight: '28px',
+                          borderRight: '1px solid rgba(196, 170, 255, .14)',
+                        }
+                      : {}
+                  }
                 >
                   <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
                     Online now
@@ -2280,46 +2192,54 @@ export default class Home extends React.Component {
                     {Number(this.props.onlineNow || 0).toLocaleString('en-US')}
                   </dd>
                 </div>
-                <div
-                  style={{
-                    paddingRight: '28px',
-                    marginRight: '28px',
-                    borderRight: '1px solid rgba(196, 170, 255, .14)',
-                  }}
-                >
-                  <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
-                    Avg. wait
-                  </dt>
-                  <dd
-                    style={{
-                      margin: '2px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontSize: '28px',
-                      fontWeight: '700',
-                      letterSpacing: '-.02em',
-                      color: '#FFFFFF',
-                    }}
+                {v.stat.wait ? (
+                  <div
+                    style={
+                      v.stat.rating
+                        ? {
+                            paddingRight: '28px',
+                            marginRight: '28px',
+                            borderRight: '1px solid rgba(196, 170, 255, .14)',
+                          }
+                        : {}
+                    }
                   >
-                    1m 42s
-                  </dd>
-                </div>
-                <div>
-                  <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
-                    38k reviews
-                  </dt>
-                  <dd
-                    style={{
-                      margin: '2px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontSize: '28px',
-                      fontWeight: '700',
-                      letterSpacing: '-.02em',
-                      color: '#FFFFFF',
-                    }}
-                  >
-                    4.9 / 5
-                  </dd>
-                </div>
+                    <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
+                      Avg. wait
+                    </dt>
+                    <dd
+                      style={{
+                        margin: '2px 0 0',
+                        fontFamily: "'Bricolage Grotesque', sans-serif",
+                        fontSize: '28px',
+                        fontWeight: '700',
+                        letterSpacing: '-.02em',
+                        color: '#FFFFFF',
+                      }}
+                    >
+                      {v.stat.wait}
+                    </dd>
+                  </div>
+                ) : null}
+                {v.stat.rating ? (
+                  <div>
+                    <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
+                      {v.stat.reviews}
+                    </dt>
+                    <dd
+                      style={{
+                        margin: '2px 0 0',
+                        fontFamily: "'Bricolage Grotesque', sans-serif",
+                        fontSize: '28px',
+                        fontWeight: '700',
+                        letterSpacing: '-.02em',
+                        color: '#FFFFFF',
+                      }}
+                    >
+                      {v.stat.rating} / 5
+                    </dd>
+                  </div>
+                ) : null}
               </dl>
             </div>
             <div
@@ -2378,7 +2298,7 @@ export default class Home extends React.Component {
                       background: '#5EEAA8',
                     }}
                   />
-                  Match found · 1m 08s
+                  {v.stat.wait ? 'Match found · ' + v.stat.wait : 'Match found'}
                 </div>
                 <div
                   style={{
@@ -2432,21 +2352,11 @@ export default class Home extends React.Component {
                     }}
                   >
                     <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
-                      Kairo
+                      Your teammate
                     </span>
                     <span style={{ fontSize: '12.5px', color: '#A79DC4' }}>
-                      Master 214 LP · Mid
+                      Rank-verified · voice on
                     </span>
-                  </span>
-                  <span
-                    style={{
-                      marginLeft: 'auto',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      color: '#FFFFFF',
-                    }}
-                  >
-                    ★ 4.97
                   </span>
                 </div>
               </div>
@@ -2480,76 +2390,78 @@ export default class Home extends React.Component {
               </div>
             </div>
           </section>
-          <div
-            aria-label="Recent matches"
-            style={{
-              borderTop: '1px solid rgba(196, 170, 255, .08)',
-              borderBottom: '1px solid rgba(196, 170, 255, .08)',
-              overflow: 'hidden',
-              padding: '14px 0',
-            }}
-          >
+          {v.ticker.length ? (
             <div
+              aria-label="Recent matches"
               style={{
-                display: 'flex',
-                gap: '40px',
-                width: 'max-content',
-                animation: 'dlticker 58s linear infinite',
+                borderTop: '1px solid rgba(196, 170, 255, .08)',
+                borderBottom: '1px solid rgba(196, 170, 255, .08)',
+                overflow: 'hidden',
+                padding: '14px 0',
               }}
             >
-              {v.ticker.map((t, $index) => (
-                <React.Fragment key={$index}>
-                  <span
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      fontSize: '13.5px',
-                      color: '#A79DC4',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    <img
-                      src={t.img}
-                      alt=""
-                      width="22"
-                      height="22"
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '40px',
+                  width: 'max-content',
+                  animation: 'dlticker 58s linear infinite',
+                }}
+              >
+                {v.ticker.map((t, $index) => (
+                  <React.Fragment key={$index}>
+                    <span
                       style={{
-                        width: '22px',
-                        height: '22px',
-                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        fontSize: '13.5px',
+                        color: '#A79DC4',
+                        whiteSpace: 'nowrap',
                       }}
-                    />
-                    <span style={{ color: '#F3EEFF', fontWeight: '600' }}>
-                      {t.who}
-                    </span>{' '}
-                    got a {t.what}
-                    <span style={{ color: '#5EEAA8' }}>{t.time}</span>
-                    {t.rating ? (
-                      <span
-                        aria-label={'Rated ' + t.rating + ' out of 5'}
-                        style={{ color: '#FFD27A' }}
-                      >
-                        ★ {t.rating}
-                      </span>
-                    ) : null}
-                    <svg
-                      aria-hidden="true"
-                      width="10"
-                      height="10"
-                      viewBox="0 0 24 24"
-                      style={{ marginLeft: '20px' }}
                     >
-                      <path
-                        fill="#4A3B70"
-                        d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"
+                      <img
+                        src={t.img}
+                        alt=""
+                        width="22"
+                        height="22"
+                        style={{
+                          width: '22px',
+                          height: '22px',
+                          borderRadius: '6px',
+                        }}
                       />
-                    </svg>
-                  </span>
-                </React.Fragment>
-              ))}
+                      <span style={{ color: '#F3EEFF', fontWeight: '600' }}>
+                        {t.who}
+                      </span>{' '}
+                      got a {t.what}
+                      <span style={{ color: '#5EEAA8' }}>{t.time}</span>
+                      {t.rating ? (
+                        <span
+                          aria-label={'Rated ' + t.rating + ' out of 5'}
+                          style={{ color: '#FFD27A' }}
+                        >
+                          ★ {t.rating}
+                        </span>
+                      ) : null}
+                      <svg
+                        aria-hidden="true"
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        style={{ marginLeft: '20px' }}
+                      >
+                        <path
+                          fill="#4A3B70"
+                          d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"
+                        />
+                      </svg>
+                    </span>
+                  </React.Fragment>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : null}
           <div
             style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 24px' }}
           >
@@ -2695,7 +2607,7 @@ export default class Home extends React.Component {
                             className="dl-online"
                             style={{ animationDelay: g.dotDelay }}
                           />
-                          {g.online} online
+                          {g.online !== '' ? g.online + ' online' : ''}
                         </span>
                       </span>
                     </button>
@@ -2920,112 +2832,23 @@ export default class Home extends React.Component {
                     Teammates online for {v.game.name}
                   </h3>
                   <span style={{ fontSize: '13px', color: '#8E84AB' }}>
-                    You’ll get the first one free — re-roll twice if the vibe’s
-                    off
+                    The first free teammate takes your order. Re-roll twice if
+                    the vibe is off
                   </span>
                 </div>
-                <div
+                <p
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns:
-                      'repeat(auto-fill, minmax(230px, 1fr))',
-                    gap: '10px',
+                    margin: '0',
+                    padding: '18px 20px',
+                    borderRadius: '16px',
+                    background: '#120B22',
+                    border: '1px solid rgba(196, 170, 255, .08)',
+                    color: '#A79DC4',
+                    fontSize: '14px',
                   }}
                 >
-                  {v.mates.map((p, $index) => (
-                    <React.Fragment key={$index}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          padding: '12px',
-                          borderRadius: '16px',
-                          background: '#120B22',
-                          border: '1px solid rgba(196, 170, 255, .08)',
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'relative',
-                            flex: '0 0 auto',
-                            width: '44px',
-                            height: '44px',
-                          }}
-                        >
-                          <img
-                            src={p.av}
-                            alt=""
-                            width="44"
-                            height="44"
-                            style={{
-                              width: '44px',
-                              height: '44px',
-                              borderRadius: '50%',
-                              display: 'block',
-                            }}
-                          />
-                          <img
-                            src={p.flag}
-                            alt={p.cc}
-                            width="16"
-                            height="16"
-                            style={{
-                              position: 'absolute',
-                              right: '-2px',
-                              bottom: '-2px',
-                              width: '16px',
-                              height: '16px',
-                              borderRadius: '50%',
-                              boxShadow: '0 0 0 2px #120B22',
-                            }}
-                          />
-                        </span>
-                        <span
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            minWidth: '0',
-                            lineHeight: '1.35',
-                          }}
-                        >
-                          <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
-                            {p.name}
-                          </span>
-                          <span
-                            style={{ fontSize: '12.5px', color: '#A79DC4' }}
-                          >
-                            {p.rank} · {p.role}
-                          </span>
-                        </span>
-                        <span
-                          style={{
-                            marginLeft: 'auto',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-end',
-                            lineHeight: '1.35',
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: '13px',
-                              fontWeight: '600',
-                              color: '#FFFFFF',
-                            }}
-                          >
-                            ★ {p.rating}
-                          </span>
-                          <span
-                            style={{ fontSize: '11.5px', color: '#8E84AB' }}
-                          >
-                            {p.games} games
-                          </span>
-                        </span>
-                      </div>
-                    </React.Fragment>
-                  ))}
-                </div>
+                  {v.gameOnlineText}
+                </p>
               </div>
             </section>
             <section
@@ -3959,8 +3782,8 @@ export default class Home extends React.Component {
                           d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"
                         />
                       </svg>
-                      Not matched in 5 min? The full amount goes back to your
-                      Duoly balance
+                      Not matched in 5 min? The hold on your card is released
+                      and you pay nothing
                     </li>
                   </ul>
                 </aside>
@@ -4055,7 +3878,7 @@ export default class Home extends React.Component {
                           color: '#FFFFFF',
                         }}
                       >
-                        612
+                        {v.stat.regions.length ? v.stat.regions[0][1] : 0}
                       </dd>
                     </div>
                     <div
@@ -4078,7 +3901,7 @@ export default class Home extends React.Component {
                           color: '#FFFFFF',
                         }}
                       >
-                        438
+                        {v.stat.regions.length ? v.stat.regions[1][1] : 0}
                       </dd>
                     </div>
                     <div
@@ -4090,7 +3913,7 @@ export default class Home extends React.Component {
                       }}
                     >
                       <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
-                        Asia & Oceania
+                        Asia and Oceania
                       </dt>
                       <dd
                         style={{
@@ -4101,7 +3924,7 @@ export default class Home extends React.Component {
                           color: '#FFFFFF',
                         }}
                       >
-                        171
+                        {v.stat.regions.length ? v.stat.regions[2][1] : 0}
                       </dd>
                     </div>
                     <div
@@ -4124,7 +3947,7 @@ export default class Home extends React.Component {
                           color: '#FFFFFF',
                         }}
                       >
-                        63
+                        {v.stat.regions.length ? v.stat.regions[3][1] : 0}
                       </dd>
                     </div>
                   </dl>
@@ -4393,102 +4216,6 @@ export default class Home extends React.Component {
                   </div>
                 </div>
               </div>
-              <div
-                aria-label="Teammates online"
-                style={{ marginTop: '36px', overflow: 'hidden' }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '12px',
-                    width: 'max-content',
-                    animation: 'dlticker 75s linear infinite',
-                  }}
-                >
-                  {v.carousel.map((c, $index) => (
-                    <React.Fragment key={$index}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          width: '268px',
-                          padding: '12px',
-                          borderRadius: '18px',
-                          background: '#120B22',
-                          border: '1px solid rgba(196, 170, 255, .08)',
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'relative',
-                            flex: '0 0 auto',
-                            width: '46px',
-                            height: '46px',
-                          }}
-                        >
-                          <img
-                            src={c.av}
-                            alt=""
-                            width="46"
-                            height="46"
-                            style={{
-                              width: '46px',
-                              height: '46px',
-                              borderRadius: '50%',
-                              display: 'block',
-                            }}
-                          />
-                          <img
-                            src={c.flag}
-                            alt={c.cc}
-                            width="16"
-                            height="16"
-                            style={{
-                              position: 'absolute',
-                              right: '-2px',
-                              bottom: '-2px',
-                              width: '16px',
-                              height: '16px',
-                              borderRadius: '50%',
-                              boxShadow: '0 0 0 2px #120B22',
-                            }}
-                          />
-                        </span>
-                        <span
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            minWidth: '0',
-                            lineHeight: '1.35',
-                          }}
-                        >
-                          <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
-                            {c.name}
-                          </span>
-                          <span
-                            style={{ fontSize: '12.5px', color: '#A79DC4' }}
-                          >
-                            {c.rank} · ★ {c.rating}
-                          </span>
-                        </span>
-                        <img
-                          src={c.img}
-                          alt=""
-                          width="30"
-                          height="30"
-                          style={{
-                            marginLeft: 'auto',
-                            width: '30px',
-                            height: '30px',
-                            borderRadius: '9px',
-                          }}
-                        />
-                      </div>
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
             </section>
             <section
               id="how"
@@ -4688,43 +4415,47 @@ export default class Home extends React.Component {
                       color: '#FFFFFF',
                     }}
                   >
-                    Top 0.5%
+                    Rank-verified
                   </dd>
                 </div>
-                <div>
-                  <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
-                    Avg. rating
-                  </dt>
-                  <dd
-                    style={{
-                      margin: '4px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontSize: '40px',
-                      fontWeight: '700',
-                      letterSpacing: '-.03em',
-                      color: '#FFFFFF',
-                    }}
-                  >
-                    4.9★
-                  </dd>
-                </div>
-                <div>
-                  <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
-                    Sessions played
-                  </dt>
-                  <dd
-                    style={{
-                      margin: '4px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontSize: '40px',
-                      fontWeight: '700',
-                      letterSpacing: '-.03em',
-                      color: '#FFFFFF',
-                    }}
-                  >
-                    212k
-                  </dd>
-                </div>
+                {v.stat.rating ? (
+                  <div>
+                    <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
+                      Avg. rating
+                    </dt>
+                    <dd
+                      style={{
+                        margin: '4px 0 0',
+                        fontFamily: "'Bricolage Grotesque', sans-serif",
+                        fontSize: '40px',
+                        fontWeight: '700',
+                        letterSpacing: '-.03em',
+                        color: '#FFFFFF',
+                      }}
+                    >
+                      {v.stat.rating}★
+                    </dd>
+                  </div>
+                ) : null}
+                {v.stat.sessions ? (
+                  <div>
+                    <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
+                      Sessions played
+                    </dt>
+                    <dd
+                      style={{
+                        margin: '4px 0 0',
+                        fontFamily: "'Bricolage Grotesque', sans-serif",
+                        fontSize: '40px',
+                        fontWeight: '700',
+                        letterSpacing: '-.03em',
+                        color: '#FFFFFF',
+                      }}
+                    >
+                      {v.stat.sessions}
+                    </dd>
+                  </div>
+                ) : null}
                 <div>
                   <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
                     Support
@@ -5435,79 +5166,81 @@ export default class Home extends React.Component {
                       Your own dashboard to track the climb
                     </li>
                   </ul>
-                  <div
-                    style={{
-                      marginTop: '22px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '12px 14px',
-                      borderRadius: '16px',
-                      background: 'rgba(9, 4, 20, .5)',
-                      border: '1px solid rgba(196, 170, 255, .12)',
-                    }}
-                  >
-                    <span style={{ display: 'flex' }}>
-                      <img
-                        src="/assets/avatars/avatar-1.png"
-                        alt=""
-                        width="30"
-                        height="30"
-                        style={{
-                          width: '30px',
-                          height: '30px',
-                          borderRadius: '50%',
-                          boxShadow: '0 0 0 2px #1B1033',
-                        }}
-                      />
-                      <img
-                        src="/assets/avatars/avatar-2.png"
-                        alt=""
-                        width="30"
-                        height="30"
-                        style={{
-                          width: '30px',
-                          height: '30px',
-                          borderRadius: '50%',
-                          marginLeft: '-8px',
-                          boxShadow: '0 0 0 2px #1B1033',
-                        }}
-                      />
-                      <img
-                        src="/assets/avatars/avatar-3.png"
-                        alt=""
-                        width="30"
-                        height="30"
-                        style={{
-                          width: '30px',
-                          height: '30px',
-                          borderRadius: '50%',
-                          marginLeft: '-8px',
-                          boxShadow: '0 0 0 2px #1B1033',
-                        }}
-                      />
-                    </span>
-                    <span
+                  {v.stat.rating ? (
+                    <div
                       style={{
+                        marginTop: '22px',
                         display: 'flex',
-                        flexDirection: 'column',
-                        lineHeight: '1.3',
+                        alignItems: 'center',
+                        gap: '12px',
+                        padding: '12px 14px',
+                        borderRadius: '16px',
+                        background: 'rgba(9, 4, 20, .5)',
+                        border: '1px solid rgba(196, 170, 255, .12)',
                       }}
                     >
+                      <span style={{ display: 'flex' }}>
+                        <img
+                          src="/assets/avatars/avatar-1.png"
+                          alt=""
+                          width="30"
+                          height="30"
+                          style={{
+                            width: '30px',
+                            height: '30px',
+                            borderRadius: '50%',
+                            boxShadow: '0 0 0 2px #1B1033',
+                          }}
+                        />
+                        <img
+                          src="/assets/avatars/avatar-2.png"
+                          alt=""
+                          width="30"
+                          height="30"
+                          style={{
+                            width: '30px',
+                            height: '30px',
+                            borderRadius: '50%',
+                            marginLeft: '-8px',
+                            boxShadow: '0 0 0 2px #1B1033',
+                          }}
+                        />
+                        <img
+                          src="/assets/avatars/avatar-3.png"
+                          alt=""
+                          width="30"
+                          height="30"
+                          style={{
+                            width: '30px',
+                            height: '30px',
+                            borderRadius: '50%',
+                            marginLeft: '-8px',
+                            boxShadow: '0 0 0 2px #1B1033',
+                          }}
+                        />
+                      </span>
                       <span
                         style={{
-                          fontSize: '13.5px',
-                          fontWeight: '600',
-                          color: '#FFFFFF',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          lineHeight: '1.3',
                         }}
                       >
-                        ★ 4.9 / 5
+                        <span
+                          style={{
+                            fontSize: '13.5px',
+                            fontWeight: '600',
+                            color: '#FFFFFF',
+                          }}
+                        >
+                          ★ {v.stat.rating} / 5
+                        </span>
+                        <span style={{ fontSize: '12px', color: '#A79DC4' }}>
+                          from {v.stat.reviews}
+                        </span>
                       </span>
-                      <span style={{ fontSize: '12px', color: '#A79DC4' }}>
-                        from 38k reviews
-                      </span>
-                    </span>
-                  </div>
+                    </div>
+                  ) : null}
                 </div>
                 <div
                   style={{
