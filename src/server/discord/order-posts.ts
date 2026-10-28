@@ -1,6 +1,6 @@
 // Discord order posts (ledger #41, Fabian's lib/discordQueue.js).
 // When an order has waited AFTER_MS in the queue without a teammate, the bot posts it in that
-// game's #general channel, mentions the Teammate role and links the bot's own handover link.
+// game's #lfd channel, mentions the Teammate role and links the bot's own handover link.
 // When the order is taken, cancelled or re-rolled, the post is edited so nobody clicks a dead link.
 //
 // Posts use Discord Components V2 (flag IS_COMPONENTS_V2). Public channels: the post never

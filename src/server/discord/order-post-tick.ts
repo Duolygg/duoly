@@ -117,7 +117,10 @@ interface Channel {
   position?: number;
 }
 
-/** game id to text channel id: the "general" channel under the category named after the game. */
+/**
+ * game id to text channel id: the "lfd" (looking for duo) channel under the category named after
+ * the game. Falls back to the "general" channel, then the first text channel, if a game has no lfd.
+ */
 export function channelMap(channels: Channel[]): Record<string, string> {
   const map: Record<string, string> = {};
   for (const game of Object.values(POST_GAMES)) {
@@ -130,7 +133,9 @@ export function channelMap(channels: Channel[]): Record<string, string> {
       .filter((c) => c.type === 0 && c.parent_id === category.id)
       .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
     const channel =
-      text.find((c) => norm(c.name).includes('general')) ?? text[0];
+      text.find((c) => norm(c.name).includes('lfd')) ??
+      text.find((c) => norm(c.name).includes('general')) ??
+      text[0];
     if (channel) map[game.id] = channel.id;
   }
   return map;
@@ -349,7 +354,7 @@ export async function runOrderPosts(
     if (!channel) {
       warnOnce(
         `nochannel${o.game}`,
-        `no channel for ${o.game} (make a category named after the game with a "general" channel)`,
+        `no channel for ${o.game} (make a category named after the game with an "lfd" channel)`,
       );
       result.skipped++;
       continue;
