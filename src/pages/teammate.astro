@@ -3,7 +3,9 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import LiveTeammate from '../components/teammate/LiveTeammate';
 import { accountContext } from '../server/auth/context';
 import { orderChatEnabled } from '../server/chat/config';
+import { connectEnabled } from '../server/connect/config';
 const chatEnabled = orderChatEnabled();
+const connectPayouts = connectEnabled();
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
@@ -35,6 +37,7 @@ const csrf = account.csrf();
     discordEnabled={!!account.config?.providers.discord}
     discordResult={Astro.url.searchParams.get('discord') ?? ''}
     chatEnabled={chatEnabled}
+    connectPayouts={connectPayouts}
     client:load
   />
 </SiteLayout>

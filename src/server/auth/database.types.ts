@@ -1939,6 +1939,10 @@ export type Database = {
         Returns: Json;
       };
       admin_payout_release: { Args: { p_line_id: string }; Returns: Json };
+      admin_payout_pay_all_manual: {
+        Args: { p_method: string; p_reference: string };
+        Returns: Json;
+      };
       admin_payouts: { Args: never; Returns: Json };
       admin_set_creator_active: {
         Args: { p_active: boolean; p_id: string };
@@ -2278,6 +2282,7 @@ export type Database = {
         Args: { p_owner: boolean; p_user_id: string };
         Returns: undefined;
       };
+      teammate_connect_status: { Args: never; Returns: Json };
       teammate_current_assignment: { Args: never; Returns: Json };
       teammate_earnings: {
         Args: { p_limit?: number; p_offset?: number };

@@ -9,6 +9,7 @@ export default function LiveTeammate({
   discordEnabled,
   discordResult,
   chatEnabled,
+  connectPayouts = false,
 }: {
   viewer: Viewer;
   csrf: string;
@@ -16,6 +17,8 @@ export default function LiveTeammate({
   discordEnabled: boolean;
   discordResult?: string;
   chatEnabled: boolean;
+  /** Stripe Connect payouts (CONNECT_PAYOUTS_ENABLED). */
+  connectPayouts?: boolean;
 }) {
   const onSignOut = async () => {
     const response = await fetch('/auth/logout', {
@@ -34,6 +37,7 @@ export default function LiveTeammate({
       discordEnabled={discordEnabled}
       discordResult={discordResult}
       chatEnabled={chatEnabled}
+      connectPayouts={connectPayouts}
       onSignOut={onSignOut}
     />
   );

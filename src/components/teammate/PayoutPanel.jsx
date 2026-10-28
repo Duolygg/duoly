@@ -24,6 +24,39 @@ const input = {
   color: '#FFFFFF',
   font: 'inherit',
 };
+const connectLabel = {
+  not_started: 'Not started',
+  pending: 'Pending verification',
+  ready: 'Ready',
+  restricted: 'Restricted',
+};
+const connectColor = {
+  not_started: '#8E84AB',
+  pending: '#C4AAFF',
+  ready: '#5EEAA8',
+  restricted: '#FFC46B',
+};
+const connectHelp = {
+  not_started:
+    'Get paid straight to your bank with Stripe. Stripe checks your identity and keeps your bank details. Until then we pay you manually.',
+  pending:
+    'Stripe is checking your details. We keep paying you manually until Stripe is ready.',
+  ready:
+    'Your payouts are sent with Stripe to the bank account you added there.',
+  restricted:
+    'Stripe needs more information before it can pay you. Until then we pay you manually.',
+};
+const smallButton = {
+  alignSelf: 'flex-start',
+  padding: '8px 12px',
+  borderRadius: '10px',
+  border: '1px solid rgba(196, 170, 255, .25)',
+  background: 'transparent',
+  color: '#C4AAFF',
+  font: 'inherit',
+  fontSize: '13px',
+  cursor: 'pointer',
+};
 const empty = {
   legalName: '',
   address: '',
@@ -34,7 +67,10 @@ const empty = {
   account: '',
 };
 
-/** Payout history and the private payout details form on the teammate desk (M2). */
+/**
+ * Payout history and the private payout details form on the teammate desk (M2). With
+ * connect (CONNECT_PAYOUTS_ENABLED) it also shows Stripe payouts setup (M9).
+ */
 export default class PayoutPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -44,8 +80,69 @@ export default class PayoutPanel extends React.Component {
       form: empty,
       saving: false,
       message: '',
+      connect: null,
+      connectBusy: false,
+      connectMessage: '',
     };
   }
+  componentDidMount() {
+    if (!this.props.connect) return;
+    const back =
+      typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('connect')
+        : null;
+    // Stripe sends people to refresh_url when an onboarding link expired: make a new one.
+    if (back === 'refresh') this.startConnect('refresh');
+    else this.loadConnect(back === 'return');
+  }
+  loadConnect = async (sync, keepMessage = false) => {
+    try {
+      const response = await fetch(
+        '/api/teammate/connect' + (sync ? '?sync=1' : ''),
+        { credentials: 'same-origin' },
+      );
+      const body = await response.json();
+      if (response.ok && body && body.enabled && body.connect)
+        this.setState(
+          keepMessage
+            ? { connect: body.connect }
+            : { connect: body.connect, connectMessage: '' },
+        );
+      else if (!response.ok)
+        this.setState({
+          connectMessage: body.error || 'Couldn’t load your Stripe status.',
+        });
+    } catch {
+      this.setState({ connectMessage: 'Couldn’t load your Stripe status.' });
+    }
+  };
+  startConnect = async (action) => {
+    if (this.state.connectBusy) return;
+    this.setState({ connectBusy: true, connectMessage: '' });
+    try {
+      const response = await fetch('/api/teammate/connect', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ csrf: this.props.csrf, action }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (response.ok && body.url) {
+        window.location.assign(body.url);
+        return;
+      }
+      this.setState({
+        connectBusy: false,
+        connectMessage: body.error || 'Couldn’t open Stripe. Try again.',
+      });
+      this.loadConnect(false, true);
+    } catch {
+      this.setState({
+        connectBusy: false,
+        connectMessage: 'Couldn’t open Stripe. Try again.',
+      });
+    }
+  };
   open = async () => {
     this.setState({ open: true, message: '' });
     if (this.state.loaded) return;
@@ -54,10 +151,16 @@ export default class PayoutPanel extends React.Component {
         credentials: 'same-origin',
       });
       const body = await response.json();
-      this.setState({
-        loaded: true,
-        form: body && body.details ? { ...empty, ...body.details } : empty,
-      });
+      // Never overwrite what the teammate already typed while the details were loading.
+      this.setState((state) =>
+        state.dirty
+          ? { loaded: true }
+          : {
+              loaded: true,
+              form:
+                body && body.details ? { ...empty, ...body.details } : empty,
+            },
+      );
     } catch {
       this.setState({ message: 'Couldn’t load your payout details.' });
     }
@@ -105,13 +208,80 @@ export default class PayoutPanel extends React.Component {
       });
     }
   };
-  set = (key) => (event) =>
-    this.setState({ form: { ...this.state.form, [key]: event.target.value } });
+  set = (key) => (event) => {
+    const value = event.target.value;
+    this.setState((state) => ({
+      dirty: true,
+      form: { ...state.form, [key]: value },
+    }));
+  };
+  renderConnect() {
+    const c = this.state.connect;
+    const status = connectLabel[c.status] ? c.status : 'not_started';
+    return (
+      <div
+        aria-label="Stripe payouts"
+        role="group"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          padding: '10px 12px',
+          borderRadius: '12px',
+          background: '#090414',
+        }}
+      >
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'baseline' }}>
+          <span style={{ fontSize: '13px', color: '#CFC4EA' }}>
+            Stripe payouts
+          </span>
+          <span
+            data-connect-status={status}
+            style={{ fontSize: '13px', color: connectColor[status] }}
+          >
+            {connectLabel[status]}
+          </span>
+        </div>
+        <p style={{ margin: 0, fontSize: '12.5px', color: '#8E84AB' }}>
+          {connectHelp[status]}
+          {c.payoutFailed
+            ? ' Your last bank payout failed. Check your bank details in Stripe.'
+            : ''}
+        </p>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            disabled={this.state.connectBusy}
+            onClick={() => this.startConnect(c.account ? 'refresh' : 'onboard')}
+            style={smallButton}
+          >
+            {this.state.connectBusy
+              ? 'Opening Stripe…'
+              : !c.account
+                ? 'Set up payouts with Stripe'
+                : status === 'ready'
+                  ? 'Update details in Stripe'
+                  : 'Continue setup with Stripe'}
+          </button>
+          {c.account ? (
+            <button
+              type="button"
+              onClick={() => this.loadConnect(true)}
+              style={smallButton}
+            >
+              Refresh status
+            </button>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
   render() {
     const p = this.props.payout;
     const s = this.state;
     return (
       <div
+        id="payouts"
         style={{
           marginTop: '12px',
           display: 'flex',
@@ -130,6 +300,15 @@ export default class PayoutPanel extends React.Component {
             style={{ margin: 0, fontSize: '13px', color: '#FFC46B' }}
           >
             Add your payout details so we can pay you.
+          </p>
+        ) : null}
+        {this.props.connect && s.connect ? this.renderConnect() : null}
+        {this.props.connect && s.connectMessage ? (
+          <p
+            role="status"
+            style={{ margin: 0, fontSize: '13px', color: '#FFC46B' }}
+          >
+            {s.connectMessage}
           </p>
         ) : null}
         {p.history.length ? (

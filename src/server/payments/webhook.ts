@@ -4,6 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { adminFor, paymentsConfig, stripeFor } from './config';
 import { settlePending } from './settle';
 import { handleProEvent, isProCheckoutSession } from '../pro/webhook';
+import { handleTransferEvent } from '../connect/events';
 import { sendEmail } from '../email/send';
 import { GAME } from '../../design-reference/lib/games.js';
 
@@ -548,8 +549,12 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
         break;
       }
       default:
+        // Stripe Connect payouts: transfer.created / updated / reversed (src/server/connect).
         // Duoly PRO: customer.subscription.* and invoice.paid / payment_failed.
-        outcome = (await handleProEvent(stripe, admin, event)) ?? 'ignored';
+        outcome =
+          (await handleTransferEvent(admin, event)) ??
+          (await handleProEvent(stripe, admin, event)) ??
+          'ignored';
         break;
     }
   } catch {
