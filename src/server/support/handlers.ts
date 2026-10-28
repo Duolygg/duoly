@@ -4,7 +4,7 @@ import { mutation } from '../auth/handlers';
 import { SupportPostSchema } from '../../contracts/support';
 import { answerMetadata, answerWithAi } from './ai';
 import { sparkyLookup } from './lookup';
-import { notifySupportAdmins, notifySupportDiscordHook } from './notify';
+import { notifySupportAdmins, notifySupportDiscord } from './notify';
 import { supportPerson } from './person';
 import { CHIPS, greeting, preparedReply, type SupportPerson } from './sparky';
 import {
@@ -134,7 +134,7 @@ async function handoff(
       message || 'Asked to talk to a person.',
       now.replace(/[^0-9]/g, '').slice(0, 14),
     ),
-    notifySupportDiscordHook(person, message),
+    notifySupportDiscord(service, conversation.id, person, message),
   ]);
   return {
     ...conversation,

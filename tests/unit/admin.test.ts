@@ -11,7 +11,7 @@ import {
   WalletAdjustSchema,
   applicationError,
 } from '../../src/contracts/admin';
-import { rpcResponse } from '../../src/server/admin/handlers';
+import { pageParams, rpcResponse } from '../../src/server/admin/handlers';
 
 describe('owners (ADMIN_EMAILS)', () => {
   it('parses a comma separated list, case and space insensitive', () => {
@@ -149,6 +149,21 @@ describe('admin contracts', () => {
 });
 
 describe('admin RPC envelope', () => {
+  it('bounds paging query parameters', () => {
+    expect(
+      pageParams(new URL('https://duoly.gg/api?limit=250&offset=500')),
+    ).toEqual({
+      limit: 250,
+      offset: 500,
+    });
+    expect(
+      pageParams(new URL('https://duoly.gg/api?limit=9999&offset=-4')),
+    ).toEqual({
+      limit: 200,
+      offset: 0,
+    });
+  });
+
   const account = {
     json: (body: unknown, status = 200) =>
       new Response(JSON.stringify(body), { status }),

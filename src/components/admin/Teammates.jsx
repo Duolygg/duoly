@@ -2,6 +2,7 @@ import React from 'react';
 import { GAME as GAMES } from '../../design-reference/lib/games';
 import { maskEmail } from '../../design-reference/lib/adminData';
 import { flagSrc } from '../../design-reference/lib/countries';
+import { TIERS } from '../../design-reference/lib/trust';
 import Applications from './Applications';
 import {
   C,
@@ -23,8 +24,7 @@ import {
 // is durable: Playing wins, then Online, then Offline.
 const REFRESH_MS = 20000;
 const FILTERS = ['All', 'Online', 'Suspended', 'No Discord'];
-const SOON_TRUST = 'Coming with trust levels';
-const SOON_PAYOUTS = 'Coming with weekly payouts';
+const TIER_BY_ID = Object.fromEntries(TIERS.map((tier) => [tier.id, tier]));
 const toMs = (v) => (v ? Date.parse(v) : null);
 
 export default class Teammates extends React.Component {
@@ -66,6 +66,11 @@ export default class Teammates extends React.Component {
       rating: t.rating == null ? null : Number(t.rating),
       reviews: Number(t.reviews) || 0,
       warnings: Number(t.warnings) || 0,
+      tier: TIER_BY_ID[(t.trust && t.trust.trust_tier) || 'rookie'] || TIERS[0],
+      held: (Number(t.depositHeldUsdCents) || 0) / 100,
+      owed:
+        Number((t.payout && t.payout.due) || 0) +
+        Number((t.payout && t.payout.owed) || 0),
       suspended: t.suspended
         ? { ...t.suspended, at: toMs(t.suspended.at) }
         : null,
@@ -141,11 +146,6 @@ export default class Teammates extends React.Component {
         }[s.sort],
       );
     const n = (f) => s.list.filter((t) => is(t, f)).length;
-    const soon = (title) => (
-      <span style={{ color: C.faint, fontSize: '12.5px' }} title={title}>
-        Soon
-      </span>
-    );
     return (
       <>
         <div
@@ -388,7 +388,14 @@ export default class Teammates extends React.Component {
                       ) : null}
                     </span>
                   </td>
-                  <td style={td}>{soon(SOON_TRUST)}</td>
+                  <td style={td}>
+                    <span style={{ fontWeight: '700', color: t.tier.color }}>
+                      {t.tier.name}
+                    </span>{' '}
+                    <span style={{ color: C.dim, fontSize: '12.5px' }}>
+                      · {t.tier.deposit}%
+                    </span>
+                  </td>
                   <td
                     style={{ ...td, textAlign: 'right' }}
                     title={
@@ -415,11 +422,25 @@ export default class Teammates extends React.Component {
                   >
                     {usd(t.earned30)}
                   </td>
-                  <td style={{ ...td, textAlign: 'right' }}>
-                    {soon(SOON_TRUST)}
+                  <td
+                    style={{
+                      ...td,
+                      textAlign: 'right',
+                      color: t.held ? C.gold : C.faint,
+                    }}
+                  >
+                    {t.held ? usd(t.held) : usd(0)}
                   </td>
-                  <td style={{ ...td, textAlign: 'right' }}>
-                    {soon(SOON_PAYOUTS)}
+                  <td
+                    style={{
+                      ...td,
+                      textAlign: 'right',
+                      fontWeight: '700',
+                      color: t.owed < 0 ? C.red : t.owed ? C.white : C.faint,
+                    }}
+                    title="Current payout week plus unpaid payout lines"
+                  >
+                    {t.owed ? usd(t.owed) : usd(0)}
                   </td>
                   <td style={td}>
                     <span
@@ -561,9 +582,8 @@ export default class Teammates extends React.Component {
           </table>
         </div>
         <p style={{ margin: '12px 0 0', fontSize: '13px', color: C.dim }}>
-          Trust level, deposit held and amount owed show here once trust levels
-          and weekly payouts are live. Game access and roles are edited in Users
-          and roles.
+          Game access and roles are edited in Users and roles. Payout balances
+          include the running Vienna week and unpaid payout lines.
         </p>
       </>
     );

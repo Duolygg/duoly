@@ -36,6 +36,26 @@ export function adminApi(csrf) {
   };
 }
 
+export async function allAdminPages(api, path, key, limit = 200) {
+  let offset = 0;
+  let total = Infinity;
+  const rows = [];
+  while (offset < total) {
+    const join = path.includes('?') ? '&' : '?';
+    const response = await api.get(
+      path + join + 'limit=' + limit + '&offset=' + offset,
+    );
+    if (!response.ok) return response;
+    const page = Array.isArray(response.data[key]) ? response.data[key] : [];
+    total = Number(response.data.total);
+    if (!Number.isFinite(total)) total = offset + page.length;
+    rows.push(...page);
+    offset += page.length;
+    if (!page.length || page.length < limit) break;
+  }
+  return { ok: true, data: { total: rows.length, [key]: rows } };
+}
+
 /** Server account → what the Users screen renders (times in ms like the original). */
 export function account(a) {
   return {

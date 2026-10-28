@@ -1460,6 +1460,9 @@ export type Database = {
           admin_seen_at: string | null;
           claimed_by: string | null;
           created_at: string;
+          discord_channel_id: string | null;
+          discord_message_id: string | null;
+          discord_message_text: string | null;
           email: string;
           guest_token_hash: string | null;
           id: string;
@@ -1477,6 +1480,9 @@ export type Database = {
           admin_seen_at?: string | null;
           claimed_by?: string | null;
           created_at?: string;
+          discord_channel_id?: string | null;
+          discord_message_id?: string | null;
+          discord_message_text?: string | null;
           email?: string;
           guest_token_hash?: string | null;
           id?: string;
@@ -1494,6 +1500,9 @@ export type Database = {
           admin_seen_at?: string | null;
           claimed_by?: string | null;
           created_at?: string;
+          discord_channel_id?: string | null;
+          discord_message_id?: string | null;
+          discord_message_text?: string | null;
           email?: string;
           guest_token_hash?: string | null;
           id?: string;
@@ -1837,6 +1846,10 @@ export type Database = {
         Returns: Json;
       };
       admin_applications: { Args: never; Returns: Json };
+      admin_applications_page: {
+        Args: { p_limit?: number; p_offset?: number };
+        Returns: Json;
+      };
       admin_apply_role: {
         Args: {
           p_actor: string;
@@ -1899,6 +1912,11 @@ export type Database = {
       };
       admin_order_reports: { Args: never; Returns: Json };
       admin_orders: { Args: { p_limit?: number }; Returns: Json };
+      admin_orders_page: {
+        Args: { p_limit?: number; p_offset?: number };
+        Returns: Json;
+      };
+      admin_overview: { Args: never; Returns: Json };
       admin_presence: { Args: never; Returns: Json };
       admin_presence_check_in: { Args: { p_online?: boolean }; Returns: Json };
       admin_priority: { Args: never; Returns: Json };

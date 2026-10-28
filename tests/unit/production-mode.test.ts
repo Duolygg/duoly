@@ -59,14 +59,20 @@ describe('ECB exchange rate', () => {
       calls += 1;
       return new Response(xml);
     }) as unknown as typeof fetch;
-    expect(await eurToUsd(ok, 1_000)).toEqual({ rate: 1.0921, source: 'ecb' });
-    expect(await eurToUsd(ok, 2_000)).toEqual({ rate: 1.0921, source: 'ecb' });
+    expect(await eurToUsd(ok, 1_000)).toMatchObject({
+      rate: 1.0921,
+      source: 'ecb',
+    });
+    expect(await eurToUsd(ok, 2_000)).toMatchObject({
+      rate: 1.0921,
+      source: 'ecb',
+    });
     expect(calls).toBe(1);
     resetFxCache();
     const down = (async () => {
       throw new Error('offline');
     }) as unknown as typeof fetch;
-    expect(await eurToUsd(down, 3_000)).toEqual({
+    expect(await eurToUsd(down, 3_000)).toMatchObject({
       rate: 1.08,
       source: 'fallback',
     });

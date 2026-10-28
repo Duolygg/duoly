@@ -7,7 +7,12 @@ import {
   type SupportPerson,
 } from '../../src/server/support/sparky';
 import { answerWithAi, parseAiResponse } from '../../src/server/support/ai';
-import { notifySupportDiscordHook } from '../../src/server/support/notify';
+import {
+  notifySupportDiscord,
+  notifySupportDiscordHook,
+  resetSupportDiscordCache,
+  updateSupportDiscordNote,
+} from '../../src/server/support/notify';
 import {
   canSendMessage,
   dailyAiLimit,
@@ -258,6 +263,75 @@ describe('support Discord alert', () => {
     expect(body.content.startsWith('<@&99999> ')).toBe(true);
     expect(body.allowed_mentions.roles).toEqual(['99999']);
   });
+  it('uses the bot Admin role and stores the Discord message', async () => {
+    resetSupportDiscordCache();
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify([{ id: '11111', name: 'admin-chat', type: 0 }]),
+          {
+            status: 200,
+          },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify([
+            { id: '22222', name: 'Senior Admin', managed: false },
+            { id: '33333', name: 'Admin', managed: false },
+          ]),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ id: '44444' }), { status: 200 }),
+      );
+    const eq = vi.fn(async () => ({ error: null }));
+    const update = vi.fn(() => ({ eq }));
+    const service = { from: vi.fn(() => ({ update })) } as never;
+    expect(
+      await notifySupportDiscord(service, 'chat-id', customer, 'please help', {
+        token: 'secret',
+        guildId: '55555',
+        fetcher: fetcher as unknown as typeof fetch,
+      }),
+    ).toBe(true);
+    const post = fetcher.mock.calls[2] as unknown as [string, RequestInit];
+    expect(post[1].headers).toMatchObject({ Authorization: 'Bot secret' });
+    const body = JSON.parse(String(post[1].body));
+    expect(body.content.startsWith('<@&33333> ')).toBe(true);
+    expect(body.allowed_mentions).toEqual({ parse: [], roles: ['33333'] });
+    expect(update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        discord_channel_id: '11111',
+        discord_message_id: '44444',
+      }),
+    );
+  });
+
+  it('edits a claimed chat without pinging or the dashboard reply line', async () => {
+    const fetcher = vi.fn(async () => new Response(null, { status: 204 }));
+    expect(
+      await updateSupportDiscordNote(
+        {
+          channelId: '11111',
+          messageId: '44444',
+          text: 'Original text\nReply in the admin dashboard: https://duoly.gg/admin/support',
+        },
+        '✅ **Mina** is on it',
+        { token: 'secret', fetcher: fetcher as unknown as typeof fetch },
+      ),
+    ).toBe(true);
+    const body = JSON.parse(
+      String(
+        (fetcher.mock.calls[0] as unknown as [string, RequestInit])[1].body,
+      ),
+    );
+    expect(body.content).toBe('✅ **Mina** is on it\nOriginal text');
+    expect(body.allowed_mentions).toEqual({ parse: [] });
+  });
+
   it('does nothing without a valid webhook URL', async () => {
     const fetcher = vi.fn();
     expect(

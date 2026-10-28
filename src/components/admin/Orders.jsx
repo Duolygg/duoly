@@ -15,7 +15,8 @@ import {
   ago,
   dateTime,
 } from '../../design-reference/components/admin/ui';
-import { order } from './api';
+import { LEVELS } from '../../design-reference/lib/rewards';
+import { allAdminPages, order } from './api';
 
 // Port of the original components/admin/Orders.jsx on /api/admin/orders (RPC admin_orders):
 // the same table, drawer, money rows and timeline, with truthful Stripe wording (cards are
@@ -71,7 +72,11 @@ export default class Orders extends React.Component {
     };
   }
   async load() {
-    const res = await this.props.api.get('/api/admin/orders');
+    const res = await allAdminPages(
+      this.props.api,
+      '/api/admin/orders',
+      'orders',
+    );
     if (!res.ok) return this.setState({ error: res.error, loaded: true });
     this.setState({
       orders: (res.data.orders || []).map(order).map(withStatus),
@@ -269,7 +274,18 @@ export default class Orders extends React.Component {
       ]);
     const fee = o.amount * PLATFORM_FEE;
     const shareEur = o.amount - fee;
-    const notLive = (label) => row(label, 'Not live yet', C.faint);
+    const loyalty = o.customerLoyalty;
+    const trust = o.teammateTrust;
+    const trustName = trust
+      ? String(trust.trust_tier || 'rookie').replace(/^./, (x) =>
+          x.toUpperCase(),
+        )
+      : '';
+    const depositPercent = Number(o.depositPercent) || 0;
+    const depositHeld = (Number(o.depositHeldUsdCents) || 0) / 100;
+    const teammateNet = (Number(o.teammateNetUsdCents) || 0) / 100;
+    const cashback = (Number(o.cashbackEurCents) || 0) / 100;
+    const cashbackPercent = Number(o.cashbackPercent) || 0;
     const row = (label, value, color, bold) => (
       <div
         style={{
@@ -293,7 +309,7 @@ export default class Orders extends React.Component {
         </span>
       </div>
     );
-    const person = (label, name, av) => (
+    const person = (label, name, av, sub, subColor) => (
       <div
         style={{
           flex: '1 1 200px',
@@ -355,6 +371,17 @@ export default class Orders extends React.Component {
           >
             {name || 'Not matched yet'}
           </span>
+          {sub ? (
+            <span
+              style={{
+                display: 'block',
+                fontSize: '12px',
+                color: subColor || C.dim,
+              }}
+            >
+              {sub}
+            </span>
+          ) : null}
         </span>
       </div>
     );
@@ -484,8 +511,29 @@ export default class Orders extends React.Component {
               gap: '8px',
             }}
           >
-            {person('Customer', o.customer, o.customerAv)}
-            {person('Teammate', o.teammate, o.teammateAv)}
+            {person(
+              'Customer',
+              o.customer,
+              o.customerAv,
+              loyalty
+                ? loyalty.name + ' · ' + o.customerOrderCount + ' orders'
+                : o.customerOrderCount + ' orders',
+              (loyalty &&
+                (LEVELS.find((l) => l.id === loyalty.id) || {}).color) ||
+                C.dim,
+            )}
+            {person(
+              'Teammate',
+              o.teammate,
+              o.teammateAv,
+              trustName
+                ? trustName +
+                    (o.teammateRating == null
+                      ? ' · No rating yet'
+                      : ' · ★ ' + Number(o.teammateRating).toFixed(2))
+                : '',
+              C.accent,
+            )}
           </div>
 
           <h3
@@ -520,8 +568,21 @@ export default class Orders extends React.Component {
               o.status === 'Cancelled' ? C.dim : undefined,
             )}
           </div>
-          {notLive('Security deposit')}
-          {notLive('Cashback to customer')}
+          {o.teammateId
+            ? row(
+                'Security deposit (' + depositPercent + '%)',
+                depositPercent ? '− ' + usd(depositHeld) : 'None',
+                C.gold,
+              )
+            : null}
+          {o.teammateId
+            ? row('Teammate net pay', usd(teammateNet), C.green, true)
+            : null}
+          {row(
+            'Cashback to customer (' + cashbackPercent + '%)',
+            eur(cashback),
+            C.cyan,
+          )}
           {row('Paid with', o.pay)}
           {pay ? row('Payment', pay[0], pay[1], true) : null}
           {o.payment && o.payment.error

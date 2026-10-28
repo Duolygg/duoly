@@ -73,7 +73,21 @@ type Command = {
  * One admin endpoint. GET reads, POST runs the first command whose schema matches.
  * Non-admins get 404, like /admin itself; the database re-checks the role on every call.
  */
-function adminRoute(get: ((client: Client) => Rpc) | null, post: Command[]) {
+type AdminGet = (client: Client, context: APIContext) => Rpc;
+
+export function pageParams(url: URL): { limit: number; offset: number } {
+  const rawLimit = Number(url.searchParams.get('limit') || 200);
+  const rawOffset = Number(url.searchParams.get('offset') || 0);
+  return {
+    limit:
+      Number.isInteger(rawLimit) && rawLimit >= 1 && rawLimit <= 500
+        ? rawLimit
+        : 200,
+    offset: Number.isInteger(rawOffset) && rawOffset >= 0 ? rawOffset : 0,
+  };
+}
+
+function adminRoute(get: AdminGet | null, post: Command[]) {
   const handler: APIRoute = async (context: APIContext) => {
     let account = accountContext(context.request, context.cookies);
     try {
@@ -97,7 +111,7 @@ function adminRoute(get: ((client: Client) => Rpc) | null, post: Command[]) {
         return account.json({ error: 'Not found.' }, 404);
       if (method === 'GET') {
         if (!get) return account.json({ error: 'Method not allowed.' }, 405);
-        const { data, error } = await get(account.client);
+        const { data, error } = await get(account.client, context);
         return rpcResponse(account, data, error);
       }
       for (const command of post) {
@@ -147,7 +161,13 @@ export const users = adminRoute(
 );
 
 export const applications = adminRoute(
-  (client) => client.rpc('admin_applications'),
+  (client, context) => {
+    const page = pageParams(context.url);
+    return client.rpc('admin_applications_page', {
+      p_limit: page.limit,
+      p_offset: page.offset,
+    });
+  },
   [
     {
       schema: DecideApplicationSchema,
@@ -207,7 +227,13 @@ export const customers = adminRoute(
 );
 
 export const orders = adminRoute(
-  (client) => client.rpc('admin_orders', { p_limit: 1000 }),
+  (client, context) => {
+    const page = pageParams(context.url);
+    return client.rpc('admin_orders_page', {
+      p_limit: page.limit,
+      p_offset: page.offset,
+    });
+  },
   [
     {
       schema: AdminCreateHandoverSchema,
@@ -239,6 +265,11 @@ export const orders = adminRoute(
       after: () => settleSoon(),
     },
   ],
+);
+
+export const overview = adminRoute(
+  (client) => client.rpc('admin_overview'),
+  [],
 );
 
 export const audit = adminRoute(
@@ -367,14 +398,32 @@ export const payouts = adminRoute(
  * lib/fx.js), whether owners are configured and whether referral capture is switched on.
  * No env values or names are returned.
  */
-export async function settingsSnapshot(fx = eurToUsd) {
-  const { rate, source } = await fx();
+type FxReading = {
+  rate: number;
+  source: string;
+  date?: string;
+  fetchedAt?: number;
+};
+
+export async function settingsSnapshot(
+  fx: () => Promise<FxReading> = () => eurToUsd(),
+) {
+  const value = await fx();
+  const { rate, source } = value;
   return {
     fx: {
       rate,
       customerRate: customerUsdRate(rate),
       markup: 0.01,
+      source,
+      date:
+        'date' in value && typeof value.date === 'string' ? value.date : null,
+      ageMs:
+        'fetchedAt' in value && typeof value.fetchedAt === 'number'
+          ? Math.max(0, Date.now() - value.fetchedAt)
+          : null,
       live: source === 'ecb',
+      fallback: source === 'fallback',
     },
     ownersConfigured: ownerEmails().length > 0,
     referralsEnabled: referralsEnabled(),

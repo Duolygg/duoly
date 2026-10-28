@@ -296,7 +296,16 @@ describe('admin creators and settings endpoints', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toEqual({
-      fx: { rate: 1.1, customerRate: 1.111, markup: 0.01, live: true },
+      fx: {
+        rate: 1.1,
+        customerRate: 1.111,
+        markup: 0.01,
+        source: 'ecb',
+        date: null,
+        ageMs: null,
+        live: true,
+        fallback: false,
+      },
       ownersConfigured: expect.any(Boolean),
       referralsEnabled: expect.any(Boolean),
     });

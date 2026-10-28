@@ -14,7 +14,7 @@ import {
   ago,
   dateTime,
 } from '../../design-reference/components/admin/ui';
-import { order } from './api';
+import { allAdminPages, order } from './api';
 
 // Port of the original components/admin/Overview.jsx. Data: /api/admin/orders, applications
 // and (when order chat is on) chat flags. Improvement on the original: Duoly's earnings are the
@@ -66,11 +66,12 @@ export default class Overview extends React.Component {
   }
   async load() {
     const { api, chatEnabled } = this.props;
-    const [o, a, p, f] = await Promise.all([
-      api.get('/api/admin/orders'),
-      api.get('/api/admin/applications'),
+    const [o, a, p, f, summary] = await Promise.all([
+      allAdminPages(api, '/api/admin/orders', 'orders'),
+      allAdminPages(api, '/api/admin/applications', 'applications'),
       api.get('/api/admin/presence'),
       chatEnabled ? api.get('/api/admin/chat-flags') : Promise.resolve(null),
+      api.get('/api/admin/overview'),
     ]);
     if (!o.ok) return this.setState({ error: o.error });
     const now = Date.now();
@@ -104,8 +105,11 @@ export default class Overview extends React.Component {
                 status: x.status === 'open' ? 'Open' : x.status,
               }))
             : null,
-        reportsOpen: null,
-        payouts: null,
+        reportsOpen: summary.ok ? Number(summary.data.reportsOpen) || 0 : null,
+        payouts: summary.ok ? Number(summary.data.payoutsDue) || 0 : null,
+        payoutsTotal: summary.ok
+          ? (Number(summary.data.payoutsDueUsdCents) || 0) / 100
+          : null,
       },
     });
   }
@@ -257,7 +261,10 @@ export default class Overview extends React.Component {
       {
         n: data.payouts,
         label: 'Payouts due',
-        text: 'Teammates to pay on Friday',
+        text:
+          data.payoutsTotal == null
+            ? 'Teammates to pay on Friday'
+            : usd(data.payoutsTotal) + ' due this Friday',
         to: 'payouts',
         color: C.cyan,
       },
