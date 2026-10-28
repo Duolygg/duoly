@@ -32,17 +32,6 @@ const where = (file) => (
   </code>
 );
 const note = { margin: '4px 0 10px', fontSize: '13px', color: C.dim };
-const soon = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '2px 8px',
-  borderRadius: '999px',
-  fontSize: '12px',
-  fontWeight: '600',
-  background: 'rgba(255, 210, 122, .12)',
-  color: C.gold,
-  whiteSpace: 'nowrap',
-};
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -75,26 +64,34 @@ export default class Settings extends React.Component {
         fx ? fx.rate.toFixed(4) : '…',
         fx
           ? fx.live
-            ? 'ECB reference rate, checked every 6 hours. Teammate pay uses it as is; USD customers pay ' +
+            ? 'ECB reference rate' +
+              (fx.date ? ' for ' + fx.date : '') +
+              ', checked every 6 hours. Teammate pay uses it as is; USD customers pay ' +
               fx.customerRate.toFixed(4) +
               ' (+' +
               Math.round(fx.markup * 100) +
-              '%).'
-            : 'Couldn’t reach the ECB yet, so a fallback rate is used.'
+              '%). Source: ' +
+              fx.source +
+              (fx.ageMs == null
+                ? '.'
+                : ', fetched ' + Math.round(fx.ageMs / 60000) + ' minutes ago.')
+            : 'Fallback rate in use because the ECB could not be reached. Source: ' +
+              fx.source +
+              '.'
           : this.state.error || 'Loading today’s rate…',
         'src/server/fx.ts',
       ],
       [
         'Payout day',
-        'Not set',
-        'Weekly payouts to teammates come with the Payouts screen. Until then each order’s earnings are recorded.',
-        'Payouts',
+        'Friday',
+        'The Vienna payout week runs Friday to Friday. Amounts due are frozen and paid on Friday.',
+        'public.payout_week_start',
       ],
       [
         'Deposit release',
         RELEASE_DAYS + ' days',
-        'Held deposits are paid back after this many days without a dispute. Deposits are recorded today; paying them back comes with payouts.',
-        'src/design-reference/lib/trust.js → RELEASE_DAYS',
+        'The hourly release job returns held deposits after this many days without an open report or Stripe dispute.',
+        'trust-deposit-release cron',
       ],
     ];
     const tiers = CREATOR_RULES.tiers;
@@ -196,11 +193,11 @@ export default class Settings extends React.Component {
             style={{ ...card, padding: '18px' }}
           >
             <h2 id="st-rewards" style={h2}>
-              Customer reward levels <span style={soon}>Not live yet</span>
+              Customer reward levels
             </h2>
             <p style={note}>
-              Cashback paid as gifted balance, plus a one-off gift per level.
-              Customers don’t earn cashback or gifts until rewards ship.{' '}
+              Cashback is credited to gifted balance after 14 days. Level gifts
+              are granted once when each level is reached.{' '}
               {where('src/design-reference/lib/rewards.js → LEVELS')}
             </p>
             <div className="ops-table-wrap">
@@ -319,7 +316,7 @@ export default class Settings extends React.Component {
               </li>
               <li>
                 {CREATOR_RULES.viewerDiscountPercent}% off a viewer’s first
-                order: <span style={soon}>Not applied at checkout yet</span>
+                order is applied at checkout.
               </li>
               <li>
                 A customer keeps the first creator they came with; a later code

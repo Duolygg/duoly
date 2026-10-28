@@ -7,6 +7,7 @@ import {
 } from '../../design-reference/components/admin/ui';
 import { adminApi, auditEntry } from './api';
 import { supportInbox } from './support-data';
+import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
 import Users from './Users';
 import AuditLog from './AuditLog';
 import Orders from './Orders';
@@ -172,16 +173,8 @@ const LIVE = [
   'creators',
   'payouts',
 ];
-// Live sections where some of the original columns wait on a backend that isn't live yet
-// (trust levels, deposits, weekly payouts, wallet). They say so instead of plain "Live".
-const PARTLY = {
-  teammates:
-    'Roster, games, status and earnings are live. Trust level, deposit held and amount owed come with trust levels and weekly payouts.',
-  applications:
-    'Roster, games, status and earnings are live. Trust level, deposit held and amount owed come with trust levels and weekly payouts.',
-  customers:
-    'Customers, orders and spend are live. Wallet balances and adjustments come with the customer wallet.',
-};
+// Every listed section is connected to its live server read model.
+const PARTLY = {};
 // The header badge, worded like the original per section.
 export const badgeFor = (section, chatEnabled) => {
   if (!(LIVE.includes(section) || (section === 'safety' && chatEnabled)))
@@ -242,6 +235,7 @@ export default class AdminApp extends React.Component {
       queued: 0,
       active: 0,
       supportWaiting: 0,
+      focusChat: null,
       openReports: 0,
     };
   }
@@ -251,9 +245,12 @@ export default class AdminApp extends React.Component {
     window.addEventListener('popstate', this._pop);
     this.loadAudit();
     this.loadCounts();
+    this._ping = newChatPing();
+    this.watchSupport();
     this.presenceCheckIn();
     this.revealNav();
     this._counts = setInterval(this.loadCounts, 30000);
+    this._support = setInterval(this.watchSupport, 5000);
     this._presence = setInterval(this.presenceCheckIn, 10000);
     this._leave = () => {
       try {
@@ -278,6 +275,7 @@ export default class AdminApp extends React.Component {
     window.removeEventListener('popstate', this._pop);
     window.removeEventListener('pagehide', this._leave);
     clearInterval(this._counts);
+    clearInterval(this._support);
     clearInterval(this._presence);
     (this._toastTimers || []).forEach(clearTimeout);
   }
@@ -295,7 +293,10 @@ export default class AdminApp extends React.Component {
     if (window.location.pathname !== path)
       window.history.pushState(null, '', path);
     document.title = TITLES[section][0] + ' | Duoly admin';
-    this.setState({ section });
+    this.setState({
+      section,
+      focusChat: opts && opts.chat ? opts.chat : null,
+    });
     if (!(opts && opts.keepScroll)) window.scrollTo(0, 0);
   };
 
@@ -329,36 +330,85 @@ export default class AdminApp extends React.Component {
     this.api
       .post('/api/admin/presence', { action: 'check-in', online: true })
       .catch(() => undefined);
+  watchSupport = async () => {
+    let response;
+    try {
+      response = await this.api.get('/api/admin/support');
+    } catch {
+      return;
+    }
+    if (!response || !response.ok) return;
+    const list = supportInbox(response.data).conversations;
+    const needs = list.filter(
+      (c) => c.status === 'waiting' || (c.status === 'open' && c.unread > 0),
+    );
+    const keys = new Set(needs.map((c) => c.id + ':' + (c.count || 0)));
+    if (this._supportKeys) {
+      const fresh = needs.filter(
+        (c) => !this._supportKeys.has(c.id + ':' + (c.count || 0)),
+      );
+      if (fresh.length) this.alertSupport(fresh[0], fresh.length);
+    }
+    this._supportKeys = keys;
+    if (this.state.supportWaiting !== needs.length)
+      this.setState({ supportWaiting: needs.length });
+  };
+  alertSupport = (conversation, count) => {
+    playChatPing(this._ping);
+    if (
+      (!document.hidden && this.state.section === 'support') ||
+      typeof Notification === 'undefined' ||
+      Notification.permission !== 'granted'
+    )
+      return;
+    try {
+      const who =
+        conversation.role === 'guest'
+          ? 'A guest'
+          : conversation.name +
+            (conversation.role === 'teammate' ? ' (teammate)' : '');
+      const notification = new Notification(
+        conversation.status === 'waiting' && Number(conversation.count) <= 6
+          ? who + ' needs help'
+          : 'New message from ' +
+              (conversation.role === 'guest' ? 'a guest' : conversation.name),
+        {
+          body:
+            (conversation.lastUserText
+              ? '“' + conversation.lastUserText.slice(0, 140) + '”'
+              : 'Open the support chat to reply.') +
+            (count > 1 ? '  (+' + (count - 1) + ' more)' : ''),
+          icon: '/assets/brand/logo-mascots.webp',
+          tag: 'duoly-support-' + conversation.id,
+          renotify: true,
+        },
+      );
+      notification.onclick = () => {
+        window.focus();
+        this.go('support', { chat: conversation.id });
+        notification.close();
+      };
+    } catch {}
+  };
+
   // Sidebar counts like the original: queue on Live desk, open orders, pending applications on
   // Teammates, chats waiting for a human, open reports (hot) on Reports and safety.
   loadCounts = async () => {
-    const [apps, orders, support, reports] = await Promise.all([
-      this.api.get('/api/admin/applications'),
-      this.api.get('/api/admin/orders'),
+    const [summary, support] = await Promise.all([
+      this.api.get('/api/admin/overview'),
       this.api.get('/api/admin/support'),
-      this.props.reportsEnabled
-        ? this.api.get('/api/admin/reports')
-        : Promise.resolve({ ok: false }),
     ]);
     const next = {};
-    if (apps.ok)
-      next.pendingApps = (apps.data.applications || []).filter(
-        (a) => a.status === 'pending',
-      ).length;
-    if (orders.ok) {
-      const list = orders.data.orders || [];
-      next.queued = list.filter((o) => o.status === 'queued').length;
-      next.active = list.filter(
-        (o) => o.status === 'queued' || o.status === 'in_progress',
-      ).length;
+    if (summary.ok) {
+      next.pendingApps = Number(summary.data.pendingApplications) || 0;
+      next.queued = Number(summary.data.queuedOrders) || 0;
+      next.active = Number(summary.data.activeOrders) || 0;
+      if (this.props.reportsEnabled)
+        next.openReports = Number(summary.data.reportsOpen) || 0;
     }
     if (support.ok)
       next.supportWaiting = supportInbox(support.data).conversations.filter(
         (c) => c.status === 'waiting' || (c.status === 'open' && c.unread > 0),
-      ).length;
-    if (reports.ok)
-      next.openReports = (reports.data.reports || []).filter(
-        (r) => r.status === 'open',
       ).length;
     this.setState(next);
   };
@@ -603,7 +653,14 @@ export default class AdminApp extends React.Component {
     else if (s.section === 'customers') body = <Customers {...props} />;
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;
-    else if (s.section === 'support') body = <Support {...props} />;
+    else if (s.section === 'support')
+      body = (
+        <Support
+          {...props}
+          key={s.focusChat || 'support'}
+          focusChat={s.focusChat}
+        />
+      );
     else if (s.section === 'audit') body = <AuditLog {...props} />;
     else if (s.section === 'settings') body = <Settings {...props} />;
     else if (s.section === 'creators') body = <Creators {...props} />;

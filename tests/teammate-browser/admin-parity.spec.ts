@@ -50,6 +50,16 @@ const orders = [
     queuedAt: iso(1_800_000),
     acceptedAt: iso(1_700_000),
     teammate: 'Fixture Mate',
+    teammateId: '77777777-7777-4777-8777-777777777777',
+    teammateRating: 4.9,
+    teammateTrust: { trust_tier: 'trusted', deposit_percent: 8 },
+    customerOrderCount: 3,
+    customerLoyalty: { id: 'bronze', name: 'Bronze', cashback: 1 },
+    depositPercent: 8,
+    depositHeldUsdCents: 52,
+    teammateNetUsdCents: 598,
+    cashbackPercent: 1,
+    cashbackEurCents: 10,
     payment: { state: 'captured', method: 'card', stripeId: 'pi_fixture_2' },
   },
   {
@@ -112,6 +122,9 @@ const teammates = [
     warnings: 0,
     suspended: null,
     discord: true,
+    trust: { trust_tier: 'trusted', deposit_percent: 8 },
+    depositHeldUsdCents: 250,
+    payout: { due: 12.5, owed: 0 },
   },
 ];
 const applications = [
@@ -141,6 +154,17 @@ async function mock(page: Page) {
   await page.route('**/api/**', async (r) => {
     const path = new URL(r.request().url()).pathname;
     if (path === '/api/admin/orders') return r.fulfill({ json: { orders } });
+    if (path === '/api/admin/overview')
+      return r.fulfill({
+        json: {
+          queuedOrders: 1,
+          activeOrders: 2,
+          pendingApplications: 1,
+          reportsOpen: 0,
+          payoutsDue: 1,
+          payoutsDueUsdCents: 1250,
+        },
+      });
     if (path === '/api/admin/presence') return r.fulfill({ json: presence });
     if (path === '/api/admin/priority')
       return r.fulfill({
@@ -222,11 +246,14 @@ test('applications are a tab inside Teammates with a real URL', async ({
   ).toHaveAttribute('aria-selected', 'true');
   const row = main.getByRole('row', { name: /Fixture Mate/ });
   await expect(row).toContainText('★ 4.90');
-  await expect(row).toContainText('Soon');
+  await expect(row).toContainText('Trusted');
+  await expect(row).toContainText('$2.50');
+  await expect(row).toContainText('$12.50');
+  await expect(row).not.toContainText('Soon');
   await expect(
     row.getByRole('button', { name: 'Adjust balance' }),
   ).toBeEnabled();
-  await expect(page.getByText('Live · partly connected')).toBeVisible();
+  await expect(page.getByText('Live · partly connected')).toHaveCount(0);
   // no separate Applications entry in the sidebar; Teammates carries the pending count
   await expect(page.getByRole('link', { name: /^Applications/ })).toHaveCount(
     0,
@@ -258,9 +285,12 @@ test('orders drawer shows the original money rows and timeline', async ({
   await expect(drawer.getByText('Customer paid')).toBeVisible();
   await expect(drawer.getByText('Duoly fee (40%)')).toBeVisible();
   await expect(drawer.getByText('Teammate share')).toBeVisible();
-  await expect(drawer.getByText('Security deposit')).toBeVisible();
-  await expect(drawer.getByText('Cashback to customer')).toBeVisible();
-  await expect(drawer.getByText('Not live yet')).toHaveCount(2);
+  await expect(drawer.getByText('Security deposit (8%)')).toBeVisible();
+  await expect(drawer.getByText('Teammate net pay')).toBeVisible();
+  await expect(drawer.getByText('Cashback to customer (1%)')).toBeVisible();
+  await expect(drawer.getByText('Bronze · 3 orders')).toBeVisible();
+  await expect(drawer.getByText('Trusted · ★ 4.90')).toBeVisible();
+  await expect(drawer.getByText('Not live yet')).toHaveCount(0);
   await expect(drawer.getByText('Paid with Card')).toBeVisible();
   await expect(
     drawer.getByText(/Matched with Fixture Mate after/),

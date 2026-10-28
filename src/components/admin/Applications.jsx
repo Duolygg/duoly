@@ -9,7 +9,7 @@ import {
   ago,
 } from '../../design-reference/components/admin/ui';
 import { GAME } from '../../design-reference/lib/games';
-import { application } from './api';
+import { allAdminPages, application } from './api';
 
 // Port of the Applications tab of the original components/admin/Teammates.jsx, wired to
 // /api/admin/applications. Rendered inside the Teammates card (embedded), like the original. Approving makes the account with that email a teammate for the
@@ -49,7 +49,11 @@ export default class Applications extends React.Component {
     clearInterval(this._t);
   }
   async load() {
-    const res = await this.props.api.get('/api/admin/applications');
+    const res = await allAdminPages(
+      this.props.api,
+      '/api/admin/applications',
+      'applications',
+    );
     if (!res.ok) return this.setState({ error: res.error, loaded: true });
     const list = (res.data.applications || []).map(application);
     this.setState({ list, error: '', loaded: true });

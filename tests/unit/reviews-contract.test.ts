@@ -132,11 +132,11 @@ describe('review contracts', () => {
     expect(parse(board)).toBe(true);
     expect(parse({})).toBe(true);
     expect(parse({ week: board.week })).toBe(false);
-    for (const extra of [
-      { email: 'x@y.z' },
-      { country: 'de' },
-      { earnings: 10 },
-    ])
+    // country is public, like the original leaderboard flags
+    expect(
+      parse({ ...board, week: { global: [{ ...entry, country: 'de' }] } }),
+    ).toBe(true);
+    for (const extra of [{ email: 'x@y.z' }, { earnings: 10 }])
       expect(
         parse({ ...board, week: { global: [{ ...entry, ...extra }] } }),
       ).toBe(false);

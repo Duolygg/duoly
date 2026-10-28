@@ -114,11 +114,13 @@ const ReviewStatsSchema = z.strictObject({
     .optional(),
 });
 
-// One public leaderboard row (lib/ledger.js leaderboard()). Only public fields: no email, country or earnings.
+// One public leaderboard row (lib/ledger.js leaderboard()). Only public fields: no email or earnings.
+// Country is the profile flag code, shown like the original; empty when unset.
 export const LeaderboardRowSchema = z.strictObject({
   id: z.uuid(),
   name: z.string().min(1).max(200),
   image: z.string().max(2048),
+  country: z.string().max(8).default(''),
   orders: z.number().int().positive(),
   main: z.string().min(1).max(32),
   rating: z.number().min(1).max(5).nullable(),

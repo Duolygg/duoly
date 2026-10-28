@@ -9,6 +9,7 @@ import {
   btn,
   input,
   ago,
+  eur,
   usd,
 } from '../../design-reference/components/admin/ui';
 import { GAMES } from '../../design-reference/lib/adminData';
@@ -302,7 +303,9 @@ export default class Support extends React.Component {
         {o.email ? row('Email', o.email) : null}
         {x && x.kind === 'customer' ? (
           <>
-            {row('Orders', x.orders)}
+            {row('Wallet', eur(x.wallet || 0))}
+            {row('Orders', x.orders + ' · ' + x.level)}
+            {x.blocked ? row('Status', 'Blocked', C.red) : null}
             {x.order
               ? row(
                   'Open order',
@@ -315,8 +318,14 @@ export default class Support extends React.Component {
         ) : null}
         {x && x.kind === 'teammate' ? (
           <>
-            {row('Completed', x.lifetime + ' orders')}
-            {row('Recorded earnings', usd(x.owed || 0))}
+            {row('Level', x.tier + ' · ' + x.lifetime + ' orders')}
+            {row(
+              'Rating',
+              x.rating == null
+                ? 'No rating yet'
+                : '★ ' + Number(x.rating).toFixed(2),
+            )}
+            {row('Owed', usd(x.owed || 0))}
             {row(
               'Games',
               x.gg
@@ -326,7 +335,15 @@ export default class Support extends React.Component {
                   : 'none yet',
               x.games.length || x.gg ? C.white : C.gold,
             )}
-            {x.suspended ? row('Status', 'Suspended', C.red) : null}
+            {row(
+              'Right now',
+              x.suspended
+                ? 'Suspended'
+                : String(x.status || 'offline').replace(/^./, (v) =>
+                    v.toUpperCase(),
+                  ),
+              x.suspended ? C.red : x.status === 'offline' ? C.dim : C.green,
+            )}
             {row(
               'Discord',
               x.discord ? 'Connected' : 'Not connected',

@@ -96,11 +96,199 @@ const plain = (value: string, max: number) =>
     .trim()
     .slice(0, max);
 
+const DISCORD_API = 'https://discord.com/api/v10';
+const DISCORD_ID = /^\d{5,25}$/;
+let supportTargetCache: {
+  guildId: string;
+  channelId: string | null;
+  roleId: string | null;
+  at: number;
+} | null = null;
+
+const envValue = (name: string) =>
+  process.env[name] ?? (import.meta.env?.[name] as string | undefined);
+
+async function discordBotFetch(
+  token: string,
+  path: string,
+  method: 'GET' | 'POST' | 'PATCH',
+  body: unknown,
+  fetcher: typeof fetch,
+) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 4000);
+  try {
+    return await fetcher(DISCORD_API + path, {
+      method,
+      headers: {
+        Authorization: `Bot ${token}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'DiscordBot (https://duoly.gg, 1.0)',
+      },
+      ...(body == null ? {} : { body: JSON.stringify(body) }),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function adminPingTarget(
+  token: string,
+  guildId: string,
+  fetcher: typeof fetch,
+  now = Date.now(),
+) {
+  if (
+    supportTargetCache?.guildId === guildId &&
+    now - supportTargetCache.at < 10 * 60_000
+  )
+    return supportTargetCache;
+  const [channelsResponse, rolesResponse] = await Promise.all([
+    discordBotFetch(token, `/guilds/${guildId}/channels`, 'GET', null, fetcher),
+    discordBotFetch(token, `/guilds/${guildId}/roles`, 'GET', null, fetcher),
+  ]);
+  const channels = channelsResponse.ok
+    ? ((await channelsResponse.json()) as {
+        id?: string;
+        name?: string;
+        type?: number;
+      }[])
+    : [];
+  const roles = rolesResponse.ok
+    ? ((await rolesResponse.json()) as {
+        id?: string;
+        name?: string;
+        managed?: boolean;
+      }[])
+    : [];
+  const channel = channels.find(
+    (entry) =>
+      entry.type === 0 &&
+      typeof entry.name === 'string' &&
+      /admin/i.test(entry.name),
+  );
+  const role =
+    roles.find(
+      (entry) => entry.name?.trim().toLowerCase() === 'admin' && !entry.managed,
+    ) ??
+    roles.find(
+      (entry) =>
+        typeof entry.name === 'string' &&
+        /admin/i.test(entry.name) &&
+        !entry.managed,
+    );
+  supportTargetCache = {
+    guildId,
+    channelId: DISCORD_ID.test(channel?.id ?? '') ? channel!.id! : null,
+    roleId: DISCORD_ID.test(role?.id ?? '') ? role!.id! : null,
+    at: now,
+  };
+  return supportTargetCache;
+}
+
+export type SupportDiscordNote = {
+  channelId: string;
+  messageId: string;
+  text: string;
+};
+
+export async function notifySupportDiscord(
+  service: SupabaseClient,
+  conversationId: string,
+  person: SupportPerson,
+  message: string,
+  {
+    token = envValue('DISCORD_BOT_TOKEN'),
+    guildId = envValue('DISCORD_GUILD_ID'),
+    fetcher = fetch,
+  }: { token?: string; guildId?: string; fetcher?: typeof fetch } = {},
+): Promise<boolean> {
+  if (!token) return notifySupportDiscordHook(person, message, { fetcher });
+  if (!guildId || !DISCORD_ID.test(guildId)) return false;
+  try {
+    const target = await adminPingTarget(token, guildId, fetcher);
+    if (!target.channelId) return false;
+    const who =
+      person.role === 'guest'
+        ? 'A guest'
+        : `${person.role === 'teammate' ? 'Teammate' : 'Customer'} ${plain(person.name ?? '', 32).split(' ')[0] || 'Player'}`;
+    const text = [
+      `**Support chat waiting.** ${who} asked for a human.`,
+      `> ${plain(message, 160) || 'Asked to talk to a person.'}`,
+      `Reply in the admin dashboard: ${siteOrigin()}/admin/support`,
+    ].join('\n');
+    const response = await discordBotFetch(
+      token,
+      `/channels/${target.channelId}/messages`,
+      'POST',
+      {
+        content: `${target.roleId ? `<@&${target.roleId}> ` : ''}${text}`.slice(
+          0,
+          1900,
+        ),
+        allowed_mentions: {
+          parse: [],
+          roles: target.roleId ? [target.roleId] : [],
+        },
+      },
+      fetcher,
+    );
+    if (!response.ok) return false;
+    const result = (await response.json()) as { id?: unknown };
+    if (typeof result.id !== 'string' || !DISCORD_ID.test(result.id))
+      return false;
+    const update = await service
+      .from('support_conversations')
+      .update({
+        discord_channel_id: target.channelId,
+        discord_message_id: result.id,
+        discord_message_text: text,
+      })
+      .eq('id', conversationId);
+    return !update.error;
+  } catch {
+    return false;
+  }
+}
+
+export async function updateSupportDiscordNote(
+  note: SupportDiscordNote | null | undefined,
+  status: string,
+  {
+    token = envValue('DISCORD_BOT_TOKEN'),
+    fetcher = fetch,
+  }: { token?: string; fetcher?: typeof fetch } = {},
+): Promise<boolean> {
+  if (!note || !token) return false;
+  if (!DISCORD_ID.test(note.channelId) || !DISCORD_ID.test(note.messageId))
+    return false;
+  try {
+    const original = note.text
+      .replace(/\nReply in the admin dashboard[^\n]*/i, '')
+      .trim();
+    const response = await discordBotFetch(
+      token,
+      `/channels/${note.channelId}/messages/${note.messageId}`,
+      'PATCH',
+      {
+        content: `${plain(status, 120)}\n${original}`.slice(0, 1900),
+        allowed_mentions: { parse: [] },
+      },
+      fetcher,
+    );
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+export function resetSupportDiscordCache() {
+  supportTargetCache = null;
+}
+
 /**
- * Posts a "chat needs a human" alert to the Discord support channel webhook
- * (SUPPORT_DISCORD_WEBHOOK_URL). Mentions are disabled, except an optional
- * admin role ping (SUPPORT_DISCORD_ADMIN_ROLE_ID). Never throws; no email or
- * other personal data beyond a first name is posted.
+ * Webhook fallback used only when no bot token is configured.
  */
 export async function notifySupportDiscordHook(
   person: SupportPerson,

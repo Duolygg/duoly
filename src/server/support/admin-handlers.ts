@@ -5,9 +5,22 @@ import { AdminSupportSchema } from '../../contracts/support';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { rpcResponse } from '../admin/handlers';
-import { notifySupportReply } from './notify';
+import { notifySupportReply, updateSupportDiscordNote } from './notify';
 
 const idSchema = z.uuid();
+
+/** Discord status line for the admin ping, matching the original support route. */
+export function supportDiscordStatus(
+  action: string,
+  name: string,
+  hadAgent: boolean,
+): string | null {
+  if ((action === 'reply' || action === 'claim') && !hadAgent)
+    return `✅ **${name}** is on it`;
+  if (action === 'close') return `✔️ Closed by **${name}**`;
+  if (action === 'bot') return `↩️ **${name}** handed it back to Sparky`;
+  return null;
+}
 
 export const getAdminSupport: APIRoute = async (context) => {
   const account = accountContext(context.request, context.cookies);
@@ -45,6 +58,15 @@ export const postAdminSupport: APIRoute = async (context) => {
       return prepared.account.json({ error: 'Authentication required.' }, 401);
     if (identity.viewer.role !== 'admin')
       return prepared.account.json({ error: 'Not found.' }, 404);
+    let hadAgent = false;
+    if (parsed.data.action === 'reply' || parsed.data.action === 'claim') {
+      const before = await prepared.account.client.rpc('admin_support_inbox', {
+        p_conversation_id: parsed.data.id,
+      });
+      hadAgent = Boolean(
+        (before.data as { open?: { agent?: unknown } } | null)?.open?.agent,
+      );
+    }
     const { data, error } = await prepared.account.client.rpc(
       'admin_support_command',
       {
@@ -54,8 +76,22 @@ export const postAdminSupport: APIRoute = async (context) => {
       },
     );
     const response = rpcResponse(prepared.account, data, error);
+    const open = (data as { open?: Record<string, unknown> }).open;
+    const status = supportDiscordStatus(
+      parsed.data.action,
+      identity.viewer.name || 'Duoly team',
+      hadAgent,
+    );
+    if (response.status === 200 && status) {
+      const note = open?.discordNote;
+      await updateSupportDiscordNote(
+        note && typeof note === 'object'
+          ? (note as { channelId: string; messageId: string; text: string })
+          : null,
+        status,
+      );
+    }
     if (response.status === 200 && parsed.data.action === 'reply') {
-      const open = (data as { open?: Record<string, unknown> }).open;
       const messages = Array.isArray(open?.messages) ? open.messages : [];
       const last = messages[messages.length - 1] as
         { id?: unknown; by?: { image?: unknown } } | undefined;

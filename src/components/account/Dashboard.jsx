@@ -1816,8 +1816,9 @@ export default class Dashboard extends React.Component {
                       color: '#A79DC4',
                     }}
                   >
-                    Refunds, cashback and level-up gifts land here. Your balance
-                    never expires. Paying with it at checkout is coming soon.
+                    Refunds, cashback and level-up gifts land here. Switch on
+                    “Use my Duoly balance” at checkout to pay for part or all of
+                    an order, any game. It never expires.
                     {v.walletBucketNote ? (
                       <span
                         style={{

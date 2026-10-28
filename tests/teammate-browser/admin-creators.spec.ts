@@ -137,9 +137,10 @@ test('settings shows the live rules read-only, with honest not-live labels', asy
   await expect(main.getByText('USD customers pay 1.0950 (+1%)')).toBeVisible();
   await expect(main.getByText('40%', { exact: true })).toBeVisible();
   await expect(
-    main.getByRole('heading', { name: 'Customer reward levels Not live yet' }),
+    main.getByRole('heading', { name: 'Customer reward levels' }),
   ).toBeVisible();
-  await expect(main.getByText('Not applied at checkout yet')).toBeVisible();
+  await expect(main.getByText('Not live yet')).toHaveCount(0);
+  await expect(main.getByText(/order is applied at checkout/)).toBeVisible();
   await expect(main.getByText('Referral links:')).toContainText('Off');
   await expect(main.getByText('Owners configured:')).toContainText('Yes');
   // Read-only: no inputs, toggles or save buttons; no env names leak.
