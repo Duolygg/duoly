@@ -165,6 +165,21 @@ describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
         { level: 'gold', amountEurCents: 1500 },
       ],
       giftClaimed: true,
+      perks: null,
     });
+  });
+
+  it('passes perks through and marks free coaching orders', () => {
+    const perks = {
+      level: 'platinum',
+      freeCoaching: {
+        eligible: true,
+        used: false,
+        available: true,
+        month: '2026-10',
+      },
+      pickTeammate: { eligible: false },
+    };
+    expect(toOriginalRewards({ orders: 500, perks }).perks).toEqual(perks);
   });
 });

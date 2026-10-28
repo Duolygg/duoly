@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { LEVELS, levelFor } from '../../design-reference/lib/rewards';
+import { freeCoachingStatus } from '../shared/perks';
 
 // Turns a CSS declaration string ("color: red; margin-top: 4px") into a React style object.
 function css(str) {
@@ -50,17 +51,19 @@ const PERKS = [
     title: 'Priority matching',
     text: 'Jump the queue at busy times',
   },
+  // Live with migration 20261026160000 (MONEY-RULES section 9). Until the server answers with
+  // perks (feature not live), these two stay "coming soon".
   {
     at: 3,
+    perk: 'freeCoaching',
     title: 'Free monthly Play and Learn',
-    text: 'One coaching game on us, every month',
-    comingSoon: true,
+    text: 'One free coaching session (1 game or 1 hour) every month',
   },
   {
     at: 4,
+    perk: 'pickTeammate',
     title: 'Pick any teammate',
-    text: 'Book the top 1% and personal support',
-    comingSoon: true,
+    text: 'Pick a teammate you played with before. They get your order first.',
   },
 ];
 
@@ -85,6 +88,7 @@ export default class Rewards extends React.Component {
       cashbackMonth = 0,
       cashbackPending = 0,
       pendingOrders = 0,
+      perks = null,
     } = this.props;
     const level = levelFor(orders);
     const idx = LEVELS.indexOf(level);
@@ -118,24 +122,37 @@ export default class Rewards extends React.Component {
           (state === 'locked' ? 'filter: grayscale(.7) brightness(.55);' : ''),
       };
     });
-    const perks = PERKS.map((p) => ({
-      ...p,
-      unlocked: p.at <= idx && !p.comingSoon,
-      lockName: LEVELS[p.at].name,
-      lockColor: LEVELS[p.at].color,
-      style:
-        'display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 16px; ' +
-        (p.at <= idx && !p.comingSoon
-          ? 'background: #120B22; border: 1px solid rgba(196, 170, 255, .1);'
-          : 'background: #0D0819; border: 1px dashed rgba(196, 170, 255, .12);'),
-    }));
+    const live = !!(perks && perks.freeCoaching && perks.pickTeammate);
+    const perkList = PERKS.map((p) => {
+      const comingSoon = !!p.perk && !live;
+      // Server-gated perks follow the level the server computed (free orders do not count).
+      const unlocked = p.perk ? live && !!perks[p.perk].eligible : p.at <= idx;
+      const status =
+        unlocked && p.perk === 'freeCoaching' ? freeCoachingStatus(perks) : '';
+      return {
+        ...p,
+        comingSoon,
+        unlocked,
+        status,
+        statusColor: live && perks.freeCoaching.available ? GREEN : '#A79DC4',
+        bookHref:
+          unlocked && p.perk === 'freeCoaching' ? '/?coaching=1#checkout' : '',
+        lockName: LEVELS[p.at].name,
+        lockColor: LEVELS[p.at].color,
+        style:
+          'display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 16px; ' +
+          (unlocked
+            ? 'background: #120B22; border: 1px solid rgba(196, 170, 255, .1);'
+            : 'background: #0D0819; border: 1px dashed rgba(196, 170, 255, .12);'),
+      };
+    });
     const giftLevel = level.gift ? level : null;
     return {
       level,
       idx,
       next,
       ladder,
-      perks,
+      perks: perkList,
       levelNum: 'Level ' + (idx + 1) + ' of ' + LEVELS.length,
       name: name.toUpperCase(),
       orders: String(orders),
@@ -819,7 +836,12 @@ export default class Rewards extends React.Component {
               </div>
               <ul className="rw-perks" style={{ listStyle: 'none' }}>
                 {v.perks.map((p, i) => (
-                  <li key={i} style={css(p.style)}>
+                  <li
+                    key={i}
+                    style={css(p.style)}
+                    data-perk={p.perk || undefined}
+                    data-unlocked={p.unlocked ? 'true' : 'false'}
+                  >
                     <span
                       style={{
                         flex: '0 0 auto',
@@ -903,6 +925,34 @@ export default class Rewards extends React.Component {
                       >
                         {p.text}
                       </span>
+                      {p.status ? (
+                        <span
+                          data-perk-status
+                          style={{
+                            display: 'block',
+                            marginTop: '4px',
+                            fontSize: '12.5px',
+                            fontWeight: '600',
+                            color: p.statusColor,
+                          }}
+                        >
+                          {p.status}
+                        </span>
+                      ) : null}
+                      {p.bookHref ? (
+                        <a
+                          href={p.bookHref}
+                          style={{
+                            display: 'inline-block',
+                            marginTop: '4px',
+                            fontSize: '12.5px',
+                            fontWeight: '600',
+                            color: '#D6BBFF',
+                          }}
+                        >
+                          Book coaching
+                        </a>
+                      ) : null}
                     </span>
                   </li>
                 ))}

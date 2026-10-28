@@ -35,10 +35,11 @@ import {
 const TIERS = BASE_TIERS.map((tier) => ({
   ...tier,
   perk:
+    // Live with migration 20261026160000 (MONEY-RULES section 9). Never a delay number here.
     tier.id === 'veteran'
-      ? 'High-value matching coming soon'
+      ? 'Orders of €20 or more reach you first'
       : tier.id === 'elite'
-        ? 'Priority matching coming soon'
+        ? 'You get matched faster'
         : tier.id === 'legend'
           ? 'No deposit plus Legend badge'
           : tier.perk,
@@ -98,6 +99,9 @@ export default class TrustScore extends React.Component {
         shieldOpacity:
           state === 'locked' ? '1' : state === 'done' ? '.55' : '1',
         nameColor: state === 'locked' ? '#8E84AB' : '#FFFFFF',
+        // Matching perks: on for this tier and every tier above it.
+        perkActive:
+          (t.id === 'veteran' || t.id === 'elite') && state !== 'locked',
         pctColor: state === 'locked' ? '#6A6086' : t.color,
       };
     });
@@ -603,6 +607,20 @@ export default class TrustScore extends React.Component {
                       }}
                     >
                       {l.perk}
+                      {l.perkActive ? (
+                        <span
+                          data-perk-active
+                          style={{
+                            display: 'block',
+                            marginTop: '4px',
+                            fontSize: '10.5px',
+                            fontWeight: '700',
+                            color: GREEN,
+                          }}
+                        >
+                          Active for you
+                        </span>
+                      ) : null}
                     </span>
                     {l.now ? (
                       <span

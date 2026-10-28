@@ -167,7 +167,11 @@ export default function CustomerOrderRoom({
                   {order.units === 1 ? '' : 's'}
                 </dd>
                 <dt>Order amount</dt>
-                <dd>{euro(order.amount_eur_cents)}</dd>
+                <dd>
+                  {order.free_perk
+                    ? 'Free with your perk'
+                    : euro(order.amount_eur_cents)}
+                </dd>
                 <dt>Created</dt>
                 <dd>
                   <time dateTime={order.created_at}>
@@ -198,8 +202,10 @@ export default function CustomerOrderRoom({
                 {order.cancel_reason === 'queue_expired'
                   ? 'Queue expired'
                   : 'Customer cancelled'}
-                . Any refund credit posting is listed on your dashboard; this is
-                not a provider refund.
+                .{' '}
+                {order.free_perk
+                  ? 'Your free coaching for this month is available again.'
+                  : 'Any refund credit posting is listed on your dashboard; this is not a provider refund.'}
               </p>
             )}
             <div className="co-actions">

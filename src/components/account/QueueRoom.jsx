@@ -574,7 +574,9 @@ export default class QueueRoom extends React.Component {
     const g = o ? GAMES[o.game] || { name: o.game, img: '' } : null;
     const waited = o ? now - o.createdAt : 0;
     const limit = o ? o.autoCancelMs : 300000;
-    const total = o ? moneyOf(o.paid) : '';
+    // Free monthly coaching (migration 20261026160000): no price, nothing to refund.
+    const free = !!(o && o.freePerk);
+    const total = o ? (free ? 'Free with your perk' : moneyOf(o.paid)) : '';
     const mate = o && o.teammate ? o.teammate : null;
     const wins = 0;
     const byYou = o && /customer/i.test(o.cancelReason || '');
@@ -618,9 +620,11 @@ export default class QueueRoom extends React.Component {
       ],
       cancelled: [
         byYou ? 'Order cancelled' : 'Nobody was free this time',
-        'Nothing was charged: the hold on your ' +
-          (total ? total + ' ' : '') +
-          'payment is released, usually within a few days depending on your bank.',
+        free
+          ? 'Nothing was charged. Your free coaching for this month is available again.'
+          : 'Nothing was charged: the hold on your ' +
+            (total ? total + ' ' : '') +
+            'payment is released, usually within a few days depending on your bank.',
       ],
       missing: [
         'We can’t find that order',
@@ -642,7 +646,7 @@ export default class QueueRoom extends React.Component {
 
     // [label, done, current]
     const steps = [
-      ['Paid', true, false],
+      [free ? 'Booked' : 'Paid', true, false],
       [
         'In queue',
         phase !== 'searching' && phase !== 'loading',
@@ -662,6 +666,7 @@ export default class QueueRoom extends React.Component {
       waited,
       limit,
       total,
+      free,
       mate,
       wins,
       steps,
@@ -2646,7 +2651,7 @@ export default class QueueRoom extends React.Component {
 
   // The order summary (what was booked, rank, in-game name) plus who took it.
   renderOrderCard(v) {
-    const { o, g, total, mate } = v;
+    const { o, g, total, free, mate } = v;
     const card = {
       borderRadius: '24px',
       background: '#120B22',
@@ -2715,11 +2720,13 @@ export default class QueueRoom extends React.Component {
           <div
             style={{
               fontFamily: DISPLAY,
-              fontSize: '24px',
+              fontSize: free ? '15px' : '24px',
               fontWeight: '800',
               letterSpacing: '-.02em',
-              color: '#FFFFFF',
+              color: free ? GREEN : '#FFFFFF',
+              textAlign: 'right',
             }}
+            data-free-perk={free ? 'true' : undefined}
           >
             {total}
           </div>
@@ -2847,7 +2854,7 @@ export default class QueueRoom extends React.Component {
 
   render() {
     const v = this.renderVals();
-    const { s, o, g, phase, head, waited, limit, total, mate } = v;
+    const { s, o, g, phase, head, waited, limit, total, free, mate } = v;
     const user = this.props.user;
     const card = {
       borderRadius: '24px',
@@ -3505,7 +3512,11 @@ export default class QueueRoom extends React.Component {
                       }}
                     >
                       <span>
-                        Nobody free in 5:00? {total} back to your Duoly balance.
+                        {free
+                          ? 'Nobody free in 5:00? Your free coaching comes back.'
+                          : 'Nobody free in 5:00? ' +
+                            total +
+                            ' back to your Duoly balance.'}
                       </span>
                       <span style={{ color: MUTED, fontWeight: '600' }}>
                         {clock(left)}
@@ -3558,7 +3569,11 @@ export default class QueueRoom extends React.Component {
                             color: '#F3EEFF',
                           }}
                         >
-                          Cancel and get {total} back to your Duoly balance?
+                          {free
+                            ? 'Cancel and get your free coaching back?'
+                            : 'Cancel and get ' +
+                              total +
+                              ' back to your Duoly balance?'}
                         </p>
                         <div
                           style={{

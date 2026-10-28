@@ -116,6 +116,25 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
           return json({ error: 'Invalid command' }, 400);
         }
         if (
+          parsedId.success &&
+          csrf &&
+          init.method === 'POST' &&
+          body.action === 'pass' &&
+          Object.keys(body).length === 1
+        ) {
+          // A Diamond customer picked this teammate: pass, the order goes to everyone.
+          await request(
+            '/api/teammate/orders/' + id + '/pass',
+            OrderResponseSchemas.pickedPass,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ csrf }),
+            },
+          );
+          return json({ passed: true });
+        }
+        if (
           !parsedId.success ||
           !csrf ||
           init.method !== 'POST' ||
@@ -199,5 +218,7 @@ export function toOriginalTeammateOrder(raw) {
     payout: o.payout_usd_cents / 100,
     realCustomer: true,
     assignmentId: o.current_assignment_id,
+    // Added by 20261026160000: only this teammate can take it for a moment.
+    ...(o.picked_for_you === true ? { pickedForYou: true } : {}),
   };
 }

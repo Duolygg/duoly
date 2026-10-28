@@ -312,9 +312,11 @@ export default class Dashboard extends React.Component {
       '.png';
     const eur = (n) => '€' + (n || 0).toFixed(2);
     const priceOf = (o) =>
-      o.paid
-        ? (o.paid.currency === 'USD' ? '$' : '€') + o.paid.total.toFixed(2)
-        : eur(o.amountEur);
+      o.freePerk
+        ? 'Free with your perk'
+        : o.paid
+          ? (o.paid.currency === 'USD' ? '$' : '€') + o.paid.total.toFixed(2)
+          : eur(o.amountEur);
 
     // Activity: games played with a teammate per week (Monday to Sunday), last 12 weeks
     const WEEKS = 12;
@@ -454,8 +456,9 @@ export default class Dashboard extends React.Component {
         star: st[2],
         price: priceOf(o),
         refunded: o.status === 'cancelled',
-        back:
-          o.status === 'completed'
+        back: o.freePerk
+          ? ''
+          : o.status === 'completed'
             ? o.cashback
               ? '+' + eur(o.cashback) + ' back'
               : ''
@@ -1167,6 +1170,7 @@ export default class Dashboard extends React.Component {
               cashbackMonth={v.rewards.cashbackMonth}
               cashbackPending={v.rewards.cashbackPending}
               pendingOrders={v.rewards.pendingOrders}
+              perks={v.rewards.perks || null}
               giftClaimed={v.rewards.giftClaimed}
             />
           ) : null}

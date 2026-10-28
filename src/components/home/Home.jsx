@@ -28,6 +28,12 @@ import {
   MC_EDITIONS,
 } from '../../design-reference/lib/servers';
 import { flagSrc } from '../../design-reference/lib/countries';
+import {
+  freeCoachingFits,
+  monthName,
+  LEVEL_NAMES,
+  PICK_UNAVAILABLE,
+} from '../shared/perks';
 // What the customer picked before logging in, so it survives the Discord/Google redirect
 const PENDING_KEY = 'duoly-pending-queue';
 
@@ -71,6 +77,12 @@ export default class Home extends React.Component {
       queued: false,
       cur: initCur,
       curManual: !!initCur,
+      // Perks (migration 20261026160000): null until /api/orders/perks answers, or not live.
+      perks: null,
+      freePerk: false,
+      pick: '',
+      pickList: null,
+      pickErr: '',
     };
   }
   detectCurrency() {
@@ -130,6 +142,8 @@ export default class Home extends React.Component {
     this.detectCurrency();
     this.loadFx();
     this.loadWallet();
+    this.loadPerks();
+    this.openCoachingFromLink();
     this.setState({ now: Date.now() });
     this._clock = setInterval(() => this.setState({ now: Date.now() }), 1000);
     this.resumeQueue();
@@ -161,12 +175,90 @@ export default class Home extends React.Component {
         this.setState({ wallet: j.wallet });
     } catch (e) {}
   }
+  // The current game and service, the same way renderVals picks them.
+  selection() {
+    const all = this.data();
+    const g = all.find((x) => x.id === this.state.game) || all[0];
+    const top = g.modes.find((m) => m.id === g.main) || g.modes[0];
+    const sel = g.modes.find((m) => m.id === this.state.mode) || top;
+    return { g, sel };
+  }
+  // From the Rewards card ("Book coaching"): open the Coaching tab with one session selected.
+  openCoachingFromLink() {
+    try {
+      if (new URLSearchParams(window.location.search).get('coaching') !== '1')
+        return;
+    } catch (e) {
+      return;
+    }
+    const { g } = this.selection();
+    const m = g.modes.find((x) => x.cat === 'training');
+    if (m) this.setState({ tab: 'training', mode: m.id, bundle: null, qty: 1 });
+  }
+  // Signed-in customers on live checkout: which perks their level unlocks (null = not live).
+  async loadPerks() {
+    const user = this.props.session && this.props.session.user;
+    // Live: LiveHome reads /api/orders/perks (this file's own fetch is never served).
+    if (
+      !this.props.onCheckout ||
+      !this.props.loadPerks ||
+      !user ||
+      (user.role && user.role !== 'customer')
+    )
+      return;
+    try {
+      const p = await this.props.loadPerks();
+      const perks =
+        p && typeof p === 'object' && p.freeCoaching && p.pickTeammate
+          ? p
+          : null;
+      this.setState({ perks }, () => this.loadPickable(true));
+    } catch (e) {}
+  }
+  pickQuery() {
+    const { g, sel } = this.selection();
+    return (
+      'game=' +
+      encodeURIComponent(g.id) +
+      '&gg=' +
+      (sel.cat === 'gg' ? 'true' : 'false') +
+      '&voice=' +
+      (this.state.voice ? 'true' : 'false')
+    );
+  }
+  // Diamond: past teammates who can take this game, service type and voice choice right now.
+  async loadPickable(force) {
+    const p = this.state.perks;
+    if (
+      !p ||
+      !p.pickTeammate ||
+      !p.pickTeammate.eligible ||
+      !this.props.loadPickable
+    )
+      return;
+    const q = this.pickQuery();
+    if (!force && q === this._pickQ) return;
+    this._pickQ = q;
+    this.setState({ pickList: null });
+    let list = [];
+    try {
+      const found = await this.props.loadPickable(q);
+      if (Array.isArray(found)) list = found;
+    } catch (e) {}
+    if (this._pickQ !== q) return;
+    this.setState((st) => ({
+      pickList: list,
+      pick: list.some((t) => t.handle === st.pick) ? st.pick : '',
+    }));
+  }
   componentDidUpdate(prevProps) {
     const had = prevProps.session && prevProps.session.user;
     const user = this.props.session && this.props.session.user;
     if (prevProps.walletEur !== this.props.walletEur) this.loadWallet();
+    if (this.state.perks) this.loadPickable(false);
     if (had && !user) this.setState({ wallet: 0 });
     if (!had && user) {
+      this.loadPerks();
       this.loadWallet();
       this.resumeQueue();
       // just signed in: the account's currency wins; if it has none yet, keep the one picked here
@@ -1002,6 +1094,27 @@ export default class Home extends React.Component {
     const proMember = !!(pro && pro.member);
     const proOff = proMember ? Math.round((sub - save) * 10) / 100 : 0;
     const total = sub - save - proOff;
+    // Free monthly coaching (Platinum and Diamond): one coaching session of 1 game or 1 hour.
+    const perks = s.perks;
+    const fc = perks && perks.freeCoaching;
+    const freeReady = !!(fc && fc.available);
+    const freeFits = freeCoachingFits({
+      cat: sel.cat,
+      units: s.qty,
+      bundle: s.bundle,
+    });
+    const freeOn = freeReady && freeFits && !!s.freePerk;
+    // Diamond: optional pick of a past teammate.
+    const pickOn = !!(
+      perks &&
+      perks.pickTeammate &&
+      perks.pickTeammate.eligible
+    );
+    const pickList = s.pickList;
+    const pick =
+      pickOn && pickList && pickList.some((t) => t.handle === s.pick)
+        ? s.pick
+        : '';
     // Duoly balance (refunds, cashback, gifts) pays first when switched on; the payment method gets the rest.
     // The server does the same sum again (lib/orders.js placeOrder), this is only what we show.
     const walletHere =
@@ -1010,7 +1123,8 @@ export default class Home extends React.Component {
       ) / 100;
     const hasWallet = walletHere >= 0.01;
     // Same rule as the server: a card part must be at least the Stripe minimum (0.50).
-    let walletUse = hasWallet && s.useWallet ? Math.min(walletHere, total) : 0;
+    let walletUse =
+      hasWallet && s.useWallet && !freeOn ? Math.min(walletHere, total) : 0;
     if (walletUse > 0 && total - walletUse >= 0.005 && total - walletUse < 0.5)
       walletUse = Math.max(0, Math.round((total - 0.5) * 100) / 100);
     const due = Math.max(0, Math.round((total - walletUse) * 100) / 100);
@@ -1134,18 +1248,49 @@ export default class Home extends React.Component {
       unitPrice: eur(priceOf(sel)),
       subtotal: money(sub),
       saveAmt: money(save),
-      total: money(total),
+      total: freeOn ? 'Free' : money(total),
       hasSave: save > 0,
       proSave: money(total * 0.1),
       // null while PRO_ENABLED is off: the PRO line then stays hidden.
-      proOffer: !!pro && !proMember,
-      proMember,
+      proOffer: !!pro && !proMember && !freeOn,
+      proMember: proMember && !freeOn,
+      freeOn,
+      freeShow: freeReady && freeFits,
+      freeHint: freeReady && !freeFits,
+      freePressed: freeOn ? 'true' : 'false',
+      freeSub:
+        'Your ' +
+        (LEVEL_NAMES[perks && perks.level] || 'Platinum') +
+        ' perk for ' +
+        monthName(fc && fc.month) +
+        '. You pay nothing.',
+      toggleFree: () => this.setState({ freePerk: !this.state.freePerk }),
+      freeList: money(sub),
+      pickOn,
+      pickLoading: pickOn && pickList === null,
+      pickEmpty: pickOn && !!pickList && pickList.length === 0,
+      pickErr: s.pickErr || '',
+      pickNone: {
+        pressed: pick ? 'false' : 'true',
+        pick: () => this.setState({ pick: '', pickErr: '' }),
+      },
+      pickMates: (pickList || []).map((t) => ({
+        key: t.handle,
+        name: t.name,
+        image: t.image || '/assets/avatars/avatar-1.png',
+        flag: t.country ? flagSrc(t.country) : '',
+        together:
+          t.orders + (t.orders === 1 ? ' order' : ' orders') + ' together',
+        on: t.handle === pick,
+        pressed: t.handle === pick ? 'true' : 'false',
+        pick: () => this.setState({ pick: t.handle, pickErr: '' }),
+      })),
       proOff: money(proOff),
       proHref: pro && pro.manage ? '/dashboard#pro' : '/pro',
       proCta:
         pro && pro.trialEligible ? 'Try PRO free for 7 days' : 'Get Duoly PRO',
       savePct: Math.round((disc[s.qty] || 0) * 100) + '%',
-      hasWallet,
+      hasWallet: hasWallet && !freeOn,
       walletOn: !!s.useWallet,
       walletPressed: s.useWallet ? 'true' : 'false',
       walletAvail: money(walletHere),
@@ -1153,7 +1298,7 @@ export default class Home extends React.Component {
       usesWallet: walletUse > 0,
       allWallet,
       toggleWallet: () => this.setState({ useWallet: !this.state.useWallet }),
-      due: money(due),
+      due: freeOn ? 'Free' : money(due),
       units,
       unitWord: unit,
       payNote:
@@ -1162,9 +1307,11 @@ export default class Home extends React.Component {
         ', charged once when you queue. Nothing is charged after each ' +
         unit +
         '.',
-      ctaLabel: allWallet
-        ? 'Pay ' + money(total) + ' with Duoly balance'
-        : 'Pay ' + money(due) + ' with ' + payLabel,
+      ctaLabel: freeOn
+        ? 'Book my free coaching'
+        : allWallet
+          ? 'Pay ' + money(total) + ' with Duoly balance'
+          : 'Pay ' + money(due) + ' with ' + payLabel,
       ...this.authVals(s),
       ...this.confirmVals(s, {
         g,
@@ -1178,6 +1325,8 @@ export default class Home extends React.Component {
         cur,
         money,
         payLabel,
+        freeOn,
+        pick,
       }),
       queue: this.startQueue,
     };
@@ -1197,6 +1346,8 @@ export default class Home extends React.Component {
       cur,
       money,
       payLabel,
+      freeOn = false,
+      pick = '',
     },
   ) {
     const ignLabel = IGN_LABEL[g.id] || 'in-game name';
@@ -1267,7 +1418,11 @@ export default class Home extends React.Component {
           ign,
           note: (st.orderNote || '').trim(),
           voice: !!st.voice,
-          useWallet: !!st.useWallet,
+          // The free coaching order never uses the wallet (the server refuses both together).
+          ...(freeOn
+            ? { freePerk: true, useWallet: false }
+            : { useWallet: !!st.useWallet }),
+          ...(pick ? { pickSource: pick } : {}),
         });
         if (result && result.url) {
           try {
@@ -1283,6 +1438,11 @@ export default class Home extends React.Component {
           window.location.href = '/queue/' + result.orderId;
           return;
         }
+        if (result && result.error === PICK_UNAVAILABLE) {
+          // The picked teammate went offline or got busy: clear the pick and show who is free now.
+          this.setState({ pick: '', pickErr: result.error });
+          this.loadPickable(true);
+        } else if (freeOn) this.loadPerks();
         return this.setState({
           placing: false,
           placeErr:
@@ -1350,36 +1510,40 @@ export default class Home extends React.Component {
       closeConfirm: () => {
         if (!this.state.placing) this.setState({ confirmOpen: false });
       },
-      confirmTotal: money(amount),
+      confirmTotal: freeOn ? 'Free' : money(amount),
       confirmPay: payLabel,
       confirmCur: cur,
       // step 1 of "what happens next": exactly where the money comes from, once
       // Live checkout charges the euro price; a dollar figure is a conversion, so say so.
-      chargeTitle: this.props.onCheckout
-        ? 'Pay ' +
-          (cur === 'USD' ? 'about ' : '') +
-          money(amount) +
-          ' securely with Stripe'
-        : allWallet
-          ? money(amount) + ' comes from your Duoly balance'
-          : walletUse > 0
-            ? 'We charge ' + money(due) + ' to your ' + payLabel
-            : 'We charge ' + money(amount) + ' to your ' + payLabel,
-      chargeText: this.props.onCheckout
-        ? (cur === 'USD'
-            ? 'Prices are set in euros and shown in dollars at today’s ECB rate plus 1%. Checkout shows the exact amount. '
-            : '') +
-          'Apple Pay, Google Pay, PayPal, cards and 20+ local methods. Cards, wallets and PayPal are only charged when a teammate accepts.'
-        : (walletUse > 0 && !allWallet
-            ? 'The other ' +
-              money(walletUse) +
-              ' comes from your Duoly balance. '
-            : '') +
-          'One payment for all ' +
-          s.qty +
-          ' ' +
-          (s.qty === 1 ? unit : unit + 's') +
-          ', nothing is charged later. Cancel for free until a teammate accepts.',
+      chargeTitle: freeOn
+        ? 'Free with your perk'
+        : this.props.onCheckout
+          ? 'Pay ' +
+            (cur === 'USD' ? 'about ' : '') +
+            money(amount) +
+            ' securely with Stripe'
+          : allWallet
+            ? money(amount) + ' comes from your Duoly balance'
+            : walletUse > 0
+              ? 'We charge ' + money(due) + ' to your ' + payLabel
+              : 'We charge ' + money(amount) + ' to your ' + payLabel,
+      chargeText: freeOn
+        ? 'This month’s free coaching. Nothing is charged and your Duoly balance is not used.'
+        : this.props.onCheckout
+          ? (cur === 'USD'
+              ? 'Prices are set in euros and shown in dollars at today’s ECB rate plus 1%. Checkout shows the exact amount. '
+              : '') +
+            'Apple Pay, Google Pay, PayPal, cards and 20+ local methods. Cards, wallets and PayPal are only charged when a teammate accepts.'
+          : (walletUse > 0 && !allWallet
+              ? 'The other ' +
+                money(walletUse) +
+                ' comes from your Duoly balance. '
+              : '') +
+            'One payment for all ' +
+            s.qty +
+            ' ' +
+            (s.qty === 1 ? unit : unit + 's') +
+            ', nothing is charged later. Cancel for free until a teammate accepts.',
       confirmLine:
         s.qty +
         ' ' +
@@ -1440,15 +1604,19 @@ export default class Home extends React.Component {
       region: byName ? (s.mcServer || '').trim() || 'your server' : server[0],
       placing: !!s.placing,
       placeErr: s.placeErr || '',
-      placeLabel: this.props.onCheckout
+      placeLabel: freeOn
         ? s.placing
-          ? 'Opening checkout…'
-          : 'Continue to payment · ' + money(amount)
-        : s.placing
-          ? allWallet
-            ? 'Paying with your balance…'
-            : 'Charging ' + payLabel + '…'
-          : 'Pay ' + money(allWallet ? amount : due) + ' & queue',
+          ? 'Booking…'
+          : 'Book my free coaching'
+        : this.props.onCheckout
+          ? s.placing
+            ? 'Opening checkout…'
+            : 'Continue to payment · ' + money(amount)
+          : s.placing
+            ? allWallet
+              ? 'Paying with your balance…'
+              : 'Charging ' + payLabel + '…'
+            : 'Pay ' + money(allWallet ? amount : due) + ' and queue',
       placeOrder: place,
     };
   }
@@ -3328,7 +3496,271 @@ export default class Home extends React.Component {
                         </span>
                       </button>
                     ) : null}
+                    {v.freeShow ? (
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={v.freePressed}
+                        onClick={v.toggleFree}
+                        data-free-toggle
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '14px',
+                          padding: '14px 16px',
+                          borderRadius: '16px',
+                          textAlign: 'left',
+                          background: v.freeOn ? '#0F2A22' : '#090414',
+                          border:
+                            '1.5px solid ' +
+                            (v.freeOn ? '#5EEAA8' : 'rgba(94, 234, 168, .3)'),
+                          color: '#F3EEFF',
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px',
+                            flex: '1',
+                            minWidth: '0',
+                          }}
+                        >
+                          <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
+                            Use my free monthly coaching
+                          </span>
+                          <span style={{ fontSize: '13px', color: '#A79DC4' }}>
+                            {v.freeSub}
+                          </span>
+                        </span>
+                        <span
+                          style={{
+                            position: 'relative',
+                            flex: '0 0 auto',
+                            width: '34px',
+                            height: '20px',
+                            borderRadius: '999px',
+                            transition: 'background-color .15s',
+                            background: v.freeOn ? '#5EEAA8' : '#2A1F45',
+                          }}
+                        >
+                          <span
+                            style={{
+                              position: 'absolute',
+                              top: '3px',
+                              left: v.freeOn ? '17px' : '3px',
+                              width: '14px',
+                              height: '14px',
+                              borderRadius: '50%',
+                              transition: 'left .15s',
+                              background: v.freeOn ? '#062A1B' : '#8E84AB',
+                            }}
+                          />
+                        </span>
+                      </button>
+                    ) : null}
+                    {v.freeHint ? (
+                      <div
+                        data-free-hint
+                        style={{
+                          padding: '12px 14px',
+                          borderRadius: '12px',
+                          background: 'rgba(94, 234, 168, .06)',
+                          border: '1px solid rgba(94, 234, 168, .2)',
+                          fontSize: '13px',
+                          lineHeight: '1.5',
+                          color: '#C9F7E2',
+                        }}
+                      >
+                        Your free monthly coaching is ready. Pick one coaching
+                        session (1 game or 1 hour) under Coaching to use it.
+                      </div>
+                    ) : null}
                   </div>
+                  {v.pickOn ? (
+                    <div
+                      data-pick-teammate
+                      role="radiogroup"
+                      aria-labelledby="pick-h"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                      }}
+                    >
+                      <span
+                        id="pick-h"
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          color: '#CFC4EA',
+                        }}
+                      >
+                        Pick a teammate{' '}
+                        <span style={{ fontWeight: '500', color: '#8E84AB' }}>
+                          (optional)
+                        </span>
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '13px',
+                          lineHeight: '1.5',
+                          color: '#A79DC4',
+                        }}
+                      >
+                        They get your order first for 60 seconds. If they don’t
+                        take it, it goes to everyone.
+                      </span>
+                      {v.pickErr ? (
+                        <div
+                          role="alert"
+                          style={{
+                            padding: '10px 12px',
+                            borderRadius: '12px',
+                            background: 'rgba(240, 166, 255, .1)',
+                            border: '1px solid rgba(240, 166, 255, .28)',
+                            fontSize: '13.5px',
+                            color: '#F7D6FF',
+                          }}
+                        >
+                          {v.pickErr}
+                        </div>
+                      ) : null}
+                      {v.pickLoading ? (
+                        <span style={{ fontSize: '13px', color: '#8E84AB' }}>
+                          Loading your past teammates…
+                        </span>
+                      ) : v.pickEmpty ? (
+                        <span style={{ fontSize: '13px', color: '#8E84AB' }}>
+                          None of your past teammates are online for this right
+                          now.
+                        </span>
+                      ) : (
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '8px',
+                          }}
+                        >
+                          <button
+                            type="button"
+                            role="radio"
+                            aria-checked={v.pickNone.pressed}
+                            onClick={v.pickNone.pick}
+                            style={{
+                              minHeight: '52px',
+                              padding: '0 14px',
+                              borderRadius: '12px',
+                              background:
+                                v.pickNone.pressed === 'true'
+                                  ? '#1B1033'
+                                  : 'transparent',
+                              border:
+                                '1.5px solid ' +
+                                (v.pickNone.pressed === 'true'
+                                  ? '#D6BBFF'
+                                  : 'rgba(196, 170, 255, .12)'),
+                              color: '#F3EEFF',
+                              fontSize: '13.5px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Anyone
+                          </button>
+                          {v.pickMates.map((t) => (
+                            <button
+                              key={t.key}
+                              type="button"
+                              role="radio"
+                              aria-checked={t.pressed}
+                              onClick={t.pick}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                minHeight: '52px',
+                                padding: '6px 14px 6px 8px',
+                                borderRadius: '12px',
+                                textAlign: 'left',
+                                background: t.on ? '#1B1033' : 'transparent',
+                                border:
+                                  '1.5px solid ' +
+                                  (t.on
+                                    ? '#D6BBFF'
+                                    : 'rgba(196, 170, 255, .12)'),
+                                color: '#F3EEFF',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  position: 'relative',
+                                  flex: '0 0 auto',
+                                  width: '34px',
+                                  height: '34px',
+                                }}
+                              >
+                                <img
+                                  src={t.image}
+                                  alt=""
+                                  width="34"
+                                  height="34"
+                                  referrerPolicy="no-referrer"
+                                  style={{
+                                    width: '34px',
+                                    height: '34px',
+                                    borderRadius: '50%',
+                                    objectFit: 'cover',
+                                    display: 'block',
+                                  }}
+                                />
+                                {t.flag ? (
+                                  <img
+                                    src={t.flag}
+                                    alt=""
+                                    width="13"
+                                    height="13"
+                                    style={{
+                                      position: 'absolute',
+                                      right: '-2px',
+                                      bottom: '-2px',
+                                      width: '13px',
+                                      height: '13px',
+                                      borderRadius: '50%',
+                                      boxShadow: '0 0 0 1.5px #120B22',
+                                    }}
+                                  />
+                                ) : null}
+                              </span>
+                              <span
+                                style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  minWidth: '0',
+                                  lineHeight: '1.3',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    color: '#FFFFFF',
+                                  }}
+                                >
+                                  {t.name}
+                                </span>
+                                <span
+                                  style={{ fontSize: '12px', color: '#A79DC4' }}
+                                >
+                                  {t.together}
+                                </span>
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
                   <div
                     style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}
                   >
@@ -3492,6 +3924,19 @@ export default class Home extends React.Component {
                         </div>
                       </>
                     ) : null}
+                    {v.freeOn ? (
+                      <div
+                        data-free-perk
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          color: '#5EEAA8',
+                        }}
+                      >
+                        <span>Free monthly coaching</span>
+                        <span>−{v.freeList}</span>
+                      </div>
+                    ) : null}
                     {v.proMember ? (
                       <div
                         data-pro-discount
@@ -3597,7 +4042,7 @@ export default class Home extends React.Component {
                       Your Duoly balance covers the whole order. No card needed.
                     </div>
                   ) : null}
-                  {this.props.onCheckout ? (
+                  {this.props.onCheckout && !v.freeOn ? (
                     <div
                       style={{
                         fontSize: '13px',
@@ -3609,7 +4054,7 @@ export default class Home extends React.Component {
                       payment methods. You choose on the next step.
                     </div>
                   ) : null}
-                  {v.allWallet || this.props.onCheckout ? null : (
+                  {v.allWallet || v.freeOn || this.props.onCheckout ? null : (
                     <div
                       role="radiogroup"
                       aria-label="Payment method"
@@ -6459,11 +6904,13 @@ export default class Home extends React.Component {
                       ],
                       [
                         'You get matched and play',
-                        this.props.onCheckout
-                          ? 'You’ll see who took it on the next page. Nobody free within 5 minutes? You pay nothing: the hold on your card or wallet is released automatically.'
-                          : 'You’ll see who took it on the next page. Nobody free within 5 minutes? The full ' +
-                            v.confirmTotal +
-                            ' goes back to your Duoly balance, automatically.',
+                        v.freeOn
+                          ? 'You’ll see who took it on the next page. Nobody free within 5 minutes? The order is cancelled and your free coaching comes back for this month.'
+                          : this.props.onCheckout
+                            ? 'You’ll see who took it on the next page. Nobody free within 5 minutes? You pay nothing: the hold on your card or wallet is released automatically.'
+                            : 'You’ll see who took it on the next page. Nobody free within 5 minutes? The full ' +
+                              v.confirmTotal +
+                              ' goes back to your Duoly balance, automatically.',
                       ],
                     ].map(([t, d], i) => (
                       <li

@@ -9,6 +9,11 @@ import { checkoutRefCode } from '../referrals';
 import { proEnabled } from '../pro/config';
 import { applyOrderDiscounts } from '../pro/discounts';
 import { isProMember } from '../pro/status';
+import {
+  checkCheckoutPerks,
+  freeCoachingIntentRow,
+  freeCoachingOutcome,
+} from '../perks/checkout';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { GAMES } from '../../design-reference/lib/games.js';
 import {
@@ -21,18 +26,29 @@ import {
 /** Stripe's minimum Checkout Session lifetime. */
 const SESSION_MINUTES = 30;
 
-export const CheckoutRequestSchema = z.strictObject({
-  gameId: z.string().max(8),
-  serviceId: z.string().max(64),
-  units: z.number().int().min(1).max(10),
-  server: z.string().max(60),
-  rank: z.string().max(40).optional(),
-  edition: z.enum(['Java', 'Bedrock']).optional(),
-  ign: z.string().trim().min(2).max(40),
-  note: z.string().trim().max(200).optional(),
-  voice: z.boolean().optional(),
-  useWallet: z.boolean().default(true),
-});
+export const CheckoutRequestSchema = z
+  .strictObject({
+    gameId: z.string().max(8),
+    serviceId: z.string().max(64),
+    units: z.number().int().min(1).max(10),
+    server: z.string().max(60),
+    rank: z.string().max(40).optional(),
+    edition: z.enum(['Java', 'Bedrock']).optional(),
+    ign: z.string().trim().min(2).max(40),
+    note: z.string().trim().max(200).optional(),
+    voice: z.boolean().optional(),
+    useWallet: z.boolean().default(true),
+    // Platinum and Diamond: this month's free 1-hour coaching (migration 20261026160000).
+    // The free order pays nothing, so it never takes wallet money, a PRO or creator discount.
+    freePerk: z.boolean().optional(),
+    // Diamond: one of the customer's own completed orders (the handle from
+    // /api/orders/pickable-teammates) names the teammate who gets the order first for 60 s.
+    pickSource: z.uuid().optional(),
+  })
+  .refine((request) => !(request.freePerk && request.useWallet), {
+    message: 'The free coaching order does not use the wallet.',
+    path: ['useWallet'],
+  });
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
 
 interface CatalogMode {
@@ -230,7 +246,70 @@ export const createCheckout: APIRoute = async (context) => {
         },
         403,
       );
+    const rpc = admin.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => PromiseLike<{ data: unknown; error: unknown }>;
+    const free = parsed.data.freePerk === true;
+    const pickSource = parsed.data.pickSource ?? null;
+    const perkCheck = await checkCheckoutPerks(
+      account.client!.rpc.bind(account.client!) as unknown as (
+        fn: string,
+        args?: Record<string, unknown>,
+      ) => PromiseLike<{ data: unknown; error: unknown }>,
+      {
+        free,
+        pickSource,
+        gameId: parsed.data.gameId,
+        serviceId: parsed.data.serviceId,
+        units: parsed.data.units,
+        gg: built.row.gg,
+        voice: built.row.voice,
+      },
+    );
+    if (!perkCheck.ok)
+      return account.json({ error: perkCheck.error }, perkCheck.status);
     const now = Math.floor(Date.now() / 1000);
+    if (free) {
+      // Free monthly coaching: no Stripe, no wallet, no PRO or creator discount and no creator
+      // code. The database checks the level and the month again and records the claim.
+      const { data: freeIntent, error: freeError } = await admin
+        .from('checkout_intents')
+        .insert(
+          freeCoachingIntentRow(built.row, {
+            customerId: identity.viewer.id,
+            pickSource,
+            expiresAt: new Date(
+              (now + SESSION_MINUTES * 60 + 60) * 1000,
+            ).toISOString(),
+          }),
+        )
+        .select('id')
+        .single();
+      if (freeError || !freeIntent)
+        return account.json(
+          { error: 'Checkout is unavailable. Try again.' },
+          503,
+        );
+      const created = await rpc('create_free_coaching_order', {
+        p_intent_id: freeIntent.id,
+      });
+      const outcome = freeCoachingOutcome(created);
+      if (!outcome.ok) {
+        if (outcome.status === 503)
+          await rpc('checkout_release_wallet', {
+            p_intent_id: freeIntent.id,
+            p_status: 'failed',
+          });
+        return account.json({ error: outcome.error }, outcome.status);
+      }
+      return account.json({
+        intent_id: freeIntent.id,
+        order_id: outcome.orderId,
+        url: `/queue/${outcome.orderId}`,
+        free_perk: true,
+      });
+    }
     // Creator code from the server-set referral cookie only; the database resolves it to an
     // active creator and attributes the customer once the order is paid (ledger #28).
     const refCode = checkoutRefCode(
@@ -274,6 +353,7 @@ export const createCheckout: APIRoute = async (context) => {
       .insert({
         ...priced.row,
         ...(refCode ? { ref_code: refCode } : {}),
+        ...(pickSource ? { pick_source_order_id: pickSource } : {}),
         customer_id: identity.viewer.id,
         expires_at: new Date(
           (now + SESSION_MINUTES * 60 + 60) * 1000,
@@ -287,10 +367,6 @@ export const createCheckout: APIRoute = async (context) => {
         503,
       );
 
-    const rpc = admin.rpc as unknown as (
-      fn: string,
-      args: Record<string, unknown>,
-    ) => PromiseLike<{ data: unknown; error: unknown }>;
     let cardEurCents = priced.row.amount_eur_cents;
     if (parsed.data.useWallet) {
       const reserved = await rpc('checkout_reserve_wallet', {

@@ -297,10 +297,10 @@ test('original layout, server queue, real chat transport and private completion 
     trust.getByText('Trusted badge on your profile', { exact: true }),
   ).toBeVisible();
   await expect(
-    trust.getByText('High-value matching coming soon', { exact: true }),
+    trust.getByText('Orders of €20 or more reach you first', { exact: true }),
   ).toBeVisible();
   await expect(
-    trust.getByText('Priority matching coming soon', { exact: true }),
+    trust.getByText('You get matched faster', { exact: true }),
   ).toBeVisible();
   await expect(
     trust.getByText('No deposit plus Legend badge', { exact: true }),
