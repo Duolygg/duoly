@@ -119,7 +119,7 @@ export default class AuditLog extends React.Component {
                       ? 'Loading…'
                       : audit.length
                         ? 'Nothing matches that search.'
-                        : 'No admin actions yet. Every role change, approval, refund, suspension and payout is recorded here with who did it and why.'}
+                        : 'No admin actions yet. Every refund, approval, suspension, credit and payout will be recorded here with who did it and why.'}
                   </td>
                 </tr>
               ) : null}
@@ -127,8 +127,8 @@ export default class AuditLog extends React.Component {
           </table>
         </div>
         <p style={{ margin: '12px 0 0', fontSize: '13px', color: C.dim }}>
-          Stored permanently on the server and can’t be edited. The newest 2,000
-          entries are kept.
+          Stored on the server and can’t be edited. The newest 2,000 entries are
+          kept.
         </p>
       </section>
     );

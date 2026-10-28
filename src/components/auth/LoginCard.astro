@@ -179,14 +179,16 @@ const unconfigured =
         ? 'Use at least 8 characters. Confirm your email before signing in.'
         : 'Keep your password private. Duoly teammates never need access to your account.'}
     </p>
-    {!register && providers.email && (
-      <a class="back-link" href="/reset-password">
-        Forgot your password?
+    <p class="login-links">
+      {!register && providers.email && (
+        <a class="back-link" href="/reset-password">
+          Forgot your password?
+        </a>
+      )}
+      <a class="back-link" href={register ? '/login' : '/login?mode=register'}>
+        {register ? 'Already have an account? Sign in' : 'Create an account'}
       </a>
-    )}
-    <a class="back-link" href={register ? '/login' : '/login?mode=register'}>
-      {register ? 'Already have an account? Sign in' : 'Create an account'}
-    </a>
+    </p>
   </div>
 </section>
 <style>
@@ -326,9 +328,15 @@ const unconfigured =
     font-size: 13px;
     margin: 14px 0 0;
   }
+  .login-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 22px;
+    margin: 18px 0 0;
+  }
   .back-link {
     display: inline-block;
-    margin-top: 18px;
     font-size: 14px;
   }
   .registered {

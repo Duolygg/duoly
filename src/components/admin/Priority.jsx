@@ -88,7 +88,10 @@ export default class Priority extends React.Component {
     const r = await this.props.api.get('/api/admin/priority');
     if (!r.ok)
       return this.setState({
-        error: r.error || 'Couldn’t load priorities.',
+        // like the original: a network failure keeps retrying on the next poll
+        error: r.status
+          ? r.error || 'Couldn’t load priorities.'
+          : 'Can’t reach Duoly right now. Retrying…',
         loaded: true,
       });
     const d = r.data || {};
@@ -1100,7 +1103,7 @@ export default class Priority extends React.Component {
               <li style={{ color: C.dim, fontSize: '14px' }}>
                 {q || s.filter !== 'All'
                   ? 'No teammates match.'
-                  : 'No teammates yet.'}
+                  : 'No teammates yet. Teammates appear here as soon as they’re approved; admins always see every order right away.'}
               </li>
             ) : null}
           </ul>

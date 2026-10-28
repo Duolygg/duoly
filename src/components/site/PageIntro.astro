@@ -4,11 +4,13 @@ interface Props {
   title: string;
   lead?: string;
   narrow?: boolean;
+  /** Vertically and horizontally centred block for short pages such as the 404. */
+  centered?: boolean;
 }
-const { eyebrow, title, lead, narrow = false } = Astro.props;
+const { eyebrow, title, lead, narrow = false, centered = false } = Astro.props;
 ---
 
-<section class:list={['page', { narrow }]}>
+<section class:list={['page', { narrow, centered }]}>
   {eyebrow && <p class="eyebrow">{eyebrow}</p>}
   <h1>{title}</h1>
   {lead && <p class="lead">{lead}</p>}
@@ -23,6 +25,20 @@ const { eyebrow, title, lead, narrow = false } = Astro.props;
   }
   .page.narrow {
     max-width: 760px;
+  }
+  .page.centered {
+    box-sizing: border-box;
+    min-height: min(68vh, 640px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 56px;
+  }
+  .page.centered .lead {
+    margin-left: auto;
+    margin-right: auto;
   }
   .eyebrow {
     margin: 0;
