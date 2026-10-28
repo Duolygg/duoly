@@ -75,30 +75,24 @@ manual.
 - `STRIPE_CONNECT_WEBHOOK_SECRET` signing secret of the Connect endpoint.
 - Uses the existing `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_*`, `AUTH_ORIGIN`.
 
-## Stripe Dashboard steps (owner, test mode first)
+## Stripe setup (test mode, done 2026-10-28)
 
-The test platform has **not signed up for Connect yet**: `POST /v1/accounts` answers "You can only
-create new accounts if you've signed up for Connect". So all Stripe calls were tested against a
-mocked Stripe and signed test events. Before switching the flag on:
-
-1. Dashboard, test mode, Connect (`https://dashboard.stripe.com/test/connect`): Get started, choose
-   "Marketplace" style with **Express** accounts, the platform pays out (separate transfers, no
-   `on_behalf_of`).
-2. Complete the **platform profile** (business type, what teammates sell, who is responsible for
-   losses and refunds: the platform).
-3. Connect settings, Branding: name Duoly, icon, colour (shown in Express onboarding and emails).
-4. Connect settings, Onboarding options / countries: allow the countries listed above, transfers
-   capability only.
-5. Developers, Webhooks:
-   - existing platform endpoint `https://duoly.gg/api/webhooks/stripe`: **add** events
-     `transfer.created`, `transfer.updated`, `transfer.reversed`;
-   - **new** endpoint "Events on connected accounts" `https://duoly.gg/api/webhooks/stripe-connect`
-     with `account.updated`, `payout.failed`; put its signing secret in
-     `STRIPE_CONNECT_WEBHOOK_SECRET`.
-6. Test: create a test balance (test card `4000000000000077` charges land in the available balance
-   at once), onboard a test teammate with Stripe's test data, Pay via Stripe one line.
-7. Live later: repeat 1 to 5 in live mode, review Connect pricing (monthly active account and
-   cross-border payout fees), then a code change is needed (live keys are refused on purpose).
+- Connect enabled on the Duoly.gg sandbox; the owner completed the platform profile with Duoly as
+  the losses collector (separate transfers need platform liability).
+- Stripe refuses Accounts v1 `type: 'express'` for new platforms, so accounts are created with
+  Accounts v2 (`dashboard: express`, `recipient` configuration with
+  `stripe_balance.stripe_transfers`, fees and losses collector `application`). v1 retrieve,
+  account links and transfers keep working on these ids (checked against the sandbox).
+  Accounts v2 needs a contact email; a teammate without one gets a 409 asking to add it.
+- Webhooks: the platform endpoint `https://duoly.gg/api/webhooks/stripe` also receives
+  `transfer.created`, `transfer.updated`, `transfer.reversed`; the Connect endpoint
+  `https://duoly.gg/api/webhooks/stripe-connect` (`account.updated`, `payout.failed`) has its
+  secret in `STRIPE_CONNECT_WEBHOOK_SECRET` (Vercel production, Keychain
+  `duoly-stripe-connect-webhook-secret`).
+- Still to do: set `CONNECT_PAYOUTS_ENABLED=true`, onboard a test teammate with Stripe test data,
+  fund the test balance (card `4000000000000077`), Pay via Stripe one line.
+- Live later: platform profile and webhooks in live mode, Connect pricing review, then the code
+  change that allows live keys.
 
 ## Deploy order
 

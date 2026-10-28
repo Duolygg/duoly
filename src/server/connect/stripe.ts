@@ -38,21 +38,38 @@ export function accountFacts(object: unknown): AccountFacts | null {
   };
 }
 
-/** Express account for one teammate: transfers only, individual, Stripe collects KYC and bank. */
+/**
+ * Connected account for one teammate (Accounts v2): Express Dashboard, recipient of transfers
+ * only, individual, Stripe collects KYC and bank. Stripe refuses v1 `type: 'express'` for new
+ * platforms; the platform is fees and losses collector (separate transfers, platform profile
+ * loss-liability acknowledged by the owner 2026-10-28). Accounts v2 needs a contact email, so
+ * null when the teammate has none. v1 retrieve and account links keep working on these ids.
+ */
 export function accountCreateParams(input: {
   teammateId: string;
   email: string | null;
   country: string;
-}): Stripe.AccountCreateParams {
+}): Stripe.V2.Core.AccountCreateParams | null {
+  if (!input.email) return null;
   return {
-    type: 'express',
-    country: input.country,
-    ...(input.email ? { email: input.email } : {}),
-    business_type: 'individual',
-    capabilities: { transfers: { requested: true } },
-    business_profile: {
-      product_description: 'Gaming teammate sessions sold on duoly.gg',
-      url: 'https://duoly.gg',
+    contact_email: input.email,
+    dashboard: 'express',
+    identity: {
+      country: input.country.toLowerCase(),
+      entity_type: 'individual',
+    },
+    defaults: {
+      responsibilities: {
+        fees_collector: 'application',
+        losses_collector: 'application',
+      },
+    },
+    configuration: {
+      recipient: {
+        capabilities: {
+          stripe_balance: { stripe_transfers: { requested: true } },
+        },
+      },
     },
     metadata: { kind: 'duoly_teammate', teammate_id: input.teammateId },
   };
