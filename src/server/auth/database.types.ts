@@ -1911,6 +1911,29 @@ export type Database = {
         Args: { p_blocked: boolean; p_reason?: string; p_user_id: string };
         Returns: Json;
       };
+      admin_creator_payout_pay: {
+        Args: {
+          p_creator_id: string;
+          p_method: string;
+          p_month: string;
+          p_reference: string;
+        };
+        Returns: Json;
+      };
+      admin_payout_hold: {
+        Args: { p_line_id: string; p_reason: string };
+        Returns: Json;
+      };
+      admin_payout_pay: {
+        Args: { p_line_id: string; p_method: string; p_reference: string };
+        Returns: Json;
+      };
+      admin_payout_pay_all: {
+        Args: { p_method: string; p_reference: string };
+        Returns: Json;
+      };
+      admin_payout_release: { Args: { p_line_id: string }; Returns: Json };
+      admin_payouts: { Args: never; Returns: Json };
       admin_set_creator_active: {
         Args: { p_active: boolean; p_id: string };
         Returns: Json;
@@ -1937,6 +1960,14 @@ export type Database = {
       };
       admin_support_inbox: {
         Args: { p_conversation_id?: string };
+        Returns: Json;
+      };
+      admin_teammate_adjust: {
+        Args: {
+          p_amount_usd_cents: number;
+          p_reason: string;
+          p_teammate_id: string;
+        };
         Returns: Json;
       };
       admin_teammates: { Args: never; Returns: Json };
@@ -2254,7 +2285,20 @@ export type Database = {
         };
         Returns: boolean;
       };
+      teammate_payout_details: { Args: never; Returns: Json };
       teammate_queue_settings: { Args: never; Returns: Json };
+      teammate_save_payout_details: {
+        Args: {
+          p_account: string;
+          p_address: string;
+          p_country: string;
+          p_date_of_birth: string;
+          p_legal_name: string;
+          p_method: string;
+          p_tax_number: string;
+        };
+        Returns: Json;
+      };
       teammate_stats: { Args: never; Returns: Json };
     };
     Enums: {

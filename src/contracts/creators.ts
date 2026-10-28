@@ -63,5 +63,15 @@ export const AdminCreatorCommandSchema = z.discriminatedUnion('action', [
       active: z.boolean(),
     })
     .strict(),
+  z
+    .object({
+      csrf,
+      action: z.literal('pay'),
+      creatorId: z.uuid(),
+      month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+      method: z.enum(['bank', 'wise', 'paypal', 'other']),
+      reference: z.string().trim().min(1).max(120),
+    })
+    .strict(),
 ]);
 export type AdminCreatorCommand = z.infer<typeof AdminCreatorCommandSchema>;

@@ -4,7 +4,9 @@
 -- (mark paid with method and reference) and teammate payout details for DAC7.
 -- Deploy order: code first (the stats contract accepts the old and the new payload and the admin screen
 -- reports an unavailable service until this migration exists), then apply this migration.
--- Latest definitions replaced here: teammate_stats() from 20261025130000_trust_deposits.sql.
+-- Latest definitions replaced here: teammate_stats() from 20261025130000_trust_deposits.sql and
+-- admin_creator_dto(creators) from 20261025110000_creator_referrals.sql (adds paid vs owed per month).
+-- Creator commission months are marked paid on the same manual rail (creator_payouts).
 begin;
 
 create extension if not exists pg_cron with schema pg_catalog;
@@ -157,6 +159,24 @@ grant select on table public.teammate_payout_details to authenticated;
 create policy teammate_payout_details_read on public.teammate_payout_details for select to authenticated
   using (teammate_id=(select auth.uid()) or (select public.payout_viewer_is_admin()));
 
+-- Creator commission uses the same manual rail. One immutable record marks one creator month paid.
+create table public.creator_payouts (
+  id uuid primary key default pg_catalog.gen_random_uuid(),
+  creator_id uuid not null references public.creators(id) on delete restrict,
+  month date not null check (month=pg_catalog.date_trunc('month',month)::date),
+  amount_eur_cents bigint not null check (amount_eur_cents>0),
+  paid_at timestamptz not null default pg_catalog.clock_timestamp(),
+  paid_by uuid not null references public.profiles(id) on delete restrict,
+  paid_method text not null check (paid_method in ('bank','wise','paypal','other')),
+  paid_reference text not null check (paid_reference=pg_catalog.btrim(paid_reference) and pg_catalog.char_length(paid_reference) between 1 and 120),
+  unique (creator_id,month)
+);
+create index creator_payouts_paid_at on public.creator_payouts(paid_at desc);
+alter table public.creator_payouts enable row level security;
+revoke all on table public.creator_payouts from public,anon,authenticated,service_role;
+create trigger creator_payouts_immutable before update or delete on public.creator_payouts
+  for each row execute function public.payout_immutable_guard();
+
 -- ---- helpers ----------------------------------------------------------------------------------
 
 create function public.payout_order_blocked(p_order_id uuid) returns boolean
@@ -295,11 +315,17 @@ begin
     select i.* into v_item from public.payout_line_items i where i.kind='earning' and i.source_id=p_order_id;
     if v_item.id is null or v_item.amount_usd_cents<=0 then return 'accruing'; end if;
     select l.* into v_line from public.payout_lines l where l.id=v_item.line_id for update;
-    if v_line.status not in ('scheduled','on_hold') then return v_line.status; end if;
+    -- Follow carry-forward links so a newly opened report or dispute withholds the affected
+    -- order from the currently payable balance, rather than from an already-carried shell.
+    while v_line.status='carried' and v_line.carried_to is not null loop
+      select l.* into v_line from public.payout_lines l where l.id=v_line.carried_to for update;
+    end loop;
+    if v_line.status not in ('scheduled','on_hold','carried') then return v_line.status; end if;
     insert into public.payout_order_holds(order_id,teammate_id,line_id,amount_usd_cents,reason)
       values(p_order_id,v_line.teammate_id,v_line.id,v_item.amount_usd_cents,'Open report or Stripe dispute on this order') returning id into v_id;
     insert into public.payout_line_items(line_id,kind,source_id,amount_usd_cents) values(v_line.id,'order_hold',v_id,-v_item.amount_usd_cents);
-    update public.payout_lines set updated_at=pg_catalog.clock_timestamp() where id=v_line.id;
+    update public.payout_lines set status=case when status='scheduled' and public.payout_line_total(id)<1000 then 'carried' else status end,
+      updated_at=pg_catalog.clock_timestamp() where id=v_line.id;
     perform public.admin_log(null,'Duoly','Auto-held payout amount',public.payout_person(v_line.teammate_id),
       coalesce(v_ref,'Order')||' · '||public.payout_money(v_item.amount_usd_cents)||' while a report or Stripe dispute is open');
     return 'held';
@@ -575,7 +601,7 @@ begin
   if pg_catalog.char_length(v_name) not between 2 and 120 then return public.order_error(400,'Add your full legal name.'); end if;
   if pg_catalog.char_length(v_address) not between 5 and 300 then return public.order_error(400,'Add your full address.'); end if;
   if pg_catalog.char_length(v_country) not between 2 and 56 then return public.order_error(400,'Add your country.'); end if;
-  if p_date_of_birth is null or p_date_of_birth<date '1900-01-01' or p_date_of_birth>(pg_catalog.current_date-interval '18 years')::date then
+  if p_date_of_birth is null or p_date_of_birth<date '1900-01-01' or p_date_of_birth>(current_date-interval '18 years')::date then
     return public.order_error(400,'Add your date of birth. You need to be 18 or older to be paid.'); end if;
   if pg_catalog.char_length(v_tax) not between 2 and 40 then return public.order_error(400,'Add your tax number.'); end if;
   if p_method is null or p_method not in ('bank','wise','paypal') then return public.order_error(400,'Pick how you want to be paid.'); end if;
@@ -647,6 +673,95 @@ begin
  return v_result;
 end $$;
 
+-- ---- creator payout marking -------------------------------------------------------------------
+
+create function public.creator_month_commission(p_creator uuid,p_month date) returns bigint
+language sql stable security definer set search_path='' as $$
+  with counted as (
+    select greatest(0,r.amount_eur_cents-coalesce((select pg_catalog.sum(c.amount_eur_cents)
+      from public.refund_credits c where c.order_id=o.id),0))::bigint base
+    from public.order_referrals r join public.orders o on o.id=r.order_id
+    left join public.order_payments p on p.order_id=o.id
+    where r.creator_id=p_creator and o.status='completed'
+      and pg_catalog.date_trunc('month',o.completed_at at time zone 'UTC')::date=p_month
+      and coalesce(p.state,'') not in ('refunded','voided')
+  ), totals as (select pg_catalog.count(*)::integer n,coalesce(pg_catalog.sum(base),0)::bigint base from counted)
+  select (base*(public.creator_tier(n)->>'commission')::integer+50)/100 from totals;
+$$;
+
+-- Replace the latest definition from 20261025110000_creator_referrals.sql. Commission is still
+-- calculated from the same completed-order CTE; paid months are annotated and excluded from owed.
+create or replace function public.admin_creator_dto(p_creator public.creators) returns jsonb
+language plpgsql stable security invoker set search_path = '' as $$
+declare v_months jsonb; v_owed bigint; v_earned bigint; v_customers integer; v_orders integer; v_pending integer;
+begin
+  with counted as (
+    select pg_catalog.to_char(pg_catalog.date_trunc('month',o.completed_at at time zone 'UTC'),'YYYY-MM') as month,
+      greatest(0,r.amount_eur_cents-coalesce((select pg_catalog.sum(c.amount_eur_cents) from public.refund_credits c where c.order_id=o.id),0))::bigint base
+    from public.order_referrals r join public.orders o on o.id=r.order_id
+    left join public.order_payments p on p.order_id=o.id
+    where r.creator_id=p_creator.id and o.status='completed' and coalesce(p.state,'') not in ('refunded','voided')
+  ), months as (
+    select m.month,m.n,m.base,public.creator_tier(m.n) tier,
+      (m.base*(public.creator_tier(m.n)->>'commission')::integer+50)/100 commission_cents
+    from (select month,pg_catalog.count(*)::integer n,pg_catalog.sum(base)::bigint base from counted group by month) m
+  ), decorated as (
+    select m.*,cp.id payout_id,cp.paid_at,cp.paid_method,cp.paid_reference
+    from months m left join public.creator_payouts cp on cp.creator_id=p_creator.id
+      and cp.month=pg_catalog.to_date(m.month||'-01','YYYY-MM-DD')
+  )
+  select coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+      'month',x.month,'orders',x.n,'baseCents',x.base,'tier',x.tier->>'id',
+      'commission',(x.tier->>'commission')::integer,'commissionCents',x.commission_cents,
+      'paid',x.payout_id is not null,'paidAt',x.paid_at,'method',x.paid_method,'reference',x.paid_reference)
+      order by x.month desc),'[]'::jsonb),
+    coalesce(pg_catalog.sum(x.commission_cents) filter(where x.payout_id is null),0)::bigint,
+    coalesce(pg_catalog.sum(x.commission_cents),0)::bigint
+    into v_months,v_owed,v_earned from decorated x;
+  select pg_catalog.count(*) into v_customers from public.customer_referrals where creator_id=p_creator.id;
+  select pg_catalog.count(*) into v_orders from public.order_referrals where creator_id=p_creator.id;
+  select pg_catalog.count(*) into v_pending from public.order_referrals r join public.orders o on o.id=r.order_id
+    where r.creator_id=p_creator.id and o.status in ('queued','in_progress');
+  return pg_catalog.jsonb_build_object(
+    'id',p_creator.id,'code',p_creator.code,'name',p_creator.name,'channel',p_creator.channel,
+    'active',p_creator.active,'createdAt',p_creator.created_at,'createdBy',p_creator.created_by,
+    'customers',v_customers,'orders',v_orders,'openOrders',v_pending,
+    'months',v_months,'owedCents',v_owed,'earnedCents',v_earned);
+end;
+$$;
+
+create function public.admin_creator_payout_pay(p_creator_id uuid,p_month text,p_method text,p_reference text) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare v_actor uuid; v_actor_name text; v_creator public.creators; v_month date; v_amount bigint; v_owed bigint; v_ref text:=pg_catalog.btrim(coalesce(p_reference,''));
+begin
+  select id,name into v_actor,v_actor_name from public.admin_caller();
+  if v_actor is null then return public.order_error(403,'Admins only.'); end if;
+  if p_month is null or p_month !~ '^[0-9]{4}-(0[1-9]|1[0-2])$' then return public.order_error(400,'Pick a valid commission month.'); end if;
+  v_month:=pg_catalog.to_date(p_month||'-01','YYYY-MM-DD');
+  if v_month>=pg_catalog.date_trunc('month',pg_catalog.clock_timestamp() at time zone 'UTC')::date then
+    return public.order_error(409,'Only finished commission months can be marked paid.'); end if;
+  if p_method is null or p_method not in ('bank','wise','paypal','other') then return public.order_error(400,'Pick how you paid.'); end if;
+  if pg_catalog.char_length(v_ref) not between 1 and 120 then return public.order_error(400,'Add the transfer reference (up to 120 characters).'); end if;
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('duoly.creator.payout.'||p_creator_id::text,0));
+  select c.* into v_creator from public.creators c where c.id=p_creator_id;
+  if v_creator.id is null then return public.order_error(404,'Creator not found.'); end if;
+  if exists(select 1 from public.creator_payouts where creator_id=p_creator_id and month=v_month) then
+    return public.order_error(409,'That creator month was already marked paid.'); end if;
+  v_amount:=public.creator_month_commission(p_creator_id,v_month);
+  if v_amount<=0 then return public.order_error(409,'There is no commission to pay for that month.'); end if;
+  select coalesce(pg_catalog.sum(public.creator_month_commission(p_creator_id,m.month)),0)::bigint into v_owed
+    from (select distinct pg_catalog.date_trunc('month',o.completed_at at time zone 'UTC')::date as month
+      from public.order_referrals r join public.orders o on o.id=r.order_id
+      where r.creator_id=p_creator_id and o.status='completed') m
+    where not exists(select 1 from public.creator_payouts cp where cp.creator_id=p_creator_id and cp.month=m.month);
+  if v_owed<5000 then return public.order_error(409,'Creator commission stays owed until the unpaid total reaches €50.'); end if;
+  insert into public.creator_payouts(creator_id,month,amount_eur_cents,paid_by,paid_method,paid_reference)
+    values(p_creator_id,v_month,v_amount,v_actor,p_method,v_ref);
+  perform public.admin_log(v_actor,v_actor_name,'Marked creator commission paid',v_creator.name,
+    '€'||pg_catalog.to_char(v_amount/100.0,'FM999999990.00')||' · '||p_month||' · '||p_method||' · '||v_ref);
+  return pg_catalog.jsonb_build_object('ok',true,'creator',public.admin_creator_dto(v_creator));
+end $$;
+
 -- ---- grants and schedule ----------------------------------------------------------------------
 
 revoke all on function
@@ -654,16 +769,19 @@ revoke all on function
   public.payout_money(bigint),public.payout_person(uuid),public.payout_valid_count(uuid),public.payout_freeze_week(timestamptz),
   public.payout_freeze_due_at(timestamptz),public.payout_freeze_due(),public.payout_refresh_order_hold(uuid),public.payout_hold_after_change(),
   public.payout_pending(uuid,timestamptz),public.payout_line_dto(uuid),public.payout_teammate_dto(uuid),
-  public.payout_pay_locked(public.payout_lines,uuid,text,text),public.teammate_payout_summary(uuid)
+  public.payout_pay_locked(public.payout_lines,uuid,text,text),public.teammate_payout_summary(uuid),
+  public.creator_month_commission(uuid,date)
   from public,anon,authenticated,service_role;
 revoke all on function
   public.admin_payouts(),public.admin_teammate_adjust(uuid,integer,text),public.admin_payout_pay(uuid,text,text),
   public.admin_payout_pay_all(text,text),public.admin_payout_hold(uuid,text),public.admin_payout_release(uuid),
+  public.admin_creator_payout_pay(uuid,text,text,text),
   public.teammate_payout_details(),public.teammate_save_payout_details(text,text,text,date,text,text,text),public.teammate_stats()
   from public,anon,authenticated,service_role;
 grant execute on function
   public.admin_payouts(),public.admin_teammate_adjust(uuid,integer,text),public.admin_payout_pay(uuid,text,text),
   public.admin_payout_pay_all(text,text),public.admin_payout_hold(uuid,text),public.admin_payout_release(uuid),
+  public.admin_creator_payout_pay(uuid,text,text,text),
   public.teammate_payout_details(),public.teammate_save_payout_details(text,text,text,date,text,text,text),public.teammate_stats()
   to authenticated;
 

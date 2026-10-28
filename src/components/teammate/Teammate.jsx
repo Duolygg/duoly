@@ -15,6 +15,7 @@ const previewPermission = () =>
 import React from 'react';
 // Session commands are supplied by the live wrapper.
 import Leaderboard from './Leaderboard';
+import PayoutPanel from './PayoutPanel';
 import SupportChat from '../support/SupportChat';
 import TrustScore, { tierFor } from './TrustScore';
 import {
@@ -54,7 +55,7 @@ export const FEATURES = {
   notifications: true,
   preferences: true,
   trust: true,
-  stats: false,
+  stats: true,
   reviews: true,
   tips: false,
   leaderboard: true,
@@ -1495,7 +1496,8 @@ export default class Teammate extends React.Component {
       today: money(today),
       weekTotal: money(weekTotal),
       week,
-      payoutDue: money(payoutDue),
+      payoutDue: money(st && st.payout ? st.payout.due : payoutDue),
+      payout: st && st.payout ? st.payout : null,
       todayOrders:
         todayList.filter((e) => !e.adjustment).length === 1
           ? '1 order today'
@@ -4930,6 +4932,21 @@ export default class Teammate extends React.Component {
                         <span style={{ fontSize: '11.5px', color: '#6A6086' }}>
                           Earned since last Friday, after deposit, incl. tips
                         </span>
+                        {v.payout && v.payout.carried ? (
+                          <span
+                            style={{ fontSize: '11.5px', color: '#6A6086' }}
+                          >
+                            Includes {money(v.payout.carried)} carried forward
+                          </span>
+                        ) : null}
+                        {v.payout && v.payout.held ? (
+                          <span
+                            style={{ fontSize: '11.5px', color: '#FFC46B' }}
+                          >
+                            {money(v.payout.held)} paused while a report or
+                            dispute is open
+                          </span>
+                        ) : null}
                       </span>
                       <span style={{ fontWeight: '700', color: '#FFFFFF' }}>
                         {v.payoutDue}
@@ -4991,6 +5008,9 @@ export default class Teammate extends React.Component {
                           </li>
                         ))}
                       </ul>
+                    ) : null}
+                    {v.payout ? (
+                      <PayoutPanel payout={v.payout} csrf={this.props.csrf} />
                     ) : null}
                     <LatestReviews reviews={v.latestReviews} />
                   </section>

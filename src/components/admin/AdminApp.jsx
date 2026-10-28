@@ -20,6 +20,7 @@ import Support from './Support';
 import Safety from './Safety';
 import Settings from './Settings';
 import Creators from './Creators';
+import Payouts from './Payouts';
 
 // Port of the original admin shell (components/admin/AdminApp.jsx): same sidebar, groups,
 // titles, confirm dialog and toasts. Sections are real URLs (/admin/users) so they can be
@@ -169,6 +170,7 @@ const LIVE = [
   'audit',
   'settings',
   'creators',
+  'payouts',
 ];
 // Live sections where some of the original columns wait on a backend that isn't live yet
 // (trust levels, deposits, weekly payouts, wallet). They say so instead of plain "Live".
@@ -605,6 +607,7 @@ export default class AdminApp extends React.Component {
     else if (s.section === 'audit') body = <AuditLog {...props} />;
     else if (s.section === 'settings') body = <Settings {...props} />;
     else if (s.section === 'creators') body = <Creators {...props} />;
+    else if (s.section === 'payouts') body = <Payouts {...props} />;
     else if (s.section === 'safety')
       body = (
         <Safety
