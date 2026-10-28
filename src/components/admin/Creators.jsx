@@ -44,10 +44,12 @@ export function creatorRow(c) {
     ...c,
     createdAt: toMs(c.createdAt),
     owed: (c.owedCents || 0) / 100,
+    earned: (c.earnedCents ?? c.owedCents ?? 0) / 100,
     months: (c.months || []).map((m) => ({
       ...m,
       base: m.baseCents / 100,
       commissionEur: m.commissionCents / 100,
+      paidAt: toMs(m.paidAt),
     })),
   };
 }
@@ -161,6 +163,28 @@ export default class Creators extends React.Component {
         ')',
     );
   }
+  async payMonth(c, month, method, reference) {
+    this.setState({ busy: c.id + ':' + month.month });
+    const r = await this.props.api.post('/api/admin/creators', {
+      action: 'pay',
+      creatorId: c.id,
+      month: month.month,
+      method,
+      reference,
+    });
+    this.setState({ busy: '' });
+    if (!r.ok)
+      return this.props.toast(
+        r.error || 'Couldn’t mark that commission paid.',
+        'warn',
+      );
+    const next = creatorRow(r.data.creator);
+    this.setState((s) => ({
+      creators: s.creators.map((x) => (x.id === c.id ? next : x)),
+    }));
+    this.props.log();
+    this.props.toast('Marked ' + monthLabel(month.month) + ' commission paid.');
+  }
 
   renderForm() {
     const s = this.state;
@@ -256,6 +280,7 @@ export default class Creators extends React.Component {
               <th style={{ ...th, textAlign: 'right' }}>Order value</th>
               <th style={th}>Tier</th>
               <th style={{ ...th, textAlign: 'right' }}>Commission</th>
+              <th style={th}>Payout</th>
             </tr>
           </thead>
           <tbody>
@@ -277,6 +302,66 @@ export default class Creators extends React.Component {
                 >
                   {eur(m.commissionEur)}
                 </td>
+                <td style={td}>
+                  {m.paid ? (
+                    <span style={{ color: C.green }}>
+                      Paid{' '}
+                      {m.paidAt
+                        ? new Date(m.paidAt).toLocaleDateString('en-GB')
+                        : ''}
+                      {m.reference ? ' · ' + m.reference : ''}
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={
+                        this.state.busy === c.id + ':' + m.month ||
+                        c.owed < 50 ||
+                        m.month >= new Date().toISOString().slice(0, 7)
+                      }
+                      title={
+                        c.owed < 50
+                          ? 'Creator commission is paid once owed reaches €50.'
+                          : undefined
+                      }
+                      style={{
+                        ...btn(),
+                        opacity:
+                          c.owed < 50 ||
+                          m.month >= new Date().toISOString().slice(0, 7)
+                            ? '.45'
+                            : '1',
+                      }}
+                      onClick={() =>
+                        this.props.ask({
+                          title: 'Mark ' + monthLabel(m.month) + ' paid?',
+                          body:
+                            'Send ' +
+                            eur(m.commissionEur) +
+                            ' to ' +
+                            c.name +
+                            ' outside Duoly first.',
+                          confirm: 'Mark paid',
+                          field: {
+                            label: 'Payment method',
+                            options: ['bank', 'wise', 'paypal', 'other'],
+                            value: 'bank',
+                            required: true,
+                          },
+                          field2: {
+                            label: 'Transfer reference',
+                            placeholder: 'Bank or Wise reference',
+                            required: true,
+                          },
+                          onConfirm: (method, reference) =>
+                            this.payMonth(c, m, method, reference),
+                        })
+                      }
+                    >
+                      Mark paid
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -289,11 +374,16 @@ export default class Creators extends React.Component {
     const s = this.state;
     const ask = this.props.ask;
     const totalOwed = s.creators.reduce((n, c) => n + c.owed, 0);
+    const totalEarned = s.creators.reduce((n, c) => n + c.earned, 0);
     const customers = s.creators.reduce((n, c) => n + c.customers, 0);
     const kpis = [
       ['Creators', String(s.creators.filter((c) => c.active).length), 'active'],
       ['Referred customers', String(customers), 'all codes'],
-      ['Commission earned', eur(totalOwed), 'nothing paid out from Duoly'],
+      [
+        'Commission owed',
+        eur(totalOwed),
+        eur(totalEarned - totalOwed) + ' paid',
+      ],
       [
         'Referral links',
         s.referralsEnabled === null ? '…' : s.referralsEnabled ? 'On' : 'Off',

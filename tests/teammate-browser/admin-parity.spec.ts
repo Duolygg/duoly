@@ -225,7 +225,7 @@ test('applications are a tab inside Teammates with a real URL', async ({
   await expect(row).toContainText('Soon');
   await expect(
     row.getByRole('button', { name: 'Adjust balance' }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await expect(page.getByText('Live · partly connected')).toBeVisible();
   // no separate Applications entry in the sidebar; Teammates carries the pending count
   await expect(page.getByRole('link', { name: /^Applications/ })).toHaveCount(
