@@ -59,6 +59,43 @@ const credit = {
   amount_eur_cents: 599,
   created_at: timestamp,
 };
+const rewards = {
+  orders: 100,
+  level: {
+    index: 1,
+    id: 'silver',
+    name: 'Silver',
+    from: 100,
+    cashback: 2,
+    giftEurCents: 500,
+  },
+  next: {
+    index: 2,
+    id: 'gold',
+    name: 'Gold',
+    from: 250,
+    cashback: 3,
+    giftEurCents: 1500,
+  },
+  remaining: 150,
+  percent: 0,
+  cashback: {
+    earnedEurCents: 10,
+    monthEurCents: 10,
+    pendingEurCents: 20,
+    pendingOrders: 1,
+  },
+  gifts: [{ level: 'silver', amountEurCents: 500, grantedAt: timestamp }],
+  cashbackOrders: [
+    {
+      orderId: id,
+      state: 'pending',
+      percent: 2,
+      amountEurCents: 20,
+      creditAt: timestamp,
+    },
+  ],
+};
 
 describe('pure RPC result decoder', () => {
   it('returns validated payloads only for the expected response kind', () => {
@@ -67,6 +104,7 @@ describe('pure RPC result decoder', () => {
       customerActive: { order: customer },
       customerHistory: { orders: [customer] },
       refundCredits: { credits: [credit] },
+      customerRewards: rewards,
       teammateOrder: { order: teammate },
       teammateQueue: { orders: [teammate] },
       teammateAssignment: { order: teammate },
@@ -230,6 +268,7 @@ describe('strict SQL order contracts', () => {
       customerActive: { order: null },
       customerHistory: { orders: [customer] },
       refundCredits: { credits: [credit] },
+      customerRewards: rewards,
       teammateOrder: { order: teammate },
       teammateQueue: { orders: [teammate] },
       teammateAssignment: { order: null },

@@ -49,8 +49,10 @@ export default class Customers extends React.Component {
     const res = await this.props.api.get('/api/admin/customers');
     if (!res.ok) return this.setState({ error: res.error, loaded: true });
     const customers = (res.data.customers || []).map((c) => {
-      const orders = Number(c.completed) || 0;
-      const level = levelFor(orders);
+      const orders = Number(c.loyalty?.orders) || 0;
+      const level =
+        LEVELS.find((entry) => entry.id === c.loyalty?.level?.id) ||
+        levelFor(orders);
       return {
         ...c,
         av: c.image || '/assets/avatars/avatar-1.png',

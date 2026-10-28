@@ -132,6 +132,20 @@ export function toOriginalHistory(orders, walletData, now = Date.now()) {
   };
 }
 
+/** Maps the customer_rewards RPC into Fabian's Rewards component props. */
+export function toOriginalRewards(rewards) {
+  const cashback = rewards?.cashback || {};
+  return {
+    orders: Number(rewards?.orders) || 0,
+    cashbackTotal: (Number(cashback.earnedEurCents) || 0) / 100,
+    cashbackMonth: (Number(cashback.monthEurCents) || 0) / 100,
+    cashbackPending: (Number(cashback.pendingEurCents) || 0) / 100,
+    pendingOrders: Number(cashback.pendingOrders) || 0,
+    gifts: Array.isArray(rewards?.gifts) ? rewards.gifts : [],
+    giftClaimed: true,
+  };
+}
+
 export async function dashboardFetch(input) {
   const path = String(input);
   try {
@@ -140,11 +154,15 @@ export async function dashboardFetch(input) {
       return json({ order: order ? toOriginalOrder(order) : null });
     }
     if (path === '/api/me/history') {
-      const [h, c] = await Promise.all([
+      const [h, c, rewards] = await Promise.all([
         get('/api/orders/history?limit=100'),
         get('/api/orders/credits').catch(() => ({ credits: [] })),
+        get('/api/orders/rewards'),
       ]);
-      return json(toOriginalHistory(h.orders || [], c));
+      return json({
+        ...toOriginalHistory(h.orders || [], c),
+        rewards: toOriginalRewards(rewards),
+      });
     }
   } catch {
     return json({ error: 'unavailable' }, 503);

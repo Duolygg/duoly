@@ -85,6 +85,67 @@ export const RefundCreditSchema = z.strictObject({
   created_at: TimestampSchema,
 });
 
+const LoyaltyLevelSchema = z.strictObject({
+  index: z.number().int().min(0).max(4),
+  id: z.enum(['bronze', 'silver', 'gold', 'platinum', 'diamond']),
+  name: z.enum(['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond']),
+  from: z.number().int().min(0).max(1000),
+  cashback: z.union([
+    z.literal(1),
+    z.literal(2),
+    z.literal(3),
+    z.literal(5),
+    z.literal(7),
+  ]),
+  giftEurCents: z.number().int().min(0).max(10000),
+});
+
+export const CustomerRewardsSchema = z.strictObject({
+  orders: z.number().int().min(0),
+  level: LoyaltyLevelSchema,
+  next: LoyaltyLevelSchema.nullable(),
+  remaining: z.number().int().min(0),
+  percent: z.number().int().min(0).max(100),
+  cashback: z.strictObject({
+    earnedEurCents: z.number().int(),
+    monthEurCents: z.number().int(),
+    pendingEurCents: z.number().int().min(0),
+    pendingOrders: z.number().int().min(0),
+  }),
+  gifts: z
+    .array(
+      z.strictObject({
+        level: z.enum(['silver', 'gold', 'platinum', 'diamond']),
+        amountEurCents: z.number().int().min(500).max(10000),
+        grantedAt: TimestampSchema,
+      }),
+    )
+    .max(4),
+  cashbackOrders: z
+    .array(
+      z.strictObject({
+        orderId: z.uuid(),
+        state: z.enum([
+          'pending',
+          'blocked',
+          'credited',
+          'cancelled',
+          'reversed',
+        ]),
+        percent: z.union([
+          z.literal(1),
+          z.literal(2),
+          z.literal(3),
+          z.literal(5),
+          z.literal(7),
+        ]),
+        amountEurCents: z.number().int().min(0),
+        creditAt: TimestampSchema,
+      }),
+    )
+    .max(100),
+});
+
 /** Public command input; callers translate order_id to the RPC p_order_id. */
 export const OrderCommandSchema = z.strictObject({ order_id: z.uuid() });
 export const OrderPaginationSchema = z.strictObject({
@@ -116,6 +177,7 @@ export const OrderResponseSchemas = {
   refundCredits: z.strictObject({
     credits: z.array(RefundCreditSchema).max(100),
   }),
+  customerRewards: CustomerRewardsSchema,
   teammateOrder: z.strictObject({ order: TeammateOrderSchema }),
   teammateQueue: z.strictObject({
     orders: z.array(TeammateOrderSchema).max(100),
