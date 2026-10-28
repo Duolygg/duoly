@@ -75,6 +75,7 @@ export type Database = {
           created_at: string;
           creator_id: string | null;
           customer_id: string;
+          first_order_discount_cents: number;
           expires_at: string;
           game: string;
           gg: boolean;
@@ -103,6 +104,7 @@ export type Database = {
           created_at?: string;
           creator_id?: string | null;
           customer_id: string;
+          first_order_discount_cents?: number;
           expires_at: string;
           game: string;
           gg?: boolean;
@@ -131,6 +133,7 @@ export type Database = {
           created_at?: string;
           creator_id?: string | null;
           customer_id?: string;
+          first_order_discount_cents?: number;
           expires_at?: string;
           game?: string;
           gg?: boolean;

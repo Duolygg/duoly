@@ -38,6 +38,37 @@ interface CatalogMode {
   unit: 'game' | 'hour';
 }
 
+/** Creator link first-order discount (owner decision 2026-10-27, docs/product/creators.md). */
+export const CREATOR_FIRST_ORDER_PERCENT = 10;
+
+/**
+ * Pure: 10% off the customer price, rounded to the cent. Duoly covers it, so the teammate
+ * payout is unchanged. Never takes the price below Stripe's 0.99 EUR order minimum.
+ */
+export function applyCreatorDiscount<
+  T extends { row: { amount_eur_cents: number } },
+>(
+  built: T,
+): Omit<T, 'row'> & {
+  row: T['row'] & { first_order_discount_cents: number };
+  discountCents: number;
+} {
+  const amount = built.row.amount_eur_cents;
+  const discount = Math.min(
+    Math.round((amount * CREATOR_FIRST_ORDER_PERCENT) / 100),
+    Math.max(0, amount - 99),
+  );
+  return {
+    ...built,
+    row: {
+      ...built.row,
+      amount_eur_cents: amount - discount,
+      first_order_discount_cents: discount,
+    },
+    discountCents: discount,
+  };
+}
+
 /** Pure: everything the intent row and Checkout Session need, priced on the server. */
 export function buildCheckout(
   request: CheckoutRequest,
@@ -203,10 +234,29 @@ export const createCheckout: APIRoute = async (context) => {
       context.cookies,
       config.origin.startsWith('https:'),
     );
+    // First order through an active creator's link: 10% off (decided in the database).
+    let priced: ReturnType<typeof applyCreatorDiscount<typeof built>> = {
+      ...built,
+      row: { ...built.row, first_order_discount_cents: 0 },
+      discountCents: 0,
+    };
+    if (refCode) {
+      const eligible = await (
+        admin.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>,
+        ) => PromiseLike<{ data: unknown; error: unknown }>
+      )('referral_first_order_discount_eligible', {
+        p_customer: identity.viewer.id,
+        p_code: refCode,
+      });
+      if (!eligible.error && eligible.data === true)
+        priced = applyCreatorDiscount(built);
+    }
     const { data: intent, error } = await admin
       .from('checkout_intents')
       .insert({
-        ...built.row,
+        ...priced.row,
         ...(refCode ? { ref_code: refCode } : {}),
         customer_id: identity.viewer.id,
         expires_at: new Date(
@@ -226,7 +276,7 @@ export const createCheckout: APIRoute = async (context) => {
         customerId: identity.viewer.id,
         email: identity.viewer.email,
         origin: config.origin,
-        amountEurCents: built.row.amount_eur_cents,
+        amountEurCents: priced.row.amount_eur_cents,
         productName: built.productName,
         description: built.description,
         nowSeconds: now,

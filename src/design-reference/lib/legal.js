@@ -123,7 +123,7 @@ export const PRIVACY = {
   slug: 'privacy', kicker: 'Legal', title: 'Privacy Policy', updated: LEGAL_UPDATED,
   intro: 'What we collect, why we need it and what you can do about it. Short version: only what it takes to match you with a teammate, no ads, no tracking, no selling your data.',
   summary: [
-    ['eye', 'No tracking or ads', 'No analytics, ad pixels or tracking cookies. Only the cookies the site needs to work.'],
+    ['eye', 'No tracking or ads', 'No analytics or ad pixels. The only optional cookie remembers a creator link, and only if you allow it.'],
     ['lock', 'Never sold', 'We don’t sell or rent your data, and we only share it where it’s needed to run your session.'],
     ['card', 'No card details', 'Your payment details go straight to the payment provider. We only see the amount and the method.'],
     ['user', 'You’re in control', 'See, correct, download or delete your data whenever you want.']
@@ -165,12 +165,14 @@ export const PRIVACY = {
       'Some of these providers can be outside the EU/EEA. In that case we rely on an adequacy decision (such as the EU–US Data Privacy Framework) or the EU’s Standard Contractual Clauses.'
     ] },
     { id: 'cookies', title: 'Cookies & local storage', blocks: [
-      'We only use what’s needed for the site to work, so there’s no cookie banner to click away.',
+      'Most cookies are needed for the site to work. One is optional: if you came through a creator’s link, it remembers that creator for 30 days so they get credit for your first order. We only set it if you choose “Accept all” in the cookie banner, and you can change your choice any time under “Cookie settings” at the bottom of the page.',
       { table: [
         ['Name', 'Type', 'What it does', 'How long'],
         ['next-auth.session-token (and csrf/callback cookies)', 'Cookie', 'Keeps you signed in and protects forms', 'Session, up to 30 days'],
         ['dl_support', 'Cookie', 'Remembers your support chat if you’re not signed in', '1 year'],
         ['duoly-currency', 'Cookie', 'Remembers EUR or USD', '1 year'],
+        ['duoly-consent', 'Cookie', 'Remembers your choice in the cookie banner', '1 year'],
+        ['duoly-ref (optional)', 'Cookie', 'Remembers the creator whose link you used, only with your consent', '30 days'],
         ['duoly-currency, duoly-ign-*', 'Local storage', 'Remembers your currency and in-game name on this device', 'Until you clear it'],
         ['Pending order', 'Session storage', 'Keeps your pick while you sign in', 'Until you close the tab']
       ] },

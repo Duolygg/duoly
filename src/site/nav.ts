@@ -39,6 +39,7 @@ export const FOOTER_COLUMNS = [
     links: [
       { href: '/terms', label: 'Terms' },
       { href: '/privacy', label: 'Privacy' },
+      { href: '#cookie-settings', label: 'Cookie settings' },
       { href: '/imprint', label: 'Imprint' },
     ],
   },

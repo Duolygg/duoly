@@ -115,16 +115,30 @@ describe('creator codes', () => {
   });
 });
 
-function jar(initial: Record<string, string> = {}) {
+// Visitors in these tests accepted all cookies in the banner unless a test says otherwise.
+function jar(
+  initial: Record<string, string> = {},
+  consent: string | null = 'all',
+) {
   const values = new Map(Object.entries(initial));
   const set = vi.fn((name: string, value: string) => values.set(name, value));
+  const remove = vi.fn((name: string) => values.delete(name));
+  const read = (name: string) =>
+    name === 'duoly-consent'
+      ? consent === null
+        ? undefined
+        : { value: consent }
+      : values.has(name)
+        ? { value: values.get(name)! }
+        : undefined;
   return {
     set,
+    remove,
     values,
     cookies: {
-      get: (name: string) =>
-        values.has(name) ? { value: values.get(name)! } : undefined,
+      get: read,
       set,
+      delete: remove,
     } as unknown as Parameters<typeof captureReferral>[2],
   };
 }
@@ -336,5 +350,35 @@ describe('admin Creators screen mapping', () => {
     expect(
       referralOrder({ ...base, status: 'cancelled', payment: 'voided' }).counts,
     ).toBe('No');
+  });
+});
+
+describe('referral cookie consent (cookie banner, owner decision 2026-10-27)', () => {
+  const url = (path: string) => new URL('https://duoly.gg' + path);
+  it('sets nothing before the visitor chose in the banner', () => {
+    const j = jar({}, null);
+    expect(
+      captureReferral(url('/?ref=ALPHA'), 'GET', j.cookies, true),
+    ).toBeNull();
+    expect(j.set).not.toHaveBeenCalled();
+  });
+  it('"Only necessary" sets nothing and removes an existing referral cookie', () => {
+    const j = jar({ '__Host-duoly-ref': 'ALPHA' }, 'necessary');
+    expect(
+      captureReferral(url('/?ref=BETA'), 'GET', j.cookies, true),
+    ).toBeNull();
+    expect(j.set).not.toHaveBeenCalled();
+    expect(j.remove).toHaveBeenCalledWith('__Host-duoly-ref', {
+      path: '/',
+      secure: true,
+    });
+  });
+  it('checkout ignores the code without "Accept all"', () => {
+    for (const consent of [null, 'necessary', 'other']) {
+      const j = jar({ '__Host-duoly-ref': 'ALPHA' }, consent);
+      expect(
+        checkoutRefCode(j.cookies as NonNullable<typeof j.cookies>, true, true),
+      ).toBeNull();
+    }
   });
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type Stripe from 'stripe';
 import {
+  applyCreatorDiscount,
   buildCheckout,
   CheckoutRequestSchema,
   sessionParams,
@@ -252,5 +253,21 @@ describe('settlement', () => {
     const s = stripe('processing');
     expect((await settleOne(s.client, row('release'))).state).toBe('retry');
     expect(s.calls).toEqual([]);
+  });
+});
+
+describe('creator link first-order discount', () => {
+  it('takes 10% off the customer price and leaves the teammate payout alone', () => {
+    const built = buildCheckout(CheckoutRequestSchema.parse(lol));
+    const priced = applyCreatorDiscount(built);
+    const amount = built.row.amount_eur_cents;
+    expect(priced.discountCents).toBe(Math.round(amount / 10));
+    expect(priced.row.amount_eur_cents).toBe(amount - priced.discountCents);
+    expect(priced.row.first_order_discount_cents).toBe(priced.discountCents);
+    expect(priced.row.payout_usd_cents).toBe(built.row.payout_usd_cents);
+  });
+  it('never goes below the 0.99 EUR minimum', () => {
+    const tiny = { row: { amount_eur_cents: 100 } };
+    expect(applyCreatorDiscount(tiny).row.amount_eur_cents).toBe(99);
   });
 });
