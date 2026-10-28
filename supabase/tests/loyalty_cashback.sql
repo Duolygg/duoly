@@ -34,7 +34,7 @@ begin
  values(o,i,'pi_loyalty'||pg_catalog.replace(i::text,'-',''),1000,'eur',1000,'card','captured','none');
  if wallet_spend>0 then
   insert into public.wallet_entries(customer_id,amount_eur_cents,kind,cashable,created_by,reason) values(c,wallet_spend,'admin_credit',false,'5c000000-0000-4000-8000-000000000006','Loyalty test setup');
-  insert into public.wallet_entries(customer_id,amount_eur_cents,kind,cashable,order_id,reason) values(c,-wallet_spend,'checkout_spend',false,o,'Loyalty test wallet spend');
+  insert into public.wallet_entries(customer_id,amount_eur_cents,kind,cashable,order_id,checkout_intent_id,reason) values(c,-wallet_spend,'checkout_spend',false,o,i,'Loyalty test wallet spend');
  end if;
  update public.orders set status='completed',assigned_teammate_id=t,current_assignment_id=a,accepted_at=at,completed_at=at where id=o;
  return o;
