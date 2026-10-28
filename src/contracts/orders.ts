@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { CustomerReportSchema } from './reports';
 import { ReviewSchema } from './reviews';
+import { TipSchema } from './tips';
 
 const TimestampSchema = z.iso.datetime({ offset: true });
 const AvatarSchema = z
@@ -63,6 +64,8 @@ export const CustomerOrderSchema = z.strictObject({
     })
     .nullable(),
   review: ReviewSchema.nullable(),
+  // Added by 20261026100000; optional so code can deploy before the migration.
+  tip: TipSchema.nullable().optional(),
   // Added by 20261024220000; optional so code can deploy before the migration.
   reports: z.array(CustomerReportSchema).max(2).optional(),
 });

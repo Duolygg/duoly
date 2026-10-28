@@ -10,12 +10,13 @@ import { COUNTRY_NAME, flagSrc } from '../../design-reference/lib/countries';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
 import { shrinkImage } from '../../design-reference/lib/shrinkImage';
 import PrivateProofs from '../proofs/PrivateProofs';
+import TipPaymentPanel from './TipPayment';
 import { createRoomFetch } from './queue-room-data';
 
 // Port of the original components/QueueRoom.jsx (duoly-admin/duoly@7f0299f): layout and copy are
 // his. Data and commands go through queue-room-data.js to the real order, chat and proof APIs.
 // Report with bounty (#9), review and tip (#7/#10) stay in the file and switch on here.
-const FEATURES = { reviews: true, tips: false };
+const FEATURES = { reviews: true, tips: true };
 
 // what customers can do once matched (kept in sync with lib/orders.js REVIEW_TAGS and lib/reports.js)
 const REVIEW_TAGS = [
@@ -110,6 +111,7 @@ export default class QueueRoom extends React.Component {
         sent: null,
         drag: false,
       },
+      tipPayment: null,
       rv: {
         rating: 0,
         hover: 0,
@@ -513,8 +515,10 @@ export default class QueueRoom extends React.Component {
         ? Number(String(rv.custom).replace(',', '.')) || 0
         : Number(rv.tip) || 0
       : 0;
-    if (tip < 0 || tip > 100)
-      return this.setState({ rv: { ...rv, err: 'Tips can be up to 100.' } });
+    if (tip > 0 && tip < 1)
+      return this.setState({ rv: { ...rv, err: 'Tips start at €1.' } });
+    if (tip > 100)
+      return this.setState({ rv: { ...rv, err: 'Tips can be up to €100.' } });
     this.setState({ busy: 'review', rv: { ...rv, err: '' } });
     try {
       const { ok, d } = await this.act({
@@ -522,6 +526,7 @@ export default class QueueRoom extends React.Component {
         rating: rv.rating,
         tags: rv.tags,
         text: rv.text,
+        tip,
       });
       if (!ok)
         return this.setState({
@@ -533,7 +538,9 @@ export default class QueueRoom extends React.Component {
         });
       this.setState((s) => ({
         busy: '',
+        tipPayment: d.tipPayment || null,
         order: { ...d.order, reports: s.order.reports || [] },
+        rv: d.tipError ? { ...s.rv, err: d.tipError } : s.rv,
       }));
     } catch (e) {
       this.setState({
@@ -1723,6 +1730,41 @@ export default class QueueRoom extends React.Component {
   }
 
   // After the order: stars, quick tags, a few words and a tip. Then a thank-you with what they sent.
+  resumeTip = async () => {
+    const o = this.state.order;
+    if (!o?.review || o.tip?.state !== 'pending' || this.state.busy) return;
+    this.setState({ busy: 'review' });
+    try {
+      const res = await this.api('/api/orders/' + this.props.id, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'review',
+          rating: o.review.rating,
+          tags: o.review.tags || [],
+          text: o.review.text || '',
+          tip: o.tip.amount,
+        }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || 'The tip could not open.');
+      this.setState((s) => ({
+        busy: '',
+        tipPayment: d.tipPayment || null,
+        order: { ...d.order, reports: s.order.reports || [] },
+      }));
+    } catch (error) {
+      this.setState((s) => ({
+        busy: '',
+        rv: {
+          ...s.rv,
+          err:
+            error instanceof Error ? error.message : 'The tip could not open.',
+        },
+      }));
+    }
+  };
+
   renderReview(v) {
     const { o, mate, sym } = v;
     const name = mate
@@ -1800,6 +1842,23 @@ export default class QueueRoom extends React.Component {
       </div>
     );
 
+    if (this.state.tipPayment) {
+      return (
+        <TipPaymentPanel
+          payment={this.state.tipPayment}
+          onPaid={() =>
+            this.setState((s) => ({
+              tipPayment: null,
+              order: {
+                ...s.order,
+                tip: s.order.tip ? { ...s.order.tip, state: 'paid' } : null,
+              },
+            }))
+          }
+        />
+      );
+    }
+
     if (o.review) {
       return (
         <div className="q-review" style={{ textAlign: 'center' }}>
@@ -1831,6 +1890,23 @@ export default class QueueRoom extends React.Component {
             {o.tip ? '100% of your tip goes to ' + name + '. ' : ''}Your
             feedback helps us match you with the right teammates.
           </p>
+          {o.tip?.state === 'pending' ? (
+            <button
+              type="button"
+              className="q-review-send"
+              disabled={this.state.busy === 'review'}
+              onClick={this.resumeTip}
+            >
+              {this.state.busy === 'review'
+                ? 'Opening payment…'
+                : `Pay €${o.tip.amount.toFixed(2)} tip`}
+            </button>
+          ) : null}
+          {rv.err ? (
+            <p role="alert" style={{ color: PINK, fontSize: '13.5px' }}>
+              {rv.err}
+            </p>
+          ) : null}
         </div>
       );
     }
@@ -2086,7 +2162,7 @@ export default class QueueRoom extends React.Component {
               {this.state.busy === 'review'
                 ? 'Sending…'
                 : tipVal > 0
-                  ? 'Send rating & ' +
+                  ? 'Send rating and ' +
                     sym +
                     tipVal.toFixed(2).replace(/\.00$/, '') +
                     ' tip'

@@ -3,6 +3,7 @@
 import ProductLayout from '../../../../../src/layouts/ProductLayout.astro';
 import OrderChat from '../../../../../src/components/chat/OrderChat';
 import CustomerOrderRoom from '../../../../../src/components/account/CustomerOrderRoom';
+import LiveQueueRoom from '../../../../../src/components/account/LiveQueueRoom';
 import OrderDesk from '../../../../../src/components/teammate/OrderDesk';
 import { CustomerOrderSchema } from '../../../../../src/contracts/orders';
 const order = CustomerOrderSchema.parse({
@@ -48,6 +49,22 @@ const view =
   </p>
   {mode === 'chat' ? (
     <OrderChat orderId={order.id} csrf="fixture-csrf" view={view} client:load />
+  ) : mode === 'queue' ? (
+    <LiveQueueRoom
+      id={order.id}
+      viewer={{
+        id: '33333333-3333-4333-8333-333333333333',
+        email: 'alex@example.test',
+        name: 'Alex',
+        image: '',
+        provider: 'email',
+        role: 'customer',
+      }}
+      csrf="fixture-csrf"
+      chatEnabled={false}
+      reportsEnabled={false}
+      client:load
+    />
   ) : view === 'teammate' ? (
     <OrderDesk {...{ csrf: 'fixture-csrf', chatEnabled: true }} client:load />
   ) : (

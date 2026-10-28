@@ -5,8 +5,10 @@ export const TIP_MIN_CENTS = 100;
 export const TIP_MAX_CENTS = 10000;
 
 export const TipInputSchema = z.strictObject({
-  csrf: z.string().min(1).max(128),
-  amount_cents: z.number().int().min(TIP_MIN_CENTS).max(TIP_MAX_CENTS),
+  amount_cents: z.union([
+    z.literal(0),
+    z.number().int().min(TIP_MIN_CENTS).max(TIP_MAX_CENTS),
+  ]),
 });
 
 export const TipSchema = z.strictObject({
@@ -25,7 +27,7 @@ export const TipStatusSchema = z.strictObject({
   tipUntil: z.number().int().nullable(),
 });
 
-/** order_tip_prepare(): the recorded amount; the server attaches the PaymentIntent. */
+/** The database-prepared amount; the server attaches the PaymentIntent. */
 export const TipPreparedSchema = z.strictObject({
   tipId: z.uuid(),
   amountCents: z.number().int().min(TIP_MIN_CENTS).max(TIP_MAX_CENTS),
@@ -38,3 +40,12 @@ export const TipPreparedSchema = z.strictObject({
   teammate: z.string().min(1).max(200),
   tip: TipSchema,
 });
+export type TipPrepared = z.infer<typeof TipPreparedSchema>;
+
+export type TipPayment = {
+  clientSecret: string;
+  publishableKey: string;
+  amount: number;
+  currency: 'EUR';
+  teammate: string;
+};

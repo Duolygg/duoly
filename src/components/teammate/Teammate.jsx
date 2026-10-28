@@ -57,7 +57,7 @@ export const FEATURES = {
   trust: true,
   stats: true,
   reviews: true,
-  tips: false,
+  tips: true,
   leaderboard: true,
   handovers: false,
   cancelled: false,

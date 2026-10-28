@@ -2,16 +2,15 @@
 -- T1 a tip is its own Stripe PaymentIntent, confirmed by the customer right after the rating is saved.
 -- T2/T3 1.00 to 100.00 EUR (the order's currency). T4 the teammate keeps 100%: the tip is converted to
 -- USD at the ECB mid rate fixed when the PaymentIntent is created, no fee is deducted (Duoly pays it).
--- T5 one tip per order, only together with the rating: the tip can be started within 30 minutes of the
--- rating and never after a tip was paid. T6 never paid from the wallet (Stripe only; nothing here
+-- T5 one tip per order, created only together with the rating by the order customer after completion. T6 never paid from the wallet (Stripe only; nothing here
 -- touches wallet_entries) and never earns loyalty cashback (cashback reads order_payments only).
 -- T7 a refund or dispute of a tip that was already counted in a payout line is taken back from the
 -- teammate's next payout week as a negative tip movement; a won dispute gives it back the same way.
 -- Payout timing: a tip counts in the payout week in which it was paid (paid_at), not the order's week.
 --
--- Deploy order: apply this migration first, then deploy the code. The migration is additive (new tables
--- and functions) and replaces payout read models with the same signatures, so the old code keeps
--- working (tipsTotal stays 0 until the new code takes the first tip). The new code needs the RPCs below.
+-- Deploy order: deploy the code first, then apply this migration. The code accepts the optional tip
+-- field before the database adds it. The migration adds the tip tables and RPCs and then extends the
+-- order and payout read models; do not use the tip UI until both steps are complete.
 --
 -- Latest definitions replaced here (all from 20261025250000_weekly_payouts.sql, rules unchanged apart
 -- from adding tips): payout_freeze_week(timestamptz), payout_freeze_due_at(timestamptz),
@@ -116,60 +115,68 @@ $$;
 
 -- ---- customer RPCs ----------------------------------------------------------------------------
 
--- Starts (or re-opens) the customer's tip for one order. Records the amount only; the server then
--- creates or updates the Stripe PaymentIntent and attaches it with order_tip_attach().
-create function public.order_tip_prepare(p_order_id uuid,p_amount_cents integer) returns jsonb
+-- Records the review and selected tip in one transaction. This is the database enforcement for T5:
+-- a new tip can only be created by the same call that creates the one review for the order.
+create function public.order_review_tip(p_order_id uuid,p_rating integer,p_text text default '',p_tags text[] default '{}',p_amount_cents integer default null) returns jsonb
 language plpgsql security definer set search_path='' as $$
-declare v_actor uuid:=auth.uid(); v public.orders; e public.teammate_earning_entries; r public.order_reviews; t public.order_tips;
+declare v_actor uuid:=auth.uid(); v public.orders; a public.order_assignments; r public.order_reviews; t public.order_tips;
+ v_text text; v_tags text[];
 begin
   if v_actor is null then return public.order_error(401,'Authentication required.'); end if;
-  perform 1 from public.account_roles where user_id=v_actor and role='customer';
+  perform 1 from public.account_roles where user_id=v_actor and role='customer' for share;
   if not found then return public.order_error(403,'Customer role required.'); end if;
   select o.* into v from public.orders o where o.id=p_order_id and o.customer_id=v_actor for update;
   if v.id is null then return public.order_error(404,'Order not found.'); end if;
-  select x.* into e from public.teammate_earning_entries x where x.order_id=v.id;
-  if v.status<>'completed' or e.order_id is null then return public.order_error(409,'You can tip your teammate once the order is done.'); end if;
-  select x.* into r from public.order_reviews x where x.order_id=v.id;
-  if r.order_id is null then return public.order_error(409,'Rate your teammate first, then add your tip.'); end if;
-  if p_amount_cents is null or p_amount_cents not between 100 and 10000 then
-    return public.order_error(400,'Tips can be from €1 to €100.'); end if;
-  select x.* into t from public.order_tips x where x.order_id=v.id for update;
-  if t.state in ('paid','refunded','disputed') then return public.order_error(409,'You already tipped for this order. Thank you!'); end if;
-  if r.created_at<pg_catalog.clock_timestamp()-interval '30 minutes' then
-    return public.order_error(409,'Tips can only be added together with your rating.'); end if;
-  if t.id is null then
+  if v.status<>'completed' then return public.order_error(409,'You can rate your teammate once the order is done.'); end if;
+  if exists(select 1 from public.order_reviews where order_id=v.id) then return public.order_error(409,'You already rated this order. Thank you!'); end if;
+  if p_rating is null or p_rating not between 1 and 5 then return public.order_error(400,'Pick 1 to 5 stars.'); end if;
+  if p_amount_cents is not null and p_amount_cents not between 100 and 10000 then return public.order_error(400,'Tips can be from €1 to €100.'); end if;
+  v_text:=pg_catalog.left(pg_catalog.btrim(pg_catalog.regexp_replace(coalesce(p_text,''),'[[:cntrl:]]',' ','g')),500);
+  select coalesce(pg_catalog.array_agg(q.tag order by q.n),'{}') into v_tags from (
+    select x.tag,pg_catalog.min(x.n) n from pg_catalog.unnest(coalesce(p_tags,'{}'::text[])) with ordinality x(tag,n)
+    where x.tag=any(array['Great comms','Shotcaller','Super friendly','Taught me a lot','Carried hard','Patient','Fun to play with']::text[])
+    group by x.tag order by n limit 4) q;
+  select x.* into a from public.order_assignments x where x.id=v.current_assignment_id and x.order_id=v.id
+    and x.teammate_id=v.assigned_teammate_id and x.end_reason='completed' and x.ended_at is not null for share;
+  if a.id is null or not exists(select 1 from public.teammate_earning_entries e where e.order_id=v.id and e.assignment_id=a.id and e.teammate_id=a.teammate_id) then
+    return public.order_error(409,'Completed assignment unavailable.'); end if;
+  insert into public.order_reviews(order_id,assignment_id,customer_id,teammate_id,rating,text,tags)
+    values(v.id,a.id,v_actor,a.teammate_id,p_rating,v_text,v_tags) returning * into r;
+  if p_amount_cents is not null then
     insert into public.order_tips(order_id,customer_id,teammate_id,amount_cents)
-      values(v.id,v_actor,e.teammate_id,p_amount_cents) returning * into t;
-  elsif t.state='canceled' then
-    if t.attempt>=50 then return public.order_error(409,'Tips can only be added together with your rating.'); end if;
-    update public.order_tips set state='pending',amount_cents=p_amount_cents,stripe_payment_intent_id=null,fx_eur_usd=null,
-      attempt=attempt+1,last_error=null,updated_at=pg_catalog.clock_timestamp() where id=t.id returning * into t;
-  else
-    update public.order_tips set amount_cents=p_amount_cents,updated_at=pg_catalog.clock_timestamp() where id=t.id returning * into t;
+      values(v.id,v_actor,a.teammate_id,p_amount_cents) returning * into t;
   end if;
-  return pg_catalog.jsonb_build_object('tipId',t.id,'amountCents',t.amount_cents,'attempt',t.attempt,
-    'paymentIntentId',t.stripe_payment_intent_id,'reference',v.public_reference,
-    'teammate',coalesce((select nullif(p.name,'Player') from public.profiles p where p.id=t.teammate_id),'your teammate'),
-    'tip',public.tip_dto(t));
+  if exists(select 1 from public.order_chat_rooms where assignment_id=a.id) then
+    perform public.order_chat_append(a.id,'system','Duoly','','Rated '||p_rating::text||'/5. Thank you!',null,'reviewed');
+    perform public.order_chat_invalidate(a.id);
+  end if;
+  return pg_catalog.jsonb_build_object('order',public.order_customer_dto(v),'tipPrepared',case when t.id is null then null else
+    pg_catalog.jsonb_build_object('tipId',t.id,'amountCents',t.amount_cents,'attempt',t.attempt,'paymentIntentId',null,
+      'reference',v.public_reference,'teammate',coalesce((select nullif(p.name,'Player') from public.profiles p where p.id=t.teammate_id),'your teammate'),'tip',public.tip_dto(t)) end);
 end $$;
 
--- What the order room shows: the tip, and whether a tip can still be started (T5).
+-- Service-only recovery of the already selected pending tip. It cannot create or change a tip.
+create function public.order_tip_pending(p_order_id uuid,p_customer_id uuid) returns jsonb
+language sql stable security definer set search_path='' as $$
+  select case when t.id is null or t.state<>'pending' then null else pg_catalog.jsonb_build_object(
+    'tipId',t.id,'amountCents',t.amount_cents,'attempt',t.attempt,'paymentIntentId',t.stripe_payment_intent_id,
+    'reference',o.public_reference,'teammate',coalesce(nullif(p.name,'Player'),'your teammate'),'tip',public.tip_dto(t)) end
+  from public.orders o join public.order_tips t on t.order_id=o.id left join public.profiles p on p.id=t.teammate_id
+  where o.id=p_order_id and o.customer_id=p_customer_id;
+$$;
+
+-- What the order room shows. A selected pending tip can be resumed, but no tip can be added later.
 create function public.order_tip_status(p_order_id uuid) returns jsonb
 language plpgsql stable security definer set search_path='' as $$
-declare v_actor uuid:=auth.uid(); v public.orders; r public.order_reviews; t public.order_tips;
+declare v_actor uuid:=auth.uid(); v public.orders; t public.order_tips;
 begin
   if v_actor is null then return public.order_error(401,'Authentication required.'); end if;
   perform 1 from public.account_roles where user_id=v_actor and role='customer';
   if not found then return public.order_error(403,'Customer role required.'); end if;
   select o.* into v from public.orders o where o.id=p_order_id and o.customer_id=v_actor;
   if v.id is null then return public.order_error(404,'Order not found.'); end if;
-  select x.* into r from public.order_reviews x where x.order_id=v.id;
   select x.* into t from public.order_tips x where x.order_id=v.id;
-  return pg_catalog.jsonb_build_object('tip',public.tip_dto(t),
-    'canTip',v.status='completed' and exists(select 1 from public.teammate_earning_entries x where x.order_id=v.id)
-      and coalesce(t.state,'pending') in ('pending','canceled')
-      and (r.order_id is null or r.created_at>=pg_catalog.clock_timestamp()-interval '30 minutes'),
-    'tipUntil',case when r.order_id is null then null else public.payout_ms(r.created_at+interval '30 minutes') end);
+  return pg_catalog.jsonb_build_object('tip',public.tip_dto(t),'canTip',t.state='pending','tipUntil',null);
 end $$;
 
 -- ---- server (service role) RPCs ---------------------------------------------------------------
@@ -186,7 +193,9 @@ begin
   if t.state<>'pending' then return pg_catalog.jsonb_build_object('attached',false,'reason',t.state); end if;
   if t.stripe_payment_intent_id is not null and t.stripe_payment_intent_id<>p_payment_intent then
     return pg_catalog.jsonb_build_object('attached',false,'reason','other_intent'); end if;
-  update public.order_tips set stripe_payment_intent_id=p_payment_intent,amount_cents=p_amount_cents,fx_eur_usd=p_fx,
+  if t.amount_cents<>p_amount_cents then
+    return pg_catalog.jsonb_build_object('attached',false,'reason','amount_mismatch'); end if;
+  update public.order_tips set stripe_payment_intent_id=p_payment_intent,fx_eur_usd=coalesce(fx_eur_usd,p_fx),
     updated_at=pg_catalog.clock_timestamp() where id=t.id;
   return pg_catalog.jsonb_build_object('attached',true);
 end $$;
@@ -206,18 +215,18 @@ begin
   select x.* into t from public.order_tips x where x.stripe_payment_intent_id=p_payment_intent for update;
   if t.id is null or t.id is distinct from p_tip_id then return pg_catalog.jsonb_build_object('recorded',false,'reason','unknown_tip'); end if;
   if t.state<>'pending' then return pg_catalog.jsonb_build_object('recorded',false,'reason','already_'||t.state,'state',t.state); end if;
-  if p_currency is distinct from 'eur' or p_amount_cents is null or p_amount_cents not between 100 and 10000 then
+  if p_currency is distinct from 'eur' or p_amount_cents is distinct from t.amount_cents then
     update public.order_tips set last_error='Amount or currency outside the tip rules',updated_at=pg_catalog.clock_timestamp() where id=t.id;
     return pg_catalog.jsonb_build_object('recorded',false,'reason','amount_mismatch');
   end if;
-  update public.order_tips set state='paid',amount_cents=p_amount_cents,
+  update public.order_tips set state='paid',
     amount_usd_cents=greatest(1,pg_catalog.round(p_amount_cents*t.fx_eur_usd)::integer),paid_at=pg_catalog.clock_timestamp(),
     last_error=null,updated_at=pg_catalog.clock_timestamp() where id=t.id;
   return pg_catalog.jsonb_build_object('recorded',true,'state','paid','tipId',t.id);
 end $$;
 
--- A canceled tip PaymentIntent closes the pending tip (it can be started again inside the window);
--- a failed attempt only records the reason, the customer can retry on the same PaymentIntent.
+-- A canceled tip PaymentIntent closes the pending tip; a failed attempt only records the reason and
+-- the customer can retry on the same PaymentIntent.
 create function public.order_tip_record_failure(p_payment_intent text,p_status text,p_error text) returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare t public.order_tips;
@@ -279,6 +288,43 @@ begin
       public.payout_person(t.teammate_id),public.payout_money(v_diff)||' in the next payout week · '||p_status);
   end if;
   return pg_catalog.jsonb_build_object('updated',true,'state',t.state,'tipId',t.id,'movement',v_diff);
+end $$;
+
+-- Latest customer order DTO from 20261024220000_order_reports.sql, plus the customer's own tip.
+create or replace function public.order_customer_dto(p_order public.orders) returns jsonb
+language sql stable security invoker set search_path='' as $$
+  select pg_catalog.jsonb_build_object(
+    'id',p_order.id,'public_reference',p_order.public_reference,'status',p_order.status,
+    'game',p_order.game,'service',p_order.service,'title',p_order.title,'units',p_order.units,'unit',p_order.unit,'gg',p_order.gg,
+    'rank',p_order.rank,'region',p_order.region,'ign',p_order.ign,'note',p_order.note,'voice',p_order.voice,
+    'amount_eur_cents',p_order.amount_eur_cents,'created_at',p_order.created_at,'queued_at',p_order.queued_at,
+    'accepted_at',p_order.accepted_at,'completed_at',p_order.completed_at,'cancelled_at',p_order.cancelled_at,
+    'cancel_reason',p_order.cancel_reason,'rerolls',p_order.rerolls,'current_assignment_id',p_order.current_assignment_id,
+    'teammate',(select pg_catalog.jsonb_build_object('name',p.name,'image',p.image,'country',p.country,'bio',p.bio,'languages',pg_catalog.to_jsonb(p.languages)) from public.profiles p where p.id=p_order.assigned_teammate_id),
+    'review',(select public.order_review_dto(r) from public.order_reviews r where r.order_id=p_order.id),
+    'tip',(select public.tip_dto(t) from public.order_tips t where t.order_id=p_order.id),
+    'reports',coalesce((select pg_catalog.jsonb_agg(public.order_report_customer_dto(r) order by r.created_at) from public.order_reports r where r.order_id=p_order.id and r.customer_id=p_order.customer_id),'[]'::jsonb));
+$$;
+
+-- Latest admin order detail from 20261024170000_handover_admin_actions.sql, plus tip status.
+create or replace function public.admin_orders(p_limit integer default 500) returns jsonb
+language plpgsql stable security definer set search_path='' as $$
+begin
+  if not exists(select 1 from public.admin_caller()) then return public.order_error(403,'Admins only.'); end if;
+  return pg_catalog.jsonb_build_object('orders',coalesce((select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+    'id',o.public_reference,'orderId',o.id,'status',o.status,'game',o.game,'service',o.title,'units',o.units,'unit',o.unit,'gg',o.gg,
+    'rank',o.rank,'region',o.region,'voice',o.voice,'amountCents',o.amount_eur_cents,'payoutUsdCents',o.payout_usd_cents,'fx',o.booking_fx,
+    'createdAt',o.created_at,'queuedAt',o.queued_at,'acceptedAt',o.accepted_at,'completedAt',o.completed_at,'cancelledAt',o.cancelled_at,'cancelReason',o.cancel_reason,
+    'adminCancelNote',o.admin_cancel_note,'adminRefundedAt',o.admin_refunded_at,'adminRefundReason',o.admin_refund_reason,
+    'rerolls',o.rerolls,'customerId',o.customer_id,'customer',o.customer_name,'customerAv',o.customer_image,
+    'teammateId',o.assigned_teammate_id,'teammate',tp.name,'teammateAv',tp.image,
+    'review',(select public.order_review_dto(r) from public.order_reviews r where r.order_id=o.id),
+    'tip',(select public.tip_dto(t) from public.order_tips t where t.order_id=o.id),
+    'payment',case when pay.order_id is null then null else pg_catalog.jsonb_build_object('method',pay.payment_method_type,'state',pay.state,'settle',pay.settle,
+      'currency',pay.currency,'amountMinor',pay.amount_minor,'error',pay.last_error,'stripeId',pay.stripe_payment_intent_id,'refundReason',pay.refund_reason,'refundedAt',pay.refunded_at) end,
+    'refundCents',(select pg_catalog.sum(c.amount_eur_cents) from public.refund_credits c where c.order_id=o.id)) order by o.created_at desc)
+    from (select * from public.orders order by created_at desc limit greatest(1,least(coalesce(p_limit,500),2000))) o
+    left join public.profiles tp on tp.id=o.assigned_teammate_id left join public.order_payments pay on pay.order_id=o.id),'[]'::jsonb));
 end $$;
 
 -- ---- payouts: create or replace from 20261025250000_weekly_payouts.sql, adding tips --------------
@@ -515,14 +561,14 @@ end $$;
 
 revoke all on function
   public.tip_payable_usd(public.order_tips),public.tip_sync_payout(uuid,text),public.tip_dto(public.order_tips),
-  public.order_tip_prepare(uuid,integer),public.order_tip_status(uuid),
+  public.order_review_tip(uuid,integer,text,text[],integer),public.order_tip_pending(uuid,uuid),public.order_tip_status(uuid),
   public.order_tip_attach(uuid,text,integer,numeric),public.order_tip_for_intent(text),
   public.order_tip_record_payment(text,uuid,integer,text),public.order_tip_record_failure(text,text,text),
   public.order_tip_record_refund(text,integer),public.order_tip_record_dispute(text,text,text)
   from public,anon,authenticated,service_role;
-grant execute on function public.order_tip_prepare(uuid,integer),public.order_tip_status(uuid) to authenticated;
+grant execute on function public.order_review_tip(uuid,integer,text,text[],integer),public.order_tip_status(uuid) to authenticated;
 grant execute on function
-  public.order_tip_attach(uuid,text,integer,numeric),public.order_tip_for_intent(text),
+  public.order_tip_pending(uuid,uuid),public.order_tip_attach(uuid,text,integer,numeric),public.order_tip_for_intent(text),
   public.order_tip_record_payment(text,uuid,integer,text),public.order_tip_record_failure(text,text,text),
   public.order_tip_record_refund(text,integer),public.order_tip_record_dispute(text,text,text)
   to service_role;

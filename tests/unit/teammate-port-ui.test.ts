@@ -93,6 +93,7 @@ it('retains the original layout with live presence and unsupported controls stil
     presence,
     notifications,
     reviews,
+    tips,
     leaderboard,
     preferences,
     trust,
@@ -107,8 +108,8 @@ it('retains the original layout with live presence and unsupported controls stil
   expect(presence).toBe(true);
   expect(notifications).toBe(true);
   expect(reviews).toBe(true);
-  expect(FEATURES.tips).toBe(false);
-  expect(html).not.toContain('Tips received');
+  expect(tips).toBe(true);
+  expect(html).toContain('Tips received');
   expect(html).toContain('Earned today');
   expect(Object.values(gated).every((v) => v === false)).toBe(true);
 });

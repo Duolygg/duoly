@@ -25,6 +25,9 @@ export const ReviewInputSchema = z.strictObject({
     .array(z.enum(REVIEW_TAGS))
     .max(4)
     .refine((tags) => new Set(tags).size === tags.length),
+  tip_cents: z
+    .union([z.literal(0), z.number().int().min(100).max(10000)])
+    .default(0),
 });
 
 const ReviewStatsSchema = z.strictObject({
@@ -48,21 +51,21 @@ const ReviewStatsSchema = z.strictObject({
     .optional(),
   rating: z.number().min(1).max(5).nullable(),
   reviews: z.number().int().nonnegative(),
-  tipsTotal: z.literal(0),
+  tipsTotal: z.number().nonnegative(),
   recent: z.array(
     z.union([
       z.strictObject({
         orderId: z.uuid(),
         at: z.number().int(),
         net: z.number().nonnegative(),
-        tip: z.literal(0),
+        tip: z.number().nonnegative(),
         game: z.string(),
       }),
       z.strictObject({
         orderId: z.null(),
         at: z.number().int(),
         net: z.number(),
-        tip: z.literal(0),
+        tip: z.number().nonnegative(),
         game: z.null(),
         adjustment: z.literal(true),
       }),
