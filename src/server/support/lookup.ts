@@ -324,8 +324,8 @@ export function sparkyLookup(
     async deskStatus() {
       // The Discord link is read from teammate_order_access.discord_id, which a
       // trigger mirrors from the linked Discord identity: the service role has no
-      // read grant on discord_accounts or teammate_presence. Presence is read best
-      // effort so it starts working if a read grant is added later.
+      // read grant on discord_accounts. Presence: 20261026170000 grants the four
+      // columns read here; still best effort so an older database answers null.
       const [access, presence, busy] = await Promise.all([
         service
           .from('teammate_order_access')
