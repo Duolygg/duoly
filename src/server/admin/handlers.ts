@@ -26,6 +26,7 @@ import { ownerEmails } from './owners';
 import { sendApplicationDecision, sendApplicationReceived } from './notify';
 import { settleSoon } from '../payments/webhook';
 import { syncRolesAfter } from '../discord/role-hooks';
+import { connectEnabled } from '../connect/config';
 
 type Client = NonNullable<AccountContext['client']>;
 type Rpc = PromiseLike<{ data: unknown; error: unknown }>;
@@ -307,8 +308,17 @@ export const creators = adminRoute(
   ],
 );
 
+/** Admin payouts read model plus whether Pay via Stripe is switched on (CONNECT_PAYOUTS_ENABLED). */
+async function adminPayoutsRead(client: Client) {
+  const result = await client.rpc('admin_payouts');
+  const data = result.data as Record<string, unknown> | null;
+  if (result.error || !data || typeof data !== 'object' || 'error' in data)
+    return result;
+  return { data: { ...data, connect: connectEnabled() }, error: null };
+}
+
 export const payouts = adminRoute(
-  (client) => client.rpc('admin_payouts'),
+  (client) => adminPayoutsRead(client),
   [
     {
       schema: AdminPayoutCommandSchema,
@@ -327,10 +337,16 @@ export const payouts = adminRoute(
               p_reference: body.reference as string,
             });
           case 'payAll':
-            return client.rpc('admin_payout_pay_all', {
-              p_method: body.method as string,
-              p_reference: body.reference as string,
-            });
+            // With Stripe payouts on, the manual batch leaves Stripe-ready lines alone.
+            return client.rpc(
+              connectEnabled()
+                ? 'admin_payout_pay_all_manual'
+                : 'admin_payout_pay_all',
+              {
+                p_method: body.method as string,
+                p_reference: body.reference as string,
+              },
+            );
           case 'hold':
             return client.rpc('admin_payout_hold', {
               p_line_id: body.payoutId as string,

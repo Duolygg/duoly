@@ -34,6 +34,44 @@ const weekLabel = (p) =>
     month: 'short',
   });
 
+/** M9 rail of a payout line: Stripe when the line was or will be paid with Stripe. */
+const stripeReady = (p) =>
+  p.connect === 'ready' || (p.transfer && p.transfer.state === 'pending');
+const railOf = (p) =>
+  p.method === 'stripe' ||
+  (p.status !== 'Paid' && p.status !== 'Accruing' && stripeReady(p)) ||
+  (p.status === 'Accruing' && p.connect === 'ready')
+    ? 'Stripe'
+    : 'Manual';
+const connectNote = {
+  not_started: 'no Stripe account',
+  pending: 'Stripe pending verification',
+  restricted: 'Stripe restricted',
+};
+const railNote = (p) => {
+  const t = p.transfer;
+  if (t && t.state === 'pending') return 'transfer pending';
+  if (t && t.state === 'reversed') return 'transfer reversed';
+  if (t && t.state === 'paid' && t.reversed > 0) return 'partly reversed';
+  if (t && t.state === 'failed' && p.status === 'Scheduled')
+    return 'last transfer failed';
+  if (railOf(p) === 'Manual' && p.status !== 'Paid')
+    return connectNote[p.connect] || '';
+  return '';
+};
+const railTitle = (p) => {
+  const t = p.transfer;
+  if (!t) return undefined;
+  return [
+    t.transferId,
+    t.currency + ' ' + Number(t.amount).toFixed(2),
+    t.fx ? 'ECB ' + t.fx : '',
+    t.error || '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+};
+
 export default class Payouts extends React.Component {
   constructor(props) {
     super(props);
@@ -43,6 +81,7 @@ export default class Payouts extends React.Component {
       loaded: false,
       error: '',
       busy: false,
+      connect: false,
     };
   }
   componentDidMount() {
@@ -58,6 +97,7 @@ export default class Payouts extends React.Component {
     this.setState({
       loaded: true,
       error: '',
+      connect: response.data.connect === true,
       payouts: (response.data.payouts || []).map((p) => ({
         ...p,
         tierColor:
@@ -76,6 +116,23 @@ export default class Payouts extends React.Component {
         'warn',
       );
     this.props.toast(success);
+    this.props.log();
+    this.load();
+  };
+  /** M9: one Stripe Transfer for one Scheduled line. Safe to press again after an error. */
+  stripePay = async (id) => {
+    if (this.state.busy) return;
+    this.setState({ busy: true });
+    const response = await this.props.api.post('/api/admin/payout-stripe', {
+      payoutId: id,
+    });
+    this.setState({ busy: false });
+    if (!response.ok) {
+      this.props.toast(response.error || 'Couldn’t pay via Stripe.', 'warn');
+      this.load();
+      return;
+    }
+    this.props.toast('Paid via Stripe.');
     this.props.log();
     this.load();
   };
@@ -277,7 +334,9 @@ export default class Payouts extends React.Component {
                       ' · ' +
                       usd(sum(scheduled, 'total')) +
                       '?',
-                    body: 'Marks every payout from finished weeks as paid. Payouts on hold and this week’s running total are skipped. No money is sent. Pay each transfer yourself first.',
+                    body: s.connect
+                      ? 'Marks every manual payout from finished weeks as paid. Payouts on hold, this week’s running total and payouts for teammates with a ready Stripe account are skipped. No money is sent. Pay each manual transfer yourself first.'
+                      : 'Marks every payout from finished weeks as paid. Payouts on hold and this week’s running total are skipped. No money is sent. Pay each transfer yourself first.',
                     confirm: 'Continue',
                     onConfirm: () => actions.payAll(),
                   })
@@ -301,6 +360,7 @@ export default class Payouts extends React.Component {
                   </th>
                   <th style={{ ...th, textAlign: 'right' }}>Payout</th>
                   <th style={th}>Status</th>
+                  {s.connect ? <th style={th}>Rail</th> : null}
                   <th style={th}>
                     <span
                       style={{
@@ -450,6 +510,30 @@ export default class Payouts extends React.Component {
                         {p.status}
                       </span>
                     </td>
+                    {s.connect ? (
+                      <td style={td} data-rail={railOf(p)}>
+                        <span
+                          title={railTitle(p)}
+                          style={{
+                            fontSize: '13px',
+                            color: railOf(p) === 'Stripe' ? C.cyan : C.dim,
+                          }}
+                        >
+                          {railOf(p)}
+                        </span>
+                        {railNote(p) ? (
+                          <span
+                            style={{
+                              display: 'block',
+                              fontSize: '12px',
+                              color: C.dim,
+                            }}
+                          >
+                            {railNote(p)}
+                          </span>
+                        ) : null}
+                      </td>
+                    ) : null}
                     <td style={{ ...td, textAlign: 'right' }}>
                       {p.status === 'Paid' || p.status === 'Accruing' ? (
                         <span style={{ fontSize: '13px', color: C.dim }}>
@@ -457,7 +541,32 @@ export default class Payouts extends React.Component {
                         </span>
                       ) : (
                         <span style={{ display: 'inline-flex', gap: '6px' }}>
-                          {p.status === 'Scheduled' ? (
+                          {p.status === 'Scheduled' &&
+                          s.connect &&
+                          stripeReady(p) ? (
+                            <button
+                              type="button"
+                              style={btn()}
+                              disabled={s.busy}
+                              onClick={() =>
+                                ask({
+                                  title:
+                                    'Pay ' +
+                                    usd(p.total) +
+                                    ' to ' +
+                                    p.teammate +
+                                    ' via Stripe?',
+                                  body: 'Sends a Stripe transfer from the Duoly balance to their Stripe account and marks the payout paid. Pressing it again never pays twice.',
+                                  confirm: 'Pay via Stripe',
+                                  onConfirm: () => this.stripePay(p.id),
+                                })
+                              }
+                            >
+                              {p.transfer && p.transfer.state === 'pending'
+                                ? 'Retry Pay via Stripe'
+                                : 'Pay via Stripe'}
+                            </button>
+                          ) : p.status === 'Scheduled' ? (
                             <button
                               type="button"
                               style={btn()}
@@ -469,7 +578,9 @@ export default class Payouts extends React.Component {
                                     ' to ' +
                                     p.teammate +
                                     ' as paid?',
-                                  body: 'Only records it. Send the money yourself first: no payout provider is connected yet.',
+                                  body: s.connect
+                                    ? 'Only records it. Send the money yourself first: this teammate has no ready Stripe account.'
+                                    : 'Only records it. Send the money yourself first: no payout provider is connected yet.',
                                   confirm: 'Mark paid',
                                   onConfirm: () => actions.payPayout(p.id),
                                 })
@@ -496,7 +607,9 @@ export default class Payouts extends React.Component {
                             >
                               Release
                             </button>
-                          ) : (
+                          ) : s.connect &&
+                            p.transfer &&
+                            p.transfer.state === 'pending' ? null : (
                             <button
                               type="button"
                               style={btn('danger')}

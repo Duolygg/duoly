@@ -20,6 +20,7 @@ const viewer = {
     discordLinked={Astro.url.searchParams.get('discord') !== 'missing'}
     discordEnabled={true}
     chatEnabled={true}
+    connectPayouts={Astro.url.searchParams.get('connect') === 'on'}
     client:load
   />
 </SiteLayout>

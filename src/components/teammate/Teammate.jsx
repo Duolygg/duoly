@@ -5010,7 +5010,11 @@ export default class Teammate extends React.Component {
                       </ul>
                     ) : null}
                     {v.payout ? (
-                      <PayoutPanel payout={v.payout} csrf={this.props.csrf} />
+                      <PayoutPanel
+                        payout={v.payout}
+                        csrf={this.props.csrf}
+                        connect={!!this.props.connectPayouts}
+                      />
                     ) : null}
                     <LatestReviews reviews={v.latestReviews} />
                   </section>
