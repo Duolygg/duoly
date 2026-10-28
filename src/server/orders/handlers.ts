@@ -157,3 +157,10 @@ export const assignment = route(
   (client) => client.rpc('teammate_current_assignment'),
   { role: 'teammate' },
 );
+/** A Diamond customer picked this teammate: pass now, the order goes to the normal queue. */
+export const passPicked = route(
+  'pickedPass',
+  (client, { p_order_id }) =>
+    client.rpc('teammate_pass_picked_order', { p_order_id }),
+  { input: 'id', method: 'POST', role: 'teammate' },
+);
