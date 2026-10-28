@@ -12,6 +12,7 @@ import {
   refundedPaymentIntentId,
 } from '../../src/server/payments/webhook';
 import { settleOne } from '../../src/server/payments/settle';
+import { walletSplit } from '../../src/server/payments/wallet';
 
 const lol = {
   gameId: 'lol',
@@ -21,6 +22,25 @@ const lol = {
   rank: 'Platinum',
   ign: 'Tester#EUW',
 };
+
+describe('wallet split', () => {
+  it('defaults wallet use on and rejects browser money fields', () => {
+    expect(CheckoutRequestSchema.parse(lol).useWallet).toBe(true);
+    expect(
+      CheckoutRequestSchema.safeParse({ ...lol, useWallet: false }).data,
+    ).toMatchObject({ useWallet: false });
+    expect(
+      CheckoutRequestSchema.safeParse({ ...lol, walletEurCents: 999 }).success,
+    ).toBe(false);
+  });
+
+  it('uses the wallet after pricing while keeping Stripe at its minimum', () => {
+    expect(walletSplit(1_000, 2_000)).toEqual({ wallet: 1_000, card: 0 });
+    expect(walletSplit(1_000, 700)).toEqual({ wallet: 700, card: 300 });
+    expect(walletSplit(1_000, 980)).toEqual({ wallet: 950, card: 50 });
+    expect(walletSplit(1_000, 0)).toEqual({ wallet: 0, card: 1_000 });
+  });
+});
 
 describe('checkout pricing', () => {
   it('prices on the server and ignores anything else the browser sends', () => {

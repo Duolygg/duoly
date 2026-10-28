@@ -149,9 +149,11 @@ export default class Home extends React.Component {
   // the signed-in customer's Duoly balance (EUR), so checkout can use it
   async loadWallet() {
     const user = this.props.session && this.props.session.user;
-    // Live checkout: the wallet is not connected yet, never show sample balances.
-    if (this.props.onCheckout) return;
     if (!user || (user.role && user.role !== 'customer')) return;
+    if (typeof this.props.walletEur === 'number') {
+      this.setState({ wallet: Math.max(0, this.props.walletEur) });
+      return;
+    }
     try {
       const r = await fetch('/api/me/history');
       const j = await r.json();
@@ -162,6 +164,7 @@ export default class Home extends React.Component {
   componentDidUpdate(prevProps) {
     const had = prevProps.session && prevProps.session.user;
     const user = this.props.session && this.props.session.user;
+    if (prevProps.walletEur !== this.props.walletEur) this.loadWallet();
     if (had && !user) this.setState({ wallet: 0 });
     if (!had && user) {
       this.loadWallet();
@@ -1001,8 +1004,10 @@ export default class Home extends React.Component {
         (cur === 'USD' ? s.wallet * (s.usdRate || 1.13) : s.wallet) * 100,
       ) / 100;
     const hasWallet = walletHere >= 0.01;
-    const walletUse =
-      hasWallet && s.useWallet ? Math.min(walletHere, total) : 0;
+    // Same rule as the server: a card part must be at least the Stripe minimum (0.50).
+    let walletUse = hasWallet && s.useWallet ? Math.min(walletHere, total) : 0;
+    if (walletUse > 0 && total - walletUse >= 0.005 && total - walletUse < 0.5)
+      walletUse = Math.max(0, Math.round((total - 0.5) * 100) / 100);
     const due = Math.max(0, Math.round((total - walletUse) * 100) / 100);
     const allWallet = walletUse > 0 && due < 0.01;
     const units = s.qty + ' ' + (s.qty === 1 ? unit : unit + 's');
@@ -1250,6 +1255,7 @@ export default class Home extends React.Component {
           ign,
           note: (st.orderNote || '').trim(),
           voice: !!st.voice,
+          useWallet: !!st.useWallet,
         });
         if (result && result.url) {
           try {

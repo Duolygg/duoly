@@ -32,3 +32,10 @@ Secrets live in macOS Keychain (`duoly-stripe-*`, `duoly-supabase-secret-key`, `
 ## Before live mode
 
 Activate the Stripe account (business details), create live keys and a live webhook, swap the secret key for a restricted key, revisit VAT/Stripe Tax once registered, persist an ECB FX rate (payouts use the 1.08 fallback today), and decide how a failed capture is handled operationally (currently `capture_failed`, visible in `order_payments`).
+
+## Wallet at checkout (M4)
+
+- The customer sends only `useWallet` (default on). The server prices the order (creator discount included), stores the checkout intent, then `checkout_reserve_wallet` writes `checkout_hold` rows, promo first, then cashable.
+- Split rule: the wallet pays first. If it covers the whole total, there is no Stripe session and `create_wallet_order` creates the order through `create_paid_order` (state `wallet`, no `order_payments` row). Otherwise the card must pay at least €0.50 (Stripe minimum), so the hold is reduced to total minus €0.50 when needed.
+- A verified Stripe success must match the card part exactly; `create_paid_order` then turns holds into `checkout_spend`. Expiry, async failure, checkout errors and the payments tick (stale holds) write `checkout_release`. Holds and spends are idempotent per intent.
+- Cancel or refund of a mixed order: the card part goes through Stripe as before; `order_wallet_return` returns the wallet part to the same buckets, once. Teammate payout stays on the full order price.

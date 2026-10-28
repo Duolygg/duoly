@@ -1806,10 +1806,9 @@ export default class Dashboard extends React.Component {
                       </span>
                     ) : null}
                   </p>
-                  <button
-                    type="button"
-                    disabled
-                    aria-label="Book with my balance, coming soon"
+                  <a
+                    href="/?wallet=1#checkout"
+                    aria-label="Book with my balance"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1822,12 +1821,11 @@ export default class Dashboard extends React.Component {
                       color: '#17092E',
                       fontSize: '15px',
                       fontWeight: '700',
-                      opacity: '.58',
-                      cursor: 'not-allowed',
+                      textDecoration: 'none',
                     }}
                   >
-                    Book with my balance · coming soon
-                  </button>
+                    Book with my balance
+                  </a>
                 </section>
               ) : null}
 

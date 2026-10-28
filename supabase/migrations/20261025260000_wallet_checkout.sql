@@ -236,7 +236,10 @@ begin
   if i.status = 'conflict' then return pg_catalog.jsonb_build_object('conflict', true); end if;
   -- A card payment needs a card part; a wallet-only order needs the wallet to cover everything.
   if (p_state = 'wallet') <> (i.wallet_eur_cents = i.amount_eur_cents)
-     or (p_state = 'wallet') <> (p_payment_intent is null) then
+     or (p_state = 'wallet') <> (p_payment_intent is null)
+     or (p_state = 'wallet' and (p_amount_minor <> 0 or pg_catalog.lower(p_currency) <> 'eur'))
+     or (p_state <> 'wallet' and pg_catalog.lower(p_currency) = 'eur'
+       and p_amount_minor <> i.amount_eur_cents - i.wallet_eur_cents) then
     return pg_catalog.jsonb_build_object('error', 'payment_mismatch');
   end if;
   -- Serialize per customer, then enforce one open order.

@@ -97,6 +97,7 @@ export type Database = {
           units: number;
           updated_at: string;
           voice: boolean;
+          wallet_eur_cents: number;
         };
         Insert: {
           amount_eur_cents: number;
@@ -126,6 +127,7 @@ export type Database = {
           units: number;
           updated_at?: string;
           voice?: boolean;
+          wallet_eur_cents?: number;
         };
         Update: {
           amount_eur_cents?: number;
@@ -155,6 +157,7 @@ export type Database = {
           units?: number;
           updated_at?: string;
           voice?: boolean;
+          wallet_eur_cents?: number;
         };
         Relationships: [
           {
@@ -1215,6 +1218,7 @@ export type Database = {
           unit: string;
           units: number;
           voice: boolean;
+          wallet_eur_cents: number;
         };
         Insert: {
           accepted_at?: string | null;
@@ -1250,6 +1254,7 @@ export type Database = {
           unit: string;
           units: number;
           voice?: boolean;
+          wallet_eur_cents?: number;
         };
         Update: {
           accepted_at?: string | null;
@@ -1285,6 +1290,7 @@ export type Database = {
           unit?: string;
           units?: number;
           voice?: boolean;
+          wallet_eur_cents?: number;
         };
         Relationships: [
           {

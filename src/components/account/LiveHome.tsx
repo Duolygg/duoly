@@ -40,6 +40,7 @@ export default function LiveHome({
   stats?: HomeStats | null;
   authError?: string | null;
 }) {
+  const [walletEur, setWalletEur] = useState<number | undefined>(undefined);
   const [live, setLive] = useState({
     onlineNow: initialOnline,
     recentMatches: initialMatches,
@@ -79,6 +80,25 @@ export default function LiveHome({
     const timer = window.setInterval(() => void refresh(), 60_000);
     return () => window.clearInterval(timer);
   }, []);
+  useEffect(() => {
+    if (!viewer || viewer.role !== 'customer') return;
+    let active = true;
+    void fetch('/api/orders/credits', {
+      credentials: 'same-origin',
+      cache: 'no-store',
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { balance?: { total_eur_cents?: unknown } } | null) => {
+        const cents = Number(data?.balance?.total_eur_cents);
+        if (active && Number.isFinite(cents))
+          setWalletEur(Math.max(0, cents) / 100);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [viewer]);
+
   // Original HomeWithAuth saveCurrency: a cookie so the next visit knows it (also
   // signed out), plus the account when signed in so it follows the user to other devices.
   const saveCurrency = (code: Currency) => {
@@ -188,7 +208,11 @@ export default function LiveHome({
         error?: string;
         order_id?: string;
       };
-      if (response.ok && data.url?.startsWith('/checkout/'))
+      if (
+        response.ok &&
+        data.url &&
+        (data.url.startsWith('/checkout/') || data.url.startsWith('/queue/'))
+      )
         return { url: data.url };
       if (response.status === 409 && data.order_id)
         return { orderId: data.order_id };
@@ -214,6 +238,7 @@ export default function LiveHome({
       onSignOut={signOut}
       onEmailAuth={onEmailAuth}
       onCheckout={checkoutEnabled ? onCheckout : undefined}
+      walletEur={walletEur}
       usdRate={usdRate}
       onlineNow={live.onlineNow}
       recentMatches={live.recentMatches}
