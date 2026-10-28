@@ -18,7 +18,7 @@ if (!config || !/^[0-9a-f-]{36}$/i.test(id)) return Astro.rewrite('/404');
 const { data: intent } = await adminFor(config)
   .from('checkout_intents')
   .select(
-    'id, customer_id, status, order_id, stripe_client_secret, game, service, title, units, unit, rank, region, ign, voice, amount_eur_cents, first_order_discount_cents, wallet_eur_cents',
+    'id, customer_id, status, order_id, stripe_client_secret, game, service, title, units, unit, rank, region, ign, voice, amount_eur_cents, first_order_discount_cents, pro_discount_cents, wallet_eur_cents',
   )
   .eq('id', id)
   .maybeSingle();
@@ -57,7 +57,13 @@ try {
   const creatorDiscount =
     (intent as { first_order_discount_cents?: number })
       .first_order_discount_cents ?? 0;
-  if (quote.amountEurMinor === intent.amount_eur_cents + creatorDiscount) {
+  // Duoly PRO: 10% off after bundle discounts (ledger #39); never together with the creator one.
+  const proDiscount =
+    (intent as { pro_discount_cents?: number }).pro_discount_cents ?? 0;
+  if (
+    quote.amountEurMinor ===
+    intent.amount_eur_cents + creatorDiscount + proDiscount
+  ) {
     breakdown = [
       {
         label: `${eur(quote.unitPriceEurMinor)} × ${intent.units} ${unitWord(intent.units)}`,
@@ -80,6 +86,12 @@ try {
       breakdown.push({
         label: 'Creator link, 10% off your first order',
         value: `−${eur(creatorDiscount)}`,
+        accent: true,
+      });
+    if (proDiscount > 0)
+      breakdown.push({
+        label: 'PRO members save 10%',
+        value: `−${eur(proDiscount)}`,
         accent: true,
       });
   }

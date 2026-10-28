@@ -3,6 +3,7 @@ import type Stripe from 'stripe';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { adminFor, paymentsConfig, stripeFor } from './config';
 import { settlePending } from './settle';
+import { handleProEvent, isProCheckoutSession } from '../pro/webhook';
 import { sendEmail } from '../email/send';
 import { GAME } from '../../design-reference/lib/games.js';
 
@@ -425,6 +426,11 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
     switch (event.type) {
       case 'checkout.session.completed':
       case 'checkout.session.async_payment_succeeded':
+        // Duoly PRO subscription sessions are handled in src/server/pro/webhook.ts.
+        if (isProCheckoutSession(event.data.object)) {
+          outcome = (await handleProEvent(stripe, admin, event)) ?? 'ignored';
+          break;
+        }
         outcome = await fulfil(stripe, admin, event.data.object.id);
         break;
       case 'checkout.session.async_payment_failed':
@@ -542,6 +548,8 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
         break;
       }
       default:
+        // Duoly PRO: customer.subscription.* and invoice.paid / payment_failed.
+        outcome = (await handleProEvent(stripe, admin, event)) ?? 'ignored';
         break;
     }
   } catch {

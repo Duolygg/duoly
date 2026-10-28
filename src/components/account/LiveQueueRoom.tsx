@@ -8,12 +8,14 @@ export default function LiveQueueRoom({
   csrf,
   chatEnabled,
   reportsEnabled,
+  proMember = false,
 }: {
   id: string;
   viewer: Viewer;
   csrf: string;
   chatEnabled: boolean;
   reportsEnabled: boolean;
+  proMember?: boolean;
 }) {
   return (
     <QueueRoom
@@ -22,6 +24,7 @@ export default function LiveQueueRoom({
       csrf={csrf}
       chatEnabled={chatEnabled}
       reportsEnabled={reportsEnabled}
+      proMember={proMember}
     />
   );
 }

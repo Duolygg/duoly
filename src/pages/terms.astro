@@ -4,12 +4,16 @@ import LegalPage from '../components/site/LegalPage.jsx';
 import { TERMS } from '../design-reference/lib/legal';
 import { pageViewer } from '../site/viewer';
 import { accountContext } from '../server/auth/context';
+import { proEnabled } from '../server/pro/config';
+import { termsWithPro } from '../server/pro/terms';
 const { viewer, csrf } = await pageViewer(Astro);
 // The support widget works for signed-out visitors too, so they get a CSRF token.
 const account = accountContext(Astro.request, Astro.cookies);
 const widgetCsrf = account.config ? csrf || account.csrf() : '';
+// Duoly PRO terms only while PRO is switched on (ledger #39).
+const doc = proEnabled() ? termsWithPro(TERMS) : TERMS;
 ---
 
 <SiteLayout title="Terms | Duoly" viewer={viewer} csrf={csrf}>
-  <LegalPage doc={TERMS} chrome={false} csrf={widgetCsrf} client:load />
+  <LegalPage doc={doc} chrome={false} csrf={widgetCsrf} client:load />
 </SiteLayout>

@@ -996,7 +996,12 @@ export default class Home extends React.Component {
     }));
     // multi-game / multi-hour discount on play sessions (coaching is always full price)
     const save = sub * (sel.cat !== 'training' ? disc[s.qty] || 0 : 0);
-    const total = sub - save;
+    // Duoly PRO (ledger #39): members get another 10% on top of bundles. The server prices it
+    // again (src/server/pro/discounts.ts); this is only what we show.
+    const pro = this.props.pro || null;
+    const proMember = !!(pro && pro.member);
+    const proOff = proMember ? Math.round((sub - save) * 10) / 100 : 0;
+    const total = sub - save - proOff;
     // Duoly balance (refunds, cashback, gifts) pays first when switched on; the payment method gets the rest.
     // The server does the same sum again (lib/orders.js placeOrder), this is only what we show.
     const walletHere =
@@ -1132,6 +1137,13 @@ export default class Home extends React.Component {
       total: money(total),
       hasSave: save > 0,
       proSave: money(total * 0.1),
+      // null while PRO_ENABLED is off: the PRO line then stays hidden.
+      proOffer: !!pro && !proMember,
+      proMember,
+      proOff: money(proOff),
+      proHref: pro && pro.manage ? '/dashboard#pro' : '/pro',
+      proCta:
+        pro && pro.trialEligible ? 'Try PRO free for 7 days' : 'Get Duoly PRO',
       savePct: Math.round((disc[s.qty] || 0) * 100) + '%',
       hasWallet,
       walletOn: !!s.useWallet,
@@ -3349,50 +3361,53 @@ export default class Home extends React.Component {
                       </React.Fragment>
                     ))}
                   </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '12px',
-                      paddingTop: '20px',
-                      borderTop: '1px solid rgba(196, 170, 255, .08)',
-                    }}
-                  >
+                  {v.proOffer ? (
                     <div
+                      data-pro-line
                       style={{
                         display: 'flex',
+                        flexWrap: 'wrap',
                         alignItems: 'center',
+                        justifyContent: 'space-between',
                         gap: '12px',
+                        paddingTop: '20px',
+                        borderTop: '1px solid rgba(196, 170, 255, .08)',
                       }}
                     >
-                      <img
-                        src="/assets/brand/logo-mascots.webp"
-                        alt=""
-                        width="56"
-                        height="35"
-                        style={{ width: '56px', height: '35px' }}
-                      />
-                      <span style={{ fontSize: '14px', color: '#CFC4EA' }}>
-                        Duoly PRO members save{' '}
-                        <strong style={{ color: '#FFFFFF' }}>
-                          {v.proSave}
-                        </strong>{' '}
-                        on this order
-                      </span>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
+                        <img
+                          src="/assets/brand/logo-mascots.webp"
+                          alt=""
+                          width="56"
+                          height="35"
+                          style={{ width: '56px', height: '35px' }}
+                        />
+                        <span style={{ fontSize: '14px', color: '#CFC4EA' }}>
+                          Duoly PRO members save{' '}
+                          <strong style={{ color: '#FFFFFF' }}>
+                            {v.proSave}
+                          </strong>{' '}
+                          on this order
+                        </span>
+                      </div>
+                      <a
+                        href={v.proHref}
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: '#D6BBFF',
+                        }}
+                      >
+                        {v.proCta}
+                      </a>
                     </div>
-                    <a
-                      href="#"
-                      style={{
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: '#D6BBFF',
-                      }}
-                    >
-                      Try PRO free for 7 days
-                    </a>
-                  </div>
+                  ) : null}
                 </div>
                 <aside
                   aria-label="Order summary"
@@ -3476,6 +3491,19 @@ export default class Home extends React.Component {
                           <span>−{v.saveAmt}</span>
                         </div>
                       </>
+                    ) : null}
+                    {v.proMember ? (
+                      <div
+                        data-pro-discount
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          color: '#5EEAA8',
+                        }}
+                      >
+                        <span>PRO members save 10%</span>
+                        <span>−{v.proOff}</span>
+                      </div>
                     ) : null}
                     {v.usesWallet ? (
                       <>

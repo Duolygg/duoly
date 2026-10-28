@@ -37,7 +37,7 @@ const toRoomReport = (report) => ({
 });
 
 /** Our customer order DTO in the original QueueRoom shape. */
-export function toRoomOrder(o) {
+export function toRoomOrder(o, { proMember = false } = {}) {
   const base = toOriginalOrder(o);
   const accepted = ms(o.accepted_at);
   return {
@@ -51,7 +51,9 @@ export function toRoomOrder(o) {
     // QueueRoom tells 'you cancelled' from 'nobody took it' by the raw reason.
     cancelReason: o.cancel_reason || '',
     autoCancelMs: QUEUE_MS,
-    rerollsLeft: Math.max(0, MAX_REROLLS - o.rerolls),
+    // R2 (ledger #39): PRO members have no limit of 2 (reroll_order checks is_pro too).
+    rerollsLeft: proMember ? 1 : Math.max(0, MAX_REROLLS - o.rerolls),
+    rerollsUnlimited: !!proMember,
     rerollUntil: accepted ? accepted + REROLL_WINDOW_MS : null,
     paid: {
       currency: 'EUR',
@@ -80,7 +82,7 @@ const toRoomMessage = (m) => ({
   image: m.image,
 });
 
-export function createRoomFetch({ orderId, csrf }) {
+export function createRoomFetch({ orderId, csrf, proMember = false }) {
   const base = '/api/orders/' + encodeURIComponent(orderId);
   let assignment = null;
   return async function roomFetch(input, init = {}) {
@@ -92,7 +94,10 @@ export function createRoomFetch({ orderId, csrf }) {
         const { res, data } = await call(base);
         if (!res.ok || !data.order)
           return json({ error: data.error }, res.status || 503);
-        return json({ order: toRoomOrder(data.order), now: Date.now() });
+        return json({
+          order: toRoomOrder(data.order, { proMember }),
+          now: Date.now(),
+        });
       }
       if (path === base && method === 'POST') {
         if (!['cancel', 'reroll', 'review', 'report'].includes(body.action))
@@ -144,7 +149,7 @@ export function createRoomFetch({ orderId, csrf }) {
             res.status || 503,
           );
         return json({
-          order: toRoomOrder(data.order),
+          order: toRoomOrder(data.order, { proMember }),
           tipPayment: data.tipPayment || null,
           tipError: data.tipError || '',
         });
