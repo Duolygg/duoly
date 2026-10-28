@@ -649,10 +649,11 @@ export type Database = {
       order_handovers: {
         Row: {
           created_at: string;
-          created_by: string;
+          created_by: string | null;
           created_by_name: string;
           expires_at: string;
           id: string;
+          kind: string;
           order_id: string;
           revoke_reason: string | null;
           revoked_at: string | null;
@@ -660,10 +661,11 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
-          created_by: string;
+          created_by?: string | null;
           created_by_name: string;
           expires_at: string;
           id?: string;
+          kind?: string;
           order_id: string;
           revoke_reason?: string | null;
           revoked_at?: string | null;
@@ -671,10 +673,11 @@ export type Database = {
         };
         Update: {
           created_at?: string;
-          created_by?: string;
+          created_by?: string | null;
           created_by_name?: string;
           expires_at?: string;
           id?: string;
+          kind?: string;
           order_id?: string;
           revoke_reason?: string | null;
           revoked_at?: string | null;
