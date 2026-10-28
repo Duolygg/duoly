@@ -1,6 +1,6 @@
 # Discord order posts (ledger #41)
 
-Port of Fabian's `lib/discordQueue.js`. When an order has waited 100 seconds without a teammate, the bot posts it in that game's `#general` channel (the first text channel with "general" in its name under the category named after the game), mentions the **Teammate** role and links its own handover link. When the order is taken, cancelled, expires or is re-rolled, the post is edited in place so nobody clicks a dead link.
+Port of Fabian's `lib/discordQueue.js`. When an order has waited 100 seconds without a teammate, the bot posts it in that game's `#lfd` channel (the first text channel with "lfd" in its name under the category named after the game; falls back to `#general`, then the first text channel). Fabian's original used `#general`; changed on Fabian's request 2026-10-28, mentions the **Teammate** role and links its own handover link. When the order is taken, cancelled, expires or is re-rolled, the post is edited in place so nobody clicks a dead link.
 
 ## Design
 
