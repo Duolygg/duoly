@@ -16,7 +16,8 @@ interface CatalogMode {
 
 /**
  * Pure: the free monthly Play and Learn order is one coaching session (catalog category
- * training) of exactly one hour. Bundles are 3, 5 or 10 units, so units === 1 rules them out.
+ * training) of exactly one unit: 1 hour, or 1 game for the per-game Play and Learn. Bundles are
+ * 3, 5 or 10 units, so units === 1 rules them out.
  */
 export function freeCoachingFits(request: {
   gameId: string;
@@ -30,12 +31,7 @@ export function freeCoachingFits(request: {
     return false;
   }
   const mode = modes.find((entry) => entry.id === request.serviceId);
-  return (
-    !!mode &&
-    mode.cat === 'training' &&
-    mode.unit === 'hour' &&
-    request.units === 1
-  );
+  return !!mode && mode.cat === 'training' && request.units === 1;
 }
 
 /** Pure: every (game, service) pair that can be the free coaching order. */
@@ -46,8 +42,7 @@ export function freeCoachingServices(
   for (const gameId of gameIds) {
     const modes = (servicesFor(gameId) as { modes: CatalogMode[] }).modes;
     for (const mode of modes)
-      if (mode.cat === 'training' && mode.unit === 'hour')
-        pairs.push([gameId, mode.id]);
+      if (mode.cat === 'training') pairs.push([gameId, mode.id]);
   }
   return pairs;
 }
@@ -59,7 +54,7 @@ export function freeCoachingRefusal(
   if (reason === 'used')
     return 'You already used this month’s free coaching. It comes back on the 1st.';
   if (reason === 'service')
-    return 'Free coaching is one 1-hour coaching session.';
+    return 'Free coaching is one coaching session (1 hour or 1 game).';
   return 'Free monthly coaching unlocks at Platinum.';
 }
 

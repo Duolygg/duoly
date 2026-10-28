@@ -1,7 +1,8 @@
 -- Customer and teammate perks (ledger #37 and #13; MONEY-RULES section 9, perks decided 2026-10-28).
 --
--- 1. Free monthly Play and Learn (customer loyalty Platinum and Diamond): one free 1-hour coaching
---    order (catalog category training, unit hour, exactly 1 unit, no bundle, no Gamer Girl) per
+-- 1. Free monthly Play and Learn (customer loyalty Platinum and Diamond): one free coaching
+--    order (catalog category training, exactly 1 unit: 1 hour or 1 game for the per-game
+--    Play and Learn, no bundle, no Gamer Girl; owner decision 2026-10-28) per
 --    calendar month in Europe/Vienna time. The customer pays 0 and there is no Stripe payment and
 --    no wallet spend. orders.amount_eur_cents keeps the full list price (orders need >= 0.99 EUR and
 --    teammates see a normal order); payout_usd_cents is the normal payout and Duoly pays it.
@@ -48,7 +49,7 @@ alter table public.checkout_intents
   add column free_coaching boolean not null default false,
   add column pick_source_order_id uuid references public.orders(id) on delete restrict,
   add constraint checkout_intents_free_coaching check (
-    not free_coaching or (units = 1 and unit = 'hour' and not gg and wallet_eur_cents = 0
+    not free_coaching or (units = 1 and not gg and wallet_eur_cents = 0
       and pro_discount_cents = 0 and first_order_discount_cents = 0 and ref_code is null));
 
 create table public.free_coaching_claims (
@@ -97,11 +98,12 @@ language sql stable security invoker set search_path = '' as $$
   select pg_catalog.date_trunc('month', p_at at time zone 'Europe/Vienna')::date;
 $$;
 
--- Catalog services in category training with unit hour (src/design-reference/lib/catalog.js,
+-- Catalog services in category training, per hour or per game (src/design-reference/lib/catalog.js,
 -- servicesFor). tests/unit/perks.test.ts keeps this list equal to the catalog.
 create function public.free_coaching_service(p_game text, p_service text) returns boolean
 language sql immutable security invoker set search_path = '' as $$
-  select (p_game, p_service) in (('lol','vod'),('lol','champ'),('val','vod'),('val','aim'),('cs2','demo'),('cs2','util'),('fn','learn'),('fn','build'),('cod','learn'),('cod','loadout'),('apex','learn'),('apex','move'),('r6','ops'),('r6','maps'),('mr','hero'),('ow','role'),('rl','mech'),('tft','econ'),('fc','tactics'),('fc','champs'),('arc','pvp'),('mc','pvp'),('mc','bw'),('pu','draft'));
+  select (p_game, p_service) in (('lol','vod'),('lol','champ'),('val','vod'),('val','aim'),('cs2','demo'),('cs2','util'),('fn','learn'),('fn','build'),('cod','learn'),('cod','loadout'),('apex','learn'),('apex','move'),('r6','ops'),('r6','maps'),('mr','hero'),('ow','role'),('rl','mech'),('tft','econ'),('fc','tactics'),('fc','champs'),('arc','pvp'),('mc','pvp'),('mc','bw'),('pu','draft'),
+    ('lol','learn'),('val','learn'),('cs2','learn'),('r6','learn'),('mr','learn'),('ow','learn'),('rl','learn'),('pu','learn'));
 $$;
 
 create function public.order_is_free_perk(p_order_id uuid) returns boolean
@@ -589,10 +591,10 @@ begin
     return pg_catalog.jsonb_build_object('conflict', true);
   end if;
   -- Free monthly coaching: Platinum or Diamond at booking time, one used claim per Vienna month,
-  -- a training service of exactly one hour.
+  -- a training service of exactly one unit (1 hour, or 1 game for Play and Learn).
   if p_state = 'free' then
     v_free := public.customer_perks_for(i.customer_id);
-    if not public.free_coaching_service(i.game, i.service) or i.units <> 1 or i.unit <> 'hour' or i.gg
+    if not public.free_coaching_service(i.game, i.service) or i.units <> 1 or i.gg
        or not coalesce((v_free->'freeCoaching'->>'available')::boolean, false) then
       update public.checkout_intents set status = 'failed', updated_at = pg_catalog.clock_timestamp() where id = i.id and status = 'open';
       return pg_catalog.jsonb_build_object('error', 'free_perk_unavailable',

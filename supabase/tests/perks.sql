@@ -117,6 +117,9 @@ select pg_temp.pk_assert(public.free_coaching_month('2026-07-31 22:00:00+00')='2
 select pg_temp.pk_assert(public.free_coaching_service('lol','vod') and public.free_coaching_service('pu','draft')
   and not public.free_coaching_service('lol','duo') and not public.free_coaching_service('val','vod2'),'training services');
 
+-- Per-game Play and Learn counts as one unit (owner decision 2026-10-28); duo never does.
+select pg_temp.pk_assert(public.free_coaching_service('lol','learn') and public.free_coaching_service('pu','learn')
+  and not public.free_coaching_service('arc','learn') and not public.free_coaching_service('lol','duo'),'per-game Play and Learn qualifies');
 -- Perks per level: Gold none, Platinum free coaching, Diamond both.
 select pg_temp.pk_assert((public.customer_perks_for('9e000000-0000-4000-8000-0000000000b1')#>>'{freeCoaching,eligible}')='false'
   and (public.customer_perks_for('9e000000-0000-4000-8000-0000000000a1')#>>'{freeCoaching,available}')='true'

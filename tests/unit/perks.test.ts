@@ -41,20 +41,15 @@ describe('freeCoachingFits', () => {
     ['lol', 'duo2'],
     ['lol', 'gg1'],
     ['lol', 'aram'],
-    ['lol', 'learn'], // training, but per game, not per hour
-    ['val', 'learn'],
     ['xx', 'vod'],
     ['lol', 'nope'],
-  ])(
-    'refuses non-training or per-game services (%s %s)',
-    (gameId, serviceId) => {
-      expect(freeCoachingFits({ gameId, serviceId, units: 1 })).toBe(false);
-    },
-  );
+  ])('refuses non-training services (%s %s)', (gameId, serviceId) => {
+    expect(freeCoachingFits({ gameId, serviceId, units: 1 })).toBe(false);
+  });
 });
 
 describe('catalog and migration agree', () => {
-  it('free_coaching_service lists exactly the catalog training hour services', () => {
+  it('free_coaching_service lists exactly the catalog training services', () => {
     const body =
       /function public\.free_coaching_service[\s\S]*?\$\$([\s\S]*?)\$\$/.exec(
         MIGRATION,
@@ -82,7 +77,7 @@ describe('freeCoachingRefusal', () => {
     );
     expect(copy[0]).toMatch(/Platinum/);
     expect(copy[1]).toMatch(/already used/);
-    expect(copy[2]).toMatch(/1-hour/);
+    expect(copy[2]).toMatch(/1 hour or 1 game/);
     expect(copy[3]).toBe(copy[0]);
     for (const text of copy) expect(text).not.toMatch(/[\u2013\u2014&]/);
   });
