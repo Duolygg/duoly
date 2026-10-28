@@ -39,6 +39,7 @@ export function toOriginalOrder(o) {
           name: o.teammate.name,
           image: o.teammate.image,
           country: o.teammate.country,
+          trustBadge: o.teammate.trust_badge || null,
         }
       : null,
     lastTeammate: null,

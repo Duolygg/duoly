@@ -61,6 +61,14 @@ export const CustomerOrderSchema = z.strictObject({
       // Added by 20261024190000; optional so either side can ship first.
       bio: z.string().max(160).optional(),
       languages: z.array(z.string().max(32)).max(6).optional(),
+      // Added by 20261026110000; optional so code can deploy before the migration.
+      trust_badge: z
+        .strictObject({
+          id: z.enum(['trusted', 'legend']),
+          name: z.enum(['Trusted', 'Legend']),
+        })
+        .nullable()
+        .optional(),
     })
     .nullable(),
   review: ReviewSchema.nullable(),

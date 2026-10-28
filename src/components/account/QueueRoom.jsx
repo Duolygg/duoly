@@ -12,6 +12,7 @@ import { shrinkImage } from '../../design-reference/lib/shrinkImage';
 import PrivateProofs from '../proofs/PrivateProofs';
 import TipPaymentPanel from './TipPayment';
 import { createRoomFetch } from './queue-room-data';
+import TrustBadge from '../shared/TrustBadge';
 
 // Port of the original components/QueueRoom.jsx (duoly-admin/duoly@7f0299f): layout and copy are
 // his. Data and commands go through queue-room-data.js to the real order, chat and proof APIs.
@@ -912,6 +913,17 @@ export default class QueueRoom extends React.Component {
                   }}
                 />
               )}
+              {!isYou && matched && mate ? (
+                <span
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginTop: '6px',
+                  }}
+                >
+                  <TrustBadge badge={mate.trustBadge} />
+                </span>
+              ) : null}
               <span
                 style={{
                   display: 'block',

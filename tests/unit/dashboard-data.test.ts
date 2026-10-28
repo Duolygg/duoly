@@ -33,6 +33,7 @@ const base = {
     name: 'Mika Star',
     image: '/assets/avatars/avatar-2.png',
     country: 'de',
+    trust_badge: { id: 'trusted', name: 'Trusted' },
   },
   review: null,
 };
@@ -45,6 +46,7 @@ describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
       ref: 'DL-1001',
       games: 3,
       amountEur: 26.97,
+      teammate: { trustBadge: { id: 'trusted', name: 'Trusted' } },
       review: null,
     });
     expect(o.createdAt).toBe(Date.parse(base.created_at));
@@ -119,7 +121,12 @@ describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
     expect(h.weekOrders).toBe(1);
     expect(h.gamesPlayed).toBe(4);
     expect(h.mates).toEqual([
-      expect.objectContaining({ name: 'Mika Star', orders: 2, online: null }),
+      expect.objectContaining({
+        name: 'Mika Star',
+        orders: 2,
+        online: null,
+        trustBadge: { id: 'trusted', name: 'Trusted' },
+      }),
     ]);
     expect(h.wallet).toBe(65);
     expect(h.walletCashable).toBe(5);

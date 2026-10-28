@@ -49,7 +49,6 @@ const PERKS = [
     at: 2,
     title: 'Priority matching',
     text: 'Jump the queue at busy times',
-    comingSoon: true,
   },
   {
     at: 3,

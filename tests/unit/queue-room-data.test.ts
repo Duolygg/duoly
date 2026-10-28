@@ -74,10 +74,12 @@ describe('order room adapter (original QueueRoom.jsx shape)', () => {
       country: 'de',
       bio: 'Calm comms',
       languages: ['English', 'German'],
+      trust_badge: { id: 'legend', name: 'Legend' },
     };
     expect(toRoomOrder({ ...order, teammate: mate }).teammate).toMatchObject({
       bio: 'Calm comms',
       languages: ['English', 'German'],
+      trustBadge: { id: 'legend', name: 'Legend' },
     });
   });
   it('maps report status into the original room shape', () => {
