@@ -7,10 +7,16 @@
 // - Arguments are validated with strict zod schemas; anything extra is refused.
 // - Outputs are minimal DTOs (see lookup.ts): no emails, no internal ids beyond
 //   the public order reference, no admin data, no priority data.
+// - S3: order_by_reference and person_summary are admin-only. They are offered
+//   only when the session account role is admin (person.accountRole, set from
+//   the server session in person.ts) and an admin lookup bound to the asker's
+//   own signed-in client exists; the admin RPCs re-check the role in the
+//   database. A forged call from anyone else is refused before any read.
 import { z } from 'zod';
 import { FAQ_TABS } from '../../design-reference/lib/faq.js';
 import { knowledgeFor } from './knowledge';
 import type { SparkyLookup } from './lookup';
+import type { SparkyAdminLookup } from './admin-lookup';
 import { catalogFor, gameNames } from './offer';
 import { CURRENT_FACTS, type SupportPerson } from './sparky';
 
@@ -22,6 +28,8 @@ export type ToolContext = {
   person: SupportPerson;
   /** Bound to the session user id; null for guests. */
   lookup: SparkyLookup | null;
+  /** Admin reads through the asker's own signed-in client; only for admins. */
+  admin?: SparkyAdminLookup | null;
 };
 
 export type ToolStatus = 'ok' | 'not_found' | 'invalid' | 'denied' | 'error';
@@ -31,7 +39,7 @@ export type ToolResult = {
   output: unknown;
 };
 
-type Audience = 'everyone' | 'signed_in' | 'teammate';
+type Audience = 'everyone' | 'signed_in' | 'teammate' | 'admin';
 
 const reference = z
   .string()
@@ -109,6 +117,30 @@ const TOOLS = {
       },
     },
   },
+  order_by_reference: {
+    audience: 'admin' as Audience,
+    description:
+      'Admin only. Any order by its reference, as the admin Orders screen shows it: status, game, service, customer and teammate display names, payment state, timestamps, cancel and refund details, review, tip and reports.',
+    schema: z.object({ reference }).strict(),
+    parameters: {
+      reference: {
+        type: 'string',
+        description: 'Order reference such as DL-1042.',
+      },
+    },
+  },
+  person_summary: {
+    audience: 'admin' as Audience,
+    description:
+      'Admin only. Look up accounts by exact email, exact user id, or display name (exact, else partial; up to 3 matches). Returns role, blocked or suspended state, order counts, wallet balance and loyalty level for customers, and trust tier, rating and owed payout for teammates.',
+    schema: z.object({ query: z.string().trim().min(2).max(120) }).strict(),
+    parameters: {
+      query: {
+        type: 'string',
+        description: 'Email, user id or display name.',
+      },
+    },
+  },
   faq_search: {
     audience: 'everyone' as Audience,
     description:
@@ -126,14 +158,19 @@ const ORDER: ToolName[] = [
   'order_detail',
   'payment_status',
   'teammate_desk_status',
+  'order_by_reference',
+  'person_summary',
   'catalog_prices',
   'faq_search',
 ];
+const ADMIN_TOOLS: ToolName[] = ['order_by_reference', 'person_summary'];
 
 function allowed(person: SupportPerson, audience: Audience) {
   if (audience === 'everyone') return true;
   if (!person.userId) return false;
   if (audience === 'teammate') return person.role === 'teammate';
+  // accountRole comes from the server session (person.ts), never from the model.
+  if (audience === 'admin') return person.accountRole === 'admin';
   return true;
 }
 
@@ -242,6 +279,28 @@ async function execute(
       output: {
         note: 'Current facts override older FAQ wording (for example, there is no Duoly wallet).',
         results,
+      },
+    };
+  }
+  if (ADMIN_TOOLS.includes(name)) {
+    const admin = ctx.admin;
+    if (!admin) return { status: 'denied', output: { error: 'Admins only.' } };
+    if (name === 'order_by_reference') {
+      const order = await admin.orderByReference(String(args.reference));
+      return order
+        ? { status: 'ok', output: { found: true, order } }
+        : {
+            status: 'not_found',
+            output: { found: false, note: 'No order with this reference.' },
+          };
+    }
+    const result = await admin.personSummary(String(args.query));
+    return {
+      status: result.people.length ? 'ok' : 'not_found',
+      output: {
+        found: result.people.length > 0,
+        ...result,
+        note: 'Priority and matching delays are not part of this summary; they stay on the admin Priority screen.',
       },
     };
   }
