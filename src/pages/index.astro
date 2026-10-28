@@ -6,6 +6,7 @@ import { paymentsConfig } from '../server/payments/config';
 import { customerUsdRate, eurToUsd } from '../server/fx';
 import { CurrencySchema } from '../contracts/account';
 import { homeLive } from '../server/home/live';
+import { loadProView } from '../server/pro/status';
 const account = accountContext(Astro.request, Astro.cookies);
 let viewer = null;
 let accountCurrency = null;
@@ -30,6 +31,8 @@ const cookieCurrency = CurrencySchema.safeParse(
 );
 // Teammates online and recent matches: public, cached per instance (src/server/home/live.ts).
 const { onlineNow, recentMatches, stats } = await homeLive();
+// Duoly PRO strip and member discount in the order summary (null while PRO_ENABLED is off).
+const pro = await loadProView(account.client, viewer?.role);
 ---
 
 <SiteLayout title="Duoly | Duo up in under 2 minutes" bare>
@@ -43,6 +46,7 @@ const { onlineNow, recentMatches, stats } = await homeLive();
     onlineNow={onlineNow}
     recentMatches={recentMatches}
     stats={stats}
+    pro={pro}
     client:load
   />
 </SiteLayout>

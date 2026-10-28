@@ -6,6 +6,9 @@ import { mutation } from '../auth/handlers';
 import { accountContext } from '../auth/context';
 import { calculateQuote } from '../pricing';
 import { checkoutRefCode } from '../referrals';
+import { proEnabled } from '../pro/config';
+import { applyOrderDiscounts } from '../pro/discounts';
+import { isProMember } from '../pro/status';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { GAMES } from '../../design-reference/lib/games.js';
 import {
@@ -235,11 +238,7 @@ export const createCheckout: APIRoute = async (context) => {
       config.origin.startsWith('https:'),
     );
     // First order through an active creator's link: 10% off (decided in the database).
-    let priced: ReturnType<typeof applyCreatorDiscount<typeof built>> = {
-      ...built,
-      row: { ...built.row, first_order_discount_cents: 0 },
-      discountCents: 0,
-    };
+    let creatorEligible = false;
     if (refCode) {
       const eligible = await (
         admin.rpc as unknown as (
@@ -250,9 +249,26 @@ export const createCheckout: APIRoute = async (context) => {
         p_customer: identity.viewer.id,
         p_code: refCode,
       });
-      if (!eligible.error && eligible.data === true)
-        priced = applyCreatorDiscount(built);
+      creatorEligible = !eligible.error && eligible.data === true;
     }
+    // Duoly PRO: 10% off, from the subscription state in the database only (ledger #39).
+    let proMember = false;
+    if (proEnabled()) {
+      try {
+        proMember = await isProMember(admin, identity.viewer.id);
+      } catch {
+        return account.json(
+          { error: 'Checkout is unavailable. Try again.' },
+          503,
+        );
+      }
+    }
+    // One discount only, before the wallet split; docs/product/pro.md.
+    const priced = applyOrderDiscounts(
+      built,
+      { pro: proMember, creator: creatorEligible },
+      CREATOR_FIRST_ORDER_PERCENT,
+    );
     const { data: intent, error } = await admin
       .from('checkout_intents')
       .insert({

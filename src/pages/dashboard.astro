@@ -3,6 +3,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import ProductLayout from '../layouts/ProductLayout.astro';
 import LiveDashboard from '../components/account/LiveDashboard';
 import { accountContext } from '../server/auth/context';
+import { loadProView } from '../server/pro/status';
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
@@ -21,6 +22,11 @@ if (identity && identity.viewer.role !== 'customer')
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
 const csrf = account.csrf();
+// Duoly PRO card state (null while PRO_ENABLED is off).
+const pro = identity
+  ? await loadProView(account.client, identity.viewer.role)
+  : null;
+const proWelcome = Astro.url.searchParams.get('pro') === 'welcome';
 ---
 
 {identity ? (
@@ -30,7 +36,13 @@ const csrf = account.csrf();
     csrf={csrf}
     bare
   >
-    <LiveDashboard viewer={identity.viewer} csrf={csrf} client:load />
+    <LiveDashboard
+      viewer={identity.viewer}
+      csrf={csrf}
+      pro={pro}
+      proWelcome={proWelcome}
+      client:load
+    />
   </SiteLayout>
 ) : (
   <ProductLayout title="Your dashboard | Duoly">

@@ -1,13 +1,18 @@
 import Dashboard from './Dashboard.jsx';
 import type { Viewer } from '../../contracts/account';
+import type { ProView } from '../../contracts/pro';
 
 /** The original customer Dashboard on the real session and order APIs. */
 export default function LiveDashboard({
   viewer,
   csrf,
+  pro = null,
+  proWelcome = false,
 }: {
   viewer: Viewer;
   csrf: string;
+  pro?: ProView | null;
+  proWelcome?: boolean;
 }) {
   const onSignOut = async () => {
     const response = await fetch('/auth/logout', {
@@ -18,5 +23,13 @@ export default function LiveDashboard({
     });
     if (response.ok) window.location.assign('/');
   };
-  return <Dashboard user={viewer} csrf={csrf} onSignOut={onSignOut} />;
+  return (
+    <Dashboard
+      user={viewer}
+      csrf={csrf}
+      onSignOut={onSignOut}
+      pro={pro}
+      proWelcome={proWelcome}
+    />
+  );
 }

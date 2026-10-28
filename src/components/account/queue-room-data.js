@@ -8,6 +8,8 @@ import { readChat, sendChat, setTyping } from '../../client/order-chat';
 const REROLL_WINDOW_MS = 5 * 60 * 1000;
 const QUEUE_MS = 5 * 60 * 1000;
 const MAX_REROLLS = 2;
+// R2 (ledger #39): PRO members have no limit of 2; the database keeps an abuse ceiling of 20.
+const PRO_MAX_REROLLS = 20;
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -37,7 +39,7 @@ const toRoomReport = (report) => ({
 });
 
 /** Our customer order DTO in the original QueueRoom shape. */
-export function toRoomOrder(o) {
+export function toRoomOrder(o, { proMember = false } = {}) {
   const base = toOriginalOrder(o);
   const accepted = ms(o.accepted_at);
   return {
@@ -51,7 +53,11 @@ export function toRoomOrder(o) {
     // QueueRoom tells 'you cancelled' from 'nobody took it' by the raw reason.
     cancelReason: o.cancel_reason || '',
     autoCancelMs: QUEUE_MS,
-    rerollsLeft: Math.max(0, MAX_REROLLS - o.rerolls),
+    rerollsLeft: Math.max(
+      0,
+      (proMember ? PRO_MAX_REROLLS : MAX_REROLLS) - o.rerolls,
+    ),
+    rerollsUnlimited: !!proMember,
     rerollUntil: accepted ? accepted + REROLL_WINDOW_MS : null,
     paid: {
       currency: 'EUR',
@@ -80,7 +86,7 @@ const toRoomMessage = (m) => ({
   image: m.image,
 });
 
-export function createRoomFetch({ orderId, csrf }) {
+export function createRoomFetch({ orderId, csrf, proMember = false }) {
   const base = '/api/orders/' + encodeURIComponent(orderId);
   let assignment = null;
   return async function roomFetch(input, init = {}) {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
 import type { Currency, Viewer } from '../../contracts/account';
 import type { HomeStats, RecentMatch } from '../../contracts/home';
+import type { ProView } from '../../contracts/pro';
 
 const PENDING_KEY = 'duoly-pending-queue';
 
@@ -28,6 +29,7 @@ export default function LiveHome({
   recentMatches: initialMatches = [],
   stats: initialStats = null,
   authError = null,
+  pro = null,
 }: {
   viewer: Viewer | null;
   csrf: string;
@@ -39,6 +41,7 @@ export default function LiveHome({
   recentMatches?: RecentMatch[];
   stats?: HomeStats | null;
   authError?: string | null;
+  pro?: ProView | null;
 }) {
   const [walletEur, setWalletEur] = useState<number | undefined>(undefined);
   const [live, setLive] = useState({
@@ -243,6 +246,7 @@ export default function LiveHome({
       onlineNow={live.onlineNow}
       recentMatches={live.recentMatches}
       stats={live.stats}
+      pro={pro}
     />
   );
 }
