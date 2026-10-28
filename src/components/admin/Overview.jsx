@@ -9,6 +9,7 @@ import {
   btn,
   pill,
   eur,
+  usd,
   eur0,
   num,
   ago,
