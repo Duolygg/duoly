@@ -4,6 +4,7 @@ import SupportChat from '../support/SupportChat';
 import { GAME } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
 import { dashboardFetch as fetch } from './dashboard-data';
+import TrustBadge from '../shared/TrustBadge';
 
 // Port of the original components/Dashboard.jsx (duoly-admin/duoly@7f0299f). Layout and copy are
 // his; data comes from /api/orders/active, /history and /credits through dashboard-data.js.
@@ -1669,6 +1670,7 @@ export default class Dashboard extends React.Component {
                             }}
                           >
                             {m.first}
+                            <TrustBadge badge={m.trustBadge} />
                             <img
                               src={m.img}
                               alt=""

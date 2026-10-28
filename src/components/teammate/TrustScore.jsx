@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import TrustBadge, { trustBadgeForCompleted } from '../shared/TrustBadge';
 
 // Turns a CSS declaration string ("color: red; margin-top: 4px") into a React style object.
 function css(str) {
@@ -135,6 +136,7 @@ export default class TrustScore extends React.Component {
         ', transparent);',
       held: usd(held),
       saved: usd(saved),
+      badge: trustBadgeForCompleted(completed),
     };
   }
 
@@ -319,6 +321,9 @@ export default class TrustScore extends React.Component {
               }}
             >
               {t.name}
+            </div>
+            <div style={{ marginTop: '8px' }}>
+              <TrustBadge badge={v.badge} />
             </div>
             <div
               style={{
