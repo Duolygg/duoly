@@ -660,6 +660,33 @@ export default class Orders extends React.Component {
               {row('Received', dateTime(o.review.at))}
             </>
           ) : null}
+          {o.tip ? (
+            <>
+              <h3
+                style={{
+                  margin: '22px 0 4px',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  letterSpacing: '.06em',
+                  textTransform: 'uppercase',
+                  color: C.faint,
+                }}
+              >
+                Tip
+              </h3>
+              {row(
+                'Amount',
+                '€' + Number(o.tip.amount).toFixed(2),
+                C.green,
+                true,
+              )}
+              {row('Status', String(o.tip.state))}
+              {o.tip.refunded
+                ? row('Refunded', '€' + Number(o.tip.refunded).toFixed(2))
+                : null}
+              {o.tip.paidAt ? row('Paid', dateTime(o.tip.paidAt)) : null}
+            </>
+          ) : null}
 
           <div
             style={{

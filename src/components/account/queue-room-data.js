@@ -65,7 +65,7 @@ export function toRoomOrder(o) {
           languages: o.teammate.languages || [],
         }
       : null,
-    tip: null,
+    tip: o.tip || null,
     reports: (o.reports || []).map(toRoomReport),
     proof: [],
   };
@@ -132,6 +132,9 @@ export function createRoomFetch({ orderId, csrf }) {
                 rating: body.rating,
                 tags: Array.isArray(body.tags) ? body.tags : [],
                 text: typeof body.text === 'string' ? body.text : '',
+                tip_cents: Number.isFinite(body.tip)
+                  ? Math.round(body.tip * 100)
+                  : 0,
               }
             : { csrf };
         const { res, data } = await call(base + '/' + body.action, payload);
@@ -140,7 +143,11 @@ export function createRoomFetch({ orderId, csrf }) {
             { error: data.error || 'That didn’t work. Try again.' },
             res.status || 503,
           );
-        return json({ order: toRoomOrder(data.order) });
+        return json({
+          order: toRoomOrder(data.order),
+          tipPayment: data.tipPayment || null,
+          tipError: data.tipError || '',
+        });
       }
       if (path === base + '/chat' && method === 'GET') {
         const room = await readChat(fetch, orderId);

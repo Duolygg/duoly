@@ -82,11 +82,12 @@ it('submits a review through the scoped RPC only', async () => {
   const res = await run(review, context('POST', JSON.stringify(valid)));
   expect(res.status).toBe(200);
   expect((await res.json()).order.review.rating).toBe(5);
-  expect(rpc).toHaveBeenCalledExactlyOnceWith('order_review', {
+  expect(rpc).toHaveBeenCalledExactlyOnceWith('order_review_tip', {
     p_order_id: id,
     p_rating: 5,
     p_text: 'GG',
     p_tags: ['Patient'],
+    p_amount_cents: null,
   });
 });
 

@@ -27,6 +27,7 @@ describe('review contracts', () => {
       rating: 5,
       text: 'Great teammate',
       tags: ['Great comms', 'Patient'],
+      tip_cents: 0,
     });
   });
 
@@ -59,7 +60,7 @@ describe('review contracts', () => {
     ).toBe(false);
   });
 
-  it('validates privacy-safe teammate rating stats with tips fixed off', () => {
+  it('validates privacy-safe teammate rating and tip stats', () => {
     const payload = {
       now: 1792843200000,
       me: '11111111-1111-4111-8111-111111111111',

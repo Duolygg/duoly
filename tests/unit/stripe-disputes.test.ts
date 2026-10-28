@@ -71,6 +71,39 @@ const signed = (type: string, status: string) => {
   });
 };
 
+const signedTip = () => {
+  const body = JSON.stringify({
+    id: 'evt_tip_succeeded',
+    object: 'event',
+    api_version: '2026-09-30.clover',
+    created: 1_800_000_000,
+    livemode: false,
+    pending_webhooks: 1,
+    request: null,
+    type: 'payment_intent.succeeded',
+    data: {
+      object: {
+        id: 'pi_tip123',
+        object: 'payment_intent',
+        status: 'succeeded',
+        amount_received: 500,
+        currency: 'eur',
+        metadata: { tip_id: '10000000-0000-4000-8000-000000000001' },
+      },
+    },
+  });
+  return new Request('https://duoly.gg/api/webhooks/stripe', {
+    method: 'POST',
+    headers: {
+      'stripe-signature': Stripe.webhooks.generateTestHeaderString({
+        payload: body,
+        secret,
+      }),
+    },
+    body,
+  });
+};
+
 const signedCheckout = (type: string) => {
   const body = JSON.stringify({
     id: `evt_${type.replaceAll('.', '_')}`,
@@ -142,6 +175,25 @@ describe('signed Stripe dispute webhooks', () => {
     expect(calls.rpc).toHaveBeenCalledWith('checkout_release_wallet', {
       p_intent_id: 'b4200000-0000-4000-8000-000000000001',
       p_status: 'expired',
+    });
+  });
+
+  it('records a signed succeeded tip exactly once', async () => {
+    const response = await stripeWebhook({ request: signedTip() } as never);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      received: true,
+      outcome: 'tip_paid',
+    });
+    expect(calls.rpc).toHaveBeenCalledWith('order_tip_record_payment', {
+      p_payment_intent: 'pi_tip123',
+      p_tip_id: '10000000-0000-4000-8000-000000000001',
+      p_amount_cents: 500,
+      p_currency: 'eur',
+    });
+    expect(calls.inserts).toContainEqual({
+      table: 'stripe_events',
+      row: { id: 'evt_tip_succeeded', type: 'payment_intent.succeeded' },
     });
   });
 

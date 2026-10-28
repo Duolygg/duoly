@@ -115,6 +115,88 @@ export function disputeFacts(object: unknown): DisputeFacts | null {
   };
 }
 
+export interface TipPaymentFacts {
+  paymentIntentId: string;
+  tipId: string;
+  amountCents: number;
+  currency: string;
+}
+
+/** A succeeded, server-labelled tip PaymentIntent. */
+export function tipPaymentFacts(object: unknown): TipPaymentFacts | null {
+  if (!object || typeof object !== 'object') return null;
+  const value = object as {
+    id?: unknown;
+    status?: unknown;
+    amount_received?: unknown;
+    currency?: unknown;
+    metadata?: { tip_id?: unknown };
+  };
+  const id = stripeId(value.id);
+  const tipId = value.metadata?.tip_id;
+  if (
+    !id?.startsWith('pi_') ||
+    value.status !== 'succeeded' ||
+    typeof tipId !== 'string' ||
+    !/^[0-9a-f-]{36}$/i.test(tipId) ||
+    !Number.isInteger(value.amount_received) ||
+    (value.amount_received as number) < 100 ||
+    (value.amount_received as number) > 10_000 ||
+    value.currency !== 'eur'
+  )
+    return null;
+  return {
+    paymentIntentId: id,
+    tipId,
+    amountCents: value.amount_received as number,
+    currency: value.currency,
+  };
+}
+
+export function tipRefundFacts(object: unknown): {
+  paymentIntentId: string;
+  refundedCents: number;
+} | null {
+  if (!object || typeof object !== 'object') return null;
+  const value = object as {
+    payment_intent?: unknown;
+    amount_refunded?: unknown;
+  };
+  const paymentIntentId = stripeId(value.payment_intent);
+  if (
+    !paymentIntentId?.startsWith('pi_') ||
+    !Number.isInteger(value.amount_refunded) ||
+    (value.amount_refunded as number) < 0
+  )
+    return null;
+  return {
+    paymentIntentId,
+    refundedCents: value.amount_refunded as number,
+  };
+}
+
+export function tipDisputeFacts(object: unknown): {
+  disputeId: string;
+  paymentIntentId: string;
+  status: string;
+} | null {
+  if (!object || typeof object !== 'object') return null;
+  const value = object as {
+    id?: unknown;
+    payment_intent?: unknown;
+    status?: unknown;
+  };
+  const disputeId = stripeId(value.id);
+  const paymentIntentId = stripeId(value.payment_intent);
+  if (
+    !disputeId?.startsWith('dp_') ||
+    !paymentIntentId?.startsWith('pi_') ||
+    typeof value.status !== 'string'
+  )
+    return null;
+  return { disputeId, paymentIntentId, status: value.status };
+}
+
 export interface PaymentFacts {
   intentId: string;
   paymentIntentId: string;
@@ -353,11 +435,56 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
         await releaseSessionWallet(admin, event.data.object.id, 'expired');
         outcome = 'expired';
         break;
+      case 'payment_intent.succeeded': {
+        const tip = tipPaymentFacts(event.data.object);
+        if (!tip) break;
+        const result = await admin.rpc('order_tip_record_payment', {
+          p_payment_intent: tip.paymentIntentId,
+          p_tip_id: tip.tipId,
+          p_amount_cents: tip.amountCents,
+          p_currency: tip.currency,
+        });
+        if (result.error) throw new Error('order_tip_record_payment failed');
+        outcome = 'tip_paid';
+        break;
+      }
+      case 'payment_intent.payment_failed':
+      case 'payment_intent.canceled': {
+        const intent = event.data.object as Stripe.PaymentIntent;
+        if (!intent.id?.startsWith('pi_') || !intent.metadata?.tip_id) break;
+        const result = await admin.rpc('order_tip_record_failure', {
+          p_payment_intent: intent.id,
+          p_status:
+            event.type === 'payment_intent.canceled' ? 'canceled' : 'failed',
+          p_error: intent.last_payment_error?.code ?? event.type,
+        });
+        if (result.error) throw new Error('order_tip_record_failure failed');
+        outcome = 'tip_payment_failed';
+        break;
+      }
       case 'charge.dispute.created':
       case 'charge.dispute.updated':
       case 'charge.dispute.closed': {
         const dispute = disputeFacts(event.data.object);
         if (!dispute) break;
+        const lookup = await admin.rpc('order_tip_for_intent', {
+          p_payment_intent: dispute.paymentIntentId,
+        });
+        if (lookup.error) throw new Error('order_tip_for_intent failed');
+        if (
+          typeof lookup.data === 'string' &&
+          /^[0-9a-f-]{36}$/i.test(lookup.data)
+        ) {
+          const tipResult = await admin.rpc('order_tip_record_dispute', {
+            p_dispute_id: dispute.disputeId,
+            p_payment_intent: dispute.paymentIntentId,
+            p_status: dispute.status,
+          });
+          if (tipResult.error)
+            throw new Error('order_tip_record_dispute failed');
+          outcome = `tip_dispute_${dispute.action}`;
+          break;
+        }
         const result = await admin.rpc('record_stripe_dispute', {
           p_dispute_id: dispute.disputeId,
           p_charge_id: dispute.chargeId,
@@ -377,6 +504,35 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
           event.data.object,
         );
         if (!paymentIntent) break;
+        const lookup = await admin.rpc('order_tip_for_intent', {
+          p_payment_intent: paymentIntent,
+        });
+        if (lookup.error) throw new Error('order_tip_for_intent failed');
+        if (
+          typeof lookup.data === 'string' &&
+          /^[0-9a-f-]{36}$/i.test(lookup.data)
+        ) {
+          let refundedCents = tipRefundFacts(event.data.object)?.refundedCents;
+          if (refundedCents === undefined) {
+            const intent = await stripe.paymentIntents.retrieve(paymentIntent, {
+              expand: ['latest_charge'],
+            });
+            refundedCents =
+              intent.latest_charge && typeof intent.latest_charge === 'object'
+                ? intent.latest_charge.amount_refunded
+                : undefined;
+          }
+          if (!Number.isInteger(refundedCents))
+            throw new Error('tip refund total unavailable');
+          const tipResult = await admin.rpc('order_tip_record_refund', {
+            p_payment_intent: paymentIntent,
+            p_refunded_cents: refundedCents,
+          });
+          if (tipResult.error)
+            throw new Error('order_tip_record_refund failed');
+          outcome = 'tip_refund_recorded';
+          break;
+        }
         const result = await admin.rpc('record_payment_refund', {
           p_payment_intent: paymentIntent,
           p_reason: 'Refund received from Stripe',
