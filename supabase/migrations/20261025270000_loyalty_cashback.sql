@@ -49,7 +49,8 @@ language sql stable security definer set search_path='' as $$
   end
 $$;
 
--- Valid completed orders count towards the level: completed, not refunded, no open or lost dispute.
+-- Valid completed orders count towards the level: completed and not refunded.
+-- Stripe disputes can delay or cancel cashback, but L1 levels count every unrefunded completion.
 -- With p_before set, only orders completed strictly before that (completed_at, id) position count.
 create function public.loyalty_valid_count(p_customer uuid,p_before_at timestamptz default null,p_before_id uuid default null)
 returns bigint language sql stable security definer set search_path='' as $$
@@ -57,7 +58,6 @@ returns bigint language sql stable security definer set search_path='' as $$
    where o.customer_id=p_customer and o.status='completed'
      and (p_before_at is null or (o.completed_at,o.id)<(p_before_at,p_before_id))
      and not public.loyalty_order_refunded(o.id)
-     and public.loyalty_order_dispute(o.id) is null
 $$;
 
 -- L2: card-paid EUR cents. No Stripe payment means nothing was paid by card. Wallet money spent on
@@ -326,7 +326,7 @@ begin
       'pendingOrders',(select pg_catalog.count(*) from public.loyalty_cashbacks c where c.customer_id=v_actor and c.state in ('pending','blocked'))),
     'gifts',coalesce((select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object('level',g.level,'amountEurCents',g.amount_eur_cents,'grantedAt',g.granted_at) order by g.granted_at,g.level)
       from public.loyalty_level_gifts g where g.customer_id=v_actor),'[]'::jsonb),
-    'orders',coalesce((select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object('orderId',q.order_id,'state',q.state,'percent',q.cashback_percent,
+    'cashbackOrders',coalesce((select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object('orderId',q.order_id,'state',q.state,'percent',q.cashback_percent,
         'amountEurCents',case when q.state in ('pending','blocked') then (public.loyalty_card_paid_cents(q.order_id)*q.cashback_percent+50)/100 else coalesce(q.amount_eur_cents,0) end,
         'creditAt',q.credit_at) order by q.completed_at desc)
       from (select c.* from public.loyalty_cashbacks c where c.customer_id=v_actor order by c.completed_at desc limit 100) q),'[]'::jsonb));

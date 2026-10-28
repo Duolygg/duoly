@@ -2025,6 +2025,7 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number };
         Returns: Json;
       };
+      customer_rewards: { Args: never; Returns: Json };
       desk_check_in: { Args: { p_last_active?: string }; Returns: Json };
       desk_set_online: { Args: { p_online: boolean }; Returns: Json };
       finalize_order_proof_upload: {
