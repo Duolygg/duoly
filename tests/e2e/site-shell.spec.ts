@@ -164,6 +164,25 @@ test('removed preview routes and unknown pages are branded 404s', async ({
     'This lobby is empty.',
   );
   await expect(page.locator('header.site-header')).toBeVisible();
+  // the short 404 block is centred with a minimum height, not floating above a void
+  const box = await page.locator('section.page.centered').boundingBox();
+  expect(box?.height ?? 0).toBeGreaterThan(300);
+});
+
+test('login page has no duplicate header sign in and spaced links', async ({
+  page,
+}) => {
+  await page.goto('/login');
+  await expect(
+    page.locator('header.site-header').getByRole('link', { name: 'Sign in' }),
+  ).toHaveCount(0);
+  const links = page.locator('.login-links');
+  await expect(
+    links.getByRole('link', { name: 'Create an account', exact: true }),
+  ).toBeVisible();
+  expect(await links.evaluate((el) => getComputedStyle(el).columnGap)).not.toBe(
+    'normal',
+  );
 });
 
 test('admin sections are invisible to signed-out visitors', async ({

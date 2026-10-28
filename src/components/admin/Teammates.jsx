@@ -2,6 +2,7 @@ import React from 'react';
 import { GAME as GAMES } from '../../design-reference/lib/games';
 import { maskEmail } from '../../design-reference/lib/adminData';
 import { flagSrc } from '../../design-reference/lib/countries';
+import Applications from './Applications';
 import {
   C,
   card,
@@ -13,15 +14,17 @@ import {
   input,
   usd,
   dateOnly,
-  ago,
 } from '../../design-reference/components/admin/ui';
 
-// Port of the roster tab of the original components/admin/Teammates.jsx on /api/admin/teammates
-// (RPCs admin_teammates, admin_set_suspended). Applications have their own section. Trust level,
-// rating, deposit held and amount owed come with order completion and payouts. Presence is
-// durable: Playing wins, then Online, then Offline.
+// Port of the original components/admin/Teammates.jsx on /api/admin/teammates (RPCs
+// admin_teammates, admin_set_suspended): the Teammates and Applications tabs. The tab is part of
+// the URL (/admin/teammates, /admin/applications). Trust level, deposit held, amount owed and
+// balance adjustments wait on trust levels and weekly payouts, so those cells say so. Presence
+// is durable: Playing wins, then Online, then Offline.
 const REFRESH_MS = 20000;
-const FILTERS = ['All', 'Online', 'Playing', 'Suspended', 'No Discord'];
+const FILTERS = ['All', 'Online', 'Suspended', 'No Discord'];
+const SOON_TRUST = 'Coming with trust levels';
+const SOON_PAYOUTS = 'Coming with weekly payouts';
 const toMs = (v) => (v ? Date.parse(v) : null);
 
 export default class Teammates extends React.Component {
@@ -34,6 +37,7 @@ export default class Teammates extends React.Component {
       q: '',
       filter: 'All',
       sort: 'orders',
+      tab: props.tab || 'roster',
       busy: '',
     };
   }
@@ -43,6 +47,10 @@ export default class Teammates extends React.Component {
   }
   componentWillUnmount() {
     clearInterval(this._t);
+  }
+  componentDidUpdate(prev) {
+    if (prev.tab !== this.props.tab && this.props.tab)
+      this.setState({ tab: this.props.tab });
   }
   async load() {
     const res = await this.props.api.get('/api/admin/teammates');
@@ -82,14 +90,13 @@ export default class Teammates extends React.Component {
     this.props.log();
     this.load();
   }
-  render() {
+  renderRoster() {
     const { ask } = this.props;
     const s = this.state;
     const q = s.q.trim().toLowerCase();
     const is = (t, f) =>
       f === 'All' ||
-      (f === 'Online' && t.online) ||
-      (f === 'Playing' && t.playing) ||
+      (f === 'Online' && (t.online || t.playing) && !t.suspended) ||
       (f === 'Suspended' && t.suspended) ||
       (f === 'No Discord' && !t.discord);
     const list = s.list
@@ -109,21 +116,19 @@ export default class Teammates extends React.Component {
       .sort(
         {
           orders: (a, b) => b.lifetime - a.lifetime,
+          rating: (a, b) => (b.rating || 0) - (a.rating || 0),
           earned: (a, b) => b.earned30 - a.earned30,
           newest: (a, b) => (b.joined || 0) - (a.joined || 0),
         }[s.sort],
       );
     const n = (f) => s.list.filter((t) => is(t, f)).length;
-    const dash = (
-      <span
-        style={{ color: C.faint }}
-        title="Comes with order completion and payouts"
-      >
-        –
+    const soon = (title) => (
+      <span style={{ color: C.faint, fontSize: '12.5px' }} title={title}>
+        Soon
       </span>
     );
     return (
-      <section style={{ ...card, padding: '18px' }}>
+      <>
         <div
           style={{
             display: 'flex',
@@ -167,6 +172,7 @@ export default class Teammates extends React.Component {
             style={input}
           >
             <option value="orders">Most orders</option>
+            <option value="rating">Best rating</option>
             <option value="earned">Most earned (30d)</option>
             <option value="newest">Newest</option>
           </select>
@@ -308,9 +314,6 @@ export default class Teammates extends React.Component {
                         >
                           {maskEmail(t.email)}
                           {t.joined ? ' · since ' + dateOnly(t.joined) : ''}
-                          {t.lastSeen
-                            ? ' · signed in ' + ago(t.lastSeen, Date.now())
-                            : ''}
                         </span>
                       </span>
                     </span>
@@ -366,7 +369,7 @@ export default class Teammates extends React.Component {
                       ) : null}
                     </span>
                   </td>
-                  <td style={td}>{dash}</td>
+                  <td style={td}>{soon(SOON_TRUST)}</td>
                   <td
                     style={{ ...td, textAlign: 'right' }}
                     title={
@@ -375,7 +378,7 @@ export default class Teammates extends React.Component {
                         : 'No reviews yet'
                     }
                   >
-                    {t.rating == null ? dash : '★ ' + t.rating.toFixed(2)}
+                    {t.rating == null ? 'New' : '★ ' + t.rating.toFixed(2)}
                   </td>
                   <td
                     style={{ ...td, textAlign: 'right' }}
@@ -387,14 +390,18 @@ export default class Teammates extends React.Component {
                     style={{
                       ...td,
                       textAlign: 'right',
-                      color: t.earned30 ? C.white : C.faint,
+                      color: C.white,
                       fontWeight: '600',
                     }}
                   >
-                    {t.earned30 ? usd(t.earned30) : '–'}
+                    {usd(t.earned30)}
                   </td>
-                  <td style={{ ...td, textAlign: 'right' }}>{dash}</td>
-                  <td style={{ ...td, textAlign: 'right' }}>{dash}</td>
+                  <td style={{ ...td, textAlign: 'right' }}>
+                    {soon(SOON_TRUST)}
+                  </td>
+                  <td style={{ ...td, textAlign: 'right' }}>
+                    {soon(SOON_PAYOUTS)}
+                  </td>
                   <td style={td}>
                     <span
                       title={
@@ -426,59 +433,75 @@ export default class Teammates extends React.Component {
                     </span>
                   </td>
                   <td style={{ ...td, textAlign: 'right' }}>
-                    {t.suspended ? (
+                    <span style={{ display: 'inline-flex', gap: '6px' }}>
                       <button
                         type="button"
-                        disabled={s.busy === t.id}
-                        style={btn()}
-                        onClick={() =>
-                          ask({
-                            title: 'Reinstate ' + t.name + '?',
-                            body:
-                              'They can take orders again right away.' +
-                              (t.suspended.reason
-                                ? ' Suspended for: ' + t.suspended.reason + '.'
-                                : ''),
-                            confirm: 'Reinstate',
-                            onConfirm: () => this.setSuspended(t, false),
-                          })
-                        }
-                      >
-                        Reinstate
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled={s.busy === t.id || t.playing}
-                        title={
-                          t.playing
-                            ? 'They’re playing an order right now'
-                            : undefined
-                        }
+                        disabled
+                        title={SOON_PAYOUTS}
                         style={{
-                          ...btn('danger'),
-                          opacity: t.playing ? '.45' : '1',
+                          ...btn(),
+                          opacity: '.45',
+                          cursor: 'not-allowed',
                         }}
-                        onClick={() =>
-                          ask({
-                            title: 'Suspend ' + t.name + '?',
-                            body: 'They can’t see or take orders, upload proof or chat until you reinstate them.',
-                            confirm: 'Suspend',
-                            kind: 'danger',
-                            field: {
-                              label: 'Reason (shown in the audit log)',
-                              placeholder:
-                                'e.g. repeated toxic behaviour reports',
-                              required: true,
-                            },
-                            onConfirm: (reason) =>
-                              this.setSuspended(t, true, reason),
-                          })
-                        }
                       >
-                        Suspend
+                        Adjust balance
                       </button>
-                    )}
+                      {t.suspended ? (
+                        <button
+                          type="button"
+                          disabled={s.busy === t.id}
+                          style={btn()}
+                          onClick={() =>
+                            ask({
+                              title: 'Reinstate ' + t.name + '?',
+                              body:
+                                'They can take orders again right away.' +
+                                (t.suspended.reason
+                                  ? ' Suspended for: ' +
+                                    t.suspended.reason +
+                                    '.'
+                                  : ''),
+                              confirm: 'Reinstate',
+                              onConfirm: () => this.setSuspended(t, false),
+                            })
+                          }
+                        >
+                          Reinstate
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={s.busy === t.id || t.playing}
+                          title={
+                            t.playing
+                              ? 'They’re playing an order right now'
+                              : undefined
+                          }
+                          style={{
+                            ...btn('danger'),
+                            opacity: t.playing ? '.45' : '1',
+                          }}
+                          onClick={() =>
+                            ask({
+                              title: 'Suspend ' + t.name + '?',
+                              body: 'They can’t see or take orders, upload proof or chat until you reinstate them.',
+                              confirm: 'Suspend',
+                              kind: 'danger',
+                              field: {
+                                label: 'Reason (shown in the audit log)',
+                                placeholder:
+                                  'e.g. repeated toxic behaviour reports',
+                                required: true,
+                              },
+                              onConfirm: (reason) =>
+                                this.setSuspended(t, true, reason),
+                            })
+                          }
+                        >
+                          Suspend
+                        </button>
+                      )}
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -496,7 +519,7 @@ export default class Teammates extends React.Component {
                   >
                     {s.list.length
                       ? 'No teammates match.'
-                      : 'No teammates yet. Approve an application or make someone a teammate in Users & roles.'}
+                      : 'No teammates yet. Approve an application or make someone a teammate in Users and roles.'}
                   </td>
                 </tr>
               ) : null}
@@ -504,9 +527,69 @@ export default class Teammates extends React.Component {
           </table>
         </div>
         <p style={{ margin: '12px 0 0', fontSize: '13px', color: C.dim }}>
-          Trust level, deposit and amount owed fill in once order completion and
-          payouts are live. Game access and roles are edited in Users & roles.
+          Trust level, deposit held and amount owed show here once trust levels
+          and weekly payouts are live. Game access and roles are edited in Users
+          and roles.
         </p>
+      </>
+    );
+  }
+  render() {
+    const s = this.state;
+    const pending = this.props.pendingApps || 0;
+    const pick = (id) => {
+      this.setState({ tab: id });
+      if (this.props.onTab) this.props.onTab(id);
+    };
+    const tab = (id, label, n, hot) => (
+      <button
+        type="button"
+        role="tab"
+        aria-selected={s.tab === id ? 'true' : 'false'}
+        onClick={() => pick(id)}
+        style={{
+          ...chip(s.tab === id),
+          minHeight: '40px',
+          padding: '0 16px',
+          fontSize: '14px',
+        }}
+      >
+        {label}
+        <span
+          style={{
+            minWidth: '20px',
+            height: '20px',
+            padding: '0 6px',
+            borderRadius: '999px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '11.5px',
+            background: hot
+              ? 'rgba(255, 210, 122, .2)'
+              : 'rgba(196, 170, 255, .14)',
+            color: s.tab === id ? C.ink : hot ? C.gold : C.accent,
+          }}
+        >
+          {n}
+        </span>
+      </button>
+    );
+    return (
+      <section style={{ ...card, padding: '18px' }}>
+        <div
+          role="tablist"
+          aria-label="Teammates"
+          style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}
+        >
+          {tab('roster', 'Teammates', s.list.length)}
+          {tab('apps', 'Applications', pending, pending > 0)}
+        </div>
+        {s.tab === 'roster' ? (
+          this.renderRoster()
+        ) : (
+          <Applications {...this.props} embedded />
+        )}
       </section>
     );
   }

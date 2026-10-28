@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
 import type { Currency, Viewer } from '../../contracts/account';
-import type { RecentMatch } from '../../contracts/home';
+import type { HomeStats, RecentMatch } from '../../contracts/home';
 
 const PENDING_KEY = 'duoly-pending-queue';
 
@@ -26,6 +26,7 @@ export default function LiveHome({
   cookieCurrency = null,
   onlineNow: initialOnline = 0,
   recentMatches: initialMatches = [],
+  stats: initialStats = null,
   authError = null,
 }: {
   viewer: Viewer | null;
@@ -36,11 +37,13 @@ export default function LiveHome({
   cookieCurrency?: Currency | null;
   onlineNow?: number;
   recentMatches?: RecentMatch[];
+  stats?: HomeStats | null;
   authError?: string | null;
 }) {
   const [live, setLive] = useState({
     onlineNow: initialOnline,
     recentMatches: initialMatches,
+    stats: initialStats,
   });
   // Keeps the figures fresh on an open tab. The endpoint is CDN-cached, so this is cheap.
   useEffect(() => {
@@ -54,6 +57,7 @@ export default function LiveHome({
         const data = (await response.json()) as {
           onlineNow?: unknown;
           recentMatches?: unknown;
+          stats?: HomeStats | null;
         };
         setLive((current) => ({
           onlineNow:
@@ -63,6 +67,10 @@ export default function LiveHome({
           recentMatches: Array.isArray(data.recentMatches)
             ? (data.recentMatches as RecentMatch[])
             : current.recentMatches,
+          stats:
+            data.stats && typeof data.stats === 'object'
+              ? data.stats
+              : current.stats,
         }));
       } catch {
         /* Keep the last figures. */
@@ -209,6 +217,7 @@ export default function LiveHome({
       usdRate={usdRate}
       onlineNow={live.onlineNow}
       recentMatches={live.recentMatches}
+      stats={live.stats}
     />
   );
 }

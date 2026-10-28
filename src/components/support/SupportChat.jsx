@@ -456,7 +456,7 @@ export default class SupportChat extends React.Component {
                         .replace(/, ([^,]*)$/, ' and $1') +
                       (online.length === 1 ? ' is' : ' are') +
                       ' online'
-                    : 'Sparky answers 24/7 · the team replies right here'}
+                    : 'The team is away · Sparky answers 24/7'}
                 </div>
               ) : null}
             </header>

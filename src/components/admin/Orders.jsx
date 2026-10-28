@@ -17,9 +17,12 @@ import {
 } from '../../design-reference/components/admin/ui';
 import { order } from './api';
 
-// Port of the original components/admin/Orders.jsx on /api/admin/orders (RPC admin_orders).
-// Read-only for now: cancel, refund and handover come with the Live desk step.
+// Port of the original components/admin/Orders.jsx on /api/admin/orders (RPC admin_orders):
+// the same table, drawer, money rows and timeline, with truthful Stripe wording (cards are
+// authorized at booking and charged on accept; cancels release, refunds go back to the card).
+// Security deposit and cashback keep their rows and say they are not live yet.
 const REFRESH_MS = 15000;
+const PLATFORM_FEE = 0.4; // Duoly keeps 40%, the teammate gets 60% (src/server/pricing)
 const CANCEL = {
   queue_expired: 'No teammate within 5 minutes',
   customer_cancelled: 'Cancelled by the customer',
@@ -34,7 +37,19 @@ const PAY_STATE = {
   release_failed: ['Release failed, needs attention', C.red],
 };
 
-const STATUSES = ['All', 'Queued', 'In progress', 'Completed', 'Cancelled'];
+const STATUSES = [
+  'All',
+  'Queued',
+  'In progress',
+  'Completed',
+  'Refunded',
+  'Cancelled',
+];
+// A refunded order shows as Refunded, like the original.
+const refunded = (o) =>
+  !!(o.adminRefundedAt || (o.payment && o.payment.state === 'refunded'));
+const withStatus = (o) =>
+  refunded(o) && o.status !== 'Cancelled' ? { ...o, status: 'Refunded' } : o;
 const PAGE = 12;
 
 export default class Orders extends React.Component {
@@ -59,7 +74,7 @@ export default class Orders extends React.Component {
     const res = await this.props.api.get('/api/admin/orders');
     if (!res.ok) return this.setState({ error: res.error, loaded: true });
     this.setState({
-      orders: (res.data.orders || []).map(order),
+      orders: (res.data.orders || []).map(order).map(withStatus),
       error: '',
       loaded: true,
       now: Date.now(),
@@ -190,14 +205,10 @@ export default class Orders extends React.Component {
     if (!o) return null;
     const g = GAMES[o.game] || { name: o.game, img: '' };
     const close = () => this.setState({ open: null });
+    const charged =
+      o.payment && ['captured', 'refunded'].includes(o.payment.state);
     const timeline = [
-      [
-        'Booked · ' +
-          o.pay +
-          (o.payment && o.payment.state === 'authorized' ? ' authorized' : ''),
-        o.createdAt,
-        true,
-      ],
+      [(charged ? 'Paid with ' : 'Booked with ') + o.pay, o.createdAt, true],
     ];
     if (o.acceptedAt)
       timeline.push([
@@ -222,15 +233,43 @@ export default class Orders extends React.Component {
     if (o.status === 'Queued')
       timeline.push(['Waiting for a teammate', null, false]);
     if (o.status === 'In progress') timeline.push(['Playing now', null, false]);
-    if (o.status === 'Completed')
-      timeline.push(['Completed with proof', o.completedAt, true]);
+    if (o.completedAt) {
+      timeline.push([
+        'Played ' +
+          o.games +
+          ' ' +
+          (o.unit || 'game') +
+          (o.games === 1 ? '' : 's') +
+          ' · proof screenshots uploaded',
+        o.completedAt,
+        true,
+      ]);
+      timeline.push([
+        'Completed · earnings recorded for the teammate',
+        o.completedAt,
+        true,
+      ]);
+    }
+    if (o.status === 'Refunded')
+      timeline.push([
+        'Refunded to the card' +
+          (o.adminRefundReason ? ': ' + o.adminRefundReason : ''),
+        Date.parse(
+          o.adminRefundedAt || (o.payment && o.payment.refundedAt) || '',
+        ) || null,
+        true,
+      ]);
     if (o.status === 'Cancelled')
       timeline.push([
         (CANCEL[o.cancelReason] || 'Cancelled') +
+          (o.adminCancelNote ? ': ' + o.adminCancelNote : '') +
           (o.refund ? ' · ' + eur(o.refund) + ' credited' : ''),
         o.cancelledAt,
         true,
       ]);
+    const fee = o.amount * PLATFORM_FEE;
+    const shareEur = o.amount - fee;
+    const notLive = (label) => row(label, 'Not live yet', C.faint);
     const row = (label, value, color, bold) => (
       <div
         style={{
@@ -461,16 +500,28 @@ export default class Orders extends React.Component {
           >
             Money
           </h3>
-          {row('Order amount', eur(o.amount), C.white, true)}
           {row(
-            o.status === 'Cancelled'
-              ? 'Teammate payout (not owed, order cancelled)'
-              : 'Teammate payout (booked at ' +
-                  Number(o.fx).toFixed(4) +
-                  ' USD/EUR)',
-            usd(o.payoutUsd),
-            o.status === 'Cancelled' ? C.dim : C.green,
+            charged ? 'Customer paid' : 'Order amount',
+            eur(o.amount),
+            C.white,
+            true,
           )}
+          {row(
+            'Duoly fee (' + Math.round(PLATFORM_FEE * 100) + '%)',
+            eur(fee),
+            C.accent,
+          )}
+          <div title={'Booked at ' + Number(o.fx).toFixed(4) + ' USD/EUR'}>
+            {row(
+              o.status === 'Cancelled'
+                ? 'Teammate share (not owed, order cancelled)'
+                : 'Teammate share',
+              eur(shareEur) + ' → ' + usd(o.payoutUsd),
+              o.status === 'Cancelled' ? C.dim : undefined,
+            )}
+          </div>
+          {notLive('Security deposit')}
+          {notLive('Cashback to customer')}
           {row('Paid with', o.pay)}
           {pay ? row('Payment', pay[0], pay[1], true) : null}
           {o.payment && o.payment.error
@@ -501,34 +552,6 @@ export default class Orders extends React.Component {
                 {o.payment.stripeId}
               </a>
             </p>
-          ) : null}
-
-          {o.review ? (
-            <>
-              <h3
-                style={{
-                  margin: '22px 0 4px',
-                  fontSize: '13px',
-                  fontWeight: '700',
-                  letterSpacing: '.06em',
-                  textTransform: 'uppercase',
-                  color: C.faint,
-                }}
-              >
-                Customer review
-              </h3>
-              {row(
-                'Rating',
-                '★'.repeat(o.review.rating) + ' ' + o.review.rating + '/5',
-                C.gold,
-                true,
-              )}
-              {o.review.tags.length
-                ? row('Tags', o.review.tags.join(', '))
-                : null}
-              {o.review.text ? row('Review', o.review.text) : null}
-              {row('Received', dateTime(o.review.at))}
-            </>
           ) : null}
 
           <h3
@@ -610,6 +633,34 @@ export default class Orders extends React.Component {
               </li>
             ))}
           </ol>
+          {o.review ? (
+            <>
+              <h3
+                style={{
+                  margin: '22px 0 4px',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  letterSpacing: '.06em',
+                  textTransform: 'uppercase',
+                  color: C.faint,
+                }}
+              >
+                Customer review
+              </h3>
+              {row(
+                'Rating',
+                '★'.repeat(o.review.rating) + ' ' + o.review.rating + '/5',
+                C.gold,
+                true,
+              )}
+              {o.review.tags.length
+                ? row('Tags', o.review.tags.join(', '))
+                : null}
+              {o.review.text ? row('Review', o.review.text) : null}
+              {row('Received', dateTime(o.review.at))}
+            </>
+          ) : null}
+
           <div
             style={{
               marginTop: '24px',
@@ -633,7 +684,7 @@ export default class Orders extends React.Component {
                 <button
                   type="button"
                   disabled={!!s.actionBusy}
-                  style={btn('danger')}
+                  style={btn()}
                   onClick={() =>
                     this.props.ask({
                       title: 'Cancel ' + o.id + '?',

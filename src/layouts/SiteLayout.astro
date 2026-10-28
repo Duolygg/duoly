@@ -129,11 +129,11 @@ const external = (href: string) => href.startsWith('http');
                   </form>
                 </div>
               </details>
-            ) : (
+            ) : path !== '/login' ? (
               <a class="signin" href="/login">
                 Sign in
               </a>
-            )}
+            ) : null}
             <details class="mobile-nav">
               <summary aria-label="Menu">
                 <svg

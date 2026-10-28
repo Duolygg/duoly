@@ -29,7 +29,7 @@ const cookieCurrency = CurrencySchema.safeParse(
   Astro.cookies.get('duoly-currency')?.value,
 );
 // Teammates online and recent matches: public, cached per instance (src/server/home/live.ts).
-const { onlineNow, recentMatches } = await homeLive();
+const { onlineNow, recentMatches, stats } = await homeLive();
 ---
 
 <SiteLayout title="Duoly | Duo up in under 2 minutes" bare>
@@ -42,6 +42,7 @@ const { onlineNow, recentMatches } = await homeLive();
     cookieCurrency={cookieCurrency.success ? cookieCurrency.data : null}
     onlineNow={onlineNow}
     recentMatches={recentMatches}
+    stats={stats}
     client:load
   />
 </SiteLayout>

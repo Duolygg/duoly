@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { authConfig } from '../auth/config';
 import type { Database } from '../auth/database.types';
-import type { HomeLive, RecentMatch } from '../../contracts/home';
+import type { HomeLive, HomeStats, RecentMatch } from '../../contracts/home';
 
 /**
  * Homepage live elements (ledger #36): the "teammates online" figure and the
@@ -11,7 +11,7 @@ import type { HomeLive, RecentMatch } from '../../contracts/home';
  * reads to a handful per minute on the Free plan.
  */
 
-export type { HomeLive, RecentMatch } from '../../contracts/home';
+export type { HomeLive, HomeStats, RecentMatch } from '../../contracts/home';
 
 export const HOME_LIVE_TTL_MS = 30_000;
 export const HOME_LIVE_CACHE_CONTROL =
@@ -87,7 +87,52 @@ export function mapRecentMatches(raw: unknown): RecentMatch[] {
   return out;
 }
 
-type Loader = () => Promise<{ online: unknown; matches: unknown }>;
+/** Maps public.home_public_stats() into HomeStats. Anything malformed gives null. */
+export function mapHomeStats(raw: unknown): HomeStats | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const r = raw as Record<string, unknown>;
+  const count = (value: unknown) =>
+    typeof value === 'number' && Number.isInteger(value) && value >= 0
+      ? value
+      : null;
+  const sessions = count(r.sessions);
+  const reviews = count(r.reviews);
+  if (sessions === null || reviews === null) return null;
+  const onlineByGame: Record<string, number> = {};
+  if (r.onlineByGame && typeof r.onlineByGame === 'object')
+    for (const [game, n] of Object.entries(
+      r.onlineByGame as Record<string, unknown>,
+    )) {
+      const value = count(n);
+      if (GAMES.has(game) && value !== null) onlineByGame[game] = value;
+    }
+  const regions = (r.onlineByRegion ?? {}) as Record<string, unknown>;
+  const onlineByRegion = {
+    eu: count(regions.eu) ?? 0,
+    na: count(regions.na) ?? 0,
+    ao: count(regions.ao) ?? 0,
+    sa: count(regions.sa) ?? 0,
+  };
+  const rating = Number(r.rating);
+  const matchSeconds = count(r.matchSeconds);
+  return {
+    onlineByGame,
+    onlineByRegion,
+    sessions,
+    reviews,
+    rating:
+      reviews > 0 && r.rating !== null && rating >= 1 && rating <= 5
+        ? Math.round(rating * 10) / 10
+        : null,
+    matchSeconds,
+  };
+}
+
+type Loader = () => Promise<{
+  online: unknown;
+  matches: unknown;
+  stats?: unknown;
+}>;
 
 let client: { key: string; client: SupabaseClient<Database> } | null = null;
 
@@ -107,15 +152,22 @@ function publicClient(): SupabaseClient<Database> | null {
 
 const defaultLoader: Loader = async () => {
   const db = publicClient();
-  if (!db) return { online: 0, matches: [] };
-  const [online, matches] = await Promise.all([
+  if (!db) return { online: 0, matches: [], stats: null };
+  const [online, matches, stats] = await Promise.all([
     db.rpc('presence_public_count'),
     db.rpc('home_recent_matches'),
+    // Not in the generated types until they are regenerated after the migration.
+    (
+      db.rpc as unknown as (fn: string) => PromiseLike<{
+        data: unknown;
+        error: unknown;
+      }>
+    )('home_public_stats'),
   ]);
   return {
     online: online.error ? null : online.data,
-    // Until the migration is applied the call fails; the ticker keeps his sample rows.
     matches: matches.error ? null : matches.data,
+    stats: stats.error ? null : stats.data,
   };
 };
 
@@ -142,11 +194,16 @@ export async function homeLive(
           raw.matches === null
             ? (cached?.value.recentMatches ?? [])
             : mapRecentMatches(raw.matches),
+        stats: mapHomeStats(raw.stats) ?? cached?.value.stats ?? null,
       };
       cached = { value, at: now };
       return value;
     } catch {
-      const value = cached?.value ?? { onlineNow: 0, recentMatches: [] };
+      const value = cached?.value ?? {
+        onlineNow: 0,
+        recentMatches: [],
+        stats: null,
+      };
       // Retry after a short pause instead of on every request.
       cached = { value, at: now - HOME_LIVE_TTL_MS + 5_000 };
       return value;
