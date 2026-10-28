@@ -115,8 +115,11 @@ describe('Sparky prepared replies', () => {
 
     const teammateAnswers = preparedAnswers(teammate).join('\n');
     expect(teammateAnswers).toMatch(/recorded earnings/i);
-    expect(teammateAnswers).toMatch(/coming/i);
-    expect(teammateAnswers).not.toMatch(/paid every Friday|weekly payout/i);
+    // Weekly payouts and deposits are live (releases 5 and 8).
+    expect(teammateAnswers).toMatch(/Friday/);
+    expect(teammateAnswers).toMatch(/\$10/);
+    expect(teammateAnswers).toMatch(/Rookie 10%/);
+    expect(teammateAnswers).not.toMatch(/coming later|not live yet/i);
   });
 });
 

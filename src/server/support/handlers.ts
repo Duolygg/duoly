@@ -4,6 +4,7 @@ import { mutation } from '../auth/handlers';
 import { SupportPostSchema } from '../../contracts/support';
 import { answerMetadata, answerWithAi } from './ai';
 import { sparkyLookup } from './lookup';
+import { sparkyAdminLookup } from './admin-lookup';
 import { notifySupportAdmins, notifySupportDiscord } from './notify';
 import { supportPerson } from './person';
 import { CHIPS, greeting, preparedReply, type SupportPerson } from './sparky';
@@ -143,6 +144,14 @@ async function handoff(
   } as ConversationRow;
 }
 
+type UserClient = ReturnType<typeof accountContext>['client'];
+
+/** Admin tools need the session role admin and the asker's own signed-in client. */
+export function adminLookupFor(person: SupportPerson, client: UserClient) {
+  if (person.accountRole !== 'admin' || !person.userId || !client) return null;
+  return sparkyAdminLookup((fn, args) => client.rpc(fn, args as never));
+}
+
 export const postSupport: APIRoute = async (context) => {
   const prepared = await mutation(context, 4096);
   if (prepared.failure || !prepared.body) return prepared.failure!;
@@ -256,6 +265,9 @@ export const postSupport: APIRoute = async (context) => {
               process.env.OPENAI_API_KEY ?? import.meta.env?.OPENAI_API_KEY,
             // Bound to the session user id, never to anything the model sends.
             lookup: person.userId ? sparkyLookup(service, person.userId) : null,
+            // Admin reads only for a session whose account role is admin, and
+            // through the asker's own client so the admin RPCs re-check the role.
+            adminLookup: adminLookupFor(person, prepared.account.client),
           })
         : (() => {
             const routed = preparedReply(person, text);

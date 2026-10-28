@@ -40,3 +40,11 @@ Original sources (fetch with `gh api "repos/duoly-admin/duoly/contents/<path>?re
 ## Deliver
 
 Commit on `feat/support-sparky`, push the branch, open a DRAFT PR to `Duolygg/duoly`. Final answer: PR URL, what works (with the real test outputs), what is gated or left, the migration file name, any decisions you made that the owner should know, and cost notes (tokens per typical answer).
+
+## S3: admin tools and the evaluation set
+
+- `order_by_reference(reference)` and `person_summary(query)` live in `src/server/support/admin-lookup.ts`. They are offered to the model only when the session account role is admin (`person.accountRole`, from `account.identity()` in `person.ts`) and run the admin dashboard read RPCs (`admin_orders_page`, `admin_order_reports`, `admin_accounts`, `admin_customers`, `admin_teammates`) with the admin's own signed-in client, so `admin_caller()` re-checks the role in the database. No new SQL, read only.
+- Results are shaped for chat: no emails, user ids, Stripe ids, provider error texts, report bodies, evidence keys, avatars or priority numbers. Priority stays on the admin Priority screen.
+- A forged call from a customer, teammate or guest is refused before any read (`denied`), and the call is logged in the message metadata like every S2 tool call.
+- Eval: `node scripts/sparky/run-eval.ts [--only C01,A05] [--verbose] [--out file.json]` runs `tests/eval/sparky-eval.json` (40 questions) through `answerWithAi` with the real OpenAI key and live data. It picks existing accounts by role and never writes: customer and teammate tools read with the service role bound to the asker, admin tools run as the admin inside a rolled-back transaction through the linked Supabase CLI. Keys come from the macOS Keychain. Not part of CI.
+- When a product rule changes, update `CURRENT_FACTS` in `sparky.ts`, the entry in `knowledge.ts` and rerun the eval.

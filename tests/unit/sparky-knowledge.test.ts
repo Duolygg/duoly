@@ -46,8 +46,9 @@ describe('Sparky knowledge from the original assistant', () => {
   it('follows the owner copy rules and drops retired claims', () => {
     for (const entry of KNOWLEDGE) {
       expect(entry.text, entry.id).not.toMatch(/[\u2013\u2014&]/);
+      // Wallet, cashback, tips, payouts, deposits and Discord roles are live now.
       expect(entry.text, entry.id).not.toMatch(
-        /wallet (credit|balance)|cashback/i,
+        /no duoly wallet|there is no (duoly )?wallet|not live yet|coming (soon|later)|tips are not available/i,
       );
     }
   });

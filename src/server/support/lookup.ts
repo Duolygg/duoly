@@ -104,7 +104,7 @@ export type SparkyLookup = {
   deskStatus(): Promise<DeskStatus | null>;
 };
 
-const PAYMENT_MEANING: Record<string, [boolean, string]> = {
+export const PAYMENT_MEANING: Record<string, [boolean, string]> = {
   authorized: [
     false,
     'The amount is on hold on the card, nothing is charged yet. It is charged only when a teammate accepts.',

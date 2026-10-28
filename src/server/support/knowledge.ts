@@ -31,13 +31,13 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     roles: BUYERS,
     match:
       /cancel|refund|money back|charge|chargeback|didnt (get|play)|hold|pending/,
-    text: 'Nothing is charged until a teammate accepts. If nobody accepts within 5 minutes, or you cancel before that, the card hold is released (your bank may take a few days to show it). Once an order is being played, tell us what went wrong (no-show, left mid-game, toxic) and an admin reviews it; refunds after a match go back to your card through Stripe. There is no Duoly wallet.',
+    text: 'Nothing is charged until a teammate accepts. If nobody accepts within 5 minutes, or you cancel before that, the card hold is released (your bank may take a few days to show it). Once an order is being played, tell us what went wrong (no-show, left mid-game, toxic) and an admin reviews it; refunds after a match go back to your card through Stripe, and any part you paid with Duoly balance goes back to your balance.',
   },
   {
     id: 'rate',
     roles: BUYERS,
     match: /rate|rating|review|stars|feedback/,
-    text: 'After your order is done you can rate your teammate with 1 to 5 stars, pick a few tags and write a short review in your order room. You can rate each order once. Tips are not available yet.',
+    text: 'After your order is done you can rate your teammate with 1 to 5 stars, pick a few tags and write a short review in your order room. You can rate each order once, and add a tip of €1 to €100 together with your rating; 100% of the tip goes to your teammate.',
   },
   {
     id: 'apply',
@@ -51,6 +51,25 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     match:
       /chat|message|paypal|venmo|whatsapp|telegram|snapchat|password|login details|outside/,
     text: 'Order chat keeps payments and accounts on Duoly: messages that ask for logins or move payments or contact off Duoly are blocked. Never share your login with anyone. Chat messages are up to 500 characters.',
+  },
+  {
+    id: 'balance',
+    roles: BUYERS,
+    match: /wallet|balance|guthaben/,
+    text: 'Your Duoly balance collects cashback, level-up gifts, the €50 report bounty and credits from Duoly. Switch it on at checkout (it is on by default) to pay for part or all of an order, for any game. It never expires; promotional balance can’t be paid out as cash, and it can’t pay tips. Your dashboard shows your balance.',
+  },
+  {
+    id: 'loyalty',
+    roles: BUYERS,
+    match:
+      /loyal|cashback|level|bronze|silver|gold|platinum|diamond|reward|perk|gift/,
+    text: 'Loyalty levels by completed orders: Bronze from 0 (1% cashback), Silver from 100 (2%, €5 gift), Gold from 250 (3%, €15 gift, priority matching), Platinum from 500 (5%, €40 gift, one free 1-hour or 1-game coaching order every month), Diamond from 1000 (7%, €100 gift, pick a teammate you played with before). Cashback is on the card-paid part of each completed order and lands in your balance 14 days later. Gifts are added automatically. Your dashboard Rewards card shows your level.',
+  },
+  {
+    id: 'pro',
+    roles: BUYERS,
+    match: /\bpro\b|membership|subscription|abo/,
+    text: 'Duoly PRO costs €4.99 a month: 10% off every order on top of bundle discounts, priority matching and unlimited re-rolls (still in the first 5 minutes after acceptance). The first 7 days are free, once per customer and card. Cancel anytime with Manage PRO on your dashboard; PRO stays active until the end of the paid month.',
   },
   // ---- teammates
   {
@@ -100,7 +119,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'discord',
     roles: TEAM,
     match: /discord|role|in session/,
-    text: 'Connect Discord from your dashboard; it is required to go online. The Duoly server roles (Teammate, Online, In Session) and order posts in the game channels are coming soon.',
+    text: 'Connect Discord from your dashboard; it is required to go online. Once you connected Discord and joined the Duoly server, the roles Teammate, Online and In Session are synced automatically. New orders are posted in each game’s lfd channel, and the Take this order button there gives you a handover link for that order.',
   },
   {
     id: 'rules',
@@ -118,13 +137,13 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'pay',
     roles: TEAM,
     match: /paid|payout|pay day|payday|earn|money|friday|salary|when.*get|tip/,
-    text: 'Your earnings are recorded in USD for every completed order and shown on your dashboard. The plan is weekly payouts every Friday, but the payout schedule is not live yet, so an admin handles payouts for now. Tips are not available yet; when they are, they will be 100% yours.',
+    text: 'You earn 60% of the order price, fixed in USD when the order is booked, and earnings are recorded for every completed order. Payouts are weekly: each week runs Friday to Friday (Vienna time) and is paid on the Friday it ends. The minimum payout is $10; smaller amounts carry over to the next week. Before your first payout, fill in your payout details (legal name, address, country, date of birth, tax number and payout method). Tips are 100% yours and are paid out with your week.',
   },
   {
     id: 'trust',
     roles: TEAM,
     match: /deposit|held|hold|trust|tier|level|rookie|veteran|legend|elite/,
-    text: 'Trust levels by completed orders: Rookie from 0 (10% deposit), Trusted from 100 (8%), Veteran from 250 (5%), Elite from 500 (3%), Legend from 1000 (no deposit). The deposit is held from each order and paid back after 14 days without a dispute. Deposit holding starts together with the payout schedule, which is not live yet.',
+    text: 'Trust levels by completed orders: Rookie from 0 (10% deposit), Trusted from 100 (8%, Trusted badge), Veteran from 250 (5%, see high-value orders first), Elite from 500 (3%, priority matching), Legend from 1000 (no deposit, Legend badge). The deposit is held from each order and paid back with your payout 14 days after completion when there is no open report or dispute on that order. Refunded or disputed orders do not count towards your level.',
   },
 ];
 

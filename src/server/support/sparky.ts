@@ -101,11 +101,20 @@ const sanitize = (value: string, max = 120): string => {
 export const CURRENT_FACTS = [
   'Stripe authorises a card or wallet payment at checkout. It charges only when a teammate accepts.',
   'If nobody accepts within 5 minutes, or the customer cancels before acceptance, nothing is charged. Stripe releases the hold. A bank may take a few days to show that release.',
-  'Refunds after acceptance are decided by an admin and go back to the card through Stripe. There is no Duoly wallet or balance. There is no cashback or reward level system yet.',
-  'Built and live: booking, checkout, the 5 minute queue, acceptance, two rerolls during the first 5 minutes after acceptance, order chat with a safety filter, proof upload, completion, star ratings with tags and a short review, customer reports with screenshot proof and a €50 bounty after admin confirmation, the teammate Online switch with new-order bell, admin handover links, recorded teammate earnings, applications, the contact form and Discord account linking.',
+  'Refunds after acceptance are decided by an admin and go back to the card through Stripe. The part of an order paid with Duoly balance goes back to the balance.',
+  'Duoly balance (wallet) is live: it holds cashback, level-up gifts, the report bounty and credits from Duoly. At checkout it can pay for part or all of an order, for any game; the switch is on by default. It never expires. Promotional balance (cashback, gifts, bounties) cannot be paid out as cash. The balance cannot pay tips.',
+  'Loyalty levels for customers by completed orders: Bronze from 0 (1% cashback), Silver from 100 (2%, one-off €5 gift), Gold from 250 (3%, €15 gift), Platinum from 500 (5%, €40 gift), Diamond from 1000 (7%, €100 gift). Cashback is on the card-paid part of each completed order and lands in the balance 14 days after completion. Level gifts are added automatically. Refunded orders do not count and their cashback is reversed.',
+  'Customer perks: Gold and higher get priority matching (their orders are shown to teammates first). Platinum and Diamond get one free 1-hour or 1-game coaching order per calendar month, which does not roll over. Diamond can pick a teammate they played with before; that teammate gets the order first for 60 seconds, then it goes to the normal queue.',
+  'Duoly PRO is live: €4.99 a month, 10% off every order on top of bundle discounts, priority matching and unlimited re-rolls (still only in the first 5 minutes after acceptance). The first 7 days are free, one trial per customer and card. Cancel anytime with Manage PRO on the dashboard; PRO stays active until the end of the paid month. The creator first-order discount and PRO do not stack; the larger one applies.',
+  'Tips are live: after a completed order, together with the rating and only once, a customer can tip €1 to €100 as its own card payment. 100% of the tip goes to the teammate.',
+  'Report a teammate (toxic behaviour, or trying to move you off Duoly) with screenshots; if an admin confirms it, the customer gets a €50 bounty as Duoly balance.',
+  'Built and live: booking, checkout, the 5 minute queue, acceptance, two rerolls during the first 5 minutes after acceptance (unlimited with PRO), order chat with a safety filter, proof upload, completion, star ratings with tags and a short review, the teammate Online switch with new-order bell, queue settings per game and for voice, admin handover links, applications, the contact form and Discord account linking.',
   'Also live: the teammate leaderboard (week, month, all time; 10 points per completed order plus 5 per five-star review), teammate bio and languages, and a saved EUR or USD display currency per account.',
-  'Coming later: tips, weekly payouts, deposit holding, priority adjustments, Duoly PRO, and the Discord bot roles and order posts.',
-  'A teammate can upload 1 to 5 proof images and mark an assignment complete. Earnings are recorded when completion succeeds. A payout schedule is not live yet.',
+  'Teammate pay: 60% of the order price, fixed in USD when the order is booked; Duoly pays PRO and other customer discounts, so they never lower teammate pay. Earnings are recorded when an assignment is completed with 1 to 5 proof images.',
+  'Weekly payouts are live: a payout week runs Friday to Friday (Vienna time) and is paid on the Friday it ends, in USD, by an admin transfer. Minimum payout is $10; a smaller or negative week is carried forward until it reaches $10. Before the first payout a teammate must fill in payout details: legal name, address, country, date of birth, tax number and payout method. While a report or Stripe dispute on an order is open, that order’s amount is held. Admins can add or subtract an adjustment with a reason the teammate sees.',
+  'Teammate trust levels by completed orders (refunded or disputed orders do not count): Rookie from 0 (10% deposit), Trusted from 100 (8%, Trusted badge), Veteran from 250 (5%, sees high-value orders first), Elite from 500 (3%, priority matching), Legend from 1000 (no deposit, Legend badge). The deposit is held from each order’s pay and paid back with the payout 14 days after completion when there is no open report or dispute on that order. If a report or dispute against the teammate is upheld, Duoly keeps that order’s deposit.',
+  'Discord: the Duoly server roles Teammate, Online and In Session are synced automatically for teammates who connected Discord and joined the server. New orders are posted in each game’s lfd channel; the Take this order button opens a handover link that gives that teammate the order if they connected Discord, are approved for the game and are not suspended.',
+  'Teammate priority (how soon new orders show up for each teammate) and the exact timing of head starts are internal and never shared with teammates or customers.',
 ];
 
 const orderLine = (order: CustomerOrder) =>
@@ -138,7 +147,7 @@ function chipAnswer(person: SupportPerson, chip: string): string {
     return 'You can reroll during the first 5 minutes after acceptance, up to twice per order: the order goes back into the queue and that teammate can’t take it from the queue again. After the order you can rate them. For toxic behaviour or a safety concern, keep the details in Duoly chat and ask for a human.';
   if (chip === 'When do I get paid?') {
     const cents = person.teammate?.recordedEarningsUsdCents ?? 0;
-    return `Your recorded earnings are $${(cents / 100).toFixed(2)}. Scheduled teammate payments are coming later, so Duoly does not have a live payout schedule yet. Ask an admin if you need help with a specific earning.`;
+    return `Your recorded earnings are $${(cents / 100).toFixed(2)}. Payouts are weekly: each week runs Friday to Friday and is paid on the Friday it ends, in USD. The minimum is $10; smaller amounts carry over to the next week. Fill in your payout details on your dashboard before your first payout.`;
   }
   if (chip === 'Why can’t I go online?') {
     const t = person.teammate;
@@ -155,7 +164,7 @@ function chipAnswer(person: SupportPerson, chip: string): string {
     return `You get orders for: ${games.length ? games.join(', ') : 'no games yet'}. Go online on your dashboard and allow notifications so the bell reaches you. New orders don’t reach everyone at the same moment: taking what you’re online for, finishing orders and good reviews help. Once an order shows up for you, the first to accept gets it.`;
   }
   if (chip === 'How does the deposit work?')
-    return 'Trust levels and teammate deposits are coming later. No live deposit is being held. Your completed assignments create recorded earnings.';
+    return 'A small deposit is held from each order’s pay and paid back 14 days after completion when there is no open report or dispute on that order. It depends on your trust level: Rookie 10%, Trusted 8%, Veteran 5%, Elite 3% and Legend 0%. Your trust level grows with completed orders.';
   return 'I can get someone from the Duoly team to help here.';
 }
 
