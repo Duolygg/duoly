@@ -1,5 +1,6 @@
 ---
 import '../design-reference/globals.css';
+import CookieBanner from '../components/site/CookieBanner.astro';
 import { UPLOADED_AVATAR, type Viewer } from '../contracts/account';
 import {
   DISCORD_INVITE,
@@ -217,6 +218,7 @@ const external = (href: string) => href.startsWith('http');
         })
         .catch(() => {});
     </script>}
+    <CookieBanner />
     <script is:inline>
       // Close open header menus on outside click or Escape.
       document.addEventListener('click', (event) => {

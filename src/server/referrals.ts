@@ -1,5 +1,6 @@
 import type { AstroCookies } from 'astro';
 import { normalizeRefCode, REF_COOKIE_DAYS } from '../contracts/creators';
+import { CONSENT_COOKIE, readConsent } from '../contracts/consent';
 
 /**
  * Creator referral capture (ledger #28). A visitor who lands on any page with
@@ -7,8 +8,10 @@ import { normalizeRefCode, REF_COOKIE_DAYS } from '../contracts/creators';
  * the server and stores it on the checkout intent, where the database resolves
  * it to an active creator. The browser never sends a code or an amount.
  *
- * Off unless REFERRALS_ENABLED=true (the cookie is a marketing cookie; see the
- * open owner decisions in docs/product/creators.md).
+ * Off unless REFERRALS_ENABLED=true. The cookie is optional, so it is only set
+ * after the visitor chose "Accept all" in the cookie banner; "Only necessary"
+ * removes an existing one and stops checkout from reading it (owner decision
+ * 2026-10-27, docs/product/creators.md).
  */
 export const referralsEnabled = () => process.env.REFERRALS_ENABLED === 'true';
 
@@ -29,10 +32,16 @@ export function captureReferral(
   if (!enabled || !url || !cookies || method !== 'GET') return null;
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/auth/'))
     return null;
-  const code = normalizeRefCode(url.searchParams.get('ref'));
-  if (!code) return null;
   const secure = url.protocol === 'https:';
   const name = refCookieName(secure);
+  const consent = readConsent(cookies.get(CONSENT_COOKIE)?.value);
+  if (consent !== 'all') {
+    if (consent === 'necessary' && cookies.get(name))
+      cookies.delete(name, { path: '/', secure });
+    return null;
+  }
+  const code = normalizeRefCode(url.searchParams.get('ref'));
+  if (!code) return null;
   if (normalizeRefCode(cookies.get(name)?.value)) return null;
   cookies.set(name, code, {
     httpOnly: true,
@@ -51,5 +60,6 @@ export function checkoutRefCode(
   enabled = referralsEnabled(),
 ): string | null {
   if (!enabled) return null;
+  if (readConsent(cookies.get(CONSENT_COOKIE)?.value) !== 'all') return null;
   return normalizeRefCode(cookies.get(refCookieName(secure))?.value);
 }

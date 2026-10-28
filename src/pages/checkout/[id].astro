@@ -18,7 +18,7 @@ if (!config || !/^[0-9a-f-]{36}$/i.test(id)) return Astro.rewrite('/404');
 const { data: intent } = await adminFor(config)
   .from('checkout_intents')
   .select(
-    'id, customer_id, status, order_id, stripe_client_secret, game, service, title, units, unit, rank, region, ign, voice, amount_eur_cents',
+    'id, customer_id, status, order_id, stripe_client_secret, game, service, title, units, unit, rank, region, ign, voice, amount_eur_cents, first_order_discount_cents',
   )
   .eq('id', id)
   .maybeSingle();
@@ -54,7 +54,10 @@ try {
     },
     { eurToUsd: FALLBACK_EUR_TO_USD, customerCurrency: 'EUR' },
   );
-  if (quote.amountEurMinor === intent.amount_eur_cents) {
+  const creatorDiscount =
+    (intent as { first_order_discount_cents?: number })
+      .first_order_discount_cents ?? 0;
+  if (quote.amountEurMinor === intent.amount_eur_cents + creatorDiscount) {
     breakdown = [
       {
         label: `${eur(quote.unitPriceEurMinor)} × ${intent.units} ${unitWord(intent.units)}`,
@@ -71,6 +74,12 @@ try {
       breakdown.push({
         label: 'First session discount',
         value: `−${eur(quote.firstSessionDiscountEurMinor)}`,
+        accent: true,
+      });
+    if (creatorDiscount > 0)
+      breakdown.push({
+        label: 'Creator link, 10% off your first order',
+        value: `−${eur(creatorDiscount)}`,
         accent: true,
       });
   }

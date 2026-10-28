@@ -1,6 +1,6 @@
 # Creator referral rollout decisions
 
-The referral attribution implementation is ready, but referral capture stays disabled unless `REFERRALS_ENABLED=true`. Do not enable it until the owner resolves these points.
+The referral attribution implementation is ready, but referral capture stays disabled unless `REFERRALS_ENABLED=true`. The owner decisions are resolved below; enable it after this release is live.
 
 ## Rules copied from Fabian's original code
 
@@ -13,15 +13,15 @@ These values come from `duoly-admin/duoly@7f0299f` in `lib/creators.js`:
 - Manual monthly payout threshold: €50
 - Advertised first-order customer discount: 10%
 
-The migration records attribution and calculates commission owed. It never moves money. The 10% customer discount is deliberately not applied at checkout because discounts would change the server-authoritative order price and need a separate approved implementation.
+The migration records attribution and calculates commission owed. It never moves money. The 10% customer discount is applied on the server at checkout (see decision 4).
 
-## Open owner decisions before activation
+## Owner decisions (2026-10-27)
 
-1. Approve the original commission tiers, 12-month window and €50 manual payout threshold as commercial terms. Fabian marked them as proposals to review.
-2. Approve the 30-day referral-cookie lifetime. Fabian's code did not define a cookie duration.
-3. Confirm the consent and privacy treatment for the httpOnly referral cookie before enabling capture.
-4. Decide whether and how to implement the advertised 10% first-order customer discount. Until then, the Settings screen labels it as unavailable.
-5. Define how manual creator payouts are recorded as paid. This change reports total commission owed and performs no payout or money movement.
+1. Commercial terms: Fabian's tiers (8, 10, 12%), the 12-month window and the €50 manual payout threshold are approved.
+2. Referral cookie: 30 days, approved.
+3. Consent: the referral cookie is optional and managed through the site's cookie banner (`src/components/site/CookieBanner.astro`), shown on the first visit. It is only set after "Accept all"; "Only necessary" refuses it and removes an existing one, and checkout ignores the code without consent. The choice lives in the `duoly-consent` cookie (1 year) and can be changed under "Cookie settings" in the footer. The privacy page lists both cookies.
+4. 10% first-order discount: implemented (`20261025240000_referral_first_order_discount.sql`). Checkout applies it on the server when the code belongs to an active creator, the customer has no previous order and no other discounted checkout is open. Duoly covers it: the teammate payout stays computed on the full price; the creator commission is calculated on what the customer paid. The checkout page shows it as its own line.
+5. Payout marking: commission stays recorded per creator and month in admin Creators. Paying creators uses the same manual rail as teammate payouts (bank or Wise with a recorded reference) and is added to the payouts work (money step M2), so there is one payout ledger rather than two.
 
 ## Safe deploy order
 
