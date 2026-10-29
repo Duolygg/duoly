@@ -119,7 +119,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'discord',
     roles: TEAM,
     match: /discord|role|in session/,
-    text: 'Connect Discord from your dashboard; it is required to go online. Once you connected Discord and joined the Duoly server, the roles Teammate, Online and In Session are synced automatically. New orders are posted in each game’s lfd channel, and the Take this order button there gives you a handover link for that order.',
+    text: 'Connect Discord from your dashboard; it is required to go online. Once you connected Discord and joined the Duoly server, the roles Teammate, Online and In Session are synced automatically. New orders are posted in each game’s general channel, and the Take this order button there gives you a handover link for that order.',
   },
   {
     id: 'rules',

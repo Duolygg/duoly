@@ -425,8 +425,20 @@ export default class Teammate extends React.Component {
     try {
       const room = await readChat(fetch, a.id, a.assignmentId);
       if (!this.sameAssignment(a)) return;
+      const chat = room.messages.map((m) => this.chatMessage(m));
+      // new message from the customer (not on the first load of this order, which only brings older ones)
+      const loaded = this._chatLoadedFor === a.assignmentId;
+      this._chatLoadedFor = a.assignmentId;
+      if (
+        loaded &&
+        chat.some(
+          (m) =>
+            m.from === 'them' && !this.state.chat.some((x) => x.id === m.id),
+        )
+      )
+        playChatPing(this._ping);
       this.setState({
-        chat: room.messages.map((m) => this.chatMessage(m)),
+        chat,
         chatTyping: room.typing.some(
           (t) => t.role === 'customer' && Date.parse(t.expires_at) > Date.now(),
         ),

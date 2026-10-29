@@ -182,6 +182,14 @@ describe('original teammate adapter', () => {
       onlineSince: 1792843200000,
       forcedOffline: null,
     });
+    // What desk_set_online actually returns: jsonb writes timestamptz with an offset.
+    expect(
+      toOriginalPresence({
+        online: true,
+        online_since: '2026-10-24T12:00:00.123456+00:00',
+        forced_offline: null,
+      }).onlineSince,
+    ).toBe(1792843200123);
     expect(
       toOriginalPresence({
         online: false,

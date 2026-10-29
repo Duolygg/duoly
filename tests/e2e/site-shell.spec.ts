@@ -111,8 +111,15 @@ test('signed-out header offers sign in and the main sections', async ({
   }
 });
 
-test('imprint lists the operator details', async ({ page }) => {
-  await page.goto('/imprint');
+test('imprint lists the operator details but keeps them out of search', async ({
+  page,
+}) => {
+  const response = await page.goto('/imprint');
+  expect(response?.headers()['x-robots-tag']).toContain('noindex');
+  await expect(page.getByText('2320 Schwechat, Austria').first()).toBeVisible();
+  // The personal particulars are on the page but one click away.
+  await expect(page.getByText('Fabian Nöbauer')).toBeHidden();
+  await page.getByText('Show legal details').click();
   for (const text of [
     'Fabian Nöbauer',
     'Jesuitenmühlstraße 10, 2320 Schwechat, Austria',
@@ -198,8 +205,9 @@ test('sitemap lists public pages and every game page', async ({ request }) => {
   const response = await request.get('/sitemap.xml');
   expect(response.status()).toBe(200);
   const xml = await response.text();
-  for (const path of ['/imprint', '/games', '/blog', '/games/valorant'])
+  for (const path of ['/games', '/blog', '/games/valorant'])
     expect(xml).toContain(`${path}</loc>`);
+  expect(xml).not.toContain('/imprint');
   expect(xml).not.toContain('/admin');
   const robots = await request.get('/robots.txt');
   expect(await robots.text()).toBe('User-agent: *\nDisallow: /\n');

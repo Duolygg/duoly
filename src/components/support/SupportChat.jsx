@@ -81,7 +81,7 @@ export default class SupportChat extends React.Component {
       this.take(d);
     } catch (e) {}
   }
-  // new data from the server: count new team messages (sound + badge when closed)
+  // new data from the server: count new replies from Sparky or the team (sound + badge when closed)
   take(d) {
     const before =
       this.state.data && this.state.data.conversation
@@ -89,7 +89,7 @@ export default class SupportChat extends React.Component {
         : 0;
     const msgs = d.conversation ? d.conversation.messages : [];
     const fresh = this.state.data
-      ? msgs.slice(before).filter((m) => m.from === 'admin')
+      ? msgs.slice(before).filter((m) => m.from === 'admin' || m.from === 'bot')
       : [];
     if (fresh.length) playChatPing(this.ping);
     this.setState(
