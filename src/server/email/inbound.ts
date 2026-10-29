@@ -11,6 +11,7 @@ const envNames = [
   'RESEND_WEBHOOK_SECRET',
   'INBOUND_FORWARD_TO',
   'INBOUND_FORWARD_FROM',
+  'INBOUND_ROUTES',
 ] as const;
 
 const ADDRESS = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
@@ -24,6 +25,8 @@ export interface InboundConfig {
   webhookSecret: string;
   forwardTo: string;
   forwardFrom: string;
+  /** Personal addresses: lowercased duoly.gg address to its own inbox (INBOUND_ROUTES). */
+  routes?: Record<string, string>;
 }
 
 function serverEnvironment(): Record<string, string | undefined> {
@@ -45,7 +48,52 @@ export function inboundConfig(
   if (!/^re_[A-Za-z0-9_]{8,}$/.test(apiKey)) return null;
   if (!/^whsec_[A-Za-z0-9+/=]{16,}$/.test(webhookSecret)) return null;
   if (!ADDRESS.test(forwardTo) || !FROM.test(forwardFrom)) return null;
-  return { apiKey, webhookSecret, forwardTo, forwardFrom };
+  return {
+    apiKey,
+    webhookSecret,
+    forwardTo,
+    forwardFrom,
+    routes: parseRoutes(env.INBOUND_ROUTES, forwardFrom),
+  };
+}
+
+/**
+ * INBOUND_ROUTES: comma separated `address=inbox` pairs, for example
+ * `fabian@duoly.gg=someone@gmail.com`. Mail to a routed address goes only to its inbox;
+ * every other address keeps going to INBOUND_FORWARD_TO. Pairs that are malformed or not on
+ * the forwarder's own domain are ignored.
+ */
+export function parseRoutes(
+  raw: string | undefined,
+  forwardFrom: string,
+): Record<string, string> {
+  const domain = addressOf(forwardFrom).split('@')[1];
+  const routes: Record<string, string> = {};
+  for (const pair of (raw ?? '').split(',')) {
+    const [from, to] = pair
+      .split('=')
+      .map((part) => part?.trim().toLowerCase());
+    if (!from || !to || !ADDRESS.test(from) || !ADDRESS.test(to)) continue;
+    if (!domain || !from.endsWith(`@${domain}`)) continue;
+    routes[from] = to;
+  }
+  return routes;
+}
+
+/** Inboxes one received message is forwarded to, without duplicates. */
+export function forwardTargets(
+  recipients: string[],
+  config: InboundConfig,
+): string[] {
+  const domain = addressOf(config.forwardFrom).split('@')[1];
+  const targets = new Set<string>();
+  for (const recipient of recipients) {
+    const address = addressOf(recipient);
+    if (!domain || !address.endsWith(`@${domain}`)) continue;
+    targets.add(config.routes?.[address] ?? config.forwardTo);
+  }
+  if (!targets.size) targets.add(config.forwardTo);
+  return [...targets];
 }
 
 /**
@@ -172,7 +220,7 @@ export async function forwardReceivedEmail(
   const htmlHeader = `<div style="font:13px/1.5 -apple-system,Segoe UI,Arial,sans-serif;color:#555;border-bottom:1px solid #ddd;padding:0 0 10px;margin:0 0 14px;"><strong>Forwarded from duoly.gg</strong><br>From: ${escape(email.from ?? '')}<br>To: ${escape(to)}<br>Subject: ${escape(subject)}</div>`;
   const body = {
     from: config.forwardFrom,
-    to: [config.forwardTo],
+    to: forwardTargets(email.to ?? [], config),
     reply_to: email.from,
     subject: subject.toLowerCase().startsWith('fwd:')
       ? subject
