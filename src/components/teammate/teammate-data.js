@@ -10,7 +10,8 @@ import { canTake } from '../../design-reference/lib/access';
 const PresenceSchema = z
   .object({
     online: z.boolean(),
-    online_since: z.string().datetime().nullable(),
+    // Postgres jsonb sends "+00:00", not "Z" (going online failed on the offset).
+    online_since: z.iso.datetime({ offset: true }).nullable(),
     forced_offline: z.object({ reason: z.string(), by: z.string() }).nullable(),
   })
   .strict();

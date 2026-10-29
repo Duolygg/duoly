@@ -4,25 +4,32 @@ import PageIntro from '../components/site/PageIntro.astro';
 import { pageViewer } from '../site/viewer';
 import { SUPPORT_EMAIL } from '../site/nav';
 const { viewer, csrf } = await pageViewer(Astro);
-// Operator details per §5 ECG, §14 UGB, §63 GewO and §25 MedienG.
-const rows: [string, string][] = [
-  ['Website', 'duoly.gg'],
-  ['Operator', 'Fabian Nöbauer'],
+// The operator's name and address must stay on this page (§5 ECG), but nobody needs to find them
+// through a search engine: never indexed, cached or shown as a snippet, also after launch.
+Astro.response.headers.set(
+  'X-Robots-Tag',
+  'noindex, nofollow, noarchive, nosnippet',
+);
+// Operator details per §5 ECG, §14 UGB, §63 GewO and §25 MedienG, laid out like Fabian's
+// insaneboost.gg imprint: the business at a glance, the personal particulars one click away.
+const business: [string, string][] = [
+  ['Business name', 'Duoly'],
+  ['Business location', '2320 Schwechat, Austria'],
+  ['Contact', SUPPORT_EMAIL],
   ['Legal form', 'Sole proprietorship (Einzelunternehmen)'],
-  ['Address', 'Jesuitenmühlstraße 10, 2320 Schwechat, Austria'],
-  ['Email', SUPPORT_EMAIL],
-  [
-    'Business purpose',
-    'Online gaming services: teammates, coaching and social play',
-  ],
+];
+const purpose = 'Online gaming services: teammates, coaching and social play';
+const operator: [string, string][] = [
+  ['Legally represented by', 'Fabian Nöbauer'],
   ['GISA number', '38381850'],
-  ['Trade', 'Online Gaming Service Provider (awarded in Austria)'],
+  ['Full address', 'Jesuitenmühlstraße 10, 2320 Schwechat, Austria'],
+];
+const regulatory: [string, string][] = [
   ['Chamber', 'Member of the Lower Austria Economic Chamber (WKNÖ)'],
+  ['Legal regulations', 'Austrian Trade Regulation Act (Gewerbeordnung)'],
   ['Supervisory authority', 'District Authority of Bruck an der Leitha'],
-  [
-    'Applicable law',
-    'Austrian Trade Regulation Act (Gewerbeordnung), www.ris.bka.gv.at',
-  ],
+  ['Professional title', 'Online Gaming Service Provider'],
+  ['Awarding country', 'Austria'],
 ];
 ---
 
@@ -30,44 +37,121 @@ const rows: [string, string][] = [
   <PageIntro
     eyebrow="Legal notice"
     title="Imprint"
-    lead="Who runs Duoly, as required by Austrian law."
+    lead="Who runs duoly.gg, as required by Austrian law."
     narrow
   >
-    <dl class="card facts">
-      {rows.map(([label, value]) => (
-        <div>
-          <dt>{label}</dt>
-          <dd>
-            {label === 'Email' ? (
-              <a href={`mailto:${value}`}>{value}</a>
-            ) : (
-              value
-            )}
-          </dd>
+    <section class="block" aria-labelledby="imp-business">
+      <h2 id="imp-business">
+        <span>01</span>Business information
+      </h2>
+      <p class="note">
+        Official details of the business behind Duoly, a sole proprietorship
+        under §5 ECG, §14 UGB and §63 GewO.
+      </p>
+      <dl class="tiles">
+        {business.map(([label, value]) => (
+          <div>
+            <dt>{label}</dt>
+            <dd>
+              {label === 'Contact' ? (
+                <a href={`mailto:${value}`}>{value}</a>
+              ) : (
+                value
+              )}
+            </dd>
+          </div>
+        ))}
+        <div class="wide">
+          <dt>Business purpose</dt>
+          <dd>{purpose}</dd>
         </div>
-      ))}
-    </dl>
+      </dl>
+    </section>
+
+    <section class="block" aria-labelledby="imp-legal">
+      <h2 id="imp-legal">
+        <span>02</span>Regulatory information
+      </h2>
+      <p class="note">
+        Under §5(1) ECG this website is operated by Duoly. The full legal
+        particulars required by Austrian law are below.
+      </p>
+      <details class="legal" data-nosnippet>
+        <summary>
+          <svg
+            aria-hidden="true"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M6 9l6 6 6-6"></path>
+          </svg>
+          <span class="when-closed">Show legal details</span>
+          <span class="when-open">Hide legal details</span>
+        </summary>
+        <dl class="rows">
+          {operator.map(([label, value]) => (
+            <div>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <dl class="rows">
+          {regulatory.map(([label, value]) => (
+            <div>
+              <dt>{label}</dt>
+              <dd>
+                {value}
+                {label === 'Legal regulations' ? (
+                  <>
+                    , available at{' '}
+                    <a href="https://www.ris.bka.gv.at" rel="noopener">
+                      www.ris.bka.gv.at
+                    </a>
+                  </>
+                ) : null}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </details>
+    </section>
+
     <div class="prose">
-      <h2>Liability for content</h2>
+      <h2>
+        <span>03</span>Liability for content
+      </h2>
       <p>
         We are responsible for our own content on these pages under general law.
         We are not obliged to monitor third-party information that is
         transmitted or stored here. Once we become aware of a specific legal
         violation, we remove the content concerned without delay.
       </p>
-      <h2>Liability for links</h2>
+      <h2>
+        <span>04</span>Liability for links
+      </h2>
       <p>
         Our pages link to external websites whose content we do not control. The
         respective provider is responsible for linked pages. If we learn of a
         legal violation on a linked page, we remove the link.
       </p>
-      <h2>Copyright</h2>
+      <h2>
+        <span>05</span>Copyright
+      </h2>
       <p>
         Content created by us on these pages is subject to Austrian copyright
         law. Game names, logos and artwork belong to their respective owners.
         Duoly is not affiliated with or endorsed by any game publisher.
       </p>
-      <h2>Data protection</h2>
+      <h2>
+        <span>06</span>Data protection
+      </h2>
       <p>
         How we handle personal data is described in our{' '}
         <a href="/privacy">Privacy Policy</a>.
@@ -77,29 +161,116 @@ const rows: [string, string][] = [
 </SiteLayout>
 
 <style>
-  .facts {
-    display: grid;
-    gap: 0;
-    padding: 8px 24px;
+  .block {
+    margin-top: 36px;
   }
-  .facts div {
-    display: grid;
-    grid-template-columns: 180px minmax(0, 1fr);
+  .block:first-child {
+    margin-top: 0;
+  }
+  h2 {
+    display: flex;
     align-items: baseline;
-    gap: 4px 20px;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(196, 170, 255, 0.08);
+    gap: 12px;
+    margin: 0 0 8px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 20px;
+    color: #fff;
   }
-  .facts div:last-child {
-    border-bottom: 0;
+  h2 span {
+    color: #d6bbff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .note {
+    margin: 0 0 16px;
+    max-width: 68ch;
+    color: #a79dc4;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  dl {
+    margin: 0;
   }
   dt {
-    color: #a79dc4;
-    font-size: 14px;
+    color: #8e84ab;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
   dd {
-    margin: 0;
+    margin: 4px 0 0;
     color: #f3eeff;
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .tiles div {
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(27, 16, 51, 0.55);
+    border: 1px solid rgba(196, 170, 255, 0.1);
+  }
+  .tiles .wide {
+    grid-column: 1 / -1;
+  }
+  .legal summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    color: #d6bbff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+  .legal summary::-webkit-details-marker {
+    display: none;
+  }
+  .legal summary svg {
+    transition: transform 0.16s ease;
+  }
+  .legal[open] summary svg {
+    transform: rotate(180deg);
+  }
+  .legal .when-open,
+  .legal[open] .when-closed {
+    display: none;
+  }
+  .legal[open] .when-open {
+    display: inline;
+  }
+  .rows {
+    margin-top: 12px;
+    padding: 6px 18px;
+    border-radius: 14px;
+    background: rgba(27, 16, 51, 0.55);
+    border: 1px solid rgba(196, 170, 255, 0.1);
+  }
+  .rows div {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 4px 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(196, 170, 255, 0.08);
+  }
+  .rows div:last-child {
+    border-bottom: 0;
+  }
+  .rows dt {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .rows dd {
+    margin: 0;
+    font-size: 14.5px;
   }
   .prose {
     max-width: 68ch;
@@ -107,13 +278,13 @@ const rows: [string, string][] = [
     color: #cfc4ea;
   }
   .prose h2 {
-    margin: 28px 0 8px;
-    font-family: 'Bricolage Grotesque', sans-serif;
-    font-size: 20px;
-    color: #fff;
+    margin: 32px 0 8px;
   }
   @media (max-width: 600px) {
-    .facts div {
+    .tiles {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .rows div {
       grid-template-columns: minmax(0, 1fr);
     }
   }

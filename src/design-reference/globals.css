@@ -361,7 +361,6 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .lg-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,#D6BBFF,#F0A6FF,#FFD27A);transform-origin:0 50%;transition:transform .1s linear}
 
 .lg-hero{position:relative;overflow:hidden}
-.lg-hero:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(196,170,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(196,170,255,.05) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(70% 90% at 50% 0%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(70% 90% at 50% 0%,#000 20%,transparent 75%);pointer-events:none}
 .lg-hero-in{position:relative;max-width:1180px;margin:0 auto;padding:72px 24px 40px;animation:appop .5s ease-out}
 .lg-kicker{display:inline-flex;align-items:center;gap:10px;padding:6px 14px 6px 10px;border-radius:999px;background:rgba(214,187,255,.08);border:1px solid rgba(214,187,255,.16);font-size:13px;font-weight:600;color:#D6BBFF}
 .lg-kicker-dot{width:8px;height:8px;border-radius:50%;background:#5EEAA8;box-shadow:0 0 12px #5EEAA8}
@@ -691,3 +690,4 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
   .cr-apply-card{padding:22px 16px;border-radius:22px}
   .cr-tier{padding:24px}
 }
+.dl-tp{transition:color .16s ease}.dl-tp:hover{color:#CFC4EA}.dl-tp:hover .dl-tp-count{text-decoration-color:#00B67A}

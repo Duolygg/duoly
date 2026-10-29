@@ -170,7 +170,7 @@ describe('order post design', () => {
 });
 
 describe('channel lookup', () => {
-  it('finds the lfd channel under each game category, else general', () => {
+  it('finds the general channel under each game category, else the first text channel', () => {
     const map = channelMap([
       { id: '1', type: 4, name: 'League of Legends' },
       { id: '2', type: 0, name: '👊lfd', parent_id: '1', position: 0 },
@@ -180,7 +180,7 @@ describe('channel lookup', () => {
       { id: '6', type: 4, name: 'EA Sports FC 27' },
       { id: '7', type: 0, name: 'chat', parent_id: '6', position: 0 },
     ]);
-    expect(map).toEqual({ lol: '2', pu: '5', fc: '7' });
+    expect(map).toEqual({ lol: '3', pu: '5', fc: '7' });
     expect(norm('Pokémon Unite')).toBe('pokemonunite');
     expect(Object.keys(POST_GAMES)).toHaveLength(15);
   });

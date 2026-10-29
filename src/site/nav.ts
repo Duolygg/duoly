@@ -63,5 +63,5 @@ export const PUBLIC_ROUTES = [
   '/contact',
   '/terms',
   '/privacy',
-  '/imprint',
+  // '/imprint' stays out on purpose: it carries the operator's home address.
 ] as const;

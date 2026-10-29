@@ -10,6 +10,7 @@ import {
   type Viewer,
 } from '../../contracts/account';
 import type { Database } from './database.types';
+import { displayName } from './display-name';
 import { authConfig } from './config';
 import { createCsrf } from './security';
 import { isOwnerEmail, ownerEmails, syncOwner } from '../admin/owners';
@@ -157,7 +158,7 @@ export function accountContext(request: Request, cookies: AstroCookies) {
     const provider = data.user.app_metadata.provider;
     const viewer = ViewerSchema.parse({
       id,
-      name: profile.name,
+      name: displayName(profile.name, data.user.identities, provider),
       email: data.user.email ?? null,
       image: profile.image || '/assets/avatars/avatar-1.png',
       role,

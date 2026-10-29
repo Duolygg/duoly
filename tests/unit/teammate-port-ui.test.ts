@@ -462,3 +462,49 @@ it('shows the original leaderboard only after the server sends real periods, wit
     'No completed orders this week yet. Complete one to take the top spot.',
   );
 });
+it('plays the chat sound for new customer messages, not for history or own messages', async () => {
+  const c = desk();
+  c.state.active = { id, assignmentId, realCustomer: true };
+  const play = vi.fn(() => Promise.resolve());
+  c._ping = { currentTime: 0, play };
+  const message = (n: number, sender: 'customer' | 'teammate') => ({
+    id: 'm' + n,
+    body: 'hi ' + n,
+    sender,
+    sequence: n,
+    kind: 'user' as const,
+    name: sender,
+    image: '',
+    created_at: '2026-10-23T10:00:0' + n + 'Z',
+    request_id: id,
+  });
+  const room = (messages: ReturnType<typeof message>[]) => ({
+    order_id: id,
+    assignment_id: assignmentId,
+    viewer: 'teammate' as const,
+    participant: null,
+    archives: [],
+    messages,
+    typing: [],
+    writable: true,
+  });
+  const history = [message(1, 'customer')];
+  vi.mocked(readChat).mockResolvedValueOnce(room(history));
+  await c.pollChat();
+  expect(play).not.toHaveBeenCalled();
+  vi.mocked(readChat).mockResolvedValueOnce(
+    room([...history, message(2, 'teammate')]),
+  );
+  await c.pollChat();
+  expect(play).not.toHaveBeenCalled();
+  vi.mocked(readChat).mockResolvedValueOnce(
+    room([...history, message(2, 'teammate'), message(3, 'customer')]),
+  );
+  await c.pollChat();
+  expect(play).toHaveBeenCalledTimes(1);
+  vi.mocked(readChat).mockResolvedValueOnce(
+    room([...history, message(2, 'teammate'), message(3, 'customer')]),
+  );
+  await c.pollChat();
+  expect(play).toHaveBeenCalledTimes(1);
+});
