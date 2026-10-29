@@ -2,8 +2,10 @@ import { createHmac } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import {
   forwardReceivedEmail,
+  forwardTargets,
   inboundConfig,
   isForDomain,
+  parseRoutes,
   verifyWebhook,
   type InboundConfig,
 } from '../../src/server/email/inbound';
@@ -79,7 +81,7 @@ describe('resend webhook signature', () => {
         INBOUND_FORWARD_TO: config.forwardTo,
         INBOUND_FORWARD_FROM: config.forwardFrom,
       }),
-    ).toEqual(config);
+    ).toEqual({ ...config, routes: {} });
     expect(
       inboundConfig({
         RESEND_INBOUND_API_KEY: config.apiKey,
@@ -137,6 +139,42 @@ describe('inbound forwarding', () => {
       filename: 'original-message.eml',
       content_type: 'message/rfc822',
     });
+  });
+
+  it('sends routed personal addresses to their own inbox only', async () => {
+    const routed = {
+      ...config,
+      routes: parseRoutes(
+        'Fabian@duoly.gg = Fab@Gmail.com, bad, x@other.com=y@gmail.com',
+        config.forwardFrom,
+      ),
+    };
+    expect(routed.routes).toEqual({ 'fabian@duoly.gg': 'fab@gmail.com' });
+    expect(forwardTargets(['Fabian <fabian@duoly.gg>'], routed)).toEqual([
+      'fab@gmail.com',
+    ]);
+    expect(forwardTargets(['hello@duoly.gg'], routed)).toEqual([
+      'duolygg@proton.me',
+    ]);
+    expect(
+      forwardTargets(['fabian@duoly.gg', 'hello@duoly.gg'], routed),
+    ).toEqual(['fab@gmail.com', 'duolygg@proton.me']);
+    const calls: { url: string; init?: RequestInit }[] = [];
+    await forwardReceivedEmail(
+      'abc12345',
+      routed,
+      fakeFetch({ ...received, to: ['fabian@duoly.gg'] }, calls),
+    );
+    const send = calls.find((c) => c.url === 'https://api.resend.com/emails');
+    expect(JSON.parse(String(send?.init?.body)).to).toEqual(['fab@gmail.com']);
+    expect(
+      inboundConfig({
+        RESEND_INBOUND_API_KEY: config.apiKey,
+        RESEND_WEBHOOK_SECRET: secret,
+        INBOUND_FORWARD_TO: config.forwardTo,
+        INBOUND_FORWARD_FROM: config.forwardFrom,
+      })?.routes,
+    ).toEqual({});
   });
 
   it('does not loop on its own forwards', async () => {
