@@ -39,11 +39,13 @@ out of reach (TOP 1% needs at least 100 ranked teammates, TOP 5% needs 20); the 
 - pg_cron `duoly-performance-recalc` runs `performance_recalculate('cron')` at 00:00 and 12:00 UTC,
   inside the database, then calls `POST /api/performance/sync` with the roles tick secret.
 - "Recalculate now" in Admin → Performance runs the same calculation and the same sync.
-- The sync (`src/server/performance/roles.ts`) finds the five roles by exact name and creates missing
-  ones in their colour, then gives each teammate exactly one of them and removes any other
-  performance role. No other role is touched. Status per teammate: synced, no Discord, not in
-  server, error (with the reason) or sync off. Uses the same switch and bot as the Teammate, Online
-  and In Session sync (`DISCORD_ROLE_SYNC_ENABLED`, `DISCORD_BOT_TOKEN`, `DISCORD_GUILD_ID`).
+- The sync (`src/server/performance/roles.ts`) validates the five explicitly configured canonical IDs
+  against the guild before changing member roles. It requires the exact bracket name, permissions
+  `0` and `managed=false` for each role. Missing, malformed or duplicate IDs fail closed. No runtime
+  role creation, name adoption, renaming or deletion is allowed. Only these IDs are added or removed.
+  Status per teammate: synced, no Discord, not in server, error (with the reason) or sync off. Uses
+  the same switch and bot as the Teammate, Online and In Session sync (`DISCORD_ROLE_SYNC_ENABLED`,
+  `DISCORD_BOT_TOKEN`, `DISCORD_GUILD_ID`) plus `PERFORMANCE_ROLE_IDS`.
 - The bot needs Manage Roles, and its own role must be above the five performance roles.
 - Discord roles never grant anything on the site.
 
@@ -63,8 +65,68 @@ Migration `20261030120000_performance_ranking.sql`: `performance_settings` (one 
 role and sync status). All calculations are in `performance_recalculate`; nothing is computed in the
 browser.
 
-## Deploy order
+## Identity cleanup
 
-1. Sebastian applies the migration (it also schedules the cron job).
-2. Merge the code. Until then the cron sync call gets a 404 and the ranking still works in the database.
-3. With Discord sync on, the first run creates the five roles. Check the bot's role sits above them.
+Migration `20261030150000_performance_role_identity.sql` adds a private identity ledger. Each linked
+identity is reserved before HTTP and successful applications are acknowledged with their original
+snapshot. Unlink and relink preserve former IDs as cleanup targets. All former IDs must be cleaned
+before a role is assigned to the current identity. A former guild-member 404 completes cleanup;
+other failures keep the target for retry on the next sync. Partial cleanup progress is saved in
+`cleaned_at`. Retired identities remain in the private ledger and are rechecked on subsequent syncs:
+this catches a stale in-flight PUT that finishes after cleanup and crashes before its acknowledgement.
+Already-clean members need only an idempotent GET, with no additional role mutations.
+
+Identity-transition generation tokens protect A/B/A relinks. Snapshot version, Discord ID and bracket
+must still match before an acknowledgement can update current status. Late successful assignments
+are retained for cleanup even after their initial reservation was cleaned. Concurrent syncs use
+idempotent member PUT and DELETE operations, not distributed role provisioning. Interrupted network
+calls remain recoverable through their pre-HTTP reservation. Recovery occurs on the next manual or
+scheduled sync, not synchronously inside the OAuth transaction.
+
+Previously unlinked identities from before this migration cannot be reconstructed from current
+links. Operators must inspect any known historical role holders manually. Do not claim the new
+ledger automatically repairs pre-existing identities absent from the database.
+
+## Operational setup and deploy order
+
+1. Apply all five PR110 migrations in filename order, including the identity migration, before the
+   new server code. It requires the new snapshot response fields. Keep Discord sync off during setup.
+2. An operator provisions or explicitly approves five safe zero-permission, unmanaged roles with
+   the exact names above. Set the server-only `PERFORMANCE_ROLE_IDS` to a JSON object whose keys
+   are `1`, `5`, `10`, `25`, `50` and whose values are five distinct Discord snowflake strings.
+3. Verify the bot's role is above all five roles and has Manage Roles. Deploy the code and enable
+   `DISCORD_ROLE_SYNC_ENABLED` with the existing bot, guild and tick-secret configuration.
+4. Run a manual recalculation and inspect per-teammate status. Invalid config fails closed without
+   touching any member roles. Correct the configured IDs or unsafe roles manually before retrying.
+
+Canonical IDs approved by the release operator on 2026-10-30 (production env configured separately):
+
+```json
+{
+  "1": "1565507645937426492",
+  "5": "1565507844198109254",
+  "10": "1565507887353176064",
+  "25": "1565507887365890078",
+  "50": "1565507894974095531"
+}
+```
+
+Duplicate role names require manual inspection of permissions, hierarchy and current holders. The
+runtime deliberately ignores noncanonical duplicates and never adopts, edits or deletes them.
+Changing canonical IDs also needs manual inspection and cleanup of the superseded role holders;
+the identity ledger tracks people, not a history of configuration changes.
+
+## Rollback-only hosted verification
+
+```sh
+python3 supabase/tests/build_pr110_rollback.py "$TMPDIR/pr110.sql"
+node_modules/.bin/supabase db query --linked -f "$TMPDIR/pr110.sql"
+```
+
+The builder wraps all five migration bodies and real SQL fixtures in one `BEGIN` and `ROLLBACK`,
+stripping only their outer transaction statements. It never applies migration history or commits
+fixtures. Use `--test perks.sql` (or `priority_admin.sql`, `gold_priority_badges.sql`,
+`handover_admin_actions.sql`, `discord_links.sql`, `discord_role_sync.sql`) to build each existing
+regression suite on top of all five migrations. Execute each generated file separately: PostgreSQL
+`now()` is fixed at transaction start, so stacking long fixture suites in one transaction ages
+later fixtures and can invalidate their real-time priority assertions.

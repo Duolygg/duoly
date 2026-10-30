@@ -5237,7 +5237,7 @@ export default class Teammate extends React.Component {
           </div>
 
           {/* Performance ranking (migration 20261030120000); hidden until a ranking exists */}
-          {v.admin ? null : <PerformanceCard />}
+          {v.admin || this.state.needDiscord ? null : <PerformanceCard />}
           {v.admin || !(FEATURES.trust || FEATURES.leaderboard) ? null : (
             <>
               {FEATURES.trust ? (

@@ -19,7 +19,8 @@ time with a verified Gamer Girl to talk, watch something together, fall asleep o
   | Karaoke        | Sing together or song requests on voice               | €9.99 / h |
 
   Bundles (3, 5, 10 hours) use Just Chat with the usual bundle discounts. The teammate gets the usual
-  60%. **Prices need Sebastian's sign-off before launch** (money rules).
+  60%. **Sebastian approved EUR 9.99 per hour on 2026-10-30**. Existing bundle discounts and
+  teammate share are unchanged.
 
 - **Only Gamer Girls take them.** Every Social service is a Gamer Girl service (`cat: 'gg'`), so the
   existing routing applies: Gamer Girl orders only go to teammates with Gamer Girl access, and Gamer
@@ -39,7 +40,7 @@ time with a verified Gamer Girl to talk, watch something together, fall asleep o
 
 ## Deploy order
 
-1. Sebastian approves the prices and applies `20261029130000_social_sessions.sql` (adds `social` to the
+1. With pricing approved on 2026-10-30, apply `20261029130000_social_sessions.sql` (adds `social` to the
    order, checkout and queue-settings game lists, the queue-settings functions and home stats, and
    turns Social on for existing Gamer Girls).
 2. Create the **Social** category with a `general` channel in Discord.

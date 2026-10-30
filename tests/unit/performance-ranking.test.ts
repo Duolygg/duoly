@@ -114,12 +114,22 @@ describe('Discord sync', () => {
     );
     return { calls, fetchImpl };
   }
-  const store = (targets: Awaited<ReturnType<PerformanceStore['targets']>>) => {
+  const store = (
+    targets: Omit<
+      Awaited<ReturnType<PerformanceStore['targets']>>[number],
+      'version' | 'cleanup'
+    >[],
+  ) => {
     const saved: PerformanceSyncRow[] = [];
     return {
       saved,
       store: {
-        targets: async () => targets,
+        targets: async () =>
+          targets.map((t) => ({
+            ...t,
+            version: '2026-10-30T00:00:00Z',
+            cleanup: [],
+          })),
         save: async (rows: PerformanceSyncRow[]) => {
           saved.push(...rows);
         },
@@ -127,7 +137,7 @@ describe('Discord sync', () => {
     };
   };
 
-  it('creates missing roles in their colour and syncs one role per teammate', async () => {
+  it('requires canonical configured roles and never creates roles', async () => {
     const { calls, fetchImpl } = discord([
       { id: 'r50', name: 'Performance | TOP 50%' },
       { id: 'x', name: 'Teammate' },
@@ -144,26 +154,9 @@ describe('Discord sync', () => {
       async () => {},
     );
     const created = calls.filter((c) => c.method === 'POST');
-    expect(created.map((c) => (c.body as { name: string }).name)).toEqual([
-      'Performance | TOP 1%',
-      'Performance | TOP 5%',
-      'Performance | TOP 10%',
-      'Performance | TOP 25%',
-    ]);
-    expect((created[0]?.body as { color: number }).color).toBe(0xc6a6ff);
-    // a: TOP 50% removed, the new TOP 10% role added, "Teammate" untouched
-    const changes = calls.filter(
-      (c) => c.method === 'PUT' || c.method === 'DELETE',
-    );
-    expect(
-      changes.map((c) => c.method + ' ' + c.url.split('/roles/')[1]),
-    ).toEqual(['DELETE r50', 'PUT new902']);
-    expect(saved).toEqual([
-      { userId: 'a', status: 'synced', detail: '' },
-      { userId: 'b', status: 'not_member', detail: '' },
-      { userId: 'c', status: 'no_discord', detail: '' },
-    ]);
-    expect(result).toEqual({ synced: 1, skipped: 2, errors: 0 });
+    expect(created).toEqual([]);
+    expect(result.errors).toBe(3);
+    expect(saved.every((row) => row.status === 'error')).toBe(true);
   });
 
   it('marks everyone as an error when the roles cannot be read', async () => {
