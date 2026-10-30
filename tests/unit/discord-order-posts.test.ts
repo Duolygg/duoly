@@ -182,7 +182,7 @@ describe('channel lookup', () => {
     ]);
     expect(map).toEqual({ lol: '3', pu: '5', fc: '7' });
     expect(norm('Pokémon Unite')).toBe('pokemonunite');
-    expect(Object.keys(POST_GAMES)).toHaveLength(15);
+    expect(Object.keys(POST_GAMES)).toHaveLength(16);
   });
 });
 

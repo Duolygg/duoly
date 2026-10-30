@@ -66,7 +66,9 @@ export const SERVERS = {
   ],
   fc: AREAS,
   arc: AREAS,
-  pu: AREAS.filter((a) => a[0] !== 'Middle East')
+  pu: AREAS.filter((a) => a[0] !== 'Middle East'),
+  // Social has no game server: the area tells the Gamer Girl your time zone
+  social: AREAS
 };
 
 // The flag shown for each server (lib/countries.js flagSrc → /assets/flags/svg). Every server has one:

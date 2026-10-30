@@ -9,7 +9,7 @@ import {
   btn,
   ago,
 } from '../../design-reference/components/admin/ui';
-import { GAMES } from '../../design-reference/lib/games';
+import { ACCESS_GAMES as GAMES } from '../../design-reference/lib/games';
 import { account } from './api';
 
 // Port of the original components/admin/Users.jsx, wired to /api/admin/users (Supabase RPCs
@@ -63,6 +63,8 @@ export default class Users extends React.Component {
       busy: '',
       editing: '',
       draft: null,
+      // Duo tier level per teammate (migration 20261030140000); null until it can be read
+      levels: null,
     };
   }
   // ---- order access (which games a teammate may take, or Gamer Girl). Rules: lib/access.js
@@ -70,7 +72,11 @@ export default class Users extends React.Component {
     const acc = a.access || { games: [], gg: false };
     this.setState({
       editing: a.id,
-      draft: { games: acc.games.slice(), gg: !!acc.gg },
+      draft: {
+        games: acc.games.slice(),
+        gg: !!acc.gg,
+        level: (this.state.levels && this.state.levels[a.id]) || 'standard',
+      },
     });
   }
   async saveAccess(a) {
@@ -87,6 +93,29 @@ export default class Users extends React.Component {
           'warn',
         );
       const r = res.data;
+      const before =
+        (this.state.levels && this.state.levels[a.id]) || 'standard';
+      if (this.state.levels && !d.gg && d.level !== before) {
+        const lv = await this.props.api.post('/api/admin/duo-levels', {
+          userId: a.id,
+          level: d.level,
+        });
+        if (!lv.ok)
+          this.props.toast(
+            lv.error || 'Access saved, but not their teammate level.',
+            'warn',
+          );
+        else {
+          this.setState({
+            levels: { ...this.state.levels, [a.id]: d.level },
+          });
+          this.props.log(
+            'Changed teammate level',
+            a.name || a.email,
+            d.level === 'plus_only' ? 'Plus only' : 'Standard',
+          );
+        }
+      }
       this.setState({
         editing: '',
         draft: null,
@@ -139,6 +168,21 @@ export default class Users extends React.Component {
           }}
         >
           <span style={label}>Order access</span>
+          {!acc.gg && s.levels && s.levels[a.id] === 'plus_only' ? (
+            <span
+              title="Duo Plus only: no Duo Pro, Duo Apex or other services"
+              style={{
+                fontSize: '12.5px',
+                fontWeight: '700',
+                padding: '3px 10px',
+                borderRadius: '999px',
+                background: 'rgba(255, 210, 122, .12)',
+                color: C.gold,
+              }}
+            >
+              Plus only
+            </span>
+          ) : null}
           {acc.gg ? (
             <span
               style={{
@@ -375,6 +419,77 @@ export default class Users extends React.Component {
                 );
               })}
             </div>
+            {s.levels ? (
+              <>
+                <div style={{ marginTop: '14px', ...label }}>
+                  Teammate level
+                </div>
+                <div
+                  role="radiogroup"
+                  aria-label={'Teammate level for ' + (a.name || a.email)}
+                  style={{
+                    marginTop: '8px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                    gap: '6px',
+                  }}
+                >
+                  {[
+                    [
+                      'standard',
+                      'Standard',
+                      'Duo Plus and Duo Pro. Duo Apex after 100 seconds (right away for TOP 1% and TOP 5%).',
+                    ],
+                    [
+                      'plus_only',
+                      'Plus only',
+                      'Hired with a lower rank: Duo Plus only, never Pro, Apex or other services.',
+                    ],
+                  ].map(([id, name, hint]) => {
+                    const on = d.level === id;
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        role="radio"
+                        aria-checked={on ? 'true' : 'false'}
+                        onClick={() => edit(() => ({ level: id }))}
+                        style={{
+                          display: 'block',
+                          padding: '10px 12px',
+                          borderRadius: '12px',
+                          textAlign: 'left',
+                          transform: 'none',
+                          background: on ? C.raised : 'transparent',
+                          border: '1px solid ' + (on ? C.accent : C.line2),
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: 'block',
+                            fontSize: '14px',
+                            fontWeight: '700',
+                            color: on ? C.white : C.text,
+                          }}
+                        >
+                          {name}
+                        </span>
+                        <span
+                          style={{
+                            display: 'block',
+                            marginTop: '2px',
+                            fontSize: '12.5px',
+                            color: C.dim,
+                          }}
+                        >
+                          {hint}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            ) : null}
           </>
         )}
 
@@ -436,6 +551,10 @@ export default class Users extends React.Component {
       error: '',
       loaded: true,
     });
+    // Before migration 20261030140000 this fails and the level picker stays hidden.
+    const lv = await this.props.api.get('/api/admin/duo-levels');
+    if (lv.ok && lv.data && lv.data.levels)
+      this.setState({ levels: lv.data.levels });
   }
   change(a, role) {
     if (a.role === role) return;

@@ -87,7 +87,7 @@ export function pageParams(url: URL): { limit: number; offset: number } {
   };
 }
 
-function adminRoute(get: AdminGet | null, post: Command[]) {
+export function adminRoute(get: AdminGet | null, post: Command[]) {
   const handler: APIRoute = async (context: APIContext) => {
     let account = accountContext(context.request, context.cookies);
     try {

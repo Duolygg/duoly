@@ -56,4 +56,32 @@ describe('viewer display name', () => {
       ]),
     ).toHaveLength(32);
   });
+
+  it('falls back to the email name for email sign-ups', () => {
+    const email = {
+      provider: 'email',
+      identity_data: { email: 'hiroko99@example.com' },
+    };
+    expect(
+      displayName('Player', [email], 'email', 'hiroko99@example.com'),
+    ).toBe('hiroko99');
+    expect(displayName('Player', [], 'email', 'fabi+duoly@example.com')).toBe(
+      'fabi',
+    );
+    // a provider name still wins over the email
+    expect(
+      displayName(
+        'Player',
+        [{ provider: 'google', identity_data: { full_name: 'Fabian B' } }],
+        'google',
+        'x@example.com',
+      ),
+    ).toBe('Fabian B');
+    // a saved name always wins
+    expect(displayName('Hiro', [], 'email', 'hiroko99@example.com')).toBe(
+      'Hiro',
+    );
+    expect(displayName('Player', [], 'email', 'a@example.com')).toBe('Player');
+    expect(displayName('Player', [], 'email', null)).toBe('Player');
+  });
 });

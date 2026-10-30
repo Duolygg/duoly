@@ -30,7 +30,7 @@ const cookieCurrency = CurrencySchema.safeParse(
   Astro.cookies.get('duoly-currency')?.value,
 );
 // Teammates online and recent matches: public, cached per instance (src/server/home/live.ts).
-const { onlineNow, recentMatches, stats } = await homeLive();
+const { onlineNow, recentMatches, stats, teammates } = await homeLive();
 // Duoly PRO strip and member discount in the order summary (null while PRO_ENABLED is off).
 const pro = await loadProView(account.client, viewer?.role);
 ---
@@ -46,6 +46,7 @@ const pro = await loadProView(account.client, viewer?.role);
     onlineNow={onlineNow}
     recentMatches={recentMatches}
     stats={stats}
+    teammates={teammates}
     pro={pro}
     client:load
   />

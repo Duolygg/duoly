@@ -84,7 +84,7 @@ export const TERMS = {
         'not arrange payment outside Duoly or move a session off the platform to avoid fees;',
         'follow the terms and rules of the game you’re playing.'
       ] },
-      '**Gamer Girl sessions** are about gaming and good conversation. They are never dating, romantic or sexual services, and requests like that end the session and can end your account.',
+      '**Gamer Girl and Social sessions** (just chat, watch together, sleep call, karaoke) are about good company and conversation. They are never dating, romantic or sexual services, and requests like that end the session and can end your account.',
       'Breaking these rules can lead to a warning, a cancelled order without refund, or a blocked account, depending on how serious it is.'
     ] },
     { id: 'games', title: 'Games & publisher rules', blocks: [

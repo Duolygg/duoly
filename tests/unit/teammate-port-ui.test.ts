@@ -77,7 +77,8 @@ it('retains the original layout with live presence and unsupported controls stil
   );
   expect(html).toContain('tm-status');
   expect(html).toContain('Available orders');
-  expect(html).toContain('Loading your desk');
+  // no generic loading banner: the status card says what to do
+  expect(html).not.toContain('Loading your desk');
   expect(html).toContain('You’re offline');
   expect(html).toContain('Queue settings');
   expect(html).toContain('Voice comms');
@@ -507,4 +508,21 @@ it('plays the chat sound for new customer messages, not for history or own messa
   );
   await c.pollChat();
   expect(play).toHaveBeenCalledTimes(1);
+});
+
+it('shows only the offline card after going offline, never the online empty state too', () => {
+  const c = desk();
+  c.state.access = { games: ['lol'], gg: false };
+  c.state.loaded = true;
+  c.state.queue = [];
+  c.state.online = true;
+  expect(c.renderVals().waiting).toBe(true);
+  expect(c.renderVals().offline).toBe(false);
+  // went offline: the last load is still marked as loaded
+  c.state.online = false;
+  const v = c.renderVals();
+  expect(v.offline).toBe(true);
+  expect(v.waiting).toBe(false);
+  expect(v.showFeed).toBe(false);
+  expect(v.notice).toBe('');
 });

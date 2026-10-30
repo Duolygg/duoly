@@ -158,7 +158,12 @@ export function accountContext(request: Request, cookies: AstroCookies) {
     const provider = data.user.app_metadata.provider;
     const viewer = ViewerSchema.parse({
       id,
-      name: displayName(profile.name, data.user.identities, provider),
+      name: displayName(
+        profile.name,
+        data.user.identities,
+        provider,
+        data.user.email,
+      ),
       email: data.user.email ?? null,
       image: profile.image || '/assets/avatars/avatar-1.png',
       role,

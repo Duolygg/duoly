@@ -129,7 +129,12 @@ describe('home live: cache', () => {
       await homeLive(async () => {
         throw new Error('down');
       }, 0),
-    ).toEqual({ onlineNow: 0, recentMatches: [], stats: null });
+    ).toEqual({
+      onlineNow: 0,
+      recentMatches: [],
+      stats: null,
+      teammates: [],
+    });
   });
 });
 

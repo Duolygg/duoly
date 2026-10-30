@@ -17,6 +17,7 @@ import Teammates from './Teammates';
 import Customers from './Customers';
 import NotConnected from './NotConnected';
 import Priority from './Priority';
+import Performance from './Performance';
 import Support from './Support';
 import Safety from './Safety';
 import Settings from './Settings';
@@ -44,6 +45,12 @@ export const SECTIONS = [
     slug: 'priority',
     label: 'Priority',
     icon: 'M3 6h11M3 12h7M3 18h4M17 4v16M17 20l-3-3M17 20l3-3',
+  },
+  {
+    id: 'performance',
+    slug: 'performance',
+    label: 'Performance',
+    icon: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
   },
   {
     id: 'users',
@@ -113,7 +120,7 @@ export const SECTIONS = [
   },
 ];
 const GROUPS = [
-  { label: 'Live', ids: ['overview', 'live', 'priority'] },
+  { label: 'Live', ids: ['overview', 'live', 'priority', 'performance'] },
   {
     label: 'Business',
     ids: ['orders', 'payouts', 'customers', 'teammates', 'creators'],
@@ -127,6 +134,10 @@ const TITLES = {
   live: [
     'Live desk',
     'Watch every order in the shared queue and hand them to teammates. Admins don’t play and are always online here.',
+  ],
+  performance: [
+    'Performance',
+    'Teammates ranked by retention, satisfaction and completed orders. Recalculated every 12 hours and synced to Discord.',
   ],
   priority: [
     'Priority',
@@ -650,6 +661,7 @@ export default class AdminApp extends React.Component {
       body = <Overview {...props} chatEnabled={this.props.chatEnabled} />;
     else if (s.section === 'live') body = <LiveDesk {...props} />;
     else if (s.section === 'priority') body = <Priority {...props} />;
+    else if (s.section === 'performance') body = <Performance {...props} />;
     else if (s.section === 'customers') body = <Customers {...props} />;
     else if (s.section === 'orders')
       body = <Orders {...props} stripeTest={this.props.stripeTest} />;

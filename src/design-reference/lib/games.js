@@ -18,10 +18,14 @@ export const GAMES = [
   { id: 'fc', name: 'EA SPORTS FC 27', short: 'FC 27', img: '/assets/games/ea-sports-fc-27.png', ign: 'EA ID', share: 0.03 },
   { id: 'arc', name: 'ARC Raiders', short: 'ARC Raiders', img: '/assets/games/arc-raiders.png', ign: 'Embark ID', share: 0.025 },
   { id: 'mc', name: 'Minecraft', short: 'Minecraft', img: '/assets/games/minecraft.png', ign: 'Minecraft name', share: 0.02 },
-  { id: 'pu', name: 'Pokémon Unite', short: 'Pokémon Unite', img: '/assets/games/pokemon-unite.png', ign: 'trainer name', share: 0.015 }
+  { id: 'pu', name: 'Pokémon Unite', short: 'Pokémon Unite', img: '/assets/games/pokemon-unite.png', ign: 'trainer name', share: 0.015 },
+  // Not a game: Gamer Girl only social sessions (just chat, watch together, sleep call, karaoke). See lib/catalog.js.
+  { id: 'social', name: 'Social', short: 'Social', img: '/assets/games/social.png', ign: 'Discord name', share: 0.01 }
 ];
 
 export const GAME_IDS = GAMES.map((g) => g.id);
+// Games an admin can approve one by one (Admin → Users). Social is Gamer Girl only, so it comes with gg access.
+export const ACCESS_GAMES = GAMES.filter((g) => g.id !== 'social');
 // by id: GAME.lol.name
 export const GAME = Object.fromEntries(GAMES.map((g) => [g.id, g]));
 export const gameOf = (id) => GAME[id] || GAMES[0];

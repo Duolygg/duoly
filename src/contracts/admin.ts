@@ -170,3 +170,10 @@ export const AdminCancelOrderSchema = z
 export const AdminRefundOrderSchema = z
   .object({ ...orderAction, action: z.literal('refund'), reason })
   .strict();
+
+/** Duo tier level per teammate (migration 20261030140000, docs/product/duo-tiers.md). */
+export const DUO_LEVELS = ['standard', 'plus_only'] as const;
+export type DuoLevel = (typeof DUO_LEVELS)[number];
+export const SetDuoLevelSchema = z
+  .object({ csrf, userId: z.uuid(), level: z.enum(DUO_LEVELS) })
+  .strict();

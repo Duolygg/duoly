@@ -129,7 +129,8 @@ export function buildCheckout(
       region: region.slice(0, 80),
       ign: request.ign.trim(),
       note: request.note?.trim() ?? '',
-      voice: request.voice ?? false,
+      // Social sessions are calls, so they are always on voice.
+      voice: request.gameId === 'social' || (request.voice ?? false),
       amount_eur_cents: quote.amountEurMinor,
       payout_usd_cents: quote.teammate.amountMinor,
       booking_fx: rate,

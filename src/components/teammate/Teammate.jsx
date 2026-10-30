@@ -15,6 +15,7 @@ const previewPermission = () =>
 import React from 'react';
 // Session commands are supplied by the live wrapper.
 import Leaderboard from './Leaderboard';
+import PerformanceCard from './PerformanceCard';
 import PayoutPanel from './PayoutPanel';
 import SupportChat from '../support/SupportChat';
 import TrustScore, { tierFor } from './TrustScore';
@@ -27,6 +28,7 @@ import {
 import { flagSrc } from '../../design-reference/lib/countries';
 import { canTake, NO_ACCESS } from '../../design-reference/lib/access';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
+import WaitingForOrders from '../shared/WaitingForOrders';
 import { shrinkImage } from '../../design-reference/lib/shrinkImage';
 import { BLOCKED, BLOCKED_NOTE } from '../../design-reference/lib/chatRules';
 
@@ -259,7 +261,7 @@ export default class Teammate extends React.Component {
       cancelled: [],
       autoCancelMs: 300000,
       handovers: {},
-      notice: 'Loading your desk…',
+      notice: '',
       forced: null,
       active: null,
       proof: [],
@@ -1527,8 +1529,19 @@ export default class Teammate extends React.Component {
           : 'background: radial-gradient(70% 120% at 85% 50%, rgba(214, 187, 255, .08), transparent 60%), #120B22; border: 1px solid rgba(196, 170, 255, .1);'),
       available,
       hasAvailable: available.length > 0,
-      waiting: s.loaded && !s.readError && !s.active && !available.length,
-      showFeed: s.loaded && !s.readError && !s.active,
+      // only while online: after going offline the last load stays marked as loaded, and the
+      // offline card ("Orders are hidden") already says what to do
+      waiting:
+        s.loaded &&
+        !s.readError &&
+        !s.active &&
+        !available.length &&
+        !(FEATURES.presence && !s.online),
+      showFeed:
+        s.loaded &&
+        !s.readError &&
+        !s.active &&
+        !(FEATURES.presence && !s.online),
       admin,
       busy: !!s.active || !!s.accepting || !!s.completing,
       liveOrders,
@@ -1679,8 +1692,8 @@ export default class Teammate extends React.Component {
     };
   }
 
-  // Empty queue: a floating headset (its shadow breathes with it), a line of copy, how long you've been
-  // waiting and which games we're listening for. Styles: globals.css (tmw-*).
+  // Empty queue (shared with the admin Live Desk), plus how long you've been waiting and which
+  // games we're listening for.
   renderWaiting(v) {
     const admin = v.admin;
     const on = v.games.filter((g) => g.pressed === 'true');
@@ -1699,142 +1712,13 @@ export default class Teammate extends React.Component {
       color: '#A79DC4',
     };
     return (
-      <div
-        className="tm-wait"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-          padding: '28px 20px 32px',
-          borderRadius: '22px',
-          background: '#090414',
-          border: '1px solid rgba(196, 170, 255, .08)',
-        }}
-      >
-        <div aria-hidden="true" className="tmw-stage">
-          <span className="tmw-shadow" />
-          <svg
-            className="tmw-hs"
-            viewBox="0 0 132 112"
-            width="132"
-            height="112"
-          >
-            <defs>
-              <linearGradient id="tmh-band" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stopColor="#8B67E8" />
-                <stop offset=".5" stopColor="#D9C6FF" />
-                <stop offset="1" stopColor="#8B67E8" />
-              </linearGradient>
-              <linearGradient id="tmh-cup" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor="#E9DDFF" />
-                <stop offset=".55" stopColor="#B394FF" />
-                <stop offset="1" stopColor="#6E48D2" />
-              </linearGradient>
-            </defs>
-            {/* sound waves: fade in at the top of each float */}
-            <g
-              className="tmw-waves"
-              fill="none"
-              stroke="#D6BBFF"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-            >
-              <path d="M9 58 q-5 9 0 18" />
-              <path d="M123 58 q5 9 0 18" />
-            </g>
-            {/* headband */}
-            <path
-              d="M30 66 V56 a36 36 0 0 1 72 0 V66"
-              fill="none"
-              stroke="url(#tmh-band)"
-              strokeWidth="8"
-              strokeLinecap="round"
-            />
-            <path
-              d="M44 30 a30 30 0 0 1 22 -8"
-              fill="none"
-              stroke="#FFFFFF"
-              strokeOpacity=".55"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-            />
-            {/* mic boom */}
-            <path
-              d="M27 86 q4 16 30 15"
-              fill="none"
-              stroke="#9C7BF0"
-              strokeWidth="4"
-              strokeLinecap="round"
-            />
-            <circle cx="59" cy="101" r="4.5" fill="#D6BBFF" />
-            {/* ear cups */}
-            <rect
-              x="16"
-              y="56"
-              width="24"
-              height="36"
-              rx="11"
-              fill="url(#tmh-cup)"
-            />
-            <rect
-              x="92"
-              y="56"
-              width="24"
-              height="36"
-              rx="11"
-              fill="url(#tmh-cup)"
-            />
-            <rect x="35" y="61" width="7" height="26" rx="3.5" fill="#4B2E98" />
-            <rect x="90" y="61" width="7" height="26" rx="3.5" fill="#4B2E98" />
-            <rect
-              x="21"
-              y="61"
-              width="4"
-              height="13"
-              rx="2"
-              fill="#FFFFFF"
-              opacity=".5"
-            />
-            <rect
-              x="97"
-              y="61"
-              width="4"
-              height="13"
-              rx="2"
-              fill="#FFFFFF"
-              opacity=".5"
-            />
-          </svg>
-        </div>
-
-        <div
-          style={{
-            marginTop: '6px',
-            fontFamily: DISPLAY,
-            fontSize: '21px',
-            fontWeight: '700',
-            letterSpacing: '-.02em',
-            color: '#FFFFFF',
-          }}
-        >
-          Waiting for orders!
-        </div>
-        <p
-          style={{
-            margin: '6px 0 0',
-            maxWidth: '360px',
-            fontSize: '14px',
-            lineHeight: '1.55',
-            color: '#8E84AB',
-            textWrap: 'balance',
-          }}
-        >
-          {admin
+      <WaitingForOrders
+        text={
+          admin
             ? 'No open orders. New ones land here as soon as a customer books, so you can hand them to a teammate within 5 minutes.'
-            : 'No orders yet. As soon as an eligible order is available, it pops up here.'}
-        </p>
-
+            : 'No orders yet. As soon as an eligible order is available, it pops up here.'
+        }
+      >
         <div
           style={{
             marginTop: '20px',
@@ -1984,7 +1868,7 @@ export default class Teammate extends React.Component {
             Turn on at least one game in Queue settings to get orders.
           </p>
         ) : null}
-      </div>
+      </WaitingForOrders>
     );
   }
 
@@ -5352,6 +5236,8 @@ export default class Teammate extends React.Component {
             )}
           </div>
 
+          {/* Performance ranking (migration 20261030120000); hidden until a ranking exists */}
+          {v.admin ? null : <PerformanceCard />}
           {v.admin || !(FEATURES.trust || FEATURES.leaderboard) ? null : (
             <>
               {FEATURES.trust ? (

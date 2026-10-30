@@ -66,6 +66,13 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     text: 'Loyalty levels by completed orders: Bronze from 0 (1% cashback), Silver from 100 (2%, €5 gift), Gold from 250 (3%, €15 gift, priority matching), Platinum from 500 (5%, €40 gift, one free 1-hour or 1-game coaching order every month), Diamond from 1000 (7%, €100 gift, pick a teammate you played with before). Cashback is on the card-paid part of each completed order and lands in your balance 14 days later. Gifts are added automatically. Your dashboard Rewards card shows your level.',
   },
   {
+    id: 'social',
+    roles: BUYERS,
+    match:
+      /\bsocial\b|just chat|watch together|\bmovie|sleep ?call|karaoke|\bsing\b|\be-?girls?\b/,
+    text: 'Social sessions are time with a verified Gamer Girl without a game: Just Chat, Watch Together (a movie, show or stream on Discord), Sleep Call or Karaoke. Pick Social in the game list, choose the session and the hours, pay, and a Gamer Girl joins you on voice within minutes. The price per hour is on each card, with bundle discounts for 3, 5 or 10 hours. Social sessions are friendly company, never dating, romantic or sexual services. Wake-up calls are not available yet, because every order starts right away.',
+  },
+  {
     id: 'pro',
     roles: BUYERS,
     match: /\bpro\b|membership|subscription|abo/,
@@ -84,6 +91,13 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     match:
       /no orders|not getting|dont get|never get|why.*orders|see orders|notification|sound|ring|bell/,
     text: 'You get orders for the games you’re approved for, and Gamer Girl orders only if you’re approved for those. Allow browser notifications so the bell and popup reach you while you’re online. New orders don’t reach everyone at the same moment: teammates who take what they’re online for, finish orders and get good reviews see them first. Once an order shows up for you, the first to accept gets it.',
+  },
+  {
+    id: 'duo-tiers',
+    roles: TEAM,
+    match:
+      /\bapex\b(?!\s*legends)|duo pro|duo plus|\btiers?\b|top 1|top 5|performance|ranking|plus only|teammate level/,
+    text: 'Duo services have three tiers in every game: Duo Plus, Duo Pro and Duo Apex (the top tier, for example FACEIT Duo in CS2). Standard teammates take Plus and Pro right away. A Duo Apex order goes first to teammates ranked TOP 1% or TOP 5% in the performance ranking; after 100 seconds, when it is posted in Discord, every Standard teammate approved for the game can take it. Teammates on the Plus only level take Duo Plus only. Admins set the level. The performance ranking updates every 12 hours from retention, customer satisfaction and completed orders; your dashboard shows your bracket and what it takes to reach the next one.',
   },
   {
     id: 'games',

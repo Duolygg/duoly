@@ -24,9 +24,27 @@ export interface HomeStats {
   matchSeconds: number | null;
 }
 
+/** One card in the hero's moving teammate rows (public.home_teammates, migration 20261030100000). */
+export interface HeroTeammate {
+  /** First name only. */
+  name: string;
+  /** A built-in avatar or an uploaded one; anything else falls back to avatar-1. */
+  image: string;
+  /** Up to three game ids, demand order. */
+  games: string[];
+  gg: boolean;
+  online: boolean;
+  /** Average stars (one decimal) and review count; rating is null without reviews. */
+  rating: number | null;
+  reviews: number;
+  sessions: number;
+}
+
 export interface HomeLive {
   onlineNow: number;
   recentMatches: RecentMatch[];
+  /** Empty until the migration is applied or while no teammate qualifies; the hero then shows the logo. */
+  teammates: HeroTeammate[];
   /** Null until the figures could be read once; the page then shows no figures at all. */
   stats: HomeStats | null;
 }

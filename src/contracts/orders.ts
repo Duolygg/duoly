@@ -28,6 +28,7 @@ const OrderFields = {
     'arc',
     'mc',
     'pu',
+    'social',
   ]),
   service: z.string().min(1).max(64),
   title: z.string().min(1).max(80),
