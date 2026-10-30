@@ -160,7 +160,7 @@ const avatar =
     <main id="main-content" tabindex="-1">
       <slot />
     </main>
-    {!bare && <SiteFooter topSpace={48} client:visible />}
+    {!bare && <SiteFooter topSpace={48} client:load />}
     {viewer?.role === 'customer' && !bare && <script is:inline>
       fetch('/api/orders/active', {
         credentials: 'same-origin',
