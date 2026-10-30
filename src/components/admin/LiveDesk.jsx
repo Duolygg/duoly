@@ -13,6 +13,7 @@ import {
 } from '../../design-reference/components/admin/ui';
 import { signed } from '../../contracts/priority';
 import { order } from './api';
+import WaitingForOrders from '../shared/WaitingForOrders';
 
 // Port of the original components/admin/LiveDesk.jsx and the admin mode of the original
 // Teammate desk it embeds: "Order desk" (desk status, available orders with the 5:00 countdown
@@ -393,7 +394,9 @@ export default class LiveDesk extends React.Component {
             {s.error}
           </p>
         ) : null}
-        {!queued.length ? (
+        {!queued.length && s.loaded ? (
+          <WaitingForOrders text="Nobody is waiting. New orders appear here the second they’re paid." />
+        ) : !queued.length ? (
           <p
             style={{
               margin: '0',
@@ -405,9 +408,7 @@ export default class LiveDesk extends React.Component {
               textAlign: 'center',
             }}
           >
-            {s.loaded
-              ? 'Nobody is waiting. New orders appear here the second they’re paid.'
-              : 'Loading the queue…'}
+            Loading the queue…
           </p>
         ) : (
           <ul

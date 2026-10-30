@@ -6,28 +6,38 @@ import { gameBySlug } from '../../site/games';
 const game = gameBySlug(Astro.params.game);
 if (!game) return Astro.rewrite('/404');
 const { viewer, csrf } = await pageViewer(Astro);
+// Social is not a game: time with a verified Gamer Girl (docs/product/social-sessions.md).
+const social = game.id === 'social';
+const copy = social
+  ? {
+      title: 'Social sessions | Duoly',
+      heading: 'Social sessions',
+      lead: 'Just chat, watch together, a sleep call or karaoke with a verified Gamer Girl, on voice within minutes.',
+      card: 'Pick Social on the homepage, choose a session and how many hours, and a Gamer Girl joins you on Discord. Friendly company only, never dating, romantic or sexual services.',
+      cta: 'Book a Social session',
+    }
+  : {
+      title: `${game.name} teammates | Duoly`,
+      heading: `${game.name} teammates`,
+      lead: `Book a rank-verified ${game.name} teammate who joins your lobby in minutes.`,
+      card: `A full guide to ${game.name} services, ranks and prices is on the way. For now, everything is bookable from the homepage.`,
+      cta: `Book a ${game.name} teammate`,
+    };
 ---
 
 <SiteLayout
-  title={`${game.name} teammates | Duoly`}
-  description={`Book a rank-verified ${game.name} teammate on Duoly.`}
+  title={copy.title}
+  description={copy.lead}
   viewer={viewer}
   csrf={csrf}
 >
-  <PageIntro
-    eyebrow="Games"
-    title={`${game.name} teammates`}
-    lead={`Book a rank-verified ${game.name} teammate who joins your lobby in minutes.`}
-  >
+  <PageIntro eyebrow="Games" title={copy.heading} lead={copy.lead}>
     <img class="art" src={game.img} alt="" width="88" height="88" />
     <div class="card">
-      <p>
-        A full guide to {game.name} services, ranks and prices is on the way.
-        For now, everything is bookable from the homepage.
-      </p>
+      <p>{copy.card}</p>
     </div>
     <a class="cta" href="/#games">
-      Book a {game.name} teammate
+      {copy.cta}
     </a>
     <p class="back">
       <a href="/games">All games</a>

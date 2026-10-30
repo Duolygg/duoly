@@ -2,12 +2,8 @@
 import '../design-reference/globals.css';
 import CookieBanner from '../components/site/CookieBanner.astro';
 import { UPLOADED_AVATAR, type Viewer } from '../contracts/account';
-import {
-  DISCORD_INVITE,
-  FOOTER_COLUMNS,
-  MAIN_NAV,
-  ROLE_HOME,
-} from '../site/nav';
+import SiteFooter from '../components/site/SiteFooter.jsx';
+import { MAIN_NAV, ROLE_HOME } from '../site/nav';
 
 interface Props {
   title: string;
@@ -37,7 +33,6 @@ const avatar =
     UPLOADED_AVATAR.test(viewer.image))
     ? viewer.image
     : null;
-const external = (href: string) => href.startsWith('http');
 ---
 
 <!doctype html>
@@ -165,44 +160,7 @@ const external = (href: string) => href.startsWith('http');
     <main id="main-content" tabindex="-1">
       <slot />
     </main>
-    {!bare && (
-      <footer class="site-footer">
-        <div class="site-footer-in">
-          <div class="footer-brand">
-            <img
-              src="/assets/brand/logo-wordmark.webp"
-              alt="Duoly"
-              width="120"
-              height="45"
-            />
-            <p>Made in Vienna, Austria.</p>
-            <a class="discord" href={DISCORD_INVITE} rel="noopener">
-              Join our Discord
-            </a>
-            <small>
-              © 2026 Duoly. Not affiliated with Riot Games, Valve, Epic Games,
-              Activision Blizzard, EA, Ubisoft, NetEase, Mojang or The Pokémon
-              Company.
-            </small>
-          </div>
-          <div class="footer-cols">
-            {FOOTER_COLUMNS.map((column) => (
-              <div>
-                <span>{column.title}</span>
-                {column.links.map((link) => (
-                  <a
-                    href={link.href}
-                    rel={external(link.href) ? 'noopener' : undefined}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </footer>
-    )}
+    {!bare && <SiteFooter topSpace={48} client:load />}
     {viewer?.role === 'customer' && !bare && <script is:inline>
       fetch('/api/orders/active', {
         credentials: 'same-origin',
@@ -484,67 +442,6 @@ const external = (href: string) => href.startsWith('http');
     display: block;
     min-height: calc(100vh - 320px);
   }
-  .site-footer {
-    margin-top: 48px;
-    border-top: 1px solid rgba(196, 170, 255, 0.08);
-  }
-  .site-footer-in {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 40px 24px 64px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 32px;
-  }
-  .footer-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 380px;
-  }
-  .footer-brand p {
-    margin: 0;
-    color: #f0a6ff;
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .footer-brand small {
-    color: #6a6086;
-    font-size: 12px;
-  }
-  .discord {
-    align-self: flex-start;
-    padding: 8px 14px;
-    border-radius: 10px;
-    background: #5865f2;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: none;
-  }
-  .footer-cols {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 28px 48px;
-    font-size: 14px;
-  }
-  .footer-cols div {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .footer-cols span {
-    color: #fff;
-    font-weight: 600;
-  }
-  .footer-cols a {
-    color: #a79dc4;
-    text-decoration: none;
-  }
-  .footer-cols a:hover {
-    color: #fff;
-  }
   @media (max-width: 900px) {
     .main-nav {
       display: none;
@@ -557,8 +454,7 @@ const external = (href: string) => href.startsWith('http');
     }
   }
   @media (max-width: 480px) {
-    .site-header-in,
-    .site-footer-in {
+    .site-header-in {
       padding-left: 16px;
       padding-right: 16px;
     }

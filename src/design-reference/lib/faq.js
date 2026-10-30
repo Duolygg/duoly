@@ -63,6 +63,8 @@ export const FAQ_TABS = [
       'Real players verified at the top of their game, for example Diamond 1+ in League of Legends, Immortal 1+ in Valorant and Premier 20,000+ or FACEIT Level 9+ in Counter-Strike 2. Our team approves every teammate for each game separately, and all of them follow the Duoly Teammate Code.'],
     ['What is a Gamer Girl duo?',
       'A session with a verified female teammate, either casual games with good company or ranked games on voice. It’s about gaming and great conversation, and the same safety and respect rules apply as for every session.'],
+    ['What are Social sessions?',
+      'Time with a verified Gamer Girl without a game: just chat, watch a movie or stream together on Discord, a sleep call while you fall asleep, or karaoke. You book by the hour and she joins you on voice within minutes. Social sessions are friendly company, never dating, romantic or sexual services.'],
     ['Can I choose my teammate’s role, agent or champion?',
       'Yes. Add what you need in the order notes, like “I play support, you jungle”, and talk it through in the order chat once you’re matched.'],
     ['Can I play with the same teammate again?',

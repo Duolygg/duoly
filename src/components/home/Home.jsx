@@ -7,11 +7,16 @@
 const fetch = () => Promise.resolve(new Response('{}', { status: 404 }));
 
 import React from 'react';
-import { IGN_LABEL, GAME, byDemand } from '../../design-reference/lib/games';
+import {
+  IGN_LABEL,
+  GAME,
+  GAMES,
+  byDemand,
+} from '../../design-reference/lib/games';
 import { FAQ_TABS } from '../../design-reference/lib/faq';
-import { FOOTER_COLUMNS } from '../../site/nav';
 import { trustpilotSummary } from '../../site/trustpilot';
 import SupportChat from '../support/SupportChat';
+import SiteFooter from '../site/SiteFooter';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import {
   ranksOf,
@@ -363,40 +368,7 @@ export default class Home extends React.Component {
     clearInterval(this._clock);
     clearTimeout(this._chatT);
   }
-  vienna() {
-    if (!this.state.now)
-      return {
-        vHM: '--:--',
-        vS: '--',
-        vStatus: 'Checking Vienna time…',
-        vDot: 'width: 7px; height: 7px; border-radius: 50%; background: #8E84AB;',
-      };
-    const parts = {};
-    new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Europe/Vienna',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    })
-      .formatToParts(new Date(this.state.now))
-      .forEach((p) => {
-        parts[p.type] = p.value;
-      });
-    const h = parseInt(parts.hour, 10) % 24;
-    const awake = h >= 8 && h < 24;
-    return {
-      vHM: (parts.hour === '24' ? '00' : parts.hour) + ':' + parts.minute,
-      vS: parts.second,
-      vStatus: awake
-        ? 'Our team is online'
-        : 'Team’s asleep — support still live 24/7',
-      vDot:
-        'width: 7px; height: 7px; border-radius: 50%; background: ' +
-        (awake ? '#5EEAA8' : '#F0A6FF') +
-        ';',
-    };
-  }
+
   authVals(s) {
     // Real login comes in through props (session, onSignIn, onSignOut) from HomeWithAuth.
     // Without those props it falls back to a pretend login.
@@ -607,73 +579,80 @@ export default class Home extends React.Component {
     };
   }
   data() {
-    return [
-      {
-        id: 'lol',
-      },
-      {
-        id: 'val',
-      },
-      {
-        id: 'fn',
-      },
-      {
-        id: 'apex',
-      },
-      {
-        id: 'rl',
-      },
-      {
-        id: 'mr',
-      },
-      {
-        id: 'ow',
-      },
-      {
-        id: 'arc',
-      },
-      {
-        id: 'mc',
-      },
-      {
-        id: 'pu',
-      },
-      {
-        id: 'cs2',
-      },
-      {
-        id: 'cod',
-      },
-      {
-        id: 'r6',
-      },
-      {
-        id: 'tft',
-      },
-      {
-        id: 'fc',
-      },
-      // name and icon come from the shared list (lib/games.js), so they match every other page.
-      // Shown by teammates online, most first (ties keep the demand order), so busy games lead.
-    ]
-      .map((x) => ({
-        ...x,
-        name: GAME[x.id].name,
-        img: GAME[x.id].img,
-        // Ledger #43 (owner decision 2026-10-27): real numbers only. Teammates online for
-        // this game from public.home_public_stats(); unknown until the figures are read once.
-        online: this.props.stats
-          ? String(this.props.stats.onlineByGame[x.id] || 0)
-          : '',
-        // services, bundles and units per game come from lib/catalog.js, ranks and rank prices from lib/ranks.js
-        ...servicesFor(x.id),
-      }))
-      .sort(byDemand())
-      .sort(
-        (a, b) =>
-          Number(String(b.online).replace(/\D/g, '')) -
-          Number(String(a.online).replace(/\D/g, '')),
-      );
+    return (
+      [
+        {
+          id: 'lol',
+        },
+        {
+          id: 'val',
+        },
+        {
+          id: 'fn',
+        },
+        {
+          id: 'apex',
+        },
+        {
+          id: 'rl',
+        },
+        {
+          id: 'mr',
+        },
+        {
+          id: 'ow',
+        },
+        {
+          id: 'arc',
+        },
+        {
+          id: 'mc',
+        },
+        {
+          id: 'pu',
+        },
+        {
+          id: 'cs2',
+        },
+        {
+          id: 'cod',
+        },
+        {
+          id: 'r6',
+        },
+        {
+          id: 'tft',
+        },
+        {
+          id: 'fc',
+        },
+        {
+          id: 'social',
+        },
+        // name and icon come from the shared list (lib/games.js), so they match every other page.
+        // Shown by teammates online, most first (ties keep the demand order), so busy games lead.
+      ]
+        .map((x) => ({
+          ...x,
+          name: GAME[x.id].name,
+          img: GAME[x.id].img,
+          // Ledger #43 (owner decision 2026-10-27): real numbers only. Teammates online for
+          // this game from public.home_public_stats(); unknown until the figures are read once.
+          online: this.props.stats
+            ? String(this.props.stats.onlineByGame[x.id] || 0)
+            : '',
+          // services, bundles and units per game come from lib/catalog.js, ranks and rank prices from lib/ranks.js
+          ...servicesFor(x.id),
+        }))
+        .sort(byDemand())
+        .sort(
+          (a, b) =>
+            Number(String(b.online).replace(/\D/g, '')) -
+            Number(String(a.online).replace(/\D/g, '')),
+        )
+        // Social is not a game: always last, as a full-width card under the games
+        .sort((a, b) => Number(a.id === 'social') - Number(b.id === 'social'))
+    );
   }
   renderVals() {
     const s = this.state;
@@ -714,19 +693,26 @@ export default class Home extends React.Component {
 
     const games = all.map((x, i) => {
       const active = x.id === g.id;
+      const social = x.id === 'social';
       return {
         name: x.name,
         img: x.img,
         online: x.online,
+        tagline: social
+          ? 'Just chat, watch together, sleep call or karaoke with a Gamer Girl'
+          : '',
         active,
         pressed: active ? 'true' : 'false',
         // the online dots pulse slightly out of step, so the grid feels live instead of blinking in unison
         dotDelay: -((i * 0.37) % 1.8) + 's',
         style:
           'display: flex; align-items: center; gap: 12px; min-width: 0; padding: 12px; border-radius: 18px; text-align: left; color: #FFFFFF; ' +
+          (social ? 'grid-column: 1 / -1; ' : '') +
           (active
             ? 'background: #1B1033; border: 1.5px solid #D6BBFF;'
-            : 'background: #120B22; border: 1.5px solid rgba(196, 170, 255, .08);'),
+            : social
+              ? 'background: linear-gradient(90deg, rgba(255, 79, 176, .1), #120B22 60%); border: 1.5px solid rgba(255, 79, 176, .22);'
+              : 'background: #120B22; border: 1.5px solid rgba(196, 170, 255, .08);'),
         pick: () => this.setState({ game: x.id, rank: '', queued: false }),
       };
     });
@@ -814,8 +800,16 @@ export default class Home extends React.Component {
       social: by('social'),
       training: by('training'),
     };
-    // a tab with nothing for this game (e.g. no full-team mode in TFT) is hidden; if it was open, show Duo
-    const curTab = sets[s.tab] && sets[s.tab].length ? s.tab : 'duo';
+    // a tab with nothing for this game (e.g. no full-team mode in TFT) is hidden; if it was open, show Duo,
+    // or the first tab that has something (Social only has Gamer Girl services)
+    const curTab =
+      sets[s.tab] && sets[s.tab].length
+        ? s.tab
+        : sets.duo.length
+          ? 'duo'
+          : ['gg', 'bundles', 'social', 'training', 'other'].find(
+              (id) => sets[id].length,
+            ) || 'duo';
     const tabs = [
       ['duo', 'Duo'],
       ['bundles', 'Bundles'],
@@ -1007,6 +1001,41 @@ export default class Home extends React.Component {
       rating: t[4] || null,
     }));
     const ticker = row.concat(row);
+    // Hero: what we cover, as overlapping icons (lib/games.js, demand order), Social's heart last.
+    // Always true, so it never needs live numbers (the online count was dropped, Fabian 2026-10-29).
+    // Highest expected share of orders first (lib/games.js `share`; swap in real conversion
+    // figures there once there are orders). Social is always shown, last.
+    // Hero teammate cards (public.home_teammates): one row gliding left to right over the logo,
+    // about two in view. The row repeats until it is wide enough, then twice over for a seamless loop.
+    const mates = (this.props.teammates || []).map((t) => ({
+      ...t,
+      icons: t.games.filter((id) => GAME[id]).map((id) => GAME[id]),
+      stars: t.rating ? '★ ' + t.rating.toFixed(1) : '',
+      sessionsText: t.sessions
+        ? t.sessions.toLocaleString('en-US') +
+          (t.sessions === 1 ? ' session' : ' sessions')
+        : 'New on Duoly',
+    }));
+    let heroRow = mates;
+    while (heroRow.length && heroRow.length < 4)
+      heroRow = heroRow.concat(mates);
+    heroRow = heroRow.concat(heroRow);
+    // the same calm pace whatever the number of cards: 250 px per card, about 30 px a second
+    const heroSpeed = Math.round((heroRow.length / 2) * (250 / 30)) + 's';
+    const playable = GAMES.filter((x) => x.id !== 'social').sort(
+      (a, b) => b.share - a.share,
+    );
+    const heroGames = playable
+      .slice(0, 7)
+      .concat(GAMES.filter((x) => x.id === 'social'));
+    const heroGamesLabel =
+      playable
+        .slice(0, 3)
+        .map((x) => x.short)
+        .join(', ') +
+      ' and ' +
+      (playable.length - 3) +
+      ' more';
 
     const qtys = [1, 3, 5, 10].map((n) => ({
       n: String(n),
@@ -1020,10 +1049,15 @@ export default class Home extends React.Component {
       pick: () => this.setState({ qty: n, bundle: null }),
     }));
 
-    const toggles = [
-      ['voice', 'Voice on Discord'],
-      ['same', 'Same teammate every game'],
-    ].map(([k, label]) => {
+    // Social sessions are a call with one Gamer Girl: always on voice, nothing to toggle.
+    const toggles = (
+      g.id === 'social'
+        ? []
+        : [
+            ['voice', 'Voice on Discord'],
+            ['same', 'Same teammate every game'],
+          ]
+    ).map(([k, label]) => {
       const a = !!s[k];
       return {
         label,
@@ -1220,7 +1254,6 @@ export default class Home extends React.Component {
           },
         };
       }),
-      ...this.vienna(),
       games,
       tabs,
       cards: sets[curTab],
@@ -1228,6 +1261,10 @@ export default class Home extends React.Component {
       stat,
       tp,
       ticker,
+      heroGames,
+      heroGamesLabel,
+      heroRow,
+      heroSpeed,
       pins,
       qtys,
       toggles,
@@ -1420,7 +1457,7 @@ export default class Home extends React.Component {
           ...(byName ? { edition: st.mcEdition || MC_EDITIONS[0] } : {}),
           ign,
           note: (st.orderNote || '').trim(),
-          voice: !!st.voice,
+          voice: g.id === 'social' || !!st.voice,
           // The free coaching order never uses the wallet (the server refuses both together).
           ...(freeOn
             ? { freePerk: true, useWallet: false }
@@ -1553,7 +1590,7 @@ export default class Home extends React.Component {
         (s.qty === 1 ? unit : unit + 's') +
         (rank ? ' · from ' + rank : '') +
         ' · ' +
-        (s.voice ? 'voice on Discord' : 'text chat'),
+        (s.voice || g.id === 'social' ? 'voice on Discord' : 'text chat'),
       ignLabel,
       ignPlaceholder:
         g.id === 'lol' || g.id === 'val' || g.id === 'tft'
@@ -1622,6 +1659,80 @@ export default class Home extends React.Component {
             : 'Pay ' + money(allWallet ? amount : due) + ' and queue',
       placeOrder: place,
     };
+  }
+
+  // Hero: the logo stays as the background; real teammates glide over it on cards, left to right,
+  // fading in at the left edge and out at the right (styles: globals.css dl-tm-*). Without teammates
+  // (or before migration 20261030100000) the hero shows the logo with its floating cards instead.
+  renderHeroTeammates(v) {
+    return (
+      <>
+        <img
+          src="/assets/brand/logo-full.webp"
+          alt="Duoly mascots: two smiling gamers with headsets"
+          width="560"
+          height="456"
+          style={{
+            width: '100%',
+            maxWidth: '560px',
+            height: 'auto',
+            display: 'block',
+          }}
+        />
+        <div
+          className="dl-tm-stage"
+          role="region"
+          aria-label="Some of our teammates"
+        >
+          <div
+            className="dl-tm-track"
+            style={{ animationDuration: v.heroSpeed }}
+          >
+            {v.heroRow.map((t, i) => (
+              <div
+                key={i}
+                className={'dl-tm-card' + (t.gg ? ' dl-tm-gg' : '')}
+                aria-hidden={i >= v.heroRow.length / 2 ? 'true' : undefined}
+              >
+                <div className="dl-tm-head">
+                  <span className="dl-tm-avatar">
+                    <img src={t.image} alt="" width="44" height="44" />
+                    {t.online ? <span className="dl-tm-dot" /> : null}
+                  </span>
+                  <span className="dl-tm-who">
+                    <strong>{t.name}</strong>
+                    <span className={t.online ? 'dl-tm-on' : ''}>
+                      {t.online ? 'Online now' : t.sessionsText}
+                    </span>
+                  </span>
+                  {t.gg ? <span className="dl-tm-pill">Gamer Girl</span> : null}
+                </div>
+                <div className="dl-tm-foot">
+                  <span className="dl-tm-games">
+                    {t.icons.map((g) => (
+                      <img
+                        key={g.id}
+                        src={g.img}
+                        alt={g.name}
+                        title={g.name}
+                        width="22"
+                        height="22"
+                      />
+                    ))}
+                  </span>
+                  {t.stars ? (
+                    <span className="dl-tm-stars">
+                      {t.stars}
+                      <span>({t.reviews})</span>
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    );
   }
 
   render() {
@@ -2444,53 +2555,56 @@ export default class Home extends React.Component {
                   How it works
                 </a>
               </div>
+              <a
+                href="#games"
+                className="dl-games"
+                aria-label={'Games on Duoly: ' + v.heroGamesLabel}
+                style={{
+                  marginTop: '28px',
+                  display: 'inline-flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  gap: '10px 14px',
+                  color: '#A79DC4',
+                  textDecoration: 'none',
+                  fontSize: '14px',
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{ display: 'flex', gap: '6px' }}
+                >
+                  {v.heroGames.map((x) => (
+                    <img
+                      key={x.id}
+                      src={x.img}
+                      alt=""
+                      width="34"
+                      height="34"
+                      style={{
+                        width: '34px',
+                        height: '34px',
+                        display: 'block',
+                        borderRadius: '10px',
+                      }}
+                    />
+                  ))}
+                </span>
+                <span>
+                  <span style={{ color: '#FFFFFF', fontWeight: '600' }}>
+                    {v.heroGamesLabel}
+                  </span>
+                  , plus Social
+                </span>
+              </a>
               <dl
                 style={{
-                  margin: '40px 0 0',
+                  margin: '28px 0 0',
                   display: 'flex',
                   flexWrap: 'wrap',
                   gap: '18px 0',
                 }}
               >
-                <div
-                  style={
-                    v.stat.wait || v.stat.rating
-                      ? {
-                          paddingRight: '28px',
-                          marginRight: '28px',
-                          borderRight: '1px solid rgba(196, 170, 255, .14)',
-                        }
-                      : {}
-                  }
-                >
-                  <dt style={{ fontSize: '13px', color: '#8E84AB' }}>
-                    Online now
-                  </dt>
-                  <dd
-                    style={{
-                      margin: '2px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontSize: '28px',
-                      fontWeight: '700',
-                      letterSpacing: '-.02em',
-                      color: '#FFFFFF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: '#5EEAA8',
-                        animation: 'dlpulse 1.6s ease-in-out infinite',
-                      }}
-                    />
-                    {Number(this.props.onlineNow || 0).toLocaleString('en-US')}
-                  </dd>
-                </div>
                 {v.stat.wait ? (
                   <div
                     style={
@@ -2550,143 +2664,156 @@ export default class Home extends React.Component {
                 justifyContent: 'center',
               }}
             >
-              <img
-                src="/assets/brand/logo-full.webp"
-                alt="Duoly mascots: two smiling gamers with headsets"
-                width="560"
-                height="456"
-                style={{
-                  width: '100%',
-                  maxWidth: '560px',
-                  height: 'auto',
-                  display: 'block',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  left: '0',
-                  top: '18%',
-                  width: '250px',
-                  padding: '14px',
-                  borderRadius: '18px',
-                  background: 'rgba(22, 14, 40, .92)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(196, 170, 255, .16)',
-                  boxShadow: '0 24px 60px rgba(0, 0, 0, .5)',
-                  animation: 'dlfloat 6s ease-in-out infinite',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    fontSize: '11.5px',
-                    fontWeight: '600',
-                    color: '#5EEAA8',
-                    textTransform: 'uppercase',
-                    letterSpacing: '.08em',
-                  }}
-                >
-                  <span
+              {v.heroRow.length ? (
+                this.renderHeroTeammates(v)
+              ) : (
+                <>
+                  <img
+                    src="/assets/brand/logo-full.webp"
+                    alt="Duoly mascots: two smiling gamers with headsets"
+                    width="560"
+                    height="456"
                     style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: '#5EEAA8',
+                      width: '100%',
+                      maxWidth: '560px',
+                      height: 'auto',
+                      display: 'block',
                     }}
                   />
-                  {v.stat.wait ? 'Match found · ' + v.stat.wait : 'Match found'}
-                </div>
-                <div
-                  style={{
-                    marginTop: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                  }}
-                >
-                  <span
+                  <div
                     style={{
-                      position: 'relative',
-                      flex: '0 0 auto',
-                      width: '42px',
-                      height: '42px',
+                      position: 'absolute',
+                      left: '0',
+                      top: '18%',
+                      width: '250px',
+                      padding: '14px',
+                      borderRadius: '18px',
+                      background: 'rgba(22, 14, 40, .92)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(196, 170, 255, .16)',
+                      boxShadow: '0 24px 60px rgba(0, 0, 0, .5)',
+                      animation: 'dlfloat 6s ease-in-out infinite',
                     }}
                   >
-                    <img
-                      src="/assets/avatars/avatar-1.png"
-                      alt=""
-                      width="42"
-                      height="42"
+                    <div
                       style={{
-                        width: '42px',
-                        height: '42px',
-                        borderRadius: '50%',
-                        display: 'block',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontSize: '11.5px',
+                        fontWeight: '600',
+                        color: '#5EEAA8',
+                        textTransform: 'uppercase',
+                        letterSpacing: '.08em',
                       }}
-                    />
-                    <img
-                      src="/assets/flags/de.png"
-                      alt="Germany"
-                      width="16"
-                      height="16"
+                    >
+                      <span
+                        style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          background: '#5EEAA8',
+                        }}
+                      />
+                      {v.stat.wait
+                        ? 'Match found · ' + v.stat.wait
+                        : 'Match found'}
+                    </div>
+                    <div
                       style={{
-                        position: 'absolute',
-                        right: '-2px',
-                        bottom: '-2px',
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        boxShadow: '0 0 0 2px #160E28',
+                        marginTop: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
                       }}
-                    />
-                  </span>
-                  <span
+                    >
+                      <span
+                        style={{
+                          position: 'relative',
+                          flex: '0 0 auto',
+                          width: '42px',
+                          height: '42px',
+                        }}
+                      >
+                        <img
+                          src="/assets/avatars/avatar-1.png"
+                          alt=""
+                          width="42"
+                          height="42"
+                          style={{
+                            width: '42px',
+                            height: '42px',
+                            borderRadius: '50%',
+                            display: 'block',
+                          }}
+                        />
+                        <img
+                          src="/assets/flags/de.png"
+                          alt="Germany"
+                          width="16"
+                          height="16"
+                          style={{
+                            position: 'absolute',
+                            right: '-2px',
+                            bottom: '-2px',
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '50%',
+                            boxShadow: '0 0 0 2px #160E28',
+                          }}
+                        />
+                      </span>
+                      <span
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          lineHeight: '1.3',
+                        }}
+                      >
+                        <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
+                          Your teammate
+                        </span>
+                        <span style={{ fontSize: '12.5px', color: '#A79DC4' }}>
+                          Rank-verified · voice on
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div
                     style={{
+                      position: 'absolute',
+                      right: '2%',
+                      bottom: '14%',
                       display: 'flex',
-                      flexDirection: 'column',
-                      lineHeight: '1.3',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '10px 14px 10px 10px',
+                      borderRadius: '14px',
+                      background: 'rgba(22, 14, 40, .92)',
+                      border: '1px solid rgba(196, 170, 255, .16)',
+                      boxShadow: '0 20px 50px rgba(0, 0, 0, .45)',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      color: '#F3EEFF',
+                      animation: 'dlfloat 7s ease-in-out infinite reverse',
                     }}
                   >
-                    <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
-                      Your teammate
-                    </span>
-                    <span style={{ fontSize: '12.5px', color: '#A79DC4' }}>
-                      Rank-verified · voice on
-                    </span>
-                  </span>
-                </div>
-              </div>
-              <div
-                style={{
-                  position: 'absolute',
-                  right: '2%',
-                  bottom: '14%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '10px 14px 10px 10px',
-                  borderRadius: '14px',
-                  background: 'rgba(22, 14, 40, .92)',
-                  border: '1px solid rgba(196, 170, 255, .16)',
-                  boxShadow: '0 20px 50px rgba(0, 0, 0, .45)',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  color: '#F3EEFF',
-                  animation: 'dlfloat 7s ease-in-out infinite reverse',
-                }}
-              >
-                <img
-                  src="/assets/games/valorant.png"
-                  alt=""
-                  width="28"
-                  height="28"
-                  style={{ width: '28px', height: '28px', borderRadius: '8px' }}
-                />
-                Rank Rush ×5 · <span style={{ color: '#5EEAA8' }}>−15%</span>
-              </div>
+                    <img
+                      src="/assets/games/valorant.png"
+                      alt=""
+                      width="28"
+                      height="28"
+                      style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '8px',
+                      }}
+                    />
+                    Rank Rush ×5 ·{' '}
+                    <span style={{ color: '#5EEAA8' }}>−15%</span>
+                  </div>
+                </>
+              )}
             </div>
           </section>
           {v.ticker.length ? (
@@ -2907,6 +3034,9 @@ export default class Home extends React.Component {
                             style={{ animationDelay: g.dotDelay }}
                           />
                           {g.online !== '' ? g.online + ' online' : ''}
+                          {g.tagline ? (
+                            <span className="dl-tagline">· {g.tagline}</span>
+                          ) : null}
                         </span>
                       </span>
                     </button>
@@ -5333,208 +5463,8 @@ export default class Home extends React.Component {
             </section>
           </div>
         </main>
-        <footer style={{ borderTop: '1px solid rgba(196, 170, 255, .08)' }}>
-          <div
-            style={{
-              maxWidth: '1240px',
-              margin: '0 auto',
-              padding: '40px 24px 0',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '28px 40px',
-                padding: '28px 32px',
-                borderRadius: '26px',
-                background: '#120B22',
-                border: '1px solid rgba(196, 170, 255, .1)',
-              }}
-            >
-              <div
-                style={{
-                  flex: '1 1 420px',
-                  minWidth: '0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '20px',
-                }}
-              >
-                <img
-                  src="/assets/flags/at.png"
-                  alt="Austrian flag"
-                  width="64"
-                  height="64"
-                  style={{
-                    flex: '0 0 auto',
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                    display: 'block',
-                    boxShadow: '0 10px 30px rgba(200, 16, 46, .35)',
-                  }}
-                />
-                <div style={{ minWidth: '0' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      color: '#F0A6FF',
-                      letterSpacing: '.02em',
-                    }}
-                  >
-                    <svg
-                      aria-hidden="true"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="#F0A6FF"
-                        d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.2 0 3.6 1.2 5.3 3.1 1.7-1.9 3.1-3.1 5.3-3.1 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"
-                      />
-                    </svg>
-                    Made in Vienna, Austria
-                  </div>
-                  <p
-                    style={{
-                      margin: '6px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontSize: '22px',
-                      fontWeight: '700',
-                      letterSpacing: '-.02em',
-                      lineHeight: '1.25',
-                      color: '#FFFFFF',
-                    }}
-                  >
-                    “Mozart took years to finish a symphony. You’ll be in a
-                    match in 2 minutes.”
-                  </p>
-                </div>
-              </div>
-              <div
-                style={{
-                  flex: '0 0 auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px',
-                  paddingLeft: '28px',
-                  borderLeft: '1px solid rgba(196, 170, 255, .12)',
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    letterSpacing: '.1em',
-                    textTransform: 'uppercase',
-                    color: '#8E84AB',
-                  }}
-                >
-                  Local time · Vienna
-                </span>
-                <span
-                  style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontSize: '44px',
-                    fontWeight: '700',
-                    letterSpacing: '-.03em',
-                    lineHeight: '1',
-                    color: '#FFFFFF',
-                  }}
-                >
-                  {v.vHM}:{v.vS}
-                </span>
-                <span
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    fontSize: '13px',
-                    color: '#A79DC4',
-                  }}
-                >
-                  <span style={css(v.vDot)} />
-                  {v.vStatus}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div
-            style={{
-              maxWidth: '1240px',
-              margin: '0 auto',
-              padding: '40px 24px 120px',
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              gap: '28px',
-            }}
-          >
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
-            >
-              <img
-                src="/assets/brand/logo-wordmark.webp"
-                alt="Duoly"
-                width="144"
-                height="54"
-                style={{ width: '144px', height: '54px' }}
-              />
-              <span
-                style={{
-                  fontSize: '13px',
-                  color: '#6A6086',
-                  maxWidth: '360px',
-                }}
-              >
-                © 2026 Duoly. Not affiliated with Riot Games, Valve, Epic Games,
-                Activision Blizzard, EA, Ubisoft, NetEase, Mojang or The Pokémon
-                Company.
-              </span>
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '40px',
-                fontSize: '14px',
-              }}
-            >
-              {FOOTER_COLUMNS.map((col) => (
-                <div
-                  key={col.title}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '8px',
-                  }}
-                >
-                  <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
-                    {col.title}
-                  </span>
-                  {col.links.map((l) => (
-                    <a
-                      key={l.href}
-                      href={l.href}
-                      rel={l.href.startsWith('http') ? 'noopener' : undefined}
-                      style={{ textDecoration: 'none' }}
-                    >
-                      {l.label}
-                    </a>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        </footer>
+        {/* the same footer as every other page (components/site/SiteFooter.jsx) */}
+        <SiteFooter bottomSpace={120} />
         {/* support chat: Sparky + the real admins (components/SupportChat.jsx) */}
         <SupportChat teaser csrf={this.props.csrf} />
         {v.showAuth ? (

@@ -684,5 +684,7 @@ test('Discord gate is the original popup with a real CSRF link form and no desk 
   await expect(
     form.getByRole('button', { name: 'Connect Discord' }),
   ).toBeEnabled();
+  // Allow mounted effects to run before asserting that the desk stayed idle.
+  await page.waitForTimeout(750);
   expect(calls).toEqual([]);
 });

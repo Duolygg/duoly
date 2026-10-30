@@ -37,6 +37,7 @@ export const BANNER_GAMES = {
   arc: ['ARC Raiders', 'arc-raiders'],
   mc: ['Minecraft', 'minecraft'],
   pu: ['Pokémon Unite', 'pokemon-unite'],
+  social: ['Social', 'social'],
 };
 
 const dataUrl = (file, type) =>

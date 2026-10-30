@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
 import type { Currency, Viewer } from '../../contracts/account';
-import type { HomeStats, RecentMatch } from '../../contracts/home';
+import type {
+  HeroTeammate,
+  HomeStats,
+  RecentMatch,
+} from '../../contracts/home';
 import type { ProView } from '../../contracts/pro';
 import {
   CustomerPerksSchema,
@@ -34,6 +38,7 @@ export default function LiveHome({
   onlineNow: initialOnline = 0,
   recentMatches: initialMatches = [],
   stats: initialStats = null,
+  teammates: initialTeammates = [],
   authError = null,
   pro = null,
 }: {
@@ -46,6 +51,7 @@ export default function LiveHome({
   onlineNow?: number;
   recentMatches?: RecentMatch[];
   stats?: HomeStats | null;
+  teammates?: HeroTeammate[];
   authError?: string | null;
   pro?: ProView | null;
 }) {
@@ -54,6 +60,7 @@ export default function LiveHome({
     onlineNow: initialOnline,
     recentMatches: initialMatches,
     stats: initialStats,
+    teammates: initialTeammates,
   });
   // Keeps the figures fresh on an open tab. The endpoint is CDN-cached, so this is cheap.
   useEffect(() => {
@@ -68,6 +75,7 @@ export default function LiveHome({
           onlineNow?: unknown;
           recentMatches?: unknown;
           stats?: HomeStats | null;
+          teammates?: unknown;
         };
         setLive((current) => ({
           onlineNow:
@@ -81,6 +89,9 @@ export default function LiveHome({
             data.stats && typeof data.stats === 'object'
               ? data.stats
               : current.stats,
+          teammates: Array.isArray(data.teammates)
+            ? (data.teammates as HeroTeammate[])
+            : current.teammates,
         }));
       } catch {
         /* Keep the last figures. */
@@ -290,6 +301,7 @@ export default function LiveHome({
       onlineNow={live.onlineNow}
       recentMatches={live.recentMatches}
       stats={live.stats}
+      teammates={live.teammates}
       pro={pro}
     />
   );

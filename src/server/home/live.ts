@@ -1,7 +1,13 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { authConfig } from '../auth/config';
 import type { Database } from '../auth/database.types';
-import type { HomeLive, HomeStats, RecentMatch } from '../../contracts/home';
+import type {
+  HeroTeammate,
+  HomeLive,
+  HomeStats,
+  RecentMatch,
+} from '../../contracts/home';
+import { UPLOADED_AVATAR } from '../../contracts/account';
 
 /**
  * Homepage live elements (ledger #36): the "teammates online" figure and the
@@ -11,7 +17,12 @@ import type { HomeLive, HomeStats, RecentMatch } from '../../contracts/home';
  * reads to a handful per minute on the Free plan.
  */
 
-export type { HomeLive, HomeStats, RecentMatch } from '../../contracts/home';
+export type {
+  HeroTeammate,
+  HomeLive,
+  HomeStats,
+  RecentMatch,
+} from '../../contracts/home';
 
 export const HOME_LIVE_TTL_MS = 30_000;
 export const HOME_LIVE_CACHE_CONTROL =
@@ -33,6 +44,7 @@ const GAMES = new Set([
   'arc',
   'mc',
   'pu',
+  'social',
 ]);
 
 /** Time from queue to match, written like his ticker: 58s, 1m 08s, 1h 05m. */
@@ -87,6 +99,49 @@ export function mapRecentMatches(raw: unknown): RecentMatch[] {
   return out;
 }
 
+/** Maps public.home_teammates() into hero cards. Malformed entries are dropped, never repaired. */
+export function mapHeroTeammates(raw: unknown): HeroTeammate[] {
+  if (!Array.isArray(raw)) return [];
+  const count = (value: unknown) =>
+    typeof value === 'number' && Number.isInteger(value) && value >= 0
+      ? value
+      : null;
+  const out: HeroTeammate[] = [];
+  for (const entry of raw.slice(0, 24)) {
+    if (!entry || typeof entry !== 'object') continue;
+    const t = entry as Record<string, unknown>;
+    const name = typeof t.name === 'string' ? t.name.trim().slice(0, 16) : '';
+    const reviews = count(t.reviews);
+    const sessions = count(t.sessions);
+    if (name.length < 2 || reviews === null || sessions === null) continue;
+    const image =
+      typeof t.image === 'string' &&
+      (/^\/assets\/avatars\/avatar-([1-9]|10)\.png$/.test(t.image) ||
+        UPLOADED_AVATAR.test(t.image))
+        ? t.image
+        : '/assets/avatars/avatar-1.png';
+    const rating = Number(t.rating);
+    out.push({
+      name,
+      image,
+      games: Array.isArray(t.games)
+        ? t.games
+            .filter((g): g is string => typeof g === 'string' && GAMES.has(g))
+            .slice(0, 3)
+        : [],
+      gg: t.gg === true,
+      online: t.online === true,
+      rating:
+        reviews > 0 && t.rating !== null && rating >= 1 && rating <= 5
+          ? Math.round(rating * 10) / 10
+          : null,
+      reviews,
+      sessions,
+    });
+  }
+  return out;
+}
+
 /** Maps public.home_public_stats() into HomeStats. Anything malformed gives null. */
 export function mapHomeStats(raw: unknown): HomeStats | null {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
@@ -132,6 +187,7 @@ type Loader = () => Promise<{
   online: unknown;
   matches: unknown;
   stats?: unknown;
+  teammates?: unknown;
 }>;
 
 let client: { key: string; client: SupabaseClient<Database> } | null = null;
@@ -152,8 +208,8 @@ function publicClient(): SupabaseClient<Database> | null {
 
 const defaultLoader: Loader = async () => {
   const db = publicClient();
-  if (!db) return { online: 0, matches: [], stats: null };
-  const [online, matches, stats] = await Promise.all([
+  if (!db) return { online: 0, matches: [], stats: null, teammates: [] };
+  const [online, matches, stats, teammates] = await Promise.all([
     db.rpc('presence_public_count'),
     db.rpc('home_recent_matches'),
     // Not in the generated types until they are regenerated after the migration.
@@ -163,11 +219,19 @@ const defaultLoader: Loader = async () => {
         error: unknown;
       }>
     )('home_public_stats'),
+    (
+      db.rpc as unknown as (fn: string) => PromiseLike<{
+        data: unknown;
+        error: unknown;
+      }>
+    )('home_teammates'),
   ]);
   return {
     online: online.error ? null : online.data,
     matches: matches.error ? null : matches.data,
     stats: stats.error ? null : stats.data,
+    // Until migration 20261030100000 is applied this errors, so the hero keeps the logo.
+    teammates: teammates.error ? null : teammates.data,
   };
 };
 
@@ -195,6 +259,10 @@ export async function homeLive(
             ? (cached?.value.recentMatches ?? [])
             : mapRecentMatches(raw.matches),
         stats: mapHomeStats(raw.stats) ?? cached?.value.stats ?? null,
+        teammates:
+          raw.teammates === null || raw.teammates === undefined
+            ? (cached?.value.teammates ?? [])
+            : mapHeroTeammates(raw.teammates),
       };
       cached = { value, at: now };
       return value;
@@ -203,6 +271,7 @@ export async function homeLive(
         onlineNow: 0,
         recentMatches: [],
         stats: null,
+        teammates: [],
       };
       // Retry after a short pause instead of on every request.
       cached = { value, at: now - HOME_LIVE_TTL_MS + 5_000 };

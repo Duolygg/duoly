@@ -13,6 +13,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  *               touches an admin's Teammate role
  * Only people who connected Discord and are members of the server get roles. Roles are found by
  * name in the server, exactly as in the original, and no other role is ever touched.
+ * The "Performance | TOP X%" roles are synced separately (src/server/performance/roles.ts).
  *
  * The original ran every 5 seconds in an always-on process. On Vercel it runs right after the
  * actions that change the wanted roles (src/server/discord/role-hooks.ts) and as a reconcile
@@ -196,7 +197,7 @@ export function planChanges(
 
 export type FetchLike = (
   url: string,
-  init: { method: string; headers: Record<string, string> },
+  init: { method: string; headers: Record<string, string>; body?: string },
 ) => Promise<Response>;
 export interface DiscordReply {
   status: number;
@@ -221,10 +222,12 @@ const defaultSleep = (ms: number) =>
 /** Discord REST call as the bot. Retries a 429 after retry_after, at most 3 tries. */
 export async function discordRequest(
   config: Pick<RoleSyncConfig, 'token'>,
-  method: 'GET' | 'PUT' | 'DELETE',
+  method: 'GET' | 'PUT' | 'DELETE' | 'POST',
   path: string,
   fetchImpl: FetchLike = fetch,
   sleep: (ms: number) => Promise<void> = defaultSleep,
+  /** JSON body, only for creating things (performance roles). */
+  json?: unknown,
 ): Promise<DiscordReply> {
   for (let attempt = 0; attempt < 3; attempt++) {
     const response = await fetchImpl(API + path, {
@@ -233,7 +236,9 @@ export async function discordRequest(
         authorization: `Bot ${config.token}`,
         'user-agent': 'DiscordBot (https://duoly.gg, 1.0)',
         'x-audit-log-reason': 'Duoly site activity',
+        ...(json === undefined ? {} : { 'content-type': 'application/json' }),
       },
+      ...(json === undefined ? {} : { body: JSON.stringify(json) }),
     });
     const body: unknown =
       response.status === 204 ? null : await response.json().catch(() => null);

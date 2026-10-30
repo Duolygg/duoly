@@ -235,6 +235,18 @@ export const CATALOG = {
       playLearn('Master', 9.99, 'Ranked match'),
       ['draft', 'training', 'Draft & Macro', 'Master coach · 1 hour', 'Picks that work together, objective timing and when to rotate.', 12.99, { unit: 'hour' }]
     ]
+  },
+
+  // Social (Fabian 2026-10-29, after epal.gg): no game, only time with a verified Gamer Girl. Every service is
+  // in the gg tab, so only Gamer Girl teammates can take it. Instant like every order, so no wake-up calls yet.
+  social: {
+    unit: 'hour', main: 'chat', bundles: ['Late Night Talk', 'Movie Marathon', 'Whole Evening'],
+    services: [
+      ['chat', 'gg', 'Just Chat', 'Verified Gamer Girl · voice', 'Talk about anything on voice: your day, games, music, whatever is on your mind. Relaxed and friendly, no game needed.', 9.99, { badge: 'Most picked', unit: 'hour' }],
+      ['watch', 'gg', 'Watch Together', 'Verified Gamer Girl · Discord stream', 'Pick a movie, show or stream and watch it together on Discord, with commentary and reactions on voice.', 9.99, { unit: 'hour' }],
+      ['sleep', 'gg', 'Sleep Call', 'Verified Gamer Girl · voice', 'Stay on a calm voice call while you wind down and fall asleep. Soft talk, then quiet company.', 9.99, { badge: 'Cozy', unit: 'hour' }],
+      ['karaoke', 'gg', 'Karaoke', 'Verified Gamer Girl · voice', 'Sing together or request songs she sings for you on voice. Bring your playlist or pick from hers.', 9.99, { badge: 'Fun', unit: 'hour' }]
+    ]
   }
 };
 

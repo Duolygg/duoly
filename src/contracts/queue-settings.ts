@@ -16,6 +16,7 @@ export const GAME_IDS = [
   'arc',
   'mc',
   'pu',
+  'social',
 ] as const;
 const GameIdSchema = z.enum(GAME_IDS);
 
