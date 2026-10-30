@@ -58,6 +58,34 @@ out of reach (TOP 1% needs at least 100 ranked teammates, TOP 5% needs 20); the 
   since the last run, Discord status, ranking history (last 60 runs), manual recalculation and the
   settings (`/api/admin/performance`).
 
+## Read-only admin demo
+
+Open `/admin/performance` as an admin and select **Show demo**. **Back to live**
+remounts the live reader and resumes its one-minute refresh. The toggle is also
+available while live rankings are loading or unavailable.
+
+`src/components/admin/performance-demo.ts` is imported only by the admin component
+(and regression tests). It builds a fixed fictional cohort of 100 eligible
+teammates and one ineligible teammate. Seven representative rows cover ranks 1,
+5, 10, 25, 50, 75 and the ineligible case. Summary badge counts describe displayed
+representatives, not the full cohort. Metric scores use the same two-decimal
+rounding, 45/35/20 weighting, eligible order percent rank and rank/eligible bracket
+rules as the database. Sample history includes promotions and demotions.
+
+The preview reuses the live table, filters, metric breakdown, history, badges and
+settings components. It disables recalculation, settings inputs and saving. It
+makes no performance API requests, including history and automatic refresh.
+Switching modes unmounts the old view, so outstanding live answers cannot replace
+sample data. Discord status labels explicitly say simulated. The independent
+admin-shell presence heartbeat is unchanged. No accounts, database rows, Discord
+roles, environment variables or migrations are created or changed.
+
+Coverage: `tests/unit/performance-demo.test.ts` checks the full cohort math and
+history consistency. `tests/teammate-browser/performance-demo.spec.ts` checks the
+actual admin route in desktop and mobile fixtures, including a failed live API,
+all five badges, filters, history, disabled writes, timer isolation, outstanding
+live answers and restored live reads and history.
+
 ## Data
 
 Migration `20261030120000_performance_ranking.sql`: `performance_settings` (one row),
