@@ -23,7 +23,7 @@ function css(str) {
   return out;
 }
 
-const DISPLAY = "'Bricolage Grotesque', sans-serif";
+const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 const GREEN = '#5EEAA8';
 const SHIELD = 'M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z';
 

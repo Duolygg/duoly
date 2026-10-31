@@ -13,7 +13,7 @@
 .customer-orders h1,
 .customer-orders h2,
 .customer-orders h3 {
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
   color: #fff;
   letter-spacing: -0.025em;
   line-height: 1.2;

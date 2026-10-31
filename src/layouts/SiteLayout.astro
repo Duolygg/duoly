@@ -46,6 +46,21 @@ const avatar =
     <link rel="icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Fetch the fonts with the HTML so the first paint already uses them (no headline reflow). -->
+    <link
+      rel="preload"
+      href="/fonts/bricolage-grotesque-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/geist-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <slot name="head" />
   </head>
   <body class={bare ? 'site bare' : 'site'}>
@@ -201,6 +216,17 @@ const avatar =
     font-style: normal;
     font-weight: 600 800;
     font-display: swap;
+  }
+  /* Arial scaled to Bricolage's width and vertical metrics, so text set before the webfont
+     arrives wraps the same way and nothing moves on the swap (hero headline stays two lines). */
+  @font-face {
+    font-family: 'Bricolage Fallback';
+    src: local('Arial Bold'), local('Arial-BoldMT');
+    font-weight: 600 800;
+    size-adjust: 101.7%;
+    ascent-override: 91.4%;
+    descent-override: 26.5%;
+    line-gap-override: 0%;
   }
   @font-face {
     font-family: 'Geist';

@@ -11,7 +11,7 @@
 .chat-moderation h2,
 .chat-moderation h3 {
   margin: 0;
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
   color: #fff;
 }
 .chat-moderation p,

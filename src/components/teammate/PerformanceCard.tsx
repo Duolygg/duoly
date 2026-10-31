@@ -20,7 +20,7 @@ const card: CSSProperties = {
 };
 const label: CSSProperties = { fontSize: '13px', color: '#8E84AB' };
 const big: CSSProperties = {
-  fontFamily: "'Bricolage Grotesque', sans-serif",
+  fontFamily: "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
   fontSize: '26px',
   fontWeight: 700,
   letterSpacing: '-.02em',
@@ -124,7 +124,8 @@ export function PerformanceView({ data }: { data: TeammatePerformance }) {
           id="perf-h"
           style={{
             margin: 0,
-            fontFamily: "'Bricolage Grotesque', sans-serif",
+            fontFamily:
+              "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
             fontSize: '20px',
             color: '#FFFFFF',
           }}

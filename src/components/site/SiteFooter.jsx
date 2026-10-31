@@ -126,7 +126,8 @@ export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
               <p
                 style={{
                   margin: '6px 0 0',
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
+                  fontFamily:
+                    "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                   fontSize: '22px',
                   fontWeight: '700',
                   letterSpacing: '-.02em',
@@ -162,7 +163,8 @@ export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
             </span>
             <span
               style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
+                fontFamily:
+                  "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                 fontSize: '44px',
                 fontWeight: '700',
                 letterSpacing: '-.03em',

@@ -10,7 +10,7 @@
 .teammate-desk h1,
 .teammate-desk h2,
 .teammate-desk h3 {
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
   color: #fff;
   letter-spacing: -0.025em;
   line-height: 1.2;

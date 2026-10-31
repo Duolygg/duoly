@@ -40,7 +40,7 @@ const QUICK = [
   'Can we hop in voice?',
   'GG, thanks!',
 ];
-const DISPLAY = "'Bricolage Grotesque', sans-serif";
+const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 const ACCENT = '#D6BBFF',
   GREEN = '#5EEAA8',
   PINK = '#F0A6FF',

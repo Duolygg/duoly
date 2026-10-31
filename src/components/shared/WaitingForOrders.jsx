@@ -3,7 +3,7 @@
 // Extra pills or buttons go in as children. Styles: globals.css (tmw-*).
 import React from 'react';
 
-const DISPLAY = "'Bricolage Grotesque', sans-serif";
+const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 
 export default function WaitingForOrders({ text, children }) {
   return (

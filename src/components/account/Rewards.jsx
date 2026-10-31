@@ -24,7 +24,7 @@ function css(str) {
   return out;
 }
 
-const DISPLAY = "'Bricolage Grotesque', sans-serif";
+const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 const GREEN = '#5EEAA8';
 
 // Customer loyalty levels live in lib/rewards.js (the server computes cashback with them too).
