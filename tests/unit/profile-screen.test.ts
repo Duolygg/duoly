@@ -51,3 +51,17 @@ it.each([
   expect(html).not.toContain('Languages you play in');
   expect(html).toContain(`href="${home}"`);
 });
+
+it('sits under the site navbar without a second header, keeping the way back', () => {
+  for (const [role, back] of [
+    ['admin', 'Back to admin'],
+    ['teammate', 'Back to orders'],
+    ['customer', 'Back to dashboard'],
+  ] as const) {
+    const html = render(role);
+    expect(html).not.toContain('<header');
+    expect(html).not.toContain('<main');
+    expect(html).not.toContain('logo-wordmark');
+    expect(html).toContain(back);
+  }
+});
