@@ -456,66 +456,32 @@ export default class Profile extends React.Component {
           paddingBottom: dirty ? '110px' : '48px',
         }}
       >
-        <header
-          style={{
-            position: 'sticky',
-            top: '0',
-            zIndex: '6',
-            background: 'rgba(9, 4, 20, .8)',
-            backdropFilter: 'blur(14px)',
-            borderBottom: '1px solid rgba(196, 170, 255, .08)',
-          }}
-        >
-          <div
-            style={{
-              maxWidth: '1040px',
-              margin: '0 auto',
-              padding: '10px 24px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-            }}
-          >
-            <a
-              href="/"
-              aria-label="Duoly home"
-              style={{ display: 'flex', alignItems: 'center' }}
-            >
-              <img
-                src="/assets/brand/logo-wordmark.webp"
-                alt="Duoly"
-                width="104"
-                height="39"
-                style={{ width: '104px', height: '39px', display: 'block' }}
-              />
-            </a>
-            <a href={this.props.home} style={{ ...ghost, marginLeft: 'auto' }}>
-              <svg
-                aria-hidden="true"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M19 12H5" />
-                <path d="M12 19l-7-7 7-7" />
-              </svg>
-              {role.back}
-            </a>
-          </div>
-        </header>
+        {/* The site navbar (SiteLayout) sits above, so no second header here: just the way back. */}
 
-        <main
+        <div
           style={{
             maxWidth: '1040px',
             margin: '0 auto',
-            padding: '36px 24px 0',
+            padding: '28px 24px 0',
           }}
         >
+          <a href={this.props.home} style={{ ...ghost, marginBottom: '20px' }}>
+            <svg
+              aria-hidden="true"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M19 12H5" />
+              <path d="M12 19l-7-7 7-7" />
+            </svg>
+            {role.back}
+          </a>
           <h1
             style={{
               margin: '0',
@@ -1311,7 +1277,7 @@ export default class Profile extends React.Component {
               </section>
             </div>
           </div>
-        </main>
+        </div>
 
         {/* save bar: only while something changed */}
         {dirty || s.done || s.error ? (
