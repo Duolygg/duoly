@@ -33,7 +33,7 @@
 }
 .pay-head h2 {
   margin: 0;
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
   font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -276,7 +276,7 @@
 }
 .pay-held strong {
   margin-top: 8px;
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
   font-size: 26px;
   letter-spacing: -0.02em;
   color: #fff;
@@ -326,7 +326,7 @@
 
 .pay-failed h2 {
   margin: 0;
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
   color: #fff;
 }
 .pay-failed p {

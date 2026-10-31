@@ -68,7 +68,7 @@ export const FEATURES = {
   simulation: false,
 };
 
-const DISPLAY = "'Bricolage Grotesque', sans-serif";
+const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 
 // Latest customer reviews (stars, text, tags). Only customer display names are shown.
 function LatestReviews({ reviews }) {
@@ -2173,7 +2173,7 @@ export default class Teammate extends React.Component {
           .tm-live-proof button { min-height: 44px; padding: 10px 14px; border: 1px solid rgba(214,187,255,.2); border-radius: 12px; background: #D6BBFF; color: #17092E; font: inherit; font-weight: 600; }
           .tm-live-proof button:disabled { opacity: .5; cursor: not-allowed; }
           .tm-live-proof p { color: #A79DC4; font-size: 13px; line-height: 1.5; }
-          .tm-live-proof h3 { font-family: 'Bricolage Grotesque', sans-serif; color: #FFFFFF; }
+          .tm-live-proof h3 { font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif; color: #FFFFFF; }
           .tm-live-proof input[type=file] { min-height: 44px; font: inherit; }
           .tm-live-proof input::file-selector-button { min-height: 44px; border: 1px solid rgba(214,187,255,.2); border-radius: 12px; background: #120B22; color: #D6BBFF; font: inherit; }
         `}</style>

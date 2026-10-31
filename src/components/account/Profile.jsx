@@ -11,7 +11,7 @@ import {
   flagSrc,
 } from '../../design-reference/lib/countries';
 
-const DISPLAY = "'Bricolage Grotesque', sans-serif";
+const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 const GREEN = '#5EEAA8';
 const PRESETS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
   (n) => '/assets/avatars/avatar-' + n + '.png',

@@ -29,6 +29,10 @@ const usdRate = customerUsdRate(rate);
 const cookieCurrency = CurrencySchema.safeParse(
   Astro.cookies.get('duoly-currency')?.value,
 );
+// What auto-detect found on an earlier visit, so the navbar shows it on first paint too.
+const autoCurrency = CurrencySchema.safeParse(
+  Astro.cookies.get('duoly-currency-auto')?.value,
+);
 // Teammates online and recent matches: public, cached per instance (src/server/home/live.ts).
 const { onlineNow, recentMatches, stats, teammates } = await homeLive();
 // Duoly PRO strip and member discount in the order summary (null while PRO_ENABLED is off).
@@ -43,6 +47,7 @@ const pro = await loadProView(account.client, viewer?.role);
     usdRate={usdRate}
     accountCurrency={accountCurrency}
     cookieCurrency={cookieCurrency.success ? cookieCurrency.data : null}
+    autoCurrency={autoCurrency.success ? autoCurrency.data : null}
     onlineNow={onlineNow}
     recentMatches={recentMatches}
     stats={stats}

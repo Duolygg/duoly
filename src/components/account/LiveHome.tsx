@@ -35,6 +35,7 @@ export default function LiveHome({
   usdRate,
   accountCurrency = null,
   cookieCurrency = null,
+  autoCurrency = null,
   onlineNow: initialOnline = 0,
   recentMatches: initialMatches = [],
   stats: initialStats = null,
@@ -48,6 +49,7 @@ export default function LiveHome({
   usdRate?: number;
   accountCurrency?: Currency | null;
   cookieCurrency?: Currency | null;
+  autoCurrency?: Currency | null;
   onlineNow?: number;
   recentMatches?: RecentMatch[];
   stats?: HomeStats | null;
@@ -134,6 +136,14 @@ export default function LiveHome({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ currency: code, csrf }),
     }).catch(() => {});
+  };
+  // Auto-detected currency: its own cookie (never the account), so the next load renders it
+  // right away while the navbar still says "Auto-detected".
+  const saveAutoCurrency = (code: Currency) => {
+    document.cookie =
+      'duoly-currency-auto=' +
+      code +
+      '; Path=/; Max-Age=31536000; SameSite=Lax; Secure';
   };
   // Just signed in: the account's currency wins; if it has none yet, keep the one picked here.
   useEffect(() => {
@@ -287,7 +297,9 @@ export default function LiveHome({
       csrf={csrf}
       session={viewer ? { user: viewer } : null}
       initialCurrency={accountCurrency ?? cookieCurrency}
+      initialAutoCurrency={autoCurrency}
       onCurrency={saveCurrency}
+      onAutoCurrency={saveAutoCurrency}
       authError={authError}
       askLogin={false}
       onSignIn={onSignIn}

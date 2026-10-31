@@ -68,6 +68,8 @@ export default class Home extends React.Component {
     super(props);
     // A currency saved on the account (or the cookie) comes from the server, so it's there on first paint.
     const initCur = props.initialCurrency || null;
+    // So does the one auto-detected on an earlier visit (detectCurrency still re-checks it).
+    const initAuto = props.initialAutoCurrency || null;
     this.state = {
       now: 0,
       game: 'lol',
@@ -81,7 +83,7 @@ export default class Home extends React.Component {
       voice: true,
       same: false,
       queued: false,
-      cur: initCur,
+      cur: initCur || initAuto,
       curManual: !!initCur,
       // Perks (migration 20261026160000): null until /api/orders/perks answers, or not live.
       perks: null,
@@ -143,6 +145,13 @@ export default class Home extends React.Component {
     const cur = saved === 'EUR' || saved === 'USD' ? saved : auto;
     if (cur)
       this.setState({ cur, curAuto: auto, curCity: city, curManual: !!saved });
+    if (
+      !saved &&
+      auto &&
+      auto !== this.props.initialAutoCurrency &&
+      this.props.onAutoCurrency
+    )
+      this.props.onAutoCurrency(auto);
   }
   componentDidMount() {
     this.detectCurrency();
@@ -2362,7 +2371,8 @@ export default class Home extends React.Component {
                 id="hero-h"
                 style={{
                   margin: '18px 0 0',
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
+                  fontFamily:
+                    "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                   fontWeight: '800',
                   fontSize: 'clamp(44px, 6vw, 80px)',
                   lineHeight: '.95',
@@ -2623,7 +2633,8 @@ export default class Home extends React.Component {
                     <dd
                       style={{
                         margin: '2px 0 0',
-                        fontFamily: "'Bricolage Grotesque', sans-serif",
+                        fontFamily:
+                          "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                         fontSize: '28px',
                         fontWeight: '700',
                         letterSpacing: '-.02em',
@@ -2642,7 +2653,8 @@ export default class Home extends React.Component {
                     <dd
                       style={{
                         margin: '2px 0 0',
-                        fontFamily: "'Bricolage Grotesque', sans-serif",
+                        fontFamily:
+                          "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                         fontSize: '28px',
                         fontWeight: '700',
                         letterSpacing: '-.02em',
@@ -2906,7 +2918,8 @@ export default class Home extends React.Component {
               >
                 <span
                   style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
+                    fontFamily:
+                      "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                     fontSize: '15px',
                     fontWeight: '700',
                     color: '#8E84AB',
@@ -2918,7 +2931,8 @@ export default class Home extends React.Component {
                   id="games-h"
                   style={{
                     margin: '0',
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
+                    fontFamily:
+                      "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                     fontSize: '30px',
                     fontWeight: '700',
                     letterSpacing: '-.025em',
@@ -3064,7 +3078,8 @@ export default class Home extends React.Component {
                 >
                   <span
                     style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '15px',
                       fontWeight: '700',
                       color: '#8E84AB',
@@ -3076,7 +3091,8 @@ export default class Home extends React.Component {
                     id="modes-h"
                     style={{
                       margin: '0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '30px',
                       fontWeight: '700',
                       letterSpacing: '-.025em',
@@ -3148,7 +3164,8 @@ export default class Home extends React.Component {
                         >
                           <span
                             style={{
-                              fontFamily: "'Bricolage Grotesque', sans-serif",
+                              fontFamily:
+                                "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                               fontSize: '22px',
                               fontWeight: '700',
                               letterSpacing: '-.02em',
@@ -3205,7 +3222,8 @@ export default class Home extends React.Component {
                       >
                         <span
                           style={{
-                            fontFamily: "'Bricolage Grotesque', sans-serif",
+                            fontFamily:
+                              "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                             fontSize: '26px',
                             fontWeight: '700',
                             letterSpacing: '-.02em',
@@ -3295,7 +3313,8 @@ export default class Home extends React.Component {
               >
                 <span
                   style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
+                    fontFamily:
+                      "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                     fontSize: '15px',
                     fontWeight: '700',
                     color: '#8E84AB',
@@ -3307,7 +3326,8 @@ export default class Home extends React.Component {
                   id="co-h"
                   style={{
                     margin: '0',
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
+                    fontFamily:
+                      "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                     fontSize: '30px',
                     fontWeight: '700',
                     letterSpacing: '-.025em',
@@ -4243,7 +4263,8 @@ export default class Home extends React.Component {
                       </span>
                       <span
                         style={{
-                          fontFamily: "'Bricolage Grotesque', sans-serif",
+                          fontFamily:
+                            "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                           fontSize: '36px',
                           fontWeight: '700',
                           letterSpacing: '-.03em',
@@ -4546,7 +4567,8 @@ export default class Home extends React.Component {
                     id="globe-h"
                     style={{
                       margin: '14px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: 'clamp(34px, 4.2vw, 54px)',
                       fontWeight: '800',
                       letterSpacing: '-.04em',
@@ -4594,7 +4616,8 @@ export default class Home extends React.Component {
                       <dd
                         style={{
                           margin: '2px 0 0',
-                          fontFamily: "'Bricolage Grotesque', sans-serif",
+                          fontFamily:
+                            "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                           fontSize: '24px',
                           fontWeight: '700',
                           color: '#FFFFFF',
@@ -4617,7 +4640,8 @@ export default class Home extends React.Component {
                       <dd
                         style={{
                           margin: '2px 0 0',
-                          fontFamily: "'Bricolage Grotesque', sans-serif",
+                          fontFamily:
+                            "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                           fontSize: '24px',
                           fontWeight: '700',
                           color: '#FFFFFF',
@@ -4640,7 +4664,8 @@ export default class Home extends React.Component {
                       <dd
                         style={{
                           margin: '2px 0 0',
-                          fontFamily: "'Bricolage Grotesque', sans-serif",
+                          fontFamily:
+                            "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                           fontSize: '24px',
                           fontWeight: '700',
                           color: '#FFFFFF',
@@ -4663,7 +4688,8 @@ export default class Home extends React.Component {
                       <dd
                         style={{
                           margin: '2px 0 0',
-                          fontFamily: "'Bricolage Grotesque', sans-serif",
+                          fontFamily:
+                            "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                           fontSize: '24px',
                           fontWeight: '700',
                           color: '#FFFFFF',
@@ -4949,7 +4975,8 @@ export default class Home extends React.Component {
                 style={{
                   margin: '0',
                   maxWidth: '620px',
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
+                  fontFamily:
+                    "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                   fontSize: 'clamp(32px, 4vw, 48px)',
                   fontWeight: '800',
                   letterSpacing: '-.035em',
@@ -4974,7 +5001,8 @@ export default class Home extends React.Component {
                 >
                   <div
                     style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '14px',
                       fontWeight: '700',
                       color: '#D6BBFF',
@@ -5011,7 +5039,8 @@ export default class Home extends React.Component {
                 >
                   <div
                     style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '14px',
                       fontWeight: '700',
                       color: '#8E84AB',
@@ -5049,7 +5078,8 @@ export default class Home extends React.Component {
                 >
                   <div
                     style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '14px',
                       fontWeight: '700',
                       color: '#8E84AB',
@@ -5099,7 +5129,8 @@ export default class Home extends React.Component {
                   id="why-h"
                   style={{
                     margin: '0',
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
+                    fontFamily:
+                      "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                     fontSize: '34px',
                     fontWeight: '800',
                     letterSpacing: '-.03em',
@@ -5130,7 +5161,8 @@ export default class Home extends React.Component {
                   <dd
                     style={{
                       margin: '4px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '40px',
                       fontWeight: '700',
                       letterSpacing: '-.03em',
@@ -5148,7 +5180,8 @@ export default class Home extends React.Component {
                     <dd
                       style={{
                         margin: '4px 0 0',
-                        fontFamily: "'Bricolage Grotesque', sans-serif",
+                        fontFamily:
+                          "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                         fontSize: '40px',
                         fontWeight: '700',
                         letterSpacing: '-.03em',
@@ -5167,7 +5200,8 @@ export default class Home extends React.Component {
                     <dd
                       style={{
                         margin: '4px 0 0',
-                        fontFamily: "'Bricolage Grotesque', sans-serif",
+                        fontFamily:
+                          "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                         fontSize: '40px',
                         fontWeight: '700',
                         letterSpacing: '-.03em',
@@ -5185,7 +5219,8 @@ export default class Home extends React.Component {
                   <dd
                     style={{
                       margin: '4px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '40px',
                       fontWeight: '700',
                       letterSpacing: '-.03em',
@@ -5232,7 +5267,8 @@ export default class Home extends React.Component {
                     id="faq-h"
                     style={{
                       margin: '8px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: 'clamp(34px, 4vw, 48px)',
                       fontWeight: '800',
                       letterSpacing: '-.035em',
@@ -5402,7 +5438,8 @@ export default class Home extends React.Component {
                         >
                           <span
                             style={{
-                              fontFamily: "'Bricolage Grotesque', sans-serif",
+                              fontFamily:
+                                "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                               fontSize: '14px',
                               fontWeight: '700',
                               color: '#6A6086',
@@ -5558,7 +5595,8 @@ export default class Home extends React.Component {
                   </div>
                   <div
                     style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '28px',
                       fontWeight: '800',
                       lineHeight: '1.05',
@@ -5841,7 +5879,8 @@ export default class Home extends React.Component {
                     id="auth-h"
                     style={{
                       margin: '22px 0 0',
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '32px',
                       fontWeight: '800',
                       lineHeight: '1.05',
@@ -6335,7 +6374,8 @@ export default class Home extends React.Component {
                 id="rn-h"
                 style={{
                   margin: '0',
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
+                  fontFamily:
+                    "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                   fontSize: '24px',
                   fontWeight: '800',
                   letterSpacing: '-.02em',
@@ -6524,7 +6564,8 @@ export default class Home extends React.Component {
                   id="qc-h"
                   style={{
                     margin: '8px 0 0',
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
+                    fontFamily:
+                      "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                     fontSize: '30px',
                     fontWeight: '800',
                     lineHeight: '1.05',
@@ -6577,7 +6618,8 @@ export default class Home extends React.Component {
                   </div>
                   <div
                     style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      fontFamily:
+                        "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '24px',
                       fontWeight: '800',
                       letterSpacing: '-.02em',
@@ -7187,7 +7229,8 @@ export default class Home extends React.Component {
               </div>
               <div
                 style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
+                  fontFamily:
+                    "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                   fontSize: '26px',
                   fontWeight: '700',
                   letterSpacing: '-.02em',

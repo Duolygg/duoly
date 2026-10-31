@@ -174,7 +174,8 @@ export default class Customers extends React.Component {
             <div key={l} style={{ ...card, padding: '16px 18px' }}>
               <div
                 style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
+                  fontFamily:
+                    "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                   fontSize: '24px',
                   fontWeight: '700',
                   color: C.white,

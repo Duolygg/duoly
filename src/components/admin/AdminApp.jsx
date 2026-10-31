@@ -120,7 +120,7 @@ export const SECTIONS = [
   },
 ];
 const GROUPS = [
-  { label: 'Live', ids: ['overview', 'live', 'priority', 'performance'] },
+  { label: 'Operations', ids: ['overview', 'live', 'priority', 'performance'] },
   {
     label: 'Business',
     ids: ['orders', 'payouts', 'customers', 'teammates', 'creators'],
@@ -172,6 +172,7 @@ const LIVE = [
   'overview',
   'live',
   'priority',
+  'performance',
   'users',
   'applications',
   'orders',

@@ -40,7 +40,7 @@ function css(str) {
   return out;
 }
 
-const DISPLAY = "'Bricolage Grotesque', sans-serif";
+const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 
 // Customer dashboard: the open order, order history, stats, teammates and wallet, all from the server.
 export default class Dashboard extends React.Component {

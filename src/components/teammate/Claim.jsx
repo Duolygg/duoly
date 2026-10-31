@@ -15,7 +15,7 @@ const claimOrder = (order) =>
       }
     : null;
 
-const DISPLAY = "'Bricolage Grotesque', sans-serif";
+const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 const GREEN = '#5EEAA8';
 const money = (n) => '$' + Number(n).toFixed(2);
 
