@@ -660,9 +660,15 @@ for (const failure of ['503', 'network']) {
     ).toBeVisible();
     expect(mutations).toHaveLength(1);
     recovered = true;
-    await page
-      .getByRole('button', { name: 'Refresh desk', exact: true })
-      .click();
+    // The desk also retries by itself every 3 seconds (POLL_MS); when that retry lands first the
+    // error state and its Refresh button are already gone. Either way it must recover read-only.
+    const refresh = page.getByRole('button', {
+      name: 'Refresh desk',
+      exact: true,
+    });
+    await refresh.click({ timeout: 2000 }).catch(async () => {
+      await expect(refresh).toHaveCount(0);
+    });
     await expect(
       page.getByRole('button', { name: 'Accept', exact: true }),
     ).toHaveCount(2);
