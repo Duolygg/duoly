@@ -43,7 +43,7 @@ test('customer selects a tip with the rating and opens its separate payment', as
   await page.context().addCookies([
     {
       name: 'duoly-consent',
-      value: 'necessary',
+      value: 'v2.a0.m0.r0',
       url: 'http://127.0.0.1:4336',
     },
   ]);

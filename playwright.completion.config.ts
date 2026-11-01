@@ -3,7 +3,25 @@ export default defineConfig({
   testDir: './tests/completion-browser',
   fullyParallel: true,
   workers: 2,
-  use: { baseURL: 'http://127.0.0.1:4336', trace: 'retain-on-failure' },
+  use: {
+    storageState: {
+      cookies: [
+        {
+          name: 'duoly-consent',
+          value: 'v2.a0.m0.r0',
+          domain: '127.0.0.1',
+          path: '/',
+          expires: -1,
+          httpOnly: false,
+          secure: false,
+          sameSite: 'Lax',
+        },
+      ],
+      origins: [],
+    },
+    baseURL: 'http://127.0.0.1:4336',
+    trace: 'retain-on-failure',
+  },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
     {

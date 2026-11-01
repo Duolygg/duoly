@@ -121,9 +121,9 @@ export const TERMS = {
 
 export const PRIVACY = {
   slug: 'privacy', kicker: 'Legal', title: 'Privacy Policy', updated: LEGAL_UPDATED,
-  intro: 'What we collect, why we need it and what you can do about it. Short version: only what it takes to match you with a teammate, no ads, no tracking, no selling your data.',
+  intro: 'What we collect, why we need it and what you can do about it. Short version: we use your data to run your sessions, optional analytics and ad measurement need your consent, and we never sell your data.',
   summary: [
-    ['eye', 'No tracking or ads', 'No analytics or ad pixels. The only optional cookie remembers a creator link, and only if you allow it.'],
+    ['eye', 'Your choice for analytics and ads', 'Privacy-friendly analytics and server-side ad measurement only with your OK. No ad pixels on the site. We never sell your data.'],
     ['lock', 'Never sold', 'We don’t sell or rent your data, and we only share it where it’s needed to run your session.'],
     ['card', 'No card details', 'Your payment details go straight to the payment provider. We only see the amount and the method.'],
     ['user', 'You’re in control', 'See, correct, download or delete your data whenever you want.']
@@ -164,19 +164,33 @@ export const PRIVACY = {
       ] },
       'Some of these providers can be outside the EU/EEA. In that case we rely on an adequacy decision (such as the EU–US Data Privacy Framework) or the EU’s Standard Contractual Clauses.'
     ] },
-    { id: 'cookies', title: 'Cookies & local storage', blocks: [
-      'Most cookies are needed for the site to work. One is optional: if you came through a creator’s link, it remembers that creator for 30 days so they get credit for your first order. We only set it if you choose “Accept all” in the cookie banner, and you can change your choice any time under “Cookie settings” at the bottom of the page.',
+    { id: 'cookies', title: 'Cookies and local storage', blocks: [
+      'Necessary cookies keep the site working. You can allow Analytics, Marketing and Creator link separately, or accept or refuse all optional purposes in one click. The creator cookie remembers whose link you used for 30 days so they get credit for your first order. Change your choices any time through [Cookie settings](#cookie-settings). Analytics and ad measurement are planned and are not active yet.',
       { table: [
         ['Name', 'Type', 'What it does', 'How long'],
-        ['next-auth.session-token (and csrf/callback cookies)', 'Cookie', 'Keeps you signed in and protects forms', 'Session, up to 30 days'],
+        ['__Host-duoly-session (including numbered chunks and sign-in -code-verifier cookies), duoly-session on local HTTP', 'Cookie', 'Keeps you signed in and completes secure sign-in', 'Up to 400 days; sign-in cookies are cleared after use'],
+        ['__Host-duoly-csrf, duoly-csrf on local HTTP', 'Cookie', 'Protects forms', '1 hour'],
+        ['__Host-duoly-pending-email, duoly-pending-email on local HTTP', 'Cookie', 'Remembers the email while you confirm registration', '5 minutes'],
         ['dl_support', 'Cookie', 'Remembers your support chat if you’re not signed in', '1 year'],
         ['duoly-currency', 'Cookie', 'Remembers EUR or USD', '1 year'],
-        ['duoly-consent', 'Cookie', 'Remembers your choice in the cookie banner', '1 year'],
-        ['duoly-ref (optional)', 'Cookie', 'Remembers the creator whose link you used, only with your consent', '30 days'],
+        ['ph_<project>_posthog (optional)', 'Cookie and local storage', 'Analytics, only with your consent', '1 year'],
+        ['duoly-consent', 'Cookie', 'Remembers your Analytics, Marketing and Creator link choices (v2)', '1 year'],
+        ['__Host-duoly-ref, duoly-ref on local HTTP (optional)', 'Cookie', 'Remembers the creator whose link you used, only with your consent', '30 days'],
         ['duoly-currency, duoly-ign-*', 'Local storage', 'Remembers your currency and in-game name on this device', 'Until you clear it'],
         ['Pending order', 'Session storage', 'Keeps your pick while you sign in', 'Until you close the tab']
       ] },
       'Fonts are loaded from Google Fonts, which means your browser connects to Google’s servers and shares your IP address with them. Exchange rates come from a public European Central Bank feed; no personal data is sent there.'
+    ] },
+    { id: 'analytics', title: 'Analytics', blocks: [
+      'Analytics is planned and is not active yet. The following describes how it will work once enabled.',
+      'With your permission, we use **PostHog (PostHog Inc.)**, with data stored in **PostHog EU Cloud, Frankfurt**, to improve the site and fix errors.',
+      'We collect pages visited, clicks, booking and checkout steps, device and browser type and approximate country. Session recordings show the site with everything you type and chat text hidden. We never send your name, email, Discord name, in-game name or messages to PostHog. When you are signed in, we link events to your account ID only.',
+      'The legal basis is **your consent (Art. 6(1)(a) GDPR)**. Withdraw any time through [Cookie settings](#cookie-settings). If you decline, we only count visits anonymously without cookies, using a daily changing hash that cannot identify you. This anonymous counting is also planned and is not active yet.',
+      'Analytics events are kept for up to **1 year** and recordings for up to **30 days**. We also record payments, orders and reviews on our servers to measure how the service works: amounts, game and service, with no personal details in these measurements.'
+    ] },
+    { id: 'marketing', title: 'Marketing', blocks: [
+      'Server-side ad measurement is planned for our ads and is not active yet. If you allow Marketing, when you arrive from an ad we keep the ad click ID. After you book, our servers send **Meta Platforms Ireland** and **Google Ireland** the purchase value, time and that click ID so they can count the conversion and help us measure and improve our ads. For Meta we also send a hashed email only with this consent. No ad pixels run on the site.',
+      'The legal basis is **your consent (Art. 6(1)(a) GDPR)**. Withdraw any time through [Cookie settings](#cookie-settings). Without this consent, nothing goes to ad platforms.'
     ] },
     { id: 'retention', title: 'How long we keep it', blocks: [
       { list: [

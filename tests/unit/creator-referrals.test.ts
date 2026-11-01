@@ -149,6 +149,45 @@ function jar(
   };
 }
 
+describe('referral v2 purposes', () => {
+  it.each([
+    [null, false],
+    ['garbage', false],
+    ['necessary', false],
+    ['all', true],
+    ['v2.a0.m0.r0', false],
+    ['v2.a1.m0.r0', false],
+    ['v2.a0.m0.r1', true],
+    ['v2.a1.m1.r1', true],
+  ] as const)('gates capture and checkout with %s', (consent, allowed) => {
+    const fresh = jar({}, consent);
+    expect(
+      captureReferral(
+        new URL('https://duoly.gg/?ref=ALPHA'),
+        'GET',
+        fresh.cookies,
+        true,
+      ),
+    ).toBe(allowed ? 'ALPHA' : null);
+    expect(fresh.set).toHaveBeenCalledTimes(allowed ? 1 : 0);
+    const existing = jar({ '__Host-duoly-ref': 'ALPHA' }, consent);
+    expect(checkoutRefCode(existing.cookies!, true, true)).toBe(
+      allowed ? 'ALPHA' : null,
+    );
+    captureReferral(
+      new URL('https://duoly.gg/'),
+      'GET',
+      existing.cookies,
+      true,
+    );
+    if (consent === 'necessary' || consent?.endsWith('r0'))
+      expect(existing.remove).toHaveBeenCalledWith('__Host-duoly-ref', {
+        path: '/',
+        secure: true,
+      });
+  });
+});
+
 describe('referral cookie capture', () => {
   const url = (path: string) => new URL('https://duoly.gg' + path);
   it('does nothing while referrals are switched off', () => {

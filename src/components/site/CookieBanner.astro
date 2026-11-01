@@ -1,9 +1,4 @@
 ---
-// The site's cookie banner (owner decision 2026-10-27). It asks once, on the first visit,
-// before any optional cookie is set. "Accept all" allows the creator referral cookie
-// (ledger #28); "Only necessary" refuses it and removes one that exists. The choice is kept
-// in the duoly-consent cookie and can be changed from "Cookie settings" in the footer and
-// on the privacy page. Both buttons are equal, so refusing is as easy as accepting.
 import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
 ---
 
@@ -16,62 +11,182 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
   hidden
 >
   <p>
-    We use the cookies the site needs to work. If you came here through a
-    creator's link, we would also like to remember that creator for 30 days so
-    they get credit for your first order. That cookie is optional.
+    We use necessary cookies to run the site. Optional analytics help us improve
+    it, marketing measures ads, and a creator cookie remembers whose link you
+    used for 30 days. You choose which to allow.{' '}
     <a href="/privacy#cookies">Privacy</a>
   </p>
   <div class="cookie-actions">
     <button type="button" data-consent="necessary">
       Only necessary
     </button>
+    <button
+      type="button"
+      data-customise
+      aria-expanded="false"
+      aria-controls="cookie-purposes"
+    >
+      Customise
+    </button>
     <button type="button" data-consent="all">
       Accept all
     </button>
   </div>
+  <div id="cookie-purposes" data-cookie-purposes hidden>
+    <label for="cookie-analytics">
+      <input
+        id="cookie-analytics"
+        type="checkbox"
+        aria-describedby="cookie-analytics-help"
+      />
+      Analytics
+    </label>
+    <p id="cookie-analytics-help">
+      Helps us see which pages and steps work, using PostHog hosted in the EU.
+      Session recordings hide what you type.
+    </p>
+    <label for="cookie-marketing">
+      <input
+        id="cookie-marketing"
+        type="checkbox"
+        aria-describedby="cookie-marketing-help"
+      />
+      Marketing
+    </label>
+    <p id="cookie-marketing-help">
+      Lets us tell Meta and Google Ads when a visit from their ads led to a
+      booking, so we can measure and improve our ads. No ad pixels on the site,
+      we send it from our servers.
+    </p>
+    <label for="cookie-referral">
+      <input
+        id="cookie-referral"
+        type="checkbox"
+        aria-describedby="cookie-referral-help"
+      />
+      Creator link
+    </label>
+    <p id="cookie-referral-help">
+      Remembers the creator whose link you used for 30 days so they get credit
+      for your first order.
+    </p>
+    <div class="cookie-actions">
+      <button type="button" data-save-choices>
+        Save choices
+      </button>
+    </div>
+  </div>
 </div>
-<script is:inline define:vars={{ name: CONSENT_COOKIE, days: CONSENT_DAYS }}>
+<script
+  is:inline
+  define:vars={{ cookieName: CONSENT_COOKIE, days: CONSENT_DAYS }}
+>
   (() => {
     const banner = document.querySelector('[data-cookie-banner]');
     if (!banner) return;
-    const current = document.cookie
-      .split('; ')
-      .find((c) => c.startsWith(name + '='));
-    const show = () => {
+    const purposes = banner.querySelector('[data-cookie-purposes]');
+    const customise = banner.querySelector('[data-customise]');
+    const analytics = banner.querySelector('#cookie-analytics');
+    const marketing = banner.querySelector('#cookie-marketing');
+    const referral = banner.querySelector('#cookie-referral');
+    const read = () =>
+      document.cookie
+        .split(';')
+        .map((c) => c.trim())
+        .find((c) => c.startsWith(cookieName + '='))
+        ?.slice(cookieName.length + 1);
+    // Same strict wire format and legacy mapping as contracts/consent.ts.
+    const parse = (value) => {
+      if (value === 'all' || value === 'necessary')
+        return {
+          version: 2,
+          analytics: false,
+          marketing: false,
+          referral: value === 'all',
+        };
+      const match = /^v2\.a([01])\.m([01])\.r([01])$/.exec(value || '');
+      return match
+        ? {
+            version: 2,
+            analytics: match[1] === '1',
+            marketing: match[2] === '1',
+            referral: match[3] === '1',
+          }
+        : null;
+    };
+    window.__duolyConsent = parse(read());
+    const show = (settings = false) => {
+      const state = parse(read());
+      analytics.checked = state?.analytics ?? false;
+      marketing.checked = state?.marketing ?? false;
+      referral.checked = state?.referral ?? false;
+      purposes.hidden = !settings;
+      customise.setAttribute('aria-expanded', String(settings));
       banner.hidden = false;
     };
-    if (!current || location.hash === '#cookie-settings') show();
+    if (!/^v2\.a[01]\.m[01]\.r[01]$/.test(read() || '')) show();
+    if (location.hash === '#cookie-settings') show(true);
     addEventListener('hashchange', () => {
-      if (location.hash === '#cookie-settings') show();
+      if (location.hash === '#cookie-settings') show(true);
     });
     document
       .querySelectorAll('[data-cookie-settings], a[href$="#cookie-settings"]')
       .forEach((el) =>
         el.addEventListener('click', (event) => {
           event.preventDefault();
-          show();
+          show(true);
+          analytics.focus();
         }),
       );
+    customise.addEventListener('click', () => {
+      purposes.hidden = false;
+      customise.setAttribute('aria-expanded', 'true');
+      analytics.focus();
+    });
+    const save = (state) => {
+      const value =
+        'v2.a' +
+        (state.analytics ? '1' : '0') +
+        '.m' +
+        (state.marketing ? '1' : '0') +
+        '.r' +
+        (state.referral ? '1' : '0');
+      const secure = location.protocol === 'https:' ? '; Secure' : '';
+      document.cookie =
+        cookieName +
+        '=' +
+        value +
+        '; Path=/; Max-Age=' +
+        days * 86400 +
+        '; SameSite=Lax' +
+        secure;
+      banner.hidden = true;
+      window.__duolyConsent = state;
+      window.dispatchEvent(new CustomEvent('duoly:consent', { detail: state }));
+      // Apply the referral choice immediately without navigating away.
+      fetch(location.href, {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { accept: 'text/html' },
+      }).catch(() => {});
+    };
     banner.querySelectorAll('[data-consent]').forEach((button) =>
       button.addEventListener('click', () => {
-        const value = button.getAttribute('data-consent');
-        const secure = location.protocol === 'https:' ? '; Secure' : '';
-        document.cookie =
-          name +
-          '=' +
-          value +
-          '; Path=/; Max-Age=' +
-          days * 86400 +
-          '; SameSite=Lax' +
-          secure;
-        banner.hidden = true;
-        // Let the server apply the choice now: set the referral cookie from this
-        // page's ?ref= link, or remove an existing one.
-        fetch(location.href, {
-          credentials: 'same-origin',
-          cache: 'no-store',
-          headers: { accept: 'text/html' },
-        }).catch(() => {});
+        const allow = button.getAttribute('data-consent') === 'all';
+        save({
+          version: 2,
+          analytics: allow,
+          marketing: allow,
+          referral: allow,
+        });
+      }),
+    );
+    banner.querySelector('[data-save-choices]').addEventListener('click', () =>
+      save({
+        version: 2,
+        analytics: analytics.checked,
+        marketing: marketing.checked,
+        referral: referral.checked,
       }),
     );
   })();
@@ -85,6 +200,9 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
     right: 16px;
     bottom: 16px;
     max-width: 560px;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    box-sizing: border-box;
     margin-inline: auto;
     padding: 18px 20px;
     border-radius: 16px;
@@ -95,6 +213,7 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
     font-size: 14px;
     line-height: 1.55;
   }
+  .cookie-banner [hidden],
   .cookie-banner[hidden] {
     display: none;
   }
@@ -107,10 +226,10 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
   .cookie-actions {
     display: flex;
     gap: 10px;
-    justify-content: flex-end;
     flex-wrap: wrap;
   }
   .cookie-actions button {
+    flex: 1 1 130px;
     font: inherit;
     font-weight: 600;
     padding: 10px 16px;
@@ -120,8 +239,27 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
     color: #fff;
     cursor: pointer;
   }
-  .cookie-actions button:focus-visible {
+  @media (max-width: 480px) {
+    .cookie-actions button {
+      flex-basis: 100%;
+    }
+  }
+  .cookie-banner :focus-visible {
     outline: 2px solid #c4aaff;
     outline-offset: 2px;
+  }
+  [data-cookie-purposes] {
+    margin-top: 18px;
+  }
+  .cookie-banner label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+  .cookie-banner input {
+    width: 20px;
+    height: 20px;
+    accent-color: #c4aaff;
   }
 </style>
