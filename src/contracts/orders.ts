@@ -8,6 +8,10 @@ const AvatarSchema = z
   .string()
   .regex(/^(?:|\/assets\/avatars\/avatar-([1-9]|10)\.png)$/);
 const CountrySchema = z.string().regex(/^(?:|[a-z]{2})$/);
+/** How the customer wants the session to feel (20261101120000_order_moods). */
+export const ORDER_MOODS = ['chill', 'tryhard', 'teach', 'fun'] as const;
+export const MoodSchema = z.enum(ORDER_MOODS);
+export type OrderMood = z.infer<typeof MoodSchema>;
 const OrderFields = {
   id: z.uuid(),
   public_reference: z.string().regex(/^DL-[0-9]+$/),
@@ -92,6 +96,8 @@ export const TeammateOrderSchema = z.strictObject({
   // Added by 20261026160000 (queue rows only): a Diamond customer picked this teammate, so
   // the order is theirs alone for a moment. Never a delay or priority number.
   picked_for_you: z.boolean().optional(),
+  // Added by 20261101120000; optional so code can deploy before the migration. null = no preference.
+  mood: MoodSchema.nullable().optional(),
 });
 
 export const RefundCreditSchema = z.strictObject({

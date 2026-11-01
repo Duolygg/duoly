@@ -370,11 +370,3 @@
     padding-inline: 12px;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .order-chat *,
-  .order-chat {
-    scroll-behavior: auto !important;
-    animation: none !important;
-    transition: none !important;
-  }
-}

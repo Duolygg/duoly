@@ -24,7 +24,7 @@ export interface HomeStats {
   matchSeconds: number | null;
 }
 
-/** One card in the hero's moving teammate rows (public.home_teammates, migration 20261030100000). */
+/** One card in the homepage teammate carousel (public.home_teammates, migration 20261030100000). */
 export interface HeroTeammate {
   /** First name only. */
   name: string;
@@ -43,7 +43,7 @@ export interface HeroTeammate {
 export interface HomeLive {
   onlineNow: number;
   recentMatches: RecentMatch[];
-  /** Empty until the migration is applied or while no teammate qualifies; the hero then shows the logo. */
+  /** Empty until the migration is applied or while no teammate qualifies; the carousel then shows the live online line. */
   teammates: HeroTeammate[];
   /** Null until the figures could be read once; the page then shows no figures at all. */
   stats: HomeStats | null;

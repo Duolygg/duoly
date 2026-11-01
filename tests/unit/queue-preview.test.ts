@@ -1,0 +1,257 @@
+import React from 'react';
+import { readFileSync } from 'node:fs';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { describe, expect, it } from 'vitest';
+import Home from '../../src/components/home/Home.jsx';
+import QueuePreview from '../../src/components/home/QueuePreview.jsx';
+import MatchStage, {
+  ChatPanel,
+  OrderCard,
+  QueueSteps,
+  QueueTimer,
+  ReviewThanks,
+  clock,
+} from '../../src/components/account/MatchStage.jsx';
+
+const h = React.createElement;
+const game = {
+  name: 'League of Legends',
+  img: '/assets/games/league-of-legends.png',
+};
+const order = {
+  ref: 'DL-1',
+  title: 'Duo Pro',
+  games: 3,
+  region: 'EUW',
+  ign: 'Alex#EUW',
+  voice: true,
+  paid: { method: 'Card' },
+};
+const user = { name: 'Alex', image: '/assets/avatars/avatar-1.png' };
+const mate = { name: 'Mia', image: '/assets/avatars/avatar-2.png' };
+const at = (html: string, s: string) => html.indexOf(s);
+
+describe('shared order room pieces', () => {
+  it('the order room renders every piece from MatchStage.jsx', () => {
+    const room = readFileSync('src/components/account/QueueRoom.jsx', 'utf8');
+    for (const piece of [
+      '<MatchStage',
+      '<QueueTimer waited={waited} />',
+      '<QueueSteps steps={v.steps} />',
+      '<OrderCard',
+      '<ChatPanel',
+      '<ReviewThanks',
+      '<CoveredPanel',
+    ])
+      expect(room).toContain(piece);
+    // the order room keeps its own handlers
+    expect(room).toContain('onSend={this.send}');
+    expect(room).toContain('onDraft={this.setDraft}');
+    expect(room).toContain(
+      "onReroll={() => this.setState({ modal: 'reroll', modalErr: '' })}",
+    );
+    expect(room).toContain('onReport={(type) => this.openReport(type)}');
+  });
+
+  it('stage: cycling face while searching, the teammate on a match', () => {
+    const searching = renderToStaticMarkup(
+      h(MatchStage, {
+        phase: 'searching',
+        mate: null,
+        order,
+        game,
+        user,
+        cycle: 3,
+      }),
+    );
+    expect(searching).toContain('Duo Pro ×3');
+    expect(searching).toContain('Searching…');
+    expect(searching).toContain('qorbit');
+    const matched = renderToStaticMarkup(
+      h(MatchStage, { phase: 'matched', order, game, user, mate, burst: 1 }),
+    );
+    expect(matched).toContain('Mia');
+    expect(matched).toContain('Rank-verified');
+    expect(matched).toContain('qburst');
+  });
+
+  it('timer, steps, order card, chat and review thanks', () => {
+    expect(clock(67000)).toBe('1:07');
+    expect(clock(-5)).toBe('0:00');
+    const timer = renderToStaticMarkup(h(QueueTimer, { waited: 84000 }));
+    expect(timer).toContain('IN QUEUE');
+    expect(timer).toContain('1:24');
+    const steps = renderToStaticMarkup(
+      h(QueueSteps, {
+        steps: [
+          ['Paid', true, false],
+          ['In queue', false, true],
+          ['Playing', false, false],
+          ['Done', false, false],
+        ],
+      }),
+    );
+    expect(steps).toMatch(/aria-current="step"[^>]*>[\s\S]*In queue/);
+    const card = renderToStaticMarkup(
+      h(OrderCard, {
+        order,
+        game,
+        total: '€16.17',
+        free: false,
+        mate,
+        ignLabel: 'Riot ID',
+      }),
+    );
+    expect(card).toContain('Your order');
+    expect(card).toContain('€16.17');
+    expect(card).toContain('Your teammate · rank-verified');
+    const chatProps = {
+      mate,
+      order,
+      ignLabel: 'Riot ID',
+      draft: '',
+      warn: '',
+      onDraft: () => {},
+      onSend: () => {},
+    };
+    const chat = renderToStaticMarkup(
+      h(ChatPanel, {
+        ...chatProps,
+        phase: 'matched',
+        chat: [{ id: 'a', from: 'teammate', text: 'Hey!', at: 0 }],
+        typing: true,
+        listRef: undefined,
+      }),
+    );
+    expect(chat).toContain('Chat with Mia');
+    expect(chat).toContain('Hey!');
+    expect(chat).toContain('Mia is typing');
+    expect(chat).toContain('Message Mia…');
+    const closed = renderToStaticMarkup(
+      h(ChatPanel, {
+        ...chatProps,
+        phase: 'done',
+        chat: [],
+        typing: false,
+        listRef: undefined,
+      }),
+    );
+    expect(closed).toContain('Order finished · chat closed');
+    expect(closed).not.toContain('Message Mia…');
+    const thanks = renderToStaticMarkup(
+      h(ReviewThanks, { name: 'Mia', rating: 5, tip: null, children: null }),
+    );
+    expect(thanks).toContain('THANK YOU');
+    expect(thanks).toContain('Rated 5 out of 5');
+    expect(thanks).toContain('You rated Mia 5/5');
+  });
+});
+
+describe('homepage order room preview', () => {
+  const frame = (frozen?: Record<string, unknown>) =>
+    renderToStaticMarkup(h(QueuePreview, frozen ? { frozen } : {}));
+
+  it('opens on the search with the order card beside it, in a duoly.gg/queue window', () => {
+    const html = frame();
+    expect(html).toContain('Watch your order, live.');
+    expect(html).toContain('duoly.gg/queue/DL-48321');
+    expect(html).toContain('Finding your teammate');
+    // a Pokémon Unite order on the Asia servers, with the real catalog price
+    expect(html).toContain('rank-verified Pokémon Unite teammates');
+    expect(html).toContain('Duo Pro ×3');
+    expect(html).toContain('Asia');
+    expect(html).toContain('€16.17');
+    expect(html).toMatch(/Trainer name<\/dt><dd[^>]*>Alex</);
+    expect(html).toContain('IN QUEUE');
+    expect(html).toContain('Your order');
+    expect(html).toMatch(/Paid with<\/dt><dd[^>]*>PayPal</);
+    expect(html).not.toContain('Chat with');
+    // a picture: hidden from screen readers (described once) and not focusable
+    expect(html).toContain('class="qp-body" aria-hidden="true" inert=""');
+    expect(html).toContain('Preview of the order room');
+  });
+
+  it('on a match: teammate, chat with messages and typing, order card under the stage', () => {
+    const html = frame({
+      phase: 'matched',
+      typing: true,
+      chat: [
+        { id: 'p0', from: 'teammate', text: 'Hey! Sending the invite.', at: 0 },
+      ],
+    });
+    expect(html).toContain('itskeikooo is on it!');
+    expect(html).toContain('/assets/avatars/itskeikooo.jpg');
+    expect(html).toContain('/assets/flags/svg/jp.svg" alt="Japan"');
+    expect(html).toContain('Message itskeikooo');
+    expect(html).toContain('Chat with itskeikooo');
+    expect(html).toContain('Hey! Sending the invite.');
+    expect(html).toContain('itskeikooo is typing');
+    // You're covered: re-roll with its countdown, both reports with the bounty, under the chat
+    expect(html).toContain('You’re covered');
+    expect(html).toContain('4:31 left. 2 of 2 re-rolls left.');
+    expect(html).toContain('Asked to pay or chat outside Duoly?');
+    expect(html).toContain(
+      'Report itskeikooo with proof and get €50 once we confirm it.',
+    );
+    expect(at(html, 'Chat with itskeikooo')).toBeLessThan(
+      at(html, 'You’re covered'),
+    );
+    expect(at(html, 'itskeikooo is on it!')).toBeLessThan(
+      at(html, 'id="q-order-h"'),
+    );
+    expect(at(html, 'id="q-order-h"')).toBeLessThan(
+      at(html, 'Chat with itskeikooo'),
+    );
+  });
+
+  it('when done: GG, the review thanks, every step ticked and the chat closed', () => {
+    const html = frame({ phase: 'done' });
+    expect(html).toContain('GG!');
+    expect(html).toContain(
+      'Your 3 games with itskeikooo are done. How was it?',
+    );
+    expect(html).toContain('You rated itskeikooo 5/5');
+    expect(html).toContain('Queue again');
+    expect(html).toContain('Order finished · chat closed');
+    expect(html).toContain('Locked now that your session is underway');
+    expect(html).not.toContain('aria-current="step"');
+  });
+
+  it('sits right after the three steps in "How it works"', () => {
+    const html = renderToStaticMarkup(h(Home, { recentMatches: [] }));
+    expect(at(html, 'Accept the invite')).toBeLessThan(
+      at(html, 'Watch your order, live.'),
+    );
+    expect(at(html, 'Watch your order, live.')).toBeLessThan(
+      at(html, 'Pay your way'),
+    );
+  });
+});
+
+describe('order room preview prices', () => {
+  it('shows the demo order in euros by default, priced from the catalog', () => {
+    const html = renderToStaticMarkup(h(QueuePreview));
+    expect(html).toContain('€16.17');
+    expect(html).not.toContain('$');
+  });
+
+  it('follows the selected currency like the rest of the homepage', () => {
+    // Home.jsx conv for USD at a 1.13 rate: 5.99 → 6.99 a game; 3 games minus 10% → 18.87
+    const conv = (p: number) => Math.ceil(p * 1.13) - 0.01;
+    const html = renderToStaticMarkup(
+      h(QueuePreview, {
+        cur: 'USD',
+        conv,
+        frozen: { phase: 'matched' },
+      }),
+    );
+    expect(html).toContain('$18.87');
+    expect(html).toContain('get $50 once we confirm it');
+    expect(html).not.toContain('€');
+  });
+
+  it('gets the currency and converter from the homepage', () => {
+    const home = readFileSync('src/components/home/Home.jsx', 'utf8');
+    expect(home).toContain('<QueuePreview cur={v.cur} conv={v.conv} />');
+  });
+});

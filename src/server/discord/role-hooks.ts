@@ -35,6 +35,24 @@ export async function syncRolesAfter(scope: SyncScope): Promise<void> {
   }
 }
 
+/**
+ * Same sync, but the response goes out first. On Vercel the function stays alive for it through
+ * the platform's request context (what @vercel/functions' waitUntil reads); elsewhere (local dev,
+ * tests) there is none, so it falls back to awaiting.
+ */
+export async function syncRolesInBackground(scope: SyncScope): Promise<void> {
+  const context = (
+    globalThis as {
+      [key: symbol]:
+        | { get?: () => { waitUntil?: (p: Promise<unknown>) => void } }
+        | undefined;
+    }
+  )[Symbol.for('@vercel/request-context')];
+  const waitUntil = context?.get?.()?.waitUntil;
+  if (typeof waitUntil === 'function') waitUntil(syncRolesAfter(scope));
+  else await syncRolesAfter(scope);
+}
+
 /** Runs the hook after a successful (200) response of the wrapped route. */
 export function withRoleSync(
   handler: APIRoute,

@@ -6,6 +6,8 @@
 // Posts use Discord Components V2 (flag IS_COMPONENTS_V2). Public channels: the post never
 // carries the customer's name, Discord, in-game name, country, note or loyalty level.
 
+import type { OrderMood } from '../../contracts/orders';
+
 export const POST_AFTER_MS = 100_000;
 export const IS_COMPONENTS_V2 = 1 << 15;
 
@@ -70,11 +72,23 @@ export interface PostOrder {
   rank: string | null;
   region: string | null;
   voice: boolean;
+  // Added by 20261101120000; missing or null when the customer picked no mood.
+  mood?: string | null;
   gg: boolean;
   payoutUsdCents: number;
   queuedAt: number; // ms
   cancelsAt: number; // ms
 }
+
+/** The session mood as a post fact; names match the checkout (components/shared/moods.jsx). */
+const MOOD_FACTS: Record<OrderMood, string> = {
+  chill: '☕ **Chill**',
+  tryhard: '🔥 **Tryhard**',
+  teach: '🎓 **Teach me**',
+  fun: '😂 **Just for fun**',
+};
+export const moodFact = (mood: string | null | undefined) =>
+  mood && Object.hasOwn(MOOD_FACTS, mood) ? MOOD_FACTS[mood as OrderMood] : '';
 
 export type CloseOutcome =
   'taken' | 'cancelled_customer' | 'expired' | 'cancelled' | 'rerolled';
@@ -132,6 +146,7 @@ export function openPost(o: PostOrder, claimUrl: string, opt: PostOptions) {
     o.rank ? `🏆 **${md(o.rank)}**` : '',
     o.region ? `🌍 **${md(o.region)}**` : '',
     o.voice ? '🎙️ **Voice chat**' : '',
+    moodFact(o.mood),
   ].filter(Boolean);
 
   const body: object[] = [

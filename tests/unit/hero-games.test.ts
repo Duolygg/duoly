@@ -21,7 +21,7 @@ it('shows the games we cover in the hero instead of live counters', () => {
   expect(html).not.toContain('Just played');
 });
 
-describe('hero teammate cards', () => {
+describe('teammate carousel', () => {
   const mate = {
     name: 'Mira',
     image: '/assets/avatars/avatar-2.png',
@@ -33,26 +33,42 @@ describe('hero teammate cards', () => {
     sessions: 412,
   };
 
-  it('keeps the logo until there are real teammates', () => {
+  it('shows the live online line until there are real teammates', () => {
     const html = renderToStaticMarkup(
       React.createElement(Home, { teammates: [], recentMatches: [] }),
     );
-    expect(html).toContain('logo-full.webp');
-    expect(html).not.toContain('dl-tm-card');
+    expect(html).toContain('Meet your teammates');
+    expect(html).toContain('class="tc-empty"');
+    expect(html).not.toContain('tc-card');
   });
 
-  it('glides one row of cards over the logo, which stays in the background', () => {
+  it('keeps the hero as the logo and glides the teammates in their own section', () => {
     const html = renderToStaticMarkup(
       React.createElement(Home, {
-        teammates: [mate, { ...mate, name: 'Lena', gg: true, online: false }],
+        teammates: [
+          { ...mate, name: 'Lena', games: ['val'], gg: true, online: false },
+          mate,
+        ],
         recentMatches: [],
       }),
     );
+    // the hero keeps the logo and its floating sample cards, no teammate strip
     expect(html).toContain('logo-full.webp');
-    expect(html.match(/class="dl-tm-track/g)).toHaveLength(1);
-    // the floating sample cards make room for the real teammates
-    expect(html).not.toContain('Rank Rush');
-    expect(html).toContain('Mira');
+    expect(html).toContain('Rank Rush');
+    expect(html).not.toContain('dl-tm-');
+    // the section sits between the modes and the checkout
+    const at = (s: string) => html.indexOf(s);
+    expect(at('Pick a mode')).toBeLessThan(at('Meet your teammates'));
+    expect(at('Meet your teammates')).toBeLessThan(at('id="checkout"'));
+    expect(html.match(/class="tc-track/g)).toHaveLength(1);
+    // one list for screen readers; the loop copies are hidden
+    const list = /role="list"[\s\S]*?(?=<div class="tc-set" aria-hidden)/.exec(
+      html,
+    )?.[0];
+    expect(list?.match(/class="tc-card/g)).toHaveLength(2);
+    // Mira plays the picked game (League), so she leads with its icon highlighted
+    expect(list!.indexOf('Mira')).toBeLessThan(list!.indexOf('Lena'));
+    expect(list).toMatch(/alt="League of Legends"[^>]*class="is-picked"/);
     expect(html).toContain('Online now');
     expect(html).toContain('★ 4.9');
     expect(html).toContain('Gamer Girl');

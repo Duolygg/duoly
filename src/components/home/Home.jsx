@@ -17,6 +17,13 @@ import { FAQ_TABS } from '../../design-reference/lib/faq';
 import { trustpilotSummary } from '../../site/trustpilot';
 import SupportChat from '../support/SupportChat';
 import SiteFooter from '../site/SiteFooter';
+import PaymentMethods from './PaymentMethods';
+import QueuePreview from './QueuePreview';
+import HeroTimer from './HeroTimer';
+import MoodPicker from './MoodPicker';
+import TeammateCarousel from './TeammateCarousel';
+import SoloVsDuoly from './SoloVsDuoly';
+import Testimonials from './Testimonials';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import {
   ranksOf,
@@ -72,6 +79,7 @@ export default class Home extends React.Component {
     const initAuto = props.initialAutoCurrency || null;
     this.state = {
       now: 0,
+      mood: '', // checkout session mood (MoodPicker); '' = no preference
       game: 'lol',
       mode: 'duo2',
       tab: 'duo',
@@ -377,6 +385,15 @@ export default class Home extends React.Component {
     clearInterval(this._clock);
     clearTimeout(this._chatT);
   }
+  // game cards: a soft light follows the cursor (styles: globals.css dl-gcard). Set straight on
+  // the card's CSS variables, so moving the mouse never re-renders the page.
+  cardGlow = (e) => {
+    const card = e.target.closest && e.target.closest('.dl-gcard');
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', e.clientX - r.left + 'px');
+    card.style.setProperty('--my', e.clientY - r.top + 'px');
+  };
 
   authVals(s) {
     // Real login comes in through props (session, onSignIn, onSignOut) from HomeWithAuth.
@@ -1014,23 +1031,35 @@ export default class Home extends React.Component {
     // Always true, so it never needs live numbers (the online count was dropped, Fabian 2026-10-29).
     // Highest expected share of orders first (lib/games.js `share`; swap in real conversion
     // figures there once there are orders). Social is always shown, last.
-    // Hero teammate cards (public.home_teammates): one row gliding left to right over the logo,
-    // about two in view. The row repeats until it is wide enough, then twice over for a seamless loop.
-    const mates = (this.props.teammates || []).map((t) => ({
-      ...t,
-      icons: t.games.filter((id) => GAME[id]).map((id) => GAME[id]),
-      stars: t.rating ? '★ ' + t.rating.toFixed(1) : '',
-      sessionsText: t.sessions
-        ? t.sessions.toLocaleString('en-US') +
-          (t.sessions === 1 ? ' session' : ' sessions')
-        : 'New on Duoly',
-    }));
-    let heroRow = mates;
-    while (heroRow.length && heroRow.length < 4)
-      heroRow = heroRow.concat(mates);
-    heroRow = heroRow.concat(heroRow);
-    // the same calm pace whatever the number of cards: 250 px per card, about 30 px a second
-    const heroSpeed = Math.round((heroRow.length / 2) * (250 / 30)) + 's';
+    // "vs. Duoly" boosting row: the cheapest per-game service in the catalog, in the viewer's currency
+    const fromPrice = eur(
+      Math.min(
+        ...all.flatMap((x) =>
+          x.modes
+            .filter((m) => (m.unit || x.unit || 'game') === 'game')
+            .map((m) => m.price),
+        ),
+      ),
+    );
+    // Teammate carousel under the modes (public.home_teammates, TeammateCarousel.jsx): people who
+    // play the picked game first, then whoever is online, then the most sessions.
+    const crew = (this.props.teammates || [])
+      .map((t) => ({
+        ...t,
+        plays: t.games.includes(g.id),
+        icons: t.games.filter((id) => GAME[id]).map((id) => GAME[id]),
+        stars: t.rating ? '★ ' + t.rating.toFixed(1) : '',
+        sessionsText: t.sessions
+          ? t.sessions.toLocaleString('en-US') +
+            (t.sessions === 1 ? ' session' : ' sessions')
+          : 'New on Duoly',
+      }))
+      .sort(
+        (a, b) =>
+          Number(b.plays) - Number(a.plays) ||
+          Number(b.online) - Number(a.online) ||
+          b.sessions - a.sessions,
+      );
     const playable = GAMES.filter((x) => x.id !== 'social').sort(
       (a, b) => b.share - a.share,
     );
@@ -1272,13 +1301,16 @@ export default class Home extends React.Component {
       ticker,
       heroGames,
       heroGamesLabel,
-      heroRow,
-      heroSpeed,
+      crew,
+      fromPrice,
+      // the order room preview prices its demo order in the selected currency
+      cur,
+      conv,
       pins,
       qtys,
       toggles,
       pays,
-      game: { name: g.name, img: g.img },
+      game: { id: g.id, name: g.name, img: g.img, online: g.online },
       sel: { title: s.bundle || sel.title, tier: sel.tier },
       rank,
       ranked,
@@ -1360,7 +1392,10 @@ export default class Home extends React.Component {
         ? 'Book my free coaching'
         : allWallet
           ? 'Pay ' + money(total) + ' with Duoly balance'
-          : 'Pay ' + money(due) + ' with ' + payLabel,
+          : // live checkout: the method is picked on Stripe's page, so don't name one here
+            this.props.onCheckout
+            ? 'Continue to payment · ' + money(due)
+            : 'Pay ' + money(due) + ' with ' + payLabel,
       ...this.authVals(s),
       ...this.confirmVals(s, {
         g,
@@ -1467,6 +1502,7 @@ export default class Home extends React.Component {
           ign,
           note: (st.orderNote || '').trim(),
           voice: g.id === 'social' || !!st.voice,
+          ...(st.mood && g.id !== 'social' ? { mood: st.mood } : {}),
           // The free coaching order never uses the wallet (the server refuses both together).
           ...(freeOn
             ? { freePerk: true, useWallet: false }
@@ -1670,80 +1706,6 @@ export default class Home extends React.Component {
     };
   }
 
-  // Hero: the logo stays as the background; real teammates glide over it on cards, left to right,
-  // fading in at the left edge and out at the right (styles: globals.css dl-tm-*). Without teammates
-  // (or before migration 20261030100000) the hero shows the logo with its floating cards instead.
-  renderHeroTeammates(v) {
-    return (
-      <>
-        <img
-          src="/assets/brand/logo-full.webp"
-          alt="Duoly mascots: two smiling gamers with headsets"
-          width="560"
-          height="456"
-          style={{
-            width: '100%',
-            maxWidth: '560px',
-            height: 'auto',
-            display: 'block',
-          }}
-        />
-        <div
-          className="dl-tm-stage"
-          role="region"
-          aria-label="Some of our teammates"
-        >
-          <div
-            className="dl-tm-track"
-            style={{ animationDuration: v.heroSpeed }}
-          >
-            {v.heroRow.map((t, i) => (
-              <div
-                key={i}
-                className={'dl-tm-card' + (t.gg ? ' dl-tm-gg' : '')}
-                aria-hidden={i >= v.heroRow.length / 2 ? 'true' : undefined}
-              >
-                <div className="dl-tm-head">
-                  <span className="dl-tm-avatar">
-                    <img src={t.image} alt="" width="44" height="44" />
-                    {t.online ? <span className="dl-tm-dot" /> : null}
-                  </span>
-                  <span className="dl-tm-who">
-                    <strong>{t.name}</strong>
-                    <span className={t.online ? 'dl-tm-on' : ''}>
-                      {t.online ? 'Online now' : t.sessionsText}
-                    </span>
-                  </span>
-                  {t.gg ? <span className="dl-tm-pill">Gamer Girl</span> : null}
-                </div>
-                <div className="dl-tm-foot">
-                  <span className="dl-tm-games">
-                    {t.icons.map((g) => (
-                      <img
-                        key={g.id}
-                        src={g.img}
-                        alt={g.name}
-                        title={g.name}
-                        width="22"
-                        height="22"
-                      />
-                    ))}
-                  </span>
-                  {t.stars ? (
-                    <span className="dl-tm-stars">
-                      {t.stars}
-                      <span>({t.reviews})</span>
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </>
-    );
-  }
-
   render() {
     const v = this.renderVals();
     return (
@@ -1756,6 +1718,9 @@ export default class Home extends React.Component {
           fontSize: '15px',
           lineHeight: '1.5',
           fontVariantNumeric: 'tabular-nums',
+          // the review rows run edge to edge (100vw, scrollbar included); clip, unlike hidden,
+          // keeps the sticky header and order bar working
+          overflowX: 'clip',
         }}
       >
         <header
@@ -2384,6 +2349,7 @@ export default class Home extends React.Component {
                 <br />
                 <span style={{ color: '#D6BBFF' }}>under 2 minutes.</span>
               </h1>
+              <HeroTimer />
               <p
                 style={{
                   margin: '22px 0 0',
@@ -2676,156 +2642,151 @@ export default class Home extends React.Component {
                 justifyContent: 'center',
               }}
             >
-              {v.heroRow.length ? (
-                this.renderHeroTeammates(v)
-              ) : (
-                <>
-                  <img
-                    src="/assets/brand/logo-full.webp"
-                    alt="Duoly mascots: two smiling gamers with headsets"
-                    width="560"
-                    height="456"
-                    style={{
-                      width: '100%',
-                      maxWidth: '560px',
-                      height: 'auto',
-                      display: 'block',
-                    }}
-                  />
+              <>
+                <img
+                  src="/assets/brand/logo-full.webp"
+                  alt="Duoly mascots: two smiling gamers with headsets"
+                  width="560"
+                  height="456"
+                  style={{
+                    width: '100%',
+                    maxWidth: '560px',
+                    height: 'auto',
+                    display: 'block',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '0',
+                    top: '18%',
+                    width: '250px',
+                    padding: '14px',
+                    borderRadius: '18px',
+                    background: 'rgba(22, 14, 40, .92)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(196, 170, 255, .16)',
+                    boxShadow: '0 24px 60px rgba(0, 0, 0, .5)',
+                    animation: 'dlfloat 6s ease-in-out infinite',
+                  }}
+                >
                   <div
                     style={{
-                      position: 'absolute',
-                      left: '0',
-                      top: '18%',
-                      width: '250px',
-                      padding: '14px',
-                      borderRadius: '18px',
-                      background: 'rgba(22, 14, 40, .92)',
-                      backdropFilter: 'blur(10px)',
-                      border: '1px solid rgba(196, 170, 255, .16)',
-                      boxShadow: '0 24px 60px rgba(0, 0, 0, .5)',
-                      animation: 'dlfloat 6s ease-in-out infinite',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        fontSize: '11.5px',
-                        fontWeight: '600',
-                        color: '#5EEAA8',
-                        textTransform: 'uppercase',
-                        letterSpacing: '.08em',
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: '6px',
-                          height: '6px',
-                          borderRadius: '50%',
-                          background: '#5EEAA8',
-                        }}
-                      />
-                      {v.stat.wait
-                        ? 'Match found · ' + v.stat.wait
-                        : 'Match found'}
-                    </div>
-                    <div
-                      style={{
-                        marginTop: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                      }}
-                    >
-                      <span
-                        style={{
-                          position: 'relative',
-                          flex: '0 0 auto',
-                          width: '42px',
-                          height: '42px',
-                        }}
-                      >
-                        <img
-                          src="/assets/avatars/avatar-1.png"
-                          alt=""
-                          width="42"
-                          height="42"
-                          style={{
-                            width: '42px',
-                            height: '42px',
-                            borderRadius: '50%',
-                            display: 'block',
-                          }}
-                        />
-                        <img
-                          src="/assets/flags/de.png"
-                          alt="Germany"
-                          width="16"
-                          height="16"
-                          style={{
-                            position: 'absolute',
-                            right: '-2px',
-                            bottom: '-2px',
-                            width: '16px',
-                            height: '16px',
-                            borderRadius: '50%',
-                            boxShadow: '0 0 0 2px #160E28',
-                          }}
-                        />
-                      </span>
-                      <span
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          lineHeight: '1.3',
-                        }}
-                      >
-                        <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
-                          Your teammate
-                        </span>
-                        <span style={{ fontSize: '12.5px', color: '#A79DC4' }}>
-                          Rank-verified · voice on
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      right: '2%',
-                      bottom: '14%',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
-                      padding: '10px 14px 10px 10px',
-                      borderRadius: '14px',
-                      background: 'rgba(22, 14, 40, .92)',
-                      border: '1px solid rgba(196, 170, 255, .16)',
-                      boxShadow: '0 20px 50px rgba(0, 0, 0, .45)',
-                      fontSize: '13px',
+                      gap: '6px',
+                      fontSize: '11.5px',
                       fontWeight: '600',
-                      color: '#F3EEFF',
-                      animation: 'dlfloat 7s ease-in-out infinite reverse',
+                      color: '#5EEAA8',
+                      textTransform: 'uppercase',
+                      letterSpacing: '.08em',
                     }}
                   >
-                    <img
-                      src="/assets/games/valorant.png"
-                      alt=""
-                      width="28"
-                      height="28"
+                    <span
                       style={{
-                        width: '28px',
-                        height: '28px',
-                        borderRadius: '8px',
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        background: '#5EEAA8',
                       }}
                     />
-                    Rank Rush ×5 ·{' '}
-                    <span style={{ color: '#5EEAA8' }}>−15%</span>
+                    {v.stat.wait
+                      ? 'Match found · ' + v.stat.wait
+                      : 'Match found'}
                   </div>
-                </>
-              )}
+                  <div
+                    style={{
+                      marginTop: '10px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        position: 'relative',
+                        flex: '0 0 auto',
+                        width: '42px',
+                        height: '42px',
+                      }}
+                    >
+                      <img
+                        src="/assets/avatars/avatar-1.png"
+                        alt=""
+                        width="42"
+                        height="42"
+                        style={{
+                          width: '42px',
+                          height: '42px',
+                          borderRadius: '50%',
+                          display: 'block',
+                        }}
+                      />
+                      <img
+                        src="/assets/flags/de.png"
+                        alt="Germany"
+                        width="16"
+                        height="16"
+                        style={{
+                          position: 'absolute',
+                          right: '-2px',
+                          bottom: '-2px',
+                          width: '16px',
+                          height: '16px',
+                          borderRadius: '50%',
+                          boxShadow: '0 0 0 2px #160E28',
+                        }}
+                      />
+                    </span>
+                    <span
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        lineHeight: '1.3',
+                      }}
+                    >
+                      <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
+                        Your teammate
+                      </span>
+                      <span style={{ fontSize: '12.5px', color: '#A79DC4' }}>
+                        Rank-verified · voice on
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: '2%',
+                    bottom: '14%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 14px 10px 10px',
+                    borderRadius: '14px',
+                    background: 'rgba(22, 14, 40, .92)',
+                    border: '1px solid rgba(196, 170, 255, .16)',
+                    boxShadow: '0 20px 50px rgba(0, 0, 0, .45)',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    color: '#F3EEFF',
+                    animation: 'dlfloat 7s ease-in-out infinite reverse',
+                  }}
+                >
+                  <img
+                    src="/assets/games/valorant.png"
+                    alt=""
+                    width="28"
+                    height="28"
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  Rank Rush ×5 · <span style={{ color: '#5EEAA8' }}>−15%</span>
+                </div>
+              </>
             </div>
           </section>
           {v.ticker.length ? (
@@ -2943,6 +2904,7 @@ export default class Home extends React.Component {
                 </h2>
               </div>
               <div
+                onPointerMove={this.cardGlow}
                 style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fill, minmax(218px, 1fr))',
@@ -2953,6 +2915,7 @@ export default class Home extends React.Component {
                   <React.Fragment key={$index}>
                     <button
                       type="button"
+                      className="dl-gcard"
                       onClick={g.pick}
                       aria-pressed={g.pressed}
                       title={g.name}
@@ -3258,46 +3221,12 @@ export default class Home extends React.Component {
                   </React.Fragment>
                 ))}
               </div>
-              <div style={{ marginTop: '28px' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'baseline',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                    marginBottom: '12px',
-                  }}
-                >
-                  <h3
-                    style={{
-                      margin: '0',
-                      fontSize: '15px',
-                      fontWeight: '600',
-                      color: '#FFFFFF',
-                    }}
-                  >
-                    Teammates online for {v.game.name}
-                  </h3>
-                  <span style={{ fontSize: '13px', color: '#8E84AB' }}>
-                    The first free teammate takes your order. Re-roll twice if
-                    the vibe is off
-                  </span>
-                </div>
-                <p
-                  style={{
-                    margin: '0',
-                    padding: '18px 20px',
-                    borderRadius: '16px',
-                    background: '#120B22',
-                    border: '1px solid rgba(196, 170, 255, .08)',
-                    color: '#A79DC4',
-                    fontSize: '14px',
-                  }}
-                >
-                  {v.gameOnlineText}
-                </p>
-              </div>
             </section>
+            <TeammateCarousel
+              crew={v.crew}
+              game={v.game}
+              onlineText={v.gameOnlineText}
+            />
             <section
               id="checkout"
               aria-labelledby="co-h"
@@ -4024,6 +3953,12 @@ export default class Home extends React.Component {
                       )}
                     </div>
                   ) : null}
+                  {v.game.id !== 'social' ? (
+                    <MoodPicker
+                      value={this.state.mood}
+                      onPick={(mood) => this.setState({ mood })}
+                    />
+                  ) : null}
                   <div
                     style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}
                   >
@@ -4471,7 +4406,7 @@ export default class Home extends React.Component {
                       style={{
                         display: 'flex',
                         gap: '10px',
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
                       }}
                     >
                       <svg
@@ -4479,6 +4414,7 @@ export default class Home extends React.Component {
                         width="12"
                         height="12"
                         viewBox="0 0 24 24"
+                        style={{ flex: '0 0 auto', marginTop: '4px' }}
                       >
                         <path
                           fill="#D6BBFF"
@@ -4491,7 +4427,7 @@ export default class Home extends React.Component {
                       style={{
                         display: 'flex',
                         gap: '10px',
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
                       }}
                     >
                       <svg
@@ -4499,6 +4435,7 @@ export default class Home extends React.Component {
                         width="12"
                         height="12"
                         viewBox="0 0 24 24"
+                        style={{ flex: '0 0 auto', marginTop: '4px' }}
                       >
                         <path
                           fill="#D6BBFF"
@@ -4511,7 +4448,7 @@ export default class Home extends React.Component {
                       style={{
                         display: 'flex',
                         gap: '10px',
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
                       }}
                     >
                       <svg
@@ -4519,6 +4456,7 @@ export default class Home extends React.Component {
                         width="12"
                         height="12"
                         viewBox="0 0 24 24"
+                        style={{ flex: '0 0 auto', marginTop: '4px' }}
                       >
                         <path
                           fill="#D6BBFF"
@@ -5109,7 +5047,10 @@ export default class Home extends React.Component {
                   </div>
                 </li>
               </ol>
+              <QueuePreview cur={v.cur} conv={v.conv} />
+              <PaymentMethods />
             </section>
+            <SoloVsDuoly fromPrice={v.fromPrice} />
             <section
               aria-labelledby="why-h"
               style={{
@@ -5232,6 +5173,8 @@ export default class Home extends React.Component {
                 </div>
               </dl>
             </section>
+            {/* real quotes come in through props.testimonials; until then the samples show */}
+            <Testimonials items={this.props.testimonials} />
             <section
               id="faq"
               aria-labelledby="faq-h"
@@ -7173,23 +7116,23 @@ export default class Home extends React.Component {
             </form>
           </div>
         ) : null}
+        {/* order bar: always at the bottom, so you can check out from anywhere on the page.
+            Sizes live in globals.css (dl-bar-*) so phones get one compact row. */}
         <div
+          className="dl-bar"
           style={{
             position: 'sticky',
             bottom: '0',
             zIndex: '5',
-            padding: '12px 16px 16px',
           }}
         >
           <div
+            className="dl-bar-in"
             style={{
               maxWidth: '920px',
               margin: '0 auto',
               display: 'flex',
-              flexWrap: 'wrap',
               alignItems: 'center',
-              gap: '12px 20px',
-              padding: '10px 10px 10px 12px',
               borderRadius: '20px',
               background: 'rgba(23, 14, 44, .9)',
               backdropFilter: 'blur(16px)',
@@ -7199,11 +7142,10 @@ export default class Home extends React.Component {
           >
             <>
               <div
+                className="dl-bar-info"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '12px',
-                  flex: '1 1 280px',
                   minWidth: '0',
                 }}
               >
@@ -7212,26 +7154,28 @@ export default class Home extends React.Component {
                   alt=""
                   width="42"
                   height="42"
-                  style={{
-                    width: '42px',
-                    height: '42px',
-                    borderRadius: '12px',
-                  }}
+                  className="dl-bar-img"
                 />
                 <div style={{ minWidth: '0', lineHeight: '1.35' }}>
-                  <div style={{ fontWeight: '600', color: '#FFFFFF' }}>
+                  <div
+                    className="dl-bar-line"
+                    style={{ fontWeight: '600', color: '#FFFFFF' }}
+                  >
                     {v.sel.title} · {v.qty} {v.qtyUnit}
                   </div>
-                  <div style={{ fontSize: '13px', color: '#A79DC4' }}>
+                  <div
+                    className="dl-bar-line"
+                    style={{ fontSize: '13px', color: '#A79DC4' }}
+                  >
                     {v.rankLine}
                   </div>
                 </div>
               </div>
               <div
+                className="dl-bar-total"
                 style={{
                   fontFamily:
                     "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
-                  fontSize: '26px',
                   fontWeight: '700',
                   letterSpacing: '-.02em',
                   color: '#FFFFFF',
@@ -7241,15 +7185,13 @@ export default class Home extends React.Component {
               </div>
               <button
                 type="button"
+                className="dl-bar-cta"
                 onClick={v.queue}
                 style={{
-                  minHeight: '52px',
-                  padding: '0 28px',
                   borderRadius: '14px',
                   border: 'none',
                   background: '#D6BBFF',
                   color: '#17092E',
-                  fontSize: '16px',
                   fontWeight: '700',
                 }}
               >
