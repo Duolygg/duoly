@@ -29,6 +29,7 @@ import { flagSrc } from '../../design-reference/lib/countries';
 import { canTake, NO_ACCESS } from '../../design-reference/lib/access';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
 import WaitingForOrders from '../shared/WaitingForOrders';
+import { MoodBadge, moodOf } from '../shared/moods';
 import { shrinkImage } from '../../design-reference/lib/shrinkImage';
 import { BLOCKED, BLOCKED_NOTE } from '../../design-reference/lib/chatRules';
 
@@ -1147,36 +1148,41 @@ export default class Teammate extends React.Component {
     if (!on && this.state.active)
       return this.setState({ offlineBlocked: true });
     const presenceVersion = ++this._presenceVersion;
+    // Flip the switch right away; the server confirms (or we roll back) after.
+    const before = {
+      online: this.state.online,
+      onlineSince: this.state.onlineSince,
+    };
+    const fail = (notice) => {
+      if (this._disposed || presenceVersion !== this._presenceVersion) return;
+      this.setState({ ...before, notice }, () => before.online && this.poll());
+    };
+    this._seen = null;
+    if (on) {
+      this.askNotifications();
+      this.setState({
+        online: true,
+        onlineSince: Date.now(),
+        offlineBlocked: false,
+        forced: null,
+      });
+    } else {
+      this.setState({ online: false, queue: [], offlineBlocked: false });
+    }
     try {
       const { ok, data } = await this.post('/api/presence', {
         action: 'set',
         online: on,
       });
       if (this._disposed || presenceVersion !== this._presenceVersion) return;
-      if (!ok) {
-        this.setState({
-          notice: data.error || 'Could not change your online status.',
-        });
-        return;
-      }
-      if (on) {
-        this.askNotifications();
-        this._seen = null;
-        this.setState(
-          {
-            online: true,
-            onlineSince: data.onlineSince || Date.now(),
-            offlineBlocked: false,
-            forced: null,
-          },
-          () => this.poll(),
+      if (!ok)
+        return fail(data.error || 'Could not change your online status.');
+      if (on)
+        this.setState({ onlineSince: data.onlineSince || Date.now() }, () =>
+          this.poll(),
         );
-      } else {
-        this._seen = null;
-        this.setState({ online: false, queue: [], offlineBlocked: false });
-      }
     } catch {
-      this.setState({ notice: 'Could not change your online status.' });
+      fail('Could not change your online status.');
     }
   }
   renderVals() {
@@ -3194,6 +3200,12 @@ export default class Teammate extends React.Component {
                         {v.active.region} ·{' '}
                         {v.active.voice ? 'Voice on Discord' : 'Text chat only'}
                       </div>
+                      {v.active.mood ? (
+                        <div className="tm-mood">
+                          <MoodBadge id={v.active.mood} />
+                          <span>{moodOf(v.active.mood).line}</span>
+                        </div>
+                      ) : null}
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div
@@ -4221,6 +4233,7 @@ export default class Teammate extends React.Component {
                                   Voice
                                 </span>
                               ) : null}
+                              {o.mood ? <MoodBadge id={o.mood} /> : null}
                             </div>
                             <div
                               style={{

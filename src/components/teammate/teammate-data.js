@@ -221,5 +221,7 @@ export function toOriginalTeammateOrder(raw) {
     assignmentId: o.current_assignment_id,
     // Added by 20261026160000: only this teammate can take it for a moment.
     ...(o.picked_for_you === true ? { pickedForYou: true } : {}),
+    // Added by 20261101120000: how the customer wants the session to feel.
+    ...(o.mood ? { mood: o.mood } : {}),
   };
 }

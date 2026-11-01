@@ -5,7 +5,7 @@ import {
   AdminPresenceSchema,
   TeammatePresenceSchema,
 } from '../../contracts/presence';
-import { syncRolesAfter } from '../discord/role-hooks';
+import { syncRolesInBackground } from '../discord/role-hooks';
 
 function rpcResponse(
   account: ReturnType<typeof accountContext>,
@@ -75,10 +75,11 @@ export const teammatePresence: APIRoute = async (context) => {
               : undefined,
           });
     const response = rpcResponse(account, result.data, result.error);
-    // Turning the desk on or off moves the Discord Online role right away (#40); check-ins
-    // that went stale are picked up by the sweep.
+    // Turning the desk on or off moves the Discord Online role right away (#40), after the
+    // response so the switch doesn't wait on Discord; check-ins that went stale are picked up
+    // by the sweep.
     if (parsed.data.action === 'set' && response.status === 200)
-      await syncRolesAfter({ users: [identity.viewer.id] });
+      await syncRolesInBackground({ users: [identity.viewer.id] });
     return response;
   } catch {
     return account.json({ error: 'Presence service unavailable.' }, 503);
@@ -124,9 +125,9 @@ export const adminPresence: APIRoute = async (context: APIContext) => {
     const response = rpcResponse(account, result.data, result.error);
     if (response.status === 200) {
       if (parsed.data.action === 'set-offline')
-        await syncRolesAfter({ users: [parsed.data.userId] });
+        await syncRolesInBackground({ users: [parsed.data.userId] });
       else if (adminPresenceChanged(parsed.data.online, result.data))
-        await syncRolesAfter({ users: [identity.viewer.id] });
+        await syncRolesInBackground({ users: [identity.viewer.id] });
     }
     return response;
   } catch {

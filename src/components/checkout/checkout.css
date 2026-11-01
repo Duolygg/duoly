@@ -376,9 +376,3 @@
     border-radius: 20px;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .pay-check circle,
-  .pay-check path {
-    stroke-dashoffset: 0;
-  }
-}

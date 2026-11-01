@@ -99,7 +99,7 @@ export function mapRecentMatches(raw: unknown): RecentMatch[] {
   return out;
 }
 
-/** Maps public.home_teammates() into hero cards. Malformed entries are dropped, never repaired. */
+/** Maps public.home_teammates() into carousel cards. Malformed entries are dropped, never repaired. */
 export function mapHeroTeammates(raw: unknown): HeroTeammate[] {
   if (!Array.isArray(raw)) return [];
   const count = (value: unknown) =>

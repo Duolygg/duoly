@@ -16,6 +16,7 @@ import {
 } from '../perks/checkout';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { GAMES } from '../../design-reference/lib/games.js';
+import { MoodSchema } from '../../contracts/orders';
 import {
   AUTHORIZE_ONLY_METHODS,
   adminFor,
@@ -37,6 +38,8 @@ export const CheckoutRequestSchema = z
     ign: z.string().trim().min(2).max(40),
     note: z.string().trim().max(200).optional(),
     voice: z.boolean().optional(),
+    // How the session should feel; left out means no preference (20261101120000_order_moods).
+    mood: MoodSchema.optional(),
     useWallet: z.boolean().default(true),
     // Platinum and Diamond: this month's free 1-hour coaching (migration 20261026160000).
     // The free order pays nothing, so it never takes wallet money, a PRO or creator discount.
@@ -131,6 +134,10 @@ export function buildCheckout(
       note: request.note?.trim() ?? '',
       // Social sessions are calls, so they are always on voice.
       voice: request.gameId === 'social' || (request.voice ?? false),
+      // Social sessions are a chat, not a match, so they carry no mood.
+      ...(request.mood && request.gameId !== 'social'
+        ? { mood: request.mood }
+        : {}),
       amount_eur_cents: quote.amountEurMinor,
       payout_usd_cents: quote.teammate.amountMinor,
       booking_fx: rate,

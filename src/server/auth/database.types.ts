@@ -82,6 +82,7 @@ export type Database = {
           gg: boolean;
           id: string;
           ign: string;
+          mood: string | null;
           note: string;
           order_id: string | null;
           payout_usd_cents: number;
@@ -114,6 +115,7 @@ export type Database = {
           gg?: boolean;
           id?: string;
           ign: string;
+          mood?: string | null;
           note?: string;
           order_id?: string | null;
           payout_usd_cents: number;
@@ -146,6 +148,7 @@ export type Database = {
           gg?: boolean;
           id?: string;
           ign?: string;
+          mood?: string | null;
           note?: string;
           order_id?: string | null;
           payout_usd_cents?: number;
@@ -1295,6 +1298,7 @@ export type Database = {
           gg: boolean;
           id: string;
           ign: string;
+          mood: string | null;
           note: string;
           payout_usd_cents: number;
           public_reference: string;
@@ -1331,6 +1335,7 @@ export type Database = {
           gg?: boolean;
           id?: string;
           ign: string;
+          mood?: string | null;
           note?: string;
           payout_usd_cents: number;
           public_reference?: string;
@@ -1367,6 +1372,7 @@ export type Database = {
           gg?: boolean;
           id?: string;
           ign?: string;
+          mood?: string | null;
           note?: string;
           payout_usd_cents?: number;
           public_reference?: string;
