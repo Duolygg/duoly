@@ -297,11 +297,8 @@ test('pick a teammate with nobody online says so', async ({ page }) => {
     teammates: () => [],
     checkout: () => ({ status: 503, json: { error: 'x' } }),
   });
-  // The list is read only after perks load, which waits for the whole homepage to mount; on a
-  // CI runner's dev build that can take most of the default 5 s (trace: answer 0.7 s before it).
   await expect(page.locator('[data-pick-teammate]')).toContainText(
     'None of your past teammates are online for this right now.',
-    { timeout: 15_000 },
   );
 });
 

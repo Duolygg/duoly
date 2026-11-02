@@ -3,6 +3,9 @@ export default defineConfig({
   testDir: './tests/teammate-browser',
   fullyParallel: true,
   workers: 2,
+  // The booking fixture renders the whole homepage in a dev build; on CI runners its perks and
+  // teammate requests can land just after the default 5 s (trace of PR 116), so checks get 15 s.
+  expect: { timeout: 15_000 },
   use: {
     baseURL: 'http://127.0.0.1:4356',
     trace: 'retain-on-failure',

@@ -276,7 +276,7 @@ $$;
 -- From 20261024090000_admin_foundation.sql; changed: the audit line names the comp games of a Gamer Girl
 -- teammate too (they now count).
 create or replace function public.admin_set_access(p_user_id uuid, p_games text[], p_gg boolean) returns jsonb
-language plpgsql security definer set search_path = '' as $
+language plpgsql security definer set search_path = '' as $$
 declare v_actor uuid; v_name text; v_role text; v_games text[]; v_label text;
 begin
   select id, name into v_actor, v_name from public.admin_caller();
@@ -300,13 +300,13 @@ begin
          else pg_catalog.array_to_string(v_games, ', ') end);
   return pg_catalog.jsonb_build_object('access', pg_catalog.jsonb_build_object('games', pg_catalog.to_jsonb(v_games), 'gg', coalesce(p_gg, false)));
 end;
-$;
+$$;
 
 -- From 20261029130000_social_sessions.sql; changed: also returns approved_games, the comp games, so
 -- the teammate desk can tell a Gamer Girl teammate's comp orders apart (allowed_games is every game
 -- for her). Deploy the code first: its contract accepts the key being there or missing.
 create or replace function public.teammate_queue_settings() returns jsonb
-language plpgsql stable security definer set search_path = '' as $
+language plpgsql stable security definer set search_path = '' as $$
 declare v_actor uuid := auth.uid(); v_access public.teammate_order_access; v_allowed text[]; v_enabled text[];
 begin
   if v_actor is null then return public.order_error(401,'Authentication required.'); end if;
@@ -323,6 +323,6 @@ begin
   return pg_catalog.jsonb_build_object('allowed_games',v_allowed,'enabled_games',v_enabled,'gg_access',v_access.gg_access,'voice_opt_in',v_access.voice_opt_in,
     'approved_games',v_access.approved_games);
 end;
-$;
+$$;
 
 commit;
