@@ -1,11 +1,12 @@
 /**
- * Duoly's Trustpilot profile, shown as a line under the homepage hero (ledger #43: real figures only).
+ * Duoly's Trustpilot profile, behind the "Our customers say we are ..." line under the homepage hero
+ * (ledger #43: real figures only). The line names neither Trustpilot nor its logo (paid plans only).
  * Stays hidden until all three values come from the live profile. Update score and reviews by hand.
  */
 export const TRUSTPILOT = {
-  url: null as string | null,
-  score: null as number | null,
-  reviews: null as number | null,
+  url: 'https://www.trustpilot.com/review/duoly.gg' as string | null,
+  score: 4.8 as number | null, // PREVIEW ONLY: replace with the real Trustpilot score
+  reviews: 12 as number | null, // PREVIEW ONLY: replace with the real review count
 };
 
 export interface TrustpilotSummary {

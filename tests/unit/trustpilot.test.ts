@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { TRUSTPILOT, trustpilotSummary } from '../../src/site/trustpilot';
+import { trustpilotSummary } from '../../src/site/trustpilot';
 
 const url = 'https://www.trustpilot.com/review/duoly.gg';
 
 describe('Trustpilot hero line', () => {
   it('stays hidden until the live profile is filled in', () => {
-    expect(trustpilotSummary(TRUSTPILOT)).toBeNull();
+    expect(
+      trustpilotSummary({ url: null, score: null, reviews: null }),
+    ).toBeNull();
     expect(trustpilotSummary({ url, score: null, reviews: 120 })).toBeNull();
     expect(trustpilotSummary({ url, score: 4.8, reviews: null })).toBeNull();
     expect(

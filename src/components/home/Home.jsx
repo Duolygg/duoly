@@ -2232,116 +2232,6 @@ export default class Home extends React.Component {
                 Pick your game, tap pay, and a high-rank teammate joins your
                 lobby. No sign-up, no waiting around.
               </p>
-              {/* Trustpilot line (src/site/trustpilot.ts): shown only with a real profile, score and count */}
-              {v.tp ? (
-                <a
-                  href={v.tp.url}
-                  target="_blank"
-                  rel="noopener"
-                  className="dl-tp"
-                  aria-label={
-                    'Rated ' +
-                    v.tp.label +
-                    ', ' +
-                    v.tp.score +
-                    ' out of 5 from ' +
-                    v.tp.reviews +
-                    ' on Trustpilot (opens in a new tab)'
-                  }
-                  style={{
-                    marginTop: '18px',
-                    display: 'inline-flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'center',
-                    gap: '6px 10px',
-                    maxWidth: '100%',
-                    color: '#A79DC4',
-                    textDecoration: 'none',
-                    fontSize: '15px',
-                    lineHeight: '1.4',
-                  }}
-                >
-                  <span>
-                    Rated{' '}
-                    <strong style={{ color: '#FFFFFF', fontWeight: '700' }}>
-                      {v.tp.label}
-                    </strong>
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    style={{ display: 'inline-flex', gap: '2px' }}
-                  >
-                    {[1, 2, 3, 4, 5].map((n) => {
-                      const fill =
-                        v.tp.stars >= n ? 100 : v.tp.stars >= n - 0.5 ? 50 : 0;
-                      return (
-                        <span
-                          key={n}
-                          style={{
-                            width: '20px',
-                            height: '20px',
-                            display: 'grid',
-                            placeItems: 'center',
-                            background:
-                              'linear-gradient(90deg, #00B67A ' +
-                              fill +
-                              '%, rgba(196, 170, 255, .18) ' +
-                              fill +
-                              '%)',
-                          }}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 24 24">
-                            <path
-                              fill="#FFFFFF"
-                              d="M12 2.5l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.7l7.1-.6z"
-                            />
-                          </svg>
-                        </span>
-                      );
-                    })}
-                  </span>
-                  <span>
-                    <strong style={{ color: '#FFFFFF', fontWeight: '700' }}>
-                      {v.tp.score}
-                    </strong>{' '}
-                    from{' '}
-                    <span
-                      className="dl-tp-count"
-                      style={{
-                        color: '#F3EEFF',
-                        textDecoration: 'underline',
-                        textDecorationColor: 'rgba(196, 170, 255, .4)',
-                        textUnderlineOffset: '3px',
-                      }}
-                    >
-                      {v.tp.reviews}
-                    </span>{' '}
-                    on
-                  </span>
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      color: '#FFFFFF',
-                      fontWeight: '700',
-                    }}
-                  >
-                    <svg
-                      aria-hidden="true"
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="#00B67A"
-                        d="M12 2.5l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.7l7.1-.6z"
-                      />
-                    </svg>
-                    Trustpilot
-                  </span>
-                </a>
-              ) : null}
               <div
                 style={{
                   marginTop: '30px',
@@ -2443,6 +2333,65 @@ export default class Home extends React.Component {
                   , plus Social
                 </span>
               </a>
+              {/* Review line (src/site/trustpilot.ts): the word comes from the real Trustpilot score; no
+                  Trustpilot name or logo, which needs a paid plan. Styles: globals.css (dl-tp*) */}
+              {v.tp ? (
+                <a
+                  href={v.tp.url}
+                  target="_blank"
+                  rel="noopener"
+                  className="dl-tp"
+                  aria-label={
+                    'Our customers say we are ' +
+                    v.tp.label +
+                    '. Check our reviews (opens in a new tab)'
+                  }
+                >
+                  <span className="dl-tp-stars" aria-hidden="true">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <span
+                        key={n}
+                        className="dl-tp-star"
+                        style={{
+                          '--f':
+                            (v.tp.stars >= n
+                              ? 100
+                              : v.tp.stars >= n - 0.5
+                                ? 50
+                                : 0) + '%',
+                        }}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 24 24">
+                          <path d="M12 2.5l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.7l7.1-.6z" />
+                        </svg>
+                      </span>
+                    ))}
+                  </span>
+                  <span className="dl-tp-text">
+                    <span className="dl-tp-say">
+                      Our customers say we are{' '}
+                      <strong className="dl-tp-word">{v.tp.label}</strong>
+                    </span>
+                    <span className="dl-tp-cta">
+                      Check our reviews
+                      <span className="dl-tp-arrow" aria-hidden="true">
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M9 6l6 6-6 6" />
+                        </svg>
+                      </span>
+                    </span>
+                  </span>
+                </a>
+              ) : null}
               <dl
                 style={{
                   margin: '28px 0 0',
