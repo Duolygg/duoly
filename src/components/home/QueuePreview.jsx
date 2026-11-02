@@ -18,7 +18,7 @@ import MatchStage, {
   ReviewForm,
   ReviewThanks,
 } from '../account/MatchStage';
-import { ProofView } from '../proofs/PrivateProofs';
+import { ProofView } from '../proofs/proof-view';
 import { GAME, IGN_LABEL } from '../../design-reference/lib/games';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import { rankPrice } from '../../design-reference/lib/ranks';

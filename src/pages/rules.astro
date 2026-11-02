@@ -6,8 +6,14 @@ const { viewer, csrf } = await pageViewer(Astro);
 // The teammate rules are for teammates (and admins): signed out, sign in first; customers get
 // their dashboard. Personal to the viewer, so never cached.
 Astro.response.headers.set('Cache-Control', 'private, no-store');
-if (!viewer) return Astro.redirect('/?signin=1', 303);
-if (viewer.role === 'customer') return Astro.redirect('/dashboard', 303);
+// Astro.redirect drops the headers above, so the redirects carry no-store themselves.
+const away = (to: string) =>
+  new Response(null, {
+    status: 303,
+    headers: { Location: to, 'Cache-Control': 'private, no-store' },
+  });
+if (!viewer) return away('/?signin=1');
+if (viewer.role === 'customer') return away('/dashboard');
 ---
 
 <SiteLayout title="Rules | Duoly" viewer={viewer} csrf={csrf}>

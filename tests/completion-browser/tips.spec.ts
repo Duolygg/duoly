@@ -100,11 +100,14 @@ test('customer selects a tip with the rating and opens its separate payment', as
     tip_cents: 500,
   });
   await expect(
-    page.getByText('Your rating is saved. Pay the separate €5.00 tip now.', {
-      exact: false,
-    }),
+    page.getByText(
+      'Your rating is saved. Now pay your €5 tip, and 100% of it goes to',
+      {
+        exact: false,
+      },
+    ),
   ).toBeVisible();
   await expect(
-    page.getByText('100% goes to Mina.', { exact: false }),
+    page.getByText('100% of it goes to Mina.', { exact: false }),
   ).toBeVisible();
 });

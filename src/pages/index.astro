@@ -1,5 +1,7 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+// The order preview's proof list (QueuePreview uses the stylesheet-free ProofView).
+import '../components/proofs/proofs.css';
 import LiveHome from '../components/account/LiveHome';
 import { accountContext } from '../server/auth/context';
 import { paymentsConfig } from '../server/payments/config';
