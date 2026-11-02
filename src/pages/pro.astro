@@ -5,6 +5,8 @@ import { accountContext } from '../server/auth/context';
 import { paymentsConfig } from '../server/payments/config';
 import { proEnabled } from '../server/pro/config';
 import { loadProView } from '../server/pro/status';
+import { viewerCurrency } from '../server/currency';
+import { proPrice } from '../contracts/pro';
 
 // Duoly PRO sign-up (ledger #39). Off (404) unless PRO_ENABLED is on.
 const account = accountContext(Astro.request, Astro.cookies);
@@ -13,7 +15,7 @@ for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
 const config = paymentsConfig();
 if (!proEnabled() || !config) return Astro.rewrite('/404');
-if (!identity) return account.redirect('/login');
+if (!identity) return account.redirect('/?signin=1');
 if (identity.viewer.role !== 'customer') return account.redirect('/dashboard');
 const pro = await loadProView(account.client, identity.viewer.role);
 if (!pro) return Astro.rewrite('/404');
@@ -21,6 +23,9 @@ if (!pro) return Astro.rewrite('/404');
 if (pro.manage) return account.redirect('/dashboard#pro');
 const fontUrl = new URL('/fonts/geist-latin.woff2', Astro.url).href;
 const csrf = account.csrf();
+// €9.99, or $9.99 for a customer who uses USD (charged as its euro equivalent)
+const { cur } = await viewerCurrency(Astro.cookies, identity.profile.currency);
+const price = proPrice(cur);
 ---
 
 <SiteLayout title="Duoly PRO | Duoly" viewer={identity.viewer} csrf={csrf}>
@@ -41,12 +46,12 @@ const csrf = account.csrf();
           <li>✓ Free re-rolls on every game</li>
           <li>
             {pro.trialEligible
-              ? '✓ 7 days free, cancel anytime'
+              ? '✓ 7 days free, no card needed'
               : '✓ Cancel anytime'}
           </li>
         </ul>
         <p class="price">
-          <strong>€4.99</strong>/month
+          <strong>{price}</strong>/month
           {pro.trialEligible && <span> after your 7 free days</span>}
         </p>
         <p class="fine">
@@ -63,6 +68,8 @@ const csrf = account.csrf();
           trial={pro.trialEligible}
           fontUrl={fontUrl}
           client:load
+          price={price}
+          inEuros={cur === 'USD'}
         />
       </section>
     </div>

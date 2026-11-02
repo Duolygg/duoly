@@ -4,7 +4,8 @@ import { paymentsConfig } from '../payments/config';
  * Duoly PRO (ledger #39, MONEY-RULES section 7). Owner approved all defaults on 2026-10-27.
  * Server-only: never import from browser code.
  */
-export const PRO_MONTHLY_EUR_CENTS = 499;
+/** €9.99 a month, or $9.99 for customers who use USD (owner 2026-11-02). */
+export const PRO_MONTHLY_CENTS = 999;
 export const PRO_TRIAL_DAYS = 7;
 export const PRO_DISCOUNT_PERCENT = 10;
 /** R6: perks continue this many days after a renewal payment fails. Mirrors is_pro(). */

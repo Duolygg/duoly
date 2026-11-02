@@ -4,6 +4,7 @@ import ProductLayout from '../layouts/ProductLayout.astro';
 import LiveDashboard from '../components/account/LiveDashboard';
 import { accountContext } from '../server/auth/context';
 import { loadProView } from '../server/pro/status';
+import { viewerCurrency } from '../server/currency';
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
@@ -14,7 +15,7 @@ try {
   Astro.response.status = 503;
 }
 if (!identity && Astro.response.status !== 503)
-  return account.redirect('/login');
+  return account.redirect('/?signin=1');
 if (identity && identity.viewer.role !== 'customer')
   return account.redirect(
     identity.viewer.role === 'admin' ? '/admin' : '/teammate',
@@ -27,6 +28,11 @@ const pro = identity
   ? await loadProView(account.client, identity.viewer.role)
   : null;
 const proWelcome = Astro.url.searchParams.get('pro') === 'welcome';
+// Same currency as the homepage: the account's, then the one picked (or auto-detected) here.
+const { cur, usdRate } = await viewerCurrency(
+  Astro.cookies,
+  identity?.profile.currency,
+);
 ---
 
 {identity ? (
@@ -41,6 +47,8 @@ const proWelcome = Astro.url.searchParams.get('pro') === 'welcome';
       csrf={csrf}
       pro={pro}
       proWelcome={proWelcome}
+      cur={cur}
+      usdRate={usdRate}
       client:load
     />
   </SiteLayout>

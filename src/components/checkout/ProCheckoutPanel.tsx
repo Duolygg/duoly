@@ -14,6 +14,10 @@ interface Props {
   csrf: string;
   trial: boolean;
   fontUrl: string;
+  /** the monthly price as the customer sees it (€4.99, or dollars for a USD customer) */
+  price?: string;
+  /** a dollar price, charged as its euro equivalent */
+  inEuros?: boolean;
 }
 
 const appearance: Appearance = {
@@ -58,14 +62,18 @@ export default function ProCheckoutPanel({
   csrf,
   trial,
   fontUrl,
+  price = '€9.99',
+  inEuros = false,
 }: Props) {
   const paymentRef = useRef<HTMLDivElement>(null);
   const actionsRef = useRef<StripeCheckoutLoadActionsSuccess | null>(null);
-  const [phase, setPhase] = useState<Phase>('loading');
+  // The trial needs no card: a single button that starts it. Otherwise the Stripe payment form.
+  const [phase, setPhase] = useState<Phase>(trial ? 'ready' : 'loading');
   const [error, setError] = useState('');
   const [fatal, setFatal] = useState('');
 
   useEffect(() => {
+    if (trial) return;
     let cancelled = false;
     let checkout: StripeCheckoutElementsSdk | null = null;
     const fail = (message: string) => {
@@ -128,10 +136,41 @@ export default function ProCheckoutPanel({
       cancelled = true;
       checkout?.getPaymentElement()?.destroy();
     };
-  }, [publishableKey, csrf, fontUrl]);
+  }, [publishableKey, csrf, fontUrl, trial]);
+
+  const startTrial = async () => {
+    setError('');
+    setPhase('paying');
+    try {
+      const response = await fetch('/api/pro/checkout', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csrf }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        started?: boolean;
+        error?: string;
+      };
+      if (!response.ok || !data.started) {
+        setError(data.error || 'Duoly PRO is unavailable. Try again.');
+        setPhase('ready');
+        return;
+      }
+      setPhase('done');
+      window.location.assign(WELCOME);
+    } catch {
+      setError('Can’t reach Duoly right now. Try again.');
+      setPhase('ready');
+    }
+  };
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (trial) {
+      if (phase === 'ready') await startTrial();
+      return;
+    }
     const actions = actionsRef.current;
     if (!actions || phase !== 'ready') return;
     setError('');
@@ -160,7 +199,7 @@ export default function ProCheckoutPanel({
       </div>
     );
 
-  const label = trial ? 'Start my 7 free days' : 'Get PRO · €4.99/month';
+  const label = trial ? 'Start my 7 free days' : `Get PRO · ${price}/month`;
   return (
     <form
       className={`pay-card is-${phase}`}
@@ -170,19 +209,23 @@ export default function ProCheckoutPanel({
       data-pro-checkout
     >
       <div className="pay-head">
-        <h2>Payment</h2>
-        <span className="pay-secure">Secured by Stripe</span>
+        <h2>{trial ? '7 days free' : 'Payment'}</h2>
+        <span className="pay-secure">
+          {trial ? 'No card needed' : 'Secured by Stripe'}
+        </span>
       </div>
-      <div className="pay-element">
-        {phase === 'loading' && (
-          <div className="pay-skeleton" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </div>
-        )}
-        <div ref={paymentRef} />
-      </div>
+      {trial ? null : (
+        <div className="pay-element">
+          {phase === 'loading' && (
+            <div className="pay-skeleton" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </div>
+          )}
+          <div ref={paymentRef} />
+        </div>
+      )}
       {error && (
         <p className="pay-error" role="alert">
           {error}
@@ -190,13 +233,18 @@ export default function ProCheckoutPanel({
       )}
       <button className="pay-btn" type="submit" disabled={phase !== 'ready'}>
         <span className="pay-btn-label">
-          {phase === 'paying' || phase === 'done' ? 'Confirming…' : label}
+          {phase === 'paying' || phase === 'done'
+            ? trial
+              ? 'Starting…'
+              : 'Confirming…'
+            : label}
         </span>
       </button>
       <p className="pay-fine">
         {trial
-          ? 'Free for 7 days, then €4.99 a month until you cancel. Cancel anytime from your dashboard.'
-          : '€4.99 a month until you cancel. Cancel anytime from your dashboard.'}
+          ? `Free for 7 days, no card needed. To keep PRO after that, add a card in Manage PRO on your dashboard: ${price} a month, cancel anytime.`
+          : `${price} a month until you cancel. Cancel anytime from your dashboard.`}
+        {inEuros ? ' Charged in euros at today’s rate.' : ''}
       </p>
     </form>
   );

@@ -7,7 +7,7 @@ const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
 const identity = await account.identity().catch(() => null);
-if (!identity) return account.redirect('/login');
+if (!identity) return account.redirect('/?signin=1');
 const config = paymentsConfig();
 const sessionId = Astro.url.searchParams.get('session_id') ?? '';
 if (!config || !/^cs_(test|live)_[A-Za-z0-9]+$/.test(sessionId))

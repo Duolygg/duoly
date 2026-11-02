@@ -63,13 +63,15 @@ describe('brackets', () => {
     const base = {
       csrf: 't',
       action: 'settings',
-      wRetention: 45,
-      wSatisfaction: 35,
-      wOrders: 20,
+      wRetention: 25,
+      wSatisfaction: 20,
+      wOrders: 15,
+      wWinrate: 40,
       windowDays: 90,
       minOrders: 10,
       minReviews: 5,
       minCustomers: 3,
+      minWinLossGames: 20,
     };
     expect(AdminPerformanceSettingsSchema.safeParse(base).success).toBe(true);
     expect(
@@ -285,5 +287,90 @@ describe('migration', () => {
       /grant execute on function public\.performance_recalculate\(text, text\), public\.performance_role_targets\(\),\s+public\.performance_set_sync\(jsonb\) to service_role;/,
     );
     for (const b of BRACKETS) expect(sql).toContain(`<= ${b} then ${b}`);
+  });
+});
+
+describe('winrate in the ranking (20261102170000)', () => {
+  const sql = readFileSync(
+    'supabase/migrations/20261102170000_winrate_priority.sql',
+    'utf8',
+  );
+  it('makes winrate the biggest factor: 40/25/20/15, from 20 reported games', () => {
+    expect(sql).toContain(
+      'set w_retention = 25, w_satisfaction = 20, w_orders = 15, w_winrate = 40',
+    );
+    expect(sql).toContain('min_wl_games smallint not null default 20');
+    expect(sql).toContain(
+      'check (w_retention + w_satisfaction + w_orders + w_winrate = 100)',
+    );
+    // without a winrate the other three scale up to 100%
+    expect(sql).toContain(
+      '/ (v_set.w_retention + v_set.w_satisfaction + v_set.w_orders), 2) end as score',
+    );
+    expect(sql).toContain(
+      "select public.performance_recalculate('manual', 'Winrate update');",
+    );
+  });
+
+  it('shows the teammate their winrate and the new weights', () => {
+    const data = TeammatePerformanceSchema.parse({
+      ranked: true,
+      run: {
+        at: new Date().toISOString(),
+        eligible: 40,
+        windowDays: 90,
+        weights: { retention: 25, satisfaction: 20, orders: 15, winrate: 40 },
+        minWinLossGames: 20,
+      },
+      requirements: { orders: 10, reviews: 5, customers: 3 },
+      me: {
+        reason: '',
+        completedOrders: 30,
+        reviews: 20,
+        avgRating: 4.9,
+        customers: 22,
+        returningCustomers: 9,
+        retentionRate: 0.41,
+        retentionScore: 41,
+        satisfactionScore: 97.5,
+        ordersScore: 80,
+        winLossWins: 31,
+        winLossLosses: 19,
+        winrateScore: 62,
+        score: 66.75,
+        rank: 6,
+        percentile: 15,
+        bracket: 25,
+      },
+      next: null,
+    });
+    const html = renderToStaticMarkup(
+      React.createElement(PerformanceView, { data }),
+    );
+    expect(html).toContain('Winrate');
+    expect(html).toContain('62%');
+    expect(html).toContain('31W 19L');
+    expect(html).toContain('Winrate 40%, retention 25%');
+  });
+
+  it('settings need four weights that add up to 100', () => {
+    const base = {
+      csrf: 't',
+      action: 'settings',
+      wRetention: 25,
+      wSatisfaction: 20,
+      wOrders: 15,
+      wWinrate: 40,
+      windowDays: 90,
+      minOrders: 10,
+      minReviews: 5,
+      minCustomers: 3,
+      minWinLossGames: 20,
+    };
+    expect(AdminPerformanceSettingsSchema.safeParse(base).success).toBe(true);
+    expect(
+      AdminPerformanceSettingsSchema.safeParse({ ...base, wWinrate: 30 })
+        .success,
+    ).toBe(false);
   });
 });

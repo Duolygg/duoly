@@ -76,7 +76,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'pro',
     roles: BUYERS,
     match: /\bpro\b|membership|subscription|abo/,
-    text: 'Duoly PRO costs €4.99 a month: 10% off every order on top of bundle discounts, priority matching and unlimited re-rolls (still in the first 5 minutes after acceptance). The first 7 days are free, once per customer and card. Cancel anytime with Manage PRO on your dashboard; PRO stays active until the end of the paid month.',
+    text: 'Duoly PRO costs €9.99 a month ($9.99 for customers who use US dollars, charged in euros): 10% off every order on top of bundle discounts, priority matching and unlimited re-rolls (still in the first 5 minutes after acceptance). The first 7 days are free with no card needed, once per customer and card. To keep PRO after the trial, add a card in Manage PRO on your dashboard; without one it pauses until a card is added. Cancel anytime with Manage PRO; PRO stays active until the end of the paid month.',
   },
   // ---- teammates
   {
@@ -97,7 +97,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     roles: TEAM,
     match:
       /\bapex\b(?!\s*legends)|duo pro|duo plus|\btiers?\b|top 1|top 5|performance|ranking|plus only|teammate level/,
-    text: 'Duo services have three tiers in every game: Duo Plus, Duo Pro and Duo Apex (the top tier, for example FACEIT Duo in CS2). Standard teammates take Plus and Pro right away. A Duo Apex order goes first to teammates ranked TOP 1% or TOP 5% in the performance ranking; after 100 seconds, when it is posted in Discord, every Standard teammate approved for the game can take it. Teammates on the Plus only level take Duo Plus only. Admins set the level. The performance ranking updates every 12 hours from retention, customer satisfaction and completed orders; your dashboard shows your bracket and what it takes to reach the next one.',
+    text: 'Duo services have three tiers in every game: Duo Plus, Duo Pro and Duo Apex (the top tier, for example FACEIT Duo in CS2). Standard teammates take Plus and Pro right away. A Duo Apex order goes first to teammates ranked TOP 1% or TOP 5% in the performance ranking; after 100 seconds, when it is posted in Discord, every Standard teammate approved for the game can take it. Teammates on the Plus only level take Duo Plus only. Admins set the level. The performance ranking updates every 12 hours from winrate (the biggest factor, counted from 20 games reported in match reports), retention, customer satisfaction and completed orders; your dashboard shows your bracket and what it takes to reach the next one.',
   },
   {
     id: 'games',

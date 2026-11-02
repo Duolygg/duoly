@@ -14,7 +14,6 @@ const shellPages = [
   ['/apply', 'Become a teammate | Duoly'],
   ['/contact', 'Contact | Duoly'],
   ['/creators', 'Creator program | Duoly'],
-  ['/rules', 'Rules | Duoly'],
   ['/terms', 'Terms | Duoly'],
   ['/privacy', 'Privacy | Duoly'],
   ['/imprint', 'Imprint | Duoly'],
@@ -192,6 +191,15 @@ test('login page has no duplicate header sign in and spaced links', async ({
   );
 });
 
+test('teammate rules are for teammates: signed-out visitors are asked to sign in', async ({
+  request,
+}) => {
+  const response = await request.get('/rules', { maxRedirects: 0 });
+  expect(response.status()).toBe(303);
+  expect(response.headers().location).toBe('/?signin=1');
+  expect(response.headers()['cache-control']).toContain('no-store');
+});
+
 test('admin sections are invisible to signed-out visitors', async ({
   request,
 }) => {
@@ -270,7 +278,7 @@ test('cookie banner asks once, both choices are equal and settings reopen it', a
   page,
   context,
 }) => {
-  await page.goto('/rules');
+  await page.goto('/contact');
   const banner = page.getByRole('dialog', { name: 'Cookie settings' });
   await expect(banner).toBeVisible();
   await expect(banner).toContainText('optional');

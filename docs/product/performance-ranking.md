@@ -9,9 +9,15 @@ Over a rolling window (default 90 days), for every teammate who is not suspended
 
 | Metric                | Weight | How it becomes 0 to 100                                                                     |
 | --------------------- | ------ | ------------------------------------------------------------------------------------------- |
-| Customer retention    | 45%    | Customers with 2+ completed sessions with this teammate, out of all their customers         |
-| Customer satisfaction | 35%    | Average review stars, 1 star = 0 and 5 stars = 100                                          |
-| Completed orders      | 20%    | Percent rank among eligible teammates (so one very busy teammate does not flatten everyone) |
+| Winrate               | 40%    | Games won out of games reported in match reports on completed win/loss orders               |
+| Customer retention    | 25%    | Customers with 2+ completed sessions with this teammate, out of all their customers         |
+| Customer satisfaction | 20%    | Average review stars, 1 star = 0 and 5 stars = 100                                          |
+| Completed orders      | 15%    | Percent rank among eligible teammates (so one very busy teammate does not flatten everyone) |
+
+Winrate (owner 2026-11-02, migration 20261102170000) is the biggest factor. It counts from 20 reported
+games in the window; below that, or with no win/loss orders at all (Gamer Girl, Social, coaching), it is
+left out and the other three weights scale up to 100%. Which orders have match reports:
+`WL_GAMES` and `WL_SERVICES` in `src/design-reference/lib/winloss.js`.
 
 Score = weighted sum, 0 to 100. Weights, window and the minimums below are editable in
 Admin → Performance (weights must add up to 100).
@@ -69,7 +75,7 @@ available while live rankings are loading or unavailable.
 teammates and one ineligible teammate. Seven representative rows cover ranks 1,
 5, 10, 25, 50, 75 and the ineligible case. Summary badge counts describe displayed
 representatives, not the full cohort. Metric scores use the same two-decimal
-rounding, 45/35/20 weighting, eligible order percent rank and rank/eligible bracket
+rounding, 40/25/20/15 weighting (winrate first), eligible order percent rank and rank/eligible bracket
 rules as the database. Sample history includes promotions and demotions.
 
 The preview reuses the live table, filters, metric breakdown, history, badges and

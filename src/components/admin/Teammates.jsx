@@ -3,7 +3,9 @@ import { GAME as GAMES } from '../../design-reference/lib/games';
 import { maskEmail } from '../../design-reference/lib/adminData';
 import { flagSrc } from '../../design-reference/lib/countries';
 import { TIERS } from '../../design-reference/lib/trust';
+import { winrateLabel } from '../../design-reference/lib/winloss';
 import Applications from './Applications';
+import MatchReports from './MatchReports';
 import {
   C,
   card,
@@ -65,6 +67,9 @@ export default class Teammates extends React.Component {
       earned30: (Number(t.earned30UsdCents) || 0) / 100,
       rating: t.rating == null ? null : Number(t.rating),
       reviews: Number(t.reviews) || 0,
+      // match reports on win/loss orders (20261102160000)
+      wins: Number(t.winLoss && t.winLoss.wins) || 0,
+      losses: Number(t.winLoss && t.winLoss.losses) || 0,
       warnings: Number(t.warnings) || 0,
       tier: TIER_BY_ID[(t.trust && t.trust.trust_tier) || 'rookie'] || TIERS[0],
       held: (Number(t.depositHeldUsdCents) || 0) / 100,
@@ -141,6 +146,9 @@ export default class Teammates extends React.Component {
         {
           orders: (a, b) => b.lifetime - a.lifetime,
           rating: (a, b) => (b.rating || 0) - (a.rating || 0),
+          winrate: (a, b) =>
+            (b.wins + b.losses ? b.wins / (b.wins + b.losses) : -1) -
+            (a.wins + a.losses ? a.wins / (a.wins + a.losses) : -1),
           earned: (a, b) => b.earned30 - a.earned30,
           newest: (a, b) => (b.joined || 0) - (a.joined || 0),
         }[s.sort],
@@ -192,6 +200,7 @@ export default class Teammates extends React.Component {
           >
             <option value="orders">Most orders</option>
             <option value="rating">Best rating</option>
+            <option value="winrate">Best winrate</option>
             <option value="earned">Most earned (30d)</option>
             <option value="newest">Newest</option>
           </select>
@@ -212,6 +221,7 @@ export default class Teammates extends React.Component {
                 <th style={th}>Games</th>
                 <th style={th}>Trust level</th>
                 <th style={{ ...th, textAlign: 'right' }}>Rating</th>
+                <th style={{ ...th, textAlign: 'right' }}>Winrate</th>
                 <th style={{ ...th, textAlign: 'right' }}>Orders</th>
                 <th style={{ ...th, textAlign: 'right' }}>Earned 30d</th>
                 <th style={{ ...th, textAlign: 'right' }}>Deposit held</th>
@@ -362,25 +372,25 @@ export default class Teammates extends React.Component {
                           GAMER GIRL · all games
                         </span>
                       ) : null}
-                      {!t.gg &&
-                        t.games.map((g) =>
-                          GAMES[g] ? (
-                            <img
-                              key={g}
-                              src={GAMES[g].img}
-                              alt={GAMES[g].name}
-                              title={GAMES[g].name}
-                              width="22"
-                              height="22"
-                              style={{
-                                width: '22px',
-                                height: '22px',
-                                borderRadius: '6px',
-                                flex: '0 0 auto',
-                              }}
-                            />
-                          ) : null,
-                        )}
+                      {/* comp games: also for Gamer Girl teammates (20261102140000) */}
+                      {t.games.map((g) =>
+                        GAMES[g] ? (
+                          <img
+                            key={g}
+                            src={GAMES[g].img}
+                            alt={GAMES[g].name}
+                            title={GAMES[g].name}
+                            width="22"
+                            height="22"
+                            style={{
+                              width: '22px',
+                              height: '22px',
+                              borderRadius: '6px',
+                              flex: '0 0 auto',
+                            }}
+                          />
+                        ) : null,
+                      )}
                       {!t.gg && !t.games.length ? (
                         <span style={{ fontSize: '12.5px', color: C.gold }}>
                           No games yet
@@ -405,6 +415,12 @@ export default class Teammates extends React.Component {
                     }
                   >
                     {t.rating == null ? 'New' : '★ ' + t.rating.toFixed(2)}
+                  </td>
+                  <td
+                    style={{ ...td, textAlign: 'right' }}
+                    title="From match reports on win/loss orders"
+                  >
+                    {winrateLabel(t.wins, t.losses) || '—'}
                   </td>
                   <td
                     style={{ ...td, textAlign: 'right' }}
@@ -563,7 +579,7 @@ export default class Teammates extends React.Component {
               {s.loaded && !list.length ? (
                 <tr>
                   <td
-                    colSpan={10}
+                    colSpan={11}
                     style={{
                       ...td,
                       textAlign: 'center',
@@ -593,7 +609,8 @@ export default class Teammates extends React.Component {
     const pending = this.props.pendingApps || 0;
     const pick = (id) => {
       this.setState({ tab: id });
-      if (this.props.onTab) this.props.onTab(id);
+      // Teammates and Applications have their own address; Match reports stays on the current one
+      if (this.props.onTab && id !== 'reports') this.props.onTab(id);
     };
     const tab = (id, label, n, hot) => (
       <button
@@ -609,24 +626,26 @@ export default class Teammates extends React.Component {
         }}
       >
         {label}
-        <span
-          style={{
-            minWidth: '20px',
-            height: '20px',
-            padding: '0 6px',
-            borderRadius: '999px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '11.5px',
-            background: hot
-              ? 'rgba(255, 210, 122, .2)'
-              : 'rgba(196, 170, 255, .14)',
-            color: s.tab === id ? C.ink : hot ? C.gold : C.accent,
-          }}
-        >
-          {n}
-        </span>
+        {n === null ? null : (
+          <span
+            style={{
+              minWidth: '20px',
+              height: '20px',
+              padding: '0 6px',
+              borderRadius: '999px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '11.5px',
+              background: hot
+                ? 'rgba(255, 210, 122, .2)'
+                : 'rgba(196, 170, 255, .14)',
+              color: s.tab === id ? C.ink : hot ? C.gold : C.accent,
+            }}
+          >
+            {n}
+          </span>
+        )}
       </button>
     );
     return (
@@ -638,9 +657,12 @@ export default class Teammates extends React.Component {
         >
           {tab('roster', 'Teammates', s.list.length)}
           {tab('apps', 'Applications', pending, pending > 0)}
+          {tab('reports', 'Match reports', null)}
         </div>
         {s.tab === 'roster' ? (
           this.renderRoster()
+        ) : s.tab === 'reports' ? (
+          <MatchReports {...this.props} />
         ) : (
           <Applications {...this.props} embedded />
         )}

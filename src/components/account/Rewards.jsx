@@ -81,6 +81,10 @@ const BURST = [
 
 export default class Rewards extends React.Component {
   renderVals() {
+    // the dashboard passes its formatter (EUR, or dollars for a customer who picked USD)
+    const money = this.props.money || eur;
+    // level-up gifts are fixed amounts in the customer's currency: €5, or exactly $5 for USD
+    const gift = (n) => (this.props.sym || '€') + n;
     const {
       orders = 0,
       name = 'Player',
@@ -103,7 +107,7 @@ export default class Rewards extends React.Component {
         now: state === 'now',
         locked: state === 'locked',
         threshold: l.from ? l.from + '+ orders' : 'Start',
-        giftLabel: l.gift ? '€' + l.gift + ' gift' : 'None',
+        giftLabel: l.gift ? gift(l.gift) + ' gift' : 'None',
         style:
           'position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px 12px; border-radius: 18px; text-align: center; min-width: 0; ' +
           (state === 'now'
@@ -161,8 +165,8 @@ export default class Rewards extends React.Component {
         ? next.name +
           ' · ' +
           next.cashback +
-          '% cashback + €' +
-          next.gift +
+          '% cashback + ' +
+          gift(next.gift) +
           ' gift'
         : '',
       bar:
@@ -181,11 +185,11 @@ export default class Rewards extends React.Component {
         '33, inset 0 1px 0 rgba(255, 255, 255, .6);',
       showGift: !!giftLevel,
       giftClaimed: true,
-      giftAmount: giftLevel ? eur(giftLevel.gift) : '',
+      giftAmount: giftLevel ? gift(giftLevel.gift) : '',
       giftLevelName: giftLevel ? giftLevel.name : '',
-      cashbackTotal: eur(cashbackTotal),
-      cashbackMonth: eur(cashbackMonth),
-      cashbackPending: eur(cashbackPending),
+      cashbackTotal: money(cashbackTotal),
+      cashbackMonth: money(cashbackMonth),
+      cashbackPending: money(cashbackPending),
       pendingOrders,
     };
   }

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <!-- Demo end-of-match screenshot for the homepage order room preview (not a real game capture). -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2A1550"/>
+      <stop offset="1" stop-color="#0E2A4A"/>
+    </linearGradient>
+    <linearGradient id="win" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE29A"/>
+      <stop offset="1" stop-color="#FFB547"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <circle cx="540" cy="60" r="140" fill="#FFFFFF" opacity=".04"/>
+  <circle cx="80" cy="330" r="120" fill="#FFFFFF" opacity=".04"/>
+  <text x="320" y="92" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="900" letter-spacing="6" fill="url(#win)">VICTORY</text>
+  <text x="320" y="124" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" letter-spacing="3" fill="#CFC4EA">GAME 2 OF 3 · RANKED · 9:58</text>
+  <rect x="120" y="150" width="400" height="74" rx="14" fill="#000000" opacity=".28"/>
+  <text x="215" y="200" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="800" fill="#7FD3FF">512</text>
+  <text x="320" y="198" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#FFFFFF" opacity=".6">:</text>
+  <text x="425" y="200" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="800" fill="#FF8FA3">274</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#FFFFFF">
+    <rect x="120" y="246" width="400" height="38" rx="10" fill="#FFFFFF" opacity=".08"/>
+    <text x="140" y="271">itskeikooo</text>
+    <text x="500" y="271" text-anchor="end" fill="#FFD27A">MVP</text>
+    <rect x="120" y="292" width="400" height="38" rx="10" fill="#FFFFFF" opacity=".08"/>
+    <text x="140" y="317">Alex</text>
+    <text x="500" y="317" text-anchor="end" fill="#CFC4EA">+26 pts</text>
+  </g>
+</svg>

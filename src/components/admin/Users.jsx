@@ -67,7 +67,8 @@ export default class Users extends React.Component {
       levels: null,
     };
   }
-  // ---- order access (which games a teammate may take, or Gamer Girl). Rules: lib/access.js
+  // ---- order access: Gamer Girl orders (every game) and/or comp orders in approved games
+  // (migration 20261102140000; before, Gamer Girl excluded comp orders). Rules: lib/access.js
   editAccess(a) {
     const acc = a.access || { games: [], gg: false };
     this.setState({
@@ -95,7 +96,7 @@ export default class Users extends React.Component {
       const r = res.data;
       const before =
         (this.state.levels && this.state.levels[a.id]) || 'standard';
-      if (this.state.levels && !d.gg && d.level !== before) {
+      if (this.state.levels && d.games.length && d.level !== before) {
         const lv = await this.props.api.post('/api/admin/duo-levels', {
           userId: a.id,
           level: d.level,
@@ -123,19 +124,15 @@ export default class Users extends React.Component {
           x.id === a.id ? { ...x, access: { ...x.access, ...r.access } } : x,
         ),
       });
+      const n = r.access.games.length;
+      const games = n + ' comp game' + (n === 1 ? '' : 's');
       const what = r.access.gg
-        ? 'Gamer Girl (Gamer Girl orders, all games)'
-        : r.access.games.length
-          ? r.access.games.length +
-            ' game' +
-            (r.access.games.length === 1 ? '' : 's')
+        ? 'Gamer Girl orders' + (n ? ' and ' + games : ' only')
+        : n
+          ? games
           : 'no games';
       this.props.log('Changed order access', a.name || a.email, what);
-      this.props.toast(
-        (a.name || a.email) +
-          ' now gets orders for ' +
-          what.replace(/^Gamer Girl \(.*\)$/, 'Gamer Girl orders only'),
-      );
+      this.props.toast((a.name || a.email) + ' now gets ' + what);
     } catch (e) {
       this.props.toast('Can’t reach Duoly right now.', 'warn');
     } finally {
@@ -168,7 +165,7 @@ export default class Users extends React.Component {
           }}
         >
           <span style={label}>Order access</span>
-          {!acc.gg && s.levels && s.levels[a.id] === 'plus_only' ? (
+          {acc.games.length && s.levels && s.levels[a.id] === 'plus_only' ? (
             <span
               title="Duo Plus only: no Duo Pro, Duo Apex or other services"
               style={{
@@ -194,9 +191,12 @@ export default class Users extends React.Component {
                 color: C.pink,
               }}
             >
-              Gamer Girl · only Gamer Girl orders, every game
+              {acc.games.length
+                ? 'Gamer Girl · every game'
+                : 'Gamer Girl · only Gamer Girl orders, every game'}
             </span>
-          ) : acc.games.length ? (
+          ) : null}
+          {acc.games.length ? (
             <span
               style={{ display: 'inline-flex', flexWrap: 'wrap', gap: '4px' }}
               title={GAMES.filter((g) => acc.games.includes(g.id))
@@ -214,7 +214,7 @@ export default class Users extends React.Component {
                 />
               ))}
             </span>
-          ) : (
+          ) : acc.gg ? null : (
             <span
               style={{ fontSize: '12.5px', fontWeight: '600', color: C.gold }}
             >
@@ -279,8 +279,9 @@ export default class Users extends React.Component {
             <span
               style={{ display: 'block', fontSize: '12.5px', color: C.dim }}
             >
-              Sees only Gamer Girl orders, for every game, and nothing else.
-              Internal: customers never see this.
+              Gamer Girl and Social orders in every game. Comp orders only in
+              the games below, if she’s good at one. Internal: customers never
+              see this.
             </span>
           </span>
           <button
@@ -317,181 +318,179 @@ export default class Users extends React.Component {
           </button>
         </div>
 
-        {d.gg ? null : (
-          <>
-            <div
+        <>
+          <div
+            style={{
+              marginTop: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <span style={label}>
+              {d.gg ? 'Comp games too (optional)' : 'Games they can take'}
+            </span>
+            <span style={{ fontSize: '12.5px', color: C.dim }}>
+              {d.games.length} of {GAMES.length}
+            </span>
+            <button
+              type="button"
+              onClick={() => edit(() => ({ games: GAMES.map((g) => g.id) }))}
               style={{
-                marginTop: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
+                ...btn(),
+                minHeight: '28px',
+                padding: '0 10px',
+                fontSize: '12px',
+                marginLeft: 'auto',
               }}
             >
-              <span style={label}>Games they can take</span>
-              <span style={{ fontSize: '12.5px', color: C.dim }}>
-                {d.games.length} of {GAMES.length}
-              </span>
-              <button
-                type="button"
-                onClick={() => edit(() => ({ games: GAMES.map((g) => g.id) }))}
-                style={{
-                  ...btn(),
-                  minHeight: '28px',
-                  padding: '0 10px',
-                  fontSize: '12px',
-                  marginLeft: 'auto',
-                }}
-              >
-                All
-              </button>
-              <button
-                type="button"
-                onClick={() => edit(() => ({ games: [] }))}
-                style={{
-                  ...btn(),
-                  minHeight: '28px',
-                  padding: '0 10px',
-                  fontSize: '12px',
-                }}
-              >
-                None
-              </button>
-            </div>
-            <div
-              role="group"
-              aria-label={'Games for ' + (a.name || a.email)}
+              All
+            </button>
+            <button
+              type="button"
+              onClick={() => edit(() => ({ games: [] }))}
               style={{
-                marginTop: '8px',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-                gap: '6px',
+                ...btn(),
+                minHeight: '28px',
+                padding: '0 10px',
+                fontSize: '12px',
               }}
             >
-              {GAMES.map((g) => {
-                const on = d.games.includes(g.id);
-                return (
-                  <button
-                    key={g.id}
-                    type="button"
-                    aria-pressed={on ? 'true' : 'false'}
-                    onClick={() => toggle(g.id)}
-                    title={g.name}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      minHeight: '40px',
-                      padding: '4px 10px 4px 4px',
-                      borderRadius: '12px',
-                      fontSize: '13px',
-                      fontWeight: '600',
-                      textAlign: 'left',
-                      transform: 'none',
-                      minWidth: '0',
-                      background: on ? C.raised : 'transparent',
-                      border: '1px solid ' + (on ? C.accent : C.line2),
-                      color: on ? C.white : C.dim,
-                    }}
-                  >
-                    <img
-                      src={g.img}
-                      alt=""
-                      width="30"
-                      height="30"
-                      style={{
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '8px',
-                        flex: '0 0 auto',
-                        filter: on ? 'none' : 'grayscale(1) brightness(.6)',
-                      }}
-                    />
-                    <span
-                      style={{
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {g.short}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            {s.levels ? (
-              <>
-                <div style={{ marginTop: '14px', ...label }}>
-                  Teammate level
-                </div>
-                <div
-                  role="radiogroup"
-                  aria-label={'Teammate level for ' + (a.name || a.email)}
+              None
+            </button>
+          </div>
+          <div
+            role="group"
+            aria-label={'Games for ' + (a.name || a.email)}
+            style={{
+              marginTop: '8px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+              gap: '6px',
+            }}
+          >
+            {GAMES.map((g) => {
+              const on = d.games.includes(g.id);
+              return (
+                <button
+                  key={g.id}
+                  type="button"
+                  aria-pressed={on ? 'true' : 'false'}
+                  onClick={() => toggle(g.id)}
+                  title={g.name}
                   style={{
-                    marginTop: '8px',
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                    gap: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    minHeight: '40px',
+                    padding: '4px 10px 4px 4px',
+                    borderRadius: '12px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    textAlign: 'left',
+                    transform: 'none',
+                    minWidth: '0',
+                    background: on ? C.raised : 'transparent',
+                    border: '1px solid ' + (on ? C.accent : C.line2),
+                    color: on ? C.white : C.dim,
                   }}
                 >
-                  {[
-                    [
-                      'standard',
-                      'Standard',
-                      'Duo Plus and Duo Pro. Duo Apex after 100 seconds (right away for TOP 1% and TOP 5%).',
-                    ],
-                    [
-                      'plus_only',
-                      'Plus only',
-                      'Hired with a lower rank: Duo Plus only, never Pro, Apex or other services.',
-                    ],
-                  ].map(([id, name, hint]) => {
-                    const on = d.level === id;
-                    return (
-                      <button
-                        key={id}
-                        type="button"
-                        role="radio"
-                        aria-checked={on ? 'true' : 'false'}
-                        onClick={() => edit(() => ({ level: id }))}
+                  <img
+                    src={g.img}
+                    alt=""
+                    width="30"
+                    height="30"
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                      borderRadius: '8px',
+                      flex: '0 0 auto',
+                      filter: on ? 'none' : 'grayscale(1) brightness(.6)',
+                    }}
+                  />
+                  <span
+                    style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {g.short}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {s.levels ? (
+            <>
+              <div style={{ marginTop: '14px', ...label }}>Teammate level</div>
+              <div
+                role="radiogroup"
+                aria-label={'Teammate level for ' + (a.name || a.email)}
+                style={{
+                  marginTop: '8px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '6px',
+                }}
+              >
+                {[
+                  [
+                    'standard',
+                    'Standard',
+                    'Duo Plus and Duo Pro. Duo Apex after 100 seconds (right away for TOP 1% and TOP 5%).',
+                  ],
+                  [
+                    'plus_only',
+                    'Plus only',
+                    'Hired with a lower rank: Duo Plus only, never Pro, Apex or other services.',
+                  ],
+                ].map(([id, name, hint]) => {
+                  const on = d.level === id;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      role="radio"
+                      aria-checked={on ? 'true' : 'false'}
+                      onClick={() => edit(() => ({ level: id }))}
+                      style={{
+                        display: 'block',
+                        padding: '10px 12px',
+                        borderRadius: '12px',
+                        textAlign: 'left',
+                        transform: 'none',
+                        background: on ? C.raised : 'transparent',
+                        border: '1px solid ' + (on ? C.accent : C.line2),
+                      }}
+                    >
+                      <span
                         style={{
                           display: 'block',
-                          padding: '10px 12px',
-                          borderRadius: '12px',
-                          textAlign: 'left',
-                          transform: 'none',
-                          background: on ? C.raised : 'transparent',
-                          border: '1px solid ' + (on ? C.accent : C.line2),
+                          fontSize: '14px',
+                          fontWeight: '700',
+                          color: on ? C.white : C.text,
                         }}
                       >
-                        <span
-                          style={{
-                            display: 'block',
-                            fontSize: '14px',
-                            fontWeight: '700',
-                            color: on ? C.white : C.text,
-                          }}
-                        >
-                          {name}
-                        </span>
-                        <span
-                          style={{
-                            display: 'block',
-                            marginTop: '2px',
-                            fontSize: '12.5px',
-                            color: C.dim,
-                          }}
-                        >
-                          {hint}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </>
-            ) : null}
-          </>
-        )}
+                        {name}
+                      </span>
+                      <span
+                        style={{
+                          display: 'block',
+                          marginTop: '2px',
+                          fontSize: '12.5px',
+                          color: C.dim,
+                        }}
+                      >
+                        {hint}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : null}
+        </>
 
         <div
           style={{

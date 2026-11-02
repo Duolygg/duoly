@@ -1,4 +1,5 @@
-/* global Response, fetch, AbortSignal */
+/* global Response, fetch, AbortSignal, URL, window */
+import { MatchReportResponseSchema } from '../../contracts/match-reports';
 import {
   TeammateOrderSchema,
   OrderResponseSchemas,
@@ -78,6 +79,10 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
           allowedGames: settings.allowed_games,
           enabledGames: settings.enabled_games,
           ggAccess: settings.gg_access,
+          // comp games: before the migration, a Gamer Girl teammate had none
+          compGames:
+            settings.approved_games ??
+            (settings.gg_access ? [] : settings.allowed_games),
           voiceOptIn: settings.voice_opt_in,
         });
       }
@@ -107,6 +112,36 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
         return json(
           await request('/api/teammate/stats', TeammateStatsResponseSchema),
         );
+      // Win/loss orders (20261102160000): the match report, with the server's message on refusal.
+      if (path.startsWith('/api/orders/') && path.endsWith('/match-report')) {
+        const id = path.slice('/api/orders/'.length, -'/match-report'.length);
+        if (!TeammateOrderSchema.shape.id.safeParse(id).success)
+          return json({ error: 'Invalid command' }, 400);
+        const post = init.method === 'POST';
+        const res = await fetcher(
+          '/api/teammate/orders/' + id + '/match-report',
+          {
+            credentials: 'same-origin',
+            cache: 'no-store',
+            redirect: 'error',
+            signal: AbortSignal.timeout(10000),
+            ...(post
+              ? {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ csrf, ...JSON.parse(init.body) }),
+                }
+              : {}),
+          },
+        );
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok)
+          return json(
+            { error: data.error || 'Couldn’t save the match report.' },
+            res.status,
+          );
+        return json(MatchReportResponseSchema.parse(data));
+      }
       if (path.startsWith('/api/orders/')) {
         const id = path.slice('/api/orders/'.length);
         const parsedId = TeammateOrderSchema.shape.id.safeParse(id);
@@ -134,6 +169,40 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
             },
           );
           return json({ passed: true });
+        }
+        // Hand over the order they're playing: a one-time link (15 minutes) for another teammate.
+        if (
+          parsedId.success &&
+          csrf &&
+          init.method === 'POST' &&
+          (body.action === 'handover' || body.action === 'handover-cancel') &&
+          Object.keys(body).length === 1
+        ) {
+          const post = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ csrf }),
+          };
+          if (body.action === 'handover-cancel') {
+            await request(
+              '/api/teammate/orders/' + id + '/handover-cancel',
+              OrderResponseSchemas.teammateHandoverRevoked,
+              post,
+            );
+            return json({ revoked: true });
+          }
+          const link = await request(
+            '/api/teammate/orders/' + id + '/handover',
+            OrderResponseSchemas.teammateHandover,
+            post,
+          );
+          return json({
+            url: new URL(
+              '/claim/' + encodeURIComponent(link.token),
+              window.location.origin,
+            ).toString(),
+            expiresAt: Date.parse(link.expiresAt),
+          });
         }
         if (
           !parsedId.success ||

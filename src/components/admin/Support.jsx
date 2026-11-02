@@ -328,11 +328,12 @@ export default class Support extends React.Component {
             {row('Owed', usd(x.owed || 0))}
             {row(
               'Games',
-              x.gg
-                ? 'Gamer Girl · all'
-                : x.games.length
-                  ? x.games.map((g) => (GAMES[g] || {}).short || g).join(', ')
-                  : 'none yet',
+              [
+                x.gg ? 'Gamer Girl · all' : '',
+                x.games.map((g) => (GAMES[g] || {}).short || g).join(', '),
+              ]
+                .filter(Boolean)
+                .join(' + ') || 'none yet',
               x.games.length || x.gg ? C.white : C.gold,
             )}
             {row(

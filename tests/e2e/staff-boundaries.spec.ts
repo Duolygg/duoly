@@ -5,5 +5,5 @@ test('real staff routes are role protected', async ({ request }) => {
   expect(admin.status()).toBe(404);
   const teammate = await request.get('/teammate', { maxRedirects: 0 });
   expect(teammate.status()).toBe(303);
-  expect(teammate.headers().location).toBe('/login');
+  expect(teammate.headers().location).toBe('/?signin=1');
 });

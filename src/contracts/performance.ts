@@ -39,7 +39,10 @@ export const TeammatePerformanceSchema = z.strictObject({
         retention: count,
         satisfaction: count,
         orders: count,
+        // Added by 20261102170000 (winrate in the ranking); optional so code can deploy first.
+        winrate: count.optional(),
       }),
+      minWinLossGames: count.optional(),
     })
     .nullable(),
   requirements: z
@@ -57,6 +60,10 @@ export const TeammatePerformanceSchema = z.strictObject({
       retentionScore: num.nullable(),
       satisfactionScore: num.nullable(),
       ordersScore: num.nullable(),
+      // Added by 20261102170000: reported wins and losses, and the winrate score (null below the minimum)
+      winLossWins: count.optional(),
+      winLossLosses: count.optional(),
+      winrateScore: num.nullable().optional(),
       score: num.nullable(),
       rank: count.nullable(),
       percentile: num.nullable(),
@@ -90,14 +97,17 @@ export const AdminPerformanceSettingsSchema = z
     wRetention: weight,
     wSatisfaction: weight,
     wOrders: weight,
+    wWinrate: weight,
     windowDays: z.number().int().min(7).max(365),
     minOrders: z.number().int().min(1).max(1000),
     minReviews: z.number().int().min(0).max(1000),
     minCustomers: z.number().int().min(1).max(1000),
+    minWinLossGames: z.number().int().min(1).max(1000),
   })
-  .refine((s) => s.wRetention + s.wSatisfaction + s.wOrders === 100, {
-    message: 'The three weights must add up to 100%.',
-  });
+  .refine(
+    (s) => s.wRetention + s.wSatisfaction + s.wOrders + s.wWinrate === 100,
+    { message: 'The four weights must add up to 100%.' },
+  );
 
 /** One Discord sync result row, written back through performance_set_sync. */
 export type SyncStatus =

@@ -62,8 +62,8 @@ test('PRO card offers the 7-day trial with the original copy', async ({
   ).toBeVisible();
   await expect(card).toContainText('✓ Priority matching');
   await expect(card).toContainText('✓ Free re-rolls on every game');
-  await expect(card).toContainText('✓ 7 days free, cancel anytime');
-  const cta = card.getByRole('link', { name: 'Try PRO · €4.99/month' });
+  await expect(card).toContainText('✓ 7 days free, no card needed');
+  const cta = card.getByRole('link', { name: 'Try PRO free for 7 days' });
   await expect(cta).toHaveAttribute('href', '/pro');
 });
 
@@ -72,7 +72,7 @@ test('PRO card without a second trial says Get PRO', async ({ page }) => {
   const card = page.locator('section#pro');
   await expect(card).toContainText('✓ Cancel anytime');
   await expect(
-    card.getByRole('link', { name: 'Get PRO · €4.99/month' }),
+    card.getByRole('link', { name: 'Get PRO · €9.99/month' }),
   ).toHaveAttribute('href', '/pro');
 });
 
@@ -83,7 +83,7 @@ test('PRO members get the trial status and Manage PRO', async ({ page }) => {
     card.getByRole('heading', { name: 'You’re saving 10% on every game' }),
   ).toBeVisible();
   await expect(card).toContainText(
-    'Free trial until 4 Nov, then €4.99/month. Cancel anytime.',
+    'Free trial until 4 Nov. To keep PRO after that, add a card in Manage PRO: €9.99/month, cancel anytime.',
   );
   await expect(card.getByRole('link', { name: 'Manage PRO' })).toBeVisible();
 });

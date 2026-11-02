@@ -13,7 +13,7 @@ try {
   Astro.response.status = 503;
 }
 if (!identity && Astro.response.status !== 503)
-  return account.redirect('/login');
+  return account.redirect('/?signin=1');
 const csrf = account.csrf();
 const discordParam = DiscordResultSchema.safeParse(
   Astro.url.searchParams.get('discord'),

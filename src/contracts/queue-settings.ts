@@ -26,6 +26,8 @@ export const QueueSettingsResponseSchema = z
     enabled_games: z.array(GameIdSchema).max(GAME_IDS.length),
     gg_access: z.boolean(),
     voice_opt_in: z.boolean(),
+    // Added by 20261102140000 (the comp games); optional so code can deploy before the migration.
+    approved_games: z.array(GameIdSchema).max(GAME_IDS.length).optional(),
   })
   .strict();
 

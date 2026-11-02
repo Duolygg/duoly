@@ -143,7 +143,8 @@ function ReadNotice({
       }
       className="td-notice"
     >
-      {message} {state.kind === 'signed-out' && <a href="/login">Sign in</a>}
+      {message}{' '}
+      {state.kind === 'signed-out' && <a href="/?signin=1">Sign in</a>}
       {state.kind === 'denied' && <a href="/profile">Manage profile</a>}
     </p>
   );

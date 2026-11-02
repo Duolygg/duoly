@@ -94,6 +94,19 @@ export function PerformanceView({ data }: { data: TeammatePerformance }) {
           me.avgRating !== null ? `★ ${me.avgRating.toFixed(2)}` : 'No reviews',
           `${me.reviews} ${me.reviews === 1 ? 'review' : 'reviews'}`,
         ],
+        ...(me.winLossWins !== undefined
+          ? [
+              [
+                'Winrate',
+                me.winLossWins + (me.winLossLosses ?? 0) > 0
+                  ? `${Math.round((100 * me.winLossWins) / (me.winLossWins + (me.winLossLosses ?? 0)))}%`
+                  : '—',
+                me.winrateScore !== null && me.winrateScore !== undefined
+                  ? `${me.winLossWins}W ${me.winLossLosses ?? 0}L`
+                  : `counts from ${run?.minWinLossGames ?? 20} reported games`,
+              ],
+            ]
+          : []),
         [
           'Retention rate',
           `${Math.round(me.retentionRate * 100)}%`,
@@ -282,9 +295,10 @@ export function PerformanceView({ data }: { data: TeammatePerformance }) {
           ) : null}
 
           <p style={{ margin: '16px 0 0', fontSize: '12px', color: '#6F6690' }}>
-            Retention {run.weights.retention}%, satisfaction{' '}
-            {run.weights.satisfaction}%, completed orders {run.weights.orders}%,
-            over the last {run.windowDays} days. Updated every 12 hours, last{' '}
+            {run.weights.winrate
+              ? `Winrate ${run.weights.winrate}%, retention ${run.weights.retention}%, satisfaction ${run.weights.satisfaction}%, completed orders ${run.weights.orders}%`
+              : `Retention ${run.weights.retention}%, satisfaction ${run.weights.satisfaction}%, completed orders ${run.weights.orders}%`}
+            , over the last {run.windowDays} days. Updated every 12 hours, last{' '}
             {ago(run.at)}.
           </p>
         </>

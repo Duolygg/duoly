@@ -2,7 +2,7 @@
 // Serves the endpoints the original QueueRoom.jsx calls (/api/orders/:id GET + POST {action},
 // /api/orders/:id/chat GET + POST {text}|{typing}) from the real ones, in the original's shape.
 // Pure mapping: lifecycle rules stay server-side (customer_order, cancel, reroll, chat RPCs).
-import { toOriginalOrder } from './dashboard-data';
+import { paidOf, toOriginalOrder } from './dashboard-data';
 import { readChat, sendChat, setTyping } from '../../client/order-chat';
 
 const REROLL_WINDOW_MS = 5 * 60 * 1000;
@@ -57,7 +57,7 @@ export function toRoomOrder(o, { proMember = false } = {}) {
     rerollUntil: accepted ? accepted + REROLL_WINDOW_MS : null,
     paid: o.free_perk
       ? { currency: 'EUR', total: 0, method: 'Free with your perk' }
-      : {
+      : paidOf(o) || {
           currency: 'EUR',
           total: o.amount_eur_cents / 100,
           method: 'Stripe checkout',
@@ -142,6 +142,8 @@ export function createRoomFetch({ orderId, csrf, proMember = false }) {
                 tip_cents: Number.isFinite(body.tip)
                   ? Math.round(body.tip * 100)
                   : 0,
+                // a USD customer tips in dollars; the server charges it in EUR
+                tip_currency: body.tipCurrency === 'USD' ? 'USD' : 'EUR',
               }
             : { csrf };
         const { res, data } = await call(base + '/' + body.action, payload);

@@ -8,14 +8,16 @@ import PrivateProofs from '../proofs/PrivateProofs';
 import TipPaymentPanel from './TipPayment';
 import { createRoomFetch } from './queue-room-data';
 import MatchStage, {
+  tipMoney,
   BOUNTY,
   ChatPanel,
   CoveredPanel,
   OrderCard,
+  ProofPanel,
   QueueSteps,
   QueueTimer,
+  ReviewForm,
   ReviewThanks,
-  STAR,
   clock,
 } from './MatchStage';
 
@@ -24,25 +26,13 @@ import MatchStage, {
 // Report with bounty (#9), review and tip (#7/#10) stay in the file and switch on here.
 const FEATURES = { reviews: true, tips: true };
 
-// what customers can do once matched (kept in sync with lib/orders.js REVIEW_TAGS and lib/reports.js)
-const REVIEW_TAGS = [
-  'Great comms',
-  'Shotcaller',
-  'Super friendly',
-  'Taught me a lot',
-  'Carried hard',
-  'Patient',
-  'Fun to play with',
-];
-
 const POLL_MS = 2500;
 const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 const ACCENT = '#D6BBFF',
   GREEN = '#5EEAA8',
   PINK = '#F0A6FF',
   MUTED = '#A79DC4',
-  DIM = '#8E84AB',
-  GOLD = '#FFD27A';
+  DIM = '#8E84AB';
 const TIPS = [
   'Most orders are taken in under 2 minutes.',
   'Every teammate is rank-verified and reviewed after each session.',
@@ -273,7 +263,7 @@ export default class QueueRoom extends React.Component {
       );
       const d = await res.json().catch(() => ({}));
       if (res.status === 401) {
-        window.location.href = '/login';
+        window.location.href = '/?signin=1';
         return;
       }
       if (res.status === 404) {
@@ -509,10 +499,17 @@ export default class QueueRoom extends React.Component {
         ? Number(String(rv.custom).replace(',', '.')) || 0
         : Number(rv.tip) || 0
       : 0;
-    if (tip > 0 && tip < 1)
-      return this.setState({ rv: { ...rv, err: 'Tips start at €1.' } });
+    // tips are picked in the currency the order was paid in; a USD tip is charged in EUR
+    const usd = this.state.order?.paid?.currency === 'USD';
+    const sym = usd ? '$' : '€';
+    if (tip > 0 && tip < (usd ? 2 : 1))
+      return this.setState({
+        rv: { ...rv, err: 'Tips start at ' + sym + (usd ? '2.' : '1.') },
+      });
     if (tip > 100)
-      return this.setState({ rv: { ...rv, err: 'Tips can be up to €100.' } });
+      return this.setState({
+        rv: { ...rv, err: 'Tips can be up to ' + sym + '100.' },
+      });
     this.setState({ busy: 'review', rv: { ...rv, err: '' } });
     try {
       const { ok, d } = await this.act({
@@ -521,6 +518,7 @@ export default class QueueRoom extends React.Component {
         tags: rv.tags,
         text: rv.text,
         tip,
+        tipCurrency: usd ? 'USD' : 'EUR',
       });
       if (!ok)
         return this.setState({
@@ -764,75 +762,6 @@ export default class QueueRoom extends React.Component {
         ? o.lastTeammate.name.split(' ')[0]
         : 'your teammate';
     const rv = this.state.rv;
-    const stars = (n, size, interactive) => (
-      <div
-        role={interactive ? 'radiogroup' : undefined}
-        aria-label={interactive ? 'Rating' : 'Rated ' + n + ' out of 5'}
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: size > 30 ? '8px' : '3px',
-        }}
-        onMouseLeave={
-          interactive
-            ? () => this.setState({ rv: { ...this.state.rv, hover: 0 } })
-            : undefined
-        }
-      >
-        {[1, 2, 3, 4, 5].map((i) => {
-          const on = i <= n;
-          const star = (
-            <svg
-              aria-hidden="true"
-              width={size}
-              height={size}
-              viewBox="0 0 24 24"
-              style={{
-                display: 'block',
-                transition: 'transform .15s',
-                transform:
-                  interactive && i === rv.hover ? 'scale(1.15)' : 'none',
-              }}
-            >
-              <path
-                d={STAR}
-                fill={on ? GOLD : 'rgba(196, 170, 255, .14)'}
-                stroke={on ? GOLD : 'rgba(196, 170, 255, .25)'}
-                strokeWidth="1"
-                strokeLinejoin="round"
-              />
-            </svg>
-          );
-          return interactive ? (
-            <button
-              key={i}
-              type="button"
-              role="radio"
-              aria-checked={rv.rating === i ? 'true' : 'false'}
-              aria-label={i + (i === 1 ? ' star' : ' stars')}
-              onMouseEnter={() =>
-                this.setState({ rv: { ...this.state.rv, hover: i } })
-              }
-              onClick={() =>
-                this.setState({ rv: { ...this.state.rv, rating: i, err: '' } })
-              }
-              style={{
-                padding: '2px',
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                transform: 'none',
-              }}
-            >
-              {star}
-            </button>
-          ) : (
-            <span key={i}>{star}</span>
-          );
-        })}
-      </div>
-    );
-
     if (this.state.tipPayment) {
       return (
         <TipPaymentPanel
@@ -862,7 +791,7 @@ export default class QueueRoom extends React.Component {
             >
               {this.state.busy === 'review'
                 ? 'Opening payment…'
-                : `Pay €${o.tip.amount.toFixed(2)} tip`}
+                : 'Pay ' + tipMoney(o.tip) + ' tip'}
             </button>
           ) : null}
           {rv.err ? (
@@ -874,266 +803,16 @@ export default class QueueRoom extends React.Component {
       );
     }
 
-    const shown = rv.hover || rv.rating;
-    const words = [
-      '',
-      'Not great',
-      'Could be better',
-      'Good',
-      'Great',
-      'Amazing!',
-    ];
-    const tipVal = FEATURES.tips
-      ? rv.tip === 'custom'
-        ? Number(String(rv.custom).replace(',', '.')) || 0
-        : Number(rv.tip) || 0
-      : 0;
-    const chip = (on) => ({
-      minHeight: '36px',
-      padding: '0 13px',
-      borderRadius: '999px',
-      fontSize: '13.5px',
-      fontWeight: '600',
-      cursor: 'pointer',
-      transform: 'none',
-      border: '1px solid ' + (on ? ACCENT : 'rgba(196, 170, 255, .16)'),
-      background: on ? 'rgba(214, 187, 255, .14)' : 'transparent',
-      color: on ? '#FFFFFF' : '#CFC4EA',
-    });
     return (
-      <div className="q-review">
-        <div style={{ textAlign: 'center' }}>
-          <div
-            style={{
-              fontFamily: DISPLAY,
-              fontSize: '20px',
-              fontWeight: '800',
-              letterSpacing: '-.02em',
-              color: '#FFFFFF',
-            }}
-          >
-            Rate your session with {name}
-          </div>
-          <div style={{ marginTop: '12px' }}>{stars(shown, 40, true)}</div>
-          <div
-            aria-live="polite"
-            style={{
-              marginTop: '6px',
-              minHeight: '20px',
-              fontSize: '14px',
-              fontWeight: '700',
-              color: shown ? GOLD : DIM,
-            }}
-          >
-            {shown ? words[shown] : 'Tap to rate'}
-          </div>
-        </div>
-
-        {rv.rating ? (
-          <div style={{ animation: 'dlfade .25s ease-out' }}>
-            <div
-              style={{
-                marginTop: '14px',
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                gap: '6px',
-              }}
-            >
-              {REVIEW_TAGS.map((t) => {
-                const on = rv.tags.includes(t);
-                return (
-                  <button
-                    key={t}
-                    type="button"
-                    aria-pressed={on ? 'true' : 'false'}
-                    onClick={() =>
-                      this.editRv((x) => ({
-                        tags: x.tags.includes(t)
-                          ? x.tags.filter((y) => y !== t)
-                          : x.tags.concat(t).slice(-4),
-                      }))
-                    }
-                    style={chip(on)}
-                  >
-                    {t}
-                  </button>
-                );
-              })}
-            </div>
-            <textarea
-              value={rv.text}
-              onChange={(e) => {
-                const text = e.target.value;
-                this.editRv(() => ({ text }));
-              }}
-              maxLength={500}
-              rows={3}
-              placeholder={
-                'Anything you’d like ' + name + ' or us to know? (optional)'
-              }
-              aria-label="Your review"
-              style={{
-                marginTop: '14px',
-                width: '100%',
-                boxSizing: 'border-box',
-                padding: '12px 14px',
-                borderRadius: '14px',
-                border: '1px solid rgba(196, 170, 255, .16)',
-                background: '#090414',
-                color: '#FFFFFF',
-                font: 'inherit',
-                fontSize: '14px',
-                resize: 'vertical',
-                outline: 'none',
-              }}
-            />
-
-            {FEATURES.tips ? (
-              <div className="q-tip">
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '10px',
-                  }}
-                >
-                  <span style={{ fontWeight: '700', color: '#FFFFFF' }}>
-                    Leave a tip for {name}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '12.5px',
-                      color: GREEN,
-                      fontWeight: '600',
-                    }}
-                  >
-                    100% goes to {name}
-                  </span>
-                </div>
-                <div
-                  role="radiogroup"
-                  aria-label="Tip"
-                  style={{
-                    marginTop: '10px',
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
-                    gap: '6px',
-                  }}
-                >
-                  {[
-                    [0, 'No tip'],
-                    [2, sym + '2'],
-                    [5, sym + '5'],
-                    [10, sym + '10'],
-                    ['custom', 'Other'],
-                  ].map(([val, label]) => {
-                    const on = rv.tip === val;
-                    return (
-                      <button
-                        key={label}
-                        type="button"
-                        role="radio"
-                        aria-checked={on ? 'true' : 'false'}
-                        onClick={() =>
-                          this.editRv(() => ({ tip: val, err: '' }))
-                        }
-                        style={{
-                          ...chip(on),
-                          padding: '0 4px',
-                          minHeight: '44px',
-                          borderRadius: '12px',
-                          fontWeight: '700',
-                          ...(on && val
-                            ? {
-                                borderColor: GREEN,
-                                background: 'rgba(94, 234, 168, .1)',
-                                color: GREEN,
-                              }
-                            : {}),
-                        }}
-                      >
-                        {label}
-                      </button>
-                    );
-                  })}
-                </div>
-                {rv.tip === 'custom' ? (
-                  <label
-                    style={{
-                      marginTop: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '0 14px',
-                      minHeight: '44px',
-                      borderRadius: '12px',
-                      border: '1px solid rgba(196, 170, 255, .16)',
-                      background: '#090414',
-                    }}
-                  >
-                    <span style={{ color: MUTED, fontWeight: '700' }}>
-                      {sym}
-                    </span>
-                    <input
-                      inputMode="decimal"
-                      value={rv.custom}
-                      onChange={(e) => {
-                        const custom = e.target.value
-                          .replace(/[^\d.,]/g, '')
-                          .slice(0, 6);
-                        this.editRv(() => ({ custom }));
-                      }}
-                      placeholder="Amount"
-                      aria-label="Tip amount"
-                      style={{
-                        flex: '1',
-                        minWidth: '0',
-                        border: 'none',
-                        background: 'transparent',
-                        color: '#FFFFFF',
-                        font: 'inherit',
-                        fontSize: '15px',
-                        outline: 'none',
-                      }}
-                    />
-                  </label>
-                ) : null}
-              </div>
-            ) : null}
-
-            {rv.err ? (
-              <p
-                role="alert"
-                style={{
-                  margin: '10px 0 0',
-                  fontSize: '13.5px',
-                  color: PINK,
-                  textAlign: 'center',
-                }}
-              >
-                {rv.err}
-              </p>
-            ) : null}
-            <button
-              type="button"
-              onClick={this.sendReview}
-              disabled={this.state.busy === 'review'}
-              className="q-review-send"
-            >
-              {this.state.busy === 'review'
-                ? 'Sending…'
-                : tipVal > 0
-                  ? 'Send rating and ' +
-                    sym +
-                    tipVal.toFixed(2).replace(/\.00$/, '') +
-                    ' tip'
-                  : 'Send rating'}
-            </button>
-          </div>
-        ) : null}
-      </div>
+      <ReviewForm
+        name={name}
+        sym={sym}
+        rv={rv}
+        busy={this.state.busy === 'review'}
+        tips={FEATURES.tips}
+        onEdit={this.editRv}
+        onSend={this.sendReview}
+      />
     );
   }
 
@@ -1141,59 +820,12 @@ export default class QueueRoom extends React.Component {
   renderProof(v) {
     const { o } = v;
     return (
-      <section
-        aria-labelledby="q-proof-h"
-        style={{
-          borderRadius: '24px',
-          background: '#120B22',
-          border: '1px solid rgba(196, 170, 255, .1)',
-          padding: '20px',
-        }}
+      <ProofPanel
+        reportsEnabled={this.props.reportsEnabled}
+        onReport={() => this.openReport('')}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '10px',
-          }}
-        >
-          <h2
-            id="q-proof-h"
-            style={{
-              margin: '0',
-              fontSize: '12px',
-              fontWeight: '700',
-              letterSpacing: '.08em',
-              textTransform: 'uppercase',
-              color: DIM,
-            }}
-          >
-            Proof from your teammate
-          </h2>
-          {this.props.reportsEnabled ? (
-            <button
-              type="button"
-              onClick={() => this.openReport('')}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                padding: '0',
-                color: PINK,
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transform: 'none',
-              }}
-            >
-              Report
-            </button>
-          ) : null}
-        </div>
-        <div style={{ marginTop: '12px' }}>
-          <PrivateProofs orderId={o.id} mode="customer" />
-        </div>
-      </section>
+        <PrivateProofs orderId={o.id} mode="customer" />
+      </ProofPanel>
     );
   }
 

@@ -254,7 +254,7 @@ export const createCheckout: APIRoute = async (context) => {
         },
         403,
       );
-    const rpc = admin.rpc as unknown as (
+    const rpc = admin.rpc.bind(admin) as unknown as (
       fn: string,
       args: Record<string, unknown>,
     ) => PromiseLike<{ data: unknown; error: unknown }>;

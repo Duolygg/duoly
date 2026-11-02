@@ -5,7 +5,7 @@ test('operational UUID room requires login and is never cached', async ({
 }) => {
   const response = await request.get(`/queue/${id}`, { maxRedirects: 0 });
   expect(response.status()).toBe(303);
-  expect(response.headers().location).toBe('/login');
+  expect(response.headers().location).toBe('/?signin=1');
   expect(response.headers()['cache-control']).toContain('private');
   expect(response.headers()['cache-control']).toContain('no-store');
 });
@@ -18,6 +18,6 @@ test('anonymous dashboard remains private with no operational order leakage', as
 }) => {
   const response = await request.get('/dashboard', { maxRedirects: 0 });
   expect(response.status()).toBe(303);
-  expect(response.headers().location).toBe('/login');
+  expect(response.headers().location).toBe('/?signin=1');
   expect(response.headers()['cache-control']).toContain('no-store');
 });

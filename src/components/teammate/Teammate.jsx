@@ -27,6 +27,7 @@ import {
 } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
 import { canTake, NO_ACCESS } from '../../design-reference/lib/access';
+import { tracksWinLoss } from '../../design-reference/lib/winloss';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
 import WaitingForOrders from '../shared/WaitingForOrders';
 import { MoodBadge, moodOf } from '../shared/moods';
@@ -262,6 +263,8 @@ export default class Teammate extends React.Component {
       cancelled: [],
       autoCancelMs: 300000,
       handovers: {},
+      // the match report of the active win/loss order (null for other orders)
+      matchReport: null,
       notice: '',
       forced: null,
       active: null,
@@ -488,7 +491,12 @@ export default class Teammate extends React.Component {
       ),
       voiceOk: settings.voiceOptIn,
       ...(settings.allowedGames
-        ? { access: { games: settings.allowedGames, gg: settings.ggAccess } }
+        ? {
+            access: {
+              games: settings.compGames || settings.allowedGames,
+              gg: settings.ggAccess,
+            },
+          }
         : {}),
       settingsSaving: false,
       settingsLoaded: true,
@@ -902,8 +910,111 @@ export default class Teammate extends React.Component {
       },
       () => {
         this.pollChat();
+        this.loadMatchReport(o);
       },
     );
+  }
+  // ---- match report (win/loss orders, 20261102160000): every game with both IGNs and the match
+  // link, plus wins and losses. Required to finish; the winrate comes from these.
+  emptyMatchReport(o) {
+    let mine = '';
+    try {
+      mine = window.localStorage.getItem('duoly-my-ign-' + o.game) || '';
+    } catch (e) {}
+    return {
+      games: Array.from({ length: o.games }, () => ({
+        teammateIgn: mine,
+        customerIgn: o.ign || '',
+        link: '',
+      })),
+      wins: '',
+      losses: '',
+      saved: false,
+      busy: false,
+      err: '',
+    };
+  }
+  async loadMatchReport(o) {
+    if (this.props.admin || !tracksWinLoss(o)) {
+      this.setState({ matchReport: null });
+      return;
+    }
+    this.setState({ matchReport: this.emptyMatchReport(o) });
+    try {
+      const res = await this._fetch(
+        '/api/orders/' + encodeURIComponent(o.id) + '/match-report',
+      );
+      const data = await res.json();
+      if (res.ok && data.report && this.state.active?.id === o.id)
+        this.setState({
+          matchReport: {
+            games: data.report.games,
+            wins: String(data.report.wins),
+            losses: String(data.report.losses),
+            saved: true,
+            busy: false,
+            err: '',
+          },
+        });
+    } catch (e) {}
+  }
+  editMatch(fn) {
+    this.setState((st) =>
+      st.matchReport
+        ? {
+            matchReport: {
+              ...st.matchReport,
+              ...fn(st.matchReport),
+              saved: false,
+              err: '',
+            },
+          }
+        : null,
+    );
+  }
+  async saveMatchReport() {
+    const o = this.state.active;
+    const r = this.state.matchReport;
+    if (!o || !r || r.busy) return;
+    const wins = Number(r.wins);
+    const losses = Number(r.losses);
+    if (
+      !Number.isInteger(wins) ||
+      !Number.isInteger(losses) ||
+      r.wins === '' ||
+      r.losses === '' ||
+      wins + losses !== o.games
+    )
+      return this.setState({
+        matchReport: {
+          ...r,
+          err: 'Wins and losses need to add up to ' + o.games + ' games.',
+        },
+      });
+    this.setState({ matchReport: { ...r, busy: true, err: '' } });
+    const { ok, data } = await this.post(
+      '/api/orders/' + encodeURIComponent(o.id) + '/match-report',
+      { games: r.games, wins, losses },
+    ).catch(() => ({ ok: false, data: {} }));
+    if (!ok)
+      return this.setState({
+        matchReport: {
+          ...this.state.matchReport,
+          busy: false,
+          err: data.error || 'Couldn’t save the match report. Try again.',
+        },
+      });
+    try {
+      const mine = r.games.find((g) => g.teammateIgn.trim());
+      if (mine)
+        window.localStorage.setItem(
+          'duoly-my-ign-' + o.game,
+          mine.teammateIgn.trim(),
+        );
+    } catch (e) {}
+    this.setState({
+      matchReport: { ...this.state.matchReport, busy: false, saved: true },
+    });
   }
   // A Diamond customer picked this teammate. Passing sends the order to everyone right away.
   async pass(o) {
@@ -1131,6 +1242,42 @@ export default class Teammate extends React.Component {
       },
     });
     if (this.props.onHandover) this.props.onHandover(o, data.url);
+  }
+  // Teammates: hand over the order they're playing (the customer asked for someone else). A
+  // one-time link for 15 minutes; whoever takes it gets the order and the chat.
+  async handoverMine(o) {
+    const { ok, data } = await this.post(
+      '/api/orders/' + encodeURIComponent(o.id),
+      { action: 'handover' },
+    ).catch(() => ({ ok: false, data: {} }));
+    if (!ok)
+      return this.setState({
+        notice: data.error || 'Couldn’t create a handover link.',
+      });
+    let copied = false;
+    try {
+      await navigator.clipboard.writeText(data.url);
+      copied = true;
+    } catch (e) {}
+    this.setState({
+      handovers: {
+        ...this.state.handovers,
+        [o.id]: { url: data.url, expiresAt: data.expiresAt, copied },
+      },
+    });
+  }
+  async cancelHandover(o) {
+    const { ok, data } = await this.post(
+      '/api/orders/' + encodeURIComponent(o.id),
+      { action: 'handover-cancel' },
+    ).catch(() => ({ ok: false, data: {} }));
+    if (!ok)
+      return this.setState({
+        notice: data.error || 'Couldn’t cancel the handover link.',
+      });
+    const rest = { ...this.state.handovers };
+    delete rest[o.id];
+    this.setState({ handovers: rest });
   }
   copyHandover(id) {
     const h = this.state.handovers[id];
@@ -1393,6 +1540,42 @@ export default class Teammate extends React.Component {
               ', then upload your match history or end-of-game screens showing ' +
               (a.games === 1 ? 'it' : 'them') +
               '.',
+        // win/loss orders: the match report form (null for other orders)
+        matchReport: s.matchReport
+          ? {
+              ...s.matchReport,
+              setGame: (i, key, value) =>
+                this.editMatch((r) => ({
+                  games: r.games.map((g, j) =>
+                    j === i ? { ...g, [key]: value } : g,
+                  ),
+                })),
+              setWins: (value) =>
+                this.editMatch(() => ({ wins: value.replace(/\D/g, '') })),
+              setLosses: (value) =>
+                this.editMatch(() => ({ losses: value.replace(/\D/g, '') })),
+              save: () => this.saveMatchReport(),
+            }
+          : null,
+        // handing it over (teammates): the link while it's valid
+        ...(() => {
+          const h = admin ? null : s.handovers[a.id];
+          const live = h && h.expiresAt > Date.now() ? h : null;
+          return {
+            canHandover: !admin,
+            handoverUrl: live ? live.url : '',
+            handoverCopied: live ? live.copied : false,
+            handoverUntil: live
+              ? new Date(live.expiresAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : '',
+            makeHandover: () => this.handoverMine(a),
+            copyHandover: () => this.copyHandover(a.id),
+            cancelHandover: () => this.cancelHandover(a),
+          };
+        })(),
         proof: s.proof,
         proofErr: s.proofErr,
         proofDrag: s.proofDrag,
@@ -1582,6 +1765,20 @@ export default class Teammate extends React.Component {
         st && st.reviews
           ? st.reviews + (st.reviews === 1 ? ' review' : ' reviews')
           : 'No reviews yet',
+      // winrate from match reports on win/loss orders (20261102160000)
+      winrateLabel:
+        st && st.winLoss && st.winLoss.wins + st.winLoss.losses > 0
+          ? Math.round(
+              (100 * st.winLoss.wins) / (st.winLoss.wins + st.winLoss.losses),
+            ) + '%'
+          : '—',
+      winLossLabel:
+        st && st.winLoss && st.winLoss.wins + st.winLoss.losses > 0
+          ? st.winLoss.wins +
+            'W ' +
+            st.winLoss.losses +
+            'L from your match reports'
+          : 'From your match reports',
       tipsLabel: money(st ? st.tipsTotal : 0),
       completedLabel: (st ? st.completed : 0) + ' completed · ' + tier.name,
       latestReviews: st ? st.latestReviews : [],
@@ -1675,6 +1872,8 @@ export default class Teammate extends React.Component {
         !s.access.gg &&
         !s.access.games.length,
       gamerGirl: !admin && !!s.access.gg,
+      // a Gamer Girl teammate approved for comp games too (20261102140000)
+      gamerGirlComp: !admin && !!s.access.gg && s.access.games.length > 0,
       noGames: FEATURES.preferences && mine.length > 0 && enabledCount === 0,
       voiceOk: s.voiceOk,
       voiceStr: s.voiceOk ? 'true' : 'false',
@@ -3082,6 +3281,28 @@ export default class Teammate extends React.Component {
                   {v.reviewsLabel}
                 </span>
               </div>
+              <div
+                data-winrate
+                style={{
+                  ...card,
+                  padding: '20px 22px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '6px',
+                }}
+              >
+                <span style={label}>Winrate</span>
+                <span style={statNum}>{v.winrateLabel}</span>
+                <span
+                  style={{
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    color: '#8E84AB',
+                  }}
+                >
+                  {v.winLossLabel}
+                </span>
+              </div>
               {FEATURES.stats && FEATURES.tips ? (
                 <div
                   style={{
@@ -3237,6 +3458,257 @@ export default class Teammate extends React.Component {
                       “{v.active.note}”
                     </p>
                   ) : null}
+                  {/* win/loss orders: the match report, required before finishing (20261102160000) */}
+                  {v.active.matchReport ? (
+                    <div
+                      data-match-report
+                      style={{
+                        marginTop: '16px',
+                        padding: '16px',
+                        borderRadius: '18px',
+                        background: '#090414',
+                        border:
+                          '1px solid ' +
+                          (v.active.matchReport.saved
+                            ? 'rgba(94, 234, 168, .35)'
+                            : 'rgba(196, 170, 255, .1)'),
+                      }}
+                    >
+                      <div style={{ fontWeight: '700', color: '#FFFFFF' }}>
+                        Match report
+                      </div>
+                      <p
+                        style={{
+                          margin: '2px 0 12px',
+                          fontSize: '13px',
+                          color: '#A79DC4',
+                        }}
+                      >
+                        Every game: your IGN, the customer’s IGN and the match
+                        link. Then how many you won and lost. Needed to finish
+                        this order, and it builds your winrate.
+                      </p>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                        }}
+                      >
+                        {v.active.matchReport.games.map((g, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns:
+                                'auto minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.6fr)',
+                              gap: '6px',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: '12.5px',
+                                fontWeight: '700',
+                                color: '#8E84AB',
+                                minWidth: '52px',
+                              }}
+                            >
+                              Game {i + 1}
+                            </span>
+                            <input
+                              aria-label={'Your IGN, game ' + (i + 1)}
+                              placeholder="Your IGN"
+                              value={g.teammateIgn}
+                              maxLength={64}
+                              onChange={(e) =>
+                                v.active.matchReport.setGame(
+                                  i,
+                                  'teammateIgn',
+                                  e.target.value,
+                                )
+                              }
+                              style={{
+                                minHeight: '38px',
+                                padding: '0 10px',
+                                borderRadius: '10px',
+                                border: '1px solid rgba(196, 170, 255, .16)',
+                                background: '#120B22',
+                                color: '#FFFFFF',
+                                font: 'inherit',
+                                fontSize: '13.5px',
+                                minWidth: '0',
+                              }}
+                            />
+                            <input
+                              aria-label={'Customer IGN, game ' + (i + 1)}
+                              placeholder="Customer IGN"
+                              value={g.customerIgn}
+                              maxLength={64}
+                              onChange={(e) =>
+                                v.active.matchReport.setGame(
+                                  i,
+                                  'customerIgn',
+                                  e.target.value,
+                                )
+                              }
+                              style={{
+                                minHeight: '38px',
+                                padding: '0 10px',
+                                borderRadius: '10px',
+                                border: '1px solid rgba(196, 170, 255, .16)',
+                                background: '#120B22',
+                                color: '#FFFFFF',
+                                font: 'inherit',
+                                fontSize: '13.5px',
+                                minWidth: '0',
+                              }}
+                            />
+                            <input
+                              aria-label={'Match link, game ' + (i + 1)}
+                              placeholder="https://… match link"
+                              inputMode="url"
+                              value={g.link}
+                              maxLength={300}
+                              onChange={(e) =>
+                                v.active.matchReport.setGame(
+                                  i,
+                                  'link',
+                                  e.target.value,
+                                )
+                              }
+                              style={{
+                                minHeight: '38px',
+                                padding: '0 10px',
+                                borderRadius: '10px',
+                                border: '1px solid rgba(196, 170, 255, .16)',
+                                background: '#120B22',
+                                color: '#FFFFFF',
+                                font: 'inherit',
+                                fontSize: '13.5px',
+                                minWidth: '0',
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div
+                        style={{
+                          marginTop: '12px',
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <label
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontSize: '13px',
+                            fontWeight: '700',
+                            color: '#5EEAA8',
+                          }}
+                        >
+                          Won
+                          <input
+                            inputMode="numeric"
+                            value={v.active.matchReport.wins}
+                            onChange={(e) =>
+                              v.active.matchReport.setWins(e.target.value)
+                            }
+                            style={{
+                              minHeight: '38px',
+                              padding: '0 10px',
+                              borderRadius: '10px',
+                              border: '1px solid rgba(196, 170, 255, .16)',
+                              background: '#120B22',
+                              color: '#FFFFFF',
+                              font: 'inherit',
+                              fontSize: '13.5px',
+                              minWidth: '0',
+                              width: '56px',
+                              textAlign: 'center',
+                            }}
+                          />
+                        </label>
+                        <label
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontSize: '13px',
+                            fontWeight: '700',
+                            color: '#F0A6FF',
+                          }}
+                        >
+                          Lost
+                          <input
+                            inputMode="numeric"
+                            value={v.active.matchReport.losses}
+                            onChange={(e) =>
+                              v.active.matchReport.setLosses(e.target.value)
+                            }
+                            style={{
+                              minHeight: '38px',
+                              padding: '0 10px',
+                              borderRadius: '10px',
+                              border: '1px solid rgba(196, 170, 255, .16)',
+                              background: '#120B22',
+                              color: '#FFFFFF',
+                              font: 'inherit',
+                              fontSize: '13.5px',
+                              minWidth: '0',
+                              width: '56px',
+                              textAlign: 'center',
+                            }}
+                          />
+                        </label>
+                        <span style={{ fontSize: '12.5px', color: '#8E84AB' }}>
+                          of {v.active.games}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={v.active.matchReport.save}
+                          disabled={v.active.matchReport.busy}
+                          style={{
+                            marginLeft: 'auto',
+                            minHeight: '38px',
+                            padding: '0 16px',
+                            borderRadius: '12px',
+                            border: 'none',
+                            background: v.active.matchReport.saved
+                              ? 'rgba(94, 234, 168, .14)'
+                              : '#D6BBFF',
+                            color: v.active.matchReport.saved
+                              ? '#5EEAA8'
+                              : '#17092E',
+                            fontWeight: '700',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {v.active.matchReport.busy
+                            ? 'Saving…'
+                            : v.active.matchReport.saved
+                              ? 'Saved ✓'
+                              : 'Save report'}
+                        </button>
+                      </div>
+                      {v.active.matchReport.err ? (
+                        <p
+                          role="alert"
+                          style={{
+                            margin: '8px 0 0',
+                            fontSize: '13px',
+                            color: '#F0A6FF',
+                          }}
+                        >
+                          {v.active.matchReport.err}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
                   {/* finish with proof: screenshots of the match history / session, then mark as done */}
                   <div
                     className="tm-live-proof"
@@ -3325,6 +3797,119 @@ export default class Teammate extends React.Component {
                       >
                         Read back desk
                       </button>
+                    ) : null}
+                    {v.active.canHandover ? (
+                      <div
+                        data-handover
+                        style={{
+                          marginTop: '16px',
+                          padding: '14px 16px',
+                          borderRadius: '16px',
+                          background: 'rgba(196, 170, 255, .06)',
+                          border: '1px solid rgba(196, 170, 255, .14)',
+                        }}
+                      >
+                        <div style={{ fontWeight: '700', color: '#FFFFFF' }}>
+                          Customer asked for another teammate?
+                        </div>
+                        <p
+                          style={{
+                            margin: '4px 0 12px',
+                            fontSize: '13px',
+                            lineHeight: '1.5',
+                            color: '#A79DC4',
+                          }}
+                        >
+                          Make a one-time link and send it to that teammate.
+                          When they take it, the order and the chat move to them
+                          and the customer is told. You don’t get paid for this
+                          order then.
+                        </p>
+                        {v.active.handoverUrl ? (
+                          <>
+                            <div
+                              style={{
+                                padding: '10px 12px',
+                                borderRadius: '12px',
+                                background: '#090414',
+                                border: '1px solid rgba(196, 170, 255, .16)',
+                                fontFamily: 'ui-monospace, Consolas, monospace',
+                                fontSize: '12.5px',
+                                color: '#CFC4EA',
+                                overflowWrap: 'anywhere',
+                              }}
+                            >
+                              {v.active.handoverUrl}
+                            </div>
+                            <div
+                              style={{
+                                marginTop: '10px',
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                alignItems: 'center',
+                                gap: '8px',
+                              }}
+                            >
+                              <button
+                                type="button"
+                                onClick={v.active.copyHandover}
+                                style={{
+                                  minHeight: '38px',
+                                  padding: '0 14px',
+                                  borderRadius: '12px',
+                                  border: 'none',
+                                  background: '#D6BBFF',
+                                  color: '#17092E',
+                                  fontWeight: '700',
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                {v.active.handoverCopied
+                                  ? 'Copied'
+                                  : 'Copy link'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={v.active.cancelHandover}
+                                style={{
+                                  minHeight: '38px',
+                                  padding: '0 14px',
+                                  borderRadius: '12px',
+                                  border: '1px solid rgba(196, 170, 255, .2)',
+                                  background: 'transparent',
+                                  color: '#CFC4EA',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                Cancel link
+                              </button>
+                              <span
+                                style={{ fontSize: '12.5px', color: '#8E84AB' }}
+                              >
+                                Works until {v.active.handoverUntil}, once.
+                              </span>
+                            </div>
+                          </>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={v.active.makeHandover}
+                            style={{
+                              minHeight: '40px',
+                              padding: '0 16px',
+                              borderRadius: '12px',
+                              border: '1px solid rgba(214, 187, 255, .35)',
+                              background: 'transparent',
+                              color: '#F3EEFF',
+                              fontWeight: '700',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Hand over this order
+                          </button>
+                        )}
+                      </div>
                     ) : null}
                     {FEATURES.legacyProof ? (
                       <>
@@ -5074,7 +5659,9 @@ export default class Teammate extends React.Component {
                       }}
                     >
                       {v.gamerGirl
-                        ? 'You’re a Gamer Girl teammate: you get Gamer Girl orders for the games you turn on.'
+                        ? v.gamerGirlComp
+                          ? 'You’re a Gamer Girl teammate: Gamer Girl orders for the games you turn on, and comp orders for your approved games.'
+                          : 'You’re a Gamer Girl teammate: you get Gamer Girl orders for the games you turn on.'
                         : v.noAccess
                           ? 'No games unlocked yet. An admin approves which games you can take.'
                           : 'You only get orders for the games you turn on. Missing a game? Ask an admin to unlock it.'}

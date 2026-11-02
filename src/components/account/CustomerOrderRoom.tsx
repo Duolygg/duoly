@@ -125,7 +125,7 @@ export default function CustomerOrderRoom({
       </p>
       {error && (
         <p className="co-error" role="alert" tabIndex={-1} ref={errorRef}>
-          {error} <a href="/login">Sign in</a> if your session ended.
+          {error} <a href="/?signin=1">Sign in</a> if your session ended.
         </p>
       )}
       <p role="status" aria-live="polite">

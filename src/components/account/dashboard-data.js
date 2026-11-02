@@ -18,6 +18,53 @@ const get = async (url) => {
   return res.json();
 };
 const ms = (iso) => (iso ? Date.parse(iso) : null);
+
+// Stripe payment method types, as customers know them (Apple Pay and Google Pay arrive as card)
+const METHODS = {
+  card: 'Card',
+  paypal: 'PayPal',
+  klarna: 'Klarna',
+  amazon_pay: 'Amazon Pay',
+  revolut_pay: 'Revolut Pay',
+  link: 'Link',
+  ideal: 'iDEAL',
+  bancontact: 'Bancontact',
+  eps: 'EPS',
+  blik: 'BLIK',
+  twint: 'TWINT',
+  p24: 'Przelewy24',
+  mobilepay: 'MobilePay',
+  multibanco: 'Multibanco',
+  alipay: 'Alipay',
+  wechat_pay: 'WeChat Pay',
+  sepa_debit: 'SEPA Direct Debit',
+  satispay: 'Satispay',
+};
+const methodName = (type) =>
+  METHODS[type] ||
+  (type
+    ? type.charAt(0).toUpperCase() + type.slice(1).replace(/_/g, ' ')
+    : 'Card');
+
+/**
+ * What the customer paid, as they paid it (order_customer_dto payment, 20261102120000): a card part
+ * Stripe charged in USD shows in USD; EUR (and any other currency, or a part paid from the wallet)
+ * shows the EUR price. Null for a free order or before the migration (callers fall back to EUR).
+ */
+export function paidOf(o) {
+  const p = o.payment;
+  if (!p || o.free_perk) return null;
+  const wallet = p.wallet_eur_cents > 0;
+  const card = p.amount_minor !== null;
+  return {
+    ...(card && !wallet && p.currency === 'USD'
+      ? { currency: 'USD', total: p.amount_minor / 100 }
+      : { currency: 'EUR', total: o.amount_eur_cents / 100 }),
+    method: !card
+      ? 'Duoly balance'
+      : methodName(p.method) + (wallet ? ' + Duoly balance' : ''),
+  };
+}
 const CANCELLED = {
   queue_expired: 'Nobody took it in 5 minutes · not charged',
   customer_cancelled: 'You cancelled · not charged',
@@ -54,7 +101,7 @@ export function toOriginalOrder(o) {
     createdAt: ms(o.created_at),
     completedAt: ms(o.completed_at),
     amountEur: o.amount_eur_cents / 100,
-    paid: null,
+    paid: paidOf(o),
     cashback: 0,
     refund: null,
     cancelReason:

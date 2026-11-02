@@ -224,6 +224,8 @@ describe('original teammate adapter', () => {
       allowedGames: ['lol', 'val'],
       enabledGames: ['lol'],
       ggAccess: false,
+      // comp games (20261102140000): before the migration, the approved games
+      compGames: ['lol', 'val'],
       voiceOptIn: false,
     });
     expect(
@@ -237,6 +239,8 @@ describe('original teammate adapter', () => {
       allowedGames: ['lol', 'val'],
       enabledGames: ['lol'],
       ggAccess: false,
+      // comp games (20261102140000): before the migration, the approved games
+      compGames: ['lol', 'val'],
       voiceOptIn: false,
     });
   });

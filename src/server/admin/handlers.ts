@@ -185,6 +185,20 @@ export const applications = adminRoute(
   ],
 );
 
+/** Admin, Teammates, Match reports: what teammates reported on win/loss orders (20261102160000). */
+export const matchReports = adminRoute((client, context) => {
+  const page = pageParams(context.url);
+  return (
+    client.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => PromiseLike<{ data: unknown; error: unknown }>
+  ).call(client, 'admin_match_reports', {
+    p_limit: page.limit,
+    p_offset: page.offset,
+  });
+}, []);
+
 export const teammates = adminRoute(
   (client) => client.rpc('admin_teammates'),
   [

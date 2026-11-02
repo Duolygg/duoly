@@ -1,6 +1,6 @@
 // Order room pieces shared by the real order room (QueueRoom.jsx) and the homepage preview
-// (home/QueuePreview.jsx), so both look the same: the stage, queue timer, steps, order card, chat
-// and review thanks. The stage (default export) is the matchmaking view from the order room: your card and the teammate slot, linked in the middle.
+// (home/QueuePreview.jsx), so both look the same: the stage, queue timer, steps, order card, chat,
+// "You’re covered" panel, review and tip form, and review thanks. The stage (default export) is the matchmaking view from the order room: your card and the teammate slot, linked in the middle.
 // While searching, the slot cycles through faces inside a spinning border and two dots flow between
 // you; on a match the teammate pops in with a green check and confetti bursts. Shared by the real
 // order room (QueueRoom.jsx) and the homepage preview (home/QueuePreview.jsx), so both look the same.
@@ -22,6 +22,16 @@ const ACCENT = '#D6BBFF',
 export const BOUNTY = 50;
 export const STAR =
   'M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z';
+// what customers can do once matched (kept in sync with lib/orders.js REVIEW_TAGS and lib/reports.js)
+export const REVIEW_TAGS = [
+  'Great comms',
+  'Shotcaller',
+  'Super friendly',
+  'Taught me a lot',
+  'Carried hard',
+  'Patient',
+  'Fun to play with',
+];
 // quick replies offered before the customer's first message
 const QUICK = [
   'Invite sent?',
@@ -1340,6 +1350,15 @@ export function ReviewStars({ n, size }) {
 }
 
 /** After a review: THANK YOU, the stars and what was rated (and tipped). A pending tip goes in children. */
+/** A tip as the customer picked it: $5.00 for a dollar tip (charged in EUR), else €4.42. */
+/** €5, or €4.58 when it has cents */
+export const tipAmount = (sym, n) => sym + n.toFixed(2).replace(/\.00$/, '');
+/** A tip as the customer picked it: $5 for a dollar tip (charged in EUR), else €5. */
+export const tipMoney = (tip) =>
+  tip.shown
+    ? tipAmount('$', tip.shown.amount)
+    : tipAmount(tip.currency === 'USD' ? '$' : '€', tip.amount);
+
 export function ReviewThanks({ name, rating, tip, children }) {
   return (
     <div className="q-review" style={{ textAlign: 'center' }}>
@@ -1358,12 +1377,7 @@ export function ReviewThanks({ name, rating, tip, children }) {
       </div>
       <p style={{ margin: '10px 0 0', color: '#FFFFFF', fontWeight: '600' }}>
         You rated {name} {rating}/5
-        {tip
-          ? ' and tipped ' +
-            (tip.currency === 'USD' ? '$' : '€') +
-            tip.amount.toFixed(2)
-          : ''}
-        .
+        {tip ? ' and left a ' + tipMoney(tip) + ' tip' : ''}.
       </p>
       <p style={{ margin: '4px 0 0', fontSize: '13.5px', color: MUTED }}>
         {tip ? '100% of your tip goes to ' + name + '. ' : ''}Your feedback
@@ -1606,6 +1620,387 @@ export function CoveredPanel({
           ))}
         </div>
       ) : null}
+    </section>
+  );
+}
+
+/** After the order: stars, quick tags, a few words and a tip. `rv` is the form state
+ * ({rating, hover, tags, text, tip, custom, err}); `onEdit(fn)` merges fn(rv) into it. */
+export function ReviewForm({ name, sym, rv, busy, tips, onEdit, onSend }) {
+  const stars = (n, size, interactive) => (
+    <div
+      role={interactive ? 'radiogroup' : undefined}
+      aria-label={interactive ? 'Rating' : 'Rated ' + n + ' out of 5'}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        gap: size > 30 ? '8px' : '3px',
+      }}
+      onMouseLeave={
+        interactive ? () => onEdit(() => ({ hover: 0 })) : undefined
+      }
+    >
+      {[1, 2, 3, 4, 5].map((i) => {
+        const on = i <= n;
+        const star = (
+          <svg
+            aria-hidden="true"
+            width={size}
+            height={size}
+            viewBox="0 0 24 24"
+            style={{
+              display: 'block',
+              transition: 'transform .15s',
+              transform: interactive && i === rv.hover ? 'scale(1.15)' : 'none',
+            }}
+          >
+            <path
+              d={STAR}
+              fill={on ? GOLD : 'rgba(196, 170, 255, .14)'}
+              stroke={on ? GOLD : 'rgba(196, 170, 255, .25)'}
+              strokeWidth="1"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+        return interactive ? (
+          <button
+            key={i}
+            type="button"
+            role="radio"
+            aria-checked={rv.rating === i ? 'true' : 'false'}
+            aria-label={i + (i === 1 ? ' star' : ' stars')}
+            onMouseEnter={() => onEdit(() => ({ hover: i }))}
+            onClick={() => onEdit(() => ({ rating: i, err: '' }))}
+            style={{
+              padding: '2px',
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              transform: 'none',
+            }}
+          >
+            {star}
+          </button>
+        ) : (
+          <span key={i}>{star}</span>
+        );
+      })}
+    </div>
+  );
+
+  const shown = rv.hover || rv.rating;
+  const words = [
+    '',
+    'Not great',
+    'Could be better',
+    'Good',
+    'Great',
+    'Amazing!',
+  ];
+  const tipVal = tips
+    ? rv.tip === 'custom'
+      ? Number(String(rv.custom).replace(',', '.')) || 0
+      : Number(rv.tip) || 0
+    : 0;
+  const chip = (on) => ({
+    minHeight: '36px',
+    padding: '0 13px',
+    borderRadius: '999px',
+    fontSize: '13.5px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transform: 'none',
+    border: '1px solid ' + (on ? ACCENT : 'rgba(196, 170, 255, .16)'),
+    background: on ? 'rgba(214, 187, 255, .14)' : 'transparent',
+    color: on ? '#FFFFFF' : '#CFC4EA',
+  });
+  return (
+    <div className="q-review">
+      <div style={{ textAlign: 'center' }}>
+        <div
+          style={{
+            fontFamily: DISPLAY,
+            fontSize: '20px',
+            fontWeight: '800',
+            letterSpacing: '-.02em',
+            color: '#FFFFFF',
+          }}
+        >
+          Rate your session with {name}
+        </div>
+        <div style={{ marginTop: '12px' }}>{stars(shown, 40, true)}</div>
+        <div
+          aria-live="polite"
+          style={{
+            marginTop: '6px',
+            minHeight: '20px',
+            fontSize: '14px',
+            fontWeight: '700',
+            color: shown ? GOLD : DIM,
+          }}
+        >
+          {shown ? words[shown] : 'Tap to rate'}
+        </div>
+      </div>
+
+      {rv.rating ? (
+        <div style={{ animation: 'dlfade .25s ease-out' }}>
+          <div
+            style={{
+              marginTop: '14px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '6px',
+            }}
+          >
+            {REVIEW_TAGS.map((t) => {
+              const on = rv.tags.includes(t);
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  aria-pressed={on ? 'true' : 'false'}
+                  onClick={() =>
+                    onEdit((x) => ({
+                      tags: x.tags.includes(t)
+                        ? x.tags.filter((y) => y !== t)
+                        : x.tags.concat(t).slice(-4),
+                    }))
+                  }
+                  style={chip(on)}
+                >
+                  {t}
+                </button>
+              );
+            })}
+          </div>
+          <textarea
+            value={rv.text}
+            onChange={(e) => {
+              const text = e.target.value;
+              onEdit(() => ({ text }));
+            }}
+            maxLength={500}
+            rows={3}
+            placeholder={
+              'Anything you’d like ' + name + ' or us to know? (optional)'
+            }
+            aria-label="Your review"
+            style={{
+              marginTop: '14px',
+              width: '100%',
+              boxSizing: 'border-box',
+              padding: '12px 14px',
+              borderRadius: '14px',
+              border: '1px solid rgba(196, 170, 255, .16)',
+              background: '#090414',
+              color: '#FFFFFF',
+              font: 'inherit',
+              fontSize: '14px',
+              resize: 'vertical',
+              outline: 'none',
+            }}
+          />
+
+          {tips ? (
+            <div className="q-tip">
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '10px',
+                }}
+              >
+                <span style={{ fontWeight: '700', color: '#FFFFFF' }}>
+                  Leave a tip for {name}
+                </span>
+                <span
+                  style={{
+                    fontSize: '12.5px',
+                    color: GREEN,
+                    fontWeight: '600',
+                  }}
+                >
+                  100% goes to {name}
+                </span>
+              </div>
+              <div
+                role="radiogroup"
+                aria-label="Tip"
+                style={{
+                  marginTop: '10px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+                  gap: '6px',
+                }}
+              >
+                {[
+                  [0, 'No tip'],
+                  [2, sym + '2'],
+                  [5, sym + '5'],
+                  [10, sym + '10'],
+                  ['custom', 'Other'],
+                ].map(([val, label]) => {
+                  const on = rv.tip === val;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      role="radio"
+                      aria-checked={on ? 'true' : 'false'}
+                      onClick={() => onEdit(() => ({ tip: val, err: '' }))}
+                      style={{
+                        ...chip(on),
+                        padding: '0 4px',
+                        minHeight: '44px',
+                        borderRadius: '12px',
+                        fontWeight: '700',
+                        ...(on && val
+                          ? {
+                              borderColor: GREEN,
+                              background: 'rgba(94, 234, 168, .1)',
+                              color: GREEN,
+                            }
+                          : {}),
+                      }}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+              {rv.tip === 'custom' ? (
+                <label
+                  style={{
+                    marginTop: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '0 14px',
+                    minHeight: '44px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(196, 170, 255, .16)',
+                    background: '#090414',
+                  }}
+                >
+                  <span style={{ color: MUTED, fontWeight: '700' }}>{sym}</span>
+                  <input
+                    inputMode="decimal"
+                    value={rv.custom}
+                    onChange={(e) => {
+                      const custom = e.target.value
+                        .replace(/[^\d.,]/g, '')
+                        .slice(0, 6);
+                      onEdit(() => ({ custom }));
+                    }}
+                    placeholder="Amount"
+                    aria-label="Tip amount"
+                    style={{
+                      flex: '1',
+                      minWidth: '0',
+                      border: 'none',
+                      background: 'transparent',
+                      color: '#FFFFFF',
+                      font: 'inherit',
+                      fontSize: '15px',
+                      outline: 'none',
+                    }}
+                  />
+                </label>
+              ) : null}
+            </div>
+          ) : null}
+
+          {rv.err ? (
+            <p
+              role="alert"
+              style={{
+                margin: '10px 0 0',
+                fontSize: '13.5px',
+                color: PINK,
+                textAlign: 'center',
+              }}
+            >
+              {rv.err}
+            </p>
+          ) : null}
+          <button
+            type="button"
+            onClick={onSend}
+            disabled={busy}
+            className="q-review-send"
+          >
+            {busy
+              ? 'Sending…'
+              : tipVal > 0
+                ? 'Send rating and ' +
+                  sym +
+                  tipVal.toFixed(2).replace(/\.00$/, '') +
+                  ' tip'
+                : 'Send rating'}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** After the order: the teammate's screenshots that closed it (`children`), with a report link. */
+export function ProofPanel({ reportsEnabled, onReport, children }) {
+  return (
+    <section
+      aria-labelledby="q-proof-h"
+      style={{
+        borderRadius: '24px',
+        background: '#120B22',
+        border: '1px solid rgba(196, 170, 255, .1)',
+        padding: '20px',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '10px',
+        }}
+      >
+        <h2
+          id="q-proof-h"
+          style={{
+            margin: '0',
+            fontSize: '12px',
+            fontWeight: '700',
+            letterSpacing: '.08em',
+            textTransform: 'uppercase',
+            color: DIM,
+          }}
+        >
+          Proof from your teammate
+        </h2>
+        {reportsEnabled ? (
+          <button
+            type="button"
+            onClick={onReport}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              padding: '0',
+              color: PINK,
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transform: 'none',
+            }}
+          >
+            Report
+          </button>
+        ) : null}
+      </div>
+      <div style={{ marginTop: '12px' }}>{children}</div>
     </section>
   );
 }

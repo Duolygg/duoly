@@ -21,7 +21,9 @@ it('is the one footer with the shared links on every page', () => {
   const html = renderToStaticMarkup(React.createElement(SiteFooter));
   expect(html).toContain('class="site-footer"');
   expect(html).toContain('Made in Vienna, Austria');
-  for (const href of ['/imprint', '/terms', '/privacy', '/rules'])
+  for (const href of ['/imprint', '/terms', '/privacy'])
     expect(html).toContain(`href="${href}"`);
+  // the teammate rules are for teammates: never linked for visitors
+  expect(html).not.toContain('href="/rules"');
   expect(html).not.toMatch(/[–—]/);
 });

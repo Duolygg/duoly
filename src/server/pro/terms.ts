@@ -24,13 +24,13 @@ export const PRO_TERMS_SECTION: Section = {
   id: 'pro',
   title: 'Duoly PRO',
   blocks: [
-    'Duoly PRO is an optional monthly membership for €4.99 a month. You can always book without it.',
+    'Duoly PRO is an optional monthly membership for €9.99 a month ($9.99 if you use Duoly in US dollars, charged as the euro equivalent when you subscribe). You can always book without it.',
     {
       list: [
         '**10% off every order.** Taken off the price after bundle discounts and before your Duoly balance is used. It doesn’t combine with the creator link discount: if both apply, you get one 10% discount.',
         '**Free re-rolls.** No limit of two re-rolls per order. Re-rolls still only work in the first 5 minutes after a teammate accepts.',
         '**Priority matching.** Your orders are shown to teammates before regular orders, the same head start Gold members get.',
-        '**Free trial.** New members get the first 7 days free, once per account and once per card. Unless you cancel before the trial ends, PRO renews at €4.99 a month.',
+        '**Free trial.** New members get the first 7 days free, once per account and once per card, without entering a card. To keep PRO after the trial, add a card in Manage PRO; PRO then continues at €9.99 (or your $9.99 in euros) a month. Without a card it pauses when the trial ends, and adding one later switches it back on and starts the monthly payment that day.',
         '**Cancel anytime** with Manage PRO on your dashboard. PRO stays on until the end of the period you already paid for and doesn’t renew after that.',
         '**Failed payment.** If a renewal payment fails, your PRO perks stay on for 3 days while you update your card. After that they pause until the payment goes through.',
         '**Withdrawal.** You can withdraw from the membership within 14 days of signing up by writing to hello@duoly.gg.',

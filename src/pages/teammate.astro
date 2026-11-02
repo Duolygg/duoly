@@ -18,7 +18,7 @@ try {
     headers: account.headers,
   });
 }
-if (!identity) return account.redirect('/login');
+if (!identity) return account.redirect('/?signin=1');
 if (identity.viewer.role !== 'teammate')
   return new Response('Not found', { status: 404, headers: account.headers });
 const csrf = account.csrf();

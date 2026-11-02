@@ -16,7 +16,8 @@ export async function pageViewer(
     const viewer = (await account.identity())?.viewer;
     for (const [name, value] of account.headers)
       Astro.response.headers.set(name, value);
-    return { viewer, csrf: viewer ? account.csrf() : '' };
+    // signed out too: the header's sign-in dialog posts its forms with it
+    return { viewer, csrf: account.csrf() };
   } catch {
     return { viewer: undefined, csrf: '' };
   }
