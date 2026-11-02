@@ -82,7 +82,9 @@ function Card({ t }) {
           ) : null}
         </span>
         <span className="rv-with">
-          Played {game ? game.name : 'a session'}
+          {t.game === 'social'
+            ? 'Social session'
+            : 'Played ' + (game ? game.name : 'a session')}
           <br />
           with <b>{t.teammate}</b>
         </span>

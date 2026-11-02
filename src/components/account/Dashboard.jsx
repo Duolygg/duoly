@@ -5,7 +5,7 @@ import { GAME } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
 import { dashboardFetch as fetch } from './dashboard-data';
 import TrustBadge from '../shared/TrustBadge';
-import { proStatusLine } from '../../contracts/pro';
+import { proPrice, proStatusLine } from '../../contracts/pro';
 
 // Port of the original components/Dashboard.jsx (duoly-admin/duoly@7f0299f). Layout and copy are
 // his; data comes from /api/orders/active, /history and /credits through dashboard-data.js.
@@ -310,13 +310,22 @@ export default class Dashboard extends React.Component {
           .reduce((a, c) => a + c.charCodeAt(0), 0) %
           10)) +
       '.png';
-    const eur = (n) => '€' + (n || 0).toFixed(2);
+    // Balances and cashback are kept in EUR. A customer who picked USD sees them in dollars at the
+    // customer rate, as the homepage shows prices and the wallet; an order shows what was charged.
+    const usd = this.props.cur === 'USD';
+    const sym = usd ? '$' : '€';
+    const money = (n) =>
+      sym +
+      (usd
+        ? Math.round((n || 0) * (this.props.usdRate || 1.13) * 100) / 100
+        : n || 0
+      ).toFixed(2);
     const priceOf = (o) =>
       o.freePerk
         ? 'Free with your perk'
         : o.paid
           ? (o.paid.currency === 'USD' ? '$' : '€') + o.paid.total.toFixed(2)
-          : eur(o.amountEur);
+          : money(o.amountEur);
 
     // Activity: games played with a teammate per week (Monday to Sunday), last 12 weeks
     const WEEKS = 12;
@@ -460,10 +469,10 @@ export default class Dashboard extends React.Component {
           ? ''
           : o.status === 'completed'
             ? o.cashback
-              ? '+' + eur(o.cashback) + ' back'
+              ? '+' + money(o.cashback) + ' back'
               : ''
             : o.status === 'cancelled' && o.refund
-              ? eur(o.refund.amountEur) + ' to balance'
+              ? money(o.refund.amountEur) + ' to balance'
               : '',
         backColor: o.status === 'cancelled' ? '#9EE6FF' : '#5EEAA8',
         href: '/queue/' + o.id,
@@ -500,14 +509,14 @@ export default class Dashboard extends React.Component {
     // where the balance comes from and where it went; "from Duoly" = manual adjustments by admins (+ or −)
     const walletParts = h
       ? [
-          h.refunds ? eur(h.refunds) + ' refunded' : '',
-          h.cashbackTotal ? eur(h.cashbackTotal) + ' cashback' : '',
-          h.levelGifts ? eur(h.levelGifts) + ' level gifts' : '',
+          h.refunds ? money(h.refunds) + ' refunded' : '',
+          h.cashbackTotal ? money(h.cashbackTotal) + ' cashback' : '',
+          h.levelGifts ? money(h.levelGifts) + ' level gifts' : '',
           h.gifted
-            ? (h.gifted < 0 ? '−' + eur(-h.gifted) : eur(h.gifted)) +
+            ? (h.gifted < 0 ? '−' + money(-h.gifted) : money(h.gifted)) +
               ' from Duoly'
             : '',
-          h.walletSpent ? '−' + eur(h.walletSpent) + ' spent on orders' : '',
+          h.walletSpent ? '−' + money(h.walletSpent) + ' spent on orders' : '',
         ].filter(Boolean)
       : [];
 
@@ -519,7 +528,9 @@ export default class Dashboard extends React.Component {
       isAdmin: !!u.isAdmin,
       avatar: u.image || '/assets/avatars/avatar-1.png',
       loaded: !!h,
-      wallet: h ? eur(h.wallet) : '€–',
+      wallet: h ? money(h.wallet) : sym + '–',
+      money,
+      sym,
       stats: [
         [
           'Orders with Duoly',
@@ -549,9 +560,9 @@ export default class Dashboard extends React.Component {
       ],
       giftedNote: walletParts.length ? walletParts.join(' · ') : '',
       walletBucketNote: h
-        ? eur(h.walletCashable || 0) +
+        ? money(h.walletCashable || 0) +
           ' cashable refunds · ' +
-          eur(h.walletPromo || 0) +
+          money(h.walletPromo || 0) +
           ' promotional credit'
         : '',
       // level-up gifts go into the balance automatically (lib/orders.js moneyOf), nothing to claim
@@ -1171,6 +1182,8 @@ export default class Dashboard extends React.Component {
               cashbackPending={v.rewards.cashbackPending}
               pendingOrders={v.rewards.pendingOrders}
               perks={v.rewards.perks || null}
+              money={v.money}
+              sym={v.sym}
               giftClaimed={v.rewards.giftClaimed}
             />
           ) : null}
@@ -1934,7 +1947,7 @@ export default class Dashboard extends React.Component {
                       it hasn’t yet.
                     </p>
                   ) : null}
-                  {proStatusLine(this.props.pro) ? (
+                  {proStatusLine(this.props.pro, proPrice(this.props.cur)) ? (
                     <p
                       data-pro-status
                       style={{
@@ -1944,7 +1957,7 @@ export default class Dashboard extends React.Component {
                         maxWidth: '240px',
                       }}
                     >
-                      {proStatusLine(this.props.pro)}
+                      {proStatusLine(this.props.pro, proPrice(this.props.cur))}
                     </p>
                   ) : null}
                   <ul
@@ -1964,7 +1977,7 @@ export default class Dashboard extends React.Component {
                     <li>
                       {this.props.pro.member || !this.props.pro.trialEligible
                         ? '✓ Cancel anytime'
-                        : '✓ 7 days free, cancel anytime'}
+                        : '✓ 7 days free, no card needed'}
                     </li>
                   </ul>
                   {this.state.proError ? (
@@ -2003,8 +2016,8 @@ export default class Dashboard extends React.Component {
                     {this.props.pro.manage
                       ? 'Manage PRO'
                       : this.props.pro.trialEligible
-                        ? 'Try PRO · €4.99/month'
-                        : 'Get PRO · €4.99/month'}
+                        ? 'Try PRO free for 7 days'
+                        : 'Get PRO · ' + proPrice(this.props.cur) + '/month'}
                   </a>
                 </section>
               ) : null}

@@ -35,6 +35,10 @@ export const DEMO_COHORT = Array.from({ length: 101 }, (_, index) => {
     ? round(((avgRating! - 1) / 4) * 100)
     : null;
   const ordersScore = eligible ? round(((100 - position) / 99) * 100) : null;
+  // 60 reported games each; the winrate falls with the rank (75% at #1 to 35% at #100)
+  const winLossWins = eligible ? Math.round(60 * (0.75 - index * 0.004)) : 0;
+  const winLossLosses = eligible ? 60 - winLossWins : 0;
+  const winrateScore = eligible ? round((winLossWins * 100) / 60) : null;
   return {
     userId: 'demo-' + position,
     name: names[position] ?? 'Demo Teammate ' + position,
@@ -49,9 +53,15 @@ export const DEMO_COHORT = Array.from({ length: 101 }, (_, index) => {
     retentionScore,
     satisfactionScore,
     ordersScore,
+    winLossWins,
+    winLossLosses,
+    winrateScore,
     score: eligible
       ? round(
-          (retentionScore! * 45 + satisfactionScore! * 35 + ordersScore! * 20) /
+          (retentionScore! * 25 +
+            satisfactionScore! * 20 +
+            ordersScore! * 15 +
+            winrateScore! * 40) /
             100,
         )
       : null,
@@ -76,13 +86,15 @@ export const DEMO_DATA = {
   discordEnabled: true, // Enables the shared status filter for simulated states only.
   run: { at: AT, eligible: 100, teammates: 101, trigger: 'demo', by: null },
   settings: {
-    w_retention: 45,
-    w_satisfaction: 35,
-    w_orders: 20,
+    w_retention: 25,
+    w_satisfaction: 20,
+    w_orders: 15,
+    w_winrate: 40,
     window_days: 90,
     min_orders: 10,
     min_reviews: 5,
     min_customers: 3,
+    min_wl_games: 20,
     updated_at: AT,
     updated_by: null,
   },

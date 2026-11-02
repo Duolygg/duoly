@@ -22,7 +22,9 @@ type Rpc = (
   fn: string,
   args?: Record<string, unknown>,
 ) => PromiseLike<{ data: unknown; error: unknown }>;
-const rpcOf = (client: SupabaseClient) => client.rpc as unknown as Rpc;
+// bound: supabase-js rpc reads `this`, so a detached `client.rpc` throws before any request
+const rpcOf = (client: SupabaseClient) =>
+  client.rpc.bind(client) as unknown as Rpc;
 
 const idOf = (value: unknown): string | null => {
   if (typeof value === 'string') return value;
@@ -117,6 +119,65 @@ export function invoiceSubscriptionId(object: unknown): string | null {
   return id?.startsWith('sub_') ? id : null;
 }
 
+/** Records a subscription the server just created (the trial start), like its webhook would. */
+export function syncProSubscription(
+  stripe: Stripe,
+  admin: SupabaseClient,
+  subscriptionId: string,
+): Promise<string> {
+  return syncSubscription(
+    stripe,
+    admin,
+    subscriptionId,
+    Math.floor(Date.now() / 1000),
+  );
+}
+
+/**
+ * A card saved in Manage PRO (the customer's default payment method): put it on their PRO
+ * subscription, and resume one the trial paused for lack of a card. Billing starts now.
+ */
+async function cardAdded(
+  stripe: Stripe,
+  object: unknown,
+): Promise<string | null> {
+  const customer = object as {
+    id?: unknown;
+    invoice_settings?: { default_payment_method?: unknown } | null;
+  };
+  const customerId = idOf(customer.id);
+  const method = idOf(customer.invoice_settings?.default_payment_method);
+  if (!customerId?.startsWith('cus_') || !method?.startsWith('pm_'))
+    return null;
+  const list = await stripe.subscriptions.list({
+    customer: customerId,
+    status: 'all',
+    limit: 10,
+  });
+  const pro = list.data.filter(
+    (s) =>
+      s.metadata?.kind === PRO_METADATA_KIND &&
+      ['trialing', 'paused', 'past_due', 'unpaid'].includes(s.status),
+  );
+  if (!pro.length) return null;
+  for (const sub of pro) {
+    if (idOf(sub.default_payment_method) !== method)
+      await stripe.subscriptions.update(
+        sub.id,
+        { default_payment_method: method },
+        { idempotencyKey: `pro_card_${sub.id}_${method}` },
+      );
+    if (sub.status === 'paused')
+      // resuming starts a new monthly period today (Stripe's default anchor) and bills it now
+      await stripe.subscriptions.resume(
+        sub.id,
+        {},
+        { idempotencyKey: `pro_resume_${sub.id}_${method}` },
+      );
+  }
+  return 'pro_card_added';
+}
+
 async function syncSubscription(
   stripe: Stripe,
   admin: SupabaseClient,
@@ -208,6 +269,7 @@ export async function handleProEvent(
     if (!subscriptionId?.startsWith('sub_')) return 'pro_not_ours';
     return syncSubscription(stripe, admin, subscriptionId, event.created);
   }
+  if (event.type === 'customer.updated') return cardAdded(stripe, object);
   if ((PRO_INVOICE_EVENTS as readonly string[]).includes(event.type)) {
     const subscriptionId = invoiceSubscriptionId(object);
     const invoice = object as {

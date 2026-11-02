@@ -1,6 +1,7 @@
 ---
 import '../design-reference/globals.css';
 import CookieBanner from '../components/site/CookieBanner.astro';
+import SiteAuthDialog from '../components/auth/SiteAuthDialog.jsx';
 import { UPLOADED_AVATAR, type Viewer } from '../contracts/account';
 import SiteFooter from '../components/site/SiteFooter.jsx';
 import { MAIN_NAV, ROLE_HOME } from '../site/nav';
@@ -27,6 +28,9 @@ const {
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const home = viewer ? ROLE_HOME[viewer.role] : null;
 const initial = (viewer?.name || 'P').trim().charAt(0).toUpperCase();
+// Signed out: "Sign in" (and any other link to /login) opens the homepage's sign-in popup in
+// place. Without JavaScript, or without a token, the link still goes to /login.
+const signInPopup = !viewer && !bare && !!csrf && path !== '/login';
 const avatar =
   viewer?.image &&
   (viewer.image.startsWith('/assets/avatars/') ||
@@ -126,9 +130,11 @@ const avatar =
                   <a role="menuitem" href="/profile">
                     Edit profile
                   </a>
-                  <a role="menuitem" href="/rules">
-                    Rules
-                  </a>
+                  {viewer.role !== 'customer' && (
+                    <a role="menuitem" href="/rules">
+                      Teammate rules
+                    </a>
+                  )}
                   <a role="menuitem" href="/contact">
                     Help
                   </a>
@@ -191,6 +197,7 @@ const avatar =
         })
         .catch(() => {});
     </script>}
+    {signInPopup && <SiteAuthDialog csrf={csrf} client:idle />}
     <CookieBanner />
     <script is:inline>
       // Close open header menus on outside click or Escape.

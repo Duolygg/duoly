@@ -1,5 +1,5 @@
 import type Stripe from 'stripe';
-import type { TipPayment, TipPrepared } from '../../contracts/tips';
+import type { TipPayment, TipPrepared, TipShown } from '../../contracts/tips';
 
 export type { TipPayment };
 
@@ -30,6 +30,7 @@ export async function createTipIntent(input: {
   email: string | null;
   fx: number;
   publishableKey: string;
+  shown?: TipShown | null;
 }): Promise<TipPayment> {
   const intent = await input.stripe.paymentIntents.create(
     tipIntentParams(input.prepared, input.email),
@@ -53,5 +54,6 @@ export async function createTipIntent(input: {
     amount: input.prepared.amountCents / 100,
     currency: 'EUR',
     teammate: input.prepared.teammate,
+    shown: input.shown ?? null,
   };
 }

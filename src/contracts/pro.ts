@@ -83,18 +83,30 @@ const proDate = (value: number | null) =>
       })
     : '';
 
+/** The monthly price: €9.99, or $9.99 for a customer who uses USD (charged in euros). */
+export function proPrice(cur: 'EUR' | 'USD' = 'EUR'): string {
+  return cur === 'USD' ? '$9.99' : '€9.99';
+}
+
 /** One line under the dashboard PRO heading for members and memberships that need the portal. */
-export function proStatusLine(pro: ProView | null | undefined): string {
+export function proStatusLine(
+  pro: ProView | null | undefined,
+  price = '€9.99',
+): string {
   if (!pro) return '';
   if (pro.status === 'past_due')
     return pro.member && pro.graceUntil
       ? `Your last payment failed. PRO stays on until ${proDate(pro.graceUntil)}. Update your card to keep it.`
       : 'Your last payment failed. Update your card to switch PRO back on.';
   if (!pro.member)
-    return pro.manage ? 'Update your card to switch PRO back on.' : '';
+    return pro.status === 'paused'
+      ? `Your free trial has ended. Add a card in Manage PRO to switch PRO back on (${price}/month).`
+      : pro.manage
+        ? 'Update your card to switch PRO back on.'
+        : '';
   if (pro.cancelAtPeriodEnd)
     return `PRO ends on ${proDate(pro.periodEnd ?? pro.trialEnd)}.`;
   if (pro.status === 'trialing')
-    return `Free trial until ${proDate(pro.trialEnd)}, then €4.99/month. Cancel anytime.`;
+    return `Free trial until ${proDate(pro.trialEnd)}. To keep PRO after that, add a card in Manage PRO: ${price}/month, cancel anytime.`;
   return pro.periodEnd ? `Renews on ${proDate(pro.periodEnd)}.` : '';
 }

@@ -55,6 +55,8 @@ export default class Claim extends React.Component {
         state: d.state,
         order: claimOrder(d.order),
         by: d.by || '',
+        // 'teammate': a teammate hands over an order they're playing (20261102150000)
+        kind: d.kind || '',
         expiresAt: d.expiresAt ? Date.parse(d.expiresAt) : 0,
         now: Date.now(),
         error: d.reason || '',
@@ -232,8 +234,15 @@ export default class Claim extends React.Component {
           </h1>
           {s.state === 'open' ? (
             <p style={{ margin: '8px 0 0', color: '#A79DC4' }}>
-              Hi {this.props.user.name.split(' ')[0]}, an admin passed this
-              order to you. Accept it and it’s yours.
+              {s.kind === 'teammate'
+                ? 'Hi ' +
+                  this.props.user.name.split(' ')[0] +
+                  ', ' +
+                  (s.by || 'a teammate') +
+                  ' is handing you an order they’re playing. The customer asked for you. Accept it and it’s yours, with the chat.'
+                : 'Hi ' +
+                  this.props.user.name.split(' ')[0] +
+                  ', an admin passed this order to you. Accept it and it’s yours.'}
             </p>
           ) : msg[1] ? (
             <p style={{ margin: '8px 0 0', color: '#A79DC4' }}>{msg[1]}</p>
@@ -390,7 +399,9 @@ export default class Claim extends React.Component {
                   color: '#8E84AB',
                 }}
               >
-                The order is still in the shared queue, so be quick.
+                {s.kind === 'teammate'
+                  ? (s.by || 'Your teammate') + ' keeps it until you accept.'
+                  : 'The order is still in the shared queue, so be quick.'}
               </p>
             </>
           ) : s.state === 'claimed' ? (

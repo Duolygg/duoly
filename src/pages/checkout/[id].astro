@@ -11,7 +11,7 @@ const account = accountContext(Astro.request, Astro.cookies);
 const identity = await account.identity().catch(() => null);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
-if (!identity) return account.redirect('/login');
+if (!identity) return account.redirect('/?signin=1');
 const config = paymentsConfig();
 const id = Astro.params.id ?? '';
 if (!config || !/^[0-9a-f-]{36}$/i.test(id)) return Astro.rewrite('/404');

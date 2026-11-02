@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { WinLossSchema } from './match-reports';
 
 export const REVIEW_TAGS = [
   'Great comms',
@@ -28,6 +29,8 @@ export const ReviewInputSchema = z.strictObject({
   tip_cents: z
     .union([z.literal(0), z.number().int().min(100).max(10000)])
     .default(0),
+  // the currency tip_cents is in: a USD tip is converted and charged in EUR
+  tip_currency: z.enum(['EUR', 'USD']).default('EUR'),
 });
 
 const ReviewStatsSchema = z.strictObject({
@@ -51,6 +54,8 @@ const ReviewStatsSchema = z.strictObject({
     .optional(),
   rating: z.number().min(1).max(5).nullable(),
   reviews: z.number().int().nonnegative(),
+  // Added by 20261102160000 (match reports); optional so code can deploy first.
+  winLoss: WinLossSchema.optional(),
   tipsTotal: z.number().nonnegative(),
   recent: z.array(
     z.union([

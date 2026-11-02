@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
+import { emailAuth, signInWith } from '../../client/auth-actions';
 import type { Currency, Viewer } from '../../contracts/account';
 import type {
   HeroTeammate,
@@ -42,6 +43,7 @@ export default function LiveHome({
   teammates: initialTeammates = [],
   authError = null,
   pro = null,
+  askLogin = false,
 }: {
   viewer: Viewer | null;
   csrf: string;
@@ -56,8 +58,17 @@ export default function LiveHome({
   teammates?: HeroTeammate[];
   authError?: string | null;
   pro?: ProView | null;
+  /** open the sign-in dialog on load (a signed-out visit to a page that needs an account) */
+  askLogin?: boolean;
 }) {
   const [walletEur, setWalletEur] = useState<number | undefined>(undefined);
+  // /?signin=1 opened the sign-in dialog; drop it from the address so a reload doesn't reopen it
+  useEffect(() => {
+    if (!askLogin) return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('signin');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+  }, [askLogin]);
   const [live, setLive] = useState({
     onlineNow: initialOnline,
     recentMatches: initialMatches,
@@ -160,69 +171,19 @@ export default function LiveHome({
     });
     if (response.ok) window.location.assign('/');
   };
-  // Google and Discord: the same server route the sign-in page uses.
+  // Google, Discord and email: the same routes as the sign-in page (client/auth-actions.ts).
+  // A pending order is remembered first, so a sign-in comes straight back to pay.
   const onSignIn = (provider: string) => {
     rememberCheckout();
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/auth/oauth';
-    for (const [name, value] of [
-      ['csrf', csrf],
-      ['provider', provider],
-    ] as const) {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-    }
-    document.body.appendChild(form);
-    form.submit();
+    signInWith(provider, csrf);
   };
-  // Email and password: answered as JSON so the popup shows messages in place.
-  const onEmailAuth = async (form: {
+  const onEmailAuth = (form: {
     mode: 'login' | 'register';
     email: string;
     password: string;
-  }): Promise<string | null> => {
+  }) => {
     rememberCheckout();
-    try {
-      const response = await fetch(
-        form.mode === 'register'
-          ? '/auth/password/register'
-          : '/auth/password/login',
-        {
-          method: 'POST',
-          credentials: 'same-origin',
-          redirect: 'error',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Duoly-Auth': 'popup',
-          },
-          body: JSON.stringify({
-            csrf,
-            email: form.email,
-            password: form.password,
-          }),
-        },
-      );
-      const data = (await response.json().catch(() => ({}))) as {
-        redirect?: string;
-        error?: string;
-        notice?: string;
-      };
-      if (data.redirect?.startsWith('/')) {
-        window.location.assign(data.redirect);
-        return null;
-      }
-      return (
-        data.error ??
-        data.notice ??
-        'Sign-in didn’t work. Reload the page and try again.'
-      );
-    } catch {
-      return 'Can’t reach Duoly right now. Check your connection and try again.';
-    }
+    return emailAuth(form, csrf);
   };
   // Perks (migration 20261026160000): null hides every perk control (not live or not allowed).
   const loadPerks = async (): Promise<CustomerPerks | null> => {
@@ -301,7 +262,7 @@ export default function LiveHome({
       onCurrency={saveCurrency}
       onAutoCurrency={saveAutoCurrency}
       authError={authError}
-      askLogin={false}
+      askLogin={askLogin}
       onSignIn={onSignIn}
       onSignOut={signOut}
       onEmailAuth={onEmailAuth}

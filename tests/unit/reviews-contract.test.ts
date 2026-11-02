@@ -28,6 +28,7 @@ describe('review contracts', () => {
       text: 'Great teammate',
       tags: ['Great comms', 'Patient'],
       tip_cents: 0,
+      tip_currency: 'EUR',
     });
   });
 

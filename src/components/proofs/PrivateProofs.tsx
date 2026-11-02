@@ -7,6 +7,7 @@ import {
 } from './proof-session';
 import { CompletionControls } from '../teammate/completion-ui';
 import type { Completion } from '../../contracts/completion';
+import type { Proof } from '../../contracts/proofs';
 import './proofs.css';
 
 type ProofProps = {
@@ -28,8 +29,11 @@ export function ProofView({
   onRefresh,
   onSelect,
   onUpload,
+  imageSrc,
 }: ProofProps & {
   state: ProofState;
+  /** where each image loads from; defaults to the proof API (the homepage preview passes demo images) */
+  imageSrc?: (proof: Proof) => string;
   onRefresh?: () => void;
   onSelect?: (files: File[]) => void;
   onUpload?: () => void;
@@ -62,7 +66,7 @@ export function ProofView({
       {state.error && (
         <p className="proof-error" role="alert" tabIndex={-1} ref={errorRef}>
           {state.error}{' '}
-          {state.kind === 'signed-out' && <a href="/login">Sign in</a>}
+          {state.kind === 'signed-out' && <a href="/?signin=1">Sign in</a>}
         </p>
       )}
       {state.stale && (
@@ -79,11 +83,13 @@ export function ProofView({
       {state.proofs && (
         <ul className="proof-images">
           {state.proofs.map((proof, index) => {
-            const url = proofUrl(
-              orderId,
-              proof,
-              mode === 'teammate' ? assignmentId : undefined,
-            );
+            const url = imageSrc
+              ? imageSrc(proof)
+              : proofUrl(
+                  orderId,
+                  proof,
+                  mode === 'teammate' ? assignmentId : undefined,
+                );
             return (
               <li key={proof.id}>
                 <a

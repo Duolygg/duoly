@@ -26,9 +26,10 @@ describe('admin performance sample data', () => {
       expect(row.ordersScore).toBe(round((lower / 99) * 100));
       expect(row.score).toBe(
         round(
-          (row.retentionScore! * 45 +
-            row.satisfactionScore! * 35 +
-            row.ordersScore! * 20) /
+          (row.retentionScore! * 25 +
+            row.satisfactionScore! * 20 +
+            row.ordersScore! * 15 +
+            row.winrateScore! * 40) /
             100,
         ),
       );

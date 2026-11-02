@@ -14,12 +14,13 @@ test('anonymous desk redirects privately; browser never receives queue or assign
 }) => {
   const response = await request.get('/teammate', { maxRedirects: 0 });
   expect(response.status()).toBe(303);
-  expect(response.headers().location).toBe('/login');
+  expect(response.headers().location).toBe('/?signin=1');
   expectPrivate(response.headers());
   const body = await response.text();
   expect(body).not.toMatch(/DL-[0-9]+|customer_name|payout_usd_cents/);
   await page.goto('/teammate');
-  await expect(page).toHaveURL(/\/login$/);
+  // the homepage with its sign-in dialog (?signin=1 is dropped once it opens)
+  await expect(page).toHaveURL(/\/(\?signin=1)?$/);
   await expect(page.getByRole('button', { name: /accept order/i })).toHaveCount(
     0,
   );

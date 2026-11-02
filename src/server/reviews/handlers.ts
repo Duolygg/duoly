@@ -3,8 +3,15 @@ import {
   ReviewInputSchema,
   TeammateStatsResponseSchema,
 } from '../../contracts/reviews';
-import { TipPreparedSchema } from '../../contracts/tips';
-import { eurToUsd } from '../fx';
+import {
+  TIP_MAX_CENTS,
+  TIP_MIN_CENTS,
+  TIP_USD_MAX_CENTS,
+  TIP_USD_MIN_CENTS,
+  TipPreparedSchema,
+  type TipShown,
+} from '../../contracts/tips';
+import { customerUsdRate, eurToUsd } from '../fx';
 import { adminFor, paymentsConfig, stripeFor } from '../payments/config';
 import { createTipIntent } from '../tips/handler';
 import {
@@ -47,16 +54,29 @@ export const review: APIRoute = async (context) => {
     });
     if (!command.success || context.url.search)
       return account.json({ error: 'Invalid order request.' }, 400);
-    const tipCents = input.data.tip_cents;
-    const config = tipCents ? paymentsConfig() : null;
-    if (tipCents && !config)
+    // A US customer picks the tip in dollars; it is charged in EUR at the customer rate (the
+    // rate the homepage shows USD prices at), and the dollar amount is kept to show back to them.
+    const pickedCents = input.data.tip_cents;
+    const usd = pickedCents > 0 && input.data.tip_currency === 'USD';
+    if (
+      usd &&
+      (pickedCents < TIP_USD_MIN_CENTS || pickedCents > TIP_USD_MAX_CENTS)
+    )
+      return account.json({ error: 'Tips can be from $2 to $100.' }, 400);
+    const config = pickedCents ? paymentsConfig() : null;
+    if (pickedCents && !config)
       return account.json(
         { error: 'Tip payments are unavailable right now.' },
         503,
       );
     const admin = config ? adminFor(config) : null;
-    const fx = tipCents ? await eurToUsd() : null;
-    const reviewRpc = account.client.rpc as unknown as (
+    const fx = pickedCents ? await eurToUsd() : null;
+    const tipCents = usd
+      ? Math.round(pickedCents / customerUsdRate(fx!.rate))
+      : pickedCents;
+    if (tipCents && (tipCents < TIP_MIN_CENTS || tipCents > TIP_MAX_CENTS))
+      return account.json({ error: 'Tips can be from $2 to $100.' }, 400);
+    const reviewRpc = account.client.rpc.bind(account.client) as unknown as (
       name: string,
       args: Record<string, unknown>,
     ) => PromiseLike<{ data: unknown; error: unknown }>;
@@ -121,6 +141,27 @@ export const review: APIRoute = async (context) => {
         },
         200,
       );
+    // a new tip picked in dollars: remember the dollar amount (the stored tip is in EUR)
+    let shown: TipShown | null = tipPrepared.data.tip.shown ?? null;
+    if (usd && tipPrepared.data.paymentIntentId === null) {
+      const picked: TipShown = { currency: 'USD', amount: pickedCents / 100 };
+      const set = await admin!
+        .rpc('order_tip_set_shown', {
+          p_tip_id: tipPrepared.data.tipId,
+          p_currency: 'USD',
+          p_amount_cents: pickedCents,
+        })
+        .then(
+          (r: { data: unknown; error: unknown }) => !r.error && r.data === true,
+          () => false,
+        );
+      if (set) {
+        shown = picked;
+        const order = (result.payload as { order?: { tip?: object | null } })
+          .order;
+        if (order?.tip) order.tip = { ...order.tip, shown };
+      }
+    }
     try {
       const tipPayment = await createTipIntent({
         stripe: stripeFor(config!),
@@ -132,6 +173,7 @@ export const review: APIRoute = async (context) => {
         email: identity.viewer.email,
         fx: fx!.rate,
         publishableKey: config!.publishableKey,
+        shown,
       });
       return account.json({ ...result.payload, tipPayment });
     } catch {

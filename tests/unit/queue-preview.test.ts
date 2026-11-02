@@ -30,6 +30,16 @@ const order = {
 const user = { name: 'Alex', image: '/assets/avatars/avatar-1.png' };
 const mate = { name: 'Mia', image: '/assets/avatars/avatar-2.png' };
 const at = (html: string, s: string) => html.indexOf(s);
+// the review form after the customer filled it in (QueuePreview state.rv)
+const rated = {
+  rating: 5,
+  hover: 0,
+  tags: ['Great comms', 'Patient'],
+  text: 'Super calm, explained every rotation. Thanks!',
+  tip: 5,
+  custom: '',
+  err: '',
+};
 
 describe('shared order room pieces', () => {
   it('the order room renders every piece from MatchStage.jsx', () => {
@@ -40,13 +50,18 @@ describe('shared order room pieces', () => {
       '<QueueSteps steps={v.steps} />',
       '<OrderCard',
       '<ChatPanel',
+      '<ReviewForm',
       '<ReviewThanks',
       '<CoveredPanel',
+      '<ProofPanel',
+      '<PrivateProofs orderId={o.id} mode="customer" />',
     ])
       expect(room).toContain(piece);
     // the order room keeps its own handlers
     expect(room).toContain('onSend={this.send}');
     expect(room).toContain('onDraft={this.setDraft}');
+    expect(room).toContain('onEdit={this.editRv}');
+    expect(room).toContain('onSend={this.sendReview}');
     expect(room).toContain(
       "onReroll={() => this.setState({ modal: 'reroll', modalErr: '' })}",
     );
@@ -204,17 +219,56 @@ describe('homepage order room preview', () => {
     );
   });
 
-  it('when done: GG, the review thanks, every step ticked and the chat closed', () => {
+  it('when done: GG, the review form, every step ticked and the chat closed', () => {
     const html = frame({ phase: 'done' });
     expect(html).toContain('GG!');
     expect(html).toContain(
       'Your 3 games with itskeikooo are done. How was it?',
     );
-    expect(html).toContain('You rated itskeikooo 5/5');
+    expect(html).toContain('Rate your session with itskeikooo');
+    expect(html).toContain('Tap to rate');
     expect(html).toContain('Queue again');
     expect(html).toContain('Order finished · chat closed');
     expect(html).toContain('Locked now that your session is underway');
     expect(html).not.toContain('aria-current="step"');
+  });
+
+  it('when done: the teammate’s proof under the covered panel, as the order room shows it', () => {
+    const html = frame({
+      phase: 'done',
+      matchedAt: Date.UTC(2026, 10, 2, 10, 30),
+    });
+    expect(html).toContain('Proof from your teammate');
+    expect(html).toContain('Private evidence');
+    for (const n of [1, 2, 3]) {
+      expect(html).toContain('/assets/demo/proof-pu-' + n + '.svg');
+      expect(html).toContain('Open evidence image ' + n);
+    }
+    expect(html).toContain('2026-11-02 10:01:00+00:00');
+    expect(at(html, 'You’re covered')).toBeLessThan(
+      at(html, 'Proof from your teammate'),
+    );
+    expect(frame({ phase: 'matched' })).not.toContain(
+      'Proof from your teammate',
+    );
+  });
+
+  it('shows the customer rating and picking a tip, like the order room', () => {
+    const html = frame({ phase: 'done', rv: rated });
+    expect(html).toContain('Amazing!');
+    expect(html).toMatch(/aria-pressed="true"[^>]*>Great comms</);
+    expect(html).toContain('Super calm, explained every rotation.');
+    expect(html).toContain('Leave a tip for itskeikooo');
+    expect(html).toContain('100% goes to itskeikooo');
+    expect(html).toMatch(/aria-checked="true"[^>]*>€5</);
+    expect(html).toContain('Send rating and €5 tip');
+  });
+
+  it('then the thank-you with the tip', () => {
+    const html = frame({ phase: 'done', rv: rated, reviewed: true });
+    expect(html).toContain('You rated itskeikooo 5/5 and left a €5 tip.');
+    expect(html).toContain('100% of your tip goes to itskeikooo.');
+    expect(html).not.toContain('Leave a tip for');
   });
 
   it('sits right after the three steps in "How it works"', () => {
@@ -247,6 +301,14 @@ describe('order room preview prices', () => {
     );
     expect(html).toContain('$18.87');
     expect(html).toContain('get $50 once we confirm it');
+    const tipped = renderToStaticMarkup(
+      h(QueuePreview, {
+        cur: 'USD',
+        conv,
+        frozen: { phase: 'done', rv: { ...rated, tip: 5 } },
+      }),
+    );
+    expect(tipped).toContain('Send rating and $5 tip');
     expect(html).not.toContain('€');
   });
 

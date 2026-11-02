@@ -8,11 +8,16 @@ export default function LiveDashboard({
   csrf,
   pro = null,
   proWelcome = false,
+  cur = 'EUR',
+  usdRate,
 }: {
   viewer: Viewer;
   csrf: string;
   pro?: ProView | null;
   proWelcome?: boolean;
+  /** the customer's currency: the account's, else the one picked on this browser */
+  cur?: 'EUR' | 'USD';
+  usdRate?: number;
 }) {
   const onSignOut = async () => {
     const response = await fetch('/auth/logout', {
@@ -30,6 +35,8 @@ export default function LiveDashboard({
       onSignOut={onSignOut}
       pro={pro}
       proWelcome={proWelcome}
+      cur={cur}
+      usdRate={usdRate}
     />
   );
 }

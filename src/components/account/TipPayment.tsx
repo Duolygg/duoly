@@ -75,11 +75,18 @@ export default function TipPaymentPanel({
     }
   };
 
+  // a dollar tip is shown as picked ($5) and charged in EUR (€4.58); whole amounts without .00
+  const short = (sym: string, n: number) =>
+    sym + n.toFixed(2).replace(/\.00$/, '');
+  const charged = short('€', payment.amount);
+  const picked = payment.shown ? short('$', payment.shown.amount) : charged;
+
   return (
     <div className="q-tip-payment" aria-label="Pay your tip">
       <p style={{ margin: '0 0 12px', color: '#A79DC4', fontSize: '13.5px' }}>
-        Your rating is saved. Pay the separate €{payment.amount.toFixed(2)} tip
-        now. 100% goes to {payment.teammate}.
+        Your rating is saved. Now pay your {picked} tip
+        {payment.shown ? ` (${charged} in euros)` : ''}, and 100% of it goes to{' '}
+        {payment.teammate}.
       </p>
       <div ref={mount} />
       {error ? (
@@ -93,7 +100,7 @@ export default function TipPaymentPanel({
         disabled={!ready || busy}
         onClick={confirm}
       >
-        {busy ? 'Paying…' : `Pay €${payment.amount.toFixed(2)} tip`}
+        {busy ? 'Paying…' : `Pay ${picked} tip`}
       </button>
     </div>
   );

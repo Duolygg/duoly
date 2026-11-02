@@ -123,6 +123,7 @@ describe('tip PaymentIntent', () => {
       amount: 5,
       currency: 'EUR',
       teammate: 'Mika',
+      shown: null,
     });
   });
 });

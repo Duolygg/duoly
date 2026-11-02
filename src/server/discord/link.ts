@@ -20,7 +20,7 @@ export const connect: APIRoute = async (context) => {
     return account.redirect(`/${back}?discord=unavailable`);
   try {
     const identity = await account.identity();
-    if (!identity) return account.redirect('/login');
+    if (!identity) return account.redirect('/?signin=1');
     const { data, error } = await account.client.auth.linkIdentity({
       provider: 'discord',
       options: {

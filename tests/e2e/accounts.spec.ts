@@ -87,7 +87,7 @@ test('real account routes do not expose sample identities to anonymous visitors'
   for (const path of ['/dashboard', '/profile']) {
     const response = await request.get(path, { maxRedirects: 0 });
     expect(response.status()).toBe(303);
-    expect(response.headers().location).toBe('/login');
+    expect(response.headers().location).toBe('/?signin=1');
   }
   expect((await request.get('/api/me/profile')).status()).toBe(401);
 });

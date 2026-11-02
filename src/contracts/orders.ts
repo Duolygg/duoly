@@ -83,6 +83,20 @@ export const CustomerOrderSchema = z.strictObject({
   reports: z.array(CustomerReportSchema).max(2).optional(),
   // Added by 20261026160000: the free monthly Play and Learn order (customer paid 0).
   free_perk: z.boolean().optional(),
+  // Added by 20261102120000; optional so code can deploy before the migration. What Stripe
+  // charged for the card part (in the currency the customer paid in) and the wallet part.
+  payment: z
+    .strictObject({
+      amount_minor: z.number().int().positive().nullable(),
+      currency: z
+        .string()
+        .regex(/^[A-Z]{3}$/)
+        .nullable(),
+      method: z.string().max(40).nullable(),
+      wallet_eur_cents: z.number().int().min(0).max(100000),
+    })
+    .nullable()
+    .optional(),
 });
 
 /** Exact privacy-safe public.order_teammate_dto projection. */
@@ -241,6 +255,12 @@ export const OrderResponseSchemas = {
     orders: z.array(TeammateOrderSchema).max(100),
   }),
   teammateAssignment: z.strictObject({ order: TeammateOrderSchema.nullable() }),
+  // a teammate hands over the order they're playing (20261102150000)
+  teammateHandover: z.strictObject({
+    token: z.string().regex(/^[A-Za-z0-9_-]{24}$/),
+    expiresAt: TimestampSchema,
+  }),
+  teammateHandoverRevoked: z.strictObject({ revoked: z.literal(true) }),
 } as const;
 
 export type CustomerOrder = z.infer<typeof CustomerOrderSchema>;

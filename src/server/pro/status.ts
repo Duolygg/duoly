@@ -6,7 +6,9 @@ type Rpc = (
   fn: string,
   args?: Record<string, unknown>,
 ) => PromiseLike<{ data: unknown; error: unknown }>;
-const rpcOf = (client: SupabaseClient) => client.rpc as unknown as Rpc;
+// bound: supabase-js rpc reads `this`, so a detached `client.rpc` throws before any request
+const rpcOf = (client: SupabaseClient) =>
+  client.rpc.bind(client) as unknown as Rpc;
 
 /**
  * The page-side PRO state. null while PRO is off (the UI then keeps today's markup); the

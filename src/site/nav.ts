@@ -30,7 +30,6 @@ export const FOOTER_COLUMNS = [
     title: 'Help',
     links: [
       { href: '/contact', label: 'Contact' },
-      { href: '/rules', label: 'Rules' },
       { href: DISCORD_INVITE, label: 'Discord' },
     ],
   },
@@ -59,7 +58,7 @@ export const PUBLIC_ROUTES = [
   '/blog',
   '/apply',
   '/creators',
-  '/rules',
+  // '/rules' stays out on purpose: the teammate rules are for teammates, not visitors.
   '/contact',
   '/terms',
   '/privacy',

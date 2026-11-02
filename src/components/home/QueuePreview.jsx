@@ -1,8 +1,9 @@
 // "Watch your order, live": the real order room inside a browser window, playing one scripted order
 // from start to finish: searching (faces cycle, the timer runs fast), a teammate accepts, the chat
-// opens and they talk, then the order is done and reviewed. Every card is the order room's own
-// component (account/MatchStage.jsx: stage, queue timer, steps, order card, chat, "You’re covered"
-// panel, review thanks) in the room's own two-column layout; titles, sublines and buttons copy the
+// opens and they talk, then the order is done: the customer rates it, tags it, leaves a tip and
+// sends it. Every card is the order room's own component (account/MatchStage.jsx: stage, queue
+// timer, steps, order card, chat, "You’re covered" panel, review and tip form, review thanks, the
+// teammate's proof with proofs/PrivateProofs' list) in the room's own two-column layout; titles, sublines and buttons copy the
 // room's wording.
 // It is a picture: nothing in it can be clicked or focused. Runs only while on screen and starts
 // from the search each time it comes into view. Styles: globals.css (qp-*).
@@ -11,10 +12,13 @@ import MatchStage, {
   ChatPanel,
   CoveredPanel,
   OrderCard,
+  ProofPanel,
   QueueSteps,
   QueueTimer,
+  ReviewForm,
   ReviewThanks,
 } from '../account/MatchStage';
+import { ProofView } from '../proofs/PrivateProofs';
 import { GAME, IGN_LABEL } from '../../design-reference/lib/games';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import { rankPrice } from '../../design-reference/lib/ranks';
@@ -50,9 +54,40 @@ const MATE = {
   bio: 'Master in Unite. Calm comms and rotations planned around Zapdos.',
   languages: ['Japanese', 'English'],
 };
+const REVIEW_TEXT = 'Super calm, explained every rotation. Thanks!';
+const TIP = 5; // one of the order room's tip buttons (2, 5, 10)
+// the teammate's screenshots that closed the order: one per game, uploaded a few minutes apart
+// (demo images in public/assets/demo, drawn for this preview), minutes before the order was done;
+// the preview squeezes the 3 games into seconds, so they count back from the match
+const PROOFS = [
+  ['1', 29],
+  ['2', 15],
+  ['3', 1],
+];
+const proofState = (doneAt) => ({
+  kind: 'ready',
+  proofs: PROOFS.map(([n, minsBefore]) => ({
+    id: '00000000-0000-4000-8000-00000000000' + n,
+    order_id: '00000000-0000-4000-8000-000000048321',
+    assignment_id: '00000000-0000-4000-8000-000000000100',
+    mime: 'image/png',
+    byte_size: 1,
+    // as the database sends it, shown as the order room shows it
+    created_at: new Date(doneAt - minsBefore * 60000)
+      .toISOString()
+      .replace(/\.\d+Z$/, '+00:00'),
+  })),
+  stale: false,
+  pending: false,
+  choice: null,
+  error: '',
+  message: '',
+});
+const proofSrc = (proof) =>
+  '/assets/demo/proof-pu-' + proof.id.slice(-1) + '.svg';
 const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 
-// Paced for someone seeing the order room for the first time: about 32 s a loop.
+// Paced for someone seeing the order room for the first time: about 39 s a loop.
 // the search: 33 ticks of 250 ms (about 8 s) take the timer to 1:23
 const TICK_MS = 250;
 const TICK_WAIT_MS = 2600;
@@ -79,8 +114,16 @@ const AFTER_MATCH = [
     },
   ],
   [14000, { phase: 'done' }],
-  // GG holds for 10 s: time to read the review, the steps and the covered panel
-  [24000, { restart: true }],
+  // the review form, filled in like a customer would: stars, two tags, a few words, a €5 tip
+  [15500, { rv: { hover: 5 } }],
+  [16200, { rv: { rating: 5 } }],
+  [17400, { rv: { tags: ['Great comms'] } }],
+  [18200, { rv: { tags: ['Great comms', 'Patient'] } }],
+  [19200, { rv: { text: REVIEW_TEXT } }],
+  [20600, { rv: { tip: TIP } }],
+  [22600, { reviewed: true }],
+  // the thank-you holds for 8 s: time to read it, the steps and the covered panel
+  [30600, { restart: true }],
 ];
 
 export default class QueuePreview extends React.Component {
@@ -101,6 +144,17 @@ export default class QueuePreview extends React.Component {
       typing: false,
       matchedAt: 0, // when the teammate accepted: the re-roll window counts down from here
       now: 0,
+      // the review form (QueueRoom.jsx state.rv), then sent
+      rv: {
+        rating: 0,
+        hover: 0,
+        tags: [],
+        text: '',
+        tip: 0,
+        custom: '',
+        err: '',
+      },
+      reviewed: false,
     };
   }
   componentDidMount() {
@@ -146,6 +200,8 @@ export default class QueuePreview extends React.Component {
           this.setState((s) => ({
             ...(step.phase ? { phase: step.phase } : {}),
             ...('typing' in step ? { typing: step.typing } : {}),
+            ...(step.rv ? { rv: { ...s.rv, ...step.rv } } : {}),
+            ...(step.reviewed ? { reviewed: true } : {}),
             ...(step.say
               ? {
                   chat: s.chat.concat({
@@ -168,8 +224,18 @@ export default class QueuePreview extends React.Component {
     this._timers = [];
   }
   render() {
-    const { phase, waited, cycle, burst, chat, typing, matchedAt, now } =
-      this.state;
+    const {
+      phase,
+      waited,
+      cycle,
+      burst,
+      chat,
+      typing,
+      matchedAt,
+      now,
+      rv,
+      reviewed,
+    } = this.state;
     const game = GAME[GAME_ID];
     // Home passes the selected currency and its converter; on its own the preview shows euros
     const { cur = 'EUR', conv = (p) => p } = this.props;
@@ -298,8 +364,22 @@ export default class QueuePreview extends React.Component {
                   </div>
                   <p className="qp-sub">{head[1]}</p>
                   {searching ? <QueueTimer waited={waited} /> : null}
-                  {done ? (
-                    <ReviewThanks name={MATE.name} rating={5} tip={null} />
+                  {done && reviewed ? (
+                    <ReviewThanks
+                      name={MATE.name}
+                      rating={rv.rating}
+                      tip={{ amount: rv.tip, currency: cur, state: 'paid' }}
+                    />
+                  ) : done ? (
+                    <ReviewForm
+                      name={MATE.name}
+                      sym={sym}
+                      rv={rv}
+                      busy={false}
+                      tips
+                      onEdit={() => {}}
+                      onSend={() => {}}
+                    />
                   ) : null}
                   {searching ? null : (
                     <div className="qp-btns">
@@ -367,6 +447,16 @@ export default class QueuePreview extends React.Component {
                       onReroll={() => {}}
                       onReport={() => {}}
                     />
+                    {done ? (
+                      <ProofPanel reportsEnabled onReport={() => {}}>
+                        <ProofView
+                          orderId={ORDER.ref}
+                          mode="customer"
+                          state={proofState(matchedAt)}
+                          imageSrc={proofSrc}
+                        />
+                      </ProofPanel>
+                    ) : null}
                   </>
                 )}
               </div>

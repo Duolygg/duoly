@@ -20,7 +20,7 @@ if (operational) {
   const account = accountContext(Astro.request, Astro.cookies);
   try {
     identity = await account.identity();
-    if (!identity) return account.redirect('/login');
+    if (!identity) return account.redirect('/?signin=1');
     if (identity.viewer.role !== 'customer')
       return account.redirect(
         identity.viewer.role === 'admin' ? '/admin' : '/teammate',

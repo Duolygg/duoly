@@ -53,6 +53,7 @@ const pro = await loadProView(account.client, viewer?.role);
     stats={stats}
     teammates={teammates}
     pro={pro}
+    askLogin={!viewer && Astro.url.searchParams.get('signin') === '1'}
     client:load
   />
 </SiteLayout>

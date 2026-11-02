@@ -50,11 +50,13 @@ test('private order pages stay behind existing account boundaries at mobile widt
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto(`/queue/${order}`);
-  await expect(page).toHaveURL(/\/login$/);
+  // the homepage with its sign-in dialog (?signin=1 is dropped once it opens)
+  await expect(page).toHaveURL(/\/(\?signin=1)?$/);
   await expect(page.getByLabel('Choose one evidence image')).toHaveCount(0);
   await expect(page.locator('img[src*="/proof/"]')).toHaveCount(0);
   await page.goto('/teammate');
-  await expect(page).toHaveURL(/\/login$/);
+  // the homepage with its sign-in dialog (?signin=1 is dropped once it opens)
+  await expect(page).toHaveURL(/\/(\?signin=1)?$/);
   await expect(
     page.getByRole('button', { name: 'Upload selected image' }),
   ).toHaveCount(0);

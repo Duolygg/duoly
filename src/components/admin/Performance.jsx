@@ -150,14 +150,17 @@ function Settings({ api, toast, settings, onSaved, readOnly }) {
         wRetention: settings.w_retention,
         wSatisfaction: settings.w_satisfaction,
         wOrders: settings.w_orders,
+        wWinrate: settings.w_winrate ?? 0,
         windowDays: settings.window_days,
         minOrders: settings.min_orders,
         minReviews: settings.min_reviews,
         minCustomers: settings.min_customers,
+        minWinLossGames: settings.min_wl_games ?? 20,
       });
   }, [settings]);
   if (!form) return null;
-  const total = form.wRetention + form.wSatisfaction + form.wOrders;
+  const total =
+    form.wRetention + form.wSatisfaction + form.wOrders + form.wWinrate;
   const field = (key, labelText, min, max, suffix) => (
     <label
       key={key}
@@ -183,7 +186,7 @@ function Settings({ api, toast, settings, onSaved, readOnly }) {
   const save = async () => {
     if (readOnly) return;
     if (total !== 100)
-      return toast('The three weights must add up to 100%.', 'warn');
+      return toast('The four weights must add up to 100%.', 'warn');
     setBusy(true);
     const r = await api.post('/api/admin/performance', {
       action: 'settings',
@@ -224,6 +227,7 @@ function Settings({ api, toast, settings, onSaved, readOnly }) {
         {field('wRetention', 'Customer retention', 0, 100, '%')}
         {field('wSatisfaction', 'Customer satisfaction', 0, 100, '%')}
         {field('wOrders', 'Completed orders', 0, 100, '%')}
+        {field('wWinrate', 'Winrate', 0, 100, '%')}
       </div>
       <p
         role="status"
@@ -247,6 +251,13 @@ function Settings({ api, toast, settings, onSaved, readOnly }) {
         {field('minOrders', 'Minimum completed orders', 1, 1000, '')}
         {field('minReviews', 'Minimum reviews', 0, 1000, '')}
         {field('minCustomers', 'Minimum different customers', 1, 1000, '')}
+        {field(
+          'minWinLossGames',
+          'Reported games before winrate counts',
+          1,
+          1000,
+          '',
+        )}
       </div>
       <button
         type="button"
@@ -289,8 +300,8 @@ export default function Performance({ api, toast }) {
               eligible teammates plus one ineligible teammate. Bracket counts
               describe these representative rows, not the full cohort. No real
               accounts, database writes or Discord changes. History and Discord
-              statuses are simulated. Scores use 45% retention, 35% satisfaction
-              and 20% completed orders.
+              statuses are simulated. Scores use 40% winrate, 25% retention, 20%
+              satisfaction and 15% completed orders.
             </p>
           </div>
         ) : null}
@@ -509,6 +520,7 @@ function Ranking({ api, toast, demo }) {
                     'Retention',
                     'Satisfaction',
                     'Orders',
+                    'Winrate',
                     'Returning',
                     'Trend',
                     'Discord',
@@ -590,6 +602,25 @@ function Ranking({ api, toast, demo }) {
                           </div>
                         </td>
                         <td style={td}>
+                          {(c.winLossWins ?? 0) + (c.winLossLosses ?? 0)
+                            ? Math.round(
+                                (100 * c.winLossWins) /
+                                  (c.winLossWins + c.winLossLosses),
+                              ) + '%'
+                            : '—'}
+                          <div style={{ fontSize: '12px', color: C.faint }}>
+                            {(c.winLossWins ?? 0) +
+                              'W ' +
+                              (c.winLossLosses ?? 0) +
+                              'L'}
+                            {c.winrateScore != null
+                              ? ' · ' + fixed(c.winrateScore) + ' pts'
+                              : (c.winLossWins ?? 0) + (c.winLossLosses ?? 0)
+                                ? ' · not counted yet'
+                                : ''}
+                          </div>
+                        </td>
+                        <td style={td}>
                           {c.returningCustomers} of {c.customers}
                         </td>
                         <td style={td}>
@@ -625,7 +656,7 @@ function Ranking({ api, toast, demo }) {
                       {open === c.userId ? (
                         <tr>
                           <td
-                            colSpan={11}
+                            colSpan={12}
                             style={{ ...td, whiteSpace: 'normal' }}
                           >
                             <History api={api} userId={c.userId} demo={demo} />

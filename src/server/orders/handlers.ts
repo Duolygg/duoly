@@ -157,6 +157,20 @@ export const assignment = route(
   (client) => client.rpc('teammate_current_assignment'),
   { role: 'teammate' },
 );
+/** The teammate playing an order makes a one-time link for the teammate who should take over. */
+export const handover = route(
+  'teammateHandover',
+  (client, { p_order_id }) =>
+    client.rpc('teammate_create_handover' as never, { p_order_id } as never),
+  { input: 'id', method: 'POST', role: 'teammate' },
+);
+/** ...or takes it back before anyone used it. */
+export const revokeHandover = route(
+  'teammateHandoverRevoked',
+  (client, { p_order_id }) =>
+    client.rpc('teammate_revoke_handover' as never, { p_order_id } as never),
+  { input: 'id', method: 'POST', role: 'teammate' },
+);
 /** A Diamond customer picked this teammate: pass now, the order goes to the normal queue. */
 export const passPicked = route(
   'pickedPass',
