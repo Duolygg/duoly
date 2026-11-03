@@ -52,9 +52,10 @@ describe('teammate carousel', () => {
         recentMatches: [],
       }),
     );
-    // the hero keeps the logo and its floating sample cards, no teammate strip
+    // the hero is just the logo: no floating sample cards, no teammate strip
     expect(html).toContain('logo-full.webp');
-    expect(html).toContain('Rank Rush');
+    expect(html).not.toContain('Rank Rush');
+    expect(html).not.toContain('dlfloat');
     expect(html).not.toContain('dl-tm-');
     // the section sits between the modes and the checkout
     const at = (s: string) => html.indexOf(s);

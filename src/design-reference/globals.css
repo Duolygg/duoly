@@ -965,3 +965,27 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .q-tp-btn:hover,.q-tp-btn:focus-visible{color:#17092E;background:linear-gradient(90deg,#D6BBFF,#FF4FB0) padding-box,linear-gradient(90deg,#D6BBFF,#FF4FB0) border-box;box-shadow:0 12px 30px -14px rgba(255,79,176,.6)}
 .q-tp-btn:hover svg,.q-tp-btn:focus-visible svg{transform:translate(2px,-2px)}
 @media (prefers-reduced-motion:reduce){.q-tp-btn,.q-tp-btn svg{transition:none}}
+/* Hero quotes (components/home/HeroQuotes.jsx): two lanes of quotes travel edge to edge across the
+   logo, the top lane left to right and the bottom lane right to left. Each card starts fully off one
+   edge, glides across and slides off the other (12s = two 6s steps); the strip fades out over its
+   outer thirds, so cards are faint near the edges. 100cqw is the strip's width. Like the other
+   carousels, it keeps its slow drift with reduced motion */
+.hq{position:absolute;top:-9%;bottom:-16%;left:-6%;right:-6%;pointer-events:none;overflow:hidden;container-type:inline-size;-webkit-mask-image:linear-gradient(90deg,transparent,rgba(0,0,0,.25) 12%,#000 34%,#000 66%,rgba(0,0,0,.25) 88%,transparent);mask-image:linear-gradient(90deg,transparent,rgba(0,0,0,.25) 12%,#000 34%,#000 66%,rgba(0,0,0,.25) 88%,transparent)}
+.hq-q{position:absolute;left:0;margin:0;width:340px;box-sizing:border-box;display:flex;align-items:flex-start;gap:12px;padding:14px 16px 13px 14px;border-radius:20px;border:1px solid transparent;background:radial-gradient(120% 140% at 0% 0%,rgba(214,187,255,.12),transparent 55%) padding-box,linear-gradient(rgba(20,10,38,.8),rgba(20,10,38,.8)) padding-box,linear-gradient(135deg,rgba(214,187,255,.45),rgba(255,79,176,.25) 45%,rgba(214,187,255,.06)) border-box;-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 24px 60px -24px rgba(0,0,0,.8),0 16px 40px -22px rgba(255,79,176,.4);animation:hq-ltr 12s linear both}
+.hq-q::after{content:'\201D';position:absolute;right:14px;top:-6px;font-family:'Bricolage Grotesque','Bricolage Fallback',serif;font-size:64px;font-weight:800;line-height:1;background:linear-gradient(135deg,#D6BBFF,#FF4FB0);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:.28}
+.hq-a{top:0}
+.hq-b{bottom:0;animation-name:hq-rtl}
+.hq-avatar{flex:0 0 auto;width:40px;height:40px;border-radius:50%}
+.hq-body{min-width:0}
+.hq-stars{display:flex;gap:2px}
+.hq-stars svg{fill:rgba(196,170,255,.2)}
+.hq-stars svg.is-on{fill:#FFD27A}
+.hq-q blockquote{margin:6px 0 0;font-family:'Bricolage Grotesque','Bricolage Fallback',sans-serif;font-size:15px;font-weight:700;line-height:1.32;letter-spacing:-.01em;color:#FFFFFF}
+.hq-q figcaption{margin-top:8px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:12px;font-weight:600;color:#A79DC4}
+.hq-q figcaption img{display:block;border-radius:2px}
+.hq-q figcaption .hq-game{border-radius:4px}
+.hq-dot{width:3px;height:3px;border-radius:50%;background:rgba(196,170,255,.4)}
+@keyframes hq-ltr{from{transform:translateX(-100%)}to{transform:translateX(100cqw)}}
+@keyframes hq-rtl{from{transform:translateX(100cqw)}to{transform:translateX(-100%)}}
+/* phones: smaller cards, strip as wide as the logo */
+@media (max-width:640px){.hq{left:0;right:0}.hq-q{width:260px;padding:12px 14px 11px 12px}.hq-q blockquote{font-size:14px}.hq-avatar{width:34px;height:34px}}
