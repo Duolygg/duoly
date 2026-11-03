@@ -682,7 +682,7 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 /* Hero review line (components/home/Home.jsx): glass card with brand star tiles, "Our customers say we are
    Excellent" + "Check our reviews". Each star tile fills to --f (100%, 50% or 0%) from the real score */
 .dl-tp{position:relative;margin-top:24px;display:flex;width:fit-content;flex-wrap:wrap;align-items:center;gap:10px 14px;max-width:100%;padding:10px 16px 10px 12px;border-radius:18px;text-decoration:none;font-size:15px;line-height:1.35;border:1px solid transparent;background:linear-gradient(rgba(23,9,46,.72),rgba(23,9,46,.72)) padding-box,linear-gradient(120deg,rgba(214,187,255,.35),rgba(255,79,176,.28) 50%,rgba(214,187,255,.12)) border-box;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 10px 30px -14px rgba(255,79,176,.35);transition:transform .25s ease,box-shadow .25s ease}
-.dl-tp:hover,.dl-tp:focus-visible{transform:translateY(-2px);box-shadow:0 16px 40px -14px rgba(255,79,176,.55),0 0 0 4px rgba(214,187,255,.06)}
+.dl-tp:hover,.dl-tp:focus-visible{transform:translateY(-2px);box-shadow:0 14px 34px -16px rgba(255,79,176,.45)}
 .dl-tp-stars{display:inline-flex;gap:3px}
 .dl-tp-star{width:22px;height:22px;display:grid;place-items:center;border-radius:6px;background:linear-gradient(90deg,transparent var(--f),rgba(196,170,255,.16) var(--f)),linear-gradient(135deg,#D6BBFF,#FF4FB0);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
 .dl-tp-star svg{fill:#FFFFFF;filter:drop-shadow(0 1px 1px rgba(23,9,46,.35))}
