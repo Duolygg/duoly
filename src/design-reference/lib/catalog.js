@@ -216,6 +216,7 @@ export const CATALOG = {
       ['squad', 'other', 'Server Squad', 'Skilled PvPers', 'We fill your team for Bedwars fours, SkyWars teams, Hunger Games or UHC events with players who know the mode.', 9.99, { unit: 'hour' }],
       ['surv', 'social', 'Survival Together', 'Friendly builder', 'Start a world or join yours: build a base, go mining and explore together at your own pace.', 5.99, { unit: 'hour' }],
       ['dragon', 'social', 'Beat the Game', 'Experienced partner', 'From a fresh world to the Ender Dragon: get gear, find a stronghold and take her down together.', 6.99, { unit: 'hour', badge: 'Popular' }],
+      ['manhunt', 'social', 'Manhunt', 'Top PvPer · speedrunner vs hunter', 'You speedrun with one life and have to kill the Ender Dragon, while your teammate hunts you with a compass that always points to you. They respawn, you don’t. One flat price per run, however long it takes (most last 30 to 90 minutes). They bring the setup, and you can swap roles.', 14.99, { unit: 'game', badge: 'New' }],
       ['hard', 'social', 'Hardcore Survival', 'Experienced partner', 'One life, together. See how far you get before it goes wrong.', 6.49, { unit: 'hour', badge: 'Fun' }],
       ['mini', 'social', 'Minigames Night', 'Fun partner', 'Bedwars, SkyWars, Build Battle, Murder Mystery, parkour and more on your favourite server.', 5.49, { unit: 'hour' }],
       ...gg('hour', 'survival, building or minigames', 'PvP-main', 'your Bedwars and SkyWars stats', [7.49, 8.49]),
