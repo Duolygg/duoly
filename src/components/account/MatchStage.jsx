@@ -1360,7 +1360,7 @@ export const tipMoney = (tip) =>
     ? tipAmount('$', tip.shown.amount)
     : tipAmount(tip.currency === 'USD' ? '$' : '€', tip.amount);
 
-export function ReviewThanks({ name, rating, tip, reviewUrl, children }) {
+export function ReviewThanks({ name, rating, tip, reviewUrl = '', children }) {
   return (
     <div className="q-review" style={{ textAlign: 'center' }}>
       <div
