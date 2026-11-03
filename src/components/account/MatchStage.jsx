@@ -1349,7 +1349,8 @@ export function ReviewStars({ n, size }) {
   );
 }
 
-/** After a review: THANK YOU, the stars and what was rated (and tipped). A pending tip goes in children. */
+/** After a review: THANK YOU, the stars and what was rated (and tipped). A pending tip goes in children;
+ * reviewUrl adds the Trustpilot invite under it. */
 /** A tip as the customer picked it: $5.00 for a dollar tip (charged in EUR), else €4.42. */
 /** €5, or €4.58 when it has cents */
 export const tipAmount = (sym, n) => sym + n.toFixed(2).replace(/\.00$/, '');
@@ -1359,7 +1360,7 @@ export const tipMoney = (tip) =>
     ? tipAmount('$', tip.shown.amount)
     : tipAmount(tip.currency === 'USD' ? '$' : '€', tip.amount);
 
-export function ReviewThanks({ name, rating, tip, children }) {
+export function ReviewThanks({ name, rating, tip, reviewUrl, children }) {
   return (
     <div className="q-review" style={{ textAlign: 'center' }}>
       <div
@@ -1384,6 +1385,54 @@ export function ReviewThanks({ name, rating, tip, children }) {
         helps us match you with the right teammates.
       </p>
       {children}
+      {reviewUrl ? (
+        <a
+          className="q-tp"
+          href={reviewUrl}
+          target="_blank"
+          rel="noopener"
+          aria-label="Write a review of Duoly on Trustpilot (opens in a new tab)"
+        >
+          <span className="q-tp-icon" aria-hidden="true">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z" />
+              <path d="M12 8.6l1 2.2 2.4.2-1.8 1.6.5 2.3-2.1-1.2-2.1 1.2.5-2.3-1.8-1.6 2.4-.2z" />
+            </svg>
+          </span>
+          <span className="q-tp-text">
+            <strong>One more minute?</strong>
+            <span>
+              Tell other players how Duoly went for you on Trustpilot. Honest
+              reviews, good or bad, help us get better.
+            </span>
+          </span>
+          <span className="q-tp-go">
+            Write a review
+            <svg
+              aria-hidden="true"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          </span>
+        </a>
+      ) : null}
     </div>
   );
 }

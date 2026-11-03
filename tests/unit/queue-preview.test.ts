@@ -159,6 +159,23 @@ describe('shared order room pieces', () => {
     expect(thanks).toContain('THANK YOU');
     expect(thanks).toContain('Rated 5 out of 5');
     expect(thanks).toContain('You rated Mia 5/5');
+    expect(thanks).not.toContain('Trustpilot');
+    // the order room adds the Trustpilot invite after every review, low ratings included
+    for (const rating of [1, 5]) {
+      const invited = renderToStaticMarkup(
+        h(ReviewThanks, {
+          name: 'Mia',
+          rating,
+          tip: null,
+          reviewUrl: 'https://www.trustpilot.com/evaluate/duoly.gg',
+          children: null,
+        }),
+      );
+      expect(invited).toContain(
+        'href="https://www.trustpilot.com/evaluate/duoly.gg"',
+      );
+      expect(invited).toContain('Write a review');
+    }
   });
 });
 

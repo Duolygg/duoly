@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { trustpilotSummary } from '../../src/site/trustpilot';
+import { readFileSync } from 'node:fs';
+import {
+  TRUSTPILOT_EVALUATE,
+  trustpilotSummary,
+} from '../../src/site/trustpilot';
 
 const url = 'https://www.trustpilot.com/review/duoly.gg';
 
@@ -59,5 +63,18 @@ describe('Trustpilot hero line', () => {
       label: 'Average',
       stars: 3.5,
     });
+  });
+});
+
+describe('Trustpilot review invite', () => {
+  it('points at the duoly.gg write-a-review page', () => {
+    expect(TRUSTPILOT_EVALUATE).toBe(
+      'https://www.trustpilot.com/evaluate/duoly.gg',
+    );
+  });
+
+  it('is offered after every review in the order room', () => {
+    const room = readFileSync('src/components/account/QueueRoom.jsx', 'utf8');
+    expect(room).toContain('reviewUrl={TRUSTPILOT_EVALUATE}');
   });
 });

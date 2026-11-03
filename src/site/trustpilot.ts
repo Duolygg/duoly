@@ -54,3 +54,10 @@ export function trustpilotSummary(
       (reviews === 1 ? ' review' : ' reviews'),
   };
 }
+
+/**
+ * Trustpilot's "write a review" page, offered after every review in the order room. Every customer
+ * gets it whatever they rated: asking only happy customers breaks Trustpilot's guidelines.
+ */
+export const TRUSTPILOT_EVALUATE =
+  'https://www.trustpilot.com/evaluate/duoly.gg';
