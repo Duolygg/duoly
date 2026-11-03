@@ -6,6 +6,12 @@ import { previewFetch as fetch } from '../../design-preview/preview-transport';
 import React from 'react';
 import ClosedNotice from './ClosedNotice.jsx';
 import { GAMES as GAME_LIST } from '../lib/games';
+import { servicesFor } from '../lib/catalog';
+import { COUNTRIES, flagSrc } from '../lib/countries';
+
+// Teammates keep 60% of what the customer pays (server/pricing calculateQuote). Tips are 100% theirs.
+const SHARE = 0.6;
+const eur = (n) => '€' + n.toFixed(2);
 
 // Turns a CSS declaration string ("color: red; margin-top: 4px") into a React style object.
 function css(str) {
@@ -21,12 +27,136 @@ function css(str) {
   return out;
 }
 
+// A dropdown that looks and works like the profile page's country picker (components/account/Profile.jsx):
+// the same field, chevron and popup list, with arrow keys, Enter and Escape. `search` turns the field
+// into a search box. options: [{ value, label, icon }].
+class Pick extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { open: false, query: '', hi: 0 };
+  }
+  list() {
+    const q = this.state.query.trim().toLowerCase();
+    return q ? this.props.options.filter((o) => o.label.toLowerCase().includes(q)) : this.props.options;
+  }
+  open() {
+    const i = this.props.options.findIndex((o) => o.value === this.props.value);
+    this.setState({ open: true, query: '', hi: Math.max(0, i) });
+  }
+  close() {
+    this.setState({ open: false, query: '' });
+  }
+  pick(o) {
+    this.props.onPick(o.value);
+    this.close();
+  }
+  onKey(e) {
+    const list = this.list();
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!this.state.open) return this.open();
+      const step = e.key === 'ArrowDown' ? 1 : -1;
+      this.setState({ hi: Math.min(Math.max(this.state.hi + step, 0), list.length - 1) });
+    } else if (e.key === 'Enter' || (e.key === ' ' && !this.props.search)) {
+      e.preventDefault();
+      if (!this.state.open) return this.open();
+      if (list[this.state.hi]) this.pick(list[this.state.hi]);
+    } else if (e.key === 'Escape') {
+      this.close();
+    }
+  }
+  render() {
+    const p = this.props;
+    const s = this.state;
+    const list = s.open ? this.list() : [];
+    const picked = p.options.find((o) => o.value === p.value);
+    const icon = picked && picked.icon && !(p.search && s.open) ? picked.icon : '';
+    const lead = icon || p.search;
+    const field = {
+      height: '50px', borderRadius: '14px', paddingLeft: lead ? '46px' : '14px', paddingRight: '40px',
+      transform: 'none', filter: 'none'
+    };
+    const common = {
+      id: p.id, className: 'pf-input', role: 'combobox',
+      'aria-expanded': s.open ? 'true' : 'false', 'aria-controls': p.id + '-list',
+      'aria-activedescendant': s.open && list[s.hi] ? p.id + '-o' + s.hi : undefined,
+      onBlur: () => setTimeout(() => this.close(), 120),
+      onKeyDown: (e) => this.onKey(e)
+    };
+    return (
+      <div style={{ position: 'relative' }}>
+        {icon ? (
+          <img src={icon} alt="" width="22" height="16" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', width: '22px', height: '16px', borderRadius: '3px', objectFit: 'cover', pointerEvents: 'none', zIndex: '1' }} />
+        ) : p.search ? (
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8E84AB" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '17px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: '1' }}>
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+          </svg>
+        ) : null}
+        {p.search ? (
+          <input
+            {...common}
+            aria-autocomplete="list"
+            autoComplete="off"
+            placeholder={picked ? picked.label : p.placeholder}
+            value={s.open ? s.query : picked ? picked.label : ''}
+            onFocus={() => this.open()}
+            onClick={() => (s.open ? null : this.open())}
+            onChange={(e) => this.setState({ query: e.target.value, open: true, hi: 0 })}
+            style={field}
+          />
+        ) : (
+          <button
+            {...common}
+            type="button"
+            aria-haspopup="listbox"
+            onClick={() => (s.open ? this.close() : this.open())}
+            style={{ ...field, display: 'flex', alignItems: 'center', textAlign: 'left', color: picked ? '#FFFFFF' : '#6A6086' }}
+          >
+            {picked ? picked.label : p.placeholder}
+          </button>
+        )}
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8E84AB" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)' + (s.open ? ' rotate(180deg)' : ''), pointerEvents: 'none' }}>
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+        {s.open ? (
+          <ul id={p.id + '-list'} role="listbox" aria-label={p.label} className="dl-pop dl-scroll" style={{ position: 'absolute', left: '0', right: '0', top: 'calc(100% + 6px)', zIndex: '10', maxHeight: '280px', overflowY: 'auto', margin: '0', padding: '6px', listStyle: 'none', borderRadius: '14px', background: '#170E2C', border: '1px solid rgba(214, 187, 255, .18)', boxShadow: '0 24px 60px rgba(0, 0, 0, .6)', animation: 'dlpop .16s ease-out', textAlign: 'left' }}>
+            {list.length ? list.map((o, i) => (
+              <li
+                key={o.value}
+                id={p.id + '-o' + i}
+                role="option"
+                aria-selected={o.value === p.value ? 'true' : 'false'}
+                onMouseDown={(e) => { e.preventDefault(); this.pick(o); }}
+                onMouseEnter={() => this.setState({ hi: i })}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', borderRadius: '10px', fontSize: '14px', cursor: 'pointer', color: '#F3EEFF', background: i === s.hi ? 'rgba(214, 187, 255, .1)' : 'transparent' }}
+              >
+                {o.icon ? <img src={o.icon} alt="" width="22" height="16" loading="lazy" style={{ width: '22px', height: '16px', borderRadius: '3px', objectFit: 'cover', flex: '0 0 auto' }} /> : null}
+                {o.label}
+                {o.value === p.value ? (
+                  <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D6BBFF" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 'auto' }}>
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                ) : null}
+              </li>
+            )) : (
+              <li style={{ padding: '12px 10px', fontSize: '14px', color: '#8E84AB' }}>
+                No match for “{s.query}”.
+              </li>
+            )}
+          </ul>
+        ) : null}
+      </div>
+    );
+  }
+}
+
 export default class Apply extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       step: 1, done: false,
-      f: { name: '', email: '', discord: '', country: 'Austria', adult: false, game: 'lol', rank: '', region: '', role: '', link: '', hours: '10–20', why: '', svc: { duo: true, coach: false, social: false, gg: false } }
+      f: { name: '', email: '', discord: '', country: '', adult: false, game: 'lol', rank: '', region: '', role: '', link: '', hours: '10–20', why: '', svc: { duo: true, coach: false, social: false, gg: false } }
     };
   }
   // The application goes to the admins (Teammates → Applications).
@@ -46,25 +176,30 @@ export default class Apply extends React.Component {
     const s = this.state;
     const f = s.f;
     const set = (k) => (e) => this.setState({ f: { ...this.state.f, [k]: e.target.value } });
-    // Shared game list (lib/games.js, in demand order) plus what it takes to apply for each game.
+    const put = (k) => (value) => this.setState({ f: { ...this.state.f, [k]: value } });
+    // Shared game list (lib/games.js, in demand order) plus what it takes to apply for each game. The
+    // minimum is the lowest teammate tier the game's duo and team services ask for (lib/catalog.js;
+    // coaching has its own bar below), down to the exact division, written the way each game writes it.
+    // `ranks` is what the rank picker offers: the minimum and everything above it.
+    const div = (tier, steps) => steps.map((d) => tier + ' ' + d);
     const NEEDS = {
-      lol: { min: 'Diamond 1 or higher', ranks: ['Diamond 1', 'Master', 'Grandmaster', 'Challenger'] },
-      val: { min: 'Immortal 1 or higher', ranks: ['Immortal 1', 'Immortal 2', 'Immortal 3', 'Radiant'] },
-      cs2: { min: 'Premier 20,000+ or FACEIT Level 9+', ranks: ['Premier 20,000–24,999', 'Premier 25,000+', 'FACEIT Level 9', 'FACEIT Level 10'] },
-      fn: { min: 'Champion or higher', ranks: ['Champion', 'Unreal', 'Unreal top 1,000'] },
-      cod: { min: 'Crimson 1 or higher', ranks: ['Crimson 1', 'Crimson 2', 'Crimson 3', 'Iridescent', 'Top 250'] },
-      apex: { min: 'Master or higher', ranks: ['Master', 'Apex Predator'] },
-      r6: { min: 'Diamond 3 or higher', ranks: ['Diamond 3', 'Diamond 2', 'Diamond 1', 'Champion'] },
-      mr: { min: 'Grandmaster 1 or higher', ranks: ['Grandmaster 1', 'Celestial', 'Eternity', 'One Above All'] },
-      ow: { min: 'Master 3 or higher', ranks: ['Master 3', 'Master 1', 'Grandmaster', 'Champion', 'Top 500'] },
-      rl: { min: 'Grand Champion or higher', ranks: ['Grand Champion I', 'Grand Champion II', 'Grand Champion III', 'Supersonic Legend'] },
-      tft: { min: 'Master or higher', ranks: ['Master', 'Grandmaster', 'Challenger'] },
-      fc: { min: 'Division 1 in Rivals', ranks: ['Division 1', 'Elite', 'FUT Champions top 200'] },
-      arc: { min: 'Veteran raider (100+ hours)', ranks: ['Veteran', 'Elite', 'Top-ranked raider'] },
-      mc: { min: 'Strong PvP (Bedwars, Duels, UHC…) or deep survival / SMP know-how', ranks: ['Skilled PvPer', 'Top PvPer / tournament player', 'Bedwars 1000★+', 'Survival & SMP expert', 'Builder / redstone'] },
-      pu: { min: 'Master, 1600+ rating', ranks: ['Master 1600–1700', 'Master 1700–1800', 'Master 1800+'] }
+      lol: { ranks: [...div('Diamond', [4, 3, 2, 1]), 'Master', 'Grandmaster', 'Challenger'] },
+      val: { ranks: [...div('Ascendant', [1, 2, 3]), ...div('Immortal', [1, 2, 3]), 'Radiant'] },
+      cs2: { min: 'Premier 15,000+ or FACEIT Level 8+', ranks: ['Premier 15,000–19,999', 'Premier 20,000–24,999', 'Premier 25,000–29,999', 'Premier 30,000+', ...div('FACEIT Level', [8, 9, 10])] },
+      fn: { ranks: ['Champion', 'Unreal'] },
+      cod: { ranks: [...div('Crimson', ['I', 'II', 'III']), 'Iridescent', 'Top 250'] },
+      apex: { ranks: [...div('Diamond', ['IV', 'III', 'II', 'I']), 'Master', 'Apex Predator'] },
+      r6: { ranks: [...div('Emerald', ['V', 'IV', 'III', 'II', 'I']), ...div('Diamond', ['V', 'IV', 'III', 'II', 'I']), 'Champion'] },
+      mr: { ranks: [...div('Diamond', ['III', 'II', 'I']), ...div('Grandmaster', ['III', 'II', 'I']), ...div('Celestial', ['III', 'II', 'I']), 'Eternity', 'One Above All'] },
+      ow: { ranks: [...div('Diamond', [5, 4, 3, 2, 1]), ...div('Master', [5, 4, 3, 2, 1]), ...div('Grandmaster', [5, 4, 3, 2, 1]), ...div('Champion', [5, 4, 3, 2, 1]), 'Top 500'] },
+      rl: { ranks: [...div('Champion', ['I', 'II', 'III']), ...div('Grand Champion', ['I', 'II', 'III']), 'Supersonic Legend'] },
+      tft: { ranks: ['Master', 'Grandmaster', 'Challenger'] },
+      fc: { min: 'Division 1 in Rivals', ranks: ['Division 1', 'Elite Division'] },
+      arc: { min: 'Experienced raider', ranks: ['Experienced raider', 'Veteran raider', 'Elite raider'] },
+      mc: { min: 'Skilled PvPer or survival / SMP expert', ranks: ['Skilled PvPer', 'Top PvPer', 'Survival & SMP expert'] },
+      pu: { ranks: ['Ultra', 'Master'] }
     };
-    const GAMES = GAME_LIST.filter((x) => NEEDS[x.id]).map((x) => ({ ...x, ...NEEDS[x.id] }));
+    const GAMES = GAME_LIST.filter((x) => NEEDS[x.id]).map((x) => ({ ...x, min: NEEDS[x.id].min || NEEDS[x.id].ranks[0] + ' or higher', ranks: NEEDS[x.id].ranks }));
     const g = GAMES.find((x) => x.id === f.game) || GAMES[0];
     const ggPicked = !!f.svc.gg;
     const ranks = ggPicked ? ['Any rank'].concat(g.ranks) : g.ranks;
@@ -120,9 +255,14 @@ export default class Apply extends React.Component {
       ['04', 'Grow your name', 'Top teammates get featured and join our creator program.']
     ].map(([n, title, text]) => ({ n, title, text }));
 
-    const RATE = { lol: 24, val: 22, cs2: 23, fn: 22, cod: 21, apex: 22, r6: 21, mr: 20, ow: 20, rl: 20, tft: 18, fc: 18, arc: 18, mc: 16, pu: 16 };
+    // Earnings calculator: one booked game or hour of the game's main service (lib/catalog.js) pays
+    // SHARE of its listed price. Only booked time counts, not time spent online.
     const cg = s.calcGame || 'lol';
     const ch = s.calcHours || 10;
+    const cat = servicesFor(cg);
+    const main = cat.modes.find((m) => m.id === cat.main);
+    const per = Math.round(main.price * SHARE * 100) / 100;
+    const hourly = main.unit === 'hour';
     const calcGames = GAMES.map((x) => {
       const a = x.id === cg;
       return {
@@ -132,19 +272,25 @@ export default class Apply extends React.Component {
       };
     });
     const calcHours = [5, 10, 20, 30].map((n) => ({
-      label: n + 'h', pressed: ch === n ? 'true' : 'false',
+      label: n + (hourly ? 'h' : ' games'), pressed: ch === n ? 'true' : 'false',
       style: 'min-height: 42px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; ' + (ch === n ? 'background: #F3EEFF; color: #17092E;' : 'background: transparent; color: #CFC4EA;'),
       pick: () => this.setState({ calcHours: n })
     }));
-    const monthly = Math.round(RATE[cg] * ch * 4.33 / 10) * 10;
+    const monthly = Math.round(per * ch * 4.33);
     const online = s.online !== false;
     const bars = [['Mon', 46], ['Tue', 62], ['Wed', 30], ['Thu', 78], ['Fri', 100], ['Sat', 88], ['Sun', 54]].map(([day, h], i) => ({
       day, style: 'display: block; width: 100%; max-width: 28px; height: ' + h + '%; border-radius: 8px; background: ' + (i === 4 ? '#5EEAA8' : 'rgba(214, 187, 255, .28)') + ';'
     }));
     const acc = s.accepted || {};
+    // What the teammate earns for a sample order: SHARE of the customer price after the bundle discount
+    const earn = (game, id, units) => {
+      const m = servicesFor(game).modes.find((x) => x.id === id);
+      const off = m.cat === 'training' ? 0 : ({ 3: 10, 5: 15, 10: 25 }[units] || 0);
+      return '+ ' + eur((m.was || m.price) * units * (100 - off) / 100 * SHARE);
+    };
     const orders = [
-      ['/assets/games/valorant.png', 'Duo Pro ×3 · Valorant', 'Lea · Platinum 2 · EU West', '+ €24.27'],
-      ['/assets/games/league-of-legends.png', 'Play & Learn · League', 'Sam · Gold 1 · EU West', '+ €9.99']
+      ['/assets/games/valorant.png', 'Duo Pro ×3 · Valorant', 'Lea · Platinum 2 · EU West', earn('val', 'duo2', 3)],
+      ['/assets/games/league-of-legends.png', 'Play & Learn · League', 'Sam · Gold 1 · EU West', earn('lol', 'learn', 1)]
     ].map(([img, title, meta, pay], i) => ({
       img, title, meta, pay,
       btnLabel: acc[i] ? 'Accepted' : 'Accept',
@@ -154,7 +300,9 @@ export default class Apply extends React.Component {
 
     return {
       calcGames, calcHours, calcMonthly: '€' + monthly.toLocaleString('en-US'),
-      calcNote: 'Based on avg. ' + '€' + RATE[cg] + '/h for ' + (GAMES.find((x) => x.id === cg) || GAMES[0]).name + ' teammates, before tips.',
+      calcNote: 'You keep 60% of every order: ' + eur(per) + ' per ' + (hourly ? 'hour' : 'game') + ' of ' + main.title + ' in ' +
+        (GAMES.find((x) => x.id === cg) || GAMES[0]).name + '. Tips are on top.',
+      weekTotal: eur(per * ch),
       bars, orders,
       onlineChecked: online ? 'true' : 'false', onlineLabel: online ? 'Online' : 'Offline',
       onlineTrack: 'position: relative; width: 34px; height: 20px; border-radius: 999px; background: ' + (online ? '#5EEAA8' : '#2A1F45') + ';',
@@ -162,10 +310,13 @@ export default class Apply extends React.Component {
       toggleOnline: () => this.setState({ online: !online }),
       step: String(s.step), stepper, games, services, perks,
       reqs: GAMES.map((x) => ({ name: x.name, img: x.img, min: x.min })),
-      countries: ['Austria', 'Germany', 'Switzerland', 'France', 'Spain', 'Italy', 'Netherlands', 'Poland', 'Sweden', 'United Kingdom', 'United States', 'Canada', 'Brazil', 'Japan', 'South Korea', 'Other'],
-      regions: ['EU West', 'EU Nordic & East', 'North America', 'LATAM', 'Brazil', 'Korea', 'Oceania'],
-      ranks, f,
-      on: { name: set('name'), email: set('email'), discord: set('discord'), country: set('country'), rank: set('rank'), region: set('region'), role: set('role'), link: set('link'), hours: set('hours'), why: set('why') },
+      // dropdown options for Pick; the form sends the country's name
+      countries: COUNTRIES.map(([code, name]) => ({ value: name, label: name, icon: flagSrc(code) })),
+      regions: ['EU West', 'EU Nordic & East', 'North America', 'LATAM', 'Brazil', 'Korea', 'Oceania'].map((r) => ({ value: r, label: r })),
+      ranks: ranks.map((r) => ({ value: r, label: r })),
+      hours: [['5–10', '5–10 hours'], ['10–20', '10–20 hours'], ['20–30', '20–30 hours'], ['30+', '30+ hours']].map(([value, label]) => ({ value, label })),
+      f,
+      on: { name: set('name'), email: set('email'), discord: set('discord'), country: put('country'), rank: put('rank'), region: put('region'), role: set('role'), link: set('link'), hours: put('hours'), why: set('why') },
       adultChecked: f.adult ? 'true' : 'false', adultBox: box(f.adult),
       toggleAdult: () => this.setState({ f: { ...this.state.f, adult: !this.state.f.adult } }),
       isStep1: s.step === 1, isStep2: s.step === 2, isStep3: s.step === 3,
@@ -264,7 +415,7 @@ export default class Apply extends React.Component {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   <span id="calc-hours" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
-                    Hours per week
+                    Booked per week
                   </span>
                   <div role="radiogroup" aria-labelledby="calc-hours" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "4px", padding: "4px", borderRadius: "14px", background: "#090414", border: "1px solid rgba(196, 170, 255, .14)" }}>
                     {v.calcHours.map((h, $index) => (
@@ -320,7 +471,7 @@ export default class Apply extends React.Component {
                       This week
                     </span>
                     <span style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: "24px", fontWeight: "700", color: "#FFFFFF" }}>
-                      €412.60
+                      {v.weekTotal}
                     </span>
                   </div>
                   <div aria-hidden="true" style={{ marginTop: "12px", height: "92px", display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: "8px", alignItems: "end" }}>
@@ -420,7 +571,7 @@ export default class Apply extends React.Component {
                     Coaches
                   </div>
                   <div style={{ marginTop: "4px", fontSize: "14px", color: "#A79DC4" }}>
-                    Grandmaster+ (or game equivalent) and a short sample VOD review.
+                    The coach rank shown on each game’s coaching (Master+ in League, Immortal+ in Valorant, FACEIT Level 10 in CS2…) and a short sample VOD review.
                   </div>
                 </div>
                 <div style={{ padding: "18px 20px", borderRadius: "18px", border: "1px solid rgba(196, 170, 255, .1)" }}>
@@ -485,7 +636,7 @@ export default class Apply extends React.Component {
               </ol>
             </section>
             <section id="apply" aria-labelledby="form-h" style={{ marginTop: "88px", paddingBottom: "96px" }}>
-              <div style={{ maxWidth: "760px", margin: "0 auto", borderRadius: "28px", background: "#120B22", border: "1px solid rgba(214, 187, 255, .18)", overflow: "hidden" }}>
+              <div style={{ maxWidth: "760px", margin: "0 auto", borderRadius: "28px", background: "#120B22", border: "1px solid rgba(214, 187, 255, .18)" }}>
                 {this.props.closed ? <ClosedNotice title="Applications open soon" text="We’re onboarding our first teammates through Discord right now. Join the server and say hi in the applications channel, or email us with your game, rank and Discord name." /> : v.notDone ? (
                   <>
                     <div style={{ padding: "28px 32px 0" }}>
@@ -536,15 +687,7 @@ export default class Apply extends React.Component {
                               <label htmlFor="ap-country" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
                                 Country
                               </label>
-                              <select id="ap-country" value={v.f.country} onChange={v.on.country} style={{ minHeight: "50px", padding: "0 12px", borderRadius: "14px", background: "#090414", border: "1px solid rgba(196, 170, 255, .16)", color: "#FFFFFF", fontSize: "15px" }}>
-                                {v.countries.map((c, $index) => (
-                                  <React.Fragment key={$index}>
-                                    <option value={c}>
-                                      {c}
-                                    </option>
-                                  </React.Fragment>
-                                ))}
-                              </select>
+                              <Pick id="ap-country" label="Countries" search placeholder="Search countries" value={v.f.country} options={v.countries} onPick={v.on.country} />
                             </div>
                             <button type="button" role="checkbox" aria-checked={v.adultChecked} onClick={v.toggleAdult} style={{ gridColumn: "1 / -1", display: "flex", alignItems: "center", gap: "12px", minHeight: "48px", padding: "0 4px", border: "none", background: "transparent", color: "#CFC4EA", fontSize: "14px", textAlign: "left", transform: "none" }}>
                               <span style={css(v.adultBox)}>
@@ -582,35 +725,13 @@ export default class Apply extends React.Component {
                                 <label htmlFor="ap-rank" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
                                   Current rank
                                 </label>
-                                <select id="ap-rank" value={v.f.rank} onChange={v.on.rank} style={{ minHeight: "50px", padding: "0 12px", borderRadius: "14px", background: "#090414", border: "1px solid rgba(196, 170, 255, .16)", color: "#FFFFFF", fontSize: "15px" }}>
-                                  <option value="">
-                                    Choose…
-                                  </option>
-                                  {v.ranks.map((r, $index) => (
-                                    <React.Fragment key={$index}>
-                                      <option value={r}>
-                                        {r}
-                                      </option>
-                                    </React.Fragment>
-                                  ))}
-                                </select>
+                                <Pick id="ap-rank" label="Ranks" placeholder="Choose…" value={v.f.rank} options={v.ranks} onPick={v.on.rank} />
                               </div>
                               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                                 <label htmlFor="ap-region" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
                                   Server / region
                                 </label>
-                                <select id="ap-region" value={v.f.region} onChange={v.on.region} style={{ minHeight: "50px", padding: "0 12px", borderRadius: "14px", background: "#090414", border: "1px solid rgba(196, 170, 255, .16)", color: "#FFFFFF", fontSize: "15px" }}>
-                                  <option value="">
-                                    Choose…
-                                  </option>
-                                  {v.regions.map((r, $index) => (
-                                    <React.Fragment key={$index}>
-                                      <option value={r}>
-                                        {r}
-                                      </option>
-                                    </React.Fragment>
-                                  ))}
-                                </select>
+                                <Pick id="ap-region" label="Regions" placeholder="Choose…" value={v.f.region} options={v.regions} onPick={v.on.region} />
                               </div>
                               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                                 <label htmlFor="ap-role" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
@@ -667,20 +788,7 @@ export default class Apply extends React.Component {
                               <label htmlFor="ap-hours" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
                                 Hours per week
                               </label>
-                              <select id="ap-hours" value={v.f.hours} onChange={v.on.hours} style={{ minHeight: "50px", padding: "0 12px", borderRadius: "14px", background: "#090414", border: "1px solid rgba(196, 170, 255, .16)", color: "#FFFFFF", fontSize: "15px" }}>
-                                <option value="5–10">
-                                  5–10 hours
-                                </option>
-                                <option value="10–20">
-                                  10–20 hours
-                                </option>
-                                <option value="20–30">
-                                  20–30 hours
-                                </option>
-                                <option value="30+">
-                                  30+ hours
-                                </option>
-                              </select>
+                              <Pick id="ap-hours" label="Hours per week" value={v.f.hours} options={v.hours} onPick={v.on.hours} />
                             </div>
                             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                               <label htmlFor="ap-why" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
