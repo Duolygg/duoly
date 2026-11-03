@@ -1349,7 +1349,8 @@ export function ReviewStars({ n, size }) {
   );
 }
 
-/** After a review: THANK YOU, the stars and what was rated (and tipped). A pending tip goes in children. */
+/** After a review: THANK YOU, the stars and what was rated (and tipped). A pending tip goes in children;
+ * reviewUrl adds the Trustpilot invite under it. */
 /** A tip as the customer picked it: $5.00 for a dollar tip (charged in EUR), else €4.42. */
 /** €5, or €4.58 when it has cents */
 export const tipAmount = (sym, n) => sym + n.toFixed(2).replace(/\.00$/, '');
@@ -1359,7 +1360,7 @@ export const tipMoney = (tip) =>
     ? tipAmount('$', tip.shown.amount)
     : tipAmount(tip.currency === 'USD' ? '$' : '€', tip.amount);
 
-export function ReviewThanks({ name, rating, tip, children }) {
+export function ReviewThanks({ name, rating, tip, reviewUrl = '', children }) {
   return (
     <div className="q-review" style={{ textAlign: 'center' }}>
       <div
@@ -1384,6 +1385,41 @@ export function ReviewThanks({ name, rating, tip, children }) {
         helps us match you with the right teammates.
       </p>
       {children}
+      {reviewUrl ? (
+        <div className="q-tp">
+          <div className="q-tp-rule" aria-hidden="true">
+            <span>ONE MORE THING</span>
+          </div>
+          <p className="q-tp-title">How was Duoly overall?</p>
+          <p className="q-tp-sub">
+            Share it on Trustpilot. Honest reviews, good or bad, help other
+            players choose.
+          </p>
+          <a
+            className="q-tp-btn"
+            href={reviewUrl}
+            target="_blank"
+            rel="noopener"
+            aria-label="Write a review on Trustpilot (opens in a new tab)"
+          >
+            Write a review on Trustpilot
+            <svg
+              aria-hidden="true"
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M7 17L17 7" />
+              <path d="M8 7h9v9" />
+            </svg>
+          </a>
+        </div>
+      ) : null}
     </div>
   );
 }

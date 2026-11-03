@@ -7,6 +7,7 @@ import { shrinkImage } from '../../design-reference/lib/shrinkImage';
 import PrivateProofs from '../proofs/PrivateProofs';
 import TipPaymentPanel from './TipPayment';
 import { createRoomFetch } from './queue-room-data';
+import { TRUSTPILOT_EVALUATE } from '../../site/trustpilot';
 import MatchStage, {
   tipMoney,
   BOUNTY,
@@ -781,7 +782,12 @@ export default class QueueRoom extends React.Component {
 
     if (o.review) {
       return (
-        <ReviewThanks name={name} rating={o.review.rating} tip={o.tip}>
+        <ReviewThanks
+          name={name}
+          rating={o.review.rating}
+          tip={o.tip}
+          reviewUrl={TRUSTPILOT_EVALUATE}
+        >
           {o.tip?.state === 'pending' ? (
             <button
               type="button"
