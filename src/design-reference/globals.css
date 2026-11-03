@@ -953,25 +953,27 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .qp-btn.is-primary{border-color:transparent;background:#D6BBFF;color:#17092E}
 @media (max-width:900px){.qp-order{display:none}}
 @media (max-width:560px){.qp-body{padding:4px 10px 14px}.qp-card{padding:22px 14px 20px}}
-/* Hero quotes (components/home/HeroQuotes.jsx): short reviews glide in at the logo's corners, left slots
-   from the left and right slots from the right, hold, then fade out (7.2s = two 3.6s steps) */
+/* Hero quotes (components/home/HeroQuotes.jsx): two lanes drift across the logo, the top lane left to
+   right and the bottom lane right to left. A quote fades in, glides across and fades out (9s = two
+   4.5s steps), so the lanes take turns and two quotes are on screen at a time */
 .hq{position:absolute;inset:0;pointer-events:none}
-.hq-q{position:absolute;margin:0;width:max-content;max-width:230px;padding:12px 14px 10px;border-radius:18px;border:1px solid transparent;background:linear-gradient(rgba(22,12,42,.82),rgba(22,12,42,.82)) padding-box,linear-gradient(120deg,rgba(214,187,255,.4),rgba(255,79,176,.3) 55%,rgba(214,187,255,.08)) border-box;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 22px 50px -20px rgba(0,0,0,.7),0 12px 34px -18px rgba(255,79,176,.35);animation:hq-l 7.2s cubic-bezier(.2,.7,.2,1) both}
-.hq-r1,.hq-r2{animation-name:hq-r}
-.hq-l1{left:-12%;top:2%}
-.hq-r1{right:-10%;top:12%}
-.hq-l2{left:-10%;bottom:4%}
-.hq-r2{right:-12%;bottom:14%}
-.hq-q blockquote{margin:0;font-family:'Bricolage Grotesque','Bricolage Fallback',sans-serif;font-size:15px;font-weight:700;line-height:1.3;letter-spacing:-.01em;color:#FFFFFF}
-.hq-mark{font-size:22px;line-height:0;vertical-align:-.28em;background:linear-gradient(135deg,#D6BBFF,#FF4FB0);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hq-mark:first-child{margin-right:2px}
-.hq-mark:last-child{margin-left:2px}
+.hq-q{position:absolute;left:50%;margin:0 0 0 -170px;width:340px;box-sizing:border-box;display:flex;align-items:flex-start;gap:12px;padding:14px 16px 13px 14px;border-radius:20px;border:1px solid transparent;background:radial-gradient(120% 140% at 0% 0%,rgba(214,187,255,.12),transparent 55%) padding-box,linear-gradient(rgba(20,10,38,.8),rgba(20,10,38,.8)) padding-box,linear-gradient(135deg,rgba(214,187,255,.45),rgba(255,79,176,.25) 45%,rgba(214,187,255,.06)) border-box;-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 24px 60px -24px rgba(0,0,0,.8),0 16px 40px -22px rgba(255,79,176,.4);animation:hq-ltr 9s linear both}
+.hq-q::after{content:'\201D';position:absolute;right:14px;top:-6px;font-family:'Bricolage Grotesque','Bricolage Fallback',serif;font-size:64px;font-weight:800;line-height:1;background:linear-gradient(135deg,#D6BBFF,#FF4FB0);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:.28}
+.hq-a{top:-4%}
+.hq-b{bottom:-12%;animation-name:hq-rtl}
+.hq-avatar{flex:0 0 auto;width:40px;height:40px;padding:2px;border-radius:50%;background:linear-gradient(135deg,#D6BBFF,#FF4FB0)}
+.hq-body{min-width:0}
+.hq-stars{display:flex;gap:2px}
+.hq-stars svg{fill:rgba(196,170,255,.2)}
+.hq-stars svg.is-on{fill:#FFD27A}
+.hq-q blockquote{margin:6px 0 0;font-family:'Bricolage Grotesque','Bricolage Fallback',sans-serif;font-size:15px;font-weight:700;line-height:1.32;letter-spacing:-.01em;color:#FFFFFF}
 .hq-q figcaption{margin-top:8px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#A79DC4}
 .hq-q figcaption img{display:block;border-radius:2px}
 .hq-q figcaption .hq-game{border-radius:4px}
-@keyframes hq-l{0%{opacity:0;transform:translateX(-48px);filter:blur(6px)}12%{opacity:1;transform:none;filter:none}84%{opacity:1;transform:none;filter:none}100%{opacity:0;transform:translateX(16px);filter:blur(4px)}}
-@keyframes hq-r{0%{opacity:0;transform:translateX(48px);filter:blur(6px)}12%{opacity:1;transform:none;filter:none}84%{opacity:1;transform:none;filter:none}100%{opacity:0;transform:translateX(-16px);filter:blur(4px)}}
-/* phones: one quote at a time, centered just under the logo */
-@media (max-width:640px){.hq-r1,.hq-r2{display:none}.hq-l1,.hq-l2{left:50%;right:auto;top:calc(100% + 6px);bottom:auto;width:max-content;max-width:min(300px,86vw);translate:-50% 0}}
-@media (prefers-reduced-motion:reduce){.hq-q{animation-name:hq-fade}}
-@keyframes hq-fade{0%,100%{opacity:0}12%,84%{opacity:1}}
+.hq-dot{width:3px;height:3px;border-radius:50%;background:rgba(196,170,255,.4)}
+@keyframes hq-ltr{0%{opacity:0;transform:translateX(-64%);filter:blur(5px)}16%{opacity:1;filter:none}80%{opacity:1;filter:none}100%{opacity:0;transform:translateX(64%);filter:blur(5px)}}
+@keyframes hq-rtl{0%{opacity:0;transform:translateX(64%);filter:blur(5px)}16%{opacity:1;filter:none}80%{opacity:1;filter:none}100%{opacity:0;transform:translateX(-64%);filter:blur(5px)}}
+/* phones: smaller cards and a shorter drift so they stay on screen */
+@media (max-width:640px){.hq-q{width:260px;margin-left:-130px;padding:12px 14px 11px 12px}.hq-q blockquote{font-size:14px}.hq-avatar{width:34px;height:34px}.hq-a{top:-4%}.hq-b{bottom:-2%}@keyframes hq-ltr{0%{opacity:0;transform:translateX(-22%);filter:blur(5px)}16%{opacity:1;filter:none}80%{opacity:1;filter:none}100%{opacity:0;transform:translateX(22%);filter:blur(5px)}}@keyframes hq-rtl{0%{opacity:0;transform:translateX(22%);filter:blur(5px)}16%{opacity:1;filter:none}80%{opacity:1;filter:none}100%{opacity:0;transform:translateX(-22%);filter:blur(5px)}}}
+@media (prefers-reduced-motion:reduce){.hq-q,.hq-b{animation-name:hq-fade}}
+@keyframes hq-fade{0%,100%{opacity:0}16%,80%{opacity:1}}

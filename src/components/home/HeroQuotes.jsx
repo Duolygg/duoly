@@ -1,5 +1,6 @@
-// Short customer quotes that drift in around the hero logo: left-side slots glide in from the
-// left, right-side slots from the right, each holds, then fades out while the next one arrives.
+// Short customer quotes that drift across the hero logo in two lanes: the top lane glides left to
+// right, the bottom lane right to left. Each quote fades in at one side, slides across and fades
+// out at the other, and the other lane picks up halfway, so two are on screen at a time.
 // Real reviews come in through `items` (their first sentence, if short enough); until there are
 // any, the hand-written SAMPLE_HERO_QUOTES are shown. Styles: globals.css (hq-*).
 import React from 'react';
@@ -8,24 +9,56 @@ import { flagSrc } from '../../design-reference/lib/countries';
 import { maskName } from './Testimonials';
 
 // Placeholder quotes (2026-11-03), shown until real reviews are passed in. Not real customers.
-// [quote, reviewer first name, country, game id]
+// [quote, reviewer first name, avatar (1-10), country, game id]
 export const SAMPLE_HERO_QUOTES = [
-  ['My Duoly teammate was a game changer.', 'Lukas', 'de', 'lol'],
-  ['Matched in under a minute. Won four straight.', 'Sander', 'no', 'cs2'],
-  ['Felt like duoing with a coach.', 'Daan', 'nl', 'val'],
-  ['Finally out of Gold. No flame, just wins.', 'Emily', 'gb', 'lol'],
-  ['Booked one game, stayed for five.', 'Jake', 'us', 'fn'],
-  ['Best comms I have ever had in ranked.', 'Chloé', 'fr', 'val'],
-  ['Zero toxicity. All dubs.', 'Liam', 'ca', 'apex'],
-  ['Calm, clear and seriously cracked.', 'Sofia', 'se', 'mr'],
-].map(([quote, name, country, game]) => ({ quote, name, country, game }));
+  [
+    'Stuck in Gold 2 the whole split. Plat after four games.',
+    'Lukas',
+    1,
+    'de',
+    'lol',
+  ],
+  [
+    'Booked at 2am. Had a Radiant in my lobby 90 seconds later.',
+    'Sander',
+    3,
+    'no',
+    'val',
+  ],
+  ['Finally get why I kept dying at 15 minutes.', 'Emily', 6, 'gb', 'lol'],
+  [
+    'They called every rotate before the ring even moved.',
+    'Liam',
+    5,
+    'ca',
+    'apex',
+  ],
+  ['No flame, no ego. Just clean calls and dubs.', 'Daan', 4, 'nl', 'cs2'],
+  [
+    'Asked for chill. Got chill, plus a six-game win streak.',
+    'Jake',
+    8,
+    'us',
+    'fn',
+  ],
+  ['Less like a carry, more like a coach on comms.', 'Chloé', 7, 'fr', 'ow'],
+  ['Three drones, three callouts, three rounds won.', 'Sofia', 2, 'se', 'r6'],
+].map(([quote, name, avatar, country, game]) => ({
+  quote,
+  name,
+  avatar: '/assets/avatars/avatar-' + avatar + '.png',
+  country,
+  game,
+  stars: 5,
+}));
 
-// Where the quotes sit around the logo, alternating sides so one always comes from each way.
-const SLOTS = ['l1', 'r1', 'l2', 'r2'];
-// a new quote every STEP ms; each stays two steps (7.2s), so two are on screen, one per side
-const STEP = 3600;
+// top lane drifts left to right, bottom lane right to left
+const LANES = ['a', 'b'];
+// a new quote every STEP ms, alternating lanes; each crossing takes two steps (globals.css: 9s)
+const STEP = 4500;
+const STARS = [1, 2, 3, 4, 5];
 
-/** A real review's first sentence, when it is short enough to read in passing. */
+/** A real review's first sentence, when it is short enough to read while it drifts by. */
 export function heroQuote(text) {
   const first = String(text || '').match(/^.+?[.!?](?=\s|$)/);
   const q = (first ? first[0] : String(text || '')).trim();
@@ -36,12 +69,12 @@ export function heroQuotes(real = []) {
   const quotes = real
     .map((t) => ({ ...t, quote: heroQuote(t.quote) }))
     .filter((t) => t.quote);
-  return quotes.length >= SLOTS.length ? quotes : SAMPLE_HERO_QUOTES;
+  return quotes.length >= 4 ? quotes : SAMPLE_HERO_QUOTES;
 }
 
 export default function HeroQuotes({ items }) {
   const quotes = heroQuotes(items);
-  // step n fills slot n % 4 with quote n % quotes; the slot's key changes so its animation replays
+  // step n starts quote n in lane n % 2; the lane's key changes so its animation replays
   const [n, setN] = React.useState(-1);
   React.useEffect(() => {
     setN(0);
@@ -51,35 +84,58 @@ export default function HeroQuotes({ items }) {
 
   return (
     <div className="hq" aria-hidden="true">
-      {SLOTS.map((slot, i) => {
-        // the latest step that landed in this slot
-        const at =
-          n - ((((n - i) % SLOTS.length) + SLOTS.length) % SLOTS.length);
+      {LANES.map((lane, i) => {
+        // the latest step that started in this lane
+        const at = n - ((((n - i) % 2) + 2) % 2);
         if (n < 0 || at < 0) return null;
         const t = quotes[at % quotes.length];
         const game = GAME[t.game];
         return (
-          <figure key={slot + at} className={'hq-q hq-' + slot}>
-            <blockquote>
-              <span className="hq-mark">“</span>
-              {t.quote}
-              <span className="hq-mark">”</span>
-            </blockquote>
-            <figcaption>
-              {t.country ? (
-                <img src={flagSrc(t.country)} alt="" width="16" height="12" />
-              ) : null}
-              <span>{maskName(t.name)}</span>
-              {game ? (
-                <img
-                  className="hq-game"
-                  src={game.img}
-                  alt=""
-                  width="16"
-                  height="16"
-                />
-              ) : null}
-            </figcaption>
+          <figure key={lane + at} className={'hq-q hq-' + lane}>
+            {t.avatar ? (
+              <img
+                className="hq-avatar"
+                src={t.avatar}
+                alt=""
+                width="40"
+                height="40"
+              />
+            ) : null}
+            <div className="hq-body">
+              <span className="hq-stars">
+                {STARS.map((s) => (
+                  <svg
+                    key={s}
+                    width="11"
+                    height="11"
+                    viewBox="0 0 24 24"
+                    className={s <= (t.stars || 5) ? 'is-on' : ''}
+                  >
+                    <path d="M12 2.5l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.7l7.1-.6z" />
+                  </svg>
+                ))}
+              </span>
+              <blockquote>“{t.quote}”</blockquote>
+              <figcaption>
+                <span>{maskName(t.name)}</span>
+                {t.country ? (
+                  <img src={flagSrc(t.country)} alt="" width="16" height="12" />
+                ) : null}
+                {game ? (
+                  <>
+                    <span className="hq-dot" />
+                    <img
+                      className="hq-game"
+                      src={game.img}
+                      alt=""
+                      width="14"
+                      height="14"
+                    />
+                    <span>{game.short || game.name}</span>
+                  </>
+                ) : null}
+              </figcaption>
+            </div>
           </figure>
         );
       })}
