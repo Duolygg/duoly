@@ -131,7 +131,7 @@ export default function HeroQuotes({ items }) {
                       width="14"
                       height="14"
                     />
-                    <span>{game.short || game.name}</span>
+                    <span>{game.name}</span>
                   </>
                 ) : null}
               </figcaption>
