@@ -1,6 +1,6 @@
-// Short customer quotes that drift across the hero logo in two lanes: the top lane glides left to
-// right, the bottom lane right to left. Each quote fades in at one side, slides across and fades
-// out at the other, and the other lane picks up halfway, so two are on screen at a time.
+// Short customer quotes that travel edge to edge across the hero logo in two lanes: the top lane
+// goes left to right, the bottom lane right to left. Each quote comes in from one edge, glides
+// across and leaves at the other, and the other lane starts halfway, so two are on screen at a time.
 // Real reviews come in through `items` (their first sentence, if short enough); until there are
 // any, the hand-written SAMPLE_HERO_QUOTES are shown. Styles: globals.css (hq-*).
 import React from 'react';
@@ -54,8 +54,8 @@ export const SAMPLE_HERO_QUOTES = [
 
 // top lane drifts left to right, bottom lane right to left
 const LANES = ['a', 'b'];
-// a new quote every STEP ms, alternating lanes; each crossing takes two steps (globals.css: 9s)
-const STEP = 4500;
+// a new quote every STEP ms, alternating lanes; each crossing takes two steps (globals.css: 12s)
+const STEP = 6000;
 const STARS = [1, 2, 3, 4, 5];
 
 /** A real review's first sentence, when it is short enough to read while it drifts by. */

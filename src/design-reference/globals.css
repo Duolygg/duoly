@@ -953,14 +953,16 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .qp-btn.is-primary{border-color:transparent;background:#D6BBFF;color:#17092E}
 @media (max-width:900px){.qp-order{display:none}}
 @media (max-width:560px){.qp-body{padding:4px 10px 14px}.qp-card{padding:22px 14px 20px}}
-/* Hero quotes (components/home/HeroQuotes.jsx): two lanes drift across the logo, the top lane left to
-   right and the bottom lane right to left. A quote fades in, glides across and fades out (9s = two
-   4.5s steps), so the lanes take turns and two quotes are on screen at a time */
-.hq{position:absolute;inset:0;pointer-events:none}
-.hq-q{position:absolute;left:50%;margin:0 0 0 -170px;width:340px;box-sizing:border-box;display:flex;align-items:flex-start;gap:12px;padding:14px 16px 13px 14px;border-radius:20px;border:1px solid transparent;background:radial-gradient(120% 140% at 0% 0%,rgba(214,187,255,.12),transparent 55%) padding-box,linear-gradient(rgba(20,10,38,.8),rgba(20,10,38,.8)) padding-box,linear-gradient(135deg,rgba(214,187,255,.45),rgba(255,79,176,.25) 45%,rgba(214,187,255,.06)) border-box;-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 24px 60px -24px rgba(0,0,0,.8),0 16px 40px -22px rgba(255,79,176,.4);animation:hq-ltr 9s linear both}
+/* Hero quotes (components/home/HeroQuotes.jsx): two lanes of quotes travel edge to edge across the
+   logo, the top lane left to right and the bottom lane right to left. Each card starts fully off one
+   edge, glides across and slides off the other (12s = two 6s steps); the strip's faded edges make
+   them appear and vanish. 100cqw is the strip's width. Like the other carousels, it keeps its slow
+   drift with reduced motion */
+.hq{position:absolute;top:-9%;bottom:-16%;left:-6%;right:-6%;pointer-events:none;overflow:hidden;container-type:inline-size;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+.hq-q{position:absolute;left:0;margin:0;width:340px;box-sizing:border-box;display:flex;align-items:flex-start;gap:12px;padding:14px 16px 13px 14px;border-radius:20px;border:1px solid transparent;background:radial-gradient(120% 140% at 0% 0%,rgba(214,187,255,.12),transparent 55%) padding-box,linear-gradient(rgba(20,10,38,.8),rgba(20,10,38,.8)) padding-box,linear-gradient(135deg,rgba(214,187,255,.45),rgba(255,79,176,.25) 45%,rgba(214,187,255,.06)) border-box;-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 24px 60px -24px rgba(0,0,0,.8),0 16px 40px -22px rgba(255,79,176,.4);animation:hq-ltr 12s linear both}
 .hq-q::after{content:'\201D';position:absolute;right:14px;top:-6px;font-family:'Bricolage Grotesque','Bricolage Fallback',serif;font-size:64px;font-weight:800;line-height:1;background:linear-gradient(135deg,#D6BBFF,#FF4FB0);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:.28}
-.hq-a{top:-4%}
-.hq-b{bottom:-12%;animation-name:hq-rtl}
+.hq-a{top:0}
+.hq-b{bottom:0;animation-name:hq-rtl}
 .hq-avatar{flex:0 0 auto;width:40px;height:40px;padding:2px;border-radius:50%;background:linear-gradient(135deg,#D6BBFF,#FF4FB0)}
 .hq-body{min-width:0}
 .hq-stars{display:flex;gap:2px}
@@ -971,9 +973,7 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .hq-q figcaption img{display:block;border-radius:2px}
 .hq-q figcaption .hq-game{border-radius:4px}
 .hq-dot{width:3px;height:3px;border-radius:50%;background:rgba(196,170,255,.4)}
-@keyframes hq-ltr{0%{opacity:0;transform:translateX(-64%);filter:blur(5px)}16%{opacity:1;filter:none}80%{opacity:1;filter:none}100%{opacity:0;transform:translateX(64%);filter:blur(5px)}}
-@keyframes hq-rtl{0%{opacity:0;transform:translateX(64%);filter:blur(5px)}16%{opacity:1;filter:none}80%{opacity:1;filter:none}100%{opacity:0;transform:translateX(-64%);filter:blur(5px)}}
-/* phones: smaller cards and a shorter drift so they stay on screen */
-@media (max-width:640px){.hq-q{width:260px;margin-left:-130px;padding:12px 14px 11px 12px}.hq-q blockquote{font-size:14px}.hq-avatar{width:34px;height:34px}.hq-a{top:-4%}.hq-b{bottom:-2%}@keyframes hq-ltr{0%{opacity:0;transform:translateX(-22%);filter:blur(5px)}16%{opacity:1;filter:none}80%{opacity:1;filter:none}100%{opacity:0;transform:translateX(22%);filter:blur(5px)}}@keyframes hq-rtl{0%{opacity:0;transform:translateX(22%);filter:blur(5px)}16%{opacity:1;filter:none}80%{opacity:1;filter:none}100%{opacity:0;transform:translateX(-22%);filter:blur(5px)}}}
-@media (prefers-reduced-motion:reduce){.hq-q,.hq-b{animation-name:hq-fade}}
-@keyframes hq-fade{0%,100%{opacity:0}16%,80%{opacity:1}}
+@keyframes hq-ltr{from{transform:translateX(-100%)}to{transform:translateX(100cqw)}}
+@keyframes hq-rtl{from{transform:translateX(100cqw)}to{transform:translateX(-100%)}}
+/* phones: smaller cards, strip as wide as the logo */
+@media (max-width:640px){.hq{left:0;right:0}.hq-q{width:260px;padding:12px 14px 11px 12px}.hq-q blockquote{font-size:14px}.hq-avatar{width:34px;height:34px}}
