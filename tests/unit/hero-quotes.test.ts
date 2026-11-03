@@ -40,6 +40,6 @@ describe('hero quotes', () => {
 
   it('keeps every sample short enough to read in passing', () => {
     for (const t of SAMPLE_HERO_QUOTES)
-      expect(t.quote.length).toBeLessThanOrEqual(72);
+      expect(String(t.quote).length).toBeLessThanOrEqual(72);
   });
 });
