@@ -22,6 +22,7 @@ import { ProofView } from '../proofs/proof-view';
 import { GAME, IGN_LABEL } from '../../design-reference/lib/games';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import { rankPrice } from '../../design-reference/lib/ranks';
+import { TRUSTPILOT_EVALUATE } from '../../site/trustpilot';
 
 // a Pokémon Unite Duo Pro order (lib/catalog.js: 5.99 a game, Master teammate; Veteran is the
 // base-price rank, 3 games take 10% off) on the Asia servers, with itskeikooo from Japan
@@ -369,6 +370,7 @@ export default class QueuePreview extends React.Component {
                       name={MATE.name}
                       rating={rv.rating}
                       tip={{ amount: rv.tip, currency: cur, state: 'paid' }}
+                      reviewUrl={TRUSTPILOT_EVALUATE}
                     />
                   ) : done ? (
                     <ReviewForm

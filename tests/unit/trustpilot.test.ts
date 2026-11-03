@@ -73,8 +73,13 @@ describe('Trustpilot review invite', () => {
     );
   });
 
-  it('is offered after every review in the order room', () => {
+  it('is offered after every review, in the order room and its homepage preview', () => {
     const room = readFileSync('src/components/account/QueueRoom.jsx', 'utf8');
     expect(room).toContain('reviewUrl={TRUSTPILOT_EVALUATE}');
+    const preview = readFileSync(
+      'src/components/home/QueuePreview.jsx',
+      'utf8',
+    );
+    expect(preview).toContain('reviewUrl={TRUSTPILOT_EVALUATE}');
   });
 });
