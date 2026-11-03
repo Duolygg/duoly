@@ -38,6 +38,17 @@ describe('hero quotes', () => {
     );
   });
 
+  it('has at least 20 samples across games and social, all naming Duoly', () => {
+    expect(SAMPLE_HERO_QUOTES.length).toBeGreaterThanOrEqual(20);
+    const games = new Set(SAMPLE_HERO_QUOTES.map((t) => t.game));
+    expect(games.has('social')).toBe(true);
+    expect(games.size).toBeGreaterThanOrEqual(10);
+    for (const t of SAMPLE_HERO_QUOTES) expect(t.quote).toContain('Duoly');
+    SAMPLE_HERO_QUOTES.forEach((t, i) =>
+      expect(t.game).not.toBe(SAMPLE_HERO_QUOTES[i - 1]?.game),
+    );
+  });
+
   it('keeps every sample short enough to read in passing', () => {
     for (const t of SAMPLE_HERO_QUOTES)
       expect(String(t.quote).length).toBeLessThanOrEqual(72);
