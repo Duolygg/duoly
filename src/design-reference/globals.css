@@ -955,15 +955,15 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 @media (max-width:560px){.qp-body{padding:4px 10px 14px}.qp-card{padding:22px 14px 20px}}
 /* Hero quotes (components/home/HeroQuotes.jsx): two lanes of quotes travel edge to edge across the
    logo, the top lane left to right and the bottom lane right to left. Each card starts fully off one
-   edge, glides across and slides off the other (12s = two 6s steps); the strip's faded edges make
-   them appear and vanish. 100cqw is the strip's width. Like the other carousels, it keeps its slow
-   drift with reduced motion */
-.hq{position:absolute;top:-9%;bottom:-16%;left:-6%;right:-6%;pointer-events:none;overflow:hidden;container-type:inline-size;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+   edge, glides across and slides off the other (12s = two 6s steps); the strip fades out over its
+   outer thirds, so cards are faint near the edges. 100cqw is the strip's width. Like the other
+   carousels, it keeps its slow drift with reduced motion */
+.hq{position:absolute;top:-9%;bottom:-16%;left:-6%;right:-6%;pointer-events:none;overflow:hidden;container-type:inline-size;-webkit-mask-image:linear-gradient(90deg,transparent,rgba(0,0,0,.25) 12%,#000 34%,#000 66%,rgba(0,0,0,.25) 88%,transparent);mask-image:linear-gradient(90deg,transparent,rgba(0,0,0,.25) 12%,#000 34%,#000 66%,rgba(0,0,0,.25) 88%,transparent)}
 .hq-q{position:absolute;left:0;margin:0;width:340px;box-sizing:border-box;display:flex;align-items:flex-start;gap:12px;padding:14px 16px 13px 14px;border-radius:20px;border:1px solid transparent;background:radial-gradient(120% 140% at 0% 0%,rgba(214,187,255,.12),transparent 55%) padding-box,linear-gradient(rgba(20,10,38,.8),rgba(20,10,38,.8)) padding-box,linear-gradient(135deg,rgba(214,187,255,.45),rgba(255,79,176,.25) 45%,rgba(214,187,255,.06)) border-box;-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 24px 60px -24px rgba(0,0,0,.8),0 16px 40px -22px rgba(255,79,176,.4);animation:hq-ltr 12s linear both}
 .hq-q::after{content:'\201D';position:absolute;right:14px;top:-6px;font-family:'Bricolage Grotesque','Bricolage Fallback',serif;font-size:64px;font-weight:800;line-height:1;background:linear-gradient(135deg,#D6BBFF,#FF4FB0);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:.28}
 .hq-a{top:0}
 .hq-b{bottom:0;animation-name:hq-rtl}
-.hq-avatar{flex:0 0 auto;width:40px;height:40px;padding:2px;border-radius:50%;background:linear-gradient(135deg,#D6BBFF,#FF4FB0)}
+.hq-avatar{flex:0 0 auto;width:40px;height:40px;border-radius:50%}
 .hq-body{min-width:0}
 .hq-stars{display:flex;gap:2px}
 .hq-stars svg{fill:rgba(196,170,255,.2)}
