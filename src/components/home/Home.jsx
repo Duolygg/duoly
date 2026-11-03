@@ -25,6 +25,7 @@ import MoodPicker from './MoodPicker';
 import TeammateCarousel from './TeammateCarousel';
 import SoloVsDuoly from './SoloVsDuoly';
 import Testimonials from './Testimonials';
+import HeroQuotes from './HeroQuotes';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import {
   ranksOf,
@@ -2461,18 +2462,28 @@ export default class Home extends React.Component {
                 justifyContent: 'center',
               }}
             >
-              <img
-                src="/assets/brand/logo-full.webp"
-                alt="Duoly mascots: two smiling gamers with headsets"
-                width="560"
-                height="456"
+              <div
                 style={{
+                  position: 'relative',
                   width: '100%',
                   maxWidth: '560px',
-                  height: 'auto',
-                  display: 'block',
                 }}
-              />
+              >
+                <img
+                  src="/assets/brand/logo-full.webp"
+                  alt="Duoly mascots: two smiling gamers with headsets"
+                  width="560"
+                  height="456"
+                  style={{
+                    width: '100%',
+                    maxWidth: '560px',
+                    height: 'auto',
+                    display: 'block',
+                  }}
+                />
+                {/* short quotes drifting in around the logo; real ones come in through props.testimonials */}
+                <HeroQuotes items={this.props.testimonials} />
+              </div>
             </div>
           </section>
           {v.ticker.length ? (
