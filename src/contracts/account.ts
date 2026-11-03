@@ -36,7 +36,7 @@ export const ProfileUpdateSchema = z
     ]),
   })
   .strict();
-/** Original lib/roles.js LANGUAGES, in his order. */
+/** Original lib/roles.js LANGUAGES, in his order, plus the rest of Europe before Arabic. */
 export const PROFILE_LANGUAGES = [
   'English',
   'German',
@@ -50,6 +50,26 @@ export const PROFILE_LANGUAGES = [
   'Turkish',
   'Russian',
   'Ukrainian',
+  'Greek',
+  'Czech',
+  'Slovak',
+  'Hungarian',
+  'Romanian',
+  'Bulgarian',
+  'Croatian',
+  'Serbian',
+  'Slovenian',
+  'Bosnian',
+  'Albanian',
+  'Macedonian',
+  'Danish',
+  'Norwegian',
+  'Finnish',
+  'Icelandic',
+  'Estonian',
+  'Latvian',
+  'Lithuanian',
+  'Catalan',
   'Arabic',
   'Japanese',
   'Korean',
