@@ -67,9 +67,12 @@ describe('teammate carousel', () => {
       html,
     )?.[0];
     expect(list?.match(/class="tc-card/g)).toHaveLength(2);
-    // Mira plays the picked game (League), so she leads with its icon highlighted
+    // Mira plays the picked game (League), so she leads; each card shows only its own games, unhighlighted
     expect(list!.indexOf('Mira')).toBeLessThan(list!.indexOf('Lena'));
-    expect(list).toMatch(/alt="League of Legends"[^>]*class="is-picked"/);
+    const lena = list!.slice(list!.indexOf('Lena'));
+    expect(lena).toContain('alt="Valorant"');
+    expect(lena).not.toContain('alt="League of Legends"');
+    expect(list).not.toContain('is-picked');
     expect(html).toContain('Online now');
     expect(html).toContain('★ 4.9');
     expect(html).toContain('Gamer Girl');

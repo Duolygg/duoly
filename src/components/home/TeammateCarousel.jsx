@@ -1,6 +1,6 @@
 // "Meet your teammates": real teammates (public.home_teammates) drifting right to left on cards
-// between "Pick a mode" and "Check out". People who play the picked game come first and get its
-// icon highlighted. Pauses while hovered. Without teammates it falls back to the live online line.
+// between "Pick a mode" and "Check out". People who play the picked game come first; each card
+// shows only that teammate's own games. Pauses while hovered. Without teammates it falls back to the live online line.
 // Styles: globals.css (tc-*).
 import React from 'react';
 
@@ -11,7 +11,7 @@ const LOOP_CARDS = 5;
 const SPEED = 32;
 const CARD_PX = 288;
 
-function Card({ t, game }) {
+function Card({ t }) {
   return (
     <div
       className={
@@ -41,7 +41,6 @@ function Card({ t, game }) {
               title={g.name}
               width="26"
               height="26"
-              className={g.id === game.id ? 'is-picked' : ''}
             />
           ))}
         </span>
@@ -89,7 +88,7 @@ export default function TeammateCarousel({ crew, game, onlineText }) {
             <div className="tc-set" role="list" aria-label="Our teammates">
               {crew.map((t, i) => (
                 <div role="listitem" key={i}>
-                  <Card t={t} game={game} />
+                  <Card t={t} />
                 </div>
               ))}
             </div>
@@ -97,7 +96,7 @@ export default function TeammateCarousel({ crew, game, onlineText }) {
             {Array.from({ length: perLoop * 2 - 1 }, (_, n) => (
               <div className="tc-set" aria-hidden="true" key={n}>
                 {crew.map((t, i) => (
-                  <Card t={t} game={game} key={i} />
+                  <Card t={t} key={i} />
                 ))}
               </div>
             ))}
