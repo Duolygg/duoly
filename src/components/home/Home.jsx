@@ -2461,151 +2461,18 @@ export default class Home extends React.Component {
                 justifyContent: 'center',
               }}
             >
-              <>
-                <img
-                  src="/assets/brand/logo-full.webp"
-                  alt="Duoly mascots: two smiling gamers with headsets"
-                  width="560"
-                  height="456"
-                  style={{
-                    width: '100%',
-                    maxWidth: '560px',
-                    height: 'auto',
-                    display: 'block',
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '0',
-                    top: '18%',
-                    width: '250px',
-                    padding: '14px',
-                    borderRadius: '18px',
-                    background: 'rgba(22, 14, 40, .92)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(196, 170, 255, .16)',
-                    boxShadow: '0 24px 60px rgba(0, 0, 0, .5)',
-                    animation: 'dlfloat 6s ease-in-out infinite',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      fontSize: '11.5px',
-                      fontWeight: '600',
-                      color: '#5EEAA8',
-                      textTransform: 'uppercase',
-                      letterSpacing: '.08em',
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        background: '#5EEAA8',
-                      }}
-                    />
-                    {v.stat.wait
-                      ? 'Match found · ' + v.stat.wait
-                      : 'Match found'}
-                  </div>
-                  <div
-                    style={{
-                      marginTop: '10px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                    }}
-                  >
-                    <span
-                      style={{
-                        position: 'relative',
-                        flex: '0 0 auto',
-                        width: '42px',
-                        height: '42px',
-                      }}
-                    >
-                      <img
-                        src="/assets/avatars/avatar-1.png"
-                        alt=""
-                        width="42"
-                        height="42"
-                        style={{
-                          width: '42px',
-                          height: '42px',
-                          borderRadius: '50%',
-                          display: 'block',
-                        }}
-                      />
-                      <img
-                        src="/assets/flags/de.png"
-                        alt="Germany"
-                        width="16"
-                        height="16"
-                        style={{
-                          position: 'absolute',
-                          right: '-2px',
-                          bottom: '-2px',
-                          width: '16px',
-                          height: '16px',
-                          borderRadius: '50%',
-                          boxShadow: '0 0 0 2px #160E28',
-                        }}
-                      />
-                    </span>
-                    <span
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        lineHeight: '1.3',
-                      }}
-                    >
-                      <span style={{ fontWeight: '600', color: '#FFFFFF' }}>
-                        Your teammate
-                      </span>
-                      <span style={{ fontSize: '12.5px', color: '#A79DC4' }}>
-                        Rank-verified · voice on
-                      </span>
-                    </span>
-                  </div>
-                </div>
-                <div
-                  style={{
-                    position: 'absolute',
-                    right: '2%',
-                    bottom: '14%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '10px 14px 10px 10px',
-                    borderRadius: '14px',
-                    background: 'rgba(22, 14, 40, .92)',
-                    border: '1px solid rgba(196, 170, 255, .16)',
-                    boxShadow: '0 20px 50px rgba(0, 0, 0, .45)',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    color: '#F3EEFF',
-                    animation: 'dlfloat 7s ease-in-out infinite reverse',
-                  }}
-                >
-                  <img
-                    src="/assets/games/valorant.png"
-                    alt=""
-                    width="28"
-                    height="28"
-                    style={{
-                      width: '28px',
-                      height: '28px',
-                      borderRadius: '8px',
-                    }}
-                  />
-                  Rank Rush ×5 · <span style={{ color: '#5EEAA8' }}>−15%</span>
-                </div>
-              </>
+              <img
+                src="/assets/brand/logo-full.webp"
+                alt="Duoly mascots: two smiling gamers with headsets"
+                width="560"
+                height="456"
+                style={{
+                  width: '100%',
+                  maxWidth: '560px',
+                  height: 'auto',
+                  display: 'block',
+                }}
+              />
             </div>
           </section>
           {v.ticker.length ? (
