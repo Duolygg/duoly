@@ -174,7 +174,7 @@ describe('shared order room pieces', () => {
       expect(invited).toContain(
         'href="https://www.trustpilot.com/evaluate/duoly.gg"',
       );
-      expect(invited).toContain('Write a review');
+      expect(invited).toContain('Write a review on Trustpilot');
     }
   });
 });

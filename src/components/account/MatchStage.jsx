@@ -1386,52 +1386,39 @@ export function ReviewThanks({ name, rating, tip, reviewUrl, children }) {
       </p>
       {children}
       {reviewUrl ? (
-        <a
-          className="q-tp"
-          href={reviewUrl}
-          target="_blank"
-          rel="noopener"
-          aria-label="Write a review of Duoly on Trustpilot (opens in a new tab)"
-        >
-          <span className="q-tp-icon" aria-hidden="true">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z" />
-              <path d="M12 8.6l1 2.2 2.4.2-1.8 1.6.5 2.3-2.1-1.2-2.1 1.2.5-2.3-1.8-1.6 2.4-.2z" />
-            </svg>
-          </span>
-          <span className="q-tp-text">
-            <strong>One more minute?</strong>
-            <span>
-              Tell other players how Duoly went for you on Trustpilot. Honest
-              reviews, good or bad, help us get better.
-            </span>
-          </span>
-          <span className="q-tp-go">
-            Write a review
+        <div className="q-tp">
+          <div className="q-tp-rule" aria-hidden="true">
+            <span>ONE MORE THING</span>
+          </div>
+          <p className="q-tp-title">How was Duoly overall?</p>
+          <p className="q-tp-sub">
+            Share it on Trustpilot. Honest reviews, good or bad, help other
+            players choose.
+          </p>
+          <a
+            className="q-tp-btn"
+            href={reviewUrl}
+            target="_blank"
+            rel="noopener"
+            aria-label="Write a review on Trustpilot (opens in a new tab)"
+          >
+            Write a review on Trustpilot
             <svg
               aria-hidden="true"
-              width="14"
-              height="14"
+              width="15"
+              height="15"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2.6"
+              strokeWidth="2.4"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path d="M9 6l6 6-6 6" />
+              <path d="M7 17L17 7" />
+              <path d="M8 7h9v9" />
             </svg>
-          </span>
-        </a>
+          </a>
+        </div>
       ) : null}
     </div>
   );
