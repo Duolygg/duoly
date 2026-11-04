@@ -228,7 +228,7 @@ const avatar =
     </script>}
     {signInPopup && <SiteAuthDialog csrf={csrf} client:idle />}
     <CookieBanner />
-    <Analytics viewer={viewer} />
+    <Analytics viewer={viewer} csrf={csrf} />
     <script is:inline>
       // Close open header menus on outside click or Escape.
       document.addEventListener('click', (event) => {

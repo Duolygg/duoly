@@ -7,6 +7,7 @@ import { analyticsBoot, bootJson } from '../../server/analytics/boot';
 
 interface Props {
   viewer?: Viewer | undefined;
+  csrf?: string;
 }
 const boot = analyticsBoot({
   path: Astro.url.pathname,
@@ -19,6 +20,7 @@ const boot = analyticsBoot({
   <script
     type="application/json"
     id={ANALYTICS_BOOT_ID}
+    data-csrf={Astro.props.csrf}
     set:html={bootJson(boot)}
   />
 )}

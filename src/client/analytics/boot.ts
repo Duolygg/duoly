@@ -59,8 +59,23 @@ function start() {
     readConsent,
     config: () => analyticsConfig(boot, beforeSend) as Record<string, unknown>,
   });
+  const syncConsent = () => {
+    if (!boot.uid || !readConsent()) return;
+    const csrf = island.dataset.csrf;
+    if (!csrf) return;
+    void fetch('/api/analytics/consent', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'X-CSRF-Token': csrf },
+    }).catch(() => {});
+  };
   controller.sync();
-  addEventListener('duoly:consent', () => controller.sync());
+  // One initial sync per document, not on bfcache restores.
+  syncConsent();
+  addEventListener('duoly:consent', () => {
+    syncConsent();
+    controller.sync();
+  });
   addEventListener('pageshow', (event) => {
     if (event.persisted) controller.sync();
   });

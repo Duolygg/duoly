@@ -29,6 +29,37 @@ Owner decisions: four PRs; personless business totals without Analytics consent;
 - Unit: `tests/unit/analytics-core.test.ts` (sanitizer, controller transitions, server boot, config).
 - Browser: `playwright.analytics.config.ts` (port 4361) points the SDK at a fake host and decodes real payloads. posthog-js drops events from automated browsers, so the spec hides `navigator.webdriver` and the HeadlessChrome brand. Astro's dev toolbar covers the banner buttons: use `press('Enter')`.
 
+## Server consent snapshot
+
+`feat/analytics-consent-sync` adds `20261106100000_analytics_consent.sql`.
+Apply the additive migration before deploying the sync endpoint. It has RLS,
+no browser policies or grants, and service-role CRUD only. No hosted database
+changes are part of this branch's verification.
+
+- `recordAnalyticsConsent(client, userId, state)` stores only analytics and
+  marketing with a refreshed timestamp. The endpoint reuses `supportService()`
+  (the existing service-role factory and `SUPABASE_SECRET_KEY`). Errors are
+  logged without identity or provider payloads and swallowed.
+- `POST /api/analytics/consent` uses `accountContext.identity()` and reads only
+  `duoly-consent`, never body consent or identity. The existing `verifyCsrf`
+  helper requires the configured Origin and an `X-CSRF-Token` matching the
+  HttpOnly CSRF cookie. SiteLayout passes its existing token through the
+  analytics island's `data-csrf` attribute.
+- Responses are no-store: 204 with an empty body on valid consent, absent or
+  invalid consent, or best-effort sync failure; 401 `{ "error": "Authentication
+required." }` when signed out; 403 `{ "error": "Request could not be verified.
+Reload and try again." }` for Origin or CSRF failure; 405 `{ "error": "Method
+not allowed." }` with `Allow: POST` for other methods.
+- Signed-in, eligible analytics pages sync once per document when a choice
+  exists and again on `duoly:consent`, including withdrawal. Network failures
+  are ignored. No cookie choice, no uid or no island means no sync request.
+- Tests: `analytics-consent-sync.test.ts` (endpoint, write failures, timestamp,
+  static migration isolation and additive-only diff) and
+  `analytics-consent-browser.test.ts` (load, withdrawal, first choice, guards).
+  SQL assertions are source checks, not executed database acceptance.
+- Delivery-time identity resolution and pre-handler checkout, PRO and review
+  adapter snapshots remain for the outbox/server-events branch.
+
 ## Known follow-ups
 
 - Bundle: the default `posthog-js` build adds about 120 KB gzipped to every page (module script, does not block first paint). The slim build was measured and is not smaller once web vitals are registered (128 KB gzip; extension bundles do not tree-shake), so A1 keeps the default import. Revisit only if PostHog ships tree-shakeable extensions. Evidence: `posthog-research/08-slim-bundle.md` in the project folder.
