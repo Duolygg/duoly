@@ -1,0 +1,27 @@
+---
+// Analytics bootstrap (POSTHOG-SPEC sections 2 and 3). Renders the data island only where
+// analytics may run; the script itself is inert without it and before a cookie choice.
+import type { Viewer } from '../../contracts/account';
+import { ANALYTICS_BOOT_ID } from '../../contracts/analytics';
+import { analyticsBoot, bootJson } from '../../server/analytics/boot';
+
+interface Props {
+  viewer?: Viewer | undefined;
+}
+const boot = analyticsBoot({
+  path: Astro.url.pathname,
+  notFound: Astro.routePattern === '/404' || Astro.response.status === 404,
+  viewer: Astro.props.viewer,
+});
+---
+
+{boot && (
+  <script
+    type="application/json"
+    id={ANALYTICS_BOOT_ID}
+    set:html={bootJson(boot)}
+  />
+)}
+<script>
+  import '../../client/analytics/boot';
+</script>
