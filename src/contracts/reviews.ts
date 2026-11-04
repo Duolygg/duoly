@@ -103,7 +103,8 @@ const ReviewStatsSchema = z.strictObject({
       due: z.number(),
       carried: z.number(),
       held: z.number().nonnegative(),
-      minimum: z.literal(10),
+      // 25 since 20261104120000 (10 before); any positive amount so code and migration can ship in either order.
+      minimum: z.number().positive(),
       details: z.boolean(),
       owed: z.number(),
       history: z.array(

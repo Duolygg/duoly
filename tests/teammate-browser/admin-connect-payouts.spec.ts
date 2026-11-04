@@ -88,7 +88,7 @@ const routes = async (
         return r.fulfill({ json: { ok: true } });
       }
       return r.fulfill({
-        json: { payouts, teammates: [], minimum: 10, connect },
+        json: { payouts, teammates: [], minimum: 25, connect },
       });
     }
     if (url.pathname === '/api/admin/audit')

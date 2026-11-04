@@ -199,7 +199,7 @@ const teammates = [
       due: 8.25,
       held: 0,
       carried: 0,
-      minimum: 10,
+      minimum: 25,
       details: false,
       history: [],
     },
@@ -440,7 +440,7 @@ describe('Sparky admin tools: results', () => {
         rating: 4.75,
         trustTier: 'rookie',
         depositPercent: 10,
-        payout: { owedUsd: 31.5, minimumUsd: 10, payoutDetailsComplete: false },
+        payout: { owedUsd: 31.5, minimumUsd: 25, payoutDetailsComplete: false },
       },
     });
     const kaiText = JSON.stringify(kaiSummary);

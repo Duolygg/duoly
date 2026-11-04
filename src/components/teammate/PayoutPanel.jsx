@@ -1,4 +1,6 @@
 import React from 'react';
+import Pick from '../../design-reference/components/Pick.jsx';
+import { COUNTRIES, flagSrc } from '../../design-reference/lib/countries';
 
 const money = (n) => (n < 0 ? '-$' : '$') + Math.abs(n).toFixed(2);
 const day = (t) =>
@@ -16,14 +18,20 @@ const field = {
   fontSize: '12.5px',
   color: '#A79DC4',
 };
-const input = {
-  padding: '9px 11px',
-  borderRadius: '10px',
-  border: '1px solid rgba(196, 170, 255, .18)',
-  background: '#090414',
-  color: '#FFFFFF',
-  font: 'inherit',
-};
+// Same field look as the profile page (globals.css .pf-input), sized to match the dropdowns.
+const FIELD_HEIGHT = '46px';
+const input = { height: FIELD_HEIGHT, borderRadius: '14px' };
+const METHODS = [
+  { value: 'wise', label: 'Wise' },
+  { value: 'bank', label: 'Bank transfer' },
+  { value: 'paypal', label: 'PayPal' },
+];
+// Stored as the English country name, like before this was a free-text field.
+const COUNTRY_OPTIONS = COUNTRIES.map(([code, name]) => ({
+  value: name,
+  label: name,
+  icon: flagSrc(code),
+}));
 const connectLabel = {
   not_started: 'Not started',
   pending: 'Pending verification',
@@ -158,7 +166,13 @@ export default class PayoutPanel extends React.Component {
           : {
               loaded: true,
               form:
-                body && body.details ? { ...empty, ...body.details } : empty,
+                body && body.details
+                  ? {
+                      ...empty,
+                      ...body.details,
+                      taxNumber: body.details.taxNumber || '',
+                    }
+                  : empty,
             },
       );
     } catch {
@@ -168,6 +182,12 @@ export default class PayoutPanel extends React.Component {
   save = async (event) => {
     event.preventDefault();
     if (this.state.saving) return;
+    if (!this.state.form.country || !this.state.form.method) {
+      this.setState({
+        message: 'Pick your country and how you want to be paid.',
+      });
+      return;
+    }
     this.setState({ saving: true, message: '' });
     const {
       legalName,
@@ -208,8 +228,8 @@ export default class PayoutPanel extends React.Component {
       });
     }
   };
-  set = (key) => (event) => {
-    const value = event.target.value;
+  set = (key) => (event) => this.put(key)(event.target.value);
+  put = (key) => (value) => {
     this.setState((state) => ({
       dirty: true,
       form: { ...state.form, [key]: value },
@@ -389,6 +409,7 @@ export default class PayoutPanel extends React.Component {
             <label style={field}>
               Full legal name
               <input
+                className="pf-input"
                 required
                 maxLength={120}
                 value={s.form.legalName}
@@ -399,16 +420,18 @@ export default class PayoutPanel extends React.Component {
             <label style={field}>
               Date of birth
               <input
+                className="pf-input"
                 required
                 type="date"
                 value={s.form.dateOfBirth}
                 onChange={this.set('dateOfBirth')}
-                style={input}
+                style={{ ...input, colorScheme: 'dark' }}
               />
             </label>
             <label style={field}>
               Address
               <input
+                className="pf-input"
                 required
                 maxLength={300}
                 value={s.form.address}
@@ -416,41 +439,55 @@ export default class PayoutPanel extends React.Component {
                 style={input}
               />
             </label>
-            <label style={field}>
-              Country
-              <input
-                required
-                maxLength={56}
+            <div style={field}>
+              <label htmlFor="payout-country">Country</label>
+              <Pick
+                id="payout-country"
+                label="Countries"
+                search
+                height={FIELD_HEIGHT}
+                placeholder="Search countries"
                 value={s.form.country}
-                onChange={this.set('country')}
-                style={input}
+                options={
+                  s.form.country &&
+                  !COUNTRY_OPTIONS.some((o) => o.value === s.form.country)
+                    ? [
+                        { value: s.form.country, label: s.form.country },
+                        ...COUNTRY_OPTIONS,
+                      ]
+                    : COUNTRY_OPTIONS
+                }
+                onPick={this.put('country')}
               />
-            </label>
+            </div>
             <label style={field}>
-              Tax number
+              <span>
+                Tax number <span style={{ color: '#6A6086' }}>(optional)</span>
+              </span>
               <input
-                required
+                className="pf-input"
                 maxLength={40}
                 value={s.form.taxNumber}
                 onChange={this.set('taxNumber')}
                 style={input}
               />
             </label>
-            <label style={field}>
-              Payout method
-              <select
+            <div style={field}>
+              <label htmlFor="payout-method">Payout method</label>
+              <Pick
+                id="payout-method"
+                label="Payout methods"
+                height={FIELD_HEIGHT}
+                placeholder="Choose…"
                 value={s.form.method}
-                onChange={this.set('method')}
-                style={input}
-              >
-                <option value="wise">Wise</option>
-                <option value="bank">Bank transfer</option>
-                <option value="paypal">PayPal</option>
-              </select>
-            </label>
+                options={METHODS}
+                onPick={this.put('method')}
+              />
+            </div>
             <label style={{ ...field, gridColumn: '1 / -1' }}>
               Account (IBAN, Wise or PayPal email)
               <input
+                className="pf-input"
                 required
                 maxLength={200}
                 value={s.form.account}

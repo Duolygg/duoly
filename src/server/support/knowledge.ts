@@ -151,7 +151,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'pay',
     roles: TEAM,
     match: /paid|payout|pay day|payday|earn|money|friday|salary|when.*get|tip/,
-    text: 'You earn 60% of the order price, fixed in USD when the order is booked, and earnings are recorded for every completed order. Payouts are weekly: each week runs Friday to Friday (Vienna time) and is paid on the Friday it ends. The minimum payout is $10; smaller amounts carry over to the next week. Before your first payout, fill in your payout details (legal name, address, country, date of birth, tax number and payout method). Tips are 100% yours and are paid out with your week.',
+    text: 'You earn 60% of the order price, fixed in USD when the order is booked, and earnings are recorded for every completed order. Payouts are weekly: each week runs Friday to Friday (Vienna time) and is paid on the Friday it ends. The minimum payout is $25; smaller amounts carry over to the next week. Before your first payout, fill in your payout details (legal name, address, country, date of birth and payout method; a tax number is optional). Tips are 100% yours and are paid out with your week.',
   },
   {
     id: 'trust',
