@@ -36,7 +36,11 @@ const CHAT = [
   ['mxrtin', '#5EEAA8', 'just booked one, we’re queueing rn'],
   ['zoe.gg', '#F0A6FF', 'W streamer, W code'],
   ['lumi', '#9EE6FF', 'does it work for valorant too?'],
-  ['YourChannel', '#FFD27A', 'every game: League, Valo, CS2, Fortnite, Apex…'],
+  [
+    'YourChannel',
+    '#FFD27A',
+    'every game: League of Legends, Valorant, Counter-Strike 2, Fortnite, Apex Legends…',
+  ],
 ];
 const SALES = [
   ['kiwi_', 'Duo Pro ×3'],

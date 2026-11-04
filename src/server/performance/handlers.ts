@@ -108,4 +108,5 @@ export const adminPerformance = adminRoute(
         }),
     },
   ],
+  ['performance'],
 );

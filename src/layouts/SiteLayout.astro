@@ -31,6 +31,11 @@ const initial = (viewer?.name || 'P').trim().charAt(0).toUpperCase();
 // Signed out: "Sign in" (and any other link to /login) opens the homepage's sign-in popup in
 // place. Without JavaScript, or without a token, the link still goes to /login.
 const signInPopup = !viewer && !bare && !!csrf && path !== '/login';
+// Link previews (Discord, X, WhatsApp, iMessage, …). Crawlers need absolute URLs; like the
+// canonical URL, never take the origin from the request (SITE_URL, else the live domain).
+const origin = Astro.site ?? new URL('https://duoly.gg');
+const shareUrl = new URL(path === '/' ? '/' : path, origin).href;
+const shareImage = new URL('/og/duoly.jpg', origin).href;
 const avatar =
   viewer?.image &&
   (viewer.image.startsWith('/assets/avatars/') ||
@@ -49,7 +54,30 @@ const avatar =
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <!-- Link previews: public/og/duoly.jpg is 1200x630, the size every platform shows uncropped -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Duoly" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={shareUrl} />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Duoly: find your perfect teammate with Duoly today"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={shareImage} />
+    <!-- Accent stripe on Discord embeds -->
+    <meta name="theme-color" content="#A970FF" />
     <!-- Fetch the fonts with the HTML so the first paint already uses them (no headline reflow). -->
     <link
       rel="preload"

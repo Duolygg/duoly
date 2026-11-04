@@ -1,4 +1,5 @@
 import React from 'react';
+import ProofManager from './ProofManager';
 import { GAME as GAMES } from '../../design-reference/lib/games';
 import { winrateLabel } from '../../design-reference/lib/winloss';
 import {
@@ -55,6 +56,226 @@ export default class MatchReports extends React.Component {
           'Couldn’t load the match reports. They show up once the win/loss update is live.',
       });
     this.setState({ reports: res.data.reports || [], error: '' });
+  }
+  // ---- an admin corrects the result (migration 20261105140000)
+  startEdit(r) {
+    this.setState({
+      editing: r.assignmentId,
+      draft: {
+        wins: r.wins,
+        losses: r.losses,
+        games: r.games.map((g) => ({ ...g })),
+        reason: '',
+      },
+      editError: '',
+    });
+  }
+  editDraft(patch) {
+    this.setState((s) => ({ draft: { ...s.draft, ...patch }, editError: '' }));
+  }
+  editGame(i, patch) {
+    this.setState((s) => ({
+      draft: {
+        ...s.draft,
+        games: s.draft.games.map((g, n) => (n === i ? { ...g, ...patch } : g)),
+      },
+      editError: '',
+    }));
+  }
+  async saveEdit(r) {
+    const d = this.state.draft;
+    const wins = Number(d.wins);
+    const losses = Number(d.losses);
+    if (
+      !Number.isInteger(wins) ||
+      !Number.isInteger(losses) ||
+      wins < 0 ||
+      losses < 0
+    )
+      return this.setState({ editError: 'Wins and losses are whole numbers.' });
+    if (wins + losses !== d.games.length)
+      return this.setState({
+        editError:
+          'Wins and losses need to add up to ' + d.games.length + ' games.',
+      });
+    if (d.reason.trim().length < 3)
+      return this.setState({
+        editError: 'Add a reason. It goes into the audit log.',
+      });
+    this.setState({ saving: true, editError: '' });
+    const res = await this.props.api
+      .post('/api/admin/match-reports', {
+        action: 'edit',
+        assignmentId: r.assignmentId,
+        games: d.games.map((g) => ({
+          teammateIgn: g.teammateIgn.trim(),
+          customerIgn: g.customerIgn.trim(),
+          link: g.link.trim(),
+        })),
+        wins,
+        losses,
+        reason: d.reason.trim(),
+      })
+      .catch(() => ({ ok: false }));
+    this.setState({ saving: false });
+    if (!res.ok)
+      return this.setState({
+        editError: res.error || 'Couldn’t save the correction.',
+      });
+    const report = res.data.report;
+    this.setState((s) => ({
+      editing: '',
+      draft: null,
+      reports: s.reports.map((x) =>
+        x.assignmentId === r.assignmentId
+          ? {
+              ...x,
+              games: report.games,
+              wins: report.wins,
+              losses: report.losses,
+              edited: report.edited,
+            }
+          : x,
+      ),
+    }));
+    if (this.props.log) this.props.log();
+    if (this.props.toast)
+      this.props.toast(
+        r.reference + ' corrected to ' + wins + 'W ' + losses + 'L.',
+      );
+  }
+  renderEditor(r) {
+    const s = this.state;
+    if (s.editing !== r.assignmentId)
+      return (
+        <button
+          type="button"
+          onClick={() => this.startEdit(r)}
+          style={{ ...btn(), marginTop: '10px', minHeight: '32px' }}
+        >
+          Correct result
+        </button>
+      );
+    const d = s.draft;
+    const field = {
+      ...input,
+      minHeight: '34px',
+      padding: '0 10px',
+      fontSize: '13px',
+      width: '100%',
+      boxSizing: 'border-box',
+    };
+    return (
+      <div
+        data-match-editor
+        style={{
+          marginTop: '10px',
+          padding: '12px',
+          borderRadius: '12px',
+          background: C.panel,
+          border: '1px solid ' + C.line2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+        }}
+      >
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+          <label style={{ fontSize: '12.5px', color: C.muted }}>
+            Wins
+            <input
+              type="number"
+              min="0"
+              max={d.games.length}
+              value={d.wins}
+              onChange={(e) => this.editDraft({ wins: e.target.value })}
+              style={{ ...field, width: '90px', display: 'block' }}
+            />
+          </label>
+          <label style={{ fontSize: '12.5px', color: C.muted }}>
+            Losses
+            <input
+              type="number"
+              min="0"
+              max={d.games.length}
+              value={d.losses}
+              onChange={(e) => this.editDraft({ losses: e.target.value })}
+              style={{ ...field, width: '90px', display: 'block' }}
+            />
+          </label>
+        </div>
+        {d.games.map((g, i) => (
+          <div
+            key={i}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '28px 1fr 1fr 2fr',
+              gap: '6px',
+              alignItems: 'center',
+            }}
+          >
+            <span style={{ fontSize: '12.5px', color: C.dim }}>{i + 1}</span>
+            <input
+              aria-label={'Game ' + (i + 1) + ' teammate IGN'}
+              value={g.teammateIgn}
+              onChange={(e) =>
+                this.editGame(i, { teammateIgn: e.target.value })
+              }
+              style={field}
+            />
+            <input
+              aria-label={'Game ' + (i + 1) + ' customer IGN'}
+              value={g.customerIgn}
+              onChange={(e) =>
+                this.editGame(i, { customerIgn: e.target.value })
+              }
+              style={field}
+            />
+            <input
+              aria-label={'Game ' + (i + 1) + ' match link'}
+              value={g.link}
+              onChange={(e) => this.editGame(i, { link: e.target.value })}
+              style={field}
+            />
+          </div>
+        ))}
+        <input
+          aria-label="Reason for the correction"
+          placeholder="Reason, e.g. match history shows 2 losses"
+          value={d.reason}
+          maxLength={200}
+          onChange={(e) => this.editDraft({ reason: e.target.value })}
+          style={field}
+        />
+        {s.editError ? (
+          <p
+            role="alert"
+            style={{ margin: '0', color: C.red, fontSize: '13px' }}
+          >
+            {s.editError}
+          </p>
+        ) : null}
+        <div
+          style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}
+        >
+          <button
+            type="button"
+            onClick={() => this.setState({ editing: '', draft: null })}
+            disabled={s.saving}
+            style={btn()}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => this.saveEdit(r)}
+            disabled={s.saving}
+            style={btn('primary')}
+          >
+            {s.saving ? 'Saving…' : 'Save correction'}
+          </button>
+        </div>
+      </div>
+    );
   }
   render() {
     const s = this.state;
@@ -128,7 +349,8 @@ export default class MatchReports extends React.Component {
         ) : null}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {rows.map((r) => {
-            const open = !!s.open[r.orderId + r.updatedAt];
+            const key = r.assignmentId || r.orderId + r.updatedAt;
+            const open = !!s.open[key];
             const g = GAMES[r.game] || { name: r.game, img: '' };
             const [stateLabel, stateColor] = STATES[r.state] || [
               r.state,
@@ -136,7 +358,7 @@ export default class MatchReports extends React.Component {
             ];
             return (
               <div
-                key={r.orderId + r.updatedAt}
+                key={key}
                 data-match-report={r.reference}
                 style={{
                   borderRadius: '14px',
@@ -151,7 +373,7 @@ export default class MatchReports extends React.Component {
                   aria-expanded={open ? 'true' : 'false'}
                   onClick={() =>
                     this.setState({
-                      open: { ...s.open, [r.orderId + r.updatedAt]: !open },
+                      open: { ...s.open, [key]: !open },
                     })
                   }
                   style={{
@@ -201,6 +423,17 @@ export default class MatchReports extends React.Component {
                       gap: '10px',
                     }}
                   >
+                    {r.edited ? (
+                      <span
+                        style={{
+                          fontSize: '12px',
+                          fontWeight: '700',
+                          color: C.cyan,
+                        }}
+                      >
+                        Corrected
+                      </span>
+                    ) : null}
                     {r.mismatch ? (
                       <span
                         style={{
@@ -301,6 +534,29 @@ export default class MatchReports extends React.Component {
                         ))}
                       </tbody>
                     </table>
+                    {r.edited ? (
+                      <p
+                        style={{
+                          margin: '8px 0 0',
+                          fontSize: '12.5px',
+                          color: C.cyan,
+                        }}
+                      >
+                        Corrected by {r.edited.by} on {dateOnly(r.edited.at)}:{' '}
+                        {r.edited.reason}
+                      </p>
+                    ) : null}
+                    {r.assignmentId ? this.renderEditor(r) : null}
+                    {r.assignmentId && this.props.api ? (
+                      <ProofManager
+                        orderId={r.orderId}
+                        api={this.props.api}
+                        ask={this.props.ask}
+                        toast={this.props.toast}
+                        log={this.props.log}
+                        csrf={this.props.csrf}
+                      />
+                    ) : null}
                   </div>
                 ) : null}
               </div>

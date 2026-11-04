@@ -11,6 +11,25 @@ import {
 } from '../../design-reference/components/admin/ui';
 import { ACCESS_GAMES as GAMES } from '../../design-reference/lib/games';
 import { account } from './api';
+import { DEFAULT_ADMIN_SECTIONS } from '../../contracts/admin-access';
+
+// Dashboard sections an owner can give an admin, in sidebar order (migration 20261105130000).
+const ADMIN_SECTION_LABELS = [
+  ['overview', 'Overview'],
+  ['live', 'Live desk'],
+  ['priority', 'Priority'],
+  ['performance', 'Performance'],
+  ['orders', 'Orders'],
+  ['payouts', 'Payouts'],
+  ['customers', 'Customers'],
+  ['teammates', 'Teammates & applications'],
+  ['creators', 'Creators'],
+  ['support', 'Support chat'],
+  ['users', 'Users and roles'],
+  ['safety', 'Reports and safety'],
+  ['audit', 'Audit log'],
+  ['settings', 'Settings'],
+];
 
 // Port of the original components/admin/Users.jsx, wired to /api/admin/users (Supabase RPCs
 // admin_accounts, admin_set_role, admin_set_access). The database writes the audit row.
@@ -76,6 +95,8 @@ export default class Users extends React.Component {
       draft: {
         games: acc.games.slice(),
         gg: !!acc.gg,
+        // Twitch streaming games (migration 20261105100000); always a subset of games
+        stream: (acc.stream || []).slice(),
         level: (this.state.levels && this.state.levels[a.id]) || 'standard',
       },
     });
@@ -93,7 +114,37 @@ export default class Users extends React.Component {
           res.error || 'Couldn’t save their access.',
           'warn',
         );
-      const r = res.data;
+      let r = res.data;
+      // Twitch streaming: only approved games can be streamed
+      const stream = d.stream.filter((g) => d.games.includes(g));
+      const had = (a.access && a.access.stream) || [];
+      if (
+        stream.length !== had.length ||
+        stream.some((g) => !had.includes(g))
+      ) {
+        const st = await this.props.api.post('/api/admin/users', {
+          userId: a.id,
+          streamGames: stream,
+        });
+        if (!st.ok)
+          this.props.toast(
+            st.error || 'Access saved, but not their streaming games.',
+            'warn',
+          );
+        else {
+          r = { ...r, access: { ...r.access, ...st.data.access } };
+          const names = GAMES.filter((g) =>
+            st.data.access.stream.includes(g.id),
+          )
+            .map((g) => g.short)
+            .join(', ');
+          this.props.log(
+            'Changed streaming access',
+            a.name || a.email,
+            names || 'None',
+          );
+        }
+      }
       const before =
         (this.state.levels && this.state.levels[a.id]) || 'standard';
       if (this.state.levels && d.games.length && d.level !== before) {
@@ -138,6 +189,205 @@ export default class Users extends React.Component {
     } finally {
       this.setState({ busy: '' });
     }
+  }
+  // ---- what an admin may see (owners only; migration 20261105130000)
+  editPermissions(a) {
+    this.setState({
+      permEditing: a.id,
+      permDraft: (a.permissions || []).slice(),
+    });
+  }
+  async savePermissions(a) {
+    const draft = this.state.permDraft;
+    this.setState({ busy: a.id });
+    try {
+      const res = await this.props.api.post('/api/admin/users', {
+        userId: a.id,
+        permissions: draft,
+      });
+      if (!res.ok)
+        return this.props.toast(
+          res.error || 'Couldn’t save their permissions.',
+          'warn',
+        );
+      const permissions = res.data.permissions || draft;
+      this.setState({
+        permEditing: '',
+        permDraft: null,
+        accounts: this.state.accounts.map((x) =>
+          x.id === a.id ? { ...x, permissions } : x,
+        ),
+      });
+      this.props.log();
+      this.props.toast(
+        (a.name || a.email) +
+          ' can now see ' +
+          (permissions.length
+            ? permissions.length +
+              ' of ' +
+              ADMIN_SECTION_LABELS.length +
+              ' sections'
+            : 'nothing'),
+      );
+    } catch {
+      this.props.toast('Can’t reach Duoly right now.', 'warn');
+    } finally {
+      this.setState({ busy: '' });
+    }
+  }
+  renderPermissions(a) {
+    const s = this.state;
+    const open = s.permEditing === a.id;
+    const list = open ? s.permDraft : a.permissions || [];
+    const label = {
+      fontSize: '12px',
+      fontWeight: '700',
+      letterSpacing: '.06em',
+      textTransform: 'uppercase',
+      color: C.faint,
+    };
+    const toggle = (id) =>
+      this.setState((st) => ({
+        permDraft: st.permDraft.includes(id)
+          ? st.permDraft.filter((x) => x !== id)
+          : st.permDraft.concat(id),
+      }));
+    const small = {
+      ...btn(),
+      minHeight: '32px',
+      padding: '0 12px',
+      fontSize: '12.5px',
+    };
+    return (
+      <div
+        data-admin-permissions
+        style={{
+          flex: '1 1 100%',
+          paddingTop: '10px',
+          borderTop: '1px solid ' + C.line,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px 12px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <span style={label}>Can see</span>
+          <span style={{ fontSize: '12.5px', color: C.dim }}>
+            {list.length} of {ADMIN_SECTION_LABELS.length} sections
+          </span>
+          {open ? null : (
+            <button
+              type="button"
+              onClick={() => this.editPermissions(a)}
+              style={{ ...small, fontSize: '13px', marginLeft: 'auto' }}
+            >
+              Edit permissions
+            </button>
+          )}
+        </div>
+        <div
+          role="group"
+          aria-label={'Dashboard sections for ' + (a.name || a.email)}
+          style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}
+        >
+          {ADMIN_SECTION_LABELS.map(([id, name]) => {
+            const on = list.includes(id);
+            if (!open && !on) return null;
+            return (
+              <button
+                key={id}
+                type="button"
+                aria-pressed={on ? 'true' : 'false'}
+                disabled={!open}
+                onClick={() => toggle(id)}
+                style={{
+                  minHeight: '30px',
+                  padding: '0 12px',
+                  borderRadius: '999px',
+                  fontSize: '12.5px',
+                  fontWeight: '600',
+                  transform: 'none',
+                  cursor: open ? 'pointer' : 'default',
+                  background: on ? C.raised : 'transparent',
+                  border: '1px solid ' + (on ? C.accent : C.line2),
+                  color: on ? C.white : C.dim,
+                }}
+              >
+                {name}
+              </button>
+            );
+          })}
+          {!open && !list.length ? (
+            <span
+              style={{ fontSize: '12.5px', fontWeight: '600', color: C.gold }}
+            >
+              Nothing yet · they only see an empty dashboard
+            </span>
+          ) : null}
+        </div>
+        {open ? (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <button
+              type="button"
+              onClick={() =>
+                this.setState({ permDraft: DEFAULT_ADMIN_SECTIONS.slice() })
+              }
+              style={small}
+            >
+              Defaults
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                this.setState({
+                  permDraft: ADMIN_SECTION_LABELS.map(([id]) => id),
+                })
+              }
+              style={small}
+            >
+              Everything
+            </button>
+            <span
+              style={{ flex: '1 1 160px', fontSize: '12.5px', color: C.dim }}
+            >
+              Applies on their next page load.
+            </span>
+            <button
+              type="button"
+              onClick={() =>
+                this.setState({ permEditing: '', permDraft: null })
+              }
+              disabled={s.busy === a.id}
+              style={btn()}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => this.savePermissions(a)}
+              disabled={s.busy === a.id}
+              style={btn('primary')}
+            >
+              {s.busy === a.id ? 'Saving…' : 'Save permissions'}
+            </button>
+          </div>
+        ) : null}
+      </div>
+    );
   }
   renderAccess(a) {
     const s = this.state;
@@ -221,6 +471,27 @@ export default class Users extends React.Component {
               No games yet · gets no orders
             </span>
           )}
+          {acc.stream && acc.stream.length ? (
+            <span
+              title={
+                'Twitch streaming: ' +
+                GAMES.filter((g) => acc.stream.includes(g.id))
+                  .map((g) => g.name)
+                  .join(', ')
+              }
+              style={{
+                fontSize: '12.5px',
+                fontWeight: '700',
+                padding: '3px 10px',
+                borderRadius: '999px',
+                background: 'rgba(169, 112, 255, .16)',
+                color: '#C9A6FF',
+              }}
+            >
+              Twitch · {acc.stream.length}{' '}
+              {acc.stream.length === 1 ? 'game' : 'games'}
+            </span>
+          ) : null}
           <button
             type="button"
             onClick={() => this.editAccess(a)}
@@ -245,7 +516,18 @@ export default class Users extends React.Component {
         games: x.games.includes(id)
           ? x.games.filter((g) => g !== id)
           : x.games.concat(id),
+        // a game they can't take can't be streamed either
+        stream: x.games.includes(id)
+          ? x.stream.filter((g) => g !== id)
+          : x.stream,
       }));
+    const toggleStream = (id) =>
+      edit((x) => ({
+        stream: x.stream.includes(id)
+          ? x.stream.filter((g) => g !== id)
+          : x.stream.concat(id),
+      }));
+    const streamable = GAMES.filter((g) => d.games.includes(g.id));
     return (
       <div
         style={{
@@ -491,6 +773,78 @@ export default class Users extends React.Component {
             </>
           ) : null}
         </>
+        {streamable.length ? (
+          <>
+            <div
+              style={{
+                marginTop: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span style={label}>Twitch streaming</span>
+              <span style={{ fontSize: '12.5px', color: C.dim }}>
+                {d.stream.filter((g) => d.games.includes(g)).length
+                  ? 'They can go live and be booked for these games'
+                  : 'Off · pick games to let them offer stream sessions'}
+              </span>
+            </div>
+            <div
+              role="group"
+              aria-label={'Twitch streaming games for ' + (a.name || a.email)}
+              style={{
+                marginTop: '8px',
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '6px',
+              }}
+            >
+              {streamable.map((g) => {
+                const on = d.stream.includes(g.id);
+                return (
+                  <button
+                    key={g.id}
+                    type="button"
+                    aria-pressed={on ? 'true' : 'false'}
+                    aria-label={'Stream ' + g.name}
+                    onClick={() => toggleStream(g.id)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      minHeight: '32px',
+                      padding: '0 12px 0 4px',
+                      borderRadius: '10px',
+                      fontSize: '12.5px',
+                      fontWeight: '600',
+                      transform: 'none',
+                      background: on
+                        ? 'rgba(169, 112, 255, .16)'
+                        : 'transparent',
+                      border: '1px solid ' + (on ? '#A970FF' : C.line2),
+                      color: on ? C.white : C.dim,
+                    }}
+                  >
+                    <img
+                      src={g.img}
+                      alt=""
+                      width="24"
+                      height="24"
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '7px', // rounded square like every game icon
+                        filter: on ? 'none' : 'grayscale(1) brightness(.6)',
+                      }}
+                    />
+                    {g.short}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : null}
 
         <div
           style={{
@@ -723,7 +1077,8 @@ export default class Users extends React.Component {
               >
                 Everyone who signed up or logged in. New accounts are customers.
                 Owners are always admins and can’t be changed here, and nobody
-                can change their own role.
+                can change their own role. Only owners can make admins and
+                choose what each admin can see.
               </p>
             </div>
             <input
@@ -780,7 +1135,9 @@ export default class Users extends React.Component {
             }}
           >
             {list.map((a) => {
-              const locked = a.owner || a.you;
+              // Only owners change admins (migration 20261105130000).
+              const locked =
+                a.owner || a.you || (!this.props.owner && a.role === 'admin');
               return (
                 <li
                   key={a.id}
@@ -951,7 +1308,9 @@ export default class Users extends React.Component {
                         ? 'Owners are always admins'
                         : a.you
                           ? 'You can’t change your own role'
-                          : ''
+                          : locked
+                            ? 'Only owners can change admins'
+                            : ''
                     }
                     style={{
                       display: 'inline-flex',
@@ -972,7 +1331,16 @@ export default class Users extends React.Component {
                           type="button"
                           role="radio"
                           aria-checked={on ? 'true' : 'false'}
-                          disabled={locked || s.busy === a.id}
+                          disabled={
+                            locked ||
+                            s.busy === a.id ||
+                            (r === 'admin' && !this.props.owner)
+                          }
+                          title={
+                            r === 'admin' && !this.props.owner && !locked
+                              ? 'Only owners can make someone admin'
+                              : undefined
+                          }
                           onClick={() => this.change(a, r)}
                           style={{
                             minHeight: '34px',
@@ -993,6 +1361,9 @@ export default class Users extends React.Component {
                     })}
                   </span>
                   {a.role === 'teammate' ? this.renderAccess(a) : null}
+                  {a.role === 'admin' && !a.owner && this.props.owner
+                    ? this.renderPermissions(a)
+                    : null}
                 </li>
               );
             })}

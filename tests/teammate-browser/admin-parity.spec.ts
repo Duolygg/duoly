@@ -142,6 +142,7 @@ const applications = [
     services: ['Duo Queue'],
     why: 'I like coaching.',
     link: '',
+    video: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     status: 'pending',
     submittedAt: iso(3_600_000),
     decidedAt: null,
@@ -264,6 +265,12 @@ test('applications are a tab inside Teammates with a real URL', async ({
   await expect(
     main.getByText(/applicant@example\.test · Discord/),
   ).toBeVisible();
+  // the required intro video, opened on YouTube
+  await expect(
+    main.getByRole('link', {
+      name: 'Watch Applicant One’s intro video on YouTube',
+    }),
+  ).toHaveAttribute('href', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
   await page.goto('/admin/applications');
   await expect(main.getByRole('tab', { name: /Applications/ })).toHaveAttribute(
     'aria-selected',

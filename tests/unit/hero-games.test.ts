@@ -12,7 +12,9 @@ it('shows the games we cover in the hero instead of live counters', () => {
     html,
   )?.[0];
   expect(stack).toBeDefined();
-  expect(stack).toContain('League, Valorant, CS2 and 12 more');
+  expect(stack).toContain(
+    'League of Legends, Valorant, Counter-Strike 2 and 12 more',
+  );
   expect(stack).toContain('plus Social');
   expect(stack?.match(/<img /g)).toHaveLength(8);
   // the heart closes the stack

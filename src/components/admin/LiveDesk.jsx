@@ -848,7 +848,10 @@ export default class LiveDesk extends React.Component {
                     />
                     {o.teammate || 'Teammate'}
                   </span>
-                  {o.payment && o.payment.state !== 'refunded' ? (
+                  {/* refunding to the card needs the Orders permission (20261105130000) */}
+                  {o.payment &&
+                  o.payment.state !== 'refunded' &&
+                  (!this.props.can || this.props.can('orders')) ? (
                     <button
                       type="button"
                       disabled={!!s.actionBusy}

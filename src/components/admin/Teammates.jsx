@@ -94,7 +94,7 @@ export default class Teammates extends React.Component {
     this.props.toast(
       t.name +
         (suspended
-          ? ' suspended · can’t take orders until reinstated'
+          ? ' suspended · signed out and can’t take orders until reinstated'
           : ' reinstated'),
     );
     this.props.log();
@@ -490,33 +490,38 @@ export default class Teammates extends React.Component {
                   </td>
                   <td style={{ ...td, textAlign: 'right' }}>
                     <span style={{ display: 'inline-flex', gap: '6px' }}>
-                      <button
-                        type="button"
-                        disabled={s.busy === t.id}
-                        style={btn()}
-                        onClick={() =>
-                          ask({
-                            title: 'Adjust ' + t.name + '’s payout balance',
-                            body: 'Use a positive or negative USD amount. The reason is visible to the teammate and counts in this payout week.',
-                            confirm: 'Add adjustment',
-                            field: {
-                              label: 'Amount in USD',
-                              placeholder: '25.00 or -25.00',
-                              type: 'number',
-                              required: true,
-                            },
-                            field2: {
-                              label: 'Reason shown to the teammate',
-                              placeholder: 'Why this adjustment was made',
-                              required: true,
-                            },
-                            onConfirm: (amount, reason) =>
-                              this.adjustBalance(t, amount, reason),
-                          })
-                        }
-                      >
-                        Adjust balance
-                      </button>
+                      {/* balance changes are money: Payouts permission (20261105130000) */}
+                      {!this.props.can || this.props.can('payouts') ? (
+                        <>
+                          <button
+                            type="button"
+                            disabled={s.busy === t.id}
+                            style={btn()}
+                            onClick={() =>
+                              ask({
+                                title: 'Adjust ' + t.name + '’s payout balance',
+                                body: 'Use a positive or negative USD amount. The reason is visible to the teammate and counts in this payout week.',
+                                confirm: 'Add adjustment',
+                                field: {
+                                  label: 'Amount in USD',
+                                  placeholder: '25.00 or -25.00',
+                                  type: 'number',
+                                  required: true,
+                                },
+                                field2: {
+                                  label: 'Reason shown to the teammate',
+                                  placeholder: 'Why this adjustment was made',
+                                  required: true,
+                                },
+                                onConfirm: (amount, reason) =>
+                                  this.adjustBalance(t, amount, reason),
+                              })
+                            }
+                          >
+                            Adjust balance
+                          </button>
+                        </>
+                      ) : null}
                       {t.suspended ? (
                         <button
                           type="button"
@@ -555,7 +560,7 @@ export default class Teammates extends React.Component {
                           onClick={() =>
                             ask({
                               title: 'Suspend ' + t.name + '?',
-                              body: 'They can’t see or take orders, upload proof or chat until you reinstate them.',
+                              body: 'They’re signed out and can’t sign in, see or take orders, upload proof or chat until you reinstate them. They also lose the Teammate role on Discord.',
                               confirm: 'Suspend',
                               kind: 'danger',
                               field: {

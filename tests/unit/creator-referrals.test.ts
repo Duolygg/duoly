@@ -17,6 +17,12 @@ import { accountContext } from '../../src/server/auth/context';
 import { mutation } from '../../src/server/auth/handlers';
 import { creatorRow, referralOrder } from '../../src/components/admin/Creators';
 
+// Admin permissions (migration 20261105130000): these tests act as an owner.
+vi.mock('../../src/server/admin/access', async (original) => ({
+  ...(await original<typeof import('../../src/server/admin/access')>()),
+  adminAccess: vi.fn(async () => ({ owner: true, sections: [] })),
+}));
+
 vi.mock('../../src/server/auth/context', () => ({ accountContext: vi.fn() }));
 vi.mock('../../src/server/auth/handlers', () => ({ mutation: vi.fn() }));
 vi.mock('../../src/server/fx', () => ({

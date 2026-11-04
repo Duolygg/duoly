@@ -12,13 +12,37 @@ const admin = {
   role: 'admin' as const,
   provider: 'email' as const,
 };
+// ?access=restricted: an admin with the default sections; ?access=owner: an owner. Without it the
+// dashboard shows everything, like before permissions (migration 20261105130000).
+const mode = Astro.url.searchParams.get('access');
+const access =
+  mode === 'owner'
+    ? { owner: true, sections: [] }
+    : mode === 'restricted'
+      ? {
+          owner: false,
+          sections: [
+            'overview',
+            'live',
+            'priority',
+            'performance',
+            'teammates',
+            'users',
+            'support',
+            'safety',
+            'audit',
+            'settings',
+          ],
+        }
+      : undefined;
 ---
 
 <SiteLayout title="Local admin fixture | Duoly" bare>
   <AdminRoot
     client:load
     admin={admin}
-    owner={false}
+    owner={mode === 'owner'}
+    access={access}
     csrf="fixture-csrf"
     section={sectionFromPath(Astro.url.pathname)}
     chatEnabled={false}

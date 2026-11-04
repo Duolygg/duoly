@@ -15,6 +15,14 @@ import { authConfig } from './config';
 import { createCsrf } from './security';
 import { isOwnerEmail, ownerEmails, syncOwner } from '../admin/owners';
 
+/** Supabase Auth ban (suspended teammates): a future banned_until, or "infinity". */
+export function isBanned(until: string | null | undefined, now = Date.now()) {
+  if (!until) return false;
+  if (/infinity/i.test(until)) return true;
+  const at = Date.parse(until);
+  return Number.isFinite(at) && at > now;
+}
+
 export function accountContext(request: Request, cookies: AstroCookies) {
   const config = authConfig();
   const secure = config
@@ -103,6 +111,12 @@ export function accountContext(request: Request, cookies: AstroCookies) {
       return null;
     const { data, error } = await client.auth.getUser();
     if (error || !data.user) return null;
+    // Suspended teammates are banned in Supabase Auth (migration 20261105120000). Auth refuses
+    // new sign-ins and refreshes; this ends a session whose access token is still valid.
+    if (isBanned(data.user.banned_until)) {
+      clear();
+      return null;
+    }
     // Staging restrictions apply to every read, including valid sessions obtained
     // outside this application's login form.
     if (

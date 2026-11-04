@@ -27,7 +27,7 @@ export const RANKS = {
   ow: [['Bronze', 0.8], ['Silver', 0.85], ['Gold', 0.9], ['Platinum', 1], ['Diamond', 1.05], ['Master', 1.15], ['Grandmaster', 1.3], ['Champion', 1.45], ['Top 500', 1.6]],
   rl: [['Bronze', 0.8], ['Silver', 0.85], ['Gold', 0.9], ['Platinum', 0.95], ['Diamond', 1], ['Champion', 1.1], ['Grand Champion', 1.3], ['Supersonic Legend', 1.5]],
   fc: [['Division 10', 0.8], ['Division 8', 0.85], ['Division 6', 0.9], ['Division 4', 0.95], ['Division 3', 0.95], ['Division 2', 1], ['Division 1', 1.1], ['Elite', 1.25]],
-  pu: [['Beginner', 0.8], ['Great', 0.85], ['Expert', 0.9], ['Veteran', 1], ['Ultra', 1.1], ['Master', 1.25]]
+  pu: [['Beginner', 0.8], ['Great', 0.85], ['Expert', 0.9], ['Veteran', 1], ['Ultra', 1.1], ['Master', 1.25], ['Legend', 1.45]]
 };
 
 export const SERVICE_RANKS = {

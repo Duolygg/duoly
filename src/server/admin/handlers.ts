@@ -1,5 +1,5 @@
 import type { APIContext, APIRoute } from 'astro';
-import type { z } from 'zod';
+import { z } from 'zod';
 import type { AccountContext } from '../auth/context';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
@@ -11,12 +11,22 @@ import {
   APPLICATION_SERVICES,
   DecideApplicationSchema,
   SetAccessSchema,
+  SetStreamAccessSchema,
+  EditMatchReportSchema,
+  SetProofRemovedSchema,
+  SetPermissionsSchema,
   SetBlockedSchema,
   SetRoleSchema,
   SetSuspendedSchema,
   WalletAdjustSchema,
   applicationError,
 } from '../../contracts/admin';
+import {
+  adminAccess,
+  canUse,
+  NO_SECTION_ACCESS,
+  type AdminSection,
+} from './access';
 import { AdminPriorityCommandSchema, tierById } from '../../contracts/priority';
 import { AdminCreatorCommandSchema } from '../../contracts/creators';
 import { AdminPayoutCommandSchema } from '../../contracts/payouts';
@@ -87,7 +97,16 @@ export function pageParams(url: URL): { limit: number; offset: number } {
   };
 }
 
-export function adminRoute(get: AdminGet | null, post: Command[]) {
+/**
+ * `sections`: the dashboard sections this endpoint belongs to (any of them is enough). Owners have
+ * all; other admins only what an owner gave them (migration 20261105130000). The database checks
+ * again in every admin function.
+ */
+export function adminRoute(
+  get: AdminGet | null,
+  post: Command[],
+  sections: readonly AdminSection[],
+) {
   const handler: APIRoute = async (context: APIContext) => {
     let account = accountContext(context.request, context.cookies);
     try {
@@ -109,6 +128,8 @@ export function adminRoute(get: AdminGet | null, post: Command[]) {
         return account.json({ error: 'Authentication required.' }, 401);
       if (identity.viewer.role !== 'admin')
         return account.json({ error: 'Not found.' }, 404);
+      if (!canUse(await adminAccess(account.client), sections))
+        return account.json({ error: NO_SECTION_ACCESS }, 403);
       if (method === 'GET') {
         if (!get) return account.json({ error: 'Method not allowed.' }, 405);
         const { data, error } = await get(account.client, context);
@@ -157,7 +178,35 @@ export const users = adminRoute(
         });
       },
     },
+    {
+      schema: SetStreamAccessSchema,
+      call: (client, body) =>
+        (
+          client.rpc as unknown as (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => Rpc
+        )('admin_set_stream_access', {
+          p_user_id: body.userId as string,
+          p_games: body.streamGames as string[],
+        }),
+    },
+    {
+      // Owners only; the database refuses everyone else.
+      schema: SetPermissionsSchema,
+      call: (client, body) =>
+        (
+          client.rpc as unknown as (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => Rpc
+        )('admin_set_permissions', {
+          p_user_id: body.userId as string,
+          p_sections: body.permissions as string[],
+        }),
+    },
   ],
+  ['users'],
 );
 
 export const applications = adminRoute(
@@ -183,21 +232,75 @@ export const applications = adminRoute(
         ),
     },
   ],
+  ['teammates'],
 );
 
 /** Admin, Teammates, Match reports: what teammates reported on win/loss orders (20261102160000). */
-export const matchReports = adminRoute((client, context) => {
-  const page = pageParams(context.url);
-  return (
-    client.rpc as unknown as (
-      fn: string,
-      args: Record<string, unknown>,
-    ) => PromiseLike<{ data: unknown; error: unknown }>
-  ).call(client, 'admin_match_reports', {
-    p_limit: page.limit,
-    p_offset: page.offset,
-  });
-}, []);
+export const matchReports = adminRoute(
+  (client, context) => {
+    const page = pageParams(context.url);
+    return (
+      client.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => PromiseLike<{ data: unknown; error: unknown }>
+    ).call(client, 'admin_match_reports', {
+      p_limit: page.limit,
+      p_offset: page.offset,
+    });
+  },
+  [
+    {
+      // An admin corrects a report a teammate got wrong (20261105140000).
+      schema: EditMatchReportSchema as unknown as Command['schema'],
+      call: (client, body) =>
+        (
+          client.rpc as unknown as (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => Rpc
+        )('admin_edit_match_report', {
+          p_assignment_id: body.assignmentId as string,
+          p_games: body.games,
+          p_wins: body.wins as number,
+          p_losses: body.losses as number,
+          p_reason: body.reason as string,
+        }),
+    },
+  ],
+  ['teammates', 'orders'],
+);
+
+/** Admin, a played order's screenshots: list, hide or show again (20261105140000). */
+export const orderProofs = adminRoute(
+  (client, context) =>
+    (
+      client.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Rpc
+    )('admin_order_proofs', {
+      p_order_id: z.uuid().parse(context.params.orderId),
+    }),
+  [
+    {
+      schema: SetProofRemovedSchema as unknown as Command['schema'],
+      call: (client, body) =>
+        (
+          client.rpc as unknown as (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => Rpc
+        )('admin_set_order_proof_removed', {
+          p_order_id: body.orderId as string,
+          p_proof_id: body.proofId as string,
+          p_removed: body.removed as boolean,
+          p_reason: body.reason as string,
+        }),
+    },
+  ],
+  ['teammates', 'orders'],
+);
 
 export const teammates = adminRoute(
   (client) => client.rpc('admin_teammates'),
@@ -214,6 +317,7 @@ export const teammates = adminRoute(
         syncRolesAfter({ users: [body.userId as string] }),
     },
   ],
+  ['teammates'],
 );
 
 export const customers = adminRoute(
@@ -238,6 +342,7 @@ export const customers = adminRoute(
         }),
     },
   ],
+  ['customers'],
 );
 
 export const orders = adminRoute(
@@ -279,16 +384,19 @@ export const orders = adminRoute(
       after: () => settleSoon(),
     },
   ],
+  ['live', 'orders'],
 );
 
 export const overview = adminRoute(
   (client) => client.rpc('admin_overview'),
   [],
+  ['overview'],
 );
 
 export const audit = adminRoute(
   (client) => client.rpc('admin_audit', { p_limit: 500 }),
   [],
+  ['audit'],
 );
 
 /** GET lists teammates with their breakdown; POST runs one priority command. */
@@ -322,6 +430,7 @@ export const priority = adminRoute(
       },
     },
   ],
+  ['priority', 'live'],
 );
 
 /** GET lists creators with attributed orders and commission owed; POST adds or pauses one. */
@@ -351,6 +460,7 @@ export const creators = adminRoute(
       },
     },
   ],
+  ['creators'],
 );
 
 /** Admin payouts read model plus whether Pay via Stripe is switched on (CONNECT_PAYOUTS_ENABLED). */
@@ -405,6 +515,7 @@ export const payouts = adminRoute(
       },
     },
   ],
+  ['payouts'],
 );
 
 /**
@@ -447,6 +558,7 @@ export async function settingsSnapshot(
 export const settings = adminRoute(
   () => settingsSnapshot().then((data) => ({ data, error: null })),
   [],
+  ['settings', 'creators'],
 );
 
 /** POST /api/apply: the public teammate application (no account needed). */
@@ -474,6 +586,7 @@ export const apply: APIRoute = async (context) => {
         p_link: f.link,
         p_hours: f.hours,
         p_why: f.why,
+        p_video: f.video,
         p_services: (
           Object.keys(APPLICATION_SERVICES) as (keyof typeof f.svc)[]
         )

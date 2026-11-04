@@ -1677,6 +1677,7 @@ export type Database = {
           services: string[];
           status: string;
           submitted_at: string;
+          video: string;
           why: string;
         };
         Insert: {
@@ -1700,6 +1701,7 @@ export type Database = {
           services: string[];
           status?: string;
           submitted_at?: string;
+          video?: string;
           why?: string;
         };
         Update: {
@@ -1723,6 +1725,7 @@ export type Database = {
           services?: string[];
           status?: string;
           submitted_at?: string;
+          video?: string;
           why?: string;
         };
         Relationships: [];
@@ -1912,6 +1915,15 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admin_finalize_order_proof_upload: {
+        Args: {
+          p_byte_size: number;
+          p_mime: string;
+          p_proof_id: string;
+          p_sha256: string;
+        };
+        Returns: Json;
+      };
       abandon_order_proof_upload: {
         Args: { p_proof_id: string };
         Returns: Json;
@@ -2383,6 +2395,7 @@ export type Database = {
           p_region: string;
           p_role: string;
           p_services: string[];
+          p_video: string;
           p_why: string;
         };
         Returns: Json;

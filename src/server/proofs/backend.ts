@@ -4,6 +4,7 @@ import { proofPath, ProofFailure, readProofBytes } from './storage';
 
 export type ServiceProofRpc =
   | 'finalize_order_proof_upload'
+  | 'admin_finalize_order_proof_upload'
   | 'abandon_order_proof_upload'
   | 'claim_stale_order_proof_uploads';
 export interface ProofBackend {

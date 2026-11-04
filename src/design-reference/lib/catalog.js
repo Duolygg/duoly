@@ -229,7 +229,7 @@ export const CATALOG = {
     services: [
       ['duo1', 'duo', 'Duo Plus', 'Ultra+ teammate', 'Ranked with an Ultra player who plays the lane next to yours and calls objectives.', 3.99],
       ['duo2', 'duo', 'Duo Pro', 'Master teammate', 'Ranked with a Master player who plans rotations around Drednaw, Rotom and Zapdos.', 5.99, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Master 1600+ teammate', 'A top-rated Master player for high-rating games.', 9.99],
+      ['duo3', 'duo', 'Duo Apex', 'Legend teammate', 'A Legend player, the highest rank, for your top-rated games.', 9.99],
       ['squad', 'other', 'Full Squad', 'Master players', 'Fill your five with players on set roles, on voice.', 4.99],
       ['quick', 'social', 'Standard & Quick Battle', 'Strong teammate', 'Relaxed games to practise new Pokémon with backup.', 2.99],
       ...gg('game', 'Standard or Quick Battle', 'Ultra+', 'Ranked', [5.49, 5.99]),

@@ -26,4 +26,5 @@ export const duoLevels = adminRoute(
         }),
     },
   ],
+  ['users'],
 );

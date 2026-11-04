@@ -96,6 +96,13 @@ export const callback: APIRoute = async (context) => {
   if (linking && (params.has('error') || params.has('error_code')))
     return account.redirect(`/${linking}?discord=${linkErrorResult(params)}`);
   const fail = linking ? `/${linking}?discord=failed` : '/login?error=callback';
+  // Google or Discord sign-in of a suspended teammate: Auth sends them back with the ban.
+  if (
+    !linking &&
+    (params.get('error_code') === 'user_banned' ||
+      /banned/i.test(params.get('error_description') ?? ''))
+  )
+    return account.redirect('/login?error=suspended');
   if (
     !account.config ||
     !account.client ||
@@ -106,7 +113,12 @@ export const callback: APIRoute = async (context) => {
     return account.redirect(fail);
   try {
     const { error } = await account.client.auth.exchangeCodeForSession(code);
-    if (error) return account.redirect(fail);
+    if (error)
+      return account.redirect(
+        error.code === 'user_banned' && !linking
+          ? '/login?error=suspended'
+          : fail,
+      );
     const identity = await account.identity();
     if (!identity) {
       try {

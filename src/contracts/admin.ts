@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { youtubeVideoId } from '../design-reference/lib/youtube.js';
+import { ADMIN_SECTIONS, AdminSectionSchema } from './admin-access';
 
 /** Game ids in canonical (demand) order, as stored in teammate_order_access. */
 export const GAME_IDS = [
@@ -40,6 +42,67 @@ export const SetAccessSchema = z
         gg: z.boolean(),
       })
       .strict(),
+  })
+  .strict();
+
+/** Owners only: the dashboard sections an admin may use (20261105130000). */
+export const SetPermissionsSchema = z
+  .object({
+    csrf,
+    userId: z.uuid(),
+    permissions: z
+      .array(AdminSectionSchema)
+      .max(ADMIN_SECTIONS.length)
+      .refine((list) => new Set(list).size === list.length),
+  })
+  .strict();
+
+/** Correct a win/loss report (20261105140000). Same game rules as the teammate's own report. */
+const MatchGameSchema = z.strictObject({
+  teammateIgn: z.string().trim().min(1).max(64),
+  customerIgn: z.string().trim().min(1).max(64),
+  link: z
+    .string()
+    .trim()
+    .max(300)
+    .regex(/^https:\/\/\S{4,}$/),
+});
+export const EditMatchReportSchema = z
+  .object({
+    csrf,
+    action: z.literal('edit'),
+    assignmentId: z.uuid(),
+    games: z.array(MatchGameSchema).min(1).max(20),
+    wins: z.number().int().min(0).max(20),
+    losses: z.number().int().min(0).max(20),
+    reason: z.string().trim().min(3).max(200),
+  })
+  .strict()
+  .refine((body) => body.wins + body.losses === body.games.length, {
+    message: 'Wins and losses need to add up to the games.',
+    path: ['wins'],
+  });
+
+/** Hide or show a proof screenshot again (20261105140000). */
+export const SetProofRemovedSchema = z
+  .object({
+    csrf,
+    orderId: z.uuid(),
+    proofId: z.uuid(),
+    removed: z.boolean(),
+    reason: z.string().trim().max(200).default(''),
+  })
+  .strict();
+
+/** Twitch streaming per game (20261105100000); only the teammate's approved games are kept. */
+export const SetStreamAccessSchema = z
+  .object({
+    csrf,
+    userId: z.uuid(),
+    streamGames: z
+      .array(GameIdSchema)
+      .max(GAME_IDS.length)
+      .refine((games) => new Set(games).size === games.length),
   })
   .strict();
 
@@ -89,6 +152,8 @@ export const ApplicationSchema = z
     region: text(1, 40),
     role: text(0, 60),
     link: text(0, 200),
+    // Required YouTube intro video where they talk (design-reference/lib/youtube.js).
+    video: text(1, 200).refine((value) => youtubeVideoId(value) !== ''),
     hours: z.enum(APPLICATION_HOURS),
     why: text(0, 600),
     svc: z
@@ -115,6 +180,7 @@ export function applicationError(error: z.ZodError): string {
     game: 'Pick your game, rank and region.',
     rank: 'Pick your game, rank and region.',
     region: 'Pick your game, rank and region.',
+    video: 'Add a YouTube link to your intro video.',
     svc: 'Pick at least one service.',
     hours: 'Pick how many hours you can play each week.',
   };
