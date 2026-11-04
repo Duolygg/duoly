@@ -10,9 +10,16 @@ import {
   parseAnalyticsBoot,
 } from '../../contracts/analytics';
 import { CONSENT_COOKIE, parseConsent } from '../../contracts/consent';
-import { analyticsConfig } from './config';
+import { catalogueProps } from '../../contracts/analytics-events';
+import { analyticsConfig, featureConfig } from './config';
 import { createController, type AnalyticsSdk } from './controller';
-import { filterEvent, type SanitizeContext } from './sanitize';
+import { filterEvent, scrubText, type SanitizeContext } from './sanitize';
+import {
+  ERROR_EVENT,
+  TRACK_EVENT,
+  type ErrorDetail,
+  type TrackDetail,
+} from './track';
 
 function readConsent() {
   const live = (window as { __duolyConsent?: unknown }).__duolyConsent;
@@ -57,7 +64,12 @@ function start() {
     sdk: posthog as unknown as AnalyticsSdk,
     boot,
     readConsent,
-    config: () => analyticsConfig(boot, beforeSend) as Record<string, unknown>,
+    config: (full) =>
+      analyticsConfig(boot, beforeSend, {
+        full,
+        sanitizeContext: ctx,
+      }) as Record<string, unknown>,
+    features: (full) => featureConfig(full) as Record<string, unknown>,
   });
   const syncConsent = () => {
     if (!boot.uid || !readConsent()) return;
@@ -75,6 +87,25 @@ function start() {
   addEventListener('duoly:consent', () => {
     syncConsent();
     controller.sync();
+  });
+  // Product events and handled errors from islands (track.ts). Before a choice, or for
+  // refusers, before_send drops them.
+  addEventListener(TRACK_EVENT, (event) => {
+    const { name, props } = (event as CustomEvent<TrackDetail>).detail ?? {};
+    if (!name || controller.state().mode !== 'full') return;
+    const clean = catalogueProps(name, props);
+    if (clean) posthog.capture(name, clean);
+  });
+  addEventListener(ERROR_EVENT, (event) => {
+    const { error, source } = (event as CustomEvent<ErrorDetail>).detail ?? {};
+    if (controller.state().mode !== 'full') return;
+    const err =
+      error instanceof Error
+        ? error
+        : new Error(scrubText(String(error).slice(0, 200), ctx()));
+    posthog.captureException(err, {
+      source: /^[a-z0-9_-]{1,40}$/.test(source) ? source : 'other',
+    });
   });
   addEventListener('pageshow', (event) => {
     if (event.persisted) controller.sync();

@@ -186,11 +186,10 @@ describe('filterEvent', () => {
 
   it('accepted: unknown events are dropped (fail closed)', () => {
     for (const event of [
-      '$autocapture',
-      '$snapshot',
-      '$$heatmap',
-      '$exception',
       'custom',
+      '$opt_in',
+      '$feature_flag_called',
+      '$survey_sent',
     ])
       expect(filterEvent({ ...pageview(), event }, true, ctx)).toBeNull();
     expect(
@@ -233,6 +232,9 @@ function fakeSdk(stored: Record<string, unknown> = {}) {
     get_property: (k) => props[k],
     capture: (e) => calls.push(`capture:${e}`),
     setInternalOrTestUser: () => calls.push('internal'),
+    set_config: (c) => calls.push(`set_config:${String(c.full)}`),
+    startSessionRecording: () => calls.push('replay_start'),
+    stopSessionRecording: () => calls.push('replay_stop'),
   };
   return { sdk, calls };
 }
@@ -252,6 +254,7 @@ describe('controller', () => {
       boot: boot(),
       readConsent: () => null,
       config: () => ({}),
+      features: (full: boolean) => ({ full }),
     });
     c.sync();
     c.sync();
@@ -265,6 +268,7 @@ describe('controller', () => {
       boot: boot({ uid: UID, role: 'customer' }),
       readConsent: () => consent(false),
       config: () => ({}),
+      features: (full: boolean) => ({ full }),
     });
     c.sync();
     expect(calls).toEqual(['init', 'reset', 'opt_out', 'capture:$pageview']);
@@ -277,6 +281,7 @@ describe('controller', () => {
       boot: boot({ uid: UID, role: 'customer' }),
       readConsent: () => consent(true),
       config: () => ({}),
+      features: (full: boolean) => ({ full }),
     });
     c.sync();
     expect(calls).toEqual([
@@ -285,6 +290,7 @@ describe('controller', () => {
       `identify:${UID}`,
       'register:duoly_uid',
       'register:viewer_role',
+      'replay_start',
       'capture:$pageview',
     ]);
     c.sync();
@@ -298,6 +304,7 @@ describe('controller', () => {
       boot: boot({ uid: UID, role: 'customer' }),
       readConsent: () => consent(true),
       config: () => ({}),
+      features: (full: boolean) => ({ full }),
     }).sync();
     expect(switched.calls.slice(0, 4)).toEqual([
       'init',
@@ -311,12 +318,14 @@ describe('controller', () => {
       boot: boot(),
       readConsent: () => consent(true),
       config: () => ({}),
+      features: (full: boolean) => ({ full }),
     }).sync();
     expect(loggedOut.calls).toEqual([
       'init',
       'reset',
       'opt_in:false',
       'register:viewer_role',
+      'replay_start',
       'capture:$pageview',
     ]);
   });
@@ -328,6 +337,7 @@ describe('controller', () => {
       boot: boot({ uid: UID, role: 'customer' }),
       readConsent: () => consent(true),
       config: () => ({}),
+      features: (full: boolean) => ({ full }),
     }).sync();
     expect(calls).not.toContain('reset');
     expect(calls).not.toContain(`identify:${UID}`);
@@ -340,6 +350,7 @@ describe('controller', () => {
       boot: boot({ uid: UID, role: 'teammate', internal: true }),
       readConsent: () => consent(true),
       config: () => ({}),
+      features: (full: boolean) => ({ full }),
     }).sync();
     expect(calls).toContain('internal');
   });
@@ -352,21 +363,54 @@ describe('controller', () => {
       boot: boot({ uid: UID, role: 'customer' }),
       readConsent: () => state,
       config: () => ({}),
+      features: (full: boolean) => ({ full }),
     });
     c.sync();
     calls.length = 0;
     state = consent(false);
     c.sync();
-    expect(calls).toEqual(['reset', 'opt_out']);
+    expect(calls).toEqual([
+      'set_config:false',
+      'replay_stop',
+      'reset',
+      'opt_out',
+    ]);
     calls.length = 0;
     state = consent(true);
     c.sync();
     expect(calls).toEqual([
+      'set_config:true',
       'opt_in:false',
       `identify:${UID}`,
       'register:duoly_uid',
       'register:viewer_role',
+      'replay_start',
     ]);
+  });
+
+  it('no replay where the page policy forbids it', () => {
+    const { sdk, calls } = fakeSdk();
+    createController({
+      sdk,
+      boot: boot({ uid: UID, role: 'teammate', policy: 'no-replay' }),
+      readConsent: () => consent(true),
+      config: () => ({}),
+      features: (full: boolean) => ({ full }),
+    }).sync();
+    expect(calls).not.toContain('replay_start');
+  });
+
+  it('init options follow the consent at init time', () => {
+    const seen: boolean[] = [];
+    const { sdk } = fakeSdk();
+    createController({
+      sdk,
+      boot: boot(),
+      readConsent: () => consent(false),
+      config: (full) => (seen.push(full), {}),
+      features: () => ({}),
+    }).sync();
+    expect(seen).toEqual([false]);
   });
 });
 
@@ -450,21 +494,54 @@ describe('analyticsBoot (server)', () => {
 });
 
 describe('analyticsConfig', () => {
-  it('keeps every A1-deferred feature off and the first pageview manual', () => {
-    const cfg = analyticsConfig(boot(), (e) => e);
+  const sc = () => ctx;
+  it('refused at init: interaction capture off, replay never auto-started', () => {
+    const cfg = analyticsConfig(boot(), (e) => e, {
+      full: false,
+      sanitizeContext: sc,
+    });
     expect(cfg).toMatchObject({
       api_host: 'https://eu.i.posthog.com',
       cookieless_mode: 'on_reject',
       person_profiles: 'identified_only',
       capture_pageview: false,
       autocapture: false,
-      disable_session_recording: true,
+      rageclick: false,
+      capture_dead_clicks: false,
       capture_heatmaps: false,
       capture_exceptions: false,
+      disable_session_recording: true,
+      enable_recording_console_log: false,
       disable_surveys: true,
       advanced_disable_flags: true,
     });
     expect(cfg).not.toHaveProperty('opt_out_capturing_by_default');
     expect(cfg).not.toHaveProperty('respect_dnt');
+  });
+  it('accepted at init: interaction capture on with private selectors', () => {
+    const cfg = analyticsConfig(boot(), (e) => e, {
+      full: true,
+      sanitizeContext: sc,
+    });
+    expect(cfg.autocapture).toMatchObject({
+      dom_event_allowlist: ['click', 'change', 'submit'],
+      capture_copied_text: false,
+    });
+    expect(
+      (cfg.autocapture as { css_selector_ignorelist: string[] })
+        .css_selector_ignorelist,
+    ).toContain('[data-private-block]');
+    expect(cfg).toMatchObject({
+      rageclick: true,
+      capture_dead_clicks: true,
+      capture_heatmaps: true,
+      disable_session_recording: true,
+      session_recording: {
+        maskAllInputs: true,
+        blockSelector: '[data-private-block], iframe',
+        recordHeaders: false,
+        recordBody: false,
+      },
+    });
   });
 });

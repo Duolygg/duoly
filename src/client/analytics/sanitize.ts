@@ -1,3 +1,5 @@
+import { catalogueProps, isCatalogued } from '../../contracts/analytics-events';
+
 /**
  * Privacy filter for everything the analytics SDK sends (POSTHOG-SPEC section 5.1).
  * Pure functions, unit tested. Two layers that must never be mixed:
@@ -127,6 +129,30 @@ export function templateUrl(
 }
 
 const URL_KEY = /(url|referrer|pathname|href)$/i;
+const EMBEDDED_URL = /https?:\/\/[^\s"'<>)\]]+/gi;
+const EMAIL = /[^\s@"'<>;:,()]+@[^\s@"'<>;:,()]+\.[a-z]{2,}/gi;
+
+/** Free text (error messages, element text): URLs templated, email addresses removed. */
+export function scrubText(value: string, ctx: SanitizeContext): string {
+  return value
+    .replace(EMBEDDED_URL, (u) => templateUrl(u, ctx) ?? '[url]')
+    .replace(EMAIL, '[email]');
+}
+
+/** attr__href="..." inside an autocapture $elements_chain. */
+function scrubChain(chain: string, ctx: SanitizeContext): string {
+  return scrubText(
+    chain.replace(/attr__href="([^"]*)"/g, (_, href: string) => {
+      const clean = href.startsWith('/')
+        ? templatePath(href)
+        : /^https?:/i.test(href)
+          ? (templateUrl(href, ctx) ?? '')
+          : '';
+      return `attr__href="${clean.replace(/"/g, '')}"`;
+    }),
+    ctx,
+  );
+}
 
 function baseKey(key: string): string {
   for (const p of PREFIXES)
@@ -140,10 +166,11 @@ function cleanValue(
   ctx: SanitizeContext,
   depth: number,
 ): unknown {
-  if (depth > 6) return undefined;
+  if (depth > 10) return undefined;
   if (typeof value === 'string') {
     const base = baseKey(key);
     if (key === 'title' || key === '$title') return ctx.route;
+    if (key === '$elements_chain') return scrubChain(value, ctx);
     if (UTM.includes(base))
       return ctx.campaign !== false && SAFE_VALUE.test(value)
         ? value
@@ -160,7 +187,7 @@ function cleanValue(
     }
     if (/^https?:\/\//i.test(value))
       return templateUrl(value, ctx) ?? undefined;
-    return value;
+    return /https?:|@/i.test(value) ? scrubText(value, ctx) : value;
   }
   if (Array.isArray(value))
     return value
@@ -195,7 +222,66 @@ export const ACCEPTED_EVENTS: ReadonlySet<string> = new Set([
   '$web_vitals',
   '$identify',
   '$set',
+  '$autocapture',
+  '$rageclick',
+  '$dead_click',
+  '$$heatmap',
+  '$exception',
+  '$snapshot',
 ]);
+
+/** Our own super properties, allowed on catalogue events next to SDK `$` properties. */
+const SUPER_PROPS = new Set([
+  'route',
+  'viewer_role',
+  'app_release',
+  'duoly_uid',
+  'token',
+  'distinct_id',
+  ...UTM,
+  ...CLICK_IDS,
+]);
+
+/** rrweb batch: only URL-bearing meta and custom events are rewritten; DOM is masked upstream. */
+function cleanSnapshot(data: unknown, ctx: SanitizeContext): unknown {
+  if (!Array.isArray(data)) return data;
+  return data.map((entry: unknown) => {
+    if (!entry || typeof entry !== 'object') return entry;
+    const e = entry as { type?: number; data?: Record<string, unknown> };
+    if (e.type === 4 && e.data && typeof e.data.href === 'string')
+      return {
+        ...e,
+        data: { ...e.data, href: templateUrl(e.data.href, ctx) ?? '' },
+      };
+    if (
+      e.type === 5 &&
+      e.data &&
+      typeof e.data.payload === 'object' &&
+      e.data.payload
+    )
+      return {
+        ...e,
+        data: {
+          ...e.data,
+          payload: cleanObject(e.data.payload as Record<string, unknown>, ctx),
+        },
+      };
+    return e;
+  });
+}
+
+function cleanHeatmap(data: unknown, ctx: SanitizeContext): unknown {
+  if (!data || typeof data !== 'object') return undefined;
+  const out: Record<string, unknown> = {};
+  for (const [url, points] of Object.entries(data as Record<string, unknown>)) {
+    const key = templateUrl(url, ctx);
+    if (!key) continue;
+    out[key] = Array.isArray(out[key])
+      ? [...(out[key] as unknown[]), ...(points as unknown[])]
+      : points;
+  }
+  return out;
+}
 
 type Captured = {
   event: string;
@@ -215,17 +301,42 @@ export function filterEvent<T extends Captured>(
   extraEvents: ReadonlySet<string> = new Set(),
 ): T | null {
   if (!event || analytics === null) return null;
+  const catalogued = isCatalogued(event.event);
   const allowed = analytics
-    ? ACCEPTED_EVENTS.has(event.event) || extraEvents.has(event.event)
+    ? ACCEPTED_EVENTS.has(event.event) ||
+      catalogued ||
+      extraEvents.has(event.event)
     : REFUSED_EVENTS.has(event.event);
   if (!allowed) return null;
   const tierCtx = analytics
     ? ctx
     : { ...ctx, marketing: false, campaign: false };
-  const out: T = {
-    ...event,
-    properties: cleanObject(event.properties ?? {}, tierCtx),
-  };
+  const props = event.properties ?? {};
+  let properties: Record<string, unknown>;
+  if (event.event === '$snapshot') {
+    // Replay batches are large and deeply nested: never walk the DOM tree.
+    const { $snapshot_data, ...rest } = props;
+    properties = {
+      ...cleanObject(rest, tierCtx),
+      $snapshot_data: cleanSnapshot($snapshot_data, tierCtx),
+    };
+  } else if (event.event === '$$heatmap') {
+    const { $heatmap_data, ...rest } = props;
+    properties = {
+      ...cleanObject(rest, tierCtx),
+      $heatmap_data: cleanHeatmap($heatmap_data, tierCtx),
+    };
+  } else {
+    properties = cleanObject(props, tierCtx);
+  }
+  if (catalogued) {
+    // Product events: declared properties only, plus SDK and super properties.
+    const declared = catalogueProps(event.event, properties) ?? {};
+    for (const key of Object.keys(properties))
+      if (!key.startsWith('$') && !SUPER_PROPS.has(key)) delete properties[key];
+    Object.assign(properties, declared);
+  }
+  const out: T = { ...event, properties };
   out.properties.route = ctx.route;
   if (!analytics) {
     delete out.$set;
