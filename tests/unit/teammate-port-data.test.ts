@@ -181,6 +181,7 @@ describe('original teammate adapter', () => {
       online: true,
       onlineSince: 1792843200000,
       forcedOffline: null,
+      afkIn: null,
     });
     // What desk_set_online actually returns: jsonb writes timestamptz with an offset.
     expect(
@@ -200,6 +201,7 @@ describe('original teammate adapter', () => {
       online: false,
       onlineSince: null,
       forcedOffline: { reason: 'AFK / dashboard left open', by: 'Admin' },
+      afkIn: null,
     });
   });
   it('loads and saves durable queue settings through the live endpoint', async () => {
