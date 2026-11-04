@@ -1,6 +1,6 @@
 import type { AstroCookies } from 'astro';
 import { normalizeRefCode, REF_COOKIE_DAYS } from '../contracts/creators';
-import { CONSENT_COOKIE, readConsent } from '../contracts/consent';
+import { CONSENT_COOKIE, parseConsent } from '../contracts/consent';
 
 /**
  * Creator referral capture (ledger #28). A visitor who lands on any page with
@@ -9,7 +9,7 @@ import { CONSENT_COOKIE, readConsent } from '../contracts/consent';
  * it to an active creator. The browser never sends a code or an amount.
  *
  * Off unless REFERRALS_ENABLED=true. The cookie is optional, so it is only set
- * after the visitor chose "Accept all" in the cookie banner; "Only necessary"
+ * after the visitor allowed the creator link purpose; "Only necessary"
  * removes an existing one and stops checkout from reading it (owner decision
  * 2026-10-27, docs/product/creators.md).
  */
@@ -34,9 +34,9 @@ export function captureReferral(
     return null;
   const secure = url.protocol === 'https:';
   const name = refCookieName(secure);
-  const consent = readConsent(cookies.get(CONSENT_COOKIE)?.value);
-  if (consent !== 'all') {
-    if (consent === 'necessary' && cookies.get(name))
+  const consent = parseConsent(cookies.get(CONSENT_COOKIE)?.value);
+  if (!consent?.referral) {
+    if (consent?.referral === false && cookies.get(name))
       cookies.delete(name, { path: '/', secure });
     return null;
   }
@@ -60,6 +60,6 @@ export function checkoutRefCode(
   enabled = referralsEnabled(),
 ): string | null {
   if (!enabled) return null;
-  if (readConsent(cookies.get(CONSENT_COOKIE)?.value) !== 'all') return null;
+  if (!parseConsent(cookies.get(CONSENT_COOKIE)?.value)?.referral) return null;
   return normalizeRefCode(cookies.get(refCookieName(secure))?.value);
 }

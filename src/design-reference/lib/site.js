@@ -18,4 +18,4 @@ export const SITE = {
 };
 
 // The legal pages' "last updated" date (change it whenever the Terms or Privacy text changes).
-export const LEGAL_UPDATED = '29 October 2026';
+export const LEGAL_UPDATED = '1 November 2026';

@@ -241,7 +241,7 @@ test('support bubble opens Sparky with prepared answers, never Discord or a prev
   await page.context().addCookies([
     {
       name: 'duoly-consent',
-      value: 'necessary',
+      value: 'v2.a0.m0.r0',
       url: 'http://127.0.0.1:4321',
     },
   ]);
@@ -278,17 +278,18 @@ test('cookie banner asks once, both choices are equal and settings reopen it', a
   page,
   context,
 }) => {
+  await context.clearCookies();
   await page.goto('/contact');
   const banner = page.getByRole('dialog', { name: 'Cookie settings' });
   await expect(banner).toBeVisible();
-  await expect(banner).toContainText('optional');
+  await expect(banner).toContainText('Optional');
   // Keyboard choice: in dev the Astro toolbar covers the bottom of small screens.
   await banner.getByRole('button', { name: 'Only necessary' }).press('Enter');
   await expect(banner).toBeHidden();
   const consent = (await context.cookies()).find(
     (c) => c.name === 'duoly-consent',
   );
-  expect(consent?.value).toBe('necessary');
+  expect(consent?.value).toBe('v2.a0.m0.r0');
   await page.reload();
   await expect(banner).toBeHidden();
   await page.getByRole('link', { name: 'Cookie settings' }).press('Enter');
@@ -297,5 +298,5 @@ test('cookie banner asks once, both choices are equal and settings reopen it', a
   await expect(banner).toBeHidden();
   expect(
     (await context.cookies()).find((c) => c.name === 'duoly-consent')?.value,
-  ).toBe('all');
+  ).toBe('v2.a1.m1.r1');
 });

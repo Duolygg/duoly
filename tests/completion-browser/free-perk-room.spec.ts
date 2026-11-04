@@ -10,7 +10,7 @@ test('free perk order room shows Free with your perk and no refund line', async 
   await page.context().addCookies([
     {
       name: 'duoly-consent',
-      value: 'necessary',
+      value: 'v2.a0.m0.r0',
       url: 'http://127.0.0.1:4336',
     },
   ]);

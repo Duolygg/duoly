@@ -14,7 +14,7 @@ export default defineConfig({
       cookies: [
         {
           name: 'duoly-consent',
-          value: 'necessary',
+          value: 'v2.a0.m0.r0',
           domain: '127.0.0.1',
           path: '/',
           expires: -1,
