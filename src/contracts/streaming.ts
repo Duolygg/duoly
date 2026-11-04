@@ -24,7 +24,8 @@ export const STREAM_GAME_IDS = [
 ] as const;
 export const StreamGameSchema = z.enum(STREAM_GAME_IDS);
 
-export const STREAM_RATE_MIN_CENTS = 500;
+/** €9.99 an hour at least (migration 20261105150000). */
+export const STREAM_RATE_MIN_CENTS = 999;
 export const STREAM_RATE_MAX_CENTS = 10000;
 export const STREAM_HOURS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 /** Teammates keep 60% of every order (server/pricing calculateQuote). */
@@ -44,6 +45,8 @@ export const StreamerDeskSchema = z.strictObject({
   streamOnline: z.boolean(),
   live: z.boolean(),
   deskOnline: z.boolean(),
+  /** Twitch confirmed their channel is live in the last 90 seconds (migration 20261105150000). */
+  twitchLive: z.boolean(),
   rateEurCents: Rate.nullable(),
   durations: z.array(Hours).max(10),
   twitch: z.string().nullable(),
@@ -55,17 +58,22 @@ export const StreamerDeskResponseSchema = z.strictObject({
   streaming: StreamerDeskSchema.nullable(),
 });
 
-export const StreamerDeskCommandSchema = z.strictObject({
-  csrf: z.string().min(1).max(128),
-  online: z.boolean(),
-  rateEurCents: Rate,
-  durations: z.array(Hours).min(1).max(10),
-  twitch: z
-    .string()
-    .trim()
-    .max(25)
-    .refine((value) => value === '' || TWITCH_USERNAME.test(value)),
-});
+export const StreamerDeskCommandSchema = z
+  .strictObject({
+    csrf: z.string().min(1).max(128),
+    online: z.boolean(),
+    rateEurCents: Rate,
+    durations: z.array(Hours).min(1).max(10),
+    twitch: z
+      .string()
+      .trim()
+      .max(25)
+      .refine((value) => value === '' || TWITCH_USERNAME.test(value)),
+  })
+  // The Twitch username is how we check they are live: required to go online.
+  .refine((command) => !command.online || command.twitch !== '', {
+    path: ['twitch'],
+  });
 
 /** One bookable streamer on the homepage (GET /api/home/streamers). */
 export const PublicStreamerSchema = z.strictObject({
