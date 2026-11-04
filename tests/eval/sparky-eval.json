@@ -193,7 +193,7 @@
       "topic": "payouts",
       "question": "Is there a minimum payout amount?",
       "expect": [
-        ["\\$ ?10\\b", "10 ?(usd|dollars)"],
+        ["\\$ ?25\\b", "25 ?(usd|dollars)"],
         ["carr", "next week", "roll", "stays owed", "until"]
       ],
       "forbid": []

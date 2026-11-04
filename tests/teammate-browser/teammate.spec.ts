@@ -75,7 +75,7 @@ const stats = {
       due: 12.34,
       carried: 4.5,
       held: 3,
-      minimum: 10,
+      minimum: 25,
       details: false,
       owed: 25,
       history: [
@@ -263,8 +263,11 @@ test('original layout, server queue, real chat transport and private completion 
   await detailsForm.getByLabel('Full legal name').fill('Fixture Legal');
   await detailsForm.getByLabel('Date of birth').fill('1990-01-02');
   await detailsForm.getByLabel('Address').fill('Test Street 1, Vienna');
-  await detailsForm.getByLabel('Country').fill('Austria');
+  await detailsForm.getByLabel('Country', { exact: true }).fill('Austr');
+  await detailsForm.getByRole('option', { name: 'Austria' }).click();
   await detailsForm.getByLabel('Tax number').fill('ATU123');
+  await detailsForm.getByLabel('Payout method').click();
+  await detailsForm.getByRole('option', { name: 'Wise' }).click();
   await detailsForm
     .getByLabel('Account (IBAN, Wise or PayPal email)')
     .fill('wise@example.invalid');

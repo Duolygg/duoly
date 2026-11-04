@@ -117,7 +117,7 @@ describe('Sparky prepared replies', () => {
     expect(teammateAnswers).toMatch(/recorded earnings/i);
     // Weekly payouts and deposits are live (releases 5 and 8).
     expect(teammateAnswers).toMatch(/Friday/);
-    expect(teammateAnswers).toMatch(/\$10/);
+    expect(teammateAnswers).toMatch(/\$25/);
     expect(teammateAnswers).toMatch(/Rookie 10%/);
     expect(teammateAnswers).not.toMatch(/coming later|not live yet/i);
   });

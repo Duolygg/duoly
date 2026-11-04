@@ -111,6 +111,27 @@ describe('payout details and creator payouts', () => {
         .success,
     ).toBe(false);
   });
+  it('accepts payout details without a tax number', () => {
+    expect(
+      PayoutDetailsCommandSchema.safeParse({ ...details, taxNumber: '' }).data
+        ?.taxNumber,
+    ).toBe('');
+    const withoutTax: Partial<typeof details> = { ...details };
+    delete withoutTax.taxNumber;
+    expect(
+      PayoutDetailsCommandSchema.safeParse(withoutTax).data?.taxNumber,
+    ).toBe('');
+    expect(
+      PayoutDetailsCommandSchema.safeParse({ ...details, taxNumber: 'A' })
+        .success,
+    ).toBe(false);
+    expect(
+      PayoutDetailsCommandSchema.safeParse({
+        ...details,
+        taxNumber: 'x'.repeat(41),
+      }).success,
+    ).toBe(false);
+  });
   it('marks a creator month paid only with month, method and reference', () => {
     const pay = {
       csrf: 't',
@@ -161,7 +182,7 @@ describe('payout details and creator payouts', () => {
           due: -2.5,
           carried: 0,
           held: 0,
-          minimum: 10,
+          minimum: 25,
           details: false,
           owed: 0,
           history: [

@@ -25,7 +25,7 @@ const stats = {
       due: 12.34,
       carried: 0,
       held: 0,
-      minimum: 10,
+      minimum: 25,
       details: true,
       owed: 0,
       history: [],

@@ -87,7 +87,7 @@ test('payouts lists weeks, exports scheduled CSV, and pays and holds with audit'
         }
         return r.fulfill({ json: { ok: true } });
       }
-      return r.fulfill({ json: { payouts, teammates: [], minimum: 10 } });
+      return r.fulfill({ json: { payouts, teammates: [], minimum: 25 } });
     }
     if (url.pathname === '/api/admin/audit')
       return r.fulfill({ json: { entries: [] } });

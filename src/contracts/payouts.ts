@@ -49,7 +49,13 @@ export const PayoutDetailsCommandSchema = z
     address: z.string().trim().min(5).max(300),
     country: z.string().trim().min(2).max(56),
     dateOfBirth: z.iso.date(),
-    taxNumber: z.string().trim().min(2).max(40),
+    // Optional: empty is saved as no tax number; when given it must be 2–40 characters.
+    taxNumber: z
+      .string()
+      .trim()
+      .max(40)
+      .refine((v) => v === '' || v.length >= 2)
+      .default(''),
     method: z.enum(['bank', 'wise', 'paypal']),
     account: z.string().trim().min(3).max(200),
   })
