@@ -15,7 +15,7 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "test:unit": "vitest run",
-    "test:e2e": "playwright test && playwright test --config playwright.chat.config.ts && playwright test --config playwright.completion.config.ts && playwright test --config playwright.teammate.config.ts",
+    "test:e2e": "playwright test && playwright test --config playwright.chat.config.ts && playwright test --config playwright.completion.config.ts && playwright test --config playwright.teammate.config.ts && playwright test --config playwright.analytics.config.ts",
     "build": "astro build",
     "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm test:unit && pnpm build && pnpm test:e2e"
   },
@@ -26,6 +26,7 @@
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.118.0",
     "astro": "7.4.2",
+    "posthog-js": "1.445.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "stripe": "23.0.1",

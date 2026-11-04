@@ -1,6 +1,7 @@
 ---
 import '../design-reference/globals.css';
 import CookieBanner from '../components/site/CookieBanner.astro';
+import Analytics from '../components/site/Analytics.astro';
 import SiteAuthDialog from '../components/auth/SiteAuthDialog.jsx';
 import { UPLOADED_AVATAR, type Viewer } from '../contracts/account';
 import SiteFooter from '../components/site/SiteFooter.jsx';
@@ -227,6 +228,7 @@ const avatar =
     </script>}
     {signInPopup && <SiteAuthDialog csrf={csrf} client:idle />}
     <CookieBanner />
+    <Analytics viewer={viewer} />
     <script is:inline>
       // Close open header menus on outside click or Escape.
       document.addEventListener('click', (event) => {
