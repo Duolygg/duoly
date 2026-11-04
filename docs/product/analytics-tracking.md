@@ -4,12 +4,19 @@ Spec: `POSTHOG-SPEC.md` (owner approved 2026-11-04) in the project folder outsid
 
 Owner decisions: four PRs; personless business totals without Analytics consent; managed proxy later (direct `https://eu.i.posthog.com` until then, env change only); no replay on `/teammate`; owner and coworker accounts internal via `ANALYTICS_INTERNAL_USER_IDS`.
 
-| PR         | Branch                    | Status      | Next action                                                                         |
-| ---------- | ------------------------- | ----------- | ----------------------------------------------------------------------------------- |
-| A1 core    | `feat/analytics-core`     | in review   | Owner OK to merge. Inert until the env vars below exist.                            |
-| A2 journey | `feat/analytics-journey`  | not started | Browser events, privacy markers, replay, error capture, consent sync, privacy copy. |
-| B outbox   | `feat/analytics-outbox`   | not started | Outbox migration, triggers, drain, server events, Sparky AI events, source maps.    |
-| C insights | `feat/analytics-insights` | not started | Dashboards, alerts, surveys, scanner, scripted in `scripts/posthog/`.               |
+| PR         | Branch                    | Status                         | Next action                                                                                                                                                                                                                           |
+| ---------- | ------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1 core    | `feat/analytics-core`     | merged (#130), live 2026-11-04 | Done. Env set in Vercel production, cookieless enabled in PostHog.                                                                                                                                                                    |
+| A2 journey | `feat/analytics-journey`  | in progress                    | Core pushed. Merge in `feat/analytics-consent-sync`, `feat/analytics-privacy-markers`, `feat/analytics-events` when each is green, then apply migration `20261106100000_analytics_consent.sql`, set replay project settings, open PR. |
+| B outbox   | `feat/analytics-outbox`   | not started                    | Outbox migration, triggers, drain, server events, Sparky AI events, source maps.                                                                                                                                                      |
+| C insights | `feat/analytics-insights` | not started                    | Dashboards, alerts, surveys, scanner, scripted in `scripts/posthog/`.                                                                                                                                                                 |
+
+## A2: what it adds
+
+- Interaction capture (autocapture of click, change and submit; rage and dead clicks; heatmaps; unhandled errors) only with Analytics consent. `featureConfig()` is re-applied on every consent change; `before_send` drops these events for refusers regardless.
+- Session replay is started by the controller only with Analytics consent and only on `policy: 'full'` pages. Inputs masked, `[data-private]` text masked, `[data-private-block]` and iframes not recorded, no console logs, no headers or bodies, network names templated and secret routes hidden.
+- Sanitizer handles `$elements_chain` hrefs, heatmap URL keys, replay meta and custom events (DOM tree untouched), exception frames, and scrubs URLs and email addresses in free text.
+- Product events: `track()` in `src/client/analytics/track.ts` dispatches a window event; the boot script captures it with catalogue-validated properties (`src/contracts/analytics-events.ts`). `reportError()` does the same for handled errors.
 
 ## A1: what it does
 
