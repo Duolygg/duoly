@@ -31,5 +31,5 @@ Owner decisions: four PRs; personless business totals without Analytics consent;
 
 ## Known follow-ups
 
-- Bundle: the default `posthog-js` build adds about 117 KB gzipped to every page; slim build evaluated in `posthog-research/08-slim-bundle.md`.
+- Bundle: the default `posthog-js` build adds about 120 KB gzipped to every page (module script, does not block first paint). The slim build was measured and is not smaller once web vitals are registered (128 KB gzip; extension bundles do not tree-shake), so A1 keeps the default import. Revisit only if PostHog ships tree-shakeable extensions. Evidence: `posthog-research/08-slim-bundle.md` in the project folder.
 - A pageview that follows a fetch-based logout without navigation is reset only on the next document.
