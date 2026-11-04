@@ -19,10 +19,8 @@ import {
   bracketRoleName,
 } from '../../contracts/performance';
 
-import { DEMO_DATA, DEMO_HISTORY } from './performance-demo';
-
 // Admin → Performance (migration 20261030120000, docs/product/performance-ranking.md). Every
-// live number comes from /api/admin/performance. Demo uses an isolated fictional cohort.
+// live number comes from /api/admin/performance.
 // Recalculation runs every 12 hours by itself; "Recalculate now" also re-syncs the Discord roles.
 
 const REFRESH_MS = 60_000;
@@ -73,10 +71,9 @@ function Trend({ rank, previous }) {
   );
 }
 
-function History({ api, userId, demo }) {
-  const [rows, setRows] = useState(demo ? DEMO_HISTORY[userId] : null);
+function History({ api, userId }) {
+  const [rows, setRows] = useState(null);
   useEffect(() => {
-    if (demo) return;
     let live = true;
     api
       .get('/api/admin/performance?user=' + encodeURIComponent(userId))
@@ -84,7 +81,7 @@ function History({ api, userId, demo }) {
     return () => {
       live = false;
     };
-  }, [api, userId, demo]);
+  }, [api, userId]);
   if (!rows)
     return (
       <p style={{ margin: 0, color: C.dim, fontSize: '13px' }}>
@@ -277,46 +274,10 @@ function Settings({ api, toast, settings, onSaved, readOnly }) {
 }
 
 export default function Performance({ api, toast }) {
-  const [demo, setDemo] = useState(false);
-  return (
-    <div>
-      <section
-        style={{ ...card, padding: '20px', marginBottom: '18px' }}
-        aria-label="Preview mode"
-      >
-        <button
-          type="button"
-          style={btn()}
-          onClick={() => setDemo(!demo)}
-          aria-pressed={demo}
-        >
-          {demo ? 'Back to live' : 'Show demo'}
-        </button>
-        {demo ? (
-          <div>
-            <h2 style={{ ...h2, marginTop: '14px' }}>Demo preview</h2>
-            <p style={{ color: C.muted, fontSize: '13px' }}>
-              Sample data only. Seven representative rows from 100 fictional
-              eligible teammates plus one ineligible teammate. Bracket counts
-              describe these representative rows, not the full cohort. No real
-              accounts, database writes or Discord changes. History and Discord
-              statuses are simulated. Scores use 40% winrate, 25% retention, 20%
-              satisfaction and 15% completed orders.
-            </p>
-          </div>
-        ) : null}
-      </section>
-      <Ranking
-        key={demo ? 'demo' : 'live'}
-        api={api}
-        toast={toast}
-        demo={demo}
-      />
-    </div>
-  );
+  return <Ranking api={api} toast={toast} />;
 }
 
-function Ranking({ api, toast, demo }) {
+function Ranking({ api, toast }) {
   const active = useRef(true);
   useEffect(() => {
     active.current = true;
@@ -324,14 +285,14 @@ function Ranking({ api, toast, demo }) {
       active.current = false;
     };
   }, []);
-  const [data, setData] = useState(demo ? DEMO_DATA : null);
+  const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('All');
   const [open, setOpen] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(async () => {
-    if (demo || !active.current) return;
+    if (!active.current) return;
     const r = await api.get('/api/admin/performance');
     if (!active.current) return;
 
@@ -339,16 +300,14 @@ function Ranking({ api, toast, demo }) {
       setData(r.data);
       setError('');
     } else setError(r.error || 'Can’t load the rankings.');
-  }, [api, demo]);
+  }, [api]);
   useEffect(() => {
-    if (demo) return;
     void load();
     const timer = setInterval(() => void load(), REFRESH_MS);
     return () => clearInterval(timer);
-  }, [load, demo]);
+  }, [load]);
 
   const recalc = async () => {
-    if (demo) return;
     setBusy(true);
     const r = await api.post('/api/admin/performance', {
       action: 'recalculate',
@@ -402,20 +361,18 @@ function Ranking({ api, toast, demo }) {
               Performance ranking
             </h2>
             <p style={{ margin: '6px 0 0', fontSize: '13.5px', color: C.dim }}>
-              {demo
-                ? 'Sample snapshot: October 30, 2026. 100 eligible fictional teammates.'
-                : data.run
-                  ? 'Last calculated ' +
-                    ago(Date.parse(data.run.at), Date.now()) +
-                    (data.run.trigger === 'manual'
-                      ? ' by ' + (data.run.by || 'an admin')
-                      : ' automatically') +
-                    ' · ' +
-                    data.run.eligible +
-                    ' of ' +
-                    data.run.teammates +
-                    ' teammates ranked · runs every 12 hours'
-                  : 'Not calculated yet. It runs every 12 hours, or now with the button.'}
+              {data.run
+                ? 'Last calculated ' +
+                  ago(Date.parse(data.run.at), Date.now()) +
+                  (data.run.trigger === 'manual'
+                    ? ' by ' + (data.run.by || 'an admin')
+                    : ' automatically') +
+                  ' · ' +
+                  data.run.eligible +
+                  ' of ' +
+                  data.run.teammates +
+                  ' teammates ranked · runs every 12 hours'
+                : 'Not calculated yet. It runs every 12 hours, or now with the button.'}
             </p>
             <p
               style={{
@@ -424,21 +381,19 @@ function Ranking({ api, toast, demo }) {
                 color: data.discordEnabled ? C.green : C.gold,
               }}
             >
-              {demo
-                ? 'Simulated Discord statuses only. No sync is performed.'
-                : data.discordEnabled
-                  ? 'Discord roles sync after every recalculation ("Performance | TOP X%")'
-                  : 'Discord role sync is off (DISCORD_ROLE_SYNC_ENABLED), rankings still update'}
+              {data.discordEnabled
+                ? 'Discord roles sync after every recalculation ("Performance | TOP X%")'
+                : 'Discord role sync is off (DISCORD_ROLE_SYNC_ENABLED), rankings still update'}
             </p>
           </div>
           <button
             type="button"
             onClick={recalc}
-            disabled={busy || demo}
+            disabled={busy}
             style={{
               ...btn('primary'),
-              opacity: busy || demo ? 0.6 : 1,
-              cursor: demo ? 'not-allowed' : 'pointer',
+              opacity: busy ? 0.6 : 1,
+              cursor: 'pointer',
             }}
           >
             {busy ? 'Recalculating…' : 'Recalculate now'}
@@ -630,7 +585,7 @@ function Ranking({ api, toast, demo }) {
                           <span
                             style={{ color: statusColor, fontWeight: '600' }}
                           >
-                            {demo ? 'Simulated: ' + statusText : statusText}
+                            {statusText}
                           </span>
                           <div style={{ fontSize: '12px', color: C.faint }}>
                             {c.discord.username ? '@' + c.discord.username : ''}
@@ -659,7 +614,7 @@ function Ranking({ api, toast, demo }) {
                             colSpan={12}
                             style={{ ...td, whiteSpace: 'normal' }}
                           >
-                            <History api={api} userId={c.userId} demo={demo} />
+                            <History api={api} userId={c.userId} />
                           </td>
                         </tr>
                       ) : null}
@@ -677,7 +632,7 @@ function Ranking({ api, toast, demo }) {
         toast={toast}
         settings={data.settings}
         onSaved={load}
-        readOnly={demo}
+        readOnly={false}
       />
     </div>
   );

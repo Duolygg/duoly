@@ -1,4 +1,5 @@
 import React from 'react';
+import ProofManager from './ProofManager';
 import { GAME as GAMES } from '../../design-reference/lib/games';
 import {
   C,
@@ -613,6 +614,20 @@ export default class Orders extends React.Component {
                 {o.payment.stripeId}
               </a>
             </p>
+          ) : null}
+
+          {/* wrong screenshots: remove, show again or add the correct ones (20261105140000) */}
+          {o.orderId &&
+          (o.status === 'Completed' || o.status === 'In progress') ? (
+            <ProofManager
+              key={o.orderId}
+              orderId={o.orderId}
+              api={this.props.api}
+              ask={this.props.ask}
+              toast={this.props.toast}
+              log={this.props.log}
+              csrf={this.props.csrf}
+            />
           ) : null}
 
           <h3

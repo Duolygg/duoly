@@ -83,7 +83,11 @@ function applied(n: number, patch: Partial<Applied> = {}): Applied {
 
 // ---------------------------------------------------------------- in-memory store and Discord
 
-function memoryStore(people: Person[], rows: Applied[] = []) {
+function memoryStore(
+  people: Person[],
+  rows: Applied[] = [],
+  removed: 'suspended' | 'busy' | 'ignored' = 'suspended',
+) {
   const table = new Map(rows.map((row) => [row.discord_id, { ...row }]));
   const calls: string[] = [];
   const store: RoleStore & { table: typeof table; calls: string[] } = {
@@ -110,6 +114,10 @@ function memoryStore(people: Person[], rows: Applied[] = []) {
     },
     async remove(ids) {
       for (const id of ids) table.delete(id);
+    },
+    async teammateRoleRemoved(id) {
+      calls.push('removed:' + id);
+      return removed;
     },
   };
   return store;
@@ -236,9 +244,9 @@ describe('wanted roles (lib/discordRoles.js rules)', () => {
       session: true,
     });
   });
-  it('keeps Teammate for suspended teammates but never Online', () => {
+  it('gives suspended teammates neither Teammate nor Online', () => {
     expect(wantedRoles(person(1, { suspended: true, ...fresh }), NOW)).toEqual(
-      expect.objectContaining({ teammate: true, online: false }),
+      expect.objectContaining({ teammate: false, online: false }),
     );
     expect(
       wantedRoles(person(1, { suspended: true, busy: true }), NOW).online,
@@ -408,6 +416,69 @@ describe('sync', () => {
       if (request.method !== 'GET')
         expect(Object.values(ROLE)).toContain(request.path.split('/').pop());
     }
+  });
+
+  it('suspends a teammate whose Teammate role an admin took away in Discord', async () => {
+    // the bot had given the role; the next member read finds it gone
+    const d = discord({ [did(1)]: { roles: [ROLE.online] } });
+    const store = memoryStore(
+      [person(1, { desk_online: true, last_seen: NOW - 1000 })],
+      [
+        applied(1, {
+          teammate: true,
+          online: true,
+          checked_at: new Date(NOW - MEMBER_REFRESH_MS - 1).toISOString(),
+        }),
+      ],
+    );
+    const result = await run(null, store, d.fetchImpl);
+    expect(store.calls).toContain('removed:' + did(1));
+    expect(result.suspended).toBe(1);
+    // not given back, and Online goes too
+    expect(d.changes()).toEqual([
+      expect.objectContaining({
+        method: 'DELETE',
+        path: `/guilds/${GUILD}/members/${did(1)}/roles/${ROLE.online}`,
+      }),
+    ]);
+    expect(store.table.get(did(1))).toMatchObject({
+      teammate: false,
+      online: false,
+    });
+  });
+
+  it('waits until the order is finished when the teammate is playing', async () => {
+    const d = discord({ [did(1)]: { roles: [ROLE.online, ROLE.session] } });
+    const store = memoryStore(
+      [person(1, { busy: true })],
+      [
+        applied(1, {
+          teammate: true,
+          online: true,
+          session: true,
+          checked_at: new Date(NOW - MEMBER_REFRESH_MS - 1).toISOString(),
+        }),
+      ],
+      'busy',
+    );
+    const result = await run(null, store, d.fetchImpl);
+    expect(result.suspended).toBe(0);
+    // the role is not given back, and the stored state still says "had it" so the next read asks again
+    expect(d.changes().some((r) => r.path.endsWith(ROLE.teammate))).toBe(false);
+    expect(store.table.get(did(1))).toMatchObject({ teammate: true });
+  });
+
+  it('does not suspend new members or people who never had the role from the bot', async () => {
+    const d = discord({ [did(1)]: { roles: [] } });
+    const store = memoryStore([person(1)]);
+    await run(null, store, d.fetchImpl);
+    expect(store.calls.some((c) => c.startsWith('removed:'))).toBe(false);
+    expect(d.changes()).toEqual([
+      expect.objectContaining({
+        method: 'PUT',
+        path: `/guilds/${GUILD}/members/${did(1)}/roles/${ROLE.teammate}`,
+      }),
+    ]);
   });
 
   it('sends nothing to Discord when the stored state already matches', async () => {

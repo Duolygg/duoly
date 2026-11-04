@@ -2,7 +2,11 @@ import type { APIContext, AstroCookies } from 'astro';
 import { createServerClient } from '@supabase/ssr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { callback } from '../../src/server/auth/handlers';
-import { connect, disconnect } from '../../src/server/discord/link';
+import {
+  connect,
+  disconnect,
+  TEAMMATE_STAYS_CONNECTED,
+} from '../../src/server/discord/link';
 import {
   discordReturn,
   isDiscordAuthorizeUrl,
@@ -77,7 +81,12 @@ describe('oauth helpers', () => {
 function setup({
   identities = [{ provider: 'google' }, { provider: 'discord' }],
   linkUrl = 'https://discord.com/oauth2/authorize?client_id=1',
-}: { identities?: { provider: string }[]; linkUrl?: string } = {}) {
+  role = 'teammate',
+}: {
+  identities?: { provider: string }[];
+  linkUrl?: string;
+  role?: 'customer' | 'teammate' | 'admin';
+} = {}) {
   const values = new Map<string, string>([
     ['duoly-csrf', 'c'.repeat(64)],
     ['duoly-session.0', 'session'],
@@ -91,7 +100,7 @@ function setup({
   };
   const row = (table: string) =>
     table === 'account_roles'
-      ? { role: 'teammate' }
+      ? { role }
       : table === 'discord_accounts'
         ? null
         : { id: USER, name: 'Player', country: '', image: '' };
@@ -223,8 +232,8 @@ describe('callback while linking', () => {
 });
 
 describe('disconnect', () => {
-  it('unlinks Discord when another sign-in method exists', async () => {
-    const s = setup();
+  it('unlinks an admin’s Discord when another sign-in method exists', async () => {
+    const s = setup({ role: 'admin' });
     const res = await s.post(
       disconnect,
       JSON.stringify({ csrf: 'c'.repeat(64) }),
@@ -234,8 +243,30 @@ describe('disconnect', () => {
     expect(s.unlinkIdentity).toHaveBeenCalledWith({ provider: 'discord' });
     expect(syncRolesAfter).toHaveBeenCalledExactlyOnceWith({ users: [USER] });
   });
+  it('lets customers disconnect too', async () => {
+    const s = setup({ role: 'customer' });
+    const res = await s.post(
+      disconnect,
+      JSON.stringify({ csrf: 'c'.repeat(64) }),
+      'application/json',
+    );
+    expect(res.status).toBe(200);
+    expect(s.unlinkIdentity).toHaveBeenCalledWith({ provider: 'discord' });
+  });
+  it('never lets a teammate disconnect', async () => {
+    const s = setup({ role: 'teammate' });
+    const res = await s.post(
+      disconnect,
+      JSON.stringify({ csrf: 'c'.repeat(64) }),
+      'application/json',
+    );
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: TEAMMATE_STAYS_CONNECTED });
+    expect(s.unlinkIdentity).not.toHaveBeenCalled();
+    expect(syncRolesAfter).not.toHaveBeenCalled();
+  });
   it('keeps Discord when it is the only sign-in method', async () => {
-    const s = setup({ identities: [{ provider: 'discord' }] });
+    const s = setup({ identities: [{ provider: 'discord' }], role: 'admin' });
     const res = await s.post(
       disconnect,
       JSON.stringify({ csrf: 'c'.repeat(64) }),

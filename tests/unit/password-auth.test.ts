@@ -297,6 +297,19 @@ describe('loginPassword', () => {
     }
     expect(new Set(locations)).toEqual(new Set(['/login?error=credentials']));
   });
+  it('tells a suspended teammate (banned in Auth) why they cannot sign in', async () => {
+    const account = fakeAccount();
+    account.client.auth.signInWithPassword.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'User is banned', status: 400, code: 'user_banned' },
+    });
+    const { response } = await call(
+      loginPassword,
+      account,
+      post(validCredentials),
+    );
+    expect(response.headers.get('location')).toBe('/login?error=suspended');
+  });
   it('redirects verified logins to /dashboard and deletes the CSRF cookie', async () => {
     const account = fakeAccount();
     account.client.auth.signInWithPassword.mockResolvedValue({

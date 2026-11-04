@@ -75,7 +75,13 @@ export const loginPassword: APIRoute = async (context) => {
       email: parsed.credentials.email,
       password: parsed.credentials.password,
     });
-    if (error) return done('/login?error=credentials');
+    // A suspended teammate (banned in Auth) gets told why; everything else stays generic.
+    if (error)
+      return done(
+        error.code === 'user_banned'
+          ? '/login?error=suspended'
+          : '/login?error=credentials',
+      );
     const identity = await account.identity();
     const testEmail = account.config.testEmail;
     if (!identity) {

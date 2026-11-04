@@ -307,6 +307,11 @@ export default class Profile extends React.Component {
                 <span style={{ fontSize: '13px', color: '#8E84AB' }}>
                   You sign in with Discord, so it’s connected automatically.
                 </span>
+              ) : this.props.user.role === 'teammate' ? (
+                // Only admins and customers can disconnect (src/server/discord/link.ts).
+                <span style={{ fontSize: '13px', color: '#8E84AB' }}>
+                  Teammates stay connected. Ask an admin to change it.
+                </span>
               ) : (
                 <button
                   type="button"

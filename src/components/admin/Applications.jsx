@@ -9,6 +9,7 @@ import {
   ago,
 } from '../../design-reference/components/admin/ui';
 import { GAME } from '../../design-reference/lib/games';
+import { youtubeWatchUrl } from '../../design-reference/lib/youtube';
 import { allAdminPages, application } from './api';
 
 // Port of the Applications tab of the original components/admin/Teammates.jsx, wired to
@@ -228,6 +229,46 @@ export default class Applications extends React.Component {
                     {a.hours} h/week
                   </span>
                 </div>
+                {youtubeWatchUrl(a.video) ? (
+                  <a
+                    href={youtubeWatchUrl(a.video)}
+                    target="_blank"
+                    rel="noreferrer nofollow"
+                    aria-label={'Watch ' + a.name + '’s intro video on YouTube'}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      alignSelf: 'flex-start',
+                      minHeight: '36px',
+                      padding: '0 12px',
+                      borderRadius: '10px',
+                      background: 'rgba(214, 187, 255, .1)',
+                      border: '1px solid ' + C.line2,
+                      color: C.white,
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <svg
+                      aria-hidden="true"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill={C.accent}
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Watch intro video
+                  </a>
+                ) : (
+                  <span style={{ fontSize: '13px', color: C.faint }}>
+                    {a.video
+                      ? 'Intro video link isn’t a YouTube video: ' + a.video
+                      : 'No intro video (sent before videos were required)'}
+                  </span>
+                )}
                 {a.why ? (
                   <p
                     style={{

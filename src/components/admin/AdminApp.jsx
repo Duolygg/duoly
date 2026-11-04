@@ -225,10 +225,15 @@ export const sectionFromPath = (path) => {
     .replace(/\/$/, '');
   return (SECTIONS.find((s) => s.slug === slug) || SECTIONS[0]).id;
 };
-const pathOf = (id) => {
+export const pathOf = (id) => {
   const s = SECTIONS.find((x) => x.id === id);
   return s && s.slug ? '/admin/' + s.slug : '/admin';
 };
+// The permission a page needs (migration 20261105130000): Applications is a tab of Teammates.
+export const permissionOf = (id) => (id === 'applications' ? 'teammates' : id);
+// Owners see everything; others only the sections an owner gave them. No access = all (preview).
+export const allowed = (access, id) =>
+  !access || access.owner || access.sections.includes(permissionOf(id));
 
 export default class AdminApp extends React.Component {
   constructor(props) {
@@ -300,7 +305,10 @@ export default class AdminApp extends React.Component {
   componentDidUpdate(_, prev) {
     if (prev.section !== this.state.section) this.revealNav();
   }
+  // What this admin may use (owners: everything); see permissionOf / allowed.
+  can = (id) => allowed(this.props.access, id);
   go = (section, opts) => {
+    if (!this.can(section)) return;
     const path = pathOf(section);
     if (window.location.pathname !== path)
       window.history.pushState(null, '', path);
@@ -331,6 +339,7 @@ export default class AdminApp extends React.Component {
   // The server writes the audit row inside every command; this only refreshes the list.
   log = () => this.loadAudit();
   loadAudit = async () => {
+    if (!this.can('audit')) return;
     const r = await this.api.get('/api/admin/audit');
     if (r.ok)
       this.setState({
@@ -343,6 +352,7 @@ export default class AdminApp extends React.Component {
       .post('/api/admin/presence', { action: 'check-in', online: true })
       .catch(() => undefined);
   watchSupport = async () => {
+    if (!this.can('support')) return;
     let response;
     try {
       response = await this.api.get('/api/admin/support');
@@ -406,9 +416,10 @@ export default class AdminApp extends React.Component {
   // Sidebar counts like the original: queue on Live desk, open orders, pending applications on
   // Teammates, chats waiting for a human, open reports (hot) on Reports and safety.
   loadCounts = async () => {
+    const none = Promise.resolve({ ok: false });
     const [summary, support] = await Promise.all([
-      this.api.get('/api/admin/overview'),
-      this.api.get('/api/admin/support'),
+      this.can('overview') ? this.api.get('/api/admin/overview') : none,
+      this.can('support') ? this.api.get('/api/admin/support') : none,
     ]);
     const next = {};
     if (summary.ok) {
@@ -642,6 +653,9 @@ export default class AdminApp extends React.Component {
       onApplications: (n) => this.setState({ pendingApps: n }),
       csrf: this.props.csrf,
       admin: this.props.admin,
+      // permissions (migration 20261105130000): can('payouts'), owner
+      can: this.can,
+      owner: !!(this.props.access ? this.props.access.owner : this.props.owner),
     };
     let body = null;
     if (s.section === 'users') body = <Users {...props} />;
@@ -711,7 +725,7 @@ export default class AdminApp extends React.Component {
             <span className="ops-side-chip">ADMIN</span>
           </a>
           <nav className="ops-nav" aria-label="Admin sections">
-            {GROUPS.map((g) => (
+            {GROUPS.filter((g) => g.ids.some((id) => this.can(id))).map((g) => (
               <div
                 key={g.label}
                 className="ops-group"
@@ -721,7 +735,9 @@ export default class AdminApp extends React.Component {
                 <span className="ops-group-label" aria-hidden="true">
                   {g.label}
                 </span>
-                {SECTIONS.filter((x) => g.ids.includes(x.id)).map((x) => (
+                {SECTIONS.filter(
+                  (x) => g.ids.includes(x.id) && this.can(x.id),
+                ).map((x) => (
                   <a
                     key={x.id}
                     href={pathOf(x.id)}

@@ -28,7 +28,7 @@ export const FAQ_TABS = [
     ['Which games can I play?',
       GAME_LINE + '. Every game has its own verified teammates, ranks and modes.'],
     ['Which servers and regions do you cover?',
-      'Every server each game has: from EUW, EUNE, NA, KR and the Riot servers in Asia for League, to Valorant’s shards, Fortnite’s matchmaking regions and Rocket League’s 12 regions. You pick your server at checkout and your teammate sees it before they accept. For Minecraft you just tell us the server or world you play on.'],
+      'Every server each game has: from EUW, EUNE, NA, KR and the Riot servers in Asia for League of Legends, to Valorant’s shards, Fortnite’s matchmaking regions and Rocket League’s 12 regions. You pick your server at checkout and your teammate sees it before they accept. For Minecraft you just tell us the server or world you play on.'],
     ['Do I need an account?',
       'Yes, a free one. It takes ten seconds with Discord, Google or email. It’s how we connect your order to you, keep you updated while you wait and let you rebook teammates you liked.']
   ] },

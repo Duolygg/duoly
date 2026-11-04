@@ -9,6 +9,7 @@ import Pick from './Pick.jsx';
 import { GAMES as GAME_LIST } from '../lib/games';
 import { servicesFor } from '../lib/catalog';
 import { COUNTRIES, flagSrc } from '../lib/countries';
+import { youtubeVideoId } from '../lib/youtube';
 
 // Teammates keep 60% of what the customer pays (server/pricing calculateQuote). Tips are 100% theirs.
 const SHARE = 0.6;
@@ -33,7 +34,7 @@ export default class Apply extends React.Component {
     super(props);
     this.state = {
       step: 1, done: false,
-      f: { name: '', email: '', discord: '', country: '', adult: false, game: 'lol', rank: '', region: '', role: '', link: '', hours: '10–20', why: '', svc: { duo: true, coach: false, social: false, gg: false } }
+      f: { name: '', email: '', discord: '', country: '', adult: false, game: 'lol', rank: '', region: '', role: '', link: '', video: '', hours: '10–20', why: '', svc: { duo: true, coach: false, social: false, gg: false } }
     };
   }
   // The application goes to the admins (Teammates → Applications).
@@ -74,7 +75,7 @@ export default class Apply extends React.Component {
       fc: { min: 'Division 1 in Rivals', ranks: ['Division 1', 'Elite Division'] },
       arc: { min: 'Experienced raider', ranks: ['Experienced raider', 'Veteran raider', 'Elite raider'] },
       mc: { min: 'Skilled PvPer or survival / SMP expert', ranks: ['Skilled PvPer', 'Top PvPer', 'Survival & SMP expert'] },
-      pu: { ranks: ['Ultra', 'Master'] }
+      pu: { ranks: ['Ultra', 'Master', 'Legend'] }
     };
     const GAMES = GAME_LIST.filter((x) => NEEDS[x.id]).map((x) => ({ ...x, min: NEEDS[x.id].min || NEEDS[x.id].ranks[0] + ' or higher', ranks: NEEDS[x.id].ranks }));
     const g = GAMES.find((x) => x.id === f.game) || GAMES[0];
@@ -82,10 +83,11 @@ export default class Apply extends React.Component {
     const ranks = ggPicked ? ['Any rank'].concat(g.ranks) : g.ranks;
 
     const step1ok = f.name.trim() && /@/.test(f.email) && f.discord.trim() && f.adult;
-    const step2ok = f.rank && f.region;
+    const videoOk = youtubeVideoId(f.video) !== '';
+    const step2ok = f.rank && f.region && videoOk;
     const step3ok = Object.keys(f.svc).some((k) => f.svc[k]);
     const ok = s.step === 1 ? step1ok : s.step === 2 ? step2ok : step3ok;
-    const hints = { 1: 'Fill in all fields to continue', 2: 'Pick your rank and region', 3: 'Pick at least one service' };
+    const hints = { 1: 'Fill in all fields to continue', 2: f.rank && f.region ? 'Add a YouTube link to your intro video' : 'Pick your rank and region', 3: 'Pick at least one service' };
 
     const stepper = ['About you', 'Your game', 'What you offer'].map((name, i) => {
       const n = i + 1;
@@ -167,7 +169,7 @@ export default class Apply extends React.Component {
     };
     const orders = [
       ['/assets/games/valorant.png', 'Duo Pro ×3 · Valorant', 'Lea · Platinum 2 · EU West', earn('val', 'duo2', 3)],
-      ['/assets/games/league-of-legends.png', 'Play & Learn · League', 'Sam · Gold 1 · EU West', earn('lol', 'learn', 1)]
+      ['/assets/games/league-of-legends.png', 'Play & Learn · League of Legends', 'Sam · Gold 1 · EU West', earn('lol', 'learn', 1)]
     ].map(([img, title, meta, pay], i) => ({
       img, title, meta, pay,
       btnLabel: acc[i] ? 'Accepted' : 'Accept',
@@ -193,7 +195,8 @@ export default class Apply extends React.Component {
       ranks: ranks.map((r) => ({ value: r, label: r })),
       hours: [['5–10', '5–10 hours'], ['10–20', '10–20 hours'], ['20–30', '20–30 hours'], ['30+', '30+ hours']].map(([value, label]) => ({ value, label })),
       f,
-      on: { name: set('name'), email: set('email'), discord: set('discord'), country: put('country'), rank: put('rank'), region: put('region'), role: set('role'), link: set('link'), hours: put('hours'), why: set('why') },
+      on: { name: set('name'), email: set('email'), discord: set('discord'), country: put('country'), rank: put('rank'), region: put('region'), role: set('role'), link: set('link'), video: set('video'), hours: put('hours'), why: set('why') },
+      videoBad: f.video.trim() !== '' && !videoOk,
       adultChecked: f.adult ? 'true' : 'false', adultBox: box(f.adult),
       toggleAdult: () => this.setState({ f: { ...this.state.f, adult: !this.state.f.adult } }),
       isStep1: s.step === 1, isStep2: s.step === 2, isStep3: s.step === 3,
@@ -448,7 +451,7 @@ export default class Apply extends React.Component {
                     Coaches
                   </div>
                   <div style={{ marginTop: "4px", fontSize: "14px", color: "#A79DC4" }}>
-                    The coach rank shown on each game’s coaching (Master+ in League, Immortal+ in Valorant, FACEIT Level 10 in CS2…) and a short sample VOD review.
+                    The coach rank shown on each game’s coaching (Master+ in League of Legends, Immortal+ in Valorant, FACEIT Level 10 in Counter-Strike 2…) and a short sample VOD review.
                   </div>
                 </div>
                 <div style={{ padding: "18px 20px", borderRadius: "18px", border: "1px solid rgba(196, 170, 255, .1)" }}>
@@ -625,6 +628,23 @@ export default class Apply extends React.Component {
                                 </span>
                               </label>
                               <input id="ap-link" type="url" value={v.f.link} onChange={v.on.link} placeholder="https://" style={{ minHeight: "50px", padding: "0 14px", borderRadius: "14px", background: "#090414", border: "1px solid rgba(196, 170, 255, .16)", color: "#FFFFFF", fontSize: "15px" }} />
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                              <label htmlFor="ap-video" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
+                                Intro video{" "}
+                                <span style={{ fontWeight: "400", color: "#8E84AB" }}>
+                                  (YouTube link, required)
+                                </span>
+                              </label>
+                              <span id="ap-video-help" style={{ fontSize: "13px", color: "#A79DC4", lineHeight: "1.5" }}>
+                                Upload a short video to YouTube (unlisted is fine) where you introduce yourself and tell us a bit about who you are. Showing your face is preferred, but voice only over a still image works too.
+                              </span>
+                              <input id="ap-video" type="url" required value={v.f.video} onChange={v.on.video} placeholder="https://youtu.be/…" aria-describedby={v.videoBad ? "ap-video-help ap-video-err" : "ap-video-help"} aria-invalid={v.videoBad ? "true" : "false"} style={{ minHeight: "50px", padding: "0 14px", borderRadius: "14px", background: "#090414", border: "1px solid " + (v.videoBad ? "#FF8A9B" : "rgba(196, 170, 255, .16)"), color: "#FFFFFF", fontSize: "15px" }} />
+                              {v.videoBad ? (
+                                <span id="ap-video-err" style={{ fontSize: "13px", color: "#FF8A9B" }}>
+                                  That doesn’t look like a YouTube video link. Paste the link from the Share button.
+                                </span>
+                              ) : null}
                             </div>
                           </div>
                         </>

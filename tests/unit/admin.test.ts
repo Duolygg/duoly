@@ -121,6 +121,7 @@ describe('admin contracts', () => {
     region: 'EU',
     role: '',
     link: '',
+    video: 'https://youtu.be/dQw4w9WgXcQ',
     hours: '10–20',
     why: 'I like teaching.',
     svc: { duo: true, coach: false, social: false, gg: false },
@@ -139,6 +140,11 @@ describe('admin contracts', () => {
         'Pick at least one service.',
       ],
       [{ name: 'K' }, 'Add your name.'],
+      [{ video: '' }, 'Add a YouTube link to your intro video.'],
+      [
+        { video: 'https://vimeo.com/123456' },
+        'Add a YouTube link to your intro video.',
+      ],
     ];
     for (const [patch, message] of cases) {
       const parsed = ApplicationSchema.safeParse({ ...form, ...patch });

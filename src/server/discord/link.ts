@@ -41,6 +41,9 @@ export const connect: APIRoute = async (context) => {
   }
 };
 
+export const TEAMMATE_STAYS_CONNECTED =
+  'Teammates stay connected to Discord. Ask an admin if you need to change your Discord account.';
+
 export const disconnect: APIRoute = async (context) => {
   const { account, failure } = await mutation(context);
   if (failure) return failure;
@@ -50,6 +53,10 @@ export const disconnect: APIRoute = async (context) => {
     const identity = await account.identity();
     if (!identity)
       return account.json({ error: 'Sign in to manage Discord.' }, 401);
+    // Teammates work through the Duoly Discord (roles, order posts, handovers), so only an
+    // admin's or a customer's Discord can be disconnected here.
+    if (identity.viewer.role === 'teammate')
+      return account.json({ error: TEAMMATE_STAYS_CONNECTED }, 403);
     const { data, error } = await account.client.auth.getUserIdentities();
     if (error || !data)
       return account.json(

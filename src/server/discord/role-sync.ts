@@ -5,7 +5,9 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  * Discord role sync (ledger #40), a port of the original lib/discordRoles.js.
  *
  * Keeps the "Teammate", "Online" and "In Session" roles in the Duoly Discord server in sync:
- *   Teammate    every teammate with Discord connected (taken away if they stop being a teammate)
+ *   Teammate    every teammate with Discord connected who isn't suspended (taken away if they stop
+ *               being a teammate or are suspended). An admin taking it away by hand in Discord
+ *               suspends the teammate (discord_teammate_role_removed, migration 20261105120000)
  *   Online      the dashboard toggle is on and the dashboard really checks in (20 s presence),
  *               or they're playing an order; suspended teammates are never Online
  *   In Session  they have an order in progress (removed on complete or reroll)
@@ -121,7 +123,7 @@ export function wantedRoles(person: Person, now: number): Want {
   return {
     userId: person.user_id,
     admin: false,
-    teammate: true,
+    teammate: !person.suspended,
     online: !person.suspended && (session || fresh),
     session,
   };
@@ -325,6 +327,10 @@ export interface RoleStore {
   applied(userIds: string[] | null): Promise<Applied[]>;
   save(rows: Applied[]): Promise<void>;
   remove(discordIds: string[]): Promise<void>;
+  /** Someone took the Teammate role away by hand: suspend them (or 'busy': ask again later). */
+  teammateRoleRemoved(
+    discordId: string,
+  ): Promise<'suspended' | 'busy' | 'ignored'>;
 }
 
 let serviceClient: { key: string; client: SupabaseClient } | null = null;
@@ -383,6 +389,14 @@ export function supabaseRoleStore(config: RoleSyncConfig): RoleStore {
         .in('discord_id', discordIds);
       if (error) throw new Error('discord_role_sync delete failed');
     },
+    async teammateRoleRemoved(discordId) {
+      const { data, error } = await db.rpc('discord_teammate_role_removed', {
+        p_discord_id: discordId,
+      });
+      if (error) throw new Error('discord_teammate_role_removed failed');
+      const status = (data as { status?: unknown } | null)?.status;
+      return status === 'suspended' || status === 'busy' ? status : 'ignored';
+    },
   };
 }
 
@@ -405,6 +419,8 @@ export interface SyncResult {
   changed: number;
   failed: number;
   deferred: number;
+  /** Teammates suspended because their Teammate role was taken away in Discord. */
+  suspended: number;
 }
 
 /**
@@ -423,6 +439,7 @@ export async function syncDiscordRoles(
     changed: 0,
     failed: 0,
     deferred: 0,
+    suspended: 0,
   };
   const config = deps.config === undefined ? roleSyncConfig() : deps.config;
   if (!config) return result;
@@ -461,7 +478,7 @@ export async function syncDiscordRoles(
       continue;
     }
     const stored = applied.get(did);
-    const wanted = want.get(did) ?? releaseWant(stored);
+    let wanted = want.get(did) ?? releaseWant(stored);
     let current: Applied | undefined = stored ? { ...stored } : undefined;
     let dirty = false;
     const now = clock();
@@ -511,6 +528,34 @@ export async function syncDiscordRoles(
       }
       dirty = true;
       result.checked++;
+      // The bot gave or saw the Teammate role and it is gone while the teammate still should
+      // have it: an admin took it in Discord. That suspends them instead of giving it back.
+      if (
+        stored?.teammate &&
+        !stored.not_member &&
+        roles.teammate &&
+        !current.not_member &&
+        !current.teammate &&
+        want.has(did) &&
+        wanted.teammate === true
+      ) {
+        let outcome: 'suspended' | 'busy' | 'ignored';
+        try {
+          outcome = await store.teammateRoleRemoved(did);
+        } catch {
+          result.failed++;
+          continue; // keep the stored state; the next read tries again
+        }
+        if (outcome === 'suspended') {
+          result.suspended++;
+          wanted = { ...wanted, teammate: false, online: false };
+        } else if (outcome === 'busy') {
+          // Playing an order: suspend once it's finished. Leave the role off and keep the
+          // stored "had it" so the next read asks again.
+          wanted = { ...wanted, teammate: undefined };
+          current.teammate = true;
+        }
+      }
     }
     if (!current) continue;
     if (want.has(did)) {

@@ -15,6 +15,12 @@ import {
   teammatePresence,
 } from '../../src/server/presence/handlers';
 
+// Admin permissions (migration 20261105130000): these tests act as an owner.
+vi.mock('../../src/server/admin/access', async (original) => ({
+  ...(await original<typeof import('../../src/server/admin/access')>()),
+  adminAccess: vi.fn(async () => ({ owner: true, sections: [] })),
+}));
+
 vi.mock('../../src/server/auth/context', () => ({ accountContext: vi.fn() }));
 vi.mock('../../src/server/payments/webhook', () => ({
   settleSoon: vi.fn(async () => undefined),
@@ -69,6 +75,7 @@ beforeEach(() => {
     changed: 0,
     failed: 0,
     deferred: 0,
+    suspended: 0,
   });
   vi.mocked(accountContext).mockReturnValue({
     client: { rpc },

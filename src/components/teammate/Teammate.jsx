@@ -17,6 +17,7 @@ import React from 'react';
 import Leaderboard from './Leaderboard';
 import PerformanceCard from './PerformanceCard';
 import PayoutPanel from './PayoutPanel';
+import StreamingPanel from './StreamingPanel';
 import SupportChat from '../support/SupportChat';
 import TrustScore, { tierFor } from './TrustScore';
 import {
@@ -5836,6 +5837,10 @@ export default class Teammate extends React.Component {
             )}
           </div>
 
+          {/* Twitch streaming (migration 20261105100000); only for teammates with streaming games */}
+          {v.admin || this.props.preview || this.state.needDiscord ? null : (
+            <StreamingPanel csrf={this.props.csrf} />
+          )}
           {/* Performance ranking (migration 20261030120000); hidden until a ranking exists */}
           {v.admin || this.state.needDiscord ? null : <PerformanceCard />}
           {v.admin || !(FEATURES.trust || FEATURES.leaderboard) ? null : (

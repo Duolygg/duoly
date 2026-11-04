@@ -92,7 +92,8 @@ export function catalogFor(
     (g) =>
       g.id === wanted ||
       g.name.toLowerCase() === wanted ||
-      g.short.toLowerCase() === wanted,
+      g.short.toLowerCase() === wanted ||
+      (g as { alias?: string }).alias?.toLowerCase() === wanted,
   );
   if (!match) return null;
   const { modes } = servicesFor(match.id) as { modes: Mode[] };

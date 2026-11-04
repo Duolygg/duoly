@@ -17,6 +17,7 @@ import {
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { GAMES } from '../../design-reference/lib/games.js';
 import { MoodSchema } from '../../contracts/orders';
+import { StreamerQuoteSchema, streamPrice } from '../../contracts/streaming';
 import {
   AUTHORIZE_ONLY_METHODS,
   adminFor,
@@ -47,11 +48,20 @@ export const CheckoutRequestSchema = z
     // Diamond: one of the customer's own completed orders (the handle from
     // /api/orders/pickable-teammates) names the teammate who gets the order first for 60 s.
     pickSource: z.uuid().optional(),
+    // Twitch streaming: the handle of a live streamer from /api/home/streamers. With it,
+    // serviceId is 'stream' and units are the booked hours (migration 20261105100000).
+    streamer: z.uuid().optional(),
   })
   .refine((request) => !(request.freePerk && request.useWallet), {
     message: 'The free coaching order does not use the wallet.',
     path: ['useWallet'],
-  });
+  })
+  .refine(
+    (request) =>
+      (request.streamer !== undefined) === (request.serviceId === 'stream') &&
+      !(request.streamer && (request.freePerk || request.pickSource)),
+    { message: 'A streamer booking is its own order.', path: ['streamer'] },
+  );
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
 
 interface CatalogMode {
@@ -149,6 +159,57 @@ export function buildCheckout(
   };
 }
 
+/**
+ * Pure: a Twitch streaming booking, priced from the streamer's own hourly rate (the database
+ * confirmed they are live, stream this game and offer this many hours). 60% to the streamer
+ * like every order; no PRO or creator discount, the wallet can still pay.
+ */
+export function buildStreamCheckout(
+  request: CheckoutRequest,
+  streamer: { streamerId: string; name: string; rateEurCents: number },
+  rate: number = FALLBACK_EUR_TO_USD,
+) {
+  const game = (GAMES as { id: string; name: string }[]).find(
+    (entry) => entry.id === request.gameId,
+  );
+  if (!game || request.gameId === 'social' || request.serviceId !== 'stream')
+    throw new Error('not a streaming game');
+  const price = streamPrice(streamer.rateEurCents, request.units, rate);
+  const region =
+    request.gameId === 'mc'
+      ? `${request.server.trim()} · ${request.edition ?? 'Java'}`
+      : request.server.trim();
+  if (region.length < 2) throw new Error('server required');
+  const title = `Twitch stream with ${streamer.name}`.slice(0, 80);
+  const hours = `${request.units} hour${request.units === 1 ? '' : 's'}`;
+  return {
+    row: {
+      game: request.gameId,
+      service: 'stream',
+      title,
+      units: request.units,
+      unit: 'hour' as const,
+      gg: false,
+      rank: request.rank ?? '',
+      region: region.slice(0, 80),
+      ign: request.ign.trim(),
+      note: request.note?.trim() ?? '',
+      voice: request.voice ?? false,
+      ...(request.mood ? { mood: request.mood } : {}),
+      amount_eur_cents: price.amountEurCents,
+      payout_usd_cents: price.payoutUsdCents,
+      booking_fx: rate,
+    },
+    streamer: {
+      streamer_id: streamer.streamerId,
+      streamer_name: streamer.name,
+      streamer_rate_eur_cents: streamer.rateEurCents,
+    },
+    productName: `${title} · ${hours}`,
+    description: [game.name, region].join(' · '),
+  };
+}
+
 export function sessionParams(input: {
   intentId: string;
   customerId: string;
@@ -216,9 +277,56 @@ export const createCheckout: APIRoute = async (context) => {
     const parsed = CheckoutRequestSchema.safeParse(input);
     if (!parsed.success)
       return account.json({ error: 'Check your order details.' }, 400);
+    const admin = adminFor(config);
+    // Bound on first use, so nothing touches the admin client before it's needed.
+    const rpc = (fn: string, args: Record<string, unknown>) =>
+      (
+        admin.rpc as unknown as (
+          fn: string,
+          args: Record<string, unknown>,
+        ) => PromiseLike<{ data: unknown; error: unknown }>
+      ).call(admin, fn, args);
     let built: ReturnType<typeof buildCheckout>;
+    let streamer: ReturnType<typeof buildStreamCheckout>['streamer'] | null =
+      null;
     try {
-      built = buildCheckout(parsed.data, (await eurToUsd()).rate);
+      const fx = (await eurToUsd()).rate;
+      if (parsed.data.streamer) {
+        // The database says whether this streamer is live right now, for this game and length.
+        const quoted = await rpc('streamer_checkout_quote', {
+          p_handle: parsed.data.streamer,
+          p_game: parsed.data.gameId,
+          p_hours: parsed.data.units,
+          // their own unfinished checkout for this streamer doesn't block a retry
+          p_customer: identity.viewer.id,
+        });
+        const refusal = (quoted.data as { error?: { message?: unknown } })
+          ?.error;
+        if (quoted.error || !quoted.data)
+          return account.json(
+            { error: 'Checkout is unavailable. Try again.' },
+            503,
+          );
+        if (refusal)
+          return account.json(
+            {
+              error:
+                typeof refusal.message === 'string'
+                  ? refusal.message
+                  : 'That streamer can’t be booked right now.',
+            },
+            409,
+          );
+        const quote = StreamerQuoteSchema.safeParse(quoted.data);
+        if (!quote.success)
+          return account.json(
+            { error: 'Checkout is unavailable. Try again.' },
+            503,
+          );
+        const stream = buildStreamCheckout(parsed.data, quote.data, fx);
+        built = stream;
+        streamer = stream.streamer;
+      } else built = buildCheckout(parsed.data, fx);
     } catch {
       return account.json({ error: 'That option isn’t available.' }, 400);
     }
@@ -234,7 +342,6 @@ export const createCheckout: APIRoute = async (context) => {
         },
         409,
       );
-    const admin = adminFor(config);
     // Blocked by an admin (Customers): no new bookings, checked before any Stripe session exists.
     const blocked = await admin
       .from('customer_blocks')
@@ -254,10 +361,6 @@ export const createCheckout: APIRoute = async (context) => {
         },
         403,
       );
-    const rpc = admin.rpc.bind(admin) as unknown as (
-      fn: string,
-      args: Record<string, unknown>,
-    ) => PromiseLike<{ data: unknown; error: unknown }>;
     const free = parsed.data.freePerk === true;
     const pickSource = parsed.data.pickSource ?? null;
     const perkCheck = await checkCheckoutPerks(
@@ -320,10 +423,11 @@ export const createCheckout: APIRoute = async (context) => {
     }
     // Creator code from the server-set referral cookie only; the database resolves it to an
     // active creator and attributes the customer once the order is paid (ledger #28).
-    const refCode = checkoutRefCode(
-      context.cookies,
-      config.origin.startsWith('https:'),
-    );
+    // Streaming bookings take no creator code (the streamer's rate is the price); the cookie
+    // stays for the customer's next order.
+    const refCode = streamer
+      ? null
+      : checkoutRefCode(context.cookies, config.origin.startsWith('https:'));
     // First order through an active creator's link: 10% off (decided in the database).
     let creatorEligible = false;
     if (refCode) {
@@ -340,7 +444,7 @@ export const createCheckout: APIRoute = async (context) => {
     }
     // Duoly PRO: 10% off, from the subscription state in the database only (ledger #39).
     let proMember = false;
-    if (proEnabled()) {
+    if (proEnabled() && !streamer) {
       try {
         proMember = await isProMember(admin, identity.viewer.id);
       } catch {
@@ -362,6 +466,7 @@ export const createCheckout: APIRoute = async (context) => {
         ...priced.row,
         ...(refCode ? { ref_code: refCode } : {}),
         ...(pickSource ? { pick_source_order_id: pickSource } : {}),
+        ...(streamer ?? {}),
         customer_id: identity.viewer.id,
         expires_at: new Date(
           (now + SESSION_MINUTES * 60 + 60) * 1000,

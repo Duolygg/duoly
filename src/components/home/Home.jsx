@@ -23,6 +23,7 @@ import QueuePreview from './QueuePreview';
 import HeroTimer from './HeroTimer';
 import MoodPicker from './MoodPicker';
 import TeammateCarousel from './TeammateCarousel';
+import StreamerBooking from './StreamerBooking';
 import SoloVsDuoly from './SoloVsDuoly';
 import Testimonials from './Testimonials';
 import HeroQuotes from './HeroQuotes';
@@ -1268,6 +1269,8 @@ export default class Home extends React.Component {
             ? 'Continue to payment · ' + money(due)
             : 'Pay ' + money(due) + ' with ' + payLabel,
       ...this.authVals(s),
+      // Twitch streaming bookings (StreamerBooking): an EUR amount in the visitor's currency
+      fmtEur: eur,
       ...this.confirmVals(s, {
         g,
         sel,
@@ -2687,9 +2690,10 @@ export default class Home extends React.Component {
                             fontWeight: '600',
                             fontSize: '15px',
                             color: '#FFFFFF',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
+                            // full game names wrap instead of being cut ("League of Legen…")
+                            whiteSpace: 'normal',
+                            overflowWrap: 'anywhere',
+                            textAlign: 'left',
                           }}
                         >
                           {g.name}
@@ -2919,6 +2923,13 @@ export default class Home extends React.Component {
                 ))}
               </div>
             </section>
+            {/* Live on Twitch (migration 20261105100000): after 02 Pick a mode, before Meet your teammates; hidden while nobody streams */}
+            <StreamerBooking
+              fmtEur={v.fmtEur}
+              signedIn={v.signedIn}
+              openAuth={v.openAuth}
+              onCheckout={this.props.onCheckout}
+            />
             <TeammateCarousel
               crew={v.crew}
               game={v.game}

@@ -1,6 +1,12 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { SECTIONS, sectionFromPath } from '../../components/admin/AdminApp.jsx';
+import {
+  SECTIONS,
+  allowed,
+  pathOf,
+  sectionFromPath,
+} from '../../components/admin/AdminApp.jsx';
+import { adminAccess } from '../../server/admin/access';
 import AdminRoot from '../../components/admin/AdminRoot.jsx';
 import { accountContext } from '../../server/auth/context';
 import { isOwnerEmail } from '../../server/admin/owners';
@@ -24,6 +30,23 @@ const slug = (Astro.params.section ?? '').replace(/\/$/, '');
 if (!SECTIONS.some((entry) => entry.slug === slug))
   return Astro.rewrite('/404');
 const section = sectionFromPath(Astro.url.pathname);
+// What this admin may see (owners: everything). Without it nothing is shown.
+let access: Awaited<ReturnType<typeof adminAccess>> = null;
+try {
+  access = await adminAccess(account.client);
+} catch {
+  access = null;
+}
+if (!access)
+  return new Response('Temporarily unavailable', {
+    status: 503,
+    headers: account.headers,
+  });
+// A page they can't use: their first allowed page instead.
+if (!allowed(access, section)) {
+  const first = SECTIONS.find((entry) => allowed(access, entry.id));
+  return first ? Astro.redirect(pathOf(first.id)) : Astro.rewrite('/404');
+}
 const label = SECTIONS.find((entry) => entry.id === section)?.label ?? 'Admin';
 const csrf = account.csrf();
 ---
@@ -42,6 +65,7 @@ const csrf = account.csrf();
     owner={isOwnerEmail(identity.viewer.email)}
     csrf={csrf}
     section={section}
+    access={access}
     chatEnabled={orderChatEnabled()}
     reportsEnabled={process.env.REPORTS_ENABLED === 'true'}
     stripeTest={String(
