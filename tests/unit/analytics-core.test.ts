@@ -155,6 +155,23 @@ describe('filterEvent', () => {
   it('refusers: pageview and pageleave only, no campaign data, no person updates', () => {
     const out = filterEvent(pageview(), false, ctx)!;
     expect(out.properties.utm_source).toBeUndefined();
+    expect(out.properties.$current_url).toBe('https://duoly.gg/queue/:id');
+    const withUtm = filterEvent(
+      {
+        ...pageview(),
+        properties: {
+          $current_url:
+            'https://duoly.gg/games/valorant?utm_source=tiktok&gclid=x',
+          $referrer: 'https://duoly.gg/?utm_campaign=launch',
+        },
+      },
+      false,
+      { ...ctx, marketing: true },
+    )!;
+    expect(withUtm.properties.$current_url).toBe(
+      'https://duoly.gg/games/valorant',
+    );
+    expect(withUtm.properties.$referrer).toBe('https://duoly.gg/');
     expect(out.$set_once).toBeUndefined();
     expect(out.properties.token).toBe(KEY);
     for (const event of [

@@ -14,6 +14,8 @@ export type SanitizeContext = {
   currentPath: string;
   route: string;
   marketing: boolean;
+  /** False for refusers: no campaign parameters at all, in URLs or as properties. */
+  campaign?: boolean;
 };
 
 const UTM = [
@@ -110,10 +112,11 @@ export function templateUrl(
     ? ctx.route
     : templatePath(url.pathname);
   const query = new URLSearchParams();
-  for (const name of UTM) {
-    const v = url.searchParams.get(name);
-    if (v && SAFE_VALUE.test(v)) query.set(name, v);
-  }
+  if (ctx.campaign !== false)
+    for (const name of UTM) {
+      const v = url.searchParams.get(name);
+      if (v && SAFE_VALUE.test(v)) query.set(name, v);
+    }
   if (ctx.marketing)
     for (const name of CLICK_IDS) {
       const v = url.searchParams.get(name);
@@ -141,7 +144,10 @@ function cleanValue(
   if (typeof value === 'string') {
     const base = baseKey(key);
     if (key === 'title' || key === '$title') return ctx.route;
-    if (UTM.includes(base)) return SAFE_VALUE.test(value) ? value : undefined;
+    if (UTM.includes(base))
+      return ctx.campaign !== false && SAFE_VALUE.test(value)
+        ? value
+        : undefined;
     if (CLICK_IDS.includes(base)) return ctx.marketing ? value : undefined;
     if (URL_KEY.test(key) || key === 'u' || key === 'r') {
       if (value.startsWith('/'))
@@ -213,16 +219,15 @@ export function filterEvent<T extends Captured>(
     ? ACCEPTED_EVENTS.has(event.event) || extraEvents.has(event.event)
     : REFUSED_EVENTS.has(event.event);
   if (!allowed) return null;
-  const tierCtx = analytics ? ctx : { ...ctx, marketing: false };
+  const tierCtx = analytics
+    ? ctx
+    : { ...ctx, marketing: false, campaign: false };
   const out: T = {
     ...event,
     properties: cleanObject(event.properties ?? {}, tierCtx),
   };
   out.properties.route = ctx.route;
   if (!analytics) {
-    for (const key of Object.keys(out.properties)) {
-      if (UTM.includes(baseKey(key))) delete out.properties[key];
-    }
     delete out.$set;
     delete out.$set_once;
     return out;

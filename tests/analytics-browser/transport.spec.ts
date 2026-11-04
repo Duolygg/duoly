@@ -7,7 +7,9 @@ const HOST = 'https://ph.analytics.test';
 // and sends nothing.
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
-    Object.defineProperty(Navigator.prototype, 'webdriver', { get: () => false });
+    Object.defineProperty(Navigator.prototype, 'webdriver', {
+      get: () => false,
+    });
     Object.defineProperty(Navigator.prototype, 'userAgentData', {
       get: () => undefined,
     });
@@ -50,7 +52,6 @@ async function capture(page: Page) {
   const requests: Request[] = [];
   await page.route(`${HOST}/**`, async (route) => {
     requests.push(route.request());
-    console.log('ROUTED', route.request().method(), route.request().url(), route.request().headers()['content-type'], route.request().postDataBuffer()?.subarray(0, 60).toString('base64'));
     const url = route.request().url();
     if (url.endsWith('.js'))
       return route.fulfill({ contentType: 'text/javascript', body: '' });
@@ -122,10 +123,12 @@ test('withdrawing consent in the banner switches to anonymous counting', async (
   await page.goto('/games');
   await page.locator('[data-consent="all"]').click();
   await expect.poll(() => events().length).toBeGreaterThan(0);
-  await page.goto('/games#cookie-settings');
+  // Footer link equivalent: the banner reopens on #cookie-settings.
+  await page.evaluate(() => (location.hash = 'cookie-settings'));
+  await expect(page.locator('#cookie-analytics')).toBeVisible();
   await page.locator('#cookie-analytics').uncheck();
   await page.locator('#cookie-marketing').uncheck();
-  await page.locator('[data-save-choices]').click();
+  await page.locator('[data-save-choices]').press('Enter');
   const before = events().length;
   await page.goto('/games/valorant?utm_source=tiktok');
   await expect
