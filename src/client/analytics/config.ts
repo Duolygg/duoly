@@ -48,7 +48,7 @@ export function maskNetworkName(
   name: string,
   ctx: SanitizeContext,
 ): string | null {
-  let path = name;
+  let path: string;
   try {
     path = new URL(name, 'https://duoly.gg').pathname;
   } catch {
