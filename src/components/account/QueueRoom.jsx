@@ -1,3 +1,4 @@
+import { track } from '../../client/analytics/track';
 import React from 'react';
 import { GAMES } from '../../design-reference/lib/adminData';
 import { IGN_LABEL } from '../../design-reference/lib/orderGen';
@@ -276,6 +277,22 @@ export default class QueueRoom extends React.Component {
           error: d.error || 'Couldn’t load your order. Retrying…',
         });
       const prev = this.state.order;
+      if (!prev)
+        track('queue_room_viewed', {
+          state: d.order.status,
+          game: d.order.game,
+        });
+      if (
+        d.order.status === 'in_progress' &&
+        (!prev || prev.status !== 'in_progress')
+      )
+        track('match_seen', {
+          game: d.order.game,
+          wait_seconds: Math.max(
+            0,
+            Math.floor((d.order.acceptedAt - d.order.createdAt) / 1000),
+          ),
+        });
       if (prev && prev.status === 'queued' && d.order.status === 'in_progress')
         this.celebrate(d.order);
       if (d.order.status === 'completed' || d.order.status === 'cancelled')
@@ -529,6 +546,11 @@ export default class QueueRoom extends React.Component {
             err: d.error || 'Couldn’t send that. Try again.',
           },
         });
+      if (d.tipPayment)
+        track('tip_started', {
+          amount_eur_cents: Math.max(0, Math.round(d.tipPayment.amount * 100)),
+          display_currency: d.tipPayment.shown ? 'usd' : 'eur',
+        });
       this.setState((s) => ({
         busy: '',
         tipPayment: d.tipPayment || null,
@@ -738,6 +760,11 @@ export default class QueueRoom extends React.Component {
       });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || 'The tip could not open.');
+      if (d.tipPayment)
+        track('tip_started', {
+          amount_eur_cents: Math.max(0, Math.round(d.tipPayment.amount * 100)),
+          display_currency: d.tipPayment.shown ? 'usd' : 'eur',
+        });
       this.setState((s) => ({
         busy: '',
         tipPayment: d.tipPayment || null,
@@ -1466,7 +1493,13 @@ export default class QueueRoom extends React.Component {
                     }}
                   >
                     {phase !== 'missing' ? (
-                      <a href="/#checkout" style={btn(true)}>
+                      <a
+                        href="/#checkout"
+                        style={btn(true)}
+                        onClick={() =>
+                          track('rebook_clicked', { source: 'queue' })
+                        }
+                      >
                         Queue again
                       </a>
                     ) : null}

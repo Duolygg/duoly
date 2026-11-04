@@ -76,6 +76,15 @@ const price = proPrice(cur);
   </div>
 </SiteLayout>
 
+<script>
+  import { track } from '../client/analytics/track';
+  window.addEventListener(
+    'load',
+    () => track('pro_viewed', { surface: 'pro' }),
+    { once: true },
+  );
+</script>
+
 <style>
   .pro {
     max-width: 1040px;
