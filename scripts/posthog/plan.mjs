@@ -580,6 +580,9 @@ export function buildPlan() {
       { lower: 1 },
     ],
   ];
+  // Silence alerts only mean something with steady traffic (spec: "after launch"). They stay
+  // paused until real daily volume exists; flip this set to enable them.
+  const PAUSED_UNTIL_LAUNCH = new Set(['outbox-zero', 'funding-zero']);
   const alerts = alertSpecs.map(([key, name, e, window, bounds]) => {
     const insightKey = `07-alert-${key}`;
     q(
@@ -595,7 +598,7 @@ export function buildPlan() {
       threshold: { configuration: { type: 'absolute', bounds } },
       condition: { type: 'absolute_value' },
       calculation_interval: 'hourly',
-      enabled: true,
+      enabled: !PAUSED_UNTIL_LAUNCH.has(key),
       config: {
         type: 'HogQLAlertConfig',
         column: 'value',
