@@ -4,6 +4,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,6 +32,33 @@ jobs:
       - run: pnpm test:unit
       - run: pnpm build
       - run: pnpm audit --prod --audit-level high
+  design-guard:
+    name: Design guard
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      # The homepage and shared site chrome are owner-designed. A PR that touches them needs
+      # the owner to add the `design-approved` label (CONTRIBUTING.md, "Protected design").
+      - name: Owner approval for homepage and site chrome changes
+        env:
+          APPROVED: ${{ contains(github.event.pull_request.labels.*.name, 'design-approved') }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          changed=$(git diff --name-only "$BASE" "$HEAD" -- \
+            src/pages/index.astro src/components/home src/components/site/SiteFooter.jsx \
+            src/site/nav.ts src/layouts public/og)
+          if [ -n "$changed" ] && [ "$APPROVED" != "true" ]; then
+            echo "These owner-designed files changed without the design-approved label:"
+            echo "$changed"
+            exit 1
+          fi
+          echo "Design guard ok"
   browser:
     name: Browser smoke
     runs-on: ubuntu-latest

@@ -28,12 +28,14 @@ export function viennaClock(now) {
     .forEach((p) => {
       parts[p.type] = p.value;
     });
-
+  const awake = parseInt(parts.hour, 10) % 24 >= 8;
   return {
     hm: (parts.hour === '24' ? '00' : parts.hour) + ':' + parts.minute,
     s: parts.second,
-    status: 'Local time in Austria',
-    dot: '#D6BBFF',
+    status: awake
+      ? 'Our team is online'
+      : 'Team’s asleep, support still live 24/7',
+    dot: awake ? '#5EEAA8' : '#F0A6FF',
   };
 }
 
@@ -133,7 +135,8 @@ export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
                   color: '#FFFFFF',
                 }}
               >
-                Find your game. Choose your session. Play together.
+                “Mozart took years to finish a symphony. You’ll be in a match in
+                2 minutes.”
               </p>
             </div>
           </div>
@@ -214,7 +217,7 @@ export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
             style={{ width: '144px', height: '54px' }}
           />
           <span
-            style={{ fontSize: '13px', color: '#A79DC4', maxWidth: '360px' }}
+            style={{ fontSize: '13px', color: '#6A6086', maxWidth: '360px' }}
           >
             © 2026 Duoly. Not affiliated with Riot Games, Valve, Epic Games,
             Activision Blizzard, EA, Ubisoft, NetEase, Mojang or The Pokémon

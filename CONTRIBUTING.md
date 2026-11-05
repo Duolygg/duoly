@@ -20,6 +20,12 @@ Agree shared runtime schemas and API contracts before UI/server work splits. A d
 
 Required checks: Quality and Browser smoke. A passing local or CI test does not establish live provider behavior or authorize release.
 
+## Protected design
+
+The homepage, the shared header, navigation, footer, layouts and page titles are the owner's design. Visible copy, sections, quotes, claims, layout and styling there change only with the owner's explicit approval of the exact change, agreed before implementation. This applies to SEO, accessibility, copy-rule and claim-accuracy work too: propose the change, do not apply it. SEO work is additive (new pages, metadata on new pages, structured data) unless the owner agrees otherwise.
+
+CI enforces this: the Design guard check fails when a PR touches `src/pages/index.astro`, `src/components/home/`, `src/components/site/SiteFooter.jsx`, `src/site/nav.ts`, `src/layouts/` or `public/og/` until the owner adds the `design-approved` label.
+
 ## Current enforcement limitation
 
 GitHub Free does not enforce protected branches for this private organization repository. Review is currently a team policy, not a technical barrier. An owner must approve/perform a qualifying upgrade, apply .github/settings/main-ruleset.json, and verify failing/unreviewed PRs are blocked before parallel production development. Keep the repository private.

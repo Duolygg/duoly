@@ -373,7 +373,7 @@ export default class AuthDialog extends React.Component {
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                   </span>
-                  Choose your teammate session
+                  Matched in under 2 minutes
                 </li>
                 <li
                   style={{

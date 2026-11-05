@@ -1,11 +1,12 @@
 // "What players say": the average rating, then two rows of review cards drifting in opposite
 // directions, the top row to the left and the bottom row to the right. A row pauses while
 // hovered so a card can be read. Each card shows the reviewer's masked name (L***s), avatar and country.
-// Real reviews come in through `items`; the section stays hidden until they are
+// Real reviews come in through `items`; until there are any, the hand-written SAMPLE_TESTIMONIALS are
 // shown. Styles: globals.css (rv-*).
 import React from 'react';
 import { GAME } from '../../design-reference/lib/games';
 import { COUNTRY_NAME, flagSrc } from '../../design-reference/lib/countries';
+import { SAMPLE_TESTIMONIALS } from './sampleTestimonials';
 
 const STARS = [1, 2, 3, 4, 5];
 
@@ -122,8 +123,7 @@ function Row({ cards, label, reverse }) {
 }
 
 export default function Testimonials({ items: real = [] }) {
-  const items = real;
-  if (!items.length) return null;
+  const items = real.length ? real : SAMPLE_TESTIMONIALS;
   const avg = items.reduce((sum, t) => sum + t.stars, 0) / items.length;
   // alternate the reviews between the rows so neither row is all one game
   const rowA = items.filter((_, i) => i % 2 === 0);

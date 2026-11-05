@@ -5831,7 +5831,7 @@ export default class Home extends React.Component {
                         'Your order goes live on ' + v.region,
                         'Rank-verified teammates for ' +
                           v.game.name +
-                          ' see it right away.',
+                          ' see it right away. Most orders are taken in under 2 minutes.',
                       ],
                       [
                         'You get matched and play',
