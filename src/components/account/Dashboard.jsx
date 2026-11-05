@@ -597,13 +597,13 @@ export default class Dashboard extends React.Component {
       isAdmin: !!u.isAdmin,
       avatar: u.image || '/assets/avatars/avatar-1.png',
       loaded: !!h,
-      wallet: h ? money(h.wallet) : sym + '–',
+      wallet: money(h ? h.wallet : 0),
       money,
       sym,
       stats: [
         [
           'Orders with Duoly',
-          h ? String(h.lifetimeOrders) : '–',
+          String(h ? h.lifetimeOrders : 0),
           h
             ? h.weekOrders
               ? '+' + h.weekOrders + ' this week'
@@ -614,12 +614,12 @@ export default class Dashboard extends React.Component {
         ],
         [
           'Games played',
-          h ? String(h.gamesPlayed) : '–',
+          String(h ? h.gamesPlayed : 0),
           h ? (fav ? 'mostly ' + gameOf(fav[0]).name : 'with a teammate') : '',
         ],
         [
           'Teammates',
-          h ? String(mates.length) : '–',
+          String(mates.length),
           h
             ? mates.length
               ? onlineMates + ' online now'
@@ -1363,7 +1363,7 @@ export default class Dashboard extends React.Component {
                     lineHeight: '1',
                   }}
                 >
-                  {v.loaded ? v.activity.total : '–'}
+                  {v.activity.total || 0}
                   <span
                     style={{
                       marginLeft: '8px',

@@ -215,7 +215,8 @@ export async function dashboardFetch(input) {
       const [h, c, rewards] = await Promise.all([
         get('/api/orders/history?limit=100'),
         get('/api/orders/credits').catch(() => ({ credits: [] })),
-        get('/api/orders/rewards'),
+        // Rewards only add cashback and perks: if they fail, the wallet and orders still show.
+        get('/api/orders/rewards').catch(() => null),
       ]);
       return json({
         ...toOriginalHistory(h.orders || [], c),

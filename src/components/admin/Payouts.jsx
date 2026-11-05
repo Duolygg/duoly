@@ -481,7 +481,7 @@ export default class Payouts extends React.Component {
                         color: p.held ? C.gold : C.faint,
                       }}
                     >
-                      {p.held ? '- ' + usd(p.held) : '-'}
+                      {p.held ? '- ' + usd(p.held) : usd(0)}
                     </td>
                     <td
                       style={{
@@ -490,7 +490,7 @@ export default class Payouts extends React.Component {
                         color: p.releasing ? C.green : C.faint,
                       }}
                     >
-                      {p.releasing ? '+ ' + usd(p.releasing) : '-'}
+                      {p.releasing ? '+ ' + usd(p.releasing) : usd(0)}
                     </td>
                     <td
                       style={{

@@ -578,7 +578,7 @@ export default class Priority extends React.Component {
         'missed orders · ' + s.rules.days + ' d',
         missedTotal ? C.red : C.white,
       ],
-      [avg == null ? '-' : avg + ' s', 'avg. wait online', C.white],
+      [(avg ?? 0) + ' s', 'avg. wait online', C.white],
     ];
 
     return (
