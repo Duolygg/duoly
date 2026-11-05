@@ -23,6 +23,7 @@ import { GAME, IGN_LABEL } from '../../design-reference/lib/games';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import { rankPrice } from '../../design-reference/lib/ranks';
 import { TRUSTPILOT_EVALUATE } from '../../site/trustpilot';
+import { FavoriteAsk } from '../account/FavoriteHeart';
 import { DISCORD_INVITE_MESSAGE } from '../../site/nav';
 
 // a Pokémon Unite Duo Pro order (lib/catalog.js: 2.99 a game, Master teammate; Veteran is the
@@ -126,6 +127,8 @@ const AFTER_MATCH = [
   [19200, { rv: { text: REVIEW_TEXT } }],
   [20600, { rv: { tip: TIP } }],
   [22600, { reviewed: true }],
+  // then hearts the teammate, which the teammate card shows too
+  [25600, { fav: true }],
   // the thank-you holds for 8 s: time to read it, the steps and the covered panel
   [30600, { restart: true }],
 ];
@@ -159,6 +162,7 @@ export default class QueuePreview extends React.Component {
         err: '',
       },
       reviewed: false,
+      fav: false, // the favorite heart, tapped after the review
     };
   }
   componentDidMount() {
@@ -206,6 +210,7 @@ export default class QueuePreview extends React.Component {
             ...('typing' in step ? { typing: step.typing } : {}),
             ...(step.rv ? { rv: { ...s.rv, ...step.rv } } : {}),
             ...(step.reviewed ? { reviewed: true } : {}),
+            ...(step.fav ? { fav: true } : {}),
             ...(step.say
               ? {
                   chat: s.chat.concat({
@@ -279,6 +284,13 @@ export default class QueuePreview extends React.Component {
               game.name +
               ' open.',
           ];
+    // the favorite heart, as the order room shows it (a picture: it does nothing)
+    const heart = {
+      on: this.state.fav,
+      busy: false,
+      err: '',
+      onToggle: () => {},
+    };
     const orderCard = (
       <OrderCard
         order={order}
@@ -287,6 +299,7 @@ export default class QueuePreview extends React.Component {
         free={false}
         mate={mate}
         ignLabel={ignLabel}
+        fav={mate ? heart : null}
       />
     );
     return (
@@ -374,7 +387,13 @@ export default class QueuePreview extends React.Component {
                       rating={rv.rating}
                       tip={{ amount: rv.tip, currency: cur, state: 'paid' }}
                       reviewUrl={TRUSTPILOT_EVALUATE}
-                    />
+                    >
+                      <FavoriteAsk
+                        name={MATE.name}
+                        rating={rv.rating}
+                        fav={heart}
+                      />
+                    </ReviewThanks>
                   ) : done ? (
                     <ReviewForm
                       name={MATE.name}
@@ -390,7 +409,12 @@ export default class QueuePreview extends React.Component {
                     <div className="qp-btns">
                       {done ? (
                         <>
-                          <span className="qp-btn is-primary">Queue again</span>
+                          {/* Play again, as the order room shows it (a picture, nothing is charged) */}
+                          <span className="qp-btn is-primary" data-play-again>
+                            Play again with {MATE.name} ·{' '}
+                            {sym + paid.toFixed(2).replace(/\.00$/, '')}
+                          </span>
+                          <span className="qp-btn">Queue again</span>
                           <span className="qp-btn">Go to my dashboard</span>
                         </>
                       ) : (

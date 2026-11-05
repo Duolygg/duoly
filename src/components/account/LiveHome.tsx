@@ -14,9 +14,7 @@ import type {
 import type { ProView } from '../../contracts/pro';
 import {
   CustomerPerksSchema,
-  PickableTeammatesSchema,
   type CustomerPerks,
-  type PickableTeammates,
 } from '../../contracts/orders';
 
 const PENDING_KEY = 'duoly-pending-queue';
@@ -206,25 +204,6 @@ function LiveHomeContent({
       return null;
     }
   };
-  // Diamond: past teammates free for this game, Gamer Girl and voice choice right now.
-  const loadPickable = async (
-    query: string,
-  ): Promise<PickableTeammates['teammates']> => {
-    try {
-      const response = await fetch('/api/orders/pickable-teammates?' + query, {
-        credentials: 'same-origin',
-        cache: 'no-store',
-        redirect: 'error',
-      });
-      if (!response.ok) return [];
-      const parsed = PickableTeammatesSchema.safeParse(await response.json());
-      return parsed.success && parsed.data.eligible
-        ? parsed.data.teammates
-        : [];
-    } catch {
-      return [];
-    }
-  };
   const onCheckout = async (selection: Record<string, unknown>) => {
     track('checkout_started', {
       game: String(selection.gameId),
@@ -233,7 +212,6 @@ function LiveHomeContent({
       voice: !!selection.voice,
       wallet: !!selection.useWallet,
       free_perk: !!selection.freePerk,
-      picked: !!selection.pickSource,
       mood: String(selection.mood || 'any'),
       stream: !!selection.streamer,
     });
@@ -299,7 +277,6 @@ function LiveHomeContent({
       onEmailAuth={onEmailAuth}
       onCheckout={checkoutEnabled ? onCheckout : undefined}
       loadPerks={loadPerks}
-      loadPickable={loadPickable}
       walletEur={walletEur}
       usdRate={usdRate}
       onlineNow={live.onlineNow}

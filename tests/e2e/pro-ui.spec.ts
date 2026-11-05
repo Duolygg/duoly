@@ -37,6 +37,7 @@ const dashboard = (pro: ProView | null, proWelcome = false) => {
 
 const member: ProView = {
   member: true,
+  included: false,
   trialEligible: false,
   status: 'trialing',
   trialEnd: Date.parse('2026-11-04T10:00:00Z'),

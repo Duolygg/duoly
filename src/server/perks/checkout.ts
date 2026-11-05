@@ -1,6 +1,5 @@
 import {
   CustomerPerksSchema,
-  PickableTeammatesSchema,
   type CustomerPerks,
 } from '../../contracts/orders';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
@@ -75,7 +74,6 @@ export async function checkCheckoutPerks(
   rpc: Rpc,
   input: {
     free: boolean;
-    pickSource: string | null;
     gameId: string;
     serviceId: string;
     units: number;
@@ -83,7 +81,7 @@ export async function checkCheckoutPerks(
     voice: boolean;
   },
 ): Promise<PerkCheck> {
-  if (!input.free && !input.pickSource) return { ok: true, perks: null };
+  if (!input.free) return { ok: true, perks: null };
   if (input.free && (input.gg || !freeCoachingFits(input)))
     return { ok: false, status: 400, error: freeCoachingRefusal('service') };
   const loaded = await rpc('customer_perks');
@@ -102,33 +100,6 @@ export async function checkCheckoutPerks(
         perks.data.freeCoaching.eligible ? 'used' : 'level',
       ),
     };
-  if (input.pickSource) {
-    if (!perks.data.pickTeammate.eligible)
-      return {
-        ok: false,
-        status: 409,
-        error: 'Picking a teammate unlocks at Diamond.',
-      };
-    const listed = await rpc('customer_pickable_teammates', {
-      p_game: input.gameId,
-      p_gg: input.gg,
-      p_voice: input.voice,
-    });
-    const list = PickableTeammatesSchema.safeParse(listed.data);
-    if (listed.error || !list.success)
-      return {
-        ok: false,
-        status: 503,
-        error: 'Checkout is unavailable. Try again.',
-      };
-    if (!list.data.teammates.some((t) => t.handle === input.pickSource))
-      return {
-        ok: false,
-        status: 409,
-        error:
-          'That teammate is not available right now. Pick someone else or book without a pick.',
-      };
-  }
   return { ok: true, perks: perks.data };
 }
 
@@ -139,7 +110,7 @@ export async function checkCheckoutPerks(
  */
 export function freeCoachingIntentRow<T extends Record<string, unknown>>(
   row: T,
-  input: { customerId: string; pickSource: string | null; expiresAt: string },
+  input: { customerId: string; expiresAt: string },
 ) {
   return {
     ...row,
@@ -147,7 +118,6 @@ export function freeCoachingIntentRow<T extends Record<string, unknown>>(
     wallet_eur_cents: 0,
     first_order_discount_cents: 0,
     ref_code: null,
-    ...(input.pickSource ? { pick_source_order_id: input.pickSource } : {}),
     customer_id: input.customerId,
     expires_at: input.expiresAt,
   };

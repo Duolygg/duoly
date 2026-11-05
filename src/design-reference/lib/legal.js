@@ -125,7 +125,7 @@ export const PRIVACY = {
   summary: [
     ['eye', 'Your choice for analytics and ads', 'Privacy-friendly analytics and server-side ad measurement only with your OK. No ad pixels on the site. We never sell your data.'],
     ['lock', 'Never sold', 'We don’t sell or rent your data, and we only share it where it’s needed to run your session.'],
-    ['card', 'No card details', 'Your payment details go straight to the payment provider. We only see the amount and the method.'],
+    ['card', 'No card details', 'Your payment details go straight to the payment provider. We only see the amount and the method. If you tick “save” at checkout, the provider keeps your card for Play again; we only see its brand and last 4 digits.'],
     ['user', 'You’re in control', 'See, correct, download or delete your data whenever you want.']
   ],
   sections: [

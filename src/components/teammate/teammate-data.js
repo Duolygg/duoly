@@ -160,7 +160,7 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
           body.action === 'pass' &&
           Object.keys(body).length === 1
         ) {
-          // A Diamond customer picked this teammate: pass, the order goes to everyone.
+          // Play again picked this teammate: pass, the order goes to everyone.
           await request(
             '/api/teammate/orders/' + id + '/pass',
             OrderResponseSchemas.pickedPass,

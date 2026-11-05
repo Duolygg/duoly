@@ -334,3 +334,41 @@ describe('order room preview prices', () => {
     expect(home).toContain('<QueuePreview cur={v.cur} conv={v.conv} />');
   });
 });
+
+describe('favorite heart in the preview', () => {
+  const frame = (frozen: Record<string, unknown>) =>
+    renderToStaticMarkup(h(QueuePreview, { frozen }));
+  const pressed = (html: string) =>
+    [...html.matchAll(/class="q-fav"[^>]*aria-pressed="(true|false)"/g)].map(
+      (m) => m[1],
+    );
+  it('shows an empty heart on the teammate card once they accept', () => {
+    expect(pressed(frame({ phase: 'searching' }))).toEqual([]);
+    expect(pressed(frame({ phase: 'matched' }))).toEqual(['false']);
+  });
+  it('asks after a good review, then fills both hearts', () => {
+    const asked = frame({ phase: 'done', rv: rated, reviewed: true });
+    expect(asked).toContain('Want to play with');
+    expect(pressed(asked)).toEqual(['false', 'false']);
+    const hearted = frame({
+      phase: 'done',
+      rv: rated,
+      reviewed: true,
+      fav: true,
+    });
+    expect(hearted).not.toContain('Want to play with');
+    expect(hearted).toContain('is in your favorites');
+    expect(pressed(hearted)).toEqual(['true', 'true']);
+  });
+  it('uses the same block as the order room', () => {
+    const room = readFileSync('src/components/account/QueueRoom.jsx', 'utf8');
+    expect(room).toContain(
+      '<FavoriteAsk name={name} rating={o.review.rating} fav={fav} />',
+    );
+    const preview = readFileSync(
+      'src/components/home/QueuePreview.jsx',
+      'utf8',
+    );
+    expect(preview).toContain('<FavoriteAsk');
+  });
+});

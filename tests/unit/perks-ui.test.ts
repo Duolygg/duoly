@@ -37,7 +37,7 @@ const order = {
 const perks = (available: boolean, eligible = true) => ({
   level: 'platinum',
   freeCoaching: { eligible, used: !available, available, month: '2026-10' },
-  pickTeammate: { eligible: false },
+  freePro: { eligible: false },
 });
 
 describe('perks UI helpers', () => {

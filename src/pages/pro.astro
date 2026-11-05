@@ -20,7 +20,7 @@ if (identity.viewer.role !== 'customer') return account.redirect('/dashboard');
 const pro = await loadProView(account.client, identity.viewer.role);
 if (!pro) return Astro.rewrite('/404');
 // Members and memberships waiting for a card update are handled in Manage PRO.
-if (pro.manage) return account.redirect('/dashboard#pro');
+if (pro.manage || pro.included) return account.redirect('/dashboard#pro');
 const fontUrl = new URL('/fonts/geist-latin.woff2', Astro.url).href;
 const csrf = account.csrf();
 // €9.99, or $9.99 for a customer who uses USD (charged as its euro equivalent)

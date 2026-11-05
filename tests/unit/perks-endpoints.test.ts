@@ -2,7 +2,7 @@ import type { APIContext, APIRoute } from 'astro';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { accountContext } from '../../src/server/auth/context';
 import * as orders from '../../src/server/orders/handlers';
-import { perks, pickable } from '../../src/server/perks/handlers';
+import { perks } from '../../src/server/perks/handlers';
 
 // Perk endpoints: auth and role checks, strict queries, schema parsing with a mocked Supabase
 // client, missing RPC (before the migration) treated as "no perk", no teammate ids leaking.
@@ -14,7 +14,6 @@ const rpc = vi.fn();
 const identity = vi.fn();
 const token = 'a'.repeat(64);
 const id = '00000000-0000-4000-8000-000000000001';
-const handle = '00000000-0000-4000-8000-0000000000a1';
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status });
 function context(path: string, method = 'GET', body?: string) {
@@ -40,7 +39,7 @@ const PERKS = {
     available: true,
     month: '2026-10',
   },
-  pickTeammate: { eligible: true },
+  freePro: { eligible: true },
 };
 const missing = {
   data: null,
@@ -101,91 +100,6 @@ describe('GET /api/orders/perks', () => {
       error: null,
     });
     expect((await run(perks, ctx())).status).toBe(403);
-  });
-});
-
-describe('GET /api/orders/pickable-teammates', () => {
-  const path = '/api/orders/pickable-teammates';
-  const teammate = {
-    handle,
-    name: 'Ana',
-    image: '/assets/avatars/avatar-2.png',
-    country: 'at',
-    orders: 4,
-  };
-  it('passes game, gg and voice and returns the list', async () => {
-    rpc.mockResolvedValue({
-      data: { eligible: true, teammates: [teammate] },
-      error: null,
-    });
-    const response = await run(
-      pickable,
-      context(path + '?game=val&gg=false&voice=true'),
-    );
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({
-      eligible: true,
-      teammates: [teammate],
-    });
-    expect(rpc).toHaveBeenCalledExactlyOnceWith('customer_pickable_teammates', {
-      p_game: 'val',
-      p_gg: false,
-      p_voice: true,
-    });
-  });
-  it('defaults gg and voice to false', async () => {
-    rpc.mockResolvedValue({
-      data: { eligible: false, teammates: [] },
-      error: null,
-    });
-    await run(pickable, context(path + '?game=lol'));
-    expect(rpc).toHaveBeenCalledWith('customer_pickable_teammates', {
-      p_game: 'lol',
-      p_gg: false,
-      p_voice: false,
-    });
-  });
-  it('gives an empty list below Diamond and before the migration', async () => {
-    rpc.mockResolvedValue({
-      data: { eligible: false, teammates: [teammate] },
-      error: null,
-    });
-    expect(
-      await (await run(pickable, context(path + '?game=lol'))).json(),
-    ).toEqual({
-      eligible: false,
-      teammates: [],
-    });
-    rpc.mockResolvedValue(missing);
-    const response = await run(pickable, context(path + '?game=lol'));
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ eligible: false, teammates: [] });
-  });
-  it('never passes a teammate id through', async () => {
-    rpc.mockResolvedValue({
-      data: { eligible: true, teammates: [{ ...teammate, teammate_id: id }] },
-      error: null,
-    });
-    const response = await run(pickable, context(path + '?game=lol'));
-    expect(response.status).toBe(502);
-    expect(await response.text()).not.toContain(id);
-  });
-  it.each([
-    '',
-    '?game=zz',
-    '?game=lol&gg=1',
-    '?game=lol&game=val',
-    '?game=lol&user=x',
-  ])('rejects query %s', async (query) => {
-    expect((await run(pickable, context(path + query))).status).toBe(400);
-    expect(rpc).not.toHaveBeenCalled();
-  });
-  it('requires a signed-in customer', async () => {
-    identity.mockResolvedValue(null);
-    expect((await run(pickable, context(path + '?game=lol'))).status).toBe(401);
-    identity.mockResolvedValue({ viewer: { role: 'admin' } });
-    expect((await run(pickable, context(path + '?game=lol'))).status).toBe(403);
-    expect(rpc).not.toHaveBeenCalled();
   });
 });
 

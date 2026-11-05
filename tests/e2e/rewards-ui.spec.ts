@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Dashboard from '../../src/components/account/Dashboard.jsx';
 import TrustScore from '../../src/components/teammate/TrustScore.jsx';
+import { PRO_OFFER } from '../../src/contracts/pro';
 
 const history = {
   now: Date.now(),
@@ -70,9 +71,15 @@ test('Gold priority matching is live while later perks stay coming soon until th
 
   const rewards = page.locator('#rewards');
   await expect(
-    rewards.locator('li').filter({ hasText: 'Priority matching' }),
+    rewards
+      .locator('li')
+      .filter({ has: page.getByText('Priority matching', { exact: true }) }),
   ).not.toContainText('coming soon');
-  for (const perk of ['Free monthly Play and Learn', 'Pick any teammate']) {
+  await expect(rewards).not.toContainText('Pick any teammate');
+  await expect(
+    rewards.locator('li').filter({ hasText: '4 free re-rolls' }),
+  ).not.toContainText('coming soon');
+  for (const perk of ['Free monthly Play and Learn', 'Free Duoly PRO']) {
     await expect(rewards.locator('li').filter({ hasText: perk })).toContainText(
       'coming soon',
     );
@@ -90,7 +97,7 @@ const perksFor = (
     available: level !== 'gold' && available,
     month: '2026-10',
   },
-  pickTeammate: { eligible: level === 'diamond' },
+  freePro: { eligible: level === 'diamond' },
 });
 
 const rewardsAt = async (
@@ -101,6 +108,8 @@ const rewardsAt = async (
   const dashboard = new Dashboard({
     user: { name: 'Rewards Customer', email: 'rewards@example.invalid' },
     onSignOut: () => undefined,
+    // PRO switched on, so free PRO for Diamond is live
+    pro: PRO_OFFER,
   });
   (dashboard.state as Record<string, unknown>).history = {
     ...history,
@@ -116,7 +125,7 @@ test('Gold: both new perks show their unlock level, not coming soon', async ({
 }) => {
   const rewards = await rewardsAt(page, 250, perksFor('gold', false));
   const free = rewards.locator('li[data-perk="freeCoaching"]');
-  const pick = rewards.locator('li[data-perk="pickTeammate"]');
+  const pick = rewards.locator('li[data-perk="freePro"]');
   await expect(free).toHaveAttribute('data-unlocked', 'false');
   await expect(free).toContainText('Platinum');
   await expect(pick).toHaveAttribute('data-unlocked', 'false');
@@ -127,7 +136,7 @@ test('Gold: both new perks show their unlock level, not coming soon', async ({
   ).toHaveCount(0);
 });
 
-test('Platinum: free monthly coaching is unlocked and ready, pick stays Diamond', async ({
+test('Platinum: free monthly coaching is unlocked and ready, free PRO stays Diamond', async ({
   page,
 }) => {
   const rewards = await rewardsAt(page, 600, perksFor('platinum', true));
@@ -139,19 +148,19 @@ test('Platinum: free monthly coaching is unlocked and ready, pick stays Diamond'
   await expect(
     free.getByRole('link', { name: 'Book coaching' }),
   ).toHaveAttribute('href', '/?coaching=1#checkout');
-  const pick = rewards.locator('li[data-perk="pickTeammate"]');
+  const pick = rewards.locator('li[data-perk="freePro"]');
   await expect(pick).toHaveAttribute('data-unlocked', 'false');
   await expect(pick).toContainText('Diamond');
 });
 
-test('Diamond: both perks unlocked, used month says when it comes back', async ({
+test('Diamond: free coaching and free PRO unlocked, used month says when it comes back', async ({
   page,
 }) => {
   const rewards = await rewardsAt(page, 1200, perksFor('diamond', false));
   await expect(rewards.locator('li[data-perk="freeCoaching"]')).toContainText(
     'Used for October. Back on the 1st.',
   );
-  await expect(rewards.locator('li[data-perk="pickTeammate"]')).toHaveAttribute(
+  await expect(rewards.locator('li[data-perk="freePro"]')).toHaveAttribute(
     'data-unlocked',
     'true',
   );

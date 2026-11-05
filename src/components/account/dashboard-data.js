@@ -135,6 +135,8 @@ export function toOriginalHistory(orders, walletData, now = Date.now()) {
     const key = o.teammate.name + '|' + o.teammate.image;
     const m = mates.get(key) || {
       ...o.teammate,
+      // their latest order with you: the handle that favorites them (newest first above)
+      handle: o.id,
       orders: 0,
       byGame: {},
       rating: null,
@@ -207,6 +209,8 @@ export async function dashboardFetch(input) {
       const { order } = await get('/api/orders/active');
       return json({ order: order ? toOriginalOrder(order) : null });
     }
+    // Favorite teammates (20261106150000), as the API sends them.
+    if (path === '/api/orders/favorites') return json(await get(path));
     if (path === '/api/me/history') {
       const [h, c, rewards] = await Promise.all([
         get('/api/orders/history?limit=100'),

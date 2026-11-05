@@ -36,8 +36,15 @@ const toRoomReport = (report) => ({
   bountyOwed: !!report.bounty_owed,
 });
 
-/** Our customer order DTO in the original QueueRoom shape. */
-export function toRoomOrder(o, { proMember = false } = {}) {
+/**
+ * Our customer order DTO in the original QueueRoom shape.
+ * @param {any} o
+ * @param {{ proMember?: boolean, rerollLimit?: number | null }} [options]
+ */
+export function toRoomOrder(o, { proMember = false, rerollLimit } = {}) {
+  // re-rolls per order (20261106170000): 2, 4 from Gold, null = unlimited with PRO
+  const limit =
+    rerollLimit === undefined ? (proMember ? null : MAX_REROLLS) : rerollLimit;
   const base = toOriginalOrder(o);
   const accepted = ms(o.accepted_at);
   return {
@@ -51,9 +58,10 @@ export function toRoomOrder(o, { proMember = false } = {}) {
     // QueueRoom tells 'you cancelled' from 'nobody took it' by the raw reason.
     cancelReason: o.cancel_reason || '',
     autoCancelMs: QUEUE_MS,
-    // R2 (ledger #39): PRO members have no limit of 2 (reroll_order checks is_pro too).
-    rerollsLeft: proMember ? 1 : Math.max(0, MAX_REROLLS - o.rerolls),
-    rerollsUnlimited: !!proMember,
+    // reroll_order checks the same limit
+    rerollsLeft: limit === null ? 1 : Math.max(0, limit - o.rerolls),
+    rerollsUnlimited: limit === null,
+    rerollLimit: limit,
     rerollUntil: accepted ? accepted + REROLL_WINDOW_MS : null,
     paid: o.free_perk
       ? { currency: 'EUR', total: 0, method: 'Free with your perk' }
@@ -84,7 +92,12 @@ const toRoomMessage = (m) => ({
   image: m.image,
 });
 
-export function createRoomFetch({ orderId, csrf, proMember = false }) {
+export function createRoomFetch({
+  orderId,
+  csrf,
+  proMember = false,
+  rerollLimit,
+}) {
   const base = '/api/orders/' + encodeURIComponent(orderId);
   let assignment = null;
   return async function roomFetch(input, init = {}) {
@@ -97,7 +110,7 @@ export function createRoomFetch({ orderId, csrf, proMember = false }) {
         if (!res.ok || !data.order)
           return json({ error: data.error }, res.status || 503);
         return json({
-          order: toRoomOrder(data.order, { proMember }),
+          order: toRoomOrder(data.order, { proMember, rerollLimit }),
           now: Date.now(),
         });
       }
@@ -153,10 +166,26 @@ export function createRoomFetch({ orderId, csrf, proMember = false }) {
             res.status || 503,
           );
         return json({
-          order: toRoomOrder(data.order, { proMember }),
+          order: toRoomOrder(data.order, { proMember, rerollLimit }),
           tipPayment: data.tipPayment || null,
           tipError: data.tipError || '',
         });
+      }
+      // Favorite the teammate on this order (20261106150000): { available, favorite }.
+      if (
+        path === base + '/favorite' &&
+        (method === 'GET' || method === 'POST')
+      ) {
+        const { res, data } = await call(
+          base + '/favorite',
+          method === 'POST' ? { csrf, on: body.on === true } : undefined,
+        );
+        if (!res.ok || typeof data.favorite !== 'boolean')
+          return json(
+            { error: data.error || 'That didn’t work. Try again.' },
+            res.status || 503,
+          );
+        return json({ available: !!data.available, favorite: data.favorite });
       }
       if (path === base + '/chat' && method === 'GET') {
         const room = await readChat(fetch, orderId);

@@ -34,7 +34,3 @@ export const LEVEL_NAMES = {
   platinum: 'Platinum',
   diamond: 'Diamond',
 };
-
-/** The one checkout answer that clears the pick and reloads the list. */
-export const PICK_UNAVAILABLE =
-  'That teammate is not available right now. Pick someone else or book without a pick.';

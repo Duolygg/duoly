@@ -50,3 +50,17 @@ No one had subscribed yet, so nothing needs migrating.
 1. Deploy the code. Until step 2 the app finds no valid price, and PRO sign-up answers "unavailable".
 2. Run `node scripts/stripe/setup-pro.mjs --live` with the live key (and once with the test key).
 3. Add `customer.updated` to the webhook endpoint's events.
+
+## Free with Diamond (2026-11-05)
+
+Migration `20261106160000_diamond_free_pro.sql`. Customers at the Diamond loyalty level (1000 valid
+completed orders, the server's `loyalty_level` index 4) get PRO free for as long as they stay
+Diamond, with no card. `is_pro()` counts them, so every PRO perk follows: the 10% discount, unlimited
+re-rolls and the priority head start. Dropping below Diamond (refunds) ends it.
+
+`pro_my_status()` returns `included: true` for them. The dashboard PRO card then says it is free
+with Diamond and has no Manage PRO button, unless a paid subscription is still running: then Manage
+PRO stays and the card asks them to cancel it so they are not charged again. Nothing cancels a paid
+subscription automatically. `/pro` sends Diamond customers to the dashboard, and a new PRO checkout
+is refused like for any member. The Rewards card lists **Free Duoly PRO** as a Diamond perk
+("coming soon" while PRO is switched off).

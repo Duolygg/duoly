@@ -1,6 +1,8 @@
 import { track } from '../../client/analytics/track';
 import React from 'react';
 import Rewards from './Rewards';
+import Favorites from './Favorites';
+import FavoriteHeart, { HEART } from './FavoriteHeart';
 import SupportChat from '../support/SupportChat';
 import { GAME } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
@@ -55,6 +57,10 @@ export default class Dashboard extends React.Component {
       history: null,
       proBusy: false,
       proError: '',
+      // favorite teammates (20261106150000): null until loaded
+      favs: null,
+      favBusy: '',
+      favErr: '',
     };
   }
   // Duoly PRO: the Stripe Customer Portal for cancelling or changing the card (ledger #39).
@@ -91,11 +97,56 @@ export default class Dashboard extends React.Component {
     this.loadHistory();
     this._live = setInterval(() => this.loadLive(), 5000);
     this._history = setInterval(() => this.loadHistory(), 30000);
+    this.loadFavs();
+    // who's online changes quickly; the list itself only when you heart someone
+    this._favs = setInterval(() => this.loadFavs(), 20000);
   }
   componentWillUnmount() {
     clearInterval(this._live);
     clearInterval(this._history);
+    clearInterval(this._favs);
   }
+  // Favorite teammates, online first.
+  async loadFavs() {
+    try {
+      const res = await fetch('/api/orders/favorites', { cache: 'no-store' });
+      if (!res.ok) return;
+      const d = await res.json();
+      if (d && Array.isArray(d.favorites)) this.setState({ favs: d });
+    } catch (e) {}
+  }
+  // Heart or unheart the teammate on one of your orders (handle = that order's id).
+  toggleFav = async (handle, on, source) => {
+    if (this.state.favBusy) return;
+    this.setState({ favBusy: handle, favErr: '' });
+    try {
+      const res = await window.fetch(
+        '/api/orders/' + encodeURIComponent(handle) + '/favorite',
+        {
+          method: 'POST',
+          credentials: 'same-origin',
+          cache: 'no-store',
+          redirect: 'error',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ csrf: this.props.csrf, on }),
+        },
+      );
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok || typeof d.favorite !== 'boolean')
+        return this.setState({
+          favBusy: '',
+          favErr: d.error || 'Couldn’t save that. Try again.',
+        });
+      track('teammate_favorited', { on, source });
+      await this.loadFavs();
+      this.setState({ favBusy: '' });
+    } catch (e) {
+      this.setState({
+        favBusy: '',
+        favErr: 'Can’t reach Duoly right now. Try again.',
+      });
+    }
+  };
   // Order history, wallet, stats and teammates.
   async loadHistory() {
     try {
@@ -497,8 +548,13 @@ export default class Dashboard extends React.Component {
               : 'View',
       };
     });
+    // hearted teammates, by name and avatar (the order DTO has no teammate id)
+    const favKeys = new Set(
+      (s.favs ? s.favs.favorites : []).map((f) => f.name + '|' + f.image),
+    );
     const mates = (h ? h.mates : []).map((m) => ({
       ...m,
+      favOn: favKeys.has(m.name + '|' + m.image),
       first: String(m.name).split(' ')[0],
       img: gameOf(m.main).img,
       avatar: m.image || avatarFor(m.name),
@@ -842,6 +898,37 @@ export default class Dashboard extends React.Component {
                         <path d="M5 10v10h14V10" />
                       </svg>
                       Book a duo
+                    </a>
+                    <a
+                      href="#favorites"
+                      role="menuitem"
+                      onClick={() => this.setState({ menu: false })}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        minHeight: '42px',
+                        padding: '0 10px',
+                        borderRadius: '10px',
+                        color: '#F3EEFF',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <svg
+                        aria-hidden="true"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinejoin="round"
+                      >
+                        <path d={HEART} />
+                      </svg>
+                      Favorites
                     </a>
                     <a
                       href="/profile"
@@ -1198,6 +1285,7 @@ export default class Dashboard extends React.Component {
               cashbackPending={v.rewards.cashbackPending}
               pendingOrders={v.rewards.pendingOrders}
               perks={v.rewards.perks || null}
+              proLive={!!this.props.pro}
               money={v.money}
               sym={v.sym}
               giftClaimed={v.rewards.giftClaimed}
@@ -1645,6 +1733,16 @@ export default class Dashboard extends React.Component {
                 minWidth: '0',
               }}
             >
+              <Favorites
+                favs={this.state.favs}
+                busy={this.state.favBusy}
+                err={this.state.favErr}
+                onToggle={(handle, on) =>
+                  this.toggleFav(handle, on, 'favorites')
+                }
+                card={card}
+                h2={h2}
+              />
               <section
                 aria-labelledby="mates-h"
                 style={{ ...card, padding: '24px' }}
@@ -1779,6 +1877,17 @@ export default class Dashboard extends React.Component {
                             {m.games === 1 ? 'game' : 'games'} together
                           </span>
                         </span>
+                        {m.handle && this.state.favs ? (
+                          <FavoriteHeart
+                            compact
+                            name={m.first}
+                            on={m.favOn}
+                            busy={this.state.favBusy === m.handle}
+                            onToggle={() =>
+                              this.toggleFav(m.handle, !m.favOn, 'dashboard')
+                            }
+                          />
+                        ) : null}
                       </li>
                     </React.Fragment>
                   ))}
@@ -1992,9 +2101,11 @@ export default class Dashboard extends React.Component {
                     <li>✓ Priority matching</li>
                     <li>✓ Free re-rolls on every game</li>
                     <li>
-                      {this.props.pro.member || !this.props.pro.trialEligible
-                        ? '✓ Cancel anytime'
-                        : '✓ 7 days free, no card needed'}
+                      {this.props.pro.included
+                        ? '✓ Free while you’re Diamond'
+                        : this.props.pro.member || !this.props.pro.trialEligible
+                          ? '✓ Cancel anytime'
+                          : '✓ 7 days free, no card needed'}
                     </li>
                   </ul>
                   {this.state.proError ? (
@@ -2009,33 +2120,35 @@ export default class Dashboard extends React.Component {
                       {this.state.proError}
                     </p>
                   ) : null}
-                  <a
-                    href={this.props.pro.manage ? '/dashboard#pro' : '/pro'}
-                    onClick={
-                      this.props.pro.manage
-                        ? (e) => this.openProPortal(e)
-                        : null
-                    }
-                    aria-busy={this.state.proBusy || undefined}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minHeight: '48px',
-                      borderRadius: '14px',
-                      background: '#F3EEFF',
-                      color: '#17092E',
-                      textDecoration: 'none',
-                      fontSize: '14.5px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    {this.props.pro.manage
-                      ? 'Manage PRO'
-                      : this.props.pro.trialEligible
-                        ? 'Try PRO free for 7 days'
-                        : 'Get PRO · ' + proPrice(this.props.cur) + '/month'}
-                  </a>
+                  {this.props.pro.included && !this.props.pro.manage ? null : (
+                    <a
+                      href={this.props.pro.manage ? '/dashboard#pro' : '/pro'}
+                      onClick={
+                        this.props.pro.manage
+                          ? (e) => this.openProPortal(e)
+                          : null
+                      }
+                      aria-busy={this.state.proBusy || undefined}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '48px',
+                        borderRadius: '14px',
+                        background: '#F3EEFF',
+                        color: '#17092E',
+                        textDecoration: 'none',
+                        fontSize: '14.5px',
+                        fontWeight: '700',
+                      }}
+                    >
+                      {this.props.pro.manage
+                        ? 'Manage PRO'
+                        : this.props.pro.trialEligible
+                          ? 'Try PRO free for 7 days'
+                          : 'Get PRO · ' + proPrice(this.props.cur) + '/month'}
+                    </a>
+                  )}
                 </section>
               ) : null}
             </div>

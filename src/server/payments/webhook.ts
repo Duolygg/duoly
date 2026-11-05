@@ -3,10 +3,10 @@ import type Stripe from 'stripe';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { adminFor, paymentsConfig, stripeFor } from './config';
 import { settlePending } from './settle';
+import { confirmEmail } from './confirm-email';
+import { fulfilPlayAgain } from './play-again';
 import { handleProEvent, isProCheckoutSession } from '../pro/webhook';
 import { handleTransferEvent } from '../connect/events';
-import { sendEmail } from '../email/send';
-import { GAME } from '../../design-reference/lib/games.js';
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -16,29 +16,6 @@ const json = (body: unknown, status = 200) =>
       'Cache-Control': 'no-store',
     },
   });
-
-const METHOD_LABELS: Record<string, string> = {
-  card: 'Card',
-  paypal: 'PayPal',
-  klarna: 'Klarna',
-  amazon_pay: 'Amazon Pay',
-  revolut_pay: 'Revolut Pay',
-  link: 'Link',
-  eps: 'EPS',
-  ideal: 'iDEAL',
-  bancontact: 'Bancontact',
-  sepa_debit: 'SEPA Direct Debit',
-  p24: 'Przelewy24',
-  twint: 'TWINT',
-  wero: 'Wero',
-  mb_way: 'MB WAY',
-  mobilepay: 'MobilePay',
-  bizum: 'Bizum',
-  satispay: 'Satispay',
-  alipay: 'Alipay',
-  wechat_pay: 'WeChat Pay',
-  pay_by_bank: 'Pay by Bank',
-};
 
 export function refundedPaymentIntentId(
   type: string,
@@ -267,52 +244,6 @@ async function releaseSessionWallet(
   if (result.error) throw new Error('checkout_release_wallet failed');
 }
 
-async function confirmEmail(
-  admin: SupabaseClient,
-  orderId: string,
-  email: string | null,
-  method: string,
-) {
-  if (!email) return;
-  const { data: order } = await admin
-    .from('orders')
-    .select(
-      'public_reference, game, title, units, unit, region, rank, amount_eur_cents, customer_name, created_at',
-    )
-    .eq('id', orderId)
-    .single();
-  if (!order) return;
-  const game = (GAME as Record<string, { name: string; img: string }>)[
-    order.game
-  ];
-  const total = { cents: order.amount_eur_cents, currency: 'EUR' as const };
-  await sendEmail({
-    template: 'order_confirmed',
-    to: email,
-    idempotencyKey: `order_confirmed:${order.public_reference}`,
-    data: {
-      firstName: String(order.customer_name).split(' ')[0] || 'there',
-      order: {
-        id: order.public_reference,
-        game: { name: game?.name ?? order.game, icon: game?.img ?? '' },
-        service: order.title,
-        units: order.units,
-        unit: order.unit,
-        region: order.region,
-        ...(order.rank ? { rank: order.rank } : {}),
-      },
-      lines: [{ label: order.title, amount: total }],
-      total,
-      paidWith: METHOD_LABELS[method] ?? 'Online payment',
-      paidAt: new Intl.DateTimeFormat('en-GB', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-        timeZone: 'Europe/Vienna',
-      }).format(new Date(order.created_at)),
-    },
-  });
-}
-
 async function fulfil(
   stripe: Stripe,
   admin: SupabaseClient,
@@ -455,9 +386,33 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
         outcome = 'tip_paid';
         break;
       }
+      // Play again after 3D Secure, when the order room didn't confirm it (tab closed): the
+      // authorized card payment becomes the order here (play-again.ts).
+      case 'payment_intent.amount_capturable_updated': {
+        const intent = event.data.object as Stripe.PaymentIntent;
+        if (!intent.id?.startsWith('pi_') || !intent.metadata?.play_again)
+          break;
+        const done = await fulfilPlayAgain(stripe, admin, intent);
+        outcome = 'play_again_' + done.state;
+        break;
+      }
       case 'payment_intent.payment_failed':
       case 'payment_intent.canceled': {
         const intent = event.data.object as Stripe.PaymentIntent;
+        if (intent.id?.startsWith('pi_') && intent.metadata?.play_again) {
+          // A Play again card payment that failed or was cancelled: free the held balance.
+          const intentId = intent.metadata.intent_id;
+          if (intentId && /^[0-9a-f-]{36}$/i.test(intentId)) {
+            const released = await admin.rpc('checkout_release_wallet', {
+              p_intent_id: intentId,
+              p_status: 'failed',
+            });
+            if (released.error)
+              throw new Error('checkout_release_wallet failed');
+          }
+          outcome = 'play_again_failed';
+          break;
+        }
         if (!intent.id?.startsWith('pi_') || !intent.metadata?.tip_id) break;
         const result = await admin.rpc('order_tip_record_failure', {
           p_payment_intent: intent.id,
