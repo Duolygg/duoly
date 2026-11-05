@@ -199,7 +199,7 @@ export default class Overview extends React.Component {
         days.map((x) => x[key]),
       ) || 1;
     // real teammates online right now (from their dashboards' check-ins)
-    const online = data.live.online == null ? '–' : data.live.online;
+    const online = data.live.online ?? 0;
     const inProgress = data.orders.filter(
       (o) => o.status === 'In progress',
     ).length;
@@ -616,7 +616,7 @@ export default class Overview extends React.Component {
                 [queued + data.live.queue, 'in the queue', C.gold],
                 [
                   data.live.avgWait == null
-                    ? '–'
+                    ? '0m 0s'
                     : Math.floor(data.live.avgWait / 60) +
                       'm ' +
                       (data.live.avgWait % 60) +
@@ -797,7 +797,7 @@ export default class Overview extends React.Component {
                       textAlign: 'center',
                     }}
                   >
-                    {x.n == null ? '–' : x.n}
+                    {x.n ?? 0}
                   </span>
                   <span style={{ minWidth: '0', lineHeight: '1.35' }}>
                     <span
