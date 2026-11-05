@@ -3,15 +3,27 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageIntro from '../../components/site/PageIntro.astro';
 import { pageViewer } from '../../site/viewer';
 import { SITE_GAMES } from '../../site/games';
+import { lessons } from '../../content/coaching';
 const { viewer, csrf } = await pageViewer(Astro);
 ---
 
-<SiteLayout title="Games | Duoly" viewer={viewer} csrf={csrf}>
+<SiteLayout
+  indexing="index, follow"
+  title="Book Gaming Teammates and Coaching by Game | Duoly"
+  viewer={viewer}
+  csrf={csrf}
+>
   <PageIntro
     eyebrow="Games"
     title="Every game we play"
-    lead="Rank-verified teammates for 15 games. Pick one to see services and prices."
+    lead="Browse 15 games plus Social. Choose a game hub or a finished coaching guide. Catalog support is separate from live teammate availability."
   >
+    <p>
+      Duo sessions focus on playing together. Coaching adds a specific learning
+      goal. Social is friendly voice company without a game, for adults only.
+      Payment, cancellation and refund details are in our{' '}
+      <a href="/terms">terms</a>.
+    </p>
     <ul class="grid">
       {SITE_GAMES.map((game) => (
         <li>
@@ -19,6 +31,9 @@ const { viewer, csrf } = await pageViewer(Astro);
             <img src={game.img} alt="" width="56" height="56" loading="lazy" />
             <span>{game.name}</span>
           </a>
+          {lessons[game.slug] && (
+            <a href={`/games/${game.slug}/coaching`}>{game.name} coaching</a>
+          )}
         </li>
       ))}
     </ul>

@@ -2280,9 +2280,9 @@ export default class Home extends React.Component {
                   color: '#FFFFFF',
                 }}
               >
-                Duo up in
+                Duo up
                 <br />
-                <span style={{ color: '#D6BBFF' }}>under 2 minutes.</span>
+                <span style={{ color: '#D6BBFF' }}>for your next game.</span>
               </h1>
               <HeroTimer />
               <p
@@ -2549,7 +2549,9 @@ export default class Home extends React.Component {
                   }}
                 />
                 {/* short quotes drifting in around the logo; real ones come in through props.testimonials */}
-                <HeroQuotes items={this.props.testimonials} />
+                {this.props.testimonials?.length >= 4 && (
+                  <HeroQuotes items={this.props.testimonials} />
+                )}
               </div>
             </div>
           </section>
@@ -4776,7 +4778,7 @@ export default class Home extends React.Component {
                 </div>
               </dl>
             </section>
-            {/* real quotes come in through props.testimonials; until then the samples show */}
+            {/* Render supplied reviews only; no fabricated fallback. */}
             <Testimonials items={this.props.testimonials} />
             <section
               id="faq"
@@ -5785,7 +5787,7 @@ export default class Home extends React.Component {
                         'Your order goes live on ' + v.region,
                         'Rank-verified teammates for ' +
                           v.game.name +
-                          ' see it right away. Most orders are taken in under 2 minutes.',
+                          ' see it right away. Matching depends on compatible teammate availability.',
                       ],
                       [
                         'You get matched and play',

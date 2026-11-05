@@ -9,7 +9,7 @@ export const isDiscordInvite = (text: string): boolean =>
 export const SUPPORT_EMAIL = 'hello@duoly.gg';
 
 export const MAIN_NAV = [
-  { href: '/#games', label: 'Games' },
+  { href: '/games', label: 'Games' },
   { href: '/#how', label: 'How it works' },
   { href: '/#faq', label: 'FAQ' },
   { href: '/blog', label: 'Blog' },

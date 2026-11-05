@@ -1,62 +1,99 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageIntro from '../../components/site/PageIntro.astro';
+import Hub from '../../components/seo/Hub.astro';
+import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
 import { pageViewer } from '../../site/viewer';
 import { gameBySlug } from '../../site/games';
+import { lessons } from '../../content/coaching';
+import { socialContent, valorantContent } from '../../content/hubs';
+import { viewerCurrency } from '../../server/currency';
+import { eurToUsd } from '../../server/fx';
+import { seoOffers, serviceSchema } from '../../server/seo/offers';
+import { serializeJsonLd } from '../../site/seo';
 const game = gameBySlug(Astro.params.game);
-if (!game) return Astro.rewrite('/404');
-const { viewer, csrf } = await pageViewer(Astro);
-// Social is not a game: time with a verified Gamer Girl (docs/product/social-sessions.md).
-const social = game.id === 'social';
-const copy = social
-  ? {
-      title: 'Social sessions | Duoly',
-      heading: 'Social sessions',
-      lead: 'Just chat, watch together, a sleep call or karaoke with a verified Gamer Girl, on voice within minutes.',
-      card: 'Pick Social on the homepage, choose a session and how many hours, and a Gamer Girl joins you on Discord. Friendly company only, never dating, romantic or sexual services.',
-      cta: 'Book a Social session',
-    }
-  : {
-      title: `${game.name} teammates | Duoly`,
-      heading: `${game.name} teammates`,
-      lead: `Book a rank-verified ${game.name} teammate who joins your lobby in minutes.`,
-      card: `A full guide to ${game.name} services, ranks and prices is on the way. For now, everything is bookable from the homepage.`,
-      cta: `Book a ${game.name} teammate`,
-    };
+if (!game) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
+const finished = game.id === 'val' || game.id === 'social';
+const copy = game.id === 'social' ? socialContent : valorantContent;
+const currency = await viewerCurrency(Astro.cookies, accountCurrency);
+const offers = finished
+  ? seoOffers(game.id, game.id === 'social' ? 'gg' : 'teammate', {
+      customerCurrency: currency.cur,
+      eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+    })
+  : [];
+const first = [...offers].sort((a, b) => a.amountMinor - b.amountMinor)[0];
+const description = first
+  ? `${game.name} sessions from ${first.currency} ${first.price} per ${first.unit} for ${first.title}. Compare services, prices and booking choices. Read session rules and prepare for your booking.`
+  : `Explore ${game.name} booking options on Duoly. Our complete game guide is being prepared.`;
 ---
 
 <SiteLayout
-  title={copy.title}
-  description={copy.lead}
+  title={finished ? copy.title : `${game.name} teammates | Duoly`}
+  description={description}
+  indexing={finished ? 'index, follow' : 'noindex, follow'}
   viewer={viewer}
   csrf={csrf}
 >
-  <PageIntro eyebrow="Games" title={copy.heading} lead={copy.lead}>
-    <img
-      data-analytics-game={game.id}
-      class="art"
-      src={game.img}
-      alt=""
-      width="88"
-      height="88"
+  {finished ? (
+    <Hub game={game} offers={offers} />
+  ) : (
+    <PageIntro
+      eyebrow="Games"
+      title={`${game.name} teammates`}
+      lead={`Explore ${game.name} sessions through the homepage game picker.`}
+    >
+      <Breadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Games', path: '/games' },
+          { name: game.name, path: `/games/${game.slug}` },
+        ]}
+      />
+      <img
+        data-analytics-game={game.id}
+        src={game.img}
+        alt=""
+        width="88"
+        height="88"
+      />
+      <p>
+        Our full teammate guide is being prepared. Check the homepage for
+        current services and checkout prices.
+      </p>
+      <a class="cta" href="/#games">
+        Choose a {game.name} session
+      </a>
+      {lessons[game.slug] && (
+        <p>
+          <a href={`/games/${game.slug}/coaching`}>
+            {game.name} coaching services and prices
+          </a>
+        </p>
+      )}
+      <p>
+        <a href="/games">All games</a>
+      </p>
+    </PageIntro>
+  )}
+  {finished && (
+    <script
+      slot="head"
+      type="application/ld+json"
+      set:html={serializeJsonLd(
+        serviceSchema(copy.h1, `/games/${game.slug}`, offers, Astro.site!),
+      )}
     />
-    <div class="card">
-      <p>{copy.card}</p>
-    </div>
-    <a class="cta" href="/#games">
-      {copy.cta}
-    </a>
-    <p class="back">
-      <a href="/games">All games</a>
-    </p>
-  </PageIntro>
+  )}
 </SiteLayout>
-
 <script>
   import { track } from '../../client/analytics/track';
   const game = document.querySelector<HTMLElement>('[data-analytics-game]')
     ?.dataset.analyticsGame;
-  // Wait for the shared analytics boot module; no backfill after consent changes.
   window.addEventListener(
     'load',
     () => {
@@ -70,17 +107,3 @@ const copy = social
       track('cta_clicked', { cta: 'game_book', surface: 'game' }),
     );
 </script>
-
-<style>
-  .art {
-    margin-top: 24px;
-    border-radius: 20px;
-  }
-  .card p {
-    margin: 0;
-    color: #cfc4ea;
-  }
-  .back {
-    margin-top: 16px;
-  }
-</style>

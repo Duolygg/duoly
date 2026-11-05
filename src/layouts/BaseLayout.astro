@@ -1,9 +1,10 @@
 ---
 interface Props {
   title: string;
+  indexing?: 'index, follow' | 'noindex, follow' | 'noindex, nofollow';
   description: string;
 }
-const { title, description } = Astro.props;
+const { title, description, indexing = 'noindex, nofollow' } = Astro.props;
 // Never infer the public origin from the incoming request or Vercel preview URL.
 const canonical = Astro.site
   ? new URL(Astro.url.pathname, Astro.site)
@@ -17,7 +18,7 @@ const canonical = Astro.site
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="robots" content={indexing} />
     {canonical && <link rel="canonical" href={canonical} />}
   </head>
   <body>

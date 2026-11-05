@@ -10,22 +10,26 @@ import SoloVsDuoly, {
 
 const render = (props: Record<string, unknown> = {}) =>
   renderToStaticMarkup(
-    React.createElement(Home, { recentMatches: [], ...props }),
+    React.createElement(Home, {
+      recentMatches: [],
+      testimonials: SAMPLE_TESTIMONIALS,
+      ...props,
+    }),
   );
 
 afterEach(() => vi.unstubAllEnvs());
 
 describe('testimonial carousel', () => {
-  it('shows the reviews to every visitor on the live site, like any other section', () => {
+  it('hides reviews without real supplied data for every viewer', () => {
     vi.stubEnv('DEV', false);
     for (const session of [
       undefined,
       { user: { id: 'u1', name: 'A', role: 'customer' } },
       { user: { id: 'u2', name: 'B', role: 'admin' } },
     ]) {
-      const html = render({ session });
-      expect(html).toContain('What players say after the match');
-      expect(html).toContain(SAMPLE_TESTIMONIALS[0]!.quote);
+      const html = render({ session, testimonials: [] });
+      expect(html).not.toContain('What players say after the match');
+      expect(html).not.toContain(SAMPLE_TESTIMONIALS[0]!.quote);
       expect(html).not.toContain('Sample reviews');
     }
   });
@@ -129,7 +133,7 @@ describe('solo queue vs. Duoly', () => {
       'A rank-verified teammate, reviewed after every session',
       'Voice on Discord if you want it',
       'Re-roll your teammate, up to twice',
-      'Usually matched in under 2 minutes',
+      'Book a defined teammate session',
       'Not matched in 5 minutes? You pay nothing',
       'The games themselves, with a teammate',
       'Pay per game, from {from}',

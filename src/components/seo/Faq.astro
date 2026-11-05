@@ -1,0 +1,30 @@
+---
+interface Props {
+  items: [string, string][];
+}
+const { items } = Astro.props;
+---
+
+<section>
+  <h2>Frequently asked questions</h2>
+  {items.map(([question, answer]) => (
+    <details>
+      <summary>{question}</summary>
+      <p>{answer}</p>
+    </details>
+  ))}
+</section>
+<style>
+  details {
+    border-bottom: 1px solid #39264f;
+    padding: 16px 0;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 650;
+    color: #f3eeff;
+  }
+  p {
+    color: #cfc4ea;
+  }
+</style>

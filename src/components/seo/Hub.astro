@@ -1,0 +1,102 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+import Prices from './Prices.astro';
+import Faq from './Faq.astro';
+import './seo.css';
+import type { SiteGame } from '../../site/games';
+import { lessons } from '../../content/coaching';
+import type { seoOffers } from '../../server/seo/offers';
+import { socialContent, valorantContent } from '../../content/hubs';
+import { GUIDE_PATH } from '../../site/seo';
+interface Props {
+  game: SiteGame;
+  offers: ReturnType<typeof seoOffers>;
+}
+const { game, offers } = Astro.props;
+const social = game.id === 'social';
+const copy = social ? socialContent : valorantContent;
+const first = [...offers].sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+const lesson = lessons[game.slug];
+---
+
+<article class="seo-page">
+  <Breadcrumbs
+    items={[
+      { name: 'Home', path: '/' },
+      { name: 'Games', path: '/games' },
+      { name: game.name, path: `/games/${game.slug}` },
+    ]}
+  />
+  <header class="hero">
+    <img
+      data-analytics-game={game.id}
+      src={game.img}
+      alt={`${game.name} category`}
+      width="88"
+      height="88"
+    />
+    <h1>{copy.h1}</h1>
+    <p class="lead">{copy.lead}</p>
+    <p class="price-lead">
+      From {first.currency} {first.price} per {first.unit} for {first.title}
+      {first.rank !== 'Flat price' ? ` at customer rank ${first.rank}` : ''}.
+    </p>
+    <a class="cta" href="/#games">
+      {social ? 'Book a Social session' : 'Choose a Valorant session'}
+    </a>
+    <p>
+      Select {game.name} on the homepage, then your service. Check the unit and
+      final quote before payment.
+    </p>
+  </header>
+  <section>
+    <h2>What you get</h2>
+    <p>{copy.format}</p>
+  </section>
+  <Prices offers={offers} social={social} />
+  <section>
+    <h2>How it works</h2>
+    <ol>
+      <li>
+        Choose {game.name}, your service and the number of units on the
+        homepage.
+      </li>
+      <li>
+        Confirm your region, preferences and quote. Follow the booking steps
+        through checkout.
+      </li>
+      <li>
+        Coordinate in the order chat and join voice when agreed. Keep control of
+        your own accounts.
+      </li>
+    </ol>
+    <p>
+      Read the <a href="/terms">payment, cancellation and refund terms</a> and
+      use <a href="/contact">Duoly support</a> for a booking issue. Catalog
+      services do not establish a live waiting time or guarantee a specific
+      teammate.
+    </p>
+  </section>
+  {copy.sections.map((section) => (
+    <section>
+      <h2>{section.heading}</h2>
+      {section.paragraphs.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+    </section>
+  ))}
+  <Faq items={copy.faq} />
+  <nav class="related" aria-label="Related pages">
+    <h2>Related guides and sessions</h2>
+    {lesson && (
+      <a href={`/games/${game.slug}/coaching`}>
+        Valorant coaching and VOD review
+      </a>
+    )}
+    <a href={GUIDE_PATH}>What is an e-girl?</a>
+    <a href={social ? '/games/valorant' : '/games/social'}>
+      {social ? 'Find Valorant teammates' : 'Friendly Social sessions'}
+    </a>
+    <a href="/games">Browse games</a>
+  </nav>
+</article>

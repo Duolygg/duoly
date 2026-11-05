@@ -1,0 +1,174 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Breadcrumbs from '../components/seo/Breadcrumbs.astro';
+import Faq from '../components/seo/Faq.astro';
+import '../components/seo/seo.css';
+import { pageViewer } from '../site/viewer';
+const { viewer, csrf } = await pageViewer(Astro);
+const faq: [string, string][] = [
+  [
+    'Is this a guaranteed way to earn money playing games?',
+    'No. Applying does not guarantee approval, orders or income. Earnings depend on eligible sessions you actually complete.',
+  ],
+  [
+    'How much of a session goes to the teammate?',
+    'The standard pricing calculation starts from a 60 percent share of the session amount after applicable discounts, converted to USD at the reference rate with cent rounding. The desk shows the actual amount and any adjustments.',
+  ],
+  [
+    'What is the payout minimum?',
+    'The current code sets a USD 25 weekly payout minimum. Smaller amounts carry forward. Holds and required payout details can delay payment.',
+  ],
+  [
+    'How are teammates paid?',
+    'Manual payout details support bank, Wise and PayPal. Stripe Connect is a separate supported rail when enabled and ready. Confirm which route is available in your desk.',
+  ],
+  [
+    'Can I apply for Social sessions?',
+    'Social orders require Gamer Girl service access. Follow the application process and review the friendly-company boundaries.',
+  ],
+  [
+    'Can I play on a customer’s account?',
+    'You play using your own account and follow publisher rules. Customers keep control of their accounts and credentials.',
+  ],
+];
+---
+
+<SiteLayout
+  title="Get Paid to Play Games as a Duoly Teammate | Duoly"
+  description="Apply to get paid to play games as a Duoly teammate. Learn the real session share, USD 25 payout minimum, application requirements and service boundaries."
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Become a teammate', path: '/get-paid-to-play-games' },
+      ]}
+    />
+    <header class="hero">
+      <p class="eyebrow">Teammate applications</p>
+      <h1>Get paid to play games as a Duoly teammate</h1>
+      <p class="lead">
+        Apply to provide paid gaming, coaching or friendly Social sessions.
+        Duoly is a session marketplace, with no guaranteed orders, earnings or
+        fixed hourly wage.
+      </p>
+      <a class="cta" href="/apply">
+        Apply to become a teammate
+      </a>
+      <p>
+        The standard session-share calculation starts at 60 percent. Your desk
+        shows the actual session amount and payout status.
+      </p>
+    </header>
+    <section>
+      <h2>What the work involves</h2>
+      <p>
+        You provide the service a customer booked. A gaming teammate joins the
+        agreed mode, communicates respectfully and follows the session unit. A
+        coach explains decisions and gives focused feedback. A Gamer Girl may
+        provide game-specific sessions or, with the relevant access, Social
+        voice company. Each format needs a clear scope and the ability to keep a
+        session comfortable.
+      </p>
+      <p>
+        This is different from reward apps that pay for installs, surveys or
+        playtime. You earn through eligible customer sessions you complete.
+        Strong gameplay alone is not the entire job: listening, punctual
+        communication, honest service claims and handling a difficult match
+        calmly all matter. Do not apply on the assumption that simply leaving a
+        game open creates earnings.
+      </p>
+    </section>
+    <section>
+      <h2>How session share and payouts work</h2>
+      <p>
+        The standard pricing function calculates a teammate share from 60
+        percent of the discounted session amount, converts it at the EUR to USD
+        reference rate, rounds to cents and subtracts one cent, with a USD 0.99
+        floor in that calculation. Customer display currency and the teammate
+        USD amount are separate. Account-specific discounts or later ledger
+        adjustments mean a headline catalog price is not a guaranteed take-home
+        figure.
+      </p>
+      <p>
+        Payouts are organised in weekly lines. The current code sets the minimum
+        at USD 25; smaller amounts carry into a later week. Required payout
+        details must be completed, and holds or unresolved order issues can
+        affect whether money is payable. An earnings entry, a scheduled payout
+        and funds received are different states. Check the desk rather than
+        assuming that a completed game means an immediate transfer.
+      </p>
+      <p>
+        The supported manual payout details include bank, Wise and PayPal.
+        Stripe Connect is also implemented as a conditional rail for accounts
+        that complete its verification and have the required capabilities
+        enabled. Its availability depends on platform configuration and your
+        account status. Do not assume a specific rail, transfer currency or
+        arrival time before checking the current setup with Duoly.
+      </p>
+    </section>
+    <section>
+      <h2>Prepare an honest application</h2>
+      <p>
+        You must be at least 18 and able to follow the platform and publisher
+        rules. Describe the games and services you can genuinely provide, your
+        region and your communication preferences. Use accurate rank or
+        experience evidence where relevant. A coaching application should
+        explain what you can teach, rather than relying on a high rank as the
+        only proof of teaching ability.
+      </p>
+      <p>
+        Follow the current <a href="/apply">application form</a> for the
+        requested fields and evidence. Application review determines access, and
+        submitting does not guarantee acceptance. Some service categories
+        require separate access. Social orders are restricted to teammates with
+        Gamer Girl access; they are friendly company only, never dating,
+        romantic or sexual services.
+      </p>
+      <p>
+        Keep examples specific. For Valorant, say whether you can explain
+        controller utility, entry timing or VOD decisions. For Rocket League,
+        distinguish playing Doubles from teaching recoveries. For a Social
+        application, describe how you would keep a voice session welcoming while
+        setting boundaries. Use only your own work and evidence you are allowed
+        to share.
+      </p>
+    </section>
+    <section>
+      <h2>A sensible first-session routine</h2>
+      <ol>
+        <li>
+          Read the service, unit and customer preferences before accepting an
+          eligible order. Check region, mode and legitimate queue compatibility.
+        </li>
+        <li>
+          Use the order chat to coordinate. Confirm the activity and voice
+          setup, then deliver the session as booked using your own accounts.
+        </li>
+        <li>
+          Follow the completion process and review the earnings record in your
+          desk. Use support for disagreements instead of arranging a private
+          payment.
+        </li>
+      </ol>
+      <p>
+        Keep a record through the platform tools and never promise wins, a new
+        rank or personal contact outside the booking. You are responsible for
+        understanding your own tax and reporting obligations. Ask Duoly about
+        payout setup before depending on any expected transfer.
+      </p>
+    </section>
+    <Faq items={faq} />
+    <nav class="related" aria-label="Related pages">
+      <h2>Before you apply</h2>
+      <a href="/apply">Teammate application</a>
+      <a href="/games">Services by game</a>
+      <a href="/games/social">Social boundaries</a>
+      <a href="/terms">Terms</a>
+      <a href="/contact">Ask the Duoly team</a>
+    </nav>
+  </article>
+</SiteLayout>

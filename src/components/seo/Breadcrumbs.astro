@@ -1,0 +1,39 @@
+---
+import { serializeJsonLd, breadcrumbs } from '../../site/seo';
+interface Props {
+  items: { name: string; path: string }[];
+}
+const { items } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb">
+  <ol>
+    {items.map((item) => (
+      <li>
+        <a href={item.path}>{item.name}</a>
+      </li>
+    ))}
+  </ol>
+</nav>
+<script
+  type="application/ld+json"
+  set:html={serializeJsonLd(breadcrumbs(items, Astro.site!))}
+/>
+<style>
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    list-style: none;
+    padding: 0;
+    font-size: 14px;
+  }
+  li + li::before {
+    content: '/';
+    margin-right: 16px;
+    color: #8e84ab;
+  }
+  a {
+    color: #d6bbff;
+  }
+</style>

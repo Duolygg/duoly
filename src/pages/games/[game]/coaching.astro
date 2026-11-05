@@ -1,0 +1,140 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../../components/seo/Breadcrumbs.astro';
+import Prices from '../../../components/seo/Prices.astro';
+import Faq from '../../../components/seo/Faq.astro';
+import '../../../components/seo/seo.css';
+import { lessons } from '../../../content/coaching';
+import { gameBySlug } from '../../../site/games';
+import { pageViewer } from '../../../site/viewer';
+import { viewerCurrency } from '../../../server/currency';
+import { eurToUsd } from '../../../server/fx';
+import { seoOffers, serviceSchema } from '../../../server/seo/offers';
+import { serializeJsonLd, GUIDE_PATH } from '../../../site/seo';
+const game = gameBySlug(Astro.params.game);
+const lesson = lessons[Astro.params.game ?? ''];
+if (!game || !lesson) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
+const currency = await viewerCurrency(Astro.cookies, accountCurrency);
+const offers = seoOffers(game.id, 'training', {
+  customerCurrency: currency.cur,
+  eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+});
+if (!offers.length) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+const first = [...offers].sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+const path = `/games/${game.slug}/coaching`;
+const description = `${game.name} coaching from ${first.currency} ${first.price} per ${first.unit}. Compare real training services, coach rank requirements and session plans. Prepare and book your lesson.`;
+---
+
+<SiteLayout
+  title={lesson.title}
+  description={description}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Games', path: '/games' },
+        { name: game.name, path: `/games/${game.slug}` },
+        { name: 'Coaching', path },
+      ]}
+    />
+    <header class="hero">
+      <p class="eyebrow">Learn with a plan</p>
+      <h1>{lesson.h1}</h1>
+      <p class="lead">{lesson.lead}</p>
+      <p class="price-lead">
+        From {first.currency} {first.price} per {first.unit} for {first.title}{' '}
+        at the normal price.
+      </p>
+      <a class="cta" href="/#games">
+        Choose {game.name} coaching
+      </a>
+      <p>
+        Select {game.name}, then Training on the homepage. Confirm the service
+        and session unit before checkout.
+      </p>
+    </header>
+    <section>
+      <h2>What you get</h2>
+      <p>{lesson.format}</p>
+    </section>
+    <Prices offers={offers} />
+    <section>
+      <h2>How booking works</h2>
+      <ol>
+        <li>
+          Choose your game and training service. Check the unit, region and
+          lesson goal.
+        </li>
+        <li>
+          Review the quote and complete booking. Any first Play and Learn offer
+          is based on eligibility. Training has no automatic quantity discount.
+        </li>
+        <li>
+          Meet through the order chat and agree voice or screen sharing. You
+          play on your own account and keep control of your login.
+        </li>
+      </ol>
+      <p>
+        Duoly reviews teammate applications and service access. The rank
+        specifications above do not prove current availability or professional
+        esports credentials. Read the{' '}
+        <a href="/terms">payment, cancellation and refund terms</a> before
+        booking, and <a href="/contact">contact support</a> if the session scope
+        or conduct is wrong.
+      </p>
+    </section>
+    {lesson.sections.map((section) => (
+      <section>
+        <h2>{section.heading}</h2>
+        {section.paragraphs.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </section>
+    ))}
+    <section>
+      <h2>A sample session agenda</h2>
+      <ol>
+        {lesson.agenda.map((step) => (
+          <li>{step}</li>
+        ))}
+      </ol>
+      <p>
+        This agenda is a suggested plan to agree with your coach, rather than a
+        promise of a fixed lesson script.
+      </p>
+    </section>
+    <section>
+      <h2>How to prepare</h2>
+      <p>{lesson.prepare}</p>
+    </section>
+    <Faq items={lesson.faq} />
+    <nav class="related" aria-label="Related pages">
+      <h2>Keep exploring</h2>
+      <a class="cta" href="/#games">
+        Choose {game.name} coaching
+      </a>
+      <a href={`/games/${game.slug}`}>{game.name} teammate hub</a>
+      <a href="/games">All games and coaching</a>
+      <a href={GUIDE_PATH}>Playing together respectfully</a>
+      <a href="/get-paid-to-play-games">Join the Duoly team</a>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(
+      serviceSchema(`${game.name} coaching`, path, offers, Astro.site!),
+    )}
+  />
+</SiteLayout>

@@ -1,4 +1,254 @@
 ---
-// Articles arrive with the content system; until then every slug is a 404.
-return Astro.rewrite('/404');
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
+import '../../components/seo/seo.css';
+import { pageViewer } from '../../site/viewer';
+import { serializeJsonLd, GUIDE_PATH } from '../../site/seo';
+if (Astro.params.slug !== 'what-is-an-egirl') {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+const { viewer, csrf } = await pageViewer(Astro);
+const title = 'What Is an E-Girl? How to Play Together Safely | Duoly';
+const h1 = 'What is an e-girl? And how to play with one';
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: h1,
+  mainEntityOfPage: new URL(GUIDE_PATH, Astro.site!).href,
+  datePublished: '2026-11-05',
+  dateModified: '2026-11-05',
+  author: {
+    '@type': 'Organization',
+    name: 'Duoly team',
+    url: new URL('/contact', Astro.site!).href,
+  },
+  publisher: { '@type': 'Organization', name: 'Duoly', url: Astro.site!.href },
+  image: new URL('/og/duoly.jpg', Astro.site!).href,
+};
 ---
+
+<SiteLayout
+  title={title}
+  description="An e-girl can be an online identity, a style or a gaming label. Learn the context, find people to play with safely and understand Duoly Social sessions."
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Blog', path: '/blog' },
+        { name: 'What is an e-girl?', path: GUIDE_PATH },
+      ]}
+    />
+    <header class="hero">
+      <p class="eyebrow">Gaming culture and playing together</p>
+      <h1>{h1}</h1>
+      <p class="lead">
+        An e-girl is a person associated with an online identity or
+        internet-influenced style. In gaming, people also use the word for a
+        woman they meet or play with online. The meaning depends on context, and
+        the person gets to decide whether the label fits.
+      </p>
+      <p>
+        By <a href="/contact">Duoly team</a>. Published and updated{' '}
+        <time datetime="2026-11-05">5 November 2026</time>.
+      </p>
+      <p>
+        This guide explains language and Duoly’s session rules. It does not
+        present an invented player biography or claim first-hand research into
+        every gaming community.
+      </p>
+    </header>
+    <section>
+      <h2>Where the term comes from</h2>
+      <p>
+        The letter e points to electronic or internet life. The term grew
+        through online communities rather than having one universally agreed
+        creator or starting date. Earlier gaming uses could be dismissive,
+        treating women’s presence online as a performance for attention. Later
+        uses also became self-descriptions, including fashion and creative
+        identities. That history helps explain why one person may embrace the
+        word and another may dislike it.
+      </p>
+      <p>
+        A{' '}
+        <a
+          href="https://www.diggitmagazine.com/articles/everything-you-need-know-about-e-girls"
+          rel="noopener"
+        >
+          2020 Diggit Magazine analysis by Yoanna Manoilova
+        </a>{' '}
+        describes both the term’s derogatory gaming history and its later
+        popularity on TikTok and Instagram, particularly around 2019. It
+        discusses gamer, emo and aesthetic uses. This is a cultural account, not
+        a rulebook for who qualifies. A look, voice or favourite game cannot
+        establish someone’s identity.
+      </p>
+      <p>
+        That distinction matters when searching for an egirl. A search result
+        may be about makeup, fashion, streaming or finding a teammate. Those are
+        different tasks. If what you want is someone to queue with, start by
+        naming the game and the kind of session you would enjoy rather than
+        assuming a visual style predicts a good gaming partner.
+      </p>
+    </section>
+    <section>
+      <h2>How gaming communities use e-girl</h2>
+      <p>
+        In a gaming conversation, e-girl may mean a woman who plays online, a
+        creator with an online persona or a person offering social gaming
+        sessions. It can also be used as an insult. Listen to the context and
+        use the person’s preferred description. Being a woman who plays Valorant
+        does not automatically make someone an e-girl, a streamer or a paid
+        teammate.
+      </p>
+      <p>
+        The label tells you little about skill. A casual player, a new player
+        and an experienced competitive player can all use it. If rank or a role
+        matters to your session, ask about those directly. For Valorant, useful
+        questions concern region, platform, agent preferences and comms. For
+        League, ask about server, role and the mode you both want to play.
+      </p>
+      <p>
+        A person can enjoy a playful online identity while still expecting
+        ordinary respect. You do not need to test whether they are a real gamer
+        or ask them to prove their gender in a lobby. Start with the shared
+        activity. The same courtesy applies whether you found each other through
+        a community post, an existing friend group or a paid booking platform.
+      </p>
+    </section>
+    <section>
+      <h2>Decide whether you want a teammate, a lesson or company</h2>
+      <p>
+        Choose by the activity. If you want to play a match together, look for a
+        game-specific teammate. If you want feedback on positioning, mechanics
+        or decisions, choose a coaching service with a clear teaching scope. If
+        you want conversation without loading a game, a Social session is the
+        closer fit. These formats can overlap in tone while remaining different
+        purchases.
+      </p>
+      <p>
+        For example, a relaxed Valorant duo can involve voice chat and casual
+        games. It does not automatically include a detailed VOD review. A
+        coaching hour can include friendly conversation while still keeping the
+        lesson goal first. A Social hour can cover music or games without
+        including a match. Agree the activity, unit and boundaries before you
+        start.
+      </p>
+      <p>
+        Free communities are a reasonable first option if you want an ongoing
+        group. Moderated Discord LFG channels, game-community forums and people
+        you enjoyed playing with can help. A paid session is useful when you
+        want a defined booking. Neither route promises that someone will become
+        a friend, reply outside the session or share personal details.
+      </p>
+    </section>
+    <section>
+      <h2>How to find someone to play with safely</h2>
+      <p>
+        Share the information needed for the game and keep the rest private. A
+        useful first message includes region, platform, preferred mode, usual
+        play time and whether you want voice. Use a screen name. There is no
+        need to share a home address, workplace, private phone number or account
+        password to arrange a game.
+      </p>
+      <p>
+        Check the community’s moderation and reporting options before moving
+        into private messages. Be cautious with unsolicited offers, unfamiliar
+        downloads and links that ask you to sign in again. Open a platform
+        through its known address instead of following an unexpected payment or
+        login link. A friendly voice is not proof that an unknown link is safe.
+      </p>
+      <p>
+        Agree expectations in plain language. You might say that you want two
+        relaxed games, calm voice and no criticism unless you ask. Ask whether
+        recording or streaming is acceptable; permission to join voice does not
+        automatically cover publishing it. If either person wants to stop, avoid
+        arguing them into staying. Use the platform’s support process for a
+        paid-session issue.
+      </p>
+      <p>
+        For paid bookings, keep payment and order communication on the platform.
+        That creates a record of the service you chose and what happened. Do not
+        send extra money privately to unlock promised access. Read cancellation
+        and refund terms before paying, and treat guaranteed results or pressure
+        to bypass the normal flow as warning signs.
+      </p>
+    </section>
+    <section>
+      <h2>How Duoly’s verified Gamer Girls work</h2>
+      <p>
+        Duoly uses Gamer Girl as a service category. Only teammates with Gamer
+        Girl access can accept those orders. Application review and service
+        access are platform checks. They do not mean that a teammate is
+        available right now, that every game or rank combination can be
+        fulfilled, or that a customer can expect personal contact outside a
+        booking.
+      </p>
+      <p>
+        Game-specific Gamer Girl sessions live under the relevant game in the
+        homepage picker. They have their own modes, units and prices. If you
+        want a Valorant e-girl duo, choose Valorant and review that service’s
+        scope. Use the <a href="/games/valorant">Valorant teammate hub</a> to
+        compare the broader choices and the{' '}
+        <a href="/games/valorant/coaching">Valorant coaching page</a> when your
+        real goal is learning.
+      </p>
+      <p>
+        <a href="/games/social">Duoly Social</a> is the no-game option. It
+        offers Just Chat, Watch Together, Sleep Call and Karaoke as hourly voice
+        sessions. The Social page calculates current prices from the same
+        catalog and pricing logic as checkout, so this guide does not repeat a
+        price that could drift. Choose the activity and confirm how you will use
+        Discord before starting.
+      </p>
+      <p>
+        Everyone on Duoly must be at least 18. Social is friendly company only,
+        never dating, romantic or sexual services. Payment covers the agreed
+        session and does not change those rules. You and the teammate can both
+        decline a topic, a song request or a request to reveal personal
+        information.
+      </p>
+    </section>
+    <section>
+      <h2>A respectful first-session checklist</h2>
+      <p>
+        Before booking, check that the service matches your goal, the price unit
+        is clear and your region or platform is compatible. Prepare headphones
+        and Discord if voice is part of the plan. Keep personal notifications
+        off a screen share. If watching together, confirm you both have lawful
+        access to the chosen content; a session does not include a streaming
+        subscription.
+      </p>
+      <p>
+        At the start, use the name the teammate gives you, confirm the activity
+        and say what kind of conversation feels comfortable. For games, keep
+        calls about the match rather than making assumptions from someone’s
+        voice or profile. For Social, an ordinary topic is enough. You do not
+        need to force an intimate conversation to make the hour worthwhile.
+      </p>
+      <p>
+        At the end, thank the person and finish at the agreed boundary. Another
+        session is a separate choice, and continued private contact requires
+        mutual interest. If there was a conduct or booking problem, use the
+        order tools and <a href="/contact">support</a>. Clear expectations
+        protect both the customer and the teammate.
+      </p>
+    </section>
+    <nav class="related" aria-label="Related pages">
+      <h2>Choose your next step</h2>
+      <a href="/games/social">Social services and current prices</a>
+      <a href="/games/valorant">Free Valorant LFG options and paid teammates</a>
+      <a href="/games">Browse games and coaching</a>
+      <a href="/terms">Session terms and refunds</a>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(article)}
+  />
+</SiteLayout>

@@ -9,6 +9,7 @@ import { MAIN_NAV, ROLE_HOME } from '../site/nav';
 
 interface Props {
   title: string;
+  indexing?: 'index, follow' | 'noindex, follow' | 'noindex, nofollow';
   description?: string;
   viewer?: Viewer | undefined;
   csrf?: string;
@@ -20,7 +21,8 @@ interface Props {
 
 const {
   title,
-  description = 'Book a rank-verified teammate for your game. Duo up in under 2 minutes.',
+  description = 'Book gaming teammates, coaching and friendly Social sessions. Compare services and prices, choose your game and play together on your own account.',
+  indexing = 'noindex, nofollow',
   viewer,
   csrf = '',
   bare = false,
@@ -52,7 +54,8 @@ const avatar =
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="robots" content={indexing} />
+    <link rel="canonical" href={shareUrl} />
     <link rel="icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />

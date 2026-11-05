@@ -1,0 +1,104 @@
+---
+import type { seoOffers } from '../../server/seo/offers';
+interface Props {
+  offers: ReturnType<typeof seoOffers>;
+  social?: boolean;
+}
+const { offers, social = false } = Astro.props;
+---
+
+<section aria-labelledby="prices">
+  <h2 id="prices">Services and prices</h2>
+  <p>
+    Price table updated <time datetime="2026-11-05">5 November 2026</time>.
+    Prices are calculated from the checkout catalog for one normal session unit.
+    Currency follows your account or browser preference, defaulting to EUR.
+  </p>
+  <div class="price-scroll">
+    <table>
+      <caption>One-unit prices, before account-specific offers</caption>
+      <thead>
+        <tr>
+          <th scope="col">Service</th>
+          <th scope="col">Price per unit</th>
+          <th scope="col">Provider specification</th>
+          <th scope="col">Customer rank or pricing</th>
+        </tr>
+      </thead>
+      <tbody>
+        {offers.map((offer) => (
+          <tr data-service={offer.id} data-price-minor={offer.amountMinor}>
+            <th scope="row">{offer.title}</th>
+            <td class="money">
+              {offer.currency} {offer.price} / {offer.unit}
+            </td>
+            <td>{offer.tier}</td>
+            <td>{offer.rank}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p>
+    {social
+      ? 'Social needs no game rank. Only teammates with Gamer Girl access can accept these orders. Confirm the activity and voice setup before the session. Checkout confirms the final quote.'
+      : 'Catalog ranks describe the service, not a live availability count. For ranked play, party restrictions still apply. Confirm your mode, region, platform and compatible ranks. Checkout confirms the final quote.'}
+  </p>
+</section>
+<style>
+  .price-scroll {
+    overflow-x: auto;
+    border: 1px solid #39264f;
+    border-radius: 16px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  caption {
+    text-align: left;
+    padding: 14px;
+    color: #cfc4ea;
+  }
+  th,
+  td {
+    padding: 14px;
+    text-align: left;
+    border-top: 1px solid #39264f;
+  }
+  thead {
+    background: #201034;
+  }
+  .money {
+    white-space: nowrap;
+    color: #f2dcff;
+    font-weight: 700;
+  }
+  @media (max-width: 600px) {
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    tbody tr {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    th,
+    td {
+      padding: 10px 12px;
+    }
+    td:nth-child(3),
+    td:nth-child(4) {
+      grid-column: 1 / -1;
+      border-top: 0;
+    }
+    .money {
+      text-align: right;
+      white-space: normal;
+    }
+  }
+</style>

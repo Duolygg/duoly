@@ -28,7 +28,7 @@ export const OPPONENTS = [
         'Stuck with them all game',
         'Re-roll your teammate, up to twice',
       ],
-      ['Waiting', 'Long queues to lose', 'Usually matched in under 2 minutes'],
+      ['Waiting', 'Long queues to lose', 'Book a defined teammate session'],
       [
         'Bad night',
         'Nobody owes you anything',
