@@ -741,7 +741,7 @@ export function buildPlan() {
         type: operator,
         values: operator === 'AND' ? values : values.map((v) => group([v])),
       },
-      filterTestAccounts: false,
+      filterTestAccounts: !rest.name.endsWith('Teammates'),
     },
   }));
   const actions = [

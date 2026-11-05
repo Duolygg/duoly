@@ -193,5 +193,9 @@ describe('PostHog analysis plan', () => {
     }
     expect(plan.alerts.length).toBeLessThanOrEqual(5);
     expect(plan.alerts.length).toBe(5);
+    for (const cohort of plan.cohorts)
+      expect(cohort.filters.filterTestAccounts).toBe(
+        !cohort.name.endsWith('Teammates'),
+      );
   });
 });

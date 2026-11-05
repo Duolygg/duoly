@@ -1,58 +1,7 @@
 {
   "project": 329587,
   "mode": "dry-run",
-  "settings": [
-    {
-      "key": "timezone",
-      "before": "UTC",
-      "after": "Europe/Vienna"
-    },
-    {
-      "key": "app_urls",
-      "before": [],
-      "after": ["https://duoly.gg"]
-    },
-    {
-      "key": "capture_dead_clicks",
-      "before": false,
-      "after": true
-    },
-    {
-      "key": "surveys_opt_in",
-      "before": null,
-      "after": true
-    },
-    {
-      "key": "test_account_filters_default_checked",
-      "before": null,
-      "after": true
-    },
-    {
-      "key": "test_account_filters",
-      "before": [
-        {
-          "key": "id",
-          "type": "cohort",
-          "value": 304906,
-          "operator": "not_in"
-        }
-      ],
-      "after": [
-        {
-          "key": "$internal_or_test_user",
-          "type": "person",
-          "operator": "is_not",
-          "value": ["true"]
-        },
-        {
-          "key": "internal",
-          "type": "event",
-          "operator": "is_not",
-          "value": ["true"]
-        }
-      ]
-    }
-  ],
+  "settings": [],
   "preserved": {
     "anonymize_ips": true,
     "cookieless_server_hash_mode": 1,
@@ -62,254 +11,254 @@
     {
       "type": "event_definitions",
       "name": "game_viewed",
-      "id": "dry-event_definitions-game_viewed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-game_viewed"
+      "id": "01a1aaeb-beb8-0000-afd4-0dab364fec49",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaeb-beb8-0000-afd4-0dab364fec49"
     },
     {
       "type": "event_definitions",
       "name": "cta_clicked",
-      "id": "dry-event_definitions-cta_clicked",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-cta_clicked"
+      "id": "01a1aaec-9824-0000-23fb-a5b66d1e405d",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-9824-0000-23fb-a5b66d1e405d"
     },
     {
       "type": "event_definitions",
       "name": "game_selected",
-      "id": "dry-event_definitions-game_selected",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-game_selected"
+      "id": "01a1aaec-9917-0000-dd0f-c6e61fad6461",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-9917-0000-dd0f-c6e61fad6461"
     },
     {
       "type": "event_definitions",
       "name": "service_selected",
-      "id": "dry-event_definitions-service_selected",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-service_selected"
+      "id": "01a1aaec-9a51-0000-af84-97117df45e45",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-9a51-0000-af84-97117df45e45"
     },
     {
       "type": "event_definitions",
       "name": "booking_option_changed",
-      "id": "dry-event_definitions-booking_option_changed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-booking_option_changed"
+      "id": "01a1aaec-9c52-0000-0da2-be2dd44ec5a1",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-9c52-0000-0da2-be2dd44ec5a1"
     },
     {
       "type": "event_definitions",
       "name": "wallet_toggled",
-      "id": "dry-event_definitions-wallet_toggled",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-wallet_toggled"
+      "id": "01a1aaec-9d54-0000-214e-db64fa3163b5",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-9d54-0000-214e-db64fa3163b5"
     },
     {
       "type": "event_definitions",
       "name": "perk_toggled",
-      "id": "dry-event_definitions-perk_toggled",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-perk_toggled"
+      "id": "01a1aaec-9e51-0000-3aff-9a2cfdfaae71",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-9e51-0000-3aff-9a2cfdfaae71"
     },
     {
       "type": "event_definitions",
       "name": "teammate_pick_changed",
-      "id": "dry-event_definitions-teammate_pick_changed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-teammate_pick_changed"
+      "id": "01a1aaec-9f31-0000-c8b4-06df04b83fff",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-9f31-0000-c8b4-06df04b83fff"
     },
     {
       "type": "event_definitions",
       "name": "checkout_login_required",
-      "id": "dry-event_definitions-checkout_login_required",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_login_required"
+      "id": "01a1aaec-a05b-0000-c53b-8dd1de33df9d",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a05b-0000-c53b-8dd1de33df9d"
     },
     {
       "type": "event_definitions",
       "name": "booking_confirm_opened",
-      "id": "dry-event_definitions-booking_confirm_opened",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-booking_confirm_opened"
+      "id": "01a1aaec-a12d-0000-08fb-f34ce9bc55c8",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a12d-0000-08fb-f34ce9bc55c8"
     },
     {
       "type": "event_definitions",
       "name": "checkout_started",
-      "id": "dry-event_definitions-checkout_started",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_started"
+      "id": "01a1aaec-a24f-0000-b6e2-333ba52b9abf",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a24f-0000-b6e2-333ba52b9abf"
     },
     {
       "type": "event_definitions",
       "name": "checkout_resumed",
-      "id": "dry-event_definitions-checkout_resumed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_resumed"
+      "id": "01a1aaec-a322-0000-6874-da4334066b5d",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a322-0000-6874-da4334066b5d"
     },
     {
       "type": "event_definitions",
       "name": "checkout_failed",
-      "id": "dry-event_definitions-checkout_failed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_failed"
+      "id": "01a1aaec-a418-0000-f88c-b194cf93a4f9",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a418-0000-f88c-b194cf93a4f9"
     },
     {
       "type": "event_definitions",
       "name": "payment_form_ready",
-      "id": "dry-event_definitions-payment_form_ready",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payment_form_ready"
+      "id": "01a1aaec-a57a-0000-a3e4-72146e083374",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a57a-0000-a3e4-72146e083374"
     },
     {
       "type": "event_definitions",
       "name": "payment_submitted",
-      "id": "dry-event_definitions-payment_submitted",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payment_submitted"
+      "id": "01a1aaec-a680-0000-5c6c-6d197c7f0142",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a680-0000-5c6c-6d197c7f0142"
     },
     {
       "type": "event_definitions",
       "name": "payment_confirm_failed",
-      "id": "dry-event_definitions-payment_confirm_failed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payment_confirm_failed"
+      "id": "01a1aaec-a748-0000-a8e5-90955193f1cb",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a748-0000-a8e5-90955193f1cb"
     },
     {
       "type": "event_definitions",
       "name": "checkout_returned",
-      "id": "dry-event_definitions-checkout_returned",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_returned"
+      "id": "01a1aaec-a835-0000-4990-7f6988ce6833",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a835-0000-4990-7f6988ce6833"
     },
     {
       "type": "event_definitions",
       "name": "checkout_abandon_detected",
-      "id": "dry-event_definitions-checkout_abandon_detected",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_abandon_detected"
+      "id": "01a1aaec-a8f3-0000-f65a-e9ab6f245b77",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a8f3-0000-f65a-e9ab6f245b77"
     },
     {
       "type": "event_definitions",
       "name": "review_confirmation_shown",
-      "id": "dry-event_definitions-review_confirmation_shown",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-review_confirmation_shown"
+      "id": "01a1aaec-a9b1-0000-6698-a42eb19df54d",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-a9b1-0000-6698-a42eb19df54d"
     },
     {
       "type": "event_definitions",
       "name": "tip_started",
-      "id": "dry-event_definitions-tip_started",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-tip_started"
+      "id": "01a1aaec-aa81-0000-dfb4-8231207c203e",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-aa81-0000-dfb4-8231207c203e"
     },
     {
       "type": "event_definitions",
       "name": "trustpilot_clicked",
-      "id": "dry-event_definitions-trustpilot_clicked",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-trustpilot_clicked"
+      "id": "01a1aaec-ab40-0000-cef6-b685ba302d24",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-ab40-0000-cef6-b685ba302d24"
     },
     {
       "type": "event_definitions",
       "name": "rebook_clicked",
-      "id": "dry-event_definitions-rebook_clicked",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-rebook_clicked"
+      "id": "01a1aaec-ac4f-0000-3648-e656609e196b",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-ac4f-0000-3648-e656609e196b"
     },
     {
       "type": "event_definitions",
       "name": "queue_room_viewed",
-      "id": "dry-event_definitions-queue_room_viewed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-queue_room_viewed"
+      "id": "01a1aaec-ad10-0000-6f52-53b4c462e464",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-ad10-0000-6f52-53b4c462e464"
     },
     {
       "type": "event_definitions",
       "name": "match_seen",
-      "id": "dry-event_definitions-match_seen",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-match_seen"
+      "id": "01a1aaec-aeae-0000-8431-5df1cdc91aa3",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-aeae-0000-8431-5df1cdc91aa3"
     },
     {
       "type": "event_definitions",
       "name": "login_started",
-      "id": "dry-event_definitions-login_started",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-login_started"
+      "id": "01a1aaec-af6b-0000-f860-ac6daf8718c3",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-af6b-0000-f860-ac6daf8718c3"
     },
     {
       "type": "event_definitions",
       "name": "pro_viewed",
-      "id": "dry-event_definitions-pro_viewed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_viewed"
+      "id": "01a1aaec-b065-0000-2ba0-4f45a21154ab",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b065-0000-2ba0-4f45a21154ab"
     },
     {
       "type": "event_definitions",
       "name": "pro_checkout_started",
-      "id": "dry-event_definitions-pro_checkout_started",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_checkout_started"
+      "id": "01a1aaec-b133-0000-fc0d-cda667e42937",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b133-0000-fc0d-cda667e42937"
     },
     {
       "type": "event_definitions",
       "name": "pro_portal_opened",
-      "id": "dry-event_definitions-pro_portal_opened",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_portal_opened"
+      "id": "01a1aaec-b1f1-0000-689a-c7f74ed5aff7",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b1f1-0000-689a-c7f74ed5aff7"
     },
     {
       "type": "event_definitions",
       "name": "support_opened",
-      "id": "dry-event_definitions-support_opened",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-support_opened"
+      "id": "01a1aaec-b2b5-0000-d4a3-475ebac174a7",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b2b5-0000-d4a3-475ebac174a7"
     },
     {
       "type": "event_definitions",
       "name": "support_message_sent",
-      "id": "dry-event_definitions-support_message_sent",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-support_message_sent"
+      "id": "01a1aaec-b381-0000-7bda-1a98703517f3",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b381-0000-7bda-1a98703517f3"
     },
     {
       "type": "event_definitions",
       "name": "creator_link_landed",
-      "id": "dry-event_definitions-creator_link_landed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-creator_link_landed"
+      "id": "01a1aaec-b47b-0000-5570-0f2bffd87a6e",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b47b-0000-5570-0f2bffd87a6e"
     },
     {
       "type": "event_definitions",
       "name": "review_submitted",
-      "id": "dry-event_definitions-review_submitted",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-review_submitted"
+      "id": "01a1aaec-b53c-0000-1a36-1d6c36cc9d86",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b53c-0000-1a36-1d6c36cc9d86"
     },
     {
       "type": "event_definitions",
       "name": "user_logged_in",
-      "id": "dry-event_definitions-user_logged_in",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-user_logged_in"
+      "id": "01a1aaec-b5fc-0000-0760-55951b1b36fa",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b5fc-0000-0760-55951b1b36fa"
     },
     {
       "type": "event_definitions",
       "name": "discord_linked",
-      "id": "dry-event_definitions-discord_linked",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-discord_linked"
+      "id": "01a1aaec-b6e8-0000-1e86-6a25de580cfd",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b6e8-0000-1e86-6a25de580cfd"
     },
     {
       "type": "event_definitions",
       "name": "discord_unlinked",
-      "id": "dry-event_definitions-discord_unlinked",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-discord_unlinked"
+      "id": "01a1aaec-b7b3-0000-f575-9e5595cc45c6",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b7b3-0000-f575-9e5595cc45c6"
     },
     {
       "type": "event_definitions",
       "name": "password_reset_requested",
-      "id": "dry-event_definitions-password_reset_requested",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-password_reset_requested"
+      "id": "01a1aaec-b895-0000-9116-eecbfdbbd91a",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b895-0000-9116-eecbfdbbd91a"
     },
     {
       "type": "event_definitions",
       "name": "teammate_applied",
-      "id": "dry-event_definitions-teammate_applied",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-teammate_applied"
+      "id": "01a1aaec-b967-0000-7398-e42449be1db5",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-b967-0000-7398-e42449be1db5"
     },
     {
       "type": "event_definitions",
       "name": "order_offer_passed",
-      "id": "dry-event_definitions-order_offer_passed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_offer_passed"
+      "id": "01a1aaec-ba29-0000-fc1d-49bf594c1be8",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-ba29-0000-fc1d-49bf594c1be8"
     },
     {
       "type": "event_definitions",
       "name": "handover_created",
-      "id": "dry-event_definitions-handover_created",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-handover_created"
+      "id": "01a1aaec-baf1-0000-7cc4-8060b2d21878",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-baf1-0000-7cc4-8060b2d21878"
     },
     {
       "type": "event_definitions",
       "name": "streaming_availability_saved",
-      "id": "dry-event_definitions-streaming_availability_saved",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-streaming_availability_saved"
+      "id": "01a1aaec-bbb4-0000-f0f1-955bd6ec802b",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-bbb4-0000-f0f1-955bd6ec802b"
     },
     {
       "type": "event_definitions",
       "name": "payout_setup_completed",
-      "id": "dry-event_definitions-payout_setup_completed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payout_setup_completed"
+      "id": "01a1aaec-bcad-0000-6985-a4ef0907ae87",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-bcad-0000-6985-a4ef0907ae87"
     },
     {
       "type": "event_definitions",
       "name": "support_handoff_requested",
-      "id": "dry-event_definitions-support_handoff_requested",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-support_handoff_requested"
+      "id": "01a1aaec-bd6e-0000-dc70-2d0b9b8d7b6c",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-bd6e-0000-dc70-2d0b9b8d7b6c"
     },
     {
       "type": "event_definitions",
@@ -320,170 +269,170 @@
     {
       "type": "event_definitions",
       "name": "order_funded",
-      "id": "dry-event_definitions-order_funded",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_funded"
+      "id": "01a1aaec-bf00-0000-58a2-9d95dc1e74bb",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-bf00-0000-58a2-9d95dc1e74bb"
     },
     {
       "type": "event_definitions",
       "name": "payment_captured",
-      "id": "dry-event_definitions-payment_captured",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payment_captured"
+      "id": "01a1aaec-bfc5-0000-fff1-807527651c9c",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-bfc5-0000-fff1-807527651c9c"
     },
     {
       "type": "event_definitions",
       "name": "authorization_voided",
-      "id": "dry-event_definitions-authorization_voided",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-authorization_voided"
+      "id": "01a1aaec-c0cb-0000-6c39-790dc674a851",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c0cb-0000-6c39-790dc674a851"
     },
     {
       "type": "event_definitions",
       "name": "order_refunded",
-      "id": "dry-event_definitions-order_refunded",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_refunded"
+      "id": "01a1aaec-c187-0000-01c3-bed5c0d2d832",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c187-0000-01c3-bed5c0d2d832"
     },
     {
       "type": "event_definitions",
       "name": "checkout_expired",
-      "id": "dry-event_definitions-checkout_expired",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_expired"
+      "id": "01a1aaec-c29a-0000-9f85-5f2f035d04d3",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c29a-0000-9f85-5f2f035d04d3"
     },
     {
       "type": "event_definitions",
       "name": "checkout_failed_server",
-      "id": "dry-event_definitions-checkout_failed_server",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_failed_server"
+      "id": "01a1aaec-c35f-0000-37c7-3aa439eee278",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c35f-0000-37c7-3aa439eee278"
     },
     {
       "type": "event_definitions",
       "name": "order_matched",
-      "id": "dry-event_definitions-order_matched",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_matched"
+      "id": "01a1aaec-c41d-0000-2ed2-fa4007a89462",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c41d-0000-2ed2-fa4007a89462"
     },
     {
       "type": "event_definitions",
       "name": "order_expired",
-      "id": "dry-event_definitions-order_expired",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_expired"
+      "id": "01a1aaec-c58a-0000-77a9-33af4c66fd29",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c58a-0000-77a9-33af4c66fd29"
     },
     {
       "type": "event_definitions",
       "name": "order_cancelled",
-      "id": "dry-event_definitions-order_cancelled",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_cancelled"
+      "id": "01a1aaec-c6f0-0000-d0e2-fb8bbf0fb5ee",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c6f0-0000-d0e2-fb8bbf0fb5ee"
     },
     {
       "type": "event_definitions",
       "name": "order_rerolled",
-      "id": "dry-event_definitions-order_rerolled",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_rerolled"
+      "id": "01a1aaec-c7cd-0000-cb1a-b89f2ca03dbc",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c7cd-0000-cb1a-b89f2ca03dbc"
     },
     {
       "type": "event_definitions",
       "name": "handover_accepted",
-      "id": "dry-event_definitions-handover_accepted",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-handover_accepted"
+      "id": "01a1aaec-c895-0000-4127-7fa5ec3d9236",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c895-0000-4127-7fa5ec3d9236"
     },
     {
       "type": "event_definitions",
       "name": "order_completed",
-      "id": "dry-event_definitions-order_completed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_completed"
+      "id": "01a1aaec-c950-0000-f717-16ea5e5778df",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-c950-0000-f717-16ea5e5778df"
     },
     {
       "type": "event_definitions",
       "name": "order_results_corrected",
-      "id": "dry-event_definitions-order_results_corrected",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_results_corrected"
+      "id": "01a1aaec-ca14-0000-46b0-acddd4d8aedb",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-ca14-0000-46b0-acddd4d8aedb"
     },
     {
       "type": "event_definitions",
       "name": "match_report_saved",
-      "id": "dry-event_definitions-match_report_saved",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-match_report_saved"
+      "id": "01a1aaec-cb27-0000-3b60-552bb2225689",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-cb27-0000-3b60-552bb2225689"
     },
     {
       "type": "event_definitions",
       "name": "desk_online_changed",
-      "id": "dry-event_definitions-desk_online_changed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-desk_online_changed"
+      "id": "01a1aaec-cc0c-0000-ab9f-b8bab7ce5942",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-cc0c-0000-ab9f-b8bab7ce5942"
     },
     {
       "type": "event_definitions",
       "name": "tip_paid",
-      "id": "dry-event_definitions-tip_paid",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-tip_paid"
+      "id": "01a1aaec-cd14-0000-5b27-e911f75b2085",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-cd14-0000-5b27-e911f75b2085"
     },
     {
       "type": "event_definitions",
       "name": "pro_trial_started",
-      "id": "dry-event_definitions-pro_trial_started",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_trial_started"
+      "id": "01a1aaec-cdd0-0000-e49f-bd7e67b57c3e",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-cdd0-0000-e49f-bd7e67b57c3e"
     },
     {
       "type": "event_definitions",
       "name": "pro_activated",
-      "id": "dry-event_definitions-pro_activated",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_activated"
+      "id": "01a1aaec-ce8f-0000-9fb1-d83da65bb0dc",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-ce8f-0000-9fb1-d83da65bb0dc"
     },
     {
       "type": "event_definitions",
       "name": "pro_paused",
-      "id": "dry-event_definitions-pro_paused",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_paused"
+      "id": "01a1aaec-cf6e-0000-dc97-b7c90079156f",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-cf6e-0000-dc97-b7c90079156f"
     },
     {
       "type": "event_definitions",
       "name": "pro_resumed",
-      "id": "dry-event_definitions-pro_resumed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_resumed"
+      "id": "01a1aaec-d353-0000-aac1-211daf24819e",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-d353-0000-aac1-211daf24819e"
     },
     {
       "type": "event_definitions",
       "name": "pro_ended",
-      "id": "dry-event_definitions-pro_ended",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_ended"
+      "id": "01a1aaec-d411-0000-20fb-33120fd8bbd9",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-d411-0000-20fb-33120fd8bbd9"
     },
     {
       "type": "event_definitions",
       "name": "pro_cancel_scheduled",
-      "id": "dry-event_definitions-pro_cancel_scheduled",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_cancel_scheduled"
+      "id": "01a1aaec-d4d0-0000-57f2-ebba8685a521",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-d4d0-0000-57f2-ebba8685a521"
     },
     {
       "type": "event_definitions",
       "name": "pro_cancel_undone",
-      "id": "dry-event_definitions-pro_cancel_undone",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_cancel_undone"
+      "id": "01a1aaec-d59d-0000-3254-25b52c86da16",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-d59d-0000-3254-25b52c86da16"
     },
     {
       "type": "event_definitions",
       "name": "pro_invoice_paid",
-      "id": "dry-event_definitions-pro_invoice_paid",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_invoice_paid"
+      "id": "01a1aaec-d695-0000-d1ee-ab1d54ef2911",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-d695-0000-d1ee-ab1d54ef2911"
     },
     {
       "type": "event_definitions",
       "name": "pro_invoice_failed",
-      "id": "dry-event_definitions-pro_invoice_failed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_invoice_failed"
+      "id": "01a1aaec-d79e-0000-98ce-e01c41213db1",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-d79e-0000-98ce-e01c41213db1"
     },
     {
       "type": "event_definitions",
       "name": "teammate_approved",
-      "id": "dry-event_definitions-teammate_approved",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-teammate_approved"
+      "id": "01a1aaec-d85e-0000-9d69-02638580d0be",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-d85e-0000-9d69-02638580d0be"
     },
     {
       "type": "event_definitions",
       "name": "payout_sent",
-      "id": "dry-event_definitions-payout_sent",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payout_sent"
+      "id": "01a1aaec-d95f-0000-6caf-b936566449a7",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-d95f-0000-6caf-b936566449a7"
     },
     {
       "type": "event_definitions",
       "name": "payout_reversed",
-      "id": "dry-event_definitions-payout_reversed",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payout_reversed"
+      "id": "01a1aaec-da26-0000-08d3-79887e7f5924",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-da26-0000-08d3-79887e7f5924"
     },
     {
       "type": "event_definitions",
@@ -500,14 +449,14 @@
     {
       "type": "event_definitions",
       "name": "$autocapture",
-      "id": "dry-event_definitions-$autocapture",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$autocapture"
+      "id": "01a1aaec-dca8-0000-31e2-08ea0ac233ba",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-dca8-0000-31e2-08ea0ac233ba"
     },
     {
       "type": "event_definitions",
       "name": "$exception",
-      "id": "dry-event_definitions-$exception",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$exception"
+      "id": "01a1aaec-ddaf-0000-264c-585454e53667",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-ddaf-0000-264c-585454e53667"
     },
     {
       "type": "event_definitions",
@@ -518,26 +467,26 @@
     {
       "type": "event_definitions",
       "name": "$rageclick",
-      "id": "dry-event_definitions-$rageclick",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$rageclick"
+      "id": "01a1aaec-df84-0000-a4de-3f5e87eb1ecc",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-df84-0000-a4de-3f5e87eb1ecc"
     },
     {
       "type": "event_definitions",
       "name": "$dead_click",
-      "id": "dry-event_definitions-$dead_click",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$dead_click"
+      "id": "01a1aaec-e048-0000-8a8c-7abcf69e2259",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-e048-0000-8a8c-7abcf69e2259"
     },
     {
       "type": "event_definitions",
       "name": "$ai_generation",
-      "id": "dry-event_definitions-$ai_generation",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$ai_generation"
+      "id": "01a1aaec-e119-0000-86b5-3830c917ebf5",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-e119-0000-86b5-3830c917ebf5"
     },
     {
       "type": "event_definitions",
       "name": "$ai_span",
-      "id": "dry-event_definitions-$ai_span",
-      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$ai_span"
+      "id": "01a1aaec-e1dd-0000-abc9-8e46d992967c",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aaec-e1dd-0000-abc9-8e46d992967c"
     },
     {
       "type": "property_definitions",
@@ -596,392 +545,428 @@
     {
       "type": "actions",
       "name": "[duoly] Funded order",
-      "id": "dry-actions-[duoly] Funded order",
-      "url": "https://eu.posthog.com/project/329587/data-management/actions/dry-actions-[duoly] Funded order"
+      "id": 181731,
+      "url": "https://eu.posthog.com/project/329587/data-management/actions/181731"
     },
     {
       "type": "cohorts",
       "name": "[duoly] Funded customers",
-      "id": "dry-cohorts-[duoly] Funded customers",
-      "url": "https://eu.posthog.com/project/329587/cohorts/dry-cohorts-[duoly] Funded customers"
+      "id": 312035,
+      "url": "https://eu.posthog.com/project/329587/cohorts/312035"
     },
     {
       "type": "cohorts",
       "name": "[duoly] Repeat customers (2+ order_funded)",
-      "id": "dry-cohorts-[duoly] Repeat customers (2+ order_funded)",
-      "url": "https://eu.posthog.com/project/329587/cohorts/dry-cohorts-[duoly] Repeat customers (2+ order_funded)"
+      "id": 312036,
+      "url": "https://eu.posthog.com/project/329587/cohorts/312036"
     },
     {
       "type": "cohorts",
       "name": "[duoly] Checkout started not funded 24h",
-      "id": "dry-cohorts-[duoly] Checkout started not funded 24h",
-      "url": "https://eu.posthog.com/project/329587/cohorts/dry-cohorts-[duoly] Checkout started not funded 24h"
+      "id": 312037,
+      "url": "https://eu.posthog.com/project/329587/cohorts/312037"
     },
     {
       "type": "cohorts",
       "name": "[duoly] Teammates",
-      "id": "dry-cohorts-[duoly] Teammates",
-      "url": "https://eu.posthog.com/project/329587/cohorts/dry-cohorts-[duoly] Teammates"
+      "id": 312038,
+      "url": "https://eu.posthog.com/project/329587/cohorts/312038"
     },
     {
       "type": "dashboards",
       "name": "[duoly] 1. North star",
-      "id": "dry-dashboards-[duoly] 1. North star",
-      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 1. North star"
+      "id": 1086532,
+      "url": "https://eu.posthog.com/project/329587/dashboard/1086532"
     },
     {
       "type": "dashboards",
       "name": "[duoly] 2. Booking funnel",
-      "id": "dry-dashboards-[duoly] 2. Booking funnel",
-      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 2. Booking funnel"
+      "id": 1086533,
+      "url": "https://eu.posthog.com/project/329587/dashboard/1086533"
     },
     {
       "type": "dashboards",
       "name": "[duoly] 3. Liquidity",
-      "id": "dry-dashboards-[duoly] 3. Liquidity",
-      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 3. Liquidity"
+      "id": 1086534,
+      "url": "https://eu.posthog.com/project/329587/dashboard/1086534"
     },
     {
       "type": "dashboards",
       "name": "[duoly] 4. Acquisition",
-      "id": "dry-dashboards-[duoly] 4. Acquisition",
-      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 4. Acquisition"
+      "id": 1086535,
+      "url": "https://eu.posthog.com/project/329587/dashboard/1086535"
     },
     {
       "type": "dashboards",
       "name": "[duoly] 5. Retention",
-      "id": "dry-dashboards-[duoly] 5. Retention",
-      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 5. Retention"
+      "id": 1086536,
+      "url": "https://eu.posthog.com/project/329587/dashboard/1086536"
     },
     {
       "type": "dashboards",
       "name": "[duoly] 6. Quality",
-      "id": "dry-dashboards-[duoly] 6. Quality",
-      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 6. Quality"
+      "id": 1086537,
+      "url": "https://eu.posthog.com/project/329587/dashboard/1086537"
     },
     {
       "type": "dashboards",
       "name": "[duoly] 7. Health",
-      "id": "dry-dashboards-[duoly] 7. Health",
-      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 7. Health"
+      "id": 1086538,
+      "url": "https://eu.posthog.com/project/329587/dashboard/1086538"
     },
     {
       "type": "dashboards",
       "name": "[duoly] 8. Sparky",
-      "id": "dry-dashboards-[duoly] 8. Sparky",
-      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 8. Sparky"
+      "id": 1086539,
+      "url": "https://eu.posthog.com/project/329587/dashboard/1086539"
     },
     {
       "type": "insights",
       "name": "[duoly] 01-funded Funded orders per week",
-      "id": "dry-insights-[duoly] 01-funded Funded orders per week",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121191,
+      "url": "https://eu.posthog.com/project/329587/insights/oCTVdLNI"
     },
     {
       "type": "insights",
       "name": "[duoly] 01-eur Funded EUR (booking value, not net revenue)",
-      "id": "dry-insights-[duoly] 01-eur Funded EUR (booking value, not net revenue)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121222,
+      "url": "https://eu.posthog.com/project/329587/insights/txpFVfQj"
     },
     {
       "type": "insights",
       "name": "[duoly] 01-repeat New vs repeat identified customers",
-      "id": "dry-insights-[duoly] 01-repeat New vs repeat identified customers",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121223,
+      "url": "https://eu.posthog.com/project/329587/insights/58JsZQ1i"
     },
     {
       "type": "insights",
       "name": "[duoly] 01-pro PRO active (observed consented state)",
-      "id": "dry-insights-[duoly] 01-pro PRO active (observed consented state)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121228,
+      "url": "https://eu.posthog.com/project/329587/insights/J8BVmKaT"
     },
     {
       "type": "insights",
       "name": "[duoly] 02-full Full booking journey (card branch)",
-      "id": "dry-insights-[duoly] 02-full Full booking journey (card branch)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121229,
+      "url": "https://eu.posthog.com/project/329587/insights/UCrkOyqP"
     },
     {
       "type": "insights",
       "name": "[duoly] 02-funding Checkout to funded (all payment methods)",
-      "id": "dry-insights-[duoly] 02-funding Checkout to funded (all payment methods)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121230,
+      "url": "https://eu.posthog.com/project/329587/insights/rxn6nsDV"
     },
     {
       "type": "insights",
       "name": "[duoly] 02-game Booking conversion by game",
-      "id": "dry-insights-[duoly] 02-game Booking conversion by game",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121231,
+      "url": "https://eu.posthog.com/project/329587/insights/vaXiR2u3"
     },
     {
       "type": "insights",
       "name": "[duoly] 02-device Booking conversion by device",
-      "id": "dry-insights-[duoly] 02-device Booking conversion by device",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121232,
+      "url": "https://eu.posthog.com/project/329587/insights/rVKC5gaX"
     },
     {
       "type": "insights",
       "name": "[duoly] 02-channel Booking conversion by channel",
-      "id": "dry-insights-[duoly] 02-channel Booking conversion by channel",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121233,
+      "url": "https://eu.posthog.com/project/329587/insights/yplHofIt"
     },
     {
       "type": "insights",
       "name": "[duoly] 02-currency Booking conversion by currency",
-      "id": "dry-insights-[duoly] 02-currency Booking conversion by currency",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121234,
+      "url": "https://eu.posthog.com/project/329587/insights/vqdRU8qk"
     },
     {
       "type": "insights",
       "name": "[duoly] 02-time Time from checkout to funding",
-      "id": "dry-insights-[duoly] 02-time Time from checkout to funding",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121235,
+      "url": "https://eu.posthog.com/project/329587/insights/far1ZXf4"
     },
     {
       "type": "insights",
       "name": "[duoly] 02-paths Paths after checkout, no funding in session",
-      "id": "dry-insights-[duoly] 02-paths Paths after checkout, no funding in session",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121236,
+      "url": "https://eu.posthog.com/project/329587/insights/AO8rEAZ2"
     },
     {
       "type": "insights",
       "name": "[duoly] 03-wait Match wait p50 and p90 seconds",
-      "id": "dry-insights-[duoly] 03-wait Match wait p50 and p90 seconds",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121259,
+      "url": "https://eu.posthog.com/project/329587/insights/UbS1bD3Y"
     },
     {
       "type": "insights",
       "name": "[duoly] 03-expiry Queue expiry share by hour and game",
-      "id": "dry-insights-[duoly] 03-expiry Queue expiry share by hour and game",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121260,
+      "url": "https://eu.posthog.com/project/329587/insights/B4N3TCpL"
     },
     {
       "type": "insights",
       "name": "[duoly] 03-online Teammates going online per hour (includes supply)",
-      "id": "dry-insights-[duoly] 03-online Teammates going online per hour (includes supply)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121261,
+      "url": "https://eu.posthog.com/project/329587/insights/ViQdn3RQ"
     },
     {
       "type": "insights",
       "name": "[duoly] 03-passes Offer passes per funded order (aggregate proxy)",
-      "id": "dry-insights-[duoly] 03-passes Offer passes per funded order (aggregate proxy)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121262,
+      "url": "https://eu.posthog.com/project/329587/insights/k7eak88S"
     },
     {
       "type": "insights",
       "name": "[duoly] 04-traffic Visitors by acquisition channel",
-      "id": "dry-insights-[duoly] 04-traffic Visitors by acquisition channel",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121264,
+      "url": "https://eu.posthog.com/project/329587/insights/YeDuqz1q"
     },
     {
       "type": "insights",
       "name": "[duoly] 04-landing Pageviews by route",
-      "id": "dry-insights-[duoly] 04-landing Pageviews by route",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121265,
+      "url": "https://eu.posthog.com/project/329587/insights/w4dKRxOw"
     },
     {
       "type": "insights",
       "name": "[duoly] 04-creators Creator link landings",
-      "id": "dry-insights-[duoly] 04-creators Creator link landings",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121266,
+      "url": "https://eu.posthog.com/project/329587/insights/pYXGDcoF"
     },
     {
       "type": "insights",
       "name": "[duoly] 04-conversion Landing route to funded conversion",
-      "id": "dry-insights-[duoly] 04-conversion Landing route to funded conversion",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121267,
+      "url": "https://eu.posthog.com/project/329587/insights/E7PRwSt2"
     },
     {
       "type": "insights",
       "name": "[duoly] 05-retention Weekly funded customer retention",
-      "id": "dry-insights-[duoly] 05-retention Weekly funded customer retention",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121268,
+      "url": "https://eu.posthog.com/project/329587/insights/9t2kMZlT"
     },
     {
       "type": "insights",
       "name": "[duoly] 05-lifecycle Weekly funded customer lifecycle",
-      "id": "dry-insights-[duoly] 05-lifecycle Weekly funded customer lifecycle",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121269,
+      "url": "https://eu.posthog.com/project/329587/insights/uk4kzs8h"
     },
     {
       "type": "insights",
       "name": "[duoly] 05-stickiness Booking stickiness (active days in 30 days)",
-      "id": "dry-insights-[duoly] 05-stickiness Booking stickiness (active days in 30 days)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121271,
+      "url": "https://eu.posthog.com/project/329587/insights/ckddyGRP"
     },
     {
       "type": "insights",
       "name": "[duoly] 06-ratings Review rating distribution",
-      "id": "dry-insights-[duoly] 06-ratings Review rating distribution",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121274,
+      "url": "https://eu.posthog.com/project/329587/insights/R6W4iTNm"
     },
     {
       "type": "insights",
       "name": "[duoly] 06-tips tips event rate (aggregate)",
-      "id": "dry-insights-[duoly] 06-tips tips event rate (aggregate)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121277,
+      "url": "https://eu.posthog.com/project/329587/insights/dhnlzDat"
     },
     {
       "type": "insights",
       "name": "[duoly] 06-trustpilot trustpilot event rate (aggregate)",
-      "id": "dry-insights-[duoly] 06-trustpilot trustpilot event rate (aggregate)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121278,
+      "url": "https://eu.posthog.com/project/329587/insights/JcU9Hz2D"
     },
     {
       "type": "insights",
       "name": "[duoly] 06-rebook rebook event rate (aggregate)",
-      "id": "dry-insights-[duoly] 06-rebook rebook event rate (aggregate)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121279,
+      "url": "https://eu.posthog.com/project/329587/insights/a3nkhXBk"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-exceptions-route Exceptions by route",
-      "id": "dry-insights-[duoly] 07-exceptions-route Exceptions by route",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121280,
+      "url": "https://eu.posthog.com/project/329587/insights/yEgvitGS"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-exceptions-release Exceptions by release",
-      "id": "dry-insights-[duoly] 07-exceptions-release Exceptions by release",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121281,
+      "url": "https://eu.posthog.com/project/329587/insights/jc3RQRTn"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-failures Checkout failures by reason",
-      "id": "dry-insights-[duoly] 07-failures Checkout failures by reason",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121282,
+      "url": "https://eu.posthog.com/project/329587/insights/VhAJnEtV"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-vitals LCP p90 by route (milliseconds)",
-      "id": "dry-insights-[duoly] 07-vitals LCP p90 by route (milliseconds)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121283,
+      "url": "https://eu.posthog.com/project/329587/insights/zwU5N3sy"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-rageclick rageclick by route",
-      "id": "dry-insights-[duoly] 07-rageclick rageclick by route",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121284,
+      "url": "https://eu.posthog.com/project/329587/insights/LaY0MfuM"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-dead_click dead_click by route",
-      "id": "dry-insights-[duoly] 07-dead_click dead_click by route",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121285,
+      "url": "https://eu.posthog.com/project/329587/insights/KsQH4bF2"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-outbox Outbox heartbeat: delivered facts per hour",
-      "id": "dry-insights-[duoly] 07-outbox Outbox heartbeat: delivered facts per hour",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121286,
+      "url": "https://eu.posthog.com/project/329587/insights/SP4F703f"
     },
     {
       "type": "insights",
       "name": "[duoly] 08-generations Sparky generations",
-      "id": "dry-insights-[duoly] 08-generations Sparky generations",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121288,
+      "url": "https://eu.posthog.com/project/329587/insights/xWEFbB8Y"
     },
     {
       "type": "insights",
       "name": "[duoly] 08-tokens Sparky actual input, output and cached tokens",
-      "id": "dry-insights-[duoly] 08-tokens Sparky actual input, output and cached tokens",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121289,
+      "url": "https://eu.posthog.com/project/329587/insights/Xr4ZcqGJ"
     },
     {
       "type": "insights",
       "name": "[duoly] 08-latency Sparky generation latency p50 and p90",
-      "id": "dry-insights-[duoly] 08-latency Sparky generation latency p50 and p90",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121290,
+      "url": "https://eu.posthog.com/project/329587/insights/WvZD88cS"
     },
     {
       "type": "insights",
       "name": "[duoly] 08-cost Sparky token-derived cost USD (PostHog model pricing)",
-      "id": "dry-insights-[duoly] 08-cost Sparky token-derived cost USD (PostHog model pricing)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121293,
+      "url": "https://eu.posthog.com/project/329587/insights/AKvq11cd"
     },
     {
       "type": "insights",
       "name": "[duoly] 08-handoff Handoff requests / generations",
-      "id": "dry-insights-[duoly] 08-handoff Handoff requests / generations",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121296,
+      "url": "https://eu.posthog.com/project/329587/insights/1CLbj6cO"
     },
     {
       "type": "insights",
-      "name": "[duoly] 08-tools Tool spans by tool and errors",
-      "id": "dry-insights-[duoly] 08-tools Tool spans by tool and errors",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "name": "[duoly] 08-tools Generations by executed tool names",
+      "id": 7121297,
+      "url": "https://eu.posthog.com/project/329587/insights/omLaMOkf"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 02-first-repeat Session funding by first vs repeat observed customer",
+      "id": 7121437,
+      "url": "https://eu.posthog.com/project/329587/insights/dmhFUqWI"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 04-web-user_signed_up Web Analytics: user_signed_up conversion goal",
+      "id": 7121438,
+      "url": "https://eu.posthog.com/project/329587/insights/VU2WJaC3"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 04-web-order_funded Web Analytics: order_funded conversion goal",
+      "id": 7121439,
+      "url": "https://eu.posthog.com/project/329587/insights/qYpbCsh8"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-vitals-inp INP p90 by route",
+      "id": 7121440,
+      "url": "https://eu.posthog.com/project/329587/insights/aF9OeQrs"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-vitals-fcp FCP p90 by route",
+      "id": 7121441,
+      "url": "https://eu.posthog.com/project/329587/insights/pRRGLxbH"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-vitals-cls CLS p90 by route",
+      "id": 7121442,
+      "url": "https://eu.posthog.com/project/329587/insights/BI3ewtMU"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-alert-checkout-spike Checkout failed spike (>5 in rolling hour)",
-      "id": "dry-insights-[duoly] 07-alert-checkout-spike Checkout failed spike (>5 in rolling hour)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121298,
+      "url": "https://eu.posthog.com/project/329587/insights/qlPRT05C"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-alert-expiry-day Order expired (>3 in rolling day)",
-      "id": "dry-insights-[duoly] 07-alert-expiry-day Order expired (>3 in rolling day)",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121300,
+      "url": "https://eu.posthog.com/project/329587/insights/aAYbQlDn"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-alert-outbox-zero Outbox delivered facts zero for 6h",
-      "id": "dry-insights-[duoly] 07-alert-outbox-zero Outbox delivered facts zero for 6h",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121301,
+      "url": "https://eu.posthog.com/project/329587/insights/ZFn4X2Db"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-alert-pageviews-zero Pageviews zero for 24h",
-      "id": "dry-insights-[duoly] 07-alert-pageviews-zero Pageviews zero for 24h",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121303,
+      "url": "https://eu.posthog.com/project/329587/insights/X1WT59kV"
     },
     {
       "type": "insights",
       "name": "[duoly] 07-alert-funding-zero Funded orders zero for 3 days",
-      "id": "dry-insights-[duoly] 07-alert-funding-zero Funded orders zero for 3 days",
-      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+      "id": 7121305,
+      "url": "https://eu.posthog.com/project/329587/insights/FMERI0UQ"
     },
     {
       "type": "surveys",
       "name": "[duoly] Survey A: booking blockers",
-      "id": "dry-surveys-[duoly] Survey A: booking blockers",
-      "url": "https://eu.posthog.com/project/329587/surveys/dry-surveys-[duoly] Survey A: booking blockers"
+      "id": "01a1aaf1-4a1e-0000-132b-c364ef6867f3",
+      "url": "https://eu.posthog.com/project/329587/surveys/01a1aaf1-4a1e-0000-132b-c364ef6867f3"
     },
     {
       "type": "surveys",
       "name": "[duoly] Survey B: book again",
-      "id": "dry-surveys-[duoly] Survey B: book again",
-      "url": "https://eu.posthog.com/project/329587/surveys/dry-surveys-[duoly] Survey B: book again"
+      "id": "01a1aaf1-4b5d-0000-2e4b-520cc309e0b0",
+      "url": "https://eu.posthog.com/project/329587/surveys/01a1aaf1-4b5d-0000-2e4b-520cc309e0b0"
     },
     {
       "type": "alerts",
       "name": "[duoly] Checkout failed spike (>5 in rolling hour)",
-      "id": "dry-alerts-[duoly] Checkout failed spike (>5 in rolling hour)",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Checkout failed spike (>5 in rolling hour)"
+      "id": "01a1aaf1-4d35-0000-8d9c-55900ff362fe",
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf1-4d35-0000-8d9c-55900ff362fe/"
     },
     {
       "type": "alerts",
       "name": "[duoly] Order expired (>3 in rolling day)",
-      "id": "dry-alerts-[duoly] Order expired (>3 in rolling day)",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Order expired (>3 in rolling day)"
+      "id": "01a1aaf2-1893-0000-3498-fff895f07325",
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf2-1893-0000-3498-fff895f07325/"
     },
     {
       "type": "alerts",
       "name": "[duoly] Outbox delivered facts zero for 6h",
-      "id": "dry-alerts-[duoly] Outbox delivered facts zero for 6h",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Outbox delivered facts zero for 6h"
+      "id": "01a1aaf2-1b77-0000-0064-af0b6e1acadd",
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf2-1b77-0000-0064-af0b6e1acadd/"
     },
     {
       "type": "alerts",
       "name": "[duoly] Pageviews zero for 24h",
-      "id": "dry-alerts-[duoly] Pageviews zero for 24h",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Pageviews zero for 24h"
+      "id": "01a1aaf2-1d1c-0000-727a-43770ead3e9e",
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf2-1d1c-0000-727a-43770ead3e9e/"
     },
     {
       "type": "alerts",
       "name": "[duoly] Funded orders zero for 3 days",
-      "id": "dry-alerts-[duoly] Funded orders zero for 3 days",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Funded orders zero for 3 days"
+      "id": "01a1aaf2-204c-0000-16f1-33c3f4fd1e3d",
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf2-204c-0000-16f1-33c3f4fd1e3d/"
     }
   ],
   "deferredProperties": [
@@ -1063,8 +1048,8 @@
   ],
   "limitations": [
     "Property definitions cannot be created by REST (no POST); missing properties are described in plan.mjs and will be updated after real ingestion. No synthetic data captured.",
-    "Web Analytics conversion goals are a per-view UI selector (customEventName/actionId), not a global REST-managed list; select user_signed_up and order_funded manually. Acquisition funding funnel exists.",
-    "Heatmap capture enabled; three in-app URL entries (/, /games/*, /pro) require UI setup. No session recording settings changed.",
+    "Both Web Analytics conversionGoal overviews are saved as native insights on Acquisition. The standalone Web Analytics UI goal selector is per-view; choose user_signed_up/order_funded there manually if needed, no global goal-list REST endpoint exists.",
+    "Heatmap URL allowlist configured through heatmap_capture/settings for /, /games/* and /pro (3-entry free cap). API reports enforcement_enabled=false; saved allowlist is verified but server enforcement rollout cannot be enabled here. No session recording settings changed.",
     "Surveys remain drafts: site config has disable_surveys:true. Survey A cannot express same-session NOT order_funded in SurveyConditionsSchema. Both single question, 100 lifetime responses each, 7-day wait; free allowance 1500 responses/month org-wide.",
     "Replay Vision monitor and Discord destinations deliberately not created; owner decides later.",
     "No real scheduler heartbeat exists: outbox source counts are an activity proxy. Six idle hours can alert even when drain is healthy.",
@@ -1072,12 +1057,23 @@
     "Personless business facts count in totals but cannot support reliable identity funnels, retention, repeat customers or PRO state. No historical subscription baseline; no exact per-order pass metric or refund deltas."
   ],
   "queryChecks": [],
+  "heatmapSettings": {
+    "capture_mode": "url_allowlist",
+    "url_allowlist": [
+      "https://duoly.gg/",
+      "https://duoly.gg/games/*",
+      "https://duoly.gg/pro"
+    ],
+    "enforcement_enabled": false,
+    "can_capture_all_urls": false,
+    "capture_url_limit": 3
+  },
   "counts": {
     "creates": 0,
     "updates": 0,
     "unchanged": 0,
     "verified": 0,
-    "plannedCreates": 141,
-    "plannedUpdates": 13
+    "plannedCreates": 0,
+    "plannedUpdates": 0
   }
 }

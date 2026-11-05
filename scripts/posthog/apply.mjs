@@ -50,7 +50,10 @@ const object = (type, row) => {
     type,
     name: row.name,
     id: row.id,
-    url: `${HOST}/project/${PROJECT}/${slug}/${type === 'insights' ? row.short_id : row.id}`,
+    url:
+      type === 'alerts'
+        ? `${HOST}${ROOT}alerts/${row.id}/`
+        : `${HOST}/project/${PROJECT}/${slug}/${type === 'insights' ? row.short_id : row.id}`,
   });
 };
 const projectPath = `/api/projects/${PROJECT}/`;
@@ -287,6 +290,9 @@ globalThis.console.log(
   JSON.stringify(
     {
       mode: report.mode,
+      plan: apply
+        ? undefined
+        : report.objects.map(({ type, name, id }) => ({ type, name, id })),
       counts: report.counts,
       settings: report.settings,
       dashboards: report.objects.filter((o) => o.type === 'dashboards'),

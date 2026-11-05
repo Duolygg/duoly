@@ -925,7 +925,7 @@
     },
     {
       "type": "insights",
-      "name": "[duoly] 08-tools Tool spans by tool and errors",
+      "name": "[duoly] 08-tools Generations by executed tool names",
       "id": 7121297,
       "url": "https://eu.posthog.com/project/329587/insights/omLaMOkf"
     },
@@ -1011,31 +1011,31 @@
       "type": "alerts",
       "name": "[duoly] Checkout failed spike (>5 in rolling hour)",
       "id": "01a1aaf1-4d35-0000-8d9c-55900ff362fe",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/01a1aaf1-4d35-0000-8d9c-55900ff362fe"
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf1-4d35-0000-8d9c-55900ff362fe/"
     },
     {
       "type": "alerts",
       "name": "[duoly] Order expired (>3 in rolling day)",
       "id": "01a1aaf2-1893-0000-3498-fff895f07325",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/01a1aaf2-1893-0000-3498-fff895f07325"
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf2-1893-0000-3498-fff895f07325/"
     },
     {
       "type": "alerts",
       "name": "[duoly] Outbox delivered facts zero for 6h",
       "id": "01a1aaf2-1b77-0000-0064-af0b6e1acadd",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/01a1aaf2-1b77-0000-0064-af0b6e1acadd"
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf2-1b77-0000-0064-af0b6e1acadd/"
     },
     {
       "type": "alerts",
       "name": "[duoly] Pageviews zero for 24h",
       "id": "01a1aaf2-1d1c-0000-727a-43770ead3e9e",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/01a1aaf2-1d1c-0000-727a-43770ead3e9e"
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf2-1d1c-0000-727a-43770ead3e9e/"
     },
     {
       "type": "alerts",
       "name": "[duoly] Funded orders zero for 3 days",
       "id": "01a1aaf2-204c-0000-16f1-33c3f4fd1e3d",
-      "url": "https://eu.posthog.com/project/329587/insights/alerts/01a1aaf2-204c-0000-16f1-33c3f4fd1e3d"
+      "url": "https://eu.posthog.com/api/environments/329587/alerts/01a1aaf2-204c-0000-16f1-33c3f4fd1e3d/"
     }
   ],
   "deferredProperties": [
