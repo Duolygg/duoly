@@ -5832,7 +5832,7 @@ export default class Home extends React.Component {
                         'Your order goes live on ' + v.region,
                         'Rank-verified teammates for ' +
                           v.game.name +
-                          ' see it right away. Matching depends on compatible teammate availability.',
+                          ' see it right away.',
                       ],
                       [
                         'You get matched and play',

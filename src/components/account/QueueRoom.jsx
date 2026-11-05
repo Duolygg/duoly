@@ -38,7 +38,7 @@ const ACCENT = '#D6BBFF',
   MUTED = '#A79DC4',
   DIM = '#8E84AB';
 const TIPS = [
-  'Matching depends on compatible teammate availability.',
+  'Keep your game open and voice ready so you can start right away.',
   'Every teammate is rank-verified and reviewed after each session.',
   'Not vibing with your teammate? Re-roll for free, twice per order.',
   'Teammates never ask for your login. If one does, report them.',
