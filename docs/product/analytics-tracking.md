@@ -4,12 +4,40 @@ Spec: `POSTHOG-SPEC.md` (owner approved 2026-11-04) in the project folder outsid
 
 Owner decisions: four PRs; personless business totals without Analytics consent; managed proxy later (direct `https://eu.i.posthog.com` until then, env change only); no replay on `/teammate`; owner and coworker accounts internal via `ANALYTICS_INTERNAL_USER_IDS`.
 
-| PR         | Branch                    | Status                         | Next action                                                                                                                                                                                                                           |
-| ---------- | ------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A1 core    | `feat/analytics-core`     | merged (#130), live 2026-11-04 | Done. Env set in Vercel production, cookieless enabled in PostHog.                                                                                                                                                                    |
-| A2 journey | `feat/analytics-journey`  | in progress                    | Core pushed. Merge in `feat/analytics-consent-sync`, `feat/analytics-privacy-markers`, `feat/analytics-events` when each is green, then apply migration `20261106100000_analytics_consent.sql`, set replay project settings, open PR. |
-| B outbox   | `feat/analytics-outbox`   | not started                    | Outbox migration, triggers, drain, server events, Sparky AI events, source maps.                                                                                                                                                      |
-| C insights | `feat/analytics-insights` | applied, pushed (no PR)        | Eight live dashboards, 51 executed insights, taxonomy, cohorts, drafts and five alerts. Runbook and full API-verified inventory: `scripts/posthog/README.md`.                                                                         |
+| Slice                  | PR   | Status                                   | Merge commit                               |
+| ---------------------- | ---- | ---------------------------------------- | ------------------------------------------ |
+| A1 core                | #130 | Merged                                   | `c85fc5091d0312f00998aec0ac7aeef1bfaf2c84` |
+| A2 journey             | #132 | Merged                                   | `76a350e29ef8a8e8fddd1b51a848c17ce6e8a897` |
+| Privacy copy           | #133 | Merged                                   | `11040f6878faf1b3269585bf64429da730e26146` |
+| B outbox/server/Sparky | #137 | Merged                                   | `c0799b0265fd98557b9f8eb8750e8eeb99652c58` |
+| C insights             | #139 | Merged                                   | `3b4f5076a7c8364d137cb77ead477024ad549b74` |
+| Source maps            | #140 | Merged; upload awaiting owner activation | `36e76f8ff88fe8f97735bf89ec3545134b74a5e3` |
+
+## Live status (2026-11-05, 09:41–09:44 UTC)
+
+Read-only site, database and EU PostHog project **329587** checks; no synthetic events or hosted configuration changes. Counts below are unfiltered ingestion checks, not dashboard business metrics. Earlier slice sections retain their historical verification scope.
+
+| Check                                          | Observed                                                                                                                                                                                                                                                                                             |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Production release                             | `/games` serves `36e76f8ff88f`, matching latest `origin/main` at verification (#140).                                                                                                                                                                                                                |
+| Public source maps                             | Three home-page `/_astro/*.js` bundles checked: all `.map` requests **404**, no `sourceMappingURL` comments. Upload/release linkage remains inactive pending credentials.                                                                                                                            |
+| Database outbox                                | Backlog **0**, oldest pending age **0 s**; only `user_signed_up`: **4 total / 4 sent / 0 parked**. PostHog contains all four across their original occurrence dates.                                                                                                                                 |
+| Drain                                          | Latest **10/10** cron runs succeeded (09:34–09:43 UTC). HTTP responses in each run's first second: **10/10 HTTP 200**, no timeouts, each reporting **0 claimed / 0 sent**.                                                                                                                           |
+| Events, preceding 24h                          | `$pageview` **69**, `$pageleave` **64**, `$web_vitals` **50**, `$identify` **3**, `$set` **2**, `user_signed_up` **1**. The signup is `source=outbox`.                                                                                                                                               |
+| Direct server / AI / exceptions, preceding 24h | `user_logged_in`, `review_submitted`, `discord_linked`, `teammate_applied`, `handover_created`: **0 each**. `$ai_generation`: **0**, average latency **N/A**. `$exception`: **0**, with `$release_id`: **0**. These paths remain unproven by natural production activity, not demonstrated failures. |
+| Privacy spot check, preceding 24h              | **0** events with `@` in `$current_url` or `$el_text`; this narrow check is not a full PII audit.                                                                                                                                                                                                    |
+| Dashboards                                     | IDs **1086532–1086539**, all `[duoly]`: North star **4**, Booking funnel **9**, Liquidity **4**, Acquisition **6**, Retention **3**, Quality **4**, Health **15**, Sparky **6** tiles (**51 total**).                                                                                                |
+| Declarative dry-run                            | `node scripts/posthog/apply.mjs`: **0 planned creates / 0 planned updates**, no settings changes.                                                                                                                                                                                                    |
+| Alerts                                         | **3 enabled** (checkout spike, queue expiry, pageviews zero), **2 paused** (funding zero, outbox zero); all five **Not firing**.                                                                                                                                                                     |
+
+## Owner follow-ups
+
+1. Create a PostHog personal API key with `error_tracking:write` + `organization:read`, scoped to project **329587**. Set Vercel production `POSTHOG_CLI_API_KEY` and `POSTHOG_CLI_PROJECT_ID=329587`, then redeploy and verify real uploads/symbolication.
+2. Launch surveys A and B from drafts when ready. Survey rendering is consent-gated (`disable_surveys: !full`); Survey A's same-session abandonment targeting remains a limitation. See `scripts/posthog/README.md`.
+3. Enable paused funded-zero and outbox-zero alerts after launch through `PAUSED_UNTIL_LAUNCH` in `scripts/posthog/plan.mjs`, then apply and read back. Outbox silence is not scheduler/backlog health.
+4. `checkout_abandon_detected` needs a server signal; not built.
+5. Replay Vision monitor and Discord destination were not created.
+6. `e.duoly.gg` managed proxy is deferred.
 
 ## A2: what it adds
 
