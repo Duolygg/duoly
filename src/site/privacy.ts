@@ -21,7 +21,7 @@ export const PRIVACY_LIVE_EDITS: [string, string, string | null][] = [
   [
     'analytics',
     'Analytics is planned and is not active yet. The following describes how it will work once enabled.',
-    null,
+    'We use GDPR compliant analytics. Nothing is tracked before you make a choice in the cookie banner, your data stays in the EU, and you can change your choice at any time.',
   ],
   [
     'analytics',

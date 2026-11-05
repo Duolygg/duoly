@@ -21,7 +21,8 @@ describe('live privacy policy', () => {
   });
   it('keeps the rest of the analytics section', () => {
     const analytics = LIVE_PRIVACY.sections.find((s) => s.id === 'analytics')!;
-    expect(analytics.blocks[0]).toMatch(
+    expect(analytics.blocks[0]).toMatch(/^We use GDPR compliant analytics\./);
+    expect(analytics.blocks[1]).toMatch(
       /^With your permission, we use \*\*PostHog/,
     );
     expect(JSON.stringify(analytics)).toContain('linked to your account ID');
