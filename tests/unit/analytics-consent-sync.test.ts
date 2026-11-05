@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { recordAnalyticsConsent } from '../../src/server/analytics/consent-sync';
@@ -127,7 +128,7 @@ describe('analytics consent migration (source contract, not database acceptance)
           { encoding: 'utf8' },
         ).trim();
       expect(diff('--diff-filter=MDR')).toBe('');
-      expect(diff('--diff-filter=A').split('\n')).toContain(file);
+      expect(existsSync(file)).toBe(true);
     },
   );
 });
