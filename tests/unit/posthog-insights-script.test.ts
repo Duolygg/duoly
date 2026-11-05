@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildPlan, BUILT_INS } from '../../scripts/posthog/plan.mjs';
+import { buildPlan } from '../../scripts/posthog/plan.mjs';
 import { ApiClient, upsert, matches } from '../../scripts/posthog/lib.mjs';
 import {
   EVENT_CATALOGUE,
@@ -13,7 +13,13 @@ describe('PostHog analysis plan', () => {
     const known = new Set([
       ...Object.keys(EVENT_CATALOGUE),
       ...Object.keys(SERVER_EVENT_CATALOGUE),
-      ...BUILT_INS,
+      '$pageview',
+      '$autocapture',
+      '$exception',
+      '$web_vitals',
+      '$rageclick',
+      '$dead_click',
+      '$ai_generation',
     ]);
     for (const insight of buildPlan().insights) {
       for (const name of insight.events)
@@ -121,6 +127,16 @@ describe('PostHog analysis plan', () => {
       ),
     ).toBe(true);
   });
+  it('finds renamed insights by their stable management key', async () => {
+    const api = new ApiClient({ key: 'unit-only' });
+    const existing = { id: 1, name: '[duoly] 08-tools Previous title' };
+    const result = await upsert(api, 'insights', [existing], {
+      name: '[duoly] 08-tools New title',
+    });
+    expect(result.id).toBe(1);
+    expect(api.counts.plannedCreates).toBe(0);
+    expect(api.counts.plannedUpdates).toBe(1);
+  });
   it('defaults to dry run and refuses duplicate stable names', async () => {
     const api = new ApiClient({
       key: 'unit-only',
@@ -142,6 +158,28 @@ describe('PostHog analysis plan', () => {
         { name: '[duoly] duplicate' },
       ),
     ).rejects.toThrow('Duplicate');
+  });
+  it('stores both Web Analytics goal views and exactly three heatmap entries', () => {
+    const plan = buildPlan();
+    expect(plan.heatmapSettings.url_allowlist).toEqual([
+      'https://duoly.gg/',
+      'https://duoly.gg/games/*',
+      'https://duoly.gg/pro',
+    ]);
+    expect(
+      plan.insights
+        .filter(
+          (i: { query: { kind: string } }) =>
+            i.query.kind === 'WebOverviewQuery',
+        )
+        .map(
+          (i: { query: { conversionGoal: { customEventName: string } } }) =>
+            i.query.conversionGoal.customEventName,
+        ),
+    ).toEqual(['user_signed_up', 'order_funded']);
+    expect(
+      plan.insights.some((i: { key: string }) => i.key === '02-first-repeat'),
+    ).toBe(true);
   });
   it('defines eight populated dashboards without exceeding the free alert cap', () => {
     const plan = buildPlan();

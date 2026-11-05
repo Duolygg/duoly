@@ -145,7 +145,7 @@ export function buildPlan() {
     1,
     '01-repeat',
     'New vs repeat identified customers',
-    `SELECT toStartOfWeek(timestamp) AS week, if(timestamp = first_at, 'new', 'repeat') AS customer_type, uniqExact(distinct_id) AS customers FROM events JOIN (SELECT distinct_id, min(timestamp) AS first_at FROM events WHERE event = 'order_funded' AND ${PUBLIC_SQL} AND ${identified} GROUP BY distinct_id) AS firsts ON events.distinct_id = firsts.distinct_id WHERE event = 'order_funded' AND timestamp >= now() - INTERVAL 90 DAY AND ${PUBLIC_SQL} AND ${identified} GROUP BY week, customer_type ORDER BY week`,
+    `SELECT toStartOfWeek(timestamp) AS week, if(timestamp = first_at, 'new', 'repeat') AS customer_type, uniqExact(events.distinct_id) AS customers FROM events JOIN (SELECT distinct_id, min(timestamp) AS first_at FROM events WHERE event = 'order_funded' AND ${PUBLIC_SQL} AND ${identified} GROUP BY distinct_id) AS firsts ON events.distinct_id = firsts.distinct_id WHERE event = 'order_funded' AND timestamp >= now() - INTERVAL 90 DAY AND ${PUBLIC_SQL} AND ${identified} GROUP BY week, customer_type ORDER BY week`,
     ['order_funded'],
     'Identified consented customers only; first means first observed since tracking began, not lifetime. A customer can appear in both weekly buckets.',
   );
@@ -243,7 +243,6 @@ export function buildPlan() {
         {
           type: 'hogql',
           key: "properties.$session_id NOT IN (SELECT properties.$session_id FROM events WHERE event = 'order_funded' AND timestamp >= now() - INTERVAL 30 DAY AND properties.$session_id IS NOT NULL)",
-          value: null,
         },
       ],
       pathsFilter: {
@@ -261,7 +260,7 @@ export function buildPlan() {
     '03-wait',
     'Match wait p50 and p90 seconds',
     [
-      event('order_matched', { math: 'p50', math_property: 'wait_seconds' }),
+      event('order_matched', { math: 'median', math_property: 'wait_seconds' }),
       event('order_matched', { math: 'p90', math_property: 'wait_seconds' }),
     ],
     {
@@ -455,7 +454,7 @@ export function buildPlan() {
     '08-latency',
     'Sparky generation latency p50 and p90',
     [
-      event('$ai_generation', { math: 'p50', math_property: '$ai_latency' }),
+      event('$ai_generation', { math: 'median', math_property: '$ai_latency' }),
       event('$ai_generation', { math: 'p90', math_property: '$ai_latency' }),
     ],
     {
@@ -497,9 +496,53 @@ export function buildPlan() {
     },
     'Aggregate event ratio, not conversation-level handoff probability.',
   );
-  t(8, '08-tools', 'Tool spans by tool and errors', ['$ai_span'], {
-    breakdownFilter: { breakdown: '$ai_span_name', breakdown_type: 'event' },
+  t(8, '08-tools', 'Generations by executed tool names', ['$ai_generation'], {
+    breakdownFilter: { breakdown: 'tool_names', breakdown_type: 'event' },
   });
+  q(
+    2,
+    '02-first-repeat',
+    'Session funding by first vs repeat observed customer',
+    `SELECT if(first_funding < checkout_at, 'repeat', 'first observed') AS customer_type, count() AS sessions_started, countIf(funded_at >= checkout_at AND funded_at <= checkout_at + INTERVAL 1 DAY) AS sessions_funded, sessions_funded / nullIf(sessions_started, 0) AS conversion_rate FROM (SELECT distinct_id, properties.$session_id AS session_id, minIf(timestamp, event = 'checkout_started') AS checkout_at, minIf(timestamp, event = 'order_funded') AS funded_at FROM events WHERE event IN ('checkout_started', 'order_funded') AND timestamp >= now() - INTERVAL 30 DAY AND ${PUBLIC_SQL} AND ${identified} GROUP BY distinct_id, session_id HAVING countIf(event = 'checkout_started') > 0 AND session_id IS NOT NULL) AS attempts LEFT JOIN (SELECT distinct_id, min(timestamp) AS first_funding FROM events WHERE event = 'order_funded' AND ${PUBLIC_SQL} AND ${identified} GROUP BY distinct_id) AS firsts ON attempts.distinct_id = firsts.distinct_id GROUP BY customer_type`,
+    ['checkout_started', 'order_funded'],
+    'Same-session funding within 24h; repeat means first observed funding predates checkout. Identified sessions only, no pre-tracking history; missing session links excluded.',
+  );
+  for (const goal of ['user_signed_up', 'order_funded'])
+    add(
+      4,
+      `04-web-${goal}`,
+      `Web Analytics: ${goal} conversion goal`,
+      {
+        kind: 'WebOverviewQuery',
+        ...base,
+        conversionGoal: { customEventName: goal },
+      },
+      ['$pageview', goal],
+      'Native Web Analytics overview with saved conversionGoal. Global Web Analytics UI selector is independent; no marketing subscription or group analytics.',
+    );
+  for (const [metric, unit] of [
+    ['INP', 'duration_ms'],
+    ['FCP', 'duration_ms'],
+    ['CLS', 'numeric'],
+  ])
+    t(
+      7,
+      `07-vitals-${metric.toLowerCase()}`,
+      `${metric} p90 by route`,
+      [
+        event('$web_vitals', {
+          math: 'p90',
+          math_property: `$web_vitals_${metric}_value`,
+        }),
+      ],
+      {
+        breakdownFilter: { breakdown: 'route', breakdown_type: 'event' },
+        trendsFilter: {
+          display: 'ActionsLineGraph',
+          aggregationAxisFormat: unit,
+        },
+      },
+    );
   const alertSpecs = [
     [
       'checkout-spike',
@@ -774,6 +817,14 @@ export function buildPlan() {
   }));
   return {
     dashboards,
+    heatmapSettings: {
+      capture_mode: 'url_allowlist',
+      url_allowlist: [
+        'https://duoly.gg/',
+        'https://duoly.gg/games/*',
+        'https://duoly.gg/pro',
+      ],
+    },
     insights,
     events,
     properties: [...props.values()],

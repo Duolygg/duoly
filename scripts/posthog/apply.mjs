@@ -78,6 +78,24 @@ report.preserved = {
   recordingSettingsUnchanged: true,
 };
 
+const heatmapPath = `${ROOT}heatmap_capture/settings/`;
+const heatmapBefore = await api.request(heatmapPath);
+if (!matches(heatmapBefore, plan.heatmapSettings)) {
+  report.settings.push({
+    key: 'heatmap_capture',
+    before: heatmapBefore,
+    after: plan.heatmapSettings,
+  });
+  if (apply)
+    await api.request(heatmapPath, {
+      method: 'PATCH',
+      body: plan.heatmapSettings,
+    });
+}
+const heatmapAfter = await api.request(heatmapPath);
+if (apply && !matches(heatmapAfter, plan.heatmapSettings))
+  throw new Error('Heatmap settings read-back mismatch');
+report.heatmapSettings = heatmapAfter;
 // Read every pagination page before deciding whether to create anything.
 const resources = {};
 for (const type of [
@@ -251,8 +269,8 @@ if (apply) {
 }
 report.limitations.push(
   'Property definitions cannot be created by REST (no POST); missing properties are described in plan.mjs and will be updated after real ingestion. No synthetic data captured.',
-  'Web Analytics conversion goals are a per-view UI selector (customEventName/actionId), not a global REST-managed list; select user_signed_up and order_funded manually. Acquisition funding funnel exists.',
-  'Heatmap capture enabled; three in-app URL entries (/, /games/*, /pro) require UI setup. No session recording settings changed.',
+  'Both Web Analytics conversionGoal overviews are saved as native insights on Acquisition. The standalone Web Analytics UI goal selector is per-view; choose user_signed_up/order_funded there manually if needed, no global goal-list REST endpoint exists.',
+  'Heatmap URL allowlist configured through heatmap_capture/settings for /, /games/* and /pro (3-entry free cap). API reports enforcement_enabled=false; saved allowlist is verified but server enforcement rollout cannot be enabled here. No session recording settings changed.',
   'Surveys remain drafts: site config has disable_surveys:true. Survey A cannot express same-session NOT order_funded in SurveyConditionsSchema. Both single question, 100 lifetime responses each, 7-day wait; free allowance 1500 responses/month org-wide.',
   'Replay Vision monitor and Discord destinations deliberately not created; owner decides later.',
   'No real scheduler heartbeat exists: outbox source counts are an activity proxy. Six idle hours can alert even when drain is healthy.',

@@ -135,10 +135,12 @@ export function matches(row, payload) {
   return Object.entries(payload).every(([key, value]) => {
     if (
       key === 'query' &&
-      row.query?.kind === 'InsightVizNode' &&
-      value.kind !== 'InsightVizNode'
+      row.query?.kind &&
+      ['InsightVizNode', 'DataVisualizationNode'].includes(row.query.kind) &&
+      !['InsightVizNode', 'DataVisualizationNode'].includes(value.kind)
     )
       return contains(row.query.source, value);
+    if (key === 'insight') return (row.insight?.id ?? row.insight) === value;
     if (key === 'tags')
       return (
         Array.isArray(row.tags) &&
@@ -169,7 +171,16 @@ export async function upsert(
 ) {
   if (!canonical && !payload.name.startsWith('[duoly]'))
     throw new Error('Missing management marker');
-  const found = rows.filter((row) => row.name === payload.name && !row.deleted);
+  const stableKey =
+    resource === 'insights'
+      ? payload.name.match(/^\[duoly\] [0-9]{2}-[a-z0-9-]+(?= )/)?.[0]
+      : null;
+  const found = rows.filter(
+    (row) =>
+      !row.deleted &&
+      (row.name === payload.name ||
+        (stableKey && row.name?.startsWith(`${stableKey} `))),
+  );
   if (found.length > 1)
     throw new Error(`Duplicate stable name: ${resource}/${payload.name}`);
   const existing = found[0];
