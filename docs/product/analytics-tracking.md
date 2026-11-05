@@ -9,7 +9,7 @@ Owner decisions: four PRs; personless business totals without Analytics consent;
 | A1 core    | `feat/analytics-core`     | merged (#130), live 2026-11-04 | Done. Env set in Vercel production, cookieless enabled in PostHog.                                                                                                                                                                    |
 | A2 journey | `feat/analytics-journey`  | in progress                    | Core pushed. Merge in `feat/analytics-consent-sync`, `feat/analytics-privacy-markers`, `feat/analytics-events` when each is green, then apply migration `20261106100000_analytics_consent.sql`, set replay project settings, open PR. |
 | B outbox   | `feat/analytics-outbox`   | not started                    | Outbox migration, triggers, drain, server events, Sparky AI events, source maps.                                                                                                                                                      |
-| C insights | `feat/analytics-insights` | not started                    | Dashboards, alerts, surveys, scanner, scripted in `scripts/posthog/`.                                                                                                                                                                 |
+| C insights | `feat/analytics-insights` | applied, pushed (no PR)        | Eight live dashboards, 51 executed insights, taxonomy, cohorts, drafts and five alerts. Runbook and full API-verified inventory: `scripts/posthog/README.md`.                                                                         |
 
 ## A2: what it adds
 

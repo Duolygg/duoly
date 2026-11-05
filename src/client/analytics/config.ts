@@ -31,6 +31,8 @@ export function featureConfig(
 ): Partial<PostHogConfig> {
   return {
     tracing_headers: full ? [...hosts] : [],
+    // Surveys need remote config, which refusers never request.
+    disable_surveys: !full,
     autocapture: full
       ? {
           dom_event_allowlist: ['click', 'change', 'submit'],
@@ -104,7 +106,6 @@ export function analyticsConfig(
         return name ? { ...request, name } : null;
       },
     },
-    disable_surveys: true,
     disable_product_tours: true,
     disable_conversations: true,
     // Remote config enables the recorder. Refusers must never request it.
