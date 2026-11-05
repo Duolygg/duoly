@@ -1,3 +1,4 @@
+import { trackRequest, serverAnalyticsEnabled } from '../analytics/client';
 import type { APIContext, APIRoute } from 'astro';
 import { z } from 'zod';
 import type { AccountContext } from '../auth/context';
@@ -601,6 +602,27 @@ export const apply: APIRoute = async (context) => {
       await sendApplicationReceived(f, application.reference).catch(
         () => undefined,
       );
+      // The application can be anonymous. Identity lookup must not affect its result.
+      let analyticsUserId: string | null = null;
+      try {
+        if (serverAnalyticsEnabled())
+          analyticsUserId = (await account.identity())?.viewer.id ?? null;
+      } catch {
+        /* best effort */
+      }
+      trackRequest(context, analyticsUserId, 'teammate_applied', {
+        game: f.game,
+        services_count: Object.values(f.svc).filter(Boolean).length,
+        hours_bucket: (
+          {
+            '5–10': 'under_10',
+            '10–20': '10_20',
+            '20–30': '20_30',
+            '30+': 'over_30',
+          } as const
+        )[f.hours],
+        has_video: !!f.video,
+      });
       return account.json({ application }, 201);
     }
     return response;

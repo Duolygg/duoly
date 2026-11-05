@@ -21,8 +21,18 @@ export const PRIVATE_SELECTORS = [
 const HIDDEN_REQUESTS =
   /\/(api\/claim|claim|auth|api\/auth|api\/support|api\/proofs|reset-password)(\/|$|\?)/;
 
-export function featureConfig(full: boolean): Partial<PostHogConfig> {
+/**
+ * With Analytics consent, our own requests carry X-POSTHOG-SESSION-ID so server events join
+ * the visitor's replay. Only first-party hosts; never Stripe, Discord or PostHog.
+ */
+export function featureConfig(
+  full: boolean,
+  hosts: readonly string[] = [],
+): Partial<PostHogConfig> {
   return {
+    tracing_headers: full ? [...hosts] : [],
+    // Surveys need remote config, which refusers never request.
+    disable_surveys: !full,
     autocapture: full
       ? {
           dom_event_allowlist: ['click', 'change', 'submit'],
@@ -76,7 +86,7 @@ export function analyticsConfig(
     // reconcile() sends the first pageview after identity is settled.
     capture_pageview: false,
     capture_pageleave: true,
-    ...featureConfig(options.full),
+    ...featureConfig(options.full, boot.hosts),
     capture_performance: { web_vitals: true, network_timing: true },
     disable_session_recording: true,
     enable_recording_console_log: false,
@@ -96,7 +106,6 @@ export function analyticsConfig(
         return name ? { ...request, name } : null;
       },
     },
-    disable_surveys: true,
     disable_product_tours: true,
     disable_conversations: true,
     // Remote config enables the recorder. Refusers must never request it.

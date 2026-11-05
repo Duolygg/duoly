@@ -250,3 +250,22 @@ describe('track bus', () => {
     expect(TRACK_EVENT).toBe('duoly:track');
   });
 });
+
+describe('surveys', () => {
+  it('load only with Analytics consent', async () => {
+    const { featureConfig } = await import('../../src/client/analytics/config');
+    expect(featureConfig(true).disable_surveys).toBe(false);
+    expect(featureConfig(false).disable_surveys).toBe(true);
+  });
+  it('answers pass for consented visitors and never for refusers', async () => {
+    const { filterEvent } = await import('../../src/client/analytics/sanitize');
+    const ev = () => ({
+      event: 'survey sent',
+      properties: { $survey_id: 'x', $survey_response: '7' },
+    });
+    const ctx = { pathname: '/', search: '', marketing: false } as never;
+    expect(filterEvent(ev(), true, ctx)?.properties.$survey_response).toBe('7');
+    expect(filterEvent(ev(), false, ctx)).toBeNull();
+    expect(filterEvent(ev(), null, ctx)).toBeNull();
+  });
+});

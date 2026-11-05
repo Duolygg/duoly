@@ -228,6 +228,10 @@ export const ACCEPTED_EVENTS: ReadonlySet<string> = new Set([
   '$$heatmap',
   '$exception',
   '$snapshot',
+  // Surveys (Analytics consent only; refusers never load them).
+  'survey shown',
+  'survey sent',
+  'survey dismissed',
 ]);
 
 /** Our own super properties, allowed on catalogue events next to SDK `$` properties. */

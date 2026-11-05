@@ -84,6 +84,50 @@ test('withdrawing consent in the banner switches to anonymous counting', async (
   expect(after[0]!.$set_once).toBeUndefined();
 });
 
+/** Fires a same-origin fetch and returns the session header the server would see. */
+async function sessionHeader(page: import('@playwright/test').Page) {
+  const seen = page.waitForRequest((r) => r.url().endsWith('/__probe'));
+  await page.route('**/__probe', (route) => route.fulfill({ body: '' }));
+  await page.evaluate(() => fetch('/__probe').catch(() => undefined));
+  return (await seen).headers()['x-posthog-session-id'];
+}
+
+test('server events join the replay only with Analytics consent', async ({
+  page,
+}) => {
+  const { events } = await capture(page);
+  await page.goto('/games');
+  await page.locator('[data-consent="necessary"]').click();
+  await expect.poll(() => events().length).toBeGreaterThan(0);
+  await page.waitForTimeout(1000);
+  expect(await sessionHeader(page)).toBeUndefined();
+
+  await page.evaluate(() => (location.hash = 'cookie-settings'));
+  await page.locator('#cookie-analytics').check();
+  await page.locator('[data-save-choices]').press('Enter');
+  await expect
+    .poll(() => sessionHeader(page), { timeout: 10_000 })
+    .toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-/);
+  // On the next page the header is the SDK's live session, the one events and replay use.
+  await page.goto('/games/valorant');
+  await expect
+    .poll(() => events().filter((e) => e.event === '$pageview').length)
+    .toBeGreaterThan(1);
+  const sid = await sessionHeader(page);
+  const pv = events()
+    .filter((e) => e.event === '$pageview')
+    .at(-1)!;
+  expect(pv.properties.$session_id).toBe(sid);
+
+  // Withdrawal: the header disappears on the same page.
+  await page.evaluate(() => (location.hash = 'cookie-settings'));
+  await page.locator('#cookie-analytics').uncheck();
+  await page.locator('[data-save-choices]').press('Enter');
+  await expect
+    .poll(() => sessionHeader(page), { timeout: 10_000 })
+    .toBeUndefined();
+});
+
 test('secret-link pages never get analytics', async ({ page }) => {
   const { requests } = await capture(page);
   await page.goto('/claim/some-secret-token');

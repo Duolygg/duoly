@@ -1,3 +1,4 @@
+import { trackRequest } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import { EmailSchema } from '../../contracts/account';
 import { PasswordSchema } from '../../contracts/password';
@@ -15,9 +16,10 @@ export const requestReset: APIRoute = async (context) => {
   const email = EmailSchema.safeParse(body.email);
   if (!email.success) return account.redirect('/reset-password?error=email');
   try {
-    await account.client.auth.resetPasswordForEmail(email.data, {
+    const result = await account.client.auth.resetPasswordForEmail(email.data, {
       redirectTo: `${account.config.origin}/auth/callback?next=reset`,
     });
+    if (!result?.error) trackRequest(context, null, 'password_reset_requested');
   } catch {
     /* Same answer either way. */
   }

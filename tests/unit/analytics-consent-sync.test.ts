@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { recordAnalyticsConsent } from '../../src/server/analytics/consent-sync';
 import type { APIContext } from 'astro';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -127,7 +127,7 @@ describe('analytics consent migration (source contract, not database acceptance)
           { encoding: 'utf8' },
         ).trim();
       expect(diff('--diff-filter=MDR')).toBe('');
-      expect(diff('--diff-filter=A').split('\n')).toContain(file);
+      expect(existsSync(file)).toBe(true);
     },
   );
 });

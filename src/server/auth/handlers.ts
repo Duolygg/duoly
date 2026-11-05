@@ -1,3 +1,4 @@
+import { trackRequest } from '../analytics/client';
 import { decodeAvatar, storeAvatar } from './avatar';
 import { afterLoginPath } from './after-login';
 import type { APIContext, APIRoute } from 'astro';
@@ -112,7 +113,8 @@ export const callback: APIRoute = async (context) => {
   )
     return account.redirect(fail);
   try {
-    const { error } = await account.client.auth.exchangeCodeForSession(code);
+    const { data, error } =
+      await account.client.auth.exchangeCodeForSession(code);
     if (error)
       return account.redirect(
         error.code === 'user_banned' && !linking
@@ -137,8 +139,14 @@ export const callback: APIRoute = async (context) => {
     // A Discord link or sign-in can change the server roles of teammates and admins (#40).
     if (identity.viewer.role !== 'customer')
       await syncRolesAfter({ users: [identity.viewer.id] });
-    if (linking) return account.redirect(`/${linking}?discord=linked`);
+    if (linking) {
+      trackRequest(context, identity.viewer.id, 'discord_linked');
+      return account.redirect(`/${linking}?discord=linked`);
+    }
     if (recovery) return account.redirect('/reset-password?step=new');
+    trackRequest(context, identity.viewer.id, 'user_logged_in', {
+      method: data?.user?.app_metadata?.provider ?? 'other',
+    });
     context.cookies.delete(account.names.csrf, account.cookieOptions);
     return account.redirect(afterLoginPath(context.cookies));
   } catch {

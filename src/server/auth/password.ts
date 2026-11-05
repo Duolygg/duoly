@@ -1,4 +1,5 @@
 import { afterLoginPath } from './after-login';
+import { trackRequest } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import { PasswordCredentialsSchema } from '../../contracts/password';
 import { mutation } from './handlers';
@@ -103,6 +104,9 @@ export const loginPassword: APIRoute = async (context) => {
       return done('/login?error=eligibility');
     }
     context.cookies.delete(account.names.csrf, account.cookieOptions);
+    trackRequest(context, identity.viewer.id, 'user_logged_in', {
+      method: 'password',
+    });
     return done(afterLoginPath(context.cookies));
   } catch {
     account.clear();

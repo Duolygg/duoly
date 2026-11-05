@@ -16,7 +16,7 @@
     "format": "prettier --write .",
     "test:unit": "vitest run",
     "test:e2e": "playwright test && playwright test --config playwright.chat.config.ts && playwright test --config playwright.completion.config.ts && playwright test --config playwright.teammate.config.ts && playwright test --config playwright.analytics.config.ts",
-    "build": "astro build",
+    "build": "astro build && node scripts/posthog-sourcemaps.mjs",
     "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm test:unit && pnpm build && pnpm test:e2e"
   },
   "dependencies": {
@@ -25,8 +25,10 @@
     "@stripe/stripe-js": "10.1.0",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.118.0",
+    "@vercel/functions": "3.10.6",
     "astro": "7.4.2",
     "posthog-js": "1.445.1",
+    "posthog-node": "5.61.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "stripe": "23.0.1",
@@ -36,6 +38,7 @@
     "@astrojs/check": "0.9.12",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.64.1",
+    "@posthog/cli": "0.19.0",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

@@ -1,3 +1,4 @@
+import { trackRequest } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import {
   ReviewInputSchema,
@@ -93,6 +94,13 @@ export const review: APIRoute = async (context) => {
       raw?.order ? { order: raw.order } : data,
       error,
     );
+    // Record only the original successful write, before the tip retry can replace result.
+    if (result.ok)
+      trackRequest(context, identity.viewer.id, 'review_submitted', {
+        rating: input.data.rating,
+        tag_count: input.data.tags.length,
+        has_tip: tipCents > 0,
+      });
     let preparedValue = raw?.tipPrepared;
     const refusal = OrderRpcErrorSchema.safeParse(data);
     if (
