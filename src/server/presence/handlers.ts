@@ -1,3 +1,5 @@
+import { trackRequest } from '../analytics/client';
+import { supportService } from '../support/store';
 import type { APIContext, APIRoute } from 'astro';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
@@ -64,6 +66,19 @@ export const teammatePresence: APIRoute = async (context) => {
       return account.json({ error: 'Authentication required.' }, 401);
     if (identity.viewer.role !== 'teammate')
       return account.json({ error: 'Teammates only.' }, 403);
+    let previousOnline: boolean | null = null;
+    if (parsed.data.action === 'set') {
+      try {
+        const prior = await supportService()
+          ?.from('teammate_presence')
+          .select('online')
+          .eq('user_id', identity.viewer.id)
+          .maybeSingle();
+        if (prior && !prior.error) previousOnline = prior.data?.online ?? false;
+      } catch {
+        /* Unknown state: do not guess a transition. */
+      }
+    }
     const result =
       parsed.data.action === 'set'
         ? await account.client.rpc('desk_set_online', {
@@ -75,6 +90,15 @@ export const teammatePresence: APIRoute = async (context) => {
               : undefined,
           });
     const response = rpcResponse(account, result.data, result.error);
+    if (
+      parsed.data.action === 'set' &&
+      response.status === 200 &&
+      previousOnline !== null &&
+      previousOnline !== parsed.data.online
+    )
+      trackRequest(context, identity.viewer.id, 'desk_online_changed', {
+        online: parsed.data.online,
+      });
     // Turning the desk on or off moves the Discord Online role right away (#40), after the
     // response so the switch doesn't wait on Discord; check-ins that went stale are picked up
     // by the sweep.

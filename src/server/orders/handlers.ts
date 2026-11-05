@@ -1,3 +1,4 @@
+import { trackRequest } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import type { AccountContext } from '../auth/context';
 import { accountContext } from '../auth/context';
@@ -81,6 +82,10 @@ function route(
         p_offset: pagination.data.offset,
       });
       const result = decodeOrderRpcResult(kind, data, error);
+      if (result.ok && kind === 'teammateHandover')
+        trackRequest(context, identity.viewer.id, 'handover_created');
+      if (result.ok && kind === 'pickedPass')
+        trackRequest(context, identity.viewer.id, 'order_offer_passed');
       return account.json(result.payload, result.status);
     } catch {
       return account.json({ error: 'Order service unavailable.' }, 503);

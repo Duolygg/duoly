@@ -94,6 +94,47 @@ export const EVENT_CATALOGUE = {
   support_message_sent: { turn_n: 'int' },
 } as const satisfies Record<string, Record<string, Kind>>;
 
+export const SERVER_EVENT_CATALOGUE = {
+  creator_link_landed: { referral_consent: 'bool' },
+  review_submitted: { rating: 'int', tag_count: 'int', has_tip: 'bool' },
+  user_logged_in: {
+    method: ['password', 'discord', 'google', 'email', 'magic_link', 'other'],
+  },
+  discord_linked: {},
+  discord_unlinked: {},
+  password_reset_requested: {},
+  teammate_applied: {
+    game: 'slug',
+    services_count: 'int',
+    hours_bucket: ['under_10', '10_20', '20_30', 'over_30'],
+    has_video: 'bool',
+  },
+  desk_online_changed: { online: 'bool' },
+  order_offer_passed: {},
+  handover_created: {},
+  match_report_saved: {},
+  streaming_availability_saved: {},
+  payout_setup_completed: {},
+  support_handoff_requested: {},
+} as const satisfies Record<string, Record<string, Kind>>;
+export type ServerEventName = keyof typeof SERVER_EVENT_CATALOGUE;
+
+export function serverCatalogueProps(
+  name: string,
+  props?: Record<string, unknown>,
+): Record<string, unknown> | null {
+  if (!Object.hasOwn(SERVER_EVENT_CATALOGUE, name)) return null;
+  const schema = SERVER_EVENT_CATALOGUE[name as ServerEventName] as Record<
+    string,
+    Kind
+  >;
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(props ?? {}))
+    if (Object.hasOwn(schema, key) && validAnalyticsValue(schema[key]!, value))
+      out[key] = value;
+  return out;
+}
+
 export type EventName = keyof typeof EVENT_CATALOGUE;
 type ValueOf<K> = K extends readonly (infer V)[]
   ? V
@@ -114,7 +155,7 @@ export function isCatalogued(name: string): name is EventName {
 
 const SLUG = /^[a-z0-9_-]{1,40}$/;
 
-function valid(kind: Kind, value: unknown): boolean {
+export function validAnalyticsValue(kind: Kind, value: unknown): boolean {
   if (kind === 'slug') return typeof value === 'string' && SLUG.test(value);
   if (kind === 'int')
     return (
@@ -135,6 +176,7 @@ export function catalogueProps(
   const schema = EVENT_CATALOGUE[name] as Record<string, Kind>;
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(props ?? {}))
-    if (key in schema && valid(schema[key]!, value)) out[key] = value;
+    if (key in schema && validAnalyticsValue(schema[key]!, value))
+      out[key] = value;
   return out;
 }
