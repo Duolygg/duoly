@@ -98,3 +98,29 @@ test('streamer sets a rate and hours, then goes live', async ({ page }) => {
     },
   ]);
 });
+
+test('online but not bookable: only says "booked" when the server says busy', async ({
+  page,
+}) => {
+  const on = {
+    ...desk,
+    streamOnline: true,
+    rateEurCents: 1500,
+    twitch: 'lea_tv',
+  };
+  await mock(page, { ...on, busy: false } as typeof desk, []);
+  await page.goto('/');
+  const panel = page.locator('[data-streaming-panel]');
+  await expect(panel).toContainText(
+    'On, but customers can’t book you right now',
+    { timeout: 10_000 },
+  );
+  await expect(panel).not.toContainText('booked or in an order');
+
+  await mock(page, { ...on, busy: true } as typeof desk, []);
+  await page.reload();
+  await expect(panel).toContainText(
+    'On, but hidden while you’re booked or in an order',
+    { timeout: 10_000 },
+  );
+});

@@ -138,9 +138,11 @@ export default class StreamingPanel extends React.Component {
     const status = data.live
       ? ['Live · customers can book you', '#5EEAA8']
       : data.streamOnline
-        ? data.deskOnline
-          ? ['On, but hidden while you’re booked or in an order', '#FFD27A']
-          : ['On, but hidden until your desk is online', '#FFD27A']
+        ? !data.deskOnline
+          ? ['On, but hidden until your desk is online', '#FFD27A']
+          : data.busy
+            ? ['On, but hidden while you’re booked or in an order', '#FFD27A']
+            : ['On, but customers can’t book you right now', '#FFD27A']
         : ['Offline for streaming', '#8E84AB'];
     const input = {
       height: '46px',
