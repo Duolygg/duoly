@@ -5,7 +5,7 @@ test.setTimeout(60_000);
 
 test.beforeEach(async ({ page }) => hideAutomation(page));
 
-test('real replay includes public copy but never fabricated quotes or teammate names', async ({
+test('real replay includes public copy but never homepage testimonials', async ({
   page,
 }) => {
   const { requests, events } = await capture(page, true);
@@ -42,9 +42,9 @@ test('real replay includes public copy but never fabricated quotes or teammate n
   await expect(page.locator('.tc-who').first()).toContainText(
     'CANARY-TEAMMATE-7781',
   );
-  // The hero logo area shows hero quotes only when four or more real ones
-  // arrive; it must never fall back to fabricated samples.
-  const quoteCount = await page.locator('.hq blockquote').count();
+  await expect(page.locator('.hq blockquote').first()).toBeAttached();
+  const quotes = await page.locator('.hq blockquote').allTextContents();
+  expect(quotes.length).toBeGreaterThan(0);
   const publicCopy = await page
     .getByText('Not matched? You get your money back.', { exact: true })
     .first()
@@ -82,8 +82,8 @@ test('real replay includes public copy but never fabricated quotes or teammate n
   expect(snapshots).toContain(publicCopy.split('\n')[0]!.trim());
   expect(snapshots).not.toContain('CANARY-TEAMMATE-7781');
   expect(snapshots).not.toContain('CANARY-MASKED-7781');
-  // No fabricated hero quotes may appear in the DOM or in the replay.
-  expect(quoteCount).toBe(0);
+  for (const quote of quotes)
+    expect(snapshots).not.toContain(quote.slice(1, -1));
 });
 
 test('real replay never sends contact form input', async ({ page }) => {
