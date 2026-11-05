@@ -28,9 +28,15 @@ for (const path of pages) {
       'index, follow',
     );
     expect(response?.headers()['x-robots-tag'] ?? '').not.toContain('noindex');
-    const text = await page.locator('article').innerText();
-    expect(text.split(/\s+/).length).toBeGreaterThan(600);
+    const text = await page.locator('article.seo-page').innerText();
+    // The application page is a short, direct pitch; the rest carry game detail.
+    expect(text.split(/\s+/).length).toBeGreaterThan(
+      path === '/get-paid-to-play-games' ? 450 : 600,
+    );
     expect(text).not.toMatch(/[—–&]|not [^.]*, but/i);
+    expect(text).not.toMatch(
+      /catalog|illustrative|at the normal price|final quote|account-specific|practis|availability/i,
+    );
     const schemas = await page
       .locator('script[type="application/ld+json"]')
       .allTextContents();
@@ -55,10 +61,20 @@ for (const path of pages) {
           eurToUsd: 1,
         },
       );
-      const rows = page.locator('tbody tr');
-      await expect(rows).toHaveCount(offers.length);
-      for (let i = 0; i < offers.length; i++)
-        await expect(rows.nth(i)).toContainText(`EUR ${offers[i]!.price}`);
+      await expect(page.locator('[data-price-minor]')).toHaveCount(
+        offers.length,
+      );
+      for (const offer of offers)
+        await expect(
+          page.locator(
+            `[data-service="${offer.id}"]${offer.rank ? `[data-rank="${offer.rank}"]` : ''}`,
+          ),
+        ).toContainText(`€${offer.price}`);
+      await expect(page.locator('a.cta').first()).toHaveAttribute(
+        'href',
+        new RegExp(`^/\\?game=${game.id}`),
+      );
+      await expect(page.locator('section.closing a.cta')).toHaveCount(1);
       const service = schemas
         .map((schema) => JSON.parse(schema))
         .find((schema) => schema['@type'] === 'Service');
@@ -99,4 +115,17 @@ test('sitemap URLs are indexable 200s; private and placeholder pages stay out', 
     '/blog/not-an-article',
   ])
     expect((await request.get(path)).status(), path).toBe(404);
+});
+
+test('a coaching CTA deep link opens the homepage on that game and service', async ({
+  page,
+}) => {
+  await page.goto('/?game=lol&service=vod#modes-h');
+  await expect(
+    page.getByRole('button', { name: /VOD Review/ }).first(),
+  ).toHaveAttribute('aria-pressed', 'true');
+  await expect(page).toHaveURL(/\/#modes-h$/);
+  await expect(
+    page.getByRole('tab', { name: /Coaching/ }).first(),
+  ).toHaveAttribute('aria-selected', 'true');
 });

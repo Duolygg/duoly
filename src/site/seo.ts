@@ -61,3 +61,13 @@ export function homeSchema(site: URL) {
     ],
   };
 }
+// Homepage booking deep link: the game preselected, plus a tab or one service, scrolled to the service picker.
+export const bookingHref = (
+  gameId: string,
+  pick: { tab?: string; service?: string } = {},
+) => {
+  const query = new URLSearchParams({ game: gameId });
+  if (pick.service) query.set('service', pick.service);
+  else if (pick.tab) query.set('tab', pick.tab);
+  return `/?${query}#modes-h`;
+};

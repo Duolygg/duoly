@@ -1,13 +1,18 @@
 ---
 import Breadcrumbs from './Breadcrumbs.astro';
+import SeoHero from './SeoHero.astro';
 import Prices from './Prices.astro';
+import Steps from './Steps.astro';
+import Topics from './Topics.astro';
 import Faq from './Faq.astro';
+import ClosingCta from './ClosingCta.astro';
+import { rich } from './rich';
 import './seo.css';
 import type { SiteGame } from '../../site/games';
 import { lessons } from '../../content/coaching';
-import type { seoOffers } from '../../server/seo/offers';
+import { priceSummary, type seoOffers } from '../../server/seo/offers';
 import { socialContent, valorantContent } from '../../content/hubs';
-import { GUIDE_PATH } from '../../site/seo';
+import { GUIDE_PATH, bookingHref } from '../../site/seo';
 interface Props {
   game: SiteGame;
   offers: ReturnType<typeof seoOffers>;
@@ -15,8 +20,9 @@ interface Props {
 const { game, offers } = Astro.props;
 const social = game.id === 'social';
 const copy = social ? socialContent : valorantContent;
-const first = [...offers].sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+const summary = priceSummary(offers);
 const lesson = lessons[game.slug];
+const book = bookingHref(game.id);
 ---
 
 <article class="seo-page">
@@ -27,76 +33,51 @@ const lesson = lessons[game.slug];
       { name: game.name, path: `/games/${game.slug}` },
     ]}
   />
-  <header class="hero">
-    <img
-      data-analytics-game={game.id}
-      src={game.img}
-      alt={`${game.name} category`}
-      width="88"
-      height="88"
-    />
-    <h1>{copy.h1}</h1>
-    <p class="lead">{copy.lead}</p>
-    <p class="price-lead">
-      From {first.currency} {first.price} per {first.unit} for {first.title}
-      {first.rank !== 'Flat price' ? ` at customer rank ${first.rank}` : ''}.
-    </p>
-    <a class="cta" href="/#games">
-      {social ? 'Book a Social session' : 'Choose a Valorant session'}
-    </a>
-    <p>
-      Select {game.name} on the homepage, then your service. Check the unit and
-      final quote before payment.
-    </p>
-  </header>
-  <section>
-    <h2>What you get</h2>
-    <p>{copy.format}</p>
+  <SeoHero
+    eyebrow={copy.eyebrow}
+    h1={copy.h1}
+    lead={copy.lead}
+    cta={{ href: book, label: copy.cta }}
+    secondary={{ href: '#prices', label: 'See prices' }}
+    art={[{ src: game.img, alt: `${game.name} category art` }]}
+    chip={summary}
+    facts={copy.facts}
+    analyticsGame={game.id}
+  />
+  <section aria-labelledby="get-h">
+    <h2 id="get-h">What you get</h2>
+    <p set:html={rich(copy.format)} />
   </section>
-  <Prices offers={offers} social={social} />
-  <section>
-    <h2>How it works</h2>
-    <ol>
-      <li>
-        Choose {game.name}, your service and the number of units on the
-        homepage.
-      </li>
-      <li>
-        Confirm your region, preferences and quote. Follow the booking steps
-        through checkout.
-      </li>
-      <li>
-        Coordinate in the order chat and join voice when agreed. Keep control of
-        your own accounts.
-      </li>
-    </ol>
+  <Prices gameId={game.id} offers={offers} />
+  <Steps heading="How it works" steps={copy.steps}>
     <p>
-      Read the <a href="/terms">payment, cancellation and refund terms</a> and
-      use <a href="/contact">Duoly support</a> for a booking issue. Catalog
-      services do not establish a live waiting time or guarantee a specific
-      teammate.
+      See the <a href="/terms">payment and refund terms</a> or{' '}
+      <a href="/contact">contact support</a> any time.
     </p>
-  </section>
-  {copy.sections.map((section) => (
-    <section>
-      <h2>{section.heading}</h2>
-      {section.paragraphs.map((paragraph) => (
-        <p>{paragraph}</p>
-      ))}
-    </section>
-  ))}
+  </Steps>
+  <Topics sections={copy.sections} label={social ? 'Social' : 'Valorant LFG'} />
   <Faq items={copy.faq} />
+  <ClosingCta
+    heading={copy.closing.heading}
+    text={copy.closing.text}
+    price={summary}
+    href={book}
+    label={copy.cta}
+    art={{ src: game.img, alt: '' }}
+  />
   <nav class="related" aria-label="Related pages">
     <h2>Related guides and sessions</h2>
-    {lesson && (
-      <a href={`/games/${game.slug}/coaching`}>
-        Valorant coaching and VOD review
+    <div class="chips">
+      {lesson && (
+        <a href={`/games/${game.slug}/coaching`}>
+          {game.name} coaching and VOD review
+        </a>
+      )}
+      <a href={GUIDE_PATH}>What is an e-girl?</a>
+      <a href={social ? '/games/valorant' : '/games/social'}>
+        {social ? 'Find Valorant teammates' : 'Friendly Social sessions'}
       </a>
-    )}
-    <a href={GUIDE_PATH}>What is an e-girl?</a>
-    <a href={social ? '/games/valorant' : '/games/social'}>
-      {social ? 'Find Valorant teammates' : 'Friendly Social sessions'}
-    </a>
-    <a href="/games">Browse games</a>
+      <a href="/games">Browse games</a>
+    </div>
   </nav>
 </article>

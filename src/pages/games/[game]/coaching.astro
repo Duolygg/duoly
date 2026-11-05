@@ -1,16 +1,27 @@
 ---
 import SiteLayout from '../../../layouts/SiteLayout.astro';
 import Breadcrumbs from '../../../components/seo/Breadcrumbs.astro';
+import SeoHero from '../../../components/seo/SeoHero.astro';
 import Prices from '../../../components/seo/Prices.astro';
+import Steps from '../../../components/seo/Steps.astro';
+import Topics from '../../../components/seo/Topics.astro';
+import Agenda from '../../../components/seo/Agenda.astro';
 import Faq from '../../../components/seo/Faq.astro';
+import ClosingCta from '../../../components/seo/ClosingCta.astro';
+import { rich } from '../../../components/seo/rich';
 import '../../../components/seo/seo.css';
 import { lessons } from '../../../content/coaching';
 import { gameBySlug } from '../../../site/games';
 import { pageViewer } from '../../../site/viewer';
 import { viewerCurrency } from '../../../server/currency';
 import { eurToUsd } from '../../../server/fx';
-import { seoOffers, serviceSchema } from '../../../server/seo/offers';
-import { serializeJsonLd, GUIDE_PATH } from '../../../site/seo';
+import {
+  coachingFacts,
+  priceSummary,
+  seoOffers,
+  serviceSchema,
+} from '../../../server/seo/offers';
+import { serializeJsonLd, GUIDE_PATH, bookingHref } from '../../../site/seo';
 const game = gameBySlug(Astro.params.game);
 const lesson = lessons[Astro.params.game ?? ''];
 if (!game || !lesson) {
@@ -27,9 +38,11 @@ if (!offers.length) {
   Astro.response.status = 404;
   return Astro.rewrite('/404');
 }
-const first = [...offers].sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+const summary = priceSummary(offers);
 const path = `/games/${game.slug}/coaching`;
-const description = `${game.name} coaching from ${first.currency} ${first.price} per ${first.unit}. Compare real training services, coach rank requirements and session plans. Prepare and book your lesson.`;
+const book = bookingHref(game.id, { tab: 'training' });
+const firstSession = offers.some((offer) => offer.id === 'learn');
+const description = `${game.name} coaching ${summary.charAt(0).toLowerCase()}${summary.slice(1)}. Compare training services, coach ranks and session plans, then prepare and book your lesson.`;
 ---
 
 <SiteLayout
@@ -48,86 +61,64 @@ const description = `${game.name} coaching from ${first.currency} ${first.price}
         { name: 'Coaching', path },
       ]}
     />
-    <header class="hero">
-      <p class="eyebrow">Learn with a plan</p>
-      <h1>{lesson.h1}</h1>
-      <p class="lead">{lesson.lead}</p>
-      <p class="price-lead">
-        From {first.currency} {first.price} per {first.unit} for {first.title}{' '}
-        at the normal price.
-      </p>
-      <a class="cta" href="/#games">
-        Choose {game.name} coaching
-      </a>
-      <p>
-        Select {game.name}, then Training on the homepage. Confirm the service
-        and session unit before checkout.
-      </p>
-    </header>
-    <section>
-      <h2>What you get</h2>
-      <p>{lesson.format}</p>
+    <SeoHero
+      eyebrow={`${game.name} coaching`}
+      h1={lesson.h1}
+      lead={lesson.lead}
+      cta={{ href: book, label: `Book ${game.name} coaching` }}
+      secondary={{ href: '#prices', label: 'See prices' }}
+      art={[{ src: game.img, alt: `${game.name} game art` }]}
+      chip={summary}
+      facts={coachingFacts(offers)}
+    />
+    <section aria-labelledby="get-h">
+      <h2 id="get-h">What you get</h2>
+      <p set:html={rich(lesson.format)} />
     </section>
-    <Prices offers={offers} />
-    <section>
-      <h2>How booking works</h2>
-      <ol>
-        <li>
-          Choose your game and training service. Check the unit, region and
-          lesson goal.
-        </li>
-        <li>
-          Review the quote and complete booking. Any first Play and Learn offer
-          is based on eligibility. Training has no automatic quantity discount.
-        </li>
-        <li>
-          Meet through the order chat and agree voice or screen sharing. You
-          play on your own account and keep control of your login.
-        </li>
-      </ol>
+    <Prices gameId={game.id} offers={offers} coach />
+    <Steps
+      heading="How booking works"
+      steps={[
+        'Pick your training service and add your goal.',
+        firstSession
+          ? 'Check out once, upfront. Your first Play and Learn session can be half price.'
+          : 'Check out once, upfront.',
+        'Meet your coach in the order chat and start on Discord, on your own account.',
+      ]}
+    >
       <p>
-        Duoly reviews teammate applications and service access. The rank
-        specifications above do not prove current availability or professional
-        esports credentials. Read the{' '}
-        <a href="/terms">payment, cancellation and refund terms</a> before
-        booking, and <a href="/contact">contact support</a> if the session scope
-        or conduct is wrong.
+        Every coach is reviewed by Duoly before taking orders. See the{' '}
+        <a href="/terms">payment and refund terms</a> or{' '}
+        <a href="/contact">contact support</a> any time.
       </p>
-    </section>
-    {lesson.sections.map((section) => (
-      <section>
-        <h2>{section.heading}</h2>
-        {section.paragraphs.map((paragraph) => (
-          <p>{paragraph}</p>
+    </Steps>
+    <Topics sections={lesson.sections} label={`${game.name} focus`} />
+    <Agenda steps={lesson.agenda} />
+    <section class="card" aria-labelledby="prep-h">
+      <h2 id="prep-h">How to prepare</h2>
+      <ul class="checklist">
+        {lesson.prepare.split(/(?<=\.)\s+/).map((tip) => (
+          <li>{tip}</li>
         ))}
-      </section>
-    ))}
-    <section>
-      <h2>A sample session agenda</h2>
-      <ol>
-        {lesson.agenda.map((step) => (
-          <li>{step}</li>
-        ))}
-      </ol>
-      <p>
-        This agenda is a suggested plan to agree with your coach, rather than a
-        promise of a fixed lesson script.
-      </p>
-    </section>
-    <section>
-      <h2>How to prepare</h2>
-      <p>{lesson.prepare}</p>
+      </ul>
     </section>
     <Faq items={lesson.faq} />
+    <ClosingCta
+      heading={`Ready for your ${game.name} lesson?`}
+      text="Pick a service, add your goal and meet your coach."
+      price={summary}
+      href={book}
+      label={`Book ${game.name} coaching`}
+      art={{ src: game.img, alt: '' }}
+    />
     <nav class="related" aria-label="Related pages">
       <h2>Keep exploring</h2>
-      <a class="cta" href="/#games">
-        Choose {game.name} coaching
-      </a>
-      <a href={`/games/${game.slug}`}>{game.name} teammate hub</a>
-      <a href="/games">All games and coaching</a>
-      <a href={GUIDE_PATH}>Playing together respectfully</a>
-      <a href="/get-paid-to-play-games">Join the Duoly team</a>
+      <div class="chips">
+        <a href={`/games/${game.slug}`}>{game.name} teammates</a>
+        <a href="/games">All games and coaching</a>
+        <a href={GUIDE_PATH}>Playing together respectfully</a>
+        <a href="/get-paid-to-play-games">Join the Duoly team</a>
+      </div>
     </nav>
   </article>
   <script

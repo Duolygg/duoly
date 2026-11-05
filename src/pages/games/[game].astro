@@ -9,7 +9,11 @@ import { lessons } from '../../content/coaching';
 import { socialContent, valorantContent } from '../../content/hubs';
 import { viewerCurrency } from '../../server/currency';
 import { eurToUsd } from '../../server/fx';
-import { seoOffers, serviceSchema } from '../../server/seo/offers';
+import {
+  priceSummary,
+  seoOffers,
+  serviceSchema,
+} from '../../server/seo/offers';
 import { serializeJsonLd } from '../../site/seo';
 const game = gameBySlug(Astro.params.game);
 if (!game) {
@@ -26,9 +30,10 @@ const offers = finished
       eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
     })
   : [];
-const first = [...offers].sort((a, b) => a.amountMinor - b.amountMinor)[0];
-const description = first
-  ? `${game.name} sessions from ${first.currency} ${first.price} per ${first.unit} for ${first.title}. Compare services, prices and booking choices. Read session rules and prepare for your booking.`
+const description = offers.length
+  ? game.id === 'social'
+    ? `Play with an e-girl on Duoly: friendly Social voice sessions with Just Chat, Watch Together, Sleep Call or Karaoke. ${priceSummary(offers)}. 18+ only.`
+    : `Find Valorant teammates: free LFG options plus paid duo sessions ${priceSummary(offers).toLowerCase()}. Compare ranked and casual prices, then book a teammate.`
   : `Explore ${game.name} booking options on Duoly. Our complete game guide is being prepared.`;
 ---
 
