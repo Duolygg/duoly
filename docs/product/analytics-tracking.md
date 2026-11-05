@@ -102,6 +102,106 @@ toolbar also copies island props into its shadow DOM and is blocked. Refusers
 still disable remote config. The fake host serves the installed lazy recorder,
 not a recorder stub; invalid payload decoding fails the test.
 
+## Outbox database layer (`feat/analytics-outbox-db`)
+
+Additive migration `20261106110000_analytics_outbox.sql` installs the private
+outbox, 14 guarded per-source trigger functions, six drain/maintenance RPCs and
+shared safe projections. No existing migration or business RPC is changed.
+Table/sequence access and callable helpers/RPCs are service-role-only; RLS has no
+browser policy. Every function is SECURITY DEFINER with an empty search path.
+Warnings contain only the source and SQLSTATE, never source rows or error text.
+Delivery-time consent/identity is **not** implemented here: internal user IDs and
+dedup keys must not be copied into provider properties.
+
+| Source                      | AFTER timing    | Events and dedup keys                                                                                                                                                                         |
+| --------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `checkout_intents`          | UPDATE          | `order_funded`: `funded:order`; `checkout_expired` / `checkout_failed_server`: `intent:status` (failed and conflict share the latter event)                                                   |
+| `order_payments`            | INSERT / UPDATE | `payment_captured`: `captured:order`; `authorization_voided` / `order_refunded`: `state:order` (order is the payment PK)                                                                      |
+| `orders`                    | UPDATE          | `order_matched`: `matched:order:assignment`; `order_expired`: `expired:order`; `order_cancelled`: `cancelled:order`; `order_rerolled`: `reroll:order:n`; `order_completed`: `completed:order` |
+| `order_handovers`           | UPDATE          | `handover_accepted`: `handover:id` on null revoked_at to accepted revocation                                                                                                                  |
+| `order_match_reports`       | UPDATE          | `order_results_corrected`: `corrected:assignment:edited_at`                                                                                                                                   |
+| `order_tips`                | UPDATE          | `tip_paid`: `tip:id` on first paid_at, not dispute recovery                                                                                                                                   |
+| `pro_subscriptions`         | INSERT / UPDATE | `pro_trial_started`, `pro_activated`, `pro_paused`, `pro_resumed`, `pro_ended`: `sub:status:last_event_at`; `pro_cancel_scheduled` / `pro_cancel_undone`: `sub:cape:boolean:last_event_at`    |
+| `pro_invoices`              | INSERT / UPDATE | `pro_invoice_paid` / `pro_invoice_failed`: `invoice:state`; zero paid amounts excluded                                                                                                        |
+| `teammate_applications`     | UPDATE          | `teammate_approved`: `app:approved`                                                                                                                                                           |
+| `payout_transfers`          | UPDATE          | `payout_sent`: `stripe:id`                                                                                                                                                                    |
+| `payout_lines`              | UPDATE          | `payout_sent`: `manual:id`, only bank/wise/paypal/other, never Stripe                                                                                                                         |
+| `creator_payouts`           | INSERT          | `payout_sent`: `creator:id`                                                                                                                                                                   |
+| `payout_transfer_reversals` | INSERT          | `payout_reversed`: `reversal:id`, including partial reversal while transfer state remains paid                                                                                                |
+| `auth.users`                | INSERT          | `user_signed_up`: `signup:user`; provider allowlist, otherwise `other`                                                                                                                        |
+
+Schema verification and deliberate semantics:
+
+- Payments/invoices/transfers/tips use `state`, not `status`; order expiry is
+  `cancelled` + `queue_expired`, never an expired order status.
+- Funding is observed only at the checkout paid/order binding, after the payment
+  insert. Free coaching retains positive list value but all three funded/card/
+  wallet cents are zero; wallet/free use `payment_state: n_a`. Stream is a
+  boolean from the intent, not a booking join that races another trigger.
+- `order_payments` has no separate payment ID: use its `order_id` primary key for
+  the spec's `state:payment`. No exact partial order-refund amount exists: the
+  event labels the full **card portion**, not a refund delta. PRO invoice amounts
+  retain actual minor units/currency, without invented EUR conversion.
+- `creators` has no auth account mapping; creator payout user_id stays null.
+  Approval account_id may also be null. Never substitute an entity ID as a user.
+- Service is only length-constrained in SQL, not an enum: project the checked-in
+  catalogue allowlist plus stream and map everything else to `unknown`.
+- PRO active from paused is resumed; initial/incomplete/trialing to active is
+  activated; past_due recovery is not a fresh activation. Ended means canceled,
+  incomplete_expired or unpaid. Initial cancel=true schedules cancellation.
+  The cancel key includes its boolean to distinguish opposite changes at equal
+  provider timestamps. Repeated same-state transitions at the exact same
+  last_event_at, or corrections with the same edited_at, can still collide;
+  neither source has an immutable occurrence revision.
+- Match report JSON is never serialized: only its array length and integer
+  wins/losses. Timing is order acceptance-to-completion, not summed active play.
+
+Claim uses SKIP LOCKED, oldest-first ordering, a two-minute lease, bounded batch
+size (0–1000, null defaults to 200), and increments attempts. Failure releases the
+lease, truncates last_error to 1000 characters and parks at ten attempts. A later
+claim also parks expired tenth leases left by crashed workers. Stats excludes
+sent/parked rows and includes in-flight leases. Acknowledgements do not mutate
+already-sent or parked rows. The RPC interface has no lease-token fencing;
+workers must finish within the lease and treat ambiguous acknowledgements as
+at-least-once delivery, not exactly-once remote processing.
+
+Reconcile idempotently covers funded, completed, expired, tip paid, signup and all
+three payout-sent rails. It uses source terminal/updated timestamps, not a global
+scan of business transitions. It cannot reconstruct arbitrary overwritten
+history (e.g. a transfer already reversed), original funding payment state after
+settlement/refund, or pre-correction completion counters. Unavailable historic
+payment state is omitted rather than invented. Use a rolling overlap (example:
+two days); replaying all history after sent-row retention can re-enqueue old
+facts because the dedup key was deleted. Cleanup deletes only sent rows after 30
+days; unsent and parked rows remain for operations. This is not an unconditional
+completeness guarantee for every transition.
+
+The migration ends with **commented owner-applied examples only**: minute
+pg_cron + pg_net drain using a dedicated analytics Bearer secret, and nightly
+reconcile/cleanup. It neither schedules jobs nor reads/writes Vault at install.
+No HTTP drain endpoint, hosted migration, secret, cron job or provider ingestion
+is enabled by this branch. `checkout_abandon_detected` remains deliberately absent.
+
+Verification (Node 24.21.0): check, lint, format:check, test:unit and build pass;
+125 unit files / 1839 tests, including seven outbox source-contract tests.
+The only existing-test edit is the explicitly approved consent migration guard
+fix: test file existence rather than requiring an already-merged migration in
+the added diff. No source TS/JSX changed, so browser E2E was not run.
+
+No native PostgreSQL, Docker or running Supabase CLI stack was available. An
+isolated PGlite PostgreSQL smoke test installed the new migration over 51 actual
+source-table CREATE/ALTER statements extracted in migration order (foreign keys
+omitted; managed auth.users represented by its consumed columns). It observed
+all 27 events across 14 triggers and exercised card/wallet/mixed/free, capture
+dedup, expiry/cancel/reroll/handover, correction counters, tip dispute recovery,
+PRO cancellation/resume and zero/failed-to-paid invoices, all payout rails,
+partial reversal, leases/parking, reconcile idempotence, retention, privileges,
+rollback and a deliberately rejected analytics insert without aborting signup.
+A canary in names/notes/IGN/report data did not reach properties. This is an
+isolated smoke check, **not** the full Supabase chain or a multi-session lock test.
+Hosted auth privileges, full composed triggers/FKs, concurrent SKIP LOCKED and
+provider delivery remain unverified; no hosted database was contacted.
+
 ## Known follow-ups
 
 - Bundle: the default `posthog-js` build adds about 120 KB gzipped to every page (module script, does not block first paint). The slim build was measured and is not smaller once web vitals are registered (128 KB gzip; extension bundles do not tree-shake), so A1 keeps the default import. Revisit only if PostHog ships tree-shakeable extensions. Evidence: `posthog-research/08-slim-bundle.md` in the project folder.
