@@ -127,6 +127,48 @@ describe('analytics outbox migration', () => {
     expect(sql).not.toMatch(/'games'\s*,\s*(?:new|r)\.games/);
   });
 
+  it('leases atomically, retries safely, parks poison rows and bounds diagnostics', () => {
+    expect(sql).toContain('for update skip locked');
+    expect(sql).toContain("interval '2 minutes'");
+    expect(sql).toContain('attempts = o.attempts + 1');
+    expect(sql).toContain('o.attempts < 10');
+    expect(sql).toContain('attempts >= 10');
+    expect(sql).toContain('claimed_until = null');
+    expect(sql).toContain('pg_catalog.left(p_error, 1000)');
+    expect(sql).toContain('order by o.occurred_at, o.id');
+    for (const name of [
+      'claim',
+      'mark_sent',
+      'mark_failed',
+      'stats',
+      'reconcile',
+      'cleanup',
+    ]) {
+      expect(sql).toContain(`create function public.analytics_outbox_${name}(`);
+    }
+  });
+
+  it('reconciles the durable source ledgers and only expires sent rows', () => {
+    const reconcile =
+      sql.match(
+        /create function public.analytics_outbox_reconcile\([\s\S]*?\$\$;/,
+      )?.[0] ?? '';
+    for (const event of [
+      'order_funded',
+      'order_completed',
+      'order_expired',
+      'tip_paid',
+      'user_signed_up',
+      'payout_sent',
+    ])
+      expect(reconcile).toContain(`'${event}'`);
+    expect(reconcile).toContain('on conflict (dedup_key) do nothing');
+    expect(reconcile).toContain('>= p_since');
+    expect(sql).toContain("sent_at < pg_catalog.now() - interval '30 days'");
+    const activeSql = sql.replace(/--[^\n]*/g, '');
+    expect(activeSql).not.toMatch(/cron\.schedule|net\.http_post|vault\./);
+  });
+
   it('does not modify existing migrations relative to main (when the ref exists)', () => {
     try {
       execFileSync('git', ['rev-parse', '--verify', 'origin/main'], {

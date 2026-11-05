@@ -377,4 +377,151 @@ revoke all on function public.analytics_on_creator_payouts() from public, anon, 
 revoke all on function public.analytics_on_payout_transfer_reversals() from public, anon, authenticated;
 revoke all on function public.analytics_on_users() from public, anon, authenticated;
 
+-- Claims are bounded and atomic. Exhausted leases are parked even if a worker died
+-- after its tenth claim without reporting a failure. Never wait on another worker.
+create function public.analytics_outbox_claim(p_limit integer) returns setof public.analytics_outbox
+language plpgsql security definer set search_path = '' as $$
+begin
+  with exhausted as (
+    select o.id from public.analytics_outbox o
+    where o.sent_at is null and o.failed_at is null and o.attempts >= 10
+      and (o.claimed_until is null or o.claimed_until <= pg_catalog.now())
+    order by o.occurred_at, o.id limit 1000 for update skip locked
+  )
+  update public.analytics_outbox o set failed_at = pg_catalog.now(), claimed_until = null,
+    last_error = coalesce(o.last_error, 'attempt_limit')
+  from exhausted e where o.id = e.id;
+
+  return query
+  with candidates as (
+    select o.id from public.analytics_outbox o
+    where o.sent_at is null and o.failed_at is null and o.attempts < 10
+      and (o.claimed_until is null or o.claimed_until <= pg_catalog.now())
+    order by o.occurred_at, o.id
+    limit least(greatest(coalesce(p_limit, 200), 0), 1000)
+    for update skip locked
+  ), claimed as (
+    update public.analytics_outbox o
+    set claimed_until = pg_catalog.now() + interval '2 minutes', attempts = o.attempts + 1
+    from candidates c where o.id = c.id returning o.*
+  ) select c.* from claimed c order by c.occurred_at, c.id;
+end;
+$$;
+
+create function public.analytics_outbox_mark_sent(p_ids bigint[]) returns void
+language sql security definer set search_path = '' as $$
+  update public.analytics_outbox set sent_at = pg_catalog.now(), claimed_until = null, last_error = null
+  where id = any(p_ids) and sent_at is null and failed_at is null and claimed_until is not null;
+$$;
+
+create function public.analytics_outbox_mark_failed(p_id bigint, p_error text) returns void
+language sql security definer set search_path = '' as $$
+  update public.analytics_outbox set claimed_until = null,
+    last_error = pg_catalog.left(p_error, 1000),
+    failed_at = case when attempts >= 10 then pg_catalog.now() else null end
+  where id = p_id and sent_at is null and failed_at is null and claimed_until is not null;
+$$;
+
+create function public.analytics_outbox_stats() returns table(backlog_count bigint, oldest_pending_age_seconds bigint)
+language sql security definer set search_path = '' as $$
+  select pg_catalog.count(*),
+    coalesce(greatest(0, extract(epoch from (pg_catalog.now() - pg_catalog.min(occurred_at)))::bigint), 0)
+  from public.analytics_outbox where sent_at is null and failed_at is null;
+$$;
+
+-- Source snapshots cannot reconstruct arbitrary past transitions. These durable
+-- facts retain their dedup keys/timestamps; use a rolling overlap, not all history
+-- after retention has removed sent keys. Corrections may change report counters;
+-- late backfills reflect currently available counters, never raw games JSON.
+create function public.analytics_outbox_reconcile(p_since timestamptz) returns bigint
+language plpgsql security definer set search_path = '' as $$
+declare v_count bigint;
+begin
+  if p_since is null then raise exception 'p_since is required'; end if;
+  insert into public.analytics_outbox(event, dedup_key, user_id, properties, occurred_at)
+  select 'order_funded', 'funded:' || i.order_id, i.customer_id,
+    public.analytics_funded_properties(i), i.updated_at
+  from public.checkout_intents i
+  where i.status = 'paid' and i.order_id is not null and i.updated_at >= p_since
+  union all
+  select 'order_completed', 'completed:' || o.id, o.customer_id,
+    public.analytics_completed_properties(o), o.completed_at
+  from public.orders o where o.status = 'completed' and o.completed_at >= p_since
+  union all
+  select 'order_expired', 'expired:' || o.id, o.customer_id,
+    pg_catalog.jsonb_build_object('wait_seconds', greatest(0, extract(epoch from (o.cancelled_at - o.queued_at))::bigint),
+      'game', o.game, 'service', public.analytics_service_slug(o.service)), o.cancelled_at
+  from public.orders o where o.status = 'cancelled' and o.cancel_reason = 'queue_expired' and o.cancelled_at >= p_since
+  union all
+  select 'tip_paid', 'tip:' || t.id, t.customer_id,
+    pg_catalog.jsonb_build_object('amount_eur_cents', t.amount_cents), t.paid_at
+  from public.order_tips t where t.paid_at is not null and t.updated_at >= p_since
+  union all
+  select 'user_signed_up', 'signup:' || u.id, u.id,
+    pg_catalog.jsonb_build_object('method', public.analytics_signup_method(u.raw_app_meta_data)), u.created_at
+  from auth.users u where u.created_at >= p_since
+  union all
+  select 'payout_sent', 'stripe:' || t.id, t.teammate_id,
+    pg_catalog.jsonb_build_object('amount_minor', t.amount_minor, 'currency', t.currency, 'rail', 'stripe'), t.updated_at
+  from public.payout_transfers t where t.state = 'paid' and t.updated_at >= p_since
+  union all
+  select 'payout_sent', 'manual:' || l.id, l.teammate_id,
+    pg_catalog.jsonb_build_object('amount_minor', l.paid_usd_cents, 'currency', 'usd', 'rail', 'manual'), l.paid_at
+  from public.payout_lines l where l.status = 'paid' and l.paid_method in ('bank','wise','paypal','other') and l.updated_at >= p_since
+  union all
+  select 'payout_sent', 'creator:' || c.id, null::uuid,
+    pg_catalog.jsonb_build_object('amount_minor', c.amount_eur_cents, 'currency', 'eur', 'rail', 'creator'), c.paid_at
+  from public.creator_payouts c where c.paid_at >= p_since
+  on conflict (dedup_key) do nothing;
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$$;
+
+create function public.analytics_outbox_cleanup() returns bigint
+language plpgsql security definer set search_path = '' as $$
+declare v_count bigint;
+begin
+  delete from public.analytics_outbox where sent_at < pg_catalog.now() - interval '30 days';
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$$;
+
+revoke all on function public.analytics_outbox_claim(integer) from public, anon, authenticated;
+revoke all on function public.analytics_outbox_mark_sent(bigint[]) from public, anon, authenticated;
+revoke all on function public.analytics_outbox_mark_failed(bigint, text) from public, anon, authenticated;
+revoke all on function public.analytics_outbox_stats() from public, anon, authenticated;
+revoke all on function public.analytics_outbox_reconcile(timestamptz) from public, anon, authenticated;
+revoke all on function public.analytics_outbox_cleanup() from public, anon, authenticated;
+grant execute on function public.analytics_outbox_claim(integer) to service_role;
+grant execute on function public.analytics_outbox_mark_sent(bigint[]) to service_role;
+grant execute on function public.analytics_outbox_mark_failed(bigint, text) to service_role;
+grant execute on function public.analytics_outbox_stats() to service_role;
+grant execute on function public.analytics_outbox_reconcile(timestamptz) to service_role;
+grant execute on function public.analytics_outbox_cleanup() to service_role;
+
 commit;
+
+-- OWNER-APPLIED EXAMPLE ONLY. No scheduling, Vault writes, or network at install.
+-- Create a separate analytics_drain_secret (>=32 characters) and configure the
+-- drain endpoint to validate its Authorization: Bearer header. Never reuse the
+-- Discord secret. Enable only after the endpoint and consent-aware delivery ship.
+-- select cron.schedule('duoly-analytics-drain', '* * * * *', $job$
+--   select net.http_post(
+--     url := 'https://duoly.gg/api/internal/analytics/drain',
+--     headers := pg_catalog.jsonb_build_object(
+--       'Content-Type', 'application/json',
+--       'Authorization', 'Bearer ' || (
+--         select decrypted_secret from vault.decrypted_secrets where name = 'analytics_drain_secret'
+--       )),
+--     body := '{}'::jsonb, timeout_milliseconds := 9000
+--   ) where (
+--     select count(*) = 1 and bool_and(pg_catalog.length(decrypted_secret) >= 32)
+--     from vault.decrypted_secrets where name = 'analytics_drain_secret'
+--   );
+-- $job$);
+-- select cron.schedule('duoly-analytics-reconcile', '10 3 * * *',
+--   $$select public.analytics_outbox_reconcile(pg_catalog.now() - interval '2 days');$$);
+-- select cron.schedule('duoly-analytics-cleanup', '20 3 * * *',
+--   $$select public.analytics_outbox_cleanup();$$);
