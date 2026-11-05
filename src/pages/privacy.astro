@@ -1,7 +1,7 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import LegalPage from '../components/site/LegalPage.jsx';
-import { PRIVACY } from '../design-reference/lib/legal';
+import { LIVE_PRIVACY } from '../site/privacy';
 import { pageViewer } from '../site/viewer';
 import { accountContext } from '../server/auth/context';
 const { viewer, csrf } = await pageViewer(Astro);
@@ -11,5 +11,5 @@ const widgetCsrf = account.config ? csrf || account.csrf() : '';
 ---
 
 <SiteLayout title="Privacy | Duoly" viewer={viewer} csrf={csrf}>
-  <LegalPage doc={PRIVACY} chrome={false} csrf={widgetCsrf} client:load />
+  <LegalPage doc={LIVE_PRIVACY} chrome={false} csrf={widgetCsrf} client:load />
 </SiteLayout>
