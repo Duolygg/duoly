@@ -100,6 +100,19 @@ describe('PostHog analysis plan', () => {
     expect(calls.filter((c) => c === 'GET')).toHaveLength(2);
     expect(objects).toHaveLength(1);
   });
+  it('accepts the API InsightVizNode wrapper without changing the native source', () => {
+    expect(
+      matches(
+        {
+          query: {
+            kind: 'InsightVizNode',
+            source: { kind: 'TrendsQuery', series: [] },
+          },
+        },
+        { query: { kind: 'TrendsQuery', series: [] } },
+      ),
+    ).toBe(true);
+  });
   it('compares tag membership independently of server sorting', () => {
     expect(
       matches(

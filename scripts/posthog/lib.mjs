@@ -133,6 +133,12 @@ export function contains(actual, expected) {
 
 export function matches(row, payload) {
   return Object.entries(payload).every(([key, value]) => {
+    if (
+      key === 'query' &&
+      row.query?.kind === 'InsightVizNode' &&
+      value.kind !== 'InsightVizNode'
+    )
+      return contains(row.query.source, value);
     if (key === 'tags')
       return (
         Array.isArray(row.tags) &&
