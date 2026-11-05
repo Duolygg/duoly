@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { track } from '../../client/analytics/track';
-import './creator-code.css';
 import { parseConsent } from '../../contracts/consent';
 
 type Result = {
@@ -29,6 +28,7 @@ export default function CreatorCode({
   const source = useRef<'typed' | 'link'>(explicit ? 'typed' : 'link');
   const check = async (value: string) => {
     const current = ++revision.current;
+    onChange(source.current === 'typed' ? value : undefined, false);
     setBusy(true);
     try {
       const response = await fetch('/api/creators/code/check', {

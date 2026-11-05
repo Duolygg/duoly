@@ -61,6 +61,13 @@ for (const source of ['typed', 'link'] as const) {
       path: `/Users/sebastianschrottenbach/.hermes/cache/scratch/creator-code/${info.project.name}-${source}.png`,
       fullPage: false,
     });
+    await dialog.getByPlaceholder('Name#TAG').fill('Dana#EUW');
+    await dialog
+      .getByRole('button', { name: /Continue to payment/ })
+      .dispatchEvent('click');
+    await expect.poll(() => bodies.length).toBe(1);
+    if (source === 'link') expect(bodies[0]).not.toHaveProperty('creatorCode');
+    else expect(bodies[0]!.creatorCode).toBe(' alpha ');
     await code.fill('UNKNOWN');
     await dialog.getByRole('button', { name: 'Apply code' }).click();
     await expect(
@@ -73,13 +80,14 @@ for (const source of ['typed', 'link'] as const) {
     await expect(dialog.getByRole('alert')).toHaveText(
       'Payment fixture reached.',
     );
-    expect(bodies[0]!.creatorCode).toBe('UNKNOWN');
+    await expect.poll(() => bodies.length).toBe(2);
+    expect(bodies[1]!.creatorCode).toBe('UNKNOWN');
     await dialog.getByRole('button', { name: 'Remove code' }).click();
     await expect(code).toHaveValue('');
     await dialog
       .getByRole('button', { name: /Continue to payment/ })
       .dispatchEvent('click');
-    await expect.poll(() => bodies.length).toBe(2);
-    expect(bodies[1]!.creatorCode).toBe('');
+    await expect.poll(() => bodies.length).toBe(3);
+    expect(bodies[2]!.creatorCode).toBe('');
   });
 }

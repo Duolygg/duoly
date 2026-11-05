@@ -4,6 +4,7 @@ import AnalyticsErrorBoundary from '../shared/AnalyticsErrorBoundary';
 import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
+import '../checkout/creator-code.css';
 import { emailAuth, signInWith } from '../../client/auth-actions';
 import type { Currency, Viewer } from '../../contracts/account';
 import type {

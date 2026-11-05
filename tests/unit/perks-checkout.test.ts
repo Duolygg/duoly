@@ -65,6 +65,11 @@ vi.mock('../../src/server/payments/config', () => {
     rpc: async (fn: string, args: Record<string, unknown>) => {
       state.adminCalls.push({ fn, args });
       if (fn === 'create_free_coaching_order') return state.freeAnswer;
+      if (fn === 'streamer_checkout_quote')
+        return {
+          data: { streamerId: SOURCE, name: 'Alpha', rateEurCents: 1500 },
+          error: null,
+        };
       if (fn === 'checkout_reserve_wallet')
         return {
           data: { wallet_eur_cents: 0, card_eur_cents: 599 },
@@ -161,6 +166,35 @@ beforeEach(() => {
 });
 
 describe('typed creator checkout', () => {
+  it('ignores typed creator codes on streamer bookings even for PRO members', async () => {
+    state.body = {
+      ...freeBody,
+      freePerk: false,
+      serviceId: 'stream',
+      streamer: SOURCE,
+      creatorCode: 'ALPHA',
+    };
+    expect((await run()).status).toBe(200);
+    expect(state.inserted).toMatchObject({
+      amount_eur_cents: 1500,
+      first_order_discount_cents: 0,
+      streamer_id: SOURCE,
+    });
+    expect(state.inserted).not.toHaveProperty('ref_code');
+    expect(state.inserted).not.toHaveProperty('pro_discount_cents');
+    expect(state.adminCalls.map((call) => call.fn)).toEqual([
+      'streamer_checkout_quote',
+    ]);
+  });
+  it('ignores typed creator codes on free coaching', async () => {
+    state.body = { ...freeBody, creatorCode: 'ALPHA' };
+    expect((await run()).status).toBe(200);
+    expect(state.inserted).toMatchObject({
+      ref_code: null,
+      first_order_discount_cents: 0,
+    });
+    expect(state.stripeCalls).toBe(0);
+  });
   it('normalizes typed input over a link and recomputes discounted money on the server', async () => {
     state.body = { ...freeBody, freePerk: false, creatorCode: ' beta ' };
     state.pro = false;
