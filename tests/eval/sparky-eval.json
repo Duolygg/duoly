@@ -509,6 +509,57 @@
       "question": "Can you check order {own_ref} for me?",
       "expect": [["sign in", "log in", "signed in", "logged in", "account"]],
       "forbid": ["{customer_a_name}", "\\bvoid", "16[.,]17"]
+    },
+    {
+      "id": "T16",
+      "asker": "teammate",
+      "topic": "desk",
+      "question": "I left my desk open all afternoon and got set offline. Why?",
+      "expect": [
+        ["4 hours", "four hours"],
+        ["activity", "inactiv", "afk"]
+      ],
+      "forbid": ["20 seconds after the dashboard closes"]
+    },
+    {
+      "id": "T17",
+      "asker": "teammate",
+      "topic": "streaming",
+      "question": "How does Twitch streaming work on Duoly?",
+      "expect": [["twitch"], ["live"], ["rate", "per hour", "hourly"]],
+      "forbid": ["not live yet", "coming (later|soon)"]
+    },
+    {
+      "id": "T18",
+      "asker": "teammate",
+      "topic": "desk",
+      "question": "Where do Gamer Girl orders get posted on Discord?",
+      "expect": [["social"], ["gamer girl"]],
+      "forbid": []
+    },
+    {
+      "id": "T19",
+      "asker": "teammate",
+      "topic": "desk",
+      "question": "An admin changed my match report. Can they do that?",
+      "expect": [["correct"], ["winrate", "reason", "audit"]],
+      "forbid": []
+    },
+    {
+      "id": "C14",
+      "asker": "customer",
+      "topic": "streaming",
+      "question": "Can I book someone who is streaming on Twitch?",
+      "expect": [["live on twitch", "twitch"], ["hour"]],
+      "forbid": ["not live yet", "coming (later|soon)"]
+    },
+    {
+      "id": "C15",
+      "asker": "customer",
+      "topic": "orders",
+      "question": "What does the mood at checkout do?",
+      "expect": [["chill", "tryhard", "teach"]],
+      "forbid": []
     }
   ]
 }

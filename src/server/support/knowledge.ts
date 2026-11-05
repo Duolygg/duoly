@@ -37,13 +37,31 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'rate',
     roles: BUYERS,
     match: /rate|rating|review|stars|feedback/,
-    text: 'After your order is done you can rate your teammate with 1 to 5 stars, pick a few tags and write a short review in your order room. You can rate each order once, and add a tip of €1 to €100 together with your rating; 100% of the tip goes to your teammate.',
+    text: 'After your order is done you can rate your teammate with 1 to 5 stars, pick a few tags and write a short review in your order room. You can rate each order once, and add a tip of €1 to €100 together with your rating; 100% of the tip goes to your teammate. After rating, the thank you panel also invites you to review Duoly on Trustpilot, whatever your rating was.',
+  },
+  {
+    id: 'twitch-book',
+    roles: BUYERS,
+    match: /twitch|stream(er|ing)?\b|live on/,
+    text: 'You can book a session with a teammate who is streaming on Twitch right now: the “Live on Twitch” section on the homepage shows who is live and bookable, with their hourly rate, games, rating and Twitch link (it only shows while someone is live). Press Book, pick the game, how many hours, your server, in-game name and voice, and pay through the normal checkout; the total is their rate times the hours, and your Duoly balance is used first. PRO and creator discounts don’t apply to streamer bookings. The order goes only to that streamer: if they don’t accept within 5 minutes it is cancelled and nothing is charged. A streamer booking can’t be re-rolled.',
+  },
+  {
+    id: 'mood',
+    roles: BUYERS,
+    match: /\bmood\b|chill|tryhard|teach me|vibe/,
+    text: 'At checkout you can pick how the session should feel: Chill (relaxed games, zero pressure), Tryhard (comms on, play to win), Teach me (they explain the why and drop tips) or Just for fun (banter, memes and off-meta picks). It’s optional, your teammate sees it before accepting, and it isn’t offered for Social sessions.',
+  },
+  {
+    id: 'cookies',
+    roles: BUYERS,
+    match: /cookie|tracking|analytics|privacy|consent|gdpr|dsgvo/,
+    text: 'On your first visit the cookie banner lets you choose: only necessary cookies, or also analytics, marketing and creator referral cookies, each on its own. Analytics only runs if you allow it. You can change your choice anytime under “Cookie settings” in the footer; the privacy page explains every cookie.',
   },
   {
     id: 'apply',
     roles: ALL,
     match: /become|apply|work for|join (the )?team|be a teammate|hiring/,
-    text: 'Apply on the “Become a teammate” page (/apply) with your rank and games. Admins review every application and reach out on Discord.',
+    text: 'Apply on the “Become a teammate” page (/apply) with your rank, region and games, and a YouTube link to a short intro video (required). The page shows the minimum rank for each game and what teammates earn: 60% of each order. Admins review every application and reach out on Discord.',
   },
   {
     id: 'chat-rules',
@@ -80,17 +98,36 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
   },
   // ---- teammates
   {
+    id: 'twitch-stream',
+    roles: TEAM,
+    match: /twitch|stream(er|ing)?\b/,
+    text: 'Twitch streaming lets customers book you while you stream. Admins switch it on per game, only for games you’re already approved for; your dashboard then shows a Twitch streaming panel. Set your hourly rate (€9.99 to €100; you keep 60%, like every order), which lengths from 1 to 10 hours you offer, and your Twitch username, which is required. Go online for streaming from the panel: we check with Twitch that your channel is live, and while your stream is off you drop off the list on your own and come back once you’re live again. You also need your dashboard online, a connected Discord and an account that isn’t suspended. You take one booking at a time and are hidden while you play, while a booking waits for you or while someone is paying for you. A booking goes only to you, never to Discord or other teammates; accept within 5 minutes or it is cancelled and refunded.',
+  },
+  {
+    id: 'match-reports',
+    roles: TEAM,
+    match: /match report|win.?loss|winrate|\bwins?\b|\blosses\b|\bign\b/,
+    text: 'On win/loss orders you report the wins and losses with each game’s in-game names and match link when you finish. Your winrate from these reports is the biggest factor in the performance ranking. Admins check reports: if a result or a screenshot is wrong, they correct it with a reason, it is noted in the audit log and your winrate follows the corrected numbers. Wrong or fake reports are treated like fake proof.',
+  },
+  {
+    id: 'suspended',
+    roles: TEAM,
+    match: /suspend|banned|locked|logged out|kicked/,
+    text: 'A suspended account is locked: you are logged out, can’t sign in or go online, and can’t take orders. An admin can’t suspend you in the middle of an order. Ask an admin if you think it’s a mistake.',
+  },
+  {
     id: 'online',
     roles: TEAM,
-    match: /online|offline|toggle|cant go|cannot go|wont go|switch on/,
-    text: 'To go online you need a connected Discord, at least one approved game and an account that isn’t suspended. Flip the Online switch on your dashboard and keep the tab open: if the dashboard closes, you go offline after about 20 seconds. Only go online when you’re ready to play right away. An admin can set you offline, but never while you’re playing an order.',
+    match:
+      /online|offline|toggle|cant go|cannot go|wont go|switch on|\bafk\b|inactiv|4 hours|still there/,
+    text: 'To go online you need a connected Discord, at least one approved game and an account that isn’t suspended. Flip the Online switch on your dashboard. You stay online on every Duoly page, also in background tabs, so you can browse the site; closing every Duoly tab sets you offline after about 20 seconds. After 4 hours without any activity (clicking, typing, scrolling or moving the mouse on a Duoly page) you’re set offline automatically, never while you play an order or a streaming booking waits for you. 5 minutes before, a “Still there?” notification and a banner on your dashboard warn you; any click keeps you online. Only go online when you’re ready to play right away. An admin can set you offline, but never while you’re playing an order.',
   },
   {
     id: 'no-orders',
     roles: TEAM,
     match:
       /no orders|not getting|dont get|never get|why.*orders|see orders|notification|sound|ring|bell/,
-    text: 'You get orders for the games you’re approved for, and Gamer Girl orders only if you’re approved for those. Allow browser notifications so the bell and popup reach you while you’re online. New orders don’t reach everyone at the same moment: teammates who take what they’re online for, finish orders and get good reviews see them first. Once an order shows up for you, the first to accept gets it.',
+    text: 'You get orders for the games you’re approved for, and Gamer Girl orders only if you’re approved for those. Allow browser notifications: while you’re online they reach you on every Duoly page (the bell sound plays only on your dashboard), once per order, and clicking one opens your dashboard. New orders don’t reach everyone at the same moment: teammates who take what they’re online for, finish orders and get good reviews see them first. Once an order shows up for you, the first to accept gets it. Before accepting you also see the session mood the customer picked, if any (Chill, Tryhard, Teach me or Just for fun).',
   },
   {
     id: 'duo-tiers',
@@ -133,7 +170,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'discord',
     roles: TEAM,
     match: /discord|role|in session/,
-    text: 'Connect Discord from your dashboard; it is required to go online. Once you connected Discord and joined the Duoly server, the roles Teammate, Online and In Session are synced automatically. New orders are posted in each game’s general channel, and the Take this order button there gives you a handover link for that order.',
+    text: 'Connect Discord from your dashboard; it is required to go online, and once connected it can’t be disconnected. Once you connected Discord and joined the Duoly server, the roles Teammate, Online and In Session are synced automatically. If the Teammate role is taken away on Discord, your account is suspended (after any order you’re playing). An order nobody took after 100 seconds is posted in that game’s general channel; Social and Gamer Girl orders are posted in the general chat of the Social / Gamer Girl section instead. The Take this order button there gives you a handover link for that order.',
   },
   {
     id: 'rules',

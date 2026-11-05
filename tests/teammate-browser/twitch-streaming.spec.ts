@@ -8,7 +8,6 @@ const desk = {
   streamOnline: false,
   live: false,
   deskOnline: true,
-  twitchLive: false,
   rateEurCents: null as number | null,
   durations: [1, 2],
   twitch: null as string | null,
@@ -31,7 +30,6 @@ async function mock(
           ...streaming!,
           streamOnline: body.online,
           live: body.online,
-          twitchLive: body.online,
           rateEurCents: body.rateEurCents,
           durations: body.durations,
           twitch: body.twitch || null,
@@ -99,4 +97,30 @@ test('streamer sets a rate and hours, then goes live', async ({ page }) => {
       twitch: 'lea_tv',
     },
   ]);
+});
+
+test('online but not bookable: only says "booked" when the server says busy', async ({
+  page,
+}) => {
+  const on = {
+    ...desk,
+    streamOnline: true,
+    rateEurCents: 1500,
+    twitch: 'lea_tv',
+  };
+  await mock(page, { ...on, busy: false } as typeof desk, []);
+  await page.goto('/');
+  const panel = page.locator('[data-streaming-panel]');
+  await expect(panel).toContainText(
+    'On, but customers can’t book you right now',
+    { timeout: 10_000 },
+  );
+  await expect(panel).not.toContainText('booked or in an order');
+
+  await mock(page, { ...on, busy: true } as typeof desk, []);
+  await page.reload();
+  await expect(panel).toContainText(
+    'On, but hidden while you’re booked or in an order',
+    { timeout: 10_000 },
+  );
 });

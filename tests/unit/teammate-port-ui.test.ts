@@ -526,3 +526,32 @@ it('shows only the offline card after going offline, never the online empty stat
   expect(v.showFeed).toBe(false);
   expect(v.notice).toBe('');
 });
+it('starts online when the page was rendered with online presence (no "Offline" flash)', () => {
+  const props = {
+    csrf: 'token',
+    discordLinked: true,
+    user: { name: 'Fabian' },
+    chatEnabled: true,
+    access: { games: ['lol'], gg: false },
+  };
+  const since = Date.now() - 60_000;
+  const on = new Teammate({
+    ...props,
+    presence: { online: true, onlineSince: since },
+  });
+  expect(on.state.online).toBe(true);
+  expect(on.state.onlineSince).toBe(since);
+  expect(new Teammate(props).state.online).toBe(false);
+  expect(
+    new Teammate({ ...props, presence: { online: false, onlineSince: null } })
+      .state.online,
+  ).toBe(false);
+  // without Discord the desk is locked; presence from the page doesn't apply
+  expect(
+    new Teammate({
+      ...props,
+      discordLinked: false,
+      presence: { online: true, onlineSince: since },
+    }).state.online,
+  ).toBe(false);
+});

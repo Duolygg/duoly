@@ -28,6 +28,8 @@ import {
   typingDeadline,
   isNearBottom,
 } from './emoji';
+import { isDiscordInvite } from '../../site/nav';
+import DiscordInvite from './DiscordInvite';
 import './chat.css';
 
 export type { ChatRoom } from '../../contracts/chat';
@@ -72,7 +74,11 @@ export function ChatTranscript({
     <>
       {room.messages.map((message, index) => {
         if (message.kind === 'system')
-          return (
+          return isDiscordInvite(message.body) ? (
+            <div className="oc-system" key={message.id}>
+              <DiscordInvite />
+            </div>
+          ) : (
             <div className="oc-system" key={message.id}>
               {message.body}
             </div>

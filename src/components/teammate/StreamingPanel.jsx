@@ -12,10 +12,10 @@ import {
 /**
  * Twitch streaming on the teammate desk (migration 20261105100000_twitch_streaming.sql).
  * Only shown to teammates an admin gave streaming games. They set an hourly rate, the hours
- * customers can book and their Twitch username (required), then go online for streaming. The
- * server checks with Twitch that the channel is live (migration 20261105150000). Customers only
- * see them while this is on, their Twitch stream is live AND their desk is online; bookings land
- * in their queue at once.
+ * customers can book and their Twitch username (required), then go online for streaming. Nothing
+ * checks with Twitch that they are live (migration 20261105190000); admins ban streamers who aren't.
+ * Customers only see them while this is on AND their desk is online; bookings land in their queue
+ * at once.
  */
 const POLL_MS = 10000;
 const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
@@ -92,7 +92,7 @@ export default class StreamingPanel extends React.Component {
       return 'Set an hourly rate between €9.99 and €100.';
     if (!d.durations.length) return 'Pick at least one length.';
     if (online && !d.twitch.trim())
-      return 'Add your Twitch username. We check it’s live before customers see you.';
+      return 'Add your Twitch username to go online.';
     if (d.twitch.trim() && !TWITCH_USERNAME.test(d.twitch.trim()))
       return 'A Twitch username is 4 to 25 letters, numbers or _.';
     return '';
@@ -138,11 +138,11 @@ export default class StreamingPanel extends React.Component {
     const status = data.live
       ? ['Live · customers can book you', '#5EEAA8']
       : data.streamOnline
-        ? !data.twitchLive
-          ? ['On, but hidden until your Twitch stream is live', '#FFD27A']
-          : data.deskOnline
+        ? !data.deskOnline
+          ? ['On, but hidden until your desk is online', '#FFD27A']
+          : data.busy
             ? ['On, but hidden while you’re booked or in an order', '#FFD27A']
-            : ['On, but hidden until your desk is online', '#FFD27A']
+            : ['On, but customers can’t book you right now', '#FFD27A']
         : ['Offline for streaming', '#8E84AB'];
     const input = {
       height: '46px',
@@ -285,8 +285,8 @@ export default class StreamingPanel extends React.Component {
               style={input}
             />
             <span style={{ fontWeight: '400', color: '#8E84AB' }}>
-              Required. We check with Twitch that you’re live; customers only
-              see you while your stream is on.
+              Required. Only go online while you’re streaming on Twitch: going
+              online without streaming gets your account banned.
             </span>
           </label>
         </div>

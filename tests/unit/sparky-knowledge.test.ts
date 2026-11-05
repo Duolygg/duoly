@@ -65,6 +65,38 @@ describe('Sparky knowledge from the original assistant', () => {
     ).toMatch(/online means ready/);
   });
 
+  it('knows the features shipped in November', () => {
+    expect(
+      knowledgeMatch('teammate', 'how does twitch streaming work')?.id,
+    ).toBe('twitch-stream');
+    expect(
+      knowledgeMatch('customer', 'can I watch a twitch streamer')?.id,
+    ).toBe('twitch-book');
+    expect(knowledgeMatch('teammate', 'my match report is wrong')?.id).toBe(
+      'match-reports',
+    );
+    expect(
+      knowledgeMatch('teammate', 'why was I set offline when afk')?.id,
+    ).toBe('online');
+    expect(knowledgeMatch('teammate', 'why is my account suspended')?.id).toBe(
+      'suspended',
+    );
+    expect(knowledgeMatch('customer', 'what is the chill mood')?.id).toBe(
+      'mood',
+    );
+    expect(
+      knowledgeMatch('guest', 'how do I change my cookie settings')?.id,
+    ).toBe('cookies');
+    for (const id of ['twitch-stream', 'match-reports', 'suspended'])
+      expect(knowledgeFor('customer').map((entry) => entry.id)).not.toContain(
+        id,
+      );
+    const context = buildGroundingContext(teammate());
+    expect(context).toMatch(/4 hours without any activity/);
+    expect(context).toMatch(/Social \/ Gamer Girl section/);
+    expect(context).not.toMatch(/if the dashboard closes/);
+  });
+
   it('explains going online from the teammate’s own state', () => {
     expect(
       preparedReply(teammate({ suspended: true }), 'Why can’t I go online?')
@@ -124,7 +156,7 @@ describe('Sparky identity, offer and memory', () => {
     const { offerSummary } = await import('../../src/server/support/offer');
     const offer = offerSummary();
     expect(offer).toMatch(
-      /Valorant: Duo: Duo Plus \(Ascendant\+ teammate\) €5\.99\/game/,
+      /Valorant: Duo: Duo Plus \(Ascendant\+ teammate\) €4\.99\/game/,
     );
     expect(offer).toContain('Coaching');
     expect(offer).toMatch(/no account boosting/);

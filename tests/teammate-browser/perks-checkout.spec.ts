@@ -212,6 +212,9 @@ const diamond = {
 test('pick a teammate sends pickSource and handles the unavailable answer', async ({
   page,
 }) => {
+  // The longest flow in this file on the dev-build homepage: on a slow CI runner its steps
+  // together ran past the default 30 s test timeout without any single check failing (PR 134).
+  test.slow();
   let calls = 0;
   let mikaOnline = true;
   const { pickQueries, checkoutBodies } = await bookingPage(page, {

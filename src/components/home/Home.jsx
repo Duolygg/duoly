@@ -46,6 +46,7 @@ import {
   MC_EDITIONS,
 } from '../../design-reference/lib/servers';
 import { flagSrc } from '../../design-reference/lib/countries';
+import { DISCORD_INVITE } from '../../site/nav';
 import {
   freeCoachingFits,
   monthName,
@@ -1254,6 +1255,8 @@ export default class Home extends React.Component {
       qty: s.qty,
       qtyUnit: s.qty === 1 ? unit : unit + 's',
       qtyLabel: 'How many ' + unit + 's',
+      // a bundle fixes the number of games/hours, so there's nothing to choose
+      showQty: !s.bundle && curTab !== 'bundles',
       unitPrice: eur(priceOf(sel)),
       subtotal: money(sub),
       saveAmt: money(save),
@@ -2234,7 +2237,6 @@ export default class Home extends React.Component {
                           marginLeft: i ? '-8px' : '0',
                           borderRadius: '50%',
                           display: 'block',
-                          boxShadow: '0 0 0 2px #1B1033',
                         }}
                       />
                     ),
@@ -3262,71 +3264,73 @@ export default class Home extends React.Component {
                         ) : null}
                       </div>
                     ) : null}
-                    <div
-                      style={{
-                        flex: '1 1 280px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '8px',
-                      }}
-                    >
-                      <span
-                        id="dl-qty"
-                        style={{
-                          fontSize: '13px',
-                          fontWeight: '600',
-                          color: '#CFC4EA',
-                        }}
-                      >
-                        {v.qtyLabel}
-                      </span>
+                    {v.showQty ? (
                       <div
-                        role="group"
-                        aria-labelledby="dl-qty"
                         style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-                          gap: '4px',
-                          padding: '4px',
-                          borderRadius: '14px',
-                          background: '#090414',
-                          border: '1px solid rgba(196, 170, 255, .14)',
+                          flex: '1 1 280px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
                         }}
                       >
-                        {v.qtys.map((q, $index) => (
-                          <React.Fragment key={$index}>
-                            <button
-                              type="button"
-                              onClick={q.pick}
-                              aria-pressed={q.pressed}
-                              style={css(q.style)}
-                            >
-                              <span
-                                style={{
-                                  fontSize: '15px',
-                                  fontWeight: '700',
-                                  whiteSpace: 'nowrap',
-                                }}
+                        <span
+                          id="dl-qty"
+                          style={{
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            color: '#CFC4EA',
+                          }}
+                        >
+                          {v.qtyLabel}
+                        </span>
+                        <div
+                          role="group"
+                          aria-labelledby="dl-qty"
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                            gap: '4px',
+                            padding: '4px',
+                            borderRadius: '14px',
+                            background: '#090414',
+                            border: '1px solid rgba(196, 170, 255, .14)',
+                          }}
+                        >
+                          {v.qtys.map((q, $index) => (
+                            <React.Fragment key={$index}>
+                              <button
+                                type="button"
+                                onClick={q.pick}
+                                aria-pressed={q.pressed}
+                                style={css(q.style)}
                               >
-                                {q.n}
-                                {q.save.trim() ? (
-                                  <span
-                                    style={{
-                                      fontSize: '12px',
-                                      fontWeight: '600',
-                                      opacity: '.75',
-                                    }}
-                                  >
-                                    {' '}
-                                    ({q.save})
-                                  </span>
-                                ) : null}
-                              </span>
-                            </button>
-                          </React.Fragment>
-                        ))}
+                                <span
+                                  style={{
+                                    fontSize: '15px',
+                                    fontWeight: '700',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  {q.n}
+                                  {q.save.trim() ? (
+                                    <span
+                                      style={{
+                                        fontSize: '12px',
+                                        fontWeight: '600',
+                                        opacity: '.75',
+                                      }}
+                                    >
+                                      {' '}
+                                      ({q.save})
+                                    </span>
+                                  ) : null}
+                                </span>
+                              </button>
+                            </React.Fragment>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    ) : null}
                   </div>
                   <div
                     style={{
@@ -5098,7 +5102,9 @@ export default class Home extends React.Component {
                     }}
                   >
                     <a
-                      href="#"
+                      href={DISCORD_INVITE}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -5122,23 +5128,31 @@ export default class Home extends React.Component {
                       />
                       Discord
                     </a>
-                    <a
-                      href="#"
+                    {/* opens the Sparky support chat (SupportChat.jsx listens for duoly:chat) */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        window.dispatchEvent(new Event('duoly:chat'))
+                      }
                       style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         minHeight: '46px',
+                        margin: '0',
+                        padding: '0',
                         borderRadius: '12px',
                         border: '1px solid rgba(196, 170, 255, .2)',
+                        background: 'transparent',
                         color: '#F3EEFF',
-                        textDecoration: 'none',
+                        font: 'inherit',
                         fontSize: '14px',
                         fontWeight: '600',
+                        cursor: 'pointer',
                       }}
                     >
                       Live chat
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>

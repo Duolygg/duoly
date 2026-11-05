@@ -10,6 +10,8 @@ import React from 'react';
 import TrustBadge from '../shared/TrustBadge';
 import { COUNTRY_NAME, flagSrc } from '../../design-reference/lib/countries';
 import { MAX_CHAT } from '../../design-reference/lib/chatRules';
+import { isDiscordInvite } from '../../site/nav';
+import DiscordInvite from '../chat/DiscordInvite';
 
 // same palette as QueueRoom.jsx
 const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
@@ -1077,6 +1079,8 @@ export function ChatPanel({
         ) : null}
         {chat.map((m) => {
           if (m.from === 'system') {
+            if (isDiscordInvite(String(m.text)))
+              return <DiscordInvite key={m.id} />;
             return (
               <div
                 key={m.id}

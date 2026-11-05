@@ -12,6 +12,7 @@ function LiveTeammateContent({
   discordResult,
   chatEnabled,
   connectPayouts = false,
+  presence = null,
 }: {
   viewer: Viewer;
   csrf: string;
@@ -21,6 +22,8 @@ function LiveTeammateContent({
   chatEnabled: boolean;
   /** Stripe Connect payouts (CONNECT_PAYOUTS_ENABLED). */
   connectPayouts?: boolean;
+  /** Presence read while rendering the page, so the desk doesn't start out "Offline". */
+  presence?: { online: boolean; onlineSince: number | null } | null;
 }) {
   const onSignOut = async () => {
     const response = await fetch('/auth/logout', {
@@ -40,6 +43,7 @@ function LiveTeammateContent({
       discordResult={discordResult}
       chatEnabled={chatEnabled}
       connectPayouts={connectPayouts}
+      presence={presence}
       onSignOut={onSignOut}
     />
   );
