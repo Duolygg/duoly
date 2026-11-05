@@ -10,14 +10,9 @@ import {
   buildStreamCheckout,
 } from '../../src/server/payments/checkout';
 import {
-  checkTwitch,
   homeStreamers,
   mapStreamers,
 } from '../../src/server/streaming/handlers';
-import {
-  resetTwitchToken,
-  twitchIsLive,
-} from '../../src/server/streaming/twitch';
 import { calculateQuote } from '../../src/server/pricing';
 
 // Twitch streaming bookings (migration 20261105100000_twitch_streaming.sql).
@@ -250,71 +245,28 @@ describe('one booking at a time', () => {
   });
 });
 
-describe('Twitch live check', () => {
-  const config = { clientId: 'cid', clientSecret: 'secret' };
-  const twitch = (streams: unknown[], status = 200) =>
-    (async (url: string | URL | Request) =>
-      String(url).startsWith('https://id.twitch.tv/')
-        ? new Response(JSON.stringify({ access_token: 't', expires_in: 3600 }))
-        : new Response(JSON.stringify({ data: streams }), {
-            status,
-          })) as typeof fetch;
-
-  it('is live only when Twitch lists that channel as live', async () => {
-    resetTwitchToken();
-    expect(
-      await twitchIsLive(
-        'Lea_TV',
-        config,
-        twitch([{ user_login: 'lea_tv', type: 'live' }]),
-      ),
-    ).toBe(true);
-    expect(await twitchIsLive('lea_tv', config, twitch([]))).toBe(false);
-    expect(
-      await twitchIsLive(
-        'lea_tv',
-        config,
-        twitch([{ user_login: 'other', type: 'live' }]),
-      ),
-    ).toBe(false);
-  });
-  it('fails closed without config or when Twitch is down', async () => {
-    resetTwitchToken();
-    await expect(twitchIsLive('lea_tv', null, twitch([]))).rejects.toThrow();
-    await expect(
-      twitchIsLive('lea_tv', config, twitch([], 500)),
-    ).rejects.toThrow();
-  });
-  it('asks Twitch at most every 30 s per streamer, unless forced', async () => {
-    let asked = 0;
-    const isLive = async () => (asked++, true);
-    const user = '7e000000-0000-4000-8000-0000000000d1';
-    expect(await checkTwitch(user, 'lea_tv', false, isLive, 1000)).toBe(true);
-    expect(await checkTwitch(user, 'lea_tv', false, isLive, 20000)).toBeNull();
-    expect(await checkTwitch(user, 'lea_tv', true, isLive, 20000)).toBe(true);
-    expect(await checkTwitch(user, 'lea_tv', false, isLive, 60000)).toBe(true);
-    expect(asked).toBe(3);
-    const down = async () => {
-      throw new Error('down');
-    };
-    expect(await checkTwitch(user, 'lea_tv', true, down, 70000)).toBeNull();
-  });
-});
-
 describe('Twitch username required, rate from 9.99', () => {
   const sql = readFileSync(
     'supabase/migrations/20261105150000_streamer_twitch_live.sql',
     'utf8',
   );
-  it('only lists streamers Twitch confirmed live in the last 90 s', () => {
-    expect(sql).toContain(
-      "s.twitch is not null and s.twitch_live_at > pg_catalog.clock_timestamp() - interval '90 seconds'",
-    );
+  it('needs a Twitch username to go online and a rate from 9.99', () => {
     expect(sql).toContain('check (not stream_online or twitch is not null)');
-    expect(sql).toContain('Add your Twitch username to go online.');
-    expect(sql).toContain(
-      'grant execute on function public.streamer_twitch_seen(uuid, text, boolean) to service_role;',
-    );
     expect(sql).toContain('check (rate_eur_cents between 999 and 10000)');
+  });
+});
+
+describe('No Twitch live check (migration 20261105190000)', () => {
+  const sql = readFileSync(
+    'supabase/migrations/20261105190000_streamer_no_twitch_check.sql',
+    'utf8',
+  );
+  it('lists streamers without asking Twitch', () => {
+    expect(sql).not.toMatch(/twitch_live_at >/);
+    expect(sql).toContain(
+      'drop function public.streamer_twitch_seen(uuid, text, boolean);',
+    );
+    expect(sql).toContain('drop column twitch_live_at');
+    expect(sql).toContain('Add your Twitch username to go online.');
   });
 });

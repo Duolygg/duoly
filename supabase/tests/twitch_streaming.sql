@@ -43,10 +43,9 @@ select pg_temp.ts_assert((public.streamer_desk_save(true,400,array[1],null)->'er
 select pg_temp.ts_assert((public.streamer_desk_save(true,1500,array[1],'no')->'error'->>'code')='400','bad twitch name refused');
 select pg_temp.ts_assert((public.streamer_desk_save(true,1500,array[1],null)->'error'->>'code')='400','no twitch name = cannot go online');
 select pg_temp.ts_assert((public.streamer_desk_save(true,998,array[1],'lea_tv')->'error'->>'code')='400','rate below 9.99 EUR refused');
--- 20261105150000: listed only once Twitch confirmed the channel is live (the server calls streamer_twitch_seen)
-select pg_temp.ts_assert(not (public.streamer_desk_save(true,1500,array[2,1,2,11],'lea_tv')->'streaming'->>'live')::boolean,'online but Twitch not confirmed = not live');
-select public.streamer_twitch_seen('7e000000-0000-4000-8000-000000000051','Lea_TV',true);
-select pg_temp.ts_assert((public.streamer_desk()->'streaming'->>'live')::boolean and (public.streamer_desk()->'streaming'->>'twitchLive')::boolean,'online and live');
+-- 20261105190000: listed as soon as they go online, nothing asks Twitch
+select pg_temp.ts_assert((public.streamer_desk_save(true,1500,array[2,1,2,11],'lea_tv')->'streaming'->>'live')::boolean,'online and live');
+select pg_temp.ts_assert(not (public.streamer_desk()->'streaming' ? 'twitchLive'),'no twitchLive');
 select pg_temp.ts_assert(public.streamer_desk()->'streaming'->'durations'='[1,2]'::jsonb,'durations cleaned');
 
 -- public list and checkout quote

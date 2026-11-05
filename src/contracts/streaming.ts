@@ -45,8 +45,8 @@ export const StreamerDeskSchema = z.strictObject({
   streamOnline: z.boolean(),
   live: z.boolean(),
   deskOnline: z.boolean(),
-  /** Twitch confirmed their channel is live in the last 90 seconds (migration 20261105150000). */
-  twitchLive: z.boolean(),
+  /** Unused: dropped by migration 20261105190000. Accepted until that migration is applied. */
+  twitchLive: z.boolean().optional(),
   rateEurCents: Rate.nullable(),
   durations: z.array(Hours).max(10),
   twitch: z.string().nullable(),
@@ -70,7 +70,7 @@ export const StreamerDeskCommandSchema = z
       .max(25)
       .refine((value) => value === '' || TWITCH_USERNAME.test(value)),
   })
-  // The Twitch username is how we check they are live: required to go online.
+  // The Twitch username is required to go online (shown on their card).
   .refine((command) => !command.online || command.twitch !== '', {
     path: ['twitch'],
   });
