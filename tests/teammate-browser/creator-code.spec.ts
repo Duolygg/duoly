@@ -58,7 +58,9 @@ for (const source of ['typed', 'link'] as const) {
       await page.setViewportSize({ width: 390, height: 844 });
     await code.scrollIntoViewIfNeeded();
     await page.screenshot({
-      path: `/Users/sebastianschrottenbach/.hermes/cache/scratch/creator-code/${info.project.name}-${source}.png`,
+      path: process.env.CREATOR_CODE_SCREENSHOT_DIR
+        ? `${process.env.CREATOR_CODE_SCREENSHOT_DIR}/${info.project.name}-${source}.png`
+        : info.outputPath(`${info.project.name}-${source}.png`),
       fullPage: false,
     });
     await dialog.getByPlaceholder('Name#TAG').fill('Dana#EUW');
@@ -68,6 +70,24 @@ for (const source of ['typed', 'link'] as const) {
     await expect.poll(() => bodies.length).toBe(1);
     if (source === 'link') expect(bodies[0]).not.toHaveProperty('creatorCode');
     else expect(bodies[0]!.creatorCode).toBe(' alpha ');
+    if (source === 'link') {
+      await page.evaluate(() =>
+        window.dispatchEvent(
+          new CustomEvent('duoly:consent', { detail: { referral: false } }),
+        ),
+      );
+      await expect(code).toHaveValue('');
+      await expect(dialog.getByText('Alpha: 10% off applied.')).toHaveCount(0);
+      await code.fill('ALPHA');
+      await dialog.getByRole('button', { name: 'Apply code' }).click();
+      await expect(dialog.getByText('Alpha: 10% off applied.')).toBeVisible();
+      await page.evaluate(() =>
+        window.dispatchEvent(
+          new CustomEvent('duoly:consent', { detail: { referral: false } }),
+        ),
+      );
+      await expect(code).toHaveValue('ALPHA');
+    }
     await code.fill('UNKNOWN');
     await dialog.getByRole('button', { name: 'Apply code' }).click();
     await expect(

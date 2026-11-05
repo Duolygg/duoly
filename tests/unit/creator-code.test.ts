@@ -1,10 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   selectCreatorCode,
   checkCreatorCode,
 } from '../../src/server/creators/code';
 
 describe('explicit creator codes', () => {
+  it('keeps attribution in the existing idempotent paid-order trigger (schema contract)', () => {
+    const sql = readFileSync(
+      'supabase/migrations/20261025110000_creator_referrals.sql',
+      'utf8',
+    );
+    expect(sql).toContain("new.status <> 'paid' or old.status = 'paid'");
+    expect(sql).toContain('on conflict (customer_id) do nothing');
+    expect(sql).toContain('on conflict (order_id) do nothing');
+    expect(sql).toContain("v_ref.attributed_at + interval '12 months'");
+    expect(sql).toContain('customer_id uuid primary key');
+  });
   it.each(['unknown', 'inactive'])(
     'does not distinguish %s codes or disclose their display names',
     async () => {
