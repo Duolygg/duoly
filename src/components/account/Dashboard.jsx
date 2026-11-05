@@ -1357,6 +1357,7 @@ export default class Dashboard extends React.Component {
               </section>
 
               <section
+                data-private-block=""
                 aria-labelledby="orders-h"
                 style={{ ...card, padding: '24px' }}
               >

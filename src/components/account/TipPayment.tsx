@@ -95,7 +95,11 @@ export default function TipPaymentPanel({
   const picked = payment.shown ? short('$', payment.shown.amount) : charged;
 
   return (
-    <div className="q-tip-payment" aria-label="Pay your tip">
+    <div
+      data-private-block=""
+      className="q-tip-payment"
+      aria-label="Pay your tip"
+    >
       <p style={{ margin: '0 0 12px', color: '#A79DC4', fontSize: '13.5px' }}>
         Your rating is saved. Now pay your {picked} tip
         {payment.shown ? ` (${charged} in euros)` : ''}, and 100% of it goes to{' '}

@@ -185,7 +185,11 @@ export function ChatConversation({
     emojiButton.current?.focus();
   };
   return (
-    <section className="order-chat" aria-labelledby={`${id}-title`}>
+    <section
+      data-private-block=""
+      className="order-chat"
+      aria-labelledby={`${id}-title`}
+    >
       <header className="oc-header">
         {room?.participant ? (
           <Avatar key={room.participant.image} {...room.participant} />

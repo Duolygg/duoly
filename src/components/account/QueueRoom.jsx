@@ -1127,7 +1127,11 @@ export default class QueueRoom extends React.Component {
                 · screenshots of the messages or the match, up to 5
               </span>
             </div>
-            <div className="tm-proof" style={{ marginTop: '8px' }}>
+            <div
+              data-private-block=""
+              className="tm-proof"
+              style={{ marginTop: '8px' }}
+            >
               {r.evidence.map((p, i) => (
                 <span key={p.id} className="tm-proof-thumb">
                   <img src={p.data} alt={'Evidence ' + (i + 1)} />
@@ -1301,6 +1305,7 @@ export default class QueueRoom extends React.Component {
 
     return (
       <div
+        data-private=""
         style={{
           minHeight: '100vh',
           background:

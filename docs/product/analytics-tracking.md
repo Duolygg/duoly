@@ -76,6 +76,32 @@ not allowed." }` with `Allow: POST` for other methods.
 - `tests/unit/analytics-events-wiring.test.ts` checks catalogue membership, browser event coverage with this explicit skip, and no instrumentation in design references. `analytics-event-values.test.ts` checks bounded structured error codes.
 - No production PostHog ingestion, hosted payment, or database changes are exercised by these local gates.
 
+## Replay privacy markers and island boundaries
+
+`feat/analytics-privacy-markers` adds live DOM blocks for account menus, payment
+forms, chat, support, authentication, payouts, proofs, applications, contact,
+booking details, teammate identities, testimonials, activity and order history.
+QueueRoom masks its remaining text. Design-reference components are untouched.
+
+`AnalyticsErrorBoundary` wraps the LiveHome, LiveQueueRoom, CheckoutPanel,
+LiveDashboard and LiveTeammate exports. It reports through `reportError`, adds no
+DOM, and renders only an explicit fallback or null after a render error.
+
+The real-recorder canaries in `tests/analytics-browser/privacy.spec.ts` check
+`/s/` POSTs and decode transport gzip/base64 plus rrweb's independently gzipped
+snapshot and mutation fields. Public hero text must occur in a decoded snapshot;
+rendered testimonial text, a teammate supplied through Astro island props, masked
+text and contact input `CANARY-7781` must not. The preview contact page is opened
+using its existing `closed` island prop in the intercepted document response, so
+no database or provider configuration or form submission is needed.
+
+The tests found two additional replay prerequisites: consented visitors need
+remote config (`advanced_disable_flags: false`), and Astro island `props`
+attributes must be masked independently of descendant privacy markers. The dev
+toolbar also copies island props into its shadow DOM and is blocked. Refusers
+still disable remote config. The fake host serves the installed lazy recorder,
+not a recorder stub; invalid payload decoding fails the test.
+
 ## Known follow-ups
 
 - Bundle: the default `posthog-js` build adds about 120 KB gzipped to every page (module script, does not block first paint). The slim build was measured and is not smaller once web vitals are registered (128 KB gzip; extension bundles do not tree-shake), so A1 keeps the default import. Revisit only if PostHog ships tree-shakeable extensions. Evidence: `posthog-research/08-slim-bundle.md` in the project folder.

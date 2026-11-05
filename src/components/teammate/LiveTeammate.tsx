@@ -1,8 +1,10 @@
+import AnalyticsErrorBoundary from '../shared/AnalyticsErrorBoundary';
+import type { ComponentProps } from 'react';
 import Teammate from './Teammate.jsx';
 import type { Viewer } from '../../contracts/account';
 
 /** Fabian's original teammate screen on the real session and command APIs. */
-export default function LiveTeammate({
+function LiveTeammateContent({
   viewer,
   csrf,
   discordLinked,
@@ -40,5 +42,15 @@ export default function LiveTeammate({
       connectPayouts={connectPayouts}
       onSignOut={onSignOut}
     />
+  );
+}
+
+export default function LiveTeammate(
+  props: ComponentProps<typeof LiveTeammateContent>,
+) {
+  return (
+    <AnalyticsErrorBoundary source="teammate">
+      <LiveTeammateContent {...props} />
+    </AnalyticsErrorBoundary>
   );
 }

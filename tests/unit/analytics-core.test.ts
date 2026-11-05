@@ -532,16 +532,25 @@ describe('analyticsConfig', () => {
         .css_selector_ignorelist,
     ).toContain('[data-private-block]');
     expect(cfg).toMatchObject({
+      advanced_disable_flags: false,
       rageclick: true,
       capture_dead_clicks: true,
       capture_heatmaps: true,
       disable_session_recording: true,
       session_recording: {
         maskAllInputs: true,
-        blockSelector: '[data-private-block], iframe',
+        blockSelector: '[data-private-block], iframe, astro-dev-toolbar',
         recordHeaders: false,
         recordBody: false,
       },
     });
+    const mask = cfg.session_recording!.maskAttributeFn!;
+    const island = { tagName: 'ASTRO-ISLAND' } as Element;
+    expect(mask('props', 'CANARY-PROPS-7781', island)).toBe('');
+    expect(mask('class', 'layout', island)).toBe('layout');
+    expect(mask('props', 'ordinary', { tagName: 'DIV' } as Element)).toBe(
+      'ordinary',
+    );
+    expect(mask('class', 'layout', undefined)).toBe('layout');
   });
 });

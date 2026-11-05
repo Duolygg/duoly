@@ -137,7 +137,7 @@ const avatar =
               </a>
             )}
             {viewer && home ? (
-              <details class="account">
+              <details class="account" data-private-block="">
                 <summary aria-label={`Account menu for ${viewer.name}`}>
                   {avatar ? (
                     <img src={avatar} alt="" width="32" height="32" />

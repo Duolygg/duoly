@@ -259,6 +259,7 @@ export default class SupportChat extends React.Component {
       <>
         {s.open ? (
           <section
+            data-private-block=""
             role="dialog"
             aria-label="Duoly support chat"
             style={{
@@ -758,6 +759,7 @@ export default class SupportChat extends React.Component {
 
         {s.teaser && !s.open ? (
           <div
+            data-private-block=""
             style={{
               position: 'fixed',
               right: '24px',
@@ -811,6 +813,7 @@ export default class SupportChat extends React.Component {
         ) : null}
 
         <button
+          data-private-block=""
           type="button"
           aria-label={
             s.open

@@ -219,6 +219,7 @@ export default function ProCheckoutPanel({
   const label = trial ? 'Start my 7 free days' : `Get PRO · ${price}/month`;
   return (
     <form
+      data-private-block=""
       className={`pay-card is-${phase}`}
       onSubmit={submit}
       aria-busy={phase === 'loading' || phase === 'paying'}
