@@ -2,6 +2,11 @@ import type { APIRoute } from 'astro';
 import { mutation } from '../auth/handlers';
 import { adminFor, paymentsConfig } from '../payments/config';
 import { checkCreatorCode, type CreatorCodeReader } from './code';
+import { CheckoutRequestSchema } from '../payments/checkout';
+import { creatorPricePreview } from './preview';
+import { eurToUsd } from '../fx';
+import { proEnabled } from '../pro/config';
+import { isProMember } from '../pro/status';
 
 // Bounded, per-account burst protection, in addition to authenticated CSRF and body limits.
 // Like other application limits this is not a replacement for edge abuse protection.
@@ -44,14 +49,23 @@ export const check: APIRoute = async (context) => {
         return found.data?.name ?? null;
       },
     };
-    return account.json(
-      await checkCreatorCode(
-        reader,
-        identity.viewer.id,
-        body.creatorCode,
-        body.serviceId === 'stream' || body.freePerk === true,
-      ),
+    const selection = CheckoutRequestSchema.safeParse(body.selection);
+    if (!selection.success) return result('Check your booking details.', 400);
+    const checked = await checkCreatorCode(
+      reader,
+      identity.viewer.id,
+      body.creatorCode,
+      selection.data.serviceId === 'stream' || selection.data.freePerk === true,
     );
+    if (!checked.valid) return account.json(checked);
+    const pro = proEnabled() && (await isProMember(admin, identity.viewer.id));
+    const preview = creatorPricePreview(
+      selection.data,
+      pro,
+      (await eurToUsd()).rate,
+      body.currency === 'USD' ? 'USD' : 'EUR',
+    );
+    return account.json({ ...checked, preview });
   } catch {
     return result('Could not check the code. Try again.', 503);
   }

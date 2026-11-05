@@ -34,8 +34,15 @@ referral consent. Withdrawing referral consent clears an unchanged link field.
 
 `POST /api/creators/code/check` uses the signed-in customer, existing CSRF protection,
 a 1 KB body bound and 12 checks per account per minute (bounded per-process burst limit).
-It returns only `{valid, displayName, discountPercent, reason}`. Unknown and inactive
-codes share one refusal. The read never creates an intent or attribution. Checkout
+It accepts the booking selection and display currency and returns
+`{valid, displayName, discountPercent, reason, preview}`. For valid codes the preview
+contains the original, discounted and saved minor-unit amounts in EUR or USD, plus
+the exact EUR checkout amount. It uses `buildCheckout` and `applyOrderDiscounts`,
+including server-read PRO membership and server FX, without changing discount rules.
+The confirmation strikes through the original total, shows the saving and uses the
+server amount in both the summary and payment copy. Applied codes are read-only
+with a check icon, a live status and a text-style Remove button.
+Unknown and inactive codes share one refusal. The read never creates an intent or attribution. Checkout
 revalidates independently with the existing eligibility RPC and server pricing.
 
 Rules are unchanged: active creator, no prior order and no outstanding discounted

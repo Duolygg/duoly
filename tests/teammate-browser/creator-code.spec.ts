@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { creatorPricePreview } from '../../src/server/creators/preview';
+let serverPreview: ReturnType<typeof creatorPricePreview>;
 
 for (const source of ['typed', 'link'] as const) {
   test(`${source} creator code validates, can be replaced and removed without blocking payment`, async ({
@@ -11,8 +13,15 @@ for (const source of ['typed', 'link'] as const) {
         const valid =
           route.request().postDataJSON().creatorCode.trim().toUpperCase() ===
           'ALPHA';
+        serverPreview = creatorPricePreview(
+          route.request().postDataJSON().selection,
+          false,
+          1.1,
+          route.request().postDataJSON().currency,
+        );
         return route.fulfill({
           json: {
+            preview: valid ? serverPreview : undefined,
             valid,
             displayName: valid ? 'Alpha' : null,
             discountPercent: valid ? 10 : 0,
@@ -45,22 +54,48 @@ for (const source of ['typed', 'link'] as const) {
       .getByRole('button', { name: /Continue to payment/ })
       .dispatchEvent('click');
     const dialog = page.getByRole('dialog');
-    const code = dialog.getByLabel('Creator code', { exact: true });
-    const total = dialog.getByText(/^€[0-9.,]+$/).first();
+    const code = dialog.getByLabel('Creator code · optional', { exact: true });
+    const total = dialog.locator('[data-checkout-total]');
     const totalBefore = await total.innerText();
     if (source === 'typed') {
       await code.fill(' alpha ');
       await dialog.getByRole('button', { name: 'Apply code' }).click();
     } else await expect(code).toHaveValue('ALPHA');
-    await expect(dialog.getByText('Alpha: 10% off applied.')).toBeVisible();
+    await expect(
+      dialog
+        .getByRole('status')
+        .filter({ hasText: /ALPHA applied. You save .* with Alpha./ }),
+    ).toBeVisible();
+    const money = (minor: number) =>
+      new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+      }).format(minor / 100);
+    await expect(total).toHaveText(money(serverPreview.amountMinor));
+    await expect(dialog.locator('del')).toHaveText(
+      money(serverPreview.originalMinor),
+    );
+    await expect(
+      dialog.getByText(
+        `Creator code ALPHA: minus ${money(serverPreview.discountMinor)}`,
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await expect(
+      dialog.getByText(
+        `Pay ${money(serverPreview.amountMinor)} securely with Stripe`,
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await expect(code).toHaveAttribute('readonly', '');
     if (source === 'typed') await expect(total).not.toHaveText(totalBefore);
     if (info.project.name === 'mobile')
       await page.setViewportSize({ width: 390, height: 844 });
     await code.scrollIntoViewIfNeeded();
     await page.screenshot({
       path: process.env.CREATOR_CODE_SCREENSHOT_DIR
-        ? `${process.env.CREATOR_CODE_SCREENSHOT_DIR}/${info.project.name}-${source}.png`
-        : info.outputPath(`${info.project.name}-${source}.png`),
+        ? `${process.env.CREATOR_CODE_SCREENSHOT_DIR}/${info.project.name}-${source}-v2.png`
+        : info.outputPath(`${info.project.name}-${source}-v2.png`),
       fullPage: false,
     });
     await dialog.getByPlaceholder('Name#TAG').fill('Dana#EUW');
@@ -77,10 +112,18 @@ for (const source of ['typed', 'link'] as const) {
         ),
       );
       await expect(code).toHaveValue('');
-      await expect(dialog.getByText('Alpha: 10% off applied.')).toHaveCount(0);
+      await expect(
+        dialog
+          .getByRole('status')
+          .filter({ hasText: /ALPHA applied. You save .* with Alpha./ }),
+      ).toHaveCount(0);
       await code.fill('ALPHA');
       await dialog.getByRole('button', { name: 'Apply code' }).click();
-      await expect(dialog.getByText('Alpha: 10% off applied.')).toBeVisible();
+      await expect(
+        dialog
+          .getByRole('status')
+          .filter({ hasText: /ALPHA applied. You save .* with Alpha./ }),
+      ).toBeVisible();
       await page.evaluate(() =>
         window.dispatchEvent(
           new CustomEvent('duoly:consent', { detail: { referral: false } }),
@@ -88,6 +131,9 @@ for (const source of ['typed', 'link'] as const) {
       );
       await expect(code).toHaveValue('ALPHA');
     }
+    await dialog.getByRole('button', { name: 'Remove', exact: true }).click();
+    await expect(total).toHaveText(money(serverPreview.originalMinor));
+    await expect(dialog.locator('del')).toHaveCount(0);
     await code.fill('UNKNOWN');
     await dialog.getByRole('button', { name: 'Apply code' }).click();
     await expect(
@@ -102,7 +148,7 @@ for (const source of ['typed', 'link'] as const) {
     );
     await expect.poll(() => bodies.length).toBe(2);
     expect(bodies[1]!.creatorCode).toBe('UNKNOWN');
-    await dialog.getByRole('button', { name: 'Remove code' }).click();
+    await dialog.getByRole('button', { name: 'Remove', exact: true }).click();
     await expect(code).toHaveValue('');
     await dialog
       .getByRole('button', { name: /Continue to payment/ })

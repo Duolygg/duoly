@@ -1,35 +1,44 @@
 import { useEffect, useRef, useState } from 'react';
 import { track } from '../../client/analytics/track';
 import { parseConsent } from '../../contracts/consent';
-
+import type { CreatorPricePreview as Preview } from '../../contracts/creator-price';
 type Result = {
   valid: boolean;
   displayName: string | null;
-  discountPercent: number;
   reason: string | null;
+  preview?: Preview;
 };
 export default function CreatorCode({
   initialCode = '',
   explicit = false,
   csrf,
-  pro = false,
+  selection,
+  currency,
   onChange,
 }: {
   initialCode?: string;
   explicit?: boolean;
   csrf: string;
-  pro?: boolean;
-  onChange: (code: string | undefined, valid: boolean) => void;
+  selection: Record<string, unknown>;
+  currency: 'EUR' | 'USD';
+  onChange: (
+    code: string | undefined,
+    valid: boolean,
+    preview?: Preview,
+    appliedCode?: string,
+  ) => void;
 }) {
   const [code, setCode] = useState(initialCode);
   const [result, setResult] = useState<Result | null>(null);
   const [busy, setBusy] = useState(false);
   const revision = useRef(0);
   const source = useRef<'typed' | 'link'>(explicit ? 'typed' : 'link');
+  const quoteKey = JSON.stringify({ selection, currency });
   const check = async (value: string) => {
     const current = ++revision.current;
     onChange(source.current === 'typed' ? value : undefined, false);
     setBusy(true);
+    setResult(null);
     try {
       const response = await fetch('/api/creators/code/check', {
         method: 'POST',
@@ -37,20 +46,29 @@ export default function CreatorCode({
         cache: 'no-store',
         redirect: 'error',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ creatorCode: value, csrf }),
+        body: JSON.stringify({ creatorCode: value, csrf, selection, currency }),
       });
       const data: Result = await response.json();
       if (current !== revision.current) return;
-      const valid = response.ok && data.valid === true;
+      const valid =
+        response.ok &&
+        data.valid === true &&
+        data.preview?.currency === currency;
+      const normalized = value.trim().toUpperCase();
       setResult({ ...data, valid });
-      onChange(source.current === 'typed' ? value : undefined, valid);
+      if (valid) setCode(normalized);
+      onChange(
+        source.current === 'typed' ? value : undefined,
+        valid,
+        valid ? data.preview : undefined,
+        valid ? normalized : undefined,
+      );
       track('creator_code_applied', { source: source.current, valid });
     } catch {
       if (current === revision.current)
         setResult({
           valid: false,
           displayName: null,
-          discountPercent: 0,
           reason: 'Could not check the code. Try again.',
         });
     } finally {
@@ -66,7 +84,7 @@ export default function CreatorCode({
     if (source.current === 'link' && !parseConsent(consentValue)?.referral) {
       setCode('');
       onChange(undefined, false);
-    } else if (initialCode) void check(initialCode);
+    } else if (code) void check(code);
     const consent = (event: Event) => {
       if (source.current !== 'link' || (event as CustomEvent).detail?.referral)
         return;
@@ -81,28 +99,43 @@ export default function CreatorCode({
       ++revision.current;
       window.removeEventListener('duoly:consent', consent);
     };
-  }, []);
+  }, [quoteKey]);
+  const savings = result?.preview
+    ? new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(
+        result.preview.discountMinor / 100,
+      )
+    : '';
   return (
     <div className="creator-code" data-private-block="">
-      <label htmlFor="creator-code-input">Creator code</label>
-      <p id="creator-code-help">10% off your first order</p>
+      <label htmlFor="creator-code-input">
+        Creator code <span>· optional</span>
+      </label>
       <div className="creator-code-controls">
-        <input
-          id="creator-code-input"
-          aria-describedby="creator-code-help creator-code-result"
-          value={code}
-          maxLength={40}
-          autoComplete="off"
-          spellCheck={false}
-          onChange={(event) => {
-            ++revision.current;
-            source.current = 'typed';
-            setCode(event.target.value);
-            setResult(null);
-            setBusy(false);
-            onChange(event.target.value, false);
-          }}
-        />
+        <div className="creator-code-field">
+          <input
+            id="creator-code-input"
+            aria-describedby="creator-code-result"
+            value={code}
+            readOnly={!!result?.valid}
+            placeholder="Enter a creator code"
+            maxLength={40}
+            autoComplete="off"
+            spellCheck={false}
+            onChange={(event) => {
+              ++revision.current;
+              source.current = 'typed';
+              setCode(event.target.value);
+              setResult(null);
+              setBusy(false);
+              onChange(event.target.value, false);
+            }}
+          />
+          {result?.valid && (
+            <span className="creator-code-check" aria-hidden="true">
+              ✓
+            </span>
+          )}
+        </div>
         {!result?.valid && (
           <button
             type="button"
@@ -114,6 +147,7 @@ export default function CreatorCode({
         )}
         {code && (
           <button
+            className="creator-code-remove"
             type="button"
             onClick={() => {
               ++revision.current;
@@ -124,20 +158,26 @@ export default function CreatorCode({
               onChange('', false);
             }}
           >
-            Remove code
+            Remove
           </button>
         )}
       </div>
       <p
         id="creator-code-result"
         role="status"
+        aria-live="polite"
         className={result?.valid ? 'creator-code-success' : ''}
       >
-        {result?.valid
-          ? pro
-            ? `${result.displayName}: code accepted. Your PRO discount already gives you 10% off.`
-            : `${result.displayName}: ${result.discountPercent}% off applied.`
-          : result?.reason}
+        {result?.valid ? (
+          <>
+            <span aria-hidden="true">✓ </span>
+            {result.preview?.discountKind === 'pro'
+              ? `${code} applied. Your PRO discount already saves ${savings}.`
+              : `${code} applied. You save ${savings} with ${result.displayName}.`}
+          </>
+        ) : (
+          result?.reason
+        )}
       </p>
     </div>
   );
