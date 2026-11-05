@@ -10,5 +10,9 @@ export default function LiveApply({ csrf }: { csrf: string }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, csrf }),
     });
-  return <Apply chrome={false} onSend={onSend} />;
+  return (
+    <div data-private-block="">
+      <Apply chrome={false} onSend={onSend} />
+    </div>
+  );
 }

@@ -4,12 +4,19 @@ Spec: `POSTHOG-SPEC.md` (owner approved 2026-11-04) in the project folder outsid
 
 Owner decisions: four PRs; personless business totals without Analytics consent; managed proxy later (direct `https://eu.i.posthog.com` until then, env change only); no replay on `/teammate`; owner and coworker accounts internal via `ANALYTICS_INTERNAL_USER_IDS`.
 
-| PR         | Branch                    | Status      | Next action                                                                         |
-| ---------- | ------------------------- | ----------- | ----------------------------------------------------------------------------------- |
-| A1 core    | `feat/analytics-core`     | in review   | Owner OK to merge. Inert until the env vars below exist.                            |
-| A2 journey | `feat/analytics-journey`  | not started | Browser events, privacy markers, replay, error capture, consent sync, privacy copy. |
-| B outbox   | `feat/analytics-outbox`   | not started | Outbox migration, triggers, drain, server events, Sparky AI events, source maps.    |
-| C insights | `feat/analytics-insights` | not started | Dashboards, alerts, surveys, scanner, scripted in `scripts/posthog/`.               |
+| PR         | Branch                    | Status                         | Next action                                                                                                                                                                                                                           |
+| ---------- | ------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1 core    | `feat/analytics-core`     | merged (#130), live 2026-11-04 | Done. Env set in Vercel production, cookieless enabled in PostHog.                                                                                                                                                                    |
+| A2 journey | `feat/analytics-journey`  | in progress                    | Core pushed. Merge in `feat/analytics-consent-sync`, `feat/analytics-privacy-markers`, `feat/analytics-events` when each is green, then apply migration `20261106100000_analytics_consent.sql`, set replay project settings, open PR. |
+| B outbox   | `feat/analytics-outbox`   | not started                    | Outbox migration, triggers, drain, server events, Sparky AI events, source maps.                                                                                                                                                      |
+| C insights | `feat/analytics-insights` | not started                    | Dashboards, alerts, surveys, scanner, scripted in `scripts/posthog/`.                                                                                                                                                                 |
+
+## A2: what it adds
+
+- Interaction capture (autocapture of click, change and submit; rage and dead clicks; heatmaps; unhandled errors) only with Analytics consent. `featureConfig()` is re-applied on every consent change; `before_send` drops these events for refusers regardless.
+- Session replay is started by the controller only with Analytics consent and only on `policy: 'full'` pages. Inputs masked, `[data-private]` text masked, `[data-private-block]` and iframes not recorded, no console logs, no headers or bodies, network names templated and secret routes hidden.
+- Sanitizer handles `$elements_chain` hrefs, heatmap URL keys, replay meta and custom events (DOM tree untouched), exception frames, and scrubs URLs and email addresses in free text.
+- Product events: `track()` in `src/client/analytics/track.ts` dispatches a window event; the boot script captures it with catalogue-validated properties (`src/contracts/analytics-events.ts`). `reportError()` does the same for handled errors.
 
 ## A1: what it does
 
@@ -28,6 +35,72 @@ Owner decisions: four PRs; personless business totals without Analytics consent;
 
 - Unit: `tests/unit/analytics-core.test.ts` (sanitizer, controller transitions, server boot, config).
 - Browser: `playwright.analytics.config.ts` (port 4361) points the SDK at a fake host and decodes real payloads. posthog-js drops events from automated browsers, so the spec hides `navigator.webdriver` and the HeadlessChrome brand. Astro's dev toolbar covers the banner buttons: use `press('Enter')`.
+
+## Server consent snapshot
+
+`feat/analytics-consent-sync` adds `20261106100000_analytics_consent.sql`.
+Apply the additive migration before deploying the sync endpoint. It has RLS,
+no browser policies or grants, and service-role CRUD only. No hosted database
+changes are part of this branch's verification.
+
+- `recordAnalyticsConsent(client, userId, state)` stores only analytics and
+  marketing with a refreshed timestamp. The endpoint reuses `supportService()`
+  (the existing service-role factory and `SUPABASE_SECRET_KEY`). Errors are
+  logged without identity or provider payloads and swallowed.
+- `POST /api/analytics/consent` uses `accountContext.identity()` and reads only
+  `duoly-consent`, never body consent or identity. The existing `verifyCsrf`
+  helper requires the configured Origin and an `X-CSRF-Token` matching the
+  HttpOnly CSRF cookie. SiteLayout passes its existing token through the
+  analytics island's `data-csrf` attribute.
+- Responses are no-store: 204 with an empty body on valid consent, absent or
+  invalid consent, or best-effort sync failure; 401 `{ "error": "Authentication
+required." }` when signed out; 403 `{ "error": "Request could not be verified.
+Reload and try again." }` for Origin or CSRF failure; 405 `{ "error": "Method
+not allowed." }` with `Allow: POST` for other methods.
+- Signed-in, eligible analytics pages sync once per document when a choice
+  exists and again on `duoly:consent`, including withdrawal. Network failures
+  are ignored. No cookie choice, no uid or no island means no sync request.
+- Tests: `analytics-consent-sync.test.ts` (endpoint, write failures, timestamp,
+  static migration isolation and additive-only diff) and
+  `analytics-consent-browser.test.ts` (load, withdrawal, first choice, guards).
+  SQL assertions are source checks, not executed database acceptance.
+- Delivery-time identity resolution and pre-handler checkout, PRO and review
+  adapter snapshots remain for the outbox/server-events branch.
+
+## Browser product event wiring (`feat/analytics-events`)
+
+- Live components and pages call the typed `track()` API for section 7 browser events. No server or outbox producers are added. The event catalogue is unchanged.
+- Game and PRO views run after window load; selections run only in user handlers, not for defaults. Payment events cover order, PRO and tip forms, including express checkout. Stripe error properties use only structured type/code, never messages.
+- `match_seen` uses the existing server DTO timestamps, preserved by the dashboard mapper, rather than estimating queue wait from the time the page was opened. Tips use the server-returned EUR amount.
+- Deliberate skip: `checkout_abandon_detected`. The browser has no existing server-provided signal for an open checkout intent older than 15 minutes. Pending local booking selections are not payment intents.
+- `tests/unit/analytics-events-wiring.test.ts` checks catalogue membership, browser event coverage with this explicit skip, and no instrumentation in design references. `analytics-event-values.test.ts` checks bounded structured error codes.
+- No production PostHog ingestion, hosted payment, or database changes are exercised by these local gates.
+
+## Replay privacy markers and island boundaries
+
+`feat/analytics-privacy-markers` adds live DOM blocks for account menus, payment
+forms, chat, support, authentication, payouts, proofs, applications, contact,
+booking details, teammate identities, testimonials, activity and order history.
+QueueRoom masks its remaining text. Design-reference components are untouched.
+
+`AnalyticsErrorBoundary` wraps the LiveHome, LiveQueueRoom, CheckoutPanel,
+LiveDashboard and LiveTeammate exports. It reports through `reportError`, adds no
+DOM, and renders only an explicit fallback or null after a render error.
+
+The real-recorder canaries in `tests/analytics-browser/privacy.spec.ts` check
+`/s/` POSTs and decode transport gzip/base64 plus rrweb's independently gzipped
+snapshot and mutation fields. Public hero text must occur in a decoded snapshot;
+rendered testimonial text, a teammate supplied through Astro island props, masked
+text and contact input `CANARY-7781` must not. The preview contact page is opened
+using its existing `closed` island prop in the intercepted document response, so
+no database or provider configuration or form submission is needed.
+
+The tests found two additional replay prerequisites: consented visitors need
+remote config (`advanced_disable_flags: false`), and Astro island `props`
+attributes must be masked independently of descendant privacy markers. The dev
+toolbar also copies island props into its shadow DOM and is blocked. Refusers
+still disable remote config. The fake host serves the installed lazy recorder,
+not a recorder stub; invalid payload decoding fails the test.
 
 ## Known follow-ups
 

@@ -1,9 +1,11 @@
+import AnalyticsErrorBoundary from '../shared/AnalyticsErrorBoundary';
+import type { ComponentProps } from 'react';
 import Dashboard from './Dashboard.jsx';
 import type { Viewer } from '../../contracts/account';
 import type { ProView } from '../../contracts/pro';
 
 /** The original customer Dashboard on the real session and order APIs. */
-export default function LiveDashboard({
+function LiveDashboardContent({
   viewer,
   csrf,
   pro = null,
@@ -38,5 +40,15 @@ export default function LiveDashboard({
       cur={cur}
       usdRate={usdRate}
     />
+  );
+}
+
+export default function LiveDashboard(
+  props: ComponentProps<typeof LiveDashboardContent>,
+) {
+  return (
+    <AnalyticsErrorBoundary source="dashboard">
+      <LiveDashboardContent {...props} />
+    </AnalyticsErrorBoundary>
   );
 }

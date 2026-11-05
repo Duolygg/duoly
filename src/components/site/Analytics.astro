@@ -7,6 +7,7 @@ import { analyticsBoot, bootJson } from '../../server/analytics/boot';
 
 interface Props {
   viewer?: Viewer | undefined;
+  csrf?: string;
 }
 const boot = analyticsBoot({
   path: Astro.url.pathname,
@@ -19,9 +20,33 @@ const boot = analyticsBoot({
   <script
     type="application/json"
     id={ANALYTICS_BOOT_ID}
+    data-csrf={Astro.props.csrf}
     set:html={bootJson(boot)}
   />
 )}
 <script>
   import '../../client/analytics/boot';
+  import { track } from '../../client/analytics/track';
+  // Explicit nav CTA allowlist; never derive properties from labels or user content.
+  document.addEventListener('click', (event) => {
+    const link =
+      event.target instanceof Element
+        ? event.target.closest('header a, nav a, header button[data-auth-open]')
+        : null;
+    if (!link) return;
+    const href = link.getAttribute('href');
+    const cta =
+      href === '/pro'
+        ? 'nav_pro'
+        : href === '/creators'
+          ? 'nav_creators'
+          : href === '/apply'
+            ? 'nav_apply'
+            : href === '/#games' || href === '#games'
+              ? 'nav_book'
+              : link.hasAttribute('data-auth-open')
+                ? 'nav_login'
+                : null;
+    if (cta) track('cta_clicked', { cta, surface: 'nav' });
+  });
 </script>

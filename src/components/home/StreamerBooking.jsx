@@ -224,6 +224,7 @@ export default class StreamerBooking extends React.Component {
     const total = (x.rateEurCents * f.hours) / 100;
     return (
       <div
+        data-private-block=""
         data-streamer-form
         style={{
           marginTop: '12px',
@@ -587,6 +588,7 @@ export default class StreamerBooking extends React.Component {
             return (
               <React.Fragment key={x.handle}>
                 <article
+                  data-private-block=""
                   data-streamer-card
                   // The whole card opens the booking form (the Book button stays the
                   // keyboard control); the Twitch link and the button handle their own clicks.

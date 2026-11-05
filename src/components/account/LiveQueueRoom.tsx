@@ -1,8 +1,10 @@
+import AnalyticsErrorBoundary from '../shared/AnalyticsErrorBoundary';
+import type { ComponentProps } from 'react';
 import QueueRoom from './QueueRoom.jsx';
 import type { Viewer } from '../../contracts/account';
 
 /** The original order room (QueueRoom.jsx) on the real order, chat and proof APIs. */
-export default function LiveQueueRoom({
+function LiveQueueRoomContent({
   id,
   viewer,
   csrf,
@@ -26,5 +28,15 @@ export default function LiveQueueRoom({
       reportsEnabled={reportsEnabled}
       proMember={proMember}
     />
+  );
+}
+
+export default function LiveQueueRoom(
+  props: ComponentProps<typeof LiveQueueRoomContent>,
+) {
+  return (
+    <AnalyticsErrorBoundary source="queue-room">
+      <LiveQueueRoomContent {...props} />
+    </AnalyticsErrorBoundary>
   );
 }

@@ -1,69 +1,7 @@
-import { expect, test, type Page, type Request } from '@playwright/test';
-import { gunzipSync } from 'node:zlib';
+import { expect, test } from '@playwright/test';
+import { capture, hideAutomation } from './helpers';
 
-const HOST = 'https://ph.analytics.test';
-
-// posthog-js treats automated browsers (navigator.webdriver, HeadlessChrome brand) as bots
-// and sends nothing.
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    Object.defineProperty(Navigator.prototype, 'webdriver', {
-      get: () => false,
-    });
-    Object.defineProperty(Navigator.prototype, 'userAgentData', {
-      get: () => undefined,
-    });
-  });
-});
-
-type Sent = {
-  event: string;
-  properties: Record<string, unknown>;
-  $set_once?: unknown;
-};
-
-/** Decode a posthog-js batch whatever the transport encoding (json, gzip, base64 form). */
-function decode(request: Request): Sent[] {
-  const body = request.postDataBuffer();
-  if (!body || body.length === 0) return [];
-  let text: string;
-  try {
-    text = gunzipSync(body).toString('utf8');
-  } catch {
-    text = body.toString('utf8');
-  }
-  if (text.startsWith('data=')) {
-    text = Buffer.from(decodeURIComponent(text.slice(5)), 'base64').toString(
-      'utf8',
-    );
-  }
-  try {
-    const parsed: unknown = JSON.parse(text);
-    const list = Array.isArray(parsed)
-      ? parsed
-      : ((parsed as { batch?: unknown[] }).batch ?? [parsed]);
-    return list as Sent[];
-  } catch {
-    return [];
-  }
-}
-
-async function capture(page: Page) {
-  const requests: Request[] = [];
-  await page.route(`${HOST}/**`, async (route) => {
-    requests.push(route.request());
-    const url = route.request().url();
-    if (url.endsWith('.js'))
-      return route.fulfill({ contentType: 'text/javascript', body: '' });
-    return route.fulfill({ contentType: 'application/json', body: '{}' });
-  });
-  const events = () =>
-    requests
-      .filter((r) => r.method() === 'POST')
-      .flatMap((r) => decode(r))
-      .filter((e) => e && typeof e.event === 'string');
-  return { requests, events };
-}
+test.beforeEach(async ({ page }) => hideAutomation(page));
 
 test('no cookie choice: the SDK sends nothing', async ({ page }) => {
   const { requests } = await capture(page);
