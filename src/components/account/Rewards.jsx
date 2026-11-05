@@ -51,6 +51,12 @@ const PERKS = [
     title: 'Priority matching',
     text: 'Jump the queue at busy times',
   },
+  // 20261106170000: 4 re-rolls per order from Gold
+  {
+    at: 2,
+    title: '4 free re-rolls',
+    text: 'Swap your teammate up to 4 times per order',
+  },
   // Live with migration 20261026160000 (MONEY-RULES section 9). Until the server answers with
   // perks (feature not live), these two stay "coming soon".
   {
@@ -59,11 +65,12 @@ const PERKS = [
     title: 'Free monthly Play and Learn',
     text: 'One free coaching session (1 game or 1 hour) every month',
   },
+  // 20261106160000: PRO is free while Diamond (needs the perks migration and PRO switched on)
   {
     at: 4,
-    perk: 'pickTeammate',
-    title: 'Pick any teammate',
-    text: 'Pick a teammate you played with before. They get your order first.',
+    perk: 'freePro',
+    title: 'Free Duoly PRO',
+    text: '10% off every order, priority matching and unlimited re-rolls, free while you’re Diamond',
   },
 ];
 
@@ -93,6 +100,7 @@ export default class Rewards extends React.Component {
       cashbackPending = 0,
       pendingOrders = 0,
       perks = null,
+      proLive = false,
     } = this.props;
     const level = levelFor(orders);
     const idx = LEVELS.indexOf(level);
@@ -126,11 +134,14 @@ export default class Rewards extends React.Component {
           (state === 'locked' ? 'filter: grayscale(.7) brightness(.55);' : ''),
       };
     });
-    const live = !!(perks && perks.freeCoaching && perks.pickTeammate);
+    const live = !!(perks && perks.freeCoaching && perks.freePro);
     const perkList = PERKS.map((p) => {
-      const comingSoon = !!p.perk && !live;
+      const comingSoon =
+        !!p.perk && (!live || (p.perk === 'freePro' && !proLive));
       // Server-gated perks follow the level the server computed (free orders do not count).
-      const unlocked = p.perk ? live && !!perks[p.perk].eligible : p.at <= idx;
+      const unlocked = p.perk
+        ? !comingSoon && !!perks[p.perk].eligible
+        : p.at <= idx;
       const status =
         unlocked && p.perk === 'freeCoaching' ? freeCoachingStatus(perks) : '';
       return {

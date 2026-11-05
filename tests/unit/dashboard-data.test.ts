@@ -178,7 +178,7 @@ describe('dashboard adapter (original Dashboard.jsx data shape)', () => {
         available: true,
         month: '2026-10',
       },
-      pickTeammate: { eligible: false },
+      freePro: { eligible: false },
     };
     expect(toOriginalRewards({ orders: 500, perks }).perks).toEqual(perks);
   });

@@ -56,7 +56,7 @@ export const CustomerOrderSchema = z.strictObject({
   completed_at: TimestampSchema.nullable(),
   cancelled_at: TimestampSchema.nullable(),
   cancel_reason: z.enum(['queue_expired', 'customer_cancelled']).nullable(),
-  rerolls: z.number().int().min(0).max(2),
+  rerolls: z.number().int().min(0).max(100),
   current_assignment_id: z.uuid().nullable(),
   teammate: z
     .strictObject({
@@ -107,8 +107,8 @@ export const TeammateOrderSchema = z.strictObject({
   customer_country: CountrySchema,
   payout_usd_cents: z.number().int().min(99).max(10000000),
   current_assignment_id: z.uuid().nullable(),
-  // Added by 20261026160000 (queue rows only): a Diamond customer picked this teammate, so
-  // the order is theirs alone for a moment. Never a delay or priority number.
+  // Added by 20261026160000 (queue rows only): the customer booked this teammate again with Play
+  // again (20261106180000), so the order is theirs alone for a minute. Never a delay or priority number.
   picked_for_you: z.boolean().optional(),
   // Added by 20261101120000; optional so code can deploy before the migration. null = no preference.
   mood: MoodSchema.nullable().optional(),
@@ -131,26 +131,87 @@ export const CustomerPerksSchema = z.strictObject({
     available: z.boolean(),
     month: z.string().regex(/^[0-9]{4}-[0-9]{2}$/),
   }),
-  pickTeammate: z.strictObject({ eligible: z.boolean() }),
+  // Diamond: Duoly PRO free (20261106170000 replaced the Diamond pick)
+  freePro: z.strictObject({ eligible: z.boolean() }),
 });
 export type CustomerPerks = z.infer<typeof CustomerPerksSchema>;
 
-/** public.customer_pickable_teammates: a handle is the customer's own order id, never a user id. */
-export const PickableTeammatesSchema = z.strictObject({
-  eligible: z.boolean(),
-  teammates: z
+/** Why Play again isn't offered (public.customer_play_again, 20261106180000). */
+export const PlayAgainReasonSchema = z.enum([
+  'not_done',
+  'streamer',
+  'free_coaching',
+  'open_order',
+  'teammate_busy',
+  'teammate_away',
+  'teammate_unavailable',
+]);
+export const PlayAgainCheckSchema = z.strictObject({
+  available: z.boolean(),
+  reason: PlayAgainReasonSchema.nullable(),
+});
+
+/** GET /api/orders/:id/play-again: what the button would book and charge. */
+export const PlayAgainOfferSchema = z.strictObject({
+  available: z.boolean(),
+  reason: PlayAgainReasonSchema.nullable(),
+  amountEurCents: z.number().int().min(0).max(100000),
+  walletEurCents: z.number().int().min(0).max(100000),
+  cardEurCents: z.number().int().min(0).max(100000),
+  card: z
+    .strictObject({
+      brand: z.string().max(20),
+      last4: z.string().regex(/^[0-9]{4}$/),
+    })
+    .nullable(),
+});
+export type PlayAgainOffer = z.infer<typeof PlayAgainOfferSchema>;
+export const PlayAgainInputSchema = z.strictObject({
+  csrf: z.string().min(1).max(128),
+  // the total the button showed: a different price now is refused, never charged
+  amountEurCents: z.number().int().min(0).max(100000),
+});
+export const PlayAgainConfirmSchema = z.strictObject({
+  csrf: z.string().min(1).max(128),
+  intentId: z.uuid(),
+});
+
+/** public.customer_reroll_limit (20261106170000): re-rolls per order, null = unlimited. */
+export const RerollLimitSchema = z.strictObject({
+  limit: z.number().int().min(0).max(100).nullable(),
+});
+
+/** public.customer_order_favorite(_set) (20261106150000): the teammate on one of your orders. */
+export const OrderFavoriteSchema = z.strictObject({
+  available: z.boolean(),
+  favorite: z.boolean(),
+});
+export type OrderFavorite = z.infer<typeof OrderFavoriteSchema>;
+export const OrderFavoriteInputSchema = z.strictObject({
+  csrf: z.string().min(1).max(128),
+  on: z.boolean(),
+});
+
+/**
+ * public.customer_favorites (20261106150000). A handle is the customer's latest order with that
+ * teammate, never a user id.
+ */
+export const CustomerFavoritesSchema = z.strictObject({
+  favorites: z
     .array(
       z.strictObject({
         handle: z.uuid(),
         name: z.string().max(80),
         image: z.string().max(200),
         country: z.string().max(8),
-        orders: z.number().int().min(1),
+        game: OrderFields.game,
+        orders: z.number().int().min(0),
+        status: z.enum(['online', 'busy', 'offline']),
       }),
     )
-    .max(200),
+    .max(100),
 });
-export type PickableTeammates = z.infer<typeof PickableTeammatesSchema>;
+export type CustomerFavorites = z.infer<typeof CustomerFavoritesSchema>;
 
 const LoyaltyLevelSchema = z.strictObject({
   index: z.number().int().min(0).max(4),
@@ -248,7 +309,8 @@ export const OrderResponseSchemas = {
   }),
   customerRewards: CustomerRewardsSchema,
   customerPerks: CustomerPerksSchema,
-  pickableTeammates: PickableTeammatesSchema,
+  orderFavorite: OrderFavoriteSchema,
+  customerFavorites: CustomerFavoritesSchema,
   pickedPass: z.strictObject({ passed: z.literal(true) }),
   teammateOrder: z.strictObject({ order: TeammateOrderSchema }),
   teammateQueue: z.strictObject({

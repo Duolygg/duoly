@@ -10,14 +10,18 @@ function LiveQueueRoomContent({
   csrf,
   chatEnabled,
   reportsEnabled,
-  proMember = false,
+  rerollLimit = 2,
+  stripeKey = '',
 }: {
   id: string;
   viewer: Viewer;
   csrf: string;
   chatEnabled: boolean;
   reportsEnabled: boolean;
-  proMember?: boolean;
+  /** re-rolls per order; null = unlimited (PRO) */
+  rerollLimit?: number | null;
+  /** Stripe publishable key, for Play again's 3D Secure check ('' = payments off) */
+  stripeKey?: string;
 }) {
   return (
     <QueueRoom
@@ -26,7 +30,8 @@ function LiveQueueRoomContent({
       csrf={csrf}
       chatEnabled={chatEnabled}
       reportsEnabled={reportsEnabled}
-      proMember={proMember}
+      rerollLimit={rerollLimit}
+      stripeKey={stripeKey}
     />
   );
 }

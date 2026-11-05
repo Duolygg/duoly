@@ -3,6 +3,8 @@ import { z } from 'zod';
 /** What pro_my_status() returns (migration 20261026120000_pro_subscription.sql). */
 export const ProStatusRowSchema = z.object({
   member: z.boolean(),
+  // PRO comes free with Diamond (20261106160000); absent before that migration
+  included: z.boolean().default(false),
   trial_eligible: z.boolean(),
   has_customer: z.boolean(),
   subscription: z
@@ -28,6 +30,8 @@ export const ProStatusRowSchema = z.object({
 /** The browser view of a customer's PRO state. null everywhere while PRO_ENABLED is off. */
 export interface ProView {
   member: boolean;
+  /** PRO comes free with the Diamond level (it may also still have a paid subscription). */
+  included: boolean;
   trialEligible: boolean;
   status: string | null;
   trialEnd: number | null;
@@ -43,10 +47,13 @@ const ms = (iso: string | null) => (iso ? Date.parse(iso) : null);
 export function toProView(raw: unknown): ProView | null {
   const parsed = ProStatusRowSchema.safeParse(raw);
   if (!parsed.success) return null;
-  const { member, trial_eligible, subscription } = parsed.data;
+  const { member, included, trial_eligible, subscription } = parsed.data;
   const status = subscription?.status ?? null;
+  // Free with Diamond and nothing paid: there is no subscription to manage.
+  const paid = !included || status === 'trialing' || status === 'active';
   return {
     member,
+    included,
     trialEligible: trial_eligible,
     status,
     trialEnd: ms(subscription?.trial_end ?? null),
@@ -54,7 +61,7 @@ export function toProView(raw: unknown): ProView | null {
     cancelAtPeriodEnd: subscription?.cancel_at_period_end ?? false,
     graceUntil: ms(subscription?.grace_until ?? null),
     manage:
-      member ||
+      (member && paid) ||
       status === 'past_due' ||
       status === 'unpaid' ||
       status === 'incomplete' ||
@@ -65,6 +72,7 @@ export function toProView(raw: unknown): ProView | null {
 /** Signed-out visitors and customers before the first lookup see the offer. */
 export const PRO_OFFER: ProView = {
   member: false,
+  included: false,
   trialEligible: true,
   status: null,
   trialEnd: null,
@@ -94,6 +102,10 @@ export function proStatusLine(
   price = '€9.99',
 ): string {
   if (!pro) return '';
+  if (pro.included)
+    return pro.manage && !pro.cancelAtPeriodEnd
+      ? 'PRO is free with Diamond now. Cancel your paid PRO in Manage PRO so you’re not charged again.'
+      : 'Free with your Diamond level, for as long as you stay Diamond.';
   if (pro.status === 'past_due')
     return pro.member && pro.graceUntil
       ? `Your last payment failed. PRO stays on until ${proDate(pro.graceUntil)}. Update your card to keep it.`

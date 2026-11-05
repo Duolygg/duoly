@@ -12,6 +12,7 @@ import { COUNTRY_NAME, flagSrc } from '../../design-reference/lib/countries';
 import { MAX_CHAT } from '../../design-reference/lib/chatRules';
 import { isDiscordInvite } from '../../site/nav';
 import DiscordInvite from '../chat/DiscordInvite';
+import FavoriteHeart from './FavoriteHeart';
 
 // same palette as QueueRoom.jsx
 const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
@@ -728,7 +729,16 @@ export function QueueSteps({ steps }) {
 }
 
 /** The order room's "Your order" card: game, price, server, in-game name, comms, payment, and the teammate once matched. */
-export function OrderCard({ order: o, game: g, total, free, mate, ignLabel }) {
+export function OrderCard({
+  order: o,
+  game: g,
+  total,
+  free,
+  mate,
+  ignLabel,
+  // optional heart on the teammate: { on, busy, onToggle } (the homepage preview leaves it out)
+  fav = null,
+}) {
   const card = {
     borderRadius: '24px',
     background: '#120B22',
@@ -899,7 +909,24 @@ export function OrderCard({ order: o, game: g, total, free, mate, ignLabel }) {
                 Your teammate · rank-verified
               </span>
             </span>
+            {fav ? (
+              <FavoriteHeart
+                compact
+                name={String(mate.name).split(' ')[0]}
+                on={fav.on}
+                busy={fav.busy}
+                onToggle={fav.onToggle}
+              />
+            ) : null}
           </div>
+          {fav && fav.err ? (
+            <p
+              role="alert"
+              style={{ margin: '8px 0 0', fontSize: '13px', color: PINK }}
+            >
+              {fav.err}
+            </p>
+          ) : null}
           {/* from the teammate's profile */}
           {mate.bio ? (
             <p
@@ -1455,7 +1482,9 @@ export function CoveredPanel({
   const locked = msLeft <= 0;
   const rerollText =
     left <= 0
-      ? 'You’ve used both re-rolls on this order. If something’s wrong, report it below.'
+      ? 'You’ve used ' +
+        (o.rerollLimit > 2 ? 'all ' + o.rerollLimit : 'both') +
+        ' re-rolls on this order. If something’s wrong, report it below.'
       : locked
         ? 'Locked now that your session is underway. If something’s wrong, report it below and we’ll step in.'
         : 'Switch to a new teammate for free in the first 5 minutes · ' +
@@ -1463,7 +1492,7 @@ export function CoveredPanel({
           ' left. ' +
           (o.rerollsUnlimited
             ? 'Unlimited re-rolls with Duoly PRO.'
-            : left + ' of 2 re-rolls left.');
+            : left + ' of ' + (o.rerollLimit || 2) + ' re-rolls left.');
   const sent = o.reports || [];
   const row = (icon, color, title, text, action) => (
     <li className="q-protect-row">

@@ -47,12 +47,8 @@ import {
 } from '../../design-reference/lib/servers';
 import { flagSrc } from '../../design-reference/lib/countries';
 import { DISCORD_INVITE } from '../../site/nav';
-import {
-  freeCoachingFits,
-  monthName,
-  LEVEL_NAMES,
-  PICK_UNAVAILABLE,
-} from '../shared/perks';
+import { HEART } from '../account/FavoriteHeart';
+import { freeCoachingFits, monthName, LEVEL_NAMES } from '../shared/perks';
 // What the customer picked before logging in, so it survives the Discord/Google redirect
 const PENDING_KEY = 'duoly-pending-queue';
 
@@ -102,9 +98,6 @@ export default class Home extends React.Component {
       // Perks (migration 20261026160000): null until /api/orders/perks answers, or not live.
       perks: null,
       freePerk: false,
-      pick: '',
-      pickList: null,
-      pickErr: '',
     };
   }
   detectCurrency() {
@@ -173,6 +166,7 @@ export default class Home extends React.Component {
     this.loadWallet();
     this.loadPerks();
     this.openCoachingFromLink();
+    this.openRebookFromLink();
     this.setState({ now: Date.now() });
     this._clock = setInterval(() => this.setState({ now: Date.now() }), 1000);
     this.resumeQueue();
@@ -224,6 +218,25 @@ export default class Home extends React.Component {
     const m = g.modes.find((x) => x.cat === 'training');
     if (m) this.setState({ tab: 'training', mode: m.id, bundle: null, qty: 1 });
   }
+  // From a favorite's Rebook on the dashboard (/?rebook=lol#checkout): that game, picked.
+  openRebookFromLink() {
+    let game = '';
+    try {
+      const url = new URL(window.location.href);
+      if (!url.searchParams.has('rebook')) return;
+      game = url.searchParams.get('rebook') || '';
+      url.searchParams.delete('rebook');
+      window.history.replaceState(
+        null,
+        '',
+        url.pathname + url.search + url.hash,
+      );
+    } catch (e) {
+      return;
+    }
+    if (!this.data().some((x) => x.id === game)) return;
+    this.setState({ game, rank: '', queued: false });
+  }
   // Signed-in customers on live checkout: which perks their level unlocks (null = not live).
   async loadPerks() {
     const user = this.props.session && this.props.session.user;
@@ -237,54 +250,14 @@ export default class Home extends React.Component {
       return;
     try {
       const p = await this.props.loadPerks();
-      const perks =
-        p && typeof p === 'object' && p.freeCoaching && p.pickTeammate
-          ? p
-          : null;
-      this.setState({ perks }, () => this.loadPickable(true));
+      const perks = p && typeof p === 'object' && p.freeCoaching ? p : null;
+      this.setState({ perks });
     } catch (e) {}
-  }
-  pickQuery() {
-    const { g, sel } = this.selection();
-    return (
-      'game=' +
-      encodeURIComponent(g.id) +
-      '&gg=' +
-      (sel.cat === 'gg' ? 'true' : 'false') +
-      '&voice=' +
-      (this.state.voice ? 'true' : 'false')
-    );
-  }
-  // Diamond: past teammates who can take this game, service type and voice choice right now.
-  async loadPickable(force) {
-    const p = this.state.perks;
-    if (
-      !p ||
-      !p.pickTeammate ||
-      !p.pickTeammate.eligible ||
-      !this.props.loadPickable
-    )
-      return;
-    const q = this.pickQuery();
-    if (!force && q === this._pickQ) return;
-    this._pickQ = q;
-    this.setState({ pickList: null });
-    let list = [];
-    try {
-      const found = await this.props.loadPickable(q);
-      if (Array.isArray(found)) list = found;
-    } catch (e) {}
-    if (this._pickQ !== q) return;
-    this.setState((st) => ({
-      pickList: list,
-      pick: list.some((t) => t.handle === st.pick) ? st.pick : '',
-    }));
   }
   componentDidUpdate(prevProps) {
     const had = prevProps.session && prevProps.session.user;
     const user = this.props.session && this.props.session.user;
     if (prevProps.walletEur !== this.props.walletEur) this.loadWallet();
-    if (this.state.perks) this.loadPickable(false);
     if (had && !user) this.setState({ wallet: 0 });
     if (!had && user) {
       this.loadPerks();
@@ -1107,17 +1080,6 @@ export default class Home extends React.Component {
       bundle: s.bundle,
     });
     const freeOn = freeReady && freeFits && !!s.freePerk;
-    // Diamond: optional pick of a past teammate.
-    const pickOn = !!(
-      perks &&
-      perks.pickTeammate &&
-      perks.pickTeammate.eligible
-    );
-    const pickList = s.pickList;
-    const pick =
-      pickOn && pickList && pickList.some((t) => t.handle === s.pick)
-        ? s.pick
-        : '';
     // Duoly balance (refunds, cashback, gifts) pays first when switched on; the payment method gets the rest.
     // The server does the same sum again (lib/orders.js placeOrder), this is only what we show.
     const walletHere =
@@ -1283,31 +1245,6 @@ export default class Home extends React.Component {
         track('perk_toggled', { enabled });
       },
       freeList: money(sub),
-      pickOn,
-      pickLoading: pickOn && pickList === null,
-      pickEmpty: pickOn && !!pickList && pickList.length === 0,
-      pickErr: s.pickErr || '',
-      pickNone: {
-        pressed: pick ? 'false' : 'true',
-        pick: () => {
-          this.setState({ pick: '', pickErr: '' });
-          track('teammate_pick_changed', { picked: false });
-        },
-      },
-      pickMates: (pickList || []).map((t) => ({
-        key: t.handle,
-        name: t.name,
-        image: t.image || '/assets/avatars/avatar-1.png',
-        flag: t.country ? flagSrc(t.country) : '',
-        together:
-          t.orders + (t.orders === 1 ? ' order' : ' orders') + ' together',
-        on: t.handle === pick,
-        pressed: t.handle === pick ? 'true' : 'false',
-        pick: () => {
-          this.setState({ pick: t.handle, pickErr: '' });
-          track('teammate_pick_changed', { picked: true });
-        },
-      })),
       proOff: money(proOff),
       proHref: pro && pro.manage ? '/dashboard#pro' : '/pro',
       proCta:
@@ -1358,7 +1295,6 @@ export default class Home extends React.Component {
         money,
         payLabel,
         freeOn,
-        pick,
       }),
       queue: this.startQueue,
     };
@@ -1379,7 +1315,6 @@ export default class Home extends React.Component {
       money,
       payLabel,
       freeOn = false,
-      pick = '',
     },
   ) {
     const ignLabel = IGN_LABEL[g.id] || 'in-game name';
@@ -1455,7 +1390,6 @@ export default class Home extends React.Component {
           ...(freeOn
             ? { freePerk: true, useWallet: false }
             : { useWallet: !!st.useWallet }),
-          ...(pick ? { pickSource: pick } : {}),
         });
         if (result && result.url) {
           try {
@@ -1471,11 +1405,7 @@ export default class Home extends React.Component {
           window.location.href = '/queue/' + result.orderId;
           return;
         }
-        if (result && result.error === PICK_UNAVAILABLE) {
-          // The picked teammate went offline or got busy: clear the pick and show who is free now.
-          this.setState({ pick: '', pickErr: result.error });
-          this.loadPickable(true);
-        } else if (freeOn) this.loadPerks();
+        if (freeOn) this.loadPerks();
         return this.setState({
           placing: false,
           placeErr:
@@ -2074,6 +2004,38 @@ export default class Home extends React.Component {
                               <path d="M9 6l6 6-6 6" />
                             </svg>
                           </a>
+                          {!v.isTeammate && !v.isAdmin ? (
+                            <a
+                              href="/dashboard#favorites"
+                              role="menuitem"
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                minHeight: '42px',
+                                padding: '0 10px',
+                                borderRadius: '10px',
+                                color: '#F3EEFF',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                textDecoration: 'none',
+                              }}
+                            >
+                              <svg
+                                aria-hidden="true"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.2"
+                                strokeLinejoin="round"
+                              >
+                                <path d={HEART} />
+                              </svg>
+                              Favorites
+                            </a>
+                          ) : null}
                           <a
                             href="/profile"
                             role="menuitem"
@@ -3556,191 +3518,6 @@ export default class Home extends React.Component {
                       </div>
                     ) : null}
                   </div>
-                  {v.pickOn ? (
-                    <div
-                      data-private-block=""
-                      data-pick-teammate
-                      role="radiogroup"
-                      aria-labelledby="pick-h"
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '8px',
-                      }}
-                    >
-                      <span
-                        id="pick-h"
-                        style={{
-                          fontSize: '13px',
-                          fontWeight: '600',
-                          color: '#CFC4EA',
-                        }}
-                      >
-                        Pick a teammate{' '}
-                        <span style={{ fontWeight: '500', color: '#8E84AB' }}>
-                          (optional)
-                        </span>
-                      </span>
-                      <span
-                        style={{
-                          fontSize: '13px',
-                          lineHeight: '1.5',
-                          color: '#A79DC4',
-                        }}
-                      >
-                        They get your order first for 60 seconds. If they don’t
-                        take it, it goes to everyone.
-                      </span>
-                      {v.pickErr ? (
-                        <div
-                          role="alert"
-                          style={{
-                            padding: '10px 12px',
-                            borderRadius: '12px',
-                            background: 'rgba(240, 166, 255, .1)',
-                            border: '1px solid rgba(240, 166, 255, .28)',
-                            fontSize: '13.5px',
-                            color: '#F7D6FF',
-                          }}
-                        >
-                          {v.pickErr}
-                        </div>
-                      ) : null}
-                      {v.pickLoading ? (
-                        <span style={{ fontSize: '13px', color: '#8E84AB' }}>
-                          Loading your past teammates…
-                        </span>
-                      ) : v.pickEmpty ? (
-                        <span style={{ fontSize: '13px', color: '#8E84AB' }}>
-                          None of your past teammates are online for this right
-                          now.
-                        </span>
-                      ) : (
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: '8px',
-                          }}
-                        >
-                          <button
-                            type="button"
-                            role="radio"
-                            aria-checked={v.pickNone.pressed}
-                            onClick={v.pickNone.pick}
-                            style={{
-                              minHeight: '52px',
-                              padding: '0 14px',
-                              borderRadius: '12px',
-                              background:
-                                v.pickNone.pressed === 'true'
-                                  ? '#1B1033'
-                                  : 'transparent',
-                              border:
-                                '1.5px solid ' +
-                                (v.pickNone.pressed === 'true'
-                                  ? '#D6BBFF'
-                                  : 'rgba(196, 170, 255, .12)'),
-                              color: '#F3EEFF',
-                              fontSize: '13.5px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            Anyone
-                          </button>
-                          {v.pickMates.map((t) => (
-                            <button
-                              key={t.key}
-                              type="button"
-                              role="radio"
-                              aria-checked={t.pressed}
-                              onClick={t.pick}
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '10px',
-                                minHeight: '52px',
-                                padding: '6px 14px 6px 8px',
-                                borderRadius: '12px',
-                                textAlign: 'left',
-                                background: t.on ? '#1B1033' : 'transparent',
-                                border:
-                                  '1.5px solid ' +
-                                  (t.on
-                                    ? '#D6BBFF'
-                                    : 'rgba(196, 170, 255, .12)'),
-                                color: '#F3EEFF',
-                              }}
-                            >
-                              <span
-                                style={{
-                                  position: 'relative',
-                                  flex: '0 0 auto',
-                                  width: '34px',
-                                  height: '34px',
-                                }}
-                              >
-                                <img
-                                  src={t.image}
-                                  alt=""
-                                  width="34"
-                                  height="34"
-                                  referrerPolicy="no-referrer"
-                                  style={{
-                                    width: '34px',
-                                    height: '34px',
-                                    borderRadius: '50%',
-                                    objectFit: 'cover',
-                                    display: 'block',
-                                  }}
-                                />
-                                {t.flag ? (
-                                  <img
-                                    src={t.flag}
-                                    alt=""
-                                    width="13"
-                                    height="13"
-                                    style={{
-                                      position: 'absolute',
-                                      right: '-2px',
-                                      bottom: '-2px',
-                                      width: '13px',
-                                      height: '13px',
-                                      borderRadius: '50%',
-                                      boxShadow: '0 0 0 1.5px #120B22',
-                                    }}
-                                  />
-                                ) : null}
-                              </span>
-                              <span
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  minWidth: '0',
-                                  lineHeight: '1.3',
-                                }}
-                              >
-                                <span
-                                  style={{
-                                    fontSize: '14px',
-                                    fontWeight: '600',
-                                    color: '#FFFFFF',
-                                  }}
-                                >
-                                  {t.name}
-                                </span>
-                                <span
-                                  style={{ fontSize: '12px', color: '#A79DC4' }}
-                                >
-                                  {t.together}
-                                </span>
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : null}
                   {v.game.id !== 'social' ? (
                     <MoodPicker
                       value={this.state.mood}

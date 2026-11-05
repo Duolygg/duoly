@@ -37,7 +37,6 @@ export const EVENT_CATALOGUE = {
   booking_option_changed: { option: 'slug', value: 'slug' },
   wallet_toggled: { enabled: 'bool' },
   perk_toggled: { enabled: 'bool' },
-  teammate_pick_changed: { picked: 'bool' },
   checkout_login_required: { game: 'slug', service: 'slug' },
   booking_confirm_opened: {
     game: 'slug',
@@ -53,7 +52,6 @@ export const EVENT_CATALOGUE = {
     voice: 'bool',
     wallet: 'bool',
     free_perk: 'bool',
-    picked: 'bool',
     mood: 'slug',
     stream: 'bool',
   },
@@ -78,6 +76,9 @@ export const EVENT_CATALOGUE = {
   tip_started: { amount_eur_cents: 'int', display_currency: 'slug' },
   trustpilot_clicked: { rating: 'int', source: 'slug' },
   rebook_clicked: { source: 'slug' },
+  play_again_viewed: { game: 'slug' },
+  play_again_started: { path: ['card', 'wallet', 'checkout', '3ds'] },
+  teammate_favorited: { on: 'bool', source: 'slug' },
   queue_room_viewed: { state: 'slug', game: 'slug' },
   match_seen: { game: 'slug', wait_seconds: 'int' },
   // 7.5 accounts

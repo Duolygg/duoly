@@ -87,7 +87,7 @@ describe('free coaching intent and outcome', () => {
   it('keeps the list price and sets no wallet, discount or creator code', () => {
     const row = freeCoachingIntentRow(
       { amount_eur_cents: 1299, payout_usd_cents: 840 },
-      { customerId: 'c', pickSource: ORDER, expiresAt: 'x' },
+      { customerId: 'c', expiresAt: 'x' },
     );
     expect(row).toMatchObject({
       amount_eur_cents: 1299,
@@ -96,15 +96,10 @@ describe('free coaching intent and outcome', () => {
       wallet_eur_cents: 0,
       first_order_discount_cents: 0,
       ref_code: null,
-      pick_source_order_id: ORDER,
       customer_id: 'c',
     });
-    expect(
-      freeCoachingIntentRow(
-        {},
-        { customerId: 'c', pickSource: null, expiresAt: 'x' },
-      ),
-    ).not.toHaveProperty('pick_source_order_id');
+    // the Diamond pick ended with 20261106170000
+    expect(row).not.toHaveProperty('pick_source_order_id');
   });
   it('maps create_free_coaching_order answers', () => {
     expect(
@@ -144,7 +139,15 @@ describe('checkout request schema', () => {
     server: 'EUW',
     ign: 'Me#EUW',
   };
-  it('accepts a free order without the wallet and a uuid pick source', () => {
+  it('accepts a free order without the wallet, and no pick source any more', () => {
+    expect(
+      CheckoutRequestSchema.safeParse({
+        ...base,
+        freePerk: true,
+        useWallet: false,
+      }).success,
+    ).toBe(true);
+    // the Diamond pick ended with 20261106170000
     expect(
       CheckoutRequestSchema.safeParse({
         ...base,
@@ -152,7 +155,7 @@ describe('checkout request schema', () => {
         useWallet: false,
         pickSource: ORDER,
       }).success,
-    ).toBe(true);
+    ).toBe(false);
   });
   it('rejects the free order with the wallet (explicit or by default)', () => {
     expect(

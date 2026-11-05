@@ -9,22 +9,6 @@ const settle = async (page: Page) => {
 
 // Phones: the sticky order bar and the header can cover a target, so clicks are dispatched
 // on the element itself (React handles them the same way).
-const UNAVAILABLE =
-  'That teammate is not available right now. Pick someone else or book without a pick.';
-const mika = {
-  handle: '77777777-7777-4777-8777-777777777777',
-  name: 'Mika',
-  image: '/assets/avatars/avatar-3.png',
-  country: 'de',
-  orders: 4,
-};
-const jo = {
-  handle: '88888888-8888-4888-8888-888888888888',
-  name: 'Jo',
-  image: '/assets/avatars/avatar-4.png',
-  country: 'fr',
-  orders: 1,
-};
 
 type Checkout = (body: Record<string, unknown>) => {
   status: number;
@@ -35,11 +19,9 @@ async function bookingPage(
   page: Page,
   {
     perks,
-    teammates = () => [],
     checkout,
   }: {
     perks: unknown;
-    teammates?: (query: URLSearchParams) => unknown[];
     checkout: Checkout;
   },
 ) {
@@ -53,11 +35,10 @@ async function bookingPage(
       });
     if (url.pathname === '/api/orders/perks')
       return r.fulfill({ json: { perks } });
+    // the Diamond pick ended (20261106170000): the page must not ask for it any more
     if (url.pathname === '/api/orders/pickable-teammates') {
       pickQueries.push(url.search);
-      return r.fulfill({
-        json: { eligible: true, teammates: teammates(url.searchParams) },
-      });
+      return r.fulfill({ json: { eligible: false, teammates: [] } });
     }
     if (url.pathname === '/api/checkout') {
       const body = r.request().postDataJSON();
@@ -84,7 +65,7 @@ const platinum = (available: boolean) => ({
     available,
     month: '2026-10',
   },
-  pickTeammate: { eligible: false },
+  freePro: { eligible: false },
 });
 
 test('free monthly coaching: toggle hides prices and sends freePerk without the wallet', async ({
@@ -113,7 +94,7 @@ test('free monthly coaching: toggle hides prices and sends freePerk without the 
   await expect(
     page.getByRole('switch', { name: /Use my Duoly balance/ }),
   ).toBeVisible();
-  // Pick a teammate is Diamond only.
+  // There is no teammate pick any more.
   await expect(page.locator('[data-pick-teammate]')).toHaveCount(0);
 
   await page.getByRole('tab', { name: /^Coaching/ }).dispatchEvent('click');
@@ -206,103 +187,35 @@ const diamond = {
     available: false,
     month: '2026-10',
   },
-  pickTeammate: { eligible: true },
+  freePro: { eligible: true },
 };
 
-test('pick a teammate sends pickSource and handles the unavailable answer', async ({
+test('Diamond: no teammate pick any more, and no pick requests', async ({
   page,
 }) => {
-  // The longest flow in this file on the dev-build homepage: on a slow CI runner its steps
-  // together ran past the default 30 s test timeout without any single check failing (PR 134).
-  test.slow();
-  let calls = 0;
-  let mikaOnline = true;
   const { pickQueries, checkoutBodies } = await bookingPage(page, {
     perks: diamond,
-    teammates: () => (mikaOnline ? [mika, jo] : [jo]),
-    checkout: () => {
-      calls += 1;
-      if (calls === 1) {
-        mikaOnline = false;
-        return { status: 409, json: { error: UNAVAILABLE } };
-      }
-      return {
-        status: 503,
-        json: { error: 'Checkout is unavailable. Try again.' },
-      };
-    },
+    checkout: () => ({
+      status: 503,
+      json: { error: 'Checkout is unavailable. Try again.' },
+    }),
   });
-  const picker = page.locator('[data-pick-teammate]');
-  await expect(picker).toContainText(
-    'They get your order first for 60 seconds. If they don’t take it, it goes to everyone.',
-  );
-  await expect(picker).toContainText('4 orders together');
-  await expect(picker).toContainText('1 order together');
-  // The free month is used: no free toggle.
-  await expect(
-    page.getByRole('switch', { name: /Use my free monthly coaching/ }),
-  ).toHaveCount(0);
-  expect(pickQueries[0]).toBe('?game=lol&gg=false&voice=true');
-
-  // Voice off: the list is read again for the new choice.
-  await page
-    .getByRole('switch', { name: 'Voice on Discord' })
-    .dispatchEvent('click');
-  await expect
-    .poll(() => pickQueries.at(-1))
-    .toBe('?game=lol&gg=false&voice=false');
-  await expect(picker).toContainText('4 orders together');
-
-  await picker.getByRole('radio', { name: /Mika/ }).dispatchEvent('click');
-  await expect(picker.getByRole('radio', { name: /Mika/ })).toHaveAttribute(
-    'aria-checked',
-    'true',
-  );
+  await expect(page.locator('[data-pick-teammate]')).toHaveCount(0);
   await page
     .getByRole('complementary', { name: 'Order summary' })
     .getByRole('button', { name: /^Pay / })
     .dispatchEvent('click');
   const dialog = page.getByRole('dialog');
   await dialog.getByPlaceholder('Name#TAG').fill('Dana#EUW');
-  const before = pickQueries.length;
   await dialog
     .getByRole('button', { name: /Continue to payment/ })
     .dispatchEvent('click');
   await expect.poll(() => checkoutBodies.length).toBe(1);
-  expect(checkoutBodies[0]).toMatchObject({
-    pickSource: mika.handle,
-    useWallet: true,
-    voice: false,
-  });
-  expect(checkoutBodies[0]).not.toHaveProperty('freePerk');
-  await expect(dialog.getByRole('alert')).toHaveText(UNAVAILABLE);
-  // The pick is cleared, the list read again and Mika is gone.
-  await expect.poll(() => pickQueries.length).toBe(before + 1);
-  await expect(picker.getByRole('alert')).toHaveText(UNAVAILABLE);
-  await expect(picker.getByRole('radio', { name: /Mika/ })).toHaveCount(0);
-  await expect(picker.getByRole('radio', { name: 'Anyone' })).toHaveAttribute(
-    'aria-checked',
-    'true',
-  );
-  await dialog
-    .getByRole('button', { name: /Continue to payment/ })
-    .dispatchEvent('click');
-  await expect.poll(() => checkoutBodies.length).toBe(2);
-  expect(checkoutBodies[1]).not.toHaveProperty('pickSource');
+  expect(checkoutBodies[0]).not.toHaveProperty('pickSource');
   await expect(dialog.getByRole('alert')).toHaveText(
     'Checkout is unavailable. Try again.',
   );
-});
-
-test('pick a teammate with nobody online says so', async ({ page }) => {
-  await bookingPage(page, {
-    perks: diamond,
-    teammates: () => [],
-    checkout: () => ({ status: 503, json: { error: 'x' } }),
-  });
-  await expect(page.locator('[data-pick-teammate]')).toContainText(
-    'None of your past teammates are online for this right now.',
-  );
+  expect(pickQueries).toEqual([]);
 });
 
 test('perks not live: no perk UI and no pick requests', async ({ page }) => {

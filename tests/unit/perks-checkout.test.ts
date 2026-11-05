@@ -13,7 +13,7 @@ const perks = (level: string, available: boolean, eligible = true) => ({
     available,
     month: '2026-10',
   },
-  pickTeammate: { eligible: level === 'diamond' },
+  freePro: { eligible: level === 'diamond' },
 });
 
 const state = vi.hoisted(() => ({
@@ -23,7 +23,6 @@ const state = vi.hoisted(() => ({
   stripeCalls: 0,
   inserted: null as Record<string, unknown> | null,
   perks: null as unknown,
-  pickable: null as unknown,
   freeAnswer: null as { data: unknown; error: unknown } | null,
   refCode: null as string | null,
 }));
@@ -47,8 +46,6 @@ vi.mock('../../src/server/auth/handlers', () => ({
             return { data: { order: null }, error: null };
           if (fn === 'customer_perks')
             return { data: state.perks, error: null };
-          if (fn === 'customer_pickable_teammates')
-            return { data: state.pickable, error: null };
           throw new Error(`unexpected user rpc ${fn}`);
         },
       },
@@ -147,7 +144,6 @@ beforeEach(() => {
   state.stripeCalls = 0;
   state.inserted = null;
   state.perks = perks('platinum', true);
-  state.pickable = { eligible: true, teammates: [] };
   state.freeAnswer = { data: { order_id: ORDER, created: true }, error: null };
   state.refCode = 'CREATOR1';
 });
@@ -240,32 +236,9 @@ describe('free coaching checkout', () => {
       );
     },
   );
-
-  it('stores a pick source on the free intent', async () => {
-    state.perks = perks('diamond', true);
-    state.pickable = {
-      eligible: true,
-      teammates: [
-        { handle: SOURCE, name: 'Ana', image: '', country: 'at', orders: 3 },
-      ],
-    };
-    state.body = { ...freeBody, pickSource: SOURCE };
-    expect((await run()).status).toBe(200);
-    expect(state.inserted).toMatchObject({
-      pick_source_order_id: SOURCE,
-      free_coaching: true,
-    });
-    expect(
-      state.userCalls.find((c) => c.fn === 'customer_pickable_teammates')!.args,
-    ).toEqual({
-      p_game: 'lol',
-      p_gg: false,
-      p_voice: false,
-    });
-  });
 });
 
-describe('pick a teammate on a paid checkout', () => {
+describe('the Diamond pick is gone (20261106170000)', () => {
   const paidBody = {
     gameId: 'lol',
     serviceId: 'duo2',
@@ -275,45 +248,18 @@ describe('pick a teammate on a paid checkout', () => {
     ign: 'Me#EUW',
     voice: true,
     useWallet: false,
-    pickSource: SOURCE,
   };
-  it('passes the pick source to the intent and goes to Stripe as usual', async () => {
+  it('refuses a stale page that still sends a pick, before any payment', async () => {
     state.perks = perks('diamond', true);
-    state.pickable = {
-      eligible: true,
-      teammates: [
-        { handle: SOURCE, name: 'Ana', image: '', country: 'at', orders: 3 },
-      ],
-    };
-    state.body = paidBody;
-    const response = await run();
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({
-      intent_id: INTENT,
-      url: `/checkout/${INTENT}`,
-    });
-    expect(state.inserted).toMatchObject({ pick_source_order_id: SOURCE });
-    expect(state.inserted).not.toHaveProperty('free_coaching');
-    // The paid path still applies PRO (the free path above ignores it).
-    expect(state.inserted!.pro_discount_cents as number).toBeGreaterThan(0);
-    expect(state.stripeCalls).toBe(1);
-  });
-  it('refuses a pick below Diamond and an unknown teammate', async () => {
-    state.body = paidBody;
-    state.perks = perks('platinum', true);
-    let response = await run();
-    expect(response.status).toBe(409);
-    expect((await response.json()).error).toMatch(/Diamond/);
-    state.perks = perks('diamond', true);
-    state.pickable = { eligible: true, teammates: [] };
-    response = await run();
-    expect(response.status).toBe(409);
+    state.body = { ...paidBody, pickSource: SOURCE };
+    expect((await run()).status).toBe(400);
+    state.body = { ...freeBody, pickSource: SOURCE };
+    expect((await run()).status).toBe(400);
     expect(state.inserted).toBeNull();
     expect(state.stripeCalls).toBe(0);
   });
-  it('sends no perk fields and reads no perks without a pick', async () => {
-    state.body = { ...paidBody, pickSource: undefined };
-    delete state.body.pickSource;
+  it('sends no perk fields and reads no perks on a paid checkout', async () => {
+    state.body = paidBody;
     expect((await run()).status).toBe(200);
     expect(state.inserted).not.toHaveProperty('pick_source_order_id');
     expect(state.userCalls.map((c) => c.fn)).toEqual(['customer_active_order']);

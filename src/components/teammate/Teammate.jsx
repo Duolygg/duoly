@@ -1007,7 +1007,7 @@ export default class Teammate extends React.Component {
       matchReport: { ...this.state.matchReport, busy: false, saved: true },
     });
   }
-  // A Diamond customer picked this teammate. Passing sends the order to everyone right away.
+  // Play again: a customer booked this teammate again. Passing sends the order to everyone right away.
   async pass(o) {
     if (this.props.admin || this._passing || !o.pickedForYou) return;
     this._passing = true;
@@ -2113,8 +2113,12 @@ export default class Teammate extends React.Component {
           overflowY: 'auto',
         }}
       >
+        {/* Focus lands on the panel, not the button, so no focus ring shows until you Tab. */}
         <div
+          tabIndex={-1}
+          autoFocus
           style={{
+            outline: 'none',
             position: 'relative',
             width: '100%',
             maxWidth: '440px',
@@ -2261,15 +2265,19 @@ export default class Teammate extends React.Component {
             <button
               type="submit"
               disabled={!this.props.discordEnabled}
-              autoFocus
               style={{
                 marginTop: '20px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '10px',
+                width: '100%',
                 minHeight: '54px',
+                padding: '0 20px',
+                border: 'none',
                 borderRadius: '16px',
+                cursor: this.props.discordEnabled ? 'pointer' : 'not-allowed',
+                opacity: this.props.discordEnabled ? '1' : '.55',
                 background: '#5865F2',
                 color: '#FFFFFF',
                 textDecoration: 'none',
@@ -4747,13 +4755,13 @@ export default class Teammate extends React.Component {
                                 color: '#FFD27A',
                               }}
                             >
-                              Picked for you
+                              Play again
                             </span>
                             <span
                               style={{ fontSize: '13px', color: '#CFC4EA' }}
                             >
-                              A past customer asked for you. Only you can take
-                              this for a moment.
+                              Your customer wants another round with you. Only
+                              you can take this for a minute.
                             </span>
                           </div>
                         ) : null}

@@ -8,6 +8,8 @@ import { shrinkImage } from '../../design-reference/lib/shrinkImage';
 import PrivateProofs from '../proofs/PrivateProofs';
 import TipPaymentPanel from './TipPayment';
 import { createRoomFetch } from './queue-room-data';
+import { FavoriteAsk } from './FavoriteHeart';
+import PlayAgain from './PlayAgain';
 import { TRUSTPILOT_EVALUATE } from '../../site/trustpilot';
 import MatchStage, {
   tipMoney,
@@ -67,7 +69,7 @@ export default class QueueRoom extends React.Component {
     this._fetch = createRoomFetch({
       orderId: props.id,
       csrf: props.csrf,
-      proMember: !!props.proMember,
+      rerollLimit: props.rerollLimit === undefined ? 2 : props.rerollLimit,
     });
     this.state = {
       order: null,
@@ -98,6 +100,11 @@ export default class QueueRoom extends React.Component {
         drag: false,
       },
       tipPayment: null,
+      // favorite the teammate (20261106150000): null until loaded, { available, favorite } after
+      fav: null,
+      favFor: '',
+      favBusy: false,
+      favErr: '',
       rv: {
         rating: 0,
         hover: 0,
@@ -301,6 +308,7 @@ export default class QueueRoom extends React.Component {
         { order: d.order, offset: d.now ? d.now - Date.now() : 0, error: '' },
         () => {
           if (!prev || prev.status !== d.order.status) this.pollChat(); // chat opens the moment someone accepts
+          this.loadFav();
         },
       );
     } catch (e) {
@@ -504,6 +512,74 @@ export default class QueueRoom extends React.Component {
         drag: false,
       },
     });
+  // ---- favorite the teammate: once someone plays the order, again when the teammate changes
+  favKey(o) {
+    return o &&
+      o.teammate &&
+      (o.status === 'in_progress' || o.status === 'completed')
+      ? o.teammate.name + '|' + o.teammate.image
+      : '';
+  }
+  async loadFav() {
+    const key = this.favKey(this.state.order);
+    if (!key || key === this.state.favFor) return;
+    this.setState({ favFor: key, fav: null, favErr: '' });
+    try {
+      const res = await this._fetch(
+        '/api/orders/' + encodeURIComponent(this.props.id) + '/favorite',
+        { cache: 'no-store' },
+      );
+      const d = await res.json().catch(() => ({}));
+      if (res.ok && typeof d.favorite === 'boolean') this.setState({ fav: d });
+      else this.setState({ favFor: '' }); // try again on the next poll
+    } catch (e) {
+      this.setState({ favFor: '' });
+    }
+  }
+  toggleFav = async (source) => {
+    const fav = this.state.fav;
+    if (!fav || !fav.available || this.state.favBusy) return;
+    const on = !fav.favorite;
+    this.setState({ favBusy: true, favErr: '', fav: { ...fav, favorite: on } });
+    try {
+      const res = await this._fetch(
+        '/api/orders/' + encodeURIComponent(this.props.id) + '/favorite',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ on }),
+        },
+      );
+      const d = await res.json().catch(() => ({}));
+      if (res.ok && typeof d.favorite === 'boolean') {
+        track('teammate_favorited', { on, source });
+        return this.setState({ favBusy: false, fav: d });
+      }
+      this.setState({
+        favBusy: false,
+        fav,
+        favErr: d.error || 'Couldn’t save that. Try again.',
+      });
+    } catch (e) {
+      this.setState({
+        favBusy: false,
+        fav,
+        favErr: 'Can’t reach Duoly right now. Try again.',
+      });
+    }
+  };
+  // The heart's props, or null while there's nobody to favorite.
+  favProps(source) {
+    const fav = this.state.fav;
+    if (!fav || !fav.available) return null;
+    return {
+      on: fav.favorite,
+      busy: this.state.favBusy,
+      err: this.state.favErr,
+      onToggle: () => this.toggleFav(source),
+    };
+  }
+
   // review form edits always start from the latest state, so quick clicks don't undo each other
   editRv = (fn) => this.setState((s) => ({ rv: { ...s.rv, ...fn(s.rv) } }));
   sendReview = async () => {
@@ -808,6 +884,7 @@ export default class QueueRoom extends React.Component {
     }
 
     if (o.review) {
+      const fav = this.favProps('review');
       return (
         <ReviewThanks
           name={name}
@@ -815,6 +892,9 @@ export default class QueueRoom extends React.Component {
           tip={o.tip}
           reviewUrl={TRUSTPILOT_EVALUATE}
         >
+          {fav ? (
+            <FavoriteAsk name={name} rating={o.review.rating} fav={fav} />
+          ) : null}
           {o.tip?.state === 'pending' ? (
             <button
               type="button"
@@ -1269,6 +1349,7 @@ export default class QueueRoom extends React.Component {
         free={v.free}
         mate={v.mate}
         ignLabel={v.ignLabel}
+        fav={this.favProps('card')}
       />
     );
   }
@@ -1485,6 +1566,23 @@ export default class QueueRoom extends React.Component {
                   ? this.renderReview(v)
                   : null}
 
+                {phase === 'done' && this.props.stripeKey && o ? (
+                  <PlayAgain
+                    orderId={o.id}
+                    csrf={this.props.csrf}
+                    stripeKey={this.props.stripeKey}
+                    game={o.game}
+                    name={
+                      mate
+                        ? String(mate.name).split(' ')[0]
+                        : o.lastTeammate
+                          ? o.lastTeammate.name.split(' ')[0]
+                          : 'your teammate'
+                    }
+                    summary={o.title + ' ×' + (o.games || 1)}
+                    usd={o.paid && o.paid.currency === 'USD'}
+                  />
+                ) : null}
                 {phase === 'done' ||
                 phase === 'cancelled' ||
                 phase === 'missing' ? (

@@ -127,9 +127,9 @@ test('picked for you: badge, bell, Pass and toast', async ({ page }) => {
     .dispatchEvent('click');
   const row = page.locator('li[data-picked="true"]');
   await expect(row).toBeVisible({ timeout: 10_000 });
-  await expect(row).toContainText('Picked for you');
+  await expect(row).toContainText('Play again');
   await expect(row).toContainText(
-    'A past customer asked for you. Only you can take this for a moment.',
+    'Your customer wants another round with you. Only you can take this for a minute.',
   );
   await expect(row).toContainText('DL-77');
   // A picked order is a new order: the bell rings like for any other.

@@ -24,7 +24,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     roles: BUYERS,
     match:
       /re ?roll|swap|switch|new teammate|bad teammate|isnt great|not great|toxic|rude|flam|\bleft\b|afk|leaves|leaving|throw/,
-    text: 'You can re-roll your teammate for free in the first 5 minutes after you’re matched, up to 2 times per order: the order goes back into the queue and that teammate can’t take it from the queue again. If they were toxic or tried to move you off Duoly, tell us here with screenshots and an admin looks at it.',
+    text: 'You can re-roll your teammate for free in the first 5 minutes after you’re matched, up to 2 times per order (4 from Gold, unlimited with PRO): the order goes back into the queue and that teammate can’t take it from the queue again. If they were toxic or tried to move you off Duoly, tell us here with screenshots and an admin looks at it.',
   },
   {
     id: 'cancel-refund',
@@ -38,6 +38,19 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     roles: BUYERS,
     match: /rate|rating|review|stars|feedback/,
     text: 'After your order is done you can rate your teammate with 1 to 5 stars, pick a few tags and write a short review in your order room. You can rate each order once, and add a tip of €1 to €100 together with your rating; 100% of the tip goes to your teammate. After rating, the thank you panel also invites you to review Duoly on Trustpilot, whatever your rating was.',
+  },
+  {
+    id: 'play-again',
+    roles: ['customer'],
+    match:
+      /play again|same session|another round|book again|rebook|saved card|save my card/,
+    text: 'Once your teammate has finished your order, your order room shows Play again: it books the same session again (same game, service, number of games or hours, server and in-game name) with one tap. Your Duoly balance pays first, then a card you saved at checkout (tick “save” on the payment form). If your bank asks for a check, it opens right there. Without a saved card you go to the normal payment page with everything filled in. Your teammate gets the order first for a minute, then any teammate can take it. Play again only shows while that teammate is online and free, and not for Twitch streamer bookings or the free monthly coaching.',
+  },
+  {
+    id: 'favorites',
+    roles: ['customer'],
+    match: /favou?rite|heart|rebook|same teammate|play again with|again with/,
+    text: 'You can favorite a teammate you liked: tap the heart on their card in your order room, under your rating once the order is done, or next to them in Your teammates on your dashboard. Your favorites are listed on your dashboard (also in the account menu) with who is online right now, and they see your orders first, as soon as you queue. Rebook opens checkout on the game you last played together. Tap the heart again to remove someone. You can have up to 100 favorites.',
   },
   {
     id: 'twitch-book',
@@ -81,7 +94,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     roles: BUYERS,
     match:
       /loyal|cashback|level|bronze|silver|gold|platinum|diamond|reward|perk|gift/,
-    text: 'Loyalty levels by completed orders: Bronze from 0 (1% cashback), Silver from 100 (2%, €5 gift), Gold from 250 (3%, €15 gift, priority matching), Platinum from 500 (5%, €40 gift, one free 1-hour or 1-game coaching order every month), Diamond from 1000 (7%, €100 gift, pick a teammate you played with before). Cashback is on the card-paid part of each completed order and lands in your balance 14 days later. Gifts are added automatically. Your dashboard Rewards card shows your level.',
+    text: 'Loyalty levels by completed orders: Bronze from 0 (1% cashback), Silver from 100 (2%, €5 gift), Gold from 250 (3%, €15 gift, priority matching, 4 re-rolls per order instead of 2), Platinum from 500 (5%, €40 gift, one free 1-hour or 1-game coaching order every month), Diamond from 1000 (7%, €100 gift, and Duoly PRO free for as long as you stay Diamond). Cashback is on the card-paid part of each completed order and lands in your balance 14 days later. Gifts are added automatically. Your dashboard Rewards card shows your level.',
   },
   {
     id: 'social',
@@ -94,7 +107,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'pro',
     roles: BUYERS,
     match: /\bpro\b|membership|subscription|abo/,
-    text: 'Duoly PRO costs €9.99 a month ($9.99 for customers who use US dollars, charged in euros): 10% off every order on top of bundle discounts, priority matching and unlimited re-rolls (still in the first 5 minutes after acceptance). The first 7 days are free with no card needed, once per customer and card. To keep PRO after the trial, add a card in Manage PRO on your dashboard; without one it pauses until a card is added. Cancel anytime with Manage PRO; PRO stays active until the end of the paid month.',
+    text: 'Duoly PRO costs €9.99 a month ($9.99 for customers who use US dollars, charged in euros): 10% off every order on top of bundle discounts, priority matching and unlimited re-rolls (still in the first 5 minutes after acceptance). The first 7 days are free with no card needed, once per customer and card. To keep PRO after the trial, add a card in Manage PRO on your dashboard; without one it pauses until a card is added. Cancel anytime with Manage PRO; PRO stays active until the end of the paid month. Diamond customers (1000 completed orders) get PRO free while they stay Diamond, with no card; if you were already paying for PRO, cancel it in Manage PRO so you are not charged again.',
   },
   // ---- teammates
   {
@@ -152,7 +165,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'rerolled',
     roles: TEAM,
     match: /re ?roll|swapped|replaced|took.*away/,
-    text: 'Customers can re-roll in the first 5 minutes after you’re matched, up to 2 times. The order goes back into the queue and you won’t get it again from the queue. It isn’t a penalty, so just take the next one.',
+    text: 'Customers can re-roll in the first 5 minutes after you’re matched, up to 2 times (4 from Gold, unlimited with PRO). The order goes back into the queue and you won’t get it again from the queue. It isn’t a penalty, so just take the next one.',
   },
   {
     id: 'toxic-customer',
@@ -177,6 +190,18 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     roles: TEAM,
     match: /rule|outside|off platform|socials/,
     text: 'The golden rules: online means ready, finish what you start, everything stays on Duoly (no outside payments or socials), never touch a customer’s account, and be the teammate you’d want.',
+  },
+  {
+    id: 'play-again-teammate',
+    roles: TEAM,
+    match: /play again|another round|picked|\bpass\b|only you/,
+    text: 'When a customer you just played with taps Play again, the new order shows at the top of your queue marked Play again, and only you can take it for a minute. Pass if you can’t play: it goes to every teammate at once. After the minute it goes to everyone anyway.',
+  },
+  {
+    id: 'favorited',
+    roles: TEAM,
+    match: /favou?rite|heart|regular|same customer|rebook/,
+    text: 'Customers can favorite you after playing with you. When a customer who favorited you queues an order you can play, you see it right away, before teammates who didn’t play with them; the longer it waits, the more teammates see it. You still need access to that game and an online dashboard, and your queue settings still apply.',
   },
   {
     id: 'priority',

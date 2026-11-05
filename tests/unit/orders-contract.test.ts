@@ -343,7 +343,8 @@ describe('strict SQL order contracts', () => {
     { amount_eur_cents: 99.1 },
     { amount_eur_cents: '599' },
     { rerolls: -1 },
-    { rerolls: 3 },
+    // re-rolls: 2, 4 from Gold, unlimited with PRO (20261106170000); never negative
+    { rerolls: -1 },
     { current_assignment_id: 'bad' },
     { status: 'paid' },
     { created_at: 'today' },

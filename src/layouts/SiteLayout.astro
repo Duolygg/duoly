@@ -156,6 +156,11 @@ const avatar =
                   <a role="menuitem" href={home.href} class="menu-home">
                     {home.label}
                   </a>
+                  {viewer.role === 'customer' && (
+                    <a role="menuitem" href="/dashboard#favorites">
+                      Favorites
+                    </a>
+                  )}
                   <a role="menuitem" href="/profile">
                     Edit profile
                   </a>

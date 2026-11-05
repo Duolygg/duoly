@@ -2,20 +2,28 @@
 import ProductLayout from '../../layouts/ProductLayout.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import LiveQueueRoom from '../../components/account/LiveQueueRoom';
-import { OrderCommandSchema, type CustomerOrder } from '../../contracts/orders';
+import {
+  OrderCommandSchema,
+  RerollLimitSchema,
+  type CustomerOrder,
+} from '../../contracts/orders';
 import { accountContext } from '../../server/auth/context';
 import { decodeOrderRpcResult } from '../../server/orders/results';
 import { orderChatEnabled } from '../../server/chat/config';
 import { loadProView } from '../../server/pro/status';
+import { paymentsConfig } from '../../server/payments/config';
 const chatEnabled = orderChatEnabled();
 const reportsEnabled = process.env.REPORTS_ENABLED === 'true';
+// Play again: Stripe.js only for a 3D Secure check on a saved card (publishable key only)
+const stripeKey = paymentsConfig()?.publishableKey ?? '';
 const command = OrderCommandSchema.safeParse({ order_id: Astro.params.id });
 const operational = command.success;
 let identity = null;
 let order: CustomerOrder | null = null;
 let csrf = '';
 let message = 'Order not found.';
-let proMember = false;
+// re-rolls per order: 2, 4 from Gold, null = unlimited with PRO (20261106170000)
+let rerollLimit: number | null = 2;
 if (operational) {
   const account = accountContext(Astro.request, Astro.cookies);
   try {
@@ -33,10 +41,17 @@ if (operational) {
     if (result.ok && result.payload.order.id === command.data.order_id) {
       order = result.payload.order;
       csrf = account.csrf();
-      // R2: PRO members re-roll without the limit of 2 (reroll_order checks is_pro too).
-      proMember =
-        (await loadProView(account.client, identity.viewer.role))?.member ===
-        true;
+      const rpc = account.client.rpc.bind(account.client) as unknown as (
+        fn: string,
+      ) => PromiseLike<{ data: unknown; error: unknown }>;
+      const limit = await rpc('customer_reroll_limit');
+      const parsed = RerollLimitSchema.safeParse(limit.data);
+      if (!limit.error && parsed.success) rerollLimit = parsed.data.limit;
+      // before the migration: PRO members have no limit (reroll_order checks is_pro)
+      else if (
+        (await loadProView(account.client, identity.viewer.role))?.member
+      )
+        rerollLimit = null;
     } else if (!result.ok) {
       Astro.response.status = result.status;
       message =
@@ -71,7 +86,8 @@ if (operational) {
       csrf={csrf}
       chatEnabled={chatEnabled}
       reportsEnabled={reportsEnabled}
-      proMember={proMember}
+      rerollLimit={rerollLimit}
+      stripeKey={stripeKey}
       client:load
     />
   </SiteLayout>

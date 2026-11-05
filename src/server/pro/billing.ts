@@ -5,6 +5,7 @@ import { mutation } from '../auth/handlers';
 import type { Viewer } from '../../contracts/account';
 import { viewerCurrency } from '../currency';
 import { adminFor, paymentsConfig, stripeFor } from '../payments/config';
+import { billingCustomer } from '../payments/customer';
 import {
   PRO_METADATA_KIND,
   PRO_MONTHLY_CENTS,
@@ -142,30 +143,6 @@ export function proSessionParams(input: {
   };
 }
 
-async function proCustomer(
-  stripe: Stripe,
-  admin: SupabaseClient,
-  user: { id: string; email: string | null },
-): Promise<string | null> {
-  const rpc = rpcOf(admin);
-  const existing = await rpc('pro_billing_customer', { p_user: user.id });
-  if (existing.error) return null;
-  if (typeof existing.data === 'string' && existing.data) return existing.data;
-  const customer = await stripe.customers.create(
-    {
-      ...(user.email ? { email: user.email } : {}),
-      metadata: { user_id: user.id },
-    },
-    { idempotencyKey: `pro_customer_${user.id}` },
-  );
-  const linked = await rpc('pro_link_customer', {
-    p_user: user.id,
-    p_customer: customer.id,
-  });
-  if (linked.error || typeof linked.data !== 'string') return null;
-  return linked.data;
-}
-
 type CustomerRequest =
   | { failure: Response }
   | {
@@ -247,7 +224,7 @@ export const proCheckout: APIRoute = async (context) => {
         { error: 'Duoly PRO is unavailable. Try again.' },
         503,
       );
-    const customerId = await proCustomer(stripe, admin, viewer);
+    const customerId = await billingCustomer(stripe, admin, viewer);
     if (!customerId)
       return account.json(
         { error: 'Duoly PRO is unavailable. Try again.' },

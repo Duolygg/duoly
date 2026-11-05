@@ -9,6 +9,7 @@ import { checkoutRefCode } from '../referrals';
 import { proEnabled } from '../pro/config';
 import { applyOrderDiscounts } from '../pro/discounts';
 import { isProMember } from '../pro/status';
+import { billingCustomer } from './customer';
 import {
   checkCheckoutPerks,
   freeCoachingIntentRow,
@@ -26,7 +27,7 @@ import {
 } from './config';
 
 /** Stripe's minimum Checkout Session lifetime. */
-const SESSION_MINUTES = 30;
+export const SESSION_MINUTES = 30;
 
 export const CheckoutRequestSchema = z
   .strictObject({
@@ -45,9 +46,6 @@ export const CheckoutRequestSchema = z
     // Platinum and Diamond: this month's free 1-hour coaching (migration 20261026160000).
     // The free order pays nothing, so it never takes wallet money, a PRO or creator discount.
     freePerk: z.boolean().optional(),
-    // Diamond: one of the customer's own completed orders (the handle from
-    // /api/orders/pickable-teammates) names the teammate who gets the order first for 60 s.
-    pickSource: z.uuid().optional(),
     // Twitch streaming: the handle of a live streamer from /api/home/streamers. With it,
     // serviceId is 'stream' and units are the booked hours (migration 20261105100000).
     streamer: z.uuid().optional(),
@@ -59,7 +57,7 @@ export const CheckoutRequestSchema = z
   .refine(
     (request) =>
       (request.streamer !== undefined) === (request.serviceId === 'stream') &&
-      !(request.streamer && (request.freePerk || request.pickSource)),
+      !(request.streamer && request.freePerk),
     { message: 'A streamer booking is its own order.', path: ['streamer'] },
   );
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
@@ -219,6 +217,8 @@ export function sessionParams(input: {
   productName: string;
   description: string;
   nowSeconds: number;
+  /** The account's Stripe customer: offers "save this card" (used by Play again). */
+  stripeCustomer?: string | null;
 }): Stripe.Checkout.SessionCreateParams {
   const authorizeOnly = Object.fromEntries(
     AUTHORIZE_ONLY_METHODS.map((method) => [
@@ -232,7 +232,19 @@ export function sessionParams(input: {
     mode: 'payment',
     return_url: `${input.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
     client_reference_id: input.intentId,
-    ...(input.email ? { customer_email: input.email } : {}),
+    // With the account's Stripe customer, Stripe's form offers an optional "save my payment
+    // details" box (the customer's consent) and prefills cards saved that way next time. Play again
+    // (docs/product/play-again.md) pays with such a card.
+    ...(input.stripeCustomer
+      ? {
+          customer: input.stripeCustomer,
+          saved_payment_method_options: {
+            payment_method_save: 'enabled' as const,
+          },
+        }
+      : input.email
+        ? { customer_email: input.email }
+        : {}),
     line_items: [
       {
         quantity: 1,
@@ -362,7 +374,6 @@ export const createCheckout: APIRoute = async (context) => {
         403,
       );
     const free = parsed.data.freePerk === true;
-    const pickSource = parsed.data.pickSource ?? null;
     const perkCheck = await checkCheckoutPerks(
       account.client!.rpc.bind(account.client!) as unknown as (
         fn: string,
@@ -370,7 +381,6 @@ export const createCheckout: APIRoute = async (context) => {
       ) => PromiseLike<{ data: unknown; error: unknown }>,
       {
         free,
-        pickSource,
         gameId: parsed.data.gameId,
         serviceId: parsed.data.serviceId,
         units: parsed.data.units,
@@ -389,7 +399,6 @@ export const createCheckout: APIRoute = async (context) => {
         .insert(
           freeCoachingIntentRow(built.row, {
             customerId: identity.viewer.id,
-            pickSource,
             expiresAt: new Date(
               (now + SESSION_MINUTES * 60 + 60) * 1000,
             ).toISOString(),
@@ -465,7 +474,6 @@ export const createCheckout: APIRoute = async (context) => {
       .insert({
         ...priced.row,
         ...(refCode ? { ref_code: refCode } : {}),
-        ...(pickSource ? { pick_source_order_id: pickSource } : {}),
         ...(streamer ?? {}),
         customer_id: identity.viewer.id,
         expires_at: new Date(
@@ -553,6 +561,11 @@ export const createCheckout: APIRoute = async (context) => {
     }
 
     const stripe = stripeFor(config);
+    // Saving a card is optional: without a Stripe customer the checkout still works, just without it.
+    const stripeCustomer = await billingCustomer(stripe, admin, {
+      id: identity.viewer.id,
+      email: identity.viewer.email,
+    }).catch(() => null);
     let session: Stripe.Checkout.Session;
     try {
       session = await stripe.checkout.sessions.create(
@@ -565,6 +578,7 @@ export const createCheckout: APIRoute = async (context) => {
           productName: built.productName,
           description: built.description,
           nowSeconds: now,
+          stripeCustomer,
         }),
         { idempotencyKey: `checkout_${intent.id}` },
       );
