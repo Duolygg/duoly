@@ -173,7 +173,7 @@ export default function CreatorCode({
             <span aria-hidden="true">✓ </span>
             {result.preview?.discountKind === 'pro'
               ? `${code} applied. Your PRO discount already saves ${savings}.`
-              : `${code} applied. You save ${savings} with ${result.displayName}.`}
+              : `Code applied. Thanks for supporting ${result.displayName}.`}
           </>
         ) : (
           result?.reason

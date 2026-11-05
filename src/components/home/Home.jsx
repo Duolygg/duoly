@@ -5619,8 +5619,8 @@ export default class Home extends React.Component {
                   >
                     {v.creatorDiscountKind === 'pro'
                       ? 'PRO discount'
-                      : `Creator code ${v.appliedCreatorCode}`}
-                    : minus {v.creatorSaving}
+                      : `Creator code ${v.appliedCreatorCode}`}{' '}
+                    saves you {v.creatorSaving}
                   </p>
                 )}
               </div>

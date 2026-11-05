@@ -64,7 +64,7 @@ for (const source of ['typed', 'link'] as const) {
     await expect(
       dialog
         .getByRole('status')
-        .filter({ hasText: /ALPHA applied. You save .* with Alpha./ }),
+        .filter({ hasText: /Code applied. Thanks for supporting Alpha./ }),
     ).toBeVisible();
     const money = (minor: number) =>
       new Intl.NumberFormat('en-US', {
@@ -77,7 +77,7 @@ for (const source of ['typed', 'link'] as const) {
     );
     await expect(
       dialog.getByText(
-        `Creator code ALPHA: minus ${money(serverPreview.discountMinor)}`,
+        `Creator code ALPHA saves you ${money(serverPreview.discountMinor)}`,
         { exact: true },
       ),
     ).toBeVisible();
@@ -115,14 +115,14 @@ for (const source of ['typed', 'link'] as const) {
       await expect(
         dialog
           .getByRole('status')
-          .filter({ hasText: /ALPHA applied. You save .* with Alpha./ }),
+          .filter({ hasText: /Code applied. Thanks for supporting Alpha./ }),
       ).toHaveCount(0);
       await code.fill('ALPHA');
       await dialog.getByRole('button', { name: 'Apply code' }).click();
       await expect(
         dialog
           .getByRole('status')
-          .filter({ hasText: /ALPHA applied. You save .* with Alpha./ }),
+          .filter({ hasText: /Code applied. Thanks for supporting Alpha./ }),
       ).toBeVisible();
       await page.evaluate(() =>
         window.dispatchEvent(
