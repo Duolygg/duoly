@@ -1,3 +1,5 @@
+import AnalyticsErrorBoundary from '../shared/AnalyticsErrorBoundary';
+import type { ComponentProps } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import {
   loadStripe,
@@ -90,7 +92,7 @@ function friendly(message: string | undefined) {
   return message;
 }
 
-export default function CheckoutPanel({
+function CheckoutPanelContent({
   publishableKey,
   clientSecret,
   intentId,
@@ -303,6 +305,7 @@ export default function CheckoutPanel({
   const walletFirst = !!wallet && !showOther && phase !== 'loading';
   return (
     <form
+      data-private-block=""
       className={`pay-card is-${phase}`}
       onSubmit={pay}
       aria-busy={phase === 'loading' || busy}
@@ -401,5 +404,15 @@ export default function CheckoutPanel({
         </div>
       )}
     </form>
+  );
+}
+
+export default function CheckoutPanel(
+  props: ComponentProps<typeof CheckoutPanelContent>,
+) {
+  return (
+    <AnalyticsErrorBoundary source="checkout">
+      <CheckoutPanelContent {...props} />
+    </AnalyticsErrorBoundary>
   );
 }

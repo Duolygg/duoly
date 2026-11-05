@@ -217,6 +217,7 @@ export default class AuthDialog extends React.Component {
     return (
       <>
         <div
+          data-private-block=""
           role="dialog"
           aria-modal="true"
           aria-labelledby="auth-h"

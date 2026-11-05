@@ -250,7 +250,7 @@ export default class Contact extends React.Component {
             className="ct-wrap ct-main"
             aria-labelledby="ct-form-h"
           >
-            <div className="ct-form-card">
+            <div data-private-block="" className="ct-form-card">
               {s.sent ? (
                 <div className="ct-sent" role="status">
                   <span className="ct-sent-icon">

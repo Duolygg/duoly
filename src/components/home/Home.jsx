@@ -1851,7 +1851,7 @@ export default class Home extends React.Component {
               ) : null}
               {v.signedIn ? (
                 <>
-                  <div style={{ position: 'relative' }}>
+                  <div data-private-block="" style={{ position: 'relative' }}>
                     <button
                       type="button"
                       onClick={v.toggleAccount}
@@ -2491,6 +2491,7 @@ export default class Home extends React.Component {
           </section>
           {v.ticker.length ? (
             <div
+              data-private-block=""
               aria-label="Recent matches"
               style={{
                 borderTop: '1px solid rgba(196, 170, 255, .08)',
@@ -3479,6 +3480,7 @@ export default class Home extends React.Component {
                   </div>
                   {v.pickOn ? (
                     <div
+                      data-private-block=""
                       data-pick-teammate
                       role="radiogroup"
                       aria-labelledby="pick-h"
@@ -5500,6 +5502,7 @@ export default class Home extends React.Component {
                       Server or world
                       <input
                         type="text"
+                        data-private-block=""
                         value={v.mcServer}
                         onChange={v.setMcServer}
                         placeholder="Hypixel, an IP or “my world”"
@@ -5622,6 +5625,7 @@ export default class Home extends React.Component {
                     Your {v.ignLabel}
                     <input
                       type="text"
+                      data-private-block=""
                       value={v.ign}
                       onChange={v.setIgn}
                       placeholder={v.ignPlaceholder}
@@ -5779,6 +5783,7 @@ export default class Home extends React.Component {
                     </span>
                     <input
                       type="text"
+                      data-private-block=""
                       value={v.orderNote}
                       onChange={v.setOrderNote}
                       placeholder={v.notePlaceholder}

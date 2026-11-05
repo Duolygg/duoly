@@ -83,7 +83,12 @@ export function analyticsConfig(
     session_recording: {
       maskAllInputs: true,
       maskTextSelector: '[data-private], [data-private] *',
-      blockSelector: '[data-private-block], iframe',
+      blockSelector: '[data-private-block], iframe, astro-dev-toolbar',
+      // Astro serializes Viewer and booking data in an attribute outside marked DOM.
+      maskAttributeFn: (name, value, element) =>
+        element?.tagName.toLowerCase() === 'astro-island' && name === 'props'
+          ? ''
+          : value,
       recordHeaders: false,
       recordBody: false,
       maskCapturedNetworkRequestFn: (request) => {
@@ -94,7 +99,8 @@ export function analyticsConfig(
     disable_surveys: true,
     disable_product_tours: true,
     disable_conversations: true,
-    advanced_disable_flags: true,
+    // Remote config enables the recorder. Refusers must never request it.
+    advanced_disable_flags: !options.full,
     disable_capture_url_hashes: true,
     mask_personal_data_properties: true,
     save_campaign_params: true,

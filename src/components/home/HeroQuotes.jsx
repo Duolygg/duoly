@@ -189,7 +189,7 @@ export default function HeroQuotes({ items }) {
   };
 
   return (
-    <div className="hq" aria-hidden="true">
+    <div data-private-block="" className="hq" aria-hidden="true">
       {LANES.map((lane, i) => {
         const { at, wait } = lanes[i];
         const t = quotes[at % quotes.length];

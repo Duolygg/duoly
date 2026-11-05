@@ -1,3 +1,5 @@
+import AnalyticsErrorBoundary from '../shared/AnalyticsErrorBoundary';
+import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
 import { emailAuth, signInWith } from '../../client/auth-actions';
@@ -29,7 +31,7 @@ function rememberCheckout() {
 }
 
 /** The original homepage (Home.jsx) on real checkout, FX and sign-in. */
-export default function LiveHome({
+function LiveHomeContent({
   viewer,
   csrf,
   checkoutEnabled = false,
@@ -277,5 +279,15 @@ export default function LiveHome({
       teammates={live.teammates}
       pro={pro}
     />
+  );
+}
+
+export default function LiveHome(
+  props: ComponentProps<typeof LiveHomeContent>,
+) {
+  return (
+    <AnalyticsErrorBoundary source="home">
+      <LiveHomeContent {...props} />
+    </AnalyticsErrorBoundary>
   );
 }
