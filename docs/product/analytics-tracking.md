@@ -256,3 +256,17 @@ provider delivery remain unverified; no hosted database was contacted.
 
 1. **Server events join replays.** With Analytics consent the SDK's `tracing_headers` (first-party `ANALYTICS_HOSTS` only) adds `X-POSTHOG-SESSION-ID` to our own requests; server events read it. Refusers and withdrawn users send no header. Browser test: `transport.spec.ts` "server events join the replay only with Analytics consent".
 2. **No duplicates for `match_report_saved` and `desk_online_changed`.** Moved from best-effort handler pre-reads to outbox triggers: `order_match_reports` INSERT (dedup `report:<assignment>`, teammate, `games`) and `teammate_presence` online transitions (dedup per desk session `desk:<user>:on|off:<online_since>`, `by` self or admin). Heartbeats never fire. Verified on PGlite with real DDL.
+
+## PR B drain and schedule
+
+- `POST /api/internal/analytics/drain` (Bearer `ANALYTICS_DRAIN_SECRET`, 32+ chars, constant-time compare). Claims up to 5 batches of 200, reads `analytics_consent` once per batch (lookup failure means personless for everyone), validates every row against `OUTBOX_EVENT_CATALOGUE`, posts PostHog `/batch/` with the row `uuid` and `occurred_at`.
+- Only HTTP 2xx marks rows sent. 429, 5xx and network errors call `analytics_outbox_mark_failed` (lease cleared, retried next minute, parked after 10 attempts); a 429 stops the run. Uncatalogued rows are retired without sending.
+- Identity: Analytics consent means distinct id = account id; otherwise `uuidv5('outbox:' + uuid)` with `$process_person_profile: false`. Owner accounts (`ANALYTICS_INTERNAL_USER_IDS`) get `internal: true`.
+- Schedule: `20261106120000_analytics_outbox_schedule.sql` (drain every minute, reconcile 03:10, cleanup 03:20, log prune 03:40). Inert until Vault `analytics_drain_secret` exists.
+
+### Ship order
+
+1. Vercel production env `ANALYTICS_DRAIN_SECRET` (new random secret).
+2. Vault secret `analytics_drain_secret` with the same value.
+3. Apply `20261106110000_analytics_outbox.sql`, then merge (deploy), then apply `20261106120000_analytics_outbox_schedule.sql`.
+4. Check: `select * from public.analytics_outbox_stats()` and the PostHog events table.

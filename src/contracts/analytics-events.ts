@@ -94,6 +94,69 @@ export const EVENT_CATALOGUE = {
   support_message_sent: { turn_n: 'int' },
 } as const satisfies Record<string, Record<string, Kind>>;
 
+const CENTS = 'int' as const;
+const MINOR = { amount_minor: 'int', currency: 'slug' } as const;
+const PRO_STATE = { state: 'slug', prior_state: 'slug' } as const;
+export const OUTBOX_EVENT_CATALOGUE = {
+  user_signed_up: { method: ['email', 'google', 'discord', 'apple', 'other'] },
+  order_funded: {
+    funding: ['card', 'wallet', 'mixed', 'free'],
+    list_eur_cents: CENTS,
+    funded_eur_cents: CENTS,
+    card_eur_cents: CENTS,
+    wallet_eur_cents: CENTS,
+    discount_eur_cents: CENTS,
+    free_perk: 'bool',
+    game: 'slug',
+    service: 'slug',
+    units: 'int',
+    stream: 'bool',
+    payment_state: 'slug',
+  },
+  payment_captured: {
+    card_eur_cents: CENTS,
+    charge_minor: 'int',
+    charge_currency: 'slug',
+  },
+  authorization_voided: { card_eur_cents: CENTS },
+  order_refunded: { card_eur_cents: CENTS },
+  checkout_expired: { game: 'slug', service: 'slug', status: 'slug' },
+  checkout_failed_server: { game: 'slug', service: 'slug', status: 'slug' },
+  order_matched: {
+    game: 'slug',
+    service: 'slug',
+    wait_seconds: 'int',
+    reroll_n: 'int',
+  },
+  order_expired: { game: 'slug', service: 'slug', wait_seconds: 'int' },
+  order_cancelled: { by: 'slug', stage: 'slug' },
+  order_rerolled: { reroll_n: 'int' },
+  handover_accepted: {},
+  order_completed: {
+    duration_seconds: 'int',
+    games: 'int',
+    wins: 'int',
+    losses: 'int',
+  },
+  order_results_corrected: {},
+  match_report_saved: { games: 'int' },
+  desk_online_changed: { online: 'bool', by: ['self', 'admin'] },
+  tip_paid: { amount_eur_cents: CENTS },
+  pro_trial_started: PRO_STATE,
+  pro_activated: PRO_STATE,
+  pro_paused: PRO_STATE,
+  pro_resumed: PRO_STATE,
+  pro_ended: PRO_STATE,
+  pro_cancel_scheduled: {},
+  pro_cancel_undone: {},
+  pro_invoice_paid: MINOR,
+  pro_invoice_failed: MINOR,
+  teammate_approved: { game: 'slug', services_count: 'int' },
+  payout_sent: { ...MINOR, rail: ['stripe', 'manual', 'creator'] },
+  payout_reversed: MINOR,
+} as const satisfies Record<string, Record<string, Kind>>;
+export type OutboxEventName = keyof typeof OUTBOX_EVENT_CATALOGUE;
+
 export const SERVER_EVENT_CATALOGUE = {
   creator_link_landed: { referral_consent: 'bool' },
   review_submitted: { rating: 'int', tag_count: 'int', has_tip: 'bool' },
@@ -114,6 +177,9 @@ export const SERVER_EVENT_CATALOGUE = {
   streaming_availability_saved: {},
   payout_setup_completed: {},
   support_handoff_requested: {},
+  // 7.3 marketplace facts, enqueued by database triggers (analytics_outbox) and sent by the
+  // drain. Strings are slugs or enums only; amounts are integer minor units.
+  ...OUTBOX_EVENT_CATALOGUE,
 } as const satisfies Record<string, Record<string, Kind>>;
 export type ServerEventName = keyof typeof SERVER_EVENT_CATALOGUE;
 

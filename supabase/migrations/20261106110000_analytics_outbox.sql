@@ -538,25 +538,4 @@ revoke all on function public.analytics_on_teammate_presence() from public, anon
 
 commit;
 
--- OWNER-APPLIED EXAMPLE ONLY. No scheduling, Vault writes, or network at install.
--- Create a separate analytics_drain_secret (>=32 characters) and configure the
--- drain endpoint to validate its Authorization: Bearer header. Never reuse the
--- Discord secret. Enable only after the endpoint and consent-aware delivery ship.
--- select cron.schedule('duoly-analytics-drain', '* * * * *', $job$
---   select net.http_post(
---     url := 'https://duoly.gg/api/internal/analytics/drain',
---     headers := pg_catalog.jsonb_build_object(
---       'Content-Type', 'application/json',
---       'Authorization', 'Bearer ' || (
---         select decrypted_secret from vault.decrypted_secrets where name = 'analytics_drain_secret'
---       )),
---     body := '{}'::jsonb, timeout_milliseconds := 9000
---   ) where (
---     select count(*) = 1 and bool_and(pg_catalog.length(decrypted_secret) >= 32)
---     from vault.decrypted_secrets where name = 'analytics_drain_secret'
---   );
--- $job$);
--- select cron.schedule('duoly-analytics-reconcile', '10 3 * * *',
---   $$select public.analytics_outbox_reconcile(pg_catalog.now() - interval '2 days');$$);
--- select cron.schedule('duoly-analytics-cleanup', '20 3 * * *',
---   $$select public.analytics_outbox_cleanup();$$);
+-- Scheduling lives in 20261106120000_analytics_outbox_schedule.sql.
