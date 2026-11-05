@@ -311,3 +311,35 @@ test('cookie banner asks once, both choices are equal and settings reopen it', a
     (await context.cookies()).find((c) => c.name === 'duoly-consent')?.value,
   ).toBe('v2.a1.m1.r1');
 });
+
+test('support chat button sits clear of the homepage order bar', async ({
+  page,
+}) => {
+  await page.context().addCookies([
+    {
+      name: 'duoly-consent',
+      value: 'v2.a0.m0.r0',
+      url: 'http://127.0.0.1:4321',
+    },
+  ]);
+  await page.goto('/');
+  await settle(page);
+  for (const scroll of [0, 1600, 99999]) {
+    await page.evaluate((y) => window.scrollTo(0, y), scroll);
+    await page.waitForTimeout(150);
+    const box = await page.evaluate(() => {
+      const rect = (s: string) =>
+        document.querySelector(s)!.getBoundingClientRect().toJSON();
+      return {
+        button: rect('button[aria-label^="Open support chat"]'),
+        bar: rect('.dl-bar-in'),
+      };
+    });
+    const overlaps =
+      box.button.left < box.bar.right &&
+      box.button.right > box.bar.left &&
+      box.button.top < box.bar.bottom &&
+      box.button.bottom > box.bar.top;
+    expect(overlaps, `scrolled to ${scroll}`).toBe(false);
+  }
+});

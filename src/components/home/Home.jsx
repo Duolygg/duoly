@@ -5105,7 +5105,7 @@ export default class Home extends React.Component {
         {/* the same footer as every other page (components/site/SiteFooter.jsx) */}
         <SiteFooter bottomSpace={120} />
         {/* support chat: Sparky + the real admins (components/SupportChat.jsx) */}
-        <SupportChat teaser csrf={this.props.csrf} />
+        <SupportChat teaser dockAbove=".dl-bar-in" csrf={this.props.csrf} />
         <AuthDialog
           surface="home"
           open={v.showAuth}
