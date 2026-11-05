@@ -41,7 +41,11 @@ const { onlineNow, recentMatches, stats, teammates } = await homeLive();
 const pro = await loadProView(account.client, viewer?.role);
 ---
 
-<SiteLayout title="Duoly | Duo up in under 2 minutes" bare>
+<SiteLayout
+  title="Duoly | Duo up in under 2 minutes"
+  viewer={viewer ?? undefined}
+  bare
+>
   <LiveHome
     viewer={viewer}
     csrf={csrf}

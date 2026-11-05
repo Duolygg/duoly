@@ -137,9 +137,10 @@ export function showAfkWarning(afkIn, now = Date.now()) {
     Notification.permission !== 'granted'
   )
     return;
-  // the same deadline (to the minute) in every tab: one popup
-  const deadline = Math.round((now + afkIn * 1000) / 60000);
-  if (!claimOrderNotification('afk-' + deadline, now)) return;
+  // one popup per idle stretch across tabs: a claim lasts 30 minutes, and the next warning can
+  // only come about 4 hours later (a deadline-based key could shift by a minute between check-ins)
+  void afkIn;
+  if (!claimOrderNotification('afk', now)) return;
   try {
     const n = new Notification('Still there?', {
       body: 'You’ll go offline in a few minutes: no activity on Duoly for almost 4 hours. Click here to stay online.',
