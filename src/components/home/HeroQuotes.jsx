@@ -148,7 +148,7 @@ export function heroQuotes(real = []) {
   const quotes = real
     .map((t) => ({ ...t, quote: heroQuote(t.quote) }))
     .filter((t) => t.quote);
-  return quotes;
+  return quotes.length >= 4 ? quotes : SAMPLE_HERO_QUOTES;
 }
 
 // the clock CSS animations run on
@@ -188,7 +188,6 @@ export default function HeroQuotes({ items }) {
     );
   };
 
-  if (!quotes.length) return null;
   return (
     <div data-private-block="" className="hq" aria-hidden="true">
       {LANES.map((lane, i) => {

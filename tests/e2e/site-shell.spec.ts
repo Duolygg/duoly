@@ -72,7 +72,7 @@ test('homepage uses its design header and the shared footer links', async ({
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    /Gaming teammates\s*for your next game\./,
+    /Duo up in\s*under 2 minutes\./,
   );
   await expect(page.locator('header.site-header')).toHaveCount(0);
   await expect(page.getByText('Design preview', { exact: true })).toHaveCount(

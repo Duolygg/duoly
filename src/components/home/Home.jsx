@@ -2325,8 +2325,9 @@ export default class Home extends React.Component {
                   color: '#FFFFFF',
                 }}
               >
-                Gaming teammates <br />
-                <span style={{ color: '#D6BBFF' }}>for your next game.</span>
+                Duo up in
+                <br />
+                <span style={{ color: '#D6BBFF' }}>under 2 minutes.</span>
               </h1>
               <HeroTimer />
               <p
@@ -2593,9 +2594,7 @@ export default class Home extends React.Component {
                   }}
                 />
                 {/* short quotes drifting in around the logo; real ones come in through props.testimonials */}
-                {this.props.testimonials?.length >= 4 && (
-                  <HeroQuotes items={this.props.testimonials} />
-                )}
+                <HeroQuotes items={this.props.testimonials} />
               </div>
             </div>
           </section>

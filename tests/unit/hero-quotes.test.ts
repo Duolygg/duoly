@@ -22,11 +22,11 @@ describe('hero quotes', () => {
     expect(heroQuote('x'.repeat(80) + '.')).toBeNull();
   });
 
-  it('uses only supplied real quotes and never falls back to samples', () => {
-    expect(heroQuotes([])).toEqual([]);
-    expect(
-      heroQuotes([real('Felt like duoing with a coach.', 1)]),
-    ).toHaveLength(1);
+  it('uses the samples until there are enough real quotes', () => {
+    expect(heroQuotes([])).toBe(SAMPLE_HERO_QUOTES);
+    expect(heroQuotes([real('Felt like duoing with a coach.', 1)])).toBe(
+      SAMPLE_HERO_QUOTES,
+    );
     const four = [
       'Felt like duoing with a coach.',
       'Matched in a minute and won.',

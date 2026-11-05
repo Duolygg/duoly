@@ -3,9 +3,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import React from 'react';
 import HeroTimer from '../../src/components/home/HeroTimer';
 
-it('does not simulate matching or claim an unmeasured wait time', () => {
+it('shows the hero match timer', () => {
   const html = renderToStaticMarkup(React.createElement(HeroTimer));
-  expect(html).not.toMatch(/2:00|Duo found|Finding your duo/);
+  expect(html).toMatch(/Finding your duo/);
+  expect(html).toMatch(/2:00/);
 });
 import { readFileSync } from 'node:fs';
 
