@@ -9,6 +9,7 @@ import { track } from '../../client/analytics/track';
 const fetch = () => Promise.resolve(new Response('{}', { status: 404 }));
 
 import React from 'react';
+import CreatorCode from '../checkout/CreatorCode';
 import {
   IGN_LABEL,
   GAME,
@@ -1096,7 +1097,14 @@ export default class Home extends React.Component {
     const pro = this.props.pro || null;
     const proMember = !!(pro && pro.member);
     const proOff = proMember ? Math.round((sub - save) * 10) / 100 : 0;
-    const total = sub - save - proOff;
+    const creatorOff =
+      !proMember && s.creatorValid
+        ? Math.min(
+            Math.round((sub - save) * 10) / 100,
+            Math.max(0, sub - save - 0.99),
+          )
+        : 0;
+    const total = sub - save - proOff - creatorOff;
     // Free monthly coaching (Platinum and Diamond): one coaching session of 1 game or 1 hour.
     const perks = s.perks;
     const fc = perks && perks.freeCoaching;
@@ -1448,6 +1456,9 @@ export default class Home extends React.Component {
           ...(rank ? { rank } : {}),
           ...(byName ? { edition: st.mcEdition || MC_EDITIONS[0] } : {}),
           ign,
+          ...(st.creatorCode !== undefined
+            ? { creatorCode: st.creatorCode }
+            : {}),
           note: (st.orderNote || '').trim(),
           voice: g.id === 'social' || !!st.voice,
           ...(st.mood && g.id !== 'social' ? { mood: st.mood } : {}),
@@ -5903,6 +5914,21 @@ export default class Home extends React.Component {
                   </label>
                 </div>
 
+                {this.props.onCheckout && !v.freeOn && (
+                  <CreatorCode
+                    initialCode={
+                      this.state.creatorCode ??
+                      this.props.initialCreatorCode ??
+                      ''
+                    }
+                    explicit={this.state.creatorCode !== undefined}
+                    csrf={this.props.csrf}
+                    pro={!!this.props.pro?.member}
+                    onChange={(creatorCode, creatorValid) =>
+                      this.setState({ creatorCode, creatorValid })
+                    }
+                  />
+                )}
                 <div>
                   <div
                     style={{

@@ -1,0 +1,56 @@
+.creator-code {
+  padding: 0;
+  color: #cfc4ea;
+  font-size: 13px;
+}
+.creator-code label {
+  display: block;
+  font-weight: 600;
+}
+.creator-code p {
+  margin: 5px 0 10px;
+}
+.creator-code p:last-child {
+  margin-bottom: 0;
+}
+.creator-code-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.creator-code-controls input {
+  flex: 1;
+  width: 0;
+  min-width: 120px;
+  box-sizing: border-box;
+  height: 48px;
+  min-height: 48px;
+  background: #0b0716;
+  border: 1px solid #59446f;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #fff;
+  font: inherit;
+}
+.creator-code-controls button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #59446f;
+  border-radius: 10px;
+  background: #24163c;
+  color: #f3eeff;
+  font: inherit;
+  cursor: pointer;
+}
+.creator-code-controls button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.creator-code input:focus-visible,
+.creator-code button:focus-visible {
+  outline: 2px solid #d6bbff;
+  outline-offset: 2px;
+}
+.creator-code .creator-code-success {
+  color: #5eeaa8;
+}

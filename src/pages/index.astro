@@ -5,6 +5,7 @@ import '../components/proofs/proofs.css';
 import LiveHome from '../components/account/LiveHome';
 import { accountContext } from '../server/auth/context';
 import { paymentsConfig } from '../server/payments/config';
+import { checkoutRefCode } from '../server/referrals';
 import { customerUsdRate, eurToUsd } from '../server/fx';
 import { CurrencySchema } from '../contracts/account';
 import { homeLive } from '../server/home/live';
@@ -50,6 +51,9 @@ const pro = await loadProView(account.client, viewer?.role);
     viewer={viewer}
     csrf={csrf}
     checkoutEnabled={checkoutEnabled}
+    initialCreatorCode={
+      checkoutRefCode(Astro.cookies, Astro.url.protocol === 'https:') ?? ''
+    }
     usdRate={usdRate}
     accountCurrency={accountCurrency}
     cookieCurrency={cookieCurrency.success ? cookieCurrency.data : null}
