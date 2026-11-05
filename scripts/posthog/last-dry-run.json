@@ -1,0 +1,1083 @@
+{
+  "project": 329587,
+  "mode": "dry-run",
+  "settings": [
+    {
+      "key": "timezone",
+      "before": "UTC",
+      "after": "Europe/Vienna"
+    },
+    {
+      "key": "app_urls",
+      "before": [],
+      "after": ["https://duoly.gg"]
+    },
+    {
+      "key": "capture_dead_clicks",
+      "before": false,
+      "after": true
+    },
+    {
+      "key": "surveys_opt_in",
+      "before": null,
+      "after": true
+    },
+    {
+      "key": "test_account_filters_default_checked",
+      "before": null,
+      "after": true
+    },
+    {
+      "key": "test_account_filters",
+      "before": [
+        {
+          "key": "id",
+          "type": "cohort",
+          "value": 304906,
+          "operator": "not_in"
+        }
+      ],
+      "after": [
+        {
+          "key": "$internal_or_test_user",
+          "type": "person",
+          "operator": "is_not",
+          "value": ["true"]
+        },
+        {
+          "key": "internal",
+          "type": "event",
+          "operator": "is_not",
+          "value": ["true"]
+        }
+      ]
+    }
+  ],
+  "preserved": {
+    "anonymize_ips": true,
+    "cookieless_server_hash_mode": 1,
+    "recordingSettingsUnchanged": true
+  },
+  "objects": [
+    {
+      "type": "event_definitions",
+      "name": "game_viewed",
+      "id": "dry-event_definitions-game_viewed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-game_viewed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "cta_clicked",
+      "id": "dry-event_definitions-cta_clicked",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-cta_clicked"
+    },
+    {
+      "type": "event_definitions",
+      "name": "game_selected",
+      "id": "dry-event_definitions-game_selected",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-game_selected"
+    },
+    {
+      "type": "event_definitions",
+      "name": "service_selected",
+      "id": "dry-event_definitions-service_selected",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-service_selected"
+    },
+    {
+      "type": "event_definitions",
+      "name": "booking_option_changed",
+      "id": "dry-event_definitions-booking_option_changed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-booking_option_changed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "wallet_toggled",
+      "id": "dry-event_definitions-wallet_toggled",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-wallet_toggled"
+    },
+    {
+      "type": "event_definitions",
+      "name": "perk_toggled",
+      "id": "dry-event_definitions-perk_toggled",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-perk_toggled"
+    },
+    {
+      "type": "event_definitions",
+      "name": "teammate_pick_changed",
+      "id": "dry-event_definitions-teammate_pick_changed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-teammate_pick_changed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "checkout_login_required",
+      "id": "dry-event_definitions-checkout_login_required",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_login_required"
+    },
+    {
+      "type": "event_definitions",
+      "name": "booking_confirm_opened",
+      "id": "dry-event_definitions-booking_confirm_opened",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-booking_confirm_opened"
+    },
+    {
+      "type": "event_definitions",
+      "name": "checkout_started",
+      "id": "dry-event_definitions-checkout_started",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_started"
+    },
+    {
+      "type": "event_definitions",
+      "name": "checkout_resumed",
+      "id": "dry-event_definitions-checkout_resumed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_resumed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "checkout_failed",
+      "id": "dry-event_definitions-checkout_failed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_failed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "payment_form_ready",
+      "id": "dry-event_definitions-payment_form_ready",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payment_form_ready"
+    },
+    {
+      "type": "event_definitions",
+      "name": "payment_submitted",
+      "id": "dry-event_definitions-payment_submitted",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payment_submitted"
+    },
+    {
+      "type": "event_definitions",
+      "name": "payment_confirm_failed",
+      "id": "dry-event_definitions-payment_confirm_failed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payment_confirm_failed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "checkout_returned",
+      "id": "dry-event_definitions-checkout_returned",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_returned"
+    },
+    {
+      "type": "event_definitions",
+      "name": "checkout_abandon_detected",
+      "id": "dry-event_definitions-checkout_abandon_detected",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_abandon_detected"
+    },
+    {
+      "type": "event_definitions",
+      "name": "review_confirmation_shown",
+      "id": "dry-event_definitions-review_confirmation_shown",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-review_confirmation_shown"
+    },
+    {
+      "type": "event_definitions",
+      "name": "tip_started",
+      "id": "dry-event_definitions-tip_started",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-tip_started"
+    },
+    {
+      "type": "event_definitions",
+      "name": "trustpilot_clicked",
+      "id": "dry-event_definitions-trustpilot_clicked",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-trustpilot_clicked"
+    },
+    {
+      "type": "event_definitions",
+      "name": "rebook_clicked",
+      "id": "dry-event_definitions-rebook_clicked",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-rebook_clicked"
+    },
+    {
+      "type": "event_definitions",
+      "name": "queue_room_viewed",
+      "id": "dry-event_definitions-queue_room_viewed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-queue_room_viewed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "match_seen",
+      "id": "dry-event_definitions-match_seen",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-match_seen"
+    },
+    {
+      "type": "event_definitions",
+      "name": "login_started",
+      "id": "dry-event_definitions-login_started",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-login_started"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_viewed",
+      "id": "dry-event_definitions-pro_viewed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_viewed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_checkout_started",
+      "id": "dry-event_definitions-pro_checkout_started",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_checkout_started"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_portal_opened",
+      "id": "dry-event_definitions-pro_portal_opened",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_portal_opened"
+    },
+    {
+      "type": "event_definitions",
+      "name": "support_opened",
+      "id": "dry-event_definitions-support_opened",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-support_opened"
+    },
+    {
+      "type": "event_definitions",
+      "name": "support_message_sent",
+      "id": "dry-event_definitions-support_message_sent",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-support_message_sent"
+    },
+    {
+      "type": "event_definitions",
+      "name": "creator_link_landed",
+      "id": "dry-event_definitions-creator_link_landed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-creator_link_landed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "review_submitted",
+      "id": "dry-event_definitions-review_submitted",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-review_submitted"
+    },
+    {
+      "type": "event_definitions",
+      "name": "user_logged_in",
+      "id": "dry-event_definitions-user_logged_in",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-user_logged_in"
+    },
+    {
+      "type": "event_definitions",
+      "name": "discord_linked",
+      "id": "dry-event_definitions-discord_linked",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-discord_linked"
+    },
+    {
+      "type": "event_definitions",
+      "name": "discord_unlinked",
+      "id": "dry-event_definitions-discord_unlinked",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-discord_unlinked"
+    },
+    {
+      "type": "event_definitions",
+      "name": "password_reset_requested",
+      "id": "dry-event_definitions-password_reset_requested",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-password_reset_requested"
+    },
+    {
+      "type": "event_definitions",
+      "name": "teammate_applied",
+      "id": "dry-event_definitions-teammate_applied",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-teammate_applied"
+    },
+    {
+      "type": "event_definitions",
+      "name": "order_offer_passed",
+      "id": "dry-event_definitions-order_offer_passed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_offer_passed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "handover_created",
+      "id": "dry-event_definitions-handover_created",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-handover_created"
+    },
+    {
+      "type": "event_definitions",
+      "name": "streaming_availability_saved",
+      "id": "dry-event_definitions-streaming_availability_saved",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-streaming_availability_saved"
+    },
+    {
+      "type": "event_definitions",
+      "name": "payout_setup_completed",
+      "id": "dry-event_definitions-payout_setup_completed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payout_setup_completed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "support_handoff_requested",
+      "id": "dry-event_definitions-support_handoff_requested",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-support_handoff_requested"
+    },
+    {
+      "type": "event_definitions",
+      "name": "user_signed_up",
+      "id": "01a1aad7-3722-73c1-b88d-3a8c515fcf0e",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1aad7-3722-73c1-b88d-3a8c515fcf0e"
+    },
+    {
+      "type": "event_definitions",
+      "name": "order_funded",
+      "id": "dry-event_definitions-order_funded",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_funded"
+    },
+    {
+      "type": "event_definitions",
+      "name": "payment_captured",
+      "id": "dry-event_definitions-payment_captured",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payment_captured"
+    },
+    {
+      "type": "event_definitions",
+      "name": "authorization_voided",
+      "id": "dry-event_definitions-authorization_voided",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-authorization_voided"
+    },
+    {
+      "type": "event_definitions",
+      "name": "order_refunded",
+      "id": "dry-event_definitions-order_refunded",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_refunded"
+    },
+    {
+      "type": "event_definitions",
+      "name": "checkout_expired",
+      "id": "dry-event_definitions-checkout_expired",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_expired"
+    },
+    {
+      "type": "event_definitions",
+      "name": "checkout_failed_server",
+      "id": "dry-event_definitions-checkout_failed_server",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-checkout_failed_server"
+    },
+    {
+      "type": "event_definitions",
+      "name": "order_matched",
+      "id": "dry-event_definitions-order_matched",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_matched"
+    },
+    {
+      "type": "event_definitions",
+      "name": "order_expired",
+      "id": "dry-event_definitions-order_expired",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_expired"
+    },
+    {
+      "type": "event_definitions",
+      "name": "order_cancelled",
+      "id": "dry-event_definitions-order_cancelled",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_cancelled"
+    },
+    {
+      "type": "event_definitions",
+      "name": "order_rerolled",
+      "id": "dry-event_definitions-order_rerolled",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_rerolled"
+    },
+    {
+      "type": "event_definitions",
+      "name": "handover_accepted",
+      "id": "dry-event_definitions-handover_accepted",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-handover_accepted"
+    },
+    {
+      "type": "event_definitions",
+      "name": "order_completed",
+      "id": "dry-event_definitions-order_completed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_completed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "order_results_corrected",
+      "id": "dry-event_definitions-order_results_corrected",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-order_results_corrected"
+    },
+    {
+      "type": "event_definitions",
+      "name": "match_report_saved",
+      "id": "dry-event_definitions-match_report_saved",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-match_report_saved"
+    },
+    {
+      "type": "event_definitions",
+      "name": "desk_online_changed",
+      "id": "dry-event_definitions-desk_online_changed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-desk_online_changed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "tip_paid",
+      "id": "dry-event_definitions-tip_paid",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-tip_paid"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_trial_started",
+      "id": "dry-event_definitions-pro_trial_started",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_trial_started"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_activated",
+      "id": "dry-event_definitions-pro_activated",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_activated"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_paused",
+      "id": "dry-event_definitions-pro_paused",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_paused"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_resumed",
+      "id": "dry-event_definitions-pro_resumed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_resumed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_ended",
+      "id": "dry-event_definitions-pro_ended",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_ended"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_cancel_scheduled",
+      "id": "dry-event_definitions-pro_cancel_scheduled",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_cancel_scheduled"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_cancel_undone",
+      "id": "dry-event_definitions-pro_cancel_undone",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_cancel_undone"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_invoice_paid",
+      "id": "dry-event_definitions-pro_invoice_paid",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_invoice_paid"
+    },
+    {
+      "type": "event_definitions",
+      "name": "pro_invoice_failed",
+      "id": "dry-event_definitions-pro_invoice_failed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-pro_invoice_failed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "teammate_approved",
+      "id": "dry-event_definitions-teammate_approved",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-teammate_approved"
+    },
+    {
+      "type": "event_definitions",
+      "name": "payout_sent",
+      "id": "dry-event_definitions-payout_sent",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payout_sent"
+    },
+    {
+      "type": "event_definitions",
+      "name": "payout_reversed",
+      "id": "dry-event_definitions-payout_reversed",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-payout_reversed"
+    },
+    {
+      "type": "event_definitions",
+      "name": "$pageview",
+      "id": "01a1a8c9-7020-7733-9097-300f5d9d881e",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1a8c9-7020-7733-9097-300f5d9d881e"
+    },
+    {
+      "type": "event_definitions",
+      "name": "$pageleave",
+      "id": "01a1a8c9-f947-7e43-ad49-412e04616094",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1a8c9-f947-7e43-ad49-412e04616094"
+    },
+    {
+      "type": "event_definitions",
+      "name": "$autocapture",
+      "id": "dry-event_definitions-$autocapture",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$autocapture"
+    },
+    {
+      "type": "event_definitions",
+      "name": "$exception",
+      "id": "dry-event_definitions-$exception",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$exception"
+    },
+    {
+      "type": "event_definitions",
+      "name": "$web_vitals",
+      "id": "01a1a8c9-6e93-78b3-812d-b9790aa005df",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/01a1a8c9-6e93-78b3-812d-b9790aa005df"
+    },
+    {
+      "type": "event_definitions",
+      "name": "$rageclick",
+      "id": "dry-event_definitions-$rageclick",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$rageclick"
+    },
+    {
+      "type": "event_definitions",
+      "name": "$dead_click",
+      "id": "dry-event_definitions-$dead_click",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$dead_click"
+    },
+    {
+      "type": "event_definitions",
+      "name": "$ai_generation",
+      "id": "dry-event_definitions-$ai_generation",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$ai_generation"
+    },
+    {
+      "type": "event_definitions",
+      "name": "$ai_span",
+      "id": "dry-event_definitions-$ai_span",
+      "url": "https://eu.posthog.com/project/329587/data-management/events/dry-event_definitions-$ai_span"
+    },
+    {
+      "type": "property_definitions",
+      "name": "source",
+      "id": "01a1aad7-3723-79d2-ae08-90853690d5f2",
+      "url": "https://eu.posthog.com/project/329587/data-management/properties/01a1aad7-3723-79d2-ae08-90853690d5f2"
+    },
+    {
+      "type": "property_definitions",
+      "name": "method",
+      "id": "01a1aad7-3723-79d2-ae08-90706e9f404a",
+      "url": "https://eu.posthog.com/project/329587/data-management/properties/01a1aad7-3723-79d2-ae08-90706e9f404a"
+    },
+    {
+      "type": "property_definitions",
+      "name": "route",
+      "id": "01a1a8c9-6e95-7e70-a4d0-5c4aa851bcc4",
+      "url": "https://eu.posthog.com/project/329587/data-management/properties/01a1a8c9-6e95-7e70-a4d0-5c4aa851bcc4"
+    },
+    {
+      "type": "property_definitions",
+      "name": "app_release",
+      "id": "01a1a8c9-6e95-7e70-a4d0-5c19c416bab8",
+      "url": "https://eu.posthog.com/project/329587/data-management/properties/01a1a8c9-6e95-7e70-a4d0-5c19c416bab8"
+    },
+    {
+      "type": "property_definitions",
+      "name": "viewer_role",
+      "id": "01a1a8c9-6e95-7e70-a4d0-5c6f477ce639",
+      "url": "https://eu.posthog.com/project/329587/data-management/properties/01a1a8c9-6e95-7e70-a4d0-5c6f477ce639"
+    },
+    {
+      "type": "property_definitions",
+      "name": "$device_type",
+      "id": "01a1a8c9-6e95-7e70-a4d0-556a9f754569",
+      "url": "https://eu.posthog.com/project/329587/data-management/properties/01a1a8c9-6e95-7e70-a4d0-556a9f754569"
+    },
+    {
+      "type": "property_definitions",
+      "name": "$web_vitals_LCP_value",
+      "id": "01a1a8c9-6e95-7e70-a4d0-5bf73389e91a",
+      "url": "https://eu.posthog.com/project/329587/data-management/properties/01a1a8c9-6e95-7e70-a4d0-5bf73389e91a"
+    },
+    {
+      "type": "property_definitions",
+      "name": "$internal_or_test_user",
+      "id": "01a1a912-e5b3-7260-810b-6b040e973750",
+      "url": "https://eu.posthog.com/project/329587/data-management/properties/01a1a912-e5b3-7260-810b-6b040e973750"
+    },
+    {
+      "type": "property_definitions",
+      "name": "role",
+      "id": "01a1a8c9-700d-7791-bf6c-b09a28600214",
+      "url": "https://eu.posthog.com/project/329587/data-management/properties/01a1a8c9-700d-7791-bf6c-b09a28600214"
+    },
+    {
+      "type": "actions",
+      "name": "[duoly] Funded order",
+      "id": "dry-actions-[duoly] Funded order",
+      "url": "https://eu.posthog.com/project/329587/data-management/actions/dry-actions-[duoly] Funded order"
+    },
+    {
+      "type": "cohorts",
+      "name": "[duoly] Funded customers",
+      "id": "dry-cohorts-[duoly] Funded customers",
+      "url": "https://eu.posthog.com/project/329587/cohorts/dry-cohorts-[duoly] Funded customers"
+    },
+    {
+      "type": "cohorts",
+      "name": "[duoly] Repeat customers (2+ order_funded)",
+      "id": "dry-cohorts-[duoly] Repeat customers (2+ order_funded)",
+      "url": "https://eu.posthog.com/project/329587/cohorts/dry-cohorts-[duoly] Repeat customers (2+ order_funded)"
+    },
+    {
+      "type": "cohorts",
+      "name": "[duoly] Checkout started not funded 24h",
+      "id": "dry-cohorts-[duoly] Checkout started not funded 24h",
+      "url": "https://eu.posthog.com/project/329587/cohorts/dry-cohorts-[duoly] Checkout started not funded 24h"
+    },
+    {
+      "type": "cohorts",
+      "name": "[duoly] Teammates",
+      "id": "dry-cohorts-[duoly] Teammates",
+      "url": "https://eu.posthog.com/project/329587/cohorts/dry-cohorts-[duoly] Teammates"
+    },
+    {
+      "type": "dashboards",
+      "name": "[duoly] 1. North star",
+      "id": "dry-dashboards-[duoly] 1. North star",
+      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 1. North star"
+    },
+    {
+      "type": "dashboards",
+      "name": "[duoly] 2. Booking funnel",
+      "id": "dry-dashboards-[duoly] 2. Booking funnel",
+      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 2. Booking funnel"
+    },
+    {
+      "type": "dashboards",
+      "name": "[duoly] 3. Liquidity",
+      "id": "dry-dashboards-[duoly] 3. Liquidity",
+      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 3. Liquidity"
+    },
+    {
+      "type": "dashboards",
+      "name": "[duoly] 4. Acquisition",
+      "id": "dry-dashboards-[duoly] 4. Acquisition",
+      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 4. Acquisition"
+    },
+    {
+      "type": "dashboards",
+      "name": "[duoly] 5. Retention",
+      "id": "dry-dashboards-[duoly] 5. Retention",
+      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 5. Retention"
+    },
+    {
+      "type": "dashboards",
+      "name": "[duoly] 6. Quality",
+      "id": "dry-dashboards-[duoly] 6. Quality",
+      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 6. Quality"
+    },
+    {
+      "type": "dashboards",
+      "name": "[duoly] 7. Health",
+      "id": "dry-dashboards-[duoly] 7. Health",
+      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 7. Health"
+    },
+    {
+      "type": "dashboards",
+      "name": "[duoly] 8. Sparky",
+      "id": "dry-dashboards-[duoly] 8. Sparky",
+      "url": "https://eu.posthog.com/project/329587/dashboard/dry-dashboards-[duoly] 8. Sparky"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 01-funded Funded orders per week",
+      "id": "dry-insights-[duoly] 01-funded Funded orders per week",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 01-eur Funded EUR (booking value, not net revenue)",
+      "id": "dry-insights-[duoly] 01-eur Funded EUR (booking value, not net revenue)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 01-repeat New vs repeat identified customers",
+      "id": "dry-insights-[duoly] 01-repeat New vs repeat identified customers",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 01-pro PRO active (observed consented state)",
+      "id": "dry-insights-[duoly] 01-pro PRO active (observed consented state)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 02-full Full booking journey (card branch)",
+      "id": "dry-insights-[duoly] 02-full Full booking journey (card branch)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 02-funding Checkout to funded (all payment methods)",
+      "id": "dry-insights-[duoly] 02-funding Checkout to funded (all payment methods)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 02-game Booking conversion by game",
+      "id": "dry-insights-[duoly] 02-game Booking conversion by game",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 02-device Booking conversion by device",
+      "id": "dry-insights-[duoly] 02-device Booking conversion by device",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 02-channel Booking conversion by channel",
+      "id": "dry-insights-[duoly] 02-channel Booking conversion by channel",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 02-currency Booking conversion by currency",
+      "id": "dry-insights-[duoly] 02-currency Booking conversion by currency",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 02-time Time from checkout to funding",
+      "id": "dry-insights-[duoly] 02-time Time from checkout to funding",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 02-paths Paths after checkout, no funding in session",
+      "id": "dry-insights-[duoly] 02-paths Paths after checkout, no funding in session",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 03-wait Match wait p50 and p90 seconds",
+      "id": "dry-insights-[duoly] 03-wait Match wait p50 and p90 seconds",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 03-expiry Queue expiry share by hour and game",
+      "id": "dry-insights-[duoly] 03-expiry Queue expiry share by hour and game",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 03-online Teammates going online per hour (includes supply)",
+      "id": "dry-insights-[duoly] 03-online Teammates going online per hour (includes supply)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 03-passes Offer passes per funded order (aggregate proxy)",
+      "id": "dry-insights-[duoly] 03-passes Offer passes per funded order (aggregate proxy)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 04-traffic Visitors by acquisition channel",
+      "id": "dry-insights-[duoly] 04-traffic Visitors by acquisition channel",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 04-landing Pageviews by route",
+      "id": "dry-insights-[duoly] 04-landing Pageviews by route",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 04-creators Creator link landings",
+      "id": "dry-insights-[duoly] 04-creators Creator link landings",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 04-conversion Landing route to funded conversion",
+      "id": "dry-insights-[duoly] 04-conversion Landing route to funded conversion",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 05-retention Weekly funded customer retention",
+      "id": "dry-insights-[duoly] 05-retention Weekly funded customer retention",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 05-lifecycle Weekly funded customer lifecycle",
+      "id": "dry-insights-[duoly] 05-lifecycle Weekly funded customer lifecycle",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 05-stickiness Booking stickiness (active days in 30 days)",
+      "id": "dry-insights-[duoly] 05-stickiness Booking stickiness (active days in 30 days)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 06-ratings Review rating distribution",
+      "id": "dry-insights-[duoly] 06-ratings Review rating distribution",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 06-tips tips event rate (aggregate)",
+      "id": "dry-insights-[duoly] 06-tips tips event rate (aggregate)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 06-trustpilot trustpilot event rate (aggregate)",
+      "id": "dry-insights-[duoly] 06-trustpilot trustpilot event rate (aggregate)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 06-rebook rebook event rate (aggregate)",
+      "id": "dry-insights-[duoly] 06-rebook rebook event rate (aggregate)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-exceptions-route Exceptions by route",
+      "id": "dry-insights-[duoly] 07-exceptions-route Exceptions by route",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-exceptions-release Exceptions by release",
+      "id": "dry-insights-[duoly] 07-exceptions-release Exceptions by release",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-failures Checkout failures by reason",
+      "id": "dry-insights-[duoly] 07-failures Checkout failures by reason",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-vitals LCP p90 by route (milliseconds)",
+      "id": "dry-insights-[duoly] 07-vitals LCP p90 by route (milliseconds)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-rageclick rageclick by route",
+      "id": "dry-insights-[duoly] 07-rageclick rageclick by route",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-dead_click dead_click by route",
+      "id": "dry-insights-[duoly] 07-dead_click dead_click by route",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-outbox Outbox heartbeat: delivered facts per hour",
+      "id": "dry-insights-[duoly] 07-outbox Outbox heartbeat: delivered facts per hour",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 08-generations Sparky generations",
+      "id": "dry-insights-[duoly] 08-generations Sparky generations",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 08-tokens Sparky actual input, output and cached tokens",
+      "id": "dry-insights-[duoly] 08-tokens Sparky actual input, output and cached tokens",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 08-latency Sparky generation latency p50 and p90",
+      "id": "dry-insights-[duoly] 08-latency Sparky generation latency p50 and p90",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 08-cost Sparky token-derived cost USD (PostHog model pricing)",
+      "id": "dry-insights-[duoly] 08-cost Sparky token-derived cost USD (PostHog model pricing)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 08-handoff Handoff requests / generations",
+      "id": "dry-insights-[duoly] 08-handoff Handoff requests / generations",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 08-tools Tool spans by tool and errors",
+      "id": "dry-insights-[duoly] 08-tools Tool spans by tool and errors",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-alert-checkout-spike Checkout failed spike (>5 in rolling hour)",
+      "id": "dry-insights-[duoly] 07-alert-checkout-spike Checkout failed spike (>5 in rolling hour)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-alert-expiry-day Order expired (>3 in rolling day)",
+      "id": "dry-insights-[duoly] 07-alert-expiry-day Order expired (>3 in rolling day)",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-alert-outbox-zero Outbox delivered facts zero for 6h",
+      "id": "dry-insights-[duoly] 07-alert-outbox-zero Outbox delivered facts zero for 6h",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-alert-pageviews-zero Pageviews zero for 24h",
+      "id": "dry-insights-[duoly] 07-alert-pageviews-zero Pageviews zero for 24h",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "insights",
+      "name": "[duoly] 07-alert-funding-zero Funded orders zero for 3 days",
+      "id": "dry-insights-[duoly] 07-alert-funding-zero Funded orders zero for 3 days",
+      "url": "https://eu.posthog.com/project/329587/insights/undefined"
+    },
+    {
+      "type": "surveys",
+      "name": "[duoly] Survey A: booking blockers",
+      "id": "dry-surveys-[duoly] Survey A: booking blockers",
+      "url": "https://eu.posthog.com/project/329587/surveys/dry-surveys-[duoly] Survey A: booking blockers"
+    },
+    {
+      "type": "surveys",
+      "name": "[duoly] Survey B: book again",
+      "id": "dry-surveys-[duoly] Survey B: book again",
+      "url": "https://eu.posthog.com/project/329587/surveys/dry-surveys-[duoly] Survey B: book again"
+    },
+    {
+      "type": "alerts",
+      "name": "[duoly] Checkout failed spike (>5 in rolling hour)",
+      "id": "dry-alerts-[duoly] Checkout failed spike (>5 in rolling hour)",
+      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Checkout failed spike (>5 in rolling hour)"
+    },
+    {
+      "type": "alerts",
+      "name": "[duoly] Order expired (>3 in rolling day)",
+      "id": "dry-alerts-[duoly] Order expired (>3 in rolling day)",
+      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Order expired (>3 in rolling day)"
+    },
+    {
+      "type": "alerts",
+      "name": "[duoly] Outbox delivered facts zero for 6h",
+      "id": "dry-alerts-[duoly] Outbox delivered facts zero for 6h",
+      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Outbox delivered facts zero for 6h"
+    },
+    {
+      "type": "alerts",
+      "name": "[duoly] Pageviews zero for 24h",
+      "id": "dry-alerts-[duoly] Pageviews zero for 24h",
+      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Pageviews zero for 24h"
+    },
+    {
+      "type": "alerts",
+      "name": "[duoly] Funded orders zero for 3 days",
+      "id": "dry-alerts-[duoly] Funded orders zero for 3 days",
+      "url": "https://eu.posthog.com/project/329587/insights/alerts/dry-alerts-[duoly] Funded orders zero for 3 days"
+    }
+  ],
+  "deferredProperties": [
+    "game",
+    "cta",
+    "surface",
+    "service",
+    "category",
+    "bundle_units",
+    "option",
+    "value",
+    "enabled",
+    "picked",
+    "units",
+    "display_total_cents",
+    "display_currency",
+    "voice",
+    "wallet",
+    "free_perk",
+    "mood",
+    "stream",
+    "status_bucket",
+    "reason_code",
+    "kind",
+    "error_type",
+    "error_code",
+    "outcome",
+    "age_bucket",
+    "rating",
+    "amount_eur_cents",
+    "state",
+    "wait_seconds",
+    "turn_n",
+    "referral_consent",
+    "tag_count",
+    "has_tip",
+    "services_count",
+    "hours_bucket",
+    "has_video",
+    "funding",
+    "list_eur_cents",
+    "funded_eur_cents",
+    "card_eur_cents",
+    "wallet_eur_cents",
+    "discount_eur_cents",
+    "payment_state",
+    "charge_minor",
+    "charge_currency",
+    "status",
+    "reroll_n",
+    "by",
+    "stage",
+    "duration_seconds",
+    "games",
+    "wins",
+    "losses",
+    "online",
+    "prior_state",
+    "amount_minor",
+    "currency",
+    "rail",
+    "internal",
+    "$ai_input_tokens",
+    "$ai_output_tokens",
+    "$ai_cache_read_input_tokens",
+    "$ai_latency",
+    "$ai_model",
+    "$ai_provider",
+    "$ai_is_error",
+    "$ai_http_status",
+    "$ai_span_name",
+    "$ai_total_cost_usd",
+    "$ai_trace_id",
+    "$ai_span_id",
+    "$ai_parent_id",
+    "$ai_session_id",
+    "tool_names",
+    "$session_entry_channel_type"
+  ],
+  "limitations": [
+    "Property definitions cannot be created by REST (no POST); missing properties are described in plan.mjs and will be updated after real ingestion. No synthetic data captured.",
+    "Web Analytics conversion goals are a per-view UI selector (customEventName/actionId), not a global REST-managed list; select user_signed_up and order_funded manually. Acquisition funding funnel exists.",
+    "Heatmap capture enabled; three in-app URL entries (/, /games/*, /pro) require UI setup. No session recording settings changed.",
+    "Surveys remain drafts: site config has disable_surveys:true. Survey A cannot express same-session NOT order_funded in SurveyConditionsSchema. Both single question, 100 lifetime responses each, 7-day wait; free allowance 1500 responses/month org-wide.",
+    "Replay Vision monitor and Discord destinations deliberately not created; owner decides later.",
+    "No real scheduler heartbeat exists: outbox source counts are an activity proxy. Six idle hours can alert even when drain is healthy.",
+    "Alert thresholds: checkout_failed >5/hour (absolute spike proxy, no baseline yet); order_expired >3/day; zero outbox 6h; zero pageviews 24h; zero funding 3d. Hourly, no AI investigations.",
+    "Personless business facts count in totals but cannot support reliable identity funnels, retention, repeat customers or PRO state. No historical subscription baseline; no exact per-order pass metric or refund deltas."
+  ],
+  "queryChecks": [],
+  "counts": {
+    "creates": 0,
+    "updates": 0,
+    "unchanged": 0,
+    "verified": 0,
+    "plannedCreates": 141,
+    "plannedUpdates": 13
+  }
+}

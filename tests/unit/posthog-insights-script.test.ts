@@ -1,0 +1,138 @@
+import { describe, expect, it } from 'vitest';
+import { buildPlan, BUILT_INS } from '../../scripts/posthog/plan.mjs';
+import { ApiClient, upsert } from '../../scripts/posthog/lib.mjs';
+import {
+  EVENT_CATALOGUE,
+  SERVER_EVENT_CATALOGUE,
+} from '../../src/contracts/analytics-events';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+
+describe('PostHog analysis plan', () => {
+  it('only references real catalogue or built-in events, including SQL literals', () => {
+    const known = new Set([
+      ...Object.keys(EVENT_CATALOGUE),
+      ...Object.keys(SERVER_EVENT_CATALOGUE),
+      ...BUILT_INS,
+    ]);
+    for (const insight of buildPlan().insights) {
+      for (const name of insight.events)
+        expect(known.has(name), name).toBe(true);
+      const query = insight.query;
+      for (const series of query.series ?? [])
+        expect(known.has(series.event)).toBe(true);
+      if (query.kind === 'HogQLQuery') {
+        for (const match of query.query.matchAll(/event\s*=\s*'([^']+)'/g))
+          expect(known.has(match[1])).toBe(true);
+        for (const match of query.query.matchAll(/event\s+IN\s*\(([^)]+)\)/g)) {
+          for (const name of match[1].matchAll(/'([^']+)'/g))
+            expect(known.has(name[1])).toBe(true);
+        }
+      }
+    }
+    expect(buildPlan().events.map((e: { name: string }) => e.name)).toEqual(
+      expect.arrayContaining([
+        ...Object.keys(EVENT_CATALOGUE),
+        ...Object.keys(SERVER_EVENT_CATALOGUE),
+        '$ai_generation',
+        '$ai_span',
+      ]),
+    );
+  });
+  it('contains no embedded secrets in scripts (including generated reports)', () => {
+    const walk = (dir: string): string[] =>
+      readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)],
+      );
+    for (const file of walk('scripts/posthog'))
+      expect(readFileSync(file, 'utf8')).not.toMatch(
+        /ph[xc]_[a-zA-Z0-9]{20,}|Bearer\s+[a-zA-Z0-9_-]{20,}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/,
+      );
+  });
+  it('retries 429 and 503 with Retry-After, without leaking credentials', async () => {
+    const delays: number[] = [];
+    const replies = [
+      new Response('{}', { status: 429, headers: { 'Retry-After': '2' } }),
+      new Response('{}', { status: 503 }),
+      new Response('{"ok":true}'),
+    ];
+    const api = new ApiClient({
+      key: 'unit-only',
+      apply: true,
+      fetchImpl: async () => replies.shift()!,
+      sleep: async (ms: number) => {
+        delays.push(ms);
+      },
+    });
+    expect(await api.request('/api/environments/329587/dashboards/')).toEqual({
+      ok: true,
+    });
+    expect(delays[0]).toBe(2000);
+    expect(delays[1]).toBeGreaterThanOrEqual(2000);
+  });
+  it('upserts a stable name, reads back writes and creates zero on second run', async () => {
+    const objects: { id: number; name: string }[] = [];
+    const calls: string[] = [];
+    const api = new ApiClient({
+      key: 'unit-only',
+      apply: true,
+      fetchImpl: async (
+        _url: string | URL | Request,
+        init: RequestInit = {},
+      ) => {
+        const method = init.method ?? 'GET';
+        calls.push(method);
+        if (method === 'POST') {
+          const payload = JSON.parse(init.body as string);
+          objects.push({ id: 1, ...payload });
+          return Response.json(objects[0]);
+        }
+        if (method === 'PATCH') {
+          Object.assign(objects[0]!, JSON.parse(init.body as string));
+          return Response.json(objects[0]);
+        }
+        return Response.json(objects[0]);
+      },
+    });
+    await upsert(api, 'dashboards', [], { name: '[duoly] board' });
+    await upsert(api, 'dashboards', objects, { name: '[duoly] board' });
+    expect(calls.filter((c) => c === 'POST')).toHaveLength(1);
+    expect(calls.filter((c) => c === 'GET')).toHaveLength(2);
+    expect(objects).toHaveLength(1);
+  });
+  it('defaults to dry run and refuses duplicate stable names', async () => {
+    const api = new ApiClient({
+      key: 'unit-only',
+      fetchImpl: async () => {
+        throw new Error('must not write');
+      },
+    });
+    expect(api.apply).toBe(false);
+    await upsert(api, 'dashboards', [], { name: '[duoly] dry run' });
+    expect(api.counts.creates).toBe(0);
+    await expect(
+      upsert(
+        api,
+        'dashboards',
+        [
+          { id: 1, name: '[duoly] duplicate' },
+          { id: 2, name: '[duoly] duplicate' },
+        ],
+        { name: '[duoly] duplicate' },
+      ),
+    ).rejects.toThrow('Duplicate');
+  });
+  it('defines eight populated dashboards without exceeding the free alert cap', () => {
+    const plan = buildPlan();
+    expect(plan.dashboards.map((d: { number: number }) => d.number)).toEqual([
+      1, 2, 3, 4, 5, 6, 7, 8,
+    ]);
+    for (const board of plan.dashboards) {
+      expect(
+        plan.insights.some((i: { board: number }) => i.board === board.number),
+      ).toBe(true);
+    }
+    expect(plan.alerts.length).toBeLessThanOrEqual(5);
+    expect(plan.alerts.length).toBe(5);
+  });
+});
