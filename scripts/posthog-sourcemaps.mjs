@@ -51,10 +51,27 @@ async function prepareServerMaps(outputDir) {
   );
 }
 
+let cliReady = false;
+
 export async function processSourcemaps({
   outputDir = resolve('.vercel/output'),
   env = process.env,
   run = async (args, commandEnv) => {
+    // The CLI's postinstall download is disabled (pnpm-workspace allowBuilds), so a GitHub
+    // outage can never fail `pnpm install` and block a deploy. Fetch the pinned binary here,
+    // only when uploading; a failure lands in the warning below.
+    if (!cliReady) {
+      execFileSync(
+        process.execPath,
+        [
+          fileURLToPath(
+            new URL('../node_modules/@posthog/cli/install.js', import.meta.url),
+          ),
+        ],
+        { env: commandEnv, stdio: 'pipe', timeout: 90_000 },
+      );
+      cliReady = true;
+    }
     // Invoke only the repository-pinned binary, not a global CLI or npx download.
     execFileSync(
       resolve(
