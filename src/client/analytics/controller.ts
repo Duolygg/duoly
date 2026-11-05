@@ -17,6 +17,9 @@ export interface AnalyticsSdk {
   get_property(name: string): unknown;
   capture(event: string, props?: Record<string, unknown>): unknown;
   setInternalOrTestUser(): void;
+  set_config(config: Record<string, unknown>): void;
+  startSessionRecording(override?: boolean): void;
+  stopSessionRecording(): void;
 }
 
 export const UID_PROPERTY = 'duoly_uid';
@@ -29,6 +32,7 @@ export type Controller = {
     initialized: boolean;
     mode: 'none' | 'refused' | 'full';
     pageview: boolean;
+    replay: boolean;
   };
 };
 
@@ -36,20 +40,27 @@ export function createController(options: {
   sdk: AnalyticsSdk;
   boot: AnalyticsBoot;
   readConsent: () => ConsentState | null;
-  config: () => Record<string, unknown>;
+  /** Init options for the current consent (full = Analytics accepted). */
+  config: (full: boolean) => Record<string, unknown>;
+  /** Interaction capture switches, re-applied on every consent change. */
+  features: (full: boolean) => Record<string, unknown>;
 }): Controller {
-  const { sdk, boot, readConsent, config } = options;
+  const { sdk, boot, readConsent, config, features } = options;
   let initialized = false;
   let mode: 'none' | 'refused' | 'full' = 'none';
   let pageview = false;
+  let replay = false;
 
   const sync = () => {
     const consent = readConsent();
     // No choice yet: the SDK is not even loaded, so nothing leaves the page.
     if (!consent) return;
+    const before = mode;
     if (!initialized) {
-      sdk.init(boot.key, config());
+      sdk.init(boot.key, config(consent.analytics));
       initialized = true;
+    } else if (before !== (consent.analytics ? 'full' : 'refused')) {
+      sdk.set_config(features(consent.analytics));
     }
     if (consent.analytics) {
       const stored = sdk.get_property(UID_PROPERTY);
@@ -68,7 +79,16 @@ export function createController(options: {
         ...(boot.release ? { app_release: boot.release } : {}),
       });
       mode = 'full';
+      // Replay only with Analytics consent and only where the page allows it.
+      if (boot.policy === 'full' && !replay) {
+        sdk.startSessionRecording(true);
+        replay = true;
+      }
     } else {
+      if (replay) {
+        sdk.stopSessionRecording();
+        replay = false;
+      }
       // Refused (or withdrawn): drop any identity once, then count without cookies.
       if (mode !== 'refused') sdk.reset();
       sdk.opt_out_capturing();
@@ -82,5 +102,5 @@ export function createController(options: {
     }
   };
 
-  return { sync, state: () => ({ initialized, mode, pageview }) };
+  return { sync, state: () => ({ initialized, mode, pageview, replay }) };
 }

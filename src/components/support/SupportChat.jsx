@@ -1,4 +1,5 @@
-'use client';
+import { track } from '../../client/analytics/track';
+('use client');
 
 import React from 'react';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
@@ -103,6 +104,7 @@ export default class SupportChat extends React.Component {
   }
   toggle = () => {
     const open = !this.state.open;
+    if (open) track('support_opened', { surface: 'other' });
     this.setState({ open, teaser: false, unread: 0 }, () => {
       this.schedule();
       if (open && !this.state.data) this.load();
@@ -160,6 +162,10 @@ export default class SupportChat extends React.Component {
         });
         return;
       }
+      if (text)
+        track('support_message_sent', {
+          turn_n: c.messages.filter((m) => m.from === 'user').length + 1,
+        });
       // a short "typing" moment so Sparky doesn't feel like a vending machine
       const wait = Math.max(0, 650 - (Date.now() - started));
       setTimeout(() => {
@@ -253,6 +259,7 @@ export default class SupportChat extends React.Component {
       <>
         {s.open ? (
           <section
+            data-private-block=""
             role="dialog"
             aria-label="Duoly support chat"
             style={{
@@ -751,6 +758,7 @@ export default class SupportChat extends React.Component {
 
         {s.teaser && !s.open ? (
           <div
+            data-private-block=""
             style={{
               position: 'fixed',
               right: '24px',
@@ -804,6 +812,7 @@ export default class SupportChat extends React.Component {
         ) : null}
 
         <button
+          data-private-block=""
           type="button"
           aria-label={
             s.open

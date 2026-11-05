@@ -64,7 +64,7 @@ export default function TeammateCarousel({ crew, game, onlineText }) {
     : 0;
   const duration = Math.round((crew.length * perLoop * CARD_PX) / SPEED) + 's';
   return (
-    <section className="tc" aria-labelledby="tc-h">
+    <section data-private-block="" className="tc" aria-labelledby="tc-h">
       <div className="tc-top">
         <h2 id="tc-h" className="tc-title">
           Meet your teammates

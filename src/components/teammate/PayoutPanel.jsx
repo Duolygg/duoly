@@ -301,6 +301,7 @@ export default class PayoutPanel extends React.Component {
     const s = this.state;
     return (
       <div
+        data-private-block=""
         id="payouts"
         style={{
           marginTop: '12px',

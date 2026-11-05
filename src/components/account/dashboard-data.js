@@ -99,6 +99,8 @@ export function toOriginalOrder(o) {
         }
       : null,
     createdAt: ms(o.created_at),
+    queuedAt: ms(o.queued_at),
+    acceptedAt: ms(o.accepted_at),
     completedAt: ms(o.completed_at),
     amountEur: o.amount_eur_cents / 100,
     paid: paidOf(o),

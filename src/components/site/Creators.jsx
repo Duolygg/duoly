@@ -1,6 +1,7 @@
+import { track } from '../../client/analytics/track';
 // Live port of src/design-reference/components/Creators.jsx (Fabian's original): real fetch and the
 // real Sparky widget instead of the design-preview transport. Keep layout and copy in sync with the original.
-'use client';
+('use client');
 
 import React from 'react';
 import ClosedNotice from '../../design-reference/components/ClosedNotice.jsx';
@@ -271,7 +272,16 @@ export default class Creators extends React.Component {
                 <a href="#tiers">Tiers</a>
                 <a href="#faq">FAQ</a>
               </nav>
-              <a href="#apply" className="lg-btn cr-head-cta">
+              <a
+                href="#apply"
+                className="lg-btn cr-head-cta"
+                onClick={() =>
+                  track('cta_clicked', {
+                    cta: 'creators_nav_apply',
+                    surface: 'creators',
+                  })
+                }
+              >
                 Apply now
               </a>
             </div>
@@ -302,7 +312,16 @@ export default class Creators extends React.Component {
                   every order they place for {CREATOR.attributionMonths} months.
                 </p>
                 <div className="cr-ctas">
-                  <a href="#apply" className="lg-btn big-inline">
+                  <a
+                    href="#apply"
+                    className="lg-btn big-inline"
+                    onClick={() =>
+                      track('cta_clicked', {
+                        cta: 'creators_hero_apply',
+                        surface: 'creators',
+                      })
+                    }
+                  >
                     Become a creator{' '}
                     <Icon name="arrow" size={17} stroke={2.4} />
                   </a>
@@ -442,7 +461,16 @@ export default class Creators extends React.Component {
                   That’s {eur(monthly * 12)} a year, on top of what you already
                   make.
                 </span>
-                <a href="#apply" className="lg-btn">
+                <a
+                  href="#apply"
+                  className="lg-btn"
+                  onClick={() =>
+                    track('cta_clicked', {
+                      cta: 'creators_apply',
+                      surface: 'creators',
+                    })
+                  }
+                >
                   Start earning <Icon name="arrow" size={16} stroke={2.4} />
                 </a>
               </div>

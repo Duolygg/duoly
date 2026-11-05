@@ -45,6 +45,7 @@ export function ProofView({
   const mayUpload = mode === 'teammate' && !!assignmentId;
   return (
     <section
+      data-private-block=""
       className="private-proofs"
       aria-label="Private evidence"
       aria-busy={state.pending}

@@ -1,3 +1,7 @@
+import { track } from '../../client/analytics/track';
+import { analyticsErrorSlug } from '../../client/analytics/event-values';
+import AnalyticsErrorBoundary from '../shared/AnalyticsErrorBoundary';
+import type { ComponentProps } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import {
   loadStripe,
@@ -90,7 +94,7 @@ function friendly(message: string | undefined) {
   return message;
 }
 
-export default function CheckoutPanel({
+function CheckoutPanelContent({
   publishableKey,
   clientSecret,
   intentId,
@@ -179,11 +183,19 @@ export default function CheckoutPanel({
           if (!actions) return;
           setError('');
           setPhase('paying');
+          track('payment_submitted', { kind: 'order' });
           const result = await actions.confirm({
             expressCheckoutConfirmEvent: event,
             redirect: 'if_required',
           });
           if (result.type === 'error') {
+            track('payment_confirm_failed', {
+              kind: 'order',
+              error_type: analyticsErrorSlug(
+                'type' in result.error ? result.error.type : undefined,
+              ),
+              error_code: analyticsErrorSlug(result.error.code),
+            });
             setError(friendly(result.error.message));
             setPhase('ready');
           } else setPhase('held');
@@ -204,7 +216,10 @@ export default function CheckoutPanel({
         // Any edit clears a previous error: never show a stale message.
         paymentElement.on('change', () => setError(''));
         paymentElement.on('ready', () => {
-          if (!cancelled) setPaymentReady(true);
+          if (!cancelled) {
+            setPaymentReady(true);
+            track('payment_form_ready', { kind: 'order' });
+          }
         });
         paymentElement.on('loaderror', () => {
           setFatal('The payment form couldn’t load. Reload the page.');
@@ -281,8 +296,16 @@ export default function CheckoutPanel({
     if (!actions || phase !== 'ready') return;
     setError('');
     setPhase('paying');
+    track('payment_submitted', { kind: 'order' });
     const result = await actions.confirm({ redirect: 'if_required' });
     if (result.type === 'error') {
+      track('payment_confirm_failed', {
+        kind: 'order',
+        error_type: analyticsErrorSlug(
+          'type' in result.error ? result.error.type : undefined,
+        ),
+        error_code: analyticsErrorSlug(result.error.code),
+      });
       setError(friendly(result.error.message));
       setPhase('ready');
     } else setPhase('held');
@@ -303,6 +326,7 @@ export default function CheckoutPanel({
   const walletFirst = !!wallet && !showOther && phase !== 'loading';
   return (
     <form
+      data-private-block=""
       className={`pay-card is-${phase}`}
       onSubmit={pay}
       aria-busy={phase === 'loading' || busy}
@@ -401,5 +425,15 @@ export default function CheckoutPanel({
         </div>
       )}
     </form>
+  );
+}
+
+export default function CheckoutPanel(
+  props: ComponentProps<typeof CheckoutPanelContent>,
+) {
+  return (
+    <AnalyticsErrorBoundary source="checkout">
+      <CheckoutPanelContent {...props} />
+    </AnalyticsErrorBoundary>
   );
 }

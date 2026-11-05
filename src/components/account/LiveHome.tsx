@@ -1,3 +1,7 @@
+import { track } from '../../client/analytics/track';
+import { analyticsErrorSlug } from '../../client/analytics/event-values';
+import AnalyticsErrorBoundary from '../shared/AnalyticsErrorBoundary';
+import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
 import { emailAuth, signInWith } from '../../client/auth-actions';
@@ -29,7 +33,7 @@ function rememberCheckout() {
 }
 
 /** The original homepage (Home.jsx) on real checkout, FX and sign-in. */
-export default function LiveHome({
+function LiveHomeContent({
   viewer,
   csrf,
   checkoutEnabled = false,
@@ -222,6 +226,17 @@ export default function LiveHome({
     }
   };
   const onCheckout = async (selection: Record<string, unknown>) => {
+    track('checkout_started', {
+      game: String(selection.gameId),
+      service: String(selection.serviceId),
+      units: Number(selection.units),
+      voice: !!selection.voice,
+      wallet: !!selection.useWallet,
+      free_perk: !!selection.freePerk,
+      picked: !!selection.pickSource,
+      mood: String(selection.mood || 'any'),
+      stream: !!selection.streamer,
+    });
     try {
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -234,6 +249,7 @@ export default function LiveHome({
         url?: string;
         error?: string;
         order_id?: string;
+        code?: string;
       };
       if (
         response.ok &&
@@ -241,12 +257,27 @@ export default function LiveHome({
         (data.url.startsWith('/checkout/') || data.url.startsWith('/queue/'))
       )
         return { url: data.url };
-      if (response.status === 409 && data.order_id)
+      if (response.status === 409 && data.order_id) {
+        track('checkout_resumed');
         return { orderId: data.order_id };
+      }
+      track('checkout_failed', {
+        status_bucket:
+          response.status >= 500
+            ? '5xx'
+            : response.status >= 400
+              ? '4xx'
+              : 'network',
+        reason_code: analyticsErrorSlug(data.code),
+      });
       return {
         error: data.error ?? 'Couldn’t start checkout. Please try again.',
       };
     } catch {
+      track('checkout_failed', {
+        status_bucket: 'network',
+        reason_code: 'unknown',
+      });
       return {
         error:
           'Can’t reach Duoly right now. Check your connection and try again.',
@@ -277,5 +308,15 @@ export default function LiveHome({
       teammates={live.teammates}
       pro={pro}
     />
+  );
+}
+
+export default function LiveHome(
+  props: ComponentProps<typeof LiveHomeContent>,
+) {
+  return (
+    <AnalyticsErrorBoundary source="home">
+      <LiveHomeContent {...props} />
+    </AnalyticsErrorBoundary>
   );
 }

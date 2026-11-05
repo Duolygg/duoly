@@ -1,3 +1,4 @@
+import { track } from '../../client/analytics/track';
 // Order room pieces shared by the real order room (QueueRoom.jsx) and the homepage preview
 // (home/QueuePreview.jsx), so both look the same: the stage, queue timer, steps, order card, chat,
 // "You’re covered" panel, review and tip form, and review thanks. The stage (default export) is the matchmaking view from the order room: your card and the teammate slot, linked in the middle.
@@ -1365,6 +1366,9 @@ export const tipMoney = (tip) =>
     : tipAmount(tip.currency === 'USD' ? '$' : '€', tip.amount);
 
 export function ReviewThanks({ name, rating, tip, reviewUrl = '', children }) {
+  React.useEffect(() => {
+    track('review_confirmation_shown', { rating });
+  }, [rating]);
   return (
     <div className="q-review" style={{ textAlign: 'center' }}>
       <div
@@ -1402,6 +1406,12 @@ export function ReviewThanks({ name, rating, tip, reviewUrl = '', children }) {
           <a
             className="q-tp-btn"
             href={reviewUrl}
+            onClick={() =>
+              track('trustpilot_clicked', {
+                rating,
+                source: 'review_confirmation',
+              })
+            }
             target="_blank"
             rel="noopener"
             aria-label="Write a review on Trustpilot (opens in a new tab)"

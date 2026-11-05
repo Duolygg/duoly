@@ -1,3 +1,4 @@
+import { track } from '../../client/analytics/track';
 import React from 'react';
 import Rewards from './Rewards';
 import SupportChat from '../support/SupportChat';
@@ -70,6 +71,7 @@ export default class Dashboard extends React.Component {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.url) {
+        track('pro_portal_opened');
         window.location.assign(data.url);
         return;
       }
@@ -111,6 +113,17 @@ export default class Dashboard extends React.Component {
       const o = d.order || null,
         prev = this.state.live;
       const sig = (x) => (x ? x.id + x.status + (x.review ? 'r' : '') : '');
+      if (
+        o?.status === 'in_progress' &&
+        (!prev || prev.id !== o.id || prev.status !== 'in_progress')
+      )
+        track('match_seen', {
+          game: o.game,
+          wait_seconds: Math.max(
+            0,
+            Math.floor((o.acceptedAt - (o.queuedAt || o.createdAt)) / 1000),
+          ),
+        });
       this.setState({ live: o });
       if (sig(o) !== sig(prev) && prev) this.loadHistory();
     } catch (e) {}
@@ -1003,6 +1016,9 @@ export default class Dashboard extends React.Component {
               {v.again ? (
                 <a
                   href="/#games"
+                  onClick={() =>
+                    track('rebook_clicked', { source: 'dashboard' })
+                  }
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -1341,6 +1357,7 @@ export default class Dashboard extends React.Component {
               </section>
 
               <section
+                data-private-block=""
                 aria-labelledby="orders-h"
                 style={{ ...card, padding: '24px' }}
               >
