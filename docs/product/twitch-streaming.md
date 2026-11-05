@@ -16,16 +16,13 @@ Migration: `supabase/migrations/20261105100000_twitch_streaming.sql`.
 - Hourly rate: €9.99 to €100 (EUR, like every price). The panel shows what they keep (60%, the same share
   as every order).
 - Bookable lengths: any of 1 to 10 hours.
-- Twitch username, **required to go online**. It is how we check they are live: the server asks
-  Twitch (Helix Get Streams) whether `twitch.tv/{username}` is live before they can go online, and again
-  at most every 30 s while their panel is open. A confirmation counts for 90 s, so a streamer whose
-  Twitch stream ends drops off the list and checkout on their own, and comes back once it is live again
-  (streaming stays switched on). Changing the username needs a new check. Without
-  `TWITCH_CLIENT_ID` / `TWITCH_CLIENT_SECRET` nobody can go online (fails closed). Migration
-  `20261105150000_streamer_twitch_live.sql`. The username is also shown as a link on their card.
+- Twitch username, **required to go online**. It is shown as a link on their card. Nothing checks
+  with Twitch that they are actually live (migration `20261105190000_streamer_no_twitch_check.sql`
+  removed the Helix check from `20261105150000_streamer_twitch_live.sql`): streamers who go online
+  without streaming are suspended by an admin. The panel tells them so.
 - **Go online for streaming** / **Go offline for streaming**.
 
-A streamer is listed ("live") only while all of these are true: streaming is on, Twitch confirmed their channel is live in the last 90 s, their desk is online
+A streamer is listed ("live") only while all of these are true: streaming is on, their desk is online
 with a fresh heartbeat (20 s), they have a rate and a streaming game, Discord is verified, they are not
 suspended, and they are not already taken.
 
