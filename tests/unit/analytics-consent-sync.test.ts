@@ -98,31 +98,38 @@ describe('analytics consent migration (source contract, not database acceptance)
     expect(sql).not.toMatch(/grant[^;]*to[^;]*(?:public|anon|authenticated)/);
     expect(sql).not.toContain('create policy');
   });
-  it('does not modify any existing migration relative to origin/main', () => {
-    const changed = execFileSync(
-      'git',
-      ['diff', '--name-only', 'origin/main', '--', 'supabase/migrations'],
-      { encoding: 'utf8' },
-    )
-      .trim()
-      .split('\n')
-      .filter(Boolean);
-    expect(changed).toEqual([file]);
-    expect(
-      execFileSync(
-        'git',
-        [
-          'diff',
-          '--name-only',
-          '--diff-filter=MDR',
-          'origin/main',
-          '--',
-          'supabase/migrations',
-        ],
-        { encoding: 'utf8' },
-      ).trim(),
-    ).toBe('');
-  });
+  // Branch-local guard: CI checkouts have no origin/main, so it runs only where the ref exists.
+  // Three-dot diff (since the merge base) so later migrations on main never fail it.
+  const hasMain = (() => {
+    try {
+      execFileSync('git', ['rev-parse', '--verify', '--quiet', 'origin/main'], {
+        stdio: 'ignore',
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+  it.skipIf(!hasMain)(
+    'adds this migration and modifies no existing one',
+    () => {
+      const diff = (filter: string) =>
+        execFileSync(
+          'git',
+          [
+            'diff',
+            '--name-only',
+            filter,
+            'origin/main...HEAD',
+            '--',
+            'supabase/migrations',
+          ],
+          { encoding: 'utf8' },
+        ).trim();
+      expect(diff('--diff-filter=MDR')).toBe('');
+      expect(diff('--diff-filter=A').split('\n')).toContain(file);
+    },
+  );
 });
 
 describe('analytics consent endpoint', () => {
