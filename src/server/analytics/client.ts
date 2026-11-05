@@ -18,12 +18,13 @@ const read = (name: string): string | undefined => {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 };
 let client: PostHog | null = null;
+export function serverAnalyticsEnabled(): boolean {
+  return (
+    read('PUBLIC_ANALYTICS_ENABLED') === 'true' && !!read('PUBLIC_POSTHOG_KEY')
+  );
+}
 function getClient() {
-  if (
-    read('PUBLIC_ANALYTICS_ENABLED') !== 'true' ||
-    !read('PUBLIC_POSTHOG_KEY')
-  )
-    return null;
+  if (!serverAnalyticsEnabled()) return null;
   if (!client) {
     client = new PostHog(read('PUBLIC_POSTHOG_KEY')!, {
       host: read('PUBLIC_POSTHOG_HOST') ?? 'https://eu.i.posthog.com',

@@ -1,4 +1,4 @@
-import { trackRequest } from '../analytics/client';
+import { trackRequest, serverAnalyticsEnabled } from '../analytics/client';
 import type { APIContext, APIRoute } from 'astro';
 import { z } from 'zod';
 import type { AccountContext } from '../auth/context';
@@ -605,7 +605,8 @@ export const apply: APIRoute = async (context) => {
       // The application can be anonymous. Identity lookup must not affect its result.
       let analyticsUserId: string | null = null;
       try {
-        analyticsUserId = (await account.identity())?.viewer.id ?? null;
+        if (serverAnalyticsEnabled())
+          analyticsUserId = (await account.identity())?.viewer.id ?? null;
       } catch {
         /* best effort */
       }

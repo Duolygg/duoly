@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { APIContext } from 'astro';
 const state = vi.hoisted(() => ({
+  enabled: true,
   body: {} as Record<string, unknown>,
   rpc: vi.fn(),
   prior: vi.fn(),
@@ -19,6 +20,7 @@ vi.mock('../../src/server/auth/handlers', () => ({
 }));
 vi.mock('../../src/server/analytics/client', () => ({
   trackRequest: state.track,
+  serverAnalyticsEnabled: () => state.enabled,
 }));
 vi.mock('../../src/server/discord/role-hooks', () => ({
   syncRolesInBackground: vi.fn(),
@@ -51,11 +53,21 @@ const report = {
   losses: 0,
 };
 beforeEach(() => {
+  state.enabled = true;
   vi.clearAllMocks();
   state.rpc.mockReset();
   state.prior.mockReset();
 });
 describe('direct server success predicates', () => {
+  it('disabled analytics adds no report pre-read', async () => {
+    state.enabled = false;
+    state.body = { csrf: 'token', ...report };
+    state.rpc.mockResolvedValue({ data: { report }, error: null });
+    expect((await matchReport(context())).status).toBe(200);
+    expect(state.rpc).toHaveBeenCalledTimes(1);
+    expect(state.rpc.mock.calls[0]![0]).toBe('teammate_save_match_report');
+    expect(state.track).not.toHaveBeenCalled();
+  });
   it.each([true, false])(
     'match report emits only first saves (first %s)',
     async (first) => {

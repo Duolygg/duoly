@@ -137,6 +137,12 @@ not a recorder stub; invalid payload decoding fails the test.
   calls, missing usage, network/HTTP/JSON failures, tools, admin exclusion, and
   handler first-save/transition guards. The consent migration test uses the
   owner-requested `existsSync(file)` fix for a migration already on the base branch.
+  The chat browser test now waits for emoji insertion to restore textarea focus
+  before filling a new draft: otherwise its deferred rAF can reset the new draft's
+  caret to position 2. This reproduced twice in the full gate; the synchronized
+  mobile test passes ten repeated runs without changing application chat code.
+  Disabled analytics adds no first-report/desk pre-reads or application identity
+  lookup.
 - No outbox/drain, SQL, PostHog, Vercel, or other hosted changes belong to this
   branch. Local fake-provider gates do not prove production ingestion, replay
   joins, Vercel request lifetime, or database concurrency behavior.

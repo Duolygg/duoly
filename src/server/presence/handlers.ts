@@ -1,4 +1,4 @@
-import { trackRequest } from '../analytics/client';
+import { trackRequest, serverAnalyticsEnabled } from '../analytics/client';
 import { supportService } from '../support/store';
 import type { APIContext, APIRoute } from 'astro';
 import { accountContext } from '../auth/context';
@@ -67,7 +67,7 @@ export const teammatePresence: APIRoute = async (context) => {
     if (identity.viewer.role !== 'teammate')
       return account.json({ error: 'Teammates only.' }, 403);
     let previousOnline: boolean | null = null;
-    if (parsed.data.action === 'set') {
+    if (serverAnalyticsEnabled() && parsed.data.action === 'set') {
       try {
         const prior = await supportService()
           ?.from('teammate_presence')

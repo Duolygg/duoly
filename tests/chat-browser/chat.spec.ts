@@ -12,6 +12,8 @@ test('native composer supports Unicode emojis, multiline text and escaped delive
   await page.getByRole('button', { name: 'Choose emoji', exact: true }).click();
   await page.getByRole('button', { name: 'Wave', exact: true }).click();
   await expect(input).toHaveValue('👋');
+  // Emoji insertion restores the caret in rAF. Do not race it with the next fill.
+  await expect(input).toBeFocused();
   await expect(page.getByText('1 / 500', { exact: true })).toBeVisible();
   await input.fill('Hello <script>safe</script> 🎮');
   await input.press('Shift+Enter');

@@ -1,4 +1,4 @@
-import { trackRequest } from '../analytics/client';
+import { trackRequest, serverAnalyticsEnabled } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
@@ -75,7 +75,7 @@ export const matchReport: APIRoute = async (context) => {
       args: Record<string, unknown>,
     ) => PromiseLike<{ data: unknown; error: unknown }>;
     let firstSave = false;
-    if (command) {
+    if (serverAnalyticsEnabled() && command) {
       try {
         const prior = await rpc('teammate_match_report', {
           p_order_id: order.data.order_id,
