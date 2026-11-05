@@ -72,7 +72,7 @@ test('homepage uses its design header and the shared footer links', async ({
   for (const [name, href] of [
     ['Imprint', '/imprint'],
     ['Blog', '/blog'],
-    ['Discord', 'https://discord.gg/xkKGf9bKz'],
+    ['Discord', 'https://discord.gg/KuVyByUyV4'],
   ] as const)
     await expect(
       page.locator('footer').getByRole('link', { name, exact: true }),
@@ -145,7 +145,7 @@ test('unfinished forms show an honest state and never post sample data', async (
     await expect(page.getByRole('heading', { name: title })).toBeVisible();
     await expect(
       page.getByRole('main').getByRole('link', { name: 'Join our Discord' }),
-    ).toHaveAttribute('href', 'https://discord.gg/xkKGf9bKz');
+    ).toHaveAttribute('href', 'https://discord.gg/KuVyByUyV4');
   }
   expect(posts).toEqual([]);
 });

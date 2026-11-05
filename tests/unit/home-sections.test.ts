@@ -160,13 +160,13 @@ describe('solo queue vs. Duoly', () => {
     expect(html).toContain('Boosting <span class="sv-vs-word">vs.</span>');
     expect(html).toContain('Pay per game, from $3.49');
     expect(html).not.toContain('{from}');
-    // and the homepage computes it from the catalog: Swiftplay at 2.99 EUR today
+    // and the homepage computes it from the catalog: the €1.99 minimum (e.g. Deathmatch, Skirmish) today
     const home = new (
       Home as unknown as new (p: object) => {
         renderVals(): { fromPrice: string };
       }
     )({ recentMatches: [] });
-    expect(home.renderVals().fromPrice).toBe('€2.99');
+    expect(home.renderVals().fromPrice).toBe('€1.99');
   });
 });
 

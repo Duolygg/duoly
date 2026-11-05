@@ -48,7 +48,7 @@ describe('checkout pricing', () => {
       CheckoutRequestSchema.safeParse({ ...lol, total: 0.01 }).success,
     ).toBe(false);
     const built = buildCheckout(CheckoutRequestSchema.parse(lol));
-    expect(built.row.amount_eur_cents).toBe(1617); // 5.99 × 3 − 10%
+    expect(built.row.amount_eur_cents).toBe(1077); // 3.99 × 3 − 10%
     expect(built.row).toMatchObject({
       game: 'lol',
       service: 'duo2',
