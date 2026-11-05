@@ -1,0 +1,18 @@
+---
+interface Props {
+  steps: string[];
+  note?: string;
+  heading?: string;
+}
+const { steps, note, heading = 'Sample session agenda' } = Astro.props;
+---
+
+<section aria-labelledby="agenda-h">
+  <h2 id="agenda-h">{heading}</h2>
+  <ol class="timeline">
+    {steps.map((step) => (
+      <li>{step}</li>
+    ))}
+  </ol>
+  {note && <p>{note}</p>}
+</section>

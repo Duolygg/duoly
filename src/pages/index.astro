@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { homeSchema, serializeJsonLd } from '../site/seo';
 // The order preview's proof list (QueuePreview uses the stylesheet-free ProofView).
 import '../components/proofs/proofs.css';
 import LiveHome from '../components/account/LiveHome';
@@ -43,10 +44,19 @@ const pro = await loadProView(account.client, viewer?.role);
 ---
 
 <SiteLayout
-  title="Duoly | Duo up in under 2 minutes"
+  title="Gaming Teammates, Coaching and Social Sessions | Duoly"
+  description="Book gaming teammates, coaching and friendly Social sessions on Duoly. Compare games and services from €2.49, choose a session and play on your own account."
+  indexing={
+    Astro.url.searchParams.has('signin') ? 'noindex, nofollow' : 'index, follow'
+  }
   viewer={viewer ?? undefined}
   bare
 >
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(homeSchema(Astro.site!))}
+  />
   <LiveHome
     viewer={viewer}
     csrf={csrf}

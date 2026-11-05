@@ -1,0 +1,7615 @@
+{
+  "origin": "https://duoly.gg",
+  "pages": {
+    "/": {
+      "status": 200,
+      "indexable": true,
+      "depth": 0,
+      "inbound": [
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/",
+          "text": "Rank-verified teammatesNot matched? You get your money back."
+        },
+        {
+          "path": "/",
+          "text": "Find my duo"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "League of Legends, Valorant, Counter-Strike 2 and 12 more, plus Social"
+        },
+        {
+          "path": "/",
+          "text": "Find my duo"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/apply": {
+      "status": 200,
+      "indexable": false,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/apply",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "How to get paid to play games with Duoly"
+        },
+        {
+          "path": "/apply",
+          "text": "Apply in 3 minutes"
+        },
+        {
+          "path": "/apply",
+          "text": "See requirements"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/apply",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/valorant/coaching": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "Valorant"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Coaching"
+        },
+        {
+          "path": "/",
+          "text": "Book Valorant coaching"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "See prices"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/terms",
+          "text": "payment and refund terms"
+        },
+        {
+          "path": "/contact",
+          "text": "contact support"
+        },
+        {
+          "path": "/",
+          "text": "Book Valorant coaching"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "Valorant teammates"
+        },
+        {
+          "path": "/games",
+          "text": "All games and coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Playing together respectfully"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/league-of-legends/coaching": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/league-of-legends",
+          "text": "League of Legends"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "Coaching"
+        },
+        {
+          "path": "/",
+          "text": "Book League of Legends coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "See prices"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/terms",
+          "text": "payment and refund terms"
+        },
+        {
+          "path": "/contact",
+          "text": "contact support"
+        },
+        {
+          "path": "/",
+          "text": "Book League of Legends coaching"
+        },
+        {
+          "path": "/games/league-of-legends",
+          "text": "League of Legends teammates"
+        },
+        {
+          "path": "/games",
+          "text": "All games and coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Playing together respectfully"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/rocket-league/coaching": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/rocket-league",
+          "text": "Rocket League"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Coaching"
+        },
+        {
+          "path": "/",
+          "text": "Book Rocket League coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "See prices"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/terms",
+          "text": "payment and refund terms"
+        },
+        {
+          "path": "/contact",
+          "text": "contact support"
+        },
+        {
+          "path": "/",
+          "text": "Book Rocket League coaching"
+        },
+        {
+          "path": "/games/rocket-league",
+          "text": "Rocket League teammates"
+        },
+        {
+          "path": "/games",
+          "text": "All games and coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Playing together respectfully"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/fortnite/coaching": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/fortnite",
+          "text": "Fortnite"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Coaching"
+        },
+        {
+          "path": "/",
+          "text": "Book Fortnite coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "See prices"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/terms",
+          "text": "payment and refund terms"
+        },
+        {
+          "path": "/contact",
+          "text": "contact support"
+        },
+        {
+          "path": "/",
+          "text": "Book Fortnite coaching"
+        },
+        {
+          "path": "/games/fortnite",
+          "text": "Fortnite teammates"
+        },
+        {
+          "path": "/games",
+          "text": "All games and coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Playing together respectfully"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/teamfight-tactics/coaching": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/teamfight-tactics",
+          "text": "Teamfight Tactics"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "Coaching"
+        },
+        {
+          "path": "/",
+          "text": "Book Teamfight Tactics coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "See prices"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/terms",
+          "text": "payment and refund terms"
+        },
+        {
+          "path": "/contact",
+          "text": "contact support"
+        },
+        {
+          "path": "/",
+          "text": "Book Teamfight Tactics coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics",
+          "text": "Teamfight Tactics teammates"
+        },
+        {
+          "path": "/games",
+          "text": "All games and coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Playing together respectfully"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/apex-legends/coaching": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/apex-legends",
+          "text": "Apex Legends"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Coaching"
+        },
+        {
+          "path": "/",
+          "text": "Book Apex Legends coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "See prices"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/terms",
+          "text": "payment and refund terms"
+        },
+        {
+          "path": "/contact",
+          "text": "contact support"
+        },
+        {
+          "path": "/",
+          "text": "Book Apex Legends coaching"
+        },
+        {
+          "path": "/games/apex-legends",
+          "text": "Apex Legends teammates"
+        },
+        {
+          "path": "/games",
+          "text": "All games and coaching"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Playing together respectfully"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/marvel-rivals/coaching": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/marvel-rivals",
+          "text": "Marvel Rivals"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Coaching"
+        },
+        {
+          "path": "/",
+          "text": "Book Marvel Rivals coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "See prices"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/terms",
+          "text": "payment and refund terms"
+        },
+        {
+          "path": "/contact",
+          "text": "contact support"
+        },
+        {
+          "path": "/",
+          "text": "Book Marvel Rivals coaching"
+        },
+        {
+          "path": "/games/marvel-rivals",
+          "text": "Marvel Rivals teammates"
+        },
+        {
+          "path": "/games",
+          "text": "All games and coaching"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Playing together respectfully"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/games",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "terms"
+        },
+        {
+          "path": "/games/league-of-legends",
+          "text": "League of Legends"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "Valorant"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/counter-strike-2",
+          "text": "Counter-Strike 2"
+        },
+        {
+          "path": "/games/fortnite",
+          "text": "Fortnite"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/call-of-duty",
+          "text": "Call of Duty"
+        },
+        {
+          "path": "/games/apex-legends",
+          "text": "Apex Legends"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/rainbow-six-siege",
+          "text": "Rainbow Six Siege"
+        },
+        {
+          "path": "/games/marvel-rivals",
+          "text": "Marvel Rivals"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games/overwatch-2",
+          "text": "Overwatch 2"
+        },
+        {
+          "path": "/games/rocket-league",
+          "text": "Rocket League"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics",
+          "text": "Teamfight Tactics"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "Teamfight Tactics coaching"
+        },
+        {
+          "path": "/games/ea-sports-fc-27",
+          "text": "EA SPORTS FC 27"
+        },
+        {
+          "path": "/games/arc-raiders",
+          "text": "ARC Raiders"
+        },
+        {
+          "path": "/games/minecraft",
+          "text": "Minecraft"
+        },
+        {
+          "path": "/games/pokemon-unite",
+          "text": "Pok\u00e9mon Unite"
+        },
+        {
+          "path": "/games/social",
+          "text": "Social"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/blog": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/blog",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "What is an e-girl? And how to play with one"
+        },
+        {
+          "path": "/games",
+          "text": "Browse game and coaching guides"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/blog",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/get-paid-to-play-games": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/apply",
+          "text": "Apply to become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "How payouts work"
+        },
+        {
+          "path": "/apply",
+          "text": "application form"
+        },
+        {
+          "path": "/apply",
+          "text": "Apply to become a teammate"
+        },
+        {
+          "path": "/games",
+          "text": "Services by game"
+        },
+        {
+          "path": "/games/social",
+          "text": "Social rules"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/contact",
+          "text": "Ask the Duoly team"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/creators": {
+      "status": 200,
+      "indexable": false,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/creators",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/creators",
+          "text": "Become a creator"
+        },
+        {
+          "path": "/creators",
+          "text": "What would I earn?"
+        },
+        {
+          "path": "/creators",
+          "text": "Start earning"
+        },
+        {
+          "path": "/contact",
+          "text": "Get in touch"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/creators",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/contact": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/contact",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/dashboard",
+          "text": "Problem with an order?Open your order room from the dashboard to chat with your teammate or report something.Go to my orders"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammateHigh rank and good vibes? Apply in about three minutes and start earning.Apply now"
+        },
+        {
+          "path": "/",
+          "text": "Frequently asked questions"
+        },
+        {
+          "path": "/terms",
+          "text": "Cancellations & refunds"
+        },
+        {
+          "path": "/privacy",
+          "text": "Your data rights"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/contact",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/terms": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/privacy",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/terms",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "01What Duoly is"
+        },
+        {
+          "path": "/terms",
+          "text": "02Your account"
+        },
+        {
+          "path": "/terms",
+          "text": "03Booking a session"
+        },
+        {
+          "path": "/terms",
+          "text": "04Prices & payment"
+        },
+        {
+          "path": "/terms",
+          "text": "05Cancellations & refunds"
+        },
+        {
+          "path": "/terms",
+          "text": "06Your Duoly balance"
+        },
+        {
+          "path": "/terms",
+          "text": "07How we play together"
+        },
+        {
+          "path": "/terms",
+          "text": "08Games & publisher rules"
+        },
+        {
+          "path": "/terms",
+          "text": "09Reviews, reports & proof"
+        },
+        {
+          "path": "/terms",
+          "text": "10For teammates"
+        },
+        {
+          "path": "/terms",
+          "text": "11Liability"
+        },
+        {
+          "path": "/terms",
+          "text": "12Changes, termination & law"
+        },
+        {
+          "path": "/terms",
+          "text": "13Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "01What Duoly is"
+        },
+        {
+          "path": "/terms",
+          "text": "02Your account"
+        },
+        {
+          "path": "/terms",
+          "text": "03Booking a session"
+        },
+        {
+          "path": "/terms",
+          "text": "04Prices & payment"
+        },
+        {
+          "path": "/terms",
+          "text": "05Cancellations & refunds"
+        },
+        {
+          "path": "/terms",
+          "text": "06Your Duoly balance"
+        },
+        {
+          "path": "/terms",
+          "text": "07How we play together"
+        },
+        {
+          "path": "/terms",
+          "text": "08Games & publisher rules"
+        },
+        {
+          "path": "/terms",
+          "text": "09Reviews, reports & proof"
+        },
+        {
+          "path": "/terms",
+          "text": "10For teammates"
+        },
+        {
+          "path": "/terms",
+          "text": "11Liability"
+        },
+        {
+          "path": "/terms",
+          "text": "12Changes, termination & law"
+        },
+        {
+          "path": "/terms",
+          "text": "13Contact"
+        },
+        {
+          "path": "/rules",
+          "text": "Teammate Code"
+        },
+        {
+          "path": "/contact",
+          "text": "contact form"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact us"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/terms",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/privacy": {
+      "status": 200,
+      "indexable": true,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/imprint",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/privacy",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/privacy",
+          "text": "01Who is responsible"
+        },
+        {
+          "path": "/privacy",
+          "text": "02What we collect"
+        },
+        {
+          "path": "/privacy",
+          "text": "03Why we\u2019re allowed to"
+        },
+        {
+          "path": "/privacy",
+          "text": "04Who sees your data"
+        },
+        {
+          "path": "/privacy",
+          "text": "05Cookies and local storage"
+        },
+        {
+          "path": "/privacy",
+          "text": "06Analytics"
+        },
+        {
+          "path": "/privacy",
+          "text": "07Marketing"
+        },
+        {
+          "path": "/privacy",
+          "text": "08How long we keep it"
+        },
+        {
+          "path": "/privacy",
+          "text": "09Your rights"
+        },
+        {
+          "path": "/privacy",
+          "text": "10Security"
+        },
+        {
+          "path": "/privacy",
+          "text": "11Age"
+        },
+        {
+          "path": "/privacy",
+          "text": "12Changes"
+        },
+        {
+          "path": "/privacy",
+          "text": "01Who is responsible"
+        },
+        {
+          "path": "/privacy",
+          "text": "02What we collect"
+        },
+        {
+          "path": "/privacy",
+          "text": "03Why we\u2019re allowed to"
+        },
+        {
+          "path": "/privacy",
+          "text": "04Who sees your data"
+        },
+        {
+          "path": "/privacy",
+          "text": "05Cookies and local storage"
+        },
+        {
+          "path": "/privacy",
+          "text": "06Analytics"
+        },
+        {
+          "path": "/privacy",
+          "text": "07Marketing"
+        },
+        {
+          "path": "/privacy",
+          "text": "08How long we keep it"
+        },
+        {
+          "path": "/privacy",
+          "text": "09Your rights"
+        },
+        {
+          "path": "/privacy",
+          "text": "10Security"
+        },
+        {
+          "path": "/privacy",
+          "text": "11Age"
+        },
+        {
+          "path": "/privacy",
+          "text": "12Changes"
+        },
+        {
+          "path": "/contact",
+          "text": "contact form"
+        },
+        {
+          "path": "/privacy",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/privacy",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/privacy",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/contact",
+          "text": "contact form"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact us"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/privacy",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/imprint": {
+      "status": 200,
+      "indexable": false,
+      "depth": 1,
+      "inbound": [
+        "/",
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/login",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/dashboard",
+        "/rules",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/imprint",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy Policy"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/imprint",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/login": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": [
+        "/apply",
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/games",
+        "/blog",
+        "/get-paid-to-play-games",
+        "/creators",
+        "/contact",
+        "/terms",
+        "/privacy",
+        "/imprint",
+        "/games/valorant",
+        "/blog/what-is-an-egirl",
+        "/games/league-of-legends",
+        "/games/rocket-league",
+        "/games/fortnite",
+        "/games/teamfight-tactics",
+        "/games/apex-legends",
+        "/games/marvel-rivals",
+        "/games/counter-strike-2",
+        "/games/call-of-duty",
+        "/games/rainbow-six-siege",
+        "/games/overwatch-2",
+        "/games/ea-sports-fc-27",
+        "/games/arc-raiders",
+        "/games/minecraft",
+        "/games/pokemon-unite",
+        "/games/social",
+        "/reset-password"
+      ],
+      "links": [
+        {
+          "path": "/login",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/login",
+          "text": "Create an account"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/login",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/valorant": {
+      "status": 200,
+      "indexable": true,
+      "depth": 2,
+      "inbound": [
+        "/games/valorant/coaching",
+        "/games",
+        "/blog/what-is-an-egirl",
+        "/games/social"
+      ],
+      "links": [
+        {
+          "path": "/games/valorant",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "Valorant"
+        },
+        {
+          "path": "/",
+          "text": "Book a Valorant teammate"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "See prices"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/terms",
+          "text": "payment and refund terms"
+        },
+        {
+          "path": "/contact",
+          "text": "contact support"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching page"
+        },
+        {
+          "path": "/",
+          "text": "Book a Valorant teammate"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching and VOD review"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "What is an e-girl?"
+        },
+        {
+          "path": "/games/social",
+          "text": "Friendly Social sessions"
+        },
+        {
+          "path": "/games",
+          "text": "Browse games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/blog/what-is-an-egirl": {
+      "status": 200,
+      "indexable": true,
+      "depth": 2,
+      "inbound": [
+        "/games/valorant/coaching",
+        "/games/league-of-legends/coaching",
+        "/games/rocket-league/coaching",
+        "/games/fortnite/coaching",
+        "/games/teamfight-tactics/coaching",
+        "/games/apex-legends/coaching",
+        "/games/marvel-rivals/coaching",
+        "/blog",
+        "/games/valorant",
+        "/games/social"
+      ],
+      "links": [
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "What is an e-girl?"
+        },
+        {
+          "path": "/",
+          "text": "Book a Social session"
+        },
+        {
+          "path": "/contact",
+          "text": "Duoly team"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Where the term comes from"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "How gamers use the term e-girl"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Decide whether you want a teammate, a lesson or company"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "How to find someone to play with safely"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "How Duoly\u2019s verified Gamer Girls work"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "A respectful first-session checklist"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Want company for an hour?"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Choose your next step"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "Valorant teammate hub"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching page"
+        },
+        {
+          "path": "/games/social",
+          "text": "Duoly Social"
+        },
+        {
+          "path": "/contact",
+          "text": "support"
+        },
+        {
+          "path": "/",
+          "text": "Book a Social session"
+        },
+        {
+          "path": "/games/social",
+          "text": "Social services and prices"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "Free Valorant LFG options and paid teammates"
+        },
+        {
+          "path": "/games",
+          "text": "Browse games and coaching"
+        },
+        {
+          "path": "/terms",
+          "text": "Session terms and refunds"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/league-of-legends": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games/league-of-legends/coaching", "/games"],
+      "links": [
+        {
+          "path": "/games/league-of-legends",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/league-of-legends",
+          "text": "League of Legends"
+        },
+        {
+          "path": "/",
+          "text": "Choose a League of Legends session"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching services and prices"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/league-of-legends",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/rocket-league": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games/rocket-league/coaching", "/games"],
+      "links": [
+        {
+          "path": "/games/rocket-league",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/rocket-league",
+          "text": "Rocket League"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Rocket League session"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching services and prices"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/rocket-league",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/fortnite": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games/fortnite/coaching", "/games"],
+      "links": [
+        {
+          "path": "/games/fortnite",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/fortnite",
+          "text": "Fortnite"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Fortnite session"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching services and prices"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/fortnite",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/teamfight-tactics": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games/teamfight-tactics/coaching", "/games"],
+      "links": [
+        {
+          "path": "/games/teamfight-tactics",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/teamfight-tactics",
+          "text": "Teamfight Tactics"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Teamfight Tactics session"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "Teamfight Tactics coaching services and prices"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/teamfight-tactics",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/apex-legends": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games/apex-legends/coaching", "/games"],
+      "links": [
+        {
+          "path": "/games/apex-legends",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/apex-legends",
+          "text": "Apex Legends"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Apex Legends session"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching services and prices"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/apex-legends",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/marvel-rivals": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games/marvel-rivals/coaching", "/games"],
+      "links": [
+        {
+          "path": "/games/marvel-rivals",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/marvel-rivals",
+          "text": "Marvel Rivals"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Marvel Rivals session"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching services and prices"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/marvel-rivals",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/counter-strike-2": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games"],
+      "links": [
+        {
+          "path": "/games/counter-strike-2",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/counter-strike-2",
+          "text": "Counter-Strike 2"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Counter-Strike 2 session"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/counter-strike-2",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/call-of-duty": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games"],
+      "links": [
+        {
+          "path": "/games/call-of-duty",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/call-of-duty",
+          "text": "Call of Duty"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Call of Duty session"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/call-of-duty",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/rainbow-six-siege": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games"],
+      "links": [
+        {
+          "path": "/games/rainbow-six-siege",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/rainbow-six-siege",
+          "text": "Rainbow Six Siege"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Rainbow Six Siege session"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/rainbow-six-siege",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/overwatch-2": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games"],
+      "links": [
+        {
+          "path": "/games/overwatch-2",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/overwatch-2",
+          "text": "Overwatch 2"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Overwatch 2 session"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/overwatch-2",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/ea-sports-fc-27": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games"],
+      "links": [
+        {
+          "path": "/games/ea-sports-fc-27",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/ea-sports-fc-27",
+          "text": "EA SPORTS FC 27"
+        },
+        {
+          "path": "/",
+          "text": "Choose a EA SPORTS FC 27 session"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/ea-sports-fc-27",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/arc-raiders": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games"],
+      "links": [
+        {
+          "path": "/games/arc-raiders",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/arc-raiders",
+          "text": "ARC Raiders"
+        },
+        {
+          "path": "/",
+          "text": "Choose a ARC Raiders session"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/arc-raiders",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/minecraft": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games"],
+      "links": [
+        {
+          "path": "/games/minecraft",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/minecraft",
+          "text": "Minecraft"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Minecraft session"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/minecraft",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/pokemon-unite": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/games"],
+      "links": [
+        {
+          "path": "/games/pokemon-unite",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/pokemon-unite",
+          "text": "Pok\u00e9mon Unite"
+        },
+        {
+          "path": "/",
+          "text": "Choose a Pok\u00e9mon Unite session"
+        },
+        {
+          "path": "/games",
+          "text": "All games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/pokemon-unite",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/games/social": {
+      "status": 200,
+      "indexable": true,
+      "depth": 2,
+      "inbound": [
+        "/games",
+        "/get-paid-to-play-games",
+        "/games/valorant",
+        "/blog/what-is-an-egirl"
+      ],
+      "links": [
+        {
+          "path": "/games/social",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/",
+          "text": "Home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/games/social",
+          "text": "Social"
+        },
+        {
+          "path": "/",
+          "text": "Book a Social session"
+        },
+        {
+          "path": "/games/social",
+          "text": "See prices"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/",
+          "text": "Book"
+        },
+        {
+          "path": "/terms",
+          "text": "payment and refund terms"
+        },
+        {
+          "path": "/contact",
+          "text": "contact support"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "Valorant hub"
+        },
+        {
+          "path": "/",
+          "text": "Book a Social session"
+        },
+        {
+          "path": "/blog/what-is-an-egirl",
+          "text": "What is an e-girl?"
+        },
+        {
+          "path": "/games/valorant",
+          "text": "Find Valorant teammates"
+        },
+        {
+          "path": "/games",
+          "text": "Browse games"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/games/social",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/dashboard": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/contact"],
+      "links": [
+        {
+          "path": "/dashboard",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/dashboard",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/dashboard",
+          "text": "Games"
+        },
+        {
+          "path": "/dashboard",
+          "text": "How it works"
+        },
+        {
+          "path": "/dashboard",
+          "text": "FAQ"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/dashboard",
+          "text": "Rank-verified teammatesNot matched? You get your money back."
+        },
+        {
+          "path": "/dashboard",
+          "text": "Find my duo"
+        },
+        {
+          "path": "/dashboard",
+          "text": "How it works"
+        },
+        {
+          "path": "/dashboard",
+          "text": "League of Legends, Valorant, Counter-Strike 2 and 12 more, plus Social"
+        },
+        {
+          "path": "/dashboard",
+          "text": "Find my duo"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/dashboard",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/reset-password",
+          "text": "Forgot password?"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy Policy"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/rules": {
+      "status": 200,
+      "indexable": false,
+      "depth": 2,
+      "inbound": ["/terms"],
+      "links": [
+        {
+          "path": "/rules",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/rules",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/rules",
+          "text": "Games"
+        },
+        {
+          "path": "/rules",
+          "text": "How it works"
+        },
+        {
+          "path": "/rules",
+          "text": "FAQ"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/rules",
+          "text": "Rank-verified teammatesNot matched? You get your money back."
+        },
+        {
+          "path": "/rules",
+          "text": "Find my duo"
+        },
+        {
+          "path": "/rules",
+          "text": "How it works"
+        },
+        {
+          "path": "/rules",
+          "text": "League of Legends, Valorant, Counter-Strike 2 and 12 more, plus Social"
+        },
+        {
+          "path": "/rules",
+          "text": "Find my duo"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/rules",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/reset-password",
+          "text": "Forgot password?"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy Policy"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    },
+    "/reset-password": {
+      "status": 200,
+      "indexable": false,
+      "depth": 3,
+      "inbound": ["/dashboard", "/rules"],
+      "links": [
+        {
+          "path": "/reset-password",
+          "text": "Skip to content"
+        },
+        {
+          "path": "/",
+          "text": "Duoly home"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/login",
+          "text": "Sign in"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/login",
+          "text": "Back to sign in"
+        },
+        {
+          "path": "/games/valorant/coaching",
+          "text": "Valorant coaching"
+        },
+        {
+          "path": "/games/league-of-legends/coaching",
+          "text": "League of Legends coaching"
+        },
+        {
+          "path": "/games/rocket-league/coaching",
+          "text": "Rocket League coaching"
+        },
+        {
+          "path": "/games/fortnite/coaching",
+          "text": "Fortnite coaching"
+        },
+        {
+          "path": "/games/teamfight-tactics/coaching",
+          "text": "TFT coaching"
+        },
+        {
+          "path": "/games/apex-legends/coaching",
+          "text": "Apex Legends coaching"
+        },
+        {
+          "path": "/games/marvel-rivals/coaching",
+          "text": "Marvel Rivals coaching"
+        },
+        {
+          "path": "/games",
+          "text": "Games"
+        },
+        {
+          "path": "/",
+          "text": "How it works"
+        },
+        {
+          "path": "/",
+          "text": "FAQ"
+        },
+        {
+          "path": "/blog",
+          "text": "Blog"
+        },
+        {
+          "path": "/apply",
+          "text": "Become a teammate"
+        },
+        {
+          "path": "/get-paid-to-play-games",
+          "text": "Get paid to play games"
+        },
+        {
+          "path": "/creators",
+          "text": "Creator program"
+        },
+        {
+          "path": "/contact",
+          "text": "Contact"
+        },
+        {
+          "path": "/terms",
+          "text": "Terms"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        },
+        {
+          "path": "/reset-password",
+          "text": "Cookie settings"
+        },
+        {
+          "path": "/imprint",
+          "text": "Imprint"
+        },
+        {
+          "path": "/privacy",
+          "text": "Privacy"
+        }
+      ]
+    }
+  }
+}

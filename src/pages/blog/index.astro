@@ -2,19 +2,33 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageIntro from '../../components/site/PageIntro.astro';
 import { pageViewer } from '../../site/viewer';
-import { DISCORD_INVITE } from '../../site/nav';
 const { viewer, csrf } = await pageViewer(Astro);
 ---
 
-<SiteLayout title="Blog | Duoly" viewer={viewer} csrf={csrf}>
+<SiteLayout
+  title="Gaming Guides and Playing Together Safely | Duoly"
+  description="Read Duoly guides on gaming culture, respectful sessions and choosing who to play with. Explore Social services, teammates and coaching by game."
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
   <PageIntro
-    eyebrow="Blog"
-    title="Guides, patch notes and climbing tips"
-    lead="Our first articles are being written. Join the Discord to hear when they’re out."
-    narrow
+    eyebrow="Duoly guides"
+    title="Guides to playing together"
+    lead="Practical context for choosing a session and keeping it respectful."
   >
-    <a class="cta" href={DISCORD_INVITE} rel="noopener">
-      Join our Discord
-    </a>
+    <h2>
+      <a href="/blog/what-is-an-egirl">
+        What is an e-girl? And how to play with one
+      </a>
+    </h2>
+    <p>
+      Understand the term, compare free ways to meet teammates and learn how
+      Duoly Social sessions work.
+    </p>
+    <p>By Duoly team. Updated 5 November 2026.</p>
+    <p>
+      <a href="/games">Browse game and coaching guides</a>
+    </p>
   </PageIntro>
 </SiteLayout>

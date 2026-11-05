@@ -1,0 +1,39 @@
+---
+interface Props {
+  heading: string;
+  text: string;
+  href: string;
+  label: string;
+  price?: string;
+  art?: { src: string; alt: string };
+}
+const { heading, text, href, label, art, price } = Astro.props;
+---
+
+<section class={art ? 'closing' : 'closing no-art'} aria-labelledby="closing-h">
+  {art && (
+    <img
+      src={art.src}
+      alt={art.alt}
+      width="88"
+      height="88"
+      loading="lazy"
+      decoding="async"
+    />
+  )}
+  <div>
+    <h2 id="closing-h">{heading}</h2>
+    <p>
+      {text}
+      {price && (
+        <>
+          {' '}
+          <span class="nowrap">{price}.</span>
+        </>
+      )}
+    </p>
+  </div>
+  <a class="cta" href={href} data-cta="closing">
+    {label}
+  </a>
+</section>

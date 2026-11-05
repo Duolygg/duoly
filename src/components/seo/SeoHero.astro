@@ -1,0 +1,78 @@
+---
+interface Props {
+  eyebrow: string;
+  h1: string;
+  lead: string;
+  price?: string;
+  cta: { href: string; label: string };
+  note?: string;
+  secondary?: { href: string; label: string };
+  art: { src: string; alt: string }[];
+  chip?: string;
+  facts: string[];
+  /** data-analytics-game on the first image (game hubs track game_viewed). */
+  analyticsGame?: string;
+}
+const nowrapTerms = (text: string) =>
+  text
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replace(/\be-girl\b/g, '<span class="nowrap">e-girl</span>');
+const {
+  eyebrow,
+  h1,
+  lead,
+  price,
+  cta,
+  secondary,
+  art,
+  chip,
+  facts,
+  analyticsGame,
+  note,
+} = Astro.props;
+---
+
+<header class="seo-hero">
+  <div class="hero-copy">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 set:html={nowrapTerms(h1)} />
+    <p class="lead">{lead}</p>
+    {price && <p class="hero-price">{price}</p>}
+    <div class="hero-actions">
+      <a class="cta" href={cta.href}>
+        {cta.label}
+      </a>
+      {secondary && (
+        <a class="cta-ghost" href={secondary.href}>
+          {secondary.label}
+        </a>
+      )}
+    </div>
+    {note && <p class="hero-note">{note}</p>}
+  </div>
+  <aside class="hero-card" aria-label="At a glance">
+    <div class="top">
+      <div class="art">
+        {art.map((image, index) => (
+          <img
+            src={image.src}
+            alt={image.alt}
+            width="120"
+            height="120"
+            fetchpriority={index === 0 ? 'high' : 'auto'}
+            loading="eager"
+            decoding="async"
+            data-analytics-game={index === 0 ? analyticsGame : undefined}
+          />
+        ))}
+      </div>
+      {chip && <p class="price-chip">{chip}</p>}
+    </div>
+    <ul class="facts">
+      {facts.map((fact) => (
+        <li>{fact}</li>
+      ))}
+    </ul>
+  </aside>
+</header>

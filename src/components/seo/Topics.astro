@@ -1,0 +1,27 @@
+---
+import { rich } from './rich';
+interface Props {
+  sections: { heading: string; paragraphs: string[] }[];
+  /** Pill on ordinary sections, e.g. "Valorant focus". */
+  label: string;
+}
+const { sections, label } = Astro.props;
+// Sections whose heading starts with "Example" are shown as a highlighted callout.
+const example = (heading: string) => /^Example\b/.test(heading);
+---
+
+{sections.map((section, index) => (
+  <section class={example(section.heading) ? 'topic callout' : 'topic'}>
+    {example(section.heading) ? (
+      <span class="pill">Example</span>
+    ) : (
+      index === 0 && <span class="pill">{label}</span>
+    )}
+    <h2>{section.heading}</h2>
+    <div class={section.paragraphs.length === 2 ? 'paras' : 'paras single'}>
+      {section.paragraphs.map((paragraph) => (
+        <p set:html={rich(paragraph)} />
+      ))}
+    </div>
+  </section>
+))}

@@ -18,7 +18,12 @@ const topic = params.get('topic') ?? undefined;
 const order = (params.get('order') ?? '').slice(0, 20);
 ---
 
-<SiteLayout title="Contact | Duoly" viewer={viewer} csrf={csrf}>
+<SiteLayout
+  indexing="index, follow"
+  title="Contact | Duoly"
+  viewer={viewer}
+  csrf={csrf}
+>
   <Contact
     chrome={false}
     closed={!service}

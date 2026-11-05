@@ -1,0 +1,88 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+import SeoHero from './SeoHero.astro';
+import Prices from './Prices.astro';
+import Steps from './Steps.astro';
+import Topics from './Topics.astro';
+import Faq from './Faq.astro';
+import ClosingCta from './ClosingCta.astro';
+import { rich } from './rich';
+import './seo.css';
+import type { SiteGame } from '../../site/games';
+import { lessons } from '../../content/coaching';
+import { priceSummary, type seoOffers } from '../../server/seo/offers';
+import { socialContent, valorantContent } from '../../content/hubs';
+import { GUIDE_PATH, bookingHref } from '../../site/seo';
+interface Props {
+  game: SiteGame;
+  offers: ReturnType<typeof seoOffers>;
+}
+const { game, offers } = Astro.props;
+const social = game.id === 'social';
+const copy = social ? socialContent : valorantContent;
+const summary = priceSummary(offers);
+const lesson = lessons[game.slug];
+const book = bookingHref(game.id);
+---
+
+<article class="seo-page">
+  <Breadcrumbs
+    items={[
+      { name: 'Home', path: '/' },
+      { name: 'Games', path: '/games' },
+      { name: game.name, path: `/games/${game.slug}` },
+    ]}
+  />
+  <SeoHero
+    eyebrow={copy.eyebrow}
+    h1={copy.h1}
+    lead={copy.lead}
+    cta={{ href: book, label: copy.cta }}
+    secondary={{ href: '#prices', label: 'See prices' }}
+    art={[{ src: game.img, alt: `${game.name} category art` }]}
+    chip={summary}
+    facts={copy.facts}
+    note={
+      social
+        ? '18+ only. Social is friendly company, never dating, romantic or sexual services.'
+        : undefined
+    }
+    analyticsGame={game.id}
+  />
+  <section aria-labelledby="get-h">
+    <h2 id="get-h">What you get</h2>
+    <p set:html={rich(copy.format)} />
+  </section>
+  <Prices gameId={game.id} offers={offers} />
+  <Steps heading="How it works" steps={copy.steps}>
+    <p>
+      See the <a href="/terms">payment and refund terms</a> or{' '}
+      <a href="/contact">contact support</a> any time.
+    </p>
+  </Steps>
+  <Topics sections={copy.sections} label={social ? 'Social' : 'Valorant LFG'} />
+  <Faq items={copy.faq} />
+  <ClosingCta
+    heading={copy.closing.heading}
+    text={copy.closing.text}
+    price={summary}
+    href={book}
+    label={copy.cta}
+    art={{ src: game.img, alt: '' }}
+  />
+  <nav class="related" aria-label="Related pages">
+    <h2>Related guides and sessions</h2>
+    <div class="chips">
+      {lesson && (
+        <a href={`/games/${game.slug}/coaching`}>
+          {game.name} coaching and VOD review
+        </a>
+      )}
+      <a href={GUIDE_PATH}>What is an e-girl?</a>
+      <a href={social ? '/games/valorant' : '/games/social'}>
+        {social ? 'Find Valorant teammates' : 'Friendly Social sessions'}
+      </a>
+      <a href="/games">Browse games</a>
+    </div>
+  </nav>
+</article>

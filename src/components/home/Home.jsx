@@ -168,6 +168,7 @@ export default class Home extends React.Component {
     this.loadPerks();
     this.openCoachingFromLink();
     this.openRebookFromLink();
+    this.openGameFromLink();
     this.setState({ now: Date.now() });
     this._clock = setInterval(() => this.setState({ now: Date.now() }), 1000);
     this.resumeQueue();
@@ -237,6 +238,50 @@ export default class Home extends React.Component {
     }
     if (!this.data().some((x) => x.id === game)) return;
     this.setState({ game, rank: '', queued: false });
+  }
+  // From a game or coaching page CTA (/?game=val&tab=training#modes-h or &service=vod): that game,
+  // and that service (or that tab with its first service) picked.
+  openGameFromLink() {
+    let game = '';
+    let tab = '';
+    let service = '';
+    try {
+      const url = new URL(window.location.href);
+      if (!url.searchParams.has('game')) return;
+      game = url.searchParams.get('game') || '';
+      tab = url.searchParams.get('tab') || '';
+      service = url.searchParams.get('service') || '';
+      url.searchParams.delete('game');
+      url.searchParams.delete('tab');
+      url.searchParams.delete('service');
+      window.history.replaceState(
+        null,
+        '',
+        url.pathname + url.search + url.hash,
+      );
+    } catch (e) {
+      return;
+    }
+    const g = this.data().find((x) => x.id === game);
+    if (!g) return;
+    const m =
+      (service && g.modes.find((x) => x.id === service)) ||
+      (tab && g.modes.find((x) => x.cat === tab)) ||
+      null;
+    this.setState(
+      {
+        game,
+        rank: '',
+        queued: false,
+        ...(m ? { tab: m.cat, mode: m.id, bundle: null, qty: 1 } : {}),
+      },
+      () => {
+        // the picked game's services can change the page height: land on them again
+        const h = document.getElementById('modes-h');
+        if (window.location.hash === '#modes-h' && h && h.scrollIntoView)
+          h.scrollIntoView({ block: 'start' });
+      },
+    );
   }
   // Signed-in customers on live checkout: which perks their level unlocks (null = not live).
   async loadPerks() {
@@ -2280,9 +2325,8 @@ export default class Home extends React.Component {
                   color: '#FFFFFF',
                 }}
               >
-                Duo up in
-                <br />
-                <span style={{ color: '#D6BBFF' }}>under 2 minutes.</span>
+                Gaming teammates <br />
+                <span style={{ color: '#D6BBFF' }}>for your next game.</span>
               </h1>
               <HeroTimer />
               <p
@@ -2549,7 +2593,9 @@ export default class Home extends React.Component {
                   }}
                 />
                 {/* short quotes drifting in around the logo; real ones come in through props.testimonials */}
-                <HeroQuotes items={this.props.testimonials} />
+                {this.props.testimonials?.length >= 4 && (
+                  <HeroQuotes items={this.props.testimonials} />
+                )}
               </div>
             </div>
           </section>
@@ -2820,6 +2866,7 @@ export default class Home extends React.Component {
                     id="modes-h"
                     style={{
                       margin: '0',
+                      scrollMarginTop: '140px',
                       fontFamily:
                         "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                       fontSize: '30px',
@@ -4776,7 +4823,7 @@ export default class Home extends React.Component {
                 </div>
               </dl>
             </section>
-            {/* real quotes come in through props.testimonials; until then the samples show */}
+            {/* Render supplied reviews only; no fabricated fallback. */}
             <Testimonials items={this.props.testimonials} />
             <section
               id="faq"
@@ -5785,7 +5832,7 @@ export default class Home extends React.Component {
                         'Your order goes live on ' + v.region,
                         'Rank-verified teammates for ' +
                           v.game.name +
-                          ' see it right away. Most orders are taken in under 2 minutes.',
+                          ' see it right away.',
                       ],
                       [
                         'You get matched and play',

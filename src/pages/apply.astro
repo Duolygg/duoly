@@ -12,6 +12,11 @@ const formCsrf = account.config ? csrf || account.csrf() : '';
 ---
 
 <SiteLayout title="Become a teammate | Duoly" viewer={viewer} csrf={csrf}>
+  <p style="max-width:1120px;margin:24px auto;padding:0 24px">
+    <a href="/get-paid-to-play-games">
+      How to get paid to play games with Duoly
+    </a>
+  </p>
   {formCsrf ? (
     <LiveApply csrf={formCsrf} client:load />
   ) : (

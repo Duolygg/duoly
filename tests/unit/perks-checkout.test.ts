@@ -178,9 +178,11 @@ describe('typed creator checkout', () => {
     });
     expect(state.inserted).not.toHaveProperty('ref_code');
     expect(state.inserted).not.toHaveProperty('pro_discount_cents');
-    expect(state.adminCalls.map((call) => call.fn)).toEqual([
-      'streamer_checkout_quote',
-    ]);
+    expect(
+      state.adminCalls
+        .map((call) => call.fn)
+        .filter((fn) => fn !== 'pro_billing_customer'),
+    ).toEqual(['streamer_checkout_quote']);
   });
   it('ignores typed creator codes on free coaching', async () => {
     state.body = { ...freeBody, creatorCode: 'ALPHA' };
@@ -227,7 +229,10 @@ describe('typed creator checkout', () => {
       amount_eur_cents: baseAmount(),
       first_order_discount_cents: 0,
     });
-    expect(state.adminCalls).toEqual([]);
+    // Card-saving customer lookup is independent of creator eligibility.
+    expect(
+      state.adminCalls.filter((call) => call.fn !== 'pro_billing_customer'),
+    ).toEqual([]);
   });
   it('a typed code needs no link cookie', async () => {
     state.refCode = null;

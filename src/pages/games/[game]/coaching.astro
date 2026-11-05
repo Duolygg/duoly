@@ -1,0 +1,168 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../../components/seo/Breadcrumbs.astro';
+import SeoHero from '../../../components/seo/SeoHero.astro';
+import Prices from '../../../components/seo/Prices.astro';
+import Steps from '../../../components/seo/Steps.astro';
+import Topics from '../../../components/seo/Topics.astro';
+import Agenda from '../../../components/seo/Agenda.astro';
+import Faq from '../../../components/seo/Faq.astro';
+import ClosingCta from '../../../components/seo/ClosingCta.astro';
+import { rich } from '../../../components/seo/rich';
+import '../../../components/seo/seo.css';
+import { lessons } from '../../../content/coaching';
+import { gameBySlug } from '../../../site/games';
+import { pageViewer } from '../../../site/viewer';
+import { viewerCurrency } from '../../../server/currency';
+import { eurToUsd } from '../../../server/fx';
+import {
+  coachingFacts,
+  priceSummary,
+  seoOffers,
+  serviceSchema,
+} from '../../../server/seo/offers';
+import {
+  serializeJsonLd,
+  GUIDE_PATH,
+  bookingHref,
+  COACHING_SLUGS,
+} from '../../../site/seo';
+const game = gameBySlug(Astro.params.game);
+const lesson = lessons[Astro.params.game ?? ''];
+if (!game || !lesson) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
+const currency = await viewerCurrency(Astro.cookies, accountCurrency);
+const offers = seoOffers(game.id, 'training', {
+  customerCurrency: currency.cur,
+  eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+});
+if (!offers.length) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+const summary = priceSummary(offers);
+const path = `/games/${game.slug}/coaching`;
+const book = bookingHref(game.id, { tab: 'training' });
+const related: Record<string, string[]> = {
+  valorant: ['apex-legends', 'marvel-rivals'],
+  'apex-legends': ['valorant', 'marvel-rivals'],
+  'marvel-rivals': ['valorant', 'apex-legends'],
+  'league-of-legends': ['teamfight-tactics', 'marvel-rivals'],
+  'teamfight-tactics': ['league-of-legends', 'rocket-league'],
+  fortnite: ['rocket-league', 'apex-legends'],
+  'rocket-league': ['fortnite', 'teamfight-tactics'],
+};
+const firstSession = offers.some((offer) => offer.id === 'learn');
+const descriptions: Record<string, string> = {
+  valorant: `Valorant coaching ${summary.toLowerCase()}. Choose live Play and Learn, VOD Review or Aim and Crosshair. Set a practice goal and book your coach on Duoly.`,
+  'league-of-legends': `League of Legends coaching ${summary.toLowerCase()}. Book LoL live learning, VOD Review or Champion Mastery. Work on your role, lane and recall decisions.`,
+  'rocket-league': `Rocket League coaching ${summary.toLowerCase()}. Book Doubles or Mechanics Training with practice packs. Work on aerials, recoveries and second-player decisions.`,
+  fortnite: `Fortnite coaching at ${summary.toLowerCase()}. Book a Fortnite coach for live Ranked learning or Creative build and edit practice, with a plan for your input.`,
+  'teamfight-tactics': `TFT coaching at ${summary.toLowerCase()}. Book a Teamfight Tactics Comp and Econ Review. Work on gold, roll timing, board strength and your next spending decision.`,
+  'apex-legends': `Apex Legends coaching at ${summary.toLowerCase()}. Book live Ranked learning or a Firing Range Movement Course. Practice rotations and movement for your input.`,
+  'marvel-rivals': `Marvel Rivals coaching ${summary.toLowerCase()}. Choose live Play and Learn or hourly Hero Coaching. Review positioning, abilities and ultimate timing.`,
+};
+const description = descriptions[game.slug]!;
+---
+
+<SiteLayout
+  title={lesson.title}
+  description={description}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Games', path: '/games' },
+        { name: game.name, path: `/games/${game.slug}` },
+        { name: 'Coaching', path },
+      ]}
+    />
+    <SeoHero
+      eyebrow={`${game.name} coaching`}
+      h1={lesson.h1}
+      lead={lesson.lead}
+      cta={{ href: book, label: `Book ${game.name} coaching` }}
+      secondary={{ href: '#prices', label: 'See prices' }}
+      art={[{ src: game.img, alt: `${game.name} game art` }]}
+      chip={summary}
+      facts={coachingFacts(offers)}
+    />
+    <section aria-labelledby="get-h">
+      <h2 id="get-h">What {game.name} coaching covers</h2>
+      <p set:html={rich(lesson.format)} />
+    </section>
+    <Prices gameId={game.id} offers={offers} coach />
+    <Steps
+      heading="How booking works"
+      steps={[
+        'Pick your training service and add your goal.',
+        firstSession
+          ? `Check out once, upfront. Your first Play and Learn ${offers.find((offer) => offer.id === 'learn')!.unit === 'game' ? 'game' : 'session'} is half price when eligible.`
+          : 'Check out once, upfront.',
+        'Meet your coach in the order chat and start on Discord, on your own account.',
+      ]}
+    >
+      <p>
+        Every coach is reviewed by Duoly before taking orders. See the{' '}
+        <a href="/terms">payment and refund terms</a> or{' '}
+        <a href="/contact">contact support</a> any time.
+      </p>
+    </Steps>
+    <Topics sections={lesson.sections} label={`${game.name} focus`} />
+    <Agenda
+      steps={lesson.agenda}
+      heading={
+        game.slug === 'valorant' || game.slug === 'league-of-legends'
+          ? 'Sample 1-hour VOD review'
+          : 'Sample 1-hour lesson'
+      }
+    />
+    <section class="card" aria-labelledby="prep-h">
+      <h2 id="prep-h">How to prepare</h2>
+      <ul class="checklist">
+        {lesson.prepare.split(/(?<=\.)\s+/).map((tip) => (
+          <li>{tip}</li>
+        ))}
+      </ul>
+    </section>
+    <Faq items={lesson.faq} />
+    <ClosingCta
+      heading={`Ready for your ${game.name} lesson?`}
+      text="Pick a service, add your goal and meet your coach."
+      price={summary}
+      href={book}
+      label={`Book ${game.name} coaching`}
+      art={{ src: game.img, alt: '' }}
+    />
+    <nav class="related" aria-label="Related pages">
+      <h2>Keep exploring</h2>
+      <div class="chips">
+        <a href={`/games/${game.slug}`}>{game.name} teammates</a>
+        <a href="/games">All games and coaching</a>
+        {related[game.slug]!.filter((slug) =>
+          COACHING_SLUGS.includes(slug as (typeof COACHING_SLUGS)[number]),
+        ).map((slug) => (
+          <a href={`/games/${slug}/coaching`}>
+            {lessons[slug]!.h1.split(' coaching')[0]} coaching
+          </a>
+        ))}
+        <a href={GUIDE_PATH}>Playing together respectfully</a>
+        <a href="/get-paid-to-play-games">Become a teammate</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(
+      serviceSchema(`${game.name} coaching`, path, offers, Astro.site!),
+    )}
+  />
+</SiteLayout>

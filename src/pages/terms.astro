@@ -14,6 +14,11 @@ const widgetCsrf = account.config ? csrf || account.csrf() : '';
 const doc = proEnabled() ? termsWithPro(TERMS) : TERMS;
 ---
 
-<SiteLayout title="Terms | Duoly" viewer={viewer} csrf={csrf}>
+<SiteLayout
+  indexing="index, follow"
+  title="Terms | Duoly"
+  viewer={viewer}
+  csrf={csrf}
+>
   <LegalPage doc={doc} chrome={false} csrf={widgetCsrf} client:load />
 </SiteLayout>

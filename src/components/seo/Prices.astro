@@ -1,0 +1,105 @@
+---
+import type { seoOffers } from '../../server/seo/offers';
+import { bookingHref } from '../../site/seo';
+interface Props {
+  gameId: string;
+  offers: ReturnType<typeof seoOffers>;
+  /** What the provider line names: "coach" pages say "Immortal+ coach". */
+  coach?: boolean;
+  intro?: string;
+}
+const { gameId, offers, coach = false, intro } = Astro.props;
+// One card per service; ranked services list their price per customer rank.
+const services = [
+  ...new Map(offers.map((offer) => [offer.id, offer])).values(),
+];
+// The provider pill only says something when cards differ; otherwise it goes in the intro.
+const providers = new Set(services.map((service) => service.provider));
+const sameProvider = providers.size === 1;
+const providerText = (provider: string) =>
+  coach ? `${provider} coach` : provider;
+// When every card is the same flat price, say it once instead of on every card.
+const samePrice =
+  services.length > 1 &&
+  offers.every(
+    (offer) => !offer.rank && offer.amountMinor === offers[0]!.amountMinor,
+  );
+const cols = services.length % 3 === 0 ? 3 : Math.min(services.length, 4);
+const cards = services.map((service) => {
+  const rows = offers.filter((offer) => offer.id === service.id);
+  const cheapest = [...rows].sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+  return {
+    service,
+    rows,
+    cheapest,
+    ranked: Boolean(service.rank),
+    varies: rows.some((row) => row.amountMinor !== cheapest.amountMinor),
+  };
+});
+---
+
+<section aria-labelledby="prices">
+  <h2 id="prices">Services and prices</h2>
+  {(intro || sameProvider || samePrice) && (
+    <p class="section-intro">
+      {intro ??
+        (samePrice
+          ? `Every activity is ${services[0]!.display} per ${services[0]!.unit} with ${services[0]!.provider.replace(/^Verified/, 'verified')}s.`
+          : coach
+            ? `All lessons are with ${services[0]!.provider} coaches.`
+            : `All sessions are with ${services[0]!.provider.replace(/^Verified/, 'verified')}s.`)}
+    </p>
+  )}
+  <div class="price-grid" data-cols={cols}>
+    {cards.map(({ service, rows, cheapest, ranked, varies }) => (
+      <article class="card price-card">
+        <h3>{service.title}</h3>
+        {!sameProvider && (
+          <span class="who">{providerText(service.provider)}</span>
+        )}
+        <p>{service.desc}</p>
+        {ranked ? (
+          <>
+            <details>
+              <summary>Price by your rank</summary>
+              <ul class="rank-prices">
+                {rows.map((row) => (
+                  <li
+                    data-service={row.id}
+                    data-rank={row.rank}
+                    data-price-minor={row.amountMinor}
+                  >
+                    <span>{row.rank}</span>
+                    <b>{row.display}</b>
+                  </li>
+                ))}
+              </ul>
+            </details>
+            <p class="price">
+              {varies && <span class="from">From </span>}
+              <span class="money">{cheapest.display}</span> / {cheapest.unit}
+            </p>
+          </>
+        ) : (
+          <p
+            class={samePrice ? 'price same' : 'price'}
+            data-service={service.id}
+            data-price-minor={service.amountMinor}
+          >
+            <span class="money">{service.display}</span> / {service.unit}
+          </p>
+        )}
+        <a
+          class="btn-sm"
+          href={bookingHref(gameId, { service: service.id })}
+          aria-label={`Book ${service.title}`}
+        >
+          Book
+        </a>
+      </article>
+    ))}
+  </div>
+  <p class="price-updated">
+    Prices updated <time datetime="2026-11-05">5 November 2026</time>.
+  </p>
+</section>

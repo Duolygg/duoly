@@ -32,7 +32,7 @@ const CHAT = [
   [
     'DuolyBot',
     '#D6BBFF',
-    'Duo up in under 2 minutes → duoly.gg/yourname · 10% off your first order',
+    'Book your next teammate session → duoly.gg/yourname · 10% off your first order',
   ],
   ['mxrtin', '#5EEAA8', 'just booked one, we’re queueing rn'],
   ['zoe.gg', '#F0A6FF', 'W streamer, W code'],

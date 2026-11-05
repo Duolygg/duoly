@@ -1,0 +1,168 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Breadcrumbs from '../components/seo/Breadcrumbs.astro';
+import Faq from '../components/seo/Faq.astro';
+import ClosingCta from '../components/seo/ClosingCta.astro';
+import SeoHero from '../components/seo/SeoHero.astro';
+import Steps from '../components/seo/Steps.astro';
+import '../components/seo/seo.css';
+import { pageViewer } from '../site/viewer';
+const { viewer, csrf } = await pageViewer(Astro);
+const faq: [string, string][] = [
+  [
+    'Is this a guaranteed way to earn money playing games?',
+    'No. Applying does not guarantee approval, orders or income. You earn from the sessions you complete.',
+  ],
+  [
+    'How much of a session goes to the teammate?',
+    'Your share is 60% of the session price after discounts, paid in USD. Your desk shows the exact amount for every order.',
+  ],
+  [
+    'What is the payout minimum?',
+    'Payouts run weekly once you have at least $25. Smaller amounts carry over to the next week.',
+  ],
+  [
+    'How are teammates paid?',
+    'By bank transfer, Wise or PayPal, and Stripe for eligible accounts. Your desk shows the methods available to you.',
+  ],
+  [
+    'Can I apply for Social sessions?',
+    'Yes. Social orders need Gamer Girl access, which you can request in your application. Social is friendly company only, never dating, romantic or sexual services.',
+  ],
+  [
+    'Can I play on a customer’s account?',
+    'No. You play on your own account and follow the game’s rules. Customers keep control of their accounts.',
+  ],
+];
+---
+
+<SiteLayout
+  title="Get Paid to Play Games as a Duoly Teammate | Duoly"
+  description="Get paid to play games as a Duoly teammate. Keep 60% of every session, paid weekly once you pass $25. See requirements and apply to play, coach or host."
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Become a teammate', path: '/get-paid-to-play-games' },
+      ]}
+    />
+    <SeoHero
+      eyebrow="Become a teammate"
+      h1="Get paid to play games as a Duoly teammate"
+      lead="Apply to play, coach or host friendly Social sessions on Duoly. You keep 60% of every session you complete, paid out weekly."
+      cta={{ href: '/apply', label: 'Apply to become a teammate' }}
+      secondary={{ href: '#payouts-h', label: 'How payouts work' }}
+      art={[
+        { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
+        {
+          src: '/assets/games/league-of-legends.png',
+          alt: 'League of Legends game art',
+        },
+        { src: '/assets/games/social.png', alt: 'Duoly Social art' },
+      ]}
+      chip="Keep 60% of every session"
+      facts={[
+        'Weekly payouts once you pass $25',
+        'Bank transfer, Wise or PayPal',
+        'Play, coach or host Social',
+      ]}
+    />
+    <section>
+      <h2>What the work involves</h2>
+      <p>You deliver the session a customer booked:</p>
+      <ul>
+        <li>
+          <strong>Teammates</strong> join the agreed mode, communicate
+          respectfully and play the booked number of games or hours.
+        </li>
+        <li>
+          <strong>Coaches</strong> explain decisions and give focused feedback.
+        </li>
+        <li>
+          <strong>Gamer Girls</strong> host game sessions and, with Social
+          access, friendly voice company.
+        </li>
+      </ul>
+      <p>
+        Unlike reward apps that pay for installs, surveys or playtime, you earn
+        from real customer sessions. Great sessions take more than gameplay:
+        listening, being on time, describing your skills honestly and staying
+        calm through a difficult match all matter.
+      </p>
+    </section>
+    <section>
+      <h2 id="payouts-h">How session share and payouts work</h2>
+      <p>
+        Your share is 60% of the session price after any customer discount,
+        converted to USD. Customers may pay in EUR or USD, and your desk always
+        shows your USD amount for each order.
+      </p>
+      <p>
+        Payouts run weekly once your balance reaches $25; smaller amounts carry
+        over. Add your payout details once, and your desk shows whether each
+        amount is pending, scheduled or paid.
+      </p>
+      <p>
+        You can be paid by bank transfer, Wise or PayPal. Stripe payouts are
+        available for accounts that complete Stripe’s verification. Your desk
+        shows which methods you can use.
+      </p>
+    </section>
+    <section>
+      <h2>Prepare a strong application</h2>
+      <p>
+        You must be at least 18 and follow Duoly’s rules and each game’s rules.
+        List the games and services you can provide, your region and your
+        communication style. Add real rank or experience evidence where it
+        helps. For coaching, show how you teach as well as how you play.
+      </p>
+      <p>
+        The <a href="/apply">application form</a> lists the fields and evidence
+        we need. Duoly reviews every application, and some services need
+        separate access. Social orders go only to teammates with Gamer Girl
+        access, and Social is friendly company only.
+      </p>
+      <p>
+        Keep examples specific. For Valorant, say whether you can explain
+        controller utility, entry timing or VOD decisions. For Rocket League,
+        say whether you play Doubles, teach recoveries or both. For Social,
+        describe how you keep a voice session welcoming while holding your
+        boundaries. Use only your own work.
+      </p>
+    </section>
+    <Steps
+      heading="Your first session"
+      steps={[
+        'Read the service, unit and customer preferences, then accept the order.',
+        'Coordinate in the order chat, confirm the activity and voice setup, and play on your own account.',
+        'Complete the order and watch the earnings land in your desk.',
+      ]}
+    >
+      <p>
+        Keep payments on Duoly, never promise wins or a new rank, and handle
+        your own taxes.
+      </p>
+    </Steps>
+    <Faq items={faq} />
+    <ClosingCta
+      heading="Ready to apply?"
+      text="Tell us which games and services you can offer. We review every application."
+      href="/apply"
+      label="Apply to become a teammate"
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+    />
+    <nav class="related" aria-label="Related pages">
+      <h2>Before you apply</h2>
+      <div class="chips">
+        <a href="/games">Services by game</a>
+        <a href="/games/social">Social rules</a>
+        <a href="/terms">Terms</a>
+        <a href="/contact">Ask the Duoly team</a>
+      </div>
+    </nav>
+  </article>
+</SiteLayout>

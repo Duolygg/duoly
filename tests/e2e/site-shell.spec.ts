@@ -17,9 +17,9 @@ const shellPages = [
   ['/terms', 'Terms | Duoly'],
   ['/privacy', 'Privacy | Duoly'],
   ['/imprint', 'Imprint | Duoly'],
-  ['/games', 'Games | Duoly'],
-  ['/games/valorant', 'Valorant teammates | Duoly'],
-  ['/blog', 'Blog | Duoly'],
+  ['/games', 'Gaming Teammates and Coaching by Game | Duoly'],
+  ['/games/valorant', 'Valorant LFG: Find Teammates or Book a Duo | Duoly'],
+  ['/blog', 'Gaming Guides and Playing Together Safely | Duoly'],
   ['/reset-password', 'Reset password | Duoly'],
   ['/login', ''],
 ] as const;
@@ -37,7 +37,16 @@ for (const [path, title] of shellPages) {
     await expect(page.locator('footer.site-footer')).toBeVisible();
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       'content',
-      'noindex, nofollow',
+      [
+        '/games',
+        '/games/valorant',
+        '/blog',
+        '/contact',
+        '/terms',
+        '/privacy',
+      ].includes(path)
+        ? 'index, follow'
+        : 'noindex, nofollow',
     );
     await expect(page.getByText('Design preview', { exact: true })).toHaveCount(
       0,
@@ -63,7 +72,7 @@ test('homepage uses its design header and the shared footer links', async ({
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    /Duo up in\s*under 2 minutes\./,
+    /Gaming teammates\s*for your next game\./,
   );
   await expect(page.locator('header.site-header')).toHaveCount(0);
   await expect(page.getByText('Design preview', { exact: true })).toHaveCount(
@@ -218,7 +227,9 @@ test('sitemap lists public pages and every game page', async ({ request }) => {
   expect(xml).not.toContain('/imprint');
   expect(xml).not.toContain('/admin');
   const robots = await request.get('/robots.txt');
-  expect(await robots.text()).toBe('User-agent: *\nDisallow: /\n');
+  expect(await robots.text()).toBe(
+    'User-agent: *\nAllow: /\n\nSitemap: https://duoly.gg/sitemap.xml\n',
+  );
 });
 
 test('reset password asks for an email and confirms without revealing accounts', async ({

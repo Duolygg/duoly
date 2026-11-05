@@ -1,0 +1,20 @@
+---
+import { rich } from './rich';
+interface Props {
+  heading: string;
+  steps: string[];
+}
+const { heading, steps } = Astro.props;
+---
+
+<section aria-labelledby="steps-h">
+  <h2 id="steps-h">{heading}</h2>
+  <ol class="steps">
+    {steps.map((step) => (
+      <li>
+        <span set:html={rich(step)} />
+      </li>
+    ))}
+  </ol>
+  <slot />
+</section>
