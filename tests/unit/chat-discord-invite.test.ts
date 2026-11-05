@@ -2,7 +2,10 @@ import React from 'react';
 import { readFileSync } from 'node:fs';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { ChatConversation, type ChatRoom } from '../../src/components/chat/OrderChat';
+import {
+  ChatConversation,
+  type ChatRoom,
+} from '../../src/components/chat/OrderChat';
 import { ChatPanel } from '../../src/components/account/MatchStage.jsx';
 import QueuePreview from '../../src/components/home/QueuePreview.jsx';
 import {
@@ -32,7 +35,9 @@ describe('order chat Discord invite', () => {
     );
     expect(sql).toContain('on conflict (customer_id) do nothing');
     expect(sql).toContain('returning customer_id into v_invited');
-    expect(sql).toMatch(/if v_invited is not null then[\s\S]*'discord_invite'\);/);
+    expect(sql).toMatch(
+      /if v_invited is not null then[\s\S]*'discord_invite'\);/,
+    );
     // only inside the accepted-once branch, and only while the order is being played
     const accepted = sql.indexOf('if not v_room.accepted_emitted then');
     const invite = sql.indexOf("'discord_invite');");
@@ -55,7 +60,11 @@ describe('order chat Discord invite', () => {
       assignment_id: '00000000-0000-4000-8000-000000000002',
       viewer: 'customer',
       writable: true,
-      participant: { role: 'teammate', name: 'Luna', image: '/assets/avatars/avatar-3.png' },
+      participant: {
+        role: 'teammate',
+        name: 'Luna',
+        image: '/assets/avatars/avatar-3.png',
+      },
       messages: [
         {
           id: '00000000-0000-4000-8000-000000000003',
@@ -83,7 +92,9 @@ describe('order chat Discord invite', () => {
       typing: [],
       archives: [],
     };
-    const html = renderToStaticMarkup(h(ChatConversation, { room, view: 'customer' }));
+    const html = renderToStaticMarkup(
+      h(ChatConversation, { room, view: 'customer' }),
+    );
     expect(html).toContain(card);
     expect(html).toContain(`href="${DISCORD_INVITE}"`);
     expect(html).toContain('/assets/social/discord-white.png');
@@ -100,7 +111,12 @@ describe('order chat Discord invite', () => {
         phase: 'matched',
         ignLabel: 'Riot ID',
         chat: [
-          { id: 's1', from: 'system', text: 'Mia accepted the order · Duo Pro ×3', at: 0 },
+          {
+            id: 's1',
+            from: 'system',
+            text: 'Mia accepted the order · Duo Pro ×3',
+            at: 0,
+          },
           { id: 's2', from: 'system', text: DISCORD_INVITE_MESSAGE, at: 0 },
         ],
         typing: false,
@@ -122,7 +138,9 @@ describe('order chat Discord invite', () => {
       h(QueuePreview, {
         frozen: {
           phase: 'matched',
-          chat: [{ id: 'p0', from: 'system', text: DISCORD_INVITE_MESSAGE, at: 0 }],
+          chat: [
+            { id: 'p0', from: 'system', text: DISCORD_INVITE_MESSAGE, at: 0 },
+          ],
         },
       }),
     );

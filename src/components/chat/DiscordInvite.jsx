@@ -53,7 +53,9 @@ export default function DiscordInvite() {
         >
           Voice comms on Discord
         </span>
-        <span style={{ display: 'block', fontSize: '12.5px', color: '#CFC4EA' }}>
+        <span
+          style={{ display: 'block', fontSize: '12.5px', color: '#CFC4EA' }}
+        >
           Join our server to talk with your teammate while you play.
         </span>
       </span>
