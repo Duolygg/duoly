@@ -14,6 +14,8 @@ const PresenceSchema = z
     // Postgres jsonb sends "+00:00", not "Z" (going online failed on the offset).
     online_since: z.iso.datetime({ offset: true }).nullable(),
     forced_offline: z.object({ reason: z.string(), by: z.string() }).nullable(),
+    // seconds until 4 hours without activity switch them offline (20261105160000); null when busy/offline
+    afk_in: z.number().int().nonnegative().nullable().optional(),
   })
   .strict();
 const json = (data, status = 200) => Response.json(data, { status });
@@ -247,6 +249,7 @@ export function toOriginalPresence(raw) {
       ? Date.parse(presence.online_since)
       : null,
     forcedOffline: presence.forced_offline,
+    afkIn: presence.afk_in ?? null,
   };
 }
 

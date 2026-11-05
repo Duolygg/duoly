@@ -282,7 +282,7 @@ begin
   end if;
   -- same shape as admin_set_access: { access: { stream } }
   return pg_catalog.jsonb_build_object('access', pg_catalog.jsonb_build_object('stream', pg_catalog.to_jsonb(v_games)));
-end $;
+end $$;
 
 -- ---- teammate --------------------------------------------------------------------------------
 

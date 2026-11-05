@@ -8,6 +8,7 @@ const desk = {
   streamOnline: false,
   live: false,
   deskOnline: true,
+  twitchLive: false,
   rateEurCents: null as number | null,
   durations: [1, 2],
   twitch: null as string | null,
@@ -30,6 +31,7 @@ async function mock(
           ...streaming!,
           streamOnline: body.online,
           live: body.online,
+          twitchLive: body.online,
           rateEurCents: body.rateEurCents,
           durations: body.durations,
           twitch: body.twitch || null,
@@ -80,6 +82,7 @@ test('streamer sets a rate and hours, then goes live', async ({ page }) => {
   await expect(panel).toContainText('You keep €9 per hour (60%)');
   await panel.getByRole('button', { name: '3 h' }).click();
   await panel.getByRole('button', { name: '1 h' }).click();
+  await expect(go).toBeDisabled(); // no Twitch username yet
   await panel.getByLabel('Twitch username').fill('lea_tv');
   await go.click();
 

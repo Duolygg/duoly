@@ -227,6 +227,15 @@ const avatar =
         .catch(() => {});
     </script>}
     {signInPopup && <SiteAuthDialog csrf={csrf} client:idle />}
+    {/* Teammates stay online and get new-order notifications on every page, not just the desk
+        (src/components/teammate/desk-keeper.js). The desk runs its own. */}
+    {viewer?.role === 'teammate' && csrf && path !== '/teammate' && (
+      <div hidden data-desk-keeper data-csrf={csrf} />
+    )}
+    <script>
+      import { mountDeskKeeper } from '../components/teammate/desk-keeper.js';
+      mountDeskKeeper();
+    </script>
     <CookieBanner />
     <Analytics viewer={viewer} csrf={csrf} />
     <script is:inline>

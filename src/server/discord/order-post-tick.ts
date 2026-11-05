@@ -117,26 +117,56 @@ interface Channel {
   position?: number;
 }
 
+/** channelMap key of the "Social / Gamer Girl" section's general channel (2026-11-05). */
+export const SOCIAL_GG = 'social-gg';
+
+/** The "general" text channel under a category, else its first text channel. */
+function generalIn(channels: Channel[], category: Channel | undefined) {
+  if (!category) return undefined;
+  const text = channels
+    .filter((c) => c.type === 0 && c.parent_id === category.id)
+    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+  return text.find((c) => norm(c.name).includes('general')) ?? text[0];
+}
+
 /**
  * game id to text channel id: the "general" channel under the category named after the game
  * (Fabian's original, restored on his request 2026-10-29). Falls back to the first text channel.
+ * Plus SOCIAL_GG: the general channel of the category named like "Social / Gamer Girl", where
+ * every social and Gamer Girl order goes (2026-11-05).
  */
 export function channelMap(channels: Channel[]): Record<string, string> {
   const map: Record<string, string> = {};
   for (const game of Object.values(POST_GAMES)) {
     const names = [norm(game.name), norm(game.short)];
-    const category = channels.find(
-      (c) => c.type === 4 && names.includes(norm(c.name)),
+    const channel = generalIn(
+      channels,
+      channels.find((c) => c.type === 4 && names.includes(norm(c.name))),
     );
-    if (!category) continue;
-    const text = channels
-      .filter((c) => c.type === 0 && c.parent_id === category.id)
-      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
-    const channel =
-      text.find((c) => norm(c.name).includes('general')) ?? text[0];
     if (channel) map[game.id] = channel.id;
   }
+  const categories = channels.filter(
+    (c) => c.type === 4 && norm(c.name).includes('gamergirl'),
+  );
+  const socialGg = generalIn(
+    channels,
+    categories.find((c) => norm(c.name).includes('social')) ?? categories[0],
+  );
+  if (socialGg) map[SOCIAL_GG] = socialGg.id;
   return map;
+}
+
+/**
+ * Where an order is posted: social and Gamer Girl orders in the Social / Gamer Girl section,
+ * everything else in its game's section. Without that section, the game's section as before.
+ */
+export function channelFor(
+  map: Record<string, string>,
+  order: { game: string; gg: boolean },
+): string | undefined {
+  if ((order.gg || order.game === 'social') && map[SOCIAL_GG])
+    return map[SOCIAL_GG];
+  return map[order.game];
 }
 
 let cache: {
@@ -348,11 +378,13 @@ export async function runOrderPosts(
   if (!guild) return { ...result, skipped: result.skipped + due.length };
 
   for (const o of due) {
-    const channel = guild.channels[o.game];
+    const channel = channelFor(guild.channels, o);
     if (!channel) {
       warnOnce(
-        `nochannel${o.game}`,
-        `no channel for ${o.game} (make a category named after the game with a "general" channel)`,
+        `nochannel${o.game}${o.gg ? 'gg' : ''}`,
+        o.gg || o.game === 'social'
+          ? `no channel for a ${o.gg ? 'Gamer Girl' : 'social'} order (make a "Social / Gamer Girl" category with a "general" channel)`
+          : `no channel for ${o.game} (make a category named after the game with a "general" channel)`,
       );
       result.skipped++;
       continue;
