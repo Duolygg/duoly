@@ -17,6 +17,27 @@ export const MAIN_NAV = [
 
 export const FOOTER_COLUMNS = [
   {
+    title: 'Coaching',
+    links: [
+      { href: '/games/valorant/coaching', label: 'Valorant coaching' },
+      {
+        href: '/games/league-of-legends/coaching',
+        label: 'League of Legends coaching',
+      },
+      {
+        href: '/games/rocket-league/coaching',
+        label: 'Rocket League coaching',
+      },
+      { href: '/games/fortnite/coaching', label: 'Fortnite coaching' },
+      { href: '/games/teamfight-tactics/coaching', label: 'TFT coaching' },
+      { href: '/games/apex-legends/coaching', label: 'Apex Legends coaching' },
+      {
+        href: '/games/marvel-rivals/coaching',
+        label: 'Marvel Rivals coaching',
+      },
+    ],
+  },
+  {
     title: 'Duoly',
     links: [
       { href: '/games', label: 'Games' },
@@ -29,6 +50,7 @@ export const FOOTER_COLUMNS = [
     title: 'Join',
     links: [
       { href: '/apply', label: 'Become a teammate' },
+      { href: '/get-paid-to-play-games', label: 'Get paid to play games' },
       { href: '/creators', label: 'Creator program' },
     ],
   },

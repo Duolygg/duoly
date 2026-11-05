@@ -125,14 +125,14 @@
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
   gap: 48px;
-  align-items: center;
-  padding: 24px 0 40px;
+  align-items: start;
+  padding: 24px 0 24px;
 }
 .seo-hero .hero-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 12px;
+  gap: 12px;
   margin-top: 26px;
 }
 .seo-hero .hero-price {
@@ -163,14 +163,20 @@
 .hero-card .art {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.hero-card .art:has(img:nth-child(3)) img {
+  width: 96px;
+  height: 96px;
 }
 .hero-card .art img {
   border-radius: 22px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 .hero-card .art img + img {
-  margin-left: -26px;
-  border: 3px solid #160c2a;
+  margin-left: 10px;
+  border: 0;
 }
 .price-chip {
   display: inline-block;
@@ -271,7 +277,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .price-grid[data-cols='1'] {
-  grid-template-columns: minmax(0, 420px);
+  grid-template-columns: minmax(0, 1fr);
 }
 .price-card details {
   font-size: 14px;
@@ -559,12 +565,17 @@
   .seo-page .seo-block {
     margin: 48px 0;
   }
+  .hero-card .art:has(img:nth-child(3)) img {
+    width: 82px;
+    height: 82px;
+  }
   .hero-card,
   .callout,
   .closing {
     padding: 22px;
   }
   .seo-hero .cta,
+  .seo-hero .cta-ghost,
   .closing .cta {
     width: 100%;
   }
@@ -591,14 +602,11 @@
   padding-left: 30px;
 }
 .seo-page .checklist li::before {
-  content: '';
+  content: '✓';
   position: absolute;
   left: 0;
-  top: 5px;
-  width: 18px;
-  height: 18px;
-  border-radius: 6px;
-  border: 2px solid #d6bbff;
+  color: #d6bbff;
+  font-weight: 700;
 }
 .topic .paras {
   display: grid;
@@ -607,6 +615,46 @@
 }
 .topic .paras.single {
   display: block;
+}
+.topic .paras.single p {
+  max-width: none;
+}
+.seo-page > section > p,
+.seo-page > section > ul,
+.seo-page .timeline li {
+  max-width: none;
+}
+.seo-page .hero-note {
+  font-size: 14px;
+  color: #cfc4ea;
+  margin-bottom: 0;
+}
+.hero-card .top {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.hero-card .art img {
+  width: 120px;
+  height: 120px;
+}
+.guide-toc {
+  padding: 24px;
+  border: 1px solid #45325e;
+  border-radius: 20px;
+  background: #120b22;
+}
+.guide-toc ul {
+  columns: 2;
+  padding-left: 20px;
+}
+.guide-toc li {
+  margin-bottom: 10px;
+  break-inside: avoid;
+}
+@media (max-width: 600px) {
+  .guide-toc ul {
+    columns: 1;
+  }
 }
 .nowrap {
   white-space: nowrap;

@@ -21,6 +21,10 @@ export const INDEXABLE_PATHS = [
   GUIDE_PATH,
   ...COACHING_SLUGS.map((slug) => `/games/${slug}/coaching`),
 ];
+// Content revision dates, shared by sitemap and editorial metadata. Never request time.
+export const CONTENT_DATES: Record<string, string> = Object.fromEntries(
+  INDEXABLE_PATHS.map((path) => [path, '2026-11-05']),
+);
 export function serializeJsonLd(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }

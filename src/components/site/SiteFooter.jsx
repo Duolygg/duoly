@@ -214,7 +214,7 @@ export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
             style={{ width: '144px', height: '54px' }}
           />
           <span
-            style={{ fontSize: '13px', color: '#6A6086', maxWidth: '360px' }}
+            style={{ fontSize: '13px', color: '#A79DC4', maxWidth: '360px' }}
           >
             © 2026 Duoly. Not affiliated with Riot Games, Valve, Epic Games,
             Activision Blizzard, EA, Ubisoft, NetEase, Mojang or The Pokémon

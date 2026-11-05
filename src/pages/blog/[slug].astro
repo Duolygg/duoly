@@ -6,7 +6,12 @@ import SeoHero from '../../components/seo/SeoHero.astro';
 import Steps from '../../components/seo/Steps.astro';
 import '../../components/seo/seo.css';
 import { pageViewer } from '../../site/viewer';
-import { serializeJsonLd, GUIDE_PATH, bookingHref } from '../../site/seo';
+import {
+  serializeJsonLd,
+  GUIDE_PATH,
+  bookingHref,
+  CONTENT_DATES,
+} from '../../site/seo';
 if (Astro.params.slug !== 'what-is-an-egirl') {
   Astro.response.status = 404;
   return Astro.rewrite('/404');
@@ -20,10 +25,10 @@ const article = {
   headline: h1,
   mainEntityOfPage: new URL(GUIDE_PATH, Astro.site!).href,
   datePublished: '2026-11-05',
-  dateModified: '2026-11-05',
+  dateModified: CONTENT_DATES[GUIDE_PATH],
   author: {
     '@type': 'Organization',
-    name: 'Duoly team',
+    name: 'Duoly',
     url: new URL('/contact', Astro.site!).href,
   },
   publisher: { '@type': 'Organization', name: 'Duoly', url: Astro.site!.href },
@@ -33,7 +38,7 @@ const article = {
 
 <SiteLayout
   title={title}
-  description="An e-girl can be an online identity, a style or a gaming label. Learn where the term comes from, how to find people to play with safely and how Duoly Social works."
+  description="What is an e-girl? Learn how gamers use the term, find people to play with respectfully and explore friendly Duoly Social sessions at €12.99 per hour."
   indexing="index, follow"
   viewer={viewer}
   csrf={csrf}
@@ -49,14 +54,13 @@ const article = {
     <SeoHero
       eyebrow="Guide"
       h1={h1}
-      lead="An e-girl is a person associated with an online identity or internet-influenced style. In gaming, people also use the word for a woman they meet or play with online. The meaning depends on context, and the person gets to decide whether the label fits."
+      lead="An e-girl is a girl or woman known for an internet-based persona or style. Gamers also use the term for women they meet or play with online. Let the person decide whether the label fits."
       cta={{ href: bookingHref('social'), label: 'Book a Social session' }}
-      secondary={{ href: '#origin-h', label: 'Read the guide' }}
       art={[
         { src: '/assets/games/social.png', alt: 'Duoly Social art' },
         { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
       ]}
-      chip="In this guide"
+      chip="Online identity and gaming"
       facts={[
         'Where the term comes from',
         'How to play together safely',
@@ -64,9 +68,40 @@ const article = {
       ]}
     />
     <p class="byline">
-      By <a href="/contact">Duoly team</a>. Published and updated{' '}
+      By <a href="/contact">Duoly team</a>. Published{' '}
       <time datetime="2026-11-05">5 November 2026</time>.
     </p>
+    <nav class="guide-toc" aria-label="In this guide">
+      <strong>In this guide</strong>
+      <ul>
+        <li>
+          <a href="#origin-h">Where the term comes from</a>
+        </li>
+        <li>
+          <a href="#gaming-h">How gamers use the term e-girl</a>
+        </li>
+        <li>
+          <a href="#activity-h">
+            Decide whether you want a teammate, a lesson or company
+          </a>
+        </li>
+        <li>
+          <a href="#safety-h">How to find someone to play with safely</a>
+        </li>
+        <li>
+          <a href="#duoly-h">How Duoly’s verified Gamer Girls work</a>
+        </li>
+        <li>
+          <a href="#checklist-h">A respectful first-session checklist</a>
+        </li>
+        <li>
+          <a href="#company-h">Want company for an hour?</a>
+        </li>
+        <li>
+          <a href="#next-h">Choose your next step</a>
+        </li>
+      </ul>
+    </nav>
     <section>
       <h2 id="origin-h">Where the term comes from</h2>
       <p>
@@ -99,7 +134,7 @@ const article = {
       </p>
     </section>
     <section>
-      <h2>How gaming communities use e-girl</h2>
+      <h2 id="gaming-h">How gamers use the term e-girl</h2>
       <p>
         In a gaming conversation, e-girl may mean a woman who plays online, a
         creator with an online persona or a person offering social gaming
@@ -123,7 +158,9 @@ const article = {
       </p>
     </section>
     <section>
-      <h2>Decide whether you want a teammate, a lesson or company</h2>
+      <h2 id="activity-h">
+        Decide whether you want a teammate, a lesson or company
+      </h2>
       <p>Choose by the activity:</p>
       <ul>
         <li>
@@ -152,7 +189,7 @@ const article = {
       </p>
     </section>
     <section>
-      <h2>How to find someone to play with safely</h2>
+      <h2 id="safety-h">How to find someone to play with safely</h2>
       <p>
         Share what the game needs and keep the rest private. A useful first
         message includes region, platform, preferred mode, usual play time and
@@ -182,7 +219,7 @@ const article = {
       </p>
     </section>
     <section>
-      <h2>How Duoly’s verified Gamer Girls work</h2>
+      <h2 id="duoly-h">How Duoly’s verified Gamer Girls work</h2>
       <p>
         Gamer Girl is a Duoly service category. Duoly reviews each application
         before granting Gamer Girl access, and only verified Gamer Girls can
@@ -200,32 +237,37 @@ const article = {
       <p>
         <a href="/games/social">Duoly Social</a> is the no-game option: Just
         Chat, Watch Together, Sleep Call and Karaoke as hourly voice sessions on
-        Discord. The Social page lists current prices.
+        Discord. Social sessions cost €12.99 per hour. The Social page lists
+        current prices.
       </p>
       <p>
         Everyone on Duoly must be at least 18. Social is friendly company only,
         never dating, romantic or sexual services, and payment does not change
-        that. You and your Gamer Girl can both decline a topic, a song request
-        or a question about personal details.
+        that. You and your host can both decline a topic, a song request or a
+        question about personal details.
       </p>
     </section>
-    <Steps
-      heading="A respectful first-session checklist"
-      steps={[
-        '**Before booking:** check that the service fits your goal and your region or platform. Have headphones and Discord ready, and keep notifications off a screen share.',
-        '**At the start:** use the name your teammate gives you, confirm the activity and say what kind of conversation feels comfortable. An ordinary topic is enough.',
-        '**At the end:** say thanks and finish at the agreed time. For a conduct or booking problem, use the order tools and [support](/contact).',
-      ]}
-    />
-    <ClosingCta
-      heading="Want company for an hour?"
-      text="Book a friendly Social session with a verified Gamer Girl, or pick a game and play together."
-      href={bookingHref('social')}
-      label="Book a Social session"
-      art={{ src: '/assets/games/social.png', alt: '' }}
-    />
+    <div id="checklist-h">
+      <Steps
+        heading="A respectful first-session checklist"
+        steps={[
+          '**Before booking:** check that the service fits your goal and your region or platform. Have headphones and Discord ready, and keep notifications off a screen share.',
+          '**At the start:** use the name your teammate gives you, confirm the activity and say what kind of conversation feels comfortable. An ordinary topic is enough.',
+          '**At the end:** say thanks and finish at the agreed time. For a conduct or booking problem, use the order tools and [support](/contact).',
+        ]}
+      />
+    </div>
+    <div id="company-h">
+      <ClosingCta
+        heading="Want company for an hour?"
+        text="Book a friendly Social session with a verified Gamer Girl, or pick a game and play together."
+        href={bookingHref('social')}
+        label="Book a Social session"
+        art={{ src: '/assets/games/social.png', alt: '' }}
+      />
+    </div>
     <nav class="related" aria-label="Related pages">
-      <h2>Choose your next step</h2>
+      <h2 id="next-h">Choose your next step</h2>
       <div class="chips">
         <a href="/games/social">Social services and prices</a>
         <a href="/games/valorant">

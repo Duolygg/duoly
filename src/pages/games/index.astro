@@ -9,26 +9,33 @@ const { viewer, csrf } = await pageViewer(Astro);
 
 <SiteLayout
   indexing="index, follow"
-  title="Book Gaming Teammates and Coaching by Game | Duoly"
+  title="Gaming Teammates and Coaching by Game | Duoly"
+  description="Browse gaming teammates and coaching on Duoly, with sessions from €2.49. Compare Valorant, League of Legends, Fortnite and more, or book friendly Social time."
   viewer={viewer}
   csrf={csrf}
 >
   <PageIntro
     eyebrow="Games"
-    title="Every game we play"
+    title="Gaming teammates and coaching by game"
     lead="Browse 15 games plus Social. Choose a game hub or a finished coaching guide. Catalog support is separate from live teammate availability."
   >
     <p>
-      Duo sessions focus on playing together. Coaching adds a specific learning
-      goal. Social is friendly voice company without a game, for adults only.
-      Payment, cancellation and refund details are in our{' '}
-      <a href="/terms">terms</a>.
+      Valorant sessions start at €2.49 per game. Duo sessions focus on playing
+      together. Coaching adds a specific learning goal. Social is friendly voice
+      company without a game, for adults only. Payment, cancellation and refund
+      details are in our <a href="/terms">terms</a>.
     </p>
     <ul class="grid">
       {SITE_GAMES.map((game) => (
         <li>
           <a href={`/games/${game.slug}`}>
-            <img src={game.img} alt="" width="56" height="56" loading="lazy" />
+            <img
+              src={game.img}
+              alt={`${game.name} game art`}
+              width="56"
+              height="56"
+              loading="lazy"
+            />
             <span>{game.name}</span>
           </a>
           {lessons[game.slug] && (

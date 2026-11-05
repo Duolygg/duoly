@@ -5,6 +5,7 @@ interface Props {
   lead: string;
   price?: string;
   cta: { href: string; label: string };
+  note?: string;
   secondary?: { href: string; label: string };
   art: { src: string; alt: string }[];
   chip?: string;
@@ -28,6 +29,7 @@ const {
   chip,
   facts,
   analyticsGame,
+  note,
 } = Astro.props;
 ---
 
@@ -47,6 +49,7 @@ const {
         </a>
       )}
     </div>
+    {note && <p class="hero-note">{note}</p>}
   </div>
   <aside class="hero-card" aria-label="At a glance">
     <div class="top">
@@ -55,8 +58,9 @@ const {
           <img
             src={image.src}
             alt={image.alt}
-            width="88"
-            height="88"
+            width="120"
+            height="120"
+            fetchpriority={index === 0 ? 'high' : 'auto'}
             loading="eager"
             decoding="async"
             data-analytics-game={index === 0 ? analyticsGame : undefined}

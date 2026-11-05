@@ -32,7 +32,7 @@ it('lists only finished canonical URLs from the configured site', async () => {
   expect(urls).toEqual(
     INDEXABLE_PATHS.map((path) => `https://duoly.gg${path}`),
   );
-  expect(xml).not.toMatch(/attacker|lastmod|imprint|checkout|login|dashboard/);
+  expect(xml).not.toMatch(/attacker|imprint|checkout|login|dashboard/);
   expect(urls).not.toContain('https://duoly.gg/games/fortnite');
 });
 

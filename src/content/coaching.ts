@@ -15,10 +15,10 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Valorant coaching with a focused practice plan',
     lead: 'Book a Valorant coach for live Play and Learn, a round-by-round VOD review or an aim lesson. Work on one repeatable decision before adding more drills.',
     format:
-      '**Play and Learn** is priced per game. **VOD Review** and **Aim and Crosshair** are hourly lessons. All three are taught by Immortal+ coaches. Pick review to pause rounds, or live play for feedback as decisions happen.',
+      '**Play and Learn** is priced per game. **VOD Review** and **Aim and Crosshair** are hourly lessons. Pick review to pause rounds, or live play for feedback as decisions happen.',
     sections: [
       {
-        heading: 'Trade the space, then review the shot',
+        heading: 'Take space together, then review the shot',
         paragraphs: [
           'A missed shot can begin with the route into a fight. On attack, a duelist needs a teammate close enough to trade, an initiator needs utility timed to that entry, and a controller needs smokes that isolate the right sightlines. A useful review follows that sequence before discussing sensitivity. Sentinels can instead focus on flank information and the timing of a late rotation.',
           'For a single-agent lesson, bring an agent you actually play. A Sova player might examine whether a drone cleared the angle the entry player needed. An Omen player might compare a smoke placed too early with one that lands as teammates take space. Agent choice sets the questions; the current map and team composition set the answers.',
@@ -39,7 +39,7 @@ export const lessons: Record<string, Lesson> = {
       'Finish by setting a warm-up routine for your next session and one question to check in your next recording. An hourly review can split these steps into 5, 30, 15 and 10 minutes.',
     ],
     prepare:
-      'Bring a recent full match recording with your HUD and audio, plus two timestamps where you were unsure. A close game is often more useful than a highlight reel. Check that Discord screen sharing works, hide private notifications and tell the coach your region and platform. Never send login details. For live play, check that your ranks can queue together.',
+      'For a VOD review, bring a recent full match recording with your HUD and audio, plus two timestamps where you were unsure. A close game is often more useful than a highlight reel. Check that Discord screen sharing works, hide private notifications and tell the coach your region and platform. Never send login details. For live play, check that your ranks can queue together.',
     faq: [
       [
         'Which Valorant coaching format should I book?',
@@ -63,7 +63,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'Is there a first-session offer?',
-        'Yes. Your first Play and Learn session can be half price.',
+        'Yes. Your first Play and Learn game is half price when eligible.',
       ],
     ],
   },
@@ -72,7 +72,7 @@ export const lessons: Record<string, Lesson> = {
     h1: 'League of Legends coaching for your next practice goal',
     lead: 'Choose LoL coaching for lane decisions, champion mastery or a review of your own match. Build a practice goal you can recognize in your next game.',
     format:
-      '**Play and Learn** is a live game with a Master+ coach, priced per game. **VOD Review** and **Champion Mastery** are hourly lessons with Grandmaster+ coaches. Coaching can focus on top, jungle, mid, bot or support. Tell us your role and champion when you book so the lesson starts in the right place.',
+      '**Play and Learn** is a live game, priced per game. **VOD Review** and **Champion Mastery** are hourly lessons. Coaching can focus on top, jungle, mid, bot or support. Tell us your role and champion when you book so the lesson starts in the right place.',
     sections: [
       {
         heading: 'Make wave state part of the decision',
@@ -96,7 +96,7 @@ export const lessons: Record<string, Lesson> = {
       'Use the last 10 minutes for questions and three priorities for your next games. Live Play and Learn follows the match length instead of this hourly split.',
     ],
     prepare:
-      'Bring a recent replay or recording, the patch, your role and two questions. Include a loss where you still had decisions to make. For Champion Mastery, pick one champion and list the matchups that confuse you. For live play, check your server and that your ranks can queue together. Use your own account and keep private chat out of shared recordings.',
+      'For a VOD review, bring a recent full match replay or recording, the patch, your role and two questions. Include a loss where you still had decisions to make. For Champion Mastery, pick one champion and list the matchups that confuse you. For live play, check your server and that your ranks can queue together. Use your own account and keep private chat out of shared recordings.',
     faq: [
       [
         'Can I book jungle or support coaching?',
@@ -120,7 +120,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'Can I get a first-session price?',
-        'Yes. Your first Play and Learn session can be half price.',
+        'Yes. Your first Play and Learn game is half price when eligible.',
       ],
     ],
   },
@@ -129,7 +129,7 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Rocket League coaching for decisions and mechanics',
     lead: 'Book Rocket League coaching for live Doubles or a mechanics lesson. Turn a replay problem into a drill you can repeat in free play.',
     format:
-      '**Play and Learn** is an hour of live Doubles with a Grand Champion coach. **Mechanics Training** is an hourly lesson with a Grand Champion coach and practice packs. Both are booked by the hour, however many matches you fit in. Tell the coach whether your priority is a reliable touch, a recovery or your role as second player.',
+      '**Play and Learn** is an hour of live Doubles. **Mechanics Training** is an hourly lesson with practice packs. Both are booked by the hour, however many matches you fit in. Tell the coach whether your priority is a reliable touch, a recovery or your role as second player.',
     sections: [
       {
         heading: 'Read the next touch before committing',
@@ -186,7 +186,7 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Fortnite coaching for your next practice goal',
     lead: 'Choose a Fortnite coach for live learning or Creative build and edit practice. Set the mode and input first so the lesson fits the fights you play.',
     format:
-      'Both Fortnite lessons are hourly with an Unreal coach. **Play and Learn** is live Ranked learning. **Build and Edit Course** covers piece control, edits and box fights in Creative. For Zero Build, book Play and Learn and name the mode as your goal.',
+      'Both Fortnite lessons are hourly. **Play and Learn** is live Ranked learning. **Build and Edit Course** covers piece control, edits and box fights in Creative. For Zero Build, book Play and Learn and name the mode as your goal.',
     sections: [
       {
         heading: 'Build a safer edit before adding speed',
@@ -240,10 +240,10 @@ export const lessons: Record<string, Lesson> = {
   },
   'teamfight-tactics': {
     title: 'TFT Coaching and Teamfight Tactics Econ Review | Duoly',
-    h1: 'Teamfight Tactics coaching for economy and decisions',
+    h1: 'TFT coaching for economy and decisions',
     lead: 'Book TFT coaching to review when you level, roll and commit to a board. Build a decision process that adapts when the shop does not cooperate.',
     format:
-      '**Comp and Econ Review** is an hourly session with a Master+ coach. It covers composition choices, gold management and when to roll or level from stage two. For live help during a game, the Teamfight Tactics hub also offers **Board Coach**, priced per game.',
+      '**Comp and Econ Review** is an hourly session. It covers composition choices, gold management and when to roll or level from stage two. For live help during a game, the Teamfight Tactics hub also offers **Board Coach**, priced per game.',
     sections: [
       {
         heading: 'Connect economy to board strength',
@@ -300,7 +300,7 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Apex Legends coaching for movement and rotations',
     lead: 'Choose Apex coaching for live Ranked learning or focused movement practice. Work on reaching the next position with enough options to take the fight.',
     format:
-      'Both Apex lessons are hourly with a Master coach. **Play and Learn** is a live Ranked session. **Movement Course** is a Firing Range lesson on slide jumps, wall bounces and tap-strafes. Share your input and platform when you book so every drill fits your setup.',
+      'Both Apex lessons are hourly. **Play and Learn** is a live Ranked session. **Movement Course** is a Firing Range lesson on slide jumps, wall bounces and tap-strafes. Share your input and platform when you book so every drill fits your setup.',
     sections: [
       {
         heading: 'Use movement to reach a useful position',
@@ -357,7 +357,7 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Marvel Rivals coaching for your hero and role',
     lead: 'Book Marvel Rivals coaching for live learning or a focused hero lesson. Learn when to use your abilities and when your team is ready to follow.',
     format:
-      'Both lessons are with a Grandmaster+ coach. **Play and Learn** is priced per Competitive match. **Hero Coaching** is an hour on one hero’s abilities, ultimate timing, positioning and matchups. Pick the hourly lesson for hero-specific questions, and live play to see how those decisions change as a match unfolds.',
+      'Choose between a live match and a focused lesson. **Play and Learn** is priced per Competitive match. **Hero Coaching** is an hour on one hero’s abilities, ultimate timing, positioning and matchups. Pick the hourly lesson for hero-specific questions, and live play to see how those decisions change as a match unfolds.',
     sections: [
       {
         heading: 'Read the fight from your role',

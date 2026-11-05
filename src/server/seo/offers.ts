@@ -23,10 +23,9 @@ export function priceSummary(offers: ReturnType<typeof seoOffers>) {
 }
 // Short coaching hero facts: coach ranks and how lessons are sold.
 export function coachingFacts(offers: ReturnType<typeof seoOffers>) {
-  const ranks = [...new Set(offers.map((offer) => offer.provider))];
   const units = new Set(offers.map((offer) => offer.unit));
   return [
-    `${ranks.join(' and ')} coaches`,
+    'Play on your own account',
     units.size > 1
       ? 'Per game or by the hour'
       : units.has('hour')

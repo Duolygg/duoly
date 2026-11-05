@@ -17,7 +17,7 @@ const shellPages = [
   ['/terms', 'Terms | Duoly'],
   ['/privacy', 'Privacy | Duoly'],
   ['/imprint', 'Imprint | Duoly'],
-  ['/games', 'Book Gaming Teammates and Coaching by Game | Duoly'],
+  ['/games', 'Gaming Teammates and Coaching by Game | Duoly'],
   ['/games/valorant', 'Valorant LFG: Find Teammates or Book a Duo | Duoly'],
   ['/blog', 'Gaming Guides and Playing Together Safely | Duoly'],
   ['/reset-password', 'Reset password | Duoly'],
@@ -72,7 +72,7 @@ test('homepage uses its design header and the shared footer links', async ({
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    /Duo up\s*for your next game\./,
+    /Gaming teammates\s*for your next game\./,
   );
   await expect(page.locator('header.site-header')).toHaveCount(0);
   await expect(page.getByText('Design preview', { exact: true })).toHaveCount(

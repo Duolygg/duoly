@@ -2325,8 +2325,7 @@ export default class Home extends React.Component {
                   color: '#FFFFFF',
                 }}
               >
-                Duo up
-                <br />
+                Gaming teammates <br />
                 <span style={{ color: '#D6BBFF' }}>for your next game.</span>
               </h1>
               <HeroTimer />

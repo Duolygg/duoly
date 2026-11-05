@@ -42,6 +42,11 @@ const book = bookingHref(game.id);
     art={[{ src: game.img, alt: `${game.name} category art` }]}
     chip={summary}
     facts={copy.facts}
+    note={
+      social
+        ? '18+ only. Social is friendly company, never dating, romantic or sexual services.'
+        : undefined
+    }
     analyticsGame={game.id}
   />
   <section aria-labelledby="get-h">

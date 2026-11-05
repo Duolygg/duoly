@@ -14,9 +14,9 @@ export interface HubCopy {
   closing: { heading: string; text: string };
 }
 export const socialContent: HubCopy = {
-  title: 'Play With an Egirl: Social Sessions and Prices | Duoly',
+  title: 'Play With an E-Girl: Social Sessions and Prices | Duoly',
   h1: 'Play with an e-girl or book friendly Social time',
-  lead: 'Book a verified Gamer Girl for a friendly voice session on Discord. Pick Just Chat, Watch Together, Sleep Call or Karaoke, with no game needed. Everyone is 18 or older, and Social is friendly company only, never dating, romantic or sexual services.',
+  lead: 'Book a verified Gamer Girl for a friendly voice session on Discord. Pick Just Chat, Watch Together, Sleep Call or Karaoke, with no game needed.',
   eyebrow: 'Duoly Social',
   cta: 'Book a Social session',
   facts: [
@@ -36,13 +36,13 @@ export const socialContent: HubCopy = {
       heading: 'Choose the activity you want',
       paragraphs: [
         '**Just Chat** is for talking about games, music or your day. Bring a topic or keep it casual. **Watch Together** adds a shared movie, show or stream with voice conversation. Pick something you can both stream.',
-        '**Sleep Call** is calm voice company while you wind down. Agree the volume, conversation and ending before the call begins. **Karaoke** is for singing together or trading song requests within your Gamer Girl’s comfort and repertoire. A playlist helps, and it is fine to pick a different song.',
+        '**Sleep Call** is calm background chat while you wind down. Agree the volume, conversation and ending before the call begins. **Karaoke** lets you pick songs and sing together. Agree requests with your host. A playlist helps, and it is fine to pick a different song.',
       ],
     },
     {
       heading: 'Want to play a game instead?',
       paragraphs: [
-        'Searching for a Valorant egirl to queue with? Pick Valorant on the homepage and open the Gamer Girls tab for real games, priced per game, or start with the [Valorant hub](/games/valorant).',
+        'Searching for a Valorant e-girl to queue with? Pick Valorant on the homepage and open the Gamer Girls tab for real games, priced per game, or start with the [Valorant hub](/games/valorant).',
       ],
     },
     {
@@ -88,7 +88,7 @@ export const socialContent: HubCopy = {
   ],
   closing: {
     heading: 'Ready for a friendly hour?',
-    text: 'Pick an activity, give your Discord name and meet your Gamer Girl on voice.',
+    text: 'Pick an activity, give your Discord name and meet your host on voice.',
   },
 };
 export const valorantContent: HubCopy = {
