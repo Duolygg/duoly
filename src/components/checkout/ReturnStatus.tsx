@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { track } from '../../client/analytics/track';
+import { useEffect, useRef, useState } from 'react';
 
 type State = 'waiting' | 'processing' | 'failed' | 'conflict' | 'expired';
 
@@ -11,6 +12,20 @@ export default function ReturnStatus({
   initial: State;
 }) {
   const [state, setState] = useState<State>(initial);
+  const reported = useRef(false);
+  useEffect(() => {
+    if (reported.current || initial === 'waiting' || initial === 'processing')
+      return;
+    reported.current = true;
+    track('checkout_returned', {
+      outcome:
+        initial === 'expired'
+          ? 'cancelled'
+          : initial === 'failed' || initial === 'conflict'
+            ? 'failed'
+            : 'processing',
+    });
+  }, [initial]);
   useEffect(() => {
     if (state !== 'waiting' && state !== 'processing') return;
     let stop = false;
@@ -26,6 +41,21 @@ export default function ReturnStatus({
           status?: string;
           order_id?: string | null;
         };
+        if (!reported.current) {
+          reported.current = true;
+          track('checkout_returned', {
+            outcome:
+              data.status === 'paid'
+                ? 'paid'
+                : data.status === 'failed' || data.status === 'conflict'
+                  ? 'failed'
+                  : data.status === 'expired'
+                    ? 'cancelled'
+                    : data.status === 'processing'
+                      ? 'processing'
+                      : 'unknown',
+          });
+        }
         if (data.status === 'paid' && data.order_id) {
           window.location.replace(`/queue/${data.order_id}`);
           return;

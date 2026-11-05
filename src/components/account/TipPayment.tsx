@@ -1,3 +1,5 @@
+import { track } from '../../client/analytics/track';
+import { analyticsErrorSlug } from '../../client/analytics/event-values';
 import { useEffect, useRef, useState } from 'react';
 import {
   loadStripe,
@@ -42,7 +44,12 @@ export default function TipPaymentPanel({
         },
       });
       element = group.create('payment', { layout: 'accordion' });
-      element.on('ready', () => setReady(true));
+      element.on('ready', () => {
+        if (!cancelled) {
+          setReady(true);
+          track('payment_form_ready', { kind: 'tip' });
+        }
+      });
       element.on('change', () => setError(''));
       element.mount(target);
       stripeRef.current = stripe;
@@ -57,6 +64,7 @@ export default function TipPaymentPanel({
   const confirm = async () => {
     if (!stripeRef.current || !elements.current) return;
     setBusy(true);
+    track('payment_submitted', { kind: 'tip' });
     setError('');
     const result = await stripeRef.current.confirmPayment({
       elements: elements.current,
@@ -64,6 +72,11 @@ export default function TipPaymentPanel({
       redirect: 'if_required',
     });
     if (result.error) {
+      track('payment_confirm_failed', {
+        kind: 'tip',
+        error_type: analyticsErrorSlug(result.error.type),
+        error_code: analyticsErrorSlug(result.error.code),
+      });
       setBusy(false);
       setError(result.error.message || 'The tip could not be paid. Try again.');
       return;

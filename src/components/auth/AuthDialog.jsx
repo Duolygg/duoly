@@ -1,3 +1,4 @@
+import { track } from '../../client/analytics/track';
 // The sign-in popup: Discord, Google and email (log in or create an account). The homepage opens
 // it (pay, Sign in), and so does every other page for a signed-out visitor (SiteAuthDialog.jsx,
 // any link to /login). Moved from home/Home.jsx unchanged, so they are the same popup.
@@ -77,6 +78,10 @@ export default class AuthDialog extends React.Component {
     const login = (provider) => () => {
       if (P.onSignIn) {
         this.setState({ authBusy: provider, authNote: '' });
+        track('login_started', {
+          method: provider,
+          surface: P.surface || 'other',
+        });
         P.onSignIn(provider);
         return;
       }
@@ -129,6 +134,10 @@ export default class AuthDialog extends React.Component {
           authNote: 'Sign-in is temporarily unavailable.',
         });
       this.setState({ emailBusy: true, authNote: '' });
+      track('login_started', {
+        method: 'password',
+        surface: P.surface || 'other',
+      });
       const error = await P.onEmailAuth(form);
       this.setState(
         error

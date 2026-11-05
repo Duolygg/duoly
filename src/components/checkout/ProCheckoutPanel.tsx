@@ -1,3 +1,5 @@
+import { track } from '../../client/analytics/track';
+import { analyticsErrorSlug } from '../../client/analytics/event-values';
 import { useEffect, useRef, useState } from 'react';
 import {
   loadStripe,
@@ -74,6 +76,7 @@ export default function ProCheckoutPanel({
 
   useEffect(() => {
     if (trial) return;
+    track('pro_checkout_started', { kind: 'subscription' });
     let cancelled = false;
     let checkout: StripeCheckoutElementsSdk | null = null;
     const fail = (message: string) => {
@@ -120,7 +123,10 @@ export default function ProCheckoutPanel({
         });
         element.on('change', () => setError(''));
         element.on('ready', () => {
-          if (!cancelled) setPhase('ready');
+          if (!cancelled) {
+            setPhase('ready');
+            track('payment_form_ready', { kind: 'pro' });
+          }
         });
         element.on('loaderror', () =>
           fail('The payment form couldn’t load. Reload the page.'),
@@ -139,6 +145,8 @@ export default function ProCheckoutPanel({
   }, [publishableKey, csrf, fontUrl, trial]);
 
   const startTrial = async () => {
+    track('pro_checkout_started', { kind: 'trial' });
+    track('cta_clicked', { cta: 'pro_trial', surface: 'pro' });
     setError('');
     setPhase('paying');
     try {
@@ -175,8 +183,17 @@ export default function ProCheckoutPanel({
     if (!actions || phase !== 'ready') return;
     setError('');
     setPhase('paying');
+    track('payment_submitted', { kind: 'pro' });
+    track('cta_clicked', { cta: 'pro_pay', surface: 'pro' });
     const result = await actions.confirm({ redirect: 'if_required' });
     if (result.type === 'error') {
+      track('payment_confirm_failed', {
+        kind: 'pro',
+        error_type: analyticsErrorSlug(
+          'type' in result.error ? result.error.type : undefined,
+        ),
+        error_code: analyticsErrorSlug(result.error.code),
+      });
       setError(
         result.error.message ||
           'That didn’t go through. Try again or use another card.',

@@ -32,7 +32,14 @@ const copy = social
   csrf={csrf}
 >
   <PageIntro eyebrow="Games" title={copy.heading} lead={copy.lead}>
-    <img class="art" src={game.img} alt="" width="88" height="88" />
+    <img
+      data-analytics-game={game.id}
+      class="art"
+      src={game.img}
+      alt=""
+      width="88"
+      height="88"
+    />
     <div class="card">
       <p>{copy.card}</p>
     </div>
@@ -44,6 +51,25 @@ const copy = social
     </p>
   </PageIntro>
 </SiteLayout>
+
+<script>
+  import { track } from '../../client/analytics/track';
+  const game = document.querySelector<HTMLElement>('[data-analytics-game]')
+    ?.dataset.analyticsGame;
+  // Wait for the shared analytics boot module; no backfill after consent changes.
+  window.addEventListener(
+    'load',
+    () => {
+      if (game) track('game_viewed', { game });
+    },
+    { once: true },
+  );
+  document
+    .querySelector('a.cta')
+    ?.addEventListener('click', () =>
+      track('cta_clicked', { cta: 'game_book', surface: 'game' }),
+    );
+</script>
 
 <style>
   .art {

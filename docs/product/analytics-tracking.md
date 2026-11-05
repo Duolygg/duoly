@@ -67,6 +67,15 @@ not allowed." }` with `Allow: POST` for other methods.
 - Delivery-time identity resolution and pre-handler checkout, PRO and review
   adapter snapshots remain for the outbox/server-events branch.
 
+## Browser product event wiring (`feat/analytics-events`)
+
+- Live components and pages call the typed `track()` API for section 7 browser events. No server or outbox producers are added. The event catalogue is unchanged.
+- Game and PRO views run after window load; selections run only in user handlers, not for defaults. Payment events cover order, PRO and tip forms, including express checkout. Stripe error properties use only structured type/code, never messages.
+- `match_seen` uses the existing server DTO timestamps, preserved by the dashboard mapper, rather than estimating queue wait from the time the page was opened. Tips use the server-returned EUR amount.
+- Deliberate skip: `checkout_abandon_detected`. The browser has no existing server-provided signal for an open checkout intent older than 15 minutes. Pending local booking selections are not payment intents.
+- `tests/unit/analytics-events-wiring.test.ts` checks catalogue membership, browser event coverage with this explicit skip, and no instrumentation in design references. `analytics-event-values.test.ts` checks bounded structured error codes.
+- No production PostHog ingestion, hosted payment, or database changes are exercised by these local gates.
+
 ## Known follow-ups
 
 - Bundle: the default `posthog-js` build adds about 120 KB gzipped to every page (module script, does not block first paint). The slim build was measured and is not smaller once web vitals are registered (128 KB gzip; extension bundles do not tree-shake), so A1 keeps the default import. Revisit only if PostHog ships tree-shakeable extensions. Evidence: `posthog-research/08-slim-bundle.md` in the project folder.

@@ -1,5 +1,7 @@
 'use client';
 
+import { track } from '../../client/analytics/track';
+
 /* global Response */
 // Port of the original components/Home.jsx (duoly-admin/duoly@7f0299f). Live wiring comes in as
 // props from LiveHome.tsx: checkout (server pricing + Stripe), ECB rate, sign-in popup on the real
@@ -301,6 +303,8 @@ export default class Home extends React.Component {
   startQueue = () => {
     if (!this.signedIn()) {
       const s = this.state;
+      const { g, sel } = this.selection();
+      track('checkout_login_required', { game: g.id, service: sel.id });
       try {
         window.localStorage.setItem(
           PENDING_KEY,
@@ -355,6 +359,15 @@ export default class Home extends React.Component {
     this.setState({ ...pick, auth: false, authWhy: '' }, this.startQueue);
   }
   openConfirm() {
+    const { g, sel } = this.selection();
+    const v = this.renderVals();
+    track('booking_confirm_opened', {
+      game: g.id,
+      service: sel.id,
+      units: this.state.qty,
+      display_total_cents: v.displayTotalCents,
+      display_currency: this.state.cur.toLowerCase(),
+    });
     // the server for this game: what you picked last time for it, else the one nearest your time zone
     const game = this.state.game;
     let tz = '',
@@ -611,7 +624,10 @@ export default class Home extends React.Component {
             : social
               ? 'background: linear-gradient(90deg, rgba(255, 79, 176, .1), #120B22 60%); border: 1.5px solid rgba(255, 79, 176, .22);'
               : 'background: #120B22; border: 1.5px solid rgba(196, 170, 255, .08);'),
-        pick: () => this.setState({ game: x.id, rank: '', queued: false }),
+        pick: () => {
+          this.setState({ game: x.id, rank: '', queued: false });
+          track('game_selected', { game: x.id, surface: 'home' });
+        },
       };
     });
 
@@ -629,13 +645,20 @@ export default class Home extends React.Component {
         pressed: active ? 'true' : 'false',
         checkStyle: check(active),
         style: cardBase + (active ? cardOn : cardOff),
-        pick: () =>
+        pick: () => {
+          track('service_selected', {
+            game: g.id,
+            service: m.id,
+            category: m.cat,
+            bundle_units: 0,
+          });
           this.setState({
             mode: m.id,
             bundle: null,
             qty: m.unit === 'hour' ? 1 : s.qty,
             queued: false,
-          }),
+          });
+        },
       };
     };
     // three bundles of the main service, named per game (lib/catalog.js), in games or hours
@@ -680,13 +703,20 @@ export default class Home extends React.Component {
           pressed: active ? 'true' : 'false',
           checkStyle: check(active),
           style: cardBase + (active ? cardOn : cardOff),
-          pick: () =>
+          pick: () => {
+            track('service_selected', {
+              game: g.id,
+              service: top.id,
+              category: 'bundles',
+              bundle_units: n,
+            });
             this.setState({
               bundle: title,
               mode: top.id,
               qty: n,
               queued: false,
-            }),
+            });
+          },
         };
       });
     const by = (c) => g.modes.filter((m) => m.cat === c).map(card);
@@ -733,7 +763,15 @@ export default class Home extends React.Component {
             (a
               ? 'background: rgba(23, 9, 46, .1);'
               : 'background: rgba(196, 170, 255, .1);'),
-          pick: () => this.setState({ tab: id }),
+          pick: () => {
+            this.setState({ tab: id });
+            track('service_selected', {
+              game: g.id,
+              service: sel.id,
+              category: id,
+              bundle_units: s.bundle ? s.qty : 0,
+            });
+          },
         };
       });
 
@@ -956,7 +994,13 @@ export default class Home extends React.Component {
         (s.qty === n
           ? 'background: #F3EEFF; color: #17092E;'
           : 'background: transparent; color: #CFC4EA;'),
-      pick: () => this.setState({ qty: n, bundle: null }),
+      pick: () => {
+        this.setState({ qty: n, bundle: null });
+        track('booking_option_changed', {
+          option: 'quantity',
+          value: String(n),
+        });
+      },
     }));
 
     // Social sessions are a call with one Gamer Girl: always on voice, nothing to toggle.
@@ -981,7 +1025,13 @@ export default class Home extends React.Component {
           '; width: 14px; height: 14px; border-radius: 50%; transition: left .15s; background: ' +
           (a ? '#17092E' : '#8E84AB') +
           ';',
-        pick: () => this.setState({ [k]: !a }),
+        pick: () => {
+          this.setState({ [k]: !a });
+          track('booking_option_changed', {
+            option: k,
+            value: !a ? 'on' : 'off',
+          });
+        },
       };
     });
 
@@ -1030,7 +1080,13 @@ export default class Home extends React.Component {
       active: r === rank,
       sel: r === rank ? 'true' : 'false',
       price: eur(rankPrice(g.id, sel.id, sel.price, r)),
-      pick: () => this.setState({ rank: r, rankOpen: false }),
+      pick: () => {
+        this.setState({ rank: r, rankOpen: false });
+        track('booking_option_changed', {
+          option: 'rank',
+          value: 'rank_' + ranks.indexOf(r),
+        });
+      },
     }));
     // multi-game / multi-hour discount on play sessions (coaching is always full price)
     const save = sub * (sel.cat !== 'training' ? disc[s.qty] || 0 : 0);
@@ -1201,6 +1257,7 @@ export default class Home extends React.Component {
       unitPrice: eur(priceOf(sel)),
       subtotal: money(sub),
       saveAmt: money(save),
+      displayTotalCents: freeOn ? 0 : Math.max(0, Math.round(total * 100)),
       total: freeOn ? 'Free' : money(total),
       hasSave: save > 0,
       proSave: money(total * 0.1),
@@ -1217,7 +1274,11 @@ export default class Home extends React.Component {
         ' perk for ' +
         monthName(fc && fc.month) +
         '. You pay nothing.',
-      toggleFree: () => this.setState({ freePerk: !this.state.freePerk }),
+      toggleFree: () => {
+        const enabled = !this.state.freePerk;
+        this.setState({ freePerk: enabled });
+        track('perk_toggled', { enabled });
+      },
       freeList: money(sub),
       pickOn,
       pickLoading: pickOn && pickList === null,
@@ -1225,7 +1286,10 @@ export default class Home extends React.Component {
       pickErr: s.pickErr || '',
       pickNone: {
         pressed: pick ? 'false' : 'true',
-        pick: () => this.setState({ pick: '', pickErr: '' }),
+        pick: () => {
+          this.setState({ pick: '', pickErr: '' });
+          track('teammate_pick_changed', { picked: false });
+        },
       },
       pickMates: (pickList || []).map((t) => ({
         key: t.handle,
@@ -1236,7 +1300,10 @@ export default class Home extends React.Component {
           t.orders + (t.orders === 1 ? ' order' : ' orders') + ' together',
         on: t.handle === pick,
         pressed: t.handle === pick ? 'true' : 'false',
-        pick: () => this.setState({ pick: t.handle, pickErr: '' }),
+        pick: () => {
+          this.setState({ pick: t.handle, pickErr: '' });
+          track('teammate_pick_changed', { picked: true });
+        },
       })),
       proOff: money(proOff),
       proHref: pro && pro.manage ? '/dashboard#pro' : '/pro',
@@ -1250,7 +1317,11 @@ export default class Home extends React.Component {
       walletUse: money(walletUse),
       usesWallet: walletUse > 0,
       allWallet,
-      toggleWallet: () => this.setState({ useWallet: !this.state.useWallet }),
+      toggleWallet: () => {
+        const enabled = !this.state.useWallet;
+        this.setState({ useWallet: enabled });
+        track('wallet_toggled', { enabled });
+      },
       due: freeOn ? 'Free' : money(due),
       units,
       unitWord: unit,
@@ -2247,6 +2318,9 @@ export default class Home extends React.Component {
               >
                 <a
                   href="#games"
+                  onClick={() =>
+                    track('cta_clicked', { cta: 'hero_book', surface: 'home' })
+                  }
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -3664,7 +3738,13 @@ export default class Home extends React.Component {
                   {v.game.id !== 'social' ? (
                     <MoodPicker
                       value={this.state.mood}
-                      onPick={(mood) => this.setState({ mood })}
+                      onPick={(mood) => {
+                        this.setState({ mood });
+                        track('booking_option_changed', {
+                          option: 'mood',
+                          value: mood || 'any',
+                        });
+                      }}
                     />
                   ) : null}
                   <div
@@ -3736,6 +3816,12 @@ export default class Home extends React.Component {
                       </div>
                       <a
                         href={v.proHref}
+                        onClick={() =>
+                          track('cta_clicked', {
+                            cta: 'booking_pro',
+                            surface: 'home',
+                          })
+                        }
                         style={{
                           fontSize: '14px',
                           fontWeight: '600',
@@ -5156,6 +5242,7 @@ export default class Home extends React.Component {
         {/* support chat: Sparky + the real admins (components/SupportChat.jsx) */}
         <SupportChat teaser csrf={this.props.csrf} />
         <AuthDialog
+          surface="home"
           open={v.showAuth}
           why={this.state.authWhy}
           mode={this.state.emailMode}
