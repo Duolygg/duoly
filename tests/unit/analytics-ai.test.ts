@@ -122,6 +122,38 @@ it.each(['network', 'http', 'json'])(
     expect(JSON.stringify(event)).not.toContain('PRIVATE ERROR');
   },
 );
+it('records denied tools without propagating model-authored tool names', async () => {
+  const fetcher = vi
+    .fn()
+    .mockResolvedValueOnce(
+      Response.json({
+        output: [
+          {
+            type: 'function_call',
+            call_id: 'call-1',
+            name: 'private_secret',
+            arguments: '{}',
+          },
+        ],
+      }),
+    )
+    .mockResolvedValueOnce(Response.json(finalPayload));
+  await answerWithAi({
+    person,
+    question: 'PRIVATE QUESTION',
+    apiKey: 'test',
+    fetcher,
+  });
+  const events = fake.capture.mock.calls.map(([event]) => event);
+  expect(events[0].properties.tool_names).toEqual(['unknown_tool']);
+  expect(events[1].properties).toMatchObject({
+    $ai_span_name: 'unknown_tool',
+    $ai_is_error: true,
+    outcome: 'denied',
+  });
+  expect(JSON.stringify(events)).not.toContain('private_secret');
+});
+
 it('never sends admin AI telemetry', async () => {
   await answerWithAi({
     person: { ...person, accountRole: 'admin' },
@@ -165,6 +197,8 @@ it('maps only actual usage, seconds and safe AI fields', () => {
     },
   });
   expect(props).toMatchObject({
+    $ai_model: 'gpt-5.4-mini',
+    $ai_provider: 'openai',
     $ai_input_tokens: 12,
     $ai_output_tokens: 4,
     $ai_cache_read_input_tokens: 3,

@@ -102,6 +102,45 @@ toolbar also copies island props into its shadow DOM and is blocked. Refusers
 still disable remote config. The fake host serves the installed lazy recorder,
 not a recorder stub; invalid payload decoding fails the test.
 
+## Server direct facts and Sparky (`feat/analytics-server`)
+
+- Dependencies are exact: `posthog-node` 5.61.2 and `@vercel/functions` 3.10.6.
+  The lazy warm-runtime client reads the same runtime/build env fallback as boot,
+  queues with `flushAt: 20`, disables timer flushing and GeoIP, and never shuts
+  down. `flushAnalytics()` protects each instrumented path with `waitUntil` and
+  catches SDK/platform failures without logging provider payloads or identities.
+- `SERVER_EVENT_CATALOGUE` is separate from the browser catalogue: creator link,
+  review, login, Discord link/unlink, reset request, teammate application, desk
+  transition, offer pass, handover, first match report, streaming save, payout
+  setup, and support handoff. Only declared bounded values leave the server.
+- Direct requests read `duoly-consent`. Explicit Analytics consent permits the
+  verified account id and a validated UUID v7 session header. False or missing
+  consent uses an independent UUID v5 derived from a per-fact key, with person
+  profiles disabled. No account/order/intent ids are allowed in event properties.
+- Sparky emits one `$ai_generation` per actual fetch, a per-turn trace id, and
+  `$ai_span` for each executed tool. It sends only actual provider usage, model,
+  timings in seconds, status, safe tool names and bounded outcomes. Conversation
+  ids are included only with Analytics consent; admin questions produce no AI
+  telemetry. Prompts, answers, tool definitions, arguments and results are absent.
+- Review instrumentation runs before the tip retry branch can replace the failed
+  initial review result. Recovery and Discord linking do not count as logins.
+  Creator events count successful referral-cookie captures in the editable
+  middleware wrapper; the protected referral implementation is unchanged.
+- First-report and explicit desk-transition detection use best-effort pre-reads
+  because the existing write RPCs return no atomic `created`/`changed` marker.
+  Unknown prior state suppresses the event rather than guessing. Desk reads use
+  the existing service-role factory and its column grant; heartbeats never emit.
+  Concurrent duplicate first saves or switches are not an exactly-once guarantee:
+  atomic predicates would require a separately coordinated RPC/database change.
+- Tests cover identity/consent/session validation, RFC UUID v5 vectors, catalogue
+  and AI sanitization, disabled config, capture/flush failures, real mocked model
+  calls, missing usage, network/HTTP/JSON failures, tools, admin exclusion, and
+  handler first-save/transition guards. The consent migration test uses the
+  owner-requested `existsSync(file)` fix for a migration already on the base branch.
+- No outbox/drain, SQL, PostHog, Vercel, or other hosted changes belong to this
+  branch. Local fake-provider gates do not prove production ingestion, replay
+  joins, Vercel request lifetime, or database concurrency behavior.
+
 ## Known follow-ups
 
 - Bundle: the default `posthog-js` build adds about 120 KB gzipped to every page (module script, does not block first paint). The slim build was measured and is not smaller once web vitals are registered (128 KB gzip; extension bundles do not tree-shake), so A1 keeps the default import. Revisit only if PostHog ships tree-shakeable extensions. Evidence: `posthog-research/08-slim-bundle.md` in the project folder.

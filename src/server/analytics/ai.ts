@@ -24,7 +24,7 @@ export function sanitizeAiProperties(
     ...(event === '$ai_generation'
       ? {
           $ai_provider: (v: unknown) => v === 'openai',
-          $ai_model: slug,
+          $ai_model: (value: unknown) => value === 'gpt-5.4-mini',
           $ai_input_tokens: integer,
           $ai_output_tokens: integer,
           $ai_cache_read_input_tokens: integer,
