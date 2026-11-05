@@ -111,14 +111,14 @@ describe('shared order room pieces', () => {
       h(OrderCard, {
         order,
         game,
-        total: '€16.17',
+        total: '€8.07',
         free: false,
         mate,
         ignLabel: 'Riot ID',
       }),
     );
     expect(card).toContain('Your order');
-    expect(card).toContain('€16.17');
+    expect(card).toContain('€8.07');
     expect(card).toContain('Your teammate · rank-verified');
     const chatProps = {
       mate,
@@ -192,7 +192,7 @@ describe('homepage order room preview', () => {
     expect(html).toContain('rank-verified Pokémon Unite teammates');
     expect(html).toContain('Duo Pro ×3');
     expect(html).toContain('Asia');
-    expect(html).toContain('€16.17');
+    expect(html).toContain('€8.07');
     expect(html).toMatch(/Trainer name<\/dt><dd[^>]*>Alex</);
     expect(html).toContain('IN QUEUE');
     expect(html).toContain('Your order');
@@ -302,12 +302,12 @@ describe('homepage order room preview', () => {
 describe('order room preview prices', () => {
   it('shows the demo order in euros by default, priced from the catalog', () => {
     const html = renderToStaticMarkup(h(QueuePreview));
-    expect(html).toContain('€16.17');
+    expect(html).toContain('€8.07');
     expect(html).not.toContain('$');
   });
 
   it('follows the selected currency like the rest of the homepage', () => {
-    // Home.jsx conv for USD at a 1.13 rate: 5.99 → 6.99 a game; 3 games minus 10% → 18.87
+    // Home.jsx conv for USD at a 1.13 rate: 2.99 → 3.99 a game; 3 games minus 10% → 10.77
     const conv = (p: number) => Math.ceil(p * 1.13) - 0.01;
     const html = renderToStaticMarkup(
       h(QueuePreview, {
@@ -316,7 +316,7 @@ describe('order room preview prices', () => {
         frozen: { phase: 'matched' },
       }),
     );
-    expect(html).toContain('$18.87');
+    expect(html).toContain('$10.77');
     expect(html).toContain('get $50 once we confirm it');
     const tipped = renderToStaticMarkup(
       h(QueuePreview, {

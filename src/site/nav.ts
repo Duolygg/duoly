@@ -1,5 +1,11 @@
 /** Single source for site structure: header, footer, sitemap and admin sections. */
-export const DISCORD_INVITE = 'https://discord.gg/xkKGf9bKz';
+export const DISCORD_INVITE = 'https://discord.gg/KuVyByUyV4';
+/** The order chat's one-time system message (supabase/migrations/20261105180000_chat_discord_invite.sql). */
+export const DISCORD_INVITE_MESSAGE =
+  'Join our Discord for voice comms with your teammate: ' + DISCORD_INVITE;
+/** A system message carrying our invite shows as a Discord card. Never for user messages. */
+export const isDiscordInvite = (text: string): boolean =>
+  text.includes(DISCORD_INVITE);
 export const SUPPORT_EMAIL = 'hello@duoly.gg';
 
 export const MAIN_NAV = [

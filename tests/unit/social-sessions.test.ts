@@ -52,10 +52,10 @@ describe('Social sessions', () => {
       ign: 'hiroko',
     });
     const quote = calculateQuote(input, trusted);
-    expect(quote.amountEurMinor).toBe(1998);
+    expect(quote.amountEurMinor).toBe(2598);
     expect(quote.unit).toBe('hour');
-    // 60% of €19.98 at 1.08, minus 1 cent
-    expect(quote.teammate.amountMinor).toBe(Math.round(1998 * 0.6 * 1.08) - 1);
+    // 60% of €25.98 at 1.08, minus 1 cent
+    expect(quote.teammate.amountMinor).toBe(Math.round(2598 * 0.6 * 1.08) - 1);
     expect(isServer('social', 'Europe')).toBe(true);
     expect(() =>
       parseQuoteInput({

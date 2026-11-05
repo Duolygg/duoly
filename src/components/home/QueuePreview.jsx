@@ -23,8 +23,9 @@ import { GAME, IGN_LABEL } from '../../design-reference/lib/games';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import { rankPrice } from '../../design-reference/lib/ranks';
 import { TRUSTPILOT_EVALUATE } from '../../site/trustpilot';
+import { DISCORD_INVITE_MESSAGE } from '../../site/nav';
 
-// a Pokémon Unite Duo Pro order (lib/catalog.js: 5.99 a game, Master teammate; Veteran is the
+// a Pokémon Unite Duo Pro order (lib/catalog.js: 2.99 a game, Master teammate; Veteran is the
 // base-price rank, 3 games take 10% off) on the Asia servers, with itskeikooo from Japan
 const GAME_ID = 'pu';
 // priced like the homepage prices the same order: the per-game price for the rank, converted to the
@@ -97,6 +98,8 @@ const REROLL_LEFT_MS = 271000; // the re-roll window shows 4:31 left right after
 const CYCLE_MS = 900; // how often the order room swaps the searching face
 // after the match, in ms: [when, what]
 const AFTER_MATCH = [
+  // the chat's one-time Discord invite, as the order chat sends it when the teammate accepts
+  [1200, { say: ['system', DISCORD_INVITE_MESSAGE] }],
   [2500, { typing: true }],
   [
     4500,

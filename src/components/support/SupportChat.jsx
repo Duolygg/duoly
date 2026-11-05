@@ -428,7 +428,6 @@ export default class SupportChat extends React.Component {
                     {team.slice(0, 4).map((a) => (
                       <span
                         key={a.id}
-                        title={a.name + (a.online ? ' · online' : ' · away')}
                         style={{ position: 'relative', display: 'flex' }}
                       >
                         {avatar(a.image, 24, true)}

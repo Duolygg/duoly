@@ -18,7 +18,7 @@ const CONTACT_ONLY = {
   greeting: 'Hey! Need a hand? Message us on Discord or email hello@duoly.gg. We usually reply within a few hours.',
   team: [], chips: [], suggest: [], conversation: null,
 };
-const DISCORD_URL = 'https://discord.gg/xkKGf9bKz'; // panel closed: only to show an unread badge when the team replies
+const DISCORD_URL = 'https://discord.gg/KuVyByUyV4'; // panel closed: only to show an unread badge when the team replies
 
 export default class SupportChat extends React.Component {
   constructor(props) {

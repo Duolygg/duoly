@@ -74,7 +74,7 @@ describe('server-owned quote preview', () => {
         server: 'my own world',
         edition,
       };
-      expect(calculateQuote(input, trusted).amountEurMinor).toBe(899);
+      expect(calculateQuote(input, trusted).amountEurMinor).toBe(1299);
     },
   );
 
@@ -152,16 +152,16 @@ describe('server-owned quote preview', () => {
   }
 
   it.each([
-    [1, 0, 599],
-    [2, 0, 1198],
-    [3, 10, 1617],
-    [4, 0, 2396],
-    [5, 15, 2546],
-    [6, 0, 3594],
-    [7, 0, 4193],
-    [8, 0, 4792],
-    [9, 0, 5391],
-    [10, 25, 4493],
+    [1, 0, 399],
+    [2, 0, 798],
+    [3, 10, 1077],
+    [4, 0, 1596],
+    [5, 15, 1696],
+    [6, 0, 2394],
+    [7, 0, 2793],
+    [8, 0, 3192],
+    [9, 0, 3591],
+    [10, 25, 2993],
   ])(
     'prices %i units with only exact source quantity tiers',
     (units, percent, expected) => {
@@ -238,12 +238,12 @@ describe('server-owned quote preview', () => {
       expect(usd.fx).toEqual({ eurToUsd: rate, customerUsdRate: customerRate });
       expect(usd.customer).toEqual({
         currency: 'USD',
-        amountMinor: Math.round(1617 * customerRate),
+        amountMinor: Math.round(1077 * customerRate),
       });
-      expect(eur.customer).toEqual({ currency: 'EUR', amountMinor: 1617 });
+      expect(eur.customer).toEqual({ currency: 'EUR', amountMinor: 1077 });
       expect(usd.teammate).toEqual({
         currency: 'USD',
-        amountMinor: Math.max(99, Math.round(1617 * 0.6 * rate) - 1),
+        amountMinor: Math.max(99, Math.round(1077 * 0.6 * rate) - 1),
       });
       expect(usd.teammate).toEqual(eur.teammate);
     },
@@ -289,8 +289,8 @@ describe('server-owned quote preview', () => {
 
   it('calculates the catalog EUR price without client money', () => {
     const quote = calculateQuote(parseQuoteInput(selection), trusted);
-    expect(quote.amountEurMinor).toBe(599);
+    expect(quote.amountEurMinor).toBe(399);
     expect(quote.kind).toBe('preview');
-    expect(quote.customer).toEqual({ currency: 'EUR', amountMinor: 599 });
+    expect(quote.customer).toEqual({ currency: 'EUR', amountMinor: 399 });
   });
 });
