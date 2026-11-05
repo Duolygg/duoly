@@ -24,13 +24,15 @@ language sql stable security invoker set search_path = '' as $$
        and p.online and p.last_seen_at > pg_catalog.clock_timestamp() - interval '20 seconds');
 $$;
 
--- From 20261105150000_streamer_twitch_live.sql; changed: no twitchLive.
+-- From 20261105150000_streamer_twitch_live.sql; changed: no twitchLive; busy (streamer_busy), so the
+-- panel only says "hidden while you're booked" when that is the reason.
 create or replace function public.streamer_desk_dto(p_user uuid) returns jsonb
 language sql stable security invoker set search_path = '' as $$
   select pg_catalog.jsonb_build_object(
     'games', pg_catalog.to_jsonb(public.streamer_games(a)),
     'streamOnline', coalesce(s.stream_online, false),
     'live', public.streamer_live(p_user),
+    'busy', public.streamer_busy(p_user, null),
     'deskOnline', coalesce(p.online and p.last_seen_at > pg_catalog.clock_timestamp() - interval '20 seconds', false),
     'rateEurCents', s.rate_eur_cents,
     'durations', pg_catalog.to_jsonb(coalesce(s.durations, '{1,2}'::integer[])),

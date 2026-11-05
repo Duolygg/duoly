@@ -258,10 +258,14 @@ export default class Teammate extends React.Component {
     super(props);
     this._fetch = createTeammateFetch({ csrf: props.csrf });
     const admin = !!props.admin;
+    // presence the page was rendered with (teammate.astro), so the desk doesn't flash "Offline"
+    // until the first check-in answers
+    const start =
+      !admin && props.discordLinked !== false ? props.presence : null;
     this.state = {
       now: 0,
-      online: false,
-      onlineSince: 0,
+      online: !!start?.online,
+      onlineSince: (start?.online && start.onlineSince) || 0,
       loaded: false,
       readError: false,
       // teammates without a connected Discord are locked behind the connect popup (admins never are)

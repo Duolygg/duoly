@@ -4,6 +4,7 @@ import LiveTeammate from '../components/teammate/LiveTeammate';
 import { accountContext } from '../server/auth/context';
 import { orderChatEnabled } from '../server/chat/config';
 import { connectEnabled } from '../server/connect/config';
+import { toOriginalPresence } from '../components/teammate/teammate-data.js';
 const chatEnabled = orderChatEnabled();
 const connectPayouts = connectEnabled();
 const account = accountContext(Astro.request, Astro.cookies);
@@ -22,6 +23,23 @@ if (!identity) return account.redirect('/?signin=1');
 if (identity.viewer.role !== 'teammate')
   return new Response('Not found', { status: 404, headers: account.headers });
 const csrf = account.csrf();
+// Render the desk already knowing whether this teammate is online, so moving between pages doesn't
+// flash "Offline" until the first client check-in answers. Same check-in the desk sends on mount
+// (loading a page counts as activity); on any failure the desk falls back to that client check-in.
+let presence: { online: boolean; onlineSince: number | null } | null = null;
+if (identity.discord && account.client) {
+  try {
+    const { data, error } = await account.client.rpc('desk_check_in', {
+      p_last_active: new Date().toISOString(),
+    });
+    if (!error && data && !(data as { error?: unknown }).error) {
+      const p = toOriginalPresence(data);
+      presence = { online: p.online, onlineSince: p.onlineSince };
+    }
+  } catch {
+    presence = null;
+  }
+}
 ---
 
 <SiteLayout
@@ -34,6 +52,7 @@ const csrf = account.csrf();
     viewer={identity.viewer}
     csrf={csrf}
     discordLinked={!!identity.discord}
+    presence={presence}
     discordEnabled={!!account.config?.providers.discord}
     discordResult={Astro.url.searchParams.get('discord') ?? ''}
     chatEnabled={chatEnabled}

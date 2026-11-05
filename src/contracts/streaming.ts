@@ -45,6 +45,8 @@ export const StreamerDeskSchema = z.strictObject({
   streamOnline: z.boolean(),
   live: z.boolean(),
   deskOnline: z.boolean(),
+  /** Booked, playing an order, or a customer is checking out with them (migration 20261105190000). */
+  busy: z.boolean().optional(),
   /** Unused: dropped by migration 20261105190000. Accepted until that migration is applied. */
   twitchLive: z.boolean().optional(),
   rateEurCents: Rate.nullable(),
