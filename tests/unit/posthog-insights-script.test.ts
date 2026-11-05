@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildPlan, BUILT_INS } from '../../scripts/posthog/plan.mjs';
-import { ApiClient, upsert } from '../../scripts/posthog/lib.mjs';
+import { ApiClient, upsert, matches } from '../../scripts/posthog/lib.mjs';
 import {
   EVENT_CATALOGUE,
   SERVER_EVENT_CATALOGUE,
@@ -99,6 +99,14 @@ describe('PostHog analysis plan', () => {
     expect(calls.filter((c) => c === 'POST')).toHaveLength(1);
     expect(calls.filter((c) => c === 'GET')).toHaveLength(2);
     expect(objects).toHaveLength(1);
+  });
+  it('compares tag membership independently of server sorting', () => {
+    expect(
+      matches(
+        { name: '[duoly] event', tags: ['acquisition', 'duoly'] },
+        { name: '[duoly] event', tags: ['duoly', 'acquisition'] },
+      ),
+    ).toBe(true);
   });
   it('defaults to dry run and refuses duplicate stable names', async () => {
     const api = new ApiClient({

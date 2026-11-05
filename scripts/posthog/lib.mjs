@@ -133,6 +133,12 @@ export function contains(actual, expected) {
 
 export function matches(row, payload) {
   return Object.entries(payload).every(([key, value]) => {
+    if (key === 'tags')
+      return (
+        Array.isArray(row.tags) &&
+        row.tags.length === value.length &&
+        value.every((tag) => row.tags.includes(tag))
+      );
     if (key === 'dashboards')
       return value.every(
         (id) =>
