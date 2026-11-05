@@ -8,7 +8,9 @@ import { createSupportFetch } from './support-data';
 // The support chat (Sparky + the real admins). Talks to /api/support, which knows who's asking:
 // guests, customers (their order and wallet) and teammates (payouts, deposit, games). When someone asks
 // for a human, admins answer from the admin dashboard (Support chat) with their own name and picture.
-// Props: teaser (show the little "Need a hand?" bubble), bottom (px from the bottom, default 24)
+// Props: teaser (show the little "Need a hand?" bubble), bottom (px from the bottom, default 24),
+// dockAbove (CSS selector of a bottom bar, e.g. the order bar: the button then sits 12px above it
+// whenever the bar is on screen and would overlap the button's corner)
 const MASCOT = '/assets/brand/logo-mascots.webp';
 const POLL_OPEN = 3000; // while the panel is open and a human is involved
 const ACTIVE_KEY = 'duoly-support-active';
@@ -40,6 +42,7 @@ export default class SupportChat extends React.Component {
       sending: false,
       unread: 0,
       error: '',
+      lift: null,
     };
     this.listRef = React.createRef();
     this.inputRef = React.createRef();
@@ -51,11 +54,48 @@ export default class SupportChat extends React.Component {
     if (hasActiveChat()) this.load().then(() => this.schedule());
     // other parts of the page can open the chat: window.dispatchEvent(new Event('duoly:chat')) (e.g. /contact)
     window.addEventListener('duoly:chat', this.openFromPage);
+    if (this.props.dockAbove) {
+      window.addEventListener('scroll', this.queueDock, { passive: true });
+      window.addEventListener('resize', this.queueDock);
+      if (typeof ResizeObserver !== 'undefined') {
+        this._ro = new ResizeObserver(this.queueDock);
+        this._ro.observe(document.body);
+      }
+      this.measureDock();
+    }
   }
   componentWillUnmount() {
     clearTimeout(this._t);
     window.removeEventListener('duoly:chat', this.openFromPage);
+    window.removeEventListener('scroll', this.queueDock);
+    window.removeEventListener('resize', this.queueDock);
+    if (this._ro) this._ro.disconnect();
+    if (this._raf) cancelAnimationFrame(this._raf);
   }
+  queueDock = () => {
+    if (this._raf) return;
+    this._raf = requestAnimationFrame(() => {
+      this._raf = 0;
+      this.measureDock();
+    });
+  };
+  // Keep the chat button clear of the bottom bar: when the bar is visible and reaches the
+  // button's corner (phones, narrow windows), sit 12px above it; otherwise use the normal spot.
+  measureDock = () => {
+    const bar = document.querySelector(this.props.dockAbove);
+    let lift = 0;
+    if (bar) {
+      const r = bar.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const vw = document.documentElement.clientWidth;
+      const base = this.props.bottom || 24;
+      const buttonLeft = vw - 24 - 64;
+      const visible = r.height > 0 && r.top < vh && r.bottom > 0;
+      if (visible && r.right > buttonLeft)
+        lift = Math.max(0, Math.round(vh - r.top + 12 - base));
+    }
+    if (lift !== this.state.lift) this.setState({ lift });
+  };
   openFromPage = async () => {
     await this.load();
     if (!this.state.open) this.toggle();
@@ -190,7 +230,14 @@ export default class SupportChat extends React.Component {
     const c = d.conversation;
     const team = d.team || [];
     const online = team.filter((a) => a.online);
-    const bottom = this.props.bottom || 24;
+    const base = this.props.bottom || 24;
+    // Before the first measurement (server HTML, hydration) a CSS rule gives the docked
+    // offset on narrow screens, so the button never jumps once the page is interactive.
+    const lift =
+      this.props.dockAbove && s.lift === null
+        ? 'var(--chat-dock-lift, 0px)'
+        : (s.lift || 0) + 'px';
+    const at = (extra) => 'calc(' + (base + extra) + 'px + ' + lift + ')';
     // A claimed chat always shows a person, even if the claiming admin left the team list.
     const agent =
       c && c.status === 'open'
@@ -257,6 +304,11 @@ export default class SupportChat extends React.Component {
 
     return (
       <>
+        {this.props.dockAbove ? (
+          // Matches the order bar sizes in globals.css (.dl-bar, .dl-bar-in); the live
+          // measurement in measureDock takes over once the page is interactive.
+          <style>{`@media (max-width:1119px){body:has(${this.props.dockAbove}){--chat-dock-lift:calc(78px + env(safe-area-inset-bottom))}}@media (max-width:560px){body:has(${this.props.dockAbove}){--chat-dock-lift:calc(62px + env(safe-area-inset-bottom))}}`}</style>
+        ) : null}
         {s.open ? (
           <section
             data-private-block=""
@@ -265,12 +317,12 @@ export default class SupportChat extends React.Component {
             style={{
               position: 'fixed',
               right: '24px',
-              bottom: bottom + 76 + 'px',
+              bottom: at(76),
               zIndex: '40',
               width: '384px',
               maxWidth: 'calc(100vw - 32px)',
               height: '600px',
-              maxHeight: 'calc(100vh - ' + (bottom + 116) + 'px)',
+              maxHeight: 'calc(100vh - ' + (base + 116) + 'px - ' + lift + ')',
               display: 'flex',
               flexDirection: 'column',
               borderRadius: '26px',
@@ -762,7 +814,7 @@ export default class SupportChat extends React.Component {
             style={{
               position: 'fixed',
               right: '24px',
-              bottom: bottom + 76 + 'px',
+              bottom: at(76),
               zIndex: '39',
               display: 'flex',
               alignItems: 'center',
@@ -824,7 +876,7 @@ export default class SupportChat extends React.Component {
           style={{
             position: 'fixed',
             right: '24px',
-            bottom: bottom + 'px',
+            bottom: at(0),
             zIndex: '41',
             width: '64px',
             height: '64px',
