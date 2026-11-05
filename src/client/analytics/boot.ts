@@ -69,7 +69,8 @@ function start() {
         full,
         sanitizeContext: ctx,
       }) as Record<string, unknown>,
-    features: (full) => featureConfig(full) as Record<string, unknown>,
+    features: (full) =>
+      featureConfig(full, boot.hosts) as Record<string, unknown>,
   });
   const syncConsent = () => {
     if (!boot.uid || !readConsent()) return;

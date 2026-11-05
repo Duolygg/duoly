@@ -3,6 +3,7 @@ import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { SupportPostSchema } from '../../contracts/support';
 import { answerMetadata, answerWithAi } from './ai';
+import { trackRequest, requestAnalyticsContext } from '../analytics/client';
 import { sparkyLookup } from './lookup';
 import { sparkyAdminLookup } from './admin-lookup';
 import { notifySupportAdmins, notifySupportDiscord } from './notify';
@@ -224,6 +225,12 @@ export const postSupport: APIRoute = async (context) => {
 
     if ('action' in parsed.data && parsed.data.action === 'human') {
       conversation = await handoff(service, person, conversation, text);
+      if (person.accountRole !== 'admin')
+        trackRequest(
+          context,
+          person.userId ?? null,
+          'support_handoff_requested',
+        );
       return prepared.account.json(
         await payload(prepared.account, service, person, conversation),
       );
@@ -257,6 +264,10 @@ export const postSupport: APIRoute = async (context) => {
         ? await answerWithAi({
             person,
             question: text,
+            telemetry: {
+              ...requestAnalyticsContext(context),
+              conversationId: conversation.id,
+            },
             // The new message is already stored; send only the turns before it.
             history: (await messages(service, conversation.id))
               .slice(0, -1)
@@ -299,6 +310,8 @@ export const postSupport: APIRoute = async (context) => {
           ),
         );
     }
+    if (person.accountRole !== 'admin')
+      trackRequest(context, person.userId ?? null, 'support_handoff_requested');
     return prepared.account.json(
       await payload(prepared.account, service, person, conversation),
     );

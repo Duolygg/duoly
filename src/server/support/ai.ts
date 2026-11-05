@@ -1,3 +1,6 @@
+import { randomUUID } from 'node:crypto';
+import { serverTrack, flushAnalytics } from '../analytics/client';
+import { generationProperties } from '../analytics/ai';
 import {
   buildGroundingContext,
   preparedReply,
@@ -166,8 +169,14 @@ export async function answerWithAi({
   totalTimeoutMs = 25_000,
   lookup = null,
   adminLookup = null,
+  telemetry,
 }: {
   person: SupportPerson;
+  telemetry?: {
+    consent: { analytics: boolean } | null;
+    sessionId?: string | null;
+    conversationId?: string;
+  };
   question: string;
   history?: ChatTurn[];
   apiKey: string | undefined;
@@ -182,6 +191,22 @@ export async function answerWithAi({
   adminLookup?: SparkyAdminLookup | null;
 }): Promise<AiAnswer> {
   if (!apiKey) return fallback(person, question);
+  const traceId = randomUUID();
+  let generationId = randomUUID();
+  const emit = (
+    event: '$ai_generation' | '$ai_span',
+    properties: Record<string, unknown>,
+  ) => {
+    if (person.accountRole === 'admin') return;
+    serverTrack({
+      event,
+      userId: person.userId ?? null,
+      consent: telemetry?.consent ?? null,
+      sessionId: telemetry?.sessionId,
+      stableKey: traceId,
+      properties,
+    });
+  };
   const tools = toolDefinitions(person);
   const adminTools = tools.some((tool) => tool.name === 'person_summary');
   const log: ToolLogEntry[] = [];
@@ -213,18 +238,39 @@ export async function answerWithAi({
       rounds += 1;
       input.push(...((payload as { output: OutputItem[] }).output ?? []));
       for (const [index, call] of calls.entries()) {
-        const result =
-          index < MAX_CALLS_PER_ROUND
-            ? await runTool(call.name, call.arguments, {
-                person,
-                lookup,
-                admin: adminLookup,
-              })
-            : {
-                status: 'denied' as const,
-                args: null,
-                output: { error: 'Too many lookups in one step.' },
-              };
+        const toolStart = performance.now();
+        let toolError = true;
+        let outcome = 'error';
+        let result;
+        try {
+          result =
+            index < MAX_CALLS_PER_ROUND
+              ? await runTool(call.name, call.arguments, {
+                  person,
+                  lookup,
+                  admin: adminLookup,
+                })
+              : {
+                  status: 'denied' as const,
+                  args: null,
+                  output: { error: 'Too many lookups in one step.' },
+                };
+          toolError = result.status !== 'ok';
+          outcome = result.status;
+        } finally {
+          if (index < MAX_CALLS_PER_ROUND)
+            emit('$ai_span', {
+              $ai_trace_id: traceId,
+              $ai_span_id: randomUUID(),
+              $ai_parent_id: generationId,
+              $ai_span_name: tools.some((tool) => tool.name === call.name)
+                ? call.name
+                : 'unknown_tool',
+              $ai_latency: (performance.now() - toolStart) / 1000,
+              $ai_is_error: toolError,
+              outcome,
+            });
+        }
         log.push({
           round: rounds,
           name: call.name.slice(0, 64),
@@ -240,6 +286,8 @@ export async function answerWithAi({
     }
   } catch {
     return withLog(fallback(person, question));
+  } finally {
+    flushAnalytics();
   }
 
   async function request(forceAnswer: boolean): Promise<unknown> {
@@ -250,6 +298,11 @@ export async function answerWithAi({
       () => controller.abort(),
       Math.min(timeoutMs, remaining),
     );
+    const started = performance.now();
+    generationId = randomUUID();
+    let status: number | undefined;
+    let payload: unknown;
+    let failed = true;
     try {
       const response = await fetcher('https://api.openai.com/v1/responses', {
         method: 'POST',
@@ -260,10 +313,37 @@ export async function answerWithAi({
         body: JSON.stringify(body(forceAnswer)),
         signal: controller.signal,
       });
+      status = response.status;
       if (!response.ok) return null;
-      return (await response.json()) as unknown;
+      payload = await response.json();
+      failed = !!(
+        payload &&
+        typeof payload === 'object' &&
+        ('error' in payload ||
+          ('status' in payload && payload.status === 'failed'))
+      );
+      return payload;
     } finally {
       clearTimeout(timer);
+      emit(
+        '$ai_generation',
+        generationProperties({
+          traceId,
+          spanId: generationId,
+          sessionId: telemetry?.consent?.analytics
+            ? telemetry.conversationId
+            : undefined,
+          latency: (performance.now() - started) / 1000,
+          status,
+          error: failed,
+          toolNames: functionCalls(payload).map((call) =>
+            tools.some((tool) => tool.name === call.name)
+              ? call.name
+              : 'unknown_tool',
+          ),
+          payload,
+        }),
+      );
     }
   }
 

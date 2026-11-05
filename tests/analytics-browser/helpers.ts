@@ -95,6 +95,16 @@ export async function capture(page: Page, replay = false) {
         ),
       });
     }
+    if (/\/tracing-headers\.js$/.test(new URL(url).pathname))
+      return route.fulfill({
+        contentType: 'text/javascript',
+        body: await readFile(
+          new URL(
+            '../../node_modules/posthog-js/dist/tracing-headers.js',
+            import.meta.url,
+          ),
+        ),
+      });
     if (url.endsWith('.js') && url.includes('/config'))
       return route.fulfill({ contentType: 'text/javascript', body: '' });
     if (

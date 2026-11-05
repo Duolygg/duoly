@@ -1,3 +1,4 @@
+import { trackRequest } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import { PayoutDetailsCommandSchema } from '../../contracts/payouts';
 import { accountContext } from '../auth/context';
@@ -45,7 +46,10 @@ export const payoutDetails: APIRoute = async (context) => {
             p_method: input!.data.method,
             p_account: input!.data.account,
           });
-    return rpcResponse(account, result.data, result.error);
+    const response = rpcResponse(account, result.data, result.error);
+    if (method === 'POST' && response.status === 200)
+      trackRequest(context, identity.viewer.id, 'payout_setup_completed');
+    return response;
   } catch {
     return account.json({ error: 'Payout details service unavailable.' }, 503);
   }

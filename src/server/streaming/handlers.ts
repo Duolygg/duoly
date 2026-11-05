@@ -1,3 +1,4 @@
+import { trackRequest } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { accountContext } from '../auth/context';
@@ -77,6 +78,8 @@ export const teammateStreaming: APIRoute = async (context) => {
       );
     }
     const parsed = StreamerDeskResponseSchema.safeParse(data);
+    if (parsed.success && command)
+      trackRequest(context, identity.viewer.id, 'streaming_availability_saved');
     return parsed.success
       ? account.json(parsed.data)
       : account.json({ error: 'Streaming is unavailable.' }, 503);

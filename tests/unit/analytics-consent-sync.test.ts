@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { recordAnalyticsConsent } from '../../src/server/analytics/consent-sync';
 import type { APIContext } from 'astro';
 import type { SupabaseClient } from '@supabase/supabase-js';

@@ -1,3 +1,4 @@
+import { trackRequest } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
@@ -83,6 +84,7 @@ export const disconnect: APIRoute = async (context) => {
       );
     // The bot takes its roles back from the Discord account that was just disconnected (#40).
     await syncRolesAfter({ users: [identity.viewer.id] });
+    trackRequest(context, identity.viewer.id, 'discord_unlinked');
     return account.json({ ok: true });
   } catch {
     return account.json(
