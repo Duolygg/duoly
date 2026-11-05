@@ -42,6 +42,8 @@ describe('analytics outbox migration', () => {
       'handover_accepted',
       'order_completed',
       'order_results_corrected',
+      'match_report_saved',
+      'desk_online_changed',
       'tip_paid',
       'pro_trial_started',
       'pro_activated',
@@ -63,7 +65,7 @@ describe('analytics outbox migration', () => {
         /create function public\.(analytics_on_\w+)\(\) returns trigger([\s\S]*?)\$\$;/g,
       ),
     ];
-    expect(triggers).toHaveLength(14);
+    expect(triggers).toHaveLength(15);
     for (const [, name, body] of triggers) {
       expect(body).toMatch(/exception when others then\s+raise warning/);
       expect(body).not.toContain('sqlerrm');

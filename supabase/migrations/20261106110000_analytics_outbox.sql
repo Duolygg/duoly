@@ -177,6 +177,12 @@ create function public.analytics_on_order_match_reports() returns trigger
 language plpgsql security definer set search_path = '' as $$
 declare v_user uuid;
 begin
+  -- The primary key is the assignment, so the first save inserts exactly once.
+  if tg_op = 'INSERT' then
+    perform public.analytics_enqueue('match_report_saved', 'report:' || new.assignment_id, new.teammate_id,
+      pg_catalog.jsonb_build_object('games', pg_catalog.jsonb_array_length(new.games)), new.created_at);
+    return new;
+  end if;
   if new.edited_at is not null and new.edited_at is distinct from old.edited_at and new.edited_by is not null then
     select o.customer_id into v_user from public.orders o where o.id = new.order_id;
     perform public.analytics_enqueue('order_results_corrected', 'corrected:' || new.assignment_id || ':' || new.edited_at,
@@ -188,7 +194,7 @@ exception when others then
   return new;
 end;
 $$;
-create trigger analytics_on_order_match_reports after update on public.order_match_reports
+create trigger analytics_on_order_match_reports after insert or update on public.order_match_reports
   for each row execute function public.analytics_on_order_match_reports();
 
 create function public.analytics_on_order_tips() returns trigger
@@ -500,6 +506,35 @@ grant execute on function public.analytics_outbox_mark_failed(bigint, text) to s
 grant execute on function public.analytics_outbox_stats() to service_role;
 grant execute on function public.analytics_outbox_reconcile(timestamptz) to service_role;
 grant execute on function public.analytics_outbox_cleanup() to service_role;
+
+
+-- Desk on/off transitions. Rows are updated under a row lock, so each real change fires once;
+-- heartbeats (online unchanged) never do. Stale desks are computed at read time, not written.
+create function public.analytics_on_teammate_presence() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare v_at timestamptz := pg_catalog.clock_timestamp();
+begin
+  if tg_op = 'UPDATE' and new.online is distinct from old.online
+     or tg_op = 'INSERT' and new.online then
+    perform public.analytics_enqueue('desk_online_changed',
+      -- One desk session = one 'on' and one 'off', keyed by the session's start time.
+      'desk:' || new.user_id || case when new.online then ':on:' || new.online_since
+        else ':off:' || coalesce(old.online_since::text, 'unknown:' || v_at::text) end,
+      new.user_id,
+      pg_catalog.jsonb_build_object('online', new.online,
+        'by', case when not new.online and new.set_offline_by is not null
+          and new.set_offline_by <> new.user_id then 'admin' else 'self' end),
+      v_at);
+  end if;
+  return new;
+exception when others then
+  raise warning 'analytics teammate_presence enqueue failed [%]', SQLSTATE;
+  return new;
+end;
+$$;
+create trigger analytics_on_teammate_presence after insert or update of online on public.teammate_presence
+  for each row execute function public.analytics_on_teammate_presence();
+revoke all on function public.analytics_on_teammate_presence() from public, anon, authenticated;
 
 commit;
 

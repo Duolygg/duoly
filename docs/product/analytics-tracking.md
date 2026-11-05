@@ -251,3 +251,8 @@ provider delivery remain unverified; no hosted database was contacted.
 
 - Bundle: the default `posthog-js` build adds about 120 KB gzipped to every page (module script, does not block first paint). The slim build was measured and is not smaller once web vitals are registered (128 KB gzip; extension bundles do not tree-shake), so A1 keeps the default import. Revisit only if PostHog ships tree-shakeable extensions. Evidence: `posthog-research/08-slim-bundle.md` in the project folder.
 - A pageview that follows a fetch-based logout without navigation is reset only on the next document.
+
+## PR B fixes (2026-11-05)
+
+1. **Server events join replays.** With Analytics consent the SDK's `tracing_headers` (first-party `ANALYTICS_HOSTS` only) adds `X-POSTHOG-SESSION-ID` to our own requests; server events read it. Refusers and withdrawn users send no header. Browser test: `transport.spec.ts` "server events join the replay only with Analytics consent".
+2. **No duplicates for `match_report_saved` and `desk_online_changed`.** Moved from best-effort handler pre-reads to outbox triggers: `order_match_reports` INSERT (dedup `report:<assignment>`, teammate, `games`) and `teammate_presence` online transitions (dedup per desk session `desk:<user>:on|off:<online_since>`, `by` self or admin). Heartbeats never fire. Verified on PGlite with real DDL.

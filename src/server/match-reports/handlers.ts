@@ -1,4 +1,3 @@
-import { trackRequest, serverAnalyticsEnabled } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
@@ -74,19 +73,6 @@ export const matchReport: APIRoute = async (context) => {
       name: string,
       args: Record<string, unknown>,
     ) => PromiseLike<{ data: unknown; error: unknown }>;
-    let firstSave = false;
-    if (serverAnalyticsEnabled() && command) {
-      try {
-        const prior = await rpc('teammate_match_report', {
-          p_order_id: order.data.order_id,
-        });
-        const parsed = MatchReportResponseSchema.safeParse(prior.data);
-        firstSave =
-          !prior.error && parsed.success && parsed.data.report === null;
-      } catch {
-        /* Unknown state: never count as first save. */
-      }
-    }
     const result = command
       ? await rpc('teammate_save_match_report', {
           p_order_id: order.data.order_id,
@@ -97,10 +83,7 @@ export const matchReport: APIRoute = async (context) => {
       : await rpc('teammate_match_report', {
           p_order_id: order.data.order_id,
         });
-    const response = resultResponse(account, result.data, result.error);
-    if (command && firstSave && response.status === 200)
-      trackRequest(context, identity.viewer.id, 'match_report_saved');
-    return response;
+    return resultResponse(account, result.data, result.error);
   } catch {
     return account.json({ error: 'Match report unavailable.' }, 503);
   }
