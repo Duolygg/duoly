@@ -270,3 +270,61 @@ provider delivery remain unverified; no hosted database was contacted.
 2. Vault secret `analytics_drain_secret` with the same value.
 3. Apply `20261106110000_analytics_outbox.sql`, then merge (deploy), then apply `20261106120000_analytics_outbox_schedule.sql`.
 4. Check: `select * from public.analytics_outbox_stats()` and the PostHog events table.
+
+## Error Tracking source maps (`feat/analytics-sourcemaps`)
+
+- `pnpm build` keeps `astro build` first, then runs
+  `scripts/posthog-sourcemaps.mjs`. Vite emits hidden client and server maps.
+  The script uses the exact devDependency `@posthog/cli` 0.19.0; its binary
+  download requires the explicit `allowBuilds` entry in `pnpm-workspace.yaml`.
+- Owner activation, **production build environment only**:
+  `POSTHOG_CLI_API_KEY` (personal API key scoped to this project, with
+  **error tracking write** and **organization read**) and
+  `POSTHOG_CLI_PROJECT_ID`. These are the current CLI names, not
+  `POSTHOG_CLI_TOKEN` / `POSTHOG_CLI_ENV_ID`. The script pins the EU app host
+  `https://eu.posthog.com`; no host env var is needed. Vercel must expose its
+  built-in `VERCEL_ENV` and `VERCEL_GIT_COMMIT_SHA` to the build.
+  No Vercel or PostHog settings were changed by this branch.
+- Only production with both credentials and a valid commit SHA injects/uploads.
+  Both CLI commands receive release name `duoly`, version = the first 12 SHA
+  characters (the existing boot data convention), and `--release-mode event`.
+  Upload uses `--delete-after`. Preview, missing configuration and CLI failures
+  continue without an upload; CLI failures produce only a fixed warning, never
+  raw command output or credentials. Commands have a two-minute timeout each.
+- Public assets are `.vercel/output/static/_astro`. The final SSR function is
+  `.vercel/output/functions/_render.func/dist/server` (entry plus `chunks/`).
+  The adapter stages server maps in `.vercel/output/_functions` but omits them
+  from its traced function. Before injection, the script restores each map
+  beside final JS only when staging and served JS are byte-identical. The CLI
+  excludes staging `_functions`, so it rewrites the actual served function.
+  A `finally` cleanup deletes **all** maps under `.vercel/output`, including
+  skipped/failed uploads. Cleanup filesystem failures remain fatal rather than
+  deploy public maps; telemetry/CLI failures themselves never fail the build.
+- `app_release` is a custom display/filter property, **not** PostHog's release
+  linkage. No browser change is needed: CLI event-mode injection supplies
+  `_posthogReleaseId`, which installed posthog-js 1.445.1 reads and emits as
+  `$release_id` on exceptions; the sanitizer preserves it. Injected chunk IDs
+  select source maps independently of that display property. Successful real
+  release creation, upload and production symbolication still need verification
+  after owner activation.
+- Local verification: unit tests cover production/preview/missing config,
+  failures with secret-bearing errors, cleanup and byte-matched server maps.
+  A no-key `pnpm build` left zero maps under both static and the entire output.
+  Hidden-map generation changed no JS bytes: 1,874,384 bytes before and after.
+  Offline CLI injection rewrote 60 client chunks and 219 final server chunks;
+  client JS increased by 21,480 raw bytes (1.15%), excluding real release-ID
+  injection overhead. All eight analytics Playwright tests passed against these
+  injected production-build assets and the emitted SSR function using a local
+  HTTP fixture, not Astro dev. For that offline probe only, the CLI ran from a
+  non-Git scratch directory with placeholder credentials, no release arguments
+  and an unreachable localhost host; it injected chunk IDs without resolving a
+  release. Upload was intentionally rejected by the injected runner, exercising
+  warning plus cleanup. This is **not** evidence of real PostHog ingestion.
+- Gates on Node 24.21.0: `check` (0 errors/warnings; 46 existing hints),
+  `lint`, `format:check`, `test:unit` (131 files / 1,899 tests), `build`, and
+  `test:e2e` (296 tests across all five suites) passed. The first full browser
+  run hit the existing mobile chat resize anchoring test (509px from bottom);
+  it passed ten isolated repetitions and the complete unchanged suite rerun.
+  No chat implementation or chat test changes were made here.
+- Baseline gate fix: removed a duplicate `existsSync` import already present on
+  main in `analytics-consent-sync.test.ts`; otherwise `pnpm check` could not run.
