@@ -4,6 +4,7 @@ overrides:
   'esbuild@>=0.27.3 <0.28.1': 0.28.1
   '@astrojs/react>@vitejs/plugin-react': 6.1.0
 allowBuilds:
+  '@posthog/cli': true
   core-js: false
   esbuild: true
   sharp: true
