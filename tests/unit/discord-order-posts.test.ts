@@ -8,7 +8,9 @@ import {
   type PostOrder,
 } from '../../src/server/discord/order-posts';
 import {
+  channelFor,
   channelMap,
+  SOCIAL_GG,
   norm,
   orderPostsConfig,
   resetOrderPostsMemory,
@@ -183,6 +185,22 @@ describe('channel lookup', () => {
     expect(map).toEqual({ lol: '3', pu: '5', fc: '7' });
     expect(norm('Pokémon Unite')).toBe('pokemonunite');
     expect(Object.keys(POST_GAMES)).toHaveLength(16);
+  });
+  it('sends social and Gamer Girl orders to the Social / Gamer Girl general chat', () => {
+    const map = channelMap([
+      { id: '1', type: 4, name: 'League of Legends' },
+      { id: '3', type: 0, name: '💬general', parent_id: '1', position: 1 },
+      { id: '8', type: 4, name: '🎀 Social / Gamer Girl' },
+      { id: '9', type: 0, name: '📸clips', parent_id: '8', position: 0 },
+      { id: '10', type: 0, name: '💬general', parent_id: '8', position: 1 },
+    ]);
+    expect(map).toEqual({ lol: '3', [SOCIAL_GG]: '10' });
+    expect(channelFor(map, { game: 'lol', gg: false })).toBe('3');
+    expect(channelFor(map, { game: 'lol', gg: true })).toBe('10');
+    expect(channelFor(map, { game: 'social', gg: false })).toBe('10');
+    expect(channelFor(map, { game: 'val', gg: false })).toBeUndefined();
+    // without that section: the game's own section, as before
+    expect(channelFor({ lol: '3' }, { game: 'lol', gg: true })).toBe('3');
   });
 });
 

@@ -12,8 +12,10 @@ import {
 /**
  * Twitch streaming on the teammate desk (migration 20261105100000_twitch_streaming.sql).
  * Only shown to teammates an admin gave streaming games. They set an hourly rate, the hours
- * customers can book and their Twitch username, then go online for streaming. Customers only
- * see them while this is on AND their desk is online; bookings land in their queue at once.
+ * customers can book and their Twitch username (required), then go online for streaming. The
+ * server checks with Twitch that the channel is live (migration 20261105150000). Customers only
+ * see them while this is on, their Twitch stream is live AND their desk is online; bookings land
+ * in their queue at once.
  */
 const POLL_MS = 10000;
 const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
@@ -82,18 +84,21 @@ export default class StreamingPanel extends React.Component {
     const n = Number(String(this.state.draft.rate).replace(',', '.'));
     return Number.isFinite(n) ? Math.round(n * 100) : NaN;
   }
-  problem() {
+  // online: what going (or staying) online needs; going offline needs no Twitch username
+  problem(online = true) {
     const d = this.state.draft;
     const cents = this.rateCents();
     if (!(cents >= STREAM_RATE_MIN_CENTS && cents <= STREAM_RATE_MAX_CENTS))
-      return 'Set an hourly rate between €5 and €100.';
+      return 'Set an hourly rate between €9.99 and €100.';
     if (!d.durations.length) return 'Pick at least one length.';
+    if (online && !d.twitch.trim())
+      return 'Add your Twitch username. We check it’s live before customers see you.';
     if (d.twitch.trim() && !TWITCH_USERNAME.test(d.twitch.trim()))
       return 'A Twitch username is 4 to 25 letters, numbers or _.';
     return '';
   }
   async save(online) {
-    const problem = this.problem();
+    const problem = this.problem(online);
     const saved = this.state.data;
     // Going offline always works: with a half-typed form, keep the saved rate and hours.
     const useSaved = problem && !online && saved.rateEurCents != null;
@@ -133,9 +138,11 @@ export default class StreamingPanel extends React.Component {
     const status = data.live
       ? ['Live · customers can book you', '#5EEAA8']
       : data.streamOnline
-        ? data.deskOnline
-          ? ['On, but hidden while you’re booked or in an order', '#FFD27A']
-          : ['On, but hidden until your desk is online', '#FFD27A']
+        ? !data.twitchLive
+          ? ['On, but hidden until your Twitch stream is live', '#FFD27A']
+          : data.deskOnline
+            ? ['On, but hidden while you’re booked or in an order', '#FFD27A']
+            : ['On, but hidden until your desk is online', '#FFD27A']
         : ['Offline for streaming', '#8E84AB'];
     const input = {
       height: '46px',
@@ -251,7 +258,7 @@ export default class StreamingPanel extends React.Component {
               inputMode="decimal"
               min={STREAM_RATE_MIN_CENTS / 100}
               max={STREAM_RATE_MAX_CENTS / 100}
-              step="0.5"
+              step="0.01"
               value={draft.rate}
               onChange={(e) => this.edit({ rate: e.target.value })}
               placeholder="e.g. 15"
@@ -260,14 +267,11 @@ export default class StreamingPanel extends React.Component {
             <span style={{ fontWeight: '400', color: '#8E84AB' }}>
               {keep
                 ? 'You keep ' + keep + ' per hour (60%)'
-                : '€5 to €100 per hour'}
+                : '€9.99 to €100 per hour'}
             </span>
           </label>
           <label style={label}>
-            Twitch username{' '}
-            <span style={{ fontWeight: '400', color: '#8E84AB' }}>
-              (optional)
-            </span>
+            Twitch username
             <input
               type="text"
               value={draft.twitch}
@@ -276,10 +280,13 @@ export default class StreamingPanel extends React.Component {
               autoComplete="off"
               spellCheck="false"
               maxLength={25}
+              required
+              aria-required="true"
               style={input}
             />
             <span style={{ fontWeight: '400', color: '#8E84AB' }}>
-              Shown as a link on your booking card
+              Required. We check with Twitch that you’re live; customers only
+              see you while your stream is on.
             </span>
           </label>
         </div>

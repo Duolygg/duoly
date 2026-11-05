@@ -1,6 +1,6 @@
 # Discord order posts (ledger #41)
 
-Port of Fabian's `lib/discordQueue.js`. When an order has waited 100 seconds without a teammate, the bot posts it in that game's `#general` channel (the first text channel with "general" in its name under the category named after the game; falls back to the first text channel). Switched to `#lfd` on 2026-10-28 and back to `#general`, Fabian's original, on his request 2026-10-29. It mentions the **Teammate** role and links its own handover link. When the order is taken, cancelled, expires or is re-rolled, the post is edited in place so nobody clicks a dead link.
+Port of Fabian's `lib/discordQueue.js`. When an order has waited 100 seconds without a teammate, the bot posts it in that game's `#general` channel (the first text channel with "general" in its name under the category named after the game; falls back to the first text channel). Switched to `#lfd` on 2026-10-28 and back to `#general`, Fabian's original, on his request 2026-10-29. **Social and Gamer Girl orders** go to the general chat of the **Social / Gamer Girl** section instead (since 2026-11-05: the first category with "gamer girl" in its name, preferring one that also says "social"; without it they fall back to the game's section). It mentions the **Teammate** role and links its own handover link. When the order is taken, cancelled, expires or is re-rolled, the post is edited in place so nobody clicks a dead link.
 
 ## Design
 

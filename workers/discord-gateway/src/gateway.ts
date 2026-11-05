@@ -321,10 +321,12 @@ export class Gateway {
         return;
       this.users.set(m.author.id, now);
       this.lastInChannel.set(m.channel_id, now);
-      // the game they named, else the channel's category (for example the League section)
+      // the game they named, else the channel's category (for example the League section); the
+      // Social / Gamer Girl section isn't a game
       const game = req.game
         ? ' ' + req.game
-        : ch.category && !/text channels|general/i.test(ch.category)
+        : ch.category &&
+            !/text channels|general|social|gamers*girl/i.test(ch.category)
           ? ' ' + ch.category
           : '';
       await this.api('POST', '/channels/' + m.channel_id + '/messages', {

@@ -1,0 +1,18 @@
+---
+// Isolated fictional browser fixture, never a production route: any site page other than the
+// desk, signed in as a teammate (desk-keeper keeps them online and notifies new orders).
+import SiteLayout from '../../../../../src/layouts/SiteLayout.astro';
+const viewer = {
+  id: '44444444-4444-4444-8444-444444444444',
+  name: 'Fabian',
+  email: null,
+  image: '/assets/avatars/avatar-1.png',
+  country: 'at',
+  role: 'teammate' as const,
+  provider: 'email' as const,
+};
+---
+
+<SiteLayout title="Another page | Duoly" viewer={viewer} csrf="fixture-csrf">
+  <h1>Another page</h1>
+</SiteLayout>

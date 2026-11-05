@@ -1,6 +1,15 @@
 'use client';
 
 import { createTeammateFetch, newEligibleOrders } from './teammate-data';
+import {
+  AFK_OFFLINE_REASON,
+  AFK_WARN_SECONDS,
+  backgroundTicker,
+  readSeenOrders,
+  showAfkWarning,
+  saveSeenOrders,
+  showOrderNotification,
+} from './desk-keeper';
 import PrivateProofs from '../proofs/PrivateProofs';
 import {
   readChat,
@@ -293,7 +302,9 @@ export default class Teammate extends React.Component {
       copied: false,
     };
     this._chatTimers = [];
-    this._seen = null; // order ids already shown; null until the first poll so existing orders don't ring
+    // order ids already shown; null until the first poll so existing orders don't ring. Seeded
+    // from the other pages of this tab (desk-keeper), so coming back doesn't ring for old orders.
+    this._seen = readSeenOrders();
     this._presenceVersion = 0;
     this._lastActive = Date.now();
   }
@@ -555,36 +566,27 @@ export default class Teammate extends React.Component {
         window.location.pathname + window.location.hash,
       );
     this._tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
-    this._poll = setInterval(() => this.poll(), POLL_MS);
-    this._presencePoll = setInterval(() => this.checkIn(), PRESENCE_MS);
+    // worker-driven, so a background tab keeps its heartbeat inside the 20 s timeout (desk-keeper)
+    this._stopPoll = backgroundTicker(POLL_MS, () => this.poll());
+    this._stopPresence = backgroundTicker(PRESENCE_MS, () => this.checkIn());
     this._chatPoll = setInterval(() => this.pollChat(), CHAT_POLL_MS);
     // last activity, so admins can see who's AFK with the dashboard left open
     this._activity = () => {
       this._lastActive = Date.now();
+      // the 4-hour AFK warning is up: tell the server right away instead of at the next heartbeat
+      if (this.state.afkWarning && !this._afkCheck) {
+        this._afkCheck = setTimeout(() => {
+          this._afkCheck = null;
+          this.checkIn();
+        }, 1000);
+      }
     };
     ['pointerdown', 'pointermove', 'keydown', 'wheel'].forEach((ev) =>
       window.addEventListener(ev, this._activity, { passive: true }),
     );
-    // closing the tab: tell the server right away instead of waiting for the timeout
-    this._leave = () => {
-      if (!FEATURES.presence || this.props.admin || !this.state.online) return;
-      try {
-        navigator.sendBeacon(
-          '/api/teammate/presence',
-          new Blob(
-            [
-              JSON.stringify({
-                csrf: this.props.csrf,
-                action: 'set',
-                online: false,
-              }),
-            ],
-            { type: 'application/json' },
-          ),
-        );
-      } catch {}
-    };
-    window.addEventListener('pagehide', this._leave);
+    // No "offline" beacon on pagehide: it also fired when moving to another page of the site.
+    // The other pages keep the heartbeat going (desk-keeper); closing the last tab goes offline
+    // through the 20 s heartbeat timeout.
     this._bell = new Audio('/assets/sounds/order-bell.wav');
     this._bell.preload = 'auto';
     this._ping = newChatPing();
@@ -636,11 +638,14 @@ export default class Teammate extends React.Component {
       if (!ok || this._disposed || presenceVersion !== this._presenceVersion)
         return;
       if (data.online) {
+        const afkWarning = data.afkIn != null && data.afkIn <= AFK_WARN_SECONDS;
+        if (afkWarning) showAfkWarning(data.afkIn);
         this.setState(
           {
             online: true,
             onlineSince: data.onlineSince || Date.now(),
             forced: null,
+            afkWarning,
           },
           () => this.poll(),
         );
@@ -650,6 +655,7 @@ export default class Teammate extends React.Component {
           online: false,
           queue: [],
           forced: data.forcedOffline,
+          afkWarning: false,
         });
       }
     } catch {}
@@ -686,15 +692,15 @@ export default class Teammate extends React.Component {
   componentWillUnmount() {
     this._disposed = true;
     clearInterval(this._tick);
-    clearInterval(this._poll);
-    clearInterval(this._presencePoll);
+    this._stopPoll?.();
+    this._stopPresence?.();
+    clearTimeout(this._afkCheck);
     clearInterval(this._chatPoll);
     clearInterval(this._stats);
     clearTimeout(this._toastT);
     ['pointerdown', 'pointermove', 'keydown', 'wheel'].forEach((ev) =>
       window.removeEventListener(ev, this._activity),
     );
-    window.removeEventListener('pagehide', this._leave);
     this.clearChatTimers();
     if (this._bell) this._bell.pause();
   }
@@ -709,30 +715,9 @@ export default class Teammate extends React.Component {
       .catch(() => {});
   }
   // Desktop notification for a new order (the bell already plays, so the notification stays silent).
+  // Shared with the other pages (desk-keeper): one popup per order across open tabs.
   notify(o) {
-    if (
-      typeof Notification === 'undefined' ||
-      Notification.permission !== 'granted'
-    )
-      return;
-    try {
-      const title =
-        o.title +
-        (o.games > 1 ? ' ×' + o.games : '') +
-        ' · ' +
-        gameOf(o.game).name;
-      const n = new Notification('New Order Available!', {
-        body: 'New Order: ' + title + '\nPrice: ' + money(o.payout),
-        icon: '/assets/brand/logo-full.webp',
-        // one tag per order: a shared tag only replaces the previous popup quietly, so the next order wouldn't pop up
-        tag: 'duoly-order-' + (o.id || Date.now()),
-        silent: true,
-      });
-      n.onclick = () => {
-        window.focus();
-        n.close();
-      };
-    } catch (e) {}
+    showOrderNotification(o);
   }
   // "Test" in queue settings: the same bell and a sample popup, worded as a preview, so teammates
   // know what a new order looks and sounds like (and can check their volume and notification settings).
@@ -835,6 +820,7 @@ export default class Teammate extends React.Component {
           })
         : [];
       this._seen = data.queue.map((order) => order.id);
+      saveSeenOrders(this._seen);
       if (fresh.length) {
         this.playBell();
         fresh.forEach((order) => this.notify(order));
@@ -1696,11 +1682,16 @@ export default class Teammate extends React.Component {
       smallKnob: knobStyle(false),
       toggleOnline: () => this.setOnline(!this.state.online),
       offlineBlocked: s.offlineBlocked,
-      forcedNotice: s.forced
-        ? 'An admin set you offline' +
-          (s.forced.reason ? ' (' + s.forced.reason.toLowerCase() + ')' : '') +
-          '. Go online again when you’re back.'
-        : '',
+      forcedNotice: !s.forced
+        ? ''
+        : s.forced.reason === AFK_OFFLINE_REASON && !s.forced.by
+          ? 'You were set offline after 4 hours without any activity. Go online again when you’re back.'
+          : 'An admin set you offline' +
+            (s.forced.reason
+              ? ' (' + s.forced.reason.toLowerCase() + ')'
+              : '') +
+            '. Go online again when you’re back.',
+      afkWarning: s.online && s.afkWarning,
       notice: s.notice,
       toast: s.toast || '',
       clearNotice: () => this.setState({ notice: '' }),
@@ -3030,6 +3021,26 @@ export default class Teammate extends React.Component {
                       <path d="M12 8v5M12 16.5v.5" />
                     </svg>
                     {v.forcedNotice}
+                  </p>
+                ) : null}
+                {v.afkWarning ? (
+                  <p
+                    role="alert"
+                    data-afk-warning
+                    style={{
+                      margin: '14px 0 0',
+                      padding: '10px 12px',
+                      borderRadius: '12px',
+                      background: 'rgba(255, 210, 122, .1)',
+                      border: '1px solid rgba(255, 210, 122, .35)',
+                      fontSize: '13.5px',
+                      color: '#FFE7B8',
+                      maxWidth: '520px',
+                    }}
+                  >
+                    Still there? You’ll go offline in a few minutes because
+                    there’s been no activity for almost 4 hours. Click or press
+                    any key to stay online.
                   </p>
                 ) : null}
               </div>
