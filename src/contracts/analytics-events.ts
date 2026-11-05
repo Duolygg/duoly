@@ -55,6 +55,7 @@ export const EVENT_CATALOGUE = {
     mood: 'slug',
     stream: 'bool',
   },
+  creator_code_applied: { source: ['typed', 'link'], valid: 'bool' },
   checkout_resumed: {},
   checkout_failed: {
     status_bucket: ['4xx', '5xx', 'network'],

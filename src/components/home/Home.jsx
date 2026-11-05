@@ -9,6 +9,7 @@ import { track } from '../../client/analytics/track';
 const fetch = () => Promise.resolve(new Response('{}', { status: 404 }));
 
 import React from 'react';
+import CreatorCode from '../checkout/CreatorCode';
 import {
   IGN_LABEL,
   GAME,
@@ -1069,7 +1070,11 @@ export default class Home extends React.Component {
     const pro = this.props.pro || null;
     const proMember = !!(pro && pro.member);
     const proOff = proMember ? Math.round((sub - save) * 10) / 100 : 0;
-    const total = sub - save - proOff;
+    const creatorPreview =
+      s.creatorPreview?.currency === cur ? s.creatorPreview : null;
+    const total = creatorPreview
+      ? creatorPreview.amountMinor / 100
+      : sub - save - proOff;
     // Free monthly coaching (Platinum and Diamond): one coaching session of 1 game or 1 hour.
     const perks = s.perks;
     const fc = perks && perks.freeCoaching;
@@ -1383,6 +1388,9 @@ export default class Home extends React.Component {
           ...(rank ? { rank } : {}),
           ...(byName ? { edition: st.mcEdition || MC_EDITIONS[0] } : {}),
           ign,
+          ...(st.creatorCode !== undefined
+            ? { creatorCode: st.creatorCode }
+            : {}),
           note: (st.orderNote || '').trim(),
           voice: g.id === 'social' || !!st.voice,
           ...(st.mood && g.id !== 'social' ? { mood: st.mood } : {}),
@@ -1473,6 +1481,24 @@ export default class Home extends React.Component {
       closeConfirm: () => {
         if (!this.state.placing) this.setState({ confirmOpen: false });
       },
+      creatorSelection: {
+        gameId: g.id,
+        serviceId: sel.id,
+        units: s.qty,
+        server: byName ? (s.mcServer || '').trim() : server[0],
+        ...(rank ? { rank } : {}),
+        ...(byName ? { edition: s.mcEdition || MC_EDITIONS[0] } : {}),
+        ign: 'Preview',
+        useWallet: false,
+      },
+      creatorOriginal: s.creatorPreview
+        ? money(s.creatorPreview.originalMinor / 100)
+        : null,
+      creatorSaving: s.creatorPreview
+        ? money(s.creatorPreview.discountMinor / 100)
+        : null,
+      creatorDiscountKind: s.creatorPreview?.discountKind,
+      appliedCreatorCode: s.appliedCreatorCode,
       confirmTotal: freeOn ? 'Free' : money(amount),
       confirmPay: payLabel,
       confirmCur: cur,
@@ -5345,9 +5371,35 @@ export default class Home extends React.Component {
                       color: '#FFFFFF',
                     }}
                   >
-                    {v.confirmTotal}
+                    {v.creatorSaving && (
+                      <del
+                        style={{
+                          display: 'block',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          color: '#A79DC4',
+                        }}
+                      >
+                        {v.creatorOriginal}
+                      </del>
+                    )}
+                    <span data-checkout-total="">{v.confirmTotal}</span>
                   </div>
                 </div>
+                {v.creatorSaving && (
+                  <p
+                    style={{
+                      margin: '8px 0 0',
+                      fontSize: '13px',
+                      color: '#5EEAA8',
+                    }}
+                  >
+                    {v.creatorDiscountKind === 'pro'
+                      ? 'PRO discount'
+                      : `Creator code ${v.appliedCreatorCode}`}{' '}
+                    saves you {v.creatorSaving}
+                  </p>
+                )}
               </div>
 
               <div
@@ -5680,6 +5732,32 @@ export default class Home extends React.Component {
                   </label>
                 </div>
 
+                {this.props.onCheckout && !v.freeOn && (
+                  <CreatorCode
+                    initialCode={
+                      this.state.creatorCode ??
+                      this.props.initialCreatorCode ??
+                      ''
+                    }
+                    explicit={this.state.creatorCode !== undefined}
+                    csrf={this.props.csrf}
+                    selection={v.creatorSelection}
+                    currency={v.confirmCur}
+                    onChange={(
+                      creatorCode,
+                      creatorValid,
+                      creatorPreview,
+                      appliedCreatorCode,
+                    ) =>
+                      this.setState({
+                        creatorCode,
+                        creatorValid,
+                        creatorPreview,
+                        appliedCreatorCode,
+                      })
+                    }
+                  />
+                )}
                 <div>
                   <div
                     style={{

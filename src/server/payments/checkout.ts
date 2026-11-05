@@ -6,6 +6,7 @@ import { mutation } from '../auth/handlers';
 import { accountContext } from '../auth/context';
 import { calculateQuote } from '../pricing';
 import { checkoutRefCode } from '../referrals';
+import { selectCreatorCode } from '../creators/code';
 import { proEnabled } from '../pro/config';
 import { applyOrderDiscounts } from '../pro/discounts';
 import { isProMember } from '../pro/status';
@@ -42,6 +43,7 @@ export const CheckoutRequestSchema = z
     voice: z.boolean().optional(),
     // How the session should feel; left out means no preference (20261101120000_order_moods).
     mood: MoodSchema.optional(),
+    creatorCode: z.string().max(40).optional(),
     useWallet: z.boolean().default(true),
     // Platinum and Diamond: this month's free 1-hour coaching (migration 20261026160000).
     // The free order pays nothing, so it never takes wallet money, a PRO or creator discount.
@@ -430,13 +432,14 @@ export const createCheckout: APIRoute = async (context) => {
         free_perk: true,
       });
     }
-    // Creator code from the server-set referral cookie only; the database resolves it to an
-    // active creator and attributes the customer once the order is paid (ledger #28).
-    // Streaming bookings take no creator code (the streamer's rate is the price); the cookie
-    // stays for the customer's next order.
+    // Explicit input wins, including an empty value to remove the link. No cookie is written.
+    // The existing intent trigger and paid-order trigger resolve and record attribution once.
     const refCode = streamer
       ? null
-      : checkoutRefCode(context.cookies, config.origin.startsWith('https:'));
+      : selectCreatorCode(
+          parsed.data.creatorCode,
+          checkoutRefCode(context.cookies, config.origin.startsWith('https:')),
+        );
     // First order through an active creator's link: 10% off (decided in the database).
     let creatorEligible = false;
     if (refCode) {

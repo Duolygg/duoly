@@ -18,6 +18,9 @@ const viewer = {
     viewer={viewer}
     csrf="fixture-csrf"
     checkoutEnabled={true}
+    initialCreatorCode={
+      Astro.url.searchParams.has('creator-fixture') ? 'ALPHA' : ''
+    }
     usdRate={1.1}
     accountCurrency="EUR"
     client:load

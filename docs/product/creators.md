@@ -23,6 +23,41 @@ The migration records attribution and calculates commission owed. It never moves
 4. 10% first-order discount: implemented (`20261025240000_referral_first_order_discount.sql`). Checkout applies it on the server when the code belongs to an active creator, the customer has no previous order and no other discounted checkout is open. Duoly covers it: the teammate payout stays computed on the full price; the creator commission is calculated on what the customer paid. The checkout page shows it as its own line.
 5. Payout marking: commission stays recorded per creator and month in admin Creators. Paying creators uses the same manual rail as teammate payouts (bank or Wise with a recorded reference) and is added to the payouts work (money step M2), so there is one payout ledger rather than two.
 
+## Checkout creator code (Workstream A)
+
+The booking confirmation includes one optional **Creator code** field before a payment
+session is created. A consent-allowed creator link pre-fills it and is checked automatically.
+Typing replaces the link; removing sends an explicit empty code for this checkout only.
+A typed code is an explicit customer request, needs no referral cookie or consent, and
+never changes cookie choices. Link capture remains gated by `REFERRALS_ENABLED` and
+referral consent. Withdrawing referral consent clears an unchanged link field.
+
+`POST /api/creators/code/check` uses the signed-in customer, existing CSRF protection,
+a 1 KB body bound and 12 checks per account per minute (bounded per-process burst limit).
+It accepts the booking selection and display currency and returns
+`{valid, displayName, discountPercent, reason, preview}`. For valid codes the preview
+contains the original, discounted and saved minor-unit amounts in EUR or USD, plus
+the exact EUR checkout amount. It uses `buildCheckout` and `applyOrderDiscounts`,
+including server-read PRO membership and server FX, without changing discount rules.
+The confirmation strikes through the original total, shows the saving and uses the
+server amount in both the summary and payment copy. Applied codes are read-only
+with a check icon, a live status and a text-style Remove button.
+Unknown and inactive codes share one refusal. The read never creates an intent or attribution. Checkout
+revalidates independently with the existing eligibility RPC and server pricing.
+
+Rules are unchanged: active creator, no prior order and no outstanding discounted
+intent; 10% after bundle discounts, with the existing EUR 0.99 floor. PRO and creator
+discounts do not stack, with PRO winning a tie. Streaming bookings and free coaching
+remain excluded. The schema has no creator-owner identity or self-referral prohibition,
+so this feature does not invent one. Existing paid-order triggers alone record the
+customer's creator once and preserve the 12-month attribution window. Changing a code
+cannot replace an already established customer attribution.
+
+Analytics adds `creator_code_applied` with only `source: typed | link` and `valid`.
+No code, creator name or customer input is sent to analytics. No migration is needed.
+The code can be checked or removed before continuing; the payment page uses the final
+server-priced checkout intent and does not mutate existing Stripe sessions.
+
 ## Safe deploy order
 
 1. Apply `supabase/migrations/20261025110000_creator_referrals.sql` through the reviewed migration release process while the existing application is still live. The migration only adds schema and does not replace existing functions.

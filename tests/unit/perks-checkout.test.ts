@@ -24,6 +24,8 @@ const state = vi.hoisted(() => ({
   inserted: null as Record<string, unknown> | null,
   perks: null as unknown,
   freeAnswer: null as { data: unknown; error: unknown } | null,
+  eligible: true,
+  pro: true,
   refCode: null as string | null,
 }));
 
@@ -60,13 +62,18 @@ vi.mock('../../src/server/payments/config', () => {
     rpc: async (fn: string, args: Record<string, unknown>) => {
       state.adminCalls.push({ fn, args });
       if (fn === 'create_free_coaching_order') return state.freeAnswer;
+      if (fn === 'streamer_checkout_quote')
+        return {
+          data: { streamerId: SOURCE, name: 'Alpha', rateEurCents: 1500 },
+          error: null,
+        };
       if (fn === 'checkout_reserve_wallet')
         return {
           data: { wallet_eur_cents: 0, card_eur_cents: 599 },
           error: null,
         };
       if (fn === 'referral_first_order_discount_eligible')
-        return { data: true, error: null };
+        return { data: state.eligible, error: null };
       return { data: null, error: null };
     },
     from: (table: string) => {
@@ -122,10 +129,14 @@ vi.mock('../../src/server/pro/config', async (original) => ({
   proEnabled: () => true,
 }));
 vi.mock('../../src/server/pro/status', () => ({
-  isProMember: async () => true,
+  isProMember: async () => state.pro,
 }));
 
-const { createCheckout } = await import('../../src/server/payments/checkout');
+const { createCheckout, buildCheckout, CheckoutRequestSchema } =
+  await import('../../src/server/payments/checkout');
+const baseAmount = () =>
+  buildCheckout(CheckoutRequestSchema.parse(state.body)).row.amount_eur_cents;
+const creatorAmount = () => Math.round(baseAmount() / 10);
 const run = () => createCheckout({ cookies: {} } as never) as Promise<Response>;
 const freeBody = {
   gameId: 'lol',
@@ -146,6 +157,108 @@ beforeEach(() => {
   state.perks = perks('platinum', true);
   state.freeAnswer = { data: { order_id: ORDER, created: true }, error: null };
   state.refCode = 'CREATOR1';
+  state.eligible = true;
+  state.pro = true;
+});
+
+describe('typed creator checkout', () => {
+  it('ignores typed creator codes on streamer bookings even for PRO members', async () => {
+    state.body = {
+      ...freeBody,
+      freePerk: false,
+      serviceId: 'stream',
+      streamer: SOURCE,
+      creatorCode: 'ALPHA',
+    };
+    expect((await run()).status).toBe(200);
+    expect(state.inserted).toMatchObject({
+      amount_eur_cents: 1500,
+      first_order_discount_cents: 0,
+      streamer_id: SOURCE,
+    });
+    expect(state.inserted).not.toHaveProperty('ref_code');
+    expect(state.inserted).not.toHaveProperty('pro_discount_cents');
+    expect(state.adminCalls.map((call) => call.fn)).toEqual([
+      'streamer_checkout_quote',
+    ]);
+  });
+  it('ignores typed creator codes on free coaching', async () => {
+    state.body = { ...freeBody, creatorCode: 'ALPHA' };
+    expect((await run()).status).toBe(200);
+    expect(state.inserted).toMatchObject({
+      ref_code: null,
+      first_order_discount_cents: 0,
+    });
+    expect(state.stripeCalls).toBe(0);
+  });
+  it('normalizes typed input over a link and recomputes discounted money on the server', async () => {
+    state.body = { ...freeBody, freePerk: false, creatorCode: ' beta ' };
+    state.pro = false;
+    expect((await run()).status).toBe(200);
+    expect(state.inserted).toMatchObject({
+      ref_code: 'BETA',
+      amount_eur_cents: baseAmount() - creatorAmount(),
+      first_order_discount_cents: creatorAmount(),
+    });
+    expect(
+      state.adminCalls.filter(
+        (call) => call.fn === 'referral_first_order_discount_eligible',
+      ),
+    ).toEqual([
+      {
+        fn: 'referral_first_order_discount_eligible',
+        args: {
+          p_customer: 'b5000000-0000-4000-8000-000000000001',
+          p_code: 'BETA',
+        },
+      },
+    ]);
+    // Attribution remains exclusively in the existing paid-order database trigger.
+    expect(
+      state.adminCalls.some((call) => /attribut|referral_record/.test(call.fn)),
+    ).toBe(false);
+  });
+  it('explicit removal suppresses the link and does not query eligibility', async () => {
+    state.body = { ...freeBody, freePerk: false, creatorCode: '' };
+    state.pro = false;
+    expect((await run()).status).toBe(200);
+    expect(state.inserted).not.toHaveProperty('ref_code');
+    expect(state.inserted).toMatchObject({
+      amount_eur_cents: baseAmount(),
+      first_order_discount_cents: 0,
+    });
+    expect(state.adminCalls).toEqual([]);
+  });
+  it('a typed code needs no link cookie', async () => {
+    state.refCode = null;
+    state.body = { ...freeBody, freePerk: false, creatorCode: 'ALPHA' };
+    state.pro = false;
+    expect((await run()).status).toBe(200);
+    expect(state.inserted).toMatchObject({
+      ref_code: 'ALPHA',
+      first_order_discount_cents: creatorAmount(),
+    });
+  });
+  it('an ineligible code still allows undiscounted checkout', async () => {
+    state.body = { ...freeBody, freePerk: false, creatorCode: 'ALPHA' };
+    state.pro = false;
+    state.eligible = false;
+    expect((await run()).status).toBe(200);
+    expect(state.inserted).toMatchObject({
+      amount_eur_cents: baseAmount(),
+      first_order_discount_cents: 0,
+    });
+  });
+  it('does not accept client totals', async () => {
+    state.body = {
+      ...freeBody,
+      freePerk: false,
+      creatorCode: 'ALPHA',
+      amount_eur_cents: 1,
+    };
+    expect((await run()).status).toBe(400);
+    expect(state.inserted).toBeNull();
+  });
 });
 
 describe('free coaching checkout', () => {

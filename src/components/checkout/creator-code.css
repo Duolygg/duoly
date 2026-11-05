@@ -1,0 +1,90 @@
+.creator-code {
+  padding: 0;
+  color: #cfc4ea;
+  font-size: 13px;
+}
+.creator-code label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.creator-code label span {
+  font-weight: 500;
+  color: #6a6086;
+}
+.creator-code p {
+  margin: 6px 0 0;
+}
+.creator-code-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.creator-code-field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.creator-code-controls input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 48px;
+  min-height: 48px;
+  background: #090414;
+  border: 1px solid rgba(196, 170, 255, 0.18);
+  border-radius: 14px;
+  padding: 0 14px;
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+}
+.creator-code-controls input[readonly] {
+  border-color: rgba(94, 234, 168, 0.5);
+  padding-right: 36px;
+}
+.creator-code-check {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #5eeaa8;
+}
+.creator-code-controls button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #59446f;
+  border-radius: 10px;
+  background: #24163c;
+  color: #f3eeff;
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.creator-code-controls .creator-code-remove {
+  background: transparent;
+  border-color: transparent;
+  padding: 8px 4px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.creator-code-controls button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.creator-code input:focus-visible,
+.creator-code button:focus-visible {
+  outline: 2px solid #d6bbff;
+  outline-offset: 2px;
+}
+.creator-code .creator-code-success {
+  color: #5eeaa8;
+}
+@media (max-width: 359px) {
+  .creator-code-controls {
+    flex-wrap: wrap;
+  }
+  .creator-code-field {
+    flex-basis: 100%;
+  }
+}
