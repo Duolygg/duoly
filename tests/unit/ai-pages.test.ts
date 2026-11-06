@@ -23,9 +23,11 @@ describe('AI page public contract', () => {
     expect(AI_ASSISTANTS).toHaveLength(5);
     expect(
       AI_ASSISTANTS.find((assistant) => assistant.name === 'Claude')?.status,
-    ).toBe('Coming soon');
+    ).toBe(AI_CONNECTOR_LIVE ? 'Add it yourself' : 'Coming soon');
     expect(
-      AI_ASSISTANTS.every((assistant) => assistant.status === 'Coming soon'),
+      AI_ASSISTANTS.filter((assistant) => assistant.name !== 'Claude').every(
+        (assistant) => assistant.status === 'Coming soon',
+      ),
     ).toBe(true);
   });
   it('keeps the exercised quote example aligned with authoritative pricing', () => {
@@ -83,9 +85,8 @@ describe('AI page public contract', () => {
       }
     },
   );
-  it('keeps the pending consumer page out of the sitemap contract', () => {
-    expect(AI_CONNECTOR_LIVE).toBe(false);
-    expect(INDEXABLE_PATHS).not.toContain('/ai');
+  it('aligns sitemap membership with the configured launch state', () => {
+    expect(INDEXABLE_PATHS.includes('/ai')).toBe(AI_CONNECTOR_LIVE);
     expect(INDEXABLE_PATHS).toContain('/developers/mcp');
     for (const path of ['/ai', '/developers/mcp']) {
       expect(CONTENT_DATES[path]).toBe('2026-11-06');
