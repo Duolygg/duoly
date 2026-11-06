@@ -1,3 +1,5 @@
+import { intentPages, intentPath } from '../content/intent-pages';
+
 export const COACHING_SLUGS = [
   'valorant',
   'league-of-legends',
@@ -19,12 +21,18 @@ export const INDEXABLE_PATHS = [
   '/games/social',
   '/get-paid-to-play-games',
   GUIDE_PATH,
+  ...intentPages.map(intentPath),
   ...COACHING_SLUGS.map((slug) => `/games/${slug}/coaching`),
 ];
 // Content revision dates, shared by sitemap and editorial metadata. Never request time.
 export const CONTENT_DATES: Record<string, string> = Object.fromEntries(
   INDEXABLE_PATHS.map((path) => [path, '2026-11-05']),
 );
+Object.assign(CONTENT_DATES, {
+  '/games/league-of-legends/play-with-someone': '2026-11-06',
+  '/games/marvel-rivals/duo-partner': '2026-11-06',
+  '/games/pokemon-unite/teammate': '2026-11-06',
+});
 export function serializeJsonLd(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }

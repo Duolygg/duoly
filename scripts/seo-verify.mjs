@@ -2,6 +2,8 @@
 import { spawn } from 'node:child_process';
 import { setTimeout } from 'node:timers/promises';
 import process from 'node:process';
+const base = `http://127.0.0.1:${process.env.SEO_PORT || 4381}`;
+process.env.SEO_BASE = base;
 const server = spawn(process.execPath, ['scripts/seo-preview.mjs'], {
   stdio: 'inherit',
 });
@@ -14,7 +16,7 @@ try {
   let ready = false;
   for (let i = 0; i < 60; i++) {
     if (server.exitCode !== null) throw new Error('Production preview exited');
-    ready = await fetch('http://127.0.0.1:4381/robots.txt')
+    ready = await fetch(`${base}/robots.txt`)
       .then((r) => r.ok)
       .catch(() => false);
     if (ready) break;

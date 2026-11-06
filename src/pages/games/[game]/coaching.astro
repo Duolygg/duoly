@@ -11,6 +11,7 @@ import ClosingCta from '../../../components/seo/ClosingCta.astro';
 import { rich } from '../../../components/seo/rich';
 import '../../../components/seo/seo.css';
 import { lessons } from '../../../content/coaching';
+import { intentForGame, intentPath } from '../../../content/intent-pages';
 import { gameBySlug } from '../../../site/games';
 import { pageViewer } from '../../../site/viewer';
 import { viewerCurrency } from '../../../server/currency';
@@ -145,6 +146,11 @@ const description = descriptions[game.slug]!;
       <h2>Keep exploring</h2>
       <div class="chips">
         <a href={`/games/${game.slug}`}>{game.name} teammates</a>
+        {intentForGame(game.slug) && (
+          <a href={intentPath(intentForGame(game.slug)!)}>
+            {game.name} play-together sessions
+          </a>
+        )}
         <a href="/games">All games and coaching</a>
         {related[game.slug]!.filter((slug) =>
           COACHING_SLUGS.includes(slug as (typeof COACHING_SLUGS)[number]),

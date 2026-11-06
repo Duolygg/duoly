@@ -108,6 +108,60 @@ test('sitemap has exactly the indexable self-canonical 200 URLs in both directio
     sitemapEntries.length,
   );
 });
+const intentRoutes = [
+  ['league-of-legends', 'play-with-someone', 'lol', 'norm'],
+  ['marvel-rivals', 'duo-partner', 'mr', 'quick'],
+  ['pokemon-unite', 'teammate', 'pu', 'quick'],
+];
+for (const [game, slug, id, serviceId] of intentRoutes) {
+  const path = `/games/${game}/${slug}`;
+  test(`intent page content, prices, booking and editorial links: ${path}`, () => {
+    const page = pages[path];
+    assert(page, `crawl discovered ${path}`);
+    const service = page.schemas.find(
+      (schema) => schema['@type'] === 'Service',
+    );
+    assert(service && service.offers.length > 0);
+    link('/games', path);
+    link(`/games/${game}`, path);
+    for (const [other, otherSlug] of intentRoutes) {
+      if (other !== game) {
+        const target = `/games/${other}/${otherSlug}`;
+        assert(page.editorialLinks.includes(target));
+      }
+    }
+    if (game !== 'pokemon-unite') link(`/games/${game}/coaching`, path);
+    const html = readFileSync(
+      `.vercel/seo-audit/${path.slice(1).replaceAll('/', '__')}.html`,
+      'utf8',
+    );
+    // Price cards contain nested articles. Slice through the outer closing article.
+    const start = html.search(/<article\b[^>]*\bdata-intent-page(?:\s|=|>)/);
+    assert(start >= 0, 'server-rendered intent article');
+    const content = html.slice(start, html.lastIndexOf('</article>'));
+    const text = content
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&#\d+;|&[a-z]+;/gi, ' ');
+    const wordCount = text.trim().split(/\s+/).length;
+    assert(
+      wordCount >= 600 && wordCount <= 1000,
+      `${path}: ${wordCount} words`,
+    );
+    assert((html.match(/<details/g) || []).length >= 5, 'visible FAQs');
+    assert.match(
+      html,
+      new RegExp(`game=${id}(?:&amp;|&)service=${serviceId}#modes-h`),
+    );
+    assert.match(html, /data-cta="closing"/);
+    assert.equal(
+      sitemapEntries.find((entry) => entry.url === `https://duoly.gg${path}`)
+        .lastmod,
+      '2026-11-06',
+    );
+  });
+}
+
 test('all crawled internal anchor targets resolve without a 404', () => {
   for (const [path, p] of Object.entries(pages))
     assert(p.status < 400, `${path}: ${p.status}`);
