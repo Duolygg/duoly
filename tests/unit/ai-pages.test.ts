@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   AI_ASSISTANTS,
   AI_CONNECTOR_LIVE,
@@ -62,6 +62,27 @@ describe('AI page public contract', () => {
       live ? 'Available in Claude' : 'Launching soon in Claude',
     );
   });
+  it.each([false, true])(
+    'renders sitemap visibility when live is %s',
+    async (live) => {
+      vi.resetModules();
+      vi.doMock('../../src/site/ai', () => ({
+        aiLaunchState: () => aiLaunchState(live),
+      }));
+      try {
+        const { GET } = await import('../../src/pages/sitemap.xml');
+        const response = await GET({
+          site: new URL('https://duoly.gg'),
+        } as Parameters<typeof GET>[0]);
+        expect(
+          (await response.text()).includes('https://duoly.gg/ai</loc>'),
+        ).toBe(live);
+      } finally {
+        vi.doUnmock('../../src/site/ai');
+        vi.resetModules();
+      }
+    },
+  );
   it('keeps the pending consumer page out of the sitemap contract', () => {
     expect(AI_CONNECTOR_LIVE).toBe(false);
     expect(INDEXABLE_PATHS).not.toContain('/ai');

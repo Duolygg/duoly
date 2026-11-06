@@ -164,6 +164,9 @@
   font-weight: 400;
   color: #cfc4ea;
 }
+.ai-boundaries {
+  grid-auto-rows: 1fr;
+}
 .ai-boundaries ul {
   margin: 16px 0 0;
   padding-left: 20px;
