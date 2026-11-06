@@ -59,7 +59,7 @@ test('original Rewards screen shows live level, received gifts and pending cashb
   await expect(rewards).not.toContainText('Claim');
 });
 
-test('Gold priority matching is live while later perks stay coming soon until the server has perks', async ({
+test('Gold re-rolls are live while later perks stay coming soon until the server has perks', async ({
   page,
 }) => {
   const dashboard = new Dashboard({
@@ -70,11 +70,8 @@ test('Gold priority matching is live while later perks stay coming soon until th
   await page.setContent(renderToStaticMarkup(dashboard.render()));
 
   const rewards = page.locator('#rewards');
-  await expect(
-    rewards
-      .locator('li')
-      .filter({ has: page.getByText('Priority matching', { exact: true }) }),
-  ).not.toContainText('coming soon');
+  // "Priority matching" was removed from the Gold perks on 2026-11-06 (owner decision).
+  await expect(rewards).not.toContainText('Priority matching');
   await expect(rewards).not.toContainText('Pick any teammate');
   await expect(
     rewards.locator('li').filter({ hasText: '4 free re-rolls' }),
