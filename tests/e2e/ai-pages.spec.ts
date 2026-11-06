@@ -66,7 +66,11 @@ test('developer guide explains distinct protocol flows and limits', async ({
     page.getByText('server/discover', { exact: true }),
   ).toBeVisible();
   await expect(page.locator('.ai-table tbody tr')).toHaveCount(5);
-  const text = await page.locator('article').innerText();
+  const text = await page.locator('article').evaluate((article) => {
+    const prose = article.cloneNode(true) as HTMLElement;
+    prose.querySelectorAll('pre, code').forEach((node) => node.remove());
+    return prose.innerText || prose.textContent || '';
+  });
   expect(text).toContain('16,384');
   expect(text).toContain('65,536');
   expect(text).toContain('does not preserve rank, region, quantity or edition');

@@ -6,7 +6,7 @@ export function aiLaunchState(live: boolean = AI_CONNECTOR_LIVE) {
     indexing: live ? 'index, follow' : 'noindex, follow',
     indexablePaths: live ? ['/ai'] : [],
     showSetup: live,
-  };
+  } as const;
 }
 
 // Public documentation contract. Update alongside the server before launch.
