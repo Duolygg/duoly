@@ -125,9 +125,21 @@ const book = bookingHref(game.id, { service: page.service });
 </SiteLayout>
 
 <style>
-  :global(nav[aria-label='Breadcrumb'] li) {
+  [data-intent-page] :global(nav[aria-label='Breadcrumb'] ol) {
+    gap: 4px 10px;
+  }
+  [data-intent-page] :global(nav[aria-label='Breadcrumb'] li) {
     white-space: nowrap;
     display: inline-block;
+  }
+  [data-intent-page] :global(nav[aria-label='Breadcrumb'] li + li::before) {
+    content: none;
+  }
+  [data-intent-page]
+    :global(nav[aria-label='Breadcrumb'] li:not(:last-child)::after) {
+    content: '/';
+    margin-left: 10px;
+    color: #8e84ab;
   }
   [data-intent-page] > section > p {
     max-width: 75ch;
