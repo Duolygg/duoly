@@ -39,6 +39,11 @@ export interface OrderChatProps {
   assignmentId?: string;
   view: 'customer' | 'teammate' | 'admin';
   onOrderChanged?: () => void;
+  /**
+   * Team orders (20261106190000): every seat's chat carries the whole group's messages, so the
+   * header says "Team chat" and names everyone in instead of one participant.
+   */
+  team?: { names: string[] };
 }
 
 function Avatar({ name, image }: { name: string; image: string }) {
@@ -84,9 +89,11 @@ export function ChatTranscript({
             </div>
           );
         const previous = room.messages[index - 1];
+        // Two teammates of a team ('mate') in a row stay apart: same sender AND same name.
         const grouped =
           previous?.kind === 'user' &&
           previous.sender === message.sender &&
+          previous.name === message.name &&
           Date.parse(message.created_at) - Date.parse(previous.created_at) <
             180000;
         const own = message.sender === view;
@@ -151,6 +158,7 @@ type ConversationProps = {
   onBottom?: () => void;
   onScroll?: () => void;
   listRef?: RefObject<HTMLDivElement | null>;
+  team?: OrderChatProps['team'];
 };
 
 /** Pure DTO-driven view also used by SSR/visual fixtures; never accepts tokens. */
@@ -170,6 +178,7 @@ export function ChatConversation({
   onBottom,
   onScroll,
   listRef,
+  team,
 }: ConversationProps) {
   const id = useId();
   const [emojiOpen, setEmojiOpen] = useState(false);
@@ -207,16 +216,22 @@ export function ChatConversation({
         <div className="oc-heading">
           <span className="oc-eyebrow">Session chat</span>
           <h2 id={`${id}-title`}>
-            {room?.participant
-              ? `Chat with ${room.participant.name}`
-              : 'Your conversation'}
+            {team
+              ? 'Team chat'
+              : room?.participant
+                ? `Chat with ${room.participant.name}`
+                : 'Your conversation'}
           </h2>
           <p>
-            {room?.participant
-              ? room.participant.role === 'teammate'
-                ? 'Your teammate'
-                : 'Your customer'
-              : 'Just you and your teammate'}{' '}
+            {team
+              ? team.names.length
+                ? `You, ${team.names.join(', ')}`
+                : 'Your whole team'
+              : room?.participant
+                ? room.participant.role === 'teammate'
+                  ? 'Your teammate'
+                  : 'Your customer'
+                : 'Just you and your teammate'}{' '}
             <span aria-hidden="true">·</span> <span>{connection}</span>
           </p>
         </div>
@@ -501,6 +516,7 @@ function ChatSession({
   view,
   onOrderChanged,
   onArchive,
+  team,
 }: OrderChatProps & { onArchive: (id: string) => void }) {
   const [room, setRoom] = useState<ChatRoom | null>(null);
   const [draft, setDraft] = useState('');
@@ -827,6 +843,7 @@ function ChatSession({
       typing={typing}
       hasNew={hasNew}
       listRef={listRef}
+      team={team}
       onDraft={(text) => actions.current?.draft(text)}
       onSend={() => actions.current?.send()}
       onRetry={() => actions.current?.send(true)}

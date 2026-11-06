@@ -489,7 +489,7 @@ describe('Sparky lookup tools on the asker’s own data', () => {
     );
     expect(faq.status).toBe('ok');
     const text = JSON.stringify(faq.output);
-    expect(text).toMatch(/nothing is charged/i);
+    expect(text).toMatch(/back to your Duoly balance/i);
     expect(text).toContain('current fact');
     expect(text).toContain('override');
     // Teammate-only knowledge never reaches a guest.

@@ -50,6 +50,10 @@ import { flagSrc } from '../../design-reference/lib/countries';
 import { DISCORD_INVITE } from '../../site/nav';
 import { HEART } from '../account/FavoriteHeart';
 import { freeCoachingFits, monthName, LEVEL_NAMES } from '../shared/perks';
+import { seatRule } from '../../contracts/seats';
+import { characterLabel, rolesFor } from '../../contracts/roles';
+
+const ORDINAL = ['', '1st', '2nd', '3rd', '4th', '5th', '6th'];
 // What the customer picked before logging in, so it survives the Discord/Google redirect
 const PENDING_KEY = 'duoly-pending-queue';
 
@@ -92,7 +96,6 @@ export default class Home extends React.Component {
       wallet: 0,
       pay: 'apple',
       voice: true,
-      same: false,
       queued: false,
       cur: initCur || initAuto,
       curManual: !!initCur,
@@ -585,6 +588,21 @@ export default class Home extends React.Component {
         .sort((a, b) => Number(a.id === 'social') - Number(b.id === 'social'))
     );
   }
+  // Team orders (docs/product/team-orders.md): how many teammates this booking has. A bundle is
+  // the game's main service, always one teammate.
+  seatsOf(gameId, serviceId, state) {
+    const rule = state.bundle
+      ? { min: 1, max: 1, default: 1 }
+      : seatRule(gameId, serviceId);
+    const seats = Math.min(
+      rule.max,
+      Math.max(rule.min, state.seats || rule.default),
+    );
+    return { rule, seats, factor: rule.groupPrice ? 1 : seats };
+  }
+  rolesOf(gameId, serviceId, state) {
+    return state.bundle ? [] : rolesFor(gameId, serviceId);
+  }
   renderVals() {
     const s = this.state;
     const cur = s.cur || 'EUR';
@@ -605,6 +623,12 @@ export default class Home extends React.Component {
     const rank =
       ranks.indexOf(s.rank) >= 0 ? s.rank : defaultRank(g.id, sel.id);
     const priceOf = (m) => rankPrice(g.id, m.id, m.price, rank);
+    const team = this.seatsOf(g.id, sel.id, s);
+    // the customer's role (owner-approved 2026-11-06): Fill/Flex/Any, the last one, is preselected
+    const roles = this.rolesOf(g.id, sel.id, s);
+    const role = roles.includes(s.role) ? s.role : roles[roles.length - 1];
+    // coaching in games with characters: "Champion", "Agent"… (optional free text)
+    const charLabel = s.bundle ? '' : characterLabel(g.id, sel.cat);
     const disc = { 1: 0, 3: 0.1, 5: 0.15, 10: 0.25 };
     const check = (a) =>
       'flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; ' +
@@ -645,7 +669,13 @@ export default class Home extends React.Component {
               ? 'background: linear-gradient(90deg, rgba(255, 79, 176, .1), #120B22 60%); border: 1.5px solid rgba(255, 79, 176, .22);'
               : 'background: #120B22; border: 1.5px solid rgba(196, 170, 255, .08);'),
         pick: () => {
-          this.setState({ game: x.id, rank: '', queued: false });
+          this.setState({
+            game: x.id,
+            rank: '',
+            role: null,
+            character: '',
+            queued: false,
+          });
           track('game_selected', { game: x.id, surface: 'home' });
         },
       };
@@ -676,6 +706,9 @@ export default class Home extends React.Component {
             mode: m.id,
             bundle: null,
             qty: m.unit === 'hour' ? 1 : s.qty,
+            // a new service starts at its own default number of teammates
+            seats: null,
+            character: '',
             queued: false,
           });
         },
@@ -755,16 +788,17 @@ export default class Home extends React.Component {
         ? s.tab
         : sets.duo.length
           ? 'duo'
-          : ['gg', 'bundles', 'social', 'training', 'other'].find(
+          : ['other', 'training', 'social', 'gg', 'bundles'].find(
               (id) => sets[id].length,
             ) || 'duo';
+    // High-elo services first, then the Gamer Girl ones, bundles last (owner decision 2026-11-06)
     const tabs = [
       ['duo', 'Duo'],
-      ['bundles', 'Bundles'],
-      ['gg', 'Gamer Girls'],
       ['other', 'Teams'],
-      ['social', 'Social'],
       ['training', 'Coaching'],
+      ['social', 'Social'],
+      ['gg', 'Gamer Girls'],
+      ['bundles', 'Bundles'],
     ]
       .filter(([id]) => sets[id].length)
       .map(([id, label]) => {
@@ -1023,14 +1057,50 @@ export default class Home extends React.Component {
       },
     }));
 
+    // The customer's role, styled like the games picker but wrapping (owner-approved 2026-11-06).
+    const roleOpts = roles.map((r) => ({
+      name: r,
+      pressed: role === r ? 'true' : 'false',
+      style:
+        'flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; white-space: nowrap; ' +
+        (role === r
+          ? 'background: #F3EEFF; color: #17092E;'
+          : 'background: transparent; color: #CFC4EA;'),
+      pick: () => {
+        this.setState({ role: r });
+        // analytics slugs are lowercase ("All-Rounder" -> "all-rounder")
+        track('booking_option_changed', {
+          option: 'role',
+          value: r.toLowerCase().replace(/[^a-z0-9_-]/g, '-'),
+        });
+      },
+    }));
+
+    // Team orders: how many teammates, styled like the games picker (owner-approved 2026-11-06).
+    const seatOpts = [];
+    for (let n = team.rule.min; n <= team.rule.max; n++)
+      seatOpts.push({
+        n: String(n),
+        pressed: team.seats === n ? 'true' : 'false',
+        style:
+          'display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 48px; border-radius: 10px; border: none; ' +
+          (team.seats === n
+            ? 'background: #F3EEFF; color: #17092E;'
+            : 'background: transparent; color: #CFC4EA;'),
+        pick: () => {
+          this.setState({ seats: n });
+          track('booking_option_changed', {
+            option: 'seats',
+            value: String(n),
+          });
+        },
+      });
+
     // Social sessions are a call with one Gamer Girl: always on voice, nothing to toggle.
+    // (The "Same teammate every game" switch was removed on 2026-11-06, owner decision: an order
+    // always stays with the teammate who accepted it, so the switch changed nothing.)
     const toggles = (
-      g.id === 'social'
-        ? []
-        : [
-            ['voice', 'Voice on Discord'],
-            ['same', 'Same teammate every game'],
-          ]
+      g.id === 'social' ? [] : [['voice', 'Voice on Discord']]
     ).map(([k, label]) => {
       const a = !!s[k];
       return {
@@ -1093,7 +1163,8 @@ export default class Home extends React.Component {
     });
     const payLabel = (payList.find((p) => p[0] === s.pay) || payList[0])[1];
 
-    const sub = conv(priceOf(sel)) * s.qty;
+    // per-seat services cost the seat price for every teammate; group prices are the whole group
+    const sub = conv(priceOf(sel)) * team.factor * s.qty;
     // the rank picker: every rank of this service's ladder with its price per unit
     const rankOpts = ranks.map((r) => ({
       name: r,
@@ -1269,6 +1340,44 @@ export default class Home extends React.Component {
       qtyLabel: 'How many ' + unit + 's',
       // a bundle fixes the number of games/hours, so there's nothing to choose
       showQty: !s.bundle && curTab !== 'bundles',
+      // the role picker and, for coaching, the character field
+      showRoles: roles.length > 0,
+      roleOpts,
+      charLabel,
+      // one well-known pick per game for the placeholder
+      charExample:
+        {
+          lol: 'Ahri',
+          val: 'Jett',
+          ow: 'Ana',
+          mr: 'Magneto',
+          apex: 'Wraith',
+          r6: 'Ash',
+          pu: 'Pikachu',
+        }[g.id] || '',
+      character: s.character || '',
+      setCharacter: (e) => this.setState({ character: e.target.value }),
+      // Team orders: the teammates picker, only on services that take more than one
+      showSeats: team.rule.max > 1,
+      seatOpts,
+      seatCols: 'repeat(' + seatOpts.length + ', minmax(0, 1fr))',
+      seatHint:
+        sel.cat === 'other' && ORDINAL[team.seats + 1]
+          ? 'You play the ' + ORDINAL[team.seats + 1] + ' seat'
+          : '',
+      seatLabel:
+        g.id === 'social' ? 'How many Gamer Girls' : 'How many teammates',
+      seatPart:
+        team.seats > 1 && !team.rule.groupPrice
+          ? team.seats +
+            (g.id === 'social' ? ' Gamer Girls × ' : ' teammates × ')
+          : '',
+      seatBar:
+        team.seats > 1
+          ? ' · ' +
+            team.seats +
+            (g.id === 'social' ? ' Gamer Girls' : ' teammates')
+          : '',
       unitPrice: eur(priceOf(sel)),
       subtotal: money(sub),
       saveAmt: money(save),
@@ -1425,10 +1534,27 @@ export default class Home extends React.Component {
       this.setState({ placing: true, placeErr: '' });
       if (this.props.onCheckout) {
         // Live: the server prices the order and opens Stripe checkout.
+        const seats = this.seatsOf(g.id, sel.id, st).seats;
+        // the role (only when one is picked: Fill/Flex/Any, the last, means no preference) and, for
+        // coaching, the character
+        const roleList = this.rolesOf(g.id, sel.id, st);
+        const pickedRole =
+          roleList.indexOf(st.role) >= 0 &&
+          st.role !== roleList[roleList.length - 1]
+            ? st.role
+            : '';
+        const character =
+          !st.bundle && characterLabel(g.id, sel.cat)
+            ? (st.character || '').trim()
+            : '';
         const result = await this.props.onCheckout({
           gameId: g.id,
           serviceId: sel.id,
           units: st.qty,
+          // team orders: several teammates on one order
+          ...(seats > 1 ? { seats } : {}),
+          ...(pickedRole ? { role: pickedRole } : {}),
+          ...(character ? { character } : {}),
           server: byName ? mcServer : server[0],
           ...(rank ? { rank } : {}),
           ...(byName ? { edition: st.mcEdition || MC_EDITIONS[0] } : {}),
@@ -1530,6 +1656,9 @@ export default class Home extends React.Component {
         gameId: g.id,
         serviceId: sel.id,
         units: s.qty,
+        ...(this.seatsOf(g.id, sel.id, s).seats > 1
+          ? { seats: this.seatsOf(g.id, sel.id, s).seats }
+          : {}),
         server: byName ? (s.mcServer || '').trim() : server[0],
         ...(rank ? { rank } : {}),
         ...(byName ? { edition: s.mcEdition || MC_EDITIONS[0] } : {}),
@@ -1567,7 +1696,7 @@ export default class Home extends React.Component {
           ? (cur === 'USD'
               ? 'Prices are set in euros and shown in dollars at today’s ECB rate plus 1%. Checkout shows the exact amount. '
               : '') +
-            'Apple Pay, Google Pay, PayPal, cards and 20+ local methods. Cards, wallets and PayPal are only charged when a teammate accepts.'
+            'Apple Pay, Google Pay, PayPal, cards and 20+ local methods. Charged once when you queue. If nobody takes it, it all goes back to your Duoly balance.'
           : (walletUse > 0 && !allWallet
               ? 'The other ' +
                 money(walletUse) +
@@ -3298,6 +3427,89 @@ export default class Home extends React.Component {
                         ) : null}
                       </div>
                     ) : null}
+                    {v.showRoles ? (
+                      <div
+                        style={{
+                          flex: '1 1 320px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                        }}
+                      >
+                        <span
+                          id="dl-role"
+                          style={{
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            color: '#CFC4EA',
+                          }}
+                        >
+                          Your role
+                        </span>
+                        <div
+                          role="group"
+                          aria-labelledby="dl-role"
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '4px',
+                            padding: '4px',
+                            borderRadius: '14px',
+                            background: '#090414',
+                            border: '1px solid rgba(196, 170, 255, .14)',
+                          }}
+                        >
+                          {v.roleOpts.map((r) => (
+                            <button
+                              key={r.name}
+                              type="button"
+                              onClick={r.pick}
+                              aria-pressed={r.pressed}
+                              style={css(r.style)}
+                            >
+                              {r.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+                    {v.charLabel ? (
+                      <label
+                        style={{
+                          flex: '1 1 220px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          color: '#CFC4EA',
+                        }}
+                      >
+                        <span>
+                          {v.charLabel}{' '}
+                          <span style={{ fontWeight: '500', color: '#6A6086' }}>
+                            · optional
+                          </span>
+                        </span>
+                        <input
+                          type="text"
+                          value={v.character}
+                          onChange={v.setCharacter}
+                          placeholder={'e.g. ' + v.charExample}
+                          maxLength={40}
+                          style={{
+                            minHeight: '48px',
+                            padding: '0 14px',
+                            borderRadius: '14px',
+                            background: '#090414',
+                            border: '1px solid rgba(196, 170, 255, .18)',
+                            color: '#FFFFFF',
+                            fontSize: '15px',
+                            fontFamily: 'inherit',
+                          }}
+                        />
+                      </label>
+                    ) : null}
                     {v.showQty ? (
                       <div
                         style={{
@@ -3363,6 +3575,68 @@ export default class Home extends React.Component {
                             </React.Fragment>
                           ))}
                         </div>
+                      </div>
+                    ) : null}
+                    {v.showSeats ? (
+                      <div
+                        style={{
+                          flex: '1 1 200px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                        }}
+                      >
+                        <span
+                          id="dl-seats"
+                          style={{
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            color: '#CFC4EA',
+                          }}
+                        >
+                          {v.seatLabel}
+                        </span>
+                        <div
+                          role="group"
+                          aria-labelledby="dl-seats"
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: v.seatCols,
+                            gap: '4px',
+                            padding: '4px',
+                            borderRadius: '14px',
+                            background: '#090414',
+                            border: '1px solid rgba(196, 170, 255, .14)',
+                          }}
+                        >
+                          {v.seatOpts.map((q, $index) => (
+                            <React.Fragment key={$index}>
+                              <button
+                                type="button"
+                                onClick={q.pick}
+                                aria-pressed={q.pressed}
+                                style={css(q.style)}
+                              >
+                                <span
+                                  style={{
+                                    fontSize: '15px',
+                                    fontWeight: '700',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  {q.n}
+                                </span>
+                              </button>
+                            </React.Fragment>
+                          ))}
+                        </div>
+                        {v.seatHint ? (
+                          <span
+                            style={{ fontSize: '12.5px', color: '#8E84AB' }}
+                          >
+                            {v.seatHint}
+                          </span>
+                        ) : null}
                       </div>
                     ) : null}
                   </div>
@@ -3753,7 +4027,8 @@ export default class Home extends React.Component {
                       }}
                     >
                       <span>
-                        {v.unitPrice} × {v.qty} {v.qtyUnit}
+                        {v.unitPrice} × {v.seatPart}
+                        {v.qty} {v.qtyUnit}
                       </span>
                       <span>{v.subtotal}</span>
                     </div>
@@ -4112,8 +4387,9 @@ export default class Home extends React.Component {
                           d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"
                         />
                       </svg>
-                      Not matched in 5 min? The hold on your card is released
-                      and you pay nothing
+                      {v.freeOn
+                        ? 'Not matched in 5 min? Your free coaching comes back for this month'
+                        : 'Not matched in 5 min? The full amount goes back to your Duoly balance'}
                     </li>
                   </ul>
                 </aside>
@@ -5838,7 +6114,7 @@ export default class Home extends React.Component {
                         v.freeOn
                           ? 'You’ll see who took it on the next page. Nobody free within 5 minutes? The order is cancelled and your free coaching comes back for this month.'
                           : this.props.onCheckout
-                            ? 'You’ll see who took it on the next page. Nobody free within 5 minutes? You pay nothing: the hold on your card or wallet is released automatically.'
+                            ? 'You’ll see who took it on the next page. Nobody free within 5 minutes? The full amount goes back to your Duoly balance automatically.'
                             : 'You’ll see who took it on the next page. Nobody free within 5 minutes? The full ' +
                               v.confirmTotal +
                               ' goes back to your Duoly balance, automatically.',
@@ -6065,6 +6341,7 @@ export default class Home extends React.Component {
                     style={{ fontWeight: '600', color: '#FFFFFF' }}
                   >
                     {v.sel.title} · {v.qty} {v.qtyUnit}
+                    {v.seatBar}
                   </div>
                   <div
                     className="dl-bar-line"

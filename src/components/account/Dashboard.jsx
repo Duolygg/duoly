@@ -630,7 +630,7 @@ export default class Dashboard extends React.Component {
       giftedNote: walletParts.length ? walletParts.join(' · ') : '',
       walletBucketNote: h
         ? money(h.walletCashable || 0) +
-          ' cashable refunds · ' +
+          ' refunds · ' +
           money(h.walletPromo || 0) +
           ' promotional credit'
         : '',
@@ -1961,7 +1961,12 @@ export default class Dashboard extends React.Component {
                   >
                     Refunds, cashback and level-up gifts land here. Switch on
                     “Use my Duoly balance” at checkout to pay for part or all of
-                    an order, any game. It never expires.
+                    an order, any game. It never expires. Want a refund back on
+                    your original payment method instead?{' '}
+                    <a href="/contact" style={{ color: '#D6BBFF' }}>
+                      Contact support
+                    </a>
+                    .
                     {v.walletBucketNote ? (
                       <span
                         style={{

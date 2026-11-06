@@ -76,8 +76,8 @@ export function adminFor(config: PaymentsConfig): SupabaseClient {
 }
 
 /**
- * Payment methods that can be authorized now and captured when a teammate accepts.
- * Everything else Stripe offers is captured at checkout and refunded only on cancel.
+ * Payment methods that support an authorize-now, capture-later hold. Unused since charge at queue
+ * (2026-11-06): every order is charged at checkout. Kept so older holds still settle the same way.
  */
 export const AUTHORIZE_ONLY_METHODS = [
   'card',

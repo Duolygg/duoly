@@ -1,7 +1,12 @@
 # Team orders (several teammates on one order)
 
-Status: **design, not built.** Fabian's decisions from 2026-10-30 are below. The payment part needs
-Sebastian's review before any code is written (money rules).
+Status: **built, not yet live** (migration `20261106190000_team_orders.sql`). Fabian's decisions
+from 2026-10-30 and 2026-11-06 are below; the payment approach was agreed with Sebastian before
+building.
+
+**Rollout order matters.** Deploy the app first, then apply the migration. The app reads the new
+`team` and `seat` fields as optional, so it works against the old database. The order screens of the
+app that is live now would reject the new fields if the migration went first.
 
 ## Why
 
@@ -21,6 +26,16 @@ by seat count").
 3. **Price per seat.** The service price applies per teammate: Flex Squad €7.99 per game × 3 seats =
    €23.97 per game, bundle discounts as usual. Each teammate earns the usual 60% of their seat.
 4. **One group chat** for the customer and all their teammates.
+
+## Decisions from 2026-11-06
+
+5. **Party modes too.** Besides the 21 Teams services, these can bring friends (1 seat by default):
+   League Swiftplay, ARAM Night and Normal Draft (up to 4), CoD Zombies Run (up to 3), Minecraft
+   Manhunt and Minigames Night (up to 3). The rules live in `src/contracts/seats.ts`.
+6. **Group prices keep their total.** Apex Full Trio, ARC Raiders Full Squad and Escort Run are
+   always 2 seats at the listed price (e.g. €17.99 an hour split €9.00 + €8.99), not doubled.
+7. **Homepage:** a "How many teammates" picker next to "How many games", styled like it, only on
+   group services (owner-approved; the PR needs the `design-approved` label).
 
 ## Proposed seat limits
 
@@ -44,9 +59,7 @@ Team size minus the customer; default is the most seats, so "fill my five" is on
 | Minecraft     | Server Squad                        | 1 to 3 |
 | Pokémon Unite | Full Squad                          | 1 to 4 |
 
-**Price check for Sebastian:** some listed prices read like a price for the whole group ("Two Master+
-players fill your trio", €17.99 an hour). With per-seat pricing, Apex Full Trio and both ARC Raiders
-squads double (€35.98 an hour). Those three may need a new per-seat price.
+Apex Full Trio and both ARC Raiders squads are fixed at 2 seats with a group price (decision 6).
 
 ## Design: a team is a group of linked seat orders
 
@@ -67,27 +80,38 @@ tip, reports and cashback. The team layer adds:
   order" takes the next free seat.
 - **Priority, Diamond pick and free coaching** do not apply to team orders.
 
-### Payment (needs Sebastian)
+### Payment (as built)
 
 Today `order_payments.stripe_payment_intent_id` is unique, so one Stripe payment belongs to one order.
 The card is authorized at checkout and captured when the teammate accepts (`src/server/payments/settle.ts`),
 and released on cancel. For teams:
 
-- The one payment row belongs to the **team** (the lead seat, or a new `team_payments` table).
+- The one payment row and the wallet entries belong to the **lead seat** (seat 1); `order_teams`
+  carries the team total and wallet part. Each seat carries its share of the price (rounding on the
+  lead) and the usual payout of one seat.
 - **Capture once**, when the last seat is taken. Never per seat.
 - **Release or refund in full** if the team does not fill.
-- `order_post_refund` must not create refund credits for the other seats (they have no payment row of
-  their own today, so the trigger would treat them like wallet-free orders).
-- Wallet, PRO, creator and loyalty discounts are worked out on the team total, then split per seat
-  for earnings and reporting, with rounding on the lead seat.
+- Seats create no refund credits while the team waits. After the start, a seat that ends cancelled
+  (a switched teammate nobody replaced within 5 minutes) gives its share back as Duoly balance.
+- PRO and creator discounts are worked out on the team total (Duoly covers them, payouts unchanged).
+  Cashback is worked out on the lead from the team total, less seats already credited back.
+- Admins refund a whole team from any of its seats; a Stripe refund marks every seat refunded.
 
 ### Group chat
 
-Chat today is bound to one order and its current assignment. Teams need a chat bound to the `team_id`
-with the customer and every current seat holder; a re-rolled teammate loses access, the new one gets it.
-Moderation, flags and Sparky stay as they are.
+Chat stays bound to each seat's assignment, and every message is copied into the other open seats'
+chats (`order_team_chat_mirror`). Other teammates show as sender `mate`, so nobody sees a colleague's
+message as their own. A teammate who joins gets the last 50 messages copied in, plus "X joined the
+team · 2 of 3 seats taken" and "Everyone is here" lines. A re-rolled teammate loses access as today.
+Moderation and flags run on the sender's own message, as before.
 
-## Build order
+### Locking
+
+Seat order row, then team row, then chat rooms in seat order. Only taking a seat and cancelling one
+lock the team row. A team cancel never waits on a seat another transaction holds (it skips it), and
+`order_sweep` ends any skipped seat of a cancelled team a moment later.
+
+## Build order (done, except going live)
 
 1. Database: `team_id` and `seats`, taking a seat, team waiting, team full, all-or-nothing cancel
    (migration, applied by Sebastian).

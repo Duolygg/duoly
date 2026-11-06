@@ -295,5 +295,51 @@ export function toOriginalTeammateOrder(raw) {
     ...(o.picked_for_you === true ? { pickedForYou: true } : {}),
     // Added by 20261101120000: how the customer wants the session to feel.
     ...(o.mood ? { mood: o.mood } : {}),
+    // Added by 20261106190000: the customer's role and the character they want coaching on.
+    ...(o.role ? { role: o.role } : {}),
+    ...(o.character ? { character: o.character } : {}),
+    // Added by 20261106190000: a team order (one seat of several), how full it is and who's in.
+    ...(o.team
+      ? {
+          team: {
+            seats: o.team.seats,
+            filled: o.team.filled,
+            status: o.team.status,
+            members: o.team.members.map((m) => m.name),
+          },
+        }
+      : {}),
   };
+}
+
+/** One line about a team order seat, for the queue card and the active order. */
+export function teamLine(team, taken) {
+  if (!team) return '';
+  if (!taken)
+    return (
+      'Team of ' +
+      team.seats +
+      ' · ' +
+      team.filled +
+      ' of ' +
+      team.seats +
+      ' seats taken'
+    );
+  if (team.status === 'waiting') {
+    const left = team.seats - team.filled;
+    return (
+      'Team of ' +
+      team.seats +
+      ' · waiting for ' +
+      left +
+      ' more teammate' +
+      (left === 1 ? '' : 's') +
+      '. You start together once every seat is taken.'
+    );
+  }
+  return (
+    'Team of ' +
+    team.seats +
+    (team.members.length ? ' · with ' + team.members.join(', ') : '')
+  );
 }

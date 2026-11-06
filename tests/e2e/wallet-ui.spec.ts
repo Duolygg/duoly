@@ -56,7 +56,8 @@ test('balance card shows live breakdown and enables wallet booking', async ({
     .locator('..')
     .locator('..');
   await expect(card).toContainText('€65.00');
-  await expect(card).toContainText('€5.00 cashable refunds');
+  await expect(card).toContainText('€5.00 refunds · €60.00');
+  await expect(card).toContainText('back on your original payment method');
   await expect(card).toContainText('€60.00 promotional credit');
   await expect(card).toContainText('€5.00 refunded');
   await expect(card).toContainText('€10.00 from Duoly');

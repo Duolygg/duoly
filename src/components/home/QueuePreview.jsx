@@ -17,6 +17,7 @@ import MatchStage, {
   QueueTimer,
   ReviewForm,
   ReviewThanks,
+  clock,
 } from '../account/MatchStage';
 import { ProofView } from '../proofs/proof-view';
 import { GAME, IGN_LABEL } from '../../design-reference/lib/games';
@@ -97,6 +98,7 @@ const TICK_WAIT_MS = 2600;
 const SEARCH_TICKS = 33;
 const REROLL_LEFT_MS = 271000; // the re-roll window shows 4:31 left right after the match
 const CYCLE_MS = 900; // how often the order room swaps the searching face
+const QUEUE_LIMIT_MS = 300000; // the order room's 5 minutes before the order goes back to the balance
 // after the match, in ms: [when, what]
 const AFTER_MATCH = [
   // the chat's one-time Discord invite, as the order chat sends it when the teammate accepts
@@ -445,7 +447,74 @@ export default class QueuePreview extends React.Component {
               </div>
               <div className="qp-col">
                 {searching ? (
-                  <div className="qp-order">{orderCard}</div>
+                  <>
+                    <div className="qp-order">{orderCard}</div>
+                    {/* the order room's 5-minute box: what happens if nobody takes it (QueueRoom.jsx) */}
+                    <section
+                      style={{
+                        marginTop: '16px',
+                        padding: '18px 20px',
+                        borderRadius: '24px',
+                        background: '#120B22',
+                        border: '1px solid rgba(196, 170, 255, .1)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          gap: '10px',
+                          fontSize: '13px',
+                          color: '#8E84AB',
+                        }}
+                      >
+                        <span>
+                          Nobody free in 5:00? {sym + paid.toFixed(2)} back to
+                          your Duoly balance.
+                        </span>
+                        <span style={{ color: '#A79DC4', fontWeight: '600' }}>
+                          {clock(Math.max(0, QUEUE_LIMIT_MS - waited))}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          marginTop: '8px',
+                          height: '4px',
+                          borderRadius: '999px',
+                          background: 'rgba(196, 170, 255, .08)',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width:
+                              Math.min(
+                                100,
+                                (waited / QUEUE_LIMIT_MS) * 100,
+                              ).toFixed(1) + '%',
+                            height: '100%',
+                            borderRadius: '999px',
+                            background:
+                              'linear-gradient(90deg, #D6BBFF, #F0A6FF)',
+                            transition: 'width 1s linear',
+                          }}
+                        />
+                      </div>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          marginTop: '12px',
+                          color: '#A79DC4',
+                          fontSize: '13.5px',
+                          fontWeight: '600',
+                          textDecoration: 'underline',
+                          textUnderlineOffset: '3px',
+                        }}
+                      >
+                        Cancel order · free until someone accepts
+                      </span>
+                    </section>
+                  </>
                 ) : (
                   <>
                     <ChatPanel

@@ -20,7 +20,9 @@ export const ChatMessageSchema = z
     id: ChatUuidSchema,
     sequence: z.number().int().positive().safe(),
     kind: z.enum(['user', 'system']),
-    sender: z.enum(['customer', 'teammate', 'system']),
+    // 'mate': another teammate of the same team order, copied into this seat's chat
+    // (20261106190000_team_orders). Never the viewer, so it always shows as someone else.
+    sender: z.enum(['customer', 'teammate', 'mate', 'system']),
     name,
     image,
     body: text.min(1),

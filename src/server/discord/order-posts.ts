@@ -78,6 +78,13 @@ export interface PostOrder {
   payoutUsdCents: number;
   queuedAt: number; // ms
   cancelsAt: number; // ms
+  // Added by 20261106190000 (team orders): one post per team, for its next free seat.
+  // Missing or null on single-teammate orders.
+  seats?: number | null;
+  seatsTaken?: number | null;
+  // Added by 20261106190000: the customer's role and the character they want coaching on.
+  role?: string | null;
+  character?: string | null;
 }
 
 /** The session mood as a post fact; names match the checkout (components/shared/moods.jsx). */
@@ -147,6 +154,8 @@ export function openPost(o: PostOrder, claimUrl: string, opt: PostOptions) {
     o.region ? `🌍 **${md(o.region)}**` : '',
     o.voice ? '🎙️ **Voice chat**' : '',
     moodFact(o.mood),
+    o.role ? `🎯 **Plays ${md(o.role)}**` : '',
+    o.character ? `🧩 **Coaching on ${md(o.character)}**` : '',
   ].filter(Boolean);
 
   const body: object[] = [
@@ -180,6 +189,13 @@ export function openPost(o: PostOrder, claimUrl: string, opt: PostOptions) {
   if (o.gg)
     body.push(
       text('🎀 **Gamer Girl order.** Only Gamer Girl teammates can take it.'),
+    );
+  if (o.seats && o.seats > 1)
+    body.push(
+      text(
+        `👥 **Team order · ${o.seatsTaken ?? 0} of ${o.seats} seats taken.** ` +
+          `Take a seat: you all start together once every seat is taken, and share one group chat.`,
+      ),
     );
   body.push(
     divider(1, false),

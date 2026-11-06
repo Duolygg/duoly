@@ -94,12 +94,10 @@ describe('checkout session', () => {
     description: 'League of Legends · EUW',
     nowSeconds: 1_000_000,
   });
-  it('lets Stripe show every enabled method and authorizes where possible', () => {
+  it('lets Stripe show every enabled method and charges at checkout', () => {
     expect('payment_method_types' in params).toBe(false);
-    expect(params.payment_method_options).toMatchObject({
-      card: { capture_method: 'manual' },
-      paypal: { capture_method: 'manual' },
-    });
+    // charge at queue (2026-11-06): no method is held for a later capture
+    expect(params).not.toHaveProperty('payment_method_options');
     expect(params.ui_mode).toBe('elements');
     expect(params.line_items?.[0]?.price_data?.unit_amount).toBe(1617);
     expect(params.client_reference_id).toBe(
