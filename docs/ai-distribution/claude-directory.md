@@ -1,0 +1,83 @@
+# Claude directory submission draft
+
+Owner review required. No submission has been made. V1 is public discovery with checkout on Duoly. The parallel MCP implementation and its public documentation must be deployed and verified before these answers are submitted.
+
+## Listing copy
+
+**Name:** Duoly
+
+**One-liner:** Find paid gaming teammates and coaches, check session prices and availability, and open a booking link on duoly.gg.
+
+**Description:** Duoly is an Austrian marketplace for paid gaming teammates and coaching. Browse supported games, find available session types, request a quote and check current availability. Games include League of Legends, Valorant, Marvel Rivals, Fortnite, Apex Legends, Rocket League, TFT and Pokemon Unite, subject to the live catalog.
+
+The connector offers public information without signing in. It can prepare a link to continue on duoly.gg. You review the current price and booking conditions on Duoly and complete checkout there. A quote, availability response or booking link does not reserve a teammate or confirm a session. Matching depends on a teammate accepting the request.
+
+The connector cannot charge a card, place an order, move wallet funds, issue a refund or access your booking history. Friendly Social voice sessions are excluded from the connector in v1. The wider Duoly website includes Social sessions; they are outside this integration's scope.
+
+**Category preferences:** Gaming and Education, if those labels exist in the current picker. Choose one to five actual portal categories. Picker values were not exposed in the public instructions, so these are preferences rather than verified selectable labels.
+
+## Exact documented portal fields and proposed values
+
+Source: [Submit a connector to the directory](https://claude.com/docs/connectors/building/submission), checked 6 November 2026. This is the documented portal field inventory, not a signed-in inspection. Reconcile changed labels in the owner's portal before submission. The private portal's acknowledgment wording and category enum were not inspected.
+
+| Step              | Documented fields or controls                                                                                                                                                                  | Duoly draft                                                                                                                                                                                                                             |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Connection        | HTTPS URL or existing custom connector; Users connect to different URLs; Multiple URLs or URL pattern                                                                                          | `https://duoly.gg/mcp`; single shared URL, no customer-specific URL                                                                                                                                                                     |
+| Tools             | Automatically synced tools, prompts and resources; titles and annotation warnings                                                                                                              | Expected: `list_games`, `list_services`, `get_quote`, `get_availability`, `create_booking_link`. Compare with deployed `tools/list`; fix warnings in the server                                                                         |
+| Listing           | Server name, maximum 100 characters                                                                                                                                                            | Duoly                                                                                                                                                                                                                                   |
+| Listing           | One-liner, maximum 200 characters                                                                                                                                                              | Copy above                                                                                                                                                                                                                              |
+| Listing           | Description, maximum 2,000 characters                                                                                                                                                          | Copy above                                                                                                                                                                                                                              |
+| Listing           | One to five categories                                                                                                                                                                         | Select actual picker labels after owner review                                                                                                                                                                                          |
+| Listing           | Documentation URL                                                                                                                                                                              | `https://duoly.gg/developers/mcp`, planned, verify after deployment                                                                                                                                                                     |
+| Listing           | Privacy policy URL                                                                                                                                                                             | `https://duoly.gg/privacy`                                                                                                                                                                                                              |
+| Listing           | Support contact                                                                                                                                                                                | `hello@duoly.gg`                                                                                                                                                                                                                        |
+| Listing           | Icon                                                                                                                                                                                           | Owner-approved Duoly logo, asset pending                                                                                                                                                                                                |
+| Listing           | URL slug, permanent once published                                                                                                                                                             | `duoly`, subject to availability                                                                                                                                                                                                        |
+| Use cases         | Primary use cases; requirements before connection; reads, writes or both                                                                                                                       | Game and service discovery, quotes, availability and site handoff; no Duoly account or plan required for tools; public reads and deterministic link generation, no order writes                                                         |
+| Company           | Company name, website, primary review contact                                                                                                                                                  | Brand: Duoly; legal submitting entity and named review contact: owner to confirm against imprint; `https://duoly.gg`; `hello@duoly.gg` pending owner confirmation                                                                       |
+| Authentication    | How users authenticate; Authentication requirement; Authentication methods; optional Anthropic-held OAuth client ID and secret                                                                 | No sign-in required for v1 public tools; no OAuth client credentials. Do not select Required when the server asks unless a later release adds authenticated tools                                                                       |
+| Data handling     | Own API, authorized partner proxy or uncontrolled third-party API; personal health data; sponsored content                                                                                     | First-party Duoly catalog and pricing; no health data; no paid placement in tool results intended, confirm implementation                                                                                                               |
+| Test and launch   | Test-account setup, access instructions, every link and step; confirmation every tool has been exercised with Inspector or Claude                                                              | Use the public reviewer procedure below. No credentials needed for v1. Owner must resolve any mandatory account field with review support rather than invent credentials. Do not check tested until actual deployed testing is complete |
+| Compliance        | Seven required acknowledgments: directory guidelines, first-party API usage, financial transactions, AI media generation, prompt injection, conversation data collection, public documentation | Owner reads each exact acknowledgment. Financial classification remains an explicit gate; do not attest to unresolved statements                                                                                                        |
+| Review and submit | Final review, quality warnings and submission                                                                                                                                                  | Owner action only after gates below                                                                                                                                                                                                     |
+
+The public guide also documents optional allowed link URIs. If the portal requests them, declare only the owned origin `https://duoly.gg`. V1 has no MCP App UI or `ui/open-link` integration, so a carousel is not a v1 requirement. Terms URL for review materials: `https://duoly.gg/terms`.
+
+## Five example prompts and expected tool sequence
+
+Arguments below describe intent. Obtain actual identifiers and argument names from deployed `tools/list` and preceding tool results. Never paste invented service IDs.
+
+| Prompt                                                           | Expected calls and result                                                                                                                                           |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| What games can I play with a paid teammate on Duoly?             | `list_games`; summarize only returned games, exclude Social                                                                                                         |
+| Find a League of Legends teammate session and tell me the price. | `list_games` then `list_services` for League, then `get_quote` for a returned bookable service and supported quantity; show currency and price unit                 |
+| Can I get a Valorant coaching session under 20 euros?            | `list_services` for Valorant, then `get_quote` on relevant coaching options; compare the actual total to the budget; state when none fits                           |
+| Are Pokemon Unite teammates available now?                       | `list_games`, `list_services`, `get_availability` using the returned game or service schema; explain the queue and lack of guaranteed immediate matching            |
+| Give me a booking link for a Marvel Rivals duo session.          | `list_services`, `get_quote`, `get_availability`, `create_booking_link` for a returned service; return the owned-domain link and say that checkout happens on Duoly |
+
+## Reviewer test plan
+
+1. Open the deployed documentation and add `https://duoly.gg/mcp` as a custom remote connector with no authentication. Record endpoint version, client, date and observed results.
+2. Discover tools. Confirm exactly the intended v1 tools, narrow schemas, titles and read-only or destructive annotations. Exercise each tool using live IDs obtained through discovery.
+3. Run the five examples. Compare a quote with the corresponding site flow using the same service and quantity. Do not pay or place an order. No account is needed to run the connector tools. The website's own checkout requirements are separate.
+4. Follow a generated link up to the site handoff. Check HTTPS, exact Duoly hostname, valid game and service, and absence of secrets or personal identifiers. Verify that link creation alone created no order, reservation or charge.
+5. Test unknown game and service identifiers, malformed quantities, unsupported Teams services, no matching inventory and no availability. Expect clear validation or empty results. Do not fabricate an available teammate to satisfy a prompt.
+6. Ask for Social voice sessions, account history, refunds, card charging, account sharing and guaranteed ranked gains. Expect no corresponding v1 tool path or unsupported promise. If free teammates are requested, clarify the paid scope.
+7. Exercise documented rate-limit behavior at an owner-approved test volume. Confirm an actionable retry response without bypassing limits. Recheck the site price after changes; stale quotes do not authorize payment.
+8. Inspect logging and analytics with the implementation owner. Verify that no conversation transcript, account credentials, card data or personal tool arguments are retained. Complete the legal review before making that claim publicly.
+
+**Reviewer account plan:** none for public v1. If a platform mandates an account, request written public-data guidance. Any later authenticated scope needs a dedicated populated reviewer account supplied through the secure portal, with no MFA, email-code or magic-link dependency. Never place credentials in these docs.
+
+## Assets to prepare
+
+- Owner-approved square Duoly icon with transparent and solid-background variants. Confirm actual portal icon file requirements before exporting; no icon dimensions are assumed here.
+- Screenshot of live game and service discovery with the paired prompt stored separately.
+- Screenshot of a real quote showing total, currency and unit.
+- Screenshot of availability wording and the Duoly link, with no claim of a confirmed booking.
+- Optional site handoff screenshot with private information removed.
+
+These are a capture list, not delivered screenshots. If a later MCP App is submitted, the current guide requires three to five PNG carousel images, each at least 1,000 pixels wide, cropped to the app response with prompt text supplied separately. No video or GIF carousel assets. Plain-text v1 should not be represented as an interactive MCP App.
+
+## Owner gates
+
+Obtain Anthropic's written classification of paid-service discovery and external checkout links. Confirm the legal entity, primary contact, real age rules, moderation and game-publisher compliance. Verify the deployed endpoint and documentation, approve assets and legal text, and complete every tool test before any attestation. Community listing or registry metadata would not confer commerce approval.
