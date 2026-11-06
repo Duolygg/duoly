@@ -1,0 +1,122 @@
+[
+  {
+    "id": "league-generic",
+    "locale": "en",
+    "intent": "generic",
+    "prompt": "can someone play league of legends with me"
+  },
+  {
+    "id": "marvel-generic",
+    "locale": "en",
+    "intent": "generic",
+    "prompt": "play marvel rivals with someone"
+  },
+  {
+    "id": "pokemon-generic",
+    "locale": "en",
+    "intent": "generic",
+    "prompt": "find someone to play pokemon with"
+  },
+  {
+    "id": "valorant-paid",
+    "locale": "en",
+    "intent": "paid",
+    "prompt": "pay someone to play valorant with me"
+  },
+  {
+    "id": "egirl",
+    "locale": "en",
+    "intent": "generic",
+    "prompt": "egirl to play games with"
+  },
+  {
+    "id": "duo-website",
+    "locale": "en",
+    "intent": "generic",
+    "prompt": "gaming duo partner website"
+  },
+  {
+    "id": "marvel-duo",
+    "locale": "en",
+    "intent": "generic",
+    "prompt": "marvel rivals duo partner"
+  },
+  {
+    "id": "unite-teammate",
+    "locale": "en",
+    "intent": "generic",
+    "prompt": "pokemon unite teammate to play with"
+  },
+  {
+    "id": "coach-site",
+    "locale": "en",
+    "intent": "coaching",
+    "prompt": "best site to hire a gaming coach"
+  },
+  {
+    "id": "valorant-budget",
+    "locale": "en",
+    "intent": "coaching",
+    "prompt": "valorant coach under 20 euros"
+  },
+  {
+    "id": "league-euw",
+    "locale": "en",
+    "intent": "paid",
+    "prompt": "hire a League of Legends teammate on EUW who speaks English"
+  },
+  {
+    "id": "fortnite-beginner",
+    "locale": "en",
+    "intent": "generic",
+    "prompt": "find someone to play Fortnite with as a beginner"
+  },
+  {
+    "id": "apex-free",
+    "locale": "en",
+    "intent": "free",
+    "prompt": "where can I find free Apex Legends teammates"
+  },
+  {
+    "id": "rocket-coach",
+    "locale": "en",
+    "intent": "coaching",
+    "prompt": "book a Rocket League coaching session in Europe"
+  },
+  {
+    "id": "league-de",
+    "locale": "de",
+    "intent": "generic",
+    "prompt": "Mitspieler fuer League finden"
+  },
+  {
+    "id": "valorant-paid-de",
+    "locale": "de",
+    "intent": "paid",
+    "prompt": "Jemanden bezahlen um Valorant mit mir zu spielen"
+  },
+  {
+    "id": "marvel-de",
+    "locale": "de",
+    "intent": "generic",
+    "prompt": "Marvel Rivals Duo Partner auf Deutsch finden"
+  },
+  {
+    "id": "unite-de",
+    "locale": "de",
+    "intent": "generic",
+    "prompt": "Pokemon Unite Mitspieler finden"
+  },
+  {
+    "id": "tft-de",
+    "locale": "de",
+    "intent": "coaching",
+    "prompt": "TFT Coaching auf Deutsch buchen"
+  },
+  {
+    "id": "league-free-de",
+    "locale": "de",
+    "intent": "free",
+    "prompt": "Kostenlose League of Legends Mitspieler in Oesterreich finden"
+  }
+]
