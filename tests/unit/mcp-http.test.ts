@@ -128,12 +128,13 @@ describe('MCP HTTP', () => {
       'game=val',
     );
   });
-  it('rejects untrusted and null origins and allows absent Origin', async () => {
+  it('rejects malformed, null and plain HTTP origins and allows absent Origin', async () => {
     for (const origin of [
       '',
-      'https://evil.example',
       'null',
-      'https://duoly.gg.evil.example',
+      'not a url',
+      'http://evil.example',
+      'https://claude.ai/path',
     ]) {
       expect(
         (
@@ -144,14 +145,30 @@ describe('MCP HTTP', () => {
         ).status,
       ).toBe(403);
     }
-    const ok = await handleMcp(
-      request(legacy('tools/list'), { Origin: 'https://duoly.gg' }),
-      { ip: '127.0.0.1', limit: allow },
-    );
-    expect(ok.status).toBe(200);
-    expect(ok.headers.get('access-control-allow-origin')).toBe(
+    expect(
+      (
+        await handleMcp(request(legacy('tools/list')), {
+          ip: '127.0.0.1',
+          limit: allow,
+        })
+      ).status,
+    ).toBe(200);
+  });
+  it('accepts AI client origins such as Claude and ChatGPT', async () => {
+    for (const origin of [
       'https://duoly.gg',
-    );
+      'https://claude.ai',
+      'https://claude.com',
+      'https://chatgpt.com',
+    ]) {
+      const ok = await handleMcp(
+        request(legacy('tools/list'), { Origin: origin }),
+        { ip: '127.0.0.1', limit: allow },
+      );
+      expect(ok.status).toBe(200);
+      expect(ok.headers.get('access-control-allow-origin')).toBe(origin);
+      expect(ok.headers.get('access-control-allow-credentials')).toBeNull();
+    }
   });
   it('returns GET 405 and bounds input bytes', async () => {
     expect(

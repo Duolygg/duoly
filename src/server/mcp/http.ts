@@ -43,18 +43,31 @@ function error(
     },
   );
 }
+function allowedOrigin(origin: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(origin);
+  } catch {
+    return false;
+  }
+  if (url.origin !== origin) return false;
+  if (url.protocol === 'https:') return true;
+  return (
+    import.meta.env.DEV &&
+    url.protocol === 'http:' &&
+    (url.hostname === 'localhost' || url.hostname === '127.0.0.1')
+  );
+}
 export async function handleMcp(
   request: Request,
   options: { ip: string; limit?: (ip: string) => Promise<LimitResult> },
 ): Promise<Response> {
   const origin = request.headers.get('Origin');
-  // Explicit deployment origins only. Never trust the incoming Host to admit a browser origin.
-  const allowed = new Set(['https://duoly.gg', 'https://www.duoly.gg']);
-  if (import.meta.env.DEV) {
-    allowed.add('http://localhost:4321');
-    allowed.add('http://127.0.0.1:4321');
-  }
-  if (origin !== null && !allowed.has(origin))
+  // AI clients call this endpoint from their own sites (Claude sends Origin https://claude.ai) and
+  // read a 403 as "sign-in required", which breaks connecting. Every tool is public and read-only,
+  // no cookie or credential is accepted and quotas are per IP, so any HTTPS origin may call it.
+  // Malformed, opaque ("null") and plain-HTTP origins stay rejected outside local development.
+  if (origin !== null && !allowedOrigin(origin))
     return error(403, -32000, 'Origin not allowed.');
   const decorate = (response: Response) => {
     response.headers.set('Cache-Control', 'no-store');

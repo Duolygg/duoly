@@ -211,10 +211,10 @@ const request = JSON.stringify(
         HTTP 503 means required server configuration is unavailable.
       </p>
       <p>
-        Browser origins must exactly match https://duoly.gg or
-        https://www.duoly.gg. Native and server clients may omit Origin. Browser
-        clients on other origins need an explicitly approved origin before
-        connecting.
+        Any HTTPS origin may call the endpoint, so assistants such as Claude and
+        ChatGPT can connect directly. Native and server clients may omit Origin.
+        Malformed, opaque and plain HTTP origins are rejected. No cookies or
+        credentials are accepted.
       </p>
       <p>
         Send only the structured catalog choices needed by a tool. Never send
