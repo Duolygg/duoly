@@ -173,7 +173,7 @@ function ticket() {
     .map((t) => `<span class="tg">${copy(t)}</span>`)
     .join(
       '',
-    )}</div></div></div><div class="perf"><i></i></div><div class="lines"><div><span>${state.quantity} ${option.unit}${state.quantity > 1 ? 's' : ''} at ${money(price(option, 1)[0])}</span><b>${money(original)}</b></div>${saving > 0 ? `<div class="disc"><span>${state.quantity} ${option.unit} bundle</span><b>-${money(saving)}</b></div>` : ''}<div class="sum"><span>${incomplete ? 'From' : 'Total'}</span><b id="total" data-minor="${total}">${money(total)}</b></div><p class="note2">Base price before account perks.${incomplete ? ' Choose remaining options on Duoly.' : ''}${card.currency === 'USD' ? ' USD estimate.' : ''}</p></div></div>`;
+    )}</div></div></div><div class="perf"><i></i></div><div class="lines"><div><span>${state.quantity} ${option.unit}${state.quantity > 1 ? 's' : ''} at ${money(price(option, 1)[0])}</span><b>${money(original)}</b></div>${saving > 0 ? `<div class="disc"><span>${state.quantity}-${option.unit} bundle</span><b>-${money(saving)}</b></div>` : ''}<div class="sum"><span>${incomplete ? 'From' : 'Total'}</span><b id="total" data-minor="${total}">${money(total)}</b></div><p class="note2">Base price before account perks.${incomplete ? ' Choose remaining options on Duoly.' : ''}${card.currency === 'USD' ? ' USD estimate.' : ''}</p></div></div>`;
   html +=
     '<div class="steps"><div class="track"><i></i></div>' +
     ['Picked', 'Checkout', 'Accepted', 'Play']
@@ -340,7 +340,17 @@ window.addEventListener('message', (e) => {
   }
 });
 function measureSize() {
-  return { height: Math.ceil(document.documentElement.scrollHeight) };
+  const doc = document.documentElement,
+    scroll = doc?.scrollHeight ?? 0;
+  // The document never shrinks below the iframe viewport, so report the
+  // content edge unless real overflow makes the document taller.
+  return {
+    height: Math.ceil(
+      scroll > (doc?.clientHeight ?? 0)
+        ? scroll
+        : (app.getBoundingClientRect?.().bottom ?? 0),
+    ),
+  };
 }
 function reportSize() {
   if (ready) send('ui/notifications/size-changed', measureSize());

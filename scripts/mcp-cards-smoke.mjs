@@ -184,13 +184,13 @@ try {
           Math.round(f.getBoundingClientRect().height) ===
           Math.ceil(
             f.contentDocument.getElementById('app').getBoundingClientRect()
-              .height + 12,
+              .bottom,
           )
         );
       });
       const contentHeight = await frame
         .locator('#app')
-        .evaluate((el) => Math.ceil(el.getBoundingClientRect().height + 12));
+        .evaluate((el) => Math.ceil(el.getBoundingClientRect().bottom));
       assert.equal(
         await page
           .locator('iframe')
