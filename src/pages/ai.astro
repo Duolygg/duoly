@@ -1,0 +1,261 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Breadcrumbs from '../components/seo/Breadcrumbs.astro';
+import Steps from '../components/seo/Steps.astro';
+import Faq from '../components/seo/Faq.astro';
+import ClosingCta from '../components/seo/ClosingCta.astro';
+import '../components/seo/seo.css';
+import '../components/seo/ai.css';
+import { pageViewer } from '../site/viewer';
+import { serializeJsonLd } from '../site/seo';
+import { AI_ASSISTANTS, AI_PROMPTS, MCP, aiLaunchState } from '../site/ai';
+import { calculateQuote } from '../server/pricing';
+const launch = aiLaunchState();
+const coachingQuote = calculateQuote(
+  { gameId: 'val', serviceId: 'vod', server: 'EU', units: 1 },
+  { customerCurrency: 'EUR', eurToUsd: 1 },
+);
+const coachingPrice = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'EUR',
+}).format(coachingQuote.customer.amountMinor / 100);
+const { viewer, csrf } = await pageViewer(Astro);
+const title = 'Gaming Teammates in AI Assistants | Duoly';
+const description =
+  'Find gaming teammates and coaching with AI assistants. See Duoly connector status, example prompts and privacy details. Review prices and pay on duoly.gg.';
+const faq: [string, string][] = [
+  [
+    'Can I book through an AI assistant today?',
+    launch.showSetup
+      ? 'Connect Duoly to Claude to find a session. Review your selection and book on duoly.gg.'
+      : 'The Duoly AI connection is coming soon. You can book directly on duoly.gg now.',
+  ],
+  [
+    'Do I need a Duoly account to ask for prices?',
+    'No. The public tools need no Duoly login. You sign in on Duoly when you are ready to book. Your assistant may require a paid plan or administrator permission for custom connectors.',
+  ],
+  [
+    'Can the assistant pay for my session?',
+    'No. Payment always happens on duoly.gg. Review the service, quantity and final price there before confirming.',
+  ],
+  [
+    'Does an availability result reserve a teammate?',
+    'No. Availability is a public signal, not a reservation. A teammate accepts your order through the Duoly queue. A requested time or rank is never guaranteed by an AI answer.',
+  ],
+  [
+    'Which games can I ask about?',
+    'Ask about the games in the Duoly catalog, including Valorant, League of Legends, Marvel Rivals, Pokemon Unite, Rocket League and Fortnite. Social sessions are booked on duoly.gg for now.',
+  ],
+  [
+    'Can I still book without an assistant?',
+    'Yes. Choose your game and service directly on duoly.gg. The booking and payment flow is the same destination an assistant prepares for you.',
+  ],
+];
+---
+
+<SiteLayout
+  title={title}
+  description={description}
+  indexing={launch.indexing}
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Duoly in AI assistants', path: '/ai' },
+      ]}
+    />
+    <header class="seo-hero ai-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">{launch.label}</p>
+        <h1>Book a gaming teammate from your AI assistant</h1>
+        <p class="lead">
+          Tell your AI what you want to play. The Duoly connection will find
+          teammates and coaching options, check prices and prepare your booking
+          link. You review and pay on duoly.gg.
+        </p>
+        <div class="hero-actions">
+          <a class="cta" href="/">
+            Book on Duoly
+          </a>
+          <a class="cta-ghost" href="#assistants-h">
+            See assistant status
+          </a>
+        </div>
+      </div>
+      <aside class="hero-card ai-chat" aria-label="Example conversation">
+        <div class="ai-chat-bar" aria-hidden="true">
+          <span class="ai-chat-dots">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+          <span>Example conversation</span>
+        </div>
+        <p class="ai-bubble-user">
+          Find me a Valorant coach for tonight under 15 euros
+        </p>
+        <p class="ai-tool">
+          <span aria-hidden="true"></span>Checked Duoly
+        </p>
+        <p class="ai-bubble-bot">This coaching session fits your budget:</p>
+        <div class="ai-result">
+          <div class="ai-result-head">
+            <span class="ai-tag">Valorant</span>
+            <span class="ai-tag">Coaching</span>
+          </div>
+          <h2>VOD review with an Immortal+ coach</h2>
+          <div class="ai-result-row">
+            <p
+              class="ai-chat-price"
+              data-price-minor={coachingQuote.customer.amountMinor}
+            >
+              {coachingPrice} <span>per hour</span>
+            </p>
+            <a class="btn-sm" href="/?game=val&amp;service=vod#modes-h">
+              Open booking link
+            </a>
+          </div>
+          <p class="ai-result-note">
+            Base price before account perks. A coach accepts your booking from
+            the queue.
+          </p>
+        </div>
+        <div class="ai-composer" aria-hidden="true">
+          Ask a follow-up
+        </div>
+      </aside>
+    </header>
+    <Steps
+      heading="From a question to your next session"
+      steps={[
+        'Ask your AI for a game, mode, budget and coaching goal.',
+        'Compare teammates and coaches. Check the price and who is online.',
+        'Open your booking link, review the details and book on duoly.gg.',
+      ]}
+    />
+    <section aria-labelledby="assistants-h">
+      <h2 id="assistants-h">Assistant status</h2>
+      <p>
+        {launch.showSetup
+          ? 'Add Duoly to Claude, then ask about your next session.'
+          : 'Claude launches first. More assistants are coming soon.'}
+      </p>
+      <ul class="ai-status">
+        {AI_ASSISTANTS.map((assistant, i) => (
+          <li class:list={['ai-assistant', { 'is-first': i === 0 }]}>
+            <div class="ai-card-top">
+              <div>
+                <h3>{assistant.name}</h3>
+                <p>{assistant.detail}</p>
+              </div>
+              <span class="ai-badge">{assistant.status}</span>
+            </div>
+            {launch.showSetup && assistant.steps.length > 0 && (
+              <ol>
+                {assistant.steps.map((step) => (
+                  <li>{step}</li>
+                ))}
+              </ol>
+            )}
+          </li>
+        ))}
+      </ul>
+      {launch.showSetup && (
+        <p class="ai-endpoint">
+          Custom connector URL: <code>{MCP.endpoint}</code>
+        </p>
+      )}
+      <p class="ai-dev-note">
+        Building your own client? Read the{' '}
+        <a href="/developers/mcp">Duoly MCP developer guide</a>.
+      </p>
+    </section>
+    <section aria-labelledby="prompts-h">
+      <h2 id="prompts-h">Start with one of these prompts</h2>
+      <p>
+        Use these with the Duoly connector once it is available. Include your
+        budget and mode so the assistant can narrow the options.
+      </p>
+      <ul class="ai-prompts">
+        {AI_PROMPTS.slice(0, 3).map((prompt) => (
+          <li class="card">{prompt}</li>
+        ))}
+      </ul>
+      <details class="ai-more-prompts">
+        <summary>More prompts</summary>
+        <ul class="ai-prompts">
+          {AI_PROMPTS.slice(3).map((prompt) => (
+            <li class="card">{prompt}</li>
+          ))}
+        </ul>
+      </details>
+    </section>
+    <section aria-labelledby="boundaries-h">
+      <h2 id="boundaries-h">You stay in control</h2>
+      <div class="ai-boundaries">
+        <div class="card">
+          <h3>What the AI will do</h3>
+          <ul>
+            <li>Search games and bookable services.</li>
+            <li>Compare prices and public availability.</li>
+            <li>Prepare a link to book on Duoly.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>What the AI cannot do</h3>
+          <ul>
+            <li>Pay for a session or create an order.</li>
+            <li>See your Duoly account, card or private order history.</li>
+            <li>
+              Guarantee a match time, a teammate rank or a result in your game.
+            </li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 id="privacy-h">What your AI shares</h3>
+          <ul>
+            <li>Your search choices such as game, service, rank and budget.</li>
+            <li>Nothing from your Duoly account.</li>
+            <li>Payment and personal details stay on duoly.gg.</li>
+          </ul>
+        </div>
+      </div>
+      <p>
+        Social sessions are booked on duoly.gg for now. Play on your own game
+        account and follow each game’s rules. Read our{' '}
+        <a href="/terms">booking and refund terms</a> and{' '}
+        <a href="/privacy">privacy policy</a>.
+      </p>
+    </section>
+    <Faq items={faq} />
+    <ClosingCta
+      heading="Your next teammate is on Duoly"
+      text="Choose your game, compare services and review the price before you book."
+      href="/"
+      label="Book on Duoly"
+    />
+    <nav class="related" aria-label="Related pages">
+      <h2>Keep exploring</h2>
+      <div class="chips">
+        <a href="/games">Browse games and coaching</a>
+        <a href="/developers/mcp">MCP developer documentation</a>
+        <a href="/contact">Contact Duoly</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: title,
+      description,
+      url: new URL('/ai', Astro.site!).href,
+      dateModified: '2026-11-06',
+    })}
+  />
+</SiteLayout>

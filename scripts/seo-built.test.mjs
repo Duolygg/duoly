@@ -1,6 +1,7 @@
 /* global URL, document, innerWidth, getComputedStyle, location, fetch */
 // Run after pnpm build, scripts/seo-preview.mjs and scripts/seo-audit.mjs.
 import { test } from 'node:test';
+import { aiLaunchState } from '../src/site/ai.ts';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { chromium } from '@playwright/test';
@@ -97,6 +98,44 @@ for (const [path, page] of indexed) {
     }
   });
 }
+test('AI pages expose matching structured data, launch status and links', () => {
+  for (const [path, type] of [
+    ['/ai', 'WebPage'],
+    ['/developers/mcp', 'TechArticle'],
+  ]) {
+    const page = pages[path];
+    assert(page, `${path} is reachable from real anchors`);
+    assert.equal(
+      page.robots,
+      path === '/ai' ? aiLaunchState().indexing : 'index, follow',
+    );
+    assert(page.description.length >= 140 && page.description.length <= 160);
+    const schema = page.schemas.find((item) => item['@type'] === type);
+    assert(schema);
+    assert.equal(schema.url, `https://duoly.gg${path}`);
+    assert.equal(schema.description, page.description);
+    assert.equal(schema.dateModified, '2026-11-06');
+    assert(page.schemas.some((item) => item['@type'] === 'BreadcrumbList'));
+    const entry = sitemapEntries.find((entry) => entry.url === schema.url);
+    if (path === '/ai' && !aiLaunchState().showSetup)
+      assert.equal(entry, undefined);
+    else assert.equal(entry?.lastmod, '2026-11-06');
+    const html = readFileSync(
+      `.vercel/seo-audit/${path.slice(1).replaceAll('/', '__')}.html`,
+      'utf8',
+    );
+    if (!aiLaunchState().showSetup)
+      assert.match(html, /[Cc]oming soon|Launching soon/);
+    if (path === '/developers/mcp')
+      assert.match(html, /https:\/\/duoly.gg\/mcp/);
+  }
+  link('/games', '/ai');
+  link('/games', '/developers/mcp');
+  link('/get-paid-to-play-games', '/ai');
+  link('/ai', '/developers/mcp');
+  link('/developers/mcp', '/ai');
+});
+
 test('sitemap has exactly the indexable self-canonical 200 URLs in both directions', () => {
   assert.deepEqual(
     sitemapEntries.map((e) => new URL(e.url).pathname).sort(),

@@ -1,0 +1,33 @@
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "structuredContent": {
+      "kind": "preview",
+      "basis": "base price before account perks",
+      "notReserved": true,
+      "currency": "EUR",
+      "amountMinor": 649,
+      "amountEurMinor": 649,
+      "formattedPrice": "€6.49",
+      "unit": "game",
+      "quantity": 1,
+      "quotedAt": "2026-11-06T08:12:35.570Z",
+      "fx": {
+        "rate": 1.08,
+        "source": "fallback",
+        "date": "2026-11-06",
+        "fetchedAt": 0
+      },
+      "notice": "Base price before account perks. USD is an estimate. Final payment and any account perks are reviewed on duoly.gg. No teammate is reserved.",
+      "bookUrl": "https://duoly.gg/?game=val&service=duo2&agent=other#modes-h",
+      "url": "https://duoly.gg/games/valorant"
+    },
+    "content": [
+      {
+        "type": "text",
+        "text": "€6.49 base price before account perks. No reservation. https://duoly.gg/games/valorant"
+      }
+    ]
+  }
+}

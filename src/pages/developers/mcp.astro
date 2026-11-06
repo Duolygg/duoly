@@ -1,0 +1,266 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
+import ClosingCta from '../../components/seo/ClosingCta.astro';
+import '../../components/seo/seo.css';
+import '../../components/seo/ai.css';
+import { pageViewer } from '../../site/viewer';
+import { serializeJsonLd } from '../../site/seo';
+import { MCP, aiLaunchState } from '../../site/ai';
+import quoteExample from '../../content/mcp-quote-example.json';
+const { viewer, csrf } = await pageViewer(Astro);
+const title = 'Duoly MCP Server: Tools and Integration Guide | Duoly';
+const description =
+  'Connect to the Duoly MCP server for public games, services, quotes and availability. Read tool inputs, rate limits and booking link examples. No login needed.';
+const request = JSON.stringify(
+  {
+    jsonrpc: '2.0',
+    id: 2,
+    method: 'tools/call',
+    params: {
+      name: 'get_quote',
+      arguments: {
+        game: 'val',
+        service: 'duo2',
+        rank: 'Platinum',
+        server: 'EU',
+        quantity: 1,
+        currency: 'EUR',
+      },
+    },
+  },
+  null,
+  2,
+);
+---
+
+<SiteLayout
+  title={title}
+  description={description}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Duoly in AI assistants', path: '/ai' },
+        { name: 'MCP developer guide', path: '/developers/mcp' },
+      ]}
+    />
+    <header class="ai-doc-hero">
+      <p class="eyebrow">Developer documentation</p>
+      <h1>Connect your assistant to Duoly</h1>
+      <p class="lead">
+        Use the Duoly MCP server to discover gaming teammates and coaching,
+        calculate a quote and prepare a booking link. All v1 tools are public
+        and read only. Payment stays on duoly.gg.
+      </p>
+      <p class="ai-release">
+        {aiLaunchState().showSetup
+          ? 'Available. Public tools are read only.'
+          : 'Coming soon. Use this guide to prepare your integration.'}
+      </p>
+      <p class="byline">Updated 6 November 2026</p>
+    </header>
+    <section class="card" aria-labelledby="connection-h">
+      <h2 id="connection-h">Connection details</h2>
+      <dl class="ai-connection">
+        <dt>Endpoint</dt>
+        <dd>
+          <code>{MCP.endpoint}</code>
+        </dd>
+        <dt>Transport</dt>
+        <dd>{MCP.transport}</dd>
+        <dt>Protocol versions</dt>
+        <dd>{MCP.protocolVersions.join(', ')}</dd>
+        <dt>Authentication</dt>
+        <dd>None in v1. No API key, OAuth token or Duoly login.</dd>
+        <dt>Scope</dt>
+        <dd>
+          Public catalog, quotes, availability and booking links. Social
+          sessions are excluded.
+        </dd>
+      </dl>
+      <p>
+        Use POST for one JSON-RPC message with{' '}
+        <code>Content-Type: application/json</code> and{' '}
+        <code>Accept: application/json, text/event-stream</code>. JSON responses
+        are returned. GET and DELETE return 405. Batches, subscriptions and
+        streams are not supported.
+      </p>
+      <p>
+        For 2025-11-25 and 2025-06-18, initialize your client, then use{' '}
+        <code>tools/list</code> and <code>tools/call</code>. Send the negotiated{' '}
+        <code>MCP-Protocol-Version</code> header. The transport is stateless
+        with no session ID.
+      </p>
+      <p>
+        For 2026-07-28, use <code>server/discover</code> without initialization.
+        Each request needs <code>MCP-Protocol-Version: 2026-07-28</code>,{' '}
+        <code>Mcp-Method</code> matching the method, and <code>Mcp-Name</code>{' '}
+        matching the tool for tool calls. Include protocol version, client info
+        and client capabilities in <code>params._meta</code>. Use an SDK
+        matching the protocol revision.
+      </p>
+    </section>
+    <section aria-labelledby="tools-h">
+      <h2 id="tools-h">Five public tools</h2>
+      <p>
+        Use game and service identifiers returned by the catalog. An
+        availability signal or quote does not create an order. The booking link
+        selects a game and optional service on Duoly for the user to review. It
+        does not preserve rank, region, quantity or edition. Users select those
+        on duoly.gg.
+      </p>
+      <p class="byline">
+        On narrow screens, scroll the table to read all inputs and outputs.
+      </p>
+      <div
+        class="ai-table-wrap"
+        role="region"
+        aria-label="MCP tool inputs and outputs"
+        tabindex="0"
+      >
+        <table class="ai-table">
+          <caption>v1 tool reference</caption>
+          <thead>
+            <tr>
+              <th scope="col">Tool</th>
+              <th scope="col">Inputs</th>
+              <th scope="col">Output</th>
+            </tr>
+          </thead>
+          <tbody>
+            {MCP.tools.map((tool) => (
+              <tr>
+                <th scope="row">
+                  <code>{tool.name}</code>
+                </th>
+                <td>{tool.inputs}</td>
+                <td>{tool.outputs}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Availability uses a 30-second cached aggregate. Online counts can
+        include teammates already in a session. Null means no reliable count is
+        available. Overall totals are omitted. Any historical match median
+        covers sitewide accepted orders from the last 30 days, including
+        services outside this catalog. It does not predict a wait time for a
+        game.
+      </p>
+      <p>
+        Amounts depend on the game, service, rank, quantity and currency. Get a
+        fresh quote when those choices change. Checkout calculates the final
+        price, including any applicable account eligibility. USD quotes are
+        estimates. Use exact rank and region tokens from list_services. Omit
+        rank for flat-priced services. Minecraft requires a server or world
+        string and a Java or Bedrock edition. Teams and dynamic streamer
+        bookings are excluded from this catalog.
+      </p>
+    </section>
+    <section aria-labelledby="quote-h">
+      <h2 id="quote-h">Request a quote</h2>
+      <p>
+        The following legacy JSON-RPC example uses protocol 2025-11-25 after
+        initialization. Discover valid service and rank values with{' '}
+        <code>list_services</code> first.
+      </p>
+      <h3>Request</h3>
+      <pre class="ai-code"><code>{request}</code></pre>
+      <h3>Response</h3>
+      <p>
+        A successful call returns MCP content and structured quote data. This
+        example was generated from the v1 tool implementation on 6 November 2026
+        with a fixed exchange-rate fixture. It illustrates the response shape,
+        not a live price offer.
+      </p>
+      <pre class="ai-code"><code>{JSON.stringify(quoteExample, null, 2)}</code></pre>
+      <p>
+        Handle tool errors before showing a price or link. Do not treat an error
+        message, stale quote or empty availability result as a confirmed
+        session.
+      </p>
+    </section>
+    <section aria-labelledby="inspector-h">
+      <h2 id="inspector-h">Test with MCP Inspector</h2>
+      <p>
+        After launch, start the Inspector locally, open its printed URL and
+        connect using Streamable HTTP with the endpoint above and no
+        authentication. Initialize, list tools and try a catalog request before
+        a quote.
+      </p>
+      <pre class="ai-code"><code>npx @modelcontextprotocol/inspector</code></pre>
+      <p>For a command-line discovery check:</p>
+      <pre class="ai-code"><code>{`npx @modelcontextprotocol/inspector --cli ${MCP.endpoint} --transport http --method tools/list`}</code></pre>
+    </section>
+    <section class="card" aria-labelledby="limits-h">
+      <h2 id="limits-h">Rate limits and privacy</h2>
+      <p>
+        Limits are {MCP.rateLimits.minute} requests per minute and{' '}
+        {MCP.rateLimits.day.toLocaleString('en-US')} per day per IP. On HTTP
+        429, respect the response’s retry guidance and back off. Do not retry in
+        a tight loop or rotate addresses to bypass the limit. Each accepted POST
+        counts, including discovery and initialization. Request bodies are
+        limited to 16,384 bytes; structured tool output is capped at 65,536
+        bytes. HTTP 429 includes Retry-After and error.data.retryAfterSeconds.
+        HTTP 503 means required server configuration is unavailable.
+      </p>
+      <p>
+        Browser origins must exactly match https://duoly.gg or
+        https://www.duoly.gg. Native and server clients may omit Origin. Browser
+        clients on other origins need an explicitly approved origin before
+        connecting.
+      </p>
+      <p>
+        Send only the structured catalog choices needed by a tool. Never send
+        names, emails, chat history, passwords, card details or account tokens.
+        The tools do not read accounts or store personal booking data. Abuse
+        prevention uses an IP-derived identifier; hosting infrastructure also
+        processes connection metadata.
+      </p>
+      <p>
+        These tools cannot charge, reserve, cancel or read a private order.
+        Never promise a specific start time, teammate rank or in-game result.
+        Link users to Duoly to review and complete their own booking. See our{' '}
+        <a href="/privacy">privacy policy</a> and <a href="/terms">terms</a>.
+      </p>
+    </section>
+    <ClosingCta
+      heading="Building a Duoly integration?"
+      text="Contact the team for partner questions and compatibility checks."
+      href="/contact"
+      label="Contact Duoly"
+    />
+    <nav class="related" aria-label="Related pages">
+      <h2>For your users</h2>
+      <div class="chips">
+        <a href="/ai">Using Duoly in AI assistants</a>
+        <a href="/games">Games and coaching catalog</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'TechArticle',
+      headline: 'Connect your assistant to Duoly',
+      description,
+      url: new URL('/developers/mcp', Astro.site!).href,
+      datePublished: '2026-11-06',
+      dateModified: '2026-11-06',
+      author: {
+        '@type': 'Organization',
+        name: 'Duoly',
+        url: new URL('/contact', Astro.site!).href,
+      },
+      about: 'Public read-only Duoly MCP integration',
+    })}
+  />
+</SiteLayout>
