@@ -10,10 +10,7 @@ describe('MCP catalog', () => {
       url: 'https://duoly.gg/games/valorant',
     });
   });
-  it('excludes Teams and returns the quote requirements', () => {
-    for (const game of games()) {
-      expect(services(game.id).every((s) => s.category !== 'other')).toBe(true);
-    }
+  it('returns the quote requirements for pricing-supported services', () => {
     expect(services('val').find((s) => s.id === 'duo2')).toMatchObject({
       unit: 'game',
       regions: expect.arrayContaining(['EU']),

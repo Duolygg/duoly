@@ -1,6 +1,12 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
-import { games, resolveGame, resolveService, services } from './catalog';
+import {
+  games,
+  resolveGame,
+  resolveService,
+  services,
+  ToolInputError,
+} from './catalog';
 import { calculateQuote } from '../pricing';
 import { eurToUsd } from '../fx';
 import { homeLive } from '../home/live';
@@ -169,7 +175,7 @@ export async function callTool(
 ) {
   const parsed = inputs[name].safeParse(args);
   if (!parsed.success)
-    throw new Error(
+    throw new ToolInputError(
       parsed.error.issues
         .map((i) => `${i.path.join('.') || 'arguments'}: ${i.message}`)
         .join('; ') + '. Call list_services for supported quote inputs.',
@@ -223,7 +229,7 @@ export async function callTool(
           { eurToUsd: fx.rate, customerCurrency: a.currency! },
         );
       } catch {
-        throw new Error(
+        throw new ToolInputError(
           'Invalid quote selection. Call list_services for exact rank, server and edition requirements. Omit rank for services with no ranks.',
         );
       }
@@ -286,6 +292,11 @@ export async function callTool(
     string,
     unknown
   >;
+  if (
+    new TextEncoder().encode(JSON.stringify(structuredContent)).byteLength >
+    65536
+  )
+    throw new Error('Tool response exceeds the size limit.');
   return {
     structuredContent,
     content: [{ type: 'text' as const, text: `${summary} ${url}` }],
@@ -331,7 +342,7 @@ export function createServer(userAgent = '') {
               {
                 type: 'text' as const,
                 text:
-                  error instanceof Error
+                  error instanceof ToolInputError
                     ? error.message
                     : 'Tool unavailable. Try again later.',
               },

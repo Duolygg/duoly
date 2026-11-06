@@ -1,7 +1,10 @@
 import { SITE_GAMES } from '../../site/games';
+import { parseQuoteInput } from '../pricing';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { ranksOf } from '../../design-reference/lib/ranks.js';
 import { serversFor } from '../../design-reference/lib/servers.js';
+
+export class ToolInputError extends Error {}
 
 export const games = () =>
   SITE_GAMES.filter((g) => g.id !== 'social').map(({ id, slug, name }) => ({
@@ -13,7 +16,7 @@ export const games = () =>
 export function resolveGame(value: string) {
   const game = games().find((g) => g.id === value || g.slug === value);
   if (!game)
-    throw new Error(
+    throw new ToolInputError(
       'Unsupported game. Call list_games and use a returned id or slug.',
     );
   return game;
@@ -27,7 +30,23 @@ export function services(value: string) {
     unit: 'game' | 'hour';
   }[];
   return modes
-    .filter((m) => m.cat !== 'other')
+    .filter((m) => {
+      // Bookability follows the checkout parser, including future Teams support.
+      const rank = (ranksOf(game.id, m.id) as string[])[0];
+      try {
+        parseQuoteInput({
+          gameId: game.id,
+          serviceId: m.id,
+          units: 1,
+          server: game.id === 'mc' ? 'my world' : serversFor(game.id)[0]![0],
+          ...(rank ? { rank } : {}),
+          ...(game.id === 'mc' ? { edition: 'Java' } : {}),
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    })
     .map((m) => {
       const ranks = ranksOf(game.id, m.id) as string[];
       return {
@@ -57,7 +76,7 @@ export function services(value: string) {
 export function resolveService(game: string, service: string) {
   const selected = services(game).find((s) => s.id === service);
   if (!selected)
-    throw new Error(
+    throw new ToolInputError(
       'Unsupported service. Call list_services for this game and use a returned id.',
     );
   return selected;

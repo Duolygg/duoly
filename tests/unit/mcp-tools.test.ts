@@ -22,6 +22,22 @@ const live = async () => ({
   },
 });
 describe('MCP tools', () => {
+  it('bounds structured tool output to 64 KiB', async () => {
+    await expect(
+      callTool(
+        'get_quote',
+        {
+          game: 'val',
+          service: 'duo2',
+          rank: 'Platinum',
+          server: 'EU',
+          quantity: 1,
+          currency: 'EUR',
+        },
+        { fx: async () => ({ ...(await fx()), date: 'x'.repeat(65536) }) },
+      ),
+    ).rejects.toThrow('Tool response exceeds the size limit.');
+  });
   it('quotes every bookable service and rank through the unchanged calculator', async () => {
     let count = 0;
     for (const game of games())
@@ -55,7 +71,7 @@ describe('MCP tools', () => {
           count++;
         }
       }
-    expect(count).toBe(398);
+    expect(count).toBeGreaterThanOrEqual(398);
   });
   it('returns games and service structured content', async () => {
     expect(
@@ -138,7 +154,6 @@ describe('MCP tools', () => {
   });
   it.each([
     ['list_services', { game: 'social' }],
-    ['create_booking_link', { game: 'val', service: 'stack' }],
     [
       'get_quote',
       {

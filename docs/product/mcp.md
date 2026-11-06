@@ -11,7 +11,7 @@ Tested protocol revisions:
 - **2026-07-28**: `server/discover`, per-request `_meta`, request metadata headers and `resultType: complete`. No initialize or sessions.
 - **2025-11-25**, **2025-06-18**: `initialize`, `tools/list`, `tools/call` through the SDK's stateless legacy transport. No session IDs. Each request creates a fresh SDK server.
 
-The same registered tools serve every revision. The modern handler uses `responseMode: json`; legacy uses `enableJsonResponse: true`. GET and DELETE return 405. No subscriptions or streams are offered. POST accepts one JSON-RPC message, maximum 16,384 bytes, including chunked bodies. SDK validation owns protocol errors and version/header consistency. No authentication is required because no private or transactional tools are exposed.
+The same registered tools serve every revision. The modern handler uses `responseMode: json`; legacy uses `enableJsonResponse: true`. GET and DELETE return 405. No subscriptions or streams are offered. POST accepts one JSON-RPC message, maximum 16,384 bytes, including chunked bodies. Structured tool output is capped at 65,536 bytes. Unexpected tool dependency errors are sanitized; only adapter-owned input errors are returned verbatim. SDK validation owns protocol errors and version/header consistency. No authentication is required because no private or transactional tools are exposed.
 
 Modern requests need `MCP-Protocol-Version: 2026-07-28`, `Mcp-Method` matching the method and, for tools/call, `Mcp-Name` matching the tool name. Their params include:
 
@@ -65,7 +65,7 @@ The canonical citation is `https://duoly.gg/games/valorant/coaching`. Links only
 ### Exclusions and honest availability
 
 - Social as a catalog game is excluded throughout. Ordinary casual game modes whose internal category is `social` remain available.
-- Teams (`other`) are excluded because checkout rejects them.
+- Bookability is determined by `parseQuoteInput`, not a hardcoded Teams category filter. Teams are currently excluded because the pricing parser rejects them; they appear automatically when pricing accepts them. Social stays explicitly excluded.
 - Dynamic streamer listings and pricing are excluded because they use a different quote path and streamer-specific revalidation.
 - No account reads, checkout creation, wallet use, order cancellation, private chat or credentials.
 - Online means **online now (may include teammates in a session)**. It does not mean immediately reservable capacity. Orders enter a queue and a teammate must accept. No rank gains or instant matching are promised.
@@ -77,7 +77,7 @@ The canonical citation is `https://duoly.gg/games/valorant/coaching`. Links only
 
 Every accepted POST consumes one request from both fixed UTC buckets per IP: **60 per minute and 2,000 per day**. This includes discovery and legacy initialization. Requests with malformed JSON, invalid origin, invalid media type or oversized bodies are rejected before database access. JSON-RPC batches are rejected, so batching cannot bypass quotas.
 
-IP comes from Astro's adapter `clientAddress`, never caller-controlled forwarded headers in application code. Vercel is the trusted ingress. A dedicated server-only `MCP_IP_HASH_SECRET` of at least 32 characters HMAC-SHA256 hashes the IP with a namespace. Neither raw IPs nor hash keys are sent to analytics. Rotating this secret resets quotas. Shared NAT addresses share quotas. The limiter fails closed with HTTP 503 and Retry-After 60 if the secret, address, service configuration or RPC is unavailable. Quota rejection returns HTTP 429, JSON-RPC code -32029, original RPC ID and retry guidance in `error.data.retryAfterSeconds` plus `Retry-After`.
+IP comes from Astro's adapter `clientAddress`, never caller-controlled forwarded headers in application code. Vercel is the trusted ingress. A dedicated server-only `MCP_IP_HASH_SECRET` of at least 32 characters HMAC-SHA256 hashes the IP with a namespace. Neither raw IPs nor hash keys are sent to analytics. Rotating this secret resets quotas. Shared NAT addresses share quotas. Missing secret, invalid adapter address or missing service configuration fails closed with HTTP 503 and Retry-After 60. RPC errors, timeouts and malformed RPC results fail open under a process-wide cap of 30 requests per fixed minute. The cap retains no IPs and emits one generic warning per affected minute, without error details, secrets or addresses. It is not a durable quota and scales with instance count; the durable daily quota is unavailable during an outage. Restore RPC health promptly. Quota rejection returns HTTP 429, JSON-RPC code -32029, original RPC ID and retry guidance in `error.data.retryAfterSeconds` plus `Retry-After`.
 
 Origin is allowed when absent. Present origins must exactly match `https://duoly.gg` or `https://www.duoly.gg`; localhost port 4321 is additionally allowed only in dev. `null`, suffix lookalikes and arbitrary Host-derived origins are rejected. CORS is limited to these origins, required MCP headers and POST/OPTIONS, without credentials. Server clients and native clients do not need CORS. Add an explicitly reviewed origin if a real browser host needs direct cross-origin access. A Vercel firewall rule is a recommended additional infrastructure defense, not included in this PR.
 
@@ -125,7 +125,7 @@ node scripts/mcp-smoke.mjs http://127.0.0.1:4321
 npx @modelcontextprotocol/inspector --cli http://127.0.0.1:4321/mcp --transport http --method tools/list
 ```
 
-The smoke script exercises both legacy revisions, modern discover, tools/list, all five tools and GET 405 over real HTTP. It requires working limiter configuration. Unit tests use an injected limiter and mocked RPC so they never touch production. Local dev and Inspector can be exercised against a test-only mock limiter RPC; this verifies actual Astro routing and SDK transport, not the database migration. Do not add a public limiter bypass or a production fallback to memory.
+The smoke script exercises both legacy revisions, modern discover, tools/list, all five tools and GET 405 over real HTTP. It requires working limiter configuration. Unit tests use an injected limiter and mocked RPC so they never touch production. Local dev and Inspector can be exercised against a test-only mock limiter RPC; this verifies actual Astro routing and SDK transport, not the database migration. There is no public limiter bypass. The bounded process fallback applies only to limiter RPC outages, not missing security configuration.
 
 Actual local smoke on port 4388 used a test-only mock Supabase limiter HTTP endpoint and no production credentials. All three protocol revisions and all five tools succeeded. EUR quote returned €17.52 using the real calculator and ECB loader. Availability returned null and no median with public data unavailable. Inspector tools/list exited 0 and returned the five tools with input/output schemas and all four annotations. This is not a real Claude or ChatGPT UI acceptance test; those remain a post-deployment owner step.
 

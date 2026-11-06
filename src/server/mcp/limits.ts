@@ -15,6 +15,26 @@ const result = z.strictObject({
   allowed: z.boolean(),
   retry_after: z.number().int().min(0).max(86400),
 });
+// A process-wide outage budget avoids retaining IPs or unbounded per-address maps.
+let fallbackWindow = -1;
+let fallbackCalls = 0;
+function outageLimit(): LimitResult {
+  const now = Date.now();
+  const window = Math.floor(now / 60000);
+  if (fallbackWindow !== window) {
+    fallbackWindow = window;
+    fallbackCalls = 0;
+    console.warn(
+      'MCP limiter RPC unavailable; using process cap of 30 requests per minute.',
+    );
+  }
+  return ++fallbackCalls <= 30
+    ? { allowed: true, retryAfter: 0 }
+    : {
+        allowed: false,
+        retryAfter: Math.max(1, Math.ceil(((window + 1) * 60000 - now) / 1000)),
+      };
+}
 export async function rateLimit(
   ip: string,
   rpc?: Rpc,
@@ -38,8 +58,12 @@ export async function rateLimit(
   const key = createHmac('sha256', secret)
     .update('mcp-v1:' + ip)
     .digest('hex');
-  const response = await rpc('mcp_take_rate_limit', { p_key: key });
-  if (response.error) throw new Error('MCP limiter storage unavailable');
-  const value = result.parse(response.data);
-  return { allowed: value.allowed, retryAfter: value.retry_after };
+  try {
+    const response = await rpc('mcp_take_rate_limit', { p_key: key });
+    if (response.error) return outageLimit();
+    const value = result.parse(response.data);
+    return { allowed: value.allowed, retryAfter: value.retry_after };
+  } catch {
+    return outageLimit();
+  }
 }

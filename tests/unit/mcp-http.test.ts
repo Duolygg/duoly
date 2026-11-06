@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { rateLimit } from '../../src/server/mcp/limits';
 import { handleMcp } from '../../src/server/mcp/http';
+import * as live from '../../src/server/home/live';
 import { ALL } from '../../src/pages/mcp';
 const rpc = vi.fn();
 const allow = async () => ({ allowed: true, retryAfter: 0 });
@@ -43,6 +44,24 @@ const modern = (method: string, params: Record<string, unknown> = {}) =>
   });
 describe('MCP HTTP', () => {
   beforeEach(() => rpc.mockReset());
+  it('does not expose unexpected dependency errors in tool responses', async () => {
+    const mock = vi.spyOn(live, 'homeLive').mockImplementation(async () => {
+      throw new Error('database password=secret 203.0.113.1');
+    });
+    try {
+      const response = await handleMcp(
+        request(
+          legacy('tools/call', { name: 'get_availability', arguments: {} }),
+        ),
+        { ip: '127.0.0.1', limit: allow },
+      );
+      const json = await response.json();
+      expect(json.result.isError).toBe(true);
+      expect(JSON.stringify(json)).not.toMatch(/password|secret|203\.0\.113/);
+    } finally {
+      mock.mockRestore();
+    }
+  });
   it('exports a real Astro route', () => expect(ALL).toBeTypeOf('function'));
   it.each(['2025-11-25', '2025-06-18'])(
     'initializes legacy %s and lists tools as JSON',
@@ -174,6 +193,34 @@ describe('MCP HTTP', () => {
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain('secret');
   });
+  it('keeps public tools available under a small process-wide cap on RPC outage', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-08T10:00:00Z'));
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const unavailable = async () => {
+      throw new Error('secret database details');
+    };
+    try {
+      for (let i = 0; i < 30; i++)
+        expect(
+          await rateLimit('203.0.113.8', unavailable, 'a'.repeat(32)),
+        ).toEqual({ allowed: true, retryAfter: 0 });
+      expect(
+        await rateLimit('203.0.113.9', unavailable, 'a'.repeat(32)),
+      ).toEqual({ allowed: false, retryAfter: 60 });
+      expect(warning).toHaveBeenCalledTimes(1);
+      expect(JSON.stringify(warning.mock.calls)).not.toMatch(
+        /secret|203\.0\.113/,
+      );
+      vi.advanceTimersByTime(60000);
+      expect(
+        (await rateLimit('203.0.113.8', unavailable, 'a'.repeat(32))).allowed,
+      ).toBe(true);
+    } finally {
+      warning.mockRestore();
+      vi.useRealTimers();
+    }
+  });
   it('uses one durable RPC with a secret hashed key and validates its response', async () => {
     rpc.mockResolvedValue({
       data: { allowed: false, retry_after: 60 },
@@ -188,8 +235,8 @@ describe('MCP HTTP', () => {
     });
     expect(JSON.stringify(rpc.mock.calls)).not.toContain('203.0.113.7');
     rpc.mockResolvedValue({ data: null, error: { message: 'db' } });
-    await expect(
-      rateLimit('203.0.113.7', rpc, 'a'.repeat(32)),
-    ).rejects.toThrow();
+    expect((await rateLimit('203.0.113.7', rpc, 'a'.repeat(32))).allowed).toBe(
+      true,
+    );
   });
 });
