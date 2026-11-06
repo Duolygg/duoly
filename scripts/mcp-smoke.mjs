@@ -2,7 +2,7 @@
 /* global URL, fetch, AbortSignal, console */
 import assert from 'node:assert/strict';
 const base = new URL(process.argv[2] ?? 'http://localhost:4321');
-const endpoint = new URL('/mcp', base);
+const endpoint = new URL('/mcp?client=claude', base);
 let id = 0;
 async function rpc(method, params = {}, version = '2026-07-28') {
   const modern = version === '2026-07-28';
@@ -48,44 +48,77 @@ async function rpc(method, params = {}, version = '2026-07-28') {
   assert.equal(json.result.isError, undefined, JSON.stringify(json));
   return json.result;
 }
-for (const version of ['2025-06-18', '2025-11-25']) {
-  const init = await rpc(
-    'initialize',
-    {
-      protocolVersion: version,
-      capabilities: {},
-      clientInfo: { name: 'duoly-smoke', version: '1.0.0' },
-    },
-    version,
-  );
-  assert.equal(init.protocolVersion, version);
-  assert.equal((await rpc('tools/list', {}, version)).tools.length, 5);
-  console.log(`${version}: initialize and tools/list OK`);
-}
-await rpc('server/discover');
-assert.equal((await rpc('tools/list')).tools.length, 5);
-for (const [name, args] of [
+const calls = [
   ['list_games', {}],
-  ['list_services', { game: 'val' }],
+  ['list_services', { game: 'lol' }],
+  [
+    'find_session',
+    {
+      game: 'lol',
+      goal: 'ranked',
+      rank: 'Gold',
+      server: 'EUW',
+      quantity: 3,
+      currency: 'EUR',
+    },
+  ],
   [
     'get_quote',
     {
-      game: 'val',
+      game: 'lol',
       service: 'duo2',
-      rank: 'Platinum',
+      rank: 'Gold',
       quantity: 3,
       currency: 'EUR',
+      server: 'EUW',
+    },
+  ],
+  ['list_services', { game: 'val' }],
+  [
+    'find_session',
+    {
+      game: 'val',
+      goal: 'coaching',
+      budget: 15,
+      currency: 'EUR',
+      quantity: 1,
       server: 'EU',
     },
   ],
-  ['get_availability', { game: 'val' }],
+  [
+    'get_quote',
+    { game: 'val', service: 'vod', quantity: 1, currency: 'EUR', server: 'EU' },
+  ],
+  ['get_availability', { game: 'lol' }],
   ['create_booking_link', { game: 'val', service: 'vod' }],
-]) {
-  const result = await rpc('tools/call', { name, arguments: args });
-  assert.equal(result.resultType, 'complete');
-  assert.ok(result.structuredContent.url.startsWith('https://duoly.gg/'));
-  console.log(`${name}: ${JSON.stringify(result.structuredContent)}`);
+];
+for (const version of ['2025-06-18', '2025-11-25', '2026-07-28']) {
+  if (version === '2026-07-28') await rpc('server/discover');
+  else {
+    const init = await rpc(
+      'initialize',
+      {
+        protocolVersion: version,
+        capabilities: {},
+        clientInfo: { name: 'duoly-smoke', version: '1.0.0' },
+      },
+      version,
+    );
+    assert.equal(init.protocolVersion, version);
+  }
+  assert.equal((await rpc('tools/list', {}, version)).tools.length, 6);
+  for (const [name, args] of calls) {
+    const result = await rpc('tools/call', { name, arguments: args }, version);
+    if (version === '2026-07-28') assert.equal(result.resultType, 'complete');
+    assert.ok(
+      result.content[0].text.includes(JSON.stringify(result.structuredContent)),
+    );
+    assert.ok(result.content[0].text.includes('agent=claude'));
+    console.log(
+      `${version} ${name} ${JSON.stringify(args)}\n${result.content[0].text}\n`,
+    );
+  }
+  console.log(`${version}: discovery and all six tools OK`);
 }
-const get = await fetch(endpoint);
-assert.equal(get.status, 405);
-console.log('2026-07-28: discover, tools/list, all five tools and GET 405 OK');
+assert.equal((await fetch(endpoint)).status, 405);
+console.log('GET 405 OK');

@@ -15,6 +15,7 @@ describe('AI page public contract', () => {
     expect(MCP.tools.map((tool) => tool.name)).toEqual([
       'list_games',
       'list_services',
+      'find_session',
       'get_quote',
       'get_availability',
       'create_booking_link',
@@ -48,6 +49,9 @@ describe('AI page public contract', () => {
       quote.amountEurMinor,
     );
     expect(example.result.structuredContent.notReserved).toBe(true);
+    expect(example.result.content[0]!.text).toContain(
+      JSON.stringify(example.result.structuredContent),
+    );
     expect(example.result.structuredContent.bookUrl).toBe(
       'https://duoly.gg/?game=val&service=duo2&agent=other#modes-h',
     );

@@ -20,13 +20,20 @@ export const MCP = {
       name: 'list_games',
       inputs: 'None',
       outputs:
-        'games: id, slug, name, url; canonical catalog url. Social is excluded.',
+        'games: id, slug, name, bookUrl, url; canonical catalog url. Social is excluded.',
     },
     {
       name: 'list_services',
       inputs: 'game (required)',
       outputs:
-        'game, services (id, name, category, unit, ranks, regions, editions, requiredInputs, url), url.',
+        'game, services (id, name, description, fromPrice, category, unit, ranks, regions, editions, requiredInputs, bookUrl, url), url.',
+    },
+    {
+      name: 'find_session',
+      inputs:
+        'game (required); goal or category, rank, region or server, quantity, budget, currency (EUR or USD), edition (optional)',
+      outputs:
+        'Up to three matching services with descriptions, real calculated prices, bookUrls and missingInputs. Start here for a teammate or coach. Incomplete selections have labelled from prices.',
     },
     {
       name: 'get_quote',
@@ -39,7 +46,7 @@ export const MCP = {
       name: 'get_availability',
       inputs: 'game (optional)',
       outputs:
-        'game (optional), online, onlineByGame, label, readAt, cacheSeconds, notice, url; medianMatchSeconds, medianWindowDays and medianScope when available. No reservation.',
+        'game (optional), positive online counts when available, onlineByGame, bookUrl, label, readAt, cacheSeconds, notice, url; medianMatchSeconds, medianWindowDays and medianScope when available. No reservation.',
     },
     {
       name: 'create_booking_link',

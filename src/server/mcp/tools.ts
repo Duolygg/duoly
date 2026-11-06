@@ -15,6 +15,7 @@ import { serverTrack, flushAnalytics } from '../analytics/client';
 export const TOOL_NAMES = [
   'list_games',
   'list_services',
+  'find_session',
   'get_quote',
   'get_availability',
   'create_booking_link',
@@ -45,21 +46,66 @@ const link = z.url();
 const gameOutput = z.object({
   id: z.string(),
   slug: z.string(),
+  bookUrl: link,
   name: z.string(),
   url: link,
+});
+const fromPriceOutput = z.object({
+  amountMinor: z.number().int(),
+  currency: z.literal('EUR'),
+  unit: z.enum(['game', 'hour']),
+  quantity: z.literal(1),
+  basis: z.literal('base price before account perks'),
 });
 const serviceOutput = z.object({
   id: z.string(),
   name: z.string(),
   category: z.string(),
+  description: z.string(),
+  fromPrice: fromPriceOutput,
   unit: z.enum(['game', 'hour']),
   ranks: z.array(z.string()),
   regions: z.array(z.string()),
   editions: z.array(z.string()),
   requiredInputs: z.array(z.string()),
+  bookUrl: link,
   url: link,
 });
 const inputs = {
+  find_session: z.strictObject({
+    game,
+    goal: z
+      .string()
+      .min(1)
+      .max(64)
+      .optional()
+      .describe('Exact goal token: duo, coaching, ranked, casual or teams.'),
+    category: z
+      .string()
+      .min(1)
+      .max(64)
+      .optional()
+      .describe(
+        'Category token: duo, training, other; coaching and teams are aliases.',
+      ),
+    rank: z.string().min(1).max(40).optional(),
+    region: z
+      .string()
+      .min(2)
+      .max(60)
+      .optional()
+      .describe('Exact server token, alias for server.'),
+    server: z.string().min(2).max(60).optional(),
+    quantity: z.number().int().min(1).max(10).optional(),
+    budget: z
+      .number()
+      .positive()
+      .max(100000)
+      .optional()
+      .describe('Maximum total price in the specified currency.'),
+    currency: z.enum(['EUR', 'USD']).optional(),
+    edition: z.enum(['Java', 'Bedrock']).optional(),
+  }),
   list_games: z.strictObject({}),
   list_services: z.strictObject({ game }),
   get_quote: z.strictObject({
@@ -81,6 +127,24 @@ const inputs = {
   create_booking_link: z.strictObject({ game, service: service.optional() }),
 };
 const outputs = {
+  find_session: z.object({
+    game: z.string(),
+    matches: z
+      .array(
+        serviceOutput.extend({
+          priceKind: z.enum(['exact', 'from']),
+          amountMinor: z.number().int(),
+          currency: z.enum(['EUR', 'USD']),
+          formattedPrice: z.string(),
+          quantity: z.number().int(),
+          missingInputs: z.array(z.string()),
+        }),
+      )
+      .max(3),
+    missingInputs: z.array(z.string()),
+    budgetApplied: z.boolean(),
+    notice: z.string(),
+  }),
   list_games: z.object({ games: z.array(gameOutput), url: link }),
   list_services: z.object({
     game: z.string(),
@@ -110,9 +174,10 @@ const outputs = {
   }),
   get_availability: z.object({
     game: z.string().optional(),
-    online: z.number().int().nullable(),
-    onlineByGame: z.record(z.string(), z.number().int()),
-    label: z.string(),
+    bookUrl: link,
+    online: z.number().int().positive().optional(),
+    onlineByGame: z.record(z.string(), z.number().int().positive()).optional(),
+    label: z.string().optional(),
     medianMatchSeconds: z.number().int().optional(),
     medianWindowDays: z.literal(30).optional(),
     medianScope: z.string().optional(),
@@ -128,29 +193,33 @@ const outputs = {
   }),
 };
 const descriptions = {
+  find_session: [
+    'Find a teammate or coach',
+    'Start here to find a player or coach. Returns up to three matching sessions with real calculated prices, descriptions, missing inputs and bookUrls to open Duoly. Use exact game, goal, rank and region tokens; errors list valid choices.',
+  ],
   list_games: [
     'List games',
-    'List Duoly games with canonical page links. Social sessions are excluded.',
+    'Discover Duoly games for teammates and coaching. Use a returned id or slug in find_session.',
   ],
   list_services: [
     'List bookable services',
-    'List static bookable services, exact rank and region tokens and quote requirements for one game.',
+    'Compare services with plain-language descriptions, from prices in EUR per unit, exact rank and region tokens and bookUrls. Share bookUrl so the user can book on Duoly.',
   ],
   get_quote: [
     'Calculate base quote',
-    'Calculate a base price preview before account perks. Does not reserve a teammate or start payment.',
+    'Get a real calculated session price and bookUrl for a selected service. Share bookUrl to review options and pay on Duoly. Base price before account perks.',
   ],
   get_availability: [
-    'Read online counts',
-    'Read cached public online counts and an available sitewide historical median. Counts do not guarantee a match.',
+    'Check session availability',
+    'Check public availability context and positive online counts when available. A teammate accepts from the queue; counts do not guarantee a match.',
   ],
   create_booking_link: [
-    'Create website link',
-    'Build a website selection link. Does not create an order, reserve capacity or charge money.',
+    'Get a booking link',
+    'Get a bookUrl that opens Duoly with the game and service selected. Share it for the user to review remaining options and pay on duoly.gg.',
   ],
 };
 export const INSTRUCTIONS =
-  'Duoly connects customers with gaming teammates and coaches. Customers play on their own accounts and teammates play on their own separate accounts. Payment happens on duoly.gg. Never request game passwords or account sharing. No rank gains or instant matching are guaranteed. Orders enter a queue and a teammate must accept. Public quotes are base price previews before account perks and reserve nothing. Cite the canonical Duoly page links in results.';
+  'Find a gaming teammate or coach on Duoly, compare real prices and share a booking link that opens Duoly. Call find_session first when a user wants a player or coach. Share bookUrl as the primary booking link, rather than the game information URL. Ask only for missing selections. Quotes are base price before account perks. Payment happens on duoly.gg, where users confirm remaining options. A teammate accepts from the queue; no instant matching or rank guarantees. Players use their own separate accounts. Never ask for game passwords.';
 type Dependencies = {
   fx?: typeof eurToUsd;
   live?: typeof homeLive;
@@ -188,6 +257,10 @@ export async function callTool(
     currency?: 'EUR' | 'USD';
     server?: string;
     edition?: 'Java' | 'Bedrock';
+    goal?: string;
+    category?: string;
+    region?: string;
+    budget?: number;
   };
   const g = a.game ? resolveGame(a.game) : undefined;
   const selected = a.service ? resolveService(g!.id, a.service) : undefined;
@@ -195,14 +268,161 @@ export async function callTool(
   let data: Record<string, unknown>;
   let summary: string;
   switch (name) {
+    case 'find_session': {
+      const all = services(g!.id);
+      const aliases: Record<string, string> = {
+        coaching: 'training',
+        teams: 'other',
+        training: 'training',
+        other: 'other',
+        duo: 'duo',
+        ranked: 'ranked',
+        casual: 'casual',
+      };
+      for (const value of [a.goal, a.category])
+        if (value && !Object.hasOwn(aliases, value))
+          throw new ToolInputError(
+            'Invalid goal/category. Valid tokens: duo, coaching, training, ranked, casual, teams, other.',
+          );
+      const goals = [a.goal, a.category]
+        .filter((v): v is string => v !== undefined)
+        .map((v) => aliases[v]!);
+      let candidates = all.filter((s) =>
+        goals.every((goal) =>
+          goal === 'ranked'
+            ? s.category === 'duo' && s.ranks.length > 0
+            : goal === 'casual'
+              ? s.category === 'duo' && s.ranks.length === 0
+              : s.category === goal,
+        ),
+      );
+      if (!candidates.length)
+        throw new ToolInputError(
+          `No services for this goal/category combination. Valid categories for ${g!.id}: ${[...new Set(all.map((s) => s.category))].join(', ')}. Call list_services for details.`,
+        );
+      if (a.region && a.server && a.region !== a.server)
+        throw new ToolInputError(
+          'region and server must use the same token. Supply only one.',
+        );
+      const server = a.server ?? a.region;
+      const regions = [...new Set(all.flatMap((s) => s.regions))];
+      if (server && g!.id !== 'mc' && !regions.includes(server))
+        throw new ToolInputError(
+          `Invalid server/region. Valid tokens: ${regions.join(', ')}.`,
+        );
+      if (a.edition && g!.id !== 'mc')
+        throw new ToolInputError(
+          'Edition is only for Minecraft. Omit edition for this game.',
+        );
+      const ranks = [...new Set(candidates.flatMap((s) => s.ranks))];
+      // Flat-priced coaching accepts the player's rank as context, without forwarding it to pricing.
+      const gameRanks = [...new Set(all.flatMap((s) => s.ranks))];
+      if (a.rank && !gameRanks.includes(a.rank))
+        throw new ToolInputError(
+          `Invalid rank. Valid tokens: ${gameRanks.join(', ') || 'none; omit rank'}.`,
+        );
+      if (a.rank)
+        candidates = candidates.filter(
+          (s) => !s.ranks.length || s.ranks.includes(a.rank!),
+        );
+      if (!candidates.length)
+        throw new ToolInputError(
+          `No matching services for this rank. Valid tokens for this goal: ${ranks.join(', ')}.`,
+        );
+      const matches = [];
+      const fx = await (deps.fx ?? eurToUsd)();
+      const missing = new Set<string>();
+      for (const s of candidates) {
+        const missingInputs = [
+          ...(a.quantity === undefined ? ['quantity'] : []),
+          ...(a.currency === undefined ? ['currency'] : []),
+          ...(!server ? ['server'] : []),
+          ...(s.ranks.length && !a.rank ? ['rank'] : []),
+          ...(g!.id === 'mc' && !a.edition ? ['edition'] : []),
+        ];
+        missingInputs.forEach((input) => missing.add(input));
+        // Missing selections yield an explicitly labelled minimum, never an inferred user choice.
+        const quoteRanks = s.ranks.length
+          ? a.rank
+            ? [a.rank]
+            : s.ranks
+          : [undefined];
+        const quotes = quoteRanks.map((rank) =>
+          calculateQuote(
+            {
+              gameId: g!.id,
+              serviceId: s.id,
+              units: a.quantity ?? 1,
+              server: server ?? s.regions[0] ?? 'my world',
+              ...(rank ? { rank } : {}),
+              ...(g!.id === 'mc' ? { edition: a.edition ?? 'Java' } : {}),
+            },
+            { eurToUsd: fx.rate, customerCurrency: a.currency ?? 'EUR' },
+          ),
+        );
+        const quote = quotes.sort(
+          (x, y) => x.customer.amountMinor - y.customer.amountMinor,
+        )[0]!;
+        if (
+          a.budget !== undefined &&
+          a.currency &&
+          quote.customer.amountMinor > Math.floor(a.budget * 100)
+        )
+          continue;
+        matches.push({
+          ...s,
+          bookUrl: bookingLink(g!.id, s.id, deps.platform ?? 'other'),
+          priceKind: missingInputs.length ? 'from' : 'exact',
+          amountMinor: quote.customer.amountMinor,
+          currency: quote.customer.currency,
+          formattedPrice: new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: quote.customer.currency,
+          }).format(quote.customer.amountMinor / 100),
+          quantity: a.quantity ?? 1,
+          missingInputs,
+        });
+      }
+      // Prefer directly relevant ranked tiers in catalog order; show budget-qualified coaching in the same order.
+      const best = matches.slice(0, 3);
+      data = {
+        game: g!.id,
+        matches: best,
+        missingInputs: [
+          ...new Set(
+            best.length ? best.flatMap((s) => s.missingInputs) : [...missing],
+          ),
+        ],
+        budgetApplied: a.budget !== undefined && a.currency !== undefined,
+        notice:
+          'Base price before account perks. Exact prices use the supplied selections; from prices are calculated minima for missing selections, using one unit and EUR when unspecified. A budget without currency is not applied. Links select only game and service; choose remaining options and pay on duoly.gg. A teammate accepts from the queue. No rank guarantees. Never ask for game passwords.',
+      };
+      summary = best.length
+        ? 'Matching Duoly sessions with calculated prices.'
+        : 'No sessions fit this budget. Increase the budget or change the goal.';
+      break;
+    }
     case 'list_games':
-      data = { games: games(), url };
+      data = {
+        games: games().map((g) => ({
+          ...g,
+          bookUrl: bookingLink(g.id, undefined, deps.platform ?? 'other'),
+        })),
+        url,
+      };
       summary = 'Browse 15 Duoly games. Social sessions are excluded.';
       break;
     case 'list_services':
-      data = { game: g!.id, services: services(g!.id), url };
+      data = {
+        game: g!.id,
+        services: services(g!.id).map((s) => ({
+          ...s,
+          bookUrl: bookingLink(g!.id, s.id, deps.platform ?? 'other'),
+        })),
+        url,
+      };
       summary =
-        'Bookable static services with quote requirements. Dynamic streamer bookings are not exposed in v1.';
+        'Compare Duoly services, from prices in EUR per unit and exact quote inputs.';
       break;
     case 'create_booking_link':
       data = {
@@ -260,15 +480,25 @@ export async function callTool(
     case 'get_availability': {
       const live = await (deps.live ?? homeLive)();
       const onlineByGame = Object.fromEntries(
-        Object.entries(live.stats?.onlineByGame ?? {}).filter(([id]) =>
-          games().some((g) => g.id === id),
+        Object.entries(live.stats?.onlineByGame ?? {}).filter(
+          ([id, count]) =>
+            count > 0 &&
+            (!g || g.id === id) &&
+            games().some((g) => g.id === id),
         ),
       );
       data = {
         ...(g ? { game: g.id } : {}),
-        online: g ? (onlineByGame[g.id] ?? null) : null,
-        onlineByGame,
-        label: 'online now (may include teammates in a session)',
+        bookUrl: g
+          ? bookingLink(g.id, undefined, deps.platform ?? 'other')
+          : 'https://duoly.gg/#modes-h',
+        ...(g && onlineByGame[g.id] ? { online: onlineByGame[g.id] } : {}),
+        ...(Object.keys(onlineByGame).length
+          ? {
+              onlineByGame,
+              label: 'online now (may include teammates in a session)',
+            }
+          : {}),
         ...(live.stats?.matchSeconds != null
           ? {
               medianMatchSeconds: live.stats.matchSeconds,
@@ -280,11 +510,10 @@ export async function callTool(
         readAt: new Date().toISOString(),
         cacheSeconds: 30,
         notice:
-          'Cached aggregate counts, not reservable capacity. A teammate accepts the order from a queue. Instant matching and future wait times are not guaranteed. The historical median is sitewide, not game specific. Overall online totals are omitted because they can include excluded sessions.',
+          'A teammate accepts the order from a queue. Instant matching and future wait times are not guaranteed. Any historical median is sitewide, not game specific.',
         url,
       };
-      summary =
-        'Reported online counts may include teammates in a session. A teammate must accept from the queue.';
+      summary = 'Book a session on Duoly. A teammate accepts from the queue.';
       break;
     }
   }
@@ -292,17 +521,21 @@ export async function callTool(
     string,
     unknown
   >;
-  if (
-    new TextEncoder().encode(JSON.stringify(structuredContent)).byteLength >
-    65536
-  )
-    throw new Error('Tool response exceeds the size limit.');
-  return {
+  const result = {
     structuredContent,
-    content: [{ type: 'text' as const, text: `${summary} ${url}` }],
+    content: [
+      {
+        type: 'text' as const,
+        text: `${summary} Share bookUrl to open Duoly and book.
+${JSON.stringify(structuredContent)}`,
+      },
+    ],
   };
+  if (new TextEncoder().encode(JSON.stringify(result)).byteLength > 65536)
+    throw new Error('Tool response exceeds the size limit.');
+  return result;
 }
-export function createServer(userAgent = '') {
+export function createServer(userAgent = '', client: string | null = null) {
   const server = new McpServer(
     { name: 'duoly', version: '1.0.0' },
     { instructions: INSTRUCTIONS },
@@ -323,9 +556,20 @@ export function createServer(userAgent = '') {
         },
       },
       async (args: unknown) => {
-        const platform = platformOf(
-          server.server.getClientVersion()?.name || userAgent,
+        // Untrusted attribution only. No identity, permissions or pricing depend on this hint.
+        const explicit =
+          client && ['claude', 'chatgpt', 'gemini'].includes(client)
+            ? platformOf(client)
+            : 'other';
+        const reported = platformOf(
+          server.server.getClientVersion()?.name ?? '',
         );
+        const platform =
+          explicit !== 'other'
+            ? explicit
+            : reported !== 'other'
+              ? reported
+              : platformOf(userAgent);
         serverTrack({
           event: 'agent_tool_called',
           userId: null,

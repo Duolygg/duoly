@@ -11,7 +11,7 @@ Tested protocol revisions:
 - **2026-07-28**: `server/discover`, per-request `_meta`, request metadata headers and `resultType: complete`. No initialize or sessions.
 - **2025-11-25**, **2025-06-18**: `initialize`, `tools/list`, `tools/call` through the SDK's stateless legacy transport. No session IDs. Each request creates a fresh SDK server.
 
-The same registered tools serve every revision. The modern handler uses `responseMode: json`; legacy uses `enableJsonResponse: true`. GET and DELETE return 405. No subscriptions or streams are offered. POST accepts one JSON-RPC message, maximum 16,384 bytes, including chunked bodies. Structured tool output is capped at 65,536 bytes. Unexpected tool dependency errors are sanitized; only adapter-owned input errors are returned verbatim. SDK validation owns protocol errors and version/header consistency. No authentication is required because no private or transactional tools are exposed.
+The same registered tools serve every revision. The modern handler uses `responseMode: json`; legacy uses `enableJsonResponse: true`. GET and DELETE return 405. No subscriptions or streams are offered. POST accepts one JSON-RPC message, maximum 16,384 bytes, including chunked bodies. The complete tool response, including text and structuredContent, is capped at 65,536 bytes. Unexpected tool dependency errors are sanitized; only adapter-owned input errors are returned verbatim. SDK validation owns protocol errors and version/header consistency. No authentication is required because no private or transactional tools are exposed.
 
 Modern requests need `MCP-Protocol-Version: 2026-07-28`, `Mcp-Method` matching the method and, for tools/call, `Mcp-Name` matching the tool name. Their params include:
 
@@ -29,17 +29,28 @@ Reference: [Streamable HTTP specification](https://modelcontextprotocol.io/speci
 
 ## Tools and schemas
 
-All tools declare Zod input and output schemas, titles, narrow descriptions and annotations `readOnlyHint: true`, `openWorldHint: false`, `destructiveHint: false`, `idempotentHint: true`. Success includes `structuredContent` plus a short text summary with a canonical Duoly page URL. See `src/server/mcp/tools.ts` for executable schemas or retrieve JSON Schemas with tools/list.
+All tools declare Zod input and output schemas, titles, narrow descriptions and annotations `readOnlyHint: true`, `openWorldHint: false`, `destructiveHint: false`, `idempotentHint: true`. Success includes `structuredContent` plus a short readable summary and compact JSON containing the full same data in text `content`. Models can read service IDs, descriptions, prices, exact tokens and bookUrls without consulting structuredContent. Share `bookUrl` as the primary booking link. See `src/server/mcp/tools.ts` for executable schemas or retrieve JSON Schemas with tools/list.
 
-| Tool                  | Input                                                          | Structured output                                                                                                                                                        |
-| --------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `list_games`          | `{}`                                                           | `games: [{id, slug, name, url}]`, `url`                                                                                                                                  |
-| `list_services`       | `{game}`                                                       | `game`, `services: [{id, name, category, unit, ranks, regions, editions, requiredInputs, url}]`, `url`                                                                   |
-| `get_quote`           | `{game, service, rank?, quantity, currency, server, edition?}` | `kind`, `basis`, `notReserved`, `currency`, `amountMinor`, `amountEurMinor`, `formattedPrice`, `unit`, `quantity`, `quotedAt`, `fx`, `notice`, `bookUrl`, `url`          |
-| `get_availability`    | `{game?}`                                                      | optional `game`, nullable `online`, `onlineByGame`, `label`, optional `medianMatchSeconds`, `medianWindowDays`, `medianScope`, `readAt`, `cacheSeconds`, `notice`, `url` |
-| `create_booking_link` | `{game, service?}`                                             | `bookUrl`, `url`, `notice`                                                                                                                                               |
+| Tool                  | Input                                                                                        | Structured output                                                                                                                                                                 |
+| --------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_games`          | `{}`                                                                                         | `games: [{id, slug, name, bookUrl, url}]`, `url`                                                                                                                                  |
+| `list_services`       | `{game}`                                                                                     | `game`, `services: [{id, name, description, fromPrice, category, unit, ranks, regions, editions, requiredInputs, bookUrl, url}]`, `url`                                           |
+| `find_session`        | `{game, goal?, category?, rank?, region?, server?, quantity?, budget?, currency?, edition?}` | `game`, `matches`, `missingInputs`, `budgetApplied`, `notice`                                                                                                                     |
+| `get_quote`           | `{game, service, rank?, quantity, currency, server, edition?}`                               | `kind`, `basis`, `notReserved`, `currency`, `amountMinor`, `amountEurMinor`, `formattedPrice`, `unit`, `quantity`, `quotedAt`, `fx`, `notice`, `bookUrl`, `url`                   |
+| `get_availability`    | `{game?}`                                                                                    | optional `game`, optional positive `online`, `onlineByGame`, `label`, optional `medianMatchSeconds`, `medianWindowDays`, `medianScope`, `readAt`, `cacheSeconds`, `notice`, `url` |
+| `create_booking_link` | `{game, service?}`                                                                           | `bookUrl`, `url`, `notice`                                                                                                                                                        |
 
 Game accepts an exact returned short ID or page slug. Services accept exact IDs. Quantity is an integer from 1 to 10, currency is EUR or USD. `server` is an exact region token returned by list_services. Minecraft instead requires a server/world string and edition Java or Bedrock. Rank must match the service's exact rank token and must be omitted for flat-priced services. Rank tokens are preserved exactly, including punctuation in existing catalog identifiers. No game credentials or customer names are requested.
+
+### Start with find_session
+
+Call `find_session` first when the user wants a teammate or coach. Inputs: required `game`; optional `goal`, `category`, `rank`, `region` or `server`, `quantity`, `budget`, `currency`, `edition`. Goal tokens are `duo`, `coaching`, `ranked`, `casual`, `teams`; category aliases are `training` and `other`. Unknown values return valid tokens without fuzzy matching. Conflicting region/server values are rejected.
+
+Returns `game`, up to three `matches` in relevant catalog order, `missingInputs`, `budgetApplied`, and `notice`. Each match includes service details, `bookUrl`, calculated `amountMinor`, `currency`, `formattedPrice`, `quantity`, `priceKind` and its own `missingInputs`. Complete inputs produce an exact base quote. Missing inputs produce an explicitly labelled from price using the cheapest eligible rank, one unit and EUR when unspecified. Flat-priced coaching can accept a valid player rank as context without passing rank to its price calculator. No player rank or region is inferred. A budget caps the total for the given quantity; without currency it is not applied. A budget too low returns no matches and guidance to change the budget or goal.
+
+`list_services.fromPrice` is computed through `calculateQuote` for one unit across every valid rank, in EUR before account perks. Descriptions come from the existing service catalog, joined into one sentence without adding claims.
+
+Examples: `{ "game": "lol", "goal": "ranked", "rank": "Gold", "server": "EUW", "quantity": 3, "currency": "EUR" }` and `{ "game": "val", "goal": "coaching", "budget": 15, "currency": "EUR" }`.
 
 Example quote arguments:
 
@@ -60,17 +71,17 @@ Example link for Valorant VOD review:
 
 `https://duoly.gg/?game=val&service=vod&agent=claude#modes-h`
 
-The canonical citation is `https://duoly.gg/games/valorant/coaching`. Links only preselect the game and service using the existing homepage parser. They do not preserve rank, region, quantity or edition, create an order, reserve a teammate or start checkout. Payment and remaining selections happen on duoly.gg.
+Share `bookUrl` to let the user book. The informational `url` remains available as a secondary source. Links only preselect the game and service using the existing homepage parser. They do not preserve rank, region, quantity or edition, create an order, reserve a teammate or start checkout. Payment and remaining selections happen on duoly.gg.
 
 ### Exclusions and honest availability
 
 - Gamer Girl services (category `gg`) are excluded until the first store approval.
 - Social as a catalog game is excluded throughout. Ordinary casual game modes whose internal category is `social` remain available.
-- Bookability is determined by `parseQuoteInput`, not a hardcoded Teams category filter. Teams are currently excluded because the pricing parser rejects them; they appear automatically when pricing accepts them. Social stays explicitly excluded.
+- Bookability is determined by `parseQuoteInput`, not a hardcoded Teams category filter. Supported Teams services are included when the current parser accepts them, using its one-seat default. Social stays explicitly excluded.
 - Dynamic streamer listings and pricing are excluded because they use a different quote path and streamer-specific revalidation.
 - No account reads, checkout creation, wallet use, order cancellation, private chat or credentials.
 - Online means **online now (may include teammates in a session)**. It does not mean immediately reservable capacity. Orders enter a queue and a teammate must accept. No rank gains or instant matching are promised.
-- Availability reuses the 30-second cached homeLive loader and exposes only game aggregates. The overall total is omitted because it can include excluded sessions. Null means no reliable game count is available, never zero invented from missing data.
+- Availability reuses the 30-second cached homeLive loader and exposes only game aggregates. The overall total is omitted because it can include excluded sessions. Zero and unavailable counts are omitted in text and structuredContent. Only positive online counts are shown. find_session does not surface online counts.
 - Historical match median is sitewide across accepted orders in the last 30 days, including sessions outside this tool catalog. It is not game-specific or predictive. It is only included when the public loader has a value. The loader suppresses small samples in the database and may retain a previous snapshot on failure. `readAt` is when this tool read the cache, not a claim of fresh database observation.
 - Customers and teammates use their own separate game accounts. Never ask for a game password or account sharing.
 
@@ -107,7 +118,7 @@ The test begins a transaction, includes the migration, checks RLS/privileges, mi
 
 ## Attribution and privacy
 
-The allowlisted server event `agent_tool_called` accepts only a tool-name enum and platform enum: claude, chatgpt, gemini, perplexity, mistral, other. Platform is derived from SDK client info when available, otherwise User-Agent. It is a client claim, not verified commercial attribution. Legacy stateless requests cannot carry client info over from a previous initialize request, so User-Agent is the fallback.
+The allowlisted server event `agent_tool_called` accepts only a tool-name enum and platform enum: claude, chatgpt, gemini, perplexity, mistral, other. Platform is derived from an exact `?client=claude|chatgpt|gemini` hint first, then recognized SDK client info when available, then User-Agent. Unknown client hints are ignored. These claims affect only attribution and never authentication, authorization or pricing. It is a client claim, not verified commercial attribution. Legacy stateless requests cannot carry client info over from a previous initialize request, so User-Agent is the fallback.
 
 Events reuse serverTrack and flushAnalytics with no user ID, no consent identity, no session ID and a new personless fact identity per event. Existing global analytics enablement still applies. No arguments, result bodies, IPs, game names supplied by the client, account IDs or credentials are sent. Invalid calls rejected by SDK schema validation do not reach the tool analytics callback.
 
@@ -126,34 +137,11 @@ node scripts/mcp-smoke.mjs http://127.0.0.1:4321
 npx @modelcontextprotocol/inspector --cli http://127.0.0.1:4321/mcp --transport http --method tools/list
 ```
 
-The smoke script exercises both legacy revisions, modern discover, tools/list, all five tools and GET 405 over real HTTP. It requires working limiter configuration. Unit tests use an injected limiter and mocked RPC so they never touch production. Local dev and Inspector can be exercised against a test-only mock limiter RPC; this verifies actual Astro routing and SDK transport, not the database migration. There is no public limiter bypass. The bounded process fallback applies only to limiter RPC outages, not missing security configuration.
+The smoke script exercises discovery and all six tools on all three revisions, plus GET 405 over real HTTP. It requires working limiter configuration. Unit tests use an injected limiter and mocked RPC so they never touch production. Local dev and Inspector can be exercised against a test-only mock limiter RPC; this verifies actual Astro routing and SDK transport, not the database migration. There is no public limiter bypass. The bounded process fallback applies only to limiter RPC outages, not missing security configuration.
 
-Actual local smoke on port 4388 used a test-only mock Supabase limiter HTTP endpoint and no production credentials. All three protocol revisions and all five tools succeeded. EUR quote returned €17.52 using the real calculator and ECB loader. Availability returned null and no median with public data unavailable. Inspector tools/list exited 0 and returned the five tools with input/output schemas and all four annotations. This is not a real Claude or ChatGPT UI acceptance test; those remain a post-deployment owner step.
+The local run on port 4398 used a test-only mock Supabase limiter on port 4397, with no production credentials. All three protocol revisions passed the smoke script. A separate curl run exercised all six tools over both legacy revisions (18 calls including both requested game examples). League Gold, EUW, three Duo Pro games returned €10.77. Valorant coaching returned three options at €12.99 for one game or hour. Zero online counts and their labels were absent. Inspector tools/list exited 0 with six titled read-only tools and input/output schemas. This is not a real Claude or ChatGPT UI acceptance test; those remain a post-deployment owner step.
 
-Inspector tools/call also exited 0 with this real result excerpt:
-
-```json
-{
-  "content": [
-    {
-      "type": "text",
-      "text": "€17.52 base price before account perks. No reservation. https://duoly.gg/games/valorant"
-    }
-  ],
-  "structuredContent": {
-    "kind": "preview",
-    "basis": "base price before account perks",
-    "notReserved": true,
-    "currency": "EUR",
-    "amountMinor": 1752,
-    "amountEurMinor": 1752,
-    "formattedPrice": "€17.52",
-    "unit": "game",
-    "quantity": 3,
-    "url": "https://duoly.gg/games/valorant"
-  }
-}
-```
+[Verbatim model-visible text samples from the curl run](./mcp-text-samples.md) include list_services, find_session and get_quote for League and Valorant coaching. The samples contain actual local calculator output and booking links with agent=claude.
 
 ## Next phases
 
