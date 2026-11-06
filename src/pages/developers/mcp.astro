@@ -7,6 +7,7 @@ import '../../components/seo/ai.css';
 import { pageViewer } from '../../site/viewer';
 import { serializeJsonLd } from '../../site/seo';
 import { MCP } from '../../site/ai';
+import quoteExample from '../../content/mcp-quote-example.json';
 const { viewer, csrf } = await pageViewer(Astro);
 const title = 'Duoly MCP Server: Tools and Integration Guide | Duoly';
 const description =
@@ -20,8 +21,9 @@ const request = JSON.stringify(
       name: 'get_quote',
       arguments: {
         game: 'val',
-        service: 'duo',
-        rank: 'Gold',
+        service: 'duo2',
+        rank: 'Platinum',
+        server: 'EU',
         quantity: 1,
         currency: 'EUR',
       },
@@ -86,7 +88,10 @@ const request = JSON.stringify(
         <code>Accept: application/json, text/event-stream</code>. Initialize the
         client, then discover current schemas with <code>tools/list</code>{' '}
         before calling tools. Send the negotiated{' '}
-        <code>MCP-Protocol-Version</code> header on subsequent requests.
+        <code>MCP-Protocol-Version</code> header on subsequent requests. For
+        2026-07-28, also send <code>Mcp-Method</code> and, on tool calls,
+        <code>Mcp-Name</code> with the method and tool name. Use an SDK matching
+        your protocol version. No GET event stream is offered.
       </p>
     </section>
     <section aria-labelledby="tools-h">
@@ -95,6 +100,9 @@ const request = JSON.stringify(
         Use game and service identifiers returned by the catalog. An
         availability signal or quote does not create an order. The booking link
         selects a game and service on Duoly for the user to review.
+      </p>
+      <p class="byline">
+        On narrow screens, scroll the table to read all inputs and outputs.
       </p>
       <div
         class="ai-table-wrap"
@@ -141,19 +149,11 @@ const request = JSON.stringify(
       <h3>Response</h3>
       <p>
         A successful call returns MCP content and structured quote data. This
-        schematic response uses placeholders for live quote values, so it is not
-        a current price offer.
+        example was generated from the v1 tool implementation on 6 November 2026
+        with a fixed exchange-rate fixture. It illustrates the response shape,
+        not a live price offer.
       </p>
-      <pre class="ai-code"><code>{`{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "result": {
-    "content": [
-      { "type": "text", "text": "<serialized quote data>" }
-    ],
-    "structuredContent": { "<quote fields>": "<live values>" }
-  }
-}`}</code></pre>
+      <pre class="ai-code"><code>{JSON.stringify(quoteExample, null, 2)}</code></pre>
       <p>
         Handle tool errors before showing a price or link. Do not treat an error
         message, stale quote or empty availability result as a confirmed

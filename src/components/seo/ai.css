@@ -13,7 +13,20 @@
 }
 .ai-assistant ol {
   padding-left: 22px;
-  font-size: 14px;
+  font-size: 16px;
+}
+.ai-assistant {
+  align-self: start;
+}
+.ai-assistant:last-child {
+  grid-column: 1 / -1;
+}
+.ai-doc-hero ~ section > p > code {
+  overflow-wrap: anywhere;
+}
+.ai-code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .ai-assistant li + li {
   margin-top: 10px;

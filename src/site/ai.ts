@@ -8,31 +8,33 @@ export const MCP = {
     {
       name: 'list_games',
       inputs: 'None',
-      outputs: 'Game IDs and names. Social is excluded.',
+      outputs:
+        'games: id, slug, name, url; canonical catalog url. Social is excluded.',
     },
     {
       name: 'list_services',
       inputs: 'game (required)',
       outputs:
-        'Bookable services, service IDs, ranks and pricing units for a game.',
+        'game, services (id, name, category, unit, ranks, regions, editions, requiredInputs, url), url.',
     },
     {
       name: 'get_quote',
-      inputs: 'game, service (required); rank, quantity, currency (optional)',
+      inputs:
+        'game, service, quantity (integer 1 to 10), currency (EUR or USD), server (required); rank and edition (Java or Bedrock) when the service requires them',
       outputs:
-        'A price estimate and currency for the selected service. Checkout confirms the final price.',
+        'kind, basis, notReserved, currency, amountMinor, amountEurMinor, formattedPrice, unit, quantity, quotedAt, fx, notice, bookUrl, url. Base price before account perks.',
     },
     {
       name: 'get_availability',
       inputs: 'game (optional)',
       outputs:
-        'Public availability signals. These are not reservations or guaranteed start times.',
+        'game (optional), online, onlineByGame, label, readAt, cacheSeconds, notice, url; medianMatchSeconds, medianWindowDays and medianScope when available. No reservation.',
     },
     {
       name: 'create_booking_link',
       inputs: 'game (required); service (optional)',
       outputs:
-        'A duoly.gg link with the game and optional service selected. No order is created.',
+        'bookUrl, url, notice. Selects the game and optional service. No order is created.',
     },
   ],
 } as const;
@@ -43,7 +45,7 @@ export const AI_ASSISTANTS = [
     name: 'Claude',
     status: 'Coming soon',
     detail:
-      'Custom connector setup is available on eligible plans. The Duoly directory listing is not live.',
+      'Duoly is not connected yet. After launch, eligible Claude plans can use the custom connector steps below.',
     steps: [
       'Open Customize, then Connectors in Claude (older interfaces use Settings, then Connectors).',
       'Choose Add, then Add custom connector. Name it Duoly and enter the MCP URL below.',
