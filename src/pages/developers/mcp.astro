@@ -94,7 +94,10 @@ const request = JSON.stringify(
         For 2025-11-25 and 2025-06-18, initialize your client, then use{' '}
         <code>tools/list</code> and <code>tools/call</code>. Send the negotiated{' '}
         <code>MCP-Protocol-Version</code> header. The transport is stateless
-        with no session ID.
+        with no session ID. For Claude attribution, use
+        <code>https://duoly.gg/mcp?client=claude</code>. The client query hint
+        also accepts chatgpt or gemini. It affects only the agent tag on booking
+        links, never identity, pricing or permissions.
       </p>
       <p>
         For 2026-07-28, use <code>server/discover</code> without initialization.
@@ -106,9 +109,12 @@ const request = JSON.stringify(
       </p>
     </section>
     <section aria-labelledby="tools-h">
-      <h2 id="tools-h">Five public tools</h2>
+      <h2 id="tools-h">Six public tools</h2>
       <p>
-        Use game and service identifiers returned by the catalog. An
+        Call find_session first to find a teammate or coach with real prices and
+        a booking link. Its text includes the same useful data as
+        structuredContent. Share bookUrl as the primary link so the user can
+        book. Use exact game, rank and region tokens from the catalog. An
         availability signal or quote does not create an order. The booking link
         selects a game and optional service on Duoly for the user to review. It
         does not preserve rank, region, quantity or edition. Users select those
@@ -147,11 +153,11 @@ const request = JSON.stringify(
       </div>
       <p>
         Availability uses a 30-second cached aggregate. Online counts can
-        include teammates already in a session. Null means no reliable count is
-        available. Overall totals are omitted. Any historical match median
-        covers sitewide accepted orders from the last 30 days, including
-        services outside this catalog. It does not predict a wait time for a
-        game.
+        include teammates already in a session. Counts are shown only when
+        positive. Zero and unavailable counts are omitted, as are overall
+        totals. Any historical match median covers sitewide accepted orders from
+        the last 30 days, including services outside this catalog. It does not
+        predict a wait time for a game.
       </p>
       <p>
         Amounts depend on the game, service, rank, quantity and currency. Get a
@@ -159,8 +165,16 @@ const request = JSON.stringify(
         price, including any applicable account eligibility. USD quotes are
         estimates. Use exact rank and region tokens from list_services. Omit
         rank for flat-priced services. Minecraft requires a server or world
-        string and a Java or Bedrock edition. Teams and dynamic streamer
-        bookings are excluded from this catalog.
+        string and a Java or Bedrock edition. Services appear only when the
+        pricing code accepts them. Dynamic streamer bookings are excluded.
+        list_services includes catalog descriptions and a calculated from price
+        in EUR for one game or hour. find_session returns up to three matching
+        services, a total price for the requested quantity and missingInputs.
+        Incomplete selections have labelled from prices; unspecified quantity
+        and currency use one unit and EUR for that preview. A budget is a total
+        cap and needs a currency before it is applied. Goal tokens are duo,
+        coaching, ranked, casual and teams; training and other are category
+        aliases.
       </p>
     </section>
     <section aria-labelledby="quote-h">
@@ -175,9 +189,9 @@ const request = JSON.stringify(
       <h3>Response</h3>
       <p>
         A successful call returns MCP content and structured quote data. This
-        example was generated from the v1 tool implementation on 6 November 2026
-        with a fixed exchange-rate fixture. It illustrates the response shape,
-        not a live price offer.
+        example was captured from the local tool implementation on 6 November
+        2026 using the real pricing calculator and FX loader. It illustrates the
+        response shape; request a fresh quote before booking.
       </p>
       <pre class="ai-code"><code>{JSON.stringify(quoteExample, null, 2)}</code></pre>
       <p>
@@ -206,7 +220,7 @@ const request = JSON.stringify(
         429, respect the response’s retry guidance and back off. Do not retry in
         a tight loop or rotate addresses to bypass the limit. Each accepted POST
         counts, including discovery and initialization. Request bodies are
-        limited to 16,384 bytes; structured tool output is capped at 65,536
+        limited to 16,384 bytes; the complete tool response is capped at 65,536
         bytes. HTTP 429 includes Retry-After and error.data.retryAfterSeconds.
         HTTP 503 means required server configuration is unavailable.
       </p>

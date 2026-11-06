@@ -167,6 +167,7 @@ export const SERVER_EVENT_CATALOGUE = {
       'get_quote',
       'get_availability',
       'create_booking_link',
+      'find_session',
     ],
     platform: ['claude', 'chatgpt', 'gemini', 'perplexity', 'mistral', 'other'],
   },

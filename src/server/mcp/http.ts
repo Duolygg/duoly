@@ -9,7 +9,12 @@ import { rateLimit, type LimitResult } from './limits';
 const MAX_BYTES = 16384;
 const modern = createMcpHandler(
   (context) =>
-    createServer(context.requestInfo?.headers.get('User-Agent') ?? ''),
+    createServer(
+      context.requestInfo?.headers.get('User-Agent') ?? '',
+      context.requestInfo
+        ? new URL(context.requestInfo.url).searchParams.get('client')
+        : null,
+    ),
   {
     legacy: 'reject',
     responseMode: 'json',
@@ -170,7 +175,10 @@ export async function handleMcp(
   });
   try {
     if (await isLegacyRequest(inbound, body)) {
-      const server = createServer(request.headers.get('User-Agent') ?? '');
+      const server = createServer(
+        request.headers.get('User-Agent') ?? '',
+        new URL(request.url).searchParams.get('client'),
+      );
       const transport = new WebStandardStreamableHTTPServerTransport({
         sessionIdGenerator: undefined,
         enableJsonResponse: true,
