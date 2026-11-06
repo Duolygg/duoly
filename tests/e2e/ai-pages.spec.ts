@@ -48,12 +48,16 @@ test('AI launch state, example price and progressive prompts', async ({
     ),
   ).toBe(true);
   if (page.viewportSize()!.width < 700) {
-    const heights = await page
-      .locator('.ai-assistant')
-      .evaluateAll((cards) =>
-        cards.map((card) => card.getBoundingClientRect().height),
+    // Status rows stack name, detail and badge; every badge stays on screen.
+    const badges = await page
+      .locator('.ai-assistant .ai-badge')
+      .evaluateAll((els) =>
+        els.map((el) => {
+          const r = el.getBoundingClientRect();
+          return r.left >= 0 && r.right <= innerWidth && r.height > 0;
+        }),
       );
-    expect(Math.max(...heights) - Math.min(...heights)).toBeLessThan(2);
+    expect(badges).toEqual([true, true, true, true, true]);
   }
 });
 
