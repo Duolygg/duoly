@@ -62,7 +62,12 @@ jobs:
   browser:
     name: Browser smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Playwright's own image ships Chromium and its system libraries, so no apt step can hang the job.
+    # Keep the tag equal to @playwright/test in package.json.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --ipc=host
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -73,24 +78,6 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # The apt step behind --with-deps has hung CI runs for the full job timeout.
-      # Cache the browser, bound each install attempt and retry once.
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - name: Install browser system dependencies
-        timeout-minutes: 8
-        run: |
-          timeout 180 pnpm exec playwright install-deps chromium \
-            || (sleep 15 && timeout 180 pnpm exec playwright install-deps chromium)
-      - name: Install Chromium
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        timeout-minutes: 8
-        run: |
-          timeout 180 pnpm exec playwright install chromium \
-            || (sleep 15 && timeout 180 pnpm exec playwright install chromium)
       - run: pnpm build
       - name: Verify production SEO, internal links and sitemap
         run: node scripts/seo-verify.mjs
