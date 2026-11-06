@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { AI_ASSISTANTS, MCP } from '../../src/site/ai';
 import { CONTENT_DATES, INDEXABLE_PATHS } from '../../src/site/seo';
+import example from '../../src/content/mcp-quote-example.json';
+import { calculateQuote } from '../../src/server/pricing';
 
 describe('AI page public contract', () => {
   it('keeps the endpoint, tools and rollout states explicit', () => {
@@ -20,6 +22,31 @@ describe('AI page public contract', () => {
     expect(
       AI_ASSISTANTS.every((assistant) => assistant.status === 'Coming soon'),
     ).toBe(true);
+  });
+  it('keeps the exercised quote example aligned with authoritative pricing', () => {
+    const quote = calculateQuote(
+      {
+        gameId: 'val',
+        serviceId: 'duo2',
+        rank: 'Platinum',
+        server: 'EU',
+        units: 1,
+      },
+      { customerCurrency: 'EUR', eurToUsd: 1.08 },
+    );
+    expect(example.result.structuredContent.amountMinor).toBe(
+      quote.customer.amountMinor,
+    );
+    expect(example.result.structuredContent.amountEurMinor).toBe(
+      quote.amountEurMinor,
+    );
+    expect(example.result.structuredContent.notReserved).toBe(true);
+    expect(example.result.structuredContent.bookUrl).toBe(
+      'https://duoly.gg/?game=val&service=duo2&agent=other#modes-h',
+    );
+    expect(
+      MCP.tools.find((tool) => tool.name === 'get_quote')?.inputs,
+    ).toContain('server (required)');
   });
   it('includes both pages with real editorial dates', () => {
     for (const path of ['/ai', '/developers/mcp']) {
