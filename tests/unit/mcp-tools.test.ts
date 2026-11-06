@@ -211,7 +211,7 @@ describe('MCP tools', () => {
         const link = new URL(String(result.structuredContent.bookUrl));
         expect(
           [...link.searchParams.keys()].every((key) =>
-            ['game', 'service', 'agent'].includes(key),
+            ['game', 'service', 'agent', 'rank', 'region', 'qty'].includes(key),
           ),
         ).toBe(true);
         expect(link.hash).toBe('#modes-h');

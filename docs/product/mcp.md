@@ -38,7 +38,7 @@ All tools declare Zod input and output schemas, titles, narrow descriptions and 
 | `find_session`        | `{game, goal?, category?, rank?, region?, server?, quantity?, budget?, currency?, edition?}` | `game`, `matches`, `missingInputs`, `budgetApplied`, `notice`                                                                                                                     |
 | `get_quote`           | `{game, service, rank?, quantity, currency, server, edition?}`                               | `kind`, `basis`, `notReserved`, `currency`, `amountMinor`, `amountEurMinor`, `formattedPrice`, `unit`, `quantity`, `quotedAt`, `fx`, `notice`, `bookUrl`, `url`                   |
 | `get_availability`    | `{game?}`                                                                                    | optional `game`, optional positive `online`, `onlineByGame`, `label`, optional `medianMatchSeconds`, `medianWindowDays`, `medianScope`, `readAt`, `cacheSeconds`, `notice`, `url` |
-| `create_booking_link` | `{game, service?}`                                                                           | `bookUrl`, `url`, `notice`                                                                                                                                                        |
+| `create_booking_link` | `{game, service?, rank?, region?, quantity?, currency?}`                                     | `bookUrl`, `url`, `notice`                                                                                                                                                        |
 
 Game accepts an exact returned short ID or page slug. Services accept exact IDs. Quantity is an integer from 1 to 10, currency is EUR or USD. `server` is an exact region token returned by list_services. Minecraft instead requires a server/world string and edition Java or Bedrock. Rank must match the service's exact rank token and must be omitted for flat-priced services. Rank tokens are preserved exactly, including punctuation in existing catalog identifiers. No game credentials or customer names are requested.
 
@@ -71,7 +71,24 @@ Example link for Valorant VOD review:
 
 `https://duoly.gg/?game=val&service=vod&agent=claude#modes-h`
 
-Share `bookUrl` to let the user book. The informational `url` remains available as a secondary source. Links only preselect the game and service using the existing homepage parser. They do not preserve rank, region, quantity or edition, create an order, reserve a teammate or start checkout. Payment and remaining selections happen on duoly.gg.
+Share `bookUrl` to let the user book. The informational `url` remains available as a secondary source. Links carry the game, optional service, claimed agent source and supplied selections. They do not create an order, reserve a teammate or start checkout. Payment and remaining selections happen on duoly.gg.
+
+### Booking link parameter contract
+
+The destination is `https://duoly.gg/` with fragment `#modes-h`:
+
+| Parameter | Value                                                                                                 |
+| --------- | ----------------------------------------------------------------------------------------------------- |
+| `game`    | Canonical catalog game ID, such as `val`                                                              |
+| `service` | Optional exact bookable service ID, such as `duo2`                                                    |
+| `agent`   | Existing allowlisted claimed platform; attribution semantics are unchanged                            |
+| `rank`    | Optional exact catalog rank ID, including its original punctuation                                    |
+| `region`  | Optional exact catalog region token, such as `EU` or `EUW`; tool `server` is mapped to this parameter |
+| `qty`     | Optional selected integer quantity from 1 to 10, in that service's games or hours                     |
+
+`create_booking_link` additionally accepts optional `rank`, `region`, `quantity` and `currency` (EUR or USD, for card pricing only). Invalid rank and region tokens are rejected. `find_session`, `get_quote` and the card's own booking action preserve supplied selections. Edition and currency are not URL parameters. Changing card rank, tier or pack updates the link locally without changing attribution. Unknown prefill parameters are harmless until the separate homepage prefill change lands; review all selections on Duoly before paying.
+
+Example: `https://duoly.gg/?game=val&service=duo2&agent=claude&rank=Gold&region=EU&qty=3#modes-h`.
 
 ### Exclusions and honest availability
 
@@ -143,6 +160,26 @@ The local run on port 4398 used a test-only mock Supabase limiter on port 4397, 
 
 [Verbatim model-visible text samples from the curl run](./mcp-text-samples.md) include list_services, find_session and get_quote for League and Valorant coaching. The samples contain actual local calculator output and booking links with agent=claude.
 
+## Interactive cards (MCP Apps)
+
+This change stacks on #157. Stable SEP-1865 revision **2026-01-26** is implemented with the official `@modelcontextprotocol/ext-apps` **2.0.4** server helpers, compatible with server SDK 2.4.0. `find_session`, `create_booking_link` and `list_games` declare `_meta.ui.resourceUri`. Three versioned `ui://duoly/` resources cover four views: ranked or casual teammate finder, coaching finder, session ticket, and game picker. Both resources/list and resources/read are available. All resources return `text/html;profile=mcp-app` with `_meta.ui.csp.resourceDomains: ["https://duoly.gg"]`, no external connections, no nested frames and no `ui.domain`.
+
+The self-contained resource inlines the approved dark widget CSS and vanilla JS. No external scripts or view bundler are needed. Fonts, game icons and the mascot use duoly.gg. The app initiates `ui/initialize`, waits for its result, sends `ui/notifications/initialized`, receives tool-input and tool-result notifications, and reports content-based size changes. Link clicks use `ui/open-link`; an ordinary `_blank` anchor with `rel=noopener` remains available if the bridge fails. Copy-link denial exposes a selectable URL. The picker calls `find_session` through the host's `tools/call` bridge. All tools retain titles and read-only annotations.
+
+### Price and result delivery
+
+Every displayed total is calculated server-side by the unchanged `calculateQuote`, the same path as get_quote and checkout. The card payload contains per-service, per-rank arrays for quantities 1 through 10. Each row is `[customerTotalMinor, customerOriginalMinor, quantityDiscountPercent]`, including the calculator's EUR rounding and USD conversion. The view selects these exact totals instead of duplicating pricing formulas, discount schedules or FX logic. Its per-unit summary divides an already rounded total and rounds to cents for display only. Catalog tier descriptions and badges come from the existing catalog. No account perks or eligibility are inferred.
+
+The complete first model-visible text block and structuredContent remain available. Only booking-link values and the corresponding link notice change. UI data is carried in result `_meta.duoly`, including input selections, matching services and price tables. To survive Claude Desktop issue [#696](https://github.com/modelcontextprotocol/ext-apps/issues/696), the same card payload is also appended as a separate JSON text block `{ "duoly": ... }`. The view parses this when result metadata or structuredContent is stripped. This costs additional model context but avoids an extra tool, network dependency or guessed prices. The entire result remains capped at 64 KiB. The historical complete text captures in mcp-text-samples.md are retained unchanged.
+
+No online counts are shown in cards, so zero or unknown availability cannot become a placeholder. No names, reviews, ratings or predictive wait times are invented. Existing Social and Gamer Girl exclusions, HTTP origin policy, rate limits and attribution semantics are unchanged. Missing rank and region stay explicit, and minimum prices are labelled From. Budget badges require a budget with currency and an actual nonnegative difference for the selected total. Coaching inclusion copy is taken directly from the selected real service description.
+
+### Reproducible visual and HTTP smoke
+
+Run `node scripts/mcp-cards-smoke.mjs http://127.0.0.1:4398` from the worktree root with a running local Astro MCP endpoint. It performs real HTTP initialization, tool and resource discovery and reads, captures all four real tool results, renders sandboxed iframes, checks rank/tier/pack price parity against get_quote, tests the open-link bridge, tests metadata-stripped content fallback and exercises game-picker to coaching tool calls. Screenshots at 712px and 390px and captured JSON are written to `~/.hermes/cache/scratch/mcp-cards/` by default (`MCP_CARDS_OUTPUT` overrides this). The host page is local test infrastructure, never a production endpoint. Unit tests exercise the actual inlined view JS against get_quote across every rank, tier and 1/3/5/10 pack in Valorant and League, in EUR and USD.
+
+Native rendering inside signed-in Claude or ChatGPT is a separate owner acceptance check. Issue [#671](https://github.com/modelcontextprotocol/ext-apps/issues/671) documents hosts that do not mount an iframe at all; server-side fallbacks cannot force a host to render. Plain text and booking links still work. The official Claude documentation currently recommends a host-specific domain, but this implementation intentionally omits `ui.domain` as required for the portable card scope.
+
 ## Next phases
 
-After explicit approval: production firewall and native host connector checks, registry/directory submission, optional MCP Apps quote cards, then OAuth consent and database-side delegated-client guards before any private reads or writes. Financial operations require a separate approved common-core extraction, durable idempotency and trusted human confirmation. Social is a later release with safeguarding review. ChatGPT directory eligibility for paid remote services remains a separate policy gate; technical MCP connectivity is not host-store approval.
+After explicit approval: production firewall and native host connector checks, registry/directory submission, native host card acceptance, then OAuth consent and database-side delegated-client guards before any private reads or writes. Financial operations require a separate approved common-core extraction, durable idempotency and trusted human confirmation. Social is a later release with safeguarding review. ChatGPT directory eligibility for paid remote services remains a separate policy gate; technical MCP connectivity is not host-store approval.
