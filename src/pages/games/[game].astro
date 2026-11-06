@@ -6,6 +6,7 @@ import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
 import { pageViewer } from '../../site/viewer';
 import { gameBySlug } from '../../site/games';
 import { lessons } from '../../content/coaching';
+import { intentForGame, intentPath } from '../../content/intent-pages';
 import { socialContent, valorantContent } from '../../content/hubs';
 import { viewerCurrency } from '../../server/currency';
 import { eurToUsd } from '../../server/fx';
@@ -73,6 +74,13 @@ const description = offers.length
       <a class="cta" href="/#games">
         Choose a {game.name} session
       </a>
+      {intentForGame(game.slug) && (
+        <p>
+          <a href={intentPath(intentForGame(game.slug)!)}>
+            {game.name} duo partners and casual teammate prices
+          </a>
+        </p>
+      )}
       {lessons[game.slug] && (
         <p>
           <a href={`/games/${game.slug}/coaching`}>

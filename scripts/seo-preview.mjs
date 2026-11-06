@@ -7,7 +7,9 @@ import { readFile, stat } from 'node:fs/promises';
 import { resolve, extname } from 'node:path';
 import handler from '../.vercel/output/_functions/entry.mjs';
 const root = resolve('.vercel/output/static');
+const port = Number(process.env.SEO_PORT || 4381);
 const types = {
+  '.txt': 'text/plain; charset=utf-8',
   '.css': 'text/css',
   '.js': 'text/javascript',
   '.png': 'image/png',
@@ -19,7 +21,7 @@ const types = {
 };
 createServer(async (req, res) => {
   try {
-    const url = new URL(req.url, 'http://127.0.0.1:4381');
+    const url = new URL(req.url, `http://127.0.0.1:${port}`);
     const file = resolve(root, '.' + decodeURIComponent(url.pathname));
     if (
       file.startsWith(root + '/') &&
@@ -57,6 +59,6 @@ createServer(async (req, res) => {
     res.writeHead(500);
     res.end('Preview error');
   }
-}).listen(4381, '127.0.0.1', () =>
-  console.log('Production bundle: http://127.0.0.1:4381'),
+}).listen(port, '127.0.0.1', () =>
+  console.log(`Production bundle: http://127.0.0.1:${port}`),
 );

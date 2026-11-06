@@ -7,8 +7,21 @@ interface Props {
   /** What the provider line names: "coach" pages say "Immortal+ coach". */
   coach?: boolean;
   intro?: string;
+  updated?: string;
 }
-const { gameId, offers, coach = false, intro } = Astro.props;
+const {
+  gameId,
+  offers,
+  coach = false,
+  intro,
+  updated = '2026-11-05',
+} = Astro.props;
+const updatedLabel = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+}).format(new Date(`${updated}T00:00:00Z`));
 // One card per service; ranked services list their price per customer rank.
 const services = [
   ...new Map(offers.map((offer) => [offer.id, offer])).values(),
@@ -100,6 +113,6 @@ const cards = services.map((service) => {
     ))}
   </div>
   <p class="price-updated">
-    Prices updated <time datetime="2026-11-05">5 November 2026</time>.
+    Prices updated <time datetime={updated}>{updatedLabel}</time>.
   </p>
 </section>

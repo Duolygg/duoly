@@ -4,6 +4,7 @@ import PageIntro from '../../components/site/PageIntro.astro';
 import { pageViewer } from '../../site/viewer';
 import { SITE_GAMES } from '../../site/games';
 import { lessons } from '../../content/coaching';
+import { intentForGame, intentPath } from '../../content/intent-pages';
 const { viewer, csrf } = await pageViewer(Astro);
 ---
 
@@ -38,6 +39,11 @@ const { viewer, csrf } = await pageViewer(Astro);
             />
             <span>{game.name}</span>
           </a>
+          {intentForGame(game.slug) && (
+            <a href={intentPath(intentForGame(game.slug)!)}>
+              {game.name} play-together sessions
+            </a>
+          )}
           {lessons[game.slug] && (
             <a href={`/games/${game.slug}/coaching`}>{game.name} coaching</a>
           )}

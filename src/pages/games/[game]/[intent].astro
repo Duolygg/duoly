@@ -1,0 +1,153 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../../components/seo/Breadcrumbs.astro';
+import SeoHero from '../../../components/seo/SeoHero.astro';
+import Prices from '../../../components/seo/Prices.astro';
+import Steps from '../../../components/seo/Steps.astro';
+import Topics from '../../../components/seo/Topics.astro';
+import Faq from '../../../components/seo/Faq.astro';
+import ClosingCta from '../../../components/seo/ClosingCta.astro';
+import '../../../components/seo/seo.css';
+import { intentPages, intentPath } from '../../../content/intent-pages';
+import { intentOffers } from '../../../server/seo/intent-offers';
+import { gameBySlug } from '../../../site/games';
+import { pageViewer } from '../../../site/viewer';
+import { viewerCurrency } from '../../../server/currency';
+import { eurToUsd } from '../../../server/fx';
+import { priceSummary, serviceSchema } from '../../../server/seo/offers';
+import {
+  bookingHref,
+  COACHING_SLUGS,
+  serializeJsonLd,
+} from '../../../site/seo';
+const page = intentPages.find(
+  (entry) =>
+    entry.gameSlug === Astro.params.game && entry.slug === Astro.params.intent,
+);
+const game = gameBySlug(Astro.params.game);
+if (!page || !game) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
+const currency = await viewerCurrency(Astro.cookies, accountCurrency);
+const offers = intentOffers(page, game.id, {
+  customerCurrency: currency.cur,
+  eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+});
+const summary = priceSummary(offers);
+const path = intentPath(page);
+const book = bookingHref(game.id, { service: page.service });
+---
+
+<SiteLayout
+  title={page.title}
+  description={page.description(summary.toLowerCase())}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page" data-intent-page>
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Games', path: '/games' },
+        { name: game.name, path: `/games/${game.slug}` },
+        { name: 'Play together', path },
+      ]}
+    />
+    <SeoHero
+      eyebrow={`${game.name} teammates`}
+      h1={page.h1}
+      lead={page.lead}
+      cta={{ href: book, label: `Book a ${game.name} teammate` }}
+      secondary={{ href: '#prices', label: 'Compare prices' }}
+      art={[{ src: game.img, alt: `${game.name} game art` }]}
+      price={summary}
+      facts={page.facts}
+    />
+    <section aria-labelledby="format-h">
+      <h2 id="format-h">What you get when you book</h2>
+      <p>{page.format}</p>
+    </section>
+    <Prices gameId={game.id} offers={offers} updated="2026-11-06" />
+    <Steps heading="How matching and booking work" steps={page.steps}>
+      <p>
+        Duoly reviews teammates before they take orders. Read about{' '}
+        <a href="/contact">the team behind Duoly</a>, check the{' '}
+        <a href="/terms">payment, cancellation and refund terms</a> or{' '}
+        <a href="/contact">contact support</a> for help with a booking.
+      </p>
+    </Steps>
+    <Topics sections={page.sections} label={`${game.name} duo plan`} />
+    <section class="card" aria-labelledby="prep-h">
+      <h2 id="prep-h">Before your first game</h2>
+      <ul class="checklist">
+        {page.prepare.map((tip) => (
+          <li>{tip}</li>
+        ))}
+      </ul>
+    </section>
+    <Faq items={page.faq} />
+    <ClosingCta
+      heading={`Ready to play ${game.name} together?`}
+      text="Choose your mode, share your role and book your next games."
+      href={book}
+      label="Choose your teammate session"
+      price={summary}
+      art={{ src: game.img, alt: '' }}
+    />
+    <nav class="related" aria-label="Related pages">
+      <h2>Find your next session</h2>
+      <div class="chips">
+        <a href={`/games/${game.slug}`}>{game.name} game hub</a>
+        {COACHING_SLUGS.some((slug) => slug === game.slug) && (
+          <a href={`/games/${game.slug}/coaching`}>{game.name} coaching</a>
+        )}
+        <a href="/games">All games and services</a>
+        {intentPages
+          .filter((entry) => entry !== page)
+          .map((entry) => (
+            <a href={intentPath(entry)}>
+              {gameBySlug(entry.gameSlug)!.name} duo sessions
+            </a>
+          ))}
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(
+      serviceSchema(page.h1, path, offers, Astro.site!),
+    )}
+  />
+</SiteLayout>
+
+<style>
+  [data-intent-page] :global(nav[aria-label='Breadcrumb'] ol) {
+    gap: 4px 10px;
+  }
+  [data-intent-page] :global(nav[aria-label='Breadcrumb'] li) {
+    white-space: nowrap;
+    display: inline-block;
+  }
+  [data-intent-page] :global(nav[aria-label='Breadcrumb'] li + li::before) {
+    content: none;
+  }
+  [data-intent-page]
+    :global(nav[aria-label='Breadcrumb'] li:not(:last-child)::after) {
+    content: '/';
+    margin-left: 10px;
+    color: #8e84ab;
+  }
+  [data-intent-page] > section > p {
+    max-width: 75ch;
+  }
+  @media (max-width: 600px) {
+    [data-intent-page] :global(.seo-hero h1) {
+      max-width: none;
+      text-wrap: balance;
+    }
+  }
+</style>
