@@ -70,7 +70,7 @@ const faq: [string, string][] = [
     <header class="seo-hero ai-hero">
       <div class="hero-copy">
         <p class="eyebrow">{launch.label}</p>
-        <h1>Book a gaming teammate from ChatGPT, Claude or Gemini</h1>
+        <h1>Book a gaming teammate from your AI assistant</h1>
         <p class="lead">
           Tell your AI what you want to play. The Duoly connection will find
           teammates and coaching options, check prices and prepare your booking
@@ -84,35 +84,47 @@ const faq: [string, string][] = [
             See assistant status
           </a>
         </div>
-        <p class="hero-note">
-          {launch.showSetup
-            ? 'Connect Claude to get started.'
-            : 'Direct booking is open now.'}
-        </p>
       </div>
       <aside class="hero-card ai-chat" aria-label="Example conversation">
-        <p class="byline">Example conversation</p>
-        <div class="ai-message">
-          <p class="byline">You</p>
-          <p>Find me a Valorant coach for tonight under 15 euros</p>
+        <div class="ai-chat-bar" aria-hidden="true">
+          <span class="ai-chat-dots">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+          <span>Example conversation</span>
         </div>
-        <div class="card ai-reply">
-          <p class="byline">Duoly assistant</p>
-          <h2>Valorant VOD review</h2>
-          <p>Review a recent match with an Immortal+ coach.</p>
-          <p
-            class="ai-chat-price"
-            data-price-minor={coachingQuote.customer.amountMinor}
-          >
-            {coachingPrice} <span>for 1 hour</span>
+        <p class="ai-bubble-user">
+          Find me a Valorant coach for tonight under 15 euros
+        </p>
+        <p class="ai-tool">
+          <span aria-hidden="true"></span>Checked Duoly
+        </p>
+        <p class="ai-bubble-bot">This coaching session fits your budget:</p>
+        <div class="ai-result">
+          <div class="ai-result-head">
+            <span class="ai-tag">Valorant</span>
+            <span class="ai-tag">Coaching</span>
+          </div>
+          <h2>VOD review with an Immortal+ coach</h2>
+          <div class="ai-result-row">
+            <p
+              class="ai-chat-price"
+              data-price-minor={coachingQuote.customer.amountMinor}
+            >
+              {coachingPrice} <span>per hour</span>
+            </p>
+            <a class="btn-sm" href="/?game=val&amp;service=vod#modes-h">
+              Open booking link
+            </a>
+          </div>
+          <p class="ai-result-note">
+            Base price before account perks. A coach accepts your booking from
+            the queue.
           </p>
-          <p class="hero-note">
-            Base price before account perks. Tonight is not reserved. A coach
-            must accept your booking.
-          </p>
-          <a class="btn-sm" href="/?game=val&amp;service=vod#modes-h">
-            Book on Duoly
-          </a>
+        </div>
+        <div class="ai-composer" aria-hidden="true">
+          Ask a follow-up
         </div>
       </aside>
     </header>
@@ -131,14 +143,16 @@ const faq: [string, string][] = [
           ? 'Add Duoly to Claude, then ask about your next session.'
           : 'Claude launches first. More assistants are coming soon.'}
       </p>
-      <div class="ai-grid">
-        {AI_ASSISTANTS.map((assistant) => (
-          <div class="card ai-assistant">
+      <ul class="ai-status">
+        {AI_ASSISTANTS.map((assistant, i) => (
+          <li class:list={['ai-assistant', { 'is-first': i === 0 }]}>
             <div class="ai-card-top">
-              <h3>{assistant.name}</h3>
-              <span class="eyebrow">{assistant.status}</span>
+              <div>
+                <h3>{assistant.name}</h3>
+                <p>{assistant.detail}</p>
+              </div>
+              <span class="ai-badge">{assistant.status}</span>
             </div>
-            <p>{assistant.detail}</p>
             {launch.showSetup && assistant.steps.length > 0 && (
               <ol>
                 {assistant.steps.map((step) => (
@@ -146,15 +160,15 @@ const faq: [string, string][] = [
                 ))}
               </ol>
             )}
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
       {launch.showSetup && (
         <p class="ai-endpoint">
           Custom connector URL: <code>{MCP.endpoint}</code>
         </p>
       )}
-      <p>
+      <p class="ai-dev-note">
         Building your own client? Read the{' '}
         <a href="/developers/mcp">Duoly MCP developer guide</a>.
       </p>
@@ -165,23 +179,23 @@ const faq: [string, string][] = [
         Use these with the Duoly connector once it is available. Include your
         budget and mode so the assistant can narrow the options.
       </p>
-      <ul class="ai-grid ai-prompts">
+      <ul class="ai-prompts">
         {AI_PROMPTS.slice(0, 3).map((prompt) => (
-          <li class="card">“{prompt}”</li>
+          <li class="card">{prompt}</li>
         ))}
       </ul>
       <details class="ai-more-prompts">
         <summary>More prompts</summary>
-        <ul class="ai-grid ai-prompts">
+        <ul class="ai-prompts">
           {AI_PROMPTS.slice(3).map((prompt) => (
-            <li class="card">“{prompt}”</li>
+            <li class="card">{prompt}</li>
           ))}
         </ul>
       </details>
     </section>
     <section aria-labelledby="boundaries-h">
       <h2 id="boundaries-h">You stay in control</h2>
-      <div class="split ai-boundaries">
+      <div class="ai-boundaries">
         <div class="card">
           <h3>What the AI will do</h3>
           <ul>
@@ -200,25 +214,20 @@ const faq: [string, string][] = [
             </li>
           </ul>
         </div>
+        <div class="card">
+          <h3 id="privacy-h">What your AI shares</h3>
+          <ul>
+            <li>Your search choices such as game, service, rank and budget.</li>
+            <li>Nothing from your Duoly account.</li>
+            <li>Payment and personal details stay on duoly.gg.</li>
+          </ul>
+        </div>
       </div>
       <p>
         Social sessions are booked on duoly.gg for now. Play on your own game
         account and follow each game’s rules. Read our{' '}
-        <a href="/terms">booking and refund terms</a>.
-      </p>
-    </section>
-    <section class="card" aria-labelledby="privacy-h">
-      <h2 id="privacy-h">Only the details needed to search</h2>
-      <ul>
-        <li>
-          Your AI sends search choices such as game, service, rank and budget.
-        </li>
-        <li>The connection cannot access your Duoly account.</li>
-        <li>Payment and personal details stay on duoly.gg.</li>
-      </ul>
-      <p>
-        Read our <a href="/privacy">privacy policy</a> and the{' '}
-        <a href="/developers/mcp">developer guide for technical limits</a>.
+        <a href="/terms">booking and refund terms</a> and{' '}
+        <a href="/privacy">privacy policy</a>.
       </p>
     </section>
     <Faq items={faq} />

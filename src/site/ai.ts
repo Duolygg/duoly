@@ -53,7 +53,7 @@ export const MCP = {
 export const AI_ASSISTANTS = [
   {
     name: 'Claude',
-    status: AI_CONNECTOR_LIVE ? 'Add it yourself' : 'Coming soon',
+    status: AI_CONNECTOR_LIVE ? 'Add it yourself' : 'Launching first',
     detail: 'Find teammates and coaches in your conversation.',
     steps: [
       'Open Customize, then Connectors in Claude.',

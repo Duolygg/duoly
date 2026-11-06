@@ -23,7 +23,7 @@ describe('AI page public contract', () => {
     expect(AI_ASSISTANTS).toHaveLength(5);
     expect(
       AI_ASSISTANTS.find((assistant) => assistant.name === 'Claude')?.status,
-    ).toBe(AI_CONNECTOR_LIVE ? 'Add it yourself' : 'Coming soon');
+    ).toBe(AI_CONNECTOR_LIVE ? 'Add it yourself' : 'Launching first');
     expect(
       AI_ASSISTANTS.filter((assistant) => assistant.name !== 'Claude').every(
         (assistant) => assistant.status === 'Coming soon',
