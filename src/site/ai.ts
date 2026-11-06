@@ -1,3 +1,14 @@
+// Flip only after the Claude connector is available to customers.
+export const AI_CONNECTOR_LIVE = false;
+export function aiLaunchState(live: boolean = AI_CONNECTOR_LIVE) {
+  return {
+    label: live ? 'Available in Claude' : 'Launching soon in Claude',
+    indexing: live ? 'index, follow' : 'noindex, follow',
+    indexablePaths: live ? ['/ai'] : [],
+    showSetup: live,
+  };
+}
+
 // Public documentation contract. Update alongside the server before launch.
 export const MCP = {
   endpoint: 'https://duoly.gg/mcp',
@@ -39,49 +50,39 @@ export const MCP = {
   ],
 } as const;
 
-// A setup guide is not a live integration or an assistant-store approval.
 export const AI_ASSISTANTS = [
   {
     name: 'Claude',
-    status: 'Coming soon',
-    detail:
-      'Duoly is not connected yet. After launch, eligible Claude plans can use the custom connector steps below.',
+    status: AI_CONNECTOR_LIVE ? 'Add it yourself' : 'Coming soon',
+    detail: 'Find teammates and coaches in your conversation.',
     steps: [
-      'Open Customize, then Connectors in Claude (older interfaces use Settings, then Connectors).',
-      'Choose Add, then Add custom connector. Name it Duoly and enter the MCP URL below.',
-      'Choose No sign in, finish adding it and enable Duoly from Connectors in your conversation.',
+      'Open Customize, then Connectors in Claude.',
+      'Add a custom connector named Duoly using the URL below.',
+      'Add it without signing in, then enable Duoly in your conversation.',
     ],
   },
   {
     name: 'ChatGPT',
     status: 'Coming soon',
-    detail:
-      'Duoly is not available in the ChatGPT app directory. Book directly on Duoly while platform eligibility is reviewed.',
+    detail: 'Explore games and compare session prices.',
     steps: [],
   },
   {
     name: 'Gemini',
     status: 'Coming soon',
-    detail:
-      'Duoly is not a connected app in Gemini yet. Book directly on Duoly today.',
+    detail: 'Find a session that fits your game and budget.',
     steps: [],
   },
   {
     name: 'Perplexity',
     status: 'Coming soon',
-    detail:
-      'Custom remote connectors are supported. Duoly setup opens after the server launches.',
-    steps: [
-      'Open Plugins, then Add custom, Add MCP connector and Remote. Some interfaces use Customize, then Connectors.',
-      'Name the connector Duoly and enter the MCP URL below.',
-      'In Advanced, choose None for authentication and Streamable HTTP for transport. Review the acknowledgement, add and enable it.',
-    ],
+    detail: 'Search for teammates and coaching options.',
+    steps: [],
   },
   {
     name: 'Mistral Le Chat',
     status: 'Coming soon',
-    detail:
-      'Custom MCP connectors are supported. Duoly setup instructions will follow the launch compatibility check.',
+    detail: 'Choose a service and continue on Duoly.',
     steps: [],
   },
 ] as const;

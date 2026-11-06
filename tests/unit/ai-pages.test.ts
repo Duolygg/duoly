@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { AI_ASSISTANTS, MCP } from '../../src/site/ai';
+import {
+  AI_ASSISTANTS,
+  AI_CONNECTOR_LIVE,
+  aiLaunchState,
+  MCP,
+} from '../../src/site/ai';
 import { CONTENT_DATES, INDEXABLE_PATHS } from '../../src/site/seo';
 import example from '../../src/content/mcp-quote-example.json';
 import { calculateQuote } from '../../src/server/pricing';
@@ -48,9 +53,20 @@ describe('AI page public contract', () => {
       MCP.tools.find((tool) => tool.name === 'get_quote')?.inputs,
     ).toContain('server (required)');
   });
-  it('includes both pages with real editorial dates', () => {
+  it.each([false, true])('aligns launch visibility when live is %s', (live) => {
+    const state = aiLaunchState(live);
+    expect(state.indexing).toBe(live ? 'index, follow' : 'noindex, follow');
+    expect(state.indexablePaths).toEqual(live ? ['/ai'] : []);
+    expect(state.showSetup).toBe(live);
+    expect(state.label).toBe(
+      live ? 'Available in Claude' : 'Launching soon in Claude',
+    );
+  });
+  it('keeps the pending consumer page out of the sitemap contract', () => {
+    expect(AI_CONNECTOR_LIVE).toBe(false);
+    expect(INDEXABLE_PATHS).not.toContain('/ai');
+    expect(INDEXABLE_PATHS).toContain('/developers/mcp');
     for (const path of ['/ai', '/developers/mcp']) {
-      expect(INDEXABLE_PATHS).toContain(path);
       expect(CONTENT_DATES[path]).toBe('2026-11-06');
     }
   });

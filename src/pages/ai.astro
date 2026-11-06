@@ -1,7 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Breadcrumbs from '../components/seo/Breadcrumbs.astro';
-import SeoHero from '../components/seo/SeoHero.astro';
 import Steps from '../components/seo/Steps.astro';
 import Faq from '../components/seo/Faq.astro';
 import ClosingCta from '../components/seo/ClosingCta.astro';
@@ -9,7 +8,17 @@ import '../components/seo/seo.css';
 import '../components/seo/ai.css';
 import { pageViewer } from '../site/viewer';
 import { serializeJsonLd } from '../site/seo';
-import { AI_ASSISTANTS, AI_PROMPTS, MCP } from '../site/ai';
+import { AI_ASSISTANTS, AI_PROMPTS, MCP, aiLaunchState } from '../site/ai';
+import { calculateQuote } from '../server/pricing';
+const launch = aiLaunchState();
+const coachingQuote = calculateQuote(
+  { gameId: 'val', serviceId: 'vod', server: 'EU', units: 1 },
+  { customerCurrency: 'EUR', eurToUsd: 1 },
+);
+const coachingPrice = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'EUR',
+}).format(coachingQuote.customer.amountMinor / 100);
 const { viewer, csrf } = await pageViewer(Astro);
 const title = 'Gaming Teammates in AI Assistants | Duoly';
 const description =
@@ -17,7 +26,9 @@ const description =
 const faq: [string, string][] = [
   [
     'Can I book through an AI assistant today?',
-    'The Duoly AI connection is coming soon. You can book directly on duoly.gg now. The cards above show the current status for each assistant.',
+    launch.showSetup
+      ? 'Connect Duoly to Claude to find a session. Review your selection and book on duoly.gg.'
+      : 'The Duoly AI connection is coming soon. You can book directly on duoly.gg now.',
   ],
   [
     'Do I need a Duoly account to ask for prices?',
@@ -33,7 +44,7 @@ const faq: [string, string][] = [
   ],
   [
     'Which games can I ask about?',
-    'Ask about the games in the Duoly catalog, including Valorant, League of Legends, Marvel Rivals, Pokemon Unite, Rocket League and Fortnite. Social sessions are excluded from AI tools in v1.',
+    'Ask about the games in the Duoly catalog, including Valorant, League of Legends, Marvel Rivals, Pokemon Unite, Rocket League and Fortnite. Social sessions are booked on duoly.gg for now.',
   ],
   [
     'Can I still book without an assistant?',
@@ -45,7 +56,7 @@ const faq: [string, string][] = [
 <SiteLayout
   title={title}
   description={description}
-  indexing="index, follow"
+  indexing={launch.indexing}
   viewer={viewer}
   csrf={csrf}
 >
@@ -56,45 +67,69 @@ const faq: [string, string][] = [
         { name: 'Duoly in AI assistants', path: '/ai' },
       ]}
     />
-    <SeoHero
-      eyebrow="Duoly in AI assistants"
-      h1="Book a gaming teammate from ChatGPT, Claude or Gemini"
-      lead="Tell your AI what you want to play. The Duoly connection will find teammate and coaching options, check prices and prepare your booking link. You review and pay on duoly.gg."
-      cta={{ href: '/', label: 'Book on Duoly' }}
-      secondary={{ href: '#assistants-h', label: 'See assistant status' }}
-      note="AI connections are coming soon. Direct booking is open now."
-      art={[
-        { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
-        {
-          src: '/assets/games/league-of-legends.png',
-          alt: 'League of Legends game art',
-        },
-        {
-          src: '/assets/games/marvel-rivals.png',
-          alt: 'Marvel Rivals game art',
-        },
-      ]}
-      chip="Your game. Your choice."
-      facts={[
-        'Compare teammates and coaching',
-        'Check prices before you book',
-        'Payment stays on duoly.gg',
-      ]}
-    />
+    <header class="seo-hero ai-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">{launch.label}</p>
+        <h1>Book a gaming teammate from ChatGPT, Claude or Gemini</h1>
+        <p class="lead">
+          Tell your AI what you want to play. The Duoly connection will find
+          teammates and coaching options, check prices and prepare your booking
+          link. You review and pay on duoly.gg.
+        </p>
+        <div class="hero-actions">
+          <a class="cta" href="/">
+            Book on Duoly
+          </a>
+          <a class="cta-ghost" href="#assistants-h">
+            See assistant status
+          </a>
+        </div>
+        <p class="hero-note">
+          {launch.showSetup
+            ? 'Connect Claude to get started.'
+            : 'Direct booking is open now.'}
+        </p>
+      </div>
+      <aside class="hero-card ai-chat" aria-label="Example conversation">
+        <p class="byline">Example conversation</p>
+        <div class="ai-message">
+          <p class="byline">You</p>
+          <p>Find me a Valorant coach for tonight under 15 euros</p>
+        </div>
+        <div class="card ai-reply">
+          <p class="byline">Duoly assistant</p>
+          <h2>Valorant VOD review</h2>
+          <p>Review a recent match with an Immortal+ coach.</p>
+          <p
+            class="ai-chat-price"
+            data-price-minor={coachingQuote.customer.amountMinor}
+          >
+            {coachingPrice} <span>for 1 hour</span>
+          </p>
+          <p class="hero-note">
+            Base price before account perks. Tonight is not reserved. A coach
+            must accept your booking.
+          </p>
+          <a class="btn-sm" href="/?game=val&amp;service=vod#modes-h">
+            Book on Duoly
+          </a>
+        </div>
+      </aside>
+    </header>
     <Steps
       heading="From a question to your next session"
       steps={[
         'Ask your AI for a game, mode, budget and coaching goal.',
-        'It searches Duoly for a teammate or coach, the price and public availability.',
+        'Compare teammates and coaches. Check the price and who is online.',
         'Open your booking link, review the details and book on duoly.gg.',
       ]}
     />
     <section aria-labelledby="assistants-h">
       <h2 id="assistants-h">Choose your assistant</h2>
       <p>
-        Every status below refers to Duoly. A custom connector guide does not
-        mean a directory listing is live. Use these steps after the Duoly server
-        launches.
+        {launch.showSetup
+          ? 'Add Duoly to Claude, then ask about your next session.'
+          : 'Claude launches first. More assistants are coming soon.'}
       </p>
       <div class="ai-grid">
         {AI_ASSISTANTS.map((assistant) => (
@@ -104,7 +139,7 @@ const faq: [string, string][] = [
               <span class="eyebrow">{assistant.status}</span>
             </div>
             <p>{assistant.detail}</p>
-            {assistant.steps.length > 0 && (
+            {launch.showSetup && assistant.steps.length > 0 && (
               <ol>
                 {assistant.steps.map((step) => (
                   <li>{step}</li>
@@ -114,9 +149,11 @@ const faq: [string, string][] = [
           </div>
         ))}
       </div>
-      <p class="ai-endpoint">
-        Custom connector URL: <code>{MCP.endpoint}</code>
-      </p>
+      {launch.showSetup && (
+        <p class="ai-endpoint">
+          Custom connector URL: <code>{MCP.endpoint}</code>
+        </p>
+      )}
       <p>
         Building your own client? Read the{' '}
         <a href="/developers/mcp">Duoly MCP developer guide</a>.
@@ -129,17 +166,25 @@ const faq: [string, string][] = [
         budget and mode so the assistant can narrow the options.
       </p>
       <ul class="ai-grid ai-prompts">
-        {AI_PROMPTS.map((prompt) => (
+        {AI_PROMPTS.slice(0, 3).map((prompt) => (
           <li class="card">“{prompt}”</li>
         ))}
       </ul>
+      <details class="ai-more-prompts">
+        <summary>More prompts</summary>
+        <ul class="ai-grid ai-prompts">
+          {AI_PROMPTS.slice(3).map((prompt) => (
+            <li class="card">“{prompt}”</li>
+          ))}
+        </ul>
+      </details>
     </section>
     <section aria-labelledby="boundaries-h">
       <h2 id="boundaries-h">You stay in control</h2>
-      <div class="split">
+      <div class="split ai-boundaries">
         <div class="card">
-          <h3>What the AI can do</h3>
-          <ul class="checklist">
+          <h3>What the connection will do</h3>
+          <ul>
             <li>Search games and bookable services.</li>
             <li>Compare prices and public availability.</li>
             <li>Prepare a link to book on Duoly.</li>
@@ -157,30 +202,23 @@ const faq: [string, string][] = [
         </div>
       </div>
       <p>
-        Social sessions are outside the AI tools in v1. Play on your own game
+        Social sessions are booked on duoly.gg for now. Play on your own game
         account and follow each game’s rules. Read our{' '}
         <a href="/terms">booking and refund terms</a>.
       </p>
     </section>
     <section class="card" aria-labelledby="privacy-h">
       <h2 id="privacy-h">Only the details needed to search</h2>
+      <ul>
+        <li>
+          Your AI sends search choices such as game, service, rank and budget.
+        </li>
+        <li>The connection cannot access your Duoly account.</li>
+        <li>Payment and personal details stay on duoly.gg.</li>
+      </ul>
       <p>
-        A tool call contains structured choices such as game, service, rank,
-        quantity and currency. It does not need your chat history, real name,
-        email, game password or payment details. Never put those details in a
-        tool request.
-      </p>
-      <p>
-        The public tools do not store personal booking data or link to your
-        account. Rate limiting uses an IP-derived identifier to enforce{' '}
-        {MCP.rateLimits.minute} requests per minute and{' '}
-        {MCP.rateLimits.day.toLocaleString('en-US')} per day per IP. Hosting
-        providers process connection metadata, and your assistant’s own privacy
-        rules apply to your chat.
-      </p>
-      <p>
-        Read the <a href="/privacy">Duoly privacy policy</a> or{' '}
-        <a href="/contact">ask us about your data</a>.
+        Read our <a href="/privacy">privacy policy</a> and the{' '}
+        <a href="/developers/mcp">developer guide for technical limits</a>.
       </p>
     </section>
     <Faq items={faq} />
