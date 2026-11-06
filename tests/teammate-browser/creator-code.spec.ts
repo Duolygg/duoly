@@ -2,6 +2,10 @@ import { test, expect } from '@playwright/test';
 import { creatorPricePreview } from '../../src/server/creators/preview';
 let serverPreview: ReturnType<typeof creatorPricePreview>;
 
+// The full apply, replace, remove and pay journey takes about 10s locally and
+// over 30s on GitHub runners, so it gets a longer budget than the default.
+test.setTimeout(60_000);
+
 for (const source of ['typed', 'link'] as const) {
   test(`${source} creator code validates, can be replaced and removed without blocking payment`, async ({
     page,
