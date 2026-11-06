@@ -1,6 +1,6 @@
 # Registry publication draft
 
-No registry publication or ownership change has been performed. `server.json` is a remote-only draft for the parallel MCP implementation. Version `0.1.0` is a proposed first metadata release, not evidence of a deployed release. Choose an unused release version at publication time.
+Domain ownership for the official registry is proven with `public/.well-known/mcp-registry-auth` (public Ed25519 key only). The private key lives in macOS Keychain `duoly-mcp-registry-key` and never enters the repository. `server.json` is a remote-only draft for the parallel MCP implementation. Version `0.1.0` is a proposed first metadata release, not evidence of a deployed release. Choose an unused release version at publication time.
 
 ## Official MCP Registry
 
