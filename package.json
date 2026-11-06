@@ -20,20 +20,20 @@
     "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm test:unit && pnpm build && pnpm test:e2e"
   },
   "dependencies": {
-    "@astrojs/react": "7.1.1",
-    "@astrojs/vercel": "11.0.16",
+    "@astrojs/react": "7.1.2",
+    "@astrojs/vercel": "11.0.18",
     "@modelcontextprotocol/ext-apps": "2.0.4",
     "@modelcontextprotocol/server": "2.4.0",
     "@stripe/stripe-js": "10.1.0",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.118.0",
     "@vercel/functions": "3.10.6",
-    "astro": "7.4.2",
+    "astro": "7.4.5",
     "posthog-js": "1.445.1",
     "posthog-node": "5.61.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "stripe": "23.0.1",
+    "stripe": "23.1.0",
     "zod": "4.6.7"
   },
   "devDependencies": {
@@ -48,10 +48,10 @@
     "eslint-plugin-astro": "3.2.1",
     "oxc-transform-react": "0.145.0",
     "prettier": "3.9.10",
-    "prettier-plugin-astro": "1.1.1",
+    "prettier-plugin-astro": "1.1.2",
     "supabase": "2.121.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.72.0",
+    "typescript-eslint": "8.72.1",
     "vitest": "5.0.5"
   }
 }
