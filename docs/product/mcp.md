@@ -60,7 +60,22 @@ Example link for Valorant VOD review:
 
 `https://duoly.gg/?game=val&service=vod&agent=claude#modes-h`
 
-The canonical citation is `https://duoly.gg/games/valorant/coaching`. Links only preselect the game and service using the existing homepage parser. They do not preserve rank, region, quantity or edition, create an order, reserve a teammate or start checkout. Payment and remaining selections happen on duoly.gg.
+The canonical citation is `https://duoly.gg/games/valorant/coaching`. The MCP adapter currently emits game and service links. The homepage also accepts the optional booking parameters below. Links do not create an order, reserve a teammate or start checkout. Payment and remaining selections happen on duoly.gg.
+
+### Booking link parameters
+
+Homepage links use the fixed parameter names `game`, `service`, `rank`, `region`, `qty`, `agent`. The existing optional `tab` remains supported, with a valid service taking precedence. A valid `game` is required to apply a booking prefill.
+
+- `game`: exact catalog short ID, for example `val` or `lol`.
+- `service`: exact service ID for that game, for example `duo2` or `vod`.
+- `rank`: exact, case-sensitive catalog rank string from `ranksOf(game, service)`, not a lowercase slug. Valorant ranked services accept `Iron`, `Bronze`, `Silver`, `Gold`, `Platinum`, `Diamond`, `Ascendant`, `Immortal`, `Radiant`. Service-specific ladders apply, for example League Arena accepts `Wood`. Flat-priced services ignore rank.
+- `region`: exact, case-sensitive server token from `serversFor(game)`. Valorant accepts `EU`, `NA`, `LATAM`, `BR`, `KR`, `AP`. League uses tokens such as `EUW` and `EUNE`. Other games can use strings with spaces, so construct links with `URLSearchParams`. Minecraft ignores region because it uses a server/world field instead.
+- `qty`: positive decimal integer games or hours, clamped to the existing allowed range of 1 to 10. Nonpositive, fractional and nonnumeric values are ignored. For the game's main service, quantities 3, 5 and 10 select the matching named bundle when present. Other services keep their service and clear bundle state. A manual quantity-button click still clears the bundle as before and uses the same existing total calculation.
+- `agent`: attribution hint, left untouched in the URL. `src/server/mcp/tools.ts` writes it. No homepage attribution reader exists on this base revision; this plumbing does not add one or claim conversion attribution.
+
+Example: `https://duoly.gg/?game=val&service=duo2&rank=Gold&region=EU&qty=3&agent=claude#modes-h`.
+
+The homepage consumes `game`, `service`, `tab`, `rank`, `region`, `qty`, preserving `agent`, unrelated query parameters and the hash. Invalid optional values keep the existing defaults, including saved/time-zone region selection when confirmation opens. Region lives in `Home.state.region` and appears in the existing confirmation server picker, not the sticky order bar. No UI, checkout or pricing code changes; final prices continue to come from existing server pricing.
 
 ### Exclusions and honest availability
 
