@@ -64,6 +64,7 @@ The canonical citation is `https://duoly.gg/games/valorant/coaching`. Links only
 
 ### Exclusions and honest availability
 
+- Gamer Girl services (category `gg`) are excluded until the first store approval.
 - Social as a catalog game is excluded throughout. Ordinary casual game modes whose internal category is `social` remain available.
 - Bookability is determined by `parseQuoteInput`, not a hardcoded Teams category filter. Teams are currently excluded because the pricing parser rejects them; they appear automatically when pricing accepts them. Social stays explicitly excluded.
 - Dynamic streamer listings and pricing are excluded because they use a different quote path and streamer-specific revalidation.
