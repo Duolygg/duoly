@@ -50,7 +50,10 @@ function view(payload: unknown) {
     URL,
     Intl,
     window: { parent: { postMessage() {} }, addEventListener() {} },
-    document: { getElementById: () => app },
+    document: {
+      getElementById: () => app,
+      documentElement: { scrollHeight: 0 },
+    },
     ResizeObserver: class {
       observe() {}
     },
@@ -156,6 +159,34 @@ it.each([
   { game: 'val', service: 'duo2', quantity: 11 },
 ])('rejects unsupported booking selections %j', async (args) => {
   await expect(callTool('create_booking_link', args)).rejects.toThrow();
+});
+it('labels coaching totals and includes budget, descriptions and a checklist', async () => {
+  const result = await callTool(
+    'find_session',
+    {
+      game: 'val',
+      goal: 'coaching',
+      budget: 15,
+      currency: 'EUR',
+      quantity: 1,
+      region: 'EU',
+    },
+    { fx },
+  );
+  const { app, context } = view(result);
+  expect(app.innerHTML).toContain('Your budget');
+  expect(app.innerHTML).toContain('What is included');
+  expect(app.innerHTML).toContain('<ul');
+  expect(app.innerHTML).toContain('class="radio"');
+  expect(app.innerHTML).not.toContain('per hour');
+  expect(app.innerHTML).not.toContain('Review remaining options');
+  runInContext("state.service = 'aim'; render()", context);
+  expect(app.innerHTML).toContain('Total · 1 hour');
+});
+it('reports document scroll height rather than only the app rectangle', () => {
+  const { context } = view({ isError: true });
+  context.document.documentElement = { scrollHeight: 987 };
+  expect(runInContext('measureSize().height', context)).toBe(987);
 });
 it('preserves chosen selections in booking links', async () => {
   const result = await callTool(

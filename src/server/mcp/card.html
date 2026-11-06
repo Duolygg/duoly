@@ -63,18 +63,7 @@
         position: absolute;
         inset: 0;
         z-index: -1;
-        background:
-          radial-gradient(
-            110% 60% at 100% 0%,
-            rgba(139, 92, 246, 0.28),
-            transparent 62%
-          ),
-          radial-gradient(
-            80% 50% at 0% 100%,
-            rgba(240, 166, 255, 0.12),
-            transparent 60%
-          ),
-          var(--bg);
+        background: var(--bg);
       }
       .dw::after {
         content: '';
@@ -82,7 +71,7 @@
         inset: 0;
         z-index: -1;
         pointer-events: none;
-        opacity: 0.55;
+        opacity: 0;
         background-image:
           linear-gradient(rgba(214, 187, 255, 0.04) 1px, transparent 1px),
           linear-gradient(90deg, rgba(214, 187, 255, 0.04) 1px, transparent 1px);
@@ -408,11 +397,13 @@
         place-items: center;
         transition: 0.2s;
       }
-      .tier.on .radio {
+      .tier.on .radio,
+      .opt.on .radio {
         background: var(--lav);
         border-color: var(--lav);
       }
       .tier.on .radio::after,
+      .opt.on .radio::after,
       .gm .ok::after {
         content: '';
         width: 8px;
@@ -436,24 +427,13 @@
         inset: 0;
         z-index: -1;
         opacity: 0.6;
-        background:
-          radial-gradient(
-            80% 60% at 100% 0%,
-            rgba(255, 210, 122, 0.22),
-            transparent 70%
-          ),
-          linear-gradient(
-            120deg,
-            transparent 20%,
-            rgba(240, 166, 255, 0.18) 35%,
-            rgba(94, 234, 168, 0.1) 50%,
-            rgba(255, 210, 122, 0.15) 65%,
-            transparent 80%
-          );
-        background-size:
-          100% 100%,
-          260% 100%;
-        animation: foil 6s ease-in-out infinite;
+        background: linear-gradient(
+          120deg,
+          rgba(255, 210, 122, 0.18),
+          rgba(240, 166, 255, 0.18) 35%,
+          rgba(94, 234, 168, 0.12) 65%,
+          rgba(255, 210, 122, 0.18)
+        );
       }
       @keyframes foil {
         0%,
@@ -713,11 +693,11 @@
       }
       .perf::before {
         left: -12px;
-        clip-path: inset(0 0 0 50%);
+        z-index: 1;
       }
       .perf::after {
         right: -12px;
-        clip-path: inset(0 50% 0 0);
+        z-index: 1;
       }
       .perf i {
         position: absolute;
@@ -1063,12 +1043,15 @@
       }
 
       html {
+        height: fit-content;
+        overflow: hidden;
         background: transparent;
         color-scheme: dark;
       }
       body {
         margin: 0;
-        padding: 6px;
+        padding: 0;
+        background: transparent;
         font-family: var(--body);
         -webkit-font-smoothing: antialiased;
         color: var(--ink);
@@ -1095,7 +1078,7 @@
       .dw {
         margin: 0;
         width: 100%;
-        max-width: 760px;
+        max-width: none;
         padding-bottom: 1px;
       }
       .brand {
@@ -1137,7 +1120,30 @@
         color: var(--mute);
       }
       .opt {
-        min-height: 95px;
+        position: relative;
+        min-width: 0;
+        min-height: 110px;
+        padding-right: 34px;
+      }
+      .opt-description {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12px;
+        color: var(--mute);
+      }
+      .checklist {
+        list-style: none;
+      }
+      .checklist li {
+        display: flex;
+        gap: 8px;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .checklist li::before {
+        content: '✓';
+        color: var(--mint);
       }
       .mode {
         justify-content: center;

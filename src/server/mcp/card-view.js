@@ -108,7 +108,7 @@ function totals(option, coaching = false) {
     card.input.budget && card.input.currency
       ? Math.floor(card.input.budget * 100) - total
       : -1;
-  return `<div class="bar"><div class="tot"><small>${state.rank || !option.ranks.length ? 'Total' : 'From'}${coaching ? ` · ${state.quantity} ${option.unit}${state.quantity > 1 ? 's' : ''}` : ''}</small><div class="row"><b id="total" data-minor="${total}">${money(total)}</b>${saving > 0 ? `<s>${money(original)}</s><span class="save">Save ${money(saving)}</span>` : ''}${coaching && budget >= 0 ? `<span class="save">${money(budget)} under budget</span>` : ''}</div><span class="per">${money(Math.round(total / state.quantity))} per ${option.unit}${card.currency === 'USD' ? ' · USD estimate' : ''}</span></div>${cta(option, coaching ? 'Book session' : 'Book on Duoly')}</div>`;
+  return `<div class="bar"><div class="tot"><small>${state.rank || !option.ranks.length ? 'Total' : 'From'}${coaching ? ` · ${state.quantity} ${option.unit}${state.quantity > 1 ? 's' : ''}` : ''}</small><div class="row"><b id="total" data-minor="${total}">${money(total)}</b>${saving > 0 ? `<s>${money(original)}</s><span class="save">Save ${money(saving)}</span>` : ''}${coaching && budget >= 0 ? `<span class="save">Your budget ${money(Math.floor(card.input.budget * 100))} · ${money(budget)} under</span>` : ''}</div>${!coaching || state.quantity > 1 ? `<span class="per">${money(Math.round(total / state.quantity))} per ${option.unit}</span>` : ''}${card.currency === 'USD' ? '<span class="per">USD estimate</span>' : ''}</div>${cta(option, coaching ? 'Book session' : 'Book on Duoly')}</div>`;
 }
 function setup() {
   const ranks = [...new Set(card.options.flatMap((s) => s.ranks))];
@@ -142,12 +142,12 @@ function finder() {
     );
   html += setup();
   if (coaching) {
-    html += `<div class="sec">${label('Pick a session')}<div class="opts">${options.map((s) => `<button class="opt sel ${s.id === selected.id ? 'on' : ''}" aria-pressed="${s.id === selected.id}" data-service="${htmlEscape(s.id)}"><b>${copy(s.name)}</b><small>${money(price(s)[0])} for ${state.quantity} ${s.unit}${state.quantity > 1 ? 's' : ''}</small></button>`).join('')}</div><div class="incl">In ${copy(selected.name)}</div><div class="learn"><div>✓ ${copy(selected.description)}</div></div></div>`;
+    html += `<div class="sec">${label('Pick a session')}<div class="opts">${options.map((s) => `<button class="opt sel ${s.id === selected.id ? 'on' : ''}" aria-pressed="${s.id === selected.id}" data-service="${htmlEscape(s.id)}"><span class="radio"></span><b>${copy(s.name)}</b><span class="opt-description" title="${copy(s.description)}">${copy(s.description)}</span><small>${money(price(s)[0])} for ${state.quantity} ${s.unit}${state.quantity > 1 ? 's' : ''}</small></button>`).join('')}</div><div class="incl">What is included</div><ul class="learn checklist"><li>${copy(selected.description)}</li></ul></div>`;
   } else {
     html += `<div class="sec">${label('Your teammate', `Price per ${selected.unit} at your rank`)}<div class="tiers">${options.map((s, i) => `<button class="tier sel ${s.id === selected.id ? 'on' : ''} ${s.id === 'duo3' ? 'apex' : i === 1 ? 'pro' : ''}" aria-pressed="${s.id === selected.id}" data-service="${htmlEscape(s.id)}"><span class="radio"></span><span class="tag">${s.id === 'duo3' ? 'Top tier' : s.badge || (price(s, 1)[0] === Math.min(...options.map((o) => price(o, 1)[0])) ? 'Lowest price' : 'Teammate')}</span><div class="tn">${copy(s.name)}</div><div class="who">${copy(s.tier)}</div><div class="pr"><b>${state.rank || !s.ranks.length ? '' : 'From '}${money(price(s, 1)[0])}</b><span>/ ${s.unit}</span></div></button>`).join('')}</div></div>`;
   }
   html += (coaching ? '' : packs(selected)) + totals(selected, coaching);
-  html += `<div class="fine"><span>${coaching ? 'Never share your game password. Coaches play on their own accounts.' : 'Secure checkout on duoly.gg. A teammate accepts from the queue.'}</span><span>Base price before account perks. Review remaining options on Duoly.</span></div>`;
+  html += `<div class="fine"><span>${coaching ? 'Never share your game password. Coaches play on their own accounts.' : 'Secure checkout on duoly.gg. A teammate accepts from the queue.'}</span><span>Account perks can lower your total at checkout.</span></div>`;
   return html;
 }
 function ticket() {
@@ -176,7 +176,7 @@ function ticket() {
     )}</div></div></div><div class="perf"><i></i></div><div class="lines"><div><span>${state.quantity} ${option.unit}${state.quantity > 1 ? 's' : ''} at ${money(price(option, 1)[0])}</span><b>${money(original)}</b></div>${saving > 0 ? `<div class="disc"><span>${state.quantity} ${option.unit} bundle</span><b>-${money(saving)}</b></div>` : ''}<div class="sum"><span>${incomplete ? 'From' : 'Total'}</span><b id="total" data-minor="${total}">${money(total)}</b></div><p class="note2">Base price before account perks.${incomplete ? ' Choose remaining options on Duoly.' : ''}${card.currency === 'USD' ? ' USD estimate.' : ''}</p></div></div>`;
   html +=
     '<div class="steps"><div class="track"><i></i></div>' +
-    ['Picked in chat', 'Pay on duoly.gg', 'Teammate accepts', 'Play together']
+    ['Picked', 'Checkout', 'Accepted', 'Play']
       .map(
         (s, i) =>
           `<div class="st ${i === 0 ? 'done' : i === 1 ? 'now' : ''}"><i>${i === 0 ? '✓' : i + 1}</i><span>${s}</span></div>`,
@@ -185,7 +185,7 @@ function ticket() {
     '</div>';
   html +=
     cta(option, 'Continue to checkout', true) +
-    `<div class="link-row"><code>${copy(`duoly.gg/${card.game.slug} · ${option.name} · ${state.rank || 'Choose rank'} · ${state.region || 'Choose region'} · ${state.quantity} ${option.unit}${state.quantity > 1 ? 's' : ''}`)}</code><input hidden readonly aria-label="Booking link" value="${htmlEscape(link(option))}"><button class="copy" data-copy>Copy link</button></div>`;
+    `<div class="link-row"><code>${copy(`duoly.gg/${card.game.slug}`)}</code><input hidden readonly aria-label="Booking link" value="${htmlEscape(link(option))}"><button class="copy" data-copy>Copy link</button></div>`;
   return html;
 }
 function picker() {
@@ -339,24 +339,26 @@ window.addEventListener('message', (e) => {
     window.parent.postMessage({ jsonrpc: '2.0', id: m.id, result: {} }, '*');
   }
 });
-new ResizeObserver(() => {
-  if (ready)
-    send('ui/notifications/size-changed', {
-      height: Math.ceil(app.getBoundingClientRect().height + 12),
-      width: document.documentElement.clientWidth,
-    });
-}).observe(app);
+function measureSize() {
+  return { height: Math.ceil(document.documentElement.scrollHeight) };
+}
+function reportSize() {
+  if (ready) send('ui/notifications/size-changed', measureSize());
+}
+new ResizeObserver(reportSize).observe(app);
+window.addEventListener('resize', reportSize);
+document.addEventListener?.('load', reportSize, true);
+document.fonts?.ready.then(reportSize);
 request('ui/initialize', {
   protocolVersion: '2026-01-26',
   appInfo: { name: 'Duoly cards', version: '1.0.0' },
   appCapabilities: {},
+  ...measureSize(),
 })
   .then(() => {
     ready = true;
     send('ui/notifications/initialized', {});
-    send('ui/notifications/size-changed', {
-      height: Math.ceil(app.getBoundingClientRect().height + 12),
-    });
+    reportSize();
   })
   .catch(() => {
     app.innerHTML =
