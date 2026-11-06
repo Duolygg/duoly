@@ -86,9 +86,22 @@ The destination is `https://duoly.gg/` with fragment `#modes-h`:
 | `region`  | Optional exact catalog region token, such as `EU` or `EUW`; tool `server` is mapped to this parameter |
 | `qty`     | Optional selected integer quantity from 1 to 10, in that service's games or hours                     |
 
-`create_booking_link` additionally accepts optional `rank`, `region`, `quantity` and `currency` (EUR or USD, for card pricing only). Invalid rank and region tokens are rejected. `find_session`, `get_quote` and the card's own booking action preserve supplied selections. Edition and currency are not URL parameters. Changing card rank, tier or pack updates the link locally without changing attribution. Unknown prefill parameters are harmless until the separate homepage prefill change lands; review all selections on Duoly before paying.
+`create_booking_link` additionally accepts optional `rank`, `region`, `quantity` and `currency` (EUR or USD, for card pricing only). Invalid rank and region tokens are rejected. `find_session`, `get_quote` and the card's own booking action preserve supplied selections. Edition and currency are not URL parameters. Changing card rank, tier or pack updates the link locally without changing attribution. The homepage applies these parameters (see Homepage prefill behavior below); review all selections on Duoly before paying.
 
 Example: `https://duoly.gg/?game=val&service=duo2&agent=claude&rank=Gold&region=EU&qty=3#modes-h`.
+
+### Homepage prefill behavior
+
+Homepage links use the fixed parameter names `game`, `service`, `rank`, `region`, `qty`, `agent`. The existing optional `tab` remains supported, with a valid service taking precedence. A valid `game` is required to apply a booking prefill.
+
+- `game`: exact catalog short ID, for example `val` or `lol`.
+- `service`: exact service ID for that game, for example `duo2` or `vod`.
+- `rank`: exact, case-sensitive catalog rank string from `ranksOf(game, service)`, not a lowercase slug. Valorant ranked services accept `Iron`, `Bronze`, `Silver`, `Gold`, `Platinum`, `Diamond`, `Ascendant`, `Immortal`, `Radiant`. Service-specific ladders apply, for example League Arena accepts `Wood`. Flat-priced services ignore rank.
+- `region`: exact, case-sensitive server token from `serversFor(game)`. Valorant accepts `EU`, `NA`, `LATAM`, `BR`, `KR`, `AP`. League uses tokens such as `EUW` and `EUNE`. Other games can use strings with spaces, so construct links with `URLSearchParams`. Minecraft ignores region because it uses a server/world field instead.
+- `qty`: positive decimal integer games or hours, clamped to the existing allowed range of 1 to 10. Nonpositive, fractional and nonnumeric values are ignored. For the game's main service, quantities 3, 5 and 10 select the matching named bundle when present. Other services keep their service and clear bundle state. A manual quantity-button click still clears the bundle as before and uses the same existing total calculation.
+- `agent`: attribution hint, left untouched in the URL. `src/server/mcp/tools.ts` writes it. No homepage attribution reader exists on this base revision; this plumbing does not add one or claim conversion attribution.
+
+The homepage consumes `game`, `service`, `tab`, `rank`, `region`, `qty`, preserving `agent`, unrelated query parameters and the hash. Invalid optional values keep the existing defaults, including saved/time-zone region selection when confirmation opens. Region lives in `Home.state.region` and appears in the existing confirmation server picker, not the sticky order bar. No UI, checkout or pricing code changes; final prices continue to come from existing server pricing.
 
 ### Exclusions and honest availability
 

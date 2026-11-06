@@ -248,15 +248,24 @@ export default class Home extends React.Component {
     let game = '';
     let tab = '';
     let service = '';
+    let rank = '';
+    let region = '';
+    let quantity = '';
     try {
       const url = new URL(window.location.href);
       if (!url.searchParams.has('game')) return;
       game = url.searchParams.get('game') || '';
       tab = url.searchParams.get('tab') || '';
       service = url.searchParams.get('service') || '';
+      rank = url.searchParams.get('rank') || '';
+      region = url.searchParams.get('region') || '';
+      quantity = url.searchParams.get('qty') || '';
       url.searchParams.delete('game');
       url.searchParams.delete('tab');
       url.searchParams.delete('service');
+      url.searchParams.delete('rank');
+      url.searchParams.delete('region');
+      url.searchParams.delete('qty');
       window.history.replaceState(
         null,
         '',
@@ -271,12 +280,24 @@ export default class Home extends React.Component {
       (service && g.modes.find((x) => x.id === service)) ||
       (tab && g.modes.find((x) => x.cat === tab)) ||
       null;
+    const top = g.modes.find((x) => x.id === g.main) || g.modes[0];
+    const selected = m || g.modes.find((x) => x.id === this.state.mode) || top;
+    const validQty = /^\d+$/.test(quantity) && Number(quantity) > 0;
+    // The existing order contract accepts 1 to 10 games or hours for every service.
+    const qty = validQty ? Math.min(10, Number(quantity)) : null;
+    // Named bundles belong only to the main service, never switch another service.
+    const bundle =
+      selected.id === top.id && qty !== null
+        ? (g.bundles || [])[[3, 5, 10].indexOf(qty)] || null
+        : null;
     this.setState(
       {
         game,
-        rank: '',
+        rank: ranksOf(game, selected.id).includes(rank) ? rank : '',
         queued: false,
         ...(m ? { tab: m.cat, mode: m.id, bundle: null, qty: 1 } : {}),
+        ...(!usesServerName(game) && isServer(game, region) ? { region } : {}),
+        ...(qty !== null ? { qty, bundle } : {}),
       },
       () => {
         // the picked game's services can change the page height: land on them again
