@@ -4387,8 +4387,9 @@ export default class Home extends React.Component {
                           d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z"
                         />
                       </svg>
-                      Not matched in 5 min? The full amount goes back to your
-                      Duoly balance
+                      {v.freeOn
+                        ? 'Not matched in 5 min? Your free coaching comes back for this month'
+                        : 'Not matched in 5 min? The full amount goes back to your Duoly balance'}
                     </li>
                   </ul>
                 </aside>
