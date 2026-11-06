@@ -29,49 +29,54 @@ export function services(value: string) {
     cat: string;
     unit: 'game' | 'hour';
   }[];
-  return modes
-    .filter((m) => {
-      // Bookability follows the checkout parser, including future Teams support.
-      const rank = (ranksOf(game.id, m.id) as string[])[0];
-      try {
-        parseQuoteInput({
-          gameId: game.id,
-          serviceId: m.id,
-          units: 1,
-          server: game.id === 'mc' ? 'my world' : serversFor(game.id)[0]![0],
-          ...(rank ? { rank } : {}),
-          ...(game.id === 'mc' ? { edition: 'Java' } : {}),
-        });
-        return true;
-      } catch {
-        return false;
-      }
-    })
-    .map((m) => {
-      const ranks = ranksOf(game.id, m.id) as string[];
-      return {
-        id: m.id,
-        name: m.title.replaceAll('&', 'and').replace(/[\u2013\u2014]/g, '-'),
-        category: m.cat,
-        unit: m.unit,
-        ranks,
-        regions:
-          game.id === 'mc'
-            ? []
-            : (serversFor(game.id) as string[][]).map((r) => r[0]!),
-        editions: game.id === 'mc' ? ['Java', 'Bedrock'] : [],
-        requiredInputs: [
-          'game',
-          'service',
-          'quantity',
-          'currency',
-          'server',
-          ...(ranks.length ? ['rank'] : []),
-          ...(game.id === 'mc' ? ['edition'] : []),
-        ],
-        url: game.url + (m.cat === 'training' ? '/coaching' : ''),
-      };
-    });
+  return (
+    modes
+      // Gamer Girl services stay on duoly.gg until the first store approval,
+      // like the Social game, to keep the assistant listing to coaching and teammates.
+      .filter((m) => m.cat !== 'gg')
+      .filter((m) => {
+        // Bookability follows the checkout parser, including future Teams support.
+        const rank = (ranksOf(game.id, m.id) as string[])[0];
+        try {
+          parseQuoteInput({
+            gameId: game.id,
+            serviceId: m.id,
+            units: 1,
+            server: game.id === 'mc' ? 'my world' : serversFor(game.id)[0]![0],
+            ...(rank ? { rank } : {}),
+            ...(game.id === 'mc' ? { edition: 'Java' } : {}),
+          });
+          return true;
+        } catch {
+          return false;
+        }
+      })
+      .map((m) => {
+        const ranks = ranksOf(game.id, m.id) as string[];
+        return {
+          id: m.id,
+          name: m.title.replaceAll('&', 'and').replace(/[\u2013\u2014]/g, '-'),
+          category: m.cat,
+          unit: m.unit,
+          ranks,
+          regions:
+            game.id === 'mc'
+              ? []
+              : (serversFor(game.id) as string[][]).map((r) => r[0]!),
+          editions: game.id === 'mc' ? ['Java', 'Bedrock'] : [],
+          requiredInputs: [
+            'game',
+            'service',
+            'quantity',
+            'currency',
+            'server',
+            ...(ranks.length ? ['rank'] : []),
+            ...(game.id === 'mc' ? ['edition'] : []),
+          ],
+          url: game.url + (m.cat === 'training' ? '/coaching' : ''),
+        };
+      })
+  );
 }
 export function resolveService(game: string, service: string) {
   const selected = services(game).find((s) => s.id === service);

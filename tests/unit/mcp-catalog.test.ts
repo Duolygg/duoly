@@ -17,4 +17,6 @@ it('derives bookability from the pricing parser so future Teams support is autom
   });
   expect(services('val').some((s) => s.id === 'stack')).toBe(true);
   expect(games().some((g) => g.id === 'social')).toBe(false);
+  for (const g of games())
+    expect(services(g.id).filter((s) => s.category === 'gg')).toEqual([]);
 });
