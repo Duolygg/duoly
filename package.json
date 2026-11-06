@@ -28,7 +28,7 @@
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.118.0",
     "@vercel/functions": "3.10.6",
-    "astro": "7.4.2",
+    "astro": "7.4.5",
     "posthog-js": "1.445.1",
     "posthog-node": "5.61.2",
     "react": "19.3.1",
