@@ -160,6 +160,16 @@ export const OUTBOX_EVENT_CATALOGUE = {
 export type OutboxEventName = keyof typeof OUTBOX_EVENT_CATALOGUE;
 
 export const SERVER_EVENT_CATALOGUE = {
+  agent_tool_called: {
+    tool: [
+      'list_games',
+      'list_services',
+      'get_quote',
+      'get_availability',
+      'create_booking_link',
+    ],
+    platform: ['claude', 'chatgpt', 'gemini', 'perplexity', 'mistral', 'other'],
+  },
   creator_link_landed: { referral_consent: 'bool' },
   review_submitted: { rating: 'int', tag_count: 'int', has_tip: 'bool' },
   user_logged_in: {
