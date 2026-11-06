@@ -13,6 +13,8 @@ export const GUIDE_PATH = '/blog/what-is-an-egirl';
 export const INDEXABLE_PATHS = [
   '/',
   '/games',
+  '/ai',
+  '/developers/mcp',
   '/blog',
   '/contact',
   '/terms',
@@ -26,7 +28,10 @@ export const INDEXABLE_PATHS = [
 ];
 // Content revision dates, shared by sitemap and editorial metadata. Never request time.
 export const CONTENT_DATES: Record<string, string> = Object.fromEntries(
-  INDEXABLE_PATHS.map((path) => [path, '2026-11-05']),
+  INDEXABLE_PATHS.map((path) => [
+    path,
+    ['/ai', '/developers/mcp'].includes(path) ? '2026-11-06' : '2026-11-05',
+  ]),
 );
 Object.assign(CONTENT_DATES, {
   '/games/league-of-legends/play-with-someone': '2026-11-06',

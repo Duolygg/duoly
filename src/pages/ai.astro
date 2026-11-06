@@ -1,0 +1,214 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Breadcrumbs from '../components/seo/Breadcrumbs.astro';
+import SeoHero from '../components/seo/SeoHero.astro';
+import Steps from '../components/seo/Steps.astro';
+import Faq from '../components/seo/Faq.astro';
+import ClosingCta from '../components/seo/ClosingCta.astro';
+import '../components/seo/seo.css';
+import '../components/seo/ai.css';
+import { pageViewer } from '../site/viewer';
+import { serializeJsonLd } from '../site/seo';
+import { AI_ASSISTANTS, AI_PROMPTS, MCP } from '../site/ai';
+const { viewer, csrf } = await pageViewer(Astro);
+const title = 'Gaming Teammates in AI Assistants | Duoly';
+const description =
+  'Find gaming teammates and coaching with AI assistants. See Duoly connector status, example prompts and privacy details. Review prices and pay on duoly.gg.';
+const faq: [string, string][] = [
+  [
+    'Can I book through an AI assistant today?',
+    'The Duoly AI connection is coming soon. You can book directly on duoly.gg now. The cards above show the current status for each assistant.',
+  ],
+  [
+    'Do I need a Duoly account to ask for prices?',
+    'No. The public tools need no Duoly login. You sign in on Duoly when you are ready to book. Your assistant may require a paid plan or administrator permission for custom connectors.',
+  ],
+  [
+    'Can the assistant pay for my session?',
+    'No. Payment always happens on duoly.gg. Review the service, quantity and final price there before confirming.',
+  ],
+  [
+    'Does an availability result reserve a teammate?',
+    'No. Availability is a public signal, not a reservation. A teammate accepts your order through the Duoly queue. A requested time or rank is never guaranteed by an AI answer.',
+  ],
+  [
+    'Which games can I ask about?',
+    'Ask about the games in the Duoly catalog, including Valorant, League of Legends, Marvel Rivals, Pokemon Unite, Rocket League and Fortnite. Social sessions are excluded from AI tools in v1.',
+  ],
+  [
+    'Can I still book without an assistant?',
+    'Yes. Choose your game and service directly on duoly.gg. The booking and payment flow is the same destination an assistant prepares for you.',
+  ],
+];
+---
+
+<SiteLayout
+  title={title}
+  description={description}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Duoly in AI assistants', path: '/ai' },
+      ]}
+    />
+    <SeoHero
+      eyebrow="Duoly in AI assistants"
+      h1="Book a gaming teammate from ChatGPT, Claude or Gemini"
+      lead="Tell your AI what you want to play. The Duoly connection will find teammate and coaching options, check prices and prepare your booking link. You review and pay on duoly.gg."
+      cta={{ href: '/', label: 'Book on Duoly' }}
+      secondary={{ href: '#assistants-h', label: 'See assistant status' }}
+      note="AI connections are coming soon. Direct booking is open now."
+      art={[
+        { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
+        {
+          src: '/assets/games/league-of-legends.png',
+          alt: 'League of Legends game art',
+        },
+        {
+          src: '/assets/games/marvel-rivals.png',
+          alt: 'Marvel Rivals game art',
+        },
+      ]}
+      chip="Your game. Your choice."
+      facts={[
+        'Compare teammates and coaching',
+        'Check prices before you book',
+        'Payment stays on duoly.gg',
+      ]}
+    />
+    <Steps
+      heading="From a question to your next session"
+      steps={[
+        'Ask your AI for a game, mode, budget and coaching goal.',
+        'It searches Duoly for a teammate or coach, the price and public availability.',
+        'Open your booking link, review the details and book on duoly.gg.',
+      ]}
+    />
+    <section aria-labelledby="assistants-h">
+      <h2 id="assistants-h">Choose your assistant</h2>
+      <p>
+        Every status below refers to Duoly. A custom connector guide does not
+        mean a directory listing is live. Use these steps after the Duoly server
+        launches.
+      </p>
+      <div class="ai-grid">
+        {AI_ASSISTANTS.map((assistant) => (
+          <div class="card ai-assistant">
+            <div class="ai-card-top">
+              <h3>{assistant.name}</h3>
+              <span class="eyebrow">{assistant.status}</span>
+            </div>
+            <p>{assistant.detail}</p>
+            {assistant.steps.length > 0 && (
+              <ol>
+                {assistant.steps.map((step) => (
+                  <li>{step}</li>
+                ))}
+              </ol>
+            )}
+          </div>
+        ))}
+      </div>
+      <p class="ai-endpoint">
+        Custom connector URL: <code>{MCP.endpoint}</code>
+      </p>
+      <p>
+        Building your own client? Read the{' '}
+        <a href="/developers/mcp">Duoly MCP developer guide</a>.
+      </p>
+    </section>
+    <section aria-labelledby="prompts-h">
+      <h2 id="prompts-h">Start with one of these prompts</h2>
+      <p>
+        Use these with the Duoly connector once it is available. Include your
+        budget and mode so the assistant can narrow the options.
+      </p>
+      <ul class="ai-grid ai-prompts">
+        {AI_PROMPTS.map((prompt) => (
+          <li class="card">“{prompt}”</li>
+        ))}
+      </ul>
+    </section>
+    <section aria-labelledby="boundaries-h">
+      <h2 id="boundaries-h">You stay in control</h2>
+      <div class="split">
+        <div class="card">
+          <h3>What the AI can do</h3>
+          <ul class="checklist">
+            <li>Search games and bookable services.</li>
+            <li>Compare prices and public availability.</li>
+            <li>Prepare a link to book on Duoly.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>What the AI cannot do</h3>
+          <ul>
+            <li>Pay for a session or create an order.</li>
+            <li>See your Duoly account, card or private order history.</li>
+            <li>
+              Guarantee a match time, a teammate rank or a result in your game.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p>
+        Social sessions are outside the AI tools in v1. Play on your own game
+        account and follow each game’s rules. Read our{' '}
+        <a href="/terms">booking and refund terms</a>.
+      </p>
+    </section>
+    <section class="card" aria-labelledby="privacy-h">
+      <h2 id="privacy-h">Only the details needed to search</h2>
+      <p>
+        A tool call contains structured choices such as game, service, rank,
+        quantity and currency. It does not need your chat history, real name,
+        email, game password or payment details. Never put those details in a
+        tool request.
+      </p>
+      <p>
+        The public tools do not store personal booking data or link to your
+        account. Rate limiting uses an IP-derived identifier to enforce{' '}
+        {MCP.rateLimits.minute} requests per minute and{' '}
+        {MCP.rateLimits.day.toLocaleString('en-US')} per day per IP. Hosting
+        providers process connection metadata, and your assistant’s own privacy
+        rules apply to your chat.
+      </p>
+      <p>
+        Read the <a href="/privacy">Duoly privacy policy</a> or{' '}
+        <a href="/contact">ask us about your data</a>.
+      </p>
+    </section>
+    <Faq items={faq} />
+    <ClosingCta
+      heading="Your next teammate is on Duoly"
+      text="Choose your game, compare services and review the price before you book."
+      href="/"
+      label="Book on Duoly"
+    />
+    <nav class="related" aria-label="Related pages">
+      <h2>Keep exploring</h2>
+      <div class="chips">
+        <a href="/games">Browse games and coaching</a>
+        <a href="/developers/mcp">MCP developer documentation</a>
+        <a href="/contact">Contact Duoly</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: title,
+      description,
+      url: new URL('/ai', Astro.site!).href,
+      dateModified: '2026-11-06',
+    })}
+  />
+</SiteLayout>

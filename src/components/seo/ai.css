@@ -1,0 +1,118 @@
+.ai-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.ai-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ai-assistant ol {
+  padding-left: 22px;
+  font-size: 14px;
+}
+.ai-assistant li + li {
+  margin-top: 10px;
+}
+.ai-assistant p {
+  margin-bottom: 0;
+}
+.ai-prompts {
+  list-style: none;
+  padding: 0;
+}
+.ai-endpoint,
+.ai-code,
+.ai-table-wrap {
+  border: 1px solid rgba(196, 170, 255, 0.18);
+  border-radius: 16px;
+  background: #120b22;
+}
+.ai-endpoint {
+  padding: 18px 22px;
+}
+.ai-endpoint code,
+.ai-connection code {
+  overflow-wrap: anywhere;
+}
+.ai-code {
+  padding: 22px;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #ddd3f5;
+  margin: 18px 0 28px;
+}
+.ai-table-wrap {
+  overflow-x: auto;
+}
+.ai-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  text-align: left;
+}
+.ai-table caption {
+  text-align: left;
+  padding: 18px 22px;
+  color: #a79dc4;
+}
+.ai-table th,
+.ai-table td {
+  padding: 18px 22px;
+  border-top: 1px solid rgba(196, 170, 255, 0.14);
+  vertical-align: top;
+  line-height: 1.65;
+}
+.ai-table thead th {
+  background: rgba(214, 187, 255, 0.07);
+  color: #f3eeff;
+}
+.ai-table tbody th {
+  color: #d6bbff;
+  font-weight: 600;
+}
+.ai-table td {
+  min-width: 230px;
+}
+.ai-connection {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 14px 24px;
+  line-height: 1.7;
+}
+.ai-connection dt {
+  color: #f3eeff;
+  font-weight: 650;
+}
+.ai-connection dd {
+  margin: 0;
+}
+.ai-doc-hero {
+  padding: 28px 0 0;
+  max-width: 850px;
+}
+.ai-release {
+  padding-left: 18px;
+  border-left: 3px solid #d6bbff;
+}
+@media (max-width: 700px) {
+  .ai-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ai-connection {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .ai-connection dd {
+    margin-bottom: 16px;
+  }
+  .ai-code {
+    padding: 16px;
+    font-size: 13px;
+  }
+}
