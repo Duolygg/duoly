@@ -85,7 +85,7 @@ describe('MCP HTTP', () => {
         { ip: '127.0.0.1', limit: allow },
       );
       const json = await list.json();
-      expect(json.result.tools).toHaveLength(5);
+      expect(json.result.tools).toHaveLength(6);
       expect(
         json.result.tools.every(
           (t: {
@@ -114,6 +114,43 @@ describe('MCP HTTP', () => {
     expect(json.result.structuredContent.games).toHaveLength(15);
     expect(json.result.resultType).toBe('complete');
   });
+  it.each(['2025-06-18', '2025-11-25', '2026-07-28'])(
+    'maps attribution per request for %s without sharing client state',
+    async (version) => {
+      for (const [client, ua, expected] of [
+        ['claude', '', 'claude'],
+        ['chatgpt', '', 'chatgpt'],
+        ['gemini', '', 'gemini'],
+        ['invalid', 'Anthropic', 'claude'],
+        ['', 'ChatGPT', 'chatgpt'],
+        ['', 'Gemini', 'gemini'],
+        ['', '', 'other'],
+      ] as const) {
+        const body =
+          version === '2026-07-28'
+            ? modern('tools/call', {
+                name: 'create_booking_link',
+                arguments: { game: 'lol', service: 'duo2' },
+              })
+            : legacy('tools/call', {
+                name: 'create_booking_link',
+                arguments: { game: 'lol', service: 'duo2' },
+              });
+        const req = request(body, {
+          'MCP-Protocol-Version': version,
+          'User-Agent': ua,
+        });
+        const response = await handleMcp(
+          new Request(`https://duoly.gg/mcp?client=${client}`, req),
+          { ip: '127.0.0.1', limit: allow },
+        );
+        const json = await response.json();
+        expect(json.result.structuredContent.bookUrl).toContain(
+          `agent=${expected}`,
+        );
+      }
+    },
+  );
   it('calls legacy tools without a session', async () => {
     const response = await handleMcp(
       request(

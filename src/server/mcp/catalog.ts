@@ -1,5 +1,5 @@
 import { SITE_GAMES } from '../../site/games';
-import { parseQuoteInput } from '../pricing';
+import { calculateQuote, parseQuoteInput } from '../pricing';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { ranksOf } from '../../design-reference/lib/ranks.js';
 import { serversFor } from '../../design-reference/lib/servers.js';
@@ -17,7 +17,9 @@ export function resolveGame(value: string) {
   const game = games().find((g) => g.id === value || g.slug === value);
   if (!game)
     throw new ToolInputError(
-      'Unsupported game. Call list_games and use a returned id or slug.',
+      `Unsupported game. Call list_games. Valid id or slug tokens: ${games()
+        .map((g) => `${g.id} (${g.slug})`)
+        .join(', ')}.`,
     );
   return game;
 }
@@ -26,6 +28,7 @@ export function services(value: string) {
   const modes = servicesFor(game.id).modes as {
     id: string;
     title: string;
+    desc: string;
     cat: string;
     unit: 'game' | 'hour';
   }[];
@@ -56,6 +59,35 @@ export function services(value: string) {
         return {
           id: m.id,
           name: m.title.replaceAll('&', 'and').replace(/[\u2013\u2014]/g, '-'),
+          description: m.desc
+            .replace(/[.!?]\s+/g, '; ')
+            .replaceAll('&', 'and')
+            .replace(/[\u2013\u2014]/g, '-'),
+          fromPrice: {
+            amountMinor: Math.min(
+              ...(ranks.length ? ranks : [undefined]).map(
+                (rank) =>
+                  calculateQuote(
+                    {
+                      gameId: game.id,
+                      serviceId: m.id,
+                      units: 1,
+                      server:
+                        game.id === 'mc'
+                          ? 'my world'
+                          : serversFor(game.id)[0]![0],
+                      ...(rank ? { rank } : {}),
+                      ...(game.id === 'mc' ? { edition: 'Java' } : {}),
+                    },
+                    { eurToUsd: 1 },
+                  ).amountEurMinor,
+              ),
+            ),
+            currency: 'EUR' as const,
+            unit: m.unit,
+            quantity: 1 as const,
+            basis: 'base price before account perks' as const,
+          },
           category: m.cat,
           unit: m.unit,
           ranks,
@@ -82,7 +114,11 @@ export function resolveService(game: string, service: string) {
   const selected = services(game).find((s) => s.id === service);
   if (!selected)
     throw new ToolInputError(
-      'Unsupported service. Call list_services for this game and use a returned id.',
+      `Unsupported service. Call list_services. Valid service tokens: ${services(
+        game,
+      )
+        .map((s) => s.id)
+        .join(', ')}.`,
     );
   return selected;
 }
