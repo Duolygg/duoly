@@ -61,7 +61,9 @@ test('developer guide explains distinct protocol flows and limits', async ({
   page,
 }) => {
   await page.goto('/developers/mcp');
-  await expect(page.locator('h1')).toHaveCount(1);
+  // Astro's development toolbar adds headings in shadow roots on CI.
+  // Production-wide heading counts are also checked by seo-verify.
+  await expect(page.locator('article.seo-page h1')).toHaveCount(1);
   await expect(
     page.getByText('server/discover', { exact: true }),
   ).toBeVisible();
