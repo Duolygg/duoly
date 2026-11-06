@@ -71,7 +71,10 @@ test('developer guide explains distinct protocol flows and limits', async ({
   await expect(
     page.getByText('server/discover', { exact: true }),
   ).toBeVisible();
-  await expect(page.locator('.ai-table tbody tr')).toHaveCount(5);
+  await expect(page.locator('.ai-table tbody tr')).toHaveCount(6);
+  await expect(
+    page.locator('.ai-table tbody tr').filter({ hasText: 'find_session' }),
+  ).toContainText('missingInputs');
   const text = await page.locator('article').evaluate((article) => {
     const prose = article.cloneNode(true) as HTMLElement;
     prose.querySelectorAll('pre, code').forEach((node) => node.remove());
