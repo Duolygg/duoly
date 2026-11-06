@@ -61,10 +61,6 @@ export const lessons: Record<string, Lesson> = {
         'Will coaching guarantee a new rank?',
         'Coaching gives you a clear plan to practice; your rank follows from the games you play.',
       ],
-      [
-        'Is there a first-session offer?',
-        'Yes. Your first Play and Learn game is half price when eligible.',
-      ],
     ],
   },
   'league-of-legends': {
@@ -118,10 +114,6 @@ export const lessons: Record<string, Lesson> = {
         'Do I need to be highly ranked?',
         'No. Coaching prices are the same for every rank. Pick a realistic goal for your current experience.',
       ],
-      [
-        'Can I get a first-session price?',
-        'Yes. Your first Play and Learn game is half price when eligible.',
-      ],
     ],
   },
   'rocket-league': {
@@ -174,10 +166,6 @@ export const lessons: Record<string, Lesson> = {
       [
         'Will I get practice material?',
         'Yes. Mechanics Training includes training packs. Agree which exercise to repeat and what a controlled attempt looks like.',
-      ],
-      [
-        'Is there a first-session offer?',
-        'Yes. Your first Play and Learn session can be half price.',
       ],
     ],
   },
@@ -234,7 +222,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'What does the price include?',
-        'One hour with your coach on voice and screen share. Your first Play and Learn session can be half price.',
+        'One hour with your coach on voice and screen share.',
       ],
     ],
   },

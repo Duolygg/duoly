@@ -19,13 +19,14 @@ import {
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { GAMES } from '../../design-reference/lib/games.js';
 import { MoodSchema } from '../../contracts/orders';
-import { StreamerQuoteSchema, streamPrice } from '../../contracts/streaming';
+import { MAX_SEATS } from '../../contracts/seats';
 import {
-  AUTHORIZE_ONLY_METHODS,
-  adminFor,
-  paymentsConfig,
-  stripeFor,
-} from './config';
+  CHARACTER_MAX,
+  checkRoleAndCharacter,
+  ROLE_MAX,
+} from '../../contracts/roles';
+import { StreamerQuoteSchema, streamPrice } from '../../contracts/streaming';
+import { adminFor, paymentsConfig, stripeFor } from './config';
 
 /** Stripe's minimum Checkout Session lifetime. */
 export const SESSION_MINUTES = 30;
@@ -51,6 +52,11 @@ export const CheckoutRequestSchema = z
     // Twitch streaming: the handle of a live streamer from /api/home/streamers. With it,
     // serviceId is 'stream' and units are the booked hours (migration 20261105100000).
     streamer: z.uuid().optional(),
+    // Team orders: teammates on the order (src/contracts/seats.ts, 20261106190000_team_orders).
+    seats: z.number().int().min(1).max(MAX_SEATS).optional(),
+    // The customer's role and the character they want coaching on (src/contracts/roles.ts).
+    role: z.string().max(ROLE_MAX).optional(),
+    character: z.string().max(CHARACTER_MAX).optional(),
   })
   .refine((request) => !(request.freePerk && request.useWallet), {
     message: 'The free coaching order does not use the wallet.',
@@ -61,6 +67,14 @@ export const CheckoutRequestSchema = z
       (request.streamer !== undefined) === (request.serviceId === 'stream') &&
       !(request.streamer && request.freePerk),
     { message: 'A streamer booking is its own order.', path: ['streamer'] },
+  )
+  .refine(
+    (request) =>
+      (request.seats ?? 1) === 1 || (!request.freePerk && !request.streamer),
+    {
+      message: 'Free coaching and streamer bookings are one teammate.',
+      path: ['seats'],
+    },
   );
 export type CheckoutRequest = z.infer<typeof CheckoutRequestSchema>;
 
@@ -116,12 +130,21 @@ export function buildCheckout(
       ...(request.rank ? { rank: request.rank } : {}),
       ...(request.edition ? { edition: request.edition } : {}),
       ign: request.ign,
+      ...(request.seats && request.seats > 1 ? { seats: request.seats } : {}),
     },
     { eurToUsd: rate, customerCurrency: 'EUR' },
   );
   const service = (
     servicesFor(request.gameId) as { modes: CatalogMode[] }
   ).modes.find((mode) => mode.id === request.serviceId)!;
+  // throws on a role the service doesn't offer; Fill/Flex/Any and blanks store nothing
+  const picked = checkRoleAndCharacter(
+    request.gameId,
+    request.serviceId,
+    service.cat,
+    request.role,
+    request.character,
+  );
   const game = (GAMES as { id: string; name: string }[]).find(
     (entry) => entry.id === request.gameId,
   )!;
@@ -130,14 +153,21 @@ export function buildCheckout(
       ? `${request.server.trim()} · ${request.edition}`
       : request.server;
   const units = `${request.units} ${quote.unit}${request.units === 1 ? '' : 's'}`;
+  const teammates = quote.seats > 1 ? ` · ${quote.seats} teammates` : '';
   return {
     row: {
+      // Only sent for a team, so a single order never names a column an older schema lacks.
+      ...(quote.seats > 1 ? { seats: quote.seats } : {}),
+      // only sent when picked, like seats
+      ...(picked.role ? { role: picked.role } : {}),
+      ...(picked.character ? { character_name: picked.character } : {}),
       game: request.gameId,
       service: service.id,
       title: service.title.slice(0, 80),
       units: request.units,
       unit: quote.unit,
-      gg: service.cat === 'gg',
+      // Gamer Girl tab and the per-game Social tab (girl-only since 2026-11-06): Gamer Girl teammates only.
+      gg: service.cat === 'gg' || service.cat === 'social',
       rank: request.rank ?? '',
       region: region.slice(0, 80),
       ign: request.ign.trim(),
@@ -152,7 +182,7 @@ export function buildCheckout(
       payout_usd_cents: quote.teammate.amountMinor,
       booking_fx: rate,
     },
-    productName: `${service.title} · ${units}`,
+    productName: `${service.title} · ${units}${teammates}`,
     description: [game.name, region, request.rank ? `from ${request.rank}` : '']
       .filter(Boolean)
       .join(' · '),
@@ -222,12 +252,8 @@ export function sessionParams(input: {
   /** The account's Stripe customer: offers "save this card" (used by Play again). */
   stripeCustomer?: string | null;
 }): Stripe.Checkout.SessionCreateParams {
-  const authorizeOnly = Object.fromEntries(
-    AUTHORIZE_ONLY_METHODS.map((method) => [
-      method,
-      { capture_method: 'manual' },
-    ]),
-  ) as Stripe.Checkout.SessionCreateParams.PaymentMethodOptions;
+  // Charge at queue (owner decision 2026-11-06): every method is charged at checkout. A cancelled
+  // order gives the card part back as Duoly balance (order_payment_settle), never to the card.
   return {
     // Our own UI around Stripe's Payment and Express Checkout Elements.
     ui_mode: 'elements',
@@ -260,7 +286,6 @@ export function sessionParams(input: {
         },
       },
     ],
-    payment_method_options: authorizeOnly,
     payment_intent_data: {
       description: `Duoly · ${input.productName}`,
       metadata: { intent_id: input.intentId, customer_id: input.customerId },
@@ -472,6 +497,11 @@ export const createCheckout: APIRoute = async (context) => {
       { pro: proMember, creator: creatorEligible },
       CREATOR_FIRST_ORDER_PERCENT,
     );
+    // Every seat of a team must still cost the 0.99 EUR order minimum after the discount
+    // (create_paid_order refuses it otherwise, after the card was already authorized).
+    const seats = parsed.data.seats ?? 1;
+    if (seats > 1 && Math.floor(priced.row.amount_eur_cents / seats) < 99)
+      return account.json({ error: 'That option isn’t available.' }, 400);
     const { data: intent, error } = await admin
       .from('checkout_intents')
       .insert({

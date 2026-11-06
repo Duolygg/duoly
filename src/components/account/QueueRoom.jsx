@@ -10,6 +10,7 @@ import TipPaymentPanel from './TipPayment';
 import { createRoomFetch } from './queue-room-data';
 import { FavoriteAsk } from './FavoriteHeart';
 import PlayAgain from './PlayAgain';
+import TeamRoster from './TeamRoster';
 import { TRUSTPILOT_EVALUATE } from '../../site/trustpilot';
 import MatchStage, {
   tipMoney,
@@ -300,7 +301,13 @@ export default class QueueRoom extends React.Component {
             Math.floor((d.order.acceptedAt - d.order.createdAt) / 1000),
           ),
         });
-      if (prev && prev.status === 'queued' && d.order.status === 'in_progress')
+      // From searching to matched: one teammate took a single order, or the last seat of a team
+      // was taken (a team's own seat being taken while others are still open isn't a match yet).
+      if (
+        prev &&
+        this.phase(prev) === 'searching' &&
+        this.phase(d.order) === 'matched'
+      )
         this.celebrate(d.order);
       if (d.order.status === 'completed' || d.order.status === 'cancelled')
         clearInterval(this._poll);
@@ -332,16 +339,24 @@ export default class QueueRoom extends React.Component {
         Notification.permission === 'granted' &&
         document.hidden
       ) {
-        const n = new Notification('You’re matched!', {
-          body:
-            (o.teammate ? o.teammate.name : 'A teammate') +
-            ' accepted your ' +
-            o.title +
-            '. Jump back in.',
-          icon: '/assets/brand/logo-full.webp',
-          tag: 'duoly-match-' + o.id,
-          silent: true,
-        });
+        const n = new Notification(
+          o.team ? 'Your team is complete!' : 'You’re matched!',
+          {
+            body: o.team
+              ? 'All ' +
+                o.team.seats +
+                ' teammates are in for your ' +
+                o.title +
+                '. Jump back in.'
+              : (o.teammate ? o.teammate.name : 'A teammate') +
+                ' accepted your ' +
+                o.title +
+                '. Jump back in.',
+            icon: '/assets/brand/logo-full.webp',
+            tag: 'duoly-match-' + o.id,
+            silent: true,
+          },
+        );
         n.onclick = () => {
           window.focus();
           n.close();
@@ -403,7 +418,13 @@ export default class QueueRoom extends React.Component {
   reroll = async () => {
     this.setState({ busy: 'reroll', modalErr: '' });
     try {
-      const { ok, d } = await this.act({ action: 'reroll' });
+      // team orders: switch the teammate picked on the roster (their own seat order)
+      const seat = this.state.switchSeat;
+      const { ok, d } = await this.act(
+        seat
+          ? { action: 'reroll', orderId: seat.orderId }
+          : { action: 'reroll' },
+      );
       if (!ok)
         return this.setState({
           busy: '',
@@ -413,6 +434,7 @@ export default class QueueRoom extends React.Component {
       this.setState({
         busy: '',
         modal: null,
+        switchSeat: null,
         order: {
           ...d.order,
           reports: (this.state.order && this.state.order.reports) || [],
@@ -469,6 +491,7 @@ export default class QueueRoom extends React.Component {
     try {
       const { ok, d } = await this.act({
         action: 'report',
+        ...(r.seat ? { orderId: r.seat } : {}),
         type: r.type,
         text: r.text,
         evidence: r.evidence.map((x) => x.data),
@@ -504,6 +527,8 @@ export default class QueueRoom extends React.Component {
       modal: 'report',
       modalErr: '',
       rep: {
+        // team orders: which teammate the report is about (their own seat order)
+        seat: this.reportSeatDefault(),
         type: type || '',
         text: '',
         evidence: [],
@@ -512,6 +537,13 @@ export default class QueueRoom extends React.Component {
         drag: false,
       },
     });
+  reportSeatDefault() {
+    const team = this.state.order && this.state.order.team;
+    if (!team) return undefined;
+    const taken = team.members.filter((m) => m.name);
+    const here = taken.find((m) => m.orderId === this.props.id);
+    return (here || taken[0] || {}).orderId;
+  }
   // ---- favorite the teammate: once someone plays the order, again when the teammate changes
   favKey(o) {
     return o &&
@@ -647,6 +679,12 @@ export default class QueueRoom extends React.Component {
   phase(o) {
     if (!o) return 'loading';
     if (o.status === 'queued') return 'searching';
+    // Team orders: nobody plays until every seat is taken, so a taken seat still searches.
+    if (o.team && o.team.status === 'waiting' && o.status === 'in_progress')
+      return 'searching';
+    // ...and the team keeps playing until its last seat is done.
+    if (o.team && o.team.status === 'started' && o.status === 'completed')
+      return 'matched';
     if (o.status === 'in_progress') return 'matched';
     if (o.status === 'completed') return 'done';
     return 'cancelled';
@@ -670,53 +708,130 @@ export default class QueueRoom extends React.Component {
       ? o.games + ' ' + (o.unit || 'game') + (o.games === 1 ? '' : 's')
       : '';
     const rerolled = !!(o && o.rerolls && o.status === 'queued');
+    // Team orders (20261106190000): one order, several teammates.
+    const team = o && o.team ? o.team : null;
+    const teamNames = team
+      ? team.members
+          .filter((m) => m.name)
+          .map((m) => String(m.name).split(' ')[0])
+      : [];
+    const left = team ? team.seats - team.filled : 0;
+    // a switched seat still in the queue (not one that ended unreplaced and was refunded)
+    const refilling = team
+      ? team.members.some((m) => m.status === 'queued')
+      : false;
+    // a switched seat nobody took: its share went back to the balance
+    const unreplaced = team
+      ? team.members.filter((m) => m.status === 'cancelled').length
+      : 0;
 
-    const head = {
-      loading: ['Loading your order…', ''],
-      searching: rerolled
-        ? [
-            'Finding you a new teammate',
-            'Your order is back in the queue for other ' +
-              (g ? g.name : '') +
-              ' teammates. Your last teammate can’t take it again.',
-          ]
-        : [
-            'Finding your teammate',
-            'Your order is live for rank-verified ' +
-              (g ? g.name : '') +
-              ' teammates. We’ll show you who took it the second they accept.',
+    const head = team
+      ? {
+          loading: ['Loading your order…', ''],
+          searching:
+            team.status === 'started'
+              ? [
+                  'Finding a new teammate',
+                  'This seat is back in the queue for other ' +
+                    (g ? g.name : '') +
+                    ' teammates. The rest of your team keeps playing.',
+                ]
+              : [
+                  team.filled
+                    ? team.filled + ' of ' + team.seats + ' teammates found'
+                    : 'Finding your ' + team.seats + ' teammates',
+                  'Your team starts when every seat is taken: ' +
+                    (left === 1 ? '1 more to go' : left + ' more to go') +
+                    '. Not full in 5 minutes? The whole order is cancelled and you pay nothing.',
+                ],
+          // a switched seat is back in the queue: the rest keep playing meanwhile
+          matched: refilling
+            ? [
+                'Finding a new teammate',
+                (teamNames.length ? teamNames.join(', ') : 'Your team') +
+                  ' keep playing. The free seat is back in the queue and a new teammate joins in a moment.',
+              ]
+            : unreplaced
+              ? [
+                  'Playing with ' + team.filled + ' teammates',
+                  'Nobody took the free seat in 5 minutes, so its ' +
+                    (unreplaced === 1 ? 'share' : 'shares') +
+                    ' went back to your Duoly balance. ' +
+                    (teamNames.length ? teamNames.join(', ') : 'Your team') +
+                    ' keep playing.',
+                ]
+              : [
+                  'Your team is complete!',
+                  (teamNames.length ? teamNames.join(', ') : 'Your teammates') +
+                    ' will invite ' +
+                    (o ? o.ign : 'you') +
+                    ' in-game. Keep ' +
+                    (g ? g.name : 'your game') +
+                    ' open.',
+                ],
+          done: [
+            'GG!',
+            'Your ' +
+              units +
+              ' with your team ' +
+              (o && o.games === 1 ? 'is' : 'are') +
+              ' done. Rate each teammate below.',
           ],
-      matched: [
-        (mate ? mate.name : 'A teammate') + ' is on it!',
-        'They accepted your order and will invite ' +
-          (o ? o.ign : 'you') +
-          ' in-game. Keep ' +
-          (g ? g.name : 'your game') +
-          ' open.',
-      ],
-      done: [
-        'GG!',
-        'Your ' +
-          units +
-          ' with ' +
-          (mate ? mate.name : 'your teammate') +
-          ' ' +
-          (o && o.games === 1 ? 'is' : 'are') +
-          ' done. How was it?',
-      ],
-      cancelled: [
-        byYou ? 'Order cancelled' : 'Nobody was free this time',
-        free
-          ? 'Nothing was charged. Your free coaching for this month is available again.'
-          : 'Nothing was charged: the hold on your ' +
-            (total ? total + ' ' : '') +
-            'payment is released, usually within a few days depending on your bank.',
-      ],
-      missing: [
-        'We can’t find that order',
-        'It may belong to another account. Your orders are on your dashboard.',
-      ],
-    }[phase];
+          cancelled: [
+            byYou ? 'Order cancelled' : 'Your team didn’t fill this time',
+            (total ? total : 'What you paid') +
+              ' is back on your Duoly balance, ready for your next order. Want it back on your card instead? Write to support at hello@duoly.gg.',
+          ],
+          missing: [
+            'We can’t find that order',
+            'It may belong to another account. Your orders are on your dashboard.',
+          ],
+        }[phase]
+      : {
+          loading: ['Loading your order…', ''],
+          searching: rerolled
+            ? [
+                'Finding you a new teammate',
+                'Your order is back in the queue for other ' +
+                  (g ? g.name : '') +
+                  ' teammates. Your last teammate can’t take it again.',
+              ]
+            : [
+                'Finding your teammate',
+                'Your order is live for rank-verified ' +
+                  (g ? g.name : '') +
+                  ' teammates. We’ll show you who took it the second they accept.',
+              ],
+          matched: [
+            (mate ? mate.name : 'A teammate') + ' is on it!',
+            'They accepted your order and will invite ' +
+              (o ? o.ign : 'you') +
+              ' in-game. Keep ' +
+              (g ? g.name : 'your game') +
+              ' open.',
+          ],
+          done: [
+            'GG!',
+            'Your ' +
+              units +
+              ' with ' +
+              (mate ? mate.name : 'your teammate') +
+              ' ' +
+              (o && o.games === 1 ? 'is' : 'are') +
+              ' done. How was it?',
+          ],
+          cancelled: [
+            byYou ? 'Order cancelled' : 'Nobody was free this time',
+            free
+              ? 'Nothing was charged. Your free coaching for this month is available again.'
+              : (total ? total : 'What you paid') +
+                ' is back on your Duoly balance, ready for your next order. Want it back on your card instead? Write to support at hello@duoly.gg.',
+          ],
+          missing: [
+            'We can’t find that order',
+            'It may belong to another account. Your orders are on your dashboard.',
+          ],
+        }[phase];
 
     if (typeof document !== 'undefined') {
       document.title =
@@ -776,6 +891,8 @@ export default class QueueRoom extends React.Component {
         user={this.props.user}
         cycle={this.state.cycle}
         burst={this.state.burst}
+        team={v.o && v.o.team ? v.o.team : null}
+        now={v.now}
       />
     );
   }
@@ -786,6 +903,7 @@ export default class QueueRoom extends React.Component {
     return (
       <ChatPanel
         mate={v.mate}
+        team={v.o && v.o.team ? v.o.team : null}
         order={v.o}
         phase={v.phase}
         ignLabel={v.ignLabel}
@@ -946,12 +1064,23 @@ export default class QueueRoom extends React.Component {
     const s = this.state;
     if (!s.modal) return null;
     const { mate, o, sym } = v;
-    const name = mate
-      ? String(mate.name).split(' ')[0]
-      : o && o.lastTeammate
-        ? o.lastTeammate.name.split(' ')[0]
-        : 'your teammate';
-    const close = () => this.setState({ modal: null, modalErr: '' });
+    // team orders: the teammate picked on the roster
+    const seat =
+      s.modal === 'reroll'
+        ? s.switchSeat
+        : s.modal === 'report' && o && o.team && s.rep
+          ? o.team.members.find((m) => m.orderId === s.rep.seat && m.name) ||
+            null
+          : null;
+    const name = seat
+      ? String(seat.name).split(' ')[0]
+      : mate
+        ? String(mate.name).split(' ')[0]
+        : o && o.lastTeammate
+          ? o.lastTeammate.name.split(' ')[0]
+          : 'your teammate';
+    const close = () =>
+      this.setState({ modal: null, modalErr: '', switchSeat: null });
     const btn = (primary, extra) => ({
       minHeight: '48px',
       padding: '0 18px',
@@ -974,18 +1103,34 @@ export default class QueueRoom extends React.Component {
       body = (
         <>
           <h2 id="q-modal-h" className="q-modal-title">
-            Switch to a new teammate?
+            {seat ? 'Switch ' + name + '?' : 'Switch to a new teammate?'}
           </h2>
-          <p className="q-modal-text">
-            {name} leaves your order and it goes straight back into the queue.
-            It’s free, you keep everything you paid for, and {name} can’t pick
-            it up again.{' '}
-            {o.rerollsUnlimited
-              ? 'Duoly PRO gives you unlimited re-rolls in the first 5 minutes.'
-              : o.rerollsLeft === 1
-                ? 'This is your last re-roll on this order.'
-                : 'You have ' + o.rerollsLeft + ' re-rolls left.'}
-          </p>
+          {seat ? (
+            <p className="q-modal-text">
+              {name}’s seat goes straight back into the queue and the rest of
+              your team keeps playing. It’s free, and {name} can’t take it
+              again. If nobody takes the seat within 5 minutes, its share comes
+              back to your Duoly balance.{' '}
+              {o.rerollsUnlimited
+                ? 'Duoly PRO gives you unlimited switches in the first 5 minutes.'
+                : seat.switchesLeft === 1
+                  ? 'This is the last switch for this seat.'
+                  : 'You have ' +
+                    seat.switchesLeft +
+                    ' switches left for this seat.'}
+            </p>
+          ) : (
+            <p className="q-modal-text">
+              {name} leaves your order and it goes straight back into the queue.
+              It’s free, you keep everything you paid for, and {name} can’t pick
+              it up again.{' '}
+              {o.rerollsUnlimited
+                ? 'Duoly PRO gives you unlimited re-rolls in the first 5 minutes.'
+                : o.rerollsLeft === 1
+                  ? 'This is your last re-roll on this order.'
+                  : 'You have ' + o.rerollsLeft + ' re-rolls left.'}
+            </p>
+          )}
           <p className="q-modal-text" style={{ marginTop: '8px' }}>
             If {name} broke a rule, report them instead (or as well) so we can
             act on it.
@@ -1008,7 +1153,11 @@ export default class QueueRoom extends React.Component {
               disabled={s.busy === 'reroll'}
               style={btn(true)}
             >
-              {s.busy === 'reroll' ? 'Switching…' : 'Re-roll teammate'}
+              {s.busy === 'reroll'
+                ? 'Switching…'
+                : seat
+                  ? 'Switch ' + name
+                  : 'Re-roll teammate'}
             </button>
           </div>
         </>
@@ -1096,6 +1245,64 @@ export default class QueueRoom extends React.Component {
               </b>{' '}
               once our team confirms it.
             </p>
+            {o && o.team ? (
+              <div
+                role="radiogroup"
+                aria-label="Which teammate"
+                style={{
+                  marginTop: '14px',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '6px',
+                }}
+              >
+                {o.team.members
+                  .filter((m) => m.name)
+                  .map((m) => {
+                    const on = r.seat === m.orderId;
+                    return (
+                      <button
+                        key={m.orderId}
+                        type="button"
+                        role="radio"
+                        aria-checked={on ? 'true' : 'false'}
+                        onClick={() =>
+                          this.setState({
+                            rep: { ...r, seat: m.orderId, err: '' },
+                          })
+                        }
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '6px 12px 6px 6px',
+                          borderRadius: '999px',
+                          cursor: 'pointer',
+                          transform: 'none',
+                          border:
+                            '1.5px solid ' +
+                            (on ? ACCENT : 'rgba(196, 170, 255, .14)'),
+                          background: on
+                            ? 'rgba(214, 187, 255, .08)'
+                            : '#090414',
+                          color: '#F3EEFF',
+                          fontWeight: '700',
+                        }}
+                      >
+                        <img
+                          src={m.image || '/assets/avatars/avatar-3.png'}
+                          alt=""
+                          width="24"
+                          height="24"
+                          referrerPolicy="no-referrer"
+                          style={{ borderRadius: '50%', objectFit: 'cover' }}
+                        />
+                        {String(m.name).split(' ')[0]}
+                      </button>
+                    );
+                  })}
+              </div>
+            ) : null}
             <div
               role="radiogroup"
               aria-label="What happened"
@@ -1562,11 +1769,26 @@ export default class QueueRoom extends React.Component {
 
                 {phase === 'searching' ? <QueueTimer waited={waited} /> : null}
 
+                {o && o.team ? (
+                  <TeamRoster
+                    team={o.team}
+                    orderId={o.id}
+                    now={v.now}
+                    onSwitch={(m) =>
+                      this.setState({
+                        modal: 'reroll',
+                        modalErr: '',
+                        switchSeat: m,
+                      })
+                    }
+                  />
+                ) : null}
+
                 {FEATURES.reviews && phase === 'done'
                   ? this.renderReview(v)
                   : null}
 
-                {phase === 'done' && this.props.stripeKey && o ? (
+                {phase === 'done' && this.props.stripeKey && o && !o.team ? (
                   <PlayAgain
                     orderId={o.id}
                     csrf={this.props.csrf}
@@ -1640,7 +1862,11 @@ export default class QueueRoom extends React.Component {
                         <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
                       </svg>
                       Message{' '}
-                      {mate ? String(mate.name).split(' ')[0] : 'your teammate'}
+                      {o && o.team
+                        ? 'your team'
+                        : mate
+                          ? String(mate.name).split(' ')[0]
+                          : 'your teammate'}
                     </button>
                     <a href="/dashboard" style={btn(false)}>
                       Dashboard
@@ -1848,7 +2074,9 @@ export default class QueueRoom extends React.Component {
                       <span>
                         {free
                           ? 'Nobody free in 5:00? Your free coaching comes back.'
-                          : 'Nobody free in 5:00? ' +
+                          : (o && o.team
+                              ? 'Team not full in 5:00? '
+                              : 'Nobody free in 5:00? ') +
                             total +
                             ' back to your Duoly balance.'}
                       </span>
@@ -1905,7 +2133,9 @@ export default class QueueRoom extends React.Component {
                         >
                           {free
                             ? 'Cancel and get your free coaching back?'
-                            : 'Cancel and get ' +
+                            : (o && o.team
+                                ? 'Cancel the whole team and get '
+                                : 'Cancel and get ') +
                               total +
                               ' back to your Duoly balance?'}
                         </p>
@@ -1957,7 +2187,9 @@ export default class QueueRoom extends React.Component {
                           transform: 'none',
                         }}
                       >
-                        Cancel order · free until someone accepts
+                        {o && o.team
+                          ? 'Cancel order · free until your team is full'
+                          : 'Cancel order · free until someone accepts'}
                       </button>
                     )}
                   </section>

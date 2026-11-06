@@ -31,7 +31,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     roles: BUYERS,
     match:
       /cancel|refund|money back|charge|chargeback|didnt (get|play)|hold|pending/,
-    text: 'Nothing is charged until a teammate accepts. If nobody accepts within 5 minutes, or you cancel before that, the card hold is released (your bank may take a few days to show it). Once an order is being played, tell us what went wrong (no-show, left mid-game, toxic) and an admin reviews it; refunds after a match go back to your card through Stripe, and any part you paid with Duoly balance goes back to your balance.',
+    text: 'Your payment is taken when you queue. If nobody accepts within 5 minutes, or you cancel before that, the full amount goes straight back to your Duoly balance, ready for your next order (for a team order: if not every seat is taken in 5 minutes). The balance can’t be paid out by yourself; if you want a cancelled order refunded to your original payment method instead, contact support and an admin refunds it. Once an order is being played, tell us what went wrong (no-show, left mid-game, toxic) and an admin reviews it; refunds after a match go back to your card through Stripe, and any part you paid with Duoly balance goes back to your balance.',
   },
   {
     id: 'rate',
@@ -56,7 +56,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'twitch-book',
     roles: BUYERS,
     match: /twitch|stream(er|ing)?\b|live on/,
-    text: 'You can book a session with a teammate who is streaming on Twitch right now: the “Live on Twitch” section on the homepage shows who is live and bookable, with their hourly rate, games, rating and Twitch link (it only shows while someone is live). Press Book, pick the game, how many hours, your server, in-game name and voice, and pay through the normal checkout; the total is their rate times the hours, and your Duoly balance is used first. PRO and creator discounts don’t apply to streamer bookings. The order goes only to that streamer: if they don’t accept within 5 minutes it is cancelled and nothing is charged. A streamer booking can’t be re-rolled.',
+    text: 'You can book a session with a teammate who is streaming on Twitch right now: the “Live on Twitch” section on the homepage shows who is live and bookable, with their hourly rate, games, rating and Twitch link (it only shows while someone is live). Press Book, pick the game, how many hours, your server, in-game name and voice, and pay through the normal checkout; the total is their rate times the hours, and your Duoly balance is used first. PRO and creator discounts don’t apply to streamer bookings. The order goes only to that streamer: if they don’t accept within 5 minutes it is cancelled and the full amount goes back to your Duoly balance. A streamer booking can’t be re-rolled.',
   },
   {
     id: 'mood',
@@ -87,14 +87,14 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'balance',
     roles: BUYERS,
     match: /wallet|balance|guthaben/,
-    text: 'Your Duoly balance collects cashback, level-up gifts, the €50 report bounty and credits from Duoly. Switch it on at checkout (it is on by default) to pay for part or all of an order, for any game. It never expires; promotional balance can’t be paid out as cash, and it can’t pay tips. Your dashboard shows your balance.',
+    text: 'Your Duoly balance collects refunds for cancelled orders, cashback, level-up gifts, the €50 report bounty and credits from Duoly. Switch it on at checkout (it is on by default) to pay for part or all of an order, for any game. It never expires; you can’t pay it out yourself, and it can’t pay tips. If you want a refund for a cancelled order back on your original payment method instead, contact support and an admin handles it. Your dashboard shows your balance.',
   },
   {
     id: 'loyalty',
     roles: BUYERS,
     match:
       /loyal|cashback|level|bronze|silver|gold|platinum|diamond|reward|perk|gift/,
-    text: 'Loyalty levels by completed orders: Bronze from 0 (1% cashback), Silver from 100 (2%, €5 gift), Gold from 250 (3%, €15 gift, priority matching, 4 re-rolls per order instead of 2), Platinum from 500 (5%, €40 gift, one free 1-hour or 1-game coaching order every month), Diamond from 1000 (7%, €100 gift, and Duoly PRO free for as long as you stay Diamond). Cashback is on the card-paid part of each completed order and lands in your balance 14 days later. Gifts are added automatically. Your dashboard Rewards card shows your level.',
+    text: 'Loyalty levels by completed orders: Bronze from 0 (1% cashback), Silver from 100 (2%, €5 gift), Gold from 250 (3%, €15 gift, 4 re-rolls per order instead of 2), Platinum from 500 (5%, €40 gift, one free 1-hour or 1-game coaching order every month), Diamond from 1000 (7%, €100 gift, and Duoly PRO free for as long as you stay Diamond). Cashback is on the card-paid part of each completed order and lands in your balance 14 days later. Gifts are added automatically. Your dashboard Rewards card shows your level.',
   },
   {
     id: 'social',

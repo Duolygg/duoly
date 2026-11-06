@@ -54,9 +54,13 @@ export interface ReplaySource {
   note: string;
   voice: boolean;
   mood: string | null;
+  // 20261106190000: the role and coaching character; missing before that migration
+  role?: string | null;
+  character_name?: string | null;
 }
-const SOURCE_COLUMNS =
-  'id, customer_id, game, service, units, rank, region, ign, note, voice, mood';
+// The whole row, so the role and character come along once the migration added them, and nothing
+// breaks before it does.
+const SOURCE_COLUMNS = '*';
 
 /**
  * Pure: the checkout request that books the same session again. Minecraft stores
@@ -83,6 +87,8 @@ export function replayRequest(order: ReplaySource): CheckoutRequest | null {
     ...(order.note ? { note: order.note } : {}),
     voice: order.voice,
     ...(order.mood ? { mood: order.mood } : {}),
+    ...(order.role ? { role: order.role } : {}),
+    ...(order.character_name ? { character: order.character_name } : {}),
     useWallet: true,
   });
   return parsed.success ? parsed.data : null;
@@ -481,8 +487,8 @@ export const playAgain: APIRoute = async (context) => {
               allow_redirects: 'never',
             },
             confirm: true,
-            // authorized now, captured when the order completes (settle.ts), like every card order
-            capture_method: 'manual',
+            // charged now, like every order (charge at queue, 2026-11-06); a cancelled order gives
+            // it back as Duoly balance
             description: `Duoly · ${ready.built.productName} · Play again`,
             ...(viewer.email ? { receipt_email: viewer.email } : {}),
             metadata: {

@@ -1,0 +1,358 @@
+---
+// Local preview of a team order in the real customer order room (QueueRoom.jsx), with sample data.
+// Development only: 404 on any built site. Nothing here talks to the database or Stripe; the
+// script below answers the room's own /api/orders calls with a sample team in the chosen state.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import LiveQueueRoom from '../../components/account/LiveQueueRoom';
+
+if (!import.meta.env.DEV) return Astro.rewrite('/404');
+
+const STATES = [
+  ['waiting1', 'Filling · 1 of 3'],
+  ['waiting2', 'Filling · 2 of 3'],
+  ['live', 'Live: last seat fills'],
+  ['started', 'Team complete · chat'],
+  ['unreplaced', 'Switched · not replaced'],
+  ['done', 'Done · rate each'],
+  ['cancelled', 'Didn’t fill'],
+] as const;
+const state = STATES.some(([id]) => id === Astro.url.searchParams.get('state'))
+  ? Astro.url.searchParams.get('state')!
+  : 'waiting1';
+const LEAD = '7e000000-0000-4000-8000-000000000001';
+const viewer = {
+  id: '7e000000-0000-4000-8000-0000000000c1',
+  name: 'Alex',
+  email: null,
+  image: '/assets/avatars/avatar-1.png',
+  provider: 'discord' as const,
+  role: 'customer' as const,
+};
+---
+
+<SiteLayout
+  title="Team order preview | Duoly"
+  viewer={viewer}
+  csrf="preview"
+  bare
+>
+  <nav style="position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 16px;background:#1B1033;border-bottom:1px solid rgba(214,187,255,.2);font:600 13px system-ui;color:#CFC4EA">
+    <span style="margin-right:6px">
+      Team order preview (sample data, Flex Squad · 3 teammates):
+    </span>
+    {STATES.map(([id, label]) => (
+      <a
+        href={`?state=${id}`}
+        style={`padding:6px 12px;border-radius:999px;text-decoration:none;${id === state ? 'background:#F3EEFF;color:#17092E' : 'background:#120B22;color:#CFC4EA'}`}
+      >
+        {label}
+      </a>
+    ))}
+  </nav>
+  <script is:inline define:vars={{ state, LEAD }}>
+    const seat = (n) => '7e000000-0000-4000-8000-00000000000' + (n + 1);
+    const now = Date.now();
+    const iso = (msAgo) => new Date(now - msAgo).toISOString();
+    const people = [
+      {
+        name: 'Mia Hart',
+        image: '/assets/avatars/avatar-2.png',
+        country: 'de',
+      },
+      {
+        name: 'Jonas Berg',
+        image: '/assets/avatars/avatar-5.png',
+        country: 'se',
+      },
+      {
+        name: 'Lea Moreau',
+        image: '/assets/avatars/avatar-7.png',
+        country: 'fr',
+      },
+    ];
+    const filled = {
+      waiting1: 1,
+      waiting2: 2,
+      live: 2,
+      started: 3,
+      unreplaced: 2,
+      done: 3,
+      cancelled: 0,
+    }[state];
+    const seatStatus = (i) =>
+      state === 'unreplaced'
+        ? i === 1
+          ? 'cancelled'
+          : 'in_progress'
+        : state === 'cancelled'
+          ? 'cancelled'
+          : i < filled
+            ? state === 'done'
+              ? 'completed'
+              : 'in_progress'
+            : 'queued';
+    const team = {
+      id: '7e000000-0000-4000-8000-0000000000aa',
+      seats: 3,
+      status: {
+        waiting1: 'waiting',
+        waiting2: 'waiting',
+        live: 'waiting',
+        started: 'started',
+        unreplaced: 'started',
+        done: 'done',
+        cancelled: 'cancelled',
+      }[state],
+      lead_order_id: LEAD,
+      amount_eur_cents: 2397,
+      wallet_eur_cents: 0,
+      started_at: ['started', 'unreplaced', 'done'].includes(state)
+        ? iso(60000)
+        : null,
+      filled,
+      members: [0, 1, 2].map((i) => ({
+        order_id: i === 0 ? LEAD : seat(i),
+        seat: i + 1,
+        status: seatStatus(i),
+        public_reference: 'DL-9100' + i,
+        amount_eur_cents: 799,
+        reviewed: false,
+        accepted_at: ['in_progress', 'completed'].includes(seatStatus(i))
+          ? iso(90000 - i * 15000)
+          : null,
+        rerolls: 0,
+        teammate: ['in_progress', 'completed'].includes(seatStatus(i))
+          ? people[i]
+          : null,
+      })),
+    };
+    const lead = seatStatus(0);
+    const order = {
+      id: LEAD,
+      public_reference: 'DL-91000',
+      status: lead,
+      game: 'lol',
+      service: 'flex',
+      title: 'Flex Squad',
+      units: 1,
+      unit: 'game',
+      gg: false,
+      rank: 'Gold',
+      region: 'EUW',
+      ign: 'Alex#EUW',
+      role: 'Jungle',
+      note: '',
+      voice: true,
+      amount_eur_cents: 799,
+      created_at: iso(state.startsWith('waiting') ? 70000 : 400000),
+      queued_at: iso(state.startsWith('waiting') ? 70000 : 400000),
+      accepted_at:
+        lead === 'queued' || lead === 'cancelled' ? null : iso(90000),
+      completed_at: lead === 'completed' ? iso(1000) : null,
+      cancelled_at: lead === 'cancelled' ? iso(5000) : null,
+      cancel_reason: lead === 'cancelled' ? 'queue_expired' : null,
+      rerolls: 0,
+      current_assignment_id:
+        lead === 'in_progress' || lead === 'completed'
+          ? '7e000000-0000-4000-8000-0000000000b1'
+          : null,
+      teammate: team.members[0].teammate,
+      review: null,
+      payment: {
+        amount_minor: 2397,
+        currency: 'EUR',
+        method: 'card',
+        wallet_eur_cents: 0,
+      },
+      seat: 1,
+      team,
+    };
+    const msg = (i, sender, name, image, body, agoS) => ({
+      id: '7e000000-0000-4000-8000-0000000001' + String(i).padStart(2, '0'),
+      sequence: i,
+      kind: sender === 'system' ? 'system' : 'user',
+      sender,
+      name,
+      image,
+      body,
+      created_at: iso(agoS * 1000),
+      request_id:
+        sender === 'system'
+          ? null
+          : '7e000000-0000-4000-8000-0000000002' + String(i).padStart(2, '0'),
+    });
+    const chat = {
+      order_id: LEAD,
+      assignment_id: '7e000000-0000-4000-8000-0000000000b1',
+      viewer: 'customer',
+      writable: state === 'started',
+      participant: {
+        role: 'teammate',
+        name: 'Mia Hart',
+        image: people[0].image,
+      },
+      typing: [],
+      archives: [],
+      messages: [
+        msg(
+          1,
+          'system',
+          'Duoly',
+          '',
+          'Mia accepted the order · Flex Squad ×1',
+          90,
+        ),
+        msg(
+          2,
+          'system',
+          'Duoly',
+          '',
+          'Mia joined the team · 1 of 3 seats taken',
+          90,
+        ),
+        msg(
+          3,
+          'system',
+          'Duoly',
+          '',
+          'Jonas joined the team · 2 of 3 seats taken',
+          75,
+        ),
+        msg(
+          4,
+          'system',
+          'Duoly',
+          '',
+          'Lea joined the team · 3 of 3 seats taken',
+          62,
+        ),
+        msg(
+          5,
+          'system',
+          'Duoly',
+          '',
+          'Everyone is here · your team of 3 is complete. GL HF!',
+          61,
+        ),
+        // the one-time Discord invite, sent to every seat once the team is in
+        msg(
+          6,
+          'system',
+          'Duoly',
+          '',
+          'Join our Discord for voice comms with your team: https://discord.gg/KuVyByUyV4',
+          60,
+        ),
+        msg(
+          7,
+          'customer',
+          'Alex',
+          '/assets/avatars/avatar-1.png',
+          'hey all! I main jungle, my friend plays support',
+          55,
+        ),
+        msg(
+          8,
+          'teammate',
+          'Mia Hart',
+          people[0].image,
+          'nice, I take mid then',
+          50,
+        ),
+        msg(9, 'mate', 'Jonas Berg', people[1].image, 'top for me 👍', 46),
+        msg(
+          10,
+          'mate',
+          'Lea Moreau',
+          people[2].image,
+          'adc! sending invites now',
+          40,
+        ),
+      ],
+    };
+    const json = (body, status = 200) =>
+      Promise.resolve(
+        new Response(JSON.stringify(body), {
+          status,
+          headers: { 'content-type': 'application/json' },
+        }),
+      );
+    // live: Lea takes the last seat 6 seconds in, so the room shows the match as it happens
+    if (state === 'live')
+      setTimeout(() => {
+        Object.assign(team.members[2], {
+          status: 'in_progress',
+          teammate: people[2],
+          accepted_at: new Date().toISOString(),
+        });
+        Object.assign(team, {
+          status: 'started',
+          filled: 3,
+          started_at: new Date().toISOString(),
+        });
+      }, 6000);
+    const real = window.fetch.bind(window);
+    window.fetch = (input, init) => {
+      const url = new URL(
+        typeof input === 'string' ? input : input.url,
+        location.href,
+      );
+      const path = url.pathname;
+      if (!path.startsWith('/api/orders/')) return real(input, init);
+      if (/\/chat$/.test(path))
+        return json({ ...chat, order_id: path.split('/')[3] });
+      if (/\/favorite$/.test(path))
+        return json({ available: false, favorite: false });
+      // A report on one teammate's seat (window.__reported shows which one)
+      const reported = /^\/api\/orders\/([^/]+)\/report$/.exec(path);
+      if (reported) {
+        const m = team.members.find((x) => x.order_id === reported[1]);
+        window.__reported = m && m.teammate ? m.teammate.name : reported[1];
+        return json({
+          report: {
+            reference: 'R-1042',
+            type: 'toxic',
+            status: 'open',
+            bounty_eur_cents: 5000,
+            created_at: new Date().toISOString(),
+            decided_at: null,
+            bounty_owed: false,
+          },
+        });
+      }
+      // Switch one teammate: their seat goes back to searching, the rest keep playing
+      const switched = /^\/api\/orders\/([^/]+)\/reroll$/.exec(path);
+      if (switched) {
+        const m = team.members.find((x) => x.order_id === switched[1]);
+        if (!m) return json({ error: 'Order not found.' }, 404);
+        Object.assign(m, {
+          status: 'queued',
+          teammate: null,
+          accepted_at: null,
+          rerolls: m.rerolls + 1,
+        });
+        team.filled -= 1;
+        if (m.order_id === LEAD)
+          Object.assign(order, {
+            status: 'queued',
+            teammate: null,
+            accepted_at: null,
+            current_assignment_id: null,
+          });
+        return json({ order });
+      }
+      if (/^\/api\/orders\/[^/]+$/.test(path)) return json({ order });
+      return json({ error: 'Not available in the preview.' }, 501);
+    };
+  </script>
+  <LiveQueueRoom
+    id={LEAD}
+    viewer={viewer}
+    csrf="preview"
+    chatEnabled={true}
+    reportsEnabled={true}
+    rerollLimit={2}
+    stripeKey=""
+    client:load
+  />
+</SiteLayout>

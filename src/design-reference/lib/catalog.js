@@ -1,16 +1,26 @@
 // What customers can book, per game. The homepage "Pick a mode" section reads this.
 //
-// Tabs (cat): duo (one teammate joins you), other = "Teams" (we fill several seats), social (just for fun),
-// gg (Gamer Girls), training (coaching). Bundles are built from the game's `main` service.
+// Tabs (cat): duo (one teammate joins you), other = "Teams" (we fill several seats), social (time with a
+// Gamer Girl beyond a duo), gg (Gamer Girls), training (coaching). Bundles are built from the game's `main` service.
+// `fun: true` marks a casual mode (Swiftplay, ARAM, Unrated, Manhunt…): it lives in the Duo tab with any
+// approved teammate since 2026-11-06 (owner decision), and the FAQ still quotes it as a "fun mode".
 // unit: 'game' for match-based games, 'hour' for battle royale / sandbox games where a "game" has no fixed length.
 // Prices are EUR per unit (the homepage converts to USD). Descriptions say exactly what happens in the session.
 //
 // Entry: [id, tab, title, tier line, description, price, { badge, unit, was }]
 
-const playLearn = (coach, price, what) => ['learn', 'training', 'Play & Learn', coach + ' coach · live', 'Play a real ' + what + ' together while your coach explains every decision out loud, with a quick review after. Your first one is half price.', Math.floor(price / 2 * 100) / 100, { was: price, badge: '−50%' }];
-const gg = (unit, casual, rank, ranked, prices) => [
+// Coaching costs one fixed price in every game, per game or per hour, with no first-session
+// discount (owner decisions 2026-11-06). The price passed to playLearn is ignored.
+const COACHING_PRICE = 12.99;
+const playLearn = (coach, price, what) => ['learn', 'training', 'Play & Learn', coach + ' coach · live', 'Play a real ' + what + ' together while your coach explains every decision out loud, with a quick review after.', COACHING_PRICE];
+const gg = (unit, casual, rank, ranked, prices, game, duel) => [
   ['gg1', 'gg', 'Gamer Girl Duo', 'Verified Gamer Girl · voice', 'A verified Gamer Girl joins you for ' + casual + ' on voice. Relaxed games, good conversation, no pressure.', prices[0], { badge: 'New', unit }],
-  ['gg2', 'gg', 'Gamer Girl Ranked', 'Gamer Girl · ' + rank, 'Climb ' + ranked + ' with a ' + rank + ' Gamer Girl who plays to win and keeps comms friendly.', prices[1], { unit }]
+  ['gg2', 'gg', 'Gamer Girl Ranked', 'Gamer Girl · ' + rank, 'Climb ' + ranked + ' with a ' + rank + ' Gamer Girl who plays to win and keeps comms friendly.', prices[1], { unit }],
+  // The Social tab: Gamer Girl only (owner decisions 2026-11-06). All priced like Gamer Girl Duo.
+  // 1v1 Challenge only where the game has a real 1v1 (`duel` says how); ARC Raiders has none.
+  ...(duel ? [['gg1v1', 'social', '1v1 Challenge', 'Verified Gamer Girl · you vs her', 'Take on a Gamer Girl in ' + duel + '. Trash talk welcome, rematches encouraged.', prices[0], { unit, badge: 'New' }]] : []),
+  ['ggbuddy', 'social', 'New Player Buddy', 'Patient Gamer Girl · voice', 'New to ' + game + '? A patient Gamer Girl plays with you and explains the basics as you go. No judgement, no pressure.', prices[0], { unit }],
+  ['gghype', 'social', 'Hype Squad', 'Verified Gamer Girl · watches you play', 'She doesn’t play: she watches you play ' + game + ' on your Discord stream, cheers every play, celebrates the wins and keeps you calm after a loss.', prices[0], { unit }]
 ];
 
 export const CATALOG = {
@@ -24,13 +34,13 @@ export const CATALOG = {
       ['ranked5', 'other', 'Ranked 5s', 'Full five · Master+ players', 'Play Ranked Flex as a real five-stack: Master+ players on every role you need, a planned draft, one shotcaller and voice comms the whole game.', 8.99, { badge: 'Popular' }],
       ['flex', 'other', 'Flex Squad', 'Master+ players · Ranked Flex', 'Bring one to three friends to Ranked Flex and we fill the empty seats with Master+ players, so your five finally has a jungler.', 7.99],
       ['clash', 'other', 'Clash Roster', 'Master+ players · Clash', 'Short a player (or three) for Clash weekend? We fill your roster with Master+ players who know draft and scouting.', 9.99],
-      ['swift', 'social', 'Swiftplay', 'Master+ teammate · fast games', 'Quick Summoner’s Rift games of about 15 to 20 minutes. Same map, no LP on the line, just fun.', 3.49, { badge: 'Fast' }],
-      ['aram', 'social', 'ARAM Night', 'High-elo teammate · Howling Abyss', 'Random champions, one lane, nonstop teamfights. A great way to play with someone good, without the tryhard.', 3.49],
-      ['norm', 'social', 'Normal Draft', 'Master+ teammate', 'A full normal game to try a new champion or role with a strong player covering for you.', 3.49],
-      ...gg('game', 'ARAM, Swiftplay or normals', 'Diamond+', 'Solo/Duo', [4.99, 5.49]),
+      ['swift', 'duo', 'Swiftplay', 'Master+ teammate · fast games', 'Quick Summoner’s Rift games of about 15 to 20 minutes. Same map, no LP on the line, just fun.', 3.49, { badge: 'Fast', fun: true }],
+      ['aram', 'duo', 'ARAM Night', 'High-elo teammate · Howling Abyss', 'Random champions, one lane, nonstop teamfights. A great way to play with someone good, without the tryhard.', 3.49, { fun: true }],
+      ['norm', 'duo', 'Normal Draft', 'Master+ teammate', 'A full normal game to try a new champion or role with a strong player covering for you.', 3.49, { fun: true }],
+      ...gg('game', 'ARAM, Swiftplay or normals', 'Diamond+', 'Solo/Duo', [4.99, 5.49], 'League', 'custom 1v1s in mid lane: first blood, 100 CS or first tower wins'),
       playLearn('Master+', 10.99, 'ranked game'),
-      ['vod', 'training', 'VOD Review', 'Grandmaster+ coach · 1 hour', 'Send a recent game. Your coach goes through it with you on Discord (laning, waves, map moves) and leaves you with three things to fix.', 14.99, { unit: 'hour' }],
-      ['champ', 'training', 'Champion Mastery', 'Grandmaster+ coach · 1 hour', 'One champion, properly: matchups, combos, builds and power spikes, practised in a live game.', 14.99, { unit: 'hour' }]
+      ['vod', 'training', 'VOD Review', 'Grandmaster+ coach · 1 hour', 'Send a recent game. Your coach goes through it with you on Discord (laning, waves, map moves) and leaves you with three things to fix.', COACHING_PRICE, { unit: 'hour' }],
+      ['champ', 'training', 'Champion Mastery', 'Grandmaster+ coach · 1 hour', 'One champion, properly: matchups, combos, builds and power spikes, practised in a live game.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   val: {
@@ -42,13 +52,13 @@ export const CATALOG = {
       ['skirm', 'duo', 'Skirmish 2v2', 'Immortal+ teammate · 2v2', 'Short 2v2 Skirmish games. Pure aim and trading with a strong partner, perfect between ranked sessions.', 1.99, { badge: 'Duo mode' }],
       ['stack', 'other', 'Stack Fill', 'Immortal+ players · Competitive', 'Queue Competitive with your friends and we fill the empty seats with Immortal+ players who call utility.', 7.49],
       ['premier', 'other', 'Premier Roster', 'Immortal+ players · Premier', 'Missing players for your Premier team? We fill the roster for your weekly matches with players who run real strats.', 8.99],
-      ['swift', 'social', 'Swiftplay', 'Strong teammate · short games', 'Short games of about 15 minutes with the full buy system. Great for a fun session or a warm-up.', 3.99, { badge: 'Fast' }],
-      ['unrated', 'social', 'Unrated', 'Strong teammate', 'Full games without rank pressure. Try a new agent or practise a role with backup.', 4.49],
-      ['dm', 'social', 'Deathmatch Warm-Up', 'Aim partner', 'Warm up together in Deathmatch and Team Deathmatch before you queue ranked.', 2.49],
-      ...gg('game', 'Swiftplay, Unrated or Spike Rush', 'Ascendant+', 'Competitive', [4.99, 5.49]),
+      ['swift', 'duo', 'Swiftplay', 'Strong teammate · short games', 'Short games of about 15 minutes with the full buy system. Great for a fun session or a warm-up.', 3.99, { badge: 'Fast', fun: true }],
+      ['unrated', 'duo', 'Unrated', 'Strong teammate', 'Full games without rank pressure. Try a new agent or practise a role with backup.', 4.49, { fun: true }],
+      ['dm', 'duo', 'Deathmatch Warm-Up', 'Aim partner', 'Warm up together in Deathmatch and Team Deathmatch before you queue ranked.', 2.49, { fun: true }],
+      ...gg('game', 'Swiftplay, Unrated or Spike Rush', 'Ascendant+', 'Competitive', [4.99, 5.49], 'Valorant', 'custom 1v1 duels and aim battles'),
       playLearn('Immortal+', 10.99, 'Competitive game'),
-      ['vod', 'training', 'VOD Review', 'Immortal+ coach · 1 hour', 'Your coach reviews a recent match with you round by round: positioning, utility and decision-making.', 14.99, { unit: 'hour' }],
-      ['aim', 'training', 'Aim & Crosshair', 'Immortal+ coach · 1 hour', 'Crosshair placement, peeking and counter-strafing, plus a training routine made for you.', 14.99, { unit: 'hour' }]
+      ['vod', 'training', 'VOD Review', 'Immortal+ coach · 1 hour', 'Your coach reviews a recent match with you round by round: positioning, utility and decision-making.', COACHING_PRICE, { unit: 'hour' }],
+      ['aim', 'training', 'Aim & Crosshair', 'Immortal+ coach · 1 hour', 'Crosshair placement, peeking and counter-strafing, plus a training routine made for you.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   cs2: {
@@ -60,12 +70,12 @@ export const CATALOG = {
       ['wing', 'duo', 'Wingman Duo', 'Global Elite teammate · 2v2', 'The real 2v2 with a Global Elite Wingman player. Short matches on small maps where every round depends on the two of you.', 4.99, { badge: 'Duo mode' }],
       ['five', 'other', '5-Stack Premier', 'Premier 20,000+ players', 'Bring your friends and we fill your five with players who know their positions and their smokes.', 7.99],
       ['faceit5', 'other', 'FACEIT Stack', 'FACEIT 8+ players', 'Queue FACEIT as a full stack with level 8+ players who call and support.', 9.49],
-      ['casual', 'social', 'Casual & Deathmatch', 'Strong teammate', 'Warm up your aim in Deathmatch or play casual games, no stakes.', 2.99],
-      ['retake', 'social', 'Retake Servers', 'Strong teammate', 'Play community retake servers together: the fastest way to practise site executes and clutches.', 2.99],
-      ...gg('game', 'Casual, Wingman or Deathmatch', 'Premier 15,000+', 'Premier', [4.99, 5.49]),
+      ['casual', 'duo', 'Casual & Deathmatch', 'Strong teammate', 'Warm up your aim in Deathmatch or play casual games, no stakes.', 2.99, { fun: true }],
+      ['retake', 'duo', 'Retake Servers', 'Strong teammate', 'Play community retake servers together: the fastest way to practise site executes and clutches.', 2.99, { fun: true }],
+      ...gg('game', 'Casual, Wingman or Deathmatch', 'Premier 15,000+', 'Premier', [4.99, 5.49], 'CS2', '1v1 aim maps and arena duels'),
       playLearn('FACEIT 10', 12.99, 'Premier match'),
-      ['demo', 'training', 'Demo Review', 'FACEIT 10 coach · 1 hour', 'Your coach watches your demo with you: positioning, crosshair placement, utility usage and mid-round decisions.', 17.49, { unit: 'hour' }],
-      ['util', 'training', 'Utility & Lineups', 'FACEIT 10 coach · 1 hour', 'Smokes, flashes and molotovs for your map pool, with lineups you can keep using.', 17.49, { unit: 'hour' }]
+      ['demo', 'training', 'Demo Review', 'FACEIT 10 coach · 1 hour', 'Your coach watches your demo with you: positioning, crosshair placement, utility usage and mid-round decisions.', COACHING_PRICE, { unit: 'hour' }],
+      ['util', 'training', 'Utility & Lineups', 'FACEIT 10 coach · 1 hour', 'Smokes, flashes and molotovs for your map pool, with lineups you can keep using.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   fn: {
@@ -76,12 +86,12 @@ export const CATALOG = {
       ['duo3', 'duo', 'Duo Apex', 'Unreal · high Power Ranking', 'An hour with a tournament-level player for high Unreal lobbies and endgames full of pros.', 13.99, { unit: 'hour' }],
       ['cup', 'other', 'Tournament Teammate', 'Tournament player · cups & FNCS', 'Compete in Cash Cups, Victory Cups or FNCS qualifiers with a teammate who has tournament earnings. You play together, start to finish.', 15.99, { unit: 'hour', badge: 'Competitive' }],
       ['squad', 'other', 'Squad Fill', 'Unreal players', 'Bring a friend or two and we fill your trio or squad with Unreal players who call rotations.', 14.99, { unit: 'hour' }],
-      ['zb', 'social', 'Zero Build', 'Strong teammate', 'Battle royale without building: positioning, cover and aim, at a relaxed pace.', 8.49, { unit: 'hour' }],
-      ['reload', 'social', 'Reload', 'Strong teammate', 'Fast games on a small map with respawns. Constant action, almost no waiting.', 8.49, { unit: 'hour', badge: 'Fun' }],
-      ['box', 'social', 'Creative Box Fights', 'Unreal teammate', 'Box fights and build fights in Creative with someone who’ll push you, and show you how they did it.', 8.99, { unit: 'hour' }],
-      ...gg('hour', 'Zero Build, Reload or Creative', 'Champion+', 'Ranked Duos', [10.49, 10.99]),
+      ['zb', 'duo', 'Zero Build', 'Strong teammate', 'Battle royale without building: positioning, cover and aim, at a relaxed pace.', 8.49, { unit: 'hour', fun: true }],
+      ['reload', 'duo', 'Reload', 'Strong teammate', 'Fast games on a small map with respawns. Constant action, almost no waiting.', 8.49, { unit: 'hour', badge: 'Fun', fun: true }],
+      ['box', 'duo', 'Creative Box Fights', 'Unreal teammate', 'Box fights and build fights in Creative with someone who’ll push you, and show you how they did it.', 8.99, { unit: 'hour', fun: true }],
+      ...gg('hour', 'Zero Build, Reload or Creative', 'Champion+', 'Ranked Duos', [10.49, 10.99], 'Fortnite', '1v1 box fights and build battles in Creative'),
       playLearn('Unreal', 14.99, 'hour of Ranked'),
-      ['build', 'training', 'Build & Edit Course', 'Unreal coach · 1 hour', 'Piece control, edits and box fights, drilled in Creative with exercises to keep practising.', 14.99, { unit: 'hour' }]
+      ['build', 'training', 'Build & Edit Course', 'Unreal coach · 1 hour', 'Piece control, edits and box fights, drilled in Creative with exercises to keep practising.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   cod: {
@@ -93,11 +103,11 @@ export const CATALOG = {
       ['rebirth', 'duo', 'Rebirth Duo', 'Crimson+ teammate · Resurgence', 'Fast Resurgence games on the small island, where respawns keep the action going. Great for quick sessions.', 10.49, { unit: 'hour', badge: 'Fast' }],
       ['quads', 'other', 'Warzone Quad Fill', 'Crimson+ players', 'Bring a friend or two and we fill your quad with players who play for the win.', 14.99, { unit: 'hour' }],
       ['mp4', 'other', 'Ranked 4-Stack', 'Crimson+ players · Multiplayer', 'Fill your multiplayer Ranked Play team with players who know the maps and the spawns.', 13.99, { unit: 'hour' }],
-      ['zombies', 'social', 'Zombies Run', 'Experienced co-op partner', 'Round-based Zombies with someone who knows the map, the wonder weapon and the Easter egg steps.', 8.99, { unit: 'hour', badge: 'Fun' }],
-      ['party', 'social', 'Party Modes', 'Strong teammate', 'Unranked multiplayer and party playlists, just for fun.', 7.99, { unit: 'hour' }],
-      ...gg('hour', 'Zombies, party modes or Resurgence', 'Crimson+', 'Warzone', [11.49, 12.99]),
+      ['zombies', 'duo', 'Zombies Run', 'Experienced co-op partner', 'Round-based Zombies with someone who knows the map, the wonder weapon and the Easter egg steps.', 8.99, { unit: 'hour', badge: 'Fun', fun: true }],
+      ['party', 'duo', 'Party Modes', 'Strong teammate', 'Unranked multiplayer and party playlists, just for fun.', 7.99, { unit: 'hour', fun: true }],
+      ...gg('hour', 'Zombies, party modes or Resurgence', 'Crimson+', 'Warzone', [11.49, 12.99], 'Call of Duty', '1v1 gunfights in private matches'),
       playLearn('Iridescent', 16.99, 'hour of Warzone'),
-      ['loadout', 'training', 'Loadouts & Movement', 'Iridescent coach · 1 hour', 'Builds that suit how you play, plus slide-cancels, mantles and positioning, practised live.', 16.99, { unit: 'hour' }]
+      ['loadout', 'training', 'Loadouts & Movement', 'Iridescent coach · 1 hour', 'Builds that suit how you play, plus slide-cancels, mantles and positioning, practised live.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   apex: {
@@ -107,11 +117,11 @@ export const CATALOG = {
       ['duo2', 'duo', 'Duo Pro', 'Master / Predator teammate · Ranked', 'An hour of Ranked with a Master or Apex Predator who reads the ring and takes the right fights.', 13.99, { unit: 'hour', badge: 'Most picked' }],
       ['duos', 'duo', 'Duos Playlist', 'Master teammate · 2-player squads', 'The Duos mode: just the two of you, more fights and quicker games.', 10.49, { unit: 'hour', badge: 'Duo mode' }],
       ['trio', 'other', 'Full Trio', 'Two Master+ players', 'Two high-rank players fill your trio. You play your legend, they handle the rest.', 17.99, { unit: 'hour' }],
-      ['mix', 'social', 'Mixtape', 'Strong teammate', 'Team Deathmatch, Control and Gun Run. Fast, fun modes to warm up or learn a new legend.', 7.99, { unit: 'hour', badge: 'Fun' }],
-      ['pubs', 'social', 'Pubs & Legend Practice', 'Strong teammate', 'Unranked battle royale to try a new legend or weapon with a partner who covers you.', 8.49, { unit: 'hour' }],
-      ...gg('hour', 'Mixtape or pubs', 'Diamond+', 'Ranked', [11.49, 12.99]),
+      ['mix', 'duo', 'Mixtape', 'Strong teammate', 'Team Deathmatch, Control and Gun Run. Fast, fun modes to warm up or learn a new legend.', 7.99, { unit: 'hour', badge: 'Fun', fun: true }],
+      ['pubs', 'duo', 'Pubs & Legend Practice', 'Strong teammate', 'Unranked battle royale to try a new legend or weapon with a partner who covers you.', 8.49, { unit: 'hour', fun: true }],
+      ...gg('hour', 'Mixtape or pubs', 'Diamond+', 'Ranked', [11.49, 12.99], 'Apex', '1v1 fights in the Firing Range'),
       playLearn('Master', 14.99, 'hour of Ranked'),
-      ['move', 'training', 'Movement Course', 'Master coach · 1 hour', 'Tap-strafes, slide jumps, wall bounces and positioning, practised in the Firing Range.', 14.99, { unit: 'hour' }]
+      ['move', 'training', 'Movement Course', 'Master coach · 1 hour', 'Tap-strafes, slide jumps, wall bounces and positioning, practised in the Firing Range.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   r6: {
@@ -121,12 +131,12 @@ export const CATALOG = {
       ['duo2', 'duo', 'Duo Pro', 'Diamond+ teammate', 'Ranked with a Diamond player who calls the round: drones, rotations, where the defenders are.', 4.99, { badge: 'Most picked' }],
       ['duo3', 'duo', 'Duo Apex', 'Champion teammate', 'A Champion-level player for high-elo lobbies who can win rounds on their own.', 6.99],
       ['stack', 'other', '5-Stack Fill', 'Diamond+ players', 'Bring your friends and we fill your five with players who run real strats and utility.', 6.49],
-      ['quick', 'social', 'Quick Match', 'Strong teammate', 'Unranked games to learn maps and operators with someone who explains as you play.', 2.49],
-      ['arcade', 'social', 'Arcade & Deathmatch', 'Strong teammate', 'Warm-up modes and arcade playlists between ranked games.', 2.49],
-      ...gg('game', 'Quick Match or Arcade', 'Emerald+', 'Ranked', [2.99, 5.99]),
+      ['quick', 'duo', 'Quick Match', 'Strong teammate', 'Unranked games to learn maps and operators with someone who explains as you play.', 2.49, { fun: true }],
+      ['arcade', 'duo', 'Arcade & Deathmatch', 'Strong teammate', 'Warm-up modes and arcade playlists between ranked games.', 2.49, { fun: true }],
+      ...gg('game', 'Quick Match or Arcade', 'Emerald+', 'Ranked', [2.99, 5.99], 'Rainbow Six', '1v1 custom games, one clutch at a time'),
       playLearn('Champion', 9.99, 'Ranked match'),
-      ['ops', 'training', 'Operator Lab', 'Champion coach · 1 hour', 'One attacker and one defender, properly: gadgets, setups and timings.', 16.99, { unit: 'hour' }],
-      ['maps', 'training', 'Map & Callouts', 'Champion coach · 1 hour', 'Your weakest map, room by room: callouts, rotations and setups for every site.', 16.99, { unit: 'hour' }]
+      ['ops', 'training', 'Operator Lab', 'Champion coach · 1 hour', 'One attacker and one defender, properly: gadgets, setups and timings.', COACHING_PRICE, { unit: 'hour' }],
+      ['maps', 'training', 'Map & Callouts', 'Champion coach · 1 hour', 'Your weakest map, room by room: callouts, rotations and setups for every site.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   mr: {
@@ -137,10 +147,10 @@ export const CATALOG = {
       ['duo3', 'duo', 'Duo Apex', 'Celestial+ teammate', 'A Celestial or higher player for high-rank lobbies who can carry fights on any role.', 3.99],
       ['teamup', 'duo', 'Team-Up Duo', 'Grandmaster+ teammate', 'Pick a hero pair with a Team-Up ability and learn to pull it off together, in Quick Match or Competitive.', 3.99, { badge: 'Fun' }],
       ['six', 'other', '6-Stack Fill', 'Grandmaster+ players', 'Bring your friends and we fill your six with players on the roles you need, on voice.', 5.99],
-      ['quick', 'social', 'Quick Match & Arcade', 'Strong teammate', 'No-pressure games to try new heroes or just have fun.', 2.49],
-      ...gg('game', 'Quick Match or Arcade', 'Diamond+', 'Competitive', [3.99, 4.49]),
+      ['quick', 'duo', 'Quick Match & Arcade', 'Strong teammate', 'No-pressure games to try new heroes or just have fun.', 2.49, { fun: true }],
+      ...gg('game', 'Quick Match or Arcade', 'Diamond+', 'Competitive', [3.99, 4.49], 'Marvel Rivals', '1v1 hero duels in custom games'),
       playLearn('Grandmaster+', 7.99, 'Competitive match'),
-      ['hero', 'training', 'Hero Coaching', 'Grandmaster+ coach · 1 hour', 'One hero, done right: abilities, ult timing, positioning and matchups.', 11.49, { unit: 'hour' }]
+      ['hero', 'training', 'Hero Coaching', 'Grandmaster+ coach · 1 hour', 'One hero, done right: abilities, ult timing, positioning and matchups.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   ow: {
@@ -151,10 +161,10 @@ export const CATALOG = {
       ['duo3', 'duo', 'Duo Apex', 'Grandmaster+ teammate', 'A Grandmaster or Champion player for high-rank lobbies who can swing fights on their own.', 4.49],
       ['stadium', 'duo', 'Stadium Duo', 'Master+ teammate · Stadium', 'Stadium runs together: plan your builds round by round and close out the best of seven.', 4.99, { badge: 'Fun' }],
       ['five', 'other', '5-Stack Role Queue', 'Master+ players', 'Bring your friends and we fill your five on the roles you need, for a real comp night.', 5.99],
-      ['qp', 'social', 'Quick Play & Arcade', 'Strong teammate', 'Casual games and arcade modes with someone fun and good.', 2.49],
-      ...gg('game', 'Quick Play or Arcade', 'Diamond+', 'Competitive', [3.99, 4.49]),
+      ['qp', 'duo', 'Quick Play & Arcade', 'Strong teammate', 'Casual games and arcade modes with someone fun and good.', 2.49, { fun: true }],
+      ...gg('game', 'Quick Play or Arcade', 'Diamond+', 'Competitive', [3.99, 4.49], 'Overwatch', '1v1 hero duels in custom games'),
       playLearn('Grandmaster+', 7.99, 'Competitive match'),
-      ['role', 'training', 'Role Coaching', 'Grandmaster+ coach · 1 hour', 'Tank, damage or support: positioning, cooldowns and when to take space.', 12.99, { unit: 'hour' }]
+      ['role', 'training', 'Role Coaching', 'Grandmaster+ coach · 1 hour', 'Tank, damage or support: positioning, cooldowns and when to take space.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   rl: {
@@ -165,11 +175,11 @@ export const CATALOG = {
       ['duo2', 'duo', 'Duo Pro', 'Grand Champion teammate · 2v2', 'An hour of Ranked Doubles with a Grand Champion who sets you up, covers back post and calls boost.', 9.49, { unit: 'hour', badge: 'Most picked' }],
       ['duo3', 'duo', 'Duo Apex', 'Supersonic Legend · 2v2', 'An hour of high-rank Doubles with a Supersonic Legend who wins kickoffs and plays like a pro.', 12.99, { unit: 'hour' }],
       ['three', 'other', '3v3 Standard', 'Grand Champion players', 'Ranked Standard with your friend and one or two Grand Champions filling the team.', 5.99, { unit: 'game' }],
-      ['casual', 'social', 'Casual 3v3', 'Strong teammate', 'An hour of relaxed casual matches with someone who actually passes.', 6.49, { unit: 'hour' }],
-      ['extra', 'social', 'Extra Modes', 'Strong teammate', 'An hour of Rumble, Hoops, Snow Day, Dropshot and Heatseeker. Pure fun.', 6.49, { unit: 'hour', badge: 'Fun' }],
-      ...gg('hour', 'casual or extra modes', 'Champion+', 'Doubles', [10.49, 11.49]),
+      ['casual', 'duo', 'Casual 3v3', 'Strong teammate', 'An hour of relaxed casual matches with someone who actually passes.', 6.49, { unit: 'hour', fun: true }],
+      ['extra', 'duo', 'Extra Modes', 'Strong teammate', 'An hour of Rumble, Hoops, Snow Day, Dropshot and Heatseeker. Pure fun.', 6.49, { unit: 'hour', badge: 'Fun', fun: true }],
+      ...gg('hour', 'casual or extra modes', 'Champion+', 'Doubles', [10.49, 11.49], 'Rocket League', '1v1 Duels'),
       playLearn('Grand Champion', 13.99, 'hour of Doubles'),
-      ['mech', 'training', 'Mechanics Training', 'Grand Champion coach · 1 hour', 'Aerials, flicks and recoveries, with training packs to keep practising.', 14.49, { unit: 'hour' }]
+      ['mech', 'training', 'Mechanics Training', 'Grand Champion coach · 1 hour', 'Aerials, flicks and recoveries, with training packs to keep practising.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   tft: {
@@ -177,9 +187,9 @@ export const CATALOG = {
     services: [
       ['duo1', 'duo', 'Double Up', 'Master+ partner · team of two', 'Play Double Up with a Master player: you plan the boards together and send help at the right moments.', 6.49, { badge: 'Duo mode' }],
       ['duo2', 'duo', 'Board Coach', 'Master+ player · live', 'You play your ranked game; a Master player watches your screen on Discord and tells you what to buy, roll and position, live.', 8.49, { badge: 'Most picked' }],
-      ['norm', 'social', 'Normals & Hyper Roll', 'Strong teammate', 'Fast, casual lobbies together, with good chat and no LP on the line.', 3.99],
-      ...gg('game', 'Normals or Hyper Roll', 'Diamond+', 'Double Up', [4.99, 5.49]),
-      ['econ', 'training', 'Comp & Econ Review', 'Master+ coach · 1 hour', 'Find comps that suit you, when to roll or level, and how to manage gold from stage two.', 15.49, { unit: 'hour' }]
+      ['norm', 'duo', 'Normals & Hyper Roll', 'Strong teammate', 'Fast, casual lobbies together, with good chat and no LP on the line.', 3.99, { fun: true }],
+      ...gg('game', 'Normals or Hyper Roll', 'Diamond+', 'Double Up', [4.99, 5.49], 'TFT', 'a head-to-head in the same lobby: whoever places higher wins'),
+      ['econ', 'training', 'Comp & Econ Review', 'Master+ coach · 1 hour', 'Find comps that suit you, when to roll or level, and how to manage gold from stage two.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   fc: {
@@ -188,11 +198,11 @@ export const CATALOG = {
       ['duo2', 'duo', 'Co-op Rivals', 'Division 1+ partner · 2v2', 'Play Co-op Rivals with a Division 1 partner who links up, tracks back and talks you through it.', 2.99, { badge: 'Most picked' }],
       ['duo3', 'duo', 'Co-op Elite', 'Elite partner · 2v2', 'Co-op Rivals with an Elite-level player for the top divisions.', 4.49],
       ['clubs', 'other', 'Clubs Lineup', 'Division 1+ players', 'Fill your Clubs team with players who hold their position and actually pass.', 5.49],
-      ['friendly', 'social', 'Practice Match', 'Elite opponent', 'Play an online friendly against an Elite player who tells you what to fix after the match.', 3.99],
-      ['kickoff', 'social', 'Kick-Off & Friendlies', 'Fun partner', 'Couch-style friendlies on the same team, just for fun.', 2.49],
-      ...gg('game', 'Kick-Off or friendlies', 'Division 3+', 'Co-op Rivals', [2.99, 3.99]),
-      ['tactics', 'training', 'Tactics & Squad Builder', 'Elite coach · 1 hour', 'Formations, custom tactics and a squad that fits how you play.', 15.49, { unit: 'hour' }],
-      ['champs', 'training', 'Champions Prep', 'Elite coach · 1 hour', 'Get ready for your weekend-league games: mindset, defending and the meta, with live practice.', 15.49, { unit: 'hour' }]
+      ['friendly', 'duo', 'Practice Match', 'Elite opponent', 'Play an online friendly against an Elite player who tells you what to fix after the match.', 3.99, { fun: true }],
+      ['kickoff', 'duo', 'Kick-Off & Friendlies', 'Fun partner', 'Couch-style friendlies on the same team, just for fun.', 2.49, { fun: true }],
+      ...gg('game', 'Kick-Off or friendlies', 'Division 3+', 'Co-op Rivals', [2.99, 3.99], 'EA FC', 'online friendlies, you against her'),
+      ['tactics', 'training', 'Tactics & Squad Builder', 'Elite coach · 1 hour', 'Formations, custom tactics and a squad that fits how you play.', COACHING_PRICE, { unit: 'hour' }],
+      ['champs', 'training', 'Champions Prep', 'Elite coach · 1 hour', 'Get ready for your weekend-league games: mindset, defending and the meta, with live practice.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   arc: {
@@ -203,9 +213,9 @@ export const CATALOG = {
       ['duo3', 'duo', 'Duo Apex', 'Elite raider', 'An hour with one of the best raiders around, for high-risk maps and big extractions.', 15.49, { unit: 'hour' }],
       ['squad', 'other', 'Full Squad', 'Two Veteran raiders', 'Two Veterans join you as a full trio. You loot, they keep you alive.', 17.99, { unit: 'hour' }],
       ['escort', 'other', 'Escort Run', 'Elite squad', 'A squad escorts you to the big loot and back out, safely.', 15.99, { unit: 'hour', badge: 'Popular' }],
-      ['learn', 'social', 'Learn the Maps', 'Friendly raider', 'Relaxed runs to learn the maps, the best loot routes and where to extract.', 7.99, { unit: 'hour' }],
-      ...gg('hour', 'relaxed loot runs', 'Veteran', 'raids', [11.49, 12.99]),
-      ['pvp', 'training', 'PvP & Extraction', 'Elite coach · 1 hour', 'Fights, third parties and clean extractions on every map.', 16.99, { unit: 'hour' }]
+      ['learn', 'duo', 'Learn the Maps', 'Friendly raider', 'Relaxed runs to learn the maps, the best loot routes and where to extract.', 7.99, { unit: 'hour', fun: true }],
+      ...gg('hour', 'relaxed loot runs', 'Veteran', 'raids', [11.49, 12.99], 'ARC Raiders'),
+      ['pvp', 'training', 'PvP & Extraction', 'Elite coach · 1 hour', 'Fights, third parties and clean extractions on every map.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   mc: {
@@ -215,14 +225,14 @@ export const CATALOG = {
       ['duo2', 'duo', 'PvP Duo Pro', 'Top PvPer', 'An hour with a top PvPer from servers like Hypixel or Minemen. They take the hard fights, carry the clutches and show you how they win them.', 12.99, { unit: 'hour', badge: 'Most picked' }],
       ['smp', 'duo', 'Survival Partner', 'Survival & SMP expert', 'Get ahead on your SMP or a fresh world: gear up fast, set up farms, build a safe base and handle the fights when someone comes for your stuff.', 8.99, { unit: 'hour' }],
       ['squad', 'other', 'Server Squad', 'Skilled PvPers', 'We fill your team for Bedwars fours, SkyWars teams, Hunger Games or UHC events with players who know the mode.', 9.99, { unit: 'hour' }],
-      ['surv', 'social', 'Survival Together', 'Friendly builder', 'Start a world or join yours: build a base, go mining and explore together at your own pace.', 8.49, { unit: 'hour' }],
-      ['dragon', 'social', 'Beat the Game', 'Experienced partner', 'From a fresh world to the Ender Dragon: get gear, find a stronghold and take her down together.', 9.49, { unit: 'hour', badge: 'Popular' }],
-      ['manhunt', 'social', 'Manhunt', 'Top PvPer · speedrunner vs hunter', 'You speedrun with one life and have to kill the Ender Dragon, while your teammate hunts you with a compass that always points to you. They respawn, you don’t. One flat price per run, however long it takes (most last 30 to 90 minutes). They bring the setup, and you can swap roles.', 16.99, { unit: 'game', badge: 'New' }],
-      ['hard', 'social', 'Hardcore Survival', 'Experienced partner', 'One life, together. See how far you get before it goes wrong.', 8.99, { unit: 'hour', badge: 'Fun' }],
-      ['mini', 'social', 'Minigames Night', 'Fun partner', 'Bedwars, SkyWars, Build Battle, Murder Mystery, parkour and more on your favourite server.', 7.99, { unit: 'hour' }],
-      ...gg('hour', 'survival, building or minigames', 'PvP-main', 'your Bedwars and SkyWars stats', [10.49, 10.99]),
-      ['pvp', 'training', 'PvP Coaching', 'Top PvPer coach · 1 hour', 'Aim, combos, strafing, rod and bow play, drilled in duels on practice servers until it clicks.', 17.49, { unit: 'hour' }],
-      ['bw', 'training', 'Bedwars Coaching', 'Bedwars 1000★ coach · 1 hour', 'Rush timing, bridging, bed defence and endgame clutches, practised in real games.', 17.49, { unit: 'hour' }]
+      ['surv', 'duo', 'Survival Together', 'Friendly builder', 'Start a world or join yours: build a base, go mining and explore together at your own pace.', 8.49, { unit: 'hour', fun: true }],
+      ['dragon', 'duo', 'Beat the Game', 'Experienced partner', 'From a fresh world to the Ender Dragon: get gear, find a stronghold and take her down together.', 9.49, { unit: 'hour', badge: 'Popular', fun: true }],
+      ['manhunt', 'duo', 'Manhunt', 'Top PvPer · speedrunner vs hunter', 'You speedrun with one life and have to kill the Ender Dragon, while your teammate hunts you with a compass that always points to you. They respawn, you don’t. One flat price per run, however long it takes (most last 30 to 90 minutes). They bring the setup, and you can swap roles.', 16.99, { unit: 'game', badge: 'New', fun: true }],
+      ['hard', 'duo', 'Hardcore Survival', 'Experienced partner', 'One life, together. See how far you get before it goes wrong.', 8.99, { unit: 'hour', badge: 'Fun', fun: true }],
+      ['mini', 'duo', 'Minigames Night', 'Fun partner', 'Bedwars, SkyWars, Build Battle, Murder Mystery, parkour and more on your favourite server.', 7.99, { unit: 'hour', fun: true }],
+      ...gg('hour', 'survival, building or minigames', 'PvP-main', 'your Bedwars and SkyWars stats', [10.49, 10.99], 'Minecraft', 'PvP duels with sword, bow and rod'),
+      ['pvp', 'training', 'PvP Coaching', 'Top PvPer coach · 1 hour', 'Aim, combos, strafing, rod and bow play, drilled in duels on practice servers until it clicks.', COACHING_PRICE, { unit: 'hour' }],
+      ['bw', 'training', 'Bedwars Coaching', 'Bedwars 1000★ coach · 1 hour', 'Rush timing, bridging, bed defence and endgame clutches, practised in real games.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
   pu: {
@@ -232,10 +242,10 @@ export const CATALOG = {
       ['duo2', 'duo', 'Duo Pro', 'Master teammate', 'Ranked with a Master player who plans rotations around Drednaw, Rotom and Zapdos.', 2.99, { badge: 'Most picked' }],
       ['duo3', 'duo', 'Duo Apex', 'Legend teammate', 'A Legend player, the highest rank, for your top-rated games.', 3.99],
       ['squad', 'other', 'Full Squad', 'Master players', 'Fill your five with players on set roles, on voice.', 4.99],
-      ['quick', 'social', 'Standard & Quick Battle', 'Strong teammate', 'Relaxed games to practise new Pokémon with backup.', 2.49],
-      ...gg('game', 'Standard or Quick Battle', 'Ultra+', 'Ranked', [2.49, 2.99]),
+      ['quick', 'duo', 'Standard & Quick Battle', 'Strong teammate', 'Relaxed games to practise new Pokémon with backup.', 2.49, { fun: true }],
+      ...gg('game', 'Standard or Quick Battle', 'Ultra+', 'Ranked', [2.49, 2.99], 'Pokémon Unite', '1v1 custom matches'),
       playLearn('Master', 4.99, 'Ranked match'),
-      ['draft', 'training', 'Draft & Macro', 'Master coach · 1 hour', 'Picks that work together, objective timing and when to rotate.', 12.99, { unit: 'hour' }]
+      ['draft', 'training', 'Draft & Macro', 'Master coach · 1 hour', 'Picks that work together, objective timing and when to rotate.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
 
@@ -257,7 +267,8 @@ export function servicesFor(id) {
   const c = CATALOG[id];
   if (!c) return { unit: 'game', main: 'duo2', bundles: [], modes: [] };
   const modes = c.services.map(([sid, cat, title, tier, desc, price, o = {}]) => ({
-    id: sid, cat, title, tier, desc, price, badge: o.badge, unit: o.unit || (cat === 'training' && sid !== 'learn' ? 'hour' : c.unit), was: o.was
+    id: sid, cat, title, tier, desc, price, badge: o.badge, unit: o.unit || (cat === 'training' && sid !== 'learn' ? 'hour' : c.unit), was: o.was,
+    ...(o.fun ? { fun: true } : {})
   }));
   return { unit: c.unit, main: c.main, bundles: c.bundles, modes };
 }

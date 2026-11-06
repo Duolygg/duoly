@@ -6,6 +6,7 @@ import { adminFor, paymentsConfig } from '../../server/payments/config';
 import { calculateQuote } from '../../server/pricing';
 import { FALLBACK_EUR_TO_USD } from '../../server/fx';
 import { GAME, IGN_LABEL } from '../../design-reference/lib/games.js';
+import { seatRule } from '../../contracts/seats';
 
 const account = accountContext(Astro.request, Astro.cookies);
 const identity = await account.identity().catch(() => null);
@@ -17,9 +18,9 @@ const id = Astro.params.id ?? '';
 if (!config || !/^[0-9a-f-]{36}$/i.test(id)) return Astro.rewrite('/404');
 const { data: intent } = await adminFor(config)
   .from('checkout_intents')
-  .select(
-    'id, customer_id, status, order_id, stripe_client_secret, game, service, title, units, unit, rank, region, ign, voice, amount_eur_cents, first_order_discount_cents, pro_discount_cents, wallet_eur_cents',
-  )
+  // The whole row: seats, role and character_name (20261106190000) come along once the migration
+  // added them, and the page keeps working before it does.
+  .select('*')
   .eq('id', id)
   .maybeSingle();
 if (!intent || intent.customer_id !== identity.viewer.id)
@@ -36,6 +37,12 @@ const game = (GAME as Record<string, { name: string; img: string }>)[
   intent.game
 ];
 const unitWord = (n: number) => `${intent.unit}${n === 1 ? '' : 's'}`;
+// Team orders (20261106190000_team_orders): several teammates, one payment.
+const seats = (intent as { seats?: number }).seats ?? 1;
+const team = seats > 1;
+const groupPrice = !!seatRule(intent.game, intent.service).groupPrice;
+// Social calls book Gamer Girls, everything else teammates
+const seatNoun = intent.game === 'social' ? 'Gamer Girls' : 'teammates';
 
 // Re-price the stored selection for the breakdown; if prices changed since the
 // intent was created, only the (authoritative) total is shown.
@@ -51,6 +58,7 @@ try {
       ...(intent.rank ? { rank: intent.rank } : {}),
       ...(intent.game === 'mc' && edition ? { edition } : {}),
       ign: intent.ign,
+      ...(team ? { seats } : {}),
     },
     { eurToUsd: FALLBACK_EUR_TO_USD, customerCurrency: 'EUR' },
   );
@@ -66,7 +74,10 @@ try {
   ) {
     breakdown = [
       {
-        label: `${eur(quote.unitPriceEurMinor)} × ${intent.units} ${unitWord(intent.units)}`,
+        label:
+          team && !groupPrice
+            ? `${eur(quote.unitPriceEurMinor / seats)} × ${seats} ${seatNoun} × ${intent.units} ${unitWord(intent.units)}`
+            : `${eur(quote.unitPriceEurMinor)} × ${intent.units} ${unitWord(intent.units)}`,
         value: eur(quote.subtotalEurMinor),
       },
     ];
@@ -108,9 +119,17 @@ if (walletPart > 0)
   });
 const total = eur(intent.amount_eur_cents - walletPart);
 const facts = [
+  team ? `${seats} ${seatNoun}` : '',
   `${intent.units} ${unitWord(intent.units)}`,
   intent.region,
   intent.rank ? `from ${intent.rank}` : '',
+  // 20261106190000: the customer's role and coaching character
+  (intent as { role?: string | null }).role
+    ? `Plays ${(intent as { role?: string }).role}`
+    : '',
+  (intent as { character_name?: string | null }).character_name
+    ? `Coaching on ${(intent as { character_name?: string }).character_name}`
+    : '',
   intent.voice ? 'Voice on Discord' : '',
 ].filter(Boolean);
 const ignLabel =
@@ -183,27 +202,59 @@ const fontUrl = new URL('/fonts/geist-latin.woff2', Astro.url).href;
           </div>
         </div>
         <ol class="next" aria-label="What happens next">
-          <li>
-            <b>Pay now, charged when matched</b>
-            <span>
-              Cards, wallets, PayPal, Klarna and Revolut Pay are only held until
-              a teammate accepts.
-            </span>
-          </li>
-          <li>
-            <b>Matched in minutes</b>
-            <span>
-              Rank-verified {game?.name ?? ''} teammates see your order right
-              away.
-            </span>
-          </li>
-          <li>
-            <b>Nobody free in 5 minutes?</b>
-            <span>
-              Holds are released and anything already charged is refunded in
-              full. You pay nothing.
-            </span>
-          </li>
+          {team ? (
+            <>
+              <li>
+                <b>Pay once, then you’re in the queue</b>
+                <span>
+                  One payment for all {seats} {seatNoun}, taken now. Every seat
+                  goes live the moment you pay.
+                </span>
+              </li>
+              <li>
+                <b>Your team fills in minutes</b>
+                <span>
+                  {intent.game === 'social'
+                    ? 'Verified Gamer Girls'
+                    : `Rank-verified ${game?.name ?? ''} teammates`}{' '}
+                  each take a seat, and you all share one group chat.
+                </span>
+              </li>
+              <li>
+                <b>Not every seat taken in 5 minutes?</b>
+                <span>
+                  The whole order is cancelled and the full amount goes straight
+                  back to your Duoly balance, ready for your next order. Want it
+                  on your card instead? <a href="/contact">Contact support</a>.
+                </span>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <b>Pay once, then you’re in the queue</b>
+                <span>
+                  Your payment is taken now and your order goes live the moment
+                  you pay.
+                </span>
+              </li>
+              <li>
+                <b>Matched in minutes</b>
+                <span>
+                  Rank-verified {game?.name ?? ''} teammates see your order
+                  right away.
+                </span>
+              </li>
+              <li>
+                <b>Nobody free in 5 minutes?</b>
+                <span>
+                  Your order is cancelled and the full amount goes straight back
+                  to your Duoly balance, ready for your next order. Want it on
+                  your card instead? <a href="/contact">Contact support</a>.
+                </span>
+              </li>
+            </>
+          )}
         </ol>
       </section>
       <section class="payment" aria-label="Payment">
@@ -420,6 +471,10 @@ const fontUrl = new URL('/fonts/geist-latin.woff2', Astro.url).href;
   .next span {
     color: #a79dc4;
     font-size: 14px;
+  }
+  .next a {
+    color: #d6bbff;
+    font-weight: 600;
   }
   .order {
     position: sticky;

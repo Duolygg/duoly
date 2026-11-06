@@ -5,7 +5,8 @@
 import React from 'react';
 import { DISCORD_INVITE } from '../../site/nav';
 
-export default function DiscordInvite() {
+// team: a team order (20261106190000), where everyone talks together
+export default function DiscordInvite({ team = false }) {
   return (
     <div
       className="dc-invite"
@@ -56,7 +57,8 @@ export default function DiscordInvite() {
         <span
           style={{ display: 'block', fontSize: '12.5px', color: '#CFC4EA' }}
         >
-          Join our server to talk with your teammate while you play.
+          Join our server to talk with your {team ? 'team' : 'teammate'} while
+          you play.
         </span>
       </span>
       <a

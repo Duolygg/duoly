@@ -187,7 +187,7 @@ describe('checkout button', () => {
   it('keeps the bullet icons from shrinking when a line wraps', () => {
     const html = render();
     const list =
-      /<ul[^>]*>(?:(?!<\/ul>)[\s\S])*hold on your card(?:(?!<\/ul>)[\s\S])*<\/ul>/.exec(
+      /<ul[^>]*>(?:(?!<\/ul>)[\s\S])*Not matched in 5 min(?:(?!<\/ul>)[\s\S])*<\/ul>/.exec(
         html,
       )![0];
     expect(

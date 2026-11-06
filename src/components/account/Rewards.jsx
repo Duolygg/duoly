@@ -46,12 +46,8 @@ const PERKS = [
     title: 'Level-up gifts',
     text: 'Gifted balance every time you level up',
   },
-  {
-    at: 2,
-    title: 'Priority matching',
-    text: 'Jump the queue at busy times',
-  },
-  // 20261106170000: 4 re-rolls per order from Gold
+  // 20261106170000: 4 re-rolls per order from Gold. (The "Priority matching · Jump the queue"
+  // perk was removed on 2026-11-06: the owner says it no longer describes what Gold gets.)
   {
     at: 2,
     title: '4 free re-rolls',

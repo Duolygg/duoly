@@ -308,10 +308,10 @@ describe('GET offer', () => {
 });
 
 describe('POST play again', () => {
-  it('one tap: authorizes the saved card and creates the order', async () => {
+  it('one tap: charges the saved card and creates the order', async () => {
     state.piResult = {
       id: 'pi_1',
-      status: 'requires_capture',
+      status: 'succeeded',
       amount: PRICE,
       currency: 'eur',
       metadata: { intent_id: INTENT, play_again: SOURCE },
@@ -338,16 +338,17 @@ describe('POST play again', () => {
       customer: 'cus_1',
       payment_method: 'pm_1',
       confirm: true,
-      capture_method: 'manual',
       metadata: { intent_id: INTENT, play_again: SOURCE },
     });
+    // charge at queue (2026-11-06): charged now, never held
+    expect(state.piCreated[0]).not.toHaveProperty('capture_method');
     expect(state.piCreated[0]).not.toHaveProperty('off_session');
     expect(
       state.adminCalls.find((c) => c.fn === 'create_paid_order')?.args,
     ).toMatchObject({
       p_intent_id: INTENT,
       p_payment_intent: 'pi_1',
-      p_state: 'authorized',
+      p_state: 'captured',
     });
     expect(state.sessions).toBe(0);
   });

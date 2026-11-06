@@ -37,7 +37,7 @@ export function offerSummary(): string {
   if (cached) return cached;
   const lines = [
     'Duoly matches a player with a verified teammate who joins them in-game and plays together with them on the player’s own account. Duoly also fills seats for teams, offers casual sessions, Gamer Girl sessions and coaching. Nobody ever logs into the customer’s account (no account boosting or account sharing).',
-    'Prices are in EUR per game or per hour (shown in each line) and can vary with the customer’s rank. USD is shown at the ECB rate plus 1%. Bundle discounts (not for coaching): 3 games = 10% off, 5 games = 15% off, 10 games = 25% off. Only quote a bundle total that appears in BUNDLE TOTALS below; otherwise give the per-game price and the discount. The first Play and Learn coaching session is half price where marked. The exact total always shows before Stripe checkout.',
+    'Prices are in EUR per game or per hour (shown in each line) and can vary with the customer’s rank. USD is shown at the ECB rate plus 1%. Bundle discounts (not for coaching): 3 games = 10% off, 5 games = 15% off, 10 games = 25% off. Only quote a bundle total that appears in BUNDLE TOTALS below; otherwise give the per-game price and the discount. Coaching costs a fixed €12.99 per game or hour in every game (no first-session discount). The exact total always shows before Stripe checkout.',
     'CATALOG (game: category: service, teammate level, price from):',
   ];
   const bundles: string[] = [

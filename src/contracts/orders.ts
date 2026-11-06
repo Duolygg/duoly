@@ -46,6 +46,69 @@ const OrderFields = {
   voice: z.boolean(),
 };
 
+// The customer's role and the character they want coaching on (20261106190000, src/contracts/
+// roles.ts); null = no preference. Optional so code can deploy before the migration.
+const RoleFields = {
+  role: z.string().min(1).max(24).nullable().optional(),
+  character: z.string().min(1).max(40).nullable().optional(),
+};
+
+/** Team orders (20261106190000_team_orders): where a team stands. */
+export const TeamStatusSchema = z.enum([
+  'waiting',
+  'started',
+  'cancelled',
+  'done',
+]);
+
+/** public.order_team_customer_dto: the customer's whole team, on every seat's order. */
+export const CustomerTeamSchema = z.strictObject({
+  id: z.uuid(),
+  seats: z.number().int().min(2).max(5),
+  status: TeamStatusSchema,
+  lead_order_id: z.uuid(),
+  amount_eur_cents: z.number().int().min(198).max(100000),
+  wallet_eur_cents: z.number().int().min(0).max(100000),
+  started_at: TimestampSchema.nullable(),
+  filled: z.number().int().min(0).max(5),
+  members: z
+    .array(
+      z.strictObject({
+        order_id: z.uuid(),
+        seat: z.number().int().min(1).max(5),
+        status: z.enum(['queued', 'in_progress', 'completed', 'cancelled']),
+        public_reference: z.string().regex(/^DL-[0-9]+$/),
+        amount_eur_cents: z.number().int().min(99).max(100000),
+        reviewed: z.boolean(),
+        // for the room's per-teammate "Switch" (same window and limit as reroll_order)
+        accepted_at: TimestampSchema.nullable().optional(),
+        rerolls: z.number().int().min(0).max(100).optional(),
+        teammate: z
+          .strictObject({
+            name: z.string(),
+            image: z.string(),
+            country: z.string(),
+          })
+          .nullable(),
+      }),
+    )
+    .min(2)
+    .max(5),
+});
+export type CustomerTeam = z.infer<typeof CustomerTeamSchema>;
+
+/** public.order_team_teammate_dto: how full the team is and who is in (first names only). */
+export const TeammateTeamSchema = z.strictObject({
+  seats: z.number().int().min(2).max(5),
+  status: TeamStatusSchema,
+  started_at: TimestampSchema.nullable(),
+  filled: z.number().int().min(0).max(5),
+  members: z
+    .array(z.strictObject({ name: z.string(), image: z.string() }))
+    .max(5),
+});
+export type TeammateTeam = z.infer<typeof TeammateTeamSchema>;
+
 /** Exact public.order_customer_dto projection, never a raw orders row. */
 export const CustomerOrderSchema = z.strictObject({
   ...OrderFields,
@@ -55,7 +118,14 @@ export const CustomerOrderSchema = z.strictObject({
   accepted_at: TimestampSchema.nullable(),
   completed_at: TimestampSchema.nullable(),
   cancelled_at: TimestampSchema.nullable(),
-  cancel_reason: z.enum(['queue_expired', 'customer_cancelled']).nullable(),
+  cancel_reason: z
+    .enum([
+      'queue_expired',
+      'customer_cancelled',
+      'admin_cancelled',
+      'team_incomplete',
+    ])
+    .nullable(),
   rerolls: z.number().int().min(0).max(100),
   current_assignment_id: z.uuid().nullable(),
   teammate: z
@@ -97,6 +167,10 @@ export const CustomerOrderSchema = z.strictObject({
     })
     .nullable()
     .optional(),
+  // Added by 20261106190000 (team orders); optional so code can deploy before the migration.
+  seat: z.number().int().min(1).max(5).nullable().optional(),
+  team: CustomerTeamSchema.nullable().optional(),
+  ...RoleFields,
 });
 
 /** Exact privacy-safe public.order_teammate_dto projection. */
@@ -112,13 +186,18 @@ export const TeammateOrderSchema = z.strictObject({
   picked_for_you: z.boolean().optional(),
   // Added by 20261101120000; optional so code can deploy before the migration. null = no preference.
   mood: MoodSchema.nullable().optional(),
+  // Added by 20261106190000 (team orders); optional so code can deploy before the migration.
+  team: TeammateTeamSchema.nullable().optional(),
+  ...RoleFields,
 });
 
 export const RefundCreditSchema = z.strictObject({
   id: z.uuid(),
   order_id: z.uuid(),
-  kind: z.literal('queued_refund'),
-  amount_eur_cents: z.number().int().min(99).max(100000),
+  // 'paid_refund' (20261106190000, charge at queue): what the card paid for a cancelled order,
+  // back as Duoly balance; it can be any part of the order, so any amount from 1 cent.
+  kind: z.enum(['queued_refund', 'paid_refund']),
+  amount_eur_cents: z.number().int().min(1).max(100000),
   created_at: TimestampSchema,
 });
 
@@ -145,6 +224,8 @@ export const PlayAgainReasonSchema = z.enum([
   'teammate_busy',
   'teammate_away',
   'teammate_unavailable',
+  // 20261106190000: a team is booked again from the homepage
+  'team',
 ]);
 export const PlayAgainCheckSchema = z.strictObject({
   available: z.boolean(),

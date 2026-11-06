@@ -3,6 +3,12 @@ import { servicesFor as sourceServicesFor } from '../../design-reference/lib/cat
 import { GAME_IDS } from '../../design-reference/lib/games.js';
 import { rankPrice, ranksOf } from '../../design-reference/lib/ranks.js';
 import { isServer } from '../../design-reference/lib/servers.js';
+import {
+  bookingUnitCents,
+  checkSeats,
+  isGroupService,
+  MAX_SEATS,
+} from '../../contracts/seats';
 import type {
   QuoteContext,
   QuoteInput,
@@ -34,6 +40,7 @@ const selectionSchema = z.strictObject({
     .max(40)
     .refine((value) => value.trim().length >= 2)
     .optional(),
+  seats: z.number().int().min(1).max(MAX_SEATS).optional(),
 });
 
 /** Throws on invalid selections; revalidated by calculateQuote at the trust boundary. */
@@ -44,10 +51,14 @@ export function parseQuoteInput(input: unknown): QuoteInput {
     (mode) => mode.id === selection.serviceId,
   );
   if (!service) throw new Error('Unknown service');
-  // Conservatively disable the entire Teams tab, including tournament listings,
-  // until fulfillment can explicitly guarantee seat count and assignment.
-  if (service.cat === 'other')
+  // Teams tab services are booked by seat (team orders, 20261106190000_team_orders); a Teams
+  // listing without a seat rule stays unbookable rather than silently becoming one teammate.
+  if (
+    service.cat === 'other' &&
+    !isGroupService(selection.gameId, selection.serviceId)
+  )
     throw new Error('Teams services are not supported');
+  checkSeats(selection.gameId, selection.serviceId, selection.seats ?? 1);
   if (selection.gameId === 'mc') {
     if (selection.server.trim().length < 2 || !selection.edition)
       throw new Error('Minecraft needs a server/world and edition');
@@ -90,9 +101,20 @@ export function calculateQuote(
   const baseEur = hasFirstSessionOffer
     ? (service.was ?? service.price)
     : service.price;
-  const unitPriceEurMinor = Math.round(
-    rankPrice(selection.gameId, selection.serviceId, baseEur, selection.rank) *
-      100,
+  const seats = selection.seats ?? 1;
+  // Per-seat price × seats, or the whole group's price (src/contracts/seats.ts).
+  const unitPriceEurMinor = bookingUnitCents(
+    Math.round(
+      rankPrice(
+        selection.gameId,
+        selection.serviceId,
+        baseEur,
+        selection.rank,
+      ) * 100,
+    ),
+    selection.gameId,
+    selection.serviceId,
+    seats,
   );
   const subtotalEurMinor = unitPriceEurMinor * selection.units;
   // The catalog's floor-to-cents half-price applies to ONE session, not the
@@ -121,9 +143,12 @@ export function calculateQuote(
     currency === 'USD'
       ? Math.round(amountEurMinor * customerUsdRate)
       : amountEurMinor;
+  // Each teammate earns from one seat's share; the database gives the lead seat the rounding
+  // cents of the customer price, never of the payout.
+  const seatShareEurMinor = Math.floor(amountEurMinor / seats);
   const teammateAmountMinor = Math.max(
     99,
-    Math.round(amountEurMinor * 0.6 * context.eurToUsd) - 1,
+    Math.round(seatShareEurMinor * 0.6 * context.eurToUsd) - 1,
   );
   if (
     !Number.isFinite(customerUsdRate) ||
@@ -134,7 +159,8 @@ export function calculateQuote(
       amountEurMinor,
       customerAmountMinor,
       teammateAmountMinor,
-    ].every((amount) => Number.isSafeInteger(amount) && amount > 0)
+    ].every((amount) => Number.isSafeInteger(amount) && amount > 0) ||
+    seatShareEurMinor < 99
   ) {
     throw new Error('Quote money is outside supported precision');
   }
@@ -142,6 +168,7 @@ export function calculateQuote(
     kind: 'preview',
     selection: Object.freeze({ ...selection }),
     unit: service.unit as 'game' | 'hour',
+    seats,
     unitPriceEurMinor,
     subtotalEurMinor,
     amountEurMinor,

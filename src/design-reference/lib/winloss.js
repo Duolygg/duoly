@@ -22,6 +22,8 @@ export const WL_SERVICES = Object.fromEntries(
         .filter(
           (m) =>
             (m.cat === 'duo' || m.cat === 'other') &&
+            // fun modes moved to the Duo tab on 2026-11-06 but still get no report
+            !m.fun &&
             (m.unit || s.unit) === 'game' &&
             !(PLACEMENT[game] || []).includes(m.id),
         )

@@ -65,10 +65,17 @@ export default function MatchStage({
   user,
   cycle = 0,
   burst = 0,
+  team = null,
+  now = 0,
 }) {
   const searching = phase === 'searching' || phase === 'loading';
   const matched =
     phase === 'matched' || phase === 'playing' || phase === 'done';
+  // Team orders: once the team is in, the teammate card takes turns showing each of them
+  // (a new one every 3 seconds, with the match pop each time).
+  const crew = matched && team ? team.members.filter((m) => m.name) : [];
+  const turn = crew.length > 1 ? Math.floor(now / 3000) % crew.length : 0;
+  if (crew.length) mate = crew[turn];
   const cancelled = phase === 'cancelled';
   const first = (n) => String(n || '').split(' ')[0];
   const face = CANDIDATES[cycle % CANDIDATES.length];
@@ -91,6 +98,8 @@ export default function MatchStage({
           : 'transparent';
     return (
       <div
+        // a new key per teammate replays the match pop when a team's card takes its turn
+        key={isYou ? 'you' : 'mate-' + (crew.length ? turn : 'one')}
         style={{
           position: 'relative',
           flex: '1 1 0',
@@ -163,7 +172,11 @@ export default function MatchStage({
               color: isYou ? ACCENT : matched ? GREEN : DIM,
             }}
           >
-            {isYou ? 'YOU' : 'TEAMMATE'}
+            {isYou
+              ? 'YOU'
+              : crew.length > 1
+                ? 'TEAMMATE ' + (turn + 1) + '/' + crew.length
+                : 'TEAMMATE'}
             {g && g.img ? (
               <img
                 src={g.img}
@@ -828,6 +841,8 @@ export function OrderCard({
         {[
           ['Server', o.region],
           o.from ? ['Your rank', o.from] : null,
+          o.role ? ['Your role', o.role] : null,
+          o.character ? ['Coaching on', o.character] : null,
           [ignLabel.charAt(0).toUpperCase() + ignLabel.slice(1), o.ign],
           ['Comms', o.voice ? 'Voice on Discord' : 'Text chat'],
           o.note ? ['Note', '“' + o.note + '”'] : null,
@@ -955,6 +970,7 @@ export function OrderCard({
 /** Chat with the teammate: opens on a match, read-only once the order is done. */
 export function ChatPanel({
   mate,
+  team = null,
   order: o,
   phase,
   ignLabel,
@@ -967,7 +983,17 @@ export function ChatPanel({
   listRef,
 }) {
   const open = phase === 'matched' || phase === 'playing';
-  const name = mate ? String(mate.name).split(' ')[0] : 'Your teammate';
+  // Team orders (20261106190000): one group chat with every teammate, so names on each bubble.
+  const teamNames = team
+    ? team.members
+        .filter((m) => m.name)
+        .map((m) => String(m.name).split(' ')[0])
+    : [];
+  const name = team
+    ? 'your team'
+    : mate
+      ? String(mate.name).split(' ')[0]
+      : 'Your teammate';
   const time = (at) =>
     new Date(at).toLocaleTimeString([], {
       hour: '2-digit',
@@ -1038,7 +1064,7 @@ export function ChatPanel({
             id="q-chat-h"
             style={{ display: 'block', fontWeight: '700', color: '#FFFFFF' }}
           >
-            Chat with {name}
+            {team ? 'Team chat' : 'Chat with ' + name}
           </span>
           <span
             style={{
@@ -1050,7 +1076,12 @@ export function ChatPanel({
             {typing
               ? 'typing…'
               : open
-                ? 'Your teammate · ' +
+                ? (team
+                    ? teamNames.length
+                      ? 'You, ' + teamNames.join(', ')
+                      : 'Your team'
+                    : 'Your teammate') +
+                  ' · ' +
                   (o.voice ? 'voice on Discord' : 'text chat')
                 : 'Order finished · chat closed'}
           </span>
@@ -1107,7 +1138,7 @@ export function ChatPanel({
         {chat.map((m) => {
           if (m.from === 'system') {
             if (isDiscordInvite(String(m.text)))
-              return <DiscordInvite key={m.id} />;
+              return <DiscordInvite key={m.id} team={!!team} />;
             return (
               <div
                 key={m.id}
@@ -1137,6 +1168,19 @@ export function ChatPanel({
                 alignItems: me ? 'flex-end' : 'flex-start',
               }}
             >
+              {team && !me && m.name ? (
+                <span
+                  style={{
+                    margin: '0 0 3px',
+                    padding: '0 4px',
+                    fontSize: '11.5px',
+                    fontWeight: '700',
+                    color: '#CFC4EA',
+                  }}
+                >
+                  {String(m.name).split(' ')[0]}
+                </span>
+              ) : null}
               <div
                 style={{
                   maxWidth: '82%',
@@ -1598,19 +1642,28 @@ export function CoveredPanel({
           gap: '8px',
         }}
       >
-        {row(
-          locked || left <= 0
-            ? 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4'
-            : 'M1 4v6h6M23 20v-6h-6M20.5 9A9 9 0 0 0 5.6 5.6L1 10m22 4l-4.6 4.4A9 9 0 0 1 3.5 15',
-          locked || left <= 0 ? DIM : ACCENT,
-          'Not the right fit? Re-roll',
-          rerollText,
-          small(
-            locked || left <= 0 ? 'Locked' : 'Re-roll',
-            onReroll,
-            locked || left <= 0,
-          ),
-        )}
+        {o.team
+          ? // Team orders: each teammate has their own Switch on the roster (TeamRoster.jsx)
+            row(
+              'M1 4v6h6M23 20v-6h-6M20.5 9A9 9 0 0 0 5.6 5.6L1 10m22 4l-4.6 4.4A9 9 0 0 1 3.5 15',
+              ACCENT,
+              'Someone not the right fit? Switch them',
+              'Use Switch on that teammate’s card to swap just them, for free in the first 5 minutes after your team is complete. The rest of your team keeps playing.',
+              null,
+            )
+          : row(
+              locked || left <= 0
+                ? 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4'
+                : 'M1 4v6h6M23 20v-6h-6M20.5 9A9 9 0 0 0 5.6 5.6L1 10m22 4l-4.6 4.4A9 9 0 0 1 3.5 15',
+              locked || left <= 0 ? DIM : ACCENT,
+              'Not the right fit? Re-roll',
+              rerollText,
+              small(
+                locked || left <= 0 ? 'Locked' : 'Re-roll',
+                onReroll,
+                locked || left <= 0,
+              ),
+            )}
         {reportsEnabled
           ? row(
               'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2zM9 10h6',
@@ -1629,7 +1682,8 @@ export function CoveredPanel({
               PINK,
               'Toxic or disrespectful?',
               'Report ' +
-                name +
+                // team orders: the form asks which teammate
+                (o.team ? 'any teammate' : name) +
                 ' with proof and get ' +
                 sym +
                 BOUNTY +

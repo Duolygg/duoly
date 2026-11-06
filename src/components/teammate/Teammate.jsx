@@ -1,6 +1,10 @@
 'use client';
 
-import { createTeammateFetch, newEligibleOrders } from './teammate-data';
+import {
+  createTeammateFetch,
+  newEligibleOrders,
+  teamLine,
+} from './teammate-data';
 import {
   AFK_OFFLINE_REASON,
   AFK_WARN_SECONDS,
@@ -369,14 +373,17 @@ export default class Teammate extends React.Component {
   chatMessage(m) {
     return {
       id: m.id,
+      // 'mate': another teammate of a team order (20261106190000), never this teammate.
       from:
         m.sender === 'teammate'
           ? 'me'
-          : m.sender === 'customer'
+          : m.sender === 'customer' || m.sender === 'mate'
             ? 'them'
             : 'system',
       text: m.body,
       at: Date.parse(m.created_at),
+      // shown above "them" bubbles in a team chat, where several people talk
+      name: m.sender === 'system' ? '' : m.name,
     };
   }
   async sendChat(raw) {
@@ -841,6 +848,18 @@ export default class Teammate extends React.Component {
           this.state.active.assignmentId !== data.mine.assignmentId)
       )
         this.startActive(data.mine, true);
+      else if (
+        data.mine &&
+        data.mine.team &&
+        JSON.stringify(data.mine.team) !==
+          JSON.stringify(this.state.active.team)
+      )
+        // Team orders: the same seat, but more teammates joined (or the team started).
+        this.setState((s) =>
+          s.active && s.active.assignmentId === data.mine.assignmentId
+            ? { active: { ...s.active, team: data.mine.team } }
+            : null,
+        );
       else if (!data.mine && this.state.active) {
         this._pendingChat = null;
         this.setState({
@@ -3451,6 +3470,43 @@ export default class Teammate extends React.Component {
                           <span>{moodOf(v.active.mood).line}</span>
                         </div>
                       ) : null}
+                      {v.active.role || v.active.character ? (
+                        <div
+                          style={{
+                            marginTop: '6px',
+                            fontSize: '13.5px',
+                            fontWeight: '600',
+                            color: '#D6BBFF',
+                          }}
+                        >
+                          {[
+                            v.active.role
+                              ? v.active.customer + ' plays ' + v.active.role
+                              : '',
+                            v.active.character
+                              ? 'wants coaching on ' + v.active.character
+                              : '',
+                          ]
+                            .filter(Boolean)
+                            .join(' · ')}
+                        </div>
+                      ) : null}
+                      {v.active.team ? (
+                        <div
+                          role="status"
+                          style={{
+                            marginTop: '6px',
+                            fontSize: '13.5px',
+                            fontWeight: '600',
+                            color:
+                              v.active.team.status === 'waiting'
+                                ? '#F0A6FF'
+                                : '#D6BBFF',
+                          }}
+                        >
+                          {teamLine(v.active.team, true)}
+                        </div>
+                      ) : null}
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div
@@ -4293,6 +4349,22 @@ export default class Teammate extends React.Component {
                             </div>
                           ) : (
                             <div key={m.id} style={css(m.row)}>
+                              {v.active &&
+                              v.active.team &&
+                              m.from === 'them' &&
+                              m.name ? (
+                                <span
+                                  style={{
+                                    margin: '0 0 3px',
+                                    padding: '0 4px',
+                                    fontSize: '11.5px',
+                                    fontWeight: '700',
+                                    color: '#CFC4EA',
+                                  }}
+                                >
+                                  {String(m.name).split(' ')[0]}
+                                </span>
+                              ) : null}
                               <div style={css(m.style)}>{m.text}</div>
                               <span
                                 style={{
@@ -4843,6 +4915,41 @@ export default class Teammate extends React.Component {
                                 </span>
                               ) : null}
                               {o.mood ? <MoodBadge id={o.mood} /> : null}
+                              {o.role || o.character ? (
+                                <span
+                                  style={{
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    padding: '2px 8px',
+                                    borderRadius: '7px',
+                                    background: 'rgba(214, 187, 255, .12)',
+                                    color: '#D6BBFF',
+                                  }}
+                                >
+                                  {[
+                                    o.role ? 'Plays ' + o.role : '',
+                                    o.character
+                                      ? 'Coaching on ' + o.character
+                                      : '',
+                                  ]
+                                    .filter(Boolean)
+                                    .join(' · ')}
+                                </span>
+                              ) : null}
+                              {o.team ? (
+                                <span
+                                  style={{
+                                    fontSize: '12px',
+                                    fontWeight: '600',
+                                    padding: '2px 8px',
+                                    borderRadius: '7px',
+                                    background: 'rgba(214, 187, 255, .12)',
+                                    color: '#D6BBFF',
+                                  }}
+                                >
+                                  {teamLine(o.team, false)}
+                                </span>
+                              ) : null}
                             </div>
                             <div
                               style={{

@@ -7,6 +7,7 @@ import {
   calculateQuote,
   parseQuoteInput,
 } from '../../src/server/pricing/index';
+import { seatRule } from '../../src/contracts/seats';
 
 const selection = {
   gameId: 'lol',
@@ -130,26 +131,107 @@ describe('server-owned quote preview', () => {
     }
   }
 
+  // Team orders (docs/product/team-orders.md): every Teams service is sold by seat.
   for (const gameId of GAME_IDS) {
     for (const service of servicesFor(gameId).modes.filter(
       (mode: { cat: string; id: string }) => mode.cat === 'other',
     )) {
-      it(`does not sell unsupported Teams service ${gameId}/${service.id}`, () => {
+      it(`sells Teams service ${gameId}/${service.id} by seat`, () => {
+        const rule = seatRule(gameId, service.id);
+        expect(rule.max).toBeGreaterThan(1);
+        const rank = ranksOf(gameId, service.id)[0];
         const input = {
           gameId,
           serviceId: service.id,
           units: 1,
           server: gameId === 'mc' ? 'Hypixel' : serversFor(gameId)[0]![0],
           ...(gameId === 'mc' ? { edition: 'Java' } : {}),
-          ...(ranksOf(gameId, service.id).length
-            ? { rank: ranksOf(gameId, service.id)[0] }
-            : {}),
+          ...(rank ? { rank } : {}),
+          seats: rule.default,
         };
-        expect(() => calculateQuote(input, trusted)).toThrow('Teams');
-        expect(() => parseQuoteInput(input)).toThrow('Teams');
+        const quote = calculateQuote(input, trusted);
+        const seatCents = Math.round(
+          rankPrice(gameId, service.id, service.price, rank) * 100,
+        );
+        expect(quote.seats).toBe(rule.default);
+        // The group price is the listed price; everything else is per seat.
+        expect(quote.amountEurMinor).toBe(
+          rule.groupPrice ? seatCents : seatCents * rule.default,
+        );
+        // Each teammate earns 60% of one seat's share.
+        expect(quote.teammate.amountMinor).toBe(
+          Math.max(
+            99,
+            Math.round(
+              Math.floor(quote.amountEurMinor / rule.default) * 0.6 * 1.08,
+            ) - 1,
+          ),
+        );
+        expect(() =>
+          calculateQuote({ ...input, seats: rule.max + 1 }, trusted),
+        ).toThrow('seat');
+        if (rule.min > 1)
+          expect(() =>
+            calculateQuote({ ...input, seats: rule.min - 1 }, trusted),
+          ).toThrow('seat');
       });
     }
   }
+
+  it('prices Flex Squad per seat with the bundle discount on the whole team', () => {
+    const seat = Math.round(rankPrice('lol', 'flex', 7.99, 'Gold') * 100);
+    const quote = calculateQuote(
+      {
+        gameId: 'lol',
+        serviceId: 'flex',
+        units: 3,
+        server: 'EUW',
+        rank: 'Gold',
+        seats: 3,
+      },
+      trusted,
+    );
+    // seat price × 3 seats × 3 games, minus the 10% three-game bundle on the whole team
+    expect(quote.unitPriceEurMinor).toBe(seat * 3);
+    expect(quote.subtotalEurMinor).toBe(seat * 9);
+    expect(quote.amountEurMinor).toBe(Math.round(seat * 9 * 0.9));
+    expect(quote.teammate.amountMinor).toBe(
+      Math.round(Math.floor(quote.amountEurMinor / 3) * 0.6 * 1.08) - 1,
+    );
+  });
+
+  it('keeps the listed total for group-priced services', () => {
+    const trio = {
+      gameId: 'apex',
+      serviceId: 'trio',
+      units: 1,
+      server: 'Europe',
+      ...(ranksOf('apex', 'trio').length
+        ? { rank: ranksOf('apex', 'trio')[0] }
+        : {}),
+    };
+    const listed = Math.round(
+      rankPrice('apex', 'trio', 17.99, ranksOf('apex', 'trio')[0]) * 100,
+    );
+    const quote = calculateQuote({ ...trio, seats: 2 }, trusted);
+    expect(quote.amountEurMinor).toBe(listed);
+    expect(() => calculateQuote(trio, trusted)).toThrow('seat');
+  });
+
+  it('lets party modes bring friends but keeps single services to one teammate', () => {
+    const base = { gameId: 'lol', units: 1, server: 'EUW' };
+    expect(calculateQuote({ ...base, serviceId: 'aram' }, trusted).seats).toBe(
+      1,
+    );
+    expect(
+      calculateQuote({ ...base, serviceId: 'aram', seats: 4 }, trusted)
+        .amountEurMinor,
+    ).toBe(349 * 4);
+    expect(() =>
+      calculateQuote({ ...base, serviceId: 'aram', seats: 5 }, trusted),
+    ).toThrow('seat');
+    expect(() => parseQuoteInput({ ...selection, seats: 2 })).toThrow('seat');
+  });
 
   it.each([
     [1, 0, 399],

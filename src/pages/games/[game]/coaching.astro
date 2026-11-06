@@ -55,7 +55,6 @@ const related: Record<string, string[]> = {
   fortnite: ['rocket-league', 'apex-legends'],
   'rocket-league': ['fortnite', 'teamfight-tactics'],
 };
-const firstSession = offers.some((offer) => offer.id === 'learn');
 const descriptions: Record<string, string> = {
   valorant: `Valorant coaching ${summary.toLowerCase()}. Choose live Play and Learn, VOD Review or Aim and Crosshair. Set a practice goal and book your coach on Duoly.`,
   'league-of-legends': `League of Legends coaching ${summary.toLowerCase()}. Book LoL live learning, VOD Review or Champion Mastery. Work on your role, lane and recall decisions.`,
@@ -103,9 +102,7 @@ const description = descriptions[game.slug]!;
       heading="How booking works"
       steps={[
         'Pick your training service and add your goal.',
-        firstSession
-          ? `Check out once, upfront. Your first Play and Learn ${offers.find((offer) => offer.id === 'learn')!.unit === 'game' ? 'game' : 'session'} is half price when eligible.`
-          : 'Check out once, upfront.',
+        'Check out once, upfront.',
         'Meet your coach in the order chat and start on Discord, on your own account.',
       ]}
     >

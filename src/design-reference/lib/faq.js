@@ -8,11 +8,11 @@ import { CATALOG } from './catalog';
 const gameList = GAMES.map((g) => g.name);
 // Price ranges straight from the catalog, so the FAQ never quotes stale prices.
 const eur = (n) => '€' + n.toFixed(2);
-const all = Object.entries(CATALOG).flatMap(([id, c]) => c.services.map(([, cat, , , , price, o = {}]) => ({ id, cat, price, unit: o.unit || c.unit })));
+const all = Object.entries(CATALOG).flatMap(([id, c]) => c.services.map(([, cat, , , , price, o = {}]) => ({ id, cat, price, unit: o.unit || c.unit, fun: !!o.fun })));
 const range = (list) => [Math.min(...list.map((x) => x.price)), Math.max(...list.map((x) => x.price))];
-const [gameLo, gameHi] = range(all.filter((x) => x.cat === 'duo' && x.unit === 'game'));
-const [hourLo, hourHi] = range(all.filter((x) => x.cat === 'duo' && x.unit === 'hour'));
-const [funLo] = range(all.filter((x) => x.cat === 'social'));
+const [gameLo, gameHi] = range(all.filter((x) => x.cat === 'duo' && !x.fun && x.unit === 'game'));
+const [hourLo, hourHi] = range(all.filter((x) => x.cat === 'duo' && !x.fun && x.unit === 'hour'));
+const [funLo] = range(all.filter((x) => x.fun));
 const hourly = Object.keys(CATALOG).filter((id) => CATALOG[id].unit === 'hour').map((id) => GAME[id].name);
 const HOURLY_LINE = hourly.slice(0, -1).join(', ') + ' and ' + hourly[hourly.length - 1];
 const GAME_LINE = gameList.slice(0, -1).join(', ') + ' and ' + gameList[gameList.length - 1];
@@ -34,7 +34,7 @@ export const FAQ_TABS = [
   ] },
   { id: 'pay', label: 'Prices & payments', items: [
     ['How much does a duo cost?',
-      'Duos cost ' + eur(gameLo) + ' to ' + eur(gameHi) + ' per game, depending on the game and how high your teammate is ranked. ' + HOURLY_LINE + ' are booked by the hour instead, from ' + eur(hourLo) + ' to ' + eur(hourHi) + ', because a game there has no fixed length. Fun modes start at ' + eur(funLo) + ', and your first Play & Learn session is half price. You always see the exact total before you pay, in euros or US dollars.'],
+      'Duos cost ' + eur(gameLo) + ' to ' + eur(gameHi) + ' per game, depending on the game and how high your teammate is ranked. ' + HOURLY_LINE + ' are booked by the hour instead, from ' + eur(hourLo) + ' to ' + eur(hourHi) + ', because a game there has no fixed length. Fun modes start at ' + eur(funLo) + '. You always see the exact total before you pay, in euros or US dollars.'],
     ['Are there discounts for more games?',
       'Yes. Bundles save 10% on 3 games or hours, 15% on 5 and 25% on 10. Every game has its own three bundles. Duoly PRO members save another 10% on every order.'],
     ['Which payment methods can I use?',
