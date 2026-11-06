@@ -20,7 +20,7 @@
     "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm test:unit && pnpm build && pnpm test:e2e"
   },
   "dependencies": {
-    "@astrojs/react": "7.1.1",
+    "@astrojs/react": "7.1.2",
     "@astrojs/vercel": "11.0.16",
     "@modelcontextprotocol/ext-apps": "2.0.4",
     "@modelcontextprotocol/server": "2.4.0",
