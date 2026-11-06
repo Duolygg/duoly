@@ -1,5 +1,12 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
+import { registerAppTool } from '@modelcontextprotocol/ext-apps/server';
+import {
+  CARD_URIS,
+  cardData,
+  registerCards,
+  type CardSelection,
+} from './cards';
 import {
   games,
   resolveGame,
@@ -124,7 +131,14 @@ const inputs = {
     edition: z.enum(['Java', 'Bedrock']).optional(),
   }),
   get_availability: z.strictObject({ game: game.optional() }),
-  create_booking_link: z.strictObject({ game, service: service.optional() }),
+  create_booking_link: z.strictObject({
+    game,
+    service: service.optional(),
+    rank: z.string().min(1).max(40).optional(),
+    region: z.string().min(2).max(60).optional(),
+    quantity: z.number().int().min(1).max(10).optional(),
+    currency: z.enum(['EUR', 'USD']).optional(),
+  }),
 };
 const outputs = {
   find_session: z.object({
@@ -229,11 +243,17 @@ export function bookingLink(
   gameId: string,
   serviceId: string | undefined,
   platform: Platform,
+  selection: CardSelection = {},
 ) {
   const url = new URL('https://duoly.gg/');
   url.searchParams.set('game', gameId);
   if (serviceId) url.searchParams.set('service', serviceId);
   url.searchParams.set('agent', platform);
+  if (selection.rank) url.searchParams.set('rank', selection.rank);
+  if (selection.region ?? selection.server)
+    url.searchParams.set('region', (selection.region ?? selection.server)!);
+  if (selection.quantity !== undefined)
+    url.searchParams.set('qty', String(selection.quantity));
   url.hash = 'modes-h';
   return url.href;
 }
@@ -267,6 +287,7 @@ export async function callTool(
   const url = selected?.url ?? g?.url ?? 'https://duoly.gg/games';
   let data: Record<string, unknown>;
   let summary: string;
+  let cardRate = 1;
   switch (name) {
     case 'find_session': {
       const all = services(g!.id);
@@ -331,6 +352,7 @@ export async function callTool(
         );
       const matches = [];
       const fx = await (deps.fx ?? eurToUsd)();
+      cardRate = fx.rate;
       const missing = new Set<string>();
       for (const s of candidates) {
         const missingInputs = [
@@ -371,7 +393,7 @@ export async function callTool(
           continue;
         matches.push({
           ...s,
-          bookUrl: bookingLink(g!.id, s.id, deps.platform ?? 'other'),
+          bookUrl: bookingLink(g!.id, s.id, deps.platform ?? 'other', a),
           priceKind: missingInputs.length ? 'from' : 'exact',
           amountMinor: quote.customer.amountMinor,
           currency: quote.customer.currency,
@@ -395,7 +417,7 @@ export async function callTool(
         ],
         budgetApplied: a.budget !== undefined && a.currency !== undefined,
         notice:
-          'Base price before account perks. Exact prices use the supplied selections; from prices are calculated minima for missing selections, using one unit and EUR when unspecified. A budget without currency is not applied. Links select only game and service; choose remaining options and pay on duoly.gg. A teammate accepts from the queue. No rank guarantees. Never ask for game passwords.',
+          'Base price before account perks. Exact prices use the supplied selections; from prices are calculated minima for missing selections, using one unit and EUR when unspecified. A budget without currency is not applied. Links preserve supplied rank, region and quantity; review remaining options and pay on duoly.gg. A teammate accepts from the queue. No rank guarantees. Never ask for game passwords.',
       };
       summary = best.length
         ? 'Matching Duoly sessions with calculated prices.'
@@ -425,8 +447,27 @@ export async function callTool(
         'Compare Duoly services, from prices in EUR per unit and exact quote inputs.';
       break;
     case 'create_booking_link':
+      if (
+        a.rank &&
+        !(
+          selected?.ranks.length
+            ? selected.ranks
+            : services(g!.id).flatMap((s) => s.ranks)
+        ).includes(a.rank)
+      )
+        throw new ToolInputError(
+          'Invalid rank. Call list_services for valid tokens.',
+        );
+      if (
+        a.region &&
+        !services(g!.id).some((s) => s.regions.includes(a.region!))
+      )
+        throw new ToolInputError(
+          'Invalid region. Call list_services for valid tokens.',
+        );
+      if (a.currency === 'USD') cardRate = (await (deps.fx ?? eurToUsd)()).rate;
       data = {
-        bookUrl: bookingLink(g!.id, selected?.id, deps.platform ?? 'other'),
+        bookUrl: bookingLink(g!.id, selected?.id, deps.platform ?? 'other', a),
         url,
         notice:
           'Select remaining options and complete payment on duoly.gg. This link creates no order.',
@@ -471,7 +512,7 @@ export async function callTool(
         fx,
         notice:
           'Base price before account perks. USD is an estimate. Final payment and any account perks are reviewed on duoly.gg. No teammate is reserved.',
-        bookUrl: bookingLink(g!.id, selected!.id, deps.platform ?? 'other'),
+        bookUrl: bookingLink(g!.id, selected!.id, deps.platform ?? 'other', a),
         url,
       };
       summary = `${formattedPrice} base price before account perks. No reservation.`;
@@ -521,7 +562,9 @@ export async function callTool(
     string,
     unknown
   >;
+  const card = cardData(name, a, structuredContent, cardRate);
   const result = {
+    ...(card ? { _meta: { duoly: card } } : {}),
     structuredContent,
     content: [
       {
@@ -529,6 +572,9 @@ export async function callTool(
         text: `${summary} Share bookUrl to open Duoly and book.
 ${JSON.stringify(structuredContent)}`,
       },
+      ...(card
+        ? [{ type: 'text' as const, text: JSON.stringify({ duoly: card }) }]
+        : []),
     ],
   };
   if (new TextEncoder().encode(JSON.stringify(result)).byteLength > 65536)
@@ -540,10 +586,18 @@ export function createServer(userAgent = '', client: string | null = null) {
     { name: 'duoly', version: '1.0.0' },
     { instructions: INSTRUCTIONS },
   );
+  registerCards(server);
   for (const name of TOOL_NAMES) {
-    server.registerTool(
+    registerAppTool(
+      server,
       name,
       {
+        _meta: {
+          ui: {
+            ...(CARD_URIS[name] ? { resourceUri: CARD_URIS[name] } : {}),
+            visibility: ['model', 'app'],
+          },
+        },
         title: descriptions[name][0]!,
         description: descriptions[name][1]!,
         inputSchema: inputs[name],
