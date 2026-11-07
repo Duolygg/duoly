@@ -1,10 +1,14 @@
+# Actions minute budget: label edits run only Design guard; main pushes run only Quality.
+# PR docs/research-only changes skip expensive checks, but never skip Design guard.
+# Browser smoke runs only on non-draft code PRs (including ready_for_review) or manual runs.
+# Keep pnpm store caching in both expensive jobs; Playwright browsers ship in the container.
 name: CI
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-    types: [opened, synchronize, reopened, labeled, unlabeled]
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
   workflow_dispatch:
 permissions:
   contents: read
@@ -12,8 +16,45 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  changes:
+    name: Detect code changes
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action != 'labeled' && github.event.action != 'unlabeled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Detect changes outside docs and research
+        id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          # Disable rename folding so moves out of code also count as code changes.
+          git diff --no-renames --name-only -z "$BASE" "$HEAD" > "$RUNNER_TEMP/ci-changes"
+          code=false
+          while IFS= read -r -d '' path; do
+            case "$path" in
+              docs/*|*.md|ai-agents-research/*|.github/dependabot.yml) ;;
+              *) code=true; break ;;
+            esac
+          done < "$RUNNER_TEMP/ci-changes"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
   quality:
     name: Quality
+    needs: changes
+    # !cancelled() allows push/manual runs despite the skipped PR-only detector.
+    if: >-
+      !cancelled() &&
+      github.event.action != 'labeled' && github.event.action != 'unlabeled' &&
+      (github.event_name != 'pull_request' || needs.changes.outputs.code == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -61,6 +102,13 @@ jobs:
           echo "Design guard ok"
   browser:
     name: Browser smoke
+    needs: changes
+    if: >-
+      !cancelled() &&
+      (github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+      github.event.action != 'labeled' && github.event.action != 'unlabeled' &&
+      !github.event.pull_request.draft && needs.changes.outputs.code == 'true'))
     runs-on: ubuntu-latest
     # Playwright's own image ships Chromium and its system libraries, so no apt step can hang the job.
     # Keep the tag equal to @playwright/test in package.json.
