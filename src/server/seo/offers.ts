@@ -157,3 +157,19 @@ export function serviceSchema(
     })),
   };
 }
+
+export function faqSchema(items: [string, string][], path: string, site: URL) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map(([question, answer]) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: answer,
+      },
+      url: new URL(path, site).href,
+    })),
+  };
+}

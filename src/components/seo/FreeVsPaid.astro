@@ -1,0 +1,118 @@
+---
+import type { GameDuoGuide } from '../../content/guide-pages';
+interface Props {
+  guide: GameDuoGuide;
+  gameName: string;
+  art: string;
+  booking: string;
+}
+const { guide, gameName, art, booking } = Astro.props;
+const check = 'M6.5 11.2 3.3 8l1.1-1.1 2.1 2.1 5.1-5.1 1.1 1.1z';
+const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
+---
+
+<section class="seo-guide" aria-labelledby="free-or-paid">
+  <div class="guide-head">
+    <img
+      src={art}
+      alt=""
+      width="64"
+      height="64"
+      loading="lazy"
+      decoding="async"
+    />
+    <h2 id="free-or-paid">{guide.heading}</h2>
+  </div>
+  <p class="guide-answer">{guide.answer}</p>
+  <div class="guide-grid">
+    <article class="card guide-card" aria-labelledby="guide-free-h">
+      <p class="guide-tag">Free · €0</p>
+      <h3 id="guide-free-h">Free communities</h3>
+      <p>{guide.freeIntro}</p>
+      <ul class="guide-routes">
+        {guide.freeRoutes.map((route) => (
+          <li>
+            {route.url ? (
+              <a href={route.url} rel="noopener">
+                {route.label}
+              </a>
+            ) : (
+              <strong>{route.label}</strong>
+            )}
+            : {route.text}
+          </li>
+        ))}
+      </ul>
+      <p class="guide-note">{guide.linksNote}</p>
+      <ul class="icon-list">
+        <li class="is-yes">
+          <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+            <path d={check}></path>
+          </svg>
+          <span>
+            <strong>What free gets you:</strong> {guide.freeGets}
+          </span>
+        </li>
+        {guide.limits.map((limit) => (
+          <li class="is-no">
+            <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+              <path d={cross} />
+            </svg>
+            <span>
+              <span class="fvp-sr">Limit: </span>
+              {limit}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </article>
+    <article class="card guide-card guide-paid" aria-labelledby="guide-paid-h">
+      <p class="guide-tag guide-tag-paid">Paid · fixed price</p>
+      <h3 id="guide-paid-h">A paid Duoly session</h3>
+      <p>{guide.paidIntro}</p>
+      <ul class="icon-list">
+        {guide.paidChecks.map((item) => (
+          <li class={item.yes ? 'is-yes' : 'is-no'}>
+            <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+              <path d={item.yes ? check : cross} />
+            </svg>
+            <span>
+              <span class="fvp-sr">{item.yes ? 'Included: ' : 'Limit: '}</span>
+              {item.text}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <table class="guide-prices">
+        <caption>{guide.priceCaption}</caption>
+        <tbody>
+          {guide.priceRows.map((row) => (
+            <tr>
+              <th scope="row">{row.label}</th>
+              <td>{row.value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p>{guide.paidExample}</p>
+      <a class="btn-sm" href={booking}>
+        Book a {gameName} teammate
+      </a>
+    </article>
+  </div>
+</section>
+
+<section class="seo-flow card" aria-labelledby="duo-decision">
+  <h2 id="duo-decision">Which fits you, free or paid?</h2>
+  <p>{guide.flowIntro}</p>
+  <ol class="flow">
+    {guide.flow.map((step, index) => (
+      <li class="flow-step">
+        <span class="flow-num">Step {index + 1}</span>
+        <strong class="flow-q">{step.question}</strong>
+        <span class={`flow-answer flow-${step.yes.kind}`}>{step.yes.text}</span>
+        <span class={`flow-answer flow-${step.no.kind}`}>{step.no.text}</span>
+      </li>
+    ))}
+  </ol>
+</section>

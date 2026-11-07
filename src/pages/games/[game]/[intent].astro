@@ -7,14 +7,26 @@ import Steps from '../../../components/seo/Steps.astro';
 import Topics from '../../../components/seo/Topics.astro';
 import Faq from '../../../components/seo/Faq.astro';
 import ClosingCta from '../../../components/seo/ClosingCta.astro';
+import FreeVsPaid from '../../../components/seo/FreeVsPaid.astro';
 import '../../../components/seo/seo.css';
+import '../../../components/seo/free-vs-paid.css';
 import { intentPages, intentPath } from '../../../content/intent-pages';
 import { intentOffers } from '../../../server/seo/intent-offers';
 import { gameBySlug } from '../../../site/games';
 import { pageViewer } from '../../../site/viewer';
 import { viewerCurrency } from '../../../server/currency';
 import { eurToUsd } from '../../../server/fx';
-import { priceSummary, serviceSchema } from '../../../server/seo/offers';
+import {
+  priceSummary,
+  serviceSchema,
+  faqSchema,
+} from '../../../server/seo/offers';
+import { guideExamples } from '../../../server/seo/guide';
+import {
+  guideForGame,
+  guideFaq,
+  renderTokens,
+} from '../../../content/guide-pages';
 import {
   bookingHref,
   COACHING_SLUGS,
@@ -38,6 +50,11 @@ const offers = intentOffers(page, game.id, {
 const summary = priceSummary(offers);
 const path = intentPath(page);
 const book = bookingHref(game.id, { service: page.service });
+const guidePrices = guideExamples({ eurToUsd: 1 });
+const guide = guideForGame(game.slug);
+const guideCopy = guide ? renderTokens(guide, guidePrices) : null;
+const copy = renderTokens(page, guidePrices);
+const faqItems = guideFaq(page, guidePrices);
 ---
 
 <SiteLayout
@@ -68,30 +85,41 @@ const book = bookingHref(game.id, { service: page.service });
     />
     <section aria-labelledby="format-h">
       <h2 id="format-h">What you get when you book</h2>
-      <p>{page.format}</p>
+      <p>{copy.format}</p>
     </section>
     <Prices gameId={game.id} offers={offers} updated="2026-11-06" />
-    <Steps heading="How matching and booking work" steps={page.steps}>
+    <Steps heading="How matching and booking work" steps={copy.steps}>
       <p>
-        Duoly reviews teammates before they take orders. Read about{' '}
+        Duoly reviews every teammate before any order. Read about{' '}
         <a href="/contact">the team behind Duoly</a>, check the{' '}
         <a href="/terms">payment, cancellation and refund terms</a> or{' '}
         <a href="/contact">contact support</a> for help with a booking.
       </p>
     </Steps>
-    <Topics sections={page.sections} label={`${game.name} duo plan`} />
+    <Topics sections={copy.sections} label={`${game.name} duo plan`} />
+    {guideCopy && (
+      <FreeVsPaid
+        guide={guideCopy}
+        gameName={game.name}
+        art={game.img}
+        booking={book}
+      />
+    )}
     <section class="card" aria-labelledby="prep-h">
       <h2 id="prep-h">Before your first game</h2>
       <ul class="checklist">
-        {page.prepare.map((tip) => (
+        {copy.prepare.map((tip) => (
           <li>{tip}</li>
         ))}
       </ul>
     </section>
-    <Faq items={page.faq} />
+    <Faq items={faqItems} />
     <ClosingCta
       heading={`Ready to play ${game.name} together?`}
-      text="Choose your mode, share your role and book your next games."
+      text={
+        copy.closing ??
+        'Choose your mode, share your role and book your next games.'
+      }
       href={book}
       label="Choose your teammate session"
       price={summary}
@@ -121,6 +149,11 @@ const book = bookingHref(game.id, { service: page.service });
     set:html={serializeJsonLd(
       serviceSchema(page.h1, path, offers, Astro.site!),
     )}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faqItems, path, Astro.site!))}
   />
 </SiteLayout>
 

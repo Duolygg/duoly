@@ -38,5 +38,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
       continue;
     response.headers.set(name, value);
   }
+  // Pages are UTF-8 (meta charset), but clients that only read the HTTP header
+  // otherwise fall back to Latin-1 and garble €, ’ and other characters.
+  if (response.headers.get('content-type') === 'text/html')
+    response.headers.set('content-type', 'text/html; charset=utf-8');
   return response;
 });
