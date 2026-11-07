@@ -1,5 +1,30 @@
 # MCP text samples
 
+## Existing-control prefill examples
+
+Captured from local HTTP MCP responses. Private note, IGN and creator-code inputs are intentionally not accepted by these tools.
+
+## create_booking_link: {"game":"val","service":"vod","region":"EU","quantity":3,"role":"Controller","character":"Omen","voice":false,"mood":"teach"}
+
+```text
+Continue on Duoly to review your selection. Select remaining options and complete payment on duoly.gg. This link creates no order. https://duoly.gg/?game=val&service=vod&agent=claude&region=EU&role=Controller&character=Omen&voice=false&mood=teach&qty=3#modes-h
+```
+
+## find_session: {"game":"lol","goal":"coaching","region":"EUW","quantity":1,"role":"Jungle","character":"Ahri","voice":false,"mood":"teach","currency":"EUR"}
+
+```text
+Play and Learn (learn): Play a real ranked game together while your coach explains every decision out loud, with a quick review after. EUR 12.99 total for 1 game; EUR 12.99 per game. https://duoly.gg/?game=lol&service=learn&agent=claude&region=EUW&role=Jungle&character=Ahri&voice=false&mood=teach&qty=1#modes-h
+VOD Review (vod): Send a recent game; Your coach goes through it with you on Discord (laning, waves, map moves) and leaves you with three things to fix. EUR 12.99 total for 1 hour; EUR 12.99 per hour. https://duoly.gg/?game=lol&service=vod&agent=claude&region=EUW&role=Jungle&character=Ahri&voice=false&mood=teach&qty=1#modes-h
+Champion Mastery (champ): One champion, properly: matchups, combos, builds and power spikes, practised in a live game. EUR 12.99 total for 1 hour; EUR 12.99 per hour. https://duoly.gg/?game=lol&service=champ&agent=claude&region=EUW&role=Jungle&character=Ahri&voice=false&mood=teach&qty=1#modes-h
+Base price before account perks. Pay on Duoly.
+```
+
+## create_booking_link: {"game":"mc","service":"squad","server":"my world","edition":"Bedrock","seats":2}
+
+```text
+Continue on Duoly to review your selection. Select remaining options and complete payment on duoly.gg. This link creates no order. https://duoly.gg/?game=mc&service=squad&agent=claude&server=my+world&edition=Bedrock&seats=2#modes-h
+```
+
 Verbatim content[0].text captured from the local Astro endpoint (2025-11-25). Server calculator, local test-only limiter, no production writes.
 
 ## list_services: {"game":"lol"}

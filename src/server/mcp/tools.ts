@@ -665,7 +665,7 @@ export async function callTool(
         throw new ToolInputError('Supply only one of region or server.');
       if (
         !selected &&
-        Object.keys(preferences).some(
+        [...Object.keys(preferences), 'server', 'edition'].some(
           (key) => a[key as keyof typeof a] !== undefined,
         )
       )

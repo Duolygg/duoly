@@ -4,7 +4,7 @@ import { games, services } from '../../src/server/mcp/catalog';
 import { rolesFor } from '../../src/contracts/roles';
 import Home from '../../src/components/home/Home.jsx';
 
-function open(search: string) {
+function open(search: string, props: Record<string, unknown> = {}) {
   let url = new URL('https://duoly.gg/' + search);
   vi.stubGlobal('window', {
     location: url,
@@ -15,7 +15,7 @@ function open(search: string) {
     },
   });
   vi.stubGlobal('document', { getElementById: () => null });
-  const home = new Home({ recentMatches: [] });
+  const home = new Home({ recentMatches: [], ...props });
   home.setState = (patch, callback) => {
     Object.assign(home.state, patch);
     callback?.();
@@ -27,6 +27,31 @@ function open(search: string) {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('homepage booking links', () => {
+  it('forwards prefilled values through the unchanged checkout callback only after confirmation', async () => {
+    const onCheckout = vi.fn(async () => ({}));
+    const { home } = open(
+      '?game=mc&service=squad&server=my+world&edition=Bedrock&seats=2&voice=false&mood=chill&ign=Player&note=Build+a+base&creatorCode=ABC123',
+      { onCheckout },
+    );
+    expect(onCheckout).not.toHaveBeenCalled();
+    await home.renderVals().placeOrder();
+    expect(onCheckout).toHaveBeenCalledWith(
+      expect.objectContaining({
+        gameId: 'mc',
+        serviceId: 'squad',
+        server: 'my world',
+        edition: 'Bedrock',
+        seats: 2,
+        voice: false,
+        mood: 'chill',
+        ign: 'Player',
+        note: 'Build a base',
+        creatorCode: 'ABC123',
+        useWallet: true,
+      }),
+    );
+  });
+
   it('accepts explicit private-text links without requesting these fields from assistants', () => {
     const { home, url } = open(
       '?game=lol&service=learn&ign=+Player%23123+&note=+Practice+laning+&creatorCode=ABC123',
@@ -106,7 +131,7 @@ describe('homepage booking links', () => {
   });
   it('does not suppress an explicitly selected role with a main-service bundle', () => {
     const { home } = open('?game=lol&service=duo2&qty=3&role=Jungle');
-    expect(home.state.bundle).toBeNull();
+    expect(home.state).toHaveProperty('bundle', null);
     expect(
       home.renderVals().roleOpts.find((r) => r.name === 'Jungle')?.pressed,
     ).toBe('true');

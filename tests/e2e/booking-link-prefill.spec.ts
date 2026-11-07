@@ -11,15 +11,13 @@ test('assistant coaching link selects existing controls without changing page la
     role.getByRole('button', { name: 'Fill', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true');
   const layout = async () =>
-    page
-      .locator('header, #modes-h, .dl-bar')
-      .evaluateAll((nodes) =>
-        nodes.map((node) => ({
-          tag: node.tagName,
-          width: Math.round(node.getBoundingClientRect().width),
-          height: Math.round(node.getBoundingClientRect().height),
-        })),
-      );
+    page.locator('header, #modes-h, .dl-bar').evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        tag: node.tagName,
+        width: Math.round(node.getBoundingClientRect().width),
+        height: Math.round(node.getBoundingClientRect().height),
+      })),
+    );
   const baseline = await layout();
   const out = process.env.PREFILL_SCREENSHOTS;
   if (out) {
