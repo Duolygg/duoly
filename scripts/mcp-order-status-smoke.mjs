@@ -2,6 +2,7 @@
 /* global console, fetch, document, window */
 // Local-only fictional status fixtures. Never point this runner at a remote database.
 import assert from 'node:assert/strict';
+import { Buffer } from 'node:buffer';
 import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -242,6 +243,7 @@ if (process.argv.includes('--serve-fixtures')) {
             el.style.width = w + 'px';
             el.style.maxWidth = 'none';
             el.style.boxSizing = 'content-box';
+            el.style.height = '720px';
           }, width);
         await page.waitForTimeout(400);
         const metrics = await frame.evaluate(() => ({
