@@ -24,6 +24,20 @@ function open(search: string) {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('homepage booking links', () => {
+  it('prefills existing coaching fields without suppressing roles in a bundle', () => {
+    const { home, url } = open(
+      '?game=lol&service=learn&role=Jungle&character=+Ahri+&voice=false&mood=teach&qty=3',
+    );
+    expect(home.state).toMatchObject({
+      role: 'Jungle',
+      character: 'Ahri',
+      voice: false,
+      mood: 'teach',
+      qty: 3,
+      bundle: null,
+    });
+    expect(url.search).toBe('');
+  });
   it('prefills the catalog rank, server and matching main-service bundle', () => {
     const { home, url } = open(
       '?game=val&service=duo2&rank=Gold&region=NA&qty=3&agent=claude&other=keep#modes-h',
@@ -54,12 +68,12 @@ describe('homepage booking links', () => {
   );
 
   it.each([
-    ['duo2', '100', 10, 'Ace'],
+    ['duo2', '100', 1, null],
     ['duo1', '3', 3, null],
-    ['vod', '100', 10, null],
+    ['vod', '100', 1, null],
     ['duo2', '2', 2, null],
   ])(
-    'clamps %s quantity %s without changing the service',
+    'validates %s quantity %s without changing the service',
     (service, qty, expected, bundle) => {
       const { home } = open(`?game=val&service=${service}&qty=${qty}`);
       expect(home.state).toMatchObject({
