@@ -14,6 +14,7 @@ const out =
   process.env.MCP_CARDS_OUTPUT ??
   `${homedir()}/.hermes/cache/scratch/mcp-cards`;
 await mkdir(out, { recursive: true });
+const version = process.env.MCP_PROTOCOL_VERSION ?? '2025-11-25';
 let id = 0;
 async function rpc(method, params = {}) {
   const response = await fetch(endpoint, {
@@ -22,9 +23,34 @@ async function rpc(method, params = {}) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json, text/event-stream',
-      'MCP-Protocol-Version': '2025-11-25',
+      'MCP-Protocol-Version': version,
+      ...(version === '2026-07-28'
+        ? {
+            'Mcp-Method': method,
+            ...(params.name ? { 'Mcp-Name': params.name } : {}),
+          }
+        : {}),
     },
-    body: JSON.stringify({ jsonrpc: '2.0', id: ++id, method, params }),
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: ++id,
+      method,
+      params: {
+        ...params,
+        ...(version === '2026-07-28'
+          ? {
+              _meta: {
+                'io.modelcontextprotocol/protocolVersion': version,
+                'io.modelcontextprotocol/clientInfo': {
+                  name: 'duoly-cards-smoke',
+                  version: '1',
+                },
+                'io.modelcontextprotocol/clientCapabilities': {},
+              },
+            }
+          : {}),
+      },
+    }),
   });
   assert.equal(response.status, 200, await response.clone().text());
   const json = await response.json();
@@ -32,18 +58,21 @@ async function rpc(method, params = {}) {
   assert.equal(json.result.isError, undefined, JSON.stringify(json));
   return json.result;
 }
-const init = await rpc('initialize', {
-  protocolVersion: '2025-11-25',
-  capabilities: {
-    extensions: {
-      'io.modelcontextprotocol/ui': {
-        mimeTypes: ['text/html;profile=mcp-app'],
+const init = await rpc(
+  version === '2026-07-28' ? 'server/discover' : 'initialize',
+  {
+    protocolVersion: version,
+    capabilities: {
+      extensions: {
+        'io.modelcontextprotocol/ui': {
+          mimeTypes: ['text/html;profile=mcp-app'],
+        },
       },
     },
+    clientInfo: { name: 'duoly-cards-smoke', version: '1' },
   },
-  clientInfo: { name: 'duoly-cards-smoke', version: '1' },
-});
-assert.equal(init.protocolVersion, '2025-11-25');
+);
+if (version !== '2026-07-28') assert.equal(init.protocolVersion, version);
 const tools = (await rpc('tools/list')).tools;
 const resources = (await rpc('resources/list')).resources;
 assert.equal(resources.length, 3);
@@ -254,7 +283,7 @@ try {
   assert.deepEqual(errors, []);
   await writeFile(`${out}/host.html`, host(fixtures[0]));
   console.log(
-    `PASS: HTTP initialize, six tools, three resources; all four views at 712 and 390; rank/tier/pack parity; link bridge; stripped-content fallback; game-to-coaching tool call. Screenshots: ${out}`,
+    `PASS: HTTP initialize, six tools, three resources; all four views at 712 and 390; rank/tier/pack parity; link bridge; metadata-stripped proxy recovery; game-to-coaching tool call. Screenshots: ${out}`,
   );
 } finally {
   await browser.close();

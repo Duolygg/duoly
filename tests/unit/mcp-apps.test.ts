@@ -81,7 +81,7 @@ it.each(['EUR', 'USD'] as const)(
         { fx },
       );
       const { context } = view(result);
-      for (const option of result._meta!.duoly.options) {
+      for (const option of result._meta!['gg.duoly/card'].options) {
         for (const rank of option.ranks) {
           for (const quantity of [1, 3, 5, 10]) {
             context.selection = { rank, quantity };
@@ -111,19 +111,20 @@ it.each(['EUR', 'USD'] as const)(
     expect(combinations).toBe(228);
   },
 );
-it('renders via text content alone when Claude strips structuredContent and metadata', async () => {
+it('renders from view-only metadata without a text payload', async () => {
   const result = await callTool(
     'find_session',
     { game: 'val', goal: 'ranked', rank: 'Gold', region: 'EU', quantity: 3 },
     { fx },
   );
-  const { app } = view({ content: result.content });
+  const { app } = view({ _meta: result._meta });
   expect(app.innerHTML).toContain('Duo Plus');
   expect(app.innerHTML).toContain('Book on Duoly');
   expect(app.innerHTML).not.toMatch(
     /online|4 min|rating|reviews|[\u2013\u2014]| & /,
   );
-  expect(result.content[0]!.text).toContain(
+  expect(result.content).toHaveLength(1);
+  expect(result.content[0]!.text).not.toContain(
     JSON.stringify(result.structuredContent),
   );
 });
@@ -150,7 +151,7 @@ it('hides zero online counts rather than inventing availability', async () => {
     { game: 'val', goal: 'ranked' },
     { fx },
   );
-  result._meta!.duoly.data.online = 0;
+  result._meta!['gg.duoly/card'].data.online = 0;
   expect(view(result).app.innerHTML).not.toMatch(/online|nobody|4 min/);
 });
 it.each([

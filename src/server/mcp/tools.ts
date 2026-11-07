@@ -70,6 +70,15 @@ const serviceOutput = z.object({
   category: z.string(),
   description: z.string(),
   fromPrice: fromPriceOutput,
+  priceNote: z.string(),
+  typicalPrice: z
+    .object({
+      rank: z.string(),
+      quantity: z.literal(1),
+      amountMinor: z.number().int(),
+      currency: z.literal('EUR'),
+    })
+    .optional(),
   unit: z.enum(['game', 'hour']),
   ranks: z.array(z.string()),
   regions: z.array(z.string()),
@@ -120,7 +129,10 @@ const inputs = {
     service,
     rank: z.string().max(40).optional(),
     quantity: z.number().int().min(1).max(10),
-    currency: z.enum(['EUR', 'USD']),
+    currency: z.enum(['EUR', 'USD'], {
+      error:
+        'currency is required. Valid inputs: game, service, rank when rank-priced, server, quantity (1..10), currency (EUR or USD); Minecraft also requires edition (Java or Bedrock). Use list_services for valid service, rank and server tokens.',
+    }),
     server: z
       .string()
       .min(2)
@@ -145,14 +157,36 @@ const outputs = {
     game: z.string(),
     matches: z
       .array(
-        serviceOutput.extend({
-          priceKind: z.enum(['exact', 'from']),
-          amountMinor: z.number().int(),
-          currency: z.enum(['EUR', 'USD']),
-          formattedPrice: z.string(),
-          quantity: z.number().int(),
-          missingInputs: z.array(z.string()),
-        }),
+        serviceOutput
+          .pick({
+            id: true,
+            name: true,
+            category: true,
+            description: true,
+            unit: true,
+            bookUrl: true,
+            priceNote: true,
+          })
+          .extend({
+            fromPrice: fromPriceOutput.optional(),
+            representativePrice: z
+              .object({
+                rank: z.string().optional(),
+                quantity: z.number().int(),
+                amountMinor: z.number().int(),
+                currency: z.enum(['EUR', 'USD']),
+              })
+              .optional(),
+            perUnitMinor: z.number().int(),
+            savingMinor: z.number().int(),
+            bundleDiscountPercent: z.number(),
+            priceKind: z.enum(['exact', 'from']),
+            amountMinor: z.number().int(),
+            currency: z.enum(['EUR', 'USD']),
+            formattedPrice: z.string(),
+            quantity: z.number().int(),
+            missingInputs: z.array(z.string()),
+          }),
       )
       .max(3),
     missingInputs: z.array(z.string()),
@@ -172,6 +206,9 @@ const outputs = {
     currency: z.enum(['EUR', 'USD']),
     amountMinor: z.number().int(),
     amountEurMinor: z.number().int(),
+    perUnitMinor: z.number().int(),
+    savingMinor: z.number().int(),
+    bundleDiscountPercent: z.number(),
     formattedPrice: z.string(),
     unit: z.enum(['game', 'hour']),
     quantity: z.number().int(),
@@ -221,7 +258,7 @@ const descriptions = {
   ],
   get_quote: [
     'Calculate base quote',
-    'Get a real calculated session price and bookUrl for a selected service. Share bookUrl to review options and pay on Duoly. Base price before account perks.',
+    'Use find_session for discovery and pricing. Compatibility tool for a selected service: calculate its base price before account perks. Required inputs: game, service, quantity (1..10), currency (EUR or USD), server, and rank for rank-priced services; Minecraft also needs edition.',
   ],
   get_availability: [
     'Check session availability',
@@ -229,7 +266,7 @@ const descriptions = {
   ],
   create_booking_link: [
     'Get a booking link',
-    'Get a bookUrl that opens Duoly with the game and service selected. Share it for the user to review remaining options and pay on duoly.gg.',
+    'Use find_session for discovery and pricing. Call create_booking_link only to produce a final booking link after the user selects a session. No order or payment is created.',
   ],
 };
 export const INSTRUCTIONS =
@@ -256,6 +293,24 @@ export function bookingLink(
     url.searchParams.set('qty', String(selection.quantity));
   url.hash = 'modes-h';
   return url.href;
+}
+function priceDetails(quote: ReturnType<typeof calculateQuote>) {
+  const subtotal =
+    quote.customer.currency === 'USD'
+      ? Math.round(quote.subtotalEurMinor * quote.fx.customerUsdRate)
+      : quote.subtotalEurMinor;
+  return {
+    perUnitMinor: Math.round(
+      quote.customer.amountMinor / quote.selection.units,
+    ),
+    savingMinor: subtotal - quote.customer.amountMinor,
+    bundleDiscountPercent: quote.quantityDiscountPercent,
+  };
+}
+const money = (minor: number, currency = 'EUR') =>
+  `${currency} ${(minor / 100).toFixed(2)}`;
+function priceText(s: Record<string, unknown>) {
+  return `${s.priceKind === 'from' ? 'from ' : ''}${money(Number(s.amountMinor), String(s.currency))} total for ${s.quantity} ${s.unit ?? 'unit'}; ${money(Number(s.perUnitMinor), String(s.currency))} per ${s.unit ?? 'unit'}${Number(s.savingMinor) > 0 ? `; saves ${money(Number(s.savingMinor), String(s.currency))}, ${s.bundleDiscountPercent}% bundle discount` : ''}`;
 }
 export async function callTool(
   name: ToolName,
@@ -392,9 +447,51 @@ export async function callTool(
         )
           continue;
         matches.push({
-          ...s,
+          id: s.id,
+          name: s.name,
+          category: s.category,
+          description: s.description,
+          unit: s.unit,
+          priceNote: s.priceNote,
+          ...((!s.ranks.length || a.rank) && a.quantity !== undefined
+            ? {}
+            : {
+                fromPrice: s.fromPrice,
+                representativePrice: (() => {
+                  const rank = s.ranks.length
+                    ? (a.rank ??
+                      (s.ranks.includes('Gold') ? 'Gold' : s.ranks[0]))
+                    : undefined;
+                  const q = calculateQuote(
+                    {
+                      gameId: g!.id,
+                      serviceId: s.id,
+                      units: a.quantity ?? 1,
+                      server: server ?? s.regions[0] ?? 'my world',
+                      ...(rank ? { rank } : {}),
+                      ...(g!.id === 'mc'
+                        ? { edition: a.edition ?? 'Java' }
+                        : {}),
+                    },
+                    {
+                      eurToUsd: fx.rate,
+                      customerCurrency: a.currency ?? 'EUR',
+                    },
+                  );
+                  return {
+                    ...(rank ? { rank } : {}),
+                    quantity: a.quantity ?? 1,
+                    amountMinor: q.customer.amountMinor,
+                    currency: q.customer.currency,
+                  };
+                })(),
+              }),
+          ...priceDetails(quote),
           bookUrl: bookingLink(g!.id, s.id, deps.platform ?? 'other', a),
-          priceKind: missingInputs.length ? 'from' : 'exact',
+          priceKind:
+            (!s.ranks.length || a.rank) && a.quantity !== undefined
+              ? 'exact'
+              : 'from',
           amountMinor: quote.customer.amountMinor,
           currency: quote.customer.currency,
           formattedPrice: new Intl.NumberFormat('en-US', {
@@ -417,7 +514,7 @@ export async function callTool(
         ],
         budgetApplied: a.budget !== undefined && a.currency !== undefined,
         notice:
-          'Base price before account perks. Exact prices use the supplied selections; from prices are calculated minima for missing selections, using one unit and EUR when unspecified. A budget without currency is not applied. Links preserve supplied rank, region and quantity; review remaining options and pay on duoly.gg. A teammate accepts from the queue. No rank guarantees. Never ask for game passwords.',
+          'Base price before account perks; EUR unless specified. Representative prices are examples, not inferred selections. Review remaining inputs on Duoly. A teammate accepts from the queue.',
       };
       summary = best.length
         ? 'Matching Duoly sessions with calculated prices.'
@@ -505,6 +602,7 @@ export async function callTool(
         currency: quote.customer.currency,
         amountMinor: quote.customer.amountMinor,
         amountEurMinor: quote.amountEurMinor,
+        ...priceDetails(quote),
         formattedPrice,
         unit: quote.unit,
         quantity: a.quantity,
@@ -564,17 +662,56 @@ export async function callTool(
   >;
   const card = cardData(name, a, structuredContent, cardRate);
   const result = {
-    ...(card ? { _meta: { duoly: card } } : {}),
+    ...(card ? { _meta: { 'gg.duoly/card': card } } : {}),
     structuredContent,
     content: [
       {
         type: 'text' as const,
-        text: `${summary} Share bookUrl to open Duoly and book.
-${JSON.stringify(structuredContent)}`,
+        text: (() => {
+          if (name === 'list_games')
+            return (structuredContent.games as Array<Record<string, unknown>>)
+              .map((g) => `${g.name} (${g.id}): ${g.bookUrl}`)
+              .join('\n');
+          if (name === 'list_services')
+            return (
+              structuredContent.services as Array<Record<string, unknown>>
+            )
+              .map((s) => {
+                const from = s.fromPrice as { amountMinor: number };
+                const typical = s.typicalPrice as
+                  { rank: string; amountMinor: number } | undefined;
+                return `${s.name} (${s.id}): ${s.description} From ${money(from.amountMinor)} per ${s.unit}.${typical ? ` ${s.priceNote} Typical ${typical.rank}, 1 ${s.unit}: ${money(typical.amountMinor)}.` : ''} ${s.bookUrl}`;
+              })
+              .join('\n');
+          if (name === 'find_session')
+            return `${
+              (structuredContent.matches as Array<Record<string, unknown>>)
+                .map((s) => {
+                  const example = s.representativePrice as
+                    | {
+                        rank?: string;
+                        quantity: number;
+                        amountMinor: number;
+                        currency: string;
+                      }
+                    | undefined;
+                  return `${s.name} (${s.id}): ${s.description} ${priceText(s)}.${example ? ` ${s.priceNote} Example ${example.rank ?? 'flat price'}, ${example.quantity} ${s.unit}: ${money(example.amountMinor, example.currency)}.` : ''} ${s.bookUrl}`;
+                })
+                .join('\n') || summary
+            }\n${(structuredContent.missingInputs as string[]).length ? `Remaining inputs: ${(structuredContent.missingInputs as string[]).join(', ')}. ` : ''}Base price before account perks. Pay on Duoly.`;
+          if (name === 'get_quote')
+            return `${priceText(structuredContent)}. Base price before account perks. No reservation. ${structuredContent.bookUrl}`;
+          if (name === 'get_availability')
+            return `${summary}${
+              structuredContent.onlineByGame
+                ? ` Online now: ${Object.entries(structuredContent.onlineByGame)
+                    .map(([id, count]) => `${id}: ${count}`)
+                    .join(', ')} (may include teammates in a session).`
+                : ''
+            }${structuredContent.medianMatchSeconds !== undefined ? ` Historical sitewide median: ${structuredContent.medianMatchSeconds}s over 30 days; no future wait guarantee.` : ''} ${structuredContent.bookUrl}`;
+          return `${summary} ${structuredContent.notice} ${structuredContent.bookUrl}`;
+        })(),
       },
-      ...(card
-        ? [{ type: 'text' as const, text: JSON.stringify({ duoly: card }) }]
-        : []),
     ],
   };
   if (new TextEncoder().encode(JSON.stringify(result)).byteLength > 65536)

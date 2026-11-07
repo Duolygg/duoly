@@ -25,13 +25,10 @@ describe('MCP tools', () => {
   it('puts complete bookable service data in the text the model reads', async () => {
     const result = await callTool('list_services', { game: 'lol' });
     const text = result.content[0]!.text;
-    expect(text).toContain('"id":"duo2"');
-    expect(text).toContain('"ranks":');
-    expect(text).toContain('EUW');
-    expect(text).toContain(
-      '"bookUrl":"https://duoly.gg/?game=lol&service=duo2',
-    );
-    expect(text).toContain('Share bookUrl');
+    expect(text).toContain('Duo Pro (duo2)');
+    expect(text).toContain('Typical Gold, 1 game:');
+    expect(text).toContain('https://duoly.gg/?game=lol&service=duo2');
+    expect(text).not.toContain('{');
     expect(
       new TextEncoder().encode(JSON.stringify(result)).byteLength,
     ).toBeLessThanOrEqual(65536);
@@ -203,10 +200,11 @@ describe('MCP tools', () => {
       ],
     ] as const) {
       const result = await callTool(name, args, { fx, live });
-      expect(result.content[0]!.text).toContain(
+      expect(result.content).toHaveLength(1);
+      expect(result.content[0]!.text).not.toContain(
         JSON.stringify(result.structuredContent),
       );
-      expect(result.content[0]!.text).toContain('"bookUrl":"https://duoly.gg/');
+      expect(result.content[0]!.text).toContain('https://duoly.gg/');
       if (result.structuredContent.bookUrl) {
         const link = new URL(String(result.structuredContent.bookUrl));
         expect(
