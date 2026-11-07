@@ -1,12 +1,13 @@
 ---
 interface Props {
   items: [string, string][];
+  heading?: string;
 }
-const { items } = Astro.props;
+const { items, heading = 'Frequently asked questions' } = Astro.props;
 ---
 
 <section aria-labelledby="faq-h">
-  <h2 id="faq-h">Frequently asked questions</h2>
+  <h2 id="faq-h">{heading}</h2>
   <div class="faq-list">
     {items.map(([question, answer]) => (
       <details>

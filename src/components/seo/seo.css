@@ -665,6 +665,157 @@
 .seo-page .price-card .price.same .money {
   font-size: 20px;
 }
+/* Example sessions */
+.session-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 18px 0 24px;
+}
+.seo-page .session-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 44px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #120b22;
+  border: 1px solid rgba(196, 170, 255, 0.16);
+  text-decoration: none;
+}
+.seo-page .session-pick:hover {
+  border-color: rgba(214, 187, 255, 0.4);
+}
+.session-pick-title {
+  color: #f3eeff;
+  font-weight: 700;
+  font-size: 16px;
+}
+.session-pick-tier {
+  color: #d6bbff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.session-pick-goal {
+  color: #cfc4ea;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.session-pick-price {
+  margin-top: auto;
+  padding-top: 6px;
+  color: #f3eeff;
+  font-weight: 700;
+  font-size: 15px;
+}
+.session-card {
+  margin: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+.session-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+.session-head .pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(214, 187, 255, 0.1);
+  border: 1px solid rgba(214, 187, 255, 0.22);
+  color: #d6bbff;
+  font-size: 13px;
+  font-weight: 650;
+}
+.session-card .session-goal,
+.session-card .session-bring {
+  margin: 0;
+  max-width: none;
+}
+.session-timeline {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+}
+/* Each connector runs from a marker to the next one and stops at the last step. */
+.session-timeline li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 37px;
+  top: 14px;
+  bottom: -14px;
+  width: 2px;
+  background: rgba(214, 187, 255, 0.22);
+}
+.seo-page .session-timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 16px;
+  padding: 0 0 18px;
+  max-width: none;
+  line-height: 1.6;
+}
+.session-timeline li:last-child {
+  padding-bottom: 0;
+}
+.session-at {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  min-height: 28px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: #251b3e;
+  border: 1px solid rgba(214, 187, 255, 0.3);
+  color: #f3eeff;
+  font-weight: 700;
+  font-size: 13px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.session-step {
+  color: #a79dc4;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.seo-page .session-compare {
+  margin: 0;
+  max-width: none;
+  color: #a79dc4;
+  font-size: 14px;
+}
+.session-takeaways {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(214, 187, 255, 0.16);
+  background: rgba(214, 187, 255, 0.05);
+  padding: 14px 16px;
+}
+.seo-page .session-takeaways-title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f3eeff;
+}
+@media (max-width: 480px) {
+  .seo-page .session-timeline li {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .session-timeline li:not(:last-child)::after {
+    left: 35px;
+  }
+}
 @media (max-width: 860px) {
   .topic .paras {
     display: block;

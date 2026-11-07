@@ -5,8 +5,8 @@ import SeoHero from '../../../components/seo/SeoHero.astro';
 import Prices from '../../../components/seo/Prices.astro';
 import Steps from '../../../components/seo/Steps.astro';
 import Topics from '../../../components/seo/Topics.astro';
-import Agenda from '../../../components/seo/Agenda.astro';
 import Faq from '../../../components/seo/Faq.astro';
+import SessionExamples from '../../../components/seo/SessionExamples.astro';
 import ClosingCta from '../../../components/seo/ClosingCta.astro';
 import { rich } from '../../../components/seo/rich';
 import '../../../components/seo/seo.css';
@@ -22,6 +22,11 @@ import {
   seoOffers,
   serviceSchema,
 } from '../../../server/seo/offers';
+import {
+  bookingAnswer,
+  exampleOffers,
+  withPrices,
+} from '../../../server/seo/coaching-examples';
 import {
   serializeJsonLd,
   GUIDE_PATH,
@@ -95,12 +100,17 @@ const description = descriptions[game.slug]!;
       facts={coachingFacts(offers)}
     />
     <section aria-labelledby="get-h">
-      <h2 id="get-h">What {game.name} coaching covers</h2>
-      <p set:html={rich(lesson.format)} />
+      <h2 id="get-h">What does {game.name} coaching cover?</h2>
+      <p set:html={rich(withPrices(lesson.format, offers))} />
     </section>
     <Prices gameId={game.id} offers={offers} coach />
+    <SessionExamples
+      gameId={game.id}
+      gameName={game.name}
+      examples={exampleOffers(game.id, offers)}
+    />
     <Steps
-      heading="How booking works"
+      heading={`How do you book a ${game.name} coach?`}
       steps={[
         'Pick your training service and add your goal.',
         'Check out once, upfront.',
@@ -108,29 +118,35 @@ const description = descriptions[game.slug]!;
       ]}
     >
       <p>
-        Every coach is reviewed by Duoly before taking orders. See the{' '}
+        {bookingAnswer(game.name, offers)} See the{' '}
         <a href="/terms">payment and refund terms</a> or{' '}
         <a href="/contact">contact support</a> any time.
       </p>
     </Steps>
-    <Topics sections={lesson.sections} label={`${game.name} focus`} />
-    <Agenda
-      steps={lesson.agenda}
-      heading={
-        game.slug === 'valorant' || game.slug === 'league-of-legends'
-          ? 'Sample 1-hour VOD review'
-          : 'Sample 1-hour lesson'
-      }
+    <Topics
+      sections={lesson.sections.map((section) => ({
+        ...section,
+        paragraphs: section.paragraphs.map((text) => withPrices(text, offers)),
+      }))}
+      label={`${game.name} focus`}
     />
     <section class="card" aria-labelledby="prep-h">
-      <h2 id="prep-h">How to prepare</h2>
+      <h2 id="prep-h">How should you prepare for {game.name} coaching?</h2>
       <ul class="checklist">
-        {lesson.prepare.split(/(?<=\.)\s+/).map((tip) => (
-          <li>{tip}</li>
-        ))}
+        {withPrices(lesson.prepare, offers)
+          .split(/(?<=\.)\s+/)
+          .map((tip) => (
+            <li>{tip}</li>
+          ))}
       </ul>
     </section>
-    <Faq items={lesson.faq} />
+    <Faq
+      heading={`What do players ask about ${game.name} coaching?`}
+      items={lesson.faq.map(([question, answer]) => [
+        question,
+        withPrices(answer, offers),
+      ])}
+    />
     <ClosingCta
       heading={`Ready for your ${game.name} lesson?`}
       text="Pick a service, add your goal and meet your coach."
