@@ -717,6 +717,7 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .tc-card:hover{transform:translateY(-4px);border-color:rgba(214,187,255,.45)}
 .tc-plays{border-color:rgba(214,187,255,.26)}
 .tc-gg{border-color:rgba(255,79,176,.32);background:linear-gradient(160deg,rgba(84,24,72,.75),#120B22)}
+.tc-gg:hover{border-color:rgba(255,79,176,.6)}
 .tc-head{display:flex;align-items:center;gap:12px;min-width:0}
 .tc-avatar{position:relative;flex:0 0 auto}
 .tc-avatar img{display:block;width:52px;height:52px;border-radius:50%;object-fit:cover}
@@ -805,7 +806,7 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .mp-card:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--mc) 45%,transparent)}
 .mp-card:hover::before{opacity:.45}
 .mp-card:focus-visible{outline:2px solid var(--mc);outline-offset:2px}
-.mp-card.is-on{border-color:var(--mc);box-shadow:0 0 0 3px color-mix(in srgb,var(--mc) 16%,transparent),0 14px 34px color-mix(in srgb,var(--mc) 22%,transparent)}
+.mp-card.is-on{border-color:var(--mc);box-shadow:0 14px 34px color-mix(in srgb,var(--mc) 22%,transparent)}
 .mp-card.is-on::before{opacity:1}
 .mp-ico{display:flex;align-items:center;justify-content:center;width:40px;height:40px;margin-bottom:6px;border-radius:12px;background:color-mix(in srgb,var(--mc) 14%,transparent);color:var(--mc);transition:background-color .25s ease,color .25s ease,transform .3s cubic-bezier(.2,1.5,.4,1)}
 .mp-card.is-on .mp-ico{background:var(--mc);color:#17092E;transform:scale(1.06) rotate(-4deg)}
