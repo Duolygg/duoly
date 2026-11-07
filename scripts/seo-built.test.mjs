@@ -216,10 +216,17 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/&#\d+;|&[a-z]+;/gi, ' ');
     const wordCount = text.trim().split(/\s+/).length;
+    // Pages with the free-versus-paid guide carry two extra sections.
+    const guided = html.includes('id="free-or-paid"');
+    const [minWords, maxWords] = guided ? [1500, 2400] : [600, 1000];
     assert(
-      wordCount >= 600 && wordCount <= 1000,
+      wordCount >= minWords && wordCount <= maxWords,
       `${path}: ${wordCount} words`,
     );
+    if (guided) {
+      assert.match(html, /id="duo-decision"/, 'decision flow');
+      assert.doesNotMatch(html, /\{\{\w+\}\}/, 'price tokens filled');
+    }
     assert((html.match(/<details/g) || []).length >= 5, 'visible FAQs');
     assert.match(
       html,

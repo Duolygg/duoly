@@ -1,0 +1,237 @@
+/* Free versus paid guidance on the League and Marvel Rivals duo pages. */
+.seo-guide .guide-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.seo-guide .guide-head img {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  object-fit: cover;
+}
+.seo-guide .guide-head h2 {
+  margin: 0;
+}
+.seo-guide .guide-answer {
+  max-width: 75ch;
+  margin: 14px 0 0;
+}
+.seo-guide .guide-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+@media (min-width: 860px) {
+  .seo-guide .guide-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.seo-guide .guide-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.seo-guide .guide-card h3 {
+  margin: 0;
+}
+.seo-guide .guide-card p {
+  margin: 0;
+}
+.seo-guide .guide-paid {
+  border-color: rgba(214, 187, 255, 0.32);
+}
+.seo-guide .guide-tag {
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 187, 255, 0.22);
+  background: rgba(214, 187, 255, 0.1);
+  color: #d6bbff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.seo-guide .guide-tag-paid {
+  background: #d6bbff;
+  color: #17092e;
+}
+.seo-guide .guide-routes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.seo-guide .guide-routes li {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(214, 187, 255, 0.05);
+  overflow-wrap: anywhere;
+}
+.seo-guide .guide-routes a,
+.seo-guide .guide-routes strong {
+  font-weight: 700;
+}
+.seo-guide .icon-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.seo-guide .icon-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.seo-guide .mark {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  padding: 3px;
+  border-radius: 999px;
+}
+.seo-guide .is-yes .mark {
+  background: rgba(134, 239, 172, 0.16);
+  fill: #86efac;
+}
+.seo-guide .is-no .mark {
+  background: rgba(252, 165, 165, 0.14);
+  fill: none;
+  stroke: #fca5a5;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.seo-guide .guide-prices {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.seo-guide .guide-prices th,
+.seo-guide .guide-prices td {
+  padding: 8px 0;
+  border-top: 1px solid rgba(196, 170, 255, 0.1);
+  text-align: left;
+  font-weight: 400;
+}
+.seo-guide .guide-prices td {
+  text-align: right;
+  font-weight: 700;
+  color: #f3eeff;
+  white-space: nowrap;
+  padding-left: 12px;
+}
+.seo-guide .btn-sm {
+  align-self: flex-start;
+}
+.fvp-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Decision flow */
+.seo-flow > p {
+  max-width: 75ch;
+}
+.seo-flow .flow {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 0;
+  display: grid;
+  gap: 14px;
+  counter-reset: none;
+}
+.seo-flow .flow-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 16px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(196, 170, 255, 0.14);
+  background: rgba(214, 187, 255, 0.04);
+}
+.seo-flow .flow-step > * {
+  margin: 0;
+}
+.seo-flow .flow-num {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  background: #d6bbff;
+  color: #17092e;
+  font-weight: 800;
+}
+.seo-flow .flow-answer {
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 15px;
+  border-left: 3px solid transparent;
+}
+.seo-flow .flow-free {
+  background: rgba(134, 239, 172, 0.08);
+  border-left-color: #86efac;
+}
+.seo-flow .flow-next {
+  background: rgba(214, 187, 255, 0.06);
+  border-left-color: rgba(214, 187, 255, 0.5);
+}
+.seo-flow .flow-paid {
+  background: rgba(214, 187, 255, 0.14);
+  border-left-color: #d6bbff;
+}
+@media (min-width: 860px) {
+  .seo-flow .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -30px;
+    top: 22px;
+    width: 14px;
+    height: 14px;
+    border-top: 3px solid #d6bbff;
+    border-right: 3px solid #d6bbff;
+    transform: rotate(45deg);
+  }
+}
+.seo-flow .flow-num {
+  align-self: flex-start;
+}
+
+@media (min-width: 860px) {
+  .seo-flow .flow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+    column-gap: 44px;
+    row-gap: 0;
+  }
+  /* Subgrid keeps the question and both answers on shared rows. */
+  .seo-flow .flow > .flow-step {
+    grid-row: span 4;
+    display: grid;
+    grid-template-rows: subgrid;
+    align-items: start;
+  }
+}
+
+.seo-flow .flow-answer {
+  display: block;
+  align-self: stretch;
+}
+.seo-guide .guide-prices caption {
+  text-align: left;
+  font-size: 13px;
+  color: #b9aed6;
+  padding-bottom: 6px;
+}
+.seo-guide .guide-note {
+  font-size: 13px;
+  color: #b9aed6;
+}
