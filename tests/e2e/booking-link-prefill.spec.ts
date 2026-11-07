@@ -32,7 +32,10 @@ test('assistant coaching link selects existing controls without changing page la
   await page.goto(
     '/?game=lol&service=learn&role=Jungle&character=Ahri&voice=false&mood=teach&region=EUW&qty=3&agent=claude',
   );
-  await expect(page).toHaveURL('/?agent=claude');
+  await expect(page.locator('.dl-bar')).toContainText('Play & Learn', {
+    timeout: 15000,
+  });
+  await expect(page).toHaveURL('/?agent=claude', { timeout: 15000 });
   await expect(
     role.getByRole('button', { name: 'Jungle', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true');
