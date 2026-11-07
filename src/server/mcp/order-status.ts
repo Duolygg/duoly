@@ -12,6 +12,7 @@ import {
 import { validStatusToken, statusTokenHash } from '../orders/status-token';
 import { statusRpc, type StatusRpc } from '../orders/status-storage';
 import { takeDurableLimit } from './limits';
+import { resolveGame } from './catalog';
 import template from './order-card.html?raw';
 import script from './order-card-view.js?raw';
 
@@ -95,7 +96,14 @@ export async function orderStatusResult(
         },
       ],
       structuredContent,
-      _meta: { 'gg.duoly/card': { ...data, roomUrl } },
+      _meta: {
+        'gg.duoly/card': {
+          ...data,
+          roomUrl,
+          gameName: resolveGame(data.game).name,
+          gameSlug: resolveGame(data.game).slug,
+        },
+      },
     };
   } catch {
     return {

@@ -49,6 +49,13 @@ export const MCP = {
         'game (optional), positive online counts when available, onlineByGame, bookUrl, label, readAt, cacheSeconds, notice, url; medianMatchSeconds, medianWindowDays and medianScope when available. No reservation.',
     },
     {
+      name: 'get_order_status',
+      inputs:
+        'token (required): the private dos_ code generated in your order room',
+      outputs:
+        'One order status, game, service, quantity, current acceptance, teammate display names, team seat progress, nextStep and updatedAt. Revocable, read only and limited to this order.',
+    },
+    {
       name: 'create_booking_link',
       inputs: 'game (required); service (optional)',
       outputs:

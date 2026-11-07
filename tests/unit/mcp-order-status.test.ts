@@ -22,7 +22,9 @@ const fixture = {
 function storage(data: unknown = fixture) {
   return vi.fn(async (name: string, ...args: [Record<string, unknown>]) => ({
     data:
-      name === 'mcp_take_rate_limit' && args.length ? { allowed: true, retry_after: 0 } : data,
+      name === 'mcp_take_rate_limit' && args.length
+        ? { allowed: true, retry_after: 0 }
+        : data,
     error: null,
   }));
 }
