@@ -3,6 +3,7 @@ import {
   RESOURCE_MIME_TYPE,
 } from '@modelcontextprotocol/ext-apps/server';
 import type { McpServer } from '@modelcontextprotocol/server';
+import { seatRule } from '../../contracts/seats';
 import { calculateQuote } from '../pricing';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { resolveGame, services } from './catalog';
@@ -53,6 +54,11 @@ export type CardSelection = {
   currency?: 'EUR' | 'USD';
   budget?: number;
   edition?: 'Java' | 'Bedrock';
+  role?: string;
+  character?: string;
+  voice?: boolean;
+  mood?: string;
+  seats?: number;
 };
 // Every quantity is priced on the server: no copied bundle schedule or FX rounding in the view.
 export function cardData(
@@ -79,6 +85,7 @@ export function cardData(
                   {
                     gameId: game.id,
                     serviceId: s.id,
+                    seats: input.seats ?? seatRule(game.id, s.id).default,
                     units: i + 1,
                     server:
                       input.server ??

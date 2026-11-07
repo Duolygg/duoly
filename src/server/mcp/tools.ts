@@ -1,5 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
+import { parseBookingPreferences } from '../../contracts/booking-link';
+import { seatRule } from '../../contracts/seats';
 import { registerAppTool } from '@modelcontextprotocol/ext-apps/server';
 import {
   CARD_URIS,
@@ -84,12 +86,53 @@ const serviceOutput = z.object({
   ranks: z.array(z.string()),
   regions: z.array(z.string()),
   editions: z.array(z.string()),
+  roles: z.array(z.string()),
+  characterLabel: z.string(),
+  seats: z.object({
+    min: z.number(),
+    max: z.number(),
+    default: z.number(),
+    groupPrice: z.literal(true).optional(),
+  }),
+  voice: z.array(z.boolean()),
+  moods: z.array(z.string()),
   requiredInputs: z.array(z.string()),
   bookUrl: link,
   url: link,
 });
+const preferences = {
+  role: z
+    .string()
+    .min(1)
+    .max(24)
+    .optional()
+    .describe(
+      'Exact role token from list_services, including Fill/Flex/Any for no preference.',
+    ),
+  character: z
+    .string()
+    .trim()
+    .min(1)
+    .max(40)
+    .optional()
+    .describe(
+      'One free-text character, only for character-bearing coaching services. Never use agent for this.',
+    ),
+  voice: z.boolean().optional(),
+  mood: z.enum(['chill', 'tryhard', 'teach', 'fun']).optional(),
+  seats: z
+    .number()
+    .int()
+    .min(1)
+    .max(5)
+    .optional()
+    .describe(
+      'Hired teammates, excluding the customer and friends. Must match the service seat rule.',
+    ),
+};
 const inputs = {
   find_session: z.strictObject({
+    ...preferences,
     game,
     goal: z
       .string()
@@ -129,6 +172,7 @@ const inputs = {
   list_games: z.strictObject({}),
   list_services: z.strictObject({ game }),
   get_quote: z.strictObject({
+    seats: preferences.seats,
     game,
     service,
     rank: z.string().max(40).optional(),
@@ -148,6 +192,9 @@ const inputs = {
   }),
   get_availability: z.strictObject({ game: game.optional() }),
   create_booking_link: z.strictObject({
+    ...preferences,
+    edition: z.enum(['Java', 'Bedrock']).optional(),
+    server: z.string().trim().min(2).max(60).optional(),
     game,
     service: service.optional(),
     rank: z.string().min(1).max(40).optional(),
@@ -298,11 +345,35 @@ export function bookingLink(
   url.searchParams.set('agent', platform);
   if (selection.rank) url.searchParams.set('rank', selection.rank);
   if (selection.region ?? selection.server)
-    url.searchParams.set('region', (selection.region ?? selection.server)!);
+    url.searchParams.set(
+      gameId === 'mc' ? 'server' : 'region',
+      (selection.region ?? selection.server)!,
+    );
+  for (const key of [
+    'edition',
+    'role',
+    'character',
+    'voice',
+    'mood',
+    'seats',
+  ] as const)
+    if (selection[key] !== undefined)
+      url.searchParams.set(key, String(selection[key]));
   if (selection.quantity !== undefined)
     url.searchParams.set('qty', String(selection.quantity));
   url.hash = 'modes-h';
   return url.href;
+}
+function invalidPreferences(
+  gameId: string,
+  serviceId: string,
+  selection: CardSelection,
+) {
+  return parseBookingPreferences(
+    new URL(bookingLink(gameId, serviceId, 'other', selection)).searchParams,
+    gameId,
+    serviceId,
+  ).invalid;
 }
 function priceDetails(quote: ReturnType<typeof calculateQuote>) {
   const subtotal =
@@ -347,6 +418,11 @@ export async function callTool(
     category?: string;
     region?: string;
     budget?: number;
+    role?: string;
+    character?: string;
+    voice?: boolean;
+    mood?: string;
+    seats?: number;
   };
   const g = a.game ? resolveGame(a.game) : undefined;
   const selected = a.service ? resolveService(g!.id, a.service) : undefined;
@@ -427,6 +503,16 @@ export async function callTool(
       const fx = await (deps.fx ?? eurToUsd)();
       cardRate = fx.rate;
       const missing = new Set<string>();
+      candidates = candidates.filter((s) => {
+        return (
+          invalidPreferences(g!.id, s.id, { ...a, rank: undefined }).length ===
+          0
+        );
+      });
+      if (!candidates.length)
+        throw new ToolInputError(
+          'No service supports these booking preferences. Call list_services for exact role, character and seat options.',
+        );
       for (const s of candidates) {
         const missingInputs = [
           ...(a.quantity === undefined ? ['quantity'] : []),
@@ -447,6 +533,7 @@ export async function callTool(
               gameId: g!.id,
               serviceId: s.id,
               units: a.quantity ?? 1,
+              seats: a.seats ?? seatRule(g!.id, s.id).default,
               server: server ?? s.regions[0] ?? 'my world',
               ...(rank ? { rank } : {}),
               ...(g!.id === 'mc' ? { edition: a.edition ?? 'Java' } : {}),
@@ -483,6 +570,7 @@ export async function callTool(
                       gameId: g!.id,
                       serviceId: s.id,
                       units: a.quantity ?? 1,
+                      seats: a.seats ?? seatRule(g!.id, s.id).default,
                       server: server ?? s.regions[0] ?? 'my world',
                       ...(rank ? { rank } : {}),
                       ...(g!.id === 'mc'
@@ -504,7 +592,10 @@ export async function callTool(
                 })(),
               }),
           ...priceDetails(quote),
-          bookUrl: bookingLink(g!.id, s.id, deps.platform ?? 'other', a),
+          bookUrl: bookingLink(g!.id, s.id, deps.platform ?? 'other', {
+            ...a,
+            rank: s.ranks.length ? a.rank : undefined,
+          }),
           priceKind:
             (!s.ranks.length || a.rank) && a.quantity !== undefined
               ? 'exact'
@@ -570,6 +661,24 @@ export async function callTool(
         'Compare Duoly services, from prices in EUR per unit and exact quote inputs.';
       break;
     case 'create_booking_link':
+      if (a.region && a.server)
+        throw new ToolInputError('Supply only one of region or server.');
+      if (
+        !selected &&
+        Object.keys(preferences).some(
+          (key) => a[key as keyof typeof a] !== undefined,
+        )
+      )
+        throw new ToolInputError(
+          'Select a service before supplying booking preferences. Call list_services.',
+        );
+      if (selected) {
+        const invalid = invalidPreferences(g!.id, selected.id, a);
+        if (invalid.length)
+          throw new ToolInputError(
+            `Invalid booking preferences: ${invalid.join(', ')}. Call list_services for exact tokens and seat bounds.`,
+          );
+      }
       if (
         a.rank &&
         !(
@@ -583,6 +692,7 @@ export async function callTool(
         );
       if (
         a.region &&
+        g!.id !== 'mc' &&
         !services(g!.id).some((s) => s.regions.includes(a.region!))
       )
         throw new ToolInputError(
@@ -606,6 +716,7 @@ export async function callTool(
             gameId: g!.id,
             serviceId: selected!.id,
             units: a.quantity!,
+            seats: a.seats ?? seatRule(g!.id, selected!.id).default,
             server: a.server!,
             ...(a.rank !== undefined ? { rank: a.rank } : {}),
             ...(a.edition ? { edition: a.edition } : {}),

@@ -22,6 +22,104 @@ const live = async () => ({
   },
 });
 describe('MCP tools', () => {
+  it('filters recommendations by existing preferences and prices the same seat count as checkout', async () => {
+    const result = await callTool(
+      'find_session',
+      {
+        game: 'lol',
+        goal: 'teams',
+        seats: 2,
+        role: 'Jungle',
+        voice: false,
+        quantity: 3,
+        region: 'EUW',
+        rank: 'Gold',
+        currency: 'EUR',
+      },
+      { fx },
+    );
+    const matches = result.structuredContent.matches as Array<
+      Record<string, unknown>
+    >;
+    expect(matches.length).toBeGreaterThan(0);
+    for (const match of matches) {
+      const params = new URL(String(match.bookUrl)).searchParams;
+      expect(params.get('seats')).toBe('2');
+      expect(params.get('role')).toBe('Jungle');
+      expect(params.get('voice')).toBe('false');
+      expect(match.amountMinor).toBe(
+        calculateQuote(
+          {
+            gameId: 'lol',
+            serviceId: String(match.id),
+            seats: 2,
+            units: 3,
+            server: 'EUW',
+            ...(services('lol').find((s) => s.id === match.id)!.ranks.length
+              ? { rank: 'Gold' }
+              : {}),
+          },
+          { eurToUsd: 1.08 },
+        ).amountEurMinor,
+      );
+    }
+  });
+  it('keeps Minecraft world and edition in the link', async () => {
+    const result = await callTool(
+      'create_booking_link',
+      {
+        game: 'mc',
+        service: 'squad',
+        server: 'my own world',
+        edition: 'Bedrock',
+        seats: 2,
+      },
+      { fx },
+    );
+    const params = new URL(String(result.structuredContent.bookUrl))
+      .searchParams;
+    expect(params.get('server')).toBe('my own world');
+    expect(params.get('edition')).toBe('Bedrock');
+    expect(params.has('region')).toBe(false);
+  });
+  it.each([
+    { role: 'jungle' },
+    { character: 'Ahri' },
+    { seats: 2 },
+    { edition: 'Java' },
+    { region: 'euw' },
+    { rank: 'gold' },
+    { region: 'EUW', server: 'NA' },
+  ])('rejects incompatible booking preferences %j', async (preference) => {
+    await expect(
+      callTool(
+        'create_booking_link',
+        { game: 'lol', service: 'duo2', ...preference },
+        { fx },
+      ),
+    ).rejects.toThrow();
+  });
+  it('preserves coaching preferences and false voice in assistant links', async () => {
+    const result = await callTool(
+      'create_booking_link',
+      {
+        game: 'val',
+        service: 'vod',
+        role: 'Controller',
+        character: 'Omen',
+        voice: false,
+        mood: 'teach',
+        quantity: 3,
+      },
+      { fx },
+    );
+    const params = new URL(String(result.structuredContent.bookUrl))
+      .searchParams;
+    expect(params.get('role')).toBe('Controller');
+    expect(params.get('character')).toBe('Omen');
+    expect(params.get('voice')).toBe('false');
+    expect(params.get('mood')).toBe('teach');
+  });
   it('puts complete bookable service data in the text the model reads', async () => {
     const result = await callTool('list_services', { game: 'lol' });
     const text = result.content[0]!.text;
@@ -47,6 +145,7 @@ describe('MCP tools', () => {
               {
                 gameId: g.id,
                 serviceId: s.id,
+                seats: s.seats.default,
                 units: 1,
                 server: s.regions[0] ?? 'my world',
                 ...(rank ? { rank } : {}),
@@ -285,6 +384,7 @@ describe('MCP tools', () => {
           const selection = {
             gameId: game.id,
             serviceId: service.id,
+            seats: service.seats.default,
             units: 1,
             server,
             ...(rank ? { rank } : {}),
