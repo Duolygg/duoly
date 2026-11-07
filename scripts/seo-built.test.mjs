@@ -76,11 +76,41 @@ for (const [path, page] of indexed) {
         ['Organization', 'WebSite'],
       );
     const service = scripts.find((s) => s['@type'] === 'Service');
-    if (service)
+    if (service) {
       assert.deepEqual(
         service.offers.map((o) => Number(o.price) * 100).map(Math.round),
         page.prices.map((p) => Number(p.minor)),
       );
+      const units = new Set(
+        service.offers.map((o) => o.priceSpecification.unitText),
+      );
+      for (const unit of units) {
+        assert(
+          page.description.includes(`per ${unit}`),
+          `${path}: description unit ${unit}`,
+        );
+        assert(
+          html
+            .match(/<p class="(?:price-chip|hero-price)">([\s\S]*?)<\/p>/)?.[1]
+            .includes(`per ${unit}`),
+          `${path}: summary unit ${unit}`,
+        );
+      }
+      const intro = html.match(/<p class="section-intro">([\s\S]*?)<\/p>/)?.[1];
+      if (intro && /\bis|\bare/.test(intro) && /€/.test(intro)) {
+        for (const offer of service.offers) {
+          const title = offer.name.replace(/, per \w+$/, '');
+          const clause = intro.split('; ').find((part) => part.includes(title));
+          assert(clause, `${path}: intro names ${title}`);
+          assert(
+            clause.includes(
+              `€${offer.price} per ${offer.priceSpecification.unitText}`,
+            ),
+            `${path}: intro price and unit for ${title}`,
+          );
+        }
+      }
+    }
     const crumbs = scripts.find((s) => s['@type'] === 'BreadcrumbList');
     if (crumbs)
       assert.deepEqual(
