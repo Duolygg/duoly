@@ -49,9 +49,9 @@ for (const [path, page] of indexed) {
     // "Protected design"), so length targets apply to the SEO pages only.
     if (path !== '/') assert(page.title.length <= 60, `${path}: title length`);
     if (
-      path === '/games' ||
-      path.startsWith('/games/') ||
-      path.startsWith('/blog/')
+      ['/games', '/blog', '/compare'].some(
+        (prefix) => path === prefix || path.startsWith(prefix + '/'),
+      )
     )
       assert(
         page.description.length >= 140 && page.description.length <= 160,
@@ -164,6 +164,29 @@ test('AI pages expose matching structured data, launch status and links', () => 
   link('/get-paid-to-play-games', '/ai');
   link('/ai', '/developers/mcp');
   link('/developers/mcp', '/ai');
+});
+
+test('E-Pal comparison page is factual, dated and internally linked', () => {
+  const path = '/compare/e-pal';
+  const page = pages[path];
+  assert(page, 'crawl discovered the comparison page');
+  assert(page.inbound.length >= 2, 'two inbound links');
+  const html = readFileSync('.vercel/seo-audit/compare__e-pal.html', 'utf8');
+  assert.match(html, /Last checked 2026-11-07/);
+  assert.match(html, /EUR 10\.77/);
+  assert.match(html, /EUR 3\.99/);
+  assert(html.includes('/games/league-of-legends/play-with-someone'));
+  assert(html.includes('/games/valorant'));
+  assert(html.includes('/developers/mcp'));
+  assert(!/epal\.gg[^"'\s]*\.(png|svg|jpg)/i.test(html), 'no E-Pal imagery');
+  const webPage = page.schemas.find((s) => s['@type'] === 'WebPage');
+  assert.equal(webPage.url, 'https://duoly.gg/compare/e-pal');
+  assert.equal(webPage.dateModified, '2026-11-07');
+  assert(
+    !page.schemas.some(
+      (s) => s['@type'] === 'AggregateRating' || s['@type'] === 'Review',
+    ),
+  );
 });
 
 test('sitemap has exactly the indexable self-canonical 200 URLs in both directions', () => {
