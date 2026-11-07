@@ -6,7 +6,8 @@
 // Games without a real ranked ladder (ARC Raiders, Minecraft) have no entry: no rank picker, flat price.
 //
 // SERVICE_RANKS[game][service] = a mode with its own ladder, used instead of the game's (League Arena
-// has Wood → Gladiator, CS2 Wingman uses the classic skill groups instead of Premier rating).
+// has Wood → Gladiator, CS2 Wingman uses the classic skill groups and CS2 FACEIT services use FACEIT
+// Levels 1–10 instead of Premier rating).
 //
 // RANKED[game] = the services (catalog ids) that ask for the rank and use these prices: ranked duos,
 // ranked team fills and the ranked side modes above. Everything else is a flat price, because the rank
@@ -30,11 +31,18 @@ export const RANKS = {
   pu: [['Beginner', 0.8], ['Great', 0.85], ['Expert', 0.9], ['Veteran', 1], ['Ultra', 1.1], ['Master', 1.25], ['Legend', 1.45]]
 };
 
+const FACEIT = [['FACEIT Level 1', 0.8], ['FACEIT Level 2', 0.8], ['FACEIT Level 3', 0.85], ['FACEIT Level 4', 0.9], ['FACEIT Level 5', 0.95], ['FACEIT Level 6', 1], ['FACEIT Level 7', 1.05], ['FACEIT Level 8', 1.15], ['FACEIT Level 9', 1.3], ['FACEIT Level 10', 1.5]];
+
 export const SERVICE_RANKS = {
   // Arena's own tiers (Wood and Gladiator only exist in Arena)
   lol: { arena: [['Wood', 0.85], ['Bronze', 0.9], ['Silver', 1], ['Gold', 1.1], ['Gladiator', 1.3]] },
-  // Wingman ranks with the classic 18 skill groups, grouped here: Silver I–Silver Elite Master, Gold Nova I–Master, …
-  cs2: { wing: [['Silver', 0.75], ['Gold Nova', 0.85], ['Master Guardian', 1], ['Distinguished Master Guardian', 1.1], ['Legendary Eagle', 1.2], ['Supreme', 1.35], ['Global Elite', 1.5]] }
+  cs2: {
+    // Wingman ranks with the classic 18 skill groups, grouped here: Silver I–Silver Elite Master, Gold Nova I–Master, …
+    wing: [['Silver', 0.75], ['Gold Nova', 0.85], ['Master Guardian', 1], ['Distinguished Master Guardian', 1.1], ['Legendary Eagle', 1.2], ['Legendary Eagle Master', 1.25], ['Supreme', 1.35], ['Global Elite', 1.5]],
+    // FACEIT is a separate platform with its own Level 1–10 ladder, not Premier rating
+    duo3: FACEIT,
+    faceit5: FACEIT
+  }
 };
 
 export const RANKED = {
