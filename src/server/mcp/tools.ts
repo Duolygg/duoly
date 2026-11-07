@@ -1,4 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/server';
+import { registerOrderStatus } from './order-status';
 import { z } from 'zod';
 import { parseBookingPreferences } from '../../contracts/booking-link';
 import { seatRule } from '../../contracts/seats';
@@ -861,6 +862,7 @@ export function createServer(userAgent = '', client: string | null = null) {
     { instructions: INSTRUCTIONS },
   );
   registerCards(server);
+  registerOrderStatus(server);
   for (const name of TOOL_NAMES) {
     registerAppTool(
       server,
