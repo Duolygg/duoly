@@ -61,6 +61,19 @@ describe('email html builder', () => {
 });
 
 describe('email templates', () => {
+  it.each(['order_confirmed', 'teammate_found', 'order_completed'] as const)(
+    '%s links to the UUID room and displays the public reference',
+    (id) => {
+      const rendered = renderTransactional(id, samples[id] as never, ctx);
+      const room = `https://duoly.gg/queue/${samples[id].order.roomId}`;
+      expect(rendered.html).toContain(
+        `href="${room}${id === 'order_completed' ? '#review' : ''}"`,
+      );
+      expect(rendered.text).toContain(room);
+      expect(rendered.html).toContain('Order DL-1042');
+      expect(rendered.html).not.toContain('/queue/DL-1042');
+    },
+  );
   it.each(allRendered())(
     '$id renders a complete, safe document',
     ({ subject, html: markup, text }) => {

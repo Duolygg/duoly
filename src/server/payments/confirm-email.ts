@@ -56,6 +56,7 @@ export async function confirmEmail(
       firstName: String(order.customer_name).split(' ')[0] || 'there',
       order: {
         id: order.public_reference,
+        roomId: orderId,
         game: { name: game?.name ?? order.game, icon: game?.img ?? '' },
         service: order.title,
         units: order.units,

@@ -12,6 +12,7 @@ const league = {
 
 const order = {
   id: 'DL-1042',
+  roomId: '12345678-1234-4234-8234-123456789abc',
   game: league,
   service: 'Duo Pro',
   units: 3,

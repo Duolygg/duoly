@@ -34,7 +34,10 @@ export interface Game {
 }
 
 export interface OrderSummary {
+  /** Human-visible receipt reference (DL-...). */
   id: string;
+  /** Internal order UUID used by the authenticated order room. */
+  roomId: string;
   game: Game;
   service: string;
   units: number;
@@ -148,7 +151,7 @@ export function orderConfirmed(
   data: OrderConfirmedData,
   site: string,
 ): EmailContent {
-  const room = join(site, `/queue/${encodeURIComponent(data.order.id)}`);
+  const room = join(site, `/queue/${encodeURIComponent(data.order.roomId)}`);
   return {
     subject: `Order ${data.order.id} confirmed: finding your duo`,
     preheader: `${orderTitle(data.order)} in ${data.order.game.name}. Teammates are being notified now.`,
@@ -216,7 +219,7 @@ export function teammateFound(
   data: TeammateFoundData,
   site: string,
 ): EmailContent {
-  const room = join(site, `/queue/${encodeURIComponent(data.order.id)}`);
+  const room = join(site, `/queue/${encodeURIComponent(data.order.roomId)}`);
   const name = data.teammate.name;
   const blocks: EmailContent['blocks'] = [
     { type: 'teammate', ...data.teammate, status: 'Joining your lobby' },
@@ -276,7 +279,7 @@ export function orderCompleted(
   data: OrderCompletedData,
   site: string,
 ): EmailContent {
-  const room = join(site, `/queue/${encodeURIComponent(data.order.id)}`);
+  const room = join(site, `/queue/${encodeURIComponent(data.order.roomId)}`);
   const tier = loyaltyTiers[data.tier];
   const name = data.teammate.name;
   return {
