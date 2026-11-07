@@ -19,6 +19,9 @@ export const BOOKING_PARAMS = [
   'server',
   'edition',
   'seats',
+  'ign',
+  'note',
+  'creatorCode',
 ] as const;
 export function bookingParam(params: URLSearchParams, key: string) {
   return params.getAll(key).length === 1 ? params.get(key)! : undefined;
@@ -34,6 +37,9 @@ export type BookingPreferences = {
   mcServer?: string;
   mcEdition?: 'Java' | 'Bedrock';
   seats?: number;
+  ign?: string;
+  orderNote?: string;
+  creatorCode?: string;
 };
 /** Pure browser-safe validation, shared by link producers and the landing page. */
 export function parseBookingPreferences(
@@ -140,6 +146,29 @@ export function parseBookingPreferences(
     (v) => integer(v, rule.min, rule.max),
     (v) => {
       values.seats = Number(v);
+    },
+  );
+  // Explicit hand-written links only: never solicit or emit private text in MCP URLs.
+  accept(
+    'ign',
+    (v) => v.trim().length >= 2 && v.trim().length <= 40,
+    (v) => {
+      values.ign = v.trim();
+    },
+  );
+  accept(
+    'note',
+    (v) => v.trim().length <= 200,
+    (v) => {
+      values.orderNote = v.trim();
+    },
+  );
+  // Syntax only. The existing CreatorCode control and checkout still check eligibility.
+  accept(
+    'creatorCode',
+    (v) => /^[A-Z0-9]{3,20}$/.test(v),
+    (v) => {
+      values.creatorCode = v;
     },
   );
   return { values, invalid };

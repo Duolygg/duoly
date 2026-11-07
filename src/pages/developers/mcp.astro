@@ -118,11 +118,14 @@ const request = JSON.stringify(
         link so the user can book. Use exact game, rank and region tokens from
         the catalog. An availability signal or quote does not create an order.
         The booking link selects a game and optional service on Duoly for the
-        user to review. It preserves supplied rank, region and quantity. Users
-        confirm remaining options and edition on duoly.gg. Use get_quote only
-        for a selected service and create_booking_link only to produce a final
-        link. Rank-priced services show a from price and a typical one-unit
-        price; exact totals include bundle savings.
+        user to review. It preserves supplied rank, region, quantity, role,
+        coaching character, voice, mood and teammate count. Minecraft links also
+        preserve server/world and edition. Use list_services for exact role and
+        seat options. Private notes, IGN and payment choices stay on Duoly.
+        Users confirm remaining options on duoly.gg. Use get_quote only for a
+        selected service and create_booking_link only to produce a final link.
+        Rank-priced services show a from price and a typical one-unit price;
+        exact totals include bundle savings.
       </p>
       <p class="byline">
         On narrow screens, scroll the table to read all inputs and outputs.

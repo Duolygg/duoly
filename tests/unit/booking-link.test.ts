@@ -27,6 +27,17 @@ function open(search: string) {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('homepage booking links', () => {
+  it('accepts explicit private-text links without requesting these fields from assistants', () => {
+    const { home, url } = open(
+      '?game=lol&service=learn&ign=+Player%23123+&note=+Practice+laning+&creatorCode=ABC123',
+    );
+    expect(home.state).toMatchObject({
+      ign: 'Player#123',
+      orderNote: 'Practice laning',
+      creatorCode: 'ABC123',
+    });
+    expect(url.search).toBe('');
+  });
   it('accepts every exact public catalog rank, role, region, edition and seat count', () => {
     let checked = 0;
     for (const game of games())
