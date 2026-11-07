@@ -534,7 +534,7 @@ export async function callTool(
               recommendation: {
                 serviceId: best[0].id,
                 goal: intent,
-                reason: `${best[0].description}${best[0].savingMinor > 0 ? ` Saves ${money(best[0].savingMinor, best[0].currency)} (${best[0].bundleDiscountPercent}% bundle discount).` : ' No bundle savings for this selection.'}${intent === 'play_tonight' ? ' No availability or start time is guaranteed.' : ''}${intent === 'climb' && g!.id === 'cs2' ? ' Confirm Premier or FACEIT before booking.' : ''}${intent === 'climb' && g!.id === 'cod' ? ' Confirm Multiplayer or Warzone before booking.' : ''}`,
+                reason: `${best[0].description}${best.length > 1 && best.every((m) => m.amountMinor >= best[0]!.amountMinor) ? ' Lowest total of the options that fit this goal.' : ''}${best[0].savingMinor > 0 ? ` Saves ${money(best[0].savingMinor, best[0].currency)} (${best[0].bundleDiscountPercent}% bundle discount).` : ' No bundle savings for this selection.'}${intent === 'play_tonight' ? ' No availability or start time is guaranteed.' : ''}${intent === 'climb' && g!.id === 'cs2' ? ' Confirm Premier or FACEIT before booking.' : ''}${intent === 'climb' && g!.id === 'cod' ? ' Confirm Multiplayer or Warzone before booking.' : ''}`,
               },
             }
           : {}),
@@ -724,7 +724,7 @@ export async function callTool(
                   return `${s.name} (${s.id}): ${s.description} ${priceText(s)}.${example ? ` ${s.priceNote} Example ${example.rank ?? 'flat price'}, ${example.quantity} ${s.unit}${example.quantity === 1 ? '' : 's'}: ${priceText({ ...example, unit: s.unit })}.` : ''} ${s.bookUrl}`;
                 })
                 .join('\n') || summary
-            }${structuredContent.recommendation ? `\nRecommended: ${(structuredContent.recommendation as { serviceId: string }).serviceId}. ${(structuredContent.recommendation as { reason: string }).reason}` : ''}\n${(structuredContent.missingInputs as string[]).length ? `Remaining inputs: ${(structuredContent.missingInputs as string[]).join(', ')}. ` : ''}Base price before account perks. Pay on Duoly.`;
+            }${structuredContent.recommendation ? `\nRecommended: ${(structuredContent.matches as { id: string; name: string }[]).find((m) => m.id === (structuredContent.recommendation as { serviceId: string }).serviceId)?.name ?? (structuredContent.recommendation as { serviceId: string }).serviceId}. ${(structuredContent.recommendation as { reason: string }).reason}` : ''}\n${(structuredContent.missingInputs as string[]).length ? `Remaining inputs: ${(structuredContent.missingInputs as string[]).join(', ')}. ` : ''}Base price before account perks. Pay on Duoly.`;
           if (name === 'get_quote')
             return `${priceText(structuredContent)}. Base price before account perks. No reservation. ${structuredContent.bookUrl}`;
           if (name === 'get_availability')

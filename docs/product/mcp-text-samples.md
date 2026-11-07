@@ -85,6 +85,6 @@ EUR 12.99 total for 1 hour; EUR 12.99 per hour. Base price before account perks.
 Duo Plus (duo1): Ranked Solo/Duo with a Diamond player in the role you need; They play around your lane, ping objectives and keep the game calm. EUR 9.42 total for 3 games; EUR 3.14 per game; saves EUR 1.05, 10% bundle discount. https://duoly.gg/?game=lol&service=duo1&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
 Duo Pro (duo2): Ranked Solo/Duo with a Master player who shot-calls: when to fight, which objective is next, when to back off; Ask anything between games. EUR 10.77 total for 3 games; EUR 3.59 per game; saves EUR 1.20, 10% bundle discount. https://duoly.gg/?game=lol&service=duo2&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
 Duo Apex (duo3): A Grandmaster or Challenger player for Diamond and Master lobbies, when you need a partner who can take over games. EUR 16.17 total for 3 games; EUR 5.39 per game; saves EUR 1.80, 10% bundle discount. https://duoly.gg/?game=lol&service=duo3&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
-Recommended: duo1. Ranked Solo/Duo with a Diamond player in the role you need; They play around your lane, ping objectives and keep the game calm. Saves EUR 1.05 (10% bundle discount).
+Recommended: Duo Plus. Ranked Solo/Duo with a Diamond player in the role you need; They play around your lane, ping objectives and keep the game calm. Lowest total of the options that fit this goal. Saves EUR 1.05 (10% bundle discount).
 Base price before account perks. Pay on Duoly.
 ```
