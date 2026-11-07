@@ -79,7 +79,9 @@ export default function OrderAiStatus({
           <div className="order-ai-code">
             <div>
               <span>Check my Duoly order with code</span>
-              <code>{code.token}</code>
+              <code>
+                {code.token.slice(0, 13)}…{code.token.slice(-4)}
+              </code>
             </div>
             <button type="button" onClick={copy}>
               {copied ? 'Copied' : 'Copy'}
@@ -136,7 +138,8 @@ export default function OrderAiStatus({
       </div>
       <p className="order-ai-warning">
         Anyone with this code can see this limited status. A new code replaces
-        the previous one. The code is shown only once.
+        the previous one. Keep it private; you will not see it again after this
+        page.
       </p>
       <p className="order-ai-setup">
         No Duoly connector yet?{' '}

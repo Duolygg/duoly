@@ -34,7 +34,9 @@ test('order AI panel issues only on action, copies, never persists, and revokes 
   await expect(panel).toBeVisible();
   expect(issued).toBe(0);
   await panel.getByRole('button', { name: 'Generate code' }).click();
-  await expect(panel.locator('code')).toHaveText(token);
+  await expect(panel.locator('code')).toHaveText(
+    `${token.slice(0, 13)}…${token.slice(-4)}`,
+  );
   await panel.getByRole('button', { name: 'Copy', exact: true }).click();
   await expect(panel.getByRole('button', { name: 'Copied' })).toBeVisible();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
@@ -54,7 +56,7 @@ test('order AI panel issues only on action, copies, never persists, and revokes 
         .flatMap((e) => Array.from(e.attributes).map((a) => a.value))
         .join(' '),
     ),
-  ).not.toContain(token);
+  ).not.toContain(token.slice(0, 13));
   expect(page.url()).not.toContain(token);
   await expect(panel).toHaveAttribute('data-private-block', 'true');
   const out = `${homedir()}/.hermes/cache/scratch/mcp-cards/order`;
@@ -70,7 +72,9 @@ test('order AI panel issues only on action, copies, never persists, and revokes 
   await expect(panel.locator('code')).toHaveCount(0);
   expect(revoked).toBe(1);
   await panel.getByRole('button', { name: 'Generate code' }).click();
-  await expect(panel.locator('code')).toHaveText(token);
+  await expect(panel.locator('code')).toHaveText(
+    `${token.slice(0, 13)}…${token.slice(-4)}`,
+  );
   await page.reload();
   await expect(panel).toBeVisible();
   await expect(panel.locator('code')).toHaveCount(0);
