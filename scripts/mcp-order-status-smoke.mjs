@@ -34,13 +34,14 @@ const tokens = cases.map(
 );
 const hash = (t) => createHash('sha256').update(t).digest('hex');
 function projection(i) {
-  const d = { ...fixture };
+  const stamp = (ago) => new Date(Date.now() - ago * 1000).toISOString();
+  const d = { ...fixture, bookedAt: stamp(104), searchingAt: stamp(104) };
   if (i === 1 || i === 2) {
     d.status = i === 2 ? 'completed' : 'in_progress';
     d.accepted = true;
     d.teammateDisplayName = 'Kairo';
-    d.acceptedAt = '2026-11-07T20:13:00Z';
-    if (i === 2) d.completedAt = '2026-11-07T21:31:00Z';
+    d.acceptedAt = stamp(60);
+    if (i === 2) d.completedAt = stamp(5);
   }
   if (i === 3) {
     d.game = 'lol';
@@ -62,7 +63,7 @@ function projection(i) {
     d.status = 'in_progress';
     d.accepted = true;
     d.teammateDisplayName = 'Mira';
-    d.acceptedAt = '2026-11-07T20:12:00Z';
+    d.acceptedAt = stamp(60);
   }
   return d;
 }
@@ -208,16 +209,23 @@ if (process.argv.includes('--serve-fixtures')) {
       for (const [i, name] of cases.entries()) {
         await page.setViewportSize({ width: width + 64, height: 1200 });
         await page.goto('http://localhost:8080/');
-        await page.getByLabel('Tool', { exact: true }).selectOption('get_order_status');
+        await page
+          .getByLabel('Tool', { exact: true })
+          .selectOption('get_order_status');
         const field = page.locator('textarea');
         await field.fill(JSON.stringify({ token: tokens[i] }));
         await page.getByRole('button', { name: /call tool/i }).click();
         let frame;
         for (let n = 0; n < 100; n++) {
-          frame = page
-            .frames()
-            .find((f) => f !== page.mainFrame() && f.url() === 'about:srcdoc');
-          if (frame && (await frame.locator('.dw').count())) break;
+          for (const candidate of page.frames())
+            if (
+              candidate !== page.mainFrame() &&
+              (await candidate.locator('.dw').count())
+            ) {
+              frame = candidate;
+              break;
+            }
+          if (frame) break;
           await page.waitForTimeout(100);
         }
         assert(
@@ -227,9 +235,14 @@ if (process.argv.includes('--serve-fixtures')) {
         await frame.locator('.dw').waitFor();
         await frame.evaluate(() => document.fonts.ready);
         await page.waitForTimeout(600);
-        await frame.locator('.dw').evaluate((el, w) => {
-          el.style.width = w + 'px';
-        }, width);
+        await page
+          .locator('iframe')
+          .first()
+          .evaluate((el, w) => {
+            el.style.width = w + 'px';
+            el.style.maxWidth = 'none';
+            el.style.boxSizing = 'content-box';
+          }, width);
         await page.waitForTimeout(400);
         const metrics = await frame.evaluate(() => ({
           width: document.documentElement.scrollWidth,
@@ -237,6 +250,7 @@ if (process.argv.includes('--serve-fixtures')) {
           height: document.querySelector('.dw').getBoundingClientRect().height,
           viewport: window.innerHeight,
         }));
+        assert.equal(metrics.client, width, JSON.stringify(metrics));
         assert(metrics.width <= metrics.client + 1, JSON.stringify(metrics));
         assert(metrics.height <= metrics.viewport + 2, JSON.stringify(metrics));
         await frame

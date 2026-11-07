@@ -723,12 +723,13 @@
       }
       .seat {
         position: relative;
-        aspect-ratio: 1/1.12;
+        min-height: 112px;
         border-radius: 18px;
         display: grid;
         place-items: center;
         align-content: center;
-        gap: 8px;
+        gap: 5px;
+        padding: 8px 0;
         background: rgba(255, 255, 255, 0.035);
         border: 1px solid var(--line);
       }
@@ -926,9 +927,6 @@
         font-weight: 650;
       }
       .seat .you-t {
-        position: absolute;
-        top: 9px;
-        right: 9px;
         font-size: 10px;
         font-weight: 800;
         letter-spacing: 0.1em;
@@ -937,6 +935,7 @@
         border-radius: 6px;
         background: var(--lav);
         color: #1a0e30;
+        justify-self: center;
       }
       .seat.open .a {
         border: 1.5px dashed rgba(214, 187, 255, 0.35);

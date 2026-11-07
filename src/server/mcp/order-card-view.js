@@ -78,7 +78,7 @@ function render(result) {
     cancelled = d.status === 'cancelled',
     waiting = d.team?.status === 'waiting';
   const current = (d.team ? d.team.status === 'done' : done)
-    ? 3
+    ? 4
     : d.accepted && !waiting
       ? 2
       : 1;
@@ -125,7 +125,7 @@ function render(result) {
     ? `<div class="seats" style="grid-template-columns:repeat(${d.team.seats},minmax(0,1fr))">${d.team.members
         .map((m) => {
           const taken = ['in_progress', 'completed'].includes(m.status);
-          return `<div class="seat ${taken ? 'taken' : 'open'} ${m.thisSeat ? 'you' : ''}">${m.thisSeat ? '<span class="you-t">You</span>' : ''}${taken ? '<span class="ok"></span>' : ''}<div class="a">${taken ? esc((m.name || '?').slice(0, 1)) : '<span class="pulse"></span>'}</div><small>${taken ? esc(m.name || 'Teammate') : 'Finding player'}</small></div>`;
+          return `<div class="seat ${taken ? 'taken' : 'open'} ${m.thisSeat ? 'you' : ''}">${taken ? '<span class="ok"></span>' : ''}<div class="a">${taken ? esc((m.name || '?').slice(0, 1)) : '<span class="pulse"></span>'}</div><small>${taken ? esc(m.name || 'Teammate') : 'Finding player'}</small>${m.thisSeat ? '<span class="you-t">You</span>' : ''}</div>`;
         })
         .join(
           '',
@@ -139,7 +139,8 @@ function render(result) {
     : d.accepted && !waiting
       ? `Message ${name || 'your teammate'}`
       : 'Open your order room';
-  app.innerHTML = `<article class="dw"><div class="top">${d.gameSlug && /^[a-z0-9-]+$/.test(d.gameSlug) ? `<img class="gi" src="https://duoly.gg/assets/games/${esc(d.gameSlug)}.png" alt="">` : ''}<div><div class="eyebrow">Your Duoly order</div><h3>${esc(d.gameName || d.game)} · ${esc(d.title)}</h3></div><div class="brand"><img src="https://duoly.gg/assets/brand/logo-mascots.webp" alt=""><span>duoly</span></div></div><div class="hr"></div>${d.team ? '' : `<div class="hero"><div class="orb">${orb}</div><div><div class="state-k ${done ? 'ok' : ''}">${esc(label)}</div><h2 class="headline">${esc(title)}</h2><p class="sub">${!d.accepted && !cancelled ? `Searching · <span class="timer">${timer}</span> so far<br>` : ''}${esc(d.nextStep)}</p></div></div>`}${seats}${cancelled ? '' : `<div class="journey"><div class="steps"><div class="track"><i style="width:${(current / 3) * 100}%"></i></div>${steps.map((s, i) => `<div class="st ${i < current ? 'done' : i === current ? 'now' : ''}"><i>${i < current ? '✓' : i + 1}</i><small>${s}</small><em>${esc(stamps[i])}</em></div>`).join('')}</div></div>`}<div class="strip"><div><div class="t">${esc(d.title)}</div><div class="tags"><span class="tg">${esc(d.quantity.value)} ${esc(d.quantity.unit)}${d.quantity.value > 1 ? 's' : ''}</span>${d.rank ? `<span class="tg">${esc(d.rank)}</span>` : ''}${d.region ? `<span class="tg">${esc(d.region)}</span>` : ''}</div></div><div class="paid"><b>${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(d.paidEurMinor / 100)}</b><small>Paid</small></div></div>${room ? `<div class="cta-row"><a class="cta" href="${esc(room)}" target="_blank" rel="noopener">${esc(cta)} ↗</a></div>` : ''}<div class="fine">${!d.accepted && !cancelled ? '<span>Duoly emails you the moment someone accepts</span>' : ''}<span>Updated ${esc(time(d.updatedAt))}</span><span>Read only. Email and card details stay private.</span></div></article>`;
+  // Never expose the input token as a data attribute, storage key, URL or log.
+  app.innerHTML = `<article class="dw"><div class="top">${d.gameSlug && /^[a-z0-9-]+$/.test(d.gameSlug) ? `<img class="gi" src="https://duoly.gg/assets/games/${esc(d.gameSlug)}.png" alt="">` : ''}<div><div class="eyebrow">Your Duoly order</div><h3>${esc(d.gameName || d.game)} · ${esc(d.title)}</h3></div><div class="brand"><img src="https://duoly.gg/assets/brand/logo-mascots.webp" alt=""><span>duoly</span></div></div><div class="hr"></div>${d.team ? '' : `<div class="hero"><div class="orb">${orb}</div><div><div class="state-k ${done ? 'ok' : ''}">${esc(label)}</div><h2 class="headline">${esc(title)}</h2><p class="sub">${!d.accepted && !cancelled ? `Searching · <span class="timer">${timer}</span> so far<br>` : ''}${esc(d.nextStep)}</p></div></div>`}${seats}${cancelled ? '' : `<div class="journey"><div class="steps"><div class="track"><i style="width:${Math.min(current, 3) * 33.33333333333333}%"></i></div>${steps.map((s, i) => `<div class="st ${i < current ? 'done' : i === current ? 'now' : ''}"><i>${i < current ? '✓' : i + 1}</i><small>${s}</small><em>${esc(stamps[i]) || '\u00a0'}</em></div>`).join('')}</div></div>`}<div class="strip"><div><div class="t">${esc(d.title)}</div><div class="tags"><span class="tg">${esc(d.quantity.value)} ${esc(d.quantity.unit)}${d.quantity.value > 1 ? 's' : ''}</span>${d.rank ? `<span class="tg">${esc(d.rank)}</span>` : ''}${d.region ? `<span class="tg">${esc(d.region)}</span>` : ''}</div></div><div class="paid"><b>${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(d.paidEurMinor / 100)}</b><small>Paid</small></div></div>${room ? `<div class="cta-row"><a class="cta" href="${esc(room)}" target="_blank" rel="noopener">${esc(cta)} ↗</a></div>` : ''}<div class="fine">${!d.accepted && !cancelled ? '<span>Duoly emails you the moment someone accepts</span>' : ''}<span>Updated ${esc(time(d.updatedAt))}</span><span> · </span><span>Read only. Email and card details stay private.</span></div></article>`;
   app.querySelector('a')?.addEventListener('click', (e) => {
     e.preventDefault();
     request('ui/open-link', { url: room }).catch(() => {

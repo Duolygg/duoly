@@ -92,4 +92,10 @@ it('renders names as plain text, current tracker fill and honest snapshot time',
   expect(v.app.innerHTML).toContain('Updated');
   expect(v.app.innerHTML).not.toContain('Live,');
   expect(v.app.innerHTML).toContain('66.66666666666666%');
+  runInContext(
+    "payload._meta['gg.duoly/card'].status='completed'; render(payload)",
+    v.context,
+  );
+  expect(v.app.innerHTML.match(/class="st done"/g)).toHaveLength(4);
+  expect(v.app.innerHTML).not.toContain('class="st now"');
 });
