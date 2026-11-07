@@ -1,5 +1,5 @@
-// Flip only after the Claude connector is available to customers.
-export const AI_CONNECTOR_LIVE = false;
+// Public custom connector is live. Directory listings are separate approvals.
+export const AI_CONNECTOR_LIVE = true;
 export function aiLaunchState(live: boolean = AI_CONNECTOR_LIVE) {
   return {
     label: live ? 'Available in Claude' : 'Launching soon in Claude',
@@ -70,7 +70,7 @@ export const AI_ASSISTANTS = [
     status: AI_CONNECTOR_LIVE ? 'Add it yourself' : 'Launching first',
     detail: 'Find teammates and coaches in your conversation.',
     steps: [
-      'Open Customize, then Connectors in Claude.',
+      'Open Settings, then Connectors in Claude.',
       'Add a custom connector named Duoly using the URL below.',
       'Add it without signing in, then enable Duoly in your conversation.',
     ],

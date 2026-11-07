@@ -72,9 +72,9 @@ const faq: [string, string][] = [
         <p class="eyebrow">{launch.label}</p>
         <h1>Book a gaming teammate from your AI assistant</h1>
         <p class="lead">
-          Tell your AI what you want to play. The Duoly connection will find
-          teammates and coaching options, check prices and prepare your booking
-          link. You review and pay on duoly.gg.
+          Tell your AI what you want to play. The Duoly connection finds
+          teammates and coaching options, checks prices and prepares your
+          booking link. You review and pay on duoly.gg.
         </p>
         <div class="hero-actions">
           <a class="cta" href="/">
@@ -106,7 +106,7 @@ const faq: [string, string][] = [
             <span class="ai-tag">Valorant</span>
             <span class="ai-tag">Coaching</span>
           </div>
-          <h2>VOD review with an Immortal+ coach</h2>
+          <h2>Valorant VOD review</h2>
           <div class="ai-result-row">
             <p
               class="ai-chat-price"
@@ -168,6 +168,12 @@ const faq: [string, string][] = [
           Custom connector URL: <code>{MCP.endpoint}</code>
         </p>
       )}
+      <p>
+        Duoly is available as a custom connector. It is not listed in the Claude
+        directory or the ChatGPT store. In assistants that support interactive
+        cards, you can browse games, compare sessions and open a booking link
+        from a card. Other clients can use text results and links.
+      </p>
       <p class="ai-dev-note">
         Building your own client? Read the{' '}
         <a href="/developers/mcp">Duoly MCP developer guide</a>.
@@ -176,8 +182,8 @@ const faq: [string, string][] = [
     <section aria-labelledby="prompts-h">
       <h2 id="prompts-h">Start with one of these prompts</h2>
       <p>
-        Use these with the Duoly connector once it is available. Include your
-        budget and mode so the assistant can narrow the options.
+        Use these with the Duoly connector in Claude. Include your budget and
+        mode so the assistant can narrow the options.
       </p>
       <ul class="ai-prompts">
         {AI_PROMPTS.slice(0, 3).map((prompt) => (
@@ -193,6 +199,42 @@ const faq: [string, string][] = [
         </ul>
       </details>
     </section>
+    <section aria-labelledby="tools-h">
+      <h2 id="tools-h">Seven tools for your next session</h2>
+      <ul class="ai-tools">
+        <li>
+          <code>list_games</code>: Browse supported games.
+        </li>
+        <li>
+          <code>list_services</code>: Compare services and starting prices.
+        </li>
+        <li>
+          <code>find_session</code>: Find teammates or coaching within your
+          budget.
+        </li>
+        <li>
+          <code>get_quote</code>: Check a selected session’s base price.
+        </li>
+        <li>
+          <code>get_availability</code>: Check public online signals without
+          reserving a teammate.
+        </li>
+        <li>
+          <code>create_booking_link</code>: Open your selection on Duoly to
+          review and book.
+        </li>
+        <li>
+          <code>get_order_status</code>: Check one order’s progress with its
+          private status code.
+        </li>
+      </ul>
+      <p>
+        Generate a status code in your order room and share it only with an
+        assistant you trust. You can revoke it there. It expires after seven
+        days. Ask again to refresh the status. It cannot change or cancel your
+        order.
+      </p>
+    </section>
     <section aria-labelledby="boundaries-h">
       <h2 id="boundaries-h">You stay in control</h2>
       <div class="ai-boundaries">
@@ -202,6 +244,7 @@ const faq: [string, string][] = [
             <li>Search games and bookable services.</li>
             <li>Compare prices and public availability.</li>
             <li>Prepare a link to book on Duoly.</li>
+            <li>Check one order when you share its private status code.</li>
           </ul>
         </div>
         <div class="card">
@@ -218,8 +261,14 @@ const faq: [string, string][] = [
           <h3 id="privacy-h">What your AI shares</h3>
           <ul>
             <li>Your search choices such as game, service, rank and budget.</li>
-            <li>Nothing from your Duoly account.</li>
-            <li>Payment and personal details stay on duoly.gg.</li>
+            <li>
+              A private status code, only if you choose to share it. It lets
+              your assistant read that order’s progress and teammate display
+              names.
+            </li>
+            <li>
+              Never share passwords or payment details with your assistant.
+            </li>
           </ul>
         </div>
       </div>
