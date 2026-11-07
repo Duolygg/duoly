@@ -1,0 +1,89 @@
+---
+import type { SessionExample } from '../../content/coaching-examples';
+import type { seoOffers } from '../../server/seo/offers';
+import { compareOthers, sessionLead } from '../../server/seo/coaching-examples';
+import { bookingHref } from '../../site/seo';
+interface Props {
+  gameId: string;
+  gameName: string;
+  examples: {
+    offer: ReturnType<typeof seoOffers>[number];
+    example: SessionExample;
+  }[];
+}
+const { gameId, gameName, examples } = Astro.props;
+const services = [
+  ...new Map(examples.map((item) => [item.offer.id, item])).values(),
+];
+const offers = services.map((item) => item.offer);
+---
+
+{services.length > 0 && (
+  <section aria-labelledby="session-examples">
+    <h2 id="session-examples">
+      What happens in a {gameName} coaching session?
+    </h2>
+    <p class="section-intro">
+      One example session per service. Your coach adapts the timing and focus to
+      your goal.
+    </p>
+    <nav class="session-picker" aria-label="Compare coaching services">
+      {services.map(({ offer, example }) => (
+        <a class="session-pick" href={`#example-${offer.id}`}>
+          <span class="session-pick-title">{offer.title}</span>
+          <span class="session-pick-tier">{offer.tier}</span>
+          <span class="session-pick-goal">{example.goal}</span>
+          <span class="session-pick-price">
+            {offer.display} per {offer.unit}
+          </span>
+        </a>
+      ))}
+    </nav>
+    {services.map(({ offer, example }) => (
+      <article class="card session-card" id={`example-${offer.id}`}>
+        <div class="session-head">
+          <span class="pill">Example session</span>
+          <h3>
+            What happens in {gameName} {offer.title}?
+          </h3>
+          <span class="price-chip">
+            {offer.display} per {offer.unit}
+          </span>
+        </div>
+        <p class="session-goal">{sessionLead(gameName, offer, example.goal)}</p>
+        <p class="session-bring">
+          <strong>Bring:</strong> {example.bring}
+        </p>
+        <ol class="session-timeline">
+          {example.steps.map((step, index) => (
+            <li>
+              <span class="session-at">
+                <span class="session-step">Step {index + 1}</span>
+                {step.at}
+              </span>
+              <span>
+                <strong>{step.title}.</strong> {step.text}
+              </span>
+            </li>
+          ))}
+        </ol>
+        <div class="session-takeaways">
+          <p class="session-takeaways-title">What you leave with</p>
+          <ul class="checklist">
+            {example.takeaways.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <p class="session-compare">{compareOthers(offers, offer.id)}</p>
+        <a
+          class="btn-sm"
+          href={bookingHref(gameId, { service: offer.id })}
+          aria-label={`Book ${offer.title}`}
+        >
+          Book {offer.title}
+        </a>
+      </article>
+    ))}
+  </section>
+)}
