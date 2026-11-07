@@ -1,26 +1,6 @@
 # MCP text samples
 
-Fresh verbatim content[0].text from the local Astro endpoint, protocol 2025-11-25. Prices use the unchanged server calculator and live FX loader. Limiter storage is a local test fixture, not production. No online counts or wait times are fabricated. Full data is returned separately in structuredContent; card matrices are view-only metadata.
-
-## list_games: {}
-
-```text
-League of Legends (lol): https://duoly.gg/?game=lol&agent=claude#modes-h
-Valorant (val): https://duoly.gg/?game=val&agent=claude#modes-h
-Counter-Strike 2 (cs2): https://duoly.gg/?game=cs2&agent=claude#modes-h
-Fortnite (fn): https://duoly.gg/?game=fn&agent=claude#modes-h
-Call of Duty (cod): https://duoly.gg/?game=cod&agent=claude#modes-h
-Apex Legends (apex): https://duoly.gg/?game=apex&agent=claude#modes-h
-Rainbow Six Siege (r6): https://duoly.gg/?game=r6&agent=claude#modes-h
-Marvel Rivals (mr): https://duoly.gg/?game=mr&agent=claude#modes-h
-Overwatch 2 (ow): https://duoly.gg/?game=ow&agent=claude#modes-h
-Rocket League (rl): https://duoly.gg/?game=rl&agent=claude#modes-h
-Teamfight Tactics (tft): https://duoly.gg/?game=tft&agent=claude#modes-h
-EA SPORTS FC 27 (fc): https://duoly.gg/?game=fc&agent=claude#modes-h
-ARC Raiders (arc): https://duoly.gg/?game=arc&agent=claude#modes-h
-Minecraft (mc): https://duoly.gg/?game=mc&agent=claude#modes-h
-Pokémon Unite (pu): https://duoly.gg/?game=pu&agent=claude#modes-h
-```
+Verbatim content[0].text captured from the local Astro endpoint (2025-11-25). Server calculator, local test-only limiter, no production writes.
 
 ## list_services: {"game":"lol"}
 
@@ -43,16 +23,16 @@ Champion Mastery (champ): One champion, properly: matchups, combos, builds and p
 ## find_session: {"game":"lol","rank":"Gold","server":"EUW","quantity":3}
 
 ```text
-Duo Plus (duo1): Ranked Solo/Duo with a Diamond player in the role you need; They play around your lane, ping objectives and keep the game calm. EUR 9.42 total for 3 game; EUR 3.14 per game; saves EUR 1.05, 10% bundle discount. https://duoly.gg/?game=lol&service=duo1&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
-Duo Pro (duo2): Ranked Solo/Duo with a Master player who shot-calls: when to fight, which objective is next, when to back off; Ask anything between games. EUR 10.77 total for 3 game; EUR 3.59 per game; saves EUR 1.20, 10% bundle discount. https://duoly.gg/?game=lol&service=duo2&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
-Duo Apex (duo3): A Grandmaster or Challenger player for Diamond and Master lobbies, when you need a partner who can take over games. EUR 16.17 total for 3 game; EUR 5.39 per game; saves EUR 1.80, 10% bundle discount. https://duoly.gg/?game=lol&service=duo3&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
-Remaining inputs: currency. Base price before account perks. Pay on Duoly.
+Duo Plus (duo1): Ranked Solo/Duo with a Diamond player in the role you need; They play around your lane, ping objectives and keep the game calm. EUR 9.42 total for 3 games; EUR 3.14 per game; saves EUR 1.05, 10% bundle discount. https://duoly.gg/?game=lol&service=duo1&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
+Duo Pro (duo2): Ranked Solo/Duo with a Master player who shot-calls: when to fight, which objective is next, when to back off; Ask anything between games. EUR 10.77 total for 3 games; EUR 3.59 per game; saves EUR 1.20, 10% bundle discount. https://duoly.gg/?game=lol&service=duo2&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
+Duo Apex (duo3): A Grandmaster or Challenger player for Diamond and Master lobbies, when you need a partner who can take over games. EUR 16.17 total for 3 games; EUR 5.39 per game; saves EUR 1.80, 10% bundle discount. https://duoly.gg/?game=lol&service=duo3&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
+Base price before account perks. Pay on Duoly.
 ```
 
 ## get_quote: {"game":"lol","service":"duo2","rank":"Gold","server":"EUW","quantity":3,"currency":"EUR"}
 
 ```text
-EUR 10.77 total for 3 game; EUR 3.59 per game; saves EUR 1.20, 10% bundle discount. Base price before account perks. No reservation. https://duoly.gg/?game=lol&service=duo2&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
+EUR 10.77 total for 3 games; EUR 3.59 per game; saves EUR 1.20, 10% bundle discount. Base price before account perks. No reservation. https://duoly.gg/?game=lol&service=duo2&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
 ```
 
 ## get_availability: {"game":"lol"}
@@ -97,4 +77,14 @@ Base price before account perks. Pay on Duoly.
 
 ```text
 EUR 12.99 total for 1 hour; EUR 12.99 per hour. Base price before account perks. No reservation. https://duoly.gg/?game=val&service=vod&agent=claude&region=EU&qty=1#modes-h
+```
+
+## find_session: {"game": "lol", "goal": "I want to climb", "rank": "Gold", "server": "EUW", "quantity": 3}
+
+```text
+Duo Plus (duo1): Ranked Solo/Duo with a Diamond player in the role you need; They play around your lane, ping objectives and keep the game calm. EUR 9.42 total for 3 games; EUR 3.14 per game; saves EUR 1.05, 10% bundle discount. https://duoly.gg/?game=lol&service=duo1&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
+Duo Pro (duo2): Ranked Solo/Duo with a Master player who shot-calls: when to fight, which objective is next, when to back off; Ask anything between games. EUR 10.77 total for 3 games; EUR 3.59 per game; saves EUR 1.20, 10% bundle discount. https://duoly.gg/?game=lol&service=duo2&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
+Duo Apex (duo3): A Grandmaster or Challenger player for Diamond and Master lobbies, when you need a partner who can take over games. EUR 16.17 total for 3 games; EUR 5.39 per game; saves EUR 1.80, 10% bundle discount. https://duoly.gg/?game=lol&service=duo3&agent=claude&rank=Gold&region=EUW&qty=3#modes-h
+Recommended: duo1. Ranked Solo/Duo with a Diamond player in the role you need; They play around your lane, ping objectives and keep the game calm. Saves EUR 1.05 (10% bundle discount).
+Base price before account perks. Pay on Duoly.
 ```

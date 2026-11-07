@@ -16,6 +16,7 @@ import {
 } from './catalog';
 import { calculateQuote } from '../pricing';
 import { eurToUsd } from '../fx';
+import { GOALS, goalOf, goalServices, type Goal } from './goals';
 import { homeLive } from '../home/live';
 import { serverTrack, flushAnalytics } from '../analytics/client';
 
@@ -95,7 +96,10 @@ const inputs = {
       .min(1)
       .max(64)
       .optional()
-      .describe('Exact goal token: duo, coaching, ranked, casual or teams.'),
+      .describe(
+        'Goal text matched by explicit keyword rules; use goalType to resolve ambiguity.',
+      ),
+    goalType: z.enum(GOALS).optional(),
     category: z
       .string()
       .min(1)
@@ -193,6 +197,9 @@ const outputs = {
       )
       .max(3),
     missingInputs: z.array(z.string()),
+    recommendation: z
+      .object({ serviceId: z.string(), goal: z.string(), reason: z.string() })
+      .optional(),
     budgetApplied: z.boolean(),
     notice: z.string(),
   }),
@@ -313,7 +320,7 @@ function priceDetails(quote: ReturnType<typeof calculateQuote>) {
 const money = (minor: number, currency = 'EUR') =>
   `${currency} ${(minor / 100).toFixed(2)}`;
 function priceText(s: Record<string, unknown>) {
-  return `${s.priceKind === 'from' ? 'from ' : ''}${money(Number(s.amountMinor), String(s.currency))} total for ${s.quantity} ${s.unit ?? 'unit'}; ${money(Number(s.perUnitMinor), String(s.currency))} per ${s.unit ?? 'unit'}${Number(s.savingMinor) > 0 ? `; saves ${money(Number(s.savingMinor), String(s.currency))}, ${s.bundleDiscountPercent}% bundle discount` : ''}`;
+  return `${s.priceKind === 'from' ? 'from ' : ''}${money(Number(s.amountMinor), String(s.currency))} total for ${s.quantity} ${s.unit ?? 'unit'}${Number(s.quantity) === 1 ? '' : 's'}; ${money(Number(s.perUnitMinor), String(s.currency))} per ${s.unit ?? 'unit'}${Number(s.savingMinor) > 0 ? `; saves ${money(Number(s.savingMinor), String(s.currency))}, ${s.bundleDiscountPercent}% bundle discount` : ''}`;
 }
 export async function callTool(
   name: ToolName,
@@ -336,6 +343,7 @@ export async function callTool(
     server?: string;
     edition?: 'Java' | 'Bedrock';
     goal?: string;
+    goalType?: Goal;
     category?: string;
     region?: string;
     budget?: number;
@@ -358,12 +366,13 @@ export async function callTool(
         ranked: 'ranked',
         casual: 'casual',
       };
-      for (const value of [a.goal, a.category])
+      const intent = goalOf(a.goal, a.goalType);
+      for (const value of [intent ? undefined : a.goal, a.category])
         if (value && !Object.hasOwn(aliases, value))
           throw new ToolInputError(
             'Invalid goal/category. Valid tokens: duo, coaching, training, ranked, casual, teams, other.',
           );
-      const goals = [a.goal, a.category]
+      const goals = [intent ? undefined : a.goal, a.category]
         .filter((v): v is string => v !== undefined)
         .map((v) => aliases[v]!);
       let candidates = all.filter((s) =>
@@ -375,6 +384,12 @@ export async function callTool(
               : s.category === goal,
         ),
       );
+      if (intent) {
+        const ids = goalServices(g!.id, intent);
+        candidates = ids
+          ? ids.flatMap((id) => candidates.filter((s) => s.id === id))
+          : candidates.filter((s) => s.casual);
+      }
       if (!candidates.length)
         throw new ToolInputError(
           `No services for this goal/category combination. Valid categories for ${g!.id}: ${[...new Set(all.map((s) => s.category))].join(', ')}. Call list_services for details.`,
@@ -415,7 +430,6 @@ export async function callTool(
       for (const s of candidates) {
         const missingInputs = [
           ...(a.quantity === undefined ? ['quantity'] : []),
-          ...(a.currency === undefined ? ['currency'] : []),
           ...(!server ? ['server'] : []),
           ...(s.ranks.length && !a.rank ? ['rank'] : []),
           ...(g!.id === 'mc' && !a.edition ? ['edition'] : []),
@@ -445,7 +459,6 @@ export async function callTool(
         )[0]!;
         if (
           a.budget !== undefined &&
-          a.currency &&
           quote.customer.amountMinor > Math.floor(a.budget * 100)
         )
           continue;
@@ -516,7 +529,16 @@ export async function callTool(
             best.length ? best.flatMap((s) => s.missingInputs) : [...missing],
           ),
         ],
-        budgetApplied: a.budget !== undefined && a.currency !== undefined,
+        ...(intent && best[0]
+          ? {
+              recommendation: {
+                serviceId: best[0].id,
+                goal: intent,
+                reason: `${best[0].description}${best[0].savingMinor > 0 ? ` Saves ${money(best[0].savingMinor, best[0].currency)} (${best[0].bundleDiscountPercent}% bundle discount).` : ' No bundle savings for this selection.'}${intent === 'play_tonight' ? ' No availability or start time is guaranteed.' : ''}${intent === 'climb' && g!.id === 'cs2' ? ' Confirm Premier or FACEIT before booking.' : ''}${intent === 'climb' && g!.id === 'cod' ? ' Confirm Multiplayer or Warzone before booking.' : ''}`,
+              },
+            }
+          : {}),
+        budgetApplied: a.budget !== undefined,
         notice:
           'Base price before account perks; EUR unless specified. Representative prices are examples, not inferred selections. Review remaining inputs on Duoly. A teammate accepts from the queue.',
       };
@@ -699,10 +721,10 @@ export async function callTool(
                         currency: string;
                       }
                     | undefined;
-                  return `${s.name} (${s.id}): ${s.description} ${priceText(s)}.${example ? ` ${s.priceNote} Example ${example.rank ?? 'flat price'}, ${example.quantity} ${s.unit}: ${priceText({ ...example, unit: s.unit })}.` : ''} ${s.bookUrl}`;
+                  return `${s.name} (${s.id}): ${s.description} ${priceText(s)}.${example ? ` ${s.priceNote} Example ${example.rank ?? 'flat price'}, ${example.quantity} ${s.unit}${example.quantity === 1 ? '' : 's'}: ${priceText({ ...example, unit: s.unit })}.` : ''} ${s.bookUrl}`;
                 })
                 .join('\n') || summary
-            }\n${(structuredContent.missingInputs as string[]).length ? `Remaining inputs: ${(structuredContent.missingInputs as string[]).join(', ')}. ` : ''}Base price before account perks. Pay on Duoly.`;
+            }${structuredContent.recommendation ? `\nRecommended: ${(structuredContent.recommendation as { serviceId: string }).serviceId}. ${(structuredContent.recommendation as { reason: string }).reason}` : ''}\n${(structuredContent.missingInputs as string[]).length ? `Remaining inputs: ${(structuredContent.missingInputs as string[]).join(', ')}. ` : ''}Base price before account perks. Pay on Duoly.`;
           if (name === 'get_quote')
             return `${priceText(structuredContent)}. Base price before account perks. No reservation. ${structuredContent.bookUrl}`;
           if (name === 'get_availability')

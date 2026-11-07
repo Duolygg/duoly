@@ -114,7 +114,7 @@ describe('MCP tools', () => {
       { fx },
     );
     expect(result.structuredContent.missingInputs).toEqual(
-      expect.arrayContaining(['rank', 'server', 'quantity', 'currency']),
+      expect.arrayContaining(['rank', 'server', 'quantity']),
     );
     expect(
       (result.structuredContent.matches as Array<{ priceKind: string }>).every(
@@ -163,8 +163,10 @@ describe('MCP tools', () => {
       { game: 'val', goal: 'coaching', budget: 1 },
       { fx },
     );
-    expect(noCurrency.structuredContent.budgetApplied).toBe(false);
-    expect(noCurrency.structuredContent.missingInputs).toContain('currency');
+    expect(noCurrency.structuredContent.budgetApplied).toBe(true);
+    expect(noCurrency.structuredContent.missingInputs).not.toContain(
+      'currency',
+    );
   });
   it.each([
     [{ game: 'League' }, /lol.*league-of-legends/],
