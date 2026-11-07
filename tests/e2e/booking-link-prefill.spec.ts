@@ -4,6 +4,7 @@ import { mkdir } from 'node:fs/promises';
 test('assistant coaching link selects existing controls without changing page layout', async ({
   page,
 }, testInfo) => {
+  if (process.env.PREFILL_SCREENSHOTS) test.setTimeout(60000);
   await page.goto('/?game=lol&service=learn');
   await expect(page).toHaveURL('/');
   const role = page.getByRole('group', { name: 'Your role' });
