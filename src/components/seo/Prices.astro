@@ -1,5 +1,5 @@
 ---
-import type { seoOffers } from '../../server/seo/offers';
+import { activityPriceSummary, type seoOffers } from '../../server/seo/offers';
 import { bookingHref } from '../../site/seo';
 interface Props {
   gameId: string;
@@ -57,7 +57,7 @@ const cards = services.map((service) => {
     <p class="section-intro">
       {intro ??
         (samePrice
-          ? `Every activity is ${services[0]!.display} per ${services[0]!.unit} with ${services[0]!.provider.replace(/^Verified/, 'verified')}s.`
+          ? activityPriceSummary(offers, coach)
           : coach
             ? `All lessons are with ${services[0]!.provider} coaches.`
             : `All sessions are with ${services[0]!.provider.replace(/^Verified/, 'verified')}s.`)}

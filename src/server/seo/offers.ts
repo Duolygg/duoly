@@ -19,7 +19,47 @@ export function priceSummary(offers: ReturnType<typeof seoOffers>) {
     (offer) =>
       offer.amountMinor === first.amountMinor && offer.unit === first.unit,
   );
-  return `${same ? '' : 'From '}${first.display} per ${first.unit}`;
+  const cheapestByUnit = [...new Set(offers.map((offer) => offer.unit))].map(
+    (unit) =>
+      offers
+        .filter((offer) => offer.unit === unit)
+        .sort((a, b) => a.amountMinor - b.amountMinor)[0]!,
+  );
+  const sameUnitPrice = cheapestByUnit.every(
+    (offer) => offer.amountMinor === first.amountMinor,
+  );
+  const prices = sameUnitPrice
+    ? `${first.display} ${cheapestByUnit.map((offer) => `per ${offer.unit}`).join(' or ')}`
+    : cheapestByUnit
+        .map((offer) => `${offer.display} per ${offer.unit}`)
+        .join(' or ');
+  return `${same ? '' : 'From '}${prices}`;
+}
+// Flat-price service introductions must group by both price and billing unit.
+export function activityPriceSummary(
+  offers: ReturnType<typeof seoOffers>,
+  coach = false,
+) {
+  const groups = new Map<string, typeof offers>();
+  for (const offer of offers) {
+    const key = `${offer.currency}:${offer.amountMinor}:${offer.unit}`;
+    groups.set(key, [...(groups.get(key) ?? []), offer]);
+  }
+  const list = new Intl.ListFormat('en', {
+    style: 'long',
+    type: 'conjunction',
+  });
+  const prices = [...groups.values()].map((group) => {
+    const names = [...new Set(group.map((offer) => offer.title))];
+    return `${list.format(names)} ${names.length === 1 ? 'is' : 'are'} ${group[0]!.display} per ${group[0]!.unit}`;
+  });
+  const providers = [...new Set(offers.map((offer) => offer.provider))];
+  const provider = providers[0]!;
+  const withProvider =
+    providers.length === 1
+      ? ` with ${coach ? `${provider} coaches` : `${provider.replace(/^Verified/, 'verified')}s`}`
+      : '';
+  return `${prices.join('; ')}${withProvider}.`;
 }
 // Short coaching hero facts: coach ranks and how lessons are sold.
 export function coachingFacts(offers: ReturnType<typeof seoOffers>) {
