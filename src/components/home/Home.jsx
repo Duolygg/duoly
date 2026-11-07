@@ -1,6 +1,11 @@
 'use client';
 
 import { track } from '../../client/analytics/track';
+import {
+  BOOKING_PARAMS,
+  bookingParam,
+  parseBookingPreferences,
+} from '../../contracts/booking-link';
 
 /* global Response */
 // Port of the original components/Home.jsx (duoly-admin/duoly@7f0299f). Live wiring comes in as
@@ -245,27 +250,12 @@ export default class Home extends React.Component {
   // From a game or coaching page CTA (/?game=val&tab=training#modes-h or &service=vod): that game,
   // and that service (or that tab with its first service) picked.
   openGameFromLink() {
-    let game = '';
-    let tab = '';
-    let service = '';
-    let rank = '';
-    let region = '';
-    let quantity = '';
+    let params;
     try {
       const url = new URL(window.location.href);
       if (!url.searchParams.has('game')) return;
-      game = url.searchParams.get('game') || '';
-      tab = url.searchParams.get('tab') || '';
-      service = url.searchParams.get('service') || '';
-      rank = url.searchParams.get('rank') || '';
-      region = url.searchParams.get('region') || '';
-      quantity = url.searchParams.get('qty') || '';
-      url.searchParams.delete('game');
-      url.searchParams.delete('tab');
-      url.searchParams.delete('service');
-      url.searchParams.delete('rank');
-      url.searchParams.delete('region');
-      url.searchParams.delete('qty');
+      params = new URLSearchParams(url.search);
+      for (const key of BOOKING_PARAMS) url.searchParams.delete(key);
       window.history.replaceState(
         null,
         '',
@@ -274,30 +264,44 @@ export default class Home extends React.Component {
     } catch (e) {
       return;
     }
+    const game = bookingParam(params, 'game');
     const g = this.data().find((x) => x.id === game);
     if (!g) return;
+    const service = bookingParam(params, 'service');
+    const tab = bookingParam(params, 'tab');
     const m =
       (service && g.modes.find((x) => x.id === service)) ||
       (tab && g.modes.find((x) => x.cat === tab)) ||
       null;
     const top = g.modes.find((x) => x.id === g.main) || g.modes[0];
     const selected = m || g.modes.find((x) => x.id === this.state.mode) || top;
-    const validQty = /^\d+$/.test(quantity) && Number(quantity) > 0;
-    // The existing order contract accepts 1 to 10 games or hours for every service.
-    const qty = validQty ? Math.min(10, Number(quantity)) : null;
-    // Named bundles belong only to the main service, never switch another service.
+    const { values } = parseBookingPreferences(params, game, selected.id);
+    const qty = values.qty;
+    // A requested role must not disappear behind the legacy main-service bundle.
     const bundle =
-      selected.id === top.id && qty !== null
+      selected.id === top.id &&
+      qty !== undefined &&
+      values.role === undefined &&
+      values.character === undefined &&
+      values.seats === undefined
         ? (g.bundles || [])[[3, 5, 10].indexOf(qty)] || null
         : null;
     this.setState(
       {
         game,
-        rank: ranksOf(game, selected.id).includes(rank) ? rank : '',
+        rank: '',
+        role: '',
+        character: '',
+        seats: seatRule(game, selected.id).default,
+        mood: '',
+        voice: true,
+        mcServer: '',
+        mcEdition: 'Java',
         queued: false,
-        ...(m ? { tab: m.cat, mode: m.id, bundle: null, qty: 1 } : {}),
-        ...(!usesServerName(game) && isServer(game, region) ? { region } : {}),
-        ...(qty !== null ? { qty, bundle } : {}),
+        bundle: null,
+        ...(m ? { tab: m.cat, mode: m.id, qty: 1 } : {}),
+        ...values,
+        ...(qty !== undefined ? { bundle } : {}),
       },
       () => {
         // the picked game's services can change the page height: land on them again
@@ -360,6 +364,17 @@ export default class Home extends React.Component {
             qty: s.qty,
             rank: s.rank,
             voice: s.voice,
+            // Preserve existing-control link selections through the sign-in round trip.
+            role: s.role,
+            character: s.character,
+            seats: s.seats,
+            mood: s.mood,
+            region: s.region,
+            mcServer: s.mcServer,
+            mcEdition: s.mcEdition,
+            ign: s.ign,
+            orderNote: s.orderNote,
+            creatorCode: s.creatorCode,
             pay: s.pay,
             at: Date.now(),
           }),

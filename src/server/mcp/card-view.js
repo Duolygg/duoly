@@ -86,8 +86,33 @@ function link(option) {
   if (option) url.searchParams.set('service', option.id);
   if (state.rank) url.searchParams.set('rank', state.rank);
   else url.searchParams.delete('rank');
-  if (state.region) url.searchParams.set('region', state.region);
-  else url.searchParams.delete('region');
+  const serverKey = card.game.id === 'mc' ? 'server' : 'region';
+  url.searchParams.delete(card.game.id === 'mc' ? 'region' : 'server');
+  if (state.region) url.searchParams.set(serverKey, state.region);
+  else url.searchParams.delete(serverKey);
+  for (const key of [
+    'edition',
+    'role',
+    'character',
+    'voice',
+    'mood',
+    'seats',
+  ]) {
+    const value = card.input[key];
+    const compatible =
+      key === 'role'
+        ? option?.roles?.includes(value)
+        : key === 'character'
+          ? !!option?.characterLabel
+          : key === 'edition'
+            ? card.game.id === 'mc'
+            : key === 'seats'
+              ? value >= option?.seats?.min && value <= option?.seats?.max
+              : true;
+    if (value !== undefined && compatible)
+      url.searchParams.set(key, String(value));
+    else url.searchParams.delete(key);
+  }
   if (state.quantityChosen) url.searchParams.set('qty', String(state.quantity));
   else url.searchParams.delete('qty');
   url.hash = 'modes-h';

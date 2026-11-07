@@ -1,3 +1,5 @@
+import { seatRule } from '../../contracts/seats';
+import { rolesFor, characterLabel } from '../../contracts/roles';
 import { SITE_GAMES } from '../../site/games';
 import { calculateQuote, parseQuoteInput } from '../pricing';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
@@ -45,6 +47,7 @@ export function services(value: string) {
           parseQuoteInput({
             gameId: game.id,
             serviceId: m.id,
+            seats: seatRule(game.id, m.id).default,
             units: 1,
             server: game.id === 'mc' ? 'my world' : serversFor(game.id)[0]![0],
             ...(rank ? { rank } : {}),
@@ -72,6 +75,7 @@ export function services(value: string) {
                     {
                       gameId: game.id,
                       serviceId: m.id,
+                      seats: seatRule(game.id, m.id).default,
                       units: 1,
                       server:
                         game.id === 'mc'
@@ -101,6 +105,7 @@ export function services(value: string) {
                     {
                       gameId: game.id,
                       serviceId: m.id,
+                      seats: seatRule(game.id, m.id).default,
                       units: 1,
                       server: serversFor(game.id)[0]![0],
                       rank: ranks.includes('Gold') ? 'Gold' : ranks[0]!,
@@ -111,6 +116,11 @@ export function services(value: string) {
                 },
               }
             : {}),
+          roles: [...rolesFor(game.id, m.id)],
+          characterLabel: characterLabel(game.id, m.cat),
+          seats: seatRule(game.id, m.id),
+          voice: [true, false],
+          moods: ['chill', 'tryhard', 'teach', 'fun'],
           category: m.cat,
           casual: m.fun === true,
           unit: m.unit,

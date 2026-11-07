@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
 
-it('keeps nine captured MCP text summaries readable without duplicate JSON', () => {
+it('keeps twelve captured MCP text summaries readable without duplicate JSON', () => {
   const markdown = readFileSync('docs/product/mcp-text-samples.md', 'utf8');
   const samples = [...markdown.matchAll(/```text\n([\s\S]*?)\n```/g)];
-  expect(samples).toHaveLength(9);
+  expect(samples).toHaveLength(12);
   expect(markdown).not.toContain('[truncated]');
   for (const [, text] of samples) {
     expect(text).toContain('https://duoly.gg/');

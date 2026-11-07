@@ -88,13 +88,13 @@ test('invalid booking values preserve the service defaults and clear only bookin
   );
 });
 
-test('booking quantity clamps for games and coaching hours without changing the service', async ({
+test('out-of-range booking quantity is ignored without changing the service', async ({
   page,
 }) => {
   await page.goto('/?game=val&service=duo2&qty=999');
   await expect(page).toHaveURL('/');
-  await expect(page.locator('.dl-bar')).toContainText('Ace · 10 games');
+  await expect(page.locator('.dl-bar')).toContainText('Duo Pro · 1 game');
   await page.goto('/?game=val&service=vod&qty=999');
   await expect(page).toHaveURL('/');
-  await expect(page.locator('.dl-bar')).toContainText('VOD Review · 10 hours');
+  await expect(page.locator('.dl-bar')).toContainText('VOD Review · 1 hour');
 });
