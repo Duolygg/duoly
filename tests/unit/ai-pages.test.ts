@@ -18,6 +18,7 @@ describe('AI page public contract', () => {
       'find_session',
       'get_quote',
       'get_availability',
+      'get_order_status',
       'create_booking_link',
     ]);
     expect(MCP.rateLimits).toEqual({ minute: 60, day: 2000 });

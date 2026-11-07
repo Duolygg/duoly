@@ -15,6 +15,16 @@ const result = z.strictObject({
   allowed: z.boolean(),
   retry_after: z.number().int().min(0).max(86400),
 });
+// Private capabilities require a successful durable quota check, with no outage fallback.
+export async function takeDurableLimit(
+  rpc: Rpc,
+  key: string,
+): Promise<LimitResult> {
+  const response = await rpc('mcp_take_rate_limit', { p_key: key });
+  if (response.error) throw new Error('MCP limiter unavailable');
+  const value = result.parse(response.data);
+  return { allowed: value.allowed, retryAfter: value.retry_after };
+}
 // A process-wide outage budget avoids retaining IPs or unbounded per-address maps.
 let fallbackWindow = -1;
 let fallbackCalls = 0;

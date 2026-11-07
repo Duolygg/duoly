@@ -1,7 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
+const port = process.env.DUOLY_TEST_PORT ?? '4321';
+const baseURL = `http://127.0.0.1:${port}`;
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
+  workers: process.env.DUOLY_TEST_WORKERS
+    ? Number(process.env.DUOLY_TEST_WORKERS)
+    : undefined,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   use: {
@@ -20,7 +25,7 @@ export default defineConfig({
       ],
       origins: [],
     },
-    baseURL: 'http://127.0.0.1:4321',
+    baseURL,
     trace: 'retain-on-failure',
   },
   projects: [
@@ -31,8 +36,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'node node_modules/astro/bin/astro.mjs dev --host 127.0.0.1',
-    url: 'http://127.0.0.1:4321',
+    command: `node node_modules/astro/bin/astro.mjs dev --host 127.0.0.1 --port ${port}`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
 });

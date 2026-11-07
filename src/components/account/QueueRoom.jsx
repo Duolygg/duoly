@@ -1,3 +1,4 @@
+import OrderAiStatus from './OrderAiStatus';
 import { track } from '../../client/analytics/track';
 import React from 'react';
 import { GAMES } from '../../design-reference/lib/adminData';
@@ -1549,15 +1550,17 @@ export default class QueueRoom extends React.Component {
   // The order summary (what was booked, rank, in-game name) plus who took it.
   renderOrderCard(v) {
     return (
-      <OrderCard
-        order={v.o}
-        game={v.g}
-        total={v.total}
-        free={v.free}
-        mate={v.mate}
-        ignLabel={v.ignLabel}
-        fav={this.favProps('card')}
-      />
+      <>
+        <OrderCard
+          order={v.o}
+          game={v.g}
+          total={v.total}
+          free={v.free}
+          mate={v.mate}
+          ignLabel={v.ignLabel}
+          fav={this.favProps('card')}
+        />
+      </>
     );
   }
 
@@ -1894,6 +1897,9 @@ export default class QueueRoom extends React.Component {
               {phase === 'matched' || phase === 'done'
                 ? this.renderOrderCard(v)
                 : null}
+              {phase === 'matched' || phase === 'done' ? (
+                <OrderAiStatus id={this.props.id} csrf={this.props.csrf} />
+              ) : null}
             </div>
 
             {/* side */}

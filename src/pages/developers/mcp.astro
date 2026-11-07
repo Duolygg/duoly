@@ -54,8 +54,9 @@ const request = JSON.stringify(
       <h1>Connect your assistant to Duoly</h1>
       <p class="lead">
         Use the Duoly MCP server to discover gaming teammates and coaching,
-        calculate a quote and prepare a booking link. All v1 tools are public
-        and read only. Payment stays on duoly.gg.
+        calculate a quote and prepare a booking link. Catalog tools are public.
+        Order status needs a private per-order code. All tools are read only.
+        Payment stays on duoly.gg.
       </p>
       <p class="ai-release">
         {aiLaunchState().showSetup
@@ -76,11 +77,14 @@ const request = JSON.stringify(
         <dt>Protocol versions</dt>
         <dd>{MCP.protocolVersions.join(', ')}</dd>
         <dt>Authentication</dt>
-        <dd>None in v1. No API key, OAuth token or Duoly login.</dd>
+        <dd>
+          No account connection. Order status requires a private dos_ code.
+        </dd>
         <dt>Scope</dt>
         <dd>
-          Public catalog, quotes, availability and booking links. Social
-          sessions are excluded.
+          Public catalog, quotes, availability and booking links, plus limited
+          order status with a customer-generated code. Social sessions are
+          excluded.
         </dd>
       </dl>
       <p>
@@ -109,7 +113,7 @@ const request = JSON.stringify(
       </p>
     </section>
     <section aria-labelledby="tools-h">
-      <h2 id="tools-h">Six public tools</h2>
+      <h2 id="tools-h">Six public tools and private order status</h2>
       <p>
         Call find_session first to find a teammate or coach with real prices and
         a booking link. Each result has one readable summary and full
@@ -240,14 +244,16 @@ const request = JSON.stringify(
       <p>
         Send only the structured catalog choices needed by a tool. Never send
         names, emails, chat history, passwords, card details or account tokens.
-        The tools do not read accounts or store personal booking data. Abuse
-        prevention uses an IP-derived identifier; hosting infrastructure also
-        processes connection metadata.
+        Catalog tools do not read accounts. get_order_status reads only the
+        limited order projection authorized by its code. Never log or persist
+        that code. Abuse prevention uses an IP-derived identifier; hosting
+        infrastructure also processes connection metadata.
       </p>
       <p>
-        These tools cannot charge, reserve, cancel or read a private order.
-        Never promise a specific start time, teammate rank or in-game result.
-        Link users to Duoly to review and complete their own booking. See our{' '}
+        These tools cannot charge, reserve or cancel. A private order code
+        allows only a limited read of that one order. Never promise a specific
+        start time, teammate rank or in-game result. Link users to Duoly to
+        review and complete their own booking. See our{' '}
         <a href="/privacy">privacy policy</a> and <a href="/terms">terms</a>.
       </p>
     </section>

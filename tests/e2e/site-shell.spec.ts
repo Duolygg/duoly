@@ -253,7 +253,7 @@ test('support bubble opens Sparky with prepared answers, never Discord or a prev
     {
       name: 'duoly-consent',
       value: 'v2.a0.m0.r0',
-      url: 'http://127.0.0.1:4321',
+      url: `http://127.0.0.1:${process.env.DUOLY_TEST_PORT ?? '4321'}`,
     },
   ]);
   await page.route('**/api/support', (route) =>
@@ -319,7 +319,7 @@ test('support chat button sits clear of the homepage order bar', async ({
     {
       name: 'duoly-consent',
       value: 'v2.a0.m0.r0',
-      url: 'http://127.0.0.1:4321',
+      url: `http://127.0.0.1:${process.env.DUOLY_TEST_PORT ?? '4321'}`,
     },
   ]);
   await page.goto('/');
