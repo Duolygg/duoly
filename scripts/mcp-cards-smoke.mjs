@@ -77,7 +77,7 @@ const init = await rpc(
 if (version !== '2026-07-28') assert.equal(init.protocolVersion, version);
 const tools = (await rpc('tools/list')).tools;
 const resources = (await rpc('resources/list')).resources;
-assert.equal(resources.length, 3);
+assert.equal(resources.length, 4);
 const fixtures = [];
 for (const [view, tool, args] of [
   [

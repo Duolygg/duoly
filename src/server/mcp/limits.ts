@@ -16,7 +16,10 @@ const result = z.strictObject({
   retry_after: z.number().int().min(0).max(86400),
 });
 // Private capabilities require a successful durable quota check, with no outage fallback.
-export async function takeDurableLimit(rpc: Rpc, key: string): Promise<LimitResult> {
+export async function takeDurableLimit(
+  rpc: Rpc,
+  key: string,
+): Promise<LimitResult> {
   const response = await rpc('mcp_take_rate_limit', { p_key: key });
   if (response.error) throw new Error('MCP limiter unavailable');
   const value = result.parse(response.data);

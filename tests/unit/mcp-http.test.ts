@@ -85,7 +85,7 @@ describe('MCP HTTP', () => {
         { ip: '127.0.0.1', limit: allow },
       );
       const json = await list.json();
-      expect(json.result.tools).toHaveLength(6);
+      expect(json.result.tools).toHaveLength(7);
       expect(
         json.result.tools.every(
           (t: {

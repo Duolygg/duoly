@@ -22,7 +22,7 @@ async function rpc(method: string, params = {}) {
 it('advertises and serves card resources with restricted CSP', async () => {
   const { tools } = await rpc('tools/list');
   const { resources } = await rpc('resources/list');
-  expect(resources).toHaveLength(3);
+  expect(resources).toHaveLength(4);
   for (const resource of resources) {
     expect(resource.mimeType).toBe('text/html;profile=mcp-app');
     expect(resource._meta.ui.csp.resourceDomains).toEqual(['https://duoly.gg']);

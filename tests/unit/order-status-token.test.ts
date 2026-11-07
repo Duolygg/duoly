@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { createStatusToken, validStatusToken, statusTokenHash } from '../../src/server/orders/status-token';
+import {
+  createStatusToken,
+  validStatusToken,
+  statusTokenHash,
+} from '../../src/server/orders/status-token';
 
 describe('per-order AI capabilities', () => {
   it('generates independent 256-bit canonical base64url secrets', () => {
@@ -12,15 +16,27 @@ describe('per-order AI capabilities', () => {
     }
   });
   it('rejects malformed and noncanonical tokens before hashing', async () => {
-    for (const token of ['', 'DL-1042', 'dos_' + 'a'.repeat(43), 'dos_' + 'A'.repeat(42), 'dos_' + 'A'.repeat(44), 'dos_' + 'A'.repeat(42) + '/', 'dos_' + 'A'.repeat(43) + '\n']) {
+    for (const token of [
+      '',
+      'DL-1042',
+      'dos_' + 'a'.repeat(43),
+      'dos_' + 'A'.repeat(42),
+      'dos_' + 'A'.repeat(44),
+      'dos_' + 'A'.repeat(42) + '/',
+      'dos_' + 'A'.repeat(43) + '\n',
+    ]) {
       expect(validStatusToken(token)).toBe(false);
-      await expect(statusTokenHash(token)).rejects.toThrow('Invalid status code');
+      await expect(statusTokenHash(token)).rejects.toThrow(
+        'Invalid status code',
+      );
     }
   });
   it('hashes the entire token deterministically without retaining plaintext', async () => {
     const token = 'dos_' + 'A'.repeat(43);
     const { createHash } = await import('node:crypto');
-    expect(await statusTokenHash(token)).toBe(createHash('sha256').update(token).digest('hex'));
+    expect(await statusTokenHash(token)).toBe(
+      createHash('sha256').update(token).digest('hex'),
+    );
     expect(await statusTokenHash(token)).toMatch(/^[a-f0-9]{64}$/);
   });
 });
