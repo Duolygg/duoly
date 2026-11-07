@@ -82,7 +82,10 @@ test('developer guide explains distinct protocol flows and limits', async ({
   });
   expect(text).toContain('16,384');
   expect(text).toContain('65,536');
-  expect(text).toContain('does not preserve rank, region, quantity or edition');
+  expect(text).toContain('preserves supplied rank, region and quantity');
+  expect(text).toContain('without JSON duplicated into text');
+  expect(text).toContain('Card-only data stays in result metadata');
+  expect(text).toContain('exact totals include bundle savings');
   expect(text).not.toMatch(/[—–&]|not [^.]*, but/i);
   expect(
     await page.evaluate(

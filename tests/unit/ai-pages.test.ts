@@ -49,12 +49,24 @@ describe('AI page public contract', () => {
       quote.amountEurMinor,
     );
     expect(example.result.structuredContent.notReserved).toBe(true);
-    expect(example.result.content[0]!.text).toContain(
+    expect(example.result.content).toHaveLength(1);
+    expect(example.result.content[0]!.text).not.toContain(
       JSON.stringify(example.result.structuredContent),
     );
-    expect(example.result.structuredContent.bookUrl).toBe(
-      'https://duoly.gg/?game=val&service=duo2&agent=other#modes-h',
+    expect(example.result.content[0]!.text).toContain('EUR 6.49');
+    expect(example.result.content[0]!.text).toContain(
+      example.result.structuredContent.bookUrl,
     );
+    const link = new URL(example.result.structuredContent.bookUrl);
+    expect(Object.fromEntries(link.searchParams)).toEqual({
+      game: 'val',
+      service: 'duo2',
+      agent: 'claude',
+      rank: 'Platinum',
+      region: 'EU',
+      qty: '1',
+    });
+    expect(link.hash).toBe('#modes-h');
     expect(
       MCP.tools.find((tool) => tool.name === 'get_quote')?.inputs,
     ).toContain('server (required)');

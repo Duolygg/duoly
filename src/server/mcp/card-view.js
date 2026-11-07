@@ -214,7 +214,7 @@ function render() {
         ? ticket()
         : finder();
 }
-function receive(result) {
+async function receive(result, retried = false) {
   if (result.isError) {
     app.innerHTML =
       '<p class="status">' +
@@ -224,18 +224,19 @@ function receive(result) {
       '</p>';
     return;
   }
-  let next = result._meta?.duoly;
-  // Claude issue #696: content survives hosts that strip structuredContent and result metadata.
-  if (!next)
-    for (const block of result.content ?? []) {
-      if (block.type === 'text')
-        try {
-          const parsed = JSON.parse(block.text);
-          if (parsed.duoly) next = parsed.duoly;
-        } catch {
-          /* The first block is the complete model-readable answer. */
-        }
+  const next = result._meta?.['gg.duoly/card'];
+  // ext-apps #696: affected hosts retain full results on the tools/call proxy.
+  // Retry this read-only tool once instead of charging model context for UI data.
+  if (!next && !retried) {
+    try {
+      return await receive(
+        await request('tools/call', { name: tool, arguments: input }),
+        true,
+      );
+    } catch {
+      // The readable answer and booking link remain available in chat.
     }
+  }
   if (!next) {
     app.innerHTML =
       '<p class="status">Options could not be loaded. Use the booking link in the chat.</p>';

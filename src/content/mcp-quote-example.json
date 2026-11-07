@@ -3,7 +3,7 @@
     "content": [
       {
         "type": "text",
-        "text": "€6.49 base price before account perks. No reservation. Share bookUrl to open Duoly and book.\n{\"kind\":\"preview\",\"basis\":\"base price before account perks\",\"notReserved\":true,\"currency\":\"EUR\",\"amountMinor\":649,\"amountEurMinor\":649,\"formattedPrice\":\"€6.49\",\"unit\":\"game\",\"quantity\":1,\"quotedAt\":\"2026-11-06T16:45:42.028Z\",\"fx\":{\"rate\":1.1165,\"source\":\"ecb\",\"date\":\"2026-11-06\",\"fetchedAt\":1793983432514},\"notice\":\"Base price before account perks. USD is an estimate. Final payment and any account perks are reviewed on duoly.gg. No teammate is reserved.\",\"bookUrl\":\"https://duoly.gg/?game=val&service=duo2&agent=other#modes-h\",\"url\":\"https://duoly.gg/games/valorant\"}"
+        "text": "EUR 6.49 total for 1 game; EUR 6.49 per game. Base price before account perks. No reservation. https://duoly.gg/?game=val&service=duo2&agent=claude&rank=Platinum&region=EU&qty=1#modes-h"
       }
     ],
     "structuredContent": {
@@ -13,18 +13,21 @@
       "currency": "EUR",
       "amountMinor": 649,
       "amountEurMinor": 649,
+      "perUnitMinor": 649,
+      "savingMinor": 0,
+      "bundleDiscountPercent": 0,
       "formattedPrice": "€6.49",
       "unit": "game",
       "quantity": 1,
-      "quotedAt": "2026-11-06T16:45:42.028Z",
+      "quotedAt": "2026-11-07T11:03:03.938Z",
       "fx": {
         "rate": 1.1165,
         "source": "ecb",
         "date": "2026-11-06",
-        "fetchedAt": 1793983432514
+        "fetchedAt": 1794049003630
       },
       "notice": "Base price before account perks. USD is an estimate. Final payment and any account perks are reviewed on duoly.gg. No teammate is reserved.",
-      "bookUrl": "https://duoly.gg/?game=val&service=duo2&agent=other#modes-h",
+      "bookUrl": "https://duoly.gg/?game=val&service=duo2&agent=claude&rank=Platinum&region=EU&qty=1#modes-h",
       "url": "https://duoly.gg/games/valorant"
     }
   },

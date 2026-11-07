@@ -110,9 +110,13 @@ for (const version of ['2025-06-18', '2025-11-25', '2026-07-28']) {
   for (const [name, args] of calls) {
     const result = await rpc('tools/call', { name, arguments: args }, version);
     if (version === '2026-07-28') assert.equal(result.resultType, 'complete');
+    assert.equal(result.content.length, 1);
     assert.ok(
-      result.content[0].text.includes(JSON.stringify(result.structuredContent)),
+      !result.content[0].text.includes(
+        JSON.stringify(result.structuredContent),
+      ),
     );
+    assert.ok(Object.keys(result.structuredContent).length > 0);
     assert.ok(result.content[0].text.includes('agent=claude'));
     console.log(
       `${version} ${name} ${JSON.stringify(args)}\n${result.content[0].text}\n`,

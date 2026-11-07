@@ -36,7 +36,7 @@ export function services(value: string) {
     modes
       // Gamer Girl services stay on duoly.gg until the first store approval,
       // like the Social game, to keep the assistant listing to coaching and teammates.
-      .filter((m) => m.cat !== 'gg')
+      .filter((m) => !['gg', 'social'].includes(m.cat))
       .filter((m) => {
         // Bookability follows the checkout parser, including future Teams support.
         const rank = (ranksOf(game.id, m.id) as string[])[0];
@@ -88,6 +88,28 @@ export function services(value: string) {
             quantity: 1 as const,
             basis: 'base price before account perks' as const,
           },
+          priceNote: ranks.length
+            ? "Price scales with the customer's rank."
+            : 'Flat price per unit.',
+          ...(ranks.length
+            ? {
+                typicalPrice: {
+                  rank: ranks.includes('Gold') ? 'Gold' : ranks[0]!,
+                  quantity: 1 as const,
+                  amountMinor: calculateQuote(
+                    {
+                      gameId: game.id,
+                      serviceId: m.id,
+                      units: 1,
+                      server: serversFor(game.id)[0]![0],
+                      rank: ranks.includes('Gold') ? 'Gold' : ranks[0]!,
+                    },
+                    { eurToUsd: 1 },
+                  ).amountEurMinor,
+                  currency: 'EUR' as const,
+                },
+              }
+            : {}),
           category: m.cat,
           unit: m.unit,
           ranks,

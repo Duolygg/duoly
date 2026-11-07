@@ -62,7 +62,7 @@ const request = JSON.stringify(
           ? 'Available. Public tools are read only.'
           : 'Coming soon. Use this guide to prepare your integration.'}
       </p>
-      <p class="byline">Updated 6 November 2026</p>
+      <p class="byline">Updated 7 November 2026</p>
     </header>
     <section class="card" aria-labelledby="connection-h">
       <h2 id="connection-h">Connection details</h2>
@@ -112,13 +112,17 @@ const request = JSON.stringify(
       <h2 id="tools-h">Six public tools</h2>
       <p>
         Call find_session first to find a teammate or coach with real prices and
-        a booking link. Its text includes the same useful data as
-        structuredContent. Share bookUrl as the primary link so the user can
-        book. Use exact game, rank and region tokens from the catalog. An
-        availability signal or quote does not create an order. The booking link
-        selects a game and optional service on Duoly for the user to review. It
-        does not preserve rank, region, quantity or edition. Users select those
-        on duoly.gg.
+        a booking link. Each result has one readable summary and full
+        schema-validated structuredContent, without JSON duplicated into text.
+        Card-only data stays in result metadata. Share bookUrl as the primary
+        link so the user can book. Use exact game, rank and region tokens from
+        the catalog. An availability signal or quote does not create an order.
+        The booking link selects a game and optional service on Duoly for the
+        user to review. It preserves supplied rank, region and quantity. Users
+        confirm remaining options and edition on duoly.gg. Use get_quote only
+        for a selected service and create_booking_link only to produce a final
+        link. Rank-priced services show a from price and a typical one-unit
+        price; exact totals include bundle savings.
       </p>
       <p class="byline">
         On narrow screens, scroll the table to read all inputs and outputs.
@@ -189,7 +193,7 @@ const request = JSON.stringify(
       <h3>Response</h3>
       <p>
         A successful call returns MCP content and structured quote data. This
-        example was captured from the local tool implementation on 6 November
+        example was captured from the local tool implementation on 7 November
         2026 using the real pricing calculator and FX loader. It illustrates the
         response shape; request a fresh quote before booking.
       </p>
