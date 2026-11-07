@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { aiLaunchState } from '../../src/site/ai';
+import { aiLaunchState, MCP } from '../../src/site/ai';
 import { calculateQuote } from '../../src/server/pricing';
 
 test('AI launch state, example price and progressive prompts', async ({
@@ -8,6 +8,19 @@ test('AI launch state, example price and progressive prompts', async ({
 }) => {
   const launch = aiLaunchState();
   await page.goto('/ai');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://duoly.gg/ai',
+  );
+  expect(await page.locator('.ai-tools code').allTextContents()).toEqual(
+    expect.arrayContaining(MCP.tools.map((tool) => tool.name)),
+  );
+  await expect(page.locator('.ai-tools li')).toHaveCount(7);
+  await expect(page.locator('article')).toContainText('interactive cards');
+  await expect(page.locator('article')).toContainText('private status code');
+  await expect(page.locator('article')).toContainText(
+    'It is not listed in the Claude directory or the ChatGPT store.',
+  );
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
     launch.indexing,

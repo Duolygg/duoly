@@ -10,6 +10,15 @@ import example from '../../src/content/mcp-quote-example.json';
 import { calculateQuote } from '../../src/server/pricing';
 
 describe('AI page public contract', () => {
+  it('launches the public custom connector with indexing and setup enabled', () => {
+    expect(AI_CONNECTOR_LIVE).toBe(true);
+    expect(aiLaunchState().indexing).toBe('index, follow');
+    expect(aiLaunchState().showSetup).toBe(true);
+    expect(INDEXABLE_PATHS).toContain('/ai');
+    expect(AI_ASSISTANTS[0].steps[0]).toBe(
+      'Open Settings, then Connectors in Claude.',
+    );
+  });
   it('keeps the endpoint, tools and rollout states explicit', () => {
     expect(MCP.endpoint).toBe('https://duoly.gg/mcp');
     expect(MCP.tools.map((tool) => tool.name)).toEqual([
