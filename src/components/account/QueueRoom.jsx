@@ -1560,7 +1560,6 @@ export default class QueueRoom extends React.Component {
           ignLabel={v.ignLabel}
           fav={this.favProps('card')}
         />
-        <OrderAiStatus id={this.props.id} csrf={this.props.csrf} />
       </>
     );
   }
@@ -1898,6 +1897,9 @@ export default class QueueRoom extends React.Component {
               {phase === 'matched' || phase === 'done'
                 ? this.renderOrderCard(v)
                 : null}
+              {phase === 'matched' || phase === 'done' ? (
+                <OrderAiStatus id={this.props.id} csrf={this.props.csrf} />
+              ) : null}
             </div>
 
             {/* side */}
