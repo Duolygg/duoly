@@ -31,6 +31,7 @@ export function services(value: string) {
     desc: string;
     cat: string;
     unit: 'game' | 'hour';
+    fun?: boolean;
   }[];
   return (
     modes
@@ -111,6 +112,7 @@ export function services(value: string) {
               }
             : {}),
           category: m.cat,
+          casual: m.fun === true,
           unit: m.unit,
           ranks,
           regions:
