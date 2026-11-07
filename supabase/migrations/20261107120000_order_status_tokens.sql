@@ -55,7 +55,7 @@ returns jsonb language sql stable security definer set search_path = '' as $$
     'acceptedAt', case when o.status in ('in_progress','completed') then o.accepted_at end,
     'completedAt', o.completed_at,
     'team', case when t.id is not null then pg_catalog.jsonb_build_object(
-      'status', t.status, 'seats', t.seats,
+      'status', t.status, 'seats', t.seats, 'startedAt', t.started_at, 'endedAt', t.ended_at,
       'filled', (select pg_catalog.count(*) from public.orders s where s.team_id=t.id and s.status in ('in_progress','completed')),
       'members', (select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
         'status', s.status, 'name', case when s.status in ('in_progress','completed') then sp.name end,

@@ -116,6 +116,62 @@ describe('private read-only order status', () => {
       ).toBe(expected);
     },
   );
+  it('accepts a filled team seat without claiming that the team has started', async () => {
+    const data = {
+      ...fixture,
+      status: 'in_progress',
+      accepted: true,
+      teammateDisplayName: 'Mira',
+      acceptedAt: '2026-11-07T10:01:00Z',
+      team: {
+        status: 'waiting',
+        seats: 2,
+        filled: 1,
+        startedAt: null,
+        endedAt: null,
+        members: [
+          { status: 'in_progress', name: 'Mira', thisSeat: true },
+          { status: 'queued', name: null, thisSeat: false },
+        ],
+      },
+    };
+    const result = await orderStatusResult({ token }, storage(data));
+    expect(result.isError).toBeUndefined();
+    expect(result.structuredContent?.nextStep).toContain(
+      'waiting for the remaining seats',
+    );
+    expect(result.structuredContent?.team?.filled).toBe(1);
+    const contaminated = {
+      ...data,
+      team: {
+        ...data.team,
+        members: [
+          { ...data.team.members[0], email: 'SECRET' },
+          data.team.members[1],
+        ],
+      },
+    };
+    expect(
+      (await orderStatusResult({ token }, storage(contaminated))).isError,
+    ).toBe(true);
+  });
+  it('rejects inconsistent filled-seat counts instead of publishing fictional progress', async () => {
+    const team = {
+      status: 'waiting',
+      seats: 2,
+      filled: 2,
+      startedAt: null,
+      endedAt: null,
+      members: [
+        { status: 'queued', name: null, thisSeat: true },
+        { status: 'queued', name: null, thisSeat: false },
+      ],
+    };
+    expect(
+      (await orderStatusResult({ token }, storage({ ...fixture, team })))
+        .isError,
+    ).toBe(true);
+  });
   it('does not retain a name after reroll or cancellation', async () => {
     const result = await orderStatusResult(
       { token },

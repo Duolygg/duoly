@@ -2,26 +2,29 @@ import { expect, test, type Page } from '@playwright/test';
 
 // A signed-in render fixture, not a real session. No checkout request is submitted.
 async function withCustomer(page: Page) {
-  await page.route('http://127.0.0.1:4321/?**', async (route) => {
-    const response = await route.fetch();
-    const viewer = JSON.stringify([
-      0,
-      {
-        id: [0, 'b9000000-0000-4000-8000-000000000001'],
-        role: [0, 'customer'],
-        name: [0, 'Booking link fixture'],
-      },
-    ]).replaceAll('"', '&quot;');
-    const body = (await response.text()).replace(
-      /<astro-island\b[^>]*component-url="[^"]*LiveHome[^>]*>/,
-      (island) =>
-        island.replace(
-          '&quot;viewer&quot;:[0,null]',
-          '&quot;viewer&quot;:' + viewer,
-        ),
-    );
-    await route.fulfill({ response, body });
-  });
+  await page.route(
+    `http://127.0.0.1:${process.env.DUOLY_TEST_PORT ?? '4321'}/?**`,
+    async (route) => {
+      const response = await route.fetch();
+      const viewer = JSON.stringify([
+        0,
+        {
+          id: [0, 'b9000000-0000-4000-8000-000000000001'],
+          role: [0, 'customer'],
+          name: [0, 'Booking link fixture'],
+        },
+      ]).replaceAll('"', '&quot;');
+      const body = (await response.text()).replace(
+        /<astro-island\b[^>]*component-url="[^"]*LiveHome[^>]*>/,
+        (island) =>
+          island.replace(
+            '&quot;viewer&quot;:[0,null]',
+            '&quot;viewer&quot;:' + viewer,
+          ),
+      );
+      await route.fulfill({ response, body });
+    },
+  );
 }
 
 // Consent is preset by playwright.config.ts. Dispatch avoids the sticky bar/header on phones.

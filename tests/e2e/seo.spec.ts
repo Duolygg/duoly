@@ -14,7 +14,7 @@ for (const path of pages) {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
     const response = await page.goto(
-      `http://127.0.0.1:4321${path}?utm_source=test`,
+      `http://127.0.0.1:${process.env.DUOLY_TEST_PORT ?? '4321'}${path}?utm_source=test`,
     );
     expect(response?.status()).toBe(200);
     await expect(page.locator('h1')).toHaveCount(1);

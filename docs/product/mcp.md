@@ -1,6 +1,6 @@
 # Public MCP server v1
 
-Endpoint: `https://duoly.gg/mcp`. Public, read-only, no account connection. Runs as an Astro API route on the existing Vercel Node adapter. No website design or checkout changes.
+Endpoint: `https://duoly.gg/mcp`. Public, read-only, no account connection. Runs as an Astro API route on the existing Vercel Node adapter. No checkout changes. The order-status extension adds only its approved order-room panel and MCP card.
 
 ## Protocol and SDK
 
@@ -222,7 +222,7 @@ Design: `ai-agents-research/10-mcp-order-status.html` and `10-mcp-order-status-b
 
 `get_order_status {token}` accepts only a canonical `dos_` code (32 random bytes, base64url). It returns one short text summary and schema-validated structuredContent: status, game, service, quantity, current accepted flag, teammateDisplayName, team status/count/members with display names and thisSeat, nextStep, updatedAt. A queued reroll or cancellation exposes no old teammate name. A filled seat does not imply a started team.
 
-The approved receipt card `ui://duoly/order-v1.html` additionally receives title, rank, region, EUR price paid and lifecycle timestamps in `_meta["gg.duoly/card"]`. The authenticated room URL lives only in this view metadata and is not an access capability. No email, billing/card information, account/assignment identifiers, reference, IGN, note, chat or profile images are returned. The room UUID is present only inside this approved authenticated navigation destination. Treat all display names as untrusted plain text. The card says **Updated HH:MM**, not Live: it is a snapshot and does not poll. Ask again to refresh. It never retains the input code.
+The approved receipt card `ui://duoly/order-v1.html` additionally receives title, rank, region, EUR price paid and lifecycle timestamps in `_meta["gg.duoly/card"]`. The authenticated room URL lives only in this view metadata and is not an access capability. No email, billing/card information, account/assignment identifiers, reference, IGN, note, chat or profile images are returned. The room UUID is present only inside this approved authenticated navigation destination. Treat all display names as untrusted plain text. The card says **Updated HH:MM**, not Live: it is a snapshot and does not poll. Ask again to refresh. For hosts that strip card metadata, one bounded app-initiated tools/call retries the same read using the input code held only in memory. That reference is cleared after rendering; there is no polling, code persistence or model-visible fallback payload.
 
 The owner generates or revokes a code through POST/DELETE `/api/orders/[id]/ai-status-token`, using the existing session, Origin and CSRF checks. Caller-supplied ownership is rejected. Service-role-only RPCs independently check `orders.customer_id` against the server-verified customer ID and lock the order for atomic rotation/revocation. Other customers and missing orders receive 404. Only the SHA-256 hash is stored; raw codes are returned once, held only in island memory, and copied only on explicit action. The panel is blocked from session replay. No code enters URLs, data attributes, browser storage, logs or analytics. Revoke remains available after reload even though plaintext cannot be recovered.
 

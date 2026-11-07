@@ -30,6 +30,8 @@ export const OrderStatusSchema = z.strictObject({
       status: z.enum(['waiting', 'started', 'done', 'cancelled']),
       seats: z.number().int().min(2).max(5),
       filled: z.number().int().min(0).max(5),
+      startedAt: time.nullable(),
+      endedAt: time.nullable(),
       members: z.array(member).min(2).max(5),
     })
     .nullable(),
@@ -60,6 +62,10 @@ export const StoredOrderStatusSchema = OrderStatusSchema.omit({
     if (
       s.team &&
       (s.team.filled > s.team.seats ||
+        s.team.filled !==
+          s.team.members.filter((m) =>
+            ['in_progress', 'completed'].includes(m.status),
+          ).length ||
         s.team.members.length !== s.team.seats ||
         s.team.members.filter((m) => m.thisSeat).length !== 1 ||
         s.team.members.some(
