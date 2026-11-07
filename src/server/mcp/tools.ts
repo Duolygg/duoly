@@ -172,6 +172,9 @@ const outputs = {
             representativePrice: z
               .object({
                 rank: z.string().optional(),
+                perUnitMinor: z.number().int(),
+                savingMinor: z.number().int(),
+                bundleDiscountPercent: z.number(),
                 quantity: z.number().int(),
                 amountMinor: z.number().int(),
                 currency: z.enum(['EUR', 'USD']),
@@ -480,6 +483,7 @@ export async function callTool(
                   );
                   return {
                     ...(rank ? { rank } : {}),
+                    ...priceDetails(q),
                     quantity: a.quantity ?? 1,
                     amountMinor: q.customer.amountMinor,
                     currency: q.customer.currency,
@@ -588,7 +592,7 @@ export async function callTool(
         );
       } catch {
         throw new ToolInputError(
-          'Invalid quote selection. Call list_services for exact rank, server and edition requirements. Omit rank for services with no ranks.',
+          `Invalid quote selection. Valid inputs: game=${g!.id}; service=${selected!.id}; quantity=1..10; currency=EUR or USD; server=${selected!.regions.join(', ') || 'your Minecraft world/server'}; rank=${selected!.ranks.join(', ') || 'none (omit rank)'}${g!.id === 'mc' ? '; edition=Java or Bedrock' : ''}.`,
         );
       }
       const formattedPrice = new Intl.NumberFormat('en-US', {
@@ -695,7 +699,7 @@ export async function callTool(
                         currency: string;
                       }
                     | undefined;
-                  return `${s.name} (${s.id}): ${s.description} ${priceText(s)}.${example ? ` ${s.priceNote} Example ${example.rank ?? 'flat price'}, ${example.quantity} ${s.unit}: ${money(example.amountMinor, example.currency)}.` : ''} ${s.bookUrl}`;
+                  return `${s.name} (${s.id}): ${s.description} ${priceText(s)}.${example ? ` ${s.priceNote} Example ${example.rank ?? 'flat price'}, ${example.quantity} ${s.unit}: ${priceText({ ...example, unit: s.unit })}.` : ''} ${s.bookUrl}`;
                 })
                 .join('\n') || summary
             }\n${(structuredContent.missingInputs as string[]).length ? `Remaining inputs: ${(structuredContent.missingInputs as string[]).join(', ')}. ` : ''}Base price before account perks. Pay on Duoly.`;

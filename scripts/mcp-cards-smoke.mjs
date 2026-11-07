@@ -27,7 +27,9 @@ async function rpc(method, params = {}) {
       ...(version === '2026-07-28'
         ? {
             'Mcp-Method': method,
-            ...(params.name ? { 'Mcp-Name': params.name } : {}),
+            ...(params.name || params.uri
+              ? { 'Mcp-Name': params.name ?? params.uri }
+              : {}),
           }
         : {}),
     },
