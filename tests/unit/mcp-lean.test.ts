@@ -68,6 +68,7 @@ it('excludes every social and gg service across every game catalog and discovery
         {
           live: async () => ({
             onlineNow: 0,
+            stats: null,
             recentMatches: [],
             teammates: [],
           }),
