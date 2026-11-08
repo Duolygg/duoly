@@ -2,12 +2,15 @@
 interface Props {
   heading: string;
   text: string;
+  /** Second paragraph: the practical booking facts a reader (or an AI assistant
+      quoting the page) needs before paying. The price line closes it. */
+  extra?: string;
   href: string;
   label: string;
   price?: string;
   art?: { src: string; alt: string };
 }
-const { heading, text, href, label, art, price } = Astro.props;
+const { heading, text, extra, href, label, art, price } = Astro.props;
 ---
 
 <section class={art ? 'closing' : 'closing no-art'} aria-labelledby="closing-h">
@@ -25,13 +28,24 @@ const { heading, text, href, label, art, price } = Astro.props;
     <h2 id="closing-h">{heading}</h2>
     <p>
       {text}
-      {price && (
+      {!extra && price && (
         <>
           {' '}
           <span class="nowrap">{price}.</span>
         </>
       )}
     </p>
+    {extra && (
+      <p class="closing-detail">
+        {extra}
+        {price && (
+          <>
+            {' '}
+            <span class="nowrap">{price}.</span>
+          </>
+        )}
+      </p>
+    )}
   </div>
   <a class="cta" href={href} data-cta="closing">
     {label}

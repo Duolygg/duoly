@@ -7,38 +7,59 @@ import SeoHero from '../components/seo/SeoHero.astro';
 import Steps from '../components/seo/Steps.astro';
 import '../components/seo/seo.css';
 import { pageViewer } from '../site/viewer';
+import { serializeJsonLd, CONTENT_DATES } from '../site/seo';
+import { faqSchema } from '../server/seo/offers';
+import {
+  SHARE_PERCENT,
+  BUNDLE_PERCENTS,
+  COACHING_PRICE,
+  SHORT_GAME_PRICE,
+  COACHABLE_GAMES,
+  PLAYABLE_GAMES,
+} from '../server/seo/teammate-facts';
 const { viewer, csrf } = await pageViewer(Astro);
+const share = `${SHARE_PERCENT}%`;
+const [b3, b5, b10] = BUNDLE_PERCENTS as [number, number, number];
 const faq: [string, string][] = [
   [
     'Is this a guaranteed way to earn money playing games?',
-    'No. Applying does not guarantee approval, orders or income. You earn from the sessions you complete.',
+    `No, applying guarantees no approval, no orders and no income, and a teammate earns only from completed sessions.`,
   ],
   [
     'How much of a session goes to the teammate?',
-    'Your share is 60% of the session price after discounts, paid in USD. Your desk shows the exact amount for every order.',
+    `A teammate share is ${share} of the session price after discounts, paid in USD, and the desk shows the exact amount for every order.`,
   ],
   [
     'What is the payout minimum?',
-    'Payouts run weekly once you have at least $25. Smaller amounts carry over to the next week.',
+    'Payouts run weekly once a balance passes $25, and smaller amounts carry over to the next week.',
   ],
   [
     'How are teammates paid?',
-    'By bank transfer, Wise or PayPal, and Stripe for eligible accounts. Your desk shows the methods available to you.',
+    'Bank transfer, Wise and PayPal are available, plus Stripe for eligible accounts, and the desk lists the open methods.',
   ],
   [
     'Can I apply for Social sessions?',
-    'Yes. Social orders need Gamer Girl access, which you can request in your application. Social is friendly company only, never dating, romantic or sexual services.',
+    'Yes, Social orders need Gamer Girl access, requested inside the application, and Social stays friendly company only, never dating, romantic or sexual services.',
   ],
   [
     'Can I play on a customer’s account?',
-    'No. You play on your own account and follow the game’s rules. Customers keep control of their accounts.',
+    'No, every teammate plays on a personal account and follows each game’s rules, so customers keep account control.',
+  ],
+  [
+    'How does a coaching hour pay compared with a short game?',
+    `Coaching is listed at ${COACHING_PRICE} per hour, so one finished coaching hour pays a ${share} share from Duoly in the next weekly transfer.`,
+  ],
+  [
+    'Which voice tool do teammates use?',
+    'Step 1 is approval, and additionally a teammate chooses the voice tool, usually Discord, for example a private channel for a Valorant duo.',
   ],
 ];
+const path = '/get-paid-to-play-games';
 ---
 
 <SiteLayout
   title="Get Paid to Play Games as a Duoly Teammate | Duoly"
-  description="Get paid to play games as a Duoly teammate. Keep 60% of every session, paid weekly once you pass $25. See requirements and apply to play, coach or host."
+  description={`Get paid to play games as a Duoly teammate. Keep ${share} of every session, paid weekly once you pass $25. See requirements and apply to play, coach or host.`}
   indexing="index, follow"
   viewer={viewer}
   csrf={csrf}
@@ -47,13 +68,13 @@ const faq: [string, string][] = [
     <Breadcrumbs
       items={[
         { name: 'Home', path: '/' },
-        { name: 'Become a teammate', path: '/get-paid-to-play-games' },
+        { name: 'Become a teammate', path },
       ]}
     />
     <SeoHero
       eyebrow="Become a teammate"
       h1="Get paid to play games as a Duoly teammate"
-      lead="Apply to play, coach or host friendly Social sessions on Duoly. You keep 60% of every session you complete, paid out weekly."
+      lead={`Apply to play, coach or host friendly Social sessions on Duoly. You keep ${share} of every session you complete, paid out weekly.`}
       cta={{ href: '/apply', label: 'Apply to become a teammate' }}
       secondary={{ href: '#payouts-h', label: 'How payouts work' }}
       art={[
@@ -64,78 +85,103 @@ const faq: [string, string][] = [
         },
         { src: '/assets/games/social.png', alt: 'Duoly Social art' },
       ]}
-      chip="Keep 60% of every session"
+      chip={`Keep ${share} of every session`}
       facts={[
         'Weekly payouts once you pass $25',
         'Bank transfer, Wise or PayPal',
         'Play, coach or host Social',
       ]}
     />
-    <section>
-      <h2>What the work involves</h2>
-      <p>You deliver the session a customer booked:</p>
-      <ul>
-        <li>
-          <strong>Teammates</strong> join the agreed mode, communicate
-          respectfully and play the booked number of games or hours.
-        </li>
-        <li>
-          <strong>Coaches</strong> explain decisions and give focused feedback.
-        </li>
-        <li>
-          <strong>Gamer Girls</strong> host game sessions and, with Social
-          access, friendly voice company.
-        </li>
-      </ul>
+    <section aria-labelledby="work-h">
+      <h2 id="work-h">What does a paid Duoly session actually involve?</h2>
       <p>
-        Unlike reward apps that pay for installs, surveys or playtime, you earn
-        from real customer sessions. Great sessions take more than gameplay:
-        listening, being on time, describing your skills honestly and staying
-        calm through a difficult match all matter.
+        A paid Duoly session is one booked block of play, coaching or voice
+        company that a customer has already paid for. Teammates join the agreed
+        mode, communicate respectfully and play the booked number of games or
+        hours. Coaches explain decisions and give focused feedback. Gamer Girls
+        host game sessions and, with Social access, friendly voice company.
+      </p>
+      <p>
+        Reward apps pay for installs, surveys or idle playtime. Duoly instead
+        pays a {share} share of real customer sessions, so earnings follow
+        completed orders rather than screen time. For example, a Valorant
+        customer booking a Skirmish 2v2 game at {SHORT_GAME_PRICE} expects an
+        Immortal teammate in the lobby inside the agreed window. Step 1 of every
+        order is reading the service, unit and customer notes before accepting.
+        Additionally, the 2026 catalog from Duoly spans {PLAYABLE_GAMES} games
+        plus Social, so a teammate can list one game or several.
       </p>
     </section>
-    <section>
-      <h2 id="payouts-h">How session share and payouts work</h2>
+    <section aria-labelledby="earn-h">
+      <h2 id="earn-h">How much do Duoly teammates earn per session?</h2>
       <p>
-        Your share is 60% of the session price after any customer discount,
-        converted to USD. Customers may pay in EUR or USD, and your desk always
-        shows your USD amount for each order.
+        A Duoly teammate earns {share} of the session price after any customer
+        discount, converted to USD. Customers pay in EUR or USD, and a teammate
+        desk always shows the exact USD amount for each order.
       </p>
       <p>
-        Payouts run weekly once your balance reaches $25; smaller amounts carry
-        over. Add your payout details once, and your desk shows whether each
-        amount is pending, scheduled or paid.
-      </p>
-      <p>
-        You can be paid by bank transfer, Wise or PayPal. Stripe payouts are
-        available for accounts that complete Stripe’s verification. Your desk
-        shows which methods you can use.
+        Coaching from Duoly is listed at {COACHING_PRICE} per hour across all{' '}
+        {COACHABLE_GAMES} coachable games, so one completed coaching hour pays a{' '}
+        {share} share of {COACHING_PRICE} at the order rate. Teammate sessions
+        often price lower per unit. For example, Valorant Skirmish 2v2 is listed
+        at {SHORT_GAME_PRICE} per game, which suits a teammate queueing many
+        short games with Discord voice running all evening. Step 1 is checking
+        the unit, because a game and an hour pay differently. Customer bundle
+        discounts of {b3}%, {b5}% and {b10}% cut the session price first, and
+        the {share} share applies to the discounted figure. Finally, nobody
+        earns a bonus for a win.
       </p>
     </section>
-    <section>
-      <h2>Prepare a strong application</h2>
+    <section aria-labelledby="payouts-h">
+      <h2 id="payouts-h">When does Duoly pay out, and by which method?</h2>
       <p>
-        You must be at least 18 and follow Duoly’s rules and each game’s rules.
-        List the games and services you can provide, your region and your
-        communication style. Add real rank or experience evidence where it
-        helps. For coaching, show how you teach as well as how you play.
+        A Duoly payout is a weekly transfer of a cleared balance. Payouts run
+        once every week as soon as a balance reaches $25, and smaller amounts
+        carry over to the following week rather than expiring. Teammates add
+        payout details once, then the desk marks each amount pending, scheduled
+        or paid.
       </p>
       <p>
-        The <a href="/apply">application form</a> lists the fields and evidence
-        we need. Duoly reviews every application, and some services need
-        separate access. Social orders go only to teammates with Gamer Girl
-        access, and Social is friendly company only.
+        Step 1 is choosing a method using Wise, PayPal or a bank. Bank transfer,
+        Wise and PayPal are open to every approved teammate, and Stripe is added
+        for accounts that finish Stripe verification. The desk lists the methods
+        open to each account, because availability depends on country.
       </p>
       <p>
-        Keep examples specific. For Valorant, say whether you can explain
-        controller utility, entry timing or VOD decisions. For Rocket League,
-        say whether you play Doubles, teach recoveries or both. For Social,
-        describe how you keep a voice session welcoming while holding your
-        boundaries. Use only your own work.
+        Two points follow from a weekly cycle. First, a session completed late
+        in a week clears in the next payout. For example, a {COACHING_PRICE}{' '}
+        coaching hour finished on Sunday pays a {share} share in the following
+        transfer. Second, every teammate handles personal tax reporting, because
+        the {share} share from Duoly arrives untaxed.
+      </p>
+    </section>
+    <section aria-labelledby="apply-h">
+      <h2 id="apply-h">What makes a Duoly application strong?</h2>
+      <p>
+        A Duoly application is a short form asking which games and services an
+        applicant can deliver. Applicants must be at least 18 and must follow
+        both Duoly rules and each game’s rules. The{' '}
+        <a href="/apply">application form</a> takes about three minutes and asks
+        for games, services, a region and a communication style.
+      </p>
+      <p>
+        Evidence beats adjectives, so Step 1 is attaching real rank or
+        experience proof from an account the applicant owns, never a borrowed
+        clip. For example, a Valorant applicant names controller utility, entry
+        timing or VOD decisions, while a Rocket League applicant names Doubles,
+        recoveries or both. Coaching pays a {share} share of {COACHING_PRICE}{' '}
+        per hour from Duoly, and the same {share} rule covers teammate and Gamer
+        Girl orders, so coaching applicants should show teaching as well as
+        rank.
+      </p>
+      <p>
+        Finally, Duoly reviews every application, and some services need
+        separate access. Social orders reach only teammates with Gamer Girl
+        access.
       </p>
     </section>
     <Steps
-      heading="Your first session"
+      heading="What happens during a first Duoly order?"
       steps={[
         'Read the service, unit and customer preferences, then accept the order.',
         'Coordinate in the order chat, confirm the activity and voice setup, and play on your own account.',
@@ -143,14 +189,35 @@ const faq: [string, string][] = [
       ]}
     >
       <p>
-        Keep payments on Duoly, never promise wins or a new rank, and handle
-        your own taxes.
+        A first Duoly order starts in the queue, where an approved teammate
+        reads the service, unit and customer preferences, then accepts. Nothing
+        is assigned automatically, so a teammate picks only the orders matching
+        a real schedule and a real rank.
+      </p>
+      <p>
+        Step 2 is coordination in the order chat. Confirm the activity, agree
+        the voice setup using Discord, and settle a start time before loading
+        the game. Play on a personal account at all times. Duoly never asks a
+        teammate to sign into a customer account, and the{' '}
+        <a href="/terms">terms</a> treat account sharing as a breach.
+      </p>
+      <p>
+        Finally, complete the order and watch the {share} share land in the
+        desk. For example, a {COACHING_PRICE} coaching hour shows as a pending
+        USD amount within the same desk view. Three habits protect a new
+        teammate: keep payments on Duoly, promise no rank, and report conduct
+        problems through <a href="/contact">support</a>. A {share} share from
+        Duoly arrives only after the order closes.
       </p>
     </Steps>
-    <Faq items={faq} />
+    <Faq
+      heading="What do applicants ask about getting paid to play games?"
+      items={faq}
+    />
     <ClosingCta
       heading="Ready to apply?"
-      text="Tell us which games and services you can offer. We review every application."
+      text="Applying to Duoly means naming the games and services you can offer, with evidence attached. Duoly reviews every application by hand, and approval arrives before any order can reach your queue."
+      extra={`Three things speed up a review. First, name the games and modes you really play, for example Valorant Unrated and Marvel Rivals Quick Match. Second, attach rank proof from an account you own. Third, say whether coaching, teammate or Gamer Girl work fits your week. Step 1 of earning is approval. Step 2 is accepting an order from the queue and meeting the customer using Discord voice. Step 3 is the ${share} share landing in your desk, converted to USD. Payouts run weekly above $25, and every coaching hour is listed at ${COACHING_PRICE} per hour.`}
       href="/apply"
       label="Apply to become a teammate"
       art={{ src: '/assets/games/valorant.png', alt: '' }}
@@ -166,4 +233,20 @@ const faq: [string, string][] = [
       </div>
     </nav>
   </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faq, path, Astro.site!))}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: 'Get paid to play games as a Duoly teammate',
+      url: new URL(path, Astro.site!).href,
+      dateModified: CONTENT_DATES[path],
+    })}
+  />
 </SiteLayout>
