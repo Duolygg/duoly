@@ -148,7 +148,7 @@ export const intentPages: IntentPage[] = [
         heading: 'Which Marvel Rivals roles make a good duo?',
         paragraphs: [
           'A good Marvel Rivals duo is a pair of roles with one clear plan for each fight. Vanguard and Strategist is the steadiest pair: the Vanguard holds the front line, and the Strategist keeps the Vanguard alive from a safe angle. Agree on the route into the objective first, and call when the front line moves forward. Duelist and Strategist needs the same clarity about distance, because a Duelist chasing a target around a corner leaves healing range.',
-          'Two Duelists need a shared entry and an exit. Decide who starts, who follows and which cooldown means a reset. For example, a Platinum Strategist in Europe books Duo Pro from Duoly for {{mrPro}} per match in 2026 and asks for a Grandmaster+ Vanguard, who has to be eligible to queue with you under the rules of the game. Duo Plus costs {{mrPlus}} per match at the same rank. Booking 3 matches with the same partner gets {{pct3}} off. Share your main role and one comfortable second role when booking.',
+          'Two Duelists need a shared entry and an exit. Decide who starts, who follows and which cooldown means a reset. For example, a Platinum Strategist in Europe books Duo Pro from Duoly for {{mrPro}} per match in 2026 and asks for a Grandmaster+ Vanguard the party rules admit. Duo Plus costs {{mrPlus}} per match at the same rank. Share your main role and one comfortable second role when booking.',
         ],
       },
       {
@@ -162,7 +162,7 @@ export const intentPages: IntentPage[] = [
         heading: 'Should you book Quick Match or a Competitive duo?',
         paragraphs: [
           'Quick Match is the casual Marvel Rivals mode for trying a new role, learning a map route or settling into voice chat with no rank on the line. Quick Match and Arcade cost {{mrQuick}} per match on Duoly, and 3 matches cost {{mrQuick3}} with {{pct3}} off in November 2026. Tell your partner first if you are learning a hero, so expectations match from the start.',
-          'Competitive is the ranked Marvel Rivals mode, and a duo needs ranks inside the current party rules from NetEase Games. Bring your rank and platform, then check party eligibility together before queueing. NetEase Games holds Celestial and above to a solo or a duo, caps a stack of 6 at Grandmaster and publishes no general rank-gap table, so the partner has to be eligible to queue with you under the rules of the game. For example, a Platinum player in Europe pays {{mrPro}} per match for Duo Pro. You control your hero, your decisions and your account in every match, and the booking pays for playing together.',
+          'Competitive is the ranked Marvel Rivals mode, and NetEase Games publishes no general rank-gap table: it holds Celestial and above to a solo or a duo and caps a stack of 6 at Grandmaster, so the partner has to be eligible to queue with you under the rules of the game. Bring your rank and platform, then check the party together before queueing. For example, a Platinum player in Europe pays {{mrPro}} per match for Duo Pro. You control your hero, your decisions and your account in every match, and the booking pays for playing together.',
         ],
       },
       {
@@ -442,14 +442,14 @@ export const intentPages: IntentPage[] = [
         heading: 'Zero Build or Builds: which duo should you book?',
         paragraphs: [
           'Zero Build is the Fortnite mode with building removed, at {{fnZb}} per hour, so cover comes from the map and the mantle rather than from walls and ramps. A Zero Build duo splits the job simply: one player holds the angle, the other pushes when shields break. Builds is the original mode, where a duo needs piece control, a box to reset in and mats to spend. Reload sits between them, with respawns on a small map, and Creative box fights cover building practice on their own.',
-          'For example, a Zero Build main who books an Unreal partner for Ranked Duos spends the first hour relearning piece control instead of fighting. Say which mode you want before booking, because a Zero Build main and a build fighter train different habits. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Finally, pick the tier by the lobbies your rank puts you in now, and agree the drop using Discord before the bus moves.',
+          'For example, a Zero Build main who books an Unreal partner for Ranked Duos spends the first hour relearning piece control instead of fighting. Say which mode you want before booking, because a Zero Build main and a build fighter train different habits. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5. Finally, pick the tier by the lobbies your rank puts you in now, and agree the drop using Discord before the bus moves.',
         ],
       },
       {
         heading: 'How does a Fortnite duo split the work in a match?',
         paragraphs: [
           'A Fortnite duo is 2 players sharing one drop, one loot path and one rotation plan, on a map that changes every season from Epic Games. First, agree the drop. Then agree who takes the chest side and who takes the floor loot, so the first minute never ends with 2 pistols. Split mats early in Builds, because a duo on 90 wood loses the first build fight. Call rotations by the storm circle rather than by the fight you want, because the storm decides who holds high ground.',
-          'In the endgame, 1 player builds and 1 player watches the box line. For example, calling a box reset out loud using Discord turns a lost 2v2 into a trade, with {{pct3}} off 3 hours and {{pct5}} off 5. Squad Fill in the lobby is the free version for Trios and Squads: a random player arrives from Epic Games at no cost. Ranked matchmaking still reads the highest rank in the party, read in November 2026. Finally, a booked partner is the version where the hour, the rank and the comms are agreed first, from {{fnPlus}} per hour on Duo Plus, with {{pct3}} off 3 hours and {{pct5}} off 5.',
+          'In the endgame, 1 player builds and 1 player watches the box line. For example, calling a box reset out loud using Discord turns a lost 2v2 into a trade. Squad Fill in the lobby is the free version for Trios and Squads: a random player arrives from Epic Games at no cost. Ranked matchmaking still reads the highest rank in the party, read in November 2026. Finally, a booked partner is the version where the hour, the rank and the comms are agreed first, from {{fnPlus}} per hour on Duo Plus, with {{pct3}} off 3 hours and {{pct5}} off 5.',
         ],
       },
       {
@@ -741,29 +741,29 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'Warzone or multiplayer: which teammate should you book?',
         paragraphs: [
-          'Warzone is the battle royale side of Call of Duty, where a duo lives on rotations, plates and buy station timing. Multiplayer Ranked Play is the 4v4 side, with fixed maps, known spawns and an objective to hold. First, pick one side before booking an hour, because the 2 sides reward different habits. A Warzone partner who reads the circle is not much use on Hardpoint. Multiplayer Ranked Play costs {{codPlus}} per hour at Platinum, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
-          'Resurgence on the small map gives respawns, the easiest first session with someone new. Round-based Zombies wants a partner who knows the Easter egg steps rather than one with good aim, while party playlists at {{codParty}} per hour want neither. Name the mode in your request, because a Warzone main and a Ranked Play main rarely overlap. The party rules bite in Ranked Play only: Activision keeps Crimson and above in parties of one or two inside one rank, read in November 2026, while unranked Warzone carries no rank at all. For example, a player who books one Resurgence hour to warm up and then one Warzone hour keeps the same voice across both, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+          'Warzone is the battle royale side of Call of Duty, where a duo lives on rotations, plates and buy station timing. Multiplayer Ranked Play is the 4v4 side, with fixed maps, known spawns and an objective to hold. First, pick one side before booking an hour, because the 2 sides reward different habits. A Warzone partner who reads the circle is not much use on Hardpoint. Multiplayer Ranked Play costs {{codPlus}} per hour at Platinum.',
+          'Resurgence on the small map gives respawns, the easiest first session with someone new. Round-based Zombies wants a partner who knows the Easter egg steps rather than one with good aim, while party playlists at {{codParty}} per hour want neither. Name the mode in your request, because a Warzone main and a Ranked Play main rarely overlap. The party rules bite in Ranked Play only: Activision keeps Crimson and above in parties of one or two inside one rank, read in November 2026, while unranked Warzone carries no rank at all. For example, a player who books one Resurgence hour to warm up and then one Warzone hour keeps the same voice across both.',
         ],
       },
       {
         heading: 'How does a Warzone duo win more fights?',
         paragraphs: [
-          'A Warzone duo is 2 players sharing one rotation, one loadout plan and one buy station budget. First, agree the landing spot and the contract route, so both players reach the first circle with a loadout and cash. Call the rotation by the circle and the roof you want rather than by the squad you can hear. Keep 1 player plating while the other holds the angle, because 2 players plating at once loses a 2v2. For example, one Warzone hour buys about 2 full games, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026, agreed using Discord.',
-          'Squad Fill in the lobby is the free version: Activision drops a random player into the empty seat at no cost, with no agreed time and no comms. A booked hour settles the mode, the rank and the voice setup before anyone drops, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Resurgence at {{codRebirth}} per hour is the drill version, because respawns let the pair test one fight 10 times in an hour, agreed using Discord.',
+          'A Warzone duo is 2 players sharing one rotation, one loadout plan and one buy station budget. First, agree the landing spot and the contract route, so both players reach the first circle with a loadout and cash. Call the rotation by the circle and the roof you want rather than by the squad you can hear. Keep 1 player plating while the other holds the angle, because 2 players plating at once loses a 2v2. For example, one Warzone hour buys about 2 full games, with {{pct3}} off 3 hours and {{pct5}} off 5.',
+          'Squad Fill in the lobby is the free version: Activision drops a random player into the empty seat at no cost, with no agreed time and no comms. A booked hour settles the mode, the rank and the voice setup before anyone drops. Resurgence at {{codRebirth}} per hour is the drill version, because respawns let the pair test one fight 10 times in an hour, agreed using Discord.',
         ],
       },
       {
         heading: 'How much does a Call of Duty duo cost?',
         paragraphs: [
-          'Duo Pro is the Warzone duos service on Duoly at {{codPro}} per hour for a Diamond player, and like the other duo tiers it follows your own rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Activision publishes no party rank rule for current Warzone Ranked, so that teammate has to be eligible to queue with you under the rules of the game. Multiplayer Ranked Play is {{codPlus}} per hour at Platinum, and its Crimson+ tier queues with a Diamond account rather than a Platinum one. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank, agreed using Discord.',
+          'Duo Pro is the Warzone duos service on Duoly at {{codPro}} per hour for a Diamond player, and like the other duo tiers it follows your own rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Activision publishes no party rule for current Warzone Ranked, so that teammate has to be eligible to queue with you under the rules of the game. Multiplayer Ranked Play is {{codPlus}} per hour at Platinum, and its Crimson+ tier needs a Diamond account beside it. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
+          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank.',
         ],
       },
     ],
     steps: [
       'Choose a service and a total hour count first, before checkout. Duo Pro is the Warzone duos service from Duoly, priced by your own rank, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
       'Second, add your platform, region, rank, input and language. For example, name Europe or North America, PlayStation or PC, and whether the session is Warzone, Resurgence, multiplayer Ranked Play or round-based Zombies.',
-      'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the drop and the loadout plan, then invite with your Activision ID. On a Ranked Play booking check the party limits from Activision first, because Crimson and above queue inside one rank. Bundles still take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+      'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the drop and the loadout plan, then invite with your Activision ID. On a Ranked Play booking check the party limits from Activision first, because Crimson and above queue inside one rank.',
     ],
     prepare: [
       'An Activision ID is the account name plus a number, and your teammate needs the full ID from Activision to send a party invite.',
@@ -777,7 +777,7 @@ export const intentPages: IntentPage[] = [
     faq: [
       [
         'Can I book a Warzone duo for one hour?',
-        'Yes: Warzone duos are booked by the hour at a price that follows your own rank, starting from a single hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+        'Yes: Warzone duos are booked by the hour at a price that follows your own rank, starting from a single hour.',
       ],
       [
         'Can a Gold player party with an Iridescent teammate?',

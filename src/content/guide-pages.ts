@@ -166,7 +166,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'marvel-rivals',
     heading: 'Should I find a Marvel Rivals duo for free or pay for one?',
     answer:
-      'Finding a Marvel Rivals duo for free is the right start for most players. Free LFG is a set of community spaces, such as the official Marvel Rivals Discord and the Rivals LFG board, where players post a platform, region, rank and role. A free duo costs €0 and can grow into a regular group over many evenings. A paid duo is a reviewed, higher-rank teammate who joins a booked session at an agreed time. Paying makes sense for a specific goal. For example, a Platinum player in Europe in 2026 books 3 Duo Pro matches from Duoly for {{mrPro3}} with the {{pct3}} bundle discount, and because NetEase Games publishes no rank-gap table, that Grandmaster+ partner has to be eligible to queue with you under the rules of the game. Five matches cost {{mrPro5}} with {{pct5}} off. Paying makes less sense for casual Quick Match company, because free communities already cover casual play well. Try free first.',
+      'Finding a Marvel Rivals duo for free is the right start for most players. Free LFG is a set of community spaces, such as the official Marvel Rivals Discord and the Rivals LFG board, where players post a platform, region, rank and role. A free duo costs €0 and can grow into a regular group over many evenings. A paid duo is a reviewed, higher-rank teammate who joins a booked session at an agreed time. Paying makes sense for a specific goal. For example, a Platinum player in Europe in 2026 books 3 Duo Pro matches from Duoly for {{mrPro3}} with the {{pct3}} bundle discount, and that Grandmaster+ partner has to be eligible to queue with you under the rules of the game. Five matches cost {{mrPro5}} with {{pct5}} off. Paying makes less sense for casual Quick Match company, because free communities already cover casual play well. Try free first.',
     freeIntro:
       'Free LFG is the no-cost way to meet Marvel Rivals players on your platform, and every post costs €0.',
     freeRoutes: [
@@ -245,7 +245,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a Marvel Rivals duo or find one free?',
-        'Try free communities first for casual Quick Match. Book a paid session for a set time, or for a Grandmaster+ partner who has to be eligible to queue with you under the rules of the game: NetEase Games caps a stack of 6 at Grandmaster and holds Celestial and above to a solo or a duo.',
+        'Try free communities first for casual Quick Match. Book a paid session for a set time, or for a Grandmaster+ partner, who has to be eligible to queue with you under the rules of the game: NetEase Games caps a stack of 6 at Grandmaster.',
       ],
       [
         'What does a Marvel Rivals Duo Pro session cost?',
@@ -832,7 +832,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a Warzone duo or find one free?',
-        'Try Squad Fill and the free Discords first for casual games. Book a paid hour for a set time, or for the highest rank Ranked Play admits beside your own: Activision holds Crimson and above to one rank, so a Diamond account reaches Crimson.',
+        'Try Squad Fill and the free Discords first for casual games. Book a paid hour for a set time, or for the top rank Ranked Play admits: Activision holds Crimson and above to one rank, so Diamond reaches Crimson.',
       ],
       [
         'What does a Warzone duo hour cost?',
