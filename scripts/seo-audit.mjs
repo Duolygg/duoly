@@ -30,6 +30,13 @@ while (queue.length) {
     links: [...document.querySelectorAll('a[href]')].map((e) => ({
       href: e.getAttribute('href'),
       text: e.textContent.trim() || e.getAttribute('aria-label') || '',
+      // Contextual = editorial body copy: inside <main>, outside the shared
+      // header, footer and site navigation. Breadcrumbs and .related blocks
+      // belong to the page itself, so they count.
+      contextual:
+        !!e.closest('main') &&
+        !e.closest('header, footer') &&
+        !e.closest('nav:not(.related):not([aria-label="Breadcrumb"])'),
     })),
     prices: [...document.querySelectorAll('[data-price-minor]')].map((e) => ({
       minor: e.getAttribute('data-price-minor'),
@@ -64,7 +71,7 @@ while (queue.length) {
     if (![base, 'https://duoly.gg'].includes(url.origin)) return [];
     const target = url.pathname.replace(/\/$/, '') || '/';
     if (/^\/(api|auth|checkout|queue)\b/.test(target)) return [];
-    return [{ path: target, text: link.text }];
+    return [{ path: target, text: link.text, contextual: link.contextual }];
   });
   pages[path] = data;
   // Public noindex utility routes are checked, but do not open authenticated areas.
@@ -95,18 +102,26 @@ while (pending.length) {
       pending.push(link.path);
     }
 }
+const describes = (link, path) =>
+  link.path === path &&
+  link.text &&
+  !/^(click here|learn more)$/i.test(link.text);
 for (const [path, data] of Object.entries(pages)) {
   data.depth = depth[path];
   data.inbound = Object.entries(pages)
     .filter(
       ([source, p]) =>
+        source !== path && p.links.some((link) => describes(link, path)),
+    )
+    .map(([source]) => source);
+  // Editorial inbound links only: the homepage, header, footer and site nav are
+  // the owner's design, so they never count towards internal-linking coverage.
+  data.contextualInbound = Object.entries(pages)
+    .filter(
+      ([source, p]) =>
         source !== path &&
-        p.links.some(
-          (link) =>
-            link.path === path &&
-            link.text &&
-            !/^(click here|learn more)$/i.test(link.text),
-        ),
+        source !== '/' &&
+        p.links.some((link) => describes(link, path) && link.contextual),
     )
     .map(([source]) => source);
 }

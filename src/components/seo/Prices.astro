@@ -10,6 +10,9 @@ interface Props {
   coach?: boolean;
   intro?: string;
   updated?: string;
+  /** Heading text and anchor, so a page can show more than one price group. */
+  heading?: string;
+  id?: string;
 }
 const {
   gameId,
@@ -17,7 +20,13 @@ const {
   coach = false,
   intro,
   updated = '2026-11-08',
+  heading,
+  id = 'prices',
 } = Astro.props;
+const gameName = SITE_GAMES.find((game) => game.id === gameId)?.name;
+const headingText =
+  heading ??
+  `How much does ${gameName} ${coach ? 'coaching' : 'teammate booking'} cost?`;
 const updatedLabel = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
   month: 'long',
@@ -51,11 +60,8 @@ const cards = services.map((service) => {
 });
 ---
 
-<section aria-labelledby="prices">
-  <h2 id="prices">
-    How much does {SITE_GAMES.find((game) => game.id === gameId)?.name}{' '}
-    {coach ? 'coaching' : 'teammate booking'} cost?
-  </h2>
+<section aria-labelledby={id}>
+  <h2 id={id}>{headingText}</h2>
   <p class="section-intro">{intro ?? pricesAnswer(gameId, offers, coach)}</p>
   <div class="price-grid" data-cols={cols}>
     {cards.map(({ service, rows, cheapest, ranked, varies }) => (
@@ -83,6 +89,9 @@ const cards = services.map((service) => {
             <p class="price">
               {varies && <span class="from">From </span>}
               <span class="money">{cheapest.display}</span> / {cheapest.unit}
+              {cheapest.seats > 1 && (
+                <span class="seats">for {cheapest.seats} teammates</span>
+              )}
             </p>
           </>
         ) : (
@@ -92,6 +101,9 @@ const cards = services.map((service) => {
             data-price-minor={service.amountMinor}
           >
             <span class="money">{service.display}</span> / {service.unit}
+            {service.seats > 1 && (
+              <span class="seats">for {service.seats} teammates</span>
+            )}
           </p>
         )}
         <a

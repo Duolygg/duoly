@@ -1,4 +1,5 @@
 import { intentPages, intentPath } from '../content/intent-pages';
+import { FINISHED_HUB_SLUGS } from '../content/hub-pages';
 import { aiLaunchState } from './ai';
 import { DISCORD_INVITE, SUPPORT_EMAIL } from './nav';
 
@@ -12,6 +13,8 @@ export const COACHING_SLUGS = [
   'marvel-rivals',
 ] as const;
 export const GUIDE_PATH = '/blog/what-is-an-egirl';
+/** A game hub is indexable once its copy exists (src/content/hub-pages.ts). */
+export const HUB_PATHS = FINISHED_HUB_SLUGS.map((slug) => `/games/${slug}`);
 export const INDEXABLE_PATHS = [
   '/',
   '/games',
@@ -21,8 +24,7 @@ export const INDEXABLE_PATHS = [
   '/contact',
   '/terms',
   '/privacy',
-  '/games/valorant',
-  '/games/social',
+  ...HUB_PATHS,
   '/get-paid-to-play-games',
   GUIDE_PATH,
   '/compare/e-pal',
@@ -42,6 +44,15 @@ Object.assign(CONTENT_DATES, {
   '/games/pokemon-unite/teammate': '2026-11-06',
   '/compare/e-pal': '2026-11-07',
 });
+// The data-driven game hubs were written together; Valorant and Social keep their own date.
+Object.assign(
+  CONTENT_DATES,
+  Object.fromEntries(
+    HUB_PATHS.filter(
+      (path) => !['/games/valorant', '/games/social'].includes(path),
+    ).map((path) => [path, '2026-11-08']),
+  ),
+);
 export function serializeJsonLd(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }

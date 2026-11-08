@@ -64,25 +64,28 @@ export function renderLlms() {
     '',
     '## Games',
     '',
-    ...catalog.map((game) => {
-      const available = services(game.id);
-      const categories = [
-        ...(available.some((s) => s.category === 'duo')
-          ? ['teammate sessions']
-          : []),
-        ...(available.some((s) => s.category === 'training')
-          ? ['coaching']
-          : []),
-        ...(available.some((s) => s.category === 'other')
-          ? ['team sessions']
-          : []),
-      ];
-      return link(
-        game.name,
-        `/games/${game.slug}`,
-        `Explore ${game.name} ${categories.join(', ')}.`,
-      );
-    }),
+    // Only finished, indexable hubs: an unwritten hub stays out of the guide.
+    ...catalog
+      .filter((game) => INDEXABLE_PATHS.includes(`/games/${game.slug}`))
+      .map((game) => {
+        const available = services(game.id);
+        const categories = [
+          ...(available.some((s) => s.category === 'duo')
+            ? ['teammate sessions']
+            : []),
+          ...(available.some((s) => s.category === 'training')
+            ? ['coaching']
+            : []),
+          ...(available.some((s) => s.category === 'other')
+            ? ['team sessions']
+            : []),
+        ];
+        return link(
+          game.name,
+          `/games/${game.slug}`,
+          `Explore ${game.name} ${categories.join(', ')}.`,
+        );
+      }),
     '',
     '## Teammates and coaching',
     '',

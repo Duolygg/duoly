@@ -2,15 +2,20 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageIntro from '../../components/site/PageIntro.astro';
 import Hub from '../../components/seo/Hub.astro';
+import GameHub from '../../components/seo/GameHub.astro';
 import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
 import { pageViewer } from '../../site/viewer';
 import { gameBySlug } from '../../site/games';
 import { lessons } from '../../content/coaching';
 import { intentForGame, intentPath } from '../../content/intent-pages';
 import { socialContent, valorantContent } from '../../content/hubs';
+import { hubPageFor } from '../../content/hub-pages';
+import { renderTokens } from '../../content/guide-pages';
 import { viewerCurrency } from '../../server/currency';
 import { eurToUsd } from '../../server/fx';
+import { hubOffers, hubPrices } from '../../server/seo/hub';
 import {
+  faqSchema,
   priceSummary,
   seoOffers,
   serviceSchema,
@@ -22,30 +27,53 @@ if (!game) {
   return Astro.rewrite('/404');
 }
 const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
-const finished = game.id === 'val' || game.id === 'social';
+// Valorant and Social shipped before the data-driven hubs and keep their own copy.
+const legacy = game.id === 'val' || game.id === 'social';
+const hub = legacy ? undefined : hubPageFor(game.slug);
+const finished = legacy || Boolean(hub);
 const copy = game.id === 'social' ? socialContent : valorantContent;
 const currency = await viewerCurrency(Astro.cookies, accountCurrency);
-const offers = finished
-  ? seoOffers(game.id, game.id === 'social' ? 'gg' : 'teammate', {
-      customerCurrency: currency.cur,
-      eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
-    })
+const context = {
+  customerCurrency: currency.cur,
+  eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+};
+const offers = legacy
+  ? seoOffers(game.id, game.id === 'social' ? 'gg' : 'teammate', context)
   : [];
-const description = offers.length
-  ? game.id === 'social'
-    ? `Play with an e-girl on Duoly: friendly Social voice sessions with Just Chat, Watch Together, Sleep Call or Karaoke. ${priceSummary(offers)}. 18+ only.`
-    : `Find Valorant teammates: free LFG options plus paid duo sessions ${priceSummary(offers).toLowerCase()}. Compare ranked and casual prices, then book a teammate.`
-  : `Explore ${game.name} booking options on Duoly. Our complete game guide is being prepared.`;
+const groups = hub ? hubOffers(game.id, context) : undefined;
+// Hub copy quotes prices through tokens filled from the checkout pricing engine.
+const hubCopy =
+  hub && groups
+    ? renderTokens(hub, {
+        ...hubPrices(game.id, { eurToUsd: 1 }),
+        from: priceSummary(groups.all),
+        from_lower: priceSummary(groups.all).toLowerCase(),
+      })
+    : undefined;
+const description = hubCopy
+  ? hubCopy.description
+  : offers.length
+    ? game.id === 'social'
+      ? `Play with an e-girl on Duoly: friendly Social voice sessions with Just Chat, Watch Together, Sleep Call or Karaoke. ${priceSummary(offers)}. 18+ only.`
+      : `Find Valorant teammates: free LFG options plus paid duo sessions ${priceSummary(offers).toLowerCase()}. Compare ranked and casual prices, then book a teammate.`
+    : `Explore ${game.name} booking options on Duoly. Our complete game guide is being prepared.`;
+const title = hubCopy
+  ? hubCopy.title
+  : finished
+    ? copy.title
+    : `${game.name} teammates | Duoly`;
 ---
 
 <SiteLayout
-  title={finished ? copy.title : `${game.name} teammates | Duoly`}
+  title={title}
   description={description}
   indexing={finished ? 'index, follow' : 'noindex, follow'}
   viewer={viewer}
   csrf={csrf}
 >
-  {finished ? (
+  {hubCopy && groups ? (
+    <GameHub game={game} copy={hubCopy} offers={groups} />
+  ) : finished ? (
     <Hub game={game} offers={offers} />
   ) : (
     <PageIntro
@@ -94,7 +122,30 @@ const description = offers.length
       </p>
     </PageIntro>
   )}
-  {finished && (
+  {hubCopy && groups && (
+    <script
+      slot="head"
+      type="application/ld+json"
+      set:html={serializeJsonLd(
+        serviceSchema(
+          hubCopy.h1,
+          `/games/${game.slug}`,
+          groups.all,
+          Astro.site!,
+        ),
+      )}
+    />
+  )}
+  {hubCopy && (
+    <script
+      slot="head"
+      type="application/ld+json"
+      set:html={serializeJsonLd(
+        faqSchema(hubCopy.faq.items, `/games/${game.slug}`, Astro.site!),
+      )}
+    />
+  )}
+  {finished && !hubCopy && (
     <script
       slot="head"
       type="application/ld+json"

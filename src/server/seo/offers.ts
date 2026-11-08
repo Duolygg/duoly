@@ -3,7 +3,26 @@ import { ranksOf } from '../../design-reference/lib/ranks.js';
 import { serversFor } from '../../design-reference/lib/servers.js';
 import { calculateQuote } from '../pricing';
 import { organizationSchema } from '../../site/seo';
+import { seatRule } from '../../contracts/seats';
 import type { QuoteContext } from '../../contracts/pricing';
+
+/**
+ * The selection a price example uses, without the customer's own choices. Teams
+ * services are priced per seat, so a listed price only means something together
+ * with the seats it covers (src/contracts/seats.ts). Minecraft has no regions:
+ * the quote needs a server name and an edition instead (lib/servers.js).
+ */
+export function offerSelection(gameId: string, serviceId: string) {
+  const seats = seatRule(gameId, serviceId).default;
+  return {
+    server:
+      gameId === 'mc'
+        ? 'Hypixel'
+        : ((serversFor(gameId) as string[][])[0]![0] as string),
+    ...(gameId === 'mc' ? { edition: 'Java' as const } : {}),
+    ...(seats > 1 ? { seats } : {}),
+  };
+}
 
 export const cleanCopy = (text: string) =>
   text
@@ -77,7 +96,7 @@ export function coachingFacts(offers: ReturnType<typeof seoOffers>) {
 }
 export function seoOffers(
   gameId: string,
-  category: 'training' | 'gg' | 'teammate',
+  category: 'training' | 'gg' | 'teammate' | 'other',
   context: QuoteContext,
 ) {
   const modes = servicesFor(gameId).modes as {
@@ -100,7 +119,7 @@ export function seoOffers(
           gameId,
           serviceId: mode.id,
           units: 1,
-          server: serversFor(gameId)[0][0],
+          ...offerSelection(gameId, mode.id),
           ...(rank ? { rank } : {}),
         };
         const quote = calculateQuote(selection, {
@@ -114,6 +133,8 @@ export function seoOffers(
           desc: cleanCopy(mode.desc),
           cat: mode.cat,
           rank: rank ? cleanCopy(rank) : '',
+          /** Hired teammates the listed price covers; 1 for every duo service. */
+          seats: quote.seats,
           provider: cleanCopy(mode.tier.split(' · ')[0]!).replace(
             / coach$/,
             '',
@@ -145,7 +166,7 @@ export function serviceSchema(
     provider: organizationSchema(site),
     offers: offers.map((offer) => ({
       '@type': 'Offer',
-      name: `${offer.title}${offer.rank ? `, ${offer.rank}` : ''}, per ${offer.unit}`,
+      name: `${offer.title}${offer.seats > 1 ? ` for ${offer.seats} teammates` : ''}${offer.rank ? `, ${offer.rank}` : ''}, per ${offer.unit}`,
       price: offer.price,
       priceCurrency: offer.currency,
       url: new URL('/#games', site).href,

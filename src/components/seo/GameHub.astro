@@ -1,0 +1,134 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+import SeoHero from './SeoHero.astro';
+import Prices from './Prices.astro';
+import Steps from './Steps.astro';
+import HubDecide from './HubDecide.astro';
+import Topics from './Topics.astro';
+import Faq from './Faq.astro';
+import ClosingCta from './ClosingCta.astro';
+import { rich } from './rich';
+import './seo.css';
+import './hub.css';
+import type { SiteGame } from '../../site/games';
+import { FINISHED_HUB_SLUGS, type HubPageCopy } from '../../content/hub-pages';
+import { lessons } from '../../content/coaching';
+import { intentForGame, intentPath } from '../../content/intent-pages';
+import { gameBySlug } from '../../site/games';
+import { HUB_PRICES_CHECKED, type hubOffers } from '../../server/seo/hub';
+import { priceSummary } from '../../server/seo/offers';
+import { GUIDE_PATH, bookingHref } from '../../site/seo';
+interface Props {
+  game: SiteGame;
+  copy: HubPageCopy;
+  offers: ReturnType<typeof hubOffers>;
+}
+const { game, copy, offers } = Astro.props;
+const summary = priceSummary(offers.all);
+const book = bookingHref(game.id);
+const intent = intentForGame(game.slug);
+// Only link a hub that exists: `related` names game slugs with finished copy.
+const siblings = copy.related.flatMap((slug) => {
+  const sibling = FINISHED_HUB_SLUGS.includes(slug)
+    ? gameBySlug(slug)
+    : undefined;
+  return sibling ? [sibling] : [];
+});
+const line = (id: string) => copy.services[id] ?? '';
+const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
+  group.map((offer) => ({ ...offer, desc: line(offer.id) || offer.desc }));
+---
+
+<article class="seo-page" data-hub-page>
+  <Breadcrumbs
+    items={[
+      { name: 'Home', path: '/' },
+      { name: 'Games', path: '/games' },
+      { name: game.name, path: `/games/${game.slug}` },
+    ]}
+  />
+  <SeoHero
+    eyebrow={copy.eyebrow}
+    h1={copy.h1}
+    lead={copy.lead}
+    cta={{ href: book, label: copy.cta }}
+    secondary={{ href: '#prices', label: 'See prices' }}
+    art={[{ src: game.img, alt: `${game.name} game art` }]}
+    chip={summary}
+    facts={copy.facts}
+    analyticsGame={game.id}
+  />
+  <section aria-labelledby="get-h">
+    <h2 id="get-h">{copy.format.heading}</h2>
+    <p set:html={rich(copy.format.text)} />
+  </section>
+  <Prices
+    gameId={game.id}
+    offers={withLines(offers.teammate)}
+    heading={`Teammate sessions and prices`}
+    intro={copy.intros.teammate}
+    updated={HUB_PRICES_CHECKED}
+  />
+  {offers.team.length > 0 && (
+    <Prices
+      gameId={game.id}
+      offers={withLines(offers.team)}
+      id="team-prices"
+      heading="Team sessions and prices"
+      intro={copy.intros.team}
+      updated={HUB_PRICES_CHECKED}
+    />
+  )}
+  {offers.coaching.length > 0 && (
+    <Prices
+      gameId={game.id}
+      offers={withLines(offers.coaching)}
+      id="coaching-prices"
+      heading={`${game.name} coaching prices`}
+      coach
+      updated={HUB_PRICES_CHECKED}
+    />
+  )}
+  <Steps heading={copy.steps.heading} steps={copy.steps.items}>
+    <p set:html={rich(copy.steps.note)} />
+  </Steps>
+  <HubDecide
+    gameId={game.id}
+    heading={copy.decide.heading}
+    intro={copy.decide.intro}
+    picks={copy.decide.picks}
+    offers={offers.all}
+  />
+  <Topics sections={copy.sections} label={`${game.name} sessions`} />
+  <Faq heading={copy.faq.heading} items={copy.faq.items} />
+  <ClosingCta
+    heading={copy.closing.heading}
+    text={copy.closing.text}
+    price={summary}
+    href={book}
+    label={copy.cta}
+    art={{ src: game.img, alt: '' }}
+  />
+  <nav class="related" aria-label="Related pages">
+    <h2>Guides and sessions for {game.name}</h2>
+    <div class="chips">
+      {intent && (
+        <a href={intentPath(intent)}>{game.name} duo and teammate guide</a>
+      )}
+      {lessons[game.slug] && (
+        <a href={`/games/${game.slug}/coaching`}>
+          {game.name} coaching and lessons
+        </a>
+      )}
+      <a href="/compare/e-pal">Duoly vs E-Pal compared</a>
+      <a href="/ai">Book through an AI assistant</a>
+      <a href={GUIDE_PATH}>What is an e-girl?</a>
+      <a href="/blog">All Duoly guides</a>
+      <a href="/get-paid-to-play-games">Get paid to play {game.name}</a>
+      {siblings.map((sibling) => (
+        <a href={`/games/${sibling.slug}`}>{sibling.name} teammates</a>
+      ))}
+      <a href="/games">All games and services</a>
+    </div>
+  </nav>
+</article>
