@@ -21,7 +21,7 @@ export const valorant: HubPageCopy = {
     'overwatch-2',
   ],
   intent:
-    'After the LFG page rather than the whole catalog? It covers the free Discord routes, what a post should say and the paid duo next to them.',
+    'After the LFG page rather than every Valorant service? It covers the free Discord routes, what a post should say and the paid duo next to them.',
   format: {
     heading: 'What can you book for Valorant on Duoly?',
     text: 'A Valorant booking on Duoly is one of three things: a teammate who queues with you, a fill that completes your party, or a lesson by the hour. First, the teammate tiers are Duo Plus with an Ascendant+ player, Duo Pro with an Immortal+ player and Duo Apex with a Radiant player. Competitive prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro. The casual modes hold one price everywhere: Swiftplay is {{p_swift}}, Unrated {{p_unrated}} and a Deathmatch warm-up {{p_dm}}. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. A tier name describes who Duoly hires and never the queue, because the Competitive rank restriction comes from Riot Games: a duo moves one tier, so Gold queues with Platinum. For example, name your region and rank in the order chat using Discord before anybody hits Find Match.',

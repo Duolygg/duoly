@@ -16,7 +16,7 @@ export const pokemonUnite: HubPageCopy = {
   ],
   related: ['league-of-legends', 'teamfight-tactics', 'ea-sports-fc-27'],
   intent:
-    'After the one-teammate page rather than the whole catalog? It covers lane pairings, objective calls and an example ranked plan in detail.',
+    'After the one-teammate page rather than every Unite service? It covers lane pairings, objective calls and an example ranked plan in detail.',
   format: {
     heading: 'What can you book for Pokemon Unite on Duoly?',
     text: 'A Pokemon Unite booking on Duoly is a single reviewed teammate, a Full Squad fill or a coaching hour. First, the Ranked tiers are Duo Plus with an Ultra+ teammate, Duo Pro with a Master player who plans Drednaw, Rotom and Zapdos, and Duo Apex with a Legend player. Ranked prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro. Standard and Quick Battle hold one flat price of {{p_quick}} at every rank. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. The invite rule comes from The Pokemon Company: ranks have to be the same or within two levels, plus Trainer level 6 and 80 fair-play points, read again in November 2026. For example, check both ranks using Discord first.',

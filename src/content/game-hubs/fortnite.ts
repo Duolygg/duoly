@@ -21,7 +21,7 @@ export const fortnite: HubPageCopy = {
     'counter-strike-2',
   ],
   intent:
-    'After the two-player page rather than the whole catalog? It covers partner picks, drop spots and prices for the pair of you on their own.',
+    'After the two-player page rather than every Fortnite service? It covers partner picks, drop spots and prices for the pair of you on their own.',
   format: {
     heading: 'What can you book for Fortnite on Duoly?',
     text: 'A Fortnite booking on Duoly is an hour of play, because a battle royale match has no fixed length. First, the tiers are Duo Plus with a Champion+ teammate, Duo Pro with an Unreal teammate and Duo Apex with a tournament-level player. Ranked prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Duo Pro. Zero Build and Reload stay {{p_zb}} per hour at every rank, and Creative box fights cost {{p_box}}. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. A guide from Epic Games, read in November 2026, documents that Ranked matchmaking uses the highest rank in the party and publishes no rank-gap cap, so the teammate has to be eligible to queue with you under the rules of the game. For example, name your region using Discord first.',

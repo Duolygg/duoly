@@ -21,7 +21,7 @@ export const marvelRivals: HubPageCopy = {
     'valorant',
   ],
   intent:
-    'After the two-player page rather than the whole catalog? It covers hero pairings, Team-Up abilities and prices for a pair on their own.',
+    'After the two-player page rather than every Rivals service? It covers hero pairings, Team-Up abilities and prices for a pair on their own.',
   format: {
     heading: 'What can you book for Marvel Rivals on Duoly?',
     text: 'A Marvel Rivals booking on Duoly is a single reviewed teammate, a 6-stack fill or a coaching hour. First, the Competitive tiers are Duo Plus with a Diamond+ teammate, Duo Pro with a Grandmaster+ player and Duo Apex with a Celestial+ player. Competitive prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per match on Duo Pro. Quick Match and Arcade holds one flat price of {{p_quick}} at every rank, and Team-Up Duo costs {{p_teamup}}. Bundles cut the total, {{pct3}} off 3 matches up to {{pct10}} off 10. The Season 5 notes from NetEase Games, published in 2025 and read again in November 2026, cap party size rather than naming a rank gap: Bronze through Grandmaster may use any party size except 5, and one Celestial player holds the party to 2. For example, name your platform and role using Discord first.',

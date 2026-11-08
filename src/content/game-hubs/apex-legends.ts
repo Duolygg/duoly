@@ -16,7 +16,7 @@ export const apexLegends: HubPageCopy = {
   ],
   related: ['overwatch-2', 'fortnite', 'call-of-duty'],
   intent:
-    'Want the squad-finding page rather than the whole catalog? It sets the free Discords and in-game tools next to the paid Ranked sessions.',
+    'Want the squad-finding page rather than every Apex service? It sets the free Discords and in-game tools next to the paid Ranked sessions.',
   format: {
     heading: 'What can you book for Apex Legends on Duoly?',
     text: 'An Apex Legends booking on Duoly is an hour of play, because a battle royale match has no fixed length. First, the tiers are Duo Plus with a Diamond+ teammate and Duo Pro with a Master or Apex Predator who reads the ring. Ranked prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Duo Pro. Mixtape keeps one flat price of {{p_mix}} per hour at every rank, and the Duos playlist costs {{p_duos}}. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. A tier name describes who Duoly hires and never the squad, because every premade Ranked squad stays inside two rank tiers under the rule from EA. For example, share your area and rank in the order chat using Discord first.',
