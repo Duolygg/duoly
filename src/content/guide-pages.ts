@@ -289,7 +289,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       { yes: true, text: 'Comms in your language' },
       { yes: false, text: 'Costs money for every game' },
     ],
-    priceCaption: 'Duo Pro at Gold on EU, checked 8 November 2026, in euro',
+    priceCaption: 'Duo Pro at Gold on EU, in euro',
     priceRows: [
       { label: '1 game', value: '{{valPro}}' },
       { label: '3 games, {{pct3}} off', value: '{{valPro3}}' },
@@ -320,7 +320,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Duo Pro session worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
+          text: 'Yes: book a paid session, and pick a bundle if you want more than one game.',
           kind: 'paid',
         },
         no: {
@@ -336,7 +336,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       ],
       [
         'What does a Valorant Duo Pro session cost?',
-        'A Gold player on EU pays {{valPro}} per game for Duo Pro. Three games cost {{valPro3}} with the {{pct3}} discount, and 5 games get {{pct5}} off.',
+        'Duo Pro costs {{valPro}} per game at Gold on EU, and the price moves with your own rank. Booking 3 or 5 games at once lowers what each game costs.',
       ],
     ],
     post: {
@@ -370,7 +370,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         },
       ],
       example:
-        'For example: "EU, Gold 2, Controller main on Omen and Viper, looking for a Duelist for Competitive tonight, English voice on Discord." That post gets answered. The same 4 fields go into a paid booking on Duoly, where Swiftplay costs {{valSwift}} per game and Competitive costs {{valPro}} at Gold in November 2026. Bundles take {{pct3}} off 3 games and {{pct5}} off 5.',
+        'For example: "EU, Gold 2, Controller main on Omen and Viper, looking for a Duelist for Competitive tonight, English voice on Discord." That post gets answered. The same 4 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
     },
   },
   {
@@ -409,8 +409,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       { yes: true, text: 'Builds or Zero Build, your choice' },
       { yes: false, text: 'Costs money for every hour' },
     ],
-    priceCaption:
-      'Duo Pro at Platinum in Europe, checked 8 November 2026, in euro',
+    priceCaption: 'Duo Pro at Platinum in Europe, in euro',
     priceRows: [
       { label: '1 hour', value: '{{fnPro}}' },
       { label: '3 hours, {{pct3}} off', value: '{{fnPro3}}' },
@@ -441,7 +440,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Duo Pro hour worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
+          text: 'Yes: book a paid session, and pick a bundle if you want more than one hour.',
           kind: 'paid',
         },
         no: {
@@ -457,7 +456,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       ],
       [
         'What does a Fortnite Duo Pro hour cost?',
-        'A Platinum player in Europe pays {{fnPro}} per hour for Duo Pro. Three hours cost {{fnPro3}} with the {{pct3}} discount, and 5 hours get {{pct5}} off.',
+        'Duo Pro costs {{fnPro}} per hour at Platinum in Europe, and the price moves with your own rank. Booking 3 or 5 hours at once lowers what each hour costs.',
       ],
     ],
     post: {
@@ -490,7 +489,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         { label: 'Input', chips: ['Keyboard', 'Controller'] },
       ],
       example:
-        'For example: "Europe, Platinum, controller, Zero Build duos, want a partner for 2 hours tonight, English voice on Discord." That post gets answered. The same 4 fields go into a paid booking on Duoly, where Zero Build costs {{fnZb}} per hour and Ranked Duos cost {{fnPro}} at Platinum in November 2026. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
+        'For example: "Europe, Platinum, controller, Zero Build duos, want a partner for 2 hours tonight, English voice on Discord." That post gets answered. The same 4 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
     },
   },
   {
@@ -534,8 +533,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       { yes: true, text: 'A set time agreed in the order chat' },
       { yes: false, text: 'Costs money for every game' },
     ],
-    priceCaption:
-      'Duo Pro at Platinum in Europe, checked 8 November 2026, in euro',
+    priceCaption: 'Duo Pro at Platinum in Europe, in euro',
     priceRows: [
       { label: '1 game', value: '{{owPro}}' },
       { label: '3 games, {{pct3}} off', value: '{{owPro3}}' },
@@ -566,7 +564,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Duo Pro session worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
+          text: 'Yes: book a paid session, and pick a bundle if you want more than one game.',
           kind: 'paid',
         },
         no: {
@@ -582,7 +580,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       ],
       [
         'What does an Overwatch 2 Duo Pro game cost?',
-        'A Platinum player in Europe pays {{owPro}} per game for Duo Pro. Three games cost {{owPro3}} with the {{pct3}} discount, and 5 games get {{pct5}} off.',
+        'Duo Pro costs {{owPro}} per game at Platinum in Europe, and the price moves with your own rank. Booking 3 or 5 games at once lowers what each game costs.',
       ],
     ],
     post: {
@@ -617,7 +615,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         },
       ],
       example:
-        'For example: "PS5, Europe, Platinum 3, Support main on Kiriko and Juno, looking for a Tank for Competitive tonight, English voice on Discord." The same 5 fields go into a paid booking on Duoly, where Quick Play costs {{owQp}} per game and Competitive costs {{owPro}} at Platinum in November 2026. Bundles take {{pct3}} off 3 games and {{pct5}} off 5.',
+        'For example: "PS5, Europe, Platinum 3, Support main on Kiriko and Juno, looking for a Tank for Competitive tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
     },
   },
   {
@@ -656,8 +654,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       { yes: true, text: 'The legend class your pair is missing' },
       { yes: false, text: 'Costs money for every hour' },
     ],
-    priceCaption:
-      'Duo Pro at Platinum in Europe, checked 8 November 2026, in euro',
+    priceCaption: 'Duo Pro at Platinum in Europe, in euro',
     priceRows: [
       { label: '1 hour', value: '{{apexPro}}' },
       { label: '3 hours, {{pct3}} off', value: '{{apexPro3}}' },
@@ -688,7 +685,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Duo Pro hour worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
+          text: 'Yes: book a paid session, and pick a bundle if you want more than one hour.',
           kind: 'paid',
         },
         no: {
@@ -704,7 +701,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       ],
       [
         'What does an Apex Legends Duo Pro hour cost?',
-        'A Platinum player in Europe pays {{apexPro}} per hour for Duo Pro. Three hours cost {{apexPro3}} with the {{pct3}} discount, and 5 hours get {{pct5}} off.',
+        'Duo Pro costs {{apexPro}} per hour at Platinum in Europe, and the price moves with your own rank. Booking 3 or 5 hours at once lowers what each hour costs.',
       ],
     ],
     post: {
@@ -745,7 +742,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         { label: 'Mode', chips: ['Ranked', 'Duos', 'Mixtape', 'Pubs'] },
       ],
       example:
-        'For example: "Europe, PC, Platinum 2, Controller main on Catalyst, looking for an Assault for Ranked tonight, English voice on Discord." The same 5 fields go into a paid booking on Duoly, where Mixtape costs {{apexMix}} per hour and Ranked costs {{apexPro}} at Platinum in November 2026. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
+        'For example: "Europe, PC, Platinum 2, Controller main on Catalyst, looking for an Assault for Ranked tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
     },
   },
   {
@@ -788,7 +785,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       { yes: true, text: 'Warzone, Resurgence, Ranked Play or Zombies' },
       { yes: false, text: 'Costs money for every hour' },
     ],
-    priceCaption: 'Warzone duos, every rank, checked 8 November 2026, in euro',
+    priceCaption: 'Warzone duos, every rank, in euro',
     priceRows: [
       { label: '1 hour', value: '{{codPro}}' },
       { label: '3 hours, {{pct3}} off', value: '{{codPro3}}' },
@@ -819,7 +816,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Warzone duos hour worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
+          text: 'Yes: book a paid session, and pick a bundle if you want more than one hour.',
           kind: 'paid',
         },
         no: {
@@ -835,7 +832,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       ],
       [
         'What does a Warzone duo hour cost?',
-        'Warzone duos cost {{codPro}} per hour for every rank. Three hours cost {{codPro3}} with the {{pct3}} discount, and 5 hours get {{pct5}} off.',
+        'Warzone duos cost {{codPro}} per hour, and that price is the same at every rank. Booking 3 or 5 hours at once lowers what each hour costs.',
       ],
     ],
     post: {
@@ -882,7 +879,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         { label: 'Input', chips: ['Keyboard', 'Controller'] },
       ],
       example:
-        'For example: "Europe, PS5, controller, Warzone duos, Crimson, looking for a partner for 2 hours tonight, English voice on Discord." The same 5 fields go into a paid booking on Duoly, where Warzone duos cost {{codPro}} per hour and Warzone Ranked costs {{codRanked}} at Platinum in November 2026. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
+        'For example: "Europe, PS5, controller, Warzone duos, Crimson, looking for a partner for 2 hours tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
     },
   },
   {
@@ -921,8 +918,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       { yes: true, text: 'A set time agreed in the order chat' },
       { yes: false, text: 'Costs money for every game' },
     ],
-    priceCaption:
-      'Duo Pro at Gold on EU West, checked 8 November 2026, in euro',
+    priceCaption: 'Duo Pro at Gold on EU West, in euro',
     priceRows: [
       { label: '1 game', value: '{{r6Pro}}' },
       { label: '3 games, {{pct3}} off', value: '{{r6Pro3}}' },
@@ -953,7 +949,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Duo Pro session worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
+          text: 'Yes: book a paid session, and pick a bundle if you want more than one game.',
           kind: 'paid',
         },
         no: {
@@ -969,7 +965,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       ],
       [
         'What does a Siege Duo Pro game cost?',
-        'A Gold player on EU West pays {{r6Pro}} per game for Duo Pro. Three games cost {{r6Pro3}} with the {{pct3}} discount, and 5 games get {{pct5}} off.',
+        'Duo Pro costs {{r6Pro}} per game at Gold on EU West, and the price moves with your own rank. Booking 3 or 5 games at once lowers what each game costs.',
       ],
     ],
     post: {
@@ -1013,7 +1009,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         { label: 'Mode', chips: ['Ranked', 'Quick Match', 'Arcade'] },
       ],
       example:
-        'For example: "EU West, PC, Gold 2, support main with Thatcher and Mute, looking for a hard breach for Ranked tonight, English voice on Discord." The same 5 fields go into a paid booking on Duoly, where Quick Match costs {{r6Quick}} per game and Ranked costs {{r6Pro}} at Gold in November 2026. Bundles take {{pct3}} off 3 games and {{pct5}} off 5.',
+        'For example: "EU West, PC, Gold 2, support main with Thatcher and Mute, looking for a hard breach for Ranked tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
     },
   },
 ];

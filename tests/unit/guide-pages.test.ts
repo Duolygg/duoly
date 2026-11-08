@@ -12,7 +12,7 @@ import {
   renderGuideText,
   renderTokens,
 } from '../../src/content/guide-pages';
-import { intentPages } from '../../src/content/intent-pages';
+import { type IntentPage, intentPages } from '../../src/content/intent-pages';
 
 const context = { eurToUsd: 1 };
 const eur = { ...context, customerCurrency: 'EUR' as const };
@@ -137,16 +137,47 @@ describe('free versus paid guide', () => {
     'rainbow-six-siege': 'r6Pro',
   };
 
-  it('states each teammate price once in the table and once in prose', () => {
+  /**
+   * The price tables on a teammate page: the free-versus-paid bundle rows and
+   * the "How much does ... cost?" section. Everything else is running prose.
+   */
+  const priceTables = (
+    guide: (typeof GUIDE_PAGES)[number],
+    page: IntentPage,
+  ) => [
+    guide.priceRows,
+    page.sections.filter((section) => section.heading.startsWith('How much')),
+  ];
+
+  it('states each teammate price in a table plus at most one prose mention', () => {
     for (const guide of GUIDE_PAGES) {
-      const token = HEADLINE_TOKEN[guide.gameSlug];
-      if (!token) continue;
-      const table = allText(guide.priceRows);
-      const prose = allText({ ...guide, priceRows: [], faqExtra: [] });
-      for (const suffix of ['', '3', '5']) {
-        const needle = `{{${token}${suffix}}}`;
-        expect(table.split(needle)).toHaveLength(2);
-        expect(prose.split(needle).length).toBeLessThanOrEqual(2);
+      if (!HEADLINE_TOKEN[guide.gameSlug]) continue;
+      const page = intentPages.find(
+        (entry) => entry.gameSlug === guide.gameSlug,
+      )!;
+      const tables = allText(priceTables(guide, page));
+      const prose = allText([
+        { ...guide, priceRows: [] },
+        {
+          ...page,
+          sections: page.sections.filter(
+            (section) => !section.heading.startsWith('How much'),
+          ),
+        },
+      ]);
+      // Every price the page shows has a table it belongs to.
+      const values = [...tables.matchAll(/\{\{(\w+)\}\}/g)].map((m) => m[1]!);
+      expect(values.length).toBeGreaterThan(3);
+      // No price is quoted twice outside those tables.
+      for (const token of new Set([
+        ...values,
+        ...[...prose.matchAll(/\{\{(\w+)\}\}/g)].map((m) => m[1]!),
+      ])) {
+        if (token.startsWith('pct')) continue;
+        expect(
+          prose.split(`{{${token}}}`).length - 1,
+          `${guide.gameSlug}: ${token} in prose`,
+        ).toBeLessThanOrEqual(1);
       }
       // The free card sells nothing: no price token and no paid bundle percent.
       const freeCard = allText([
@@ -157,12 +188,37 @@ describe('free versus paid guide', () => {
       expect(freeCard).not.toMatch(/\{\{/);
       // €0 is the Free tag plus at most one mention in the free card copy.
       expect(allText(guide).split('€0').length).toBeLessThanOrEqual(2);
-      // One dated claim per card: the links note and the price table caption.
-      const filled = renderTokens(guide, prices);
-      for (const text of [filled.answer, filled.paidExample, filled.flowIntro])
-        expect(text).not.toMatch(/\b20\d\d\b/);
-      expect(guide.linksNote).toMatch(/\b2026\b/);
-      expect(guide.priceCaption).toMatch(/\b2026\b/);
+    }
+  });
+
+  it('dates the teammate pages once for links and once for prices', () => {
+    for (const guide of GUIDE_PAGES) {
+      if (!HEADLINE_TOKEN[guide.gameSlug]) continue;
+      const page = intentPages.find(
+        (entry) => entry.gameSlug === guide.gameSlug,
+      )!;
+      // The links note is the only dated claim written into the copy; the price
+      // date is rendered from pricesChecked under the cards instead.
+      expect(guide.linksNote).toMatch(/8 November 2026/);
+      expect(page.pricesChecked).toBe('2026-11-08');
+      const copy = [
+        renderTokens({ ...guide, linksNote: '' }, prices),
+        renderTokens({ ...page, pricesChecked: undefined }, prices),
+        guideFaq(page, prices),
+      ];
+      // Walk the visible strings so a failure names the sentence, not the page.
+      const strings = (value: unknown): string[] =>
+        typeof value === 'string'
+          ? [value]
+          : Array.isArray(value)
+            ? value.flatMap(strings)
+            : value && typeof value === 'object'
+              ? Object.values(value).flatMap(strings)
+              : [];
+      for (const text of strings(copy))
+        expect(text, `${guide.gameSlug}: year in copy`).not.toMatch(
+          /\b(?:19|20)\d\d\b/,
+        );
     }
   });
 

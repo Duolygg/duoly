@@ -101,7 +101,7 @@ const faqItems = guideFaq(page, guidePrices);
       gameId={game.id}
       offers={offers}
       intro={copy.pricesIntro}
-      updated={page.gameSlug === 'pokemon-unite' ? '2026-11-08' : '2026-11-06'}
+      updated={page.pricesChecked ?? '2026-11-06'}
     />
     <Steps
       heading={page.stepsHeading ?? 'How matching and booking work'}

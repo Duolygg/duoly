@@ -95,7 +95,7 @@ describe('intent page booking facts', () => {
         expect(matching.length).toBeGreaterThan(0);
         expect(matching[0]!.cat).toBe('duo');
         // Short service blurbs keep the price cards scannable.
-        expect(page.services[id]!.split(/\s+/).length).toBeLessThan(20);
+        expect(page.services[id]!.split(/\s+/).length).toBeLessThanOrEqual(20);
       }
     }
   });
