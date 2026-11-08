@@ -32,7 +32,9 @@ export default function HeroTimer() {
             Duo found
           </span>
         </span>
-        <span className="ht-limit">2:00</span>
+        <span className="ht-limit" style={{ color: '#7C7199' }}>
+          2:00
+        </span>
       </div>
       <div className="ht-track">
         <span className="ht-fill" />

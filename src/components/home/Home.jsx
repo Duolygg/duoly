@@ -1,5 +1,6 @@
 'use client';
 
+import HomeImage from './HomeImage';
 import { track } from '../../client/analytics/track';
 import {
   BOOKING_PARAMS,
@@ -1863,7 +1864,7 @@ export default class Home extends React.Component {
               aria-label="Duoly home"
               style={{ display: 'flex', alignItems: 'center' }}
             >
-              <img
+              <HomeImage
                 src="/assets/brand/logo-wordmark.webp"
                 alt="Duoly"
                 width="104"
@@ -2112,7 +2113,7 @@ export default class Home extends React.Component {
                         fontWeight: '600',
                       }}
                     >
-                      <img
+                      <HomeImage
                         src={v.userAvatar}
                         alt=""
                         width="34"
@@ -2423,7 +2424,7 @@ export default class Home extends React.Component {
                 >
                   {['avatar-1', 'avatar-2', 'avatar-3', 'avatar-5'].map(
                     (av, i) => (
-                      <img
+                      <HomeImage
                         key={av}
                         src={'/assets/avatars/' + av + '.png'}
                         alt=""
@@ -2746,7 +2747,7 @@ export default class Home extends React.Component {
                   maxWidth: '560px',
                 }}
               >
-                <img
+                <HomeImage
                   src="/assets/brand/logo-full.webp"
                   alt="Duoly mascots: two smiling gamers with headsets"
                   width="560"
@@ -2794,7 +2795,7 @@ export default class Home extends React.Component {
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      <img
+                      <HomeImage
                         src={t.img}
                         alt=""
                         width="22"
@@ -3294,7 +3295,7 @@ export default class Home extends React.Component {
                           }}
                         >
                           Your current rank{' '}
-                          <span style={{ fontWeight: '500', color: '#6A6086' }}>
+                          <span style={{ fontWeight: '500', color: '#80759C' }}>
                             · sets the price
                           </span>
                         </span>
@@ -3523,7 +3524,7 @@ export default class Home extends React.Component {
                       >
                         <span>
                           {v.charLabel}{' '}
-                          <span style={{ fontWeight: '500', color: '#6A6086' }}>
+                          <span style={{ fontWeight: '500', color: '#80759C' }}>
                             · optional
                           </span>
                         </span>
@@ -3964,7 +3965,7 @@ export default class Home extends React.Component {
                           gap: '12px',
                         }}
                       >
-                        <img
+                        <HomeImage
                           src="/assets/brand/logo-mascots.webp"
                           alt=""
                           width="56"
@@ -4796,7 +4797,7 @@ export default class Home extends React.Component {
                       <React.Fragment key={$index}>
                         <div style={css(p.wrap)}>
                           <span style={css(p.avatar)}>
-                            <img
+                            <HomeImage
                               src={p.av}
                               alt=""
                               width="50"
@@ -5223,7 +5224,7 @@ export default class Home extends React.Component {
                       gap: '14px',
                     }}
                   >
-                    <img
+                    <HomeImage
                       src="/assets/brand/logo-mascots.webp"
                       alt=""
                       width="72"
@@ -5356,7 +5357,7 @@ export default class Home extends React.Component {
                                 "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
                               fontSize: '14px',
                               fontWeight: '700',
-                              color: '#6A6086',
+                              color: f.open ? '#847A9F' : '#80759C',
                               minWidth: '22px',
                             }}
                           >
@@ -6065,7 +6066,7 @@ export default class Home extends React.Component {
                   >
                     <span>
                       Note for your teammate{' '}
-                      <span style={{ fontWeight: '500', color: '#6A6086' }}>
+                      <span style={{ fontWeight: '500', color: '#80759C' }}>
                         · optional
                       </span>
                     </span>

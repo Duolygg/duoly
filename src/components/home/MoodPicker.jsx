@@ -10,7 +10,10 @@ export default function MoodPicker({ value, onPick }) {
     <div className="mp" role="group" aria-labelledby="mp-l">
       <div className="mp-head">
         <span id="mp-l" className="mp-label">
-          Session mood <span className="mp-opt">· optional</span>
+          Session mood{' '}
+          <span className="mp-opt" style={{ color: '#80759C' }}>
+            · optional
+          </span>
         </span>
       </div>
       <div className="mp-grid">
