@@ -309,20 +309,22 @@
   padding-bottom: 8px;
 }
 .seo-page .rank-prices {
-  list-style: none;
   padding: 0;
   margin: 6px 0 0;
   columns: 2;
   column-gap: 18px;
 }
-.seo-page .rank-prices li {
+.seo-page .rank-prices > div {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
   line-height: 1.9;
   break-inside: avoid;
 }
-.seo-page .rank-prices b {
+.seo-page .rank-prices dd {
+  margin: 0;
   color: #f3eeff;
+  font-weight: 700;
 }
 .seo-page .price-updated {
   font-size: 14px;

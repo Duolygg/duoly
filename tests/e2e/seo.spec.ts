@@ -97,12 +97,15 @@ test('sitemap URLs are indexable 200s; private and placeholder pages stay out', 
       /name="robots" content="index, follow"/,
     );
   }
+  // Every game Duoly sells now has a finished hub, so the noindex examples are
+  // the private and utility routes (src/content/hub-pages.ts).
   for (const path of [
     '/login',
     '/reset-password',
     '/apply',
     '/imprint',
-    '/games/fortnite',
+    '/creators',
+    '/rules',
   ]) {
     const response = await request.get(path);
     expect(await response.text()).toMatch(/name="robots" content="noindex,/);

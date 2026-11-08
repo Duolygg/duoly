@@ -11,6 +11,7 @@ it('shows the hero match timer', () => {
 import { readFileSync } from 'node:fs';
 
 import {
+  HUB_PATHS,
   INDEXABLE_PATHS,
   COACHING_SLUGS,
   OFFICIAL_PROFILES,
@@ -38,7 +39,12 @@ it('lists only finished canonical URLs from the configured site', async () => {
     INDEXABLE_PATHS.map((path) => `https://duoly.gg${path}`),
   );
   expect(xml).not.toMatch(/attacker|imprint|checkout|login|dashboard/);
-  expect(urls).not.toContain('https://duoly.gg/games/fortnite');
+  // Every game hub with finished copy is listed, and nothing else under /games.
+  for (const path of HUB_PATHS)
+    expect(urls).toContain(`https://duoly.gg${path}`);
+  expect(urls.filter((url) => /\/games\/[^/]+$/.test(url!))).toHaveLength(
+    HUB_PATHS.length,
+  );
 });
 
 it.each(['EUR', 'USD'] as const)(

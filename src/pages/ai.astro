@@ -7,10 +7,17 @@ import ClosingCta from '../components/seo/ClosingCta.astro';
 import '../components/seo/seo.css';
 import '../components/seo/ai.css';
 import { pageViewer } from '../site/viewer';
-import { serializeJsonLd } from '../site/seo';
+import { hubChips, serializeJsonLd } from '../site/seo';
 import { AI_ASSISTANTS, AI_PROMPTS, MCP, aiLaunchState } from '../site/ai';
 import { calculateQuote } from '../server/pricing';
 const launch = aiLaunchState();
+// Additive related links: game hubs an assistant can be pointed at directly.
+const HUB_LINKS = hubChips([
+  'apex-legends',
+  'overwatch-2',
+  'rocket-league',
+  'minecraft',
+]);
 const coachingQuote = calculateQuote(
   { gameId: 'val', serviceId: 'vod', server: 'EU', units: 1 },
   { customerCurrency: 'EUR', eurToUsd: 1 },
@@ -292,6 +299,10 @@ const faq: [string, string][] = [
         <a href="/games">Browse games and coaching</a>
         <a href="/developers/mcp">MCP developer documentation</a>
         <a href="/contact">Contact Duoly</a>
+        {HUB_LINKS.map((hub) => (
+          <a href={hub.path}>{hub.name} teammates and prices</a>
+        ))}
+        <a href="/blog">All Duoly guides</a>
       </div>
     </nav>
   </article>

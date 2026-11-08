@@ -1,0 +1,167 @@
+import type { HubPageCopy } from '../hub-pages';
+
+export const leagueOfLegends: HubPageCopy = {
+  gameSlug: 'league-of-legends',
+  title: 'League of Legends LFG: Teammates and Coaching | Duoly',
+  description:
+    'Book a League of Legends teammate, a Ranked Flex five or a coach on Duoly, {{from_lower}}. Compare Solo/Duo, ARAM and Clash prices.',
+  eyebrow: 'League of Legends teammates',
+  h1: 'League of Legends LFG: find teammates for tonight',
+  lead: 'Free LFG posts are great for building a regular group. Duoly books a reviewed higher-rank teammate for your next games, fills a Ranked Flex five and sells coaching when you want to learn.',
+  cta: 'Book a League teammate',
+  facts: [
+    'Diamond 4+ to Challenger teammates',
+    'Solo/Duo, Flex, ARAM and Arena',
+    'Voice on Discord, your own account',
+  ],
+  related: ['teamfight-tactics', 'marvel-rivals', 'pokemon-unite', 'valorant'],
+  intent:
+    'After the duo partner page rather than the whole catalog? It covers ARAM, normals and ranked duo on their own, with the free routes next to the paid ones.',
+  format: {
+    heading: 'What can you book for League of Legends on Duoly?',
+    text: 'Duoly sells three things for League of Legends: one teammate who joins your games on your own account, a Teams fill that turns a part-full group into a five, and coaching by the hour. The teammate tiers are Duo Plus with a Diamond 4+ player, Duo Pro with a Master+ player and Duo Apex with a Grandmaster+ player. Ranked sessions follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while casual modes keep one flat price at every rank: ARAM Night, Normal Draft and Swiftplay all cost {{p_aram}} per game. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Which queue a given pairing can use is set by Riot Games rather than by the tier you buy, so name your server and rank in the order chat before anybody hits Find Match.',
+  },
+  services: {
+    duo1: 'Ranked Solo/Duo with a Diamond 4+ teammate who plays around your lane and pings objectives.',
+    duo2: 'Ranked Solo/Duo with a Master+ shotcaller who names the next objective between fights.',
+    duo3: 'Ranked Solo/Duo with a Grandmaster+ player for Diamond and Master lobbies.',
+    arena:
+      'Arena 2v2v2v2 with a Master+ partner who picks augments that combo with yours.',
+    swift:
+      'Swiftplay games of about 15 to 20 minutes, same map, with no LP at stake.',
+    aram: 'Howling Abyss games with random champions, nonstop teamfights and a high-elo teammate.',
+    norm: 'Normal Draft to try a champion or a second role with a Master+ player covering you.',
+    gg1v1:
+      'A custom mid-lane duel against a verified Gamer Girl: first blood, 100 CS or first tower.',
+    ggbuddy:
+      'A patient Gamer Girl plays ARAM or normals with you and explains the basics as you go.',
+    gghype:
+      'A verified Gamer Girl watches your Discord stream and keeps the mood up after a loss.',
+    ranked5:
+      'Ranked Flex as a real five: Master+ players on every role, one shotcaller, voice all game.',
+    flex: 'Bring one to three friends to Ranked Flex and we fill the empty seats.',
+    clash:
+      'A Clash roster filled with Master+ players who know draft and scouting.',
+    learn:
+      'One live ranked game with a Master+ coach explaining every decision out loud.',
+    vod: 'One hour on a recent game: laning, wave states and map moves, ending with three fixes.',
+    champ:
+      'One hour on one champion: matchups, combos, builds and power spikes, practiced live.',
+  },
+  intros: {
+    teammate:
+      'Teammate prices are per game, and only ranked services move with your own rank: Solo/Duo and Arena cost more in a Challenger lobby than in an Iron one, while ARAM Night, Normal Draft and Swiftplay hold one price for everybody. One teammate joins your games on your own account. Bundles are the only other discount, {{pct3}} off 3 games and {{pct5}} off 5.',
+    team: 'Teams fills are priced per seat, so the number on a card covers the default {{seats_flex}} seats and falls when you need fewer. Flex Squad fills the empty seats in your Ranked Flex party and Ranked 5s books a whole five with a planned draft and one shotcaller, both priced by your own rank. Clash Roster covers a tournament weekend at one flat price. Bundles take {{pct3}} off 3 games.',
+    coaching:
+      'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on teammate sessions stop here. VOD Review works through one recent game, Champion Mastery drills a single champion live, and Play and Learn is the exception that covers one ranked game rather than a clock hour. Screen share runs on Discord, and the coach never touches your account.',
+  },
+  steps: {
+    heading: 'How does booking a League of Legends duo work?',
+    items: [
+      'Pick a service and the number of games. Duo Pro is the ranked Solo/Duo tier with a Master+ teammate, and 3 games at {{rank_duo2}} on EUW cost {{p_duo2_x3}} with the {{pct3}} bundle discount. Five games take {{pct5}} off.',
+      'Add your server, rank, main role and language at checkout. Name EUW, {{rank_duo2}} and the lane you want covered, so your teammate reads the real request before accepting the order.',
+      'Meet your teammate in the order chat, agree champions, voice and the queue you are both eligible for, then send the invite from the League client. A single Duo Pro game costs {{p_duo2}} at the same rank.',
+    ],
+    note: 'Duoly reviews every League teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
+  },
+  decide: {
+    heading: 'Which League of Legends session fits you?',
+    intro:
+      'The right League session is the one matching your goal for the evening, so pick the goal first and let the queue rules decide the rest. Casual modes carry no rank gate at all, while ranked pairings have to clear the Solo/Duo restrictions from Riot Games. Bundles cut totals by {{pct3}} on 3 games and {{pct5}} on 5.',
+    picks: [
+      {
+        goal: 'Climbing Solo/Duo this split?',
+        service: 'duo2',
+        answer:
+          'Duo Pro names a Master+ shotcaller from {{p_duo2_low}} per game, priced by your rank.',
+      },
+      {
+        goal: 'Stuck in Diamond or Master lobbies?',
+        service: 'duo3',
+        answer:
+          'Duo Apex brings a Grandmaster+ player who can take over a game, {{p_duo3}} at {{rank_duo3}}.',
+      },
+      {
+        goal: 'Just want a relaxed evening?',
+        service: 'aram',
+        answer:
+          'ARAM Night costs {{p_aram}} per game at every rank, and 5 games get {{pct5}} off.',
+      },
+      {
+        goal: 'Short a player for Ranked Flex?',
+        service: 'flex',
+        answer:
+          'Flex Squad fills up to {{seats_flex}} seats with Master+ players for {{p_flex}} per game.',
+      },
+      {
+        goal: 'Want to fix one repeatable mistake?',
+        service: 'vod',
+        answer:
+          'VOD Review is one hour with a Grandmaster+ coach for {{p_vod}}, ending with three fixes.',
+      },
+    ],
+  },
+  sections: [
+    {
+      heading: 'Who is the teammate you queue with?',
+      paragraphs: [
+        'Every Duoly League teammate applied for the game and showed a rank before taking orders. Duo Plus names a Diamond 4+ player, Duo Pro a Master+ player and Duo Apex a Grandmaster+ player. The tier describes the teammate you are hiring and nothing else, because Riot Games decides which two accounts may share a Solo/Duo queue: Grandmaster and Challenger cannot duo at all, a Master player only with another Master inside 400 LP or with Diamond I under 200 LP, and from Platinum upwards the window narrows to divisions rather than whole tiers. Share your server and rank in the order chat and agree the queue before the first game.',
+        'What the tier actually buys you is calm, useful comms. A Master+ teammate names the next objective, says when a summoner spell is down and calls the reset instead of reviewing the last fight. Voice runs on Discord, so the calls arrive before the fight rather than after it. Rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. You keep your champion, your decisions and your account in every game.',
+      ],
+    },
+    {
+      heading: 'How do Teams fills work for Ranked Flex and Clash?',
+      paragraphs: [
+        'A Teams fill is one order that hires several players at once, so a part-full group becomes a real five. Flex Squad fills up to {{seats_flex}} empty Ranked Flex seats with Master+ players for {{p_flex}} per game at {{rank_flex}}. Ranked 5s books the whole five with a planned draft, one shotcaller and voice the entire game, at {{p_ranked5}} per game. Clash Roster covers tournament weekends with players who know draft and scouting, and Clash itself still runs to the monthly schedule Riot Games publishes.',
+        'Pick the seats you actually need, because every seat is priced separately: a trio short two players sets Flex Squad to two seats instead of four. Agree the roles before the lobby opens, since a jungler and a support fill very differently from two mid laners. Keep comms on one call so draft and objective calls reach everybody, and remember Flex has its own party rules, looser than Solo/Duo but not unlimited. Bundles still apply, so 3 games get {{pct3}} off and 5 games get {{pct5}} off.',
+      ],
+    },
+    {
+      heading: 'Example evening: three ARAM Night games on EUW',
+      paragraphs: [
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. ARAM Night is the one to show, because the Howling Abyss has no rank gate at all, so any two accounts on EUW can queue it. Three games cost {{p_aram_x3}} with the {{pct3}} bundle discount, against {{p_aram}} for a single game. The order chat opens straight after payment, and the first message names the server and what you want out of the evening: EUW, happy to play frontline, looking for someone who engages first.',
+        'From there the evening runs on a short plan. You agree who takes the engage and who holds the poke, voice goes on, and the invite comes from the League client. After each game you pick one adjustment, such as grouping on the enemy side of the bridge instead of defending the tower. The same shape works on Normal Draft or Swiftplay, both {{p_aram}} per game, and ranked pairings follow the Solo/Duo restrictions covered above.',
+      ],
+    },
+    {
+      heading: 'When is League coaching the better booking?',
+      paragraphs: [
+        'League coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between fights; a coach stops the game, names the pattern and leaves you with homework. VOD Review and Champion Mastery each cost {{p_vod}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate sessions only.',
+        'A player who keeps dying on the third wave gains more from one review of wave states than from another duo game. A player who wants a calm evening gains more from ARAM Night at {{p_aram}} per game. Screen share runs on Discord, and lessons follow the format set by your coach. The full service list, preparation tips and lesson formats live on the [League of Legends coaching page](/games/league-of-legends/coaching).',
+      ],
+    },
+  ],
+  faq: {
+    heading: 'What do players ask about League of Legends sessions?',
+    items: [
+      [
+        'Is Duoly a free League of Legends teammate finder?',
+        'Duoly is a paid marketplace with reviewed players. Discord LFG channels and the in-game friend list from Riot Games stay the free routes to a group.',
+      ],
+      [
+        'How much does a League duo cost?',
+        'Duo Pro is {{p_duo2}} per game at {{rank_duo2}} on EUW, from {{p_duo2_low}} at the lowest rank. ARAM Night, Normal Draft and Swiftplay each cost {{p_aram}}.',
+      ],
+      [
+        'Can I choose my role and my lane partner?',
+        'Yes. Name the role in the order chat and your teammate plans around the pick, such as a Master+ ADC trading on your support engage, with voice on Discord.',
+      ],
+      [
+        'Can every rank queue Solo/Duo together?',
+        'No. Riot Games caps the gap: Grandmaster and Challenger cannot duo at all, Master only inside 400 LP of another Master or with Diamond I under 200 LP, and lower tiers queue within a narrow band. Agree the queue in the order chat first.',
+      ],
+      [
+        'Do bundles make several games cheaper?',
+        'Yes. Three games get {{pct3}} off, 5 games get {{pct5}} off and 10 games get {{pct10}} off, so 3 Duo Pro games cost {{p_duo2_x3}} at {{rank_duo2}}.',
+      ],
+      [
+        'Where do I book a League of Legends coach?',
+        'On the League of Legends coaching page, with VOD Review and Champion Mastery by the hour and one live ranked game in Play and Learn. Coaching gets no bundle discount.',
+      ],
+    ],
+  },
+  closing: {
+    heading: 'Ready to queue in League of Legends?',
+    text: 'Duo Pro is the ranked Solo/Duo tier with a Master+ teammate from Duoly, and 3 games at {{rank_duo2}} on EUW cost {{p_duo2_x3}} with {{pct3}} off. ARAM Night stays {{p_aram}} per game at any rank. Pick your rank and role, then agree champions and the queue with your teammate in the order chat.',
+  },
+};

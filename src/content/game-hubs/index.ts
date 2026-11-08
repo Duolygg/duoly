@@ -1,0 +1,33 @@
+import type { HubPageCopy } from '../hub-pages';
+import { leagueOfLegends } from './league-of-legends';
+import { counterStrike2 } from './counter-strike-2';
+import { fortnite } from './fortnite';
+import { callOfDuty } from './call-of-duty';
+import { apexLegends } from './apex-legends';
+import { rainbowSixSiege } from './rainbow-six-siege';
+import { marvelRivals } from './marvel-rivals';
+import { overwatch2 } from './overwatch-2';
+import { rocketLeague } from './rocket-league';
+import { teamfightTactics } from './teamfight-tactics';
+import { eaSportsFc27 } from './ea-sports-fc-27';
+import { arcRaiders } from './arc-raiders';
+import { minecraft } from './minecraft';
+import { pokemonUnite } from './pokemon-unite';
+
+/** Finished game hubs, in the order the sitemap lists them (catalog demand order). */
+export const GAME_HUBS: HubPageCopy[] = [
+  leagueOfLegends,
+  counterStrike2,
+  fortnite,
+  callOfDuty,
+  apexLegends,
+  rainbowSixSiege,
+  marvelRivals,
+  overwatch2,
+  rocketLeague,
+  teamfightTactics,
+  eaSportsFc27,
+  arcRaiders,
+  minecraft,
+  pokemonUnite,
+];

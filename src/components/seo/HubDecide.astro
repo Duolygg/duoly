@@ -1,0 +1,44 @@
+---
+import { rich } from './rich';
+import { bookingHref } from '../../site/seo';
+import type { HubPick } from '../../content/hub-pages';
+import type { seoOffers } from '../../server/seo/offers';
+interface Props {
+  gameId: string;
+  heading: string;
+  intro: string;
+  picks: HubPick[];
+  offers: ReturnType<typeof seoOffers>;
+}
+const { gameId, heading, intro, picks, offers } = Astro.props;
+// Every pick names a catalog service, so the card title, tier and booking link
+// all come from the catalog instead of the copy.
+const cards = picks.flatMap((pick) => {
+  const offer = offers.find((each) => each.id === pick.service);
+  return offer ? [{ pick, offer }] : [];
+});
+---
+
+<section class="hub-decide" aria-labelledby="hub-decide-h">
+  <h2 id="hub-decide-h">{heading}</h2>
+  <p>{intro}</p>
+  <ul class="decide-grid">
+    {cards.map(({ pick, offer }) => (
+      <li class="decide-card">
+        <span class="decide-goal">{pick.goal}</span>
+        <span class="decide-answer" set:html={rich(pick.answer)} />
+        <span class="decide-service">
+          <b>{offer.title}</b>
+          <span class="decide-tier">{offer.tier}</span>
+        </span>
+        <a
+          class="btn-sm"
+          href={bookingHref(gameId, { service: offer.id })}
+          aria-label={`Book ${offer.title}`}
+        >
+          Book
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
