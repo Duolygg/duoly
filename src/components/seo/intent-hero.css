@@ -63,6 +63,18 @@
     center / 14px no-repeat;
 }
 
+/*
+ * Five services fall as four cards plus a lone fifth on a second row. Three and
+ * two reads as one set. Scoped to the teammate pages, above the 860px breakpoint
+ * where seo.css stacks the grid, so the coaching pages and hubs keep their grid.
+ */
+@media (min-width: 861px) {
+  [data-intent-page]
+    .price-grid[data-cols='4']:has(> :nth-child(5):last-child) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 860px) {
   [data-intent-page] .hero-card {
     padding: 24px 24px 10px;

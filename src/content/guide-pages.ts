@@ -587,7 +587,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should an Overwatch 2 LFG post say?',
       intro:
-        'An Overwatch 2 LFG post is a short message naming your platform, region, rank, role and mode, in that order. Platform comes first, because console searches are a large share of Overwatch LFG traffic and an invite needs the BattleTag either way. Region comes second, since Europe, Americas and Asia keep separate queues. Rank comes third, because Competitive group rules from Blizzard Entertainment limit how far apart a group can be. Role comes fourth, and it is the field most posts forget: role queue locks every team to 1 Tank, 2 Damage and 2 Support, so the open seat decides who can answer.',
+        'An Overwatch 2 LFG post is a short message naming your platform, region, rank, role and mode, in that order. Platform comes first, because an invite needs the BattleTag and console posts are a large share of Overwatch LFG traffic. Region comes second, since Europe, Americas and Asia keep separate queues. Rank comes third, because the Competitive group rules from Blizzard Entertainment limit how far apart a group can be. Role comes fourth, and it is the field most posts forget. Role queue locks every team to 1 Tank, 2 Damage and 2 Support, so the open seat decides who can answer. Finally, say where you want voice, using Discord or the in-game group.',
       fields: [
         {
           label: 'Platform',
