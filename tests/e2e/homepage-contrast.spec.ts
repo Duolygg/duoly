@@ -19,7 +19,7 @@ test('homepage hints and FAQ numbers meet AA text contrast', async ({
           const s = v / 255;
           return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
         })
-        .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
+        .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i]!, 0);
     return elements.map((element) => {
       let parent: Element | null = element;
       let background = 'rgb(9, 4, 20)';
