@@ -29,9 +29,15 @@
 export const RANK_RULES_CHECKED = '2026-11-08';
 export const RANK_RULES_CHECKED_LABEL = '8 November 2026';
 
-/** The honest wording wherever a publisher documents no rank-gap rule. */
+/**
+ * The honest wording wherever a publisher documents no rank-gap rule.
+ *
+ * The leading noun is left out on purpose: a page says "teammate", "partner"
+ * or "raider" depending on what the game calls the person, and the promise is
+ * the same sentence either way.
+ */
 export const UNKNOWN_RULE =
-  'the teammate has to be eligible to queue with you under the rules of the game';
+  'has to be eligible to queue with you under the rules of the game';
 
 export interface RankRule {
   gameSlug: string;
@@ -154,7 +160,7 @@ export const RANK_RULES: RankRule[] = [
     summary:
       'Wide groups removed the rank-gap limit in April 2024, so even a duo may cross the ladder. A wide group reduces rank change, and a wide four cannot queue.',
     mustSay: 'wide group',
-    mustNotSay: ['wide group of four'],
+    mustNotSay: ['wide group of four can queue', 'wide four may queue'],
     source: {
       label: 'Defense Matrix Update: Season 10 and Beyond',
       url: 'https://overwatch.blizzard.com/en-us/news/24061006/defense-matrix-update-season-10-and-beyond/',
@@ -205,7 +211,7 @@ export const RANK_RULES: RankRule[] = [
   },
   {
     gameSlug: 'rocket-league',
-    publisher: 'Epic Games',
+    publisher: 'Psyonix',
     fullLobby: 'wider',
     duoFrom: 'Gold',
     duoCap: 'Supersonic Legend in Doubles',

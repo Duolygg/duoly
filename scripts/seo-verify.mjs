@@ -28,6 +28,7 @@ try {
     '--test',
     'scripts/seo-built.test.mjs',
     'scripts/citable-built.test.mjs',
+    'scripts/citability-floor.test.mjs',
   ]);
 } finally {
   server.kill();

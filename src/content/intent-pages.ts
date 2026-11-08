@@ -449,7 +449,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How does a Fortnite duo split the work in a match?',
         paragraphs: [
           'A Fortnite duo is 2 players sharing one drop, one loot path and one rotation plan, on a map that changes every season from Epic Games. First, agree the drop. Then agree who takes the chest side and who takes the floor loot, so the first minute never ends with 2 pistols. Split mats early in Builds, because a duo on 90 wood loses the first build fight. Call rotations by the storm circle rather than by the fight you want, because the storm decides who holds high ground.',
-          'In the endgame, 1 player builds and 1 player watches the box line. For example, calling a box reset out loud using Discord turns a lost 2v2 into a trade, with {{pct3}} off 3 hours and {{pct5}} off 5. Squad Fill in the lobby is the free version of the same idea for Trios and Squads, because a random player arrives from Epic Games at no cost. Ranked matchmaking still reads the highest rank in the party, a rule from Epic Games read in November 2026. Finally, a booked partner is the version where the hour, the rank and the comms are agreed first, from {{fnPlus}} per hour on Duo Plus, with {{pct3}} off 3 hours and {{pct5}} off 5.',
+          'In the endgame, 1 player builds and 1 player watches the box line. For example, calling a box reset out loud using Discord turns a lost 2v2 into a trade, with {{pct3}} off 3 hours and {{pct5}} off 5. Squad Fill in the lobby is the free version for Trios and Squads: a random player arrives from Epic Games at no cost. Ranked matchmaking still reads the highest rank in the party, read in November 2026. Finally, a booked partner is the version where the hour, the rank and the comms are agreed first, from {{fnPlus}} per hour on Duo Plus, with {{pct3}} off 3 hours and {{pct5}} off 5.',
         ],
       },
       {
@@ -467,8 +467,7 @@ export const intentPages: IntentPage[] = [
     ],
     prepare: [
       'An Epic name is the account name your partner needs for the friend request, and the request has to be accepted before the first queue.',
-      'Name your platform and your input. Fortnite runs on PC, PlayStation, Xbox, Nintendo Switch and cloud, and a controller player and a keyboard player warm up differently.',
-      'Pick the region before booking, because Europe, NA-East, NA-Central, NA-West, Brazil, Asia, Oceania and Middle East are separate queues with separate ping.',
+      'Name your platform and your input, because a controller player and a keyboard player warm up differently. Fortnite runs on PC, PlayStation, Xbox, Nintendo Switch and cloud, across separate regional queues from Europe to Oceania.',
       'Agree one drop spot and one backup spot, for example a named POI plus the nearest quiet landmark, and split mats before the first build fight.',
       'Test your microphone on Discord first, then say whether you want quiet games or constant calls.',
       'Check the party rule: Epic Games publishes no rank-gap cap and matches on the highest rank in the party, read in November 2026, so a wide pairing means harder lobbies.',
@@ -489,7 +488,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Does a duo booking fill a full squad?',
-        'No: a booking adds 1 partner, so a Trio or a Squad still needs friends or Squad Fill from Epic Games, which costs nothing.',
+        'No: a booking adds 1 partner, so a Trio or Squad still needs friends or Squad Fill from Epic Games.',
       ],
       [
         'Can I learn building in a duo session?',
