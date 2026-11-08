@@ -3,6 +3,7 @@
 // across and leaves at the other, and the other lane starts halfway, so two are on screen at a time.
 // Real reviews come in through `items` (their first sentence, if short enough); until there are
 // any, the hand-written SAMPLE_HERO_QUOTES are shown. Styles: globals.css (hq-*).
+import HomeImage from './HomeImage';
 import React from 'react';
 import { GAME } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
@@ -205,7 +206,7 @@ export default function HeroQuotes({ items }) {
             onAnimationEnd={next(i)}
           >
             {t.avatar ? (
-              <img
+              <HomeImage
                 className="hq-avatar"
                 src={t.avatar}
                 alt=""

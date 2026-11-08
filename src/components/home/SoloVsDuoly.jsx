@@ -6,6 +6,7 @@
 // boost sells a result (a rank, delivered); Duoly sells the game itself, with a teammate. The Duoly
 // side only repeats what the site already says (hero, FAQ, terms: no result is promised, trust
 // points in lib/legal.js, catalog descriptions, checkout moods). Styles: globals.css (sv-*).
+import HomeImage from './HomeImage';
 import React from 'react';
 
 // [what is compared, the other side, Duoly]; `{from}` becomes the cheapest per-game price
@@ -131,7 +132,7 @@ export default function SoloVsDuoly({ fromPrice = '€2.99', initial = 0 }) {
             <span className="sv-vs">VS</span>
           </div>
           <div className="sv-us">
-            <img
+            <HomeImage
               src="/assets/brand/logo-mascots.webp"
               alt=""
               width="40"

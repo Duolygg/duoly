@@ -1,0 +1,434 @@
+[
+  {
+    "source": "/assets/avatars/avatar-1.png",
+    "output": "/assets/avatars/avatar-1-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 31179,
+    "bytes": 4852
+  },
+  {
+    "source": "/assets/avatars/avatar-1.png",
+    "output": "/assets/avatars/avatar-1-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 31179,
+    "bytes": 9050
+  },
+  {
+    "source": "/assets/avatars/avatar-1.png",
+    "output": "/assets/avatars/avatar-1-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 31179,
+    "bytes": 13122
+  },
+  {
+    "source": "/assets/avatars/avatar-1.png",
+    "output": "/assets/avatars/avatar-1-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 31179,
+    "bytes": 25886
+  },
+  {
+    "source": "/assets/avatars/avatar-2.png",
+    "output": "/assets/avatars/avatar-2-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 33068,
+    "bytes": 4798
+  },
+  {
+    "source": "/assets/avatars/avatar-2.png",
+    "output": "/assets/avatars/avatar-2-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 33068,
+    "bytes": 9206
+  },
+  {
+    "source": "/assets/avatars/avatar-2.png",
+    "output": "/assets/avatars/avatar-2-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 33068,
+    "bytes": 13416
+  },
+  {
+    "source": "/assets/avatars/avatar-2.png",
+    "output": "/assets/avatars/avatar-2-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 33068,
+    "bytes": 26654
+  },
+  {
+    "source": "/assets/avatars/avatar-3.png",
+    "output": "/assets/avatars/avatar-3-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 34413,
+    "bytes": 4770
+  },
+  {
+    "source": "/assets/avatars/avatar-3.png",
+    "output": "/assets/avatars/avatar-3-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 34413,
+    "bytes": 9130
+  },
+  {
+    "source": "/assets/avatars/avatar-3.png",
+    "output": "/assets/avatars/avatar-3-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 34413,
+    "bytes": 13440
+  },
+  {
+    "source": "/assets/avatars/avatar-3.png",
+    "output": "/assets/avatars/avatar-3-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 34413,
+    "bytes": 27218
+  },
+  {
+    "source": "/assets/avatars/avatar-4.png",
+    "output": "/assets/avatars/avatar-4-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 32787,
+    "bytes": 4656
+  },
+  {
+    "source": "/assets/avatars/avatar-4.png",
+    "output": "/assets/avatars/avatar-4-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 32787,
+    "bytes": 8756
+  },
+  {
+    "source": "/assets/avatars/avatar-4.png",
+    "output": "/assets/avatars/avatar-4-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 32787,
+    "bytes": 12938
+  },
+  {
+    "source": "/assets/avatars/avatar-4.png",
+    "output": "/assets/avatars/avatar-4-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 32787,
+    "bytes": 25880
+  },
+  {
+    "source": "/assets/avatars/avatar-5.png",
+    "output": "/assets/avatars/avatar-5-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 32620,
+    "bytes": 4536
+  },
+  {
+    "source": "/assets/avatars/avatar-5.png",
+    "output": "/assets/avatars/avatar-5-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 32620,
+    "bytes": 8730
+  },
+  {
+    "source": "/assets/avatars/avatar-5.png",
+    "output": "/assets/avatars/avatar-5-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 32620,
+    "bytes": 12732
+  },
+  {
+    "source": "/assets/avatars/avatar-5.png",
+    "output": "/assets/avatars/avatar-5-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 32620,
+    "bytes": 25218
+  },
+  {
+    "source": "/assets/avatars/avatar-6.png",
+    "output": "/assets/avatars/avatar-6-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 31139,
+    "bytes": 4768
+  },
+  {
+    "source": "/assets/avatars/avatar-6.png",
+    "output": "/assets/avatars/avatar-6-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 31139,
+    "bytes": 8792
+  },
+  {
+    "source": "/assets/avatars/avatar-6.png",
+    "output": "/assets/avatars/avatar-6-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 31139,
+    "bytes": 12974
+  },
+  {
+    "source": "/assets/avatars/avatar-6.png",
+    "output": "/assets/avatars/avatar-6-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 31139,
+    "bytes": 25662
+  },
+  {
+    "source": "/assets/avatars/avatar-7.png",
+    "output": "/assets/avatars/avatar-7-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 32652,
+    "bytes": 4676
+  },
+  {
+    "source": "/assets/avatars/avatar-7.png",
+    "output": "/assets/avatars/avatar-7-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 32652,
+    "bytes": 8954
+  },
+  {
+    "source": "/assets/avatars/avatar-7.png",
+    "output": "/assets/avatars/avatar-7-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 32652,
+    "bytes": 13098
+  },
+  {
+    "source": "/assets/avatars/avatar-7.png",
+    "output": "/assets/avatars/avatar-7-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 32652,
+    "bytes": 25506
+  },
+  {
+    "source": "/assets/avatars/avatar-8.png",
+    "output": "/assets/avatars/avatar-8-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 33355,
+    "bytes": 4698
+  },
+  {
+    "source": "/assets/avatars/avatar-8.png",
+    "output": "/assets/avatars/avatar-8-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 33355,
+    "bytes": 9030
+  },
+  {
+    "source": "/assets/avatars/avatar-8.png",
+    "output": "/assets/avatars/avatar-8-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 33355,
+    "bytes": 13390
+  },
+  {
+    "source": "/assets/avatars/avatar-8.png",
+    "output": "/assets/avatars/avatar-8-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 33355,
+    "bytes": 26526
+  },
+  {
+    "source": "/assets/avatars/avatar-9.png",
+    "output": "/assets/avatars/avatar-9-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 33791,
+    "bytes": 4824
+  },
+  {
+    "source": "/assets/avatars/avatar-9.png",
+    "output": "/assets/avatars/avatar-9-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 33791,
+    "bytes": 9226
+  },
+  {
+    "source": "/assets/avatars/avatar-9.png",
+    "output": "/assets/avatars/avatar-9-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 33791,
+    "bytes": 13672
+  },
+  {
+    "source": "/assets/avatars/avatar-9.png",
+    "output": "/assets/avatars/avatar-9-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 33791,
+    "bytes": 26830
+  },
+  {
+    "source": "/assets/avatars/avatar-10.png",
+    "output": "/assets/avatars/avatar-10-50.webp",
+    "width": 50,
+    "height": 50,
+    "originalBytes": 31687,
+    "bytes": 4764
+  },
+  {
+    "source": "/assets/avatars/avatar-10.png",
+    "output": "/assets/avatars/avatar-10-78.webp",
+    "width": 78,
+    "height": 78,
+    "originalBytes": 31687,
+    "bytes": 8902
+  },
+  {
+    "source": "/assets/avatars/avatar-10.png",
+    "output": "/assets/avatars/avatar-10-100.webp",
+    "width": 100,
+    "height": 100,
+    "originalBytes": 31687,
+    "bytes": 13116
+  },
+  {
+    "source": "/assets/avatars/avatar-10.png",
+    "output": "/assets/avatars/avatar-10-156.webp",
+    "width": 156,
+    "height": 156,
+    "originalBytes": 31687,
+    "bytes": 26100
+  },
+  {
+    "source": "/assets/brand/logo-full.webp",
+    "output": "/assets/brand/logo-full-342.webp",
+    "width": 342,
+    "height": 282,
+    "originalBytes": 253862,
+    "bytes": 106434
+  },
+  {
+    "source": "/assets/brand/logo-full.webp",
+    "output": "/assets/brand/logo-full-560.webp",
+    "width": 560,
+    "height": 461,
+    "originalBytes": 253862,
+    "bytes": 249336
+  },
+  {
+    "source": "/assets/brand/logo-full.webp",
+    "output": "/assets/brand/logo-full-684.webp",
+    "width": 684,
+    "height": 563,
+    "originalBytes": 253862,
+    "bytes": 355704
+  },
+  {
+    "source": "/assets/brand/logo-full.webp",
+    "output": "/assets/brand/logo-full-1120.webp",
+    "width": 1120,
+    "height": 922,
+    "originalBytes": 253862,
+    "bytes": 829422
+  },
+  {
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-96.webp",
+    "width": 96,
+    "height": 36,
+    "originalBytes": 33262,
+    "bytes": 6770
+  },
+  {
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-104.webp",
+    "width": 104,
+    "height": 39,
+    "originalBytes": 33262,
+    "bytes": 7654
+  },
+  {
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-192.webp",
+    "width": 192,
+    "height": 72,
+    "originalBytes": 33262,
+    "bytes": 21378
+  },
+  {
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-208.webp",
+    "width": 208,
+    "height": 78,
+    "originalBytes": 33262,
+    "bytes": 24420
+  },
+  {
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-40.webp",
+    "width": 40,
+    "height": 25,
+    "originalBytes": 31924,
+    "bytes": 2984
+  },
+  {
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-56.webp",
+    "width": 56,
+    "height": 35,
+    "originalBytes": 31924,
+    "bytes": 5024
+  },
+  {
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-72.webp",
+    "width": 72,
+    "height": 45,
+    "originalBytes": 31924,
+    "bytes": 7664
+  },
+  {
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-80.webp",
+    "width": 80,
+    "height": 50,
+    "originalBytes": 31924,
+    "bytes": 9188
+  },
+  {
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-112.webp",
+    "width": 112,
+    "height": 70,
+    "originalBytes": 31924,
+    "bytes": 15944
+  },
+  {
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-144.webp",
+    "width": 144,
+    "height": 91,
+    "originalBytes": 31924,
+    "bytes": 24390
+  }
+]
