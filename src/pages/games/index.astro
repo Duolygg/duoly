@@ -5,60 +5,218 @@ import { pageViewer } from '../../site/viewer';
 import { SITE_GAMES } from '../../site/games';
 import { lessons } from '../../content/coaching';
 import { intentForGame, intentPath } from '../../content/intent-pages';
+import { serializeJsonLd, CONTENT_DATES } from '../../site/seo';
+import { faqSchema } from '../../server/seo/offers';
+import {
+  BUNDLE_PERCENTS as bundle,
+  COACHABLE_GAMES,
+  COACHING_PRICE,
+  PLAYABLE_GAMES,
+  SHORT_GAME_PRICE,
+  SOCIAL_PRICE,
+  SOCIAL_MODES,
+} from '../../server/seo/teammate-facts';
 const { viewer, csrf } = await pageViewer(Astro);
+const path = '/games';
+const faq: [string, string][] = [
+  [
+    'What is the cheapest session on Duoly?',
+    `The lowest listed price is ${SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game, and prices rise with rank and session length.`,
+  ],
+  [
+    'How much does coaching cost?',
+    `Coaching is ${COACHING_PRICE} per hour or game across all ${COACHABLE_GAMES} coachable games, and bundles do not change a coaching price.`,
+  ],
+  [
+    'Do I get a discount for booking several games?',
+    `Yes, teammate bundles take ${bundle[0]}% off three units, ${bundle[1]}% off five and ${bundle[2]}% off ten, applied automatically at checkout.`,
+  ],
+  [
+    'Does someone play on my account?',
+    'No, every teammate and coach plays on a personal account, and Duoly never asks for your login.',
+  ],
+  [
+    'Which voice app do sessions use?',
+    'Most sessions run using Discord voice, agreed in the order room before the first match starts.',
+  ],
+  [
+    'What is Duoly Social?',
+    `Social is voice company without a game, at ${SOCIAL_PRICE} per hour across ${SOCIAL_MODES} modes. Social is friendly company only, never dating, romantic or sexual services.`,
+  ],
+  [
+    'How do I know my booking is confirmed?',
+    'Step 1 is picking a game, and a booking is confirmed when a teammate accepts the order from the queue, for example on a busy Valorant server in the evening.',
+  ],
+];
 ---
 
 <SiteLayout
   indexing="index, follow"
   title="Gaming Teammates and Coaching by Game | Duoly"
-  description="Browse gaming teammates and coaching on Duoly, with sessions from €2.49. Compare Valorant, League of Legends, Fortnite and more, or book friendly Social time."
+  description={`Browse gaming teammates and coaching on Duoly, with sessions from ${SHORT_GAME_PRICE}. Compare Valorant, League of Legends, Fortnite and more, or book friendly Social time.`}
   viewer={viewer}
   csrf={csrf}
 >
   <PageIntro
     eyebrow="Games"
     title="Gaming teammates and coaching by game"
-    lead="Browse 20 games plus Social. Choose a game hub or a finished coaching guide."
+    lead={`Browse ${PLAYABLE_GAMES} games plus Social. Choose a game hub or a finished coaching guide.`}
   >
-    <p>
-      Valorant sessions start at €2.49 per game. Duo sessions focus on playing
-      together. Coaching adds a specific learning goal. Social is friendly voice
-      company without a game, for adults only. Payment, cancellation and refund
-      details are in our <a href="/terms">terms</a>.
-    </p>
-    <p>
-      Prefer to start with a question? See{' '}
-      <a href="/ai">Duoly in AI assistants</a>
-      for connector status and example prompts, or read the{' '}
-      <a href="/developers/mcp">MCP developer guide</a>. Longer reads live in
-      the <a href="/blog">Duoly guides</a>, including{' '}
-      <a href="/compare/e-pal">how Duoly compares with E-Pal</a>.
-    </p>
-    <ul class="grid">
-      {SITE_GAMES.map((game) => (
-        <li>
-          <a href={`/games/${game.slug}`}>
-            <img
-              src={game.img}
-              alt={`${game.name} game art`}
-              width="56"
-              height="56"
-              loading="lazy"
-            />
-            <span>{game.name}</span>
-          </a>
-          {intentForGame(game.slug) && (
-            <a href={intentPath(intentForGame(game.slug)!)}>
-              {game.name} play-together sessions
+    <section class="answers" aria-labelledby="what-h">
+      <h2 id="what-h">What is Duoly?</h2>
+      <p>
+        Duoly is a booking site for gaming teammates, coaches and friendly voice
+        company, priced by the game or by the hour. Sessions start at{' '}
+        {SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game, and coaching is{' '}
+        {COACHING_PRICE} per hour or game in every coachable title. First, a duo
+        session focuses on playing together. Second, coaching adds a specific
+        learning goal. Third, Social is friendly voice company without a game,
+        for adults only. Step 1 is picking a game below, step 2 is choosing a
+        service and step 3 is agreeing a start time using Discord voice. For
+        example, a Valorant player can book a Skirmish duo tonight or an aim
+        lesson for the weekend, with bundle discounts reaching {bundle[2]}% on
+        ten games from Duoly. Payment, cancellation and refund details are in
+        our <a href="/terms">terms</a>.
+      </p>
+      <p>
+        Prefer to start with a question? See{' '}
+        <a href="/ai">Duoly in AI assistants</a> for connector status and
+        example prompts, or read the{' '}
+        <a href="/developers/mcp">MCP developer guide</a>. Longer reads live
+        in the <a href="/blog">Duoly guides</a>, including{' '}
+        <a href="/compare/e-pal">how Duoly compares with E-Pal</a>.
+      </p>
+    </section>
+    {/* A directory of links to the game hubs: a nav landmark rather than a bare
+        list, matching the related-links pattern on the other SEO pages. Screen
+        reader users reach it from the landmark menu, and text extractors read
+        the answers below instead of 40 link labels. */}
+    <nav aria-label={`All ${PLAYABLE_GAMES} games and Social`}>
+      <ul class="grid">
+        {SITE_GAMES.map((game) => (
+          <li>
+            <a href={`/games/${game.slug}`}>
+              <img
+                src={game.img}
+                alt={`${game.name} game art`}
+                width="56"
+                height="56"
+                loading="lazy"
+              />
+              <span>{game.name}</span>
             </a>
-          )}
-          {lessons[game.slug] && (
-            <a href={`/games/${game.slug}/coaching`}>{game.name} coaching</a>
-          )}
-        </li>
-      ))}
-    </ul>
+            {intentForGame(game.slug) && (
+              <a href={intentPath(intentForGame(game.slug)!)}>
+                {game.name} play-together sessions
+              </a>
+            )}
+            {lessons[game.slug] && (
+              <a href={`/games/${game.slug}/coaching`}>{game.name} coaching</a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <section class="answers" aria-labelledby="services-h">
+      <h2 id="services-h">What can you book on Duoly?</h2>
+      <p>
+        A Duoly booking is one agreed block of play, coaching or voice company
+        with a verified teammate. First, a duo session puts a ranked teammate in
+        your lobby for the mode you choose, from {SHORT_GAME_PRICE} per Valorant
+        Skirmish game. Second, coaching adds a stated learning goal at{' '}
+        {COACHING_PRICE} per hour or game, covering all {COACHABLE_GAMES}{' '}
+        coachable titles. Third, Social sells {SOCIAL_MODES} voice modes at{' '}
+        {SOCIAL_PRICE} per hour with no game at all. Teammate bundles reach{' '}
+        {bundle[2]}% off, while coaching stays flat. For example, a Valorant
+        player wanting better entries books coaching, while the same player
+        wanting a calmer queue books a duo. Step 1 of any booking is naming the
+        mode, because a Swiftplay teammate and a Ranked teammate are different
+        listings. Finally, every session runs using Discord voice on accounts
+        both people own, and Duoly never asks you for a login or a password.
+      </p>
+    </section>
+    <section class="answers" aria-labelledby="cost-h">
+      <h2 id="cost-h">How much does a Duoly session cost?</h2>
+      <p>
+        A Duoly price depends on the game, the service, the teammate rank and
+        how many units you book. The lowest listed price from Duoly is{' '}
+        {SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game. Coaching is flat at{' '}
+        {COACHING_PRICE} per hour or game in every coachable title, so a
+        Grandmaster League of Legends review costs the same as a Valorant aim
+        lesson. Social is {SOCIAL_PRICE} per hour. Teammate bundles cut the
+        total by {bundle[0]}% at three units, {bundle[1]}% at five and{' '}
+        {bundle[2]}% at ten, applied at checkout rather than on request. For
+        example, ten Valorant duo games cost {bundle[2]}% less than ten single
+        bookings, which is the largest discount in the catalog. Step 1 is
+        choosing the unit, because a game and an hour price differently.
+        Finally, bundles never apply to coaching, and every session still runs
+        using Discord voice.
+      </p>
+    </section>
+    <section class="answers" aria-labelledby="choose-h">
+      <h2 id="choose-h">Should you book a duo, coaching or Social?</h2>
+      <p>
+        The right Duoly service is the one matching what you want from the next
+        hour. First, pick a duo when the goal is winning more games tonight. For
+        example, an Immortal Valorant teammate can hold a site while you take
+        map control, using Discord voice to call it. Second, pick coaching when
+        the goal is understanding why a round keeps going wrong, because a coach
+        pauses, explains and reviews at {COACHING_PRICE} per hour. Third, pick
+        Social when the goal is company rather than a scoreboard, at{' '}
+        {SOCIAL_PRICE} per hour for Just Chat, Watch Together, Sleep Call or
+        Karaoke. Step 1 of a good week is being honest about the goal. A duo
+        improves one session while coaching improves the next ten, so climbing
+        players often book both. A ten game duo bundle from Duoly costs{' '}
+        {bundle[2]}% less than ten single games.
+      </p>
+    </section>
+    <section class="answers" aria-labelledby="which-h">
+      <h2 id="which-h">Which games have coaching and play-together guides?</h2>
+      <p>
+        A Duoly game hub is the page listing every mode, rank and price for one
+        title, and every game above links to one. Coaching covers all{' '}
+        {COACHABLE_GAMES} bookable games from Duoly at {COACHING_PRICE} per hour
+        or game. Step 1 is opening the hub for your game. Games with a finished
+        coaching guide also show a coaching link, for example Valorant, League
+        of Legends, Rocket League, Fortnite, Teamfight Tactics, Apex Legends and
+        Marvel Rivals. Games with a play-together guide show a sessions link,
+        covering free options using Discord beside paid ones. Both guides name
+        real modes rather than generic advice. Finally, Social sits outside the
+        coaching set, because {SOCIAL_MODES} voice modes at {SOCIAL_PRICE} per
+        hour teach nothing about a game. Bundle discounts of {bundle[2]}% cover
+        teammate games rather than lessons.
+      </p>
+    </section>
+    <section class="answers" aria-labelledby="faq-h2">
+      <h2 id="faq-h2">What do players ask before booking?</h2>
+      <dl class="qa">
+        {faq.map(([question, answer]) => (
+          <>
+            <dt>{question}</dt>
+            <dd>
+              <p>{answer}</p>
+            </dd>
+          </>
+        ))}
+      </dl>
+    </section>
   </PageIntro>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faq, path, Astro.site!))}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Gaming teammates and coaching by game',
+      url: new URL(path, Astro.site!).href,
+      dateModified: CONTENT_DATES[path],
+    })}
+  />
 </SiteLayout>
 
 <style>
@@ -87,5 +245,40 @@ const { viewer, csrf } = await pageViewer(Astro);
   }
   .grid img {
     border-radius: 12px;
+  }
+  .answers {
+    margin-top: 48px;
+  }
+  .answers h2 {
+    margin: 0 0 12px;
+    font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+    font-size: clamp(22px, 2.6vw, 28px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: #f3eeff;
+  }
+  .answers p {
+    max-width: 70ch;
+    line-height: 1.7;
+    color: #cfc4ea;
+  }
+  .qa {
+    margin: 0;
+    display: grid;
+    gap: 18px;
+  }
+  .qa dt {
+    font-weight: 700;
+    color: #f3eeff;
+  }
+  .qa dd {
+    margin: 6px 0 0;
+  }
+  .qa dd p {
+    margin: 0;
+    max-width: 70ch;
+    line-height: 1.7;
+    color: #cfc4ea;
   }
 </style>

@@ -1,6 +1,7 @@
 import { calculateQuote } from '../pricing';
 import { SITE_GAMES } from '../../site/games';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
+import { serversFor } from '../../design-reference/lib/servers.js';
 import { formatPrice } from './offers';
 
 /**
@@ -13,6 +14,11 @@ import { formatPrice } from './offers';
  * breaks the build rather than publishing a stale claim.
  */
 
+// Server tokens differ per game (Valorant uses EU, Social uses Europe), so read the
+// first valid one out of the catalog rather than hardcoding a token that throws.
+const firstServer = (gameId: string) =>
+  (serversFor(gameId) as [string, ...unknown[]][] | undefined)?.[0]?.[0] ?? '';
+
 const quote = (
   gameId: string,
   serviceId: string,
@@ -23,7 +29,7 @@ const quote = (
     {
       gameId,
       serviceId,
-      server: 'EU',
+      server: firstServer(gameId),
       units,
       ...(rank ? { rank } : {}),
     } as Parameters<typeof calculateQuote>[0],
@@ -66,3 +72,16 @@ export const COACHABLE_GAMES = SITE_GAMES.filter((game) =>
 export const PLAYABLE_GAMES = SITE_GAMES.filter(
   (game) => game.id !== 'social',
 ).length;
+
+const socialModes =
+  (servicesFor('social') as { modes?: { id: string }[] } | undefined)?.modes ??
+  [];
+
+/** How many Social voice modes the catalog sells (Just Chat, Watch Together, ...). */
+export const SOCIAL_MODES = socialModes.length;
+
+/** The Social hourly price, quoted through the engine like every other price. */
+export const SOCIAL_PRICE = formatPrice(
+  quote('social', socialModes[0]!.id, 1).customer.amountMinor,
+  'EUR',
+);
