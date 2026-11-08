@@ -73,7 +73,9 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
     {intentLink && copy.intent && (
       <aside class="hub-intent">
         <p>{copy.intent}</p>
-        <a class="btn-sm" href={intentLink.href}>{intentLink.anchor}</a>
+        <a class="btn-sm" href={intentLink.href}>
+          {intentLink.anchor}
+        </a>
       </aside>
     )}
   </section>

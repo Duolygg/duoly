@@ -15,7 +15,8 @@ export const leagueOfLegends: HubPageCopy = {
     'Voice on Discord, your own account',
   ],
   related: ['teamfight-tactics', 'marvel-rivals', 'pokemon-unite', 'valorant'],
-  intent: 'After the duo partner page rather than the whole catalog? It covers ARAM, normals and ranked duo on their own, with the free routes next to the paid ones.',
+  intent:
+    'After the duo partner page rather than the whole catalog? It covers ARAM, normals and ranked duo on their own, with the free routes next to the paid ones.',
   format: {
     heading: 'What can you book for League of Legends on Duoly?',
     text: 'Duoly sells three things for League of Legends: one teammate who joins your games on your own account, a Teams fill that turns a part-full group into a five, and coaching by the hour. The teammate tiers are Duo Plus with a Diamond 4+ player, Duo Pro with a Master+ player and Duo Apex with a Grandmaster+ player. Ranked sessions follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while casual modes keep one flat price at every rank: ARAM Night, Normal Draft and Swiftplay all cost {{p_aram}} per game. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Which queue a given pairing can use is set by Riot Games rather than by the tier you buy, so name your server and rank in the order chat before anybody hits Find Match.',

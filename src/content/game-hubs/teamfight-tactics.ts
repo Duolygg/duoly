@@ -17,7 +17,7 @@ export const teamfightTactics: HubPageCopy = {
   related: ['league-of-legends', 'pokemon-unite', 'marvel-rivals'],
   format: {
     heading: 'What can you book for Teamfight Tactics on Duoly?',
-    text: 'A Duoly Teamfight Tactics booking is a paid session where a reviewed Master+ player joins your lobby or watches your board on your own account. Double Up is the two-player mode where you plan boards together and send help at the right moment, priced by your own rank, so a {{rank_duo1}} player pays {{p_duo1}} per game in November 2026. Board Coach is the live option at {{p_duo2}} per game: you play your ranked game while a Master+ player watches your screen and says what to buy, roll and position. For example, Normals and Hyper Roll costs {{p_norm}} per game at every rank. Bundles cut the total: 3 games get {{pct3}} off, 5 get {{pct5}} off and 10 get {{pct10}} off. Set rotations from Riot Games change the comps, never the format. Finally, every booking opens an order chat, where you agree the plan and voice using Discord.',
+    text: 'Duoly sells three things for Teamfight Tactics: a Double Up partner who runs the second board in your team of two, a Board Coach who watches your own ranked game live and calls every decision, and a comp and econ review by the hour. Double Up is priced by your own rank, from {{p_duo1_low}} to {{p_duo1_high}} per game, while Board Coach keeps one flat {{p_duo2}} per game and Normals and Hyper Roll cost {{p_norm}} at every rank. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Ranked Double Up has no rank limit on who you partner with, so the only things worth agreeing in the order chat are your server, the comps you know and whether the evening is for LP or for learning.',
   },
   services: {
     duo1: 'Double Up with a Master+ partner: plan both boards and send help at the right moment.',
@@ -40,16 +40,16 @@ export const teamfightTactics: HubPageCopy = {
   steps: {
     heading: 'How does booking a TFT session work?',
     items: [
-      'First, pick a service and the number of games. Double Up is the two-player mode with a Master+ partner, and 3 games at {{rank_duo1}} cost {{p_duo1_x3}} with the {{pct3}} bundle discount. Five games get {{pct5}} off.',
-      'Second, add your server, rank and language at checkout. For example, name EUW and {{rank_duo1}}, so your partner reads the real request from Duoly and knows which lobby strength to expect.',
-      'Third, meet your partner in the order chat, agree a plan and voice using Discord, then invite each other with your Riot ID. Board Coach costs {{p_duo2}} per game with live screen share in 2026. Ten games get {{pct10}} off.',
+      'Pick a service and the number of games. Double Up is the two-player mode with a Master+ partner, and 3 games at {{rank_duo1}} cost {{p_duo1_x3}} with the {{pct3}} bundle discount. Five games take {{pct5}} off.',
+      'Add your server, rank and language at checkout. Name EUW and {{rank_duo1}}, so your partner reads the real request and knows which lobby strength to expect.',
+      'Meet your partner in the order chat, agree who takes the contested line and how voice runs, then add each other by Riot ID. Board Coach costs {{p_duo2}} per game with live screen share.',
     ],
     note: 'Duoly reviews every TFT partner before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
   decide: {
     heading: 'Which TFT session fits you?',
     intro:
-      'The right TFT session is the one matching your goal for the evening, so pick the goal first and let the price follow. For example, a {{rank_duo1}} player who wants live calls pays {{p_duo2}} per game for Board Coach in 2026, with {{pct3}} off 3 games and {{pct5}} off 5. Screen share runs using Discord on every session from Duoly.',
+      'The right TFT session is the one matching your goal for the evening, so pick the goal first and let the price follow. Double Up follows your own rank, while Board Coach, Normals and Hyper Roll keep one flat price for everybody. Bundles cut totals by {{pct3}} on 3 games and {{pct5}} on 5, and screen share runs on Discord.',
     picks: [
       {
         goal: 'Want a real Double Up partner?',
@@ -85,31 +85,31 @@ export const teamfightTactics: HubPageCopy = {
   },
   sections: [
     {
-      heading: 'Double Up or Board Coach: which TFT booking helps more?',
+      heading: 'Can any rank queue ranked Double Up together?',
       paragraphs: [
-        'Double Up is the two-player TFT mode where both players run a board and can send units, gold or items across. A Master+ partner handles the aggressive line while you play the safer one, and the pair climbs together. Double Up is priced by your own rank, so a {{rank_duo1}} player pays {{p_duo1}} per game in 2026 and a {{rank_duo1_high}} player pays {{p_duo1_high}}, because higher lobbies need stronger partners.',
-        'Board Coach is the other shape of help, at {{p_duo2}} per game in 2026. Three games cost {{p_duo2_x3}} with {{pct3}} off. You play your own ranked game while a Master+ player watches your screen using Discord and says what to buy, roll and position in real time. For example, a player who always rolls at the wrong level learns faster from live calls than from a replay. First, pick the goal. Second, pick the mode. Finally, bundles take {{pct3}} off 3 games or {{pct5}} off 5.',
+        'Yes. Riot Games removed the rank limits from ranked Double Up, so a Master+ partner can queue with you whatever your own rank. Matchmaking is made on the senior player of the pair, which means the lobby you land in reflects your partner rather than you, and each player gains or loses LP according to their own current tier. That is the opposite of standard TFT ranked and of the League Solo/Duo queue, where the gap between two accounts is capped.',
+        'Two things follow from that. The lobbies will be harder than the ones you normally play, so expect stronger contested comps and fewer free eighth-place opponents. And the LP you earn still belongs to your tier, so a climb is a real climb. Double Up is priced by your own rank for the same reason: {{rank_duo1_low}} players pay {{p_duo1_low}} per game and {{rank_duo1_high}} players pay {{p_duo1_high}}, because a harder lobby needs a stronger partner.',
       ],
     },
     {
-      heading: 'What should you tell your TFT partner first?',
+      heading: 'Double Up or Board Coach: which TFT booking helps more?',
       paragraphs: [
-        'The useful first message is a short line naming your server, your rank and the comps you actually know. For example: EUW, {{rank_duo1}}, comfortable with reroll lines, bad at knowing when to level eight. A partner can plan around a stated weakness in 2026, and a Board Coach can watch for exactly that moment. Board Coach costs {{p_duo2}} per game. Set rotations from Riot Games change the comps every few months, so say which set you have been playing.',
-        'Then agree how the session runs. First, agree whether the goal is LP or learning, because the two lines diverge at stage four. Second, agree who commits to the contested comp in Double Up. Finally, keep calls short using Discord and name the next decision rather than the last fight. Double Up costs {{p_duo1}} per game at {{rank_duo1}} in 2026, with {{pct3}} off 3 games and {{pct5}} off 5.',
+        'Double Up is the two-player mode where both players run a board and can send units, gold or items across. A Master+ partner takes the aggressive line while you play the safer one, and the pair places together, so the help arrives inside the game. Three games at {{rank_duo1}} cost {{p_duo1_x3}} with {{pct3}} off.',
+        'Board Coach is the other shape of help, and the one to pick if the goal is learning rather than placement. You play your own ranked game while a Master+ player watches your screen on Discord and says what to buy, roll and position in real time, at a flat {{p_duo2}} per game. A player who always rolls at the wrong level hears it in the moment instead of reading it in a replay three days later. Pick the goal first and the mode second, then agree whether the evening is for LP or for learning, because the two lines diverge at stage four.',
       ],
     },
     {
       heading: 'Example evening: three Double Up games on EUW',
       paragraphs: [
-        'For example, here is a real booking, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EUW books 3 Double Up games. The total is {{p_duo1_x3}} with the {{pct3}} bundle discount, against {{p_duo1}} for one game. The order chat opens straight after payment, and the first message names the server, the rank and the weakness: EUW, {{rank_duo1}}, keeps levelling too late, wants help reading the lobby.',
-        'The evening then runs on a short plan. First, both players agree who takes the contested line. Second, voice goes on using Discord and the invite goes out with the Riot ID. Third, after each game you agree one adjustment, such as rolling at level seven instead of eight. We found the rank spread by running the price tool from Duoly for every tier, so {{rank_duo1_low}} players pay {{p_duo1_low}} in 2026. Five games take {{pct5}} off.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EUW books 3 Double Up games. The total is {{p_duo1_x3}} with the {{pct3}} bundle discount, against {{p_duo1}} for a single game. The order chat opens straight after payment, and the first message names the server, the rank and the weakness: EUW, {{rank_duo1}}, keeps levelling too late, wants help reading the lobby.',
+        'From there the evening runs on a short plan. You agree who commits to the contested comp, voice goes on, and you add each other by Riot ID. After each game you pick one adjustment, such as rolling at level seven instead of eight. The same shape works for Normals and Hyper Roll at {{p_norm}} per game if you would rather play with no LP on the line, and 5 games of anything take {{pct5}} off.',
       ],
     },
     {
       heading: 'When is TFT coaching the better booking?',
       paragraphs: [
-        'TFT coaching is the better booking when the goal is a repeatable fix rather than a partner for the next lobby. Comp and Econ Review is one hour with a Master+ coach on comps that suit you, roll and level timing, and gold management from stage two, at {{p_econ}} per hour in 2026. Finally, coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to Double Up, Board Coach and casual games only.',
-        'For example, a player who finishes fifth every lobby gains more from one econ hour than from three more games. Finally, a player who wants company gains more from Normals and Hyper Roll at {{p_norm}} per game, using Discord for voice. The full lesson list, preparation tips and formats live on the [Teamfight Tactics coaching page](/games/teamfight-tactics/coaching), and every lesson uses Discord screen share so the coach sees your real board.',
+        'TFT coaching is the better booking when the goal is a repeatable fix rather than a partner for the next lobby. Comp and Econ Review is one hour with a Master+ coach on comps that suit you, roll and level timing, and gold management from stage two, at {{p_econ}} per hour. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to Double Up, Board Coach and casual games only.',
+        'A player who finishes fifth every lobby gains more from that hour than from three more games, because fifth place is usually one economy habit rather than bad luck. A player who mostly wants company gains more from Normals and Hyper Roll at {{p_norm}} per game. Set rotations from Riot Games change the comps every few months, so say which set you have been playing. The full lesson list, preparation tips and formats live on the [Teamfight Tactics coaching page](/games/teamfight-tactics/coaching).',
       ],
     },
   ],
@@ -118,23 +118,23 @@ export const teamfightTactics: HubPageCopy = {
     items: [
       [
         'Is Duoly a free TFT partner finder?',
-        'Duoly is a paid marketplace with reviewed players. For example, Discord LFG channels and the in-game friend list from Riot Games stay the free routes to a partner.',
+        'Duoly is a paid marketplace with reviewed players. Discord LFG channels and the in-game friend list from Riot Games stay the free routes to a partner.',
       ],
       [
         'How much does a TFT session cost?',
-        'Double Up is {{p_duo1}} per game at {{rank_duo1}} in 2026. First, bundles take {{pct3}} off 3 games, and 10 games cost {{p_duo1_x10}} with {{pct10}} off.',
+        'Double Up is {{p_duo1}} per game at {{rank_duo1}}, from {{p_duo1_low}} at the lowest rank. Bundles take {{pct3}} off 3 games, and 10 games cost {{p_duo1_x10}} with {{pct10}} off.',
       ],
       [
         'What is Board Coach exactly?',
         'Board Coach is a live session where you play your own ranked game and a Master+ player watches your screen on Discord, calling buys, rolls and positioning.',
       ],
       [
-        'Does my partner play on my account?',
-        'No. You play on your own account and invite each other with your Riot ID. Never send login details to anyone, including a partner or a coach.',
+        'Can a Master+ partner queue ranked Double Up with me?',
+        'Yes. Riot Games sets no rank limit on ranked Double Up. Matchmaking uses the senior player of the pair, and each of you gains LP by your own tier.',
       ],
       [
-        'Can we play casual lobbies instead?',
-        'Yes. Normals and Hyper Roll is its own flat-price service at {{p_norm}} per game, which suits a relaxed evening using Discord.',
+        'Does my partner play on my account?',
+        'No. You play on your own account and add each other by Riot ID. Never send login details to anyone, including a partner or a coach.',
       ],
       [
         'Where do I book TFT coaching?',
@@ -144,6 +144,6 @@ export const teamfightTactics: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next TFT lobby?',
-    text: 'Double Up is the two-player session with a Master+ partner from Duoly. For example, 3 games at {{rank_duo1}} cost {{p_duo1_x3}} with {{pct3}} off in 2026. Five games get {{pct5}} off. Finally, agree your plan using Discord and invite each other with your Riot ID.',
+    text: 'Double Up is the two-player session with a Master+ partner from Duoly, and 3 games at {{rank_duo1}} cost {{p_duo1_x3}} with {{pct3}} off. Normals and Hyper Roll stays {{p_norm}} per game with no LP on the line. Pick your server and rank, then agree the plan with your partner in the order chat.',
   },
 };
