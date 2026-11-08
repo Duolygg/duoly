@@ -73,18 +73,20 @@ const cards = services.map((service) => {
           <>
             <details>
               <summary>Price by your rank</summary>
-              <ul class="rank-prices">
+              {/* A rank and its price are a name/value pair, so the rows are a
+                  description list rather than a bullet list. */}
+              <dl class="rank-prices">
                 {rows.map((row) => (
-                  <li
+                  <div
                     data-service={row.id}
                     data-rank={row.rank}
                     data-price-minor={row.amountMinor}
                   >
-                    <span>{row.rank}</span>
-                    <b>{row.display}</b>
-                  </li>
+                    <dt>{row.rank}</dt>
+                    <dd>{row.display}</dd>
+                  </div>
                 ))}
-              </ul>
+              </dl>
             </details>
             <p class="price">
               {varies && <span class="from">From </span>}

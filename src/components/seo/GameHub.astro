@@ -85,6 +85,7 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
       offers={withLines(offers.coaching)}
       id="coaching-prices"
       heading={`${game.name} coaching prices`}
+      intro={copy.intros.coaching}
       coach
       updated={HUB_PRICES_CHECKED}
     />

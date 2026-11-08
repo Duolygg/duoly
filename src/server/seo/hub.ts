@@ -1,7 +1,7 @@
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { defaultRank, ranksOf } from '../../design-reference/lib/ranks.js';
 import { calculateQuote } from '../pricing';
-import { formatPrice, offerSelection, seoOffers } from './offers';
+import { cleanCopy, formatPrice, offerSelection, seoOffers } from './offers';
 import type { QuoteContext } from '../../contracts/pricing';
 
 /** The day the hub price tokens below were last recalculated from the checkout engine. */
@@ -73,7 +73,7 @@ export function hubPrices(
       prices[`p_${serviceId}_x${units}`] = money(serviceId, units, rank);
     prices[`seats_${serviceId}`] = String(quote(serviceId, 1, rank).seats);
     if (rank) {
-      prices[`rank_${serviceId}`] = rank;
+      prices[`rank_${serviceId}`] = cleanCopy(rank);
       const byRank = ranks
         .map((each) => quote(serviceId, 1, each))
         .sort((a, b) => a.customer.amountMinor - b.customer.amountMinor);
@@ -81,13 +81,14 @@ export function hubPrices(
         byRank[0]!.customer.amountMinor,
         'EUR',
       );
-      prices[`rank_${serviceId}_low`] = byRank[0]!.selection.rank!;
+      prices[`rank_${serviceId}_low`] = cleanCopy(byRank[0]!.selection.rank!);
       prices[`p_${serviceId}_high`] = formatPrice(
         byRank[byRank.length - 1]!.customer.amountMinor,
         'EUR',
       );
-      prices[`rank_${serviceId}_high`] =
-        byRank[byRank.length - 1]!.selection.rank!;
+      prices[`rank_${serviceId}_high`] = cleanCopy(
+        byRank[byRank.length - 1]!.selection.rank!,
+      );
     }
   }
   // Quantity discounts come from a teammate service: coaching has none.

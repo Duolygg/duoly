@@ -41,7 +41,7 @@ export interface HubPageCopy {
   /** One short line per price card, by catalog service id. */
   services: Record<string, string>;
   /** Orientation line above a price grid. Never quote a price here. */
-  intros: { teammate: string; team?: string };
+  intros: { teammate: string; team?: string; coaching?: string };
   steps: { heading: string; items: [string, string, string]; note: string };
   decide: { heading: string; intro: string; picks: HubPick[] };
   sections: { heading: string; paragraphs: [string, string] }[];

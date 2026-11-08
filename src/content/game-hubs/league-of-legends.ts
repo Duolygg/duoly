@@ -50,6 +50,8 @@ export const leagueOfLegends: HubPageCopy = {
     teammate:
       'One teammate joins your games on your own account, from ranked Solo/Duo to ARAM and Arena.',
     team: 'Teams fills add several Master+ players at once, priced for the seats you need covered.',
+    coaching:
+      'Every lesson runs for one hour, except Play and Learn, which covers one live ranked game.',
   },
   steps: {
     heading: 'How does booking a League of Legends duo work?',
@@ -108,21 +110,21 @@ export const leagueOfLegends: HubPageCopy = {
     {
       heading: 'How do Teams fills work for Ranked Flex and Clash?',
       paragraphs: [
-        'A Teams fill is one order hiring several players at once, so a part-full group becomes a real five. Flex Squad fills up to {{seats_flex}} empty Ranked Flex seats with Master+ players for {{p_flex}} per game at {{rank_flex}} in 2026. Ranked 5s books the whole five with a planned draft, one shotcaller and voice the entire game. Clash Roster covers tournament weekends with players who know draft and scouting, and Clash itself still follows the schedule from Riot Games.',
+        'A Teams fill is a single order hiring several players at once, so a part-full group becomes a real five. Flex Squad fills up to {{seats_flex}} empty Ranked Flex seats with Master+ players for {{p_flex}} per game at {{rank_flex}} in 2026. Ranked 5s books the whole five with a planned draft, one shotcaller and voice the entire game, at {{p_ranked5}} per game. Clash Roster covers tournament weekends with players who know draft and scouting, and Clash itself still follows the schedule from Riot Games.',
         'Pick the seats you actually need, because every seat is priced separately. For example, a trio short two players sets Flex Squad to two seats instead of four. First, agree the roles before the lobby opens, since a jungler and a support fill differently from two mid laners. Finally, keep comms on one call using Discord so draft and objective calls reach everybody. Bundles still apply, so 3 games get {{pct3}} off and 5 games get {{pct5}} off.',
       ],
     },
     {
       heading: 'Example evening: three Duo Pro games on EUW',
       paragraphs: [
-        'Here is a real booking, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} support on EUW books 3 Duo Pro games. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for a single game. The order chat opens straight after payment, and the first message names the server, the rank and the role: bot lane support, looking for an ADC who trades on your engage.',
-        'The evening then runs on a short plan. First, both players agree a champion pair and a ward route. Second, voice goes on using Discord and the invite comes from Riot’s League client. Third, after each game you agree one adjustment, such as grouping earlier for the next drake. We found the rank spread by running the same calculator for every tier, so a {{rank_duo2_low}} player pays {{p_duo2_low}} per game and a {{rank_duo2_high}} player pays {{p_duo2_high}}. Five games take {{pct5}} off the total.',
+        'For example, here is a real booking, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} support on EUW books 3 Duo Pro games. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for a single game. The order chat opens straight after payment, and the first message names the server, the rank and the role: bot lane support, looking for an ADC who trades on your engage.',
+        'The evening then runs on a short plan. First, both players agree a champion pair and a ward route. Second, voice goes on using Discord and the invite comes from Riot’s League client. Third, after each game you agree one adjustment, such as grouping earlier for the next drake. We found the rank spread by running the price tool from Duoly for every tier, so a {{rank_duo2_low}} player pays {{p_duo2_low}} per game and a {{rank_duo2_high}} player pays {{p_duo2_high}}. Five games take {{pct5}} off the total.',
       ],
     },
     {
       heading: 'When is League coaching the better booking?',
       paragraphs: [
-        'League coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between fights. A coach stops the game, names the pattern and leaves you with homework. VOD Review and Champion Mastery each cost {{p_vod}} per hour in 2026, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate sessions only.',
+        'League coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between fights. A coach stops the game, names the pattern and leaves you with homework. VOD Review and Champion Mastery each cost {{p_vod}} per hour in 2026. Finally, coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate sessions only.',
         'For example, a player who keeps dying on the third wave gains more from one review of wave states than from another duo game. A player who wants a calm evening gains more from ARAM Night at {{p_aram}} per game. Screen share runs using Discord, and lessons follow the format set by your coach. The full service list, preparation tips and lesson formats live on the [League of Legends coaching page](/games/league-of-legends/coaching), and the duo side is covered on [play League of Legends with someone](/games/league-of-legends/play-with-someone).',
       ],
     },
@@ -132,7 +134,7 @@ export const leagueOfLegends: HubPageCopy = {
     items: [
       [
         'Is Duoly a free League of Legends teammate finder?',
-        'No. Duoly books paid sessions with reviewed players. Discord LFG channels, Reddit threads and in-game friend invites stay the free routes to a regular group.',
+        'Duoly is a paid marketplace with reviewed players. For example, Discord LFG channels and the in-game friend list from Riot Games stay the free routes to a group.',
       ],
       [
         'How much does a League duo cost?',
@@ -158,6 +160,6 @@ export const leagueOfLegends: HubPageCopy = {
   },
   closing: {
     heading: 'Ready to queue in League of Legends?',
-    text: 'Duo Pro is the ranked Solo/Duo session with a Master+ teammate. For example, 3 games at {{rank_duo2}} on EUW cost {{p_duo2_x3}} with {{pct3}} off in 2026. Five games get {{pct5}} off. Finally, pick your rank and role, then meet your teammate in the order chat using Discord.',
+    text: 'Duo Pro is the ranked Solo/Duo session with a Master+ teammate from Duoly. For example, 3 games at {{rank_duo2}} on EUW cost {{p_duo2_x3}} with {{pct3}} off in 2026. Five games get {{pct5}} off. Finally, pick your rank and role, then meet your teammate in the order chat using Discord.',
   },
 };
