@@ -70,7 +70,7 @@ const faq: [string, string][] = [
   ],
   [
     'Are the prices an assistant quotes the real prices?',
-    `Yes, get_quote reads the checkout engine, so a Valorant VOD Review reads ${coachingPrice} per hour in both places, before account perks. Coaching has no quantity discount; teammate bundles are priced separately.`,
+    `Yes. For example, get_quote reads the checkout engine, so a Valorant VOD Review reads ${coachingPrice} per hour in both places, before account perks. Coaching has no quantity discount; teammate bundles are priced separately.`,
   ],
 ];
 ---
@@ -165,12 +165,12 @@ const faq: [string, string][] = [
         returns the {coachingPrice} per hour VOD Review with a booking link
         attached, and a request for a cheap duo returns games from{' '}
         {shortGamePrice}. Prices arrive straight from Duoly, including the{' '}
-        {bundle[2]}% bundle discount on a ten game booking. Rate limits sit at{' '}
-        {MCP.rateLimits.minute} requests per minute and {MCP.rateLimits.day} per
-        day, which is generous for a conversation and small enough to keep
-        answers fast. The connector supports {MCP.protocolVersions.length}{' '}
-        protocol versions, the newest being {MCP.protocolVersions[0]}, so an
-        older client keeps working.
+        {bundle[1]}% quantity discount on five non-coaching units. Rate limits
+        sit at {MCP.rateLimits.minute} requests per minute and{' '}
+        {MCP.rateLimits.day} per day. The connector supports{' '}
+        {MCP.protocolVersions.length} protocol versions, including{' '}
+        {MCP.protocolVersions[0]}. See the developer guide for the headers each
+        revision requires.
       </p>
     </section>
     <Steps
@@ -190,12 +190,12 @@ const faq: [string, string][] = [
       <p>
         Step 3 is where the price becomes final. For example, an assistant
         quoting a Valorant VOD Review at {coachingPrice} per hour is reading the
-        same engine the checkout uses, before account perks, and a ten game
-        bundle arrives with the {bundle[2]}% discount already applied. A
-        teammate or coach then accepts the order from the Duoly queue, so no
-        assistant can reserve a person, a time or a rank on your behalf. A three
-        game booking carries a {bundle[0]}% discount and every session runs
-        using Discord voice.
+        same engine the checkout uses, before account perks, and a five-game
+        teammate booking includes the {bundle[1]}% quantity discount. A teammate
+        or coach then accepts the order from the Duoly queue, so no assistant
+        can reserve a person, a time or a rank on your behalf. Coaching has no
+        quantity discount. Confirm the voice setup in the order room before
+        starting.
       </p>
     </Steps>
     <section aria-labelledby="assistants-h">
@@ -285,8 +285,8 @@ const faq: [string, string][] = [
         teammate search into a coaching search. For example, a request for a
         Valorant coach under 15 euros returns the {coachingPrice} per hour VOD
         Review. A Valorant duo request returns short games from {shortGamePrice}
-        . Add a server when ping matters, and a quantity to see the {bundle[1]}%
-        or {bundle[2]}% bundle discount from Duoly, using Claude or any client.
+        . Add a server when ping matters, and a quantity from one to five for an
+        exact selection. Five non-coaching units receive {bundle[1]}% off.
       </p>
       <ul class="ai-prompts">
         {AI_PROMPTS.slice(0, 3).map((prompt) => (
@@ -315,9 +315,9 @@ const faq: [string, string][] = [
         matching services with real prices, for example the {coachingPrice} per
         hour Valorant VOD Review or a {shortGamePrice} Skirmish game. Second,
         get_quote prices one exact selection, including a {bundle[1]}% discount
-        on five games or {bundle[2]}% on ten. Step 1 is naming a game, because
-        every other tool needs one. get_availability reports public online
-        counts from Duoly without reserving anybody.
+        on five non-coaching units. Search with a game before selecting a
+        service; order status uses its private code instead. get_availability
+        reports public online counts from Duoly without reserving anybody.
       </p>
       <ul class="ai-tools">
         <li>
@@ -361,9 +361,9 @@ const faq: [string, string][] = [
         returns the current acceptance, the teammate display names, the team
         seat progress and the next step, and nothing about payment. A code
         covers one order only, so a second booking needs a second code. Prices
-        stay public rather than private, which is why a {coachingPrice} per hour
-        coaching quote or a {bundle[0]}% and {bundle[2]}% bundle discount from
-        Duoly needs no code at all.
+        stay public rather than private, which is why a public quote needs no
+        code at all. Keep the code out of screenshots, shared links and
+        conversation logs.
       </p>
     </section>
     <section aria-labelledby="boundaries-h">

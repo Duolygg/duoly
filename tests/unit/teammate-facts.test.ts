@@ -79,6 +79,21 @@ describe('teammate facts come from the pricing engine', () => {
     expect(BUNDLE_PERCENTS[1]).toBeLessThan(BUNDLE_PERCENTS[2]!);
   });
 
+  it('keeps ordinary five-unit pricing separate from bundle packs', () => {
+    expect(quote('val', 'duo2', 3, 'Gold').quantityDiscountPercent).toBe(0);
+    expect(quote('val', 'duo2', 5, 'Gold').quantityDiscountPercent).toBe(
+      BUNDLE_PERCENTS[1],
+    );
+    expect(() => quote('val', 'duo2', 10, 'Gold')).toThrow('Invalid quantity');
+    const ai = readFileSync(
+      new URL('../../src/pages/ai.astro', import.meta.url),
+      'utf8',
+    ).replace(/\s+/g, ' ');
+    expect(ai).not.toContain('three game booking carries');
+    expect(ai).not.toContain('on five games or {bundle[2]}% on ten');
+    expect(ai).toContain('Five non-coaching units receive {bundle[1]}% off.');
+  });
+
   it('states prices the checkout would charge', () => {
     expect(COACHING_PRICE).toBe(
       formatPrice(quote('val', 'vod', 1).customer.amountMinor, 'EUR'),
