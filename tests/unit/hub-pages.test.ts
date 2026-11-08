@@ -20,13 +20,14 @@ import {
   priceSummary,
 } from '../../src/server/seo/offers';
 import { calculateQuote } from '../../src/server/pricing';
+import type { QuoteContext } from '../../src/contracts/pricing';
 import { ranksOf } from '../../src/design-reference/lib/ranks.js';
 import { SITE_GAMES, gameBySlug } from '../../src/site/games';
 import { HUB_PATHS, INDEXABLE_PATHS, hubChips } from '../../src/site/seo';
 import { renderLlms } from '../../src/server/seo/llms';
 
-const EUR = { customerCurrency: 'EUR' as const, eurToUsd: 1 };
-const USD = { customerCurrency: 'USD' as const, eurToUsd: 1.12 };
+const EUR: QuoteContext = { customerCurrency: 'EUR', eurToUsd: 1 };
+const USD: QuoteContext = { customerCurrency: 'USD', eurToUsd: 1.12 };
 const words = (text: string) => text.trim().split(/\s+/).length;
 
 /** Every string in a hub entry, with price tokens already filled. */
@@ -38,7 +39,7 @@ function strings(value: unknown, out: string[] = []): string[] {
   return out;
 }
 
-const rendered = (slug: string, context = EUR) => {
+const rendered = (slug: string, context: QuoteContext = EUR) => {
   const game = gameBySlug(slug)!;
   const offers = hubOffers(game.id, context);
   const summary = priceSummary(offers.all);
@@ -154,6 +155,10 @@ describe.each(HUB_PAGES.map((page) => page.gameSlug))('%s hub', (slug) => {
     for (const text of strings(copy)) {
       expect(text, text).not.toMatch(/[–—]/);
       expect(text, text).not.toMatch(/ & /);
+      // Rank names are filled in from the catalog, so "a Iron player" is a real
+      // risk whenever a rank or service name starts with a vowel. Copy avoids
+      // "a" before any vowel rather than guessing which ones sound like "you".
+      expect(text, text).not.toMatch(/\b[Aa] [AEIOUaeiou]/);
     }
   });
 

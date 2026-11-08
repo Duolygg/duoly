@@ -96,7 +96,7 @@ export const eaSportsFc27: HubPageCopy = {
       heading: 'What does a Co-op Rivals partner actually do?',
       paragraphs: [
         'A Co-op Rivals partner is the second player on your team in the 2v2 mode, which means defending shape matters more than skill moves. A Division 1+ partner tracks back, holds the line and passes into space instead of chasing every ball. For example, a {{rank_duo2}} player books Co-op Rivals at {{p_duo2}} per game in 2026. Three games cost {{p_duo2_x3}} with {{pct3}} off, inside the Rivals rules from EA Sports.',
-        'Division pricing follows your own rank, so a {{rank_duo2_low}} player pays {{p_duo2_low}} per game and a {{rank_duo2_high}} player pays {{p_duo2_high}}, because higher divisions need stronger partners. First, agree who defends and who presses. Second, agree a rule for corners and set pieces. Finally, keep calls short using Discord and name the next pass. Bundles take {{pct3}} off 3 games or {{pct5}} off 5 of the same service.',
+        'Division pricing follows your own rank, so {{rank_duo2_low}} players pay {{p_duo2_low}} per game and {{rank_duo2_high}} players pay {{p_duo2_high}}, because higher divisions need stronger partners. First, agree who defends and who presses. Second, agree a rule for corners and set pieces. Finally, keep calls short using Discord and name the next pass. Bundles take {{pct3}} off 3 games or {{pct5}} off 5 of the same service.',
       ],
     },
     {

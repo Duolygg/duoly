@@ -1,5 +1,6 @@
 /* Game hub extras: the "which session fits you" decision grid and team seat labels.
    Colors and radii follow src/components/seo/seo.css. */
+[data-hub-page] > section > p,
 .hub-decide > p {
   max-width: 75ch;
 }

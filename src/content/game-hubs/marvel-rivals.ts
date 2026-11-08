@@ -101,7 +101,7 @@ export const marvelRivals: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'A Duoly Marvel Rivals teammate is a reviewed player who applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player, Duo Pro a Grandmaster+ player and Duo Apex a Celestial+ player. The tier describes the teammate, never your own lobby. Party rules from NetEase Games decide which ranks can queue Competitive together, so share your platform and rank in the order chat first. For example, a {{rank_duo2}} player pays {{p_duo2}} per match in 2026.',
-        'What the rank buys you is fight discipline. First, a Grandmaster+ teammate tracks the enemy ultimates and calls the reset instead of walking in alone. Second, voice runs using Discord, so the dive call lands before the cooldown. A {{rank_duo2_high}} player pays {{p_duo2_high}} per match, because higher lobbies need stronger teammates, and bundles take {{pct3}} off 3 matches or {{pct5}} off 5. You keep your hero and your account.',
+        'What the rank buys you is fight discipline. First, a Grandmaster+ teammate tracks the enemy ultimates and calls the reset instead of walking in alone. Second, voice runs using Discord, so the dive call lands before the cooldown. {{rank_duo2_high}} players pay {{p_duo2_high}} per match, because higher lobbies need stronger teammates, and bundles take {{pct3}} off 3 matches or {{pct5}} off 5. You keep your hero and your account.',
       ],
     },
     {

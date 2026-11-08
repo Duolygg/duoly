@@ -94,7 +94,7 @@ export const apexLegends: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'A Duoly Apex teammate is a reviewed player who applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player and Duo Pro a Master or Apex Predator. The tier describes the teammate, never your own lobby. Ranked rules from Respawn Entertainment still decide the entry cost and the split reset, so share your area and rank in the order chat first. For example, a {{rank_duo2}} player pays {{p_duo2}} per hour in 2026.',
-        'What the rank buys you is a squad that moves together. First, a Master teammate calls the drop and the first rotation instead of chasing a fight across two zones. Second, voice runs using Discord, so a knocked call lands before the push. A {{rank_duo2_high}} player pays {{p_duo2_high}} per hour, because higher lobbies need stronger teammates, and bundles take {{pct3}} off 3 hours or {{pct5}} off 5. You keep your legend and your account.',
+        'What the rank buys you is a squad that moves together. First, a Master teammate calls the drop and the first rotation instead of chasing a fight across two zones. Second, voice runs using Discord, so a knocked call lands before the push. {{rank_duo2_high}} players pay {{p_duo2_high}} per hour, because higher lobbies need stronger teammates, and bundles take {{pct3}} off 3 hours or {{pct5}} off 5. You keep your legend and your account.',
       ],
     },
     {

@@ -13,6 +13,8 @@ interface Props {
   /** Heading text and anchor, so a page can show more than one price group. */
   heading?: string;
   id?: string;
+  /** Pages with several price groups date them once, under the last group. */
+  dated?: boolean;
 }
 const {
   gameId,
@@ -22,6 +24,7 @@ const {
   updated = '2026-11-08',
   heading,
   id = 'prices',
+  dated = true,
 } = Astro.props;
 const gameName = SITE_GAMES.find((game) => game.id === gameId)?.name;
 const headingText =
@@ -118,9 +121,11 @@ const cards = services.map((service) => {
       </article>
     ))}
   </div>
-  <p class="price-updated">
-    Prices as of <time datetime={updated}>{updatedLabel}</time>.
-  </p>
+  {dated && (
+    <p class="price-updated">
+      Prices as of <time datetime={updated}>{updatedLabel}</time>.
+    </p>
+  )}
 </section>
 
 <style>

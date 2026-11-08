@@ -65,9 +65,10 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
   <Prices
     gameId={game.id}
     offers={withLines(offers.teammate)}
-    heading={`Teammate sessions and prices`}
+    heading="Teammate sessions and prices"
     intro={copy.intros.teammate}
     updated={HUB_PRICES_CHECKED}
+    dated={offers.team.length + offers.coaching.length === 0}
   />
   {offers.team.length > 0 && (
     <Prices
@@ -77,6 +78,7 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
       heading="Team sessions and prices"
       intro={copy.intros.team}
       updated={HUB_PRICES_CHECKED}
+      dated={offers.coaching.length === 0}
     />
   )}
   {offers.coaching.length > 0 && (

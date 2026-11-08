@@ -8,7 +8,7 @@ export const pokemonUnite: HubPageCopy = {
   eyebrow: 'Pokemon Unite teammates',
   h1: 'Pokemon Unite LFG: find a teammate for Ranked',
   lead: 'Free LFG Discords work for finding a lane partner. Duoly books a reviewed Ultra, Master or Legend teammate for your next Ranked games, fills a full five and sells draft and macro coaching.',
-  cta: 'Book a Unite teammate',
+  cta: 'Book a Pokemon Unite teammate',
   facts: [
     'Ultra+ to Legend teammates',
     'Ranked, Standard and Quick Battle',
@@ -129,7 +129,7 @@ export const pokemonUnite: HubPageCopy = {
         'Duoly is a paid marketplace with reviewed players. For example, Discord LFG channels and in-game friend invites stay the free routes to a regular lane partner.',
       ],
       [
-        'How much does a Unite teammate cost?',
+        'How much does a Pokemon Unite teammate cost?',
         'Duo Pro is {{p_duo2}} per game at {{rank_duo2}} in 2026. First, bundles take {{pct3}} off 3 games, and 10 games cost {{p_duo2_x10}} with {{pct10}} off.',
       ],
       [

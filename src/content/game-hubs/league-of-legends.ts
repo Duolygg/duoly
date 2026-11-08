@@ -118,7 +118,7 @@ export const leagueOfLegends: HubPageCopy = {
       heading: 'Example evening: three Duo Pro games on EUW',
       paragraphs: [
         'For example, here is a real booking, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} support on EUW books 3 Duo Pro games. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for a single game. The order chat opens straight after payment, and the first message names the server, the rank and the role: bot lane support, looking for an ADC who trades on your engage.',
-        'The evening then runs on a short plan. First, both players agree a champion pair and a ward route. Second, voice goes on using Discord and the invite comes from Riot’s League client. Third, after each game you agree one adjustment, such as grouping earlier for the next drake. We found the rank spread by running the price tool from Duoly for every tier, so a {{rank_duo2_low}} player pays {{p_duo2_low}} per game and a {{rank_duo2_high}} player pays {{p_duo2_high}}. Five games take {{pct5}} off the total.',
+        'The evening then runs on a short plan. First, both players agree a champion pair and a ward route. Second, voice goes on using Discord and the invite comes from Riot’s League client. Third, after each game you agree one adjustment, such as grouping earlier for the next drake. We found the rank spread by running the price tool from Duoly for every tier, so {{rank_duo2_low}} players pay {{p_duo2_low}} per game and {{rank_duo2_high}} players pay {{p_duo2_high}}. Five games take {{pct5}} off the total.',
       ],
     },
     {

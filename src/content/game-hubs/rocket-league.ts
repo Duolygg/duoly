@@ -103,7 +103,7 @@ export const rocketLeague: HubPageCopy = {
     {
       heading: 'What makes a Doubles partner actually useful?',
       paragraphs: [
-        'A useful Doubles partner is a player who rotates, so the two of you are never both chasing the same ball. Rotation beats raw mechanics at every rank below Supersonic Legend, which is why Duo Plus names a Champion+ partner and Duo Pro a Grand Champion who covers back post. For example, a {{rank_duo2}} player books Duo Pro at {{p_duo2}} per hour in 2026. Three hours cost {{p_duo2_x3}} with {{pct3}} off, and the ranked rules from Psyonix still apply.',
+        'The Doubles partner you want is a player who rotates, so the two of you are never both chasing the same ball. Rotation beats raw mechanics at every rank below Supersonic Legend, which is why Duo Plus names a Champion+ partner and Duo Pro a Grand Champion who covers back post. For example, a {{rank_duo2}} player books Duo Pro at {{p_duo2}} per hour in 2026. Three hours cost {{p_duo2_x3}} with {{pct3}} off, and the ranked rules from Psyonix still apply.',
         'Agree the basics in the order chat before the first kickoff. First, decide who takes the diagonal kickoff and who cheats up. Second, agree a call for boost, because two players starving at once loses the next counter. Finally, keep calls short using Discord and name the next action instead of the last mistake. Bundles still apply, so 3 hours get {{pct3}} off and 5 get {{pct5}} off the total.',
       ],
     },

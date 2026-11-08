@@ -102,7 +102,7 @@ export const teamfightTactics: HubPageCopy = {
       heading: 'Example evening: three Double Up games on EUW',
       paragraphs: [
         'For example, here is a real booking, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EUW books 3 Double Up games. The total is {{p_duo1_x3}} with the {{pct3}} bundle discount, against {{p_duo1}} for one game. The order chat opens straight after payment, and the first message names the server, the rank and the weakness: EUW, {{rank_duo1}}, keeps levelling too late, wants help reading the lobby.',
-        'The evening then runs on a short plan. First, both players agree who takes the contested line. Second, voice goes on using Discord and the invite goes out with the Riot ID. Third, after each game you agree one adjustment, such as rolling at level seven instead of eight. We found the rank spread by running the price tool from Duoly for every tier, so a {{rank_duo1_low}} player pays {{p_duo1_low}} in 2026. Five games take {{pct5}} off.',
+        'The evening then runs on a short plan. First, both players agree who takes the contested line. Second, voice goes on using Discord and the invite goes out with the Riot ID. Third, after each game you agree one adjustment, such as rolling at level seven instead of eight. We found the rank spread by running the price tool from Duoly for every tier, so {{rank_duo1_low}} players pay {{p_duo1_low}} in 2026. Five games take {{pct5}} off.',
       ],
     },
     {
