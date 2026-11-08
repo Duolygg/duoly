@@ -1,6 +1,6 @@
 import { sessionExamples } from '../../content/coaching-examples';
 import type { seoOffers } from './offers';
-import { prosePrice, quantityAnswer, offerList } from './citable-answers';
+import { prosePrice } from './citable-answers';
 
 type Offers = ReturnType<typeof seoOffers>;
 
@@ -41,24 +41,21 @@ export function sessionLead(
   return `${offer.title} is ${what}, at ${prosePrice(offer)} from Duoly, using Discord voice and screen share. For example, the goal can be to ${goal.charAt(0).toLowerCase()}${goal.slice(1)}.`;
 }
 
-// One sentence comparing the other services for the same game, with their real prices.
+// Point to alternatives without repeating the price cards.
 export function compareOthers(offers: Offers, id: string) {
   const others = [
     ...new Map(
       offers
         .filter((offer) => offer.id !== id)
-        .map((offer) => [offer.id, offer]),
+        .map((offer) => [offer.id, offer.title]),
     ).values(),
-  ].map((offer) => `${offer.title} at ${prosePrice(offer)}`);
-  if (!others.length)
-    return `Finally, check your practice goal before starting. Quantity discount: 0%. Checked 8 November 2026.`;
-  const list = new Intl.ListFormat('en', { type: 'conjunction' }).format(
-    others,
-  );
-  return `Finally, compare ${list}. Quantity discount: 0%. Checked 8 November 2026.`;
+  ];
+  return others.length
+    ? `Want a different focus? Compare ${new Intl.ListFormat('en', { type: 'conjunction' }).format(others)} above.`
+    : 'Bring the recording that best shows the decision you want to unpack.';
 }
 
-// The booking answer on every coaching page, built from the real services and prices.
-export function bookingAnswer(gameName: string, offers: Offers) {
-  return `A ${gameName} coaching booking is a prepaid lesson from Duoly: ${offerList(offers)}. First, choose one goal, for example a difficult matchup. ${quantityAnswer(offers)} Step 1 is to check your billing unit and quantity. Second, share your region, platform and experience in the order chat. Every coach is reviewed by Duoly before taking orders. Your lesson runs on your own account, using Discord for voice and screen share. Finally, check the agreed focus before starting, so the coach can connect feedback to the next game. Keep login details private. Repeat the agreed exercise 3 times.`;
+// Practical booking guidance shared by coaching pages.
+export function bookingAnswer(gameName: string) {
+  return `Choose the ${gameName} lesson that fits the problem you want to work on, then check the booking unit and total before paying. The service cards show which options are live games and which are hourly lessons. Use the order chat to send your goal and agree on Discord voice or screen share with your coach. For example, send a replay timestamp alongside the question you had in the moment. A little context helps the coach start with your actual decisions instead of guessing from the final score. Keep your login private and invite the coach from your own account. If you are booking live ranked play, confirm your region and queue eligibility together before starting. You can ask about the format before the session so there are no surprises about how the time will be used.`;
 }

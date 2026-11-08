@@ -33,21 +33,34 @@ export function quantityAnswer(offers: Offers) {
       ).quantityDiscountPercent,
   );
   return offer.cat === 'training'
-    ? `Coaching has a ${discounts[0]}% quantity discount, so extra ${[...new Set(offers.map((item) => `${item.unit}s`))].join(' or ')} keep the same standard unit price.`
-    : `Bundles of 3, 5 and 10 units receive ${discounts[0]}%, ${discounts[1]}% and ${discounts[2]}% off respectively.`;
-}
-
-function offerUnitExample(unit: string) {
-  return unit === 'hour'
-    ? 'For example, one booking unit covers one hour of the selected session, including any agreed discussion.'
-    : 'For example, one booking unit covers one full game with your chosen teammate, regardless of match length.';
+    ? 'Bundles do not apply to coaching.'
+    : `Bundles of 3, 5 and 10 ${offer.unit === 'hour' ? 'hours' : 'games'} receive ${discounts[0]}%, ${discounts[1]}% and ${discounts[2]}% off respectively.`;
 }
 
 export function pricesAnswer(gameId: string, offers: Offers, coach: boolean) {
   const name = SITE_GAMES.find((game) => game.id === gameId)?.name ?? gameId;
-  return `${name} ${coach ? 'coaching is a paid lesson' : 'teammate booking is a paid session'} with prices from Duoly: ${offerList(offers)}. We found these prices by checking the checkout calculator on 8 November 2026. ${quantityAnswer(offers)} ${offers.length === 1 ? 'An hour covers the booked time for review and questions. Extra games are outside the hourly lesson unless the selected service includes live play. ' : ''}${new Set(offers.map((item) => item.unit)).size > 1 ? 'For example, a single-game booking covers one match, while an hourly booking covers the selected time.' : offerUnitExample(offers[0]!.unit)} Check each description for the activity and provider tier. Meet your ${coach ? 'coach' : 'teammate'} in the order chat, agree on voice using Discord and keep control of your own account. Finally, review the checkout total before paying; any eligible personal offer appears there.`;
+  if (coach && !offers.some((offer) => offer.id === 'learn'))
+    return `${offers[0]!.title} gives you an hour to work through your recording and compare the decisions before you spent your gold. Bring the full game so the review can follow your econ, rolling and comp pivots.`;
+  if (coach)
+    return offers.every((offer) => offer.unit === 'hour')
+      ? `Your ${name} lesson is booked by the hour, including time spent reviewing decisions and answering questions. For live play, the number of matches depends on game length and how much you stop to discuss.`
+      : `Choose the ${name} lesson for the problem you want to work on. Play and Learn is priced per game; the focused lessons are hourly, with time to pause, ask questions and practice.`;
+  return offers.some((offer) => offer.rank)
+    ? `Choose your mode, then check the ranked price for your rank. ${quantityAnswer(offers)} The bundle discounts apply to casual games too.`
+    : `Choose the session and how much time you want to book. ${quantityAnswer(offers)} Agree on voice and a start time in the order chat.`;
 }
 
-export function closingAnswer(gameName: string, offers: Offers) {
-  return `${gameName} coaching is a paid session from Duoly, available as ${offerList(offers)}. First, choose one goal, for example a difficult matchup. ${quantityAnswer(offers)} Step 2 is to select your service and agree on Discord voice in the order chat.`;
+export function closingAnswer(gameName: string) {
+  const goals: Record<string, string> = {
+    Valorant: 'an agent, a round or a duel you want to understand',
+    'League of Legends': 'a lane matchup, a wave decision or a jungle route',
+    'Rocket League': 'a Doubles rotation or a recovery you want to get right',
+    Fortnite: 'a box fight, an edit or a zone rotation',
+    'Teamfight Tactics': 'a roll-down, an econ decision or a comp pivot',
+    'Apex Legends':
+      'a rotation, a movement problem or a fight that drew a third party',
+    'Marvel Rivals':
+      'a hero matchup, a Team-Up or an ultimate you want to time better',
+  };
+  return `Bring ${goals[gameName] ?? 'one situation from your recent games'}. Pick your lesson, share the goal in the order chat and meet your coach on Discord. You stay on your own account throughout.`;
 }

@@ -56,12 +56,19 @@ test('all eight built pages expose exactly the visible FAQ answers and readable 
         `${path}: FAQPage equals visible copy`,
       );
       assert(data.heading.endsWith('?'), `${path}: price question`);
-      assert.match(
+      assert.doesNotMatch(
         data.prices,
-        /(?:EUR|USD) \d+(?:\.\d+)? per (?:game|hour)/,
-        `${path}: prices carry units`,
+        /We found|0% quantity|paid lesson|Check each description/,
       );
-      assert.match(data.prices, /8 November 2026/);
+      assert.equal(
+        (data.text.match(/8 November 2026/g) || []).length,
+        1,
+        `${path}: price date appears once`,
+      );
+      assert.doesNotMatch(
+        data.text,
+        /Step 1 is to|match results remain uncertain|familiar setup or a basic decision|Quantity discount: 0%/,
+      );
       assert(data.closing, `${path}: closing is a headed section`);
       assert.doesNotMatch(
         data.text,

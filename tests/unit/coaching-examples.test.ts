@@ -42,9 +42,7 @@ describe('coaching example pricing', () => {
           const price = `${quote.customer.currency} ${quote.customer.amountMinor / 100} per ${quote.unit}`;
           expect(sessionLead('Game', offer, example.goal)).toContain(price);
           for (const other of offers.filter((item) => item.id !== offer.id))
-            expect(compareOthers(offers, offer.id)).toContain(
-              `${other.title} at ${other.currency} ${other.amountMinor / 100} per ${other.unit}`,
-            );
+            expect(compareOthers(offers, offer.id)).toContain(other.title);
         }
       });
     }
@@ -80,9 +78,8 @@ describe('coaching page copy prices', () => {
             );
           }
         }
-        expect(bookingAnswer(game.name, offers)).toContain(
-          `${offers[0]!.currency} ${offers[0]!.amountMinor / 100} per ${offers[0]!.unit}`,
-        );
+        expect(bookingAnswer(game.name)).toContain('booking unit and total');
+        expect(bookingAnswer(game.name)).not.toMatch(/0%|Step 1 is to/);
       });
     }
   }

@@ -205,9 +205,9 @@ export const intentPages: IntentPage[] = [
     formatHeading: 'What is a Pokemon Unite teammate booking?',
     stepsHeading: 'How do you book a Pokemon Unite teammate?',
     prepareHeading: 'How should you prepare for a Pokemon Unite session?',
-    faqHeading: 'What should you know before booking Pokemon Unite?',
+    faqHeading: 'Questions before you queue?',
     closing:
-      'A Pokemon Unite session from Duoly is a booking for one partner, with Standard and Quick Battle at {{puQuick}} per game. First, choose your mode and lane. For example, Expert customers in Europe pay {{puPro3}} for 3 Duo Pro games with {{pct3}} off. Then agree on voice using Discord before queuing.',
+      'Pick your mode, preferred lane and a Pokemon you enjoy playing. Tell your partner which role would suit your pick, then agree on voice and your first objective call in the order chat. You both play on your own accounts.',
     title: 'Pokemon Unite Teammate: Ranked and Casual Duo | Duoly',
     h1: 'Book a Pokemon Unite teammate for ranked or casual games',
     lead: 'Find a Pokemon Unite teammate for Ranked, Standard or Quick Battle. Plan lanes, pick complementary roles and coordinate the next objective together.',
@@ -215,8 +215,8 @@ export const intentPages: IntentPage[] = [
       `Book a Pokemon Unite teammate ${price}. Play ranked, Standard or Quick Battle with a duo partner. Plan lanes, roles and team compositions together.`,
     service: 'quick',
     services: {
-      duo1: 'Ranked games with an Ultra+ teammate. Agree lanes, share objective calls and coordinate with the rest of the team.',
-      duo2: 'Ranked games with a Master teammate. Plan lane pressure, rotations and team fights around the active map.',
+      duo1: 'Ranked games with an Ultra+ teammate. Agree on lanes, share objective calls and coordinate with the rest of the team.',
+      duo2: 'Ranked games with a Master teammate. Plan lane pressure, rotations and team fights around the map.',
       quick:
         'Standard or Quick Battle with a teammate while trying Pokemon, moves and different roles.',
     },
@@ -226,57 +226,57 @@ export const intentPages: IntentPage[] = [
       'Ultra+ or Master ranked partners',
     ],
     format:
-      'A Pokemon Unite teammate booking is a paid session with one partner joining your lobby on a separate account. First, choose ranked play or Standard and Quick Battle before setting the game count. Duo Pro from Duoly pairs an Expert customer in Europe with a Master teammate for {{puPro}} per game. Duo Plus with an Ultra+ teammate costs {{puPlus}} per game for the same customer rank. For example, Standard and Quick Battle costs {{puQuick}} per game when you want to try a Pokemon without ranked pressure. Step 1 is to share your rank, region and preferred path. Bundles of 3 games receive {{pct3}} off, 5 games receive {{pct5}} off and 10 games receive {{pct10}} off. Finally, agree on voice using Discord and keep control of your own account. These services cover Unite only; other Pokemon games are outside the booking.',
+      'Book one Pokemon Unite partner for Ranked, Standard or Quick Battle. Duo Plus pairs you with an Ultra+ teammate, while Duo Pro pairs you with a Master teammate. Standard and Quick Battle is the casual option for trying Pokemon, moves and roles without ranked pressure. Choose the number of games you want, then use the order chat to agree on lanes, voice and a start time. Your partner joins the lobby on a separate account, and you keep control of your own Pokemon. For example, an Attacker player might ask for a Defender who can hold space while the lane farms toward its next level. Check the rest of the team before locking picks so the duo leaves room for central area and a workable front line. The booking covers Unite only, and adds one partner rather than a full five-player squad.',
     sections: [
       {
-        heading: 'Which Pokemon Unite roles make a useful lane pair?',
+        heading: 'Which roles work well together in lane?',
         paragraphs: [
-          'A useful Pokemon Unite lane pair is a combination with room to deal damage and a way to protect or enable the damage dealer. First, choose familiar Pokemon before copying a composition. For example, a Defender can interrupt an approach while an Attacker uses the space to attack safely. Step 1 is to name the path each partner wants before either player locks a pick. Duo Plus from Duoly costs {{puPlus}} per game for Expert customers in Europe. Duo Pro with a Master teammate costs {{puPro}} per game at the same customer rank. Bundles of 3 games receive {{pct3}} off, and 5 games receive {{pct5}} off. Finally, check the other three picks and agree on short calls using Discord. A duo adds one partner to a five-player team, so avoid competing for central-area resources or leaving the rest of the team without a workable front line.',
+          'A Defender and Attacker is a useful lane pairing when both players understand who needs resources and who can protect the approach. The Defender can interrupt an engage while the Attacker deals damage from a safe position. A Supporter can also help a lane partner stay in the fight, depending on the Pokemon and moves you choose. Start with picks you know well enough to use under pressure. For example, tell your partner whether you need farm to reach an evolution or move upgrade before contesting. Agree on top path, bottom path or central area before locking in, then check the other picks. A duo still shares the map with three teammates. Avoid taking central-area resources from the player relying on them, and call a retreat before leaving a lane partner alone at a goal zone. Use Discord for short calls you can act on during a fight.',
         ],
       },
       {
-        heading: 'How should a Unite duo share resources and objective calls?',
+        heading: 'How do we plan for Rayquaza and other objectives?',
         paragraphs: [
-          'A useful Pokemon Unite objective call is a short plan naming the next action and the place to meet. First, agree which partner needs the next level breakpoint before competing for every last hit. For example, leaving a lane without a warning can expose a teammate who expected help near a goal zone. Step 1 is to call the rotation before moving and check whether the partner can follow. Duo Pro from Duoly costs {{puPro}} per game for Expert customers in Europe. Three games cost {{puPro3}} with {{pct3}} off, while 5 games receive {{pct5}} off. Finally, discuss the active arena, timers and current match rules using Discord before queuing. Objective names and routes change across maps, so use the current match information. Check teammate positions and available Unite Moves before committing, rather than carrying a route from an older season into every game.',
+          'An objective call is a plan for where the team should meet and what needs to happen before committing. On a map with Rayquaza, check teammate positions, Unite Moves and enemy pressure before starting the objective or chasing a knockout. The map and mode determine which objectives are available, so check the active arena together. For example, arriving early means little if your damage dealer is still returning from spawn or your front line has already spent every cooldown. Call the rotation while your partner still has time to finish farming and move safely. A Defender can watch the approach while an Attacker keeps a safe damage angle. If the rest of the team cannot follow, say so before stepping into the pit. Between games, agree on one change, such as grouping earlier or holding a Unite Move for the next contest.',
         ],
       },
       {
-        heading: 'What is an example plan for a ranked Unite duo?',
+        heading: 'Should we play Ranked or a casual mode first?',
         paragraphs: [
-          'A ranked Pokemon Unite duo plan is an agreement on lane picks, resource sharing and the next objective call. First, name a preferred path and one backup Pokemon for each player. For example, a Defender and Attacker can agree who protects the approach and who deals damage at a contest. Step 1 is to check current party restrictions before entering ranked together. Duo Pro from Duoly costs {{puPro}} per game for Expert customers in Europe, with {{pct3}} off for 3 games and {{pct5}} off for 5 games. Standard and Quick Battle costs {{puQuick}} per game for trying a different role. Finally, agree on voice using Discord and call level progress before a rotation. After each match, choose one adjustment for the next queue, such as grouping earlier or sharing lane resources differently. A paid partner provides coordination; the match result still depends on the whole team.',
+          'Standard or Quick Battle is a good starting point when you want to try a different role or get comfortable making calls with a new partner. Ranked makes more sense when you know your Pokemon, have held items ready and can queue together under the current party rules. Share your rank and region before booking so you can check compatibility. For example, a player ranked Expert in Europe pays {{puPro}} per game for Duo Pro with a Master teammate. Three games cost {{puPro3}} after the {{pct3}} bundle discount. Choose the game count around the time you actually have, and leave room to talk between queues. Your partner can coordinate lanes and objectives with you; nobody can promise a win for the whole team. If a lane pairing feels awkward, use the next lobby to agree on a backup pick rather than forcing the same plan again.',
         ],
       },
     ],
     steps: [
-      'A Pokemon Unite booking is a checkout for one teammate and a selected game count. First, choose Standard and Quick Battle at {{puQuick}} per game, or a ranked service. Duo Pro from Duoly costs {{puPro}} per game for an Expert customer in Europe.',
-      'Step 1 is to add your rank, region, language and preferred path. For example, request a Defender partner when you want to practice an Attacker. Check current party eligibility together before paying for ranked play. Buying 3 games gives {{pct3}} off; 5 games gives {{pct5}} off.',
-      'Finally, meet in the order chat, exchange Trainer details and agree on voice using Discord. Keep login details private and invite the partner from your own account. Confirm lanes and a backup pick before entering the lobby. The booking adds one partner, while the other seats come from your party or the normal queue.',
+      'Choose Ranked, Standard or Quick Battle and the number of games you have time to play. The price cards show each service and the ranked price for your customer rank.',
+      'Share your rank, region, language and preferred lane. Ask for a complementary role, such as a Defender alongside your Attacker, and confirm ranked party eligibility together.',
+      'Meet in the order chat, exchange Trainer details and agree on Discord voice. Confirm lanes and backup picks before queueing. Keep passwords private and send game invites from your own account.',
     ],
     prepare: [
-      'Preparation for Pokemon Unite is a clear mode, an updated game and Trainer details ready for the invite. First, share your rank, region and preferred path before the session. For example, bring a familiar Attacker plus one backup pick if another player selects the same Pokemon.',
-      'Step 1 is to check held items and move choices, then test voice using Discord. A teammate from Duoly joins your own lobby on a separate account. Standard and Quick Battle costs {{puQuick}} per game. Duo Pro costs {{puPro}} per game for an Expert customer in Europe, with {{pct3}} off for 3 games.',
-      'Finally, agree on one call for a retreat and one call for an objective. Check the active arena and current party restrictions together. Keep account access private, hide personal notifications and use game invites. Free teammates can also come from friends, in-game invites or a Discord LFG group.',
+      'Update Unite and have your Trainer details ready for the invite. Bring a familiar Pokemon and a backup in case another player picks the same one.',
+      'Check held items and move choices before the first lobby. Tell your partner which lane you prefer and whether you want relaxed chat or short objective calls on Discord.',
+      'Agree on a retreat call and an objective call. Check the active arena and party rules together. Your partner joins on a separate account; nobody needs your login.',
     ],
     faq: [
       [
-        'Is this for Pokemon Unite or other Pokemon games?',
-        'A Duoly Unite booking is a session for Pokemon Unite only. Other Pokemon games, trading, raids and card battles are outside these services. First, choose ranked play or Standard and Quick Battle around your actual goal.',
+        'Is this only for Pokemon Unite?',
+        'Yes. These sessions cover Pokemon Unite Ranked, Standard and Quick Battle. Other Pokemon games are outside the booking.',
       ],
       [
-        'How much does a Unite teammate cost?',
-        'Duo Pro from Duoly costs {{puPro}} per game for Expert customers in Europe. Standard and Quick Battle costs {{puQuick}} per game. Bundles of 3 games receive {{pct3}} off and 5 games receive {{pct5}} off. Prices checked on 8 November 2026.',
+        'How much does it cost?',
+        'Standard and Quick Battle costs {{puQuick}} per game. Ranked prices depend on your rank: for example, Duo Pro costs {{puPro}} per game for players ranked Expert in Europe. Open the rank list above to check your price. Bundles of 3, 5 and 10 games get {{pct3}}, {{pct5}} and {{pct10}} off.',
       ],
       [
-        'What should I confirm before ranked play?',
-        'Step 1 is to share your rank, region and preferred path. Check current party eligibility together. For example, ask for a complementary lane role, then agree on calls using Discord before entering the queue.',
+        'Can I ask for a particular lane partner?',
+        'Yes. Share your preferred lane and Pokemon before you queue. Ask for a complementary role, such as a Defender to make space for your Attacker. Check the other picks so your duo does not compete with the central-area player for farm.',
       ],
       [
-        'Where can I find free Unite teammates?',
-        'Free partners can come from in-game invites, existing friends or a Discord LFG group for Pokemon Unite.',
+        'Where can I find free teammates?',
+        'Try friends, in-game invites or a Pokemon Unite Discord LFG group. Include your rank, region and preferred lane so people can tell whether the lobby will work.',
       ],
       [
-        'Does booking give anyone access to my account?',
-        'No. You control your own Pokemon Unite account and exchange game invites with one partner. Keep passwords private and use game invites rather than sharing login details. The booking adds one teammate; remaining seats come from your party or the normal queue.',
+        'Does my partner need my login?',
+        'No. Exchange Trainer details and game invites while staying on separate accounts. The booking adds one teammate, and the remaining seats come from your party or the normal queue.',
       ],
     ],
   },

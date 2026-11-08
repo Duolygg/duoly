@@ -119,7 +119,7 @@ const description = descriptions[game.slug]!;
       ]}
     >
       <p>
-        {bookingAnswer(game.name, offers)} See the{' '}
+        {bookingAnswer(game.name)} See the{' '}
         <a href="/terms">payment and refund terms</a> or{' '}
         <a href="/contact">contact support</a> any time.
       </p>
@@ -150,7 +150,7 @@ const description = descriptions[game.slug]!;
     />
     <ClosingCta
       heading={`Ready for your ${game.name} lesson?`}
-      text={closingAnswer(game.name, offers)}
+      text={closingAnswer(game.name)}
       href={book}
       label={`Book ${game.name} coaching`}
       art={{ src: game.img, alt: '' }}

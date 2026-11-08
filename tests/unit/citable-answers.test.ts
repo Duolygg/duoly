@@ -23,20 +23,21 @@ describe('self-contained SEO answers use checkout prices', () => {
         };
         const offers = seoOffers(game, 'training', context);
         const answer = pricesAnswer(game, offers, true);
-        expect(answer).toContain('8 November 2026');
-        expect(answer).toContain('0% quantity discount');
+        expect(answer).not.toMatch(/0%|We found|checked on|EUR \d|USD \d/);
+        expect(answer).toMatch(/hourly|by the hour|an hour/);
         for (const offer of offers) {
           const quote = calculateQuote(offer.selection, context);
           const price = `${quote.customer.currency} ${quote.customer.amountMinor / 100} per ${quote.unit}`;
-          expect(answer).toContain(price);
-          expect(closingAnswer(game, offers)).toContain(price);
+          expect(closingAnswer(game)).not.toContain(price);
           expect(offerList(offers)).toContain(`${offer.title} at ${price}`);
           for (const units of [3, 5, 10]) {
             const bulk = calculateQuote({ ...offer.selection, units }, context);
             expect(bulk.quantityDiscountPercent).toBe(0);
           }
         }
-        expect(quantityAnswer(offers)).toContain('0%');
+        expect(quantityAnswer(offers)).toBe(
+          'Bundles do not apply to coaching.',
+        );
         if (offers.every((offer) => offer.unit === 'hour')) {
           expect(quantityAnswer(offers)).not.toContain('games');
         }
@@ -72,13 +73,8 @@ describe('self-contained SEO answers use checkout prices', () => {
       eurToUsd: 1,
     });
     const answer = pricesAnswer('pu', offers, false);
-    for (const id of new Set(offers.map((offer) => offer.id))) {
-      const cheapest = offers
-        .filter((offer) => offer.id === id)
-        .sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
-      if (cheapest.rank)
-        expect(answer).toContain(`for ${cheapest.rank} customers`);
-    }
+    expect(answer).toContain('price for your rank');
+    expect(answer).not.toContain('We found');
     expect(quantityAnswer(offers)).toContain('10%, 15% and 25%');
   });
 });

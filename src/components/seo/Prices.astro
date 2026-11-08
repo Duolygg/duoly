@@ -105,13 +105,16 @@ const cards = services.map((service) => {
     ))}
   </div>
   <p class="price-updated">
-    Prices updated <time datetime={updated}>{updatedLabel}</time>.
+    Prices as of <time datetime={updated}>{updatedLabel}</time>.
   </p>
 </section>
 
 <style>
   .section-intro {
     max-width: 75ch;
+  }
+  section[aria-labelledby='prices'] > .section-intro {
+    max-width: none;
   }
   .service-name {
     display: block;
