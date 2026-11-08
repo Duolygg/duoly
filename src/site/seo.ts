@@ -71,6 +71,9 @@ Object.assign(
     ).map((path) => [path, '2026-11-08']),
   ),
 );
+/** "Book a Valorant teammate" but "Book an Apex Legends teammate". */
+export const bookTeammateLabel = (gameName: string) =>
+  `Book ${/^[aeiou]/i.test(gameName) ? 'an' : 'a'} ${gameName} teammate`;
 export function serializeJsonLd(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }

@@ -31,6 +31,7 @@ import {
 } from '../../../content/guide-pages';
 import {
   bookingHref,
+  bookTeammateLabel,
   COACHING_SLUGS,
   serializeJsonLd,
 } from '../../../site/seo';
@@ -83,7 +84,7 @@ const faqItems = guideFaq(page, guidePrices);
       eyebrow={`${game.name} teammates`}
       h1={page.h1}
       lead={page.lead}
-      cta={{ href: book, label: `Book a ${game.name} teammate` }}
+      cta={{ href: book, label: bookTeammateLabel(game.name) }}
       secondary={{ href: '#prices', label: 'Compare prices' }}
       art={[{ src: game.img, alt: `${game.name} game art` }]}
       price={summary}

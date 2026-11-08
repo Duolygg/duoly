@@ -1,5 +1,6 @@
 ---
 import type { LfgPostGuide } from '../../content/guide-pages';
+import { bookTeammateLabel } from '../../site/seo';
 interface Props {
   post: LfgPostGuide;
   gameName: string;
@@ -26,6 +27,6 @@ const { post, gameName, booking } = Astro.props;
   </ol>
   <p class="lfg-example">{post.example}</p>
   <a class="btn-sm" href={booking}>
-    Book a {gameName} teammate
+    {bookTeammateLabel(gameName)}
   </a>
 </section>

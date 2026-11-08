@@ -5,6 +5,7 @@ import { calculateQuote } from '../../src/server/pricing';
 import { gameBySlug } from '../../src/site/games';
 import { CONTENT_DATES, INDEXABLE_PATHS } from '../../src/site/seo';
 import { priceSummary, serviceSchema } from '../../src/server/seo/offers';
+import { bookTeammateLabel } from '../../src/site/seo';
 
 describe('intent page booking facts', () => {
   it.each(['EUR', 'USD'] as const)(
@@ -68,6 +69,16 @@ describe('intent page booking facts', () => {
     // One page per game keeps intentForGame unambiguous on hubs and /games.
     expect(new Set(intentPages.map((page) => page.gameSlug)).size).toBe(
       intentPages.length,
+    );
+  });
+
+  it('writes the booking call to action with the right article', () => {
+    expect(bookTeammateLabel('Valorant')).toBe('Book a Valorant teammate');
+    expect(bookTeammateLabel('Apex Legends')).toBe(
+      'Book an Apex Legends teammate',
+    );
+    expect(bookTeammateLabel('Overwatch 2')).toBe(
+      'Book an Overwatch 2 teammate',
     );
   });
 
