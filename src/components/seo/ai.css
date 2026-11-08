@@ -456,3 +456,17 @@
 .seo-page h2 {
   text-wrap: balance;
 }
+
+/* Labels for the code samples in the developer guide. Paragraphs rather than h3,
+   because a one-word label above a <pre> is a caption, not a document section:
+   as a heading it opened a block that extractors then filled with code chrome. */
+.seo-page .ai-code-label {
+  margin: 22px 0 8px;
+  max-width: none;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #f3eeff;
+}
