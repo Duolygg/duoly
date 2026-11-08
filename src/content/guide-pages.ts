@@ -72,7 +72,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'league-of-legends',
     heading: 'Should I find a League duo for free or pay for one?',
     answer:
-      'Finding a League duo for free is the right start for most players. Free LFG is a set of community spaces, such as the League of Legends Discord, RiftQ and DUO.OP.GG, where players post a server, role and rank. A free duo costs €0 and can grow into a regular group over many evenings. A paid duo is a reviewed, higher-rank teammate who joins a booked session at an agreed time. Paying makes sense for a specific goal. For example, a Gold player climbing on EUW in 2026 can book 3 Duo Pro games with a Master+ partner from Duoly with the {{pct3}} bundle discount for {{lolPro3}}. Five games cost {{lolPro5}} with {{pct5}} off. Paying makes less sense for casual company, because free communities already cover ARAM and normals well. Try free first, and book when reliability, rank or a fixed time matters more than the price.',
+      'Finding a League duo for free is the right start for most players. Free LFG is a set of community spaces, such as the League of Legends Discord, RiftQ and DUO.OP.GG, where players post a server, role and rank. A free duo costs €0 and can grow into a regular group over many evenings. A paid duo is a reviewed, higher-rank teammate who joins a booked session at an agreed time. Paying makes sense for a specific goal. For example, a Gold player climbing on EUW in 2026 books 3 Duo Pro games from Duoly for {{lolPro3}} with the {{pct3}} bundle discount, and Solo/Duo caps that partner at Platinum I. Five games cost {{lolPro5}} with {{pct5}} off. Paying makes less sense for casual company, because free communities already cover ARAM and normals well. Try free first, and book when reliability, rank or a fixed time matters more than the price.',
     freeIntro:
       'Free LFG is the no-cost way to meet League players on your server, and every post costs €0.',
     freeRoutes: [
@@ -101,9 +101,9 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       'no cost, a large pool of players and a chance to build a regular group.',
     limits: FREE_LIMITS,
     paidIntro:
-      'A paid Duoly session is a booked block of games with a reviewed teammate at a known price. The price is fixed before checkout, and the order chat on Duoly sets the start time for the first game. Between games, you can ask the teammate questions about the last match.',
+      'A paid Duoly session is a booked block of games with a reviewed teammate at a known price. The price is fixed before checkout, and the order chat on Duoly sets the start time for the first game. Between games, you can ask the teammate questions about the last match. A tier name says who Duoly hires, and the published table from Riot Games says who may queue beside you: a Gold Solo/Duo partner stops at Platinum I, Grandmaster and Challenger cannot duo at all, and a wider gap belongs in Ranked Flex, where Master and above still need every partner at Emerald or higher.',
     paidChecks: [
-      { yes: true, text: 'Ranked climb with a Master+ partner' },
+      { yes: true, text: 'Ranked Solo/Duo up to Platinum I at Gold' },
       { yes: true, text: 'A set time agreed in the order chat' },
       { yes: true, text: 'Comms in your language' },
       { yes: false, text: 'Costs money for every game' },
@@ -154,7 +154,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a League duo or find one free?',
-        'Try free communities first for casual games. Book a paid session for a set time, a chosen service or a higher-rank partner.',
+        'Try free communities first for casual games. Book a paid session for a set time, a chosen service or the highest-rank partner Solo/Duo allows, which is Platinum I for a Gold account.',
       ],
       [
         'What does a League Duo Pro session cost?',
@@ -166,7 +166,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'marvel-rivals',
     heading: 'Should I find a Marvel Rivals duo for free or pay for one?',
     answer:
-      'Finding a Marvel Rivals duo for free is the right start for most players. Free LFG is a set of community spaces, such as the official Marvel Rivals Discord and the Rivals LFG board, where players post a platform, region, rank and role. A free duo costs €0 and can grow into a regular group over many evenings. A paid duo is a reviewed, higher-rank teammate who joins a booked session at an agreed time. Paying makes sense for a specific goal. For example, a Platinum player in Europe in 2026 can book 3 Duo Pro matches with a Grandmaster+ partner from Duoly with the {{pct3}} bundle discount for {{mrPro3}}. Five matches cost {{mrPro5}} with {{pct5}} off. Paying makes less sense for casual Quick Match company, because free communities already cover casual play well. Try free first.',
+      'Finding a Marvel Rivals duo for free is the right start for most players. Free LFG is a set of community spaces, such as the official Marvel Rivals Discord and the Rivals LFG board, where players post a platform, region, rank and role. A free duo costs €0 and can grow into a regular group over many evenings. A paid duo is a reviewed, higher-rank teammate who joins a booked session at an agreed time. Paying makes sense for a specific goal. For example, a Platinum player in Europe in 2026 books 3 Duo Pro matches from Duoly for {{mrPro3}} with the {{pct3}} bundle discount, and because NetEase Games publishes no rank-gap table, that Grandmaster+ partner has to be eligible to queue with you under the rules of the game. Five matches cost {{mrPro5}} with {{pct5}} off. Paying makes less sense for casual Quick Match company, because free communities already cover casual play well. Try free first.',
     freeIntro:
       'Free LFG is the no-cost way to meet Marvel Rivals players on your platform, and every post costs €0.',
     freeRoutes: [
@@ -192,7 +192,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidIntro:
       'A paid Duoly session is a booked block of matches with a reviewed teammate at a known price. The price is fixed before checkout, and the order chat on Duoly sets the start time for the first match. Between matches, you can ask the teammate questions about the last fight.',
     paidChecks: [
-      { yes: true, text: 'Competitive with a Grandmaster+ partner' },
+      { yes: true, text: 'Competitive with a partner the party rules admit' },
       { yes: true, text: 'A set time agreed in the order chat' },
       { yes: true, text: 'A Team-Up pair practiced on voice' },
       { yes: false, text: 'Costs money for every match' },
@@ -245,7 +245,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a Marvel Rivals duo or find one free?',
-        'Try free communities first for casual Quick Match. Book a paid session for a set time or a Grandmaster+ partner in Competitive.',
+        'Try free communities first for casual Quick Match. Book a paid session for a set time, or for a Grandmaster+ partner who has to be eligible to queue with you under the rules of the game: NetEase Games caps a stack of 6 at Grandmaster and holds Celestial and above to a solo or a duo.',
       ],
       [
         'What does a Marvel Rivals Duo Pro session cost?',
@@ -257,7 +257,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'valorant',
     heading: 'Should I find a Valorant duo for free or pay for one?',
     answer:
-      'Start with the free servers. The VALORANT Discord and the VALORANT LFG server are free to post in, and most players heading into Swiftplay or Unrated find someone there the same evening. What a free post cannot promise is the part that decides a Competitive night: rank, role and start time are all self-reported, and a planned session dies when one player logs off. A paid session is the opposite trade. You pick the rank, the order chat sets the time, and Duoly reviews the teammate first. For example, a Gold player on EU can book 3 Duo Pro games with an Immortal+ partner from Duoly for {{valPro3}}. The {{pct3}} bundle discount is already inside that number. Paying earns its keep on the evening you want to push a rank, or when nobody on your friends list plays Controller. Try free first using Discord, and pay when a set time or a higher rank matters more than the price.',
+      'Start with the free servers. The VALORANT Discord and the VALORANT LFG server are free to post in, and most players heading into Swiftplay or Unrated find someone there the same evening. What a free post cannot promise is the part that decides a Competitive night: rank, role and start time are all self-reported, and a planned session dies when one player logs off. A paid session is the opposite trade. You pick the mode, the order chat sets the time, and Duoly reviews the teammate first. For example, a Gold player on EU books 3 Duo Pro games from Duoly for {{valPro3}}, and a Competitive duo moves one tier, so that teammate queues at Platinum. The {{pct3}} bundle discount is already inside that number. Paying earns its keep on the evening nobody on your friends list plays Controller. Try free first using Discord, and pay when a set time or a reviewed teammate matters more than the price.',
     freeIntro:
       'The fastest free route is a single post in the right channel, and a post costs €0. Stay in that channel for half an hour afterwards, because replies come from whoever is scrolling right then.',
     freeRoutes: [
@@ -284,7 +284,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidIntro:
       'You choose the service and the number of games, pay once, and an order chat opens with the teammate. Duoly reviews every teammate before that chat exists, so the rank on the listing is the rank somebody checked. Between rounds you can ask what they read on the last retake.',
     paidChecks: [
-      { yes: true, text: 'Competitive with an Immortal+ partner' },
+      { yes: true, text: 'Competitive one tier up, or Immortal+ in a five' },
       { yes: true, text: 'A set time agreed in the order chat' },
       { yes: true, text: 'Comms in your language' },
       { yes: false, text: 'Costs money for every game' },
@@ -296,7 +296,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       { label: '5 games, {{pct5}} off', value: '{{valPro5}}' },
     ],
     paidExample:
-      'The row you pick in the table is the whole price, bundle discount included. Your teammate takes the second seat, so the normal queue still fills the other 3. For example, a Controller main who books an Immortal+ Duelist gets an entry instead of a second set of smokes. Before the first game, settle in the order chat whether voice runs through Discord or in the Valorant party.',
+      'The row you pick in the table is the whole price, bundle discount included. Your teammate takes the second seat, so the normal queue still fills the other 3. For example, a Controller main who books a Platinum Duelist gets an entry instead of a second set of smokes. Platinum is the ceiling because a Competitive party of 2 moves one tier: an Immortal+ Duelist queues with a Gold account in Swiftplay or Unrated, or in a full five-stack, where Riot Games cuts the RR by 25%. Before the first game, settle in the order chat whether voice runs through Discord or in the Valorant party.',
     flowIntro:
       'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a quiet Swiftplay hour and the last night before an act closes rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     flow: [
@@ -310,7 +310,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       },
       {
         question:
-          'Do you need a set time tonight or an Immortal+ partner for Competitive?',
+          'Do you need a set time tonight or the top rank Competitive allows?',
         yes: { text: 'Yes: go to step 3.', kind: 'next' },
         no: {
           text: 'No: a free LFG post using Discord is enough.',
@@ -332,7 +332,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a Valorant duo or find one free?',
-        'Try free servers first for Swiftplay and Unrated. Book a paid session for a set time or an Immortal+ partner in Competitive.',
+        'Try free servers first for Swiftplay and Unrated. Book a paid session for a set time, or for the top rank a Competitive duo allows: one tier up, so Platinum at Gold. An Immortal+ teammate needs a full five-stack.',
       ],
       [
         'What does a Valorant Duo Pro session cost?',
@@ -377,7 +377,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'fortnite',
     heading: 'Should I find a Fortnite duo for free or pay for one?',
     answer:
-      'Start with Fill and the free Discords. Turning Fill on in Duos costs nothing and drops a player into the empty seat before the bus moves, and the Official Fortnite Discord is where the longer partnerships get arranged. What neither route can promise is who shows up: a Fill partner arrives by chance, and a Discord post is answered by whoever happens to be scrolling. A booked hour is the opposite trade. You pick the rank, the order chat sets the hour and the drop spot, and Duoly reviews the teammate first. For example, a Platinum player in Europe can book 3 Duo Pro hours with an Unreal partner from Duoly for {{fnPro3}}. The {{pct3}} bundle discount is already inside that number. Paying earns its keep when you want the same partner for a whole Ranked push, and earns nothing on a relaxed Zero Build evening using Discord.',
+      'Start with Fill and the free Discords. Turning Fill on in Duos costs nothing and drops a player into the empty seat before the bus moves, and the Official Fortnite Discord is where the longer partnerships get arranged. What neither route can promise is who shows up: a Fill partner arrives by chance, and a Discord post is answered by whoever happens to be scrolling. A booked hour is the opposite trade. You pick the rank, the order chat sets the hour and the drop spot, and Duoly reviews the teammate first. For example, a Platinum player in Europe books 3 Duo Pro hours from Duoly for {{fnPro3}}, and Epic Games publishes no rank-gap cap, so that Unreal partner has to be eligible to queue with you under the rules of the game. The {{pct3}} bundle discount is already inside that number. Paying earns its keep when you want the same partner for a whole Ranked push, and nothing on a relaxed Zero Build evening.',
     freeIntro:
       'The fastest free route is a single post naming platform, region, mode and input, and a post costs €0. Fill costs nothing but the wait, so leave it on.',
     freeRoutes: [
@@ -497,7 +497,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'overwatch-2',
     heading: 'Should I find an Overwatch 2 duo for free or pay for one?',
     answer:
-      'Start with the free servers. The Overwatch Discord and the Teamfind board cost nothing to post on, and Quick Play and Arcade partners turn up there most evenings. What a free post cannot promise is the open seat: role queue locks every team to 1 Tank, 2 Damage and 2 Support, so the role you need is usually the role nobody volunteers for. A paid session is the opposite trade. You pick the rank and the role, the order chat sets the time, and Duoly reviews the teammate first. For example, a Platinum player in Europe can book 3 Duo Pro games with a Master+ partner from Duoly for {{owPro3}}. The {{pct3}} bundle discount is already inside that number. Paying earns its keep on the night your group is one Tank short, and earns nothing on a relaxed Arcade evening using Discord.',
+      'Start with the free servers. The Overwatch Discord and the Teamfind board cost nothing to post on, and Quick Play and Arcade partners turn up there most evenings. What a free post cannot promise is the open seat: role queue locks every team to 1 Tank, 2 Damage and 2 Support, so the role you need is usually the role nobody volunteers for. A paid session is the opposite trade. You pick the rank and the role, the order chat sets the time, and Duoly reviews the teammate first. For example, a Platinum player in Europe books 3 Duo Pro games from Duoly for {{owPro3}} with a Master+ partner, which Blizzard counts as a wide group: allowed in Competitive since 2024, with your rank then moving in smaller steps. The {{pct3}} bundle discount is already inside that number. Paying earns its keep on the night your group is one Tank short, and earns nothing on a relaxed Arcade evening using Discord.',
     freeIntro:
       'The fastest free route is a single post naming the role you need, and a post costs €0. Stay in the channel, because replies come from whoever is scrolling.',
     freeRoutes: [
@@ -529,7 +529,10 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidIntro:
       'You choose the service and the number of games, pay once, and an order chat opens with the teammate. Duoly reviews every teammate before that chat exists, so the rank on the listing is the rank somebody checked. The chat is also where the role gets agreed, the field free posts keep getting wrong.',
     paidChecks: [
-      { yes: true, text: 'Competitive with a Master+ partner' },
+      {
+        yes: true,
+        text: 'Competitive with a Master+ partner, as a wide group',
+      },
       { yes: true, text: 'The role your group is missing' },
       { yes: true, text: 'A set time agreed in the order chat' },
       { yes: false, text: 'Costs money for every game' },
@@ -577,7 +580,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for an Overwatch 2 duo or find one free?',
-        'Try free servers first for Quick Play and Arcade. Book a paid session for a set time or a Master+ player on one role.',
+        'Try free servers first for Quick Play and Arcade. Book a paid session for a set time or a Master+ player on one role, which Blizzard allows as a wide group with smaller rank changes.',
       ],
       [
         'What does an Overwatch 2 Duo Pro game cost?',
@@ -623,7 +626,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'apex-legends',
     heading: 'Should I find an Apex Legends duo for free or pay for one?',
     answer:
-      'Start with auto fill and the free Discords. Leaving fill on costs nothing and puts a third player in the squad before the drop ship launches, and the Apex Legends Discord is where the longer partnerships get arranged. What neither route can promise is who shows up: auto fill is a lottery, and a Discord post is answered by whoever happens to be scrolling. A booked hour is the opposite trade. You pick the rank, the order chat sets the hour and the drop, and Duoly reviews the teammate first. For example, a Platinum player in Europe can book 3 Duo Pro hours with a Master partner from Duoly for {{apexPro3}}. The {{pct3}} bundle discount is already inside that number. Paying earns its keep on the night you want the same rotations called every game, and earns nothing in Mixtape using Discord.',
+      'Start with auto fill and the free Discords. Leaving fill on costs nothing and puts a third player in the squad before the drop ship launches, and the Apex Legends Discord is where the longer partnerships get arranged. What neither route can promise is who shows up: auto fill is a lottery, and a Discord post is answered by whoever happens to be scrolling. A booked hour is the opposite trade. You pick the rank, the order chat sets the hour and the drop, and Duoly reviews the teammate first. For example, a Platinum player in Europe books 3 Duo Pro hours with a Master partner from Duoly for {{apexPro3}}, two rank tiers up and inside the squad rule from EA. The {{pct3}} bundle discount is already inside that number. Paying earns its keep on the night you want the same rotations called every game, and earns nothing in Mixtape using Discord.',
     freeIntro:
       'The fastest free route is a single post naming platform, region, rank and the legend class you leave open, and a post costs €0. Auto fill costs nothing but the wait.',
     freeRoutes: [
@@ -650,7 +653,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidIntro:
       'You choose the service and the number of hours, pay once, and an order chat opens with the teammate. Duoly reviews every teammate before that chat exists, so the rank on the listing is the rank somebody checked. The chat is also where the drop gets agreed, which decides most of the first ten minutes.',
     paidChecks: [
-      { yes: true, text: 'Ranked with a Master or Predator partner' },
+      { yes: true, text: 'Ranked up to Master at Platinum, two rank tiers up' },
       { yes: true, text: 'A set hour agreed in the order chat' },
       { yes: true, text: 'The legend class your pair is missing' },
       { yes: false, text: 'Costs money for every hour' },
@@ -698,7 +701,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for an Apex duo or find one free?',
-        'Try auto fill and the free Discords first for casual games. Book a paid hour for a set time or a Master partner.',
+        'Try auto fill and the free Discords first for casual games. Book a paid hour for a set time or a Master partner, which is the two-tier ceiling at Platinum.',
       ],
       [
         'What does an Apex Legends Duo Pro hour cost?',
@@ -807,7 +810,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       },
       {
         question:
-          'Do you need a set hour tonight or an Iridescent partner for Ranked?',
+          'Do you need a set hour tonight or the top rank Ranked Play allows?',
         yes: { text: 'Yes: go to step 3.', kind: 'next' },
         no: {
           text: 'No: a free LFG post using Discord is enough.',
@@ -829,7 +832,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a Warzone duo or find one free?',
-        'Try Squad Fill and the free Discords first for casual games. Book a paid hour for a set time or an Iridescent partner.',
+        'Try Squad Fill and the free Discords first for casual games. Book a paid hour for a set time, or for the highest rank Ranked Play admits beside your own: Activision holds Crimson and above to one rank, so a Diamond account reaches Crimson.',
       ],
       [
         'What does a Warzone duo hour cost?',
@@ -840,7 +843,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should a Call of Duty LFG post say?',
       intro:
-        'A Call of Duty LFG post is a short message naming your platform, region, mode, rank and input. Platform comes first, because an invite needs the Activision ID and crossplay settings change the lobby. Region comes second, since Europe, North America, South America, Asia, Oceania and Middle East give very different ping. Mode comes third, and it matters more here than in any other shooter: Warzone, Resurgence, multiplayer Ranked Play and round-based Zombies attract 4 different crowds. Rank comes fourth for Ranked Play and Warzone Ranked, which run from Bronze to Top 250: Activision keeps Crimson and above in parties of one or two inside one rank, read in November 2026. Input comes last, whether the hour takes {{pct3}} off 3 or {{pct5}} off 5.',
+        'A Call of Duty LFG post is a short message naming your platform, region, mode, rank and input. Platform comes first, because an invite needs the Activision ID and crossplay settings change the lobby. Region comes second, since Europe, North America, South America, Asia, Oceania and Middle East give very different ping. Mode comes third, and it matters more here than in any other shooter: Warzone, Resurgence, multiplayer Ranked Play and round-based Zombies attract 4 different crowds. Rank comes fourth for Ranked Play and Warzone Ranked, which run from Bronze to Top 250: Activision keeps Crimson and above in parties of one or two inside one rank, and a four-player party mixes ranks only at Diamond or below, read in November 2026. Input comes last, whether the hour takes {{pct3}} off 3 or {{pct5}} off 5.',
       fields: [
         { label: 'Platform', chips: ['PC', 'PlayStation', 'Xbox'] },
         {
@@ -887,7 +890,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'rainbow-six-siege',
     heading: 'Should I find a Siege duo for free or pay for one?',
     answer:
-      'Start with the free servers. The Rainbow 6 Discord and the cross-game LFG servers cost nothing to post in, and Quick Match partners turn up there most evenings. What a free post cannot promise is the pair you actually need: without a hard breach or a live drone, two players guess at every wall and every spawn peek. A paid session is the opposite trade. You pick the rank and the role, the order chat sets the time, and Duoly reviews the teammate first. For example, a Gold player on EU West can book 3 Duo Pro games with a Diamond+ partner from Duoly for {{r6Pro3}}. The {{pct3}} bundle discount is already inside that number. Paying earns its keep on the night a rank is close, and earns nothing while you are still learning maps using Discord.',
+      'Start with the free servers. The Rainbow 6 Discord and the cross-game LFG servers cost nothing to post in, and Quick Match partners turn up there most evenings. What a free post cannot promise is the pair you actually need: without a hard breach or a live drone, two players guess at every wall and every spawn peek. A paid session is the opposite trade. You pick the rank and the role, the order chat sets the time, and Duoly reviews the teammate first. For example, a Gold player on EU West books 3 Duo Pro games from Duoly for {{r6Pro3}}, and Ranked 3.0 applies both players limits at once, so that partner tops out at Emerald rather than Diamond. The {{pct3}} bundle discount is already inside that number. Paying earns its keep on the night a rank is close, and earns nothing while you are still learning maps using Discord.',
     freeIntro:
       'The fastest free route is a single post naming platform, data centre, rank and role, and a post costs €0. Stay in the channel afterwards, because replies come from whoever is scrolling.',
     freeRoutes: [
@@ -914,7 +917,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidIntro:
       'You choose the service and the number of games, pay once, and an order chat opens with the teammate. Duoly reviews every teammate before that chat exists, so the rank on the listing is the rank somebody checked. The chat is also where operators get agreed.',
     paidChecks: [
-      { yes: true, text: 'Ranked with a Diamond+ partner' },
+      { yes: true, text: 'Ranked up to Emerald at Gold, three full ranks' },
       { yes: true, text: 'A hard breach or a drone main on call' },
       { yes: true, text: 'A set time agreed in the order chat' },
       { yes: false, text: 'Costs money for every game' },
@@ -940,7 +943,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       },
       {
         question:
-          'Do you need a set time tonight or a Diamond+ partner for Ranked?',
+          'Do you need a set time tonight or the top rank Ranked allows?',
         yes: { text: 'Yes: go to step 3.', kind: 'next' },
         no: {
           text: 'No: a free LFG post using Discord is enough.',
@@ -962,7 +965,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a Siege duo or find one free?',
-        'Try free servers first for Quick Match and map learning. Book a paid session for a set time or a Diamond+ partner.',
+        'Try free servers first for Quick Match and map learning. Book a paid session for a set time, or for the highest rank Ranked 3.0 admits beside your own: Emerald for a Gold account, because Diamond carries its own two-rank window.',
       ],
       [
         'What does a Siege Duo Pro game cost?',

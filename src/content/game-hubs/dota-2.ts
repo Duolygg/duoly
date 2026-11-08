@@ -42,7 +42,7 @@ export const dota2: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and the ranked tiers read your own medal, so an Immortal lobby costs more than a Herald one. Turbo and unranked All Pick hold one price for everybody, because neither moves your rank. One teammate joins your party on your own account and plays the position you ask for, and bundles take {{pct3}} off 3 games or {{pct5}} off 5.',
+      'Teammate prices are per game, and the ranked tiers read your own medal, so an Immortal lobby costs more than a Herald one. Turbo and unranked All Pick hold one price for everybody, because neither moves your rank. One teammate joins your party on your own account and plays the position you ask for, and bundles take {{pct3}} off 3 games or {{pct5}} off 5. A tier name says who Duoly hires, never who may queue beside you: Duoly has not read the party rules from Valve for this hub yet, so the teammate has to be eligible to queue with you under the rules of the game. Check the party in the client before the first game.',
     team: 'Ranked 5-Stack is priced per seat, so the card covers up to {{seats_party5}} seats and falls when your party is only one player short. It reads your medal like the duo tiers, and bundles take {{pct3}} off 3 games.',
     coaching:
       'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Replay Review and Hero and Position Coaching are clock hours on Discord, and Play and Learn is the exception that covers one live ranked game instead.',

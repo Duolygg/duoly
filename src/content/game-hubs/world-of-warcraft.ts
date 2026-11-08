@@ -43,7 +43,7 @@ export const worldOfWarcraft: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per hour, and the rated tiers read your own Mythic+ or arena rating, so a 3,500+ key costs more than an easy one. Delves and leveling hold one price for everybody, because no rating is on the line. One teammate joins your group on your own account and plays the role you ask for, and bundles take {{pct3}} off 3 hours or {{pct5}} off 5.',
+      'Teammate prices are per hour, and the rated tiers read your own Mythic+ or arena rating, so a 3,500+ key costs more than an easy one. Delves and leveling hold one price for everybody, because no rating is on the line. One teammate joins your group on your own account and plays the role you ask for, and bundles take {{pct3}} off 3 hours or {{pct5}} off 5. A tier name says who Duoly hires, never who may group with you: Duoly has not read the rated-group rules from Blizzard for this hub yet, so the teammate has to be eligible to queue with you under the rules of the game. Check the group in the client before the first key.',
     team: 'Key Group Fill and Arena 3v3 Team are priced per seat, so each card covers the seats your group is missing: up to {{seats_keys}} for a key and {{seats_arena3}} for 3v3. Both read your rating like the duo tiers, and bundles take {{pct3}} off 3 hours.',
     coaching:
       'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Class and Rotation Coaching runs on Discord with screen share, and Play and Learn spends the hour in a real key.',

@@ -40,7 +40,7 @@ export const pubg: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per hour, and the Ranked tiers read your own tier, so a Master lobby costs more than a Bronze one. Normal Duos and Arcade hold one price for everybody, because neither moves your rank. One teammate joins your squad on your own account, and bundles take {{pct3}} off 3 hours or {{pct5}} off 5.',
+      'Teammate prices are per hour, and the Ranked tiers read your own tier, so a Master lobby costs more than a Bronze one. Normal Duos and Arcade hold one price for everybody, because neither moves your rank. One teammate joins your squad on your own account, and bundles take {{pct3}} off 3 hours or {{pct5}} off 5. A tier name says who Duoly hires, never who may squad with you: Duoly has not read the party rules from Krafton for this hub yet, so the teammate has to be eligible to queue with you under the rules of the game. Check the squad in the client before the first match.',
     team: 'Squad Fill is priced per seat, so the card covers up to {{seats_squad}} seats and falls when your squad is only one player short. It reads your Ranked tier like the duo tiers, and bundles take {{pct3}} off 3 hours.',
     coaching:
       'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Recoil and Positioning starts in the Training Mode and ends in live matches, and screen share runs on Discord.',
