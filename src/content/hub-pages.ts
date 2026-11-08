@@ -51,7 +51,14 @@ export interface HubPageCopy {
   format: { heading: string; text: string };
   /** One short line per price card, by catalog service id. */
   services: Record<string, string>;
-  /** Orientation line above a price grid. Never quote a price here. */
+  /**
+   * Orientation paragraph above a price grid: what sets the price, which
+   * discounts exist and the queue rule beside the tier names.
+   *
+   * The card prices themselves are too short to be read as sentences, so an
+   * intro that names no price leaves the whole block without one. Quote one or
+   * two real prices through the tokens above, never a hand-typed number.
+   */
   intros: { teammate: string; team?: string; coaching?: string };
   steps: { heading: string; items: [string, string, string]; note: string };
   decide: { heading: string; intro: string; picks: HubPick[] };
