@@ -38,7 +38,7 @@ export const deadlock: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and the ranked tiers read your own rank, so an Eternus lobby costs more than an Initiate one. Unranked matches hold one price for everybody, because they do not move your rank. One teammate joins your party on your own account, and bundles take {{pct3}} off 3 games or {{pct5}} off 5. A tier name says who Duoly hires, never who may queue beside you: Duoly has not read the party rules from Valve for this hub yet, so the teammate has to be eligible to queue with you under the rules of the game. Check the party in the client before the first game.',
+      'Teammate prices are per game, and the ranked tiers read your own rank, so an Eternus lobby costs more than an Initiate one. Unranked matches hold one price for everybody, because they do not move your rank. One teammate joins your party on your own account, and bundles take {{pct3}} off 3 games or {{pct5}} off 5. A tier name says who Duoly hires, never who may queue beside you: the ranked party rules come from Valve, so the teammate has to be eligible to queue with you under the rules of the game. Check the party in the client before the first game.',
     team: '6-Stack Fill is priced per seat, so the card covers up to {{seats_six}} seats and falls when your party is only one player short. It reads your rank like the duo tiers, and bundles take {{pct3}} off 3 games.',
     coaching:
       'Lessons get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Macro and Souls is one clock hour on Discord, and Play and Learn covers one live ranked match instead.',
