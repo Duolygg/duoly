@@ -1,5 +1,6 @@
 import { intentPages, intentPath } from '../content/intent-pages';
 import { FINISHED_HUB_SLUGS } from '../content/hub-pages';
+import { gameBySlug } from './games';
 import { aiLaunchState } from './ai';
 import { DISCORD_INVITE, SUPPORT_EMAIL } from './nav';
 
@@ -15,6 +16,17 @@ export const COACHING_SLUGS = [
 export const GUIDE_PATH = '/blog/what-is-an-egirl';
 /** A game hub is indexable once its copy exists (src/content/hub-pages.ts). */
 export const HUB_PATHS = FINISHED_HUB_SLUGS.map((slug) => `/games/${slug}`);
+/**
+ * Hub chips for the related-link blocks of pages that are not about one game,
+ * so every hub keeps contextual inbound links from more than its own siblings.
+ */
+export const hubChips = (slugs: string[]) =>
+  slugs.flatMap((slug) => {
+    const game = gameBySlug(slug);
+    return game && FINISHED_HUB_SLUGS.includes(slug)
+      ? [{ name: game.name, path: `/games/${slug}` }]
+      : [];
+  });
 export const INDEXABLE_PATHS = [
   '/',
   '/games',

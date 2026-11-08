@@ -40,7 +40,11 @@ for (const [path, page] of indexed) {
     assert.equal(page.h1.length, 1);
     assert(!page.toolbar);
     assert(page.depth <= 3);
-    assert(page.inbound.length >= 2);
+    assert(page.inbound.length >= 3, `${path}: ${page.inbound.length} inbound`);
+    assert(
+      page.contextualInbound.length >= 3,
+      `${path}: ${page.contextualInbound.length} contextual inbound from ${page.contextualInbound}`,
+    );
     assert.equal(page.socialMeta['og:title'], page.title);
     assert.equal(page.socialMeta['twitter:title'], page.title);
     assert.equal(page.socialMeta['og:description'], page.description);
@@ -164,6 +168,93 @@ test('AI pages expose matching structured data, launch status and links', () => 
   link('/get-paid-to-play-games', '/ai');
   link('/ai', '/developers/mcp');
   link('/developers/mcp', '/ai');
+});
+
+// Every game hub in the sitemap, apart from the two older hubs that keep their
+// own copy (src/content/hubs.ts). Driven by the sitemap so this test needs no
+// source imports.
+const hubPaths = sitemapEntries
+  .map((entry) => new URL(entry.url).pathname)
+  .filter((path) => /^\/games\/[^/]+$/.test(path));
+const dataHubs = hubPaths.filter(
+  (path) => !['/games/valorant', '/games/social'].includes(path),
+);
+test('the sitemap lists a hub for every game Duoly sells', () => {
+  // 15 games plus Social (src/design-reference/lib/games.js), 14 of them
+  // rendered from src/content/game-hubs.
+  assert.equal(hubPaths.length, 16, `hubs in sitemap: ${hubPaths.length}`);
+  assert.equal(dataHubs.length, 14);
+});
+for (const path of dataHubs) {
+  test(`game hub is finished, indexable and the linking centre: ${path}`, () => {
+    const page = pages[path];
+    assert(page, `crawl discovered ${path}`);
+    assert.equal(page.robots, 'index, follow');
+    const service = page.schemas.find((s) => s['@type'] === 'Service');
+    const faq = page.schemas.find((s) => s['@type'] === 'FAQPage');
+    assert(service && service.offers.length > 0, 'Service offers');
+    assert(faq && faq.mainEntity.length >= 5, 'FAQPage questions');
+    const html = readFileSync(
+      `.vercel/seo-audit/${path.slice(1).replaceAll('/', '__')}.html`,
+      'utf8',
+    );
+    assert.doesNotMatch(html, /\{\{\w+\}\}/, 'price tokens filled');
+    // FAQPage JSON-LD has to repeat the visible questions and answers.
+    for (const question of faq.mainEntity) {
+      assert(html.includes(question.name), `${path}: visible ${question.name}`);
+      assert(
+        html.includes(question.acceptedAnswer.text),
+        `${path}: visible answer for ${question.name}`,
+      );
+    }
+    // The required hub sections: prices, how it works, the decision visual, the FAQ.
+    for (const id of [
+      'prices',
+      'steps-h',
+      'hub-decide-h',
+      'faq-h',
+      'closing-h',
+    ])
+      assert(html.includes(`id="${id}"`), `${path}: #${id}`);
+    assert((html.match(/<details/g) || []).length >= 5, 'visible FAQs');
+    assert.match(html, /data-cta="closing"/);
+    // Guides block: the hub is the internal-linking centre for its game.
+    const guides = page.editorialLinks;
+    for (const target of ['/games', '/compare/e-pal', '/blog', '/ai'])
+      assert(guides.includes(target), `${path} -> ${target}`);
+    const siblings = new Set(
+      guides.filter(
+        (target) => /^\/games\/[^/]+$/.test(target) && target !== path,
+      ),
+    );
+    assert(siblings.size >= 3, `${path}: ${siblings.size} sibling hub links`);
+    const slug = path.split('/')[2];
+    if (coaches.includes(slug)) {
+      link(path, `${path}/coaching`);
+      link(`${path}/coaching`, path);
+    }
+    assert.equal(
+      sitemapEntries.find((entry) => entry.url === `https://duoly.gg${path}`)
+        .lastmod,
+      '2026-11-08',
+    );
+  });
+}
+
+test('every sitemap URL is a finished page with three inbound links', () => {
+  for (const entry of sitemapEntries) {
+    const path = new URL(entry.url).pathname;
+    const page = pages[path];
+    assert(page, `${path} reachable from real anchors`);
+    assert(
+      page.inbound.length >= 3,
+      `${path}: ${page.inbound.length} inbound internal links`,
+    );
+    assert(
+      page.contextualInbound.length >= 3,
+      `${path}: ${page.contextualInbound.length} contextual inbound links`,
+    );
+  }
 });
 
 test('E-Pal comparison page is factual, dated and internally linked', () => {

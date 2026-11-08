@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
 import '../../components/seo/seo.css';
 import { gameBySlug } from '../../site/games';
 import { pageViewer } from '../../site/viewer';
-import { serializeJsonLd } from '../../site/seo';
+import { hubChips, serializeJsonLd } from '../../site/seo';
 import {
   CHECKED,
   comparisonExample,
@@ -14,6 +14,13 @@ import {
 
 const { viewer, csrf } = await pageViewer(Astro);
 const game = gameBySlug('league-of-legends')!;
+// Additive related links: the biggest game hubs, so each keeps editorial inbound links.
+const HUB_LINKS = hubChips([
+  'league-of-legends',
+  'counter-strike-2',
+  'fortnite',
+  'marvel-rivals',
+]);
 const path = '/compare/e-pal';
 const title = 'Duoly vs E-Pal: Prices, Fees and Refunds | Duoly';
 const description =
@@ -408,6 +415,10 @@ const schema = {
         <a href="/games/social">Friendly Social sessions</a>
         <a href="/developers/mcp">Book through an AI assistant</a>
         <a href="/games">All games and services</a>
+        {HUB_LINKS.map((hub) => (
+          <a href={hub.path}>{hub.name} teammates and prices</a>
+        ))}
+        <a href="/blog">All Duoly guides</a>
       </div>
     </nav>
   </article>
