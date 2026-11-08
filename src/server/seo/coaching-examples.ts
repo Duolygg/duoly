@@ -52,14 +52,20 @@ export function sessionLead(
 
 // Point to alternatives without repeating the price cards.
 export function compareOthers(offers: Offers, id: string) {
-  const others = [
-    ...new Map(
-      offers
-        .filter((offer) => offer.id !== id)
-        .map((offer) => [offer.id, offer.title]),
-    ).values(),
+  const rest = offers.filter((offer) => offer.id !== id);
+  if (!rest.length)
+    return 'Bring the recording that best shows the decision you want to unpack, and name the goal in the order chat before the session starts.';
+  const names = [
+    ...new Map(rest.map((offer) => [offer.id, offer.title])).values(),
   ];
-  return others.length
-    ? `Want a different focus? Compare ${new Intl.ListFormat('en', { type: 'conjunction' }).format(others)} above, then name the goal in the order chat before the session starts.`
-    : 'Bring the recording that best shows the decision you want to unpack, and name the goal in the order chat before the session starts.';
+  // One shared price only when every alternative really costs the same per the
+  // same unit. Mixed units get no price here: "each X" would be false, and
+  // naming every price makes the card longer than a reader wants.
+  const same = rest.every(
+    (offer) =>
+      offer.amountMinor === rest[0]!.amountMinor &&
+      offer.unit === rest[0]!.unit,
+  );
+  const list = `${new Intl.ListFormat('en', { type: 'conjunction' }).format(names)}${same ? `, each ${prosePrice(rest[0]!)},` : ''}`;
+  return `Want a different focus? Compare ${list} above, then name the goal in the order chat before the session starts.`;
 }

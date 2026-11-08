@@ -145,10 +145,10 @@ export const coachRank: Record<string, CoachRankCopy> = {
   'rocket-league': {
     heading: 'Which coach rank can queue Doubles with you?',
     answer:
-      'Any coach rank is allowed in Doubles with you, including Grand Champion, because Psyonix applies the rank disparity restriction only to an undersized party. A pair in Doubles is already a full team, so the restriction never triggers.',
-    rule: 'Standard works differently. Two players in a 3v3 queue are an undersized party, so the gap narrows to three ranks. For example, a Gold player can queue Doubles with Grand Champion and cannot queue Standard as a pair.',
+      'Any coach rank is allowed in Doubles with you, including Grand Champion, because Psyonix applies the rank disparity restriction only to an undersized party. A Doubles pair is already a full team, so the restriction never triggers.',
+    rule: 'Standard works differently. Two players in a 3v3 queue are an undersized party, so the gap narrows to three ranks. For example, a Gold player can queue Doubles with Grand Champion and not Standard.',
     choice:
-      'The live hour therefore needs no fallback mode, and the booking still has two shapes: 1) live Doubles for the widest coach gap the game allows, or 2) Casual 3v3 or Extra Modes with nothing on the line. Play and Learn costs {price:learn} and Mechanics Training costs {amount:mech}, so the rule changes the mode rather than the money. Finally, send your platform and input in the order chat.',
+      'The live hour needs no fallback mode, and the booking still has two shapes: 1) live Doubles for the widest coach gap the game allows, or 2) Casual 3v3 or Extra Modes with nothing on the line. Play and Learn costs {price:learn} and Mechanics Training costs {amount:mech}. Finally, send your platform and input in the order chat.',
     rungs: [
       {
         label: 'Doubles pair',
@@ -176,9 +176,9 @@ export const coachRank: Record<string, CoachRankCopy> = {
     heading: 'Which coach rank can queue Ranked with you?',
     answer:
       'Your coach has to be eligible to queue with you under the rules of the game, because Epic Games publishes no rank-gap cap for Ranked. What Epic Games does publish is that matchmaking reads the highest rank in the party.',
-    rule: 'An Unreal coach beside you therefore means Unreal-level opponents for the whole hour. For example, a Gold player working on rotations learns more from Unreal lobbies, and a player chasing a placement wants the opposite.',
+    rule: 'An Unreal coach beside you means Unreal-level opponents all hour. For example, a Gold player working on rotations learns from Unreal lobbies, and a placement chase wants the opposite.',
     choice:
-      'The booking therefore has two honest shapes: 1) keep Ranked and accept a lobby that follows the coach, or 2) move the hour to Zero Build, Reload or Creative, where no rank gate applies. Play and Learn costs {price:learn} and the Build and Edit Course costs {amount:build}, so the rule changes the mode rather than the money. Finally, meet the coach using Discord and check the queue in the client.',
+      'The booking therefore has two honest shapes: 1) keep Ranked and accept a lobby that follows the coach, or 2) move the hour to Zero Build, Reload or Creative, where no rank gate applies. Play and Learn costs {price:learn} and Build and Edit Course costs {amount:build}, so the rule changes the mode rather than the money. Finally, meet the coach using Discord and check the queue in the client.',
     rungs: [
       {
         label: 'Ranked party',
@@ -266,9 +266,9 @@ export const coachRank: Record<string, CoachRankCopy> = {
     heading: 'Which coach rank can queue Competitive with you?',
     answer:
       'Your coach has to be eligible to queue with you under the rules of the game, because NetEase Games publishes party sizes rather than a rank-gap table. The published rule is a size rule: Bronze through Grandmaster may use any party size except five, and Celestial and above queue solo or duo.',
-    rule: 'A six caps at Grandmaster, and a squad holding anyone in placements caps at three players. For example, a Diamond player with Grandmaster coaching can bring four friends, and a Celestial player cannot.',
+    rule: 'A six caps at Grandmaster, and a squad holding anyone in placements caps at three. For example, a Diamond player with Grandmaster coaching can bring four friends, and a Celestial player cannot.',
     choice:
-      'The booking has two honest shapes: 1) keep Competitive and send your rank so the assigned coach is one your party size allows, or 2) move the match to Quick Match or Arcade, where no rank gate applies. Play and Learn costs {price:learn} and Hero Coaching costs {amount:hero}, so the rule changes the mode rather than the money. Finally, name your hero pool in the order chat.',
+      'The booking has two honest shapes: 1) keep Competitive and send your rank so the assigned coach is one your party size allows, or 2) move the match to Quick Match or Arcade, where no rank gate applies. Play and Learn costs {price:learn} and Hero Coaching costs {amount:hero}, so the mode changes rather than the price. Finally, name your hero pool in the order chat.',
     rungs: [
       {
         label: 'Bronze to Grandmaster',
@@ -296,9 +296,9 @@ export const coachRank: Record<string, CoachRankCopy> = {
     heading: 'Which coach rank can queue Premier with you?',
     answer:
       'Your coach has to be eligible to queue with you under the rules of the game, because Valve publishes no party CS Rating gap for Premier. The documented wide-gap route is FACEIT, where a Standard five carries no party Elo restriction.',
-    rule: 'A FACEIT Super party caps at 3 players within 400 Elo, and a Premium party caps at 2 players within 400 Elo with 20% more Elo on the line. For example, the Valve skill group FAQ names no admission threshold.',
+    rule: 'A FACEIT Super party caps at 3 players within 400 Elo, and a Premium party at 2 within 400 Elo with 20% more Elo on the line. For example, the Valve skill group FAQ names no admission threshold.',
     choice:
-      'The booking therefore has two honest shapes: 1) queue Premier and send your CS Rating so the assigned coach is one the queue accepts, or 2) play FACEIT Standard, where a five has no Elo restriction. Play and Learn costs {price:learn} and Demo Review costs {amount:demo}. Finally, meet your coach using Discord and name your map pool in the order chat.',
+      'The booking therefore has two honest shapes: 1) queue Premier and send your CS Rating so the assigned coach is one the queue accepts, or 2) play FACEIT Standard, where a five has no Elo restriction. Play and Learn costs {price:learn} and Demo Review costs {amount:demo}. Finally, meet your coach using Discord and name your map pool.',
     rungs: [
       {
         label: 'Premier party',
