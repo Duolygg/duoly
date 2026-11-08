@@ -22,6 +22,7 @@ import {
   type hubOffers,
 } from '../../server/seo/hub';
 import { priceSummary } from '../../server/seo/offers';
+import { closingDetail } from '../../server/seo/citable-answers';
 import { GUIDE_PATH, bookingHref } from '../../site/seo';
 interface Props {
   game: SiteGame;
@@ -126,6 +127,7 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
   <ClosingCta
     heading={copy.closing.heading}
     text={copy.closing.text}
+    extra={closingDetail(offers.all)}
     price={summary}
     href={book}
     label={copy.cta}

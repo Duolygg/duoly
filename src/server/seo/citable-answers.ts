@@ -82,3 +82,26 @@ export function closingDetail(offers: Offers) {
     : `${quantityAnswer(offers)} Bundle pricing is applied in the checkout, not on request.`;
   return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. Step 2 always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Finally, expect a question about rank, role and region before the first match loads.`;
 }
+
+/**
+ * The sentence every price grid owes a reader: what the listed figure includes,
+ * what moves it, and where it becomes final. Shared by the hub, intent and
+ * coaching price sections so the rules are stated once and stay true per
+ * category: bundles come from calculateQuote, and coaching has none.
+ */
+const lowerFirst = (text: string) =>
+  text.charAt(0).toLowerCase() + text.slice(1);
+
+export function priceNote(offers: Offers, coach = false) {
+  const ranked = offers.some((offer) => offer.rank);
+  const unit = offers[0]!.unit === 'hour' ? 'hour' : 'game';
+  return `Every figure above is the base price from Duoly for one ${unit}, before account perks. First, ${
+    ranked
+      ? 'your own rank moves a ranked price'
+      : 'these services are flat priced'
+  }. Second, ${lowerFirst(quantityAnswer(offers))} For example, ${
+    coach
+      ? 'a first lesson and a fifth cost the same'
+      : 'a longer booking reaches the largest discount shown'
+  }. Payment finishes on duoly.gg, using Discord voice on your own account.`;
+}

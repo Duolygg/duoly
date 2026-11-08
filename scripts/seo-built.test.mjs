@@ -341,12 +341,18 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     // Pages with the free-versus-paid guide carry two extra sections, and the
     // teammate pages add the LFG post template on top of that. Keep substantive
     // guides without requiring repeated prices or filler in Unite.
+    //
+    // The guided ceiling moved from 2400 to 2500 when every price section
+    // gained the shared price note (server/seo/citable-answers priceNote) and
+    // every closing gained its detail paragraph. The headroom is for those two
+    // reviewed paragraphs, not for padding: raise it again only with the same
+    // kind of justification.
     const guided = html.includes('id="free-or-paid"');
     const templated = html.includes('id="lfg-post-h"');
     const [minWords, maxWords] = templated
       ? [1900, 2900]
       : guided
-        ? [1500, 2400]
+        ? [1500, 2500]
         : [1200, 1800];
     assert(
       wordCount >= minWords && wordCount <= maxWords,

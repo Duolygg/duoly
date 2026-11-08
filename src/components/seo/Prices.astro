@@ -1,6 +1,6 @@
 ---
 import { type seoOffers } from '../../server/seo/offers';
-import { pricesAnswer } from '../../server/seo/citable-answers';
+import { pricesAnswer, priceNote } from '../../server/seo/citable-answers';
 import { SITE_GAMES } from '../../site/games';
 import { bookingHref } from '../../site/seo';
 interface Props {
@@ -121,6 +121,7 @@ const cards = services.map((service) => {
       </article>
     ))}
   </div>
+  <p class="price-note">{priceNote(offers, coach)}</p>
   {dated && (
     <p class="price-updated">
       Prices as of <time datetime={updated}>{updatedLabel}</time>.
@@ -129,6 +130,11 @@ const cards = services.map((service) => {
 </section>
 
 <style>
+  .price-note {
+    margin-top: 18px;
+    font-size: 15px;
+    color: #b8abd8;
+  }
   .section-intro {
     max-width: 75ch;
   }

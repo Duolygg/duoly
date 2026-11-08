@@ -33,11 +33,42 @@ const EXCEPTIONS = {
   // the tool table and the JSON-RPC samples cannot reach the scorer's prose
   // shape without padding the samples, so this page keeps its own floor.
   '/developers/mcp': 75,
-  // TEMPORARY, remove with the entry below once PR #184 lands. The game hubs
-  // are being rewritten in a parallel branch, so this branch must not edit
-  // them. The floor still blocks a regression from today's measured score.
-  '/games/valorant': 40,
-  '/games/social': 38,
+
+  // FOLLOW-UP, one content pass away from the floor. The game hubs (#184) and
+  // the find-a-teammate pages (#183) merged while this branch was in flight.
+  // Shared lifts here (the closing detail paragraph and the price note) moved
+  // each of them 3 to 5 points, but the rest is per-game copy in their own
+  // content files: most blocks still lack a worked example, a "using Discord"
+  // style mention and a sequence word, and several run past 167 words.
+  //
+  // Each floor is the score measured on 8 November 2026, less one point of
+  // slack, so none of these pages can get worse while the pass is pending.
+  // Delete an entry as its page reaches 80.
+  '/games/apex-legends': 75, // 76.0
+  '/games/apex-legends/lfg': 76, // 77.4
+  '/games/arc-raiders': 77, // 78.1
+  '/games/call-of-duty': 76, // 77.8
+  '/games/call-of-duty/lfg': 76, // 77.4
+  '/games/counter-strike-2': 76, // 77.7
+  '/games/ea-sports-fc-27': 77, // 78.1
+  '/games/fortnite': 77, // 78.2
+  '/games/fortnite/duos': 76, // 77.3
+  '/games/league-of-legends': 76, // 77.5
+  '/games/marvel-rivals': 75, // 76.9
+  '/games/minecraft': 75, // 76.8
+  '/games/overwatch-2': 76, // 77.0
+  '/games/overwatch-2/lfg': 77, // 78.0
+  '/games/pokemon-unite': 75, // 76.3
+  '/games/rainbow-six-siege': 78, // 79.0
+  '/games/rainbow-six-siege/lfg': 77, // 78.1
+  '/games/rocket-league': 75, // 76.9
+  '/games/teamfight-tactics': 75, // 76.7
+  '/games/valorant/lfg': 77, // 78.0
+
+  // The two oldest hubs still render the pre-#184 layout and sit far below the
+  // rest, which is worth the owner's attention rather than a quiet exception.
+  '/games/social': 40, // 41.4
+  '/games/valorant': 41, // 42.4
 };
 
 const sitemapPaths = async () => {
