@@ -4,6 +4,12 @@ export interface Lesson {
   h1: string;
   lead: string;
   format: string;
+  /** Intro above the price cards: what the unit buys, in this game's terms. */
+  prices: string;
+  /** The three booking steps shown above the booking answer. */
+  steps: [string, string, string];
+  /** The booking answer under the steps, written for this game. */
+  booking: string;
   sections: { heading: string; paragraphs: string[] }[];
   prepare: string;
   faq: [string, string][];
@@ -14,41 +20,50 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Valorant coaching with a focused practice plan',
     lead: 'Book a Valorant coach for live Play and Learn, a round-by-round VOD review or an aim lesson. Work on one repeatable decision before adding more drills.',
     format:
-      'Choose **Play and Learn** for feedback during a Competitive game with an Immortal+ coach. **VOD Review** gives you an hour to pause a recent match and work through the rounds together. **Aim and Crosshair** is an hour on crosshair placement, peeking and counter-strafing, ending with a training routine you can keep using. All three lessons use Discord voice and screen share on your own Riot account. A useful starting question is where your rounds fall apart. For example, losing the first duel might mean your crosshair trails the angle, your flash arrives late or nobody can trade you. A replay helps separate those problems before you spend another evening in the range. Bring the agent you actually queue with, and include eco rounds as well as full buys. Your decisions with a Sheriff and light shields deserve a different plan from a rifle round with full utility.',
+      'Valorant coaching from Duoly is a booked lesson with an Immortal+ coach, and three formats are open in 2026. **Play and Learn** puts a coach in your Competitive game, talking through routes, utility and trades while the round happens (Unrated works too). **VOD Review** is an hour to pause a recent match and rebuild the rounds together. **Aim and Crosshair** spends the hour on crosshair placement, peeking and counter-strafing, ending with a routine you keep. First, decide where your rounds fall apart. For example, a lost opening duel can mean a crosshair trailing the angle, a flash landing late or nobody close enough to trade. Second, bring the agent you actually queue, and include eco rounds as well as full buys. A Sheriff with light shields costs 1200, so the plan for an eco differs from a rifle round with full utility. Finally, every lesson runs on your own Riot account using Discord voice and screen share.',
+    prices:
+      'Every Valorant lesson from Duoly costs {amount:learn}. The real choice is the unit you book. Play and Learn is sold per game: one Competitive match beside an Immortal+ coach, with the calls happening live. VOD Review and Aim and Crosshair are sold by the hour, which buys the pauses, rewinds and repeats a live game cannot give you. First, pick the unit that matches the problem. For example, a player who already knows which rounds go wrong learns more from an hour of VOD Review than from another live match. Bundles do not apply to coaching, so a second hour costs {price:vod} again, and both hourly lessons run using Discord screen share.',
+    steps: [
+      'Pick the format for the problem: a live game, an hour of VOD Review or an hour on aim.',
+      'Check out once, upfront: every format costs {amount:learn}. The unit is what differs.',
+      'Meet your Immortal+ coach in the order chat and start on Discord.',
+    ],
+    booking:
+      'A Valorant booking is a single checkout for one lesson, so check whether the format is sold per game or by the hour before paying. The order chat is where a lesson gets set up properly: send your region, your agent pool and the timestamp of the round you want to open with. For example, a line saying you lose B site retakes on Ascent saves ten minutes of guessing. Send your Riot ID too, the in-game name plus the tagline, so the invite does not become a search. Finally, keep your login private and invite the coach from your own account. An Immortal+ coach from Duoly never needs a password, only a call using Discord.',
     sections: [
       {
         heading: 'Why does a missed shot often start before the peek?',
         paragraphs: [
-          'A missed shot is often the last step of a bad route into a fight. On attack, a duelist needs a teammate close enough to trade. An initiator needs utility timed to the entry, and a controller needs smokes on the right sightlines. In a Valorant review, check the route into the fight before discussing sensitivity. Sentinels can focus on flank information and the timing of a late rotation instead.',
-          'For a single-agent lesson, bring an agent you actually play. For example, a Sova player can check whether a drone cleared the angle the entry player needed. An Omen player can compare a smoke placed too early with a smoke landing as teammates take space. Your coach from Duoly ties every point to your own recording or live game.',
+          'A missed shot is usually the last step of a bad route into a fight. First, check the route before touching the sensitivity. On attack, a duelist needs a teammate close enough to trade, an initiator needs utility timed to the entry, and a controller needs smokes on the sightlines the entry has to cross. Sentinels get a different question: flank information, and the cost of a rotation that starts late.',
+          'Second, bring an agent you actually queue rather than a pro pick. For example, a Sova player can check whether the drone cleared the angle the entry player needed, and an Omen player can compare a smoke placed too early with a smoke landing as teammates take space. Half-time comes after round 12. A habit fixed on attack therefore pays again on defense, and Riot Games keeps rotating maps through the 2026 season. Finally, an Immortal+ coach from Duoly ties every point to your own recording, using Discord screen share.',
         ],
       },
       {
         heading: 'Example round: what makes an entry untradeable?',
         paragraphs: [
-          'An untradeable entry is a peek with no teammate ready to answer the kill. For example, your entry player turns a corner while the second player is still behind a smoke. Pause the VOD right before the peek. What information is available? Which angle can the second player see? Is utility about to expire? Moving together or waiting for a flash may help more than a harder shot.',
-          'For practice, mark five first contacts in your next recording. First, note whether a teammate could trade. Second, check whether your crosshair sat at head height before the opponent appeared. Finally, compare each moment with the round result instead of the scoreboard. Your Immortal+ coach from Duoly adapts the exercise to your role, agent and comfort level, reviewing clips with Discord screen share.',
+          'An untradeable entry is a peek with no teammate ready to answer the kill. For example, the entry player turns a corner while the second player is still behind a smoke. Pause the recording a second before the peek and ask three things: what information was available, which angle the second player could see, and whether utility was about to expire. Moving together or waiting for the flash usually beats a harder shot.',
+          'For practice, mark the first contact of 5 rounds in your next recording. First, note whether a teammate could trade. Second, check whether the crosshair sat at head height before the opponent appeared. Finally, compare each moment with the round result rather than the scoreboard. A Competitive match is a race to 13. Replaying one peek 3 times usually settles whether the route or the shot was the problem, and an Immortal+ coach from Duoly adapts the exercise to your role and agent, reviewing clips using Discord screen share.',
         ],
       },
     ],
     prepare:
-      'Preparation for Valorant coaching is a short checklist before the lesson starts. For VOD Review, bring a recent full match recording with your HUD and audio. Add two timestamps where you felt unsure, for example a peek and a rotation. A close game is often more useful than a highlight reel. For Aim and Crosshair, keep your usual sensitivity and settings, so the coach sees your real habits. For Play and Learn, confirm your ranks can queue together in Competitive. Test voice and screen share using Discord before the session. Hide private notifications and tell the coach your region and platform. Never send login details to anyone, including your coach. Finally, every Valorant lesson runs on your own Riot account, and your coach joins with Discord.',
+      'Preparation for Valorant coaching is a short checklist, and ten minutes before the call is enough. For VOD Review, bring a full match recording with the HUD and audio intact. Add two timestamps where the round felt unclear, for example 1) a peek you could not explain and 2) a rotation that arrived late. A close game teaches more than a highlight reel, so pick the match that ended 13-11 rather than 13-3. Note the patch as well, because Riot Games keeps adjusting agent utility through the 2026 season. For Aim and Crosshair, keep your usual sensitivity and crosshair so the coach sees real habits. For Play and Learn, confirm your ranks can queue together in Competitive. Test voice and screen share using Discord, then hide private notifications. Never send login details to anyone, including an Immortal+ coach from Duoly. Finally, write one line naming the habit you want changed by the end of the hour.',
     faq: [
       [
         'Which lesson should I pick?',
-        'Pick Aim and Crosshair if your crosshair placement or peeking needs work. Choose VOD Review to untangle utility timing, eco rounds and rotations. Play and Learn lets you apply those decisions during a Competitive game.',
+        'Three Valorant lessons are open in 2026, and the problem picks the lesson. VOD Review is the choice for players who already know which rounds go wrong, because an hour of pausing beats another live match. Aim and Crosshair suits a crosshair or peeking problem. Play and Learn is for applying a plan during a Competitive game.',
       ],
       [
         'How much does it cost?',
-        'Play and Learn costs {price:learn}. VOD Review and Aim and Crosshair each cost {price:vod}.',
+        'Every Valorant lesson from Duoly costs {amount:learn}. Play and Learn is billed per game, while VOD Review and Aim and Crosshair are billed per hour, so a second hour of review costs {price:vod} again.',
       ],
       [
         'Do I need a recording?',
-        'Bring a recent full match for VOD Review, with HUD and audio intact. Mark a round where your utility felt wasted and a duel you could not explain. You do not need a recording for Aim and Crosshair or live Play and Learn.',
+        'First, bring a full recent match for VOD Review, with the HUD and audio intact. Mark a round where utility felt wasted and a duel you cannot explain. Aim and Crosshair and live Play and Learn need no recording at all.',
       ],
       [
         'Can I work on just one agent?',
-        'Yes. Bring your main agent and a specific problem, such as Omen smoke timing or clearing space with Sova. Keep the goal narrow enough to work on in your next queue.',
+        'Yes, and a narrow goal works better. For example, name Omen smoke timing or clearing space with Sova, then share the clip using Discord screen share.',
       ],
     ],
   },
@@ -57,41 +72,50 @@ export const lessons: Record<string, Lesson> = {
     h1: 'League of Legends coaching for your next practice goal',
     lead: 'Choose LoL coaching for lane decisions, champion mastery or a review of your own match. Build a practice goal you can recognize in your next game.',
     format:
-      'Choose **Play and Learn** for a ranked game alongside a Master+ coach. **VOD Review** is an hour with a Grandmaster+ coach, following your laning, wave management and map moves before narrowing the review to three things to fix. **Champion Mastery** is an hour with a Grandmaster+ coach on one champion, including matchups, combos, builds and power spikes practiced in a live game. Lessons use Discord voice and screen share on your own Riot account. Bring your usual role and champion pool so the advice fits the games you queue. For example, a mid laner struggling after the first recall might need help crashing a wave or tracking the enemy jungle. Learning another combo will not explain why the lane became unsafe. A support can bring a roam that cost the ADC a wave; a jungler can bring an objective setup that started too late.',
+      'League of Legends coaching from Duoly is a booked lesson with a Master+ or Grandmaster+ coach, and three formats are open in 2026. **Play and Learn** puts a Master+ coach in your ranked game, talking through trades, recalls and objectives while the game happens. **VOD Review** is an hour with a Grandmaster+ coach who follows your laning, wave management and map moves, then narrows the game down to three things to fix. **Champion Mastery** is an hour on one champion: matchups, combos, builds and power spikes, practiced in a live game. First, bring the role and champion pool you actually queue. For example, a mid laner who keeps dying after the first recall usually needs wave control and jungle tracking rather than another combo. Each outer turret carries 5 plates. Fixing the first ten minutes therefore changes the rest of the game. Finally, every lesson runs on your own Riot account using Discord voice and screen share.',
+    prices:
+      'Every League of Legends lesson from Duoly costs {amount:learn}. The unit is the real difference. Play and Learn is sold per game: one ranked game beside a Master+ coach, with the calls happening live. VOD Review and Champion Mastery are sold by the hour with a Grandmaster+ coach, which buys pauses and rewinds. First, pick the unit that matches the problem. For example, a player who already knows the losing matchup learns more from an hour of Champion Mastery than from another ranked queue. Bundles do not apply to coaching, and both hourly lessons run using Discord screen share.',
+    steps: [
+      'Pick the format for the problem: a live ranked game, an hour of VOD Review or an hour on one champion.',
+      'Check out once, upfront: every format costs {amount:learn}. The unit is what differs.',
+      'Meet your coach in the order chat and start on Discord.',
+    ],
+    booking:
+      'A League of Legends booking is a single checkout for one lesson, so check whether the format is sold per game or by the hour before paying. The order chat is where a lesson gets set up properly: send your server, your role, your champion pool and the replay you want opened. For example, a line saying the Renekton matchup keeps going wrong as Camille saves ten minutes of guessing. Send your Riot ID too, since Riot Games replaced summoner names with the name plus tagline in 2023. Finally, keep your login private and invite the coach from your own account. A Grandmaster+ coach from Duoly never needs a password, only a call using Discord.',
     sections: [
       {
         heading: 'Why does wave state decide a lane trade?',
         paragraphs: [
-          'Wave state is the position and size of the minion waves in a lane, and wave state sets the price of a trade. With a large enemy wave approaching, a long trade can cost health, experience and a safe recall. With your own wave about to crash, staying for another plate can cost a clean reset. A League of Legends coach compares what you knew about the enemy jungler with the risk you took.',
-          'Jungle and support lessons need different evidence. A jungler can track camp sequencing and lane priority. A support can examine waves and vision routes using Discord screen share. For example, a bot lane review can focus on spacing with your support and the timing of a shared recall.',
+          'Wave state is the position and size of the minion waves, and wave state sets the price of a trade. First, read the wave before pressing a button. With a large enemy wave arriving, a long trade costs health, experience and a safe recall. With your own wave about to crash, staying for one more plate costs a clean reset. Plates stop dropping at 14:00. Until then a Grandmaster+ coach from Duoly can price every trade in gold rather than in feeling.',
+          'Second, jungle and support lessons need different evidence. A jungler can bring camp sequencing and lane priority, while a support can bring the vision route that went down before a fight. For example, a bot lane review often focuses on spacing with your support and the timing of a shared recall, watched using Discord screen share. Finally, name the patch, because Riot Games keeps moving gold and objective values through the 2026 season.',
         ],
       },
       {
         heading: 'Example lane review: what makes a recall expensive?',
         paragraphs: [
-          'An expensive recall is a reset that gives away minions, experience or tower plates. For example, a mid laner recalls while the wave stops just outside the opposing tower. The opponent can hold the wave, and the returning player walks forward for experience. First, ask whether the wave could have been fully crashed. Second, ask whether the enemy jungler was visible. Finally, compare the item purchase with the minions likely to be lost.',
-          'A practical take-home exercise is to label your first three recalls in your next game. Use three labels: wave crashed, wave moving toward you, or wave held away from you. Add the information you had before recalling. Your Grandmaster+ coach from Duoly adjusts the task for your matchup during VOD Review with Discord screen share.',
+          'An expensive recall is a reset that gives away minions, experience or tower plates. For example, a mid laner recalls while the wave stops just outside the enemy tower. The opponent holds the wave, and the returning laner walks forward for experience. First, ask whether the wave could have been crashed fully. Second, ask whether the enemy jungler was visible on the map. Finally, compare the item bought with the minions and plates likely to be lost.',
+          'A take-home exercise is to label your first 3 recalls in the next game. Use three labels: wave crashed, wave rolling toward you, or wave held away from you. Add the information available before pressing B. A recall at 13:30 is a different decision from a recall at 15:00. Plates make the early reset more expensive, and a Grandmaster+ coach from Duoly adapts the task to your matchup, watching the replay using Discord screen share.',
         ],
       },
     ],
     prepare:
-      'Preparation for League of Legends coaching is a recent replay and a question about your role. For VOD Review, bring a recent full match replay or recording, the patch and your role. Include a loss where you still had decisions to make. Add two questions, for example one about laning and one about map movement. For Champion Mastery, pick one champion and list the matchups you find confusing. For Play and Learn, check your server and confirm your ranks can queue together. Test voice and screen share using Discord before the session starts. Keep private chat and notifications out of shared recordings. Use your own Riot account, and never share login details. Finally, tell the coach your champion pool, so the lesson starts in the right place.',
+      'Preparation for League of Legends coaching is one replay and one honest question about your role. For VOD Review, bring a recent full replay with the patch and the role you played. Pick a loss where decisions were still open, for example 1) a recall you regret and 2) a fight you joined late. A game lost by a small margin teaches more than a 15-minute surrender. Riot Games ships a new patch every two weeks, so name the patch you played in the 2026 season. For Champion Mastery, name one champion and the matchups that keep going wrong. For Play and Learn, check your server and confirm your ranks can queue together. Test voice and screen share using Discord, then hide private chat and notifications. Stay on your own Riot account and never send login details, including to a Grandmaster+ coach from Duoly. Finally, write the one decision you want to make differently in your next ranked game.',
     faq: [
       [
         'Which lesson should I pick?',
-        'Choose VOD Review for wave management, jungle tracking and map decisions. Champion Mastery focuses on one champion and its matchups. Play and Learn lets you discuss those choices during a ranked game.',
+        'Three League of Legends lessons are open in 2026, and the problem picks the lesson. VOD Review is the choice for wave management, jungle tracking and map decisions. Champion Mastery is an hour on one champion and the matchups around the champion. Play and Learn is for making the calls during a live ranked game.',
       ],
       [
         'How much does it cost?',
-        'Play and Learn costs {price:learn}. VOD Review and Champion Mastery each cost {price:vod}.',
+        'Every League of Legends lesson from Duoly costs {amount:learn}. Play and Learn is billed per game with a Master+ coach, while VOD Review and Champion Mastery are billed per hour with a Grandmaster+ coach, so a second hour costs {price:vod} again.',
       ],
       [
         'What replay should I bring?',
-        'For VOD Review, bring a close game, win or loss. Note the patch, role and two confusing moments, such as a bad recall or a missed jungle rotation. Include your champion pool so the advice fits your next games.',
+        'First, bring a close game, win or loss, with the patch and the role noted. Mark two moments you cannot explain, for example a recall that cost plates or a jungle rotation that arrived late.',
       ],
       [
         'Can I focus on one matchup?',
-        'Yes. Book Champion Mastery and name the lane opponent that gives you trouble. Explain where you lose control of the wave so the lesson can connect the matchup to trades, builds and power spikes.',
+        'Yes. Book Champion Mastery, name the lane opponent and explain where the wave gets away from you, then share the replay using Discord screen share.',
       ],
     ],
   },

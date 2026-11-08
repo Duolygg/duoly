@@ -17,11 +17,20 @@ const priceOf = (offers: Offers, id: string) => {
   return prosePrice(offer);
 };
 
-// Copy writes {price:vod}; the page fills in the checkout price and unit for the visitor's currency.
+const amountOf = (offers: Offers, id: string) => {
+  const offer = offers.find((item) => item.id === id);
+  if (!offer) throw new Error(`No coaching price for ${id}`);
+  return `${offer.currency === 'EUR' ? 'EUR' : 'USD'} ${Number(offer.price)}`;
+};
+
+// Copy writes {price:vod} for "EUR 12.99 per hour" and {amount:vod} for "EUR 12.99";
+// the page fills in the checkout price and unit for the visitor's currency.
 export const withPrices = (text: string, offers: Offers) =>
-  text.replace(/\{price:([a-z0-9]+)\}/g, (_, id: string) =>
-    priceOf(offers, id),
-  );
+  text
+    .replace(/\{price:([a-z0-9]+)\}/g, (_, id: string) => priceOf(offers, id))
+    .replace(/\{amount:([a-z0-9]+)\}/g, (_, id: string) =>
+      amountOf(offers, id),
+    );
 
 const article = (word: string) => (/^[AEIOU]/i.test(word) ? 'an' : 'a');
 
@@ -53,9 +62,4 @@ export function compareOthers(offers: Offers, id: string) {
   return others.length
     ? `Want a different focus? Compare ${new Intl.ListFormat('en', { type: 'conjunction' }).format(others)} above.`
     : 'Bring the recording that best shows the decision you want to unpack.';
-}
-
-// Practical booking guidance shared by coaching pages.
-export function bookingAnswer(gameName: string) {
-  return `Choose the ${gameName} lesson that fits the problem you want to work on, then check the booking unit and total before paying. The service cards show which options are live games and which are hourly lessons. Use the order chat to send your goal and agree on Discord voice or screen share with your coach. For example, send a replay timestamp alongside the question you had in the moment. A little context helps the coach start with your actual decisions instead of guessing from the final score. Keep your login private and invite the coach from your own account. If you are booking live ranked play, confirm your region and queue eligibility together before starting. You can ask about the format before the session so there are no surprises about how the time will be used.`;
 }

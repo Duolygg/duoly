@@ -52,15 +52,19 @@ export function pricesAnswer(gameId: string, offers: Offers, coach: boolean) {
 
 export function closingAnswer(gameName: string) {
   const goals: Record<string, string> = {
-    Valorant: 'an agent, a round or a duel you want to understand',
-    'League of Legends': 'a lane matchup, a wave decision or a jungle route',
-    'Rocket League': 'a Doubles rotation or a recovery you want to get right',
-    Fortnite: 'a box fight, an edit or a zone rotation',
-    'Teamfight Tactics': 'a roll-down, an econ decision or a comp pivot',
+    Valorant: 'one agent and one round you keep losing, for example a B site retake',
+    'League of Legends':
+      'one matchup and one wave decision, for example a recall that gave up plates',
+    'Rocket League':
+      'one Doubles clip and one recovery, for example a rebound you keep chasing',
+    Fortnite:
+      'one mode and one lost fight, for example a box fight ended by a fast edit',
+    'Teamfight Tactics':
+      'one full game and two spending moments, for example a roll-down at stage 3',
     'Apex Legends':
-      'a rotation, a movement problem or a fight that drew a third party',
+      'one rotation and one fight, for example a crossing that drew a third party',
     'Marvel Rivals':
-      'a hero matchup, a Team-Up or an ultimate you want to time better',
+      'one hero and one team fight, for example an ultimate nobody followed',
   };
-  return `Bring ${goals[gameName] ?? 'one situation from your recent games'}. Pick your lesson, share the goal in the order chat and meet your coach on Discord. You stay on your own account throughout.`;
+  return `A ${gameName} lesson from Duoly is one booked session on a problem you choose. First, bring ${goals[gameName] ?? 'one situation from your recent games'}. Then share the goal in the order chat, meet your coach using Discord voice and stay on your own account.`;
 }

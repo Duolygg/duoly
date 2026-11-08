@@ -24,7 +24,6 @@ import {
   faqSchema,
 } from '../../../server/seo/offers';
 import {
-  bookingAnswer,
   exampleOffers,
   withPrices,
 } from '../../../server/seo/coaching-examples';
@@ -104,7 +103,12 @@ const description = descriptions[game.slug]!;
       <h2 id="get-h">What does {game.name} coaching cover?</h2>
       <p>{withPrices(lesson.format, offers).replaceAll('**', '')}</p>
     </section>
-    <Prices gameId={game.id} offers={offers} coach />
+    <Prices
+      gameId={game.id}
+      offers={offers}
+      coach
+      intro={withPrices(lesson.prices, offers)}
+    />
     <SessionExamples
       gameId={game.id}
       gameName={game.name}
@@ -112,14 +116,10 @@ const description = descriptions[game.slug]!;
     />
     <Steps
       heading={`How do you book ${game.name} coaching?`}
-      steps={[
-        'Pick your training service and add your goal.',
-        'Check out once, upfront.',
-        'Meet your coach in the order chat and start on Discord, on your own account.',
-      ]}
+      steps={lesson.steps.map((step) => withPrices(step, offers))}
     >
       <p>
-        {bookingAnswer(game.name)} See the{' '}
+        {withPrices(lesson.booking, offers)} See the{' '}
         <a href="/terms">payment and refund terms</a> or{' '}
         <a href="/contact">contact support</a> any time.
       </p>
@@ -153,6 +153,7 @@ const description = descriptions[game.slug]!;
       text={closingAnswer(game.name)}
       href={book}
       label={`Book ${game.name} coaching`}
+      price={summary}
       art={{ src: game.img, alt: '' }}
     />
     <nav class="related" aria-label="Related pages">

@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { lessons } from '../../src/content/coaching';
 import { sessionExamples } from '../../src/content/coaching-examples';
 import {
-  bookingAnswer,
   compareOthers,
   exampleOffers,
   sessionLead,
@@ -60,13 +59,16 @@ describe('coaching page copy prices', () => {
         });
         const copy = [
           lesson.format,
+          lesson.prices,
+          lesson.booking,
           lesson.prepare,
+          ...lesson.steps,
           ...lesson.sections.flatMap((section) => section.paragraphs),
           ...lesson.faq.flat(),
         ];
         for (const text of copy) {
           const filled = withPrices(text, offers);
-          expect(filled).not.toMatch(/\{price:/);
+          expect(filled).not.toMatch(/\{price:|\{amount:/);
           for (const [, id] of text.matchAll(/\{price:([a-z0-9]+)\}/g)) {
             const offer = offers.find((item) => item.id === id)!;
             const quote = calculateQuote(offer.selection, {
@@ -77,9 +79,34 @@ describe('coaching page copy prices', () => {
               `${quote.customer.currency} ${quote.customer.amountMinor / 100} per ${quote.unit}`,
             );
           }
+          for (const [, id] of text.matchAll(/\{amount:([a-z0-9]+)\}/g)) {
+            const offer = offers.find((item) => item.id === id)!;
+            const quote = calculateQuote(offer.selection, {
+              customerCurrency,
+              eurToUsd: 1.17,
+            });
+            expect(filled).toContain(
+              `${quote.customer.currency} ${quote.customer.amountMinor / 100}`,
+            );
+          }
         }
-        expect(bookingAnswer(game.name)).toContain('booking unit and total');
-        expect(bookingAnswer(game.name)).not.toMatch(/0%|Step 1 is to/);
+        // Every price in the rendered copy must come from a resolved token.
+        const rendered = copy.map((text) => withPrices(text, offers)).join(' ');
+        const helperPrices = new Set(
+          offers.flatMap((offer) => {
+            const quote = calculateQuote(offer.selection, {
+              customerCurrency,
+              eurToUsd: 1.17,
+            });
+            return [`${quote.customer.amountMinor / 100}`];
+          }),
+        );
+        for (const [, amount] of rendered.matchAll(
+          /(?:EUR|USD|[€$])\s?([\d.]+)/g,
+        ))
+          expect(helperPrices).toContain(amount);
+        expect(lesson.prices).toMatch(/\{amount:|\{price:/);
+        expect(lesson.booking).not.toMatch(/0%|Step 1 is to/);
       });
     }
   }
