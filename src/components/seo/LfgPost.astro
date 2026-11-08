@@ -1,0 +1,32 @@
+---
+import type { LfgPostGuide } from '../../content/guide-pages';
+import { bookTeammateLabel } from '../../site/seo';
+interface Props {
+  post: LfgPostGuide;
+  gameName: string;
+  booking: string;
+}
+const { post, gameName, booking } = Astro.props;
+---
+
+<section class="card lfg-post" aria-labelledby="lfg-post-h">
+  <p class="lfg-tag">{post.pill}</p>
+  <h2 id="lfg-post-h">{post.heading}</h2>
+  <p class="lfg-intro">{post.intro}</p>
+  <ol class="lfg-fields">
+    {post.fields.map((field) => (
+      <li class="lfg-field">
+        <span class="lfg-field-label">{field.label}</span>
+        <ul class="lfg-chips">
+          {field.chips.map((chip) => (
+            <li class="lfg-chip">{chip}</li>
+          ))}
+        </ul>
+      </li>
+    ))}
+  </ol>
+  <p class="lfg-example">{post.example}</p>
+  <a class="btn-sm" href={booking}>
+    {bookTeammateLabel(gameName)}
+  </a>
+</section>

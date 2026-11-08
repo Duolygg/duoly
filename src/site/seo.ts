@@ -55,6 +55,12 @@ Object.assign(CONTENT_DATES, {
   '/games/marvel-rivals/duo-partner': '2026-11-06',
   '/games/pokemon-unite/teammate': '2026-11-06',
   '/compare/e-pal': '2026-11-07',
+  '/games/valorant/lfg': '2026-11-08',
+  '/games/fortnite/duos': '2026-11-08',
+  '/games/overwatch-2/lfg': '2026-11-08',
+  '/games/apex-legends/lfg': '2026-11-08',
+  '/games/call-of-duty/lfg': '2026-11-08',
+  '/games/rainbow-six-siege/lfg': '2026-11-08',
 });
 // The data-driven game hubs were written together; Valorant and Social keep their own date.
 Object.assign(
@@ -65,6 +71,9 @@ Object.assign(
     ).map((path) => [path, '2026-11-08']),
   ),
 );
+/** "Book a Valorant teammate" but "Book an Apex Legends teammate". */
+export const bookTeammateLabel = (gameName: string) =>
+  `Book ${/^[aeiou]/i.test(gameName) ? 'an' : 'a'} ${gameName} teammate`;
 export function serializeJsonLd(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }

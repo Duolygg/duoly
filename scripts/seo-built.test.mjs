@@ -294,12 +294,19 @@ test('sitemap has exactly the indexable self-canonical 200 URLs in both directio
     sitemapEntries.length,
   );
 });
+// game, slug, catalog id, preselected service, sitemap lastmod
 const intentRoutes = [
-  ['league-of-legends', 'play-with-someone', 'lol', 'norm'],
-  ['marvel-rivals', 'duo-partner', 'mr', 'quick'],
-  ['pokemon-unite', 'teammate', 'pu', 'quick'],
+  ['league-of-legends', 'play-with-someone', 'lol', 'norm', '2026-11-06'],
+  ['marvel-rivals', 'duo-partner', 'mr', 'quick', '2026-11-06'],
+  ['pokemon-unite', 'teammate', 'pu', 'quick', '2026-11-06'],
+  ['valorant', 'lfg', 'val', 'duo2', '2026-11-08'],
+  ['fortnite', 'duos', 'fn', 'duo2', '2026-11-08'],
+  ['overwatch-2', 'lfg', 'ow', 'qp', '2026-11-08'],
+  ['apex-legends', 'lfg', 'apex', 'duos', '2026-11-08'],
+  ['call-of-duty', 'lfg', 'cod', 'duo2', '2026-11-08'],
+  ['rainbow-six-siege', 'lfg', 'r6', 'duo2', '2026-11-08'],
 ];
-for (const [game, slug, id, serviceId] of intentRoutes) {
+for (const [game, slug, id, serviceId, lastmod] of intentRoutes) {
   const path = `/games/${game}/${slug}`;
   test(`intent page content, prices, booking and editorial links: ${path}`, () => {
     const page = pages[path];
@@ -316,7 +323,8 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
         assert(page.editorialLinks.includes(target));
       }
     }
-    if (game !== 'pokemon-unite') link(`/games/${game}/coaching`, path);
+    // Coaching pages exist for some games only; where one exists it links back.
+    if (coaches.includes(game)) link(`/games/${game}/coaching`, path);
     const html = readFileSync(
       `.vercel/seo-audit/${path.slice(1).replaceAll('/', '__')}.html`,
       'utf8',
@@ -330,9 +338,16 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/&#\d+;|&[a-z]+;/gi, ' ');
     const wordCount = text.trim().split(/\s+/).length;
-    // Keep substantive guides without requiring repeated prices or filler in Unite.
+    // Pages with the free-versus-paid guide carry two extra sections, and the
+    // teammate pages add the LFG post template on top of that. Keep substantive
+    // guides without requiring repeated prices or filler in Unite.
     const guided = html.includes('id="free-or-paid"');
-    const [minWords, maxWords] = guided ? [1500, 2400] : [1200, 1800];
+    const templated = html.includes('id="lfg-post-h"');
+    const [minWords, maxWords] = templated
+      ? [1900, 2900]
+      : guided
+        ? [1500, 2400]
+        : [1200, 1800];
     assert(
       wordCount >= minWords && wordCount <= maxWords,
       `${path}: ${wordCount} words`,
@@ -340,6 +355,17 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     if (guided) {
       assert.match(html, /id="duo-decision"/, 'decision flow');
       assert.doesNotMatch(html, /\{\{\w+\}\}/, 'price tokens filled');
+    }
+    if (templated) {
+      // Every verified free route has to stay a real, attributed link.
+      assert.match(html, /class="lfg-chip"/, 'post template chips');
+      assert.match(html, /We found (?:every|both) link/, 'dated link check');
+      assert.match(html, /8 November 2026/, 'link check date');
+      assert(
+        [...html.matchAll(/<a href="(https:\/\/[^"]+)" rel="noopener"/g)]
+          .length >= 2,
+        `${path}: external free routes`,
+      );
     }
     assert((html.match(/<details/g) || []).length >= 5, 'visible FAQs');
     assert.match(
@@ -350,7 +376,7 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     assert.equal(
       sitemapEntries.find((entry) => entry.url === `https://duoly.gg${path}`)
         .lastmod,
-      '2026-11-06',
+      lastmod,
     );
   });
 }
@@ -408,11 +434,12 @@ test('intent heroes fit desktop and mobile without changing shared navigation', 
       await page.close();
     }
     const page = await browser.newPage({ javaScriptEnabled: false });
+    const intentSelector = [
+      ...new Set(intentRoutes.map(([, slug]) => `a[href$="/${slug}"]`)),
+    ].join(', ');
     for (const path of Object.keys(pages)) {
       await page.goto(base + path);
-      const forbidden = await page.evaluate(() => {
-        const selector =
-          'a[href$="/play-with-someone"], a[href$="/duo-partner"], a[href$="/teammate"]';
+      const forbidden = await page.evaluate((selector) => {
         return [...document.querySelectorAll(selector)]
           .filter(
             (el) =>
@@ -421,7 +448,7 @@ test('intent heroes fit desktop and mobile without changing shared navigation', 
               location.pathname === '/',
           )
           .map((el) => el.getAttribute('href'));
-      });
+      }, intentSelector);
       assert.deepEqual(
         forbidden,
         [],

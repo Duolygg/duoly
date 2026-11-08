@@ -1,5 +1,6 @@
 ---
 import type { GameDuoGuide } from '../../content/guide-pages';
+import { bookTeammateLabel } from '../../site/seo';
 interface Props {
   guide: GameDuoGuide;
   gameName: string;
@@ -96,11 +97,13 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </table>
       <p>{guide.paidExample}</p>
       <a class="btn-sm" href={booking}>
-        Book a {gameName} teammate
+        {bookTeammateLabel(gameName)}
       </a>
     </article>
   </div>
 </section>
+
+<slot />
 
 <section class="seo-flow card" aria-labelledby="duo-decision">
   <h2 id="duo-decision">Which fits you, free or paid?</h2>

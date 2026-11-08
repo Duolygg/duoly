@@ -8,8 +8,11 @@ import Topics from '../../../components/seo/Topics.astro';
 import Faq from '../../../components/seo/Faq.astro';
 import ClosingCta from '../../../components/seo/ClosingCta.astro';
 import FreeVsPaid from '../../../components/seo/FreeVsPaid.astro';
+import LfgPost from '../../../components/seo/LfgPost.astro';
 import '../../../components/seo/seo.css';
 import '../../../components/seo/free-vs-paid.css';
+import '../../../components/seo/lfg-post.css';
+import '../../../components/seo/intent-hero.css';
 import { intentPages, intentPath } from '../../../content/intent-pages';
 import { intentOffers } from '../../../server/seo/intent-offers';
 import { gameBySlug } from '../../../site/games';
@@ -29,6 +32,7 @@ import {
 } from '../../../content/guide-pages';
 import {
   bookingHref,
+  bookTeammateLabel,
   COACHING_SLUGS,
   serializeJsonLd,
 } from '../../../site/seo';
@@ -64,7 +68,11 @@ const faqItems = guideFaq(page, guidePrices);
   viewer={viewer}
   csrf={csrf}
 >
-  <article class="seo-page" data-intent-page>
+  <article
+    class="seo-page"
+    data-intent-page
+    style={page.accent ? `--lfg-accent: ${page.accent}` : undefined}
+  >
     <Breadcrumbs
       items={[
         { name: 'Home', path: '/' },
@@ -77,7 +85,7 @@ const faqItems = guideFaq(page, guidePrices);
       eyebrow={`${game.name} teammates`}
       h1={page.h1}
       lead={page.lead}
-      cta={{ href: book, label: `Book a ${game.name} teammate` }}
+      cta={{ href: book, label: bookTeammateLabel(game.name) }}
       secondary={{ href: '#prices', label: 'Compare prices' }}
       art={[{ src: game.img, alt: `${game.name} game art` }]}
       price={summary}
@@ -93,7 +101,7 @@ const faqItems = guideFaq(page, guidePrices);
       gameId={game.id}
       offers={offers}
       intro={copy.pricesIntro}
-      updated={page.gameSlug === 'pokemon-unite' ? '2026-11-08' : '2026-11-06'}
+      updated={page.pricesChecked ?? '2026-11-06'}
     />
     <Steps
       heading={page.stepsHeading ?? 'How matching and booking work'}
@@ -113,7 +121,11 @@ const faqItems = guideFaq(page, guidePrices);
         gameName={game.name}
         art={game.img}
         booking={book}
-      />
+      >
+        {guideCopy.post && (
+          <LfgPost post={guideCopy.post} gameName={game.name} booking={book} />
+        )}
+      </FreeVsPaid>
     )}
     <section class="card" aria-labelledby="prep-h">
       <h2 id="prep-h">{page.prepareHeading ?? 'Before your first game'}</h2>
