@@ -22,7 +22,7 @@ export const lessons: Record<string, Lesson> = {
     format:
       'Valorant coaching from Duoly is a booked lesson with an Immortal+ coach, and three formats are open in 2026. **Play and Learn** puts a coach in your Competitive game, talking through routes, utility and trades while the round happens (Unrated works too). **VOD Review** is an hour to pause a recent match and rebuild the rounds together. **Aim and Crosshair** spends the hour on crosshair placement, peeking and counter-strafing, ending with a routine you keep. First, decide where your rounds fall apart. For example, a lost opening duel can mean a crosshair trailing the angle, a flash landing late or nobody close enough to trade. Second, bring the agent you actually queue, and include eco rounds as well as full buys. A Sheriff with light shields costs 1200, so the plan for an eco differs from a rifle round with full utility. Finally, every lesson runs on your own Riot account using Discord voice and screen share.',
     prices:
-      'Every Valorant lesson from Duoly costs {amount:learn}. The real choice is the unit you book. Play and Learn is sold per game: one Competitive match beside an Immortal+ coach, with the calls happening live. VOD Review and Aim and Crosshair are sold by the hour, which buys the pauses, rewinds and repeats a live game cannot give you. First, pick the unit that matches the problem. For example, a player who already knows which rounds go wrong learns more from an hour of VOD Review than from another live match. Bundles do not apply to coaching, so a second hour costs {price:vod} again, and both hourly lessons run using Discord screen share.',
+      'Every Valorant lesson from Duoly costs {amount:learn}. The real choice is the unit you book. Play and Learn is sold per game: one Competitive match beside an Immortal+ coach, with the calls happening live. VOD Review and Aim and Crosshair are sold by the hour, which buys the pauses, rewinds and repeats a live game cannot give you. First, pick the unit that matches the problem. For example, a player who already knows which rounds go wrong learns more from an hour of VOD Review than from another live match. Bundles do not apply to coaching, so a second hour costs {amount:vod} like the first, and both hourly lessons run using Discord screen share.',
     steps: [
       'Pick the format for the problem: a live game, an hour of VOD Review or an hour on aim.',
       'Check out once, upfront: every format costs {amount:learn}. The unit is what differs.',
@@ -55,7 +55,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Every Valorant lesson from Duoly costs {amount:learn}. Play and Learn is billed per game, while VOD Review and Aim and Crosshair are billed per hour, so a second hour of review costs {price:vod} again.',
+        'Every Valorant lesson from Duoly costs {amount:learn}. Play and Learn is billed per game, while VOD Review and Aim and Crosshair are billed per hour, so a second hour of review costs {amount:vod} like the first.',
       ],
       [
         'Do I need a recording?',
@@ -94,7 +94,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'Example lane review: what makes a recall expensive?',
         paragraphs: [
           'An expensive recall is a reset that gives away minions, experience or tower plates. For example, a mid laner recalls while the wave stops just outside the enemy tower. The opponent holds the wave, and the returning laner walks forward for experience. First, ask whether the wave could have been crashed fully. Second, ask whether the enemy jungler was visible on the map. Finally, compare the item bought with the minions and plates likely to be lost.',
-          'A take-home exercise is to label your first 3 recalls in the next game. Use three labels: wave crashed, wave rolling toward you, or wave held away from you. Add the information available before pressing B. Replaying the same recall 2 times usually ends the argument. A recall at 13:30 is a different decision from a recall at 15:00. Plates make the early reset more expensive, and a Grandmaster+ coach from Duoly adapts the task to your matchup, watching the replay using Discord screen share.',
+          'A take-home exercise is to label your first 3 recalls in the next game. Use three labels: wave crashed, wave rolling toward you, or wave held away from you. Add the information available before pressing B. Replaying the same recall 3 times usually ends the argument. A recall at 13:30 is a different decision from a recall at 15:00. Plates make the early reset more expensive, and a Grandmaster+ coach from Duoly adapts the task to your matchup, watching the replay using Discord screen share.',
         ],
       },
     ],
@@ -107,7 +107,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Every League of Legends lesson from Duoly costs {amount:learn}. Play and Learn is billed per game with a Master+ coach, while VOD Review and Champion Mastery are billed per hour with a Grandmaster+ coach, so a second hour costs {price:vod} again.',
+        'Every League of Legends lesson from Duoly costs {amount:learn}. Play and Learn is billed per game with a Master+ coach, while VOD Review and Champion Mastery are billed per hour with a Grandmaster+ coach, so a second hour costs {amount:vod} like the first.',
       ],
       [
         'What replay should I bring?',
@@ -126,7 +126,7 @@ export const lessons: Record<string, Lesson> = {
     format:
       'Rocket League coaching from Duoly is a booked hour with a Grand Champion coach, and two formats are open in 2026. **Play and Learn** is a live hour of Doubles, with the coach talking through kickoffs, rotation, boost and challenges while the match runs. **Mechanics Training** is an hour on aerials, flicks and recoveries, ending with training packs you keep. First, decide whether the problem is the execution or the decision before the touch. For example, missing an aerial after a clean approach is a mechanics question, while jumping for a ball your partner already covered is a rotation question even when the shot goes in. Boost settles a lot of the argument: a big pad refills the tank to 100, and small pads give 12. Second, bring a close Doubles replay plus your platform and input. Finally, both formats run on your own account using Discord voice and screen share.',
     prices:
-      'Both Rocket League lessons from Duoly cost {amount:learn}. Both are sold by the hour, and an hour of Play and Learn happens inside live Doubles, so the coach reacts to real kickoffs, challenges and recoveries. An hour of Mechanics Training happens in free play and training packs, where one touch can be repeated 20 times with no match on the line. First, pick the hour that matches the problem. For example, a player who keeps ball-chasing learns more from live Doubles than from another aerial drill. Bundles do not apply to coaching, so a second hour costs {price:mech} again, and both formats run using Discord screen share.',
+      'Both Rocket League lessons from Duoly cost {amount:learn}. Both are sold by the hour, and an hour of Play and Learn happens inside live Doubles, so the coach reacts to real kickoffs, challenges and recoveries. An hour of Mechanics Training happens in free play and training packs, where one touch can be repeated 20 times with no match on the line. First, pick the hour that matches the problem. For example, a player who keeps ball-chasing learns more from live Doubles than from another aerial drill. Bundles do not apply to coaching, so a second hour costs {amount:mech} like the first, and both formats run using Discord screen share.',
     steps: [
       'Pick the hour that matches the problem: live Doubles or mechanics in free play.',
       'Check out once, upfront: both formats cost {amount:learn}. The hour is yours either way.',
@@ -138,7 +138,7 @@ export const lessons: Record<string, Lesson> = {
       {
         heading: 'How should the second player read a Doubles attack?',
         paragraphs: [
-          'A good second-player position is a place to pressure the next touch while still covering a dangerous clear. First, watch whether your partner can recover after the challenge. For example, a rebound above the opposing net looks inviting while both defenders are already moving toward the ball. Pause the replay before the commit and name the worst likely clear. Small pads give 12. A route across five small pads is therefore worth a short detour.',
+          'A good second-player position is a place to pressure the next touch while still covering a dangerous clear. First, watch whether your partner can recover after the challenge. For example, a rebound above the opposing net looks inviting while both defenders are already moving toward the ball. Pause the replay before the commit and name the worst likely clear. Five small pads add up to 60. Driving the pad line often beats crossing the field for a big pad.',
           'Second, keep enough boost for the drive back toward your own net. Comparing a few replays using Discord screen share shows whether the same commitment keeps leaving you stranded. Finally, judge the decision on the information available before the touch rather than on whether the shot went in. A Grand Champion coach from Duoly can replay the same ten seconds 3 times until the read becomes obvious.',
         ],
       },
@@ -151,7 +151,7 @@ export const lessons: Record<string, Lesson> = {
       },
     ],
     prepare:
-      'Preparation for Rocket League coaching is one replay, two timestamps and one practice question. Save a close Doubles match showing the approach to a conceded goal. Mark the two moments that matter, for example 1) the touch before a double commit and 2) the recovery that never happened. Share your platform, input, region and usual playlist before the hour starts. Keep familiar camera and sensitivity settings rather than changing everything an hour before practice. Test voice and screen share using Discord, then hide private notifications. Name your rank and the playlist you queue, so a Grand Champion coach from Duoly can pitch the 2026 drills at the right level. Agree on the goal before loading into a drill or a queue. Keep account access private and send the invite from your own account. Finally, repeat the chosen exercise at a controlled pace so the coach sees a habit rather than one lucky attempt.',
+      'Preparation for Rocket League coaching is one replay, two timestamps and one practice question. Save a close Doubles match showing the approach to a conceded goal. Mark the two moments that matter, for example 1) the touch before a double commit and 2) the recovery that never happened. Share your platform, input, region and usual playlist before the hour starts. Keep familiar camera and sensitivity settings rather than changing everything an hour before practice. Test voice and screen share using Discord, then hide private notifications. Name your rank and the playlist you queue, so a Grand Champion coach from Duoly can pitch the drills at the right level for the 2026 season. Agree on the goal before loading into a drill or a queue. Keep account access private and send the invite from your own account. Finally, repeat the chosen exercise at a controlled pace so the coach sees a habit rather than one lucky attempt.',
     faq: [
       [
         'Which lesson should I pick?',
@@ -159,7 +159,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Both Rocket League lessons from Duoly cost {amount:learn}. Both are hourly, and talking a play through is part of the hour, so a live session has no fixed match count. For example, a second hour costs {price:mech} again.',
+        'Both Rocket League lessons from Duoly cost {amount:learn}. Both are hourly, and talking a play through is part of the hour, so a live session has no fixed match count. For example, a second hour costs {amount:mech} like the first.',
       ],
       [
         'Should I change my settings first?',
@@ -178,7 +178,7 @@ export const lessons: Record<string, Lesson> = {
     format:
       'Fortnite coaching from Duoly is a booked hour with an Unreal coach, and two formats are open in 2026. **Play and Learn** is a live hour of Ranked, with the coach talking through cover, zone rotations and which fights are worth taking. **Build and Edit Course** is an hour in Creative on piece control, edits and box fights. First, say whether you play Builds or Zero Build, and whether you use controller or keyboard. For example, a fast edit still exposes your whole character when the wall opens from the wrong position, and Creative is the place to slow that peek down. A finished wood wall holds 150. Brick and metal take longer to reach full strength, so the material you place decides how much time an edit really costs. Second, keep your usual sensitivity and binds. Finally, both formats run on your own account using Discord voice and screen share.',
     prices:
-      'Both Fortnite lessons from Duoly cost {amount:learn}. Both are sold by the hour, and an hour of Play and Learn happens inside live Ranked, so the coach reads the storm, the rotation and the fight you are about to take. An hour of Build and Edit Course happens in Creative, where one box fight can be rerun 20 times without a Victory Royale at stake. First, pick the hour that matches the problem. For example, a Zero Build player gets nothing from edit drills and everything from a live rotation lesson. Bundles do not apply to coaching, so a second hour costs {price:build} again, and both formats run using Discord screen share.',
+      'Both Fortnite lessons from Duoly cost {amount:learn}. Both are sold by the hour, and an hour of Play and Learn happens inside live Ranked, so the coach reads the storm, the rotation and the fight you are about to take. An hour of Build and Edit Course happens in Creative, where one box fight can be rerun 20 times without a Victory Royale at stake. First, pick the hour that matches the problem. For example, a Zero Build player gets nothing from edit drills and everything from a live rotation lesson. Bundles do not apply to coaching, so a second hour costs {amount:build} like the first, and both formats run using Discord screen share.',
     steps: [
       'Pick the hour that matches the mode: live Ranked or Creative build and edit practice.',
       'Check out once, upfront: both formats cost {amount:learn}. The hour is yours either way.',
@@ -211,7 +211,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Both Fortnite lessons from Duoly cost {amount:learn}. Both are hourly, so pick the mode and the input you actually play before booking. A second hour costs {price:build} again.',
+        'Both Fortnite lessons from Duoly cost {amount:learn}. Both are hourly, so pick the mode and the input you actually play before booking. A second hour costs {amount:build} like the first.',
       ],
       [
         'Can I take a lesson on controller?',
@@ -230,7 +230,7 @@ export const lessons: Record<string, Lesson> = {
     format:
       'Teamfight Tactics coaching from Duoly is **Comp and Econ Review**, a booked hour with a Master+ coach on compositions, economy and spending, and the service is open in 2026. First, bring a full recording with the shop, bench, items and augment choices visible, because a final-board screenshot hides every decision that spent your gold or health. For example, a reroll comp looks unfinished when the roll came too early, the wrong pairs were held, or the lobby contested the same units. Interest pays 1 gold for every 10 you hold, capped at 5. A greedy save and a weak board therefore rarely survive together. Second, note the set and patch, since unit costs, traits and viable boards change. Finally, the hour runs using Discord voice and screen share, with time to pause, compare lines and rebuild the spending plan.',
     prices:
-      'Comp and Econ Review from Duoly costs {amount:econ}. The lesson is sold by the hour, and the hour is the point: a full Teamfight Tactics game takes over half an hour to play and far longer to understand. An hour with a Master+ coach buys the pauses at stage transitions, where gold, health and level actually get decided. First, pick the game you want opened rather than the game you placed best in. For example, a fourth place with a clean econ plan teaches more than a first place handed over by a lucky augment. Bundles do not apply to coaching, so a second hour costs {price:econ} again, and the review runs using Discord screen share.',
+      'Comp and Econ Review from Duoly costs {amount:econ}. The lesson is sold by the hour, and the hour is the point: a full Teamfight Tactics game takes over half an hour to play and far longer to understand. An hour with a Master+ coach buys the pauses at stage transitions, where gold, health and level actually get decided. First, pick the game you want opened rather than the game you placed best in. For example, a fourth place with a clean econ plan teaches more than a first place handed over by a lucky augment. Bundles do not apply to coaching, so a second hour costs {amount:econ} like the first, and the review runs using Discord screen share.',
     steps: [
       'Pick the game you want opened and record the full match, not the final board.',
       'Check out once, upfront: the review costs {amount:econ}. The hour is yours.',
@@ -242,7 +242,7 @@ export const lessons: Record<string, Lesson> = {
       {
         heading: 'How should you connect gold to board strength?',
         paragraphs: [
-          'Economy management is a trade between future buying power and the health a weak board gives away now. First, check health, pairs, item holders and the strength of the next few opponents. For example, saving for interest gets expensive when a cheap upgrade would have stopped two heavy losses. Interest caps at 5. Holding 90 gold therefore earns no more than holding 50, which is the moment to spend.',
+          'Economy management is a trade between future buying power and the health a weak board gives away now. First, check health, pairs, item holders and the strength of the next few opponents. For example, saving for interest gets expensive when a cheap upgrade would have stopped two heavy losses. Interest caps at 5. Holding 90 gold therefore earns no more than holding 50, so the extra 40 belongs on the board.',
           'Second, accept a temporary board when the items and the shop disagree with your opening plan. Pause before spending and name the upgrades available at the current level, then compare the same moment across the whole recording using Discord screen share. Finally, bring the set and patch with the game, because Riot Games rebalances carries constantly and the 2026 set decides which boards stay affordable. A Master+ coach from Duoly judges the plan on the information available before the shop refreshed, not on the final placement.',
         ],
       },
@@ -250,12 +250,12 @@ export const lessons: Record<string, Lesson> = {
         heading: 'How do you review a decision to roll or level?',
         paragraphs: [
           'A roll or level review is a comparison of the upgrades on offer, the gold in hand and the health cost of waiting. First, pause at a stage transition before any gold is spent. For example, a weak front line holding several pairs calls for a different answer from a stable board needing one more unit. Rolling at level 8 is a different bet from rolling at 7. Write down gold, health, level and the reason for the choice.',
-          'Second, compare the likely upgrades with the next opponents and the items sitting unassigned on your bench. A Master+ coach from Duoly will often watch the same stage 3 times before answering. Finally, include the games that went well and the games that fell apart, so a lucky shop does not become the whole explanation for a spending habit, and keep the recording open using Discord screen share.',
+          'Second, compare the likely upgrades with the next opponents and the items sitting unassigned on your bench. A Master+ coach from Duoly will often watch the same fight 3 times before answering. Finally, include the games that went well and the games that fell apart, so a lucky shop does not become the whole explanation for a spending habit, and keep the recording open using Discord screen share.',
         ],
       },
     ],
     prepare:
-      'Preparation for Teamfight Tactics coaching is one full recording with the shop, bench, items and augment choices visible. Note the current set and patch before sending the link. A final-board screenshot cannot show whether a roll made sense before the upgrades appeared. Choose two spending moments and write the reason for each, for example 1) a roll-down at stage 3 and 2) a level decision at stage 4. Riot Games reshuffles units, traits and augments with every set, so name the 2026 set you played. Keep the game audio and the shop visible in the recording rather than cropping to the board. Test voice and screen share using Discord, then hide private notifications. Make a short sheet for gold, health and level and fill the sheet in at each stage transition with a Master+ coach from Duoly watching. Finally, bring the game you want to understand, even when the placement was poor.',
+      'Preparation for Teamfight Tactics coaching is one full recording with the shop, bench, items and augment choices visible. Note the current set and patch before sending the link. A final-board screenshot cannot show whether a roll made sense before the upgrades appeared. Choose two spending moments and write the reason for each, for example 1) a roll-down at stage 3 and 2) a level decision at stage 4. Riot Games reshuffles units, traits and augments with every set, so name the 2026 set you played. Keep the game audio and the shop visible in the recording rather than cropping to the board. Test voice and screen share using Discord, then hide private notifications. Keep your account under your own control and never send login details, including to a Master+ coach from Duoly. Make a short sheet for gold, health and level, and fill in one line at every stage transition. Finally, bring the game you want to understand, even when the placement was poor.',
     faq: [
       [
         'Which lesson should I pick?',
@@ -263,7 +263,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Comp and Econ Review from Duoly costs {amount:econ}. The booking is one hour of review, and a second hour costs {price:econ} again. Board Coach has its own per-game price on the game hub.',
+        'Comp and Econ Review from Duoly costs {amount:econ}. The booking is one hour of review, and a second hour costs {amount:econ} like the first. Board Coach has its own per-game price on the game hub.',
       ],
       [
         'Is a screenshot of my final board enough?',
@@ -282,7 +282,7 @@ export const lessons: Record<string, Lesson> = {
     format:
       'Apex Legends coaching from Duoly is a booked hour with a Master coach, and two formats are open in 2026. **Play and Learn** is a live hour of Ranked, with the coach reading rotations, legend roles and third-party risk as the game happens. **Movement Course** is an hour of focused practice in the Firing Range on tap-strafes, slide jumps, wall bounces and positioning. First, share your input, platform and preferred legends, because a technique from a keyboard clip rarely transfers to a controller. For example, a clean slide into an open crossing still leaves the squad exposed when another team holds the angle. Apex Ranked plays in squads of 3. Movement that only works for one player is therefore movement the squad cannot follow. Second, bring a clip with the approach to a fight. Finally, both formats run on your own account using Discord voice and screen share.',
     prices:
-      'Both Apex Legends lessons from Duoly cost {amount:learn}. Both are sold by the hour, and an hour of Play and Learn happens inside live Ranked, so the coach talks through the ring, the rotation and the fight before the fight starts. An hour of Movement Course happens in the Firing Range, where the same route can be run 20 times with nothing at stake. First, pick the hour that matches the problem. For example, a player who dies to third parties needs rotation reads rather than another wall bounce. Bundles do not apply to coaching, so a second hour costs {price:move} again, and both formats run using Discord screen share.',
+      'Both Apex Legends lessons from Duoly cost {amount:learn}. Both are sold by the hour, and an hour of Play and Learn happens inside live Ranked, so the coach talks through the ring, the rotation and the fight before the fight starts. An hour of Movement Course happens in the Firing Range, where the same route can be run 20 times with nothing at stake. First, pick the hour that matches the problem. For example, a player who dies to third parties needs rotation reads rather than another wall bounce. Bundles do not apply to coaching, so a second hour costs {amount:move} like the first, and both formats run using Discord screen share.',
     steps: [
       'Pick the hour that matches the problem: live Ranked or Firing Range movement.',
       'Check out once, upfront: both formats cost {amount:learn}. The hour is yours either way.',
@@ -294,7 +294,7 @@ export const lessons: Record<string, Lesson> = {
       {
         heading: 'How should movement connect to cover in Apex Legends?',
         paragraphs: [
-          'Useful movement is a route toward cover or a fighting angle that leaves you options for the next action. First, ask where a technique puts your character after the landing. For example, a quick slide into an exposed lane can create a harder fight than a slower protected route. Name the next piece of cover and one fallback before leaving safety. A squad holds 3. Every route therefore has to work for two teammates as well as for you.',
+          'Useful movement is a route toward cover or a fighting angle that leaves you options for the next action. First, ask where a technique puts your character after the landing. For example, a quick slide into an exposed lane can create a harder fight than a slower protected route. Name two things before leaving safety: 1) the next piece of cover and 2) the fallback if the cover is taken. Every route has to work for two teammates as well as for you.',
           'Second, match the technique to your input, platform and legend rather than copying an unrelated clip. Rehearse the route in the Firing Range using Discord screen share, and run the same approach 10 times so the coach can watch aim and control settle. Finally, ask whether another squad already holds the angle. A Master coach from Duoly ties the execution back to ring information, spacing and the choice to take or leave a fight.',
         ],
       },
@@ -302,7 +302,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'How do you review a rotation after losing the angle?',
         paragraphs: [
           'A late rotation is a move started after another squad already controls the route or the position you wanted. First, pause the clip before your squad leaves cover. For example, the direct path into the next ring gets dangerous when opponents already watch the only crossing. Compare cover, alternate routes and the information your legend abilities gave you, then name an earlier signal to move. A Ranked lobby starts with 20 squads and ends with 1.',
-          'Second, choose the next protected position and a fallback in case the position is occupied. Watching the same rotation 2 times usually reveals the signal the whole squad missed. Finally, test a simple move toward cover while keeping aim under control, and a Master coach from Duoly adapts the drill to your input and platform before adding speed, using Discord screen share.',
+          'Second, choose the next protected position and a fallback in case the position is occupied. Watching the same rotation 3 times usually reveals the signal the whole squad missed. Finally, test a simple move toward cover while keeping aim under control, and a Master coach from Duoly adapts the drill to your input and platform before adding speed, using Discord screen share.',
         ],
       },
     ],
@@ -315,7 +315,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Both Apex Legends lessons from Duoly cost {amount:learn}. Both are hourly, and a live hour has no fixed match count because game length and review time vary. For example, a second hour costs {price:move} again.',
+        'Both Apex Legends lessons from Duoly cost {amount:learn}. Both are hourly, and a live hour has no fixed match count because game length and review time vary. For example, a second hour costs {amount:move} like the first.',
       ],
       [
         'What kind of clip should I bring?',
@@ -334,7 +334,7 @@ export const lessons: Record<string, Lesson> = {
     format:
       'Marvel Rivals coaching from Duoly is a booked lesson with a Grandmaster+ coach, and two formats are open in 2026. **Play and Learn** is one Competitive match with the coach talking through engages, cooldowns and resets, plus a quick review afterwards. **Hero Coaching** is an hour on one hero: abilities, ultimate timing, positioning and matchups. First, bring the role you actually queue, whether Vanguard, Duelist or Strategist. For example, a Strategist who spends a defensive cooldown just before a dive and a Vanguard who engages before the team can follow have very different problems. Marvel Rivals Competitive is 6 versus 6. A strong combo still needs five other players in position to use the opening. Second, bring the current patch and your hero pool so Team-Ups stay relevant. Finally, both formats run on your own account using Discord voice and screen share.',
     prices:
-      'Every Marvel Rivals lesson from Duoly costs {amount:learn}. The unit is the real difference. Play and Learn is sold per match: one Competitive game beside a Grandmaster+ coach, with the calls happening live. Hero Coaching is sold by the hour, which buys the pauses, the matchup talk and the ability sequences a live match never waits for. First, pick the unit that matches the problem. For example, a player who keeps losing the same hero matchup learns more from an hour than from another Competitive queue. Bundles do not apply to coaching, so a second hour costs {price:hero} again, and both formats run using Discord screen share.',
+      'Every Marvel Rivals lesson from Duoly costs {amount:learn}. The unit is the real difference. Play and Learn is sold per match: one Competitive game beside a Grandmaster+ coach, with the calls happening live. Hero Coaching is sold by the hour, which buys the pauses, the matchup talk and the ability sequences a live match never waits for. First, pick the unit that matches the problem. For example, a player who keeps losing the same hero matchup learns more from an hour than from another Competitive queue. Bundles do not apply to coaching, so a second hour costs {amount:hero} like the first, and both formats run using Discord screen share.',
     steps: [
       'Pick the format for the problem: one live Competitive match or an hour on one hero.',
       'Check out once, upfront: every format costs {amount:learn}. The unit is what differs.',
@@ -346,7 +346,7 @@ export const lessons: Record<string, Lesson> = {
       {
         heading: 'How does your role change a Marvel Rivals team fight?',
         paragraphs: [
-          'A team fight in Marvel Rivals is a chain of role decisions, and every role carries a different risk. First, look at the Vanguard: space created before the team can use the space is space wasted. A Duelist takes an angle and needs an escape route for the same angle. A Strategist spends cooldowns and has to keep one back for the moment an opponent commits.',
+          'A team fight in Marvel Rivals is a chain of role decisions, and every role carries a different risk. First, look at the Vanguard: space the team cannot use yet is space wasted. A Duelist takes an angle and needs an escape route off the same angle. A Strategist spends cooldowns and has to keep one back for the moment an opponent commits.',
           'Second, check who could see the target and which cooldowns were ready before the engage. Hero Coaching stays with the hero you play: a dive hero needs a plan for getting out, while a backline hero needs safe sightlines and flank awareness. For example, bring the current patch, because the roster has grown every season since 2024. Finally, a Grandmaster+ coach from Duoly works from your own recording using Discord screen share.',
         ],
       },
@@ -355,7 +355,7 @@ export const lessons: Record<string, Lesson> = {
           'Example team fight: why can an ultimate fail without follow-up?',
         paragraphs: [
           'An ultimate without follow-up is an ultimate used before teammates can act on the opening. For example, the ultimate opens a fight while two teammates are still walking back from spawn. The animation looks strong and the team still cannot take the point. Pause before the activation and count who can act, which enemy defensive abilities are known, and whether the objective needs an immediate contest.',
-          'A small practice task is to review 5 ultimate uses from your next matches. First, write the intended purpose before judging the outcome: engage, response, survival or objective contest. Second, check whether the teammates needed for the plan were alive and close. Watching one ultimate 2 times shows whether the team could have followed. A full team is 6. Finally, ask a Grandmaster+ coach from Duoly for a hero-specific cue that spots the same moment sooner, reviewing clips using Discord screen share.',
+          'A small practice task is to review 5 ultimate uses from your next matches. First, write the intended purpose before judging the outcome: 1) engage, 2) response, 3) survival or 4) objective contest. Second, check whether the teammates needed for the plan were alive and close. Watching one ultimate 3 times shows whether the whole team could have followed. Finally, ask a Grandmaster+ coach from Duoly for a hero-specific cue that spots the same moment sooner, reviewing clips using Discord screen share.',
         ],
       },
     ],
@@ -368,7 +368,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Every Marvel Rivals lesson from Duoly costs {amount:learn}. Play and Learn is billed per Competitive match, while Hero Coaching is billed per hour, so a second hour costs {price:hero} again.',
+        'Every Marvel Rivals lesson from Duoly costs {amount:learn}. Play and Learn is billed per Competitive match, while Hero Coaching is billed per hour, so a second hour costs {amount:hero} like the first.',
       ],
       [
         'What should I bring to Hero Coaching?',

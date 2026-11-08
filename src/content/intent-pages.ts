@@ -257,7 +257,7 @@ export const intentPages: IntentPage[] = [
     steps: [
       'A Pokemon Unite booking is one partner plus a game count, so start with the mode: Ranked, Standard or Quick Battle. Bookings run from 1 game up to 10. The price cards show every service, and ranked prices follow your own rank.',
       'Share your rank, region, language and preferred lane. Ask for a complementary role, such as a Defender alongside your Attacker, then confirm ranked party eligibility together before paying. For example, 3 games take {{pct3}} off the total.',
-      'Finally, meet in the order chat, exchange Trainer details and agree on voice using Discord. A teammate from Duoly joins on a separate account in 2026, so keep passwords private and send the game invite yourself.',
+      'Finally, meet in the order chat, exchange Trainer details and agree on voice using Discord. A teammate from Duoly joins on a separate account, so keep passwords private and send the game invite yourself.',
     ],
     prepare: [
       'Preparation for a Pokemon Unite session is a short checklist: an updated client, Trainer details and one lane preference.',
@@ -280,7 +280,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Can I ask for a particular lane partner?',
-        'First, share your preferred lane and Pokemon before queueing, then ask for a complementary role such as a Defender to make space for your Attacker. Agree the lane plan using Discord before the first queue.',
+        'First, share your preferred lane and Pokemon before queueing, then ask for a complementary role such as a Defender to make space for your Attacker. Agree on the lane plan using Discord before the first queue.',
       ],
       [
         'Where can I find free teammates?',
