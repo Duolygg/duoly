@@ -10,6 +10,7 @@ import { rich } from './rich';
 import './seo.css';
 import type { SiteGame } from '../../site/games';
 import { lessons } from '../../content/coaching';
+import { intentForGame, intentPath } from '../../content/intent-pages';
 import { priceSummary, type seoOffers } from '../../server/seo/offers';
 import { socialContent, valorantContent } from '../../content/hubs';
 import { GUIDE_PATH, bookingHref } from '../../site/seo';
@@ -23,6 +24,7 @@ const copy = social ? socialContent : valorantContent;
 const summary = priceSummary(offers);
 const lesson = lessons[game.slug];
 const book = bookingHref(game.id);
+const intent = intentForGame(game.slug);
 ---
 
 <article class="seo-page">
@@ -76,6 +78,11 @@ const book = bookingHref(game.id);
       {lesson && (
         <a href={`/games/${game.slug}/coaching`}>
           {game.name} coaching and VOD review
+        </a>
+      )}
+      {intent && (
+        <a href={intentPath(intent)}>
+          {game.name} duo partners and teammate prices
         </a>
       )}
       <a href={GUIDE_PATH}>What is an e-girl?</a>

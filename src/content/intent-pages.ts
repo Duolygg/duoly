@@ -335,8 +335,8 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'Should you book Competitive, Swiftplay or Unrated?',
         paragraphs: [
-          'Swiftplay is the short Valorant mode of about 15 minutes with the full buy system, and it costs {{valSwift}} per game on Duoly, or {{valSwift3}} for 3 games with {{pct3}} off. Swiftplay suits a warm-up, a first session with a new teammate or an evening with 40 minutes in it. Unrated is the full 13-round format with no rank on the line at {{valUnrated}} per game, so Unrated is the honest place to learn a new agent. A Deathmatch warm-up costs {{valDm}} per game and fixes aim rather than teamplay.',
-          'Competitive is the ranked mode, and a duo needs both accounts inside the current rank restriction from Riot Games. For example, a Gold player on EU pays {{valPro}} per game for Duo Pro with an Immortal+ partner in November 2026, and 5 games get {{pct5}} off. Open the Competitive queue in the client together and read the restriction message before the first game, because a listed teammate tier never overrides queue eligibility. You keep your agent, your calls and your account in every game.',
+          'Swiftplay is the short Valorant mode of about 15 minutes with the full buy system, and it costs {{valSwift}} per game on Duoly, or {{valSwift3}} for 3 games with {{pct3}} off. Swiftplay suits a warm-up, a first session with a new teammate or an evening with 40 minutes in it. Three Swiftplay games cost {{valSwift3}}. Unrated is the full 13-round format with no rank on the line at {{valUnrated}} per game, so Unrated is the honest place to learn a new agent. A Deathmatch warm-up costs {{valDm}} per game and fixes aim rather than teamplay.',
+          'Competitive is the ranked mode, and a duo needs both accounts inside the current rank restriction from Riot Games. For example, a Gold player on EU pays {{valPro}} per game for Duo Pro with an Immortal+ partner in November 2026, and 5 games get {{pct5}} off. Read the restriction message in the client together before the first game, because a listed teammate tier never overrides queue eligibility.',
         ],
       },
       {
@@ -358,28 +358,28 @@ export const intentPages: IntentPage[] = [
       'Test your microphone and your Discord audio first, then say whether you want relaxed chat or short round calls.',
       'Bring a small agent pool, for example 2 agents for your main role and 1 agent for a second role.',
       'Agree who buys utility on a half buy, so neither player ends the round holding full credits and no smokes.',
-      'Book the games you want up front, because 3 games at Gold cost {{valPro3}} with {{pct3}} off in 2026. Keep your login private and stay on your own account.',
+      'Book the games you want up front, because 3 games at Gold cost {{valPro3}} with {{pct3}} off and 5 games get {{pct5}} off in 2026. Keep your login private and stay on your own account.',
     ],
     faq: [
       [
         'Can I book someone just for Swiftplay?',
-        'Yes. Swiftplay is a per-game teammate service for the short 15 minute format at {{valSwift}} per game in 2026.',
+        'Yes, Swiftplay is the short Valorant format of about 15 minutes, and a Swiftplay teammate costs {{valSwift}} per game in 2026.',
       ],
       [
         'Can I play Unrated while learning an agent?',
-        'Yes. Unrated is the full 13-round mode at {{valUnrated}} per game, which suits a new agent or a second role.',
+        'Yes, Unrated is the full 13-round mode at {{valUnrated}} per game, which suits a new agent or a second role.',
       ],
       [
         'Can we queue Competitive together at any rank?',
-        'Both accounts need the same region and the current rank restriction from Riot Games. Check the queue message together.',
+        'Both accounts need the same region and the current rank restriction from Riot Games, so read the queue message together first.',
       ],
       [
         'Does a duo booking fill the whole team?',
-        'No. A duo booking adds 1 teammate to your party, and the other 3 seats come from the normal queue.',
+        'No, a duo booking adds 1 teammate, so a booked pair covers 2 of 5. The other 3 seats come from the normal queue.',
       ],
       [
         'Is this the same as Valorant coaching?',
-        'No. Duo sessions are shared playing time. Valorant coaching is the hourly lesson, VOD review or crosshair work.',
+        'No, duo sessions are shared playing time, and Valorant coaching is the separate hourly lesson, VOD review or crosshair session.',
       ],
       [
         'How do I find free Valorant teammates?',
@@ -426,8 +426,8 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'How does a Fortnite duo split the work in a match?',
         paragraphs: [
-          'A Fortnite duo is 2 players sharing one drop, one loot path and one rotation plan. Agree the drop first, then who takes the chest side and who takes the floor loot, so the first minute never ends with 2 pistols. Split mats early in Builds: a duo that leaves one player on 90 wood loses the first build fight. Call rotations by the storm circle, not by the fight you want, because the storm decides who holds high ground.',
-          'In the endgame, 1 player builds and 1 player watches the box line. For example, a Platinum player in Europe pays {{fnPro}} per hour for Duo Pro with an Unreal partner in November 2026, and 5 hours get {{pct5}} off. Squad Fill in the lobby is the free version of the same idea for Trios and Squads: Epic Games drops a random player into the empty seat at no cost. A booked partner is the version where the time, the rank and the comms are agreed first.',
+          'A Fortnite duo is 2 players sharing one drop, one loot path and one rotation plan. Agree the drop first, then who takes the chest side and who takes the floor loot, so the first minute never ends with 2 pistols. Split mats early in Builds, because a duo with one player on 90 wood loses the first build fight. Call rotations by the storm circle rather than by the fight you want, because the storm decides who holds high ground.',
+          'In the endgame, 1 player builds and 1 player watches the box line, so the pair always keeps eyes on 2. For example, a Platinum player in Europe pays {{fnPro}} per hour for Duo Pro with an Unreal partner in November 2026, and 5 hours get {{pct5}} off. Squad Fill in the lobby is the free version of the same idea for Trios and Squads, because a random player arrives from Epic Games at no cost. A booked partner is the version where the time, the rank and the comms are agreed first, with {{pct3}} off 3 hours.',
         ],
       },
       {
@@ -440,8 +440,8 @@ export const intentPages: IntentPage[] = [
     ],
     steps: [
       'Choose a service and a total hour count first, before checkout. Duo Pro is the Ranked option with an Unreal teammate, and 3 hours at Platinum in Europe cost {{fnPro3}} with the {{pct3}} bundle discount in November 2026.',
-      'Add your platform, region, rank, input and language. For example, name Europe or NA-East, controller or keyboard, and whether you want Builds or Zero Build. Input matters, because the habits differ.',
-      'Meet your partner in the order chat. Agree on voice using Discord, settle the drop spot, then add each other with the Epic name. A single Duo Pro hour costs {{fnPro}} at Platinum, and 5 hours get {{pct5}} off.',
+      'Add your platform, region, rank, input and language. For example, name Europe or NA-East, controller or keyboard, and whether you want Builds or Zero Build. Input matters, because a controller player and a keyboard player build at different speeds.',
+      'Meet your partner in the order chat. Agree on voice using Discord, settle the drop spot, then add each other with the Epic name. A single Duo Pro hour costs {{fnPro}} at Platinum, 5 hours get {{pct5}} off, and Zero Build stays at {{fnZb}} per hour for every rank.',
     ],
     prepare: [
       'An Epic name is the account name your partner needs for the friend request, and the request has to be accepted before the first queue.',
@@ -449,32 +449,32 @@ export const intentPages: IntentPage[] = [
       'Pick the region before booking, because Europe, NA-East, NA-Central, NA-West, Brazil, Asia, Oceania and Middle East are separate queues with separate ping.',
       'Agree one drop spot and one backup spot, for example a named POI plus the nearest quiet landmark.',
       'Test your microphone on Discord first, then say whether you want quiet games or constant calls.',
-      'Book the hours you want up front, because 3 hours at Platinum cost {{fnPro3}} with {{pct3}} off in 2026. Keep your login private and stay on your own account.',
+      'Book the hours you want up front, because 3 hours at Platinum cost {{fnPro3}} with {{pct3}} off and 5 hours get {{pct5}} off in 2026. Keep your login private and stay on your own account.',
     ],
     faq: [
       [
         'Can I book a duo partner for Zero Build only?',
-        'Yes. Zero Build is an hourly teammate service at {{fnZb}} per hour, and 3 hours cost {{fnZb3}} with {{pct3}} off.',
+        'Yes, Zero Build is the no-building mode, and a Zero Build teammate costs {{fnZb}} per hour, or {{fnZb3}} for 3 hours with {{pct3}} off.',
       ],
       [
         'Can we play Ranked Duos together?',
-        'Yes. Duo Plus and Duo Pro are the Ranked services, with a Champion+ or an Unreal teammate for the hours you book.',
+        'Yes, Duo Plus and Duo Pro are the Ranked services, with a Champion+ or an Unreal teammate.',
       ],
       [
         'Is Reload a good first session?',
-        'Yes. Reload gives respawns on a small map at {{fnReload}} per hour, so a new pair gets many fights in one hour.',
+        'Yes, Reload gives respawns on a small map at {{fnReload}} per hour, so a new pair gets many fights in 1.',
       ],
       [
         'Does a duo booking fill a full squad?',
-        'No. A booking adds 1 partner. For a Trio or a Squad, bring friends or use Squad Fill in the lobby.',
+        'No, a booking adds 1 partner, so a Trio or a Squad still needs friends or Squad Fill.',
       ],
       [
         'Can I learn building in a duo session?',
-        'Creative box fights at {{fnBox}} per hour include showing the builds. For drills alone, book Fortnite coaching instead.',
+        'Creative box fights at {{fnBox}} per hour include showing the builds, and Fortnite coaching is the separate drill session.',
       ],
       [
         'How do I find a free Fortnite duo?',
-        'For example, post in the Official Fortnite Discord, or turn Fill on in the lobby for a random teammate at no cost.',
+        'For example, post in the Official Fortnite Discord, or turn Fill on in the lobby for a random teammate from Epic Games at no cost.',
       ],
     ],
     closing:
@@ -531,7 +531,7 @@ export const intentPages: IntentPage[] = [
     steps: [
       'Choose a service and a total game count first, before checkout. Duo Pro is the Competitive option with a Master+ teammate, and 3 games at Platinum in Europe cost {{owPro3}} with the {{pct3}} bundle discount in November 2026.',
       'Add your platform, region, rank, role and language. For example, name PlayStation or PC, Europe or Americas, and the role you want covered, such as Tank or Support.',
-      'Meet your teammate in the order chat. Agree on voice using Discord or the in-game group, settle the role pair, then invite with your BattleTag. A single Duo Pro game costs {{owPro}} at Platinum, and 5 games get {{pct5}} off.',
+      'Meet your teammate in the order chat. Agree on voice using Discord or the in-game group, settle the role pair, then invite with your BattleTag. A single Duo Pro game costs {{owPro}} at Platinum, 5 games get {{pct5}} off, and Quick Play stays at {{owQp}} per game for every rank.',
     ],
     prepare: [
       'A BattleTag is the Battle.net name plus a number, for example Name#2154. Your teammate needs the full BattleTag to send a group invite, and console players link the same account.',
@@ -539,28 +539,28 @@ export const intentPages: IntentPage[] = [
       'Pick the region before booking, because Europe, Americas and Asia keep separate queues and separate ping.',
       'Test your microphone and your Discord audio first, then say whether you want fight calls or quiet games.',
       'Bring 2 heroes for your main role and 1 for a second role, so a counterpick does not end the session.',
-      'Book the games you want up front, because 3 games at Platinum cost {{owPro3}} with {{pct3}} off in 2026. Keep your login private and stay on your own account.',
+      'Book the games you want up front, because 3 games at Platinum cost {{owPro3}} with {{pct3}} off and 5 games get {{pct5}} off in 2026. Keep your login private and stay on your own account.',
     ],
     faq: [
       [
         'Can I book a teammate for Quick Play only?',
-        'Yes. Quick Play and Arcade are a per-game service at {{owQp}} per game, and 3 games cost {{owQp3}} with {{pct3}} off.',
+        'Yes, Quick Play is the casual Overwatch 2 mode, and a Quick Play teammate costs {{owQp}} per game, or {{owQp3}} for 3 games with {{pct3}} off.',
       ],
       [
         'Can we play Competitive role queue together?',
-        'Yes. Duo Plus, Duo Pro and Duo Apex are Competitive services, inside the current group rules from Blizzard Entertainment.',
+        'Yes, Duo Plus, Duo Pro and Duo Apex are Competitive services, inside the group rules from Blizzard Entertainment.',
       ],
       [
         'Do you support Stadium?',
-        'Yes. Stadium Duo is a per-game service at {{owStadium}} per game, planned round by round with a Master+ teammate.',
+        'Yes, Stadium Duo is a per-game service at {{owStadium}} per game, planned round by round with a Master+ teammate.',
       ],
       [
         'Does a duo booking fill all five seats?',
-        'No. A duo booking adds 1 teammate, and the other 3 seats come from your group or the normal queue.',
+        'No, a duo booking adds 1 teammate, so a booked pair covers 2 of 5. The other 3 seats come from your group or the queue.',
       ],
       [
         'Can I book on PlayStation or Xbox?',
-        'Yes. Name your platform in the request, and check the crossplay setting in the group screen before the first game.',
+        'Yes, name your platform in the request, then check the crossplay setting before the first game.',
       ],
       [
         'How do I find free Overwatch 2 teammates?',
@@ -620,7 +620,7 @@ export const intentPages: IntentPage[] = [
     steps: [
       'Choose a service and a total hour count first, before checkout. Duo Pro is the Ranked option with a Master or Apex Predator teammate, and 3 hours at Platinum in Europe cost {{apexPro3}} with the {{pct3}} bundle discount in November 2026.',
       'Add your platform, region, rank, legend pool and language. For example, name Europe or North America, PC or PlayStation, and the class you want covered, such as Controller or Recon.',
-      'Meet your teammate in the order chat. Agree on voice using Discord, settle the legend pair and the drop, then invite with your EA ID. A single Duo Pro hour costs {{apexPro}} at Platinum, and 5 hours get {{pct5}} off.',
+      'Meet your teammate in the order chat. Agree on voice using Discord, settle the legend pair and the drop, then invite with your EA ID. A single Duo Pro hour costs {{apexPro}} at Platinum, 5 hours get {{pct5}} off, and the Duos playlist stays at {{apexDuos}} per hour for every rank.',
     ],
     prepare: [
       'An EA ID is the account name your teammate needs for the invite, and Apex Legends shows it on the lobby banner.',
@@ -628,32 +628,32 @@ export const intentPages: IntentPage[] = [
       'Pick the region before booking, because Europe, North America, South America, Asia, Oceania and Middle East are separate servers.',
       'Bring 2 legends you trust plus 1 backup from a different class, so the pair still covers scan or cover when a pick is taken.',
       'Test your microphone on Discord first, then agree on 1 call for a reset, for example naming the ring edge before the third party arrives.',
-      'Book the hours you want up front, because 3 hours at Platinum cost {{apexPro3}} with {{pct3}} off in 2026. Keep your login private and stay on your own account.',
+      'Book the hours you want up front, because 3 hours at Platinum cost {{apexPro3}} with {{pct3}} off and 5 hours get {{pct5}} off in 2026. Keep your login private and stay on your own account.',
     ],
     faq: [
       [
         'Does Apex Legends have a duos mode?',
-        'A Duos playlist with 2-player squads appears in the rotation from Respawn Entertainment. Check the lobby for what is live today.',
+        'Duos is a 2-player squad playlist that appears in the rotation from Respawn Entertainment, at {{apexDuos}} per hour on Duoly. Check the lobby for what is live.',
       ],
       [
         'Can I book a teammate for Ranked?',
-        'Yes. Duo Plus and Duo Pro are hourly Ranked services with a Diamond+ or a Master and Apex Predator teammate.',
+        'Yes, Duo Plus and Duo Pro are hourly Ranked services with a Diamond+ or a Master teammate, from {{apexPlus}} per hour.',
       ],
       [
         'Is Mixtape a good first session?',
-        'Yes. Mixtape costs {{apexMix}} per hour with respawns, so a new pair gets many fights inside one hour.',
+        'Yes, Mixtape costs {{apexMix}} per hour with respawns, so a new pair gets many fights inside 1.',
       ],
       [
         'Does a booking fill a full trio?',
-        'No. A booking adds 1 teammate. In trios the third seat comes from auto fill or a friend you bring.',
+        'No, a booking adds 1 teammate, so a booked pair covers 2 of 3. The third seat comes from auto fill.',
       ],
       [
         'Can I learn movement in a duo session?',
-        'A teammate explains calls as you play. For tap strafes and slide jumps alone, book the Apex movement course instead.',
+        'A teammate explains calls as you play, and the Apex movement course is the separate lesson for tap strafes.',
       ],
       [
         'How do I find free Apex teammates?',
-        'For example, post in the Apex Legends Discord, or leave auto fill on for a random third at no cost.',
+        'For example, post in the Apex Legends Discord, or leave auto fill on for a random third from Respawn Entertainment.',
       ],
     ],
     closing:
@@ -686,7 +686,7 @@ export const intentPages: IntentPage[] = [
       'Booked by the hour',
     ],
     format:
-      'A Duoly teammate booking is a paid session where one reviewed Call of Duty player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Warzone duos service, at {{codPro}} per hour for every rank in November 2026. Bundles lower the total: 3 hours get {{pct3}} off, 5 hours get {{pct5}} off and 10 hours get {{pct10}} off. Warzone Ranked with an Iridescent teammate costs {{codRanked}} per hour at Platinum, multiplayer Ranked Play costs {{codPlus}}, Resurgence costs {{codRebirth}}, Zombies costs {{codZombies}} and party modes cost {{codParty}}. In a quad your teammate fills 1 of the 4 seats, so the rest still come from your party or fill. Every booking opens an order chat on Duoly for modes, voice and a start time.',
+      'A Duoly teammate booking is a paid session where one reviewed Call of Duty player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Warzone duos service, at {{codPro}} per hour for every rank in November 2026. Bundles lower the total: 3 hours get {{pct3}} off, 5 hours get {{pct5}} off and 10 hours get {{pct10}} off. Warzone Ranked with an Iridescent teammate costs {{codRanked}} per hour at Platinum, multiplayer Ranked Play costs {{codPlus}}, Resurgence costs {{codRebirth}}, Zombies costs {{codZombies}} and party modes cost {{codParty}}. In a quad your booked teammate fills 1 of the 4 seats, so the rest still come from your party or fill. For example, 3 Warzone hours cost {{codPro3}} with {{pct3}} off. Every booking opens an order chat on Duoly, where modes, voice and a start time are agreed using Discord before the first drop.',
     sections: [
       {
         heading: 'Warzone or multiplayer: which teammate should you book?',
@@ -711,42 +711,42 @@ export const intentPages: IntentPage[] = [
       },
     ],
     steps: [
-      'Choose a service and a total hour count first, before checkout. Duo Pro is Warzone duos at {{codPro}} per hour, and 3 hours cost {{codPro3}} with the {{pct3}} bundle discount in November 2026.',
-      'Add your platform, region, rank, input and language. For example, name Europe or North America, PlayStation or PC, and whether you want Warzone, Resurgence, Ranked Play or Zombies.',
-      'Meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the drop and the loadout plan, then invite with your Activision ID. A single Warzone hour costs {{codPro}}, and 5 hours get {{pct5}} off.',
+      'Choose a service and a total hour count first, before checkout. Duo Pro is the Warzone duos service at {{codPro}} per hour for every rank, and 3 hours cost {{codPro3}} with the {{pct3}} bundle discount in November 2026.',
+      'Add your platform, region, rank, input and language. For example, name Europe or North America, PlayStation or PC, and whether the session is Warzone, Resurgence, multiplayer Ranked Play or round-based Zombies.',
+      'Meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the drop and the loadout plan, then invite with your Activision ID. A single Warzone hour costs {{codPro}}, 5 hours get {{pct5}} off, and Warzone Ranked with an Iridescent teammate costs {{codRanked}} at Platinum.',
     ],
     prepare: [
-      'An Activision ID is the account name plus a number, and your teammate needs the full ID to send a party invite.',
+      'An Activision ID is the account name plus a number, and your teammate needs the full ID from Activision to send a party invite.',
       'Name your platform and your input. Call of Duty runs on PC, PlayStation and Xbox, and controller and keyboard players warm up differently.',
       'Pick the region before booking, because Europe, North America, South America, Asia, Oceania and Middle East give different ping.',
       'Decide the mode before the first hour, for example Warzone battle royale, Resurgence, multiplayer Ranked Play or round-based Zombies.',
       'Test your microphone on Discord first, then agree on 1 call for a reset, for example naming the building you fall back to.',
-      'Book the hours you want up front, because 3 Warzone hours cost {{codPro3}} with {{pct3}} off in 2026. Keep your login private and stay on your own account.',
+      'Book the hours you want up front, because 3 Warzone hours cost {{codPro3}} with {{pct3}} off and 5 hours get {{pct5}} off in 2026. Keep your login private and stay on your own account.',
     ],
     faq: [
       [
         'Can I book a Warzone duo for one hour?',
-        'Yes. Warzone duos cost {{codPro}} per hour for every rank, and 3 hours cost {{codPro3}} with {{pct3}} off in 2026.',
+        'Yes, Warzone duos cost {{codPro}} per hour for every rank, and 3 hours cost {{codPro3}} with {{pct3}} off in 2026.',
       ],
       [
         'Can we play Warzone Ranked together?',
-        'Yes. Warzone Ranked is an hourly service with an Iridescent teammate, priced by your own rank from Bronze to Top 250.',
+        'Yes, Warzone Ranked is an hourly service with an Iridescent teammate, priced by your rank from Bronze to Top 250.',
       ],
       [
         'Do you cover multiplayer Ranked Play?',
-        'Yes. Duo Plus is multiplayer Ranked Play with a Crimson+ teammate at {{codPlus}} per hour at Platinum.',
+        'Yes, Duo Plus is multiplayer Ranked Play with a Crimson+ teammate at {{codPlus}} per hour at Platinum.',
       ],
       [
         'Can someone help with round-based Zombies?',
-        'Yes. A Zombies Run is {{codZombies}} per hour with a partner who knows the map, the wonder weapon and the steps.',
+        'Yes, a Zombies Run is {{codZombies}} per hour with a partner who knows the map and the wonder weapon.',
       ],
       [
         'Does a booking fill a full quad?',
-        'No. A booking adds 1 teammate. For a trio or a quad, bring friends or leave Squad Fill on.',
+        'No, a booking adds 1 teammate, so a booked pair covers 2 of 4. For a trio or a quad, bring friends or leave Squad Fill on.',
       ],
       [
         'How do I find free Call of Duty teammates?',
-        'For example, post in the Call of Duty Discord or the Warzone LFG server. Include platform, region, mode and rank.',
+        'For example, post in the Call of Duty Discord or the Warzone LFG server, naming platform, region, mode and rank.',
       ],
     ],
     closing:
@@ -782,7 +782,7 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'Which Siege roles make a good duo?',
         paragraphs: [
-          'A Siege duo is a pair of jobs inside one round, and the strongest pairs share utility. Hard breach and support is the classic attacking pair: one player clears the Bandit or Mute denying the wall, the other opens it. Entry and drone is the second pair, because a fragger moving without a live drone is guessing. On defence, anchor and roamer is the pair that buys time: the anchor holds site while the roamer takes the first contact away from it.',
+          'A Siege duo is a pair of jobs inside one round, and the strongest pairs share utility rather than duplicate it. Hard breach and support is the classic attacking pair: one player clears the Bandit or Mute denying the wall, the other opens it. Entry and drone is the second pair, because a fragger moving without a live drone is guessing. On defence, anchor and roamer is the pair that buys time: the anchor holds site while the roamer takes the first contact away from it.',
           'For example, a Gold player on EU West can book Duo Pro with a Diamond+ teammate from Duoly for {{r6Pro}} per game in 2026. Duo Plus with an Emerald+ teammate costs {{r6Plus}} per game at the same rank, Duo Apex with a Champion-level teammate costs {{r6Top}}, and 3 games get {{pct3}} off. Share your operator pool before the first round, so the pair always has a hard breach and a drone between them.',
         ],
       },
@@ -804,7 +804,7 @@ export const intentPages: IntentPage[] = [
     steps: [
       'Choose a service and a total game count first, before checkout. Duo Pro is the Ranked option with a Diamond+ teammate, and 3 games at Gold on EU West cost {{r6Pro3}} with the {{pct3}} bundle discount in November 2026.',
       'Add your platform, region, rank, role and language. For example, name EU West or US East, PC or PlayStation, and whether you want to entry, support, anchor or roam.',
-      'Meet your teammate in the order chat. Agree on voice using Discord, settle the operator pair and the first site, then invite with your Ubisoft name. A single Duo Pro game costs {{r6Pro}} at Gold, and 5 games get {{pct5}} off.',
+      'Meet your teammate in the order chat. Agree on voice using Discord, settle the operator pair and the first site, then invite with your Ubisoft name. A single Duo Pro game costs {{r6Pro}} at Gold, 5 games get {{pct5}} off, and Quick Match stays at {{r6Quick}} per game for every rank.',
     ],
     prepare: [
       'A Ubisoft name is the account name your teammate needs for the friend request, and the request has to be accepted before the first queue.',
@@ -812,32 +812,32 @@ export const intentPages: IntentPage[] = [
       'Pick the data centre before booking, because EU West, EU North, US East, US Central, US West, Brazil, Asia, Japan, Australia, UAE and South Africa are separate.',
       'Bring 2 attackers and 2 defenders you trust, including 1 hard breach and 1 drone-heavy operator, so the pair always covers the wall.',
       'Test your microphone on Discord first, then agree on short callouts, for example naming the room before the floor.',
-      'Book the games you want up front, because 3 games at Gold cost {{r6Pro3}} with {{pct3}} off in 2026. Keep your login private and stay on your own account.',
+      'Book the games you want up front, because 3 games at Gold cost {{r6Pro3}} with {{pct3}} off and 5 games get {{pct5}} off in 2026. Keep your login private and stay on your own account.',
     ],
     faq: [
       [
         'Can I book a teammate for Quick Match only?',
-        'Yes. Quick Match is a per-game service at {{r6Quick}} per game, and 3 games cost {{r6Quick3}} with {{pct3}} off.',
+        'Yes, Quick Match is the unranked Siege mode, and a Quick Match teammate costs {{r6Quick}} per game, or {{r6Quick3}} for 3 games with {{pct3}} off.',
       ],
       [
         'Can we queue Ranked together?',
-        'Yes. Duo Plus, Duo Pro and Duo Apex are Ranked services, inside the current queue rules from Ubisoft.',
+        'Yes, Duo Plus, Duo Pro and Duo Apex are Ranked services, inside the current queue rules from Ubisoft, from {{r6Plus}} per game at Gold.',
       ],
       [
         'Can I ask for a hard breach main?',
-        'Yes. Name the operator pool in your request, for example a Thermite or Hibana main to pair with your support.',
+        'Yes, name the operator pool in your request, for example a Thermite main to pair with your support.',
       ],
       [
         'Does a duo booking fill all five seats?',
-        'No. A duo booking adds 1 teammate, and the other 3 seats come from the normal queue.',
+        'No, a duo booking adds 1 teammate, so a booked pair covers 2 of 5. The other 3 seats come from the normal queue.',
       ],
       [
         'Can I book on PlayStation or Xbox?',
-        'Yes. Name your platform in the request, because PC and console posts rarely match in the same queue.',
+        'Yes, name your platform in the request, because PC and console posts rarely match in the same queue.',
       ],
       [
         'How do I find free Siege teammates?',
-        'For example, post in the Rainbow 6 Discord or a cross-game LFG server. Include platform, data centre, rank and role.',
+        'For example, post in the Rainbow 6 Discord or a cross-game LFG server, naming platform, data centre, rank and role.',
       ],
     ],
     closing:
