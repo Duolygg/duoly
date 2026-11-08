@@ -114,8 +114,10 @@ describe('AI page public contract', () => {
   it('aligns sitemap membership with the configured launch state', () => {
     expect(INDEXABLE_PATHS.includes('/ai')).toBe(AI_CONNECTOR_LIVE);
     expect(INDEXABLE_PATHS).toContain('/developers/mcp');
-    for (const path of ['/ai', '/developers/mcp']) {
-      expect(CONTENT_DATES[path]).toBe('2026-11-06');
-    }
+    // The exact day comes from git via src/site/content-dates.ts, checked in
+    // tests/unit/seo.test.ts. Repeating a literal here would just be a second
+    // place to forget.
+    for (const path of ['/ai', '/developers/mcp'])
+      expect(CONTENT_DATES[path]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });

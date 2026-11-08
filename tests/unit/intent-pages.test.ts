@@ -55,9 +55,9 @@ describe('intent page booking facts', () => {
     for (const page of intentPages) {
       const path = intentPath(page);
       expect(INDEXABLE_PATHS).toContain(path);
-      expect(CONTENT_DATES[path]).toBe(
-        added.has(path) ? '2026-11-08' : '2026-11-06',
-      );
+      // The day itself comes from git via src/site/content-dates.ts, checked
+      // in tests/unit/seo.test.ts; here it only has to exist and be a date.
+      expect(CONTENT_DATES[path]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(page.title.length).toBeLessThanOrEqual(60);
       expect(page.faq.length).toBeGreaterThanOrEqual(5);
       expect(JSON.stringify(page)).not.toMatch(/[—–&]/);
