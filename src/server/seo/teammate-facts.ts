@@ -85,3 +85,9 @@ export const SOCIAL_PRICE = formatPrice(
   quote('social', socialModes[0]!.id, 1).customer.amountMinor,
   'EUR',
 );
+
+/** The Valorant Gamer Girl Duo game price, used where the guide names that service. */
+export const VALORANT_GG_PRICE = formatPrice(
+  quote('val', 'gg1', 1).customer.amountMinor,
+  'EUR',
+);

@@ -2,7 +2,31 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageIntro from '../../components/site/PageIntro.astro';
 import { pageViewer } from '../../site/viewer';
+import {
+  serializeJsonLd,
+  GUIDE_PATH,
+  CONTENT_DATES,
+  organizationSchema,
+} from '../../site/seo';
+import {
+  BUNDLE_PERCENTS as bundle,
+  COACHABLE_GAMES,
+  COACHING_PRICE,
+  SHORT_GAME_PRICE,
+  SOCIAL_MODES,
+  SOCIAL_PRICE,
+} from '../../server/seo/teammate-facts';
 const { viewer, csrf } = await pageViewer(Astro);
+const posts = [
+  {
+    path: GUIDE_PATH,
+    title: 'What is an e-girl? And how to play with one',
+    updated: CONTENT_DATES[GUIDE_PATH]!,
+    updatedLabel: '5 November 2026',
+    summary:
+      'Understand the term, compare free ways to meet teammates and learn how Duoly Social sessions work.',
+  },
+];
 ---
 
 <SiteLayout
@@ -17,18 +41,135 @@ const { viewer, csrf } = await pageViewer(Astro);
     title="Guides to playing together"
     lead="Practical context for choosing a session and keeping it respectful."
   >
-    <h2>
-      <a href="/blog/what-is-an-egirl">
-        What is an e-girl? And how to play with one
-      </a>
-    </h2>
-    <p>
-      Understand the term, compare free ways to meet teammates and learn how
-      Duoly Social sessions work.
-    </p>
-    <p>By Duoly team. Updated 5 November 2026.</p>
-    <p>
-      <a href="/games">Browse game and coaching guides</a>
-    </p>
+    <section class="answers" aria-labelledby="what-h">
+      <h2 id="what-h">What do the Duoly guides cover?</h2>
+      <p>
+        The Duoly guides are plain-language articles about playing games with
+        somebody you have not met before. First, each guide explains the words
+        people actually use, so a search for an unfamiliar term lands on an
+        honest answer rather than a sales page. Second, each guide compares free
+        options against paid ones, because a moderated Discord LFG channel often
+        beats a booking. Third, each guide states real Duoly prices where a paid
+        session is relevant, for example {SOCIAL_PRICE} per hour for a Social
+        voice session, {COACHING_PRICE} per hour for coaching, or{' '}
+        {SHORT_GAME_PRICE} for a short Valorant game with a teammate. Step 1 for
+        most readers is deciding what the next hour should feel like, and bundle
+        discounts reaching {bundle[2]}% apply only to teammate games. Finally,
+        the guides never promise a rank, a win or a result, because no session
+        can.
+      </p>
+    </section>
+    <section class="answers" aria-labelledby="posts-h">
+      <h2 id="posts-h">Which guides can you read now?</h2>
+      <p>
+        One finished guide is published, and more follow the same shape. The
+        e-girl guide explains where the term comes from, how gamers really use
+        it, and how to arrange a first session safely, using Discord voice and a
+        screen name. It also covers Duoly Social, which sells {SOCIAL_MODES}{' '}
+        voice modes at {SOCIAL_PRICE} per hour. For example, a reader wanting a
+        calm evening finds Sleep Call, while a reader wanting a climb finds
+        coaching at {COACHING_PRICE} per hour across {COACHABLE_GAMES} games.
+        Finally, every guide links back to the game hubs so a decision ends on
+        real prices.
+      </p>
+      <ul class="posts">
+        {posts.map((post) => (
+          <li>
+            {/* A card title, not a document section: the heading would open a
+                block holding only a 30-word summary. BlogPosting JSON-LD below
+                still carries the headline, description and URL per post. */}
+            <p class="post-title">
+              <a href={post.path}>{post.title}</a>
+            </p>
+            <p>{post.summary}</p>
+            <p class="meta">
+              By Duoly team. Updated{' '}
+              <time datetime={post.updated}>{post.updatedLabel}</time>.
+            </p>
+          </li>
+        ))}
+      </ul>
+      <p>
+        <a href="/games">Browse game and coaching guides</a>
+      </p>
+    </section>
   </PageIntro>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'Blog',
+      name: 'Duoly guides',
+      url: new URL('/blog', Astro.site!).href,
+      publisher: organizationSchema(Astro.site!),
+      blogPost: posts.map((post) => ({
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.summary,
+        url: new URL(post.path, Astro.site!).href,
+        dateModified: post.updated,
+        author: organizationSchema(Astro.site!),
+      })),
+    })}
+  />
 </SiteLayout>
+
+<style>
+  .answers {
+    margin-top: 44px;
+  }
+  .answers h2 {
+    margin: 0 0 12px;
+    font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+    font-size: clamp(22px, 2.6vw, 28px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: #f3eeff;
+  }
+  .answers > p {
+    max-width: 70ch;
+    line-height: 1.7;
+    color: #cfc4ea;
+  }
+  .posts {
+    list-style: none;
+    margin: 28px 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .posts li {
+    padding: 22px 24px;
+    border-radius: 22px;
+    background: #120b22;
+    border: 1px solid rgba(214, 187, 255, 0.14);
+  }
+  .posts .post-title {
+    margin: 0;
+    max-width: none;
+    font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+  .posts .post-title a {
+    color: #fff;
+    text-decoration: none;
+  }
+  .posts .post-title a:hover {
+    text-decoration: underline;
+  }
+  .posts p {
+    margin: 10px 0 0;
+    max-width: 70ch;
+    line-height: 1.7;
+    color: #cfc4ea;
+  }
+  .posts .meta {
+    font-size: 14px;
+    color: #a79dc4;
+  }
+</style>
