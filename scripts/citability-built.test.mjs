@@ -27,6 +27,26 @@ const EXCLUDED = {
 // TODO(feat/seo-rank-titles-quotability): remove this temporary list after the
 // sibling PR lands. That worker owns hub copy and these six LFG pages.
 const PENDING_SEO_RANK_TITLES_QUOTABILITY = [
+  '/games/valorant',
+  '/games/league-of-legends',
+  '/games/counter-strike-2',
+  '/games/fortnite',
+  '/games/call-of-duty',
+  '/games/apex-legends',
+  '/games/rainbow-six-siege',
+  '/games/marvel-rivals',
+  '/games/overwatch-2',
+  '/games/dota-2',
+  '/games/rocket-league',
+  '/games/world-of-warcraft',
+  '/games/pubg',
+  '/games/teamfight-tactics',
+  '/games/ea-sports-fc-27',
+  '/games/arc-raiders',
+  '/games/wild-rift',
+  '/games/minecraft',
+  '/games/deadlock',
+  '/games/pokemon-unite',
   '/games/valorant/lfg',
   '/games/fortnite/duos',
   '/games/overwatch-2/lfg',
@@ -35,7 +55,6 @@ const PENDING_SEO_RANK_TITLES_QUOTABILITY = [
   '/games/rainbow-six-siege/lfg',
 ];
 const pendingSiblingRewrite = (path) =>
-  (/^\/games\/[^/]+$/.test(path) && path !== '/games/social') ||
   PENDING_SEO_RANK_TITLES_QUOTABILITY.includes(path);
 
 const sitemapPaths = async () => {
@@ -68,7 +87,7 @@ test('every sitemap content page stays citable', async () => {
           : '');
       const floor = reason ? 0 : FLOOR;
       report.push(
-        `${average.toFixed(1).padStart(5)} (floor ${String(floor).padStart(2)}) ${path}`,
+        `${average.toFixed(1).padStart(5)} (floor ${String(floor).padStart(2)}) ${path}${reason ? `: ${reason}` : ''}`,
       );
       if (average < floor) {
         const worst = [...scored]
@@ -94,6 +113,15 @@ test('every sitemap content page stays citable', async () => {
 
 test('the exception list stays honest', async () => {
   const paths = new Set(await sitemapPaths());
+  assert.equal(
+    new Set(PENDING_SEO_RANK_TITLES_QUOTABILITY).size,
+    PENDING_SEO_RANK_TITLES_QUOTABILITY.length,
+    'temporary URLs are unique',
+  );
+  for (const path of PENDING_SEO_RANK_TITLES_QUOTABILITY) {
+    assert(paths.has(path), `${path} is pending but no longer in the sitemap`);
+    assert(!EXCLUDED[path], `${path} cannot be both excluded and pending`);
+  }
   // Social may already be absent from the sitemap, as intended by SEO policy.
   for (const path of Object.keys(EXCLUDED).filter(
     (path) => path !== '/games/social',
