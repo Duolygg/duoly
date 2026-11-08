@@ -8,8 +8,10 @@ import Topics from '../../../components/seo/Topics.astro';
 import Faq from '../../../components/seo/Faq.astro';
 import ClosingCta from '../../../components/seo/ClosingCta.astro';
 import FreeVsPaid from '../../../components/seo/FreeVsPaid.astro';
+import LfgPost from '../../../components/seo/LfgPost.astro';
 import '../../../components/seo/seo.css';
 import '../../../components/seo/free-vs-paid.css';
+import '../../../components/seo/lfg-post.css';
 import { intentPages, intentPath } from '../../../content/intent-pages';
 import { intentOffers } from '../../../server/seo/intent-offers';
 import { gameBySlug } from '../../../site/games';
@@ -64,7 +66,11 @@ const faqItems = guideFaq(page, guidePrices);
   viewer={viewer}
   csrf={csrf}
 >
-  <article class="seo-page" data-intent-page>
+  <article
+    class="seo-page"
+    data-intent-page
+    style={page.accent ? `--lfg-accent: ${page.accent}` : undefined}
+  >
     <Breadcrumbs
       items={[
         { name: 'Home', path: '/' },
@@ -113,7 +119,11 @@ const faqItems = guideFaq(page, guidePrices);
         gameName={game.name}
         art={game.img}
         booking={book}
-      />
+      >
+        {guideCopy.post && (
+          <LfgPost post={guideCopy.post} gameName={game.name} booking={book} />
+        )}
+      </FreeVsPaid>
     )}
     <section class="card" aria-labelledby="prep-h">
       <h2 id="prep-h">{page.prepareHeading ?? 'Before your first game'}</h2>

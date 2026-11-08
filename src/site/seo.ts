@@ -55,6 +55,12 @@ Object.assign(CONTENT_DATES, {
   '/games/marvel-rivals/duo-partner': '2026-11-06',
   '/games/pokemon-unite/teammate': '2026-11-06',
   '/compare/e-pal': '2026-11-07',
+  '/games/valorant/lfg': '2026-11-08',
+  '/games/fortnite/duos': '2026-11-08',
+  '/games/overwatch-2/lfg': '2026-11-08',
+  '/games/apex-legends/lfg': '2026-11-08',
+  '/games/call-of-duty/lfg': '2026-11-08',
+  '/games/rainbow-six-siege/lfg': '2026-11-08',
 });
 // The data-driven game hubs were written together; Valorant and Social keep their own date.
 Object.assign(

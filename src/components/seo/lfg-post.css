@@ -1,0 +1,139 @@
+/*
+ * The "what should your post say" card on the teammate pages, plus the
+ * per-game accent. Every page sets --lfg-accent on the article; the fallback
+ * is the shared purple, so a page without an accent looks unchanged.
+ */
+.seo-page {
+  --lfg-accent: #d6bbff;
+  --lfg-accent-soft: rgba(214, 187, 255, 0.12);
+}
+.lfg-post {
+  border-color: color-mix(in srgb, var(--lfg-accent) 26%, transparent);
+  background:
+    radial-gradient(
+      120% 120% at 100% 0%,
+      color-mix(in srgb, var(--lfg-accent) 9%, transparent),
+      transparent 60%
+    ),
+    #120b22;
+  padding: 26px 22px 24px;
+}
+.lfg-post h2 {
+  margin: 0 0 14px;
+}
+.lfg-post .lfg-tag {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--lfg-accent) 34%, transparent);
+  background: color-mix(in srgb, var(--lfg-accent) 12%, transparent);
+  color: var(--lfg-accent);
+  font-size: 13px;
+  font-weight: 650;
+}
+.lfg-post .lfg-intro {
+  margin: 0;
+}
+.lfg-post .lfg-fields {
+  list-style: none;
+  counter-reset: lfg-field;
+  padding: 0;
+  margin: 20px 0 0;
+  display: grid;
+  gap: 2px;
+}
+.seo-page .lfg-post .lfg-field {
+  counter-increment: lfg-field;
+  max-width: none;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 8.5em) minmax(0, 1fr);
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(196, 170, 255, 0.1);
+}
+.lfg-post .lfg-field::before {
+  content: counter(lfg-field);
+  grid-row: 1;
+  align-self: center;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--lfg-accent) 40%, transparent);
+  color: var(--lfg-accent);
+  font-size: 12px;
+  font-weight: 750;
+}
+.lfg-post .lfg-field-label {
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  color: #f3eeff;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.lfg-post .lfg-chips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.seo-page .lfg-post .lfg-chip {
+  max-width: none;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--lfg-accent) 24%, transparent);
+  background: color-mix(in srgb, var(--lfg-accent) 8%, transparent);
+  color: #e8e0fb;
+  font-size: 14px;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+.lfg-post .lfg-example {
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border-left: 3px solid var(--lfg-accent);
+  background: color-mix(in srgb, var(--lfg-accent) 7%, transparent);
+}
+.lfg-post .btn-sm {
+  margin-top: 18px;
+  align-self: flex-start;
+}
+
+/* The accent also tints the free-versus-paid paid card and the flow arrows. */
+.seo-page .seo-guide .guide-tag-paid {
+  background: var(--lfg-accent);
+}
+.seo-page .seo-guide .guide-paid {
+  border-color: color-mix(in srgb, var(--lfg-accent) 32%, transparent);
+}
+.seo-page .seo-flow .flow-num {
+  background: var(--lfg-accent);
+}
+.seo-page .seo-flow .flow-paid {
+  background: color-mix(in srgb, var(--lfg-accent) 14%, transparent);
+  border-left-color: var(--lfg-accent);
+}
+@media (min-width: 860px) {
+  .seo-page .seo-flow .flow-step:not(:last-child)::after {
+    border-top-color: var(--lfg-accent);
+    border-right-color: var(--lfg-accent);
+  }
+}
+
+@media (max-width: 600px) {
+  .seo-page .lfg-post .lfg-field {
+    grid-template-columns: 26px minmax(0, 1fr);
+  }
+  .lfg-post .lfg-chips {
+    grid-column: 2;
+  }
+  .seo-page .lfg-post .lfg-chip {
+    white-space: normal;
+  }
+}
