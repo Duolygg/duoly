@@ -84,11 +84,21 @@ const faqItems = guideFaq(page, guidePrices);
       facts={page.facts}
     />
     <section aria-labelledby="format-h">
-      <h2 id="format-h">What you get when you book</h2>
+      <h2 id="format-h">
+        {page.formatHeading ?? 'What you get when you book'}
+      </h2>
       <p>{copy.format}</p>
     </section>
-    <Prices gameId={game.id} offers={offers} updated="2026-11-06" />
-    <Steps heading="How matching and booking work" steps={copy.steps}>
+    <Prices
+      gameId={game.id}
+      offers={offers}
+      intro={copy.pricesIntro}
+      updated={page.gameSlug === 'pokemon-unite' ? '2026-11-08' : '2026-11-06'}
+    />
+    <Steps
+      heading={page.stepsHeading ?? 'How matching and booking work'}
+      steps={copy.steps}
+    >
       <p>
         Duoly reviews every teammate before any order. Read about{' '}
         <a href="/contact">the team behind Duoly</a>, check the{' '}
@@ -106,14 +116,14 @@ const faqItems = guideFaq(page, guidePrices);
       />
     )}
     <section class="card" aria-labelledby="prep-h">
-      <h2 id="prep-h">Before your first game</h2>
+      <h2 id="prep-h">{page.prepareHeading ?? 'Before your first game'}</h2>
       <ul class="checklist">
         {copy.prepare.map((tip) => (
           <li>{tip}</li>
         ))}
       </ul>
     </section>
-    <Faq items={faqItems} />
+    <Faq heading={page.faqHeading} items={faqItems} />
     <ClosingCta
       heading={`Ready to play ${game.name} together?`}
       text={

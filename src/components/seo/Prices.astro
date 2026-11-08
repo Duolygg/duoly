@@ -1,5 +1,7 @@
 ---
-import { activityPriceSummary, type seoOffers } from '../../server/seo/offers';
+import { type seoOffers } from '../../server/seo/offers';
+import { pricesAnswer } from '../../server/seo/citable-answers';
+import { SITE_GAMES } from '../../site/games';
 import { bookingHref } from '../../site/seo';
 interface Props {
   gameId: string;
@@ -14,7 +16,7 @@ const {
   offers,
   coach = false,
   intro,
-  updated = '2026-11-05',
+  updated = '2026-11-08',
 } = Astro.props;
 const updatedLabel = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
@@ -26,9 +28,7 @@ const updatedLabel = new Intl.DateTimeFormat('en-GB', {
 const services = [
   ...new Map(offers.map((offer) => [offer.id, offer])).values(),
 ];
-// The provider pill only says something when cards differ; otherwise it goes in the intro.
-const providers = new Set(services.map((service) => service.provider));
-const sameProvider = providers.size === 1;
+// Keep every provider tier visible alongside its service.
 const providerText = (provider: string) =>
   coach ? `${provider} coach` : provider;
 // When every card is the same flat price, say it once instead of on every card.
@@ -52,24 +52,16 @@ const cards = services.map((service) => {
 ---
 
 <section aria-labelledby="prices">
-  <h2 id="prices">Services and prices</h2>
-  {(intro || sameProvider || samePrice) && (
-    <p class="section-intro">
-      {intro ??
-        (samePrice
-          ? activityPriceSummary(offers, coach)
-          : coach
-            ? `All lessons are with ${services[0]!.provider} coaches.`
-            : `All sessions are with ${services[0]!.provider.replace(/^Verified/, 'verified')}s.`)}
-    </p>
-  )}
+  <h2 id="prices">
+    How much does {SITE_GAMES.find((game) => game.id === gameId)?.name}{' '}
+    {coach ? 'coaching' : 'teammate booking'} cost?
+  </h2>
+  <p class="section-intro">{intro ?? pricesAnswer(gameId, offers, coach)}</p>
   <div class="price-grid" data-cols={cols}>
     {cards.map(({ service, rows, cheapest, ranked, varies }) => (
       <article class="card price-card">
-        <h3>{service.title}</h3>
-        {!sameProvider && (
-          <span class="who">{providerText(service.provider)}</span>
-        )}
+        <strong class="service-name">{service.title}</strong>
+        <span class="who">{providerText(service.provider)}</span>
         <p>{service.desc}</p>
         {ranked ? (
           <>
@@ -113,6 +105,20 @@ const cards = services.map((service) => {
     ))}
   </div>
   <p class="price-updated">
-    Prices updated <time datetime={updated}>{updatedLabel}</time>.
+    Prices as of <time datetime={updated}>{updatedLabel}</time>.
   </p>
 </section>
+
+<style>
+  .section-intro {
+    max-width: 75ch;
+  }
+  section[aria-labelledby='prices'] > .section-intro {
+    max-width: none;
+  }
+  .service-name {
+    display: block;
+    font-size: 1.12rem;
+    line-height: 1.3;
+  }
+</style>

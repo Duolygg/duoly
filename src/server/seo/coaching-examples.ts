@@ -1,5 +1,6 @@
 import { sessionExamples } from '../../content/coaching-examples';
 import type { seoOffers } from './offers';
+import { prosePrice } from './citable-answers';
 
 type Offers = ReturnType<typeof seoOffers>;
 
@@ -13,14 +14,23 @@ export function exampleOffers(gameId: string, offers: Offers) {
 const priceOf = (offers: Offers, id: string) => {
   const offer = offers.find((item) => item.id === id);
   if (!offer) throw new Error(`No coaching price for ${id}`);
-  return `${offer.display} per ${offer.unit}`;
+  return prosePrice(offer);
 };
 
-// Copy writes {price:vod}; the page fills in the checkout price and unit for the visitor's currency.
+const amountOf = (offers: Offers, id: string) => {
+  const offer = offers.find((item) => item.id === id);
+  if (!offer) throw new Error(`No coaching price for ${id}`);
+  return `${offer.currency === 'EUR' ? 'EUR' : 'USD'} ${Number(offer.price)}`;
+};
+
+// Copy writes {price:vod} for "EUR 12.99 per hour" and {amount:vod} for "EUR 12.99";
+// the page fills in the checkout price and unit for the visitor's currency.
 export const withPrices = (text: string, offers: Offers) =>
-  text.replace(/\{price:([a-z0-9]+)\}/g, (_, id: string) =>
-    priceOf(offers, id),
-  );
+  text
+    .replace(/\{price:([a-z0-9]+)\}/g, (_, id: string) => priceOf(offers, id))
+    .replace(/\{amount:([a-z0-9]+)\}/g, (_, id: string) =>
+      amountOf(offers, id),
+    );
 
 const article = (word: string) => (/^[AEIOU]/i.test(word) ? 'an' : 'a');
 
@@ -37,34 +47,19 @@ export function sessionLead(
         ? `one live ${gameName} game with ${coach}`
         : `a live 1-hour ${gameName} session with ${coach}`
       : `a 1-hour ${gameName} lesson with ${coach}`;
-  return `${offer.title} is ${what}, priced at ${offer.display} per ${offer.unit}, held with Discord voice and screen share. For example, the goal can be to ${goal.charAt(0).toLowerCase()}${goal.slice(1)}.`;
+  return `${offer.title} is ${what}, at ${prosePrice(offer)} from Duoly, using Discord voice and screen share. For example, the goal can be to ${goal.charAt(0).toLowerCase()}${goal.slice(1)}.`;
 }
 
-// One sentence comparing the other services for the same game, with their real prices.
+// Point to alternatives without repeating the price cards.
 export function compareOthers(offers: Offers, id: string) {
   const others = [
     ...new Map(
       offers
         .filter((offer) => offer.id !== id)
-        .map((offer) => [offer.id, offer]),
+        .map((offer) => [offer.id, offer.title]),
     ).values(),
-  ].map((offer) => `${offer.title} at ${offer.display} per ${offer.unit}`);
-  if (!others.length) return '';
-  const list = new Intl.ListFormat('en', { type: 'conjunction' }).format(
-    others,
-  );
-  return `Compare with ${list}.`;
-}
-
-// The booking answer on every coaching page, built from the real services and prices.
-export function bookingAnswer(gameName: string, offers: Offers) {
-  const services = new Intl.ListFormat('en', {
-    style: 'long',
-    type: 'conjunction',
-  }).format(
-    [...new Map(offers.map((offer) => [offer.id, offer])).values()].map(
-      (offer) => `${offer.title} at ${offer.display} per ${offer.unit}`,
-    ),
-  );
-  return `Booking a ${gameName} coach on Duoly is a three-step checkout. The services are ${services}. Every coach is reviewed by Duoly before taking orders. Your lesson runs on your own ${gameName} account, with voice and screen share on Discord. Write your goal at checkout, for example one matchup, one habit or one recent loss. A clear goal keeps the lesson focused from the first minute. After payment, your coach meets you in the order chat, and the lesson starts with Discord voice.`;
+  ];
+  return others.length
+    ? `Want a different focus? Compare ${new Intl.ListFormat('en', { type: 'conjunction' }).format(others)} above, then name the goal in the order chat before the session starts.`
+    : 'Bring the recording that best shows the decision you want to unpack, and name the goal in the order chat before the session starts.';
 }

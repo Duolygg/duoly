@@ -24,7 +24,11 @@ try {
   }
   if (!ready) throw new Error('Production preview did not start');
   await run(['scripts/seo-audit.mjs']);
-  await run(['--test', 'scripts/seo-built.test.mjs']);
+  await run([
+    '--test',
+    'scripts/seo-built.test.mjs',
+    'scripts/citable-built.test.mjs',
+  ]);
 } finally {
   server.kill();
 }

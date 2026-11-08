@@ -239,9 +239,9 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
       .replace(/<[^>]+>/g, ' ')
       .replace(/&#\d+;|&[a-z]+;/gi, ' ');
     const wordCount = text.trim().split(/\s+/).length;
-    // Pages with the free-versus-paid guide carry two extra sections.
+    // Keep substantive guides without requiring repeated prices or filler in Unite.
     const guided = html.includes('id="free-or-paid"');
-    const [minWords, maxWords] = guided ? [1500, 2400] : [600, 1000];
+    const [minWords, maxWords] = guided ? [1500, 2400] : [1200, 1800];
     assert(
       wordCount >= minWords && wordCount <= maxWords,
       `${path}: ${wordCount} words`,

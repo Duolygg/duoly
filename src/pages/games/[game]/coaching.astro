@@ -8,9 +8,9 @@ import Topics from '../../../components/seo/Topics.astro';
 import Faq from '../../../components/seo/Faq.astro';
 import SessionExamples from '../../../components/seo/SessionExamples.astro';
 import ClosingCta from '../../../components/seo/ClosingCta.astro';
-import { rich } from '../../../components/seo/rich';
 import '../../../components/seo/seo.css';
 import { lessons } from '../../../content/coaching';
+import { closingAnswer } from '../../../server/seo/citable-answers';
 import { intentForGame, intentPath } from '../../../content/intent-pages';
 import { gameBySlug } from '../../../site/games';
 import { pageViewer } from '../../../site/viewer';
@@ -21,9 +21,9 @@ import {
   priceSummary,
   seoOffers,
   serviceSchema,
+  faqSchema,
 } from '../../../server/seo/offers';
 import {
-  bookingAnswer,
   exampleOffers,
   withPrices,
 } from '../../../server/seo/coaching-examples';
@@ -101,24 +101,25 @@ const description = descriptions[game.slug]!;
     />
     <section aria-labelledby="get-h">
       <h2 id="get-h">What does {game.name} coaching cover?</h2>
-      <p set:html={rich(withPrices(lesson.format, offers))} />
+      <p>{withPrices(lesson.format, offers).replaceAll('**', '')}</p>
     </section>
-    <Prices gameId={game.id} offers={offers} coach />
+    <Prices
+      gameId={game.id}
+      offers={offers}
+      coach
+      intro={withPrices(lesson.prices, offers)}
+    />
     <SessionExamples
       gameId={game.id}
       gameName={game.name}
       examples={exampleOffers(game.id, offers)}
     />
     <Steps
-      heading={`How do you book a ${game.name} coach?`}
-      steps={[
-        'Pick your training service and add your goal.',
-        'Check out once, upfront.',
-        'Meet your coach in the order chat and start on Discord, on your own account.',
-      ]}
+      heading={`How do you book ${game.name} coaching?`}
+      steps={lesson.steps.map((step) => withPrices(step, offers))}
     >
       <p>
-        {bookingAnswer(game.name, offers)} See the{' '}
+        {withPrices(lesson.booking, offers)} See the{' '}
         <a href="/terms">payment and refund terms</a> or{' '}
         <a href="/contact">contact support</a> any time.
       </p>
@@ -149,10 +150,10 @@ const description = descriptions[game.slug]!;
     />
     <ClosingCta
       heading={`Ready for your ${game.name} lesson?`}
-      text="Pick a service, add your goal and meet your coach."
-      price={summary}
+      text={closingAnswer(game.name)}
       href={book}
       label={`Book ${game.name} coaching`}
+      price={summary}
       art={{ src: game.img, alt: '' }}
     />
     <nav class="related" aria-label="Related pages">
@@ -182,6 +183,17 @@ const description = descriptions[game.slug]!;
     type="application/ld+json"
     set:html={serializeJsonLd(
       serviceSchema(`${game.name} coaching`, path, offers, Astro.site!),
+    )}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(
+      faqSchema(
+        lesson.faq.map(([q, a]) => [q, withPrices(a, offers)]),
+        path,
+        Astro.site!,
+      ),
     )}
   />
 </SiteLayout>
