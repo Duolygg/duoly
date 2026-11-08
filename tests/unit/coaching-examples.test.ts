@@ -102,7 +102,7 @@ describe('coaching page copy prices', () => {
           }),
         );
         for (const [, amount] of rendered.matchAll(
-          /(?:EUR|USD|[€$])\s?([\d.]+)/g,
+          /(?:EUR|USD|[€$])\s?(\d+(?:\.\d+)?)/g,
         ))
           expect(helperPrices).toContain(amount);
         expect(lesson.prices).toMatch(/\{amount:|\{price:/);

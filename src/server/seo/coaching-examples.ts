@@ -60,6 +60,6 @@ export function compareOthers(offers: Offers, id: string) {
     ).values(),
   ];
   return others.length
-    ? `Want a different focus? Compare ${new Intl.ListFormat('en', { type: 'conjunction' }).format(others)} above.`
-    : 'Bring the recording that best shows the decision you want to unpack.';
+    ? `Want a different focus? Compare ${new Intl.ListFormat('en', { type: 'conjunction' }).format(others)} above, then name the goal in the order chat before the session starts.`
+    : 'Bring the recording that best shows the decision you want to unpack, and name the goal in the order chat before the session starts.';
 }

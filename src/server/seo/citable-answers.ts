@@ -52,7 +52,8 @@ export function pricesAnswer(gameId: string, offers: Offers, coach: boolean) {
 
 export function closingAnswer(gameName: string) {
   const goals: Record<string, string> = {
-    Valorant: 'one agent and one round you keep losing, for example a B site retake',
+    Valorant:
+      'one agent and one round you keep losing, for example a B site retake',
     'League of Legends':
       'one matchup and one wave decision, for example a recall that gave up plates',
     'Rocket League':
