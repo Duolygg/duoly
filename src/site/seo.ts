@@ -24,6 +24,7 @@ export const INDEXABLE_PATHS = [
   '/games/social',
   '/get-paid-to-play-games',
   GUIDE_PATH,
+  '/compare/e-pal',
   ...intentPages.map(intentPath),
   ...COACHING_SLUGS.map((slug) => `/games/${slug}/coaching`),
 ];
@@ -38,6 +39,7 @@ Object.assign(CONTENT_DATES, {
   '/games/league-of-legends/play-with-someone': '2026-11-06',
   '/games/marvel-rivals/duo-partner': '2026-11-06',
   '/games/pokemon-unite/teammate': '2026-11-06',
+  '/compare/e-pal': '2026-11-07',
 });
 export function serializeJsonLd(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
