@@ -126,6 +126,57 @@ describe('free versus paid guide', () => {
     expect(faq.at(-1)![1]).toContain('€10.77');
   });
 
+  // The six teammate guides added in this branch; League and Marvel Rivals keep
+  // the PR #180 copy, so the repetition rules below are asserted on these only.
+  const HEADLINE_TOKEN: Record<string, string> = {
+    valorant: 'valPro',
+    fortnite: 'fnPro',
+    'overwatch-2': 'owPro',
+    'apex-legends': 'apexPro',
+    'call-of-duty': 'codPro',
+    'rainbow-six-siege': 'r6Pro',
+  };
+
+  it('states each teammate price once in the table and once in prose', () => {
+    for (const guide of GUIDE_PAGES) {
+      const token = HEADLINE_TOKEN[guide.gameSlug];
+      if (!token) continue;
+      const table = allText(guide.priceRows);
+      const prose = allText({ ...guide, priceRows: [], faqExtra: [] });
+      for (const suffix of ['', '3', '5']) {
+        const needle = `{{${token}${suffix}}}`;
+        expect(table.split(needle)).toHaveLength(2);
+        expect(prose.split(needle).length).toBeLessThanOrEqual(2);
+      }
+      // The free card sells nothing: no price token and no paid bundle percent.
+      const freeCard = allText([
+        guide.freeIntro,
+        guide.freeRoutes,
+        guide.freeGets,
+      ]);
+      expect(freeCard).not.toMatch(/\{\{/);
+      // €0 is the Free tag plus at most one mention in the free card copy.
+      expect(allText(guide).split('€0').length).toBeLessThanOrEqual(2);
+      // One dated claim per card: the links note and the price table caption.
+      const filled = renderTokens(guide, prices);
+      for (const text of [filled.answer, filled.paidExample, filled.flowIntro])
+        expect(text).not.toMatch(/\b20\d\d\b/);
+      expect(guide.linksNote).toMatch(/\b2026\b/);
+      expect(guide.priceCaption).toMatch(/\b2026\b/);
+    }
+  });
+
+  it('gives every hero fact something the heading does not already say', () => {
+    for (const page of intentPages) {
+      if (!HEADLINE_TOKEN[page.gameSlug]) continue;
+      expect(page.facts.length).toBeGreaterThanOrEqual(4);
+      const heading = `${page.h1} ${page.lead}`.toLowerCase();
+      for (const fact of page.facts)
+        expect(heading).not.toContain(fact.toLowerCase());
+      expect(new Set(page.facts).size).toBe(page.facts.length);
+    }
+  });
+
   it('keeps the copy style rules', () => {
     for (const guide of GUIDE_PAGES) {
       const page = intentPages.find(

@@ -318,9 +318,10 @@ export const intentPages: IntentPage[] = [
       dm: 'Deathmatch and Team Deathmatch together as an aim warm-up before you queue ranked.',
     },
     facts: [
-      'Competitive, Swiftplay or Unrated',
+      'Checked by Duoly before any order',
+      'Ascendant+, Immortal+ or Radiant partners',
       'Duelist, Controller, Initiator or Sentinel',
-      'One teammate, your own account',
+      'Your own account, on EU, NA, AP, KR, BR or LATAM',
     ],
     format:
       'A Duoly teammate booking is a paid session where one reviewed Valorant player queues with you on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Competitive service with an Immortal+ teammate. For example, a Gold player on EU pays {{valPro}} per game for Duo Pro in November 2026. Bundles lower the total: 3 games get {{pct3}} off, 5 games get {{pct5}} off and 10 games get {{pct10}} off. Swiftplay costs {{valSwift}} per game, Unrated costs {{valUnrated}} and a Deathmatch warm-up costs {{valDm}}. Your teammate fills 1 of the 5 seats, so the other 3 players still come from the normal queue. Every booking opens an order chat on Duoly, where you agree on agents, voice and a start time before the first game. For a lesson on one agent, choose Valorant coaching from Duoly instead.',
@@ -409,9 +410,10 @@ export const intentPages: IntentPage[] = [
       box: 'An hour of Creative box fights with an Unreal teammate who shows you how each build went.',
     },
     facts: [
-      'Ranked Duos, Zero Build or Reload',
-      'Builds or no builds, your call',
-      'Booked by the hour',
+      'Checked by Duoly before any order',
+      'Champion+, Unreal or tournament-level partners',
+      'PC, PlayStation, Xbox or Switch, either input',
+      'Your own account, Europe through to Oceania',
     ],
     format:
       'A Duoly duo booking is a paid session where one reviewed Fortnite player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Ranked service with an Unreal teammate. For example, a Platinum player in Europe pays {{fnPro}} per hour for Duo Pro in November 2026. Bundles lower the total: 3 hours get {{pct3}} off, 5 hours get {{pct5}} off and 10 hours get {{pct10}} off. Zero Build costs {{fnZb}} per hour, Reload costs {{fnReload}} and Creative box fights cost {{fnBox}}. Your partner fills the second seat in Duos, so a Trio or a Squad still pulls the rest from the queue or your friends list. Every booking opens an order chat on Duoly, where you agree on drop spots, voice and a start time. For building drills alone, choose Fortnite coaching from Duoly instead.',
@@ -499,9 +501,10 @@ export const intentPages: IntentPage[] = [
       qp: 'Quick Play and Arcade with a strong teammate for relaxed games and hero practice.',
     },
     facts: [
-      'Competitive, Quick Play or Stadium',
-      'Tank, Damage or Support',
-      'One teammate, your own account',
+      'Checked by Duoly before any order',
+      'Diamond+, Master+ or Grandmaster+ partners',
+      'Tank, Damage or Support, whichever seat is open',
+      'Your own account, on Europe, Americas or Asia',
     ],
     format:
       'A Duoly teammate booking is a paid session where one reviewed Overwatch 2 player joins your group on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Competitive service with a Master+ teammate. For example, a Platinum player in Europe pays {{owPro}} per game for Duo Pro in November 2026. Bundles lower the total: 3 games get {{pct3}} off, 5 games get {{pct5}} off and 10 games get {{pct10}} off. Quick Play and Arcade cost {{owQp}} per game, and a Stadium run costs {{owStadium}}. Your teammate fills 1 of the 5 seats, so the other 3 players still come from the normal queue. Every booking opens an order chat on Duoly, where you agree on roles, voice and a start time before the first game. For a role lesson, choose Overwatch coaching from Duoly instead.',
@@ -588,9 +591,10 @@ export const intentPages: IntentPage[] = [
       pubs: 'An hour of unranked battle royale while you learn a legend with someone covering you.',
     },
     facts: [
-      'Ranked, Duos playlist or Mixtape',
+      'Checked by Duoly before any order',
+      'Diamond+, Master or Apex Predator partners',
       'Assault, Skirmisher, Recon, Controller or Support',
-      'Booked by the hour',
+      'Your own account, Europe through to Oceania',
     ],
     format:
       'A Duoly teammate booking is a paid session where one reviewed Apex Legends player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Ranked service with a Master or Apex Predator teammate. For example, a Platinum player in Europe pays {{apexPro}} per hour for Duo Pro in November 2026. Bundles lower the total: 3 hours get {{pct3}} off, 5 hours get {{pct5}} off and 10 hours get {{pct10}} off. The Duos playlist costs {{apexDuos}} per hour, Mixtape costs {{apexMix}} and unranked pubs cost {{apexPubs}}. In trios your booked teammate fills 1 of the 3 seats, so the third seat still comes from auto fill or a friend. Every booking opens an order chat on Duoly for legends, voice and a start time. For movement drills alone, choose Apex coaching from Duoly instead.',
@@ -681,9 +685,10 @@ export const intentPages: IntentPage[] = [
         'An hour of unranked multiplayer and party playlists, played purely for fun.',
     },
     facts: [
-      'Warzone, Resurgence or Ranked Play',
-      'Battle royale or multiplayer',
-      'Booked by the hour',
+      'Checked by Duoly before any order',
+      'Crimson+ or Iridescent partners for Ranked',
+      'PC, PlayStation or Xbox, either input',
+      'Your own account, Europe through to Oceania',
     ],
     format:
       'A Duoly teammate booking is a paid session where one reviewed Call of Duty player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Warzone duos service, at {{codPro}} per hour for every rank in November 2026. Bundles lower the total: 3 hours get {{pct3}} off, 5 hours get {{pct5}} off and 10 hours get {{pct10}} off. Warzone Ranked with an Iridescent teammate costs {{codRanked}} per hour at Platinum, multiplayer Ranked Play costs {{codPlus}}, Resurgence costs {{codRebirth}}, Zombies costs {{codZombies}} and party modes cost {{codParty}}. In a quad your booked teammate fills 1 of the 4 seats, so the rest still come from your party or fill. For example, 3 Warzone hours cost {{codPro3}} with {{pct3}} off. Every booking opens an order chat on Duoly, where modes, voice and a start time are agreed using Discord before the first drop.',
@@ -772,9 +777,10 @@ export const intentPages: IntentPage[] = [
         'Arcade playlists and Deathmatch together as a warm-up between Ranked games.',
     },
     facts: [
-      'Ranked, Quick Match or Arcade',
+      'Checked by Duoly before any order',
+      'Emerald+, Diamond+ or Champion-level partners',
       'Entry, support, anchor or roam',
-      'One teammate, your own account',
+      'Your own account, EU West through to Japan East',
     ],
     format:
       'A Duoly teammate booking is a paid session where one reviewed Rainbow Six Siege player queues with you on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Ranked service with a Diamond+ teammate. For example, a Gold player on EU West pays {{r6Pro}} per game for Duo Pro in November 2026. Bundles lower the total: 3 games get {{pct3}} off, 5 games get {{pct5}} off and 10 games get {{pct10}} off. Quick Match costs {{r6Quick}} per game, and Arcade and Deathmatch cost {{r6Arcade}}. Your teammate fills 1 of the 5 seats, so the other 3 players still come from the normal queue. Every booking opens an order chat on Duoly, where you agree on operators, voice and a start time before the first round.',
