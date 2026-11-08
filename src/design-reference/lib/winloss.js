@@ -9,7 +9,7 @@
 // checks they match.
 import { servicesFor } from './catalog';
 
-export const WL_GAMES = ['lol', 'val', 'cs2', 'r6', 'mr', 'ow', 'rl', 'pu'];
+export const WL_GAMES = ['lol', 'val', 'cs2', 'r6', 'mr', 'ow', 'rl', 'pu', 'dota', 'wr', 'dl'];
 const PLACEMENT = { lol: ['arena'] };
 
 /** game id -> service ids that get a win/loss report */

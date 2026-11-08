@@ -178,23 +178,23 @@ describe('server-owned quote preview', () => {
     }
   }
 
-  it('prices Flex Squad per seat with the bundle discount on the whole team', () => {
+  it('prices Flex Squad per seat with the 5-game discount on the whole team', () => {
     const seat = Math.round(rankPrice('lol', 'flex', 7.99, 'Gold') * 100);
     const quote = calculateQuote(
       {
         gameId: 'lol',
         serviceId: 'flex',
-        units: 3,
+        units: 5,
         server: 'EUW',
         rank: 'Gold',
         seats: 3,
       },
       trusted,
     );
-    // seat price × 3 seats × 3 games, minus the 10% three-game bundle on the whole team
+    // seat price × 3 seats × 5 games, minus the 20% five-game discount on the whole team
     expect(quote.unitPriceEurMinor).toBe(seat * 3);
-    expect(quote.subtotalEurMinor).toBe(seat * 9);
-    expect(quote.amountEurMinor).toBe(Math.round(seat * 9 * 0.9));
+    expect(quote.subtotalEurMinor).toBe(seat * 15);
+    expect(quote.amountEurMinor).toBe(Math.round(seat * 15 * 0.8));
     expect(quote.teammate.amountMinor).toBe(
       Math.round(Math.floor(quote.amountEurMinor / 3) * 0.6 * 1.08) - 1,
     );
@@ -233,19 +233,15 @@ describe('server-owned quote preview', () => {
     expect(() => parseQuoteInput({ ...selection, seats: 2 })).toThrow('seat');
   });
 
+  // Owner decision 2026-11-08: the picker sells 1 to 5 and only 5 is discounted (20%).
   it.each([
     [1, 0, 399],
     [2, 0, 798],
-    [3, 10, 1077],
+    [3, 0, 1197],
     [4, 0, 1596],
-    [5, 15, 1696],
-    [6, 0, 2394],
-    [7, 0, 2793],
-    [8, 0, 3192],
-    [9, 0, 3591],
-    [10, 25, 2993],
+    [5, 20, 1596],
   ])(
-    'prices %i units with only exact source quantity tiers',
+    'prices %i picker units with 20%% off only at 5',
     (units, percent, expected) => {
       const quote = calculateQuote({ ...selection, units }, trusted);
       expect(quote.amountEurMinor).toBe(expected);
@@ -253,6 +249,70 @@ describe('server-owned quote preview', () => {
       expect(quote.subtotalEurMinor - quote.discountEurMinor).toBe(expected);
     },
   );
+
+  it.each([6, 7, 8, 9, 10])('refuses %i units outside a bundle', (units) => {
+    expect(() => calculateQuote({ ...selection, units }, trusted)).toThrow(
+      'Invalid quantity',
+    );
+  });
+
+  // The Bundles tab is unchanged: the main service in packs of 3, 5 and 10.
+  it.each([
+    [3, 10, 1077],
+    [5, 20, 1596],
+    [10, 25, 2993],
+  ])('prices a %i-unit bundle at %i%% off', (units, percent, expected) => {
+    const quote = calculateQuote(
+      { ...selection, units, bundle: true },
+      trusted,
+    );
+    expect(quote.amountEurMinor).toBe(expected);
+    expect(quote.quantityDiscountPercent).toBe(percent);
+  });
+
+  it('only sells bundles of the main service, one teammate, in 3, 5 or 10', () => {
+    for (const bad of [
+      { ...selection, units: 4, bundle: true },
+      { ...selection, units: 1, bundle: true },
+      { ...selection, serviceId: 'duo1', units: 3, bundle: true },
+      {
+        ...selection,
+        serviceId: 'vod',
+        units: 3,
+        bundle: true,
+        rank: undefined,
+      },
+    ])
+      expect(() => calculateQuote(bad, trusted)).toThrow('Invalid bundle');
+  });
+
+  // Owner decision 2026-11-08: a cheaper tier is always cheaper, at every rank.
+  for (const gameId of GAME_IDS) {
+    const modes = servicesFor(gameId).modes as { id: string; price: number }[];
+    const tiers = ['duo1', 'duo2', 'duo3']
+      .map((id) => modes.find((m) => m.id === id))
+      .filter((m): m is { id: string; price: number } => !!m);
+    if (tiers.length < 2) continue;
+    it(`keeps Plus < Pro < Apex at every rank: ${gameId}`, () => {
+      const ladder = ranksOf(gameId, tiers[0]!.id);
+      for (const rank of ladder.length ? ladder : [undefined]) {
+        for (let i = 1; i < tiers.length; i++) {
+          const lower = tiers[i - 1]!;
+          const upper = tiers[i]!;
+          // only tiers on the same ladder compete (CS2 FACEIT, TFT Double Up are other products)
+          if (
+            ranksOf(gameId, upper.id).join() !==
+            ranksOf(gameId, lower.id).join()
+          )
+            continue;
+          expect(
+            rankPrice(gameId, upper.id, upper.price, rank),
+            `${gameId} ${rank} ${upper.id}`,
+          ).toBeGreaterThan(rankPrice(gameId, lower.id, lower.price, rank));
+        }
+      }
+    });
+  }
 
   for (const gameId of GAME_IDS) {
     for (const service of servicesFor(gameId).modes.filter(
@@ -262,7 +322,7 @@ describe('server-owned quote preview', () => {
         const input = {
           gameId,
           serviceId: service.id,
-          units: 10,
+          units: 5,
           server: gameId === 'mc' ? 'Hypixel' : serversFor(gameId)[0]![0],
           ...(gameId === 'mc' ? { edition: 'Java' } : {}),
         };
@@ -272,7 +332,7 @@ describe('server-owned quote preview', () => {
           { ...trusted, firstCoachingSessionEligible: false },
         ]) {
           const quote = calculateQuote(input, context);
-          expect(quote.amountEurMinor).toBe(fullPrice * 10);
+          expect(quote.amountEurMinor).toBe(fullPrice * 5);
           expect(quote.quantityDiscountPercent).toBe(0);
         }
         const eligible = calculateQuote(input, {
@@ -282,7 +342,7 @@ describe('server-owned quote preview', () => {
         const promotionalPrice = service.was
           ? Math.round(service.price * 100)
           : fullPrice;
-        expect(eligible.amountEurMinor).toBe(fullPrice * 9 + promotionalPrice);
+        expect(eligible.amountEurMinor).toBe(fullPrice * 4 + promotionalPrice);
         expect(eligible.firstSessionDiscountEurMinor).toBe(
           fullPrice - promotionalPrice,
         );
@@ -310,7 +370,7 @@ describe('server-owned quote preview', () => {
   it.each([1.08, 1.123456, 0.75, 2.4])(
     'splits marked-up customer FX from mid-rate teammate FX at %s',
     (rate) => {
-      const input = { ...selection, units: 3 };
+      const input = { ...selection, units: 3, bundle: true };
       const eur = calculateQuote(input, { eurToUsd: rate });
       const usd = calculateQuote(input, {
         eurToUsd: rate,

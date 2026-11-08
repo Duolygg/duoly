@@ -43,6 +43,11 @@ export const POST_GAMES: Record<string, PostGame> = Object.fromEntries(
       ['arc', 'ARC Raiders', 'ARC Raiders', 'arc-raiders'],
       ['mc', 'Minecraft', 'Minecraft', 'minecraft'],
       ['pu', 'Pokémon Unite', 'Pokémon Unite', 'pokemon-unite'],
+      ['dota', 'Dota 2', 'Dota 2', 'dota-2'],
+      ['wow', 'World of Warcraft', 'WoW', 'world-of-warcraft'],
+      ['pubg', 'PUBG: Battlegrounds', 'PUBG', 'pubg'],
+      ['wr', 'Wild Rift', 'Wild Rift', 'wild-rift'],
+      ['dl', 'Deadlock', 'Deadlock', 'deadlock'],
       ['social', 'Social', 'Social', 'social'],
     ] as const
   ).map(([id, name, short, slug]) => [

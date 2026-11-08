@@ -46,6 +46,15 @@ const rules: Record<string, [string[], string[], string[]]> = {
   arc: [[], ['learn', 'pvp'], ['squad', 'escort']],
   mc: [[], ['pvp', 'bw'], ['squad', 'mini']],
   pu: [['duo1', 'duo2', 'duo3'], ['learn', 'draft'], ['squad']],
+  dota: [['duo1', 'duo2', 'duo3'], ['learn', 'replay', 'hero'], ['party5']],
+  wow: [
+    ['duo1', 'duo2', 'arena'],
+    ['learn', 'class'],
+    ['keys', 'arena3'],
+  ],
+  pubg: [['duo1', 'duo2'], ['learn', 'spray'], ['squad']],
+  wr: [['duo1', 'duo2', 'duo3'], ['learn', 'champ'], ['five']],
+  dl: [['duo1', 'duo2', 'duo3'], ['learn', 'macro'], ['six']],
 };
 export function goalOf(text?: string, explicit?: Goal): Goal | undefined {
   if (explicit) return explicit;

@@ -14,12 +14,18 @@ export const callOfDuty: HubPageCopy = {
     'Warzone, Ranked Play and Resurgence',
     'Priced per hour, your own account',
   ],
-  related: ['fortnite', 'apex-legends', 'counter-strike-2', 'arc-raiders'],
+  related: [
+    'fortnite',
+    'apex-legends',
+    'counter-strike-2',
+    'arc-raiders',
+    'pubg',
+  ],
   intent:
     'Just after a squad for tonight, free or paid? The dedicated page sets the free Discords next to Warzone and Ranked Play sessions you can book.',
   format: {
     heading: 'What can you book for Call of Duty on Duoly?',
-    text: 'Duoly sells Call of Duty by the hour, because a Warzone match has no fixed length. One booked hour buys a reviewed higher-rank player in your squad on your own account: Duo Plus covers multiplayer Ranked Play with a Crimson+ teammate, Duo Pro covers Warzone duos at a flat {{p_duo2}} per hour, and Warzone Ranked brings an Iridescent player. Ranked Play follows your own rank, from {{p_duo1_low}} to {{p_duo1_high}} per hour on Duo Plus, while Party Modes stays {{p_party}} and Zombies Run {{p_zombies}}. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Quad fills cover Warzone and Ranked Play. Activision keeps Crimson and above inside one skill division when they party, so share your rank in the order chat first.',
+    text: 'Duoly sells Call of Duty by the hour, because a Warzone match has no fixed length. One booked hour buys a reviewed higher-rank player in your squad on your own account: Duo Plus covers multiplayer Ranked Play with a Crimson+ teammate, Duo Pro covers Warzone duos at {{p_duo2}} per hour for {{rank_duo2}}, and Warzone Ranked brings an Iridescent player. All three duo tiers follow your own rank, from {{p_duo1_low}} to {{p_duo1_high}} per hour on Duo Plus, while Party Modes stays {{p_party}} and Zombies Run {{p_zombies}}. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Quad fills cover Warzone and Ranked Play. Activision keeps Crimson and above inside one skill division when they party, so share your rank in the order chat first.',
   },
   services: {
     duo1: 'An hour of multiplayer Ranked Play with a Crimson player who holds lanes and plays the objective.',
@@ -55,7 +61,7 @@ export const callOfDuty: HubPageCopy = {
   steps: {
     heading: 'How does booking a Call of Duty duo work?',
     items: [
-      'Pick a service and the number of hours. Duo Pro is the Warzone tier at a flat {{p_duo2}} per hour, and 3 hours cost {{p_duo2_x3}} with the {{pct3}} bundle discount. Five hours take {{pct5}} off.',
+      'Pick a service and the number of hours. Duo Pro is the Warzone tier at {{p_duo2}} per hour for {{rank_duo2}}, and 3 hours cost {{p_duo2_x3}} with the {{pct3}} bundle discount. Five hours take {{pct5}} off.',
       'Add your area, rank, platform and language at checkout. Name Europe, {{rank_duo1}} and controller or keyboard, so your teammate reads the real request before accepting the order.',
       'Meet your teammate in the order chat, agree a drop and check the party limits if you are booking a Ranked tier, then add each other with your Activision ID. A Warzone Ranked hour costs {{p_duo3}} at {{rank_duo3}}.',
     ],
@@ -64,13 +70,13 @@ export const callOfDuty: HubPageCopy = {
   decide: {
     heading: 'Which Call of Duty session fits you?',
     intro:
-      'The right Call of Duty session is the one matching your goal for the hour, so pick the goal first and let the price follow. Warzone duos stay flat at every rank, while the Ranked tiers are priced by your own rank and have party limits to check. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
+      'The right Call of Duty session is the one matching your goal for the hour, so pick the goal first and let the price follow. The duo tiers are priced by your own rank, and the Ranked ones have party limits to check. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
     picks: [
       {
         goal: 'Dropping into Warzone?',
         service: 'duo2',
         answer:
-          'Duo Pro adds a Crimson+ teammate at a flat {{p_duo2}} per hour, loadouts and rotations included.',
+          'Duo Pro adds a Crimson+ teammate from {{p_duo2_low}} per hour, loadouts and rotations included.',
       },
       {
         goal: 'Climbing multiplayer Ranked Play?',
@@ -102,8 +108,8 @@ export const callOfDuty: HubPageCopy = {
     {
       heading: 'Warzone or multiplayer: which duo should you book?',
       paragraphs: [
-        'Warzone and multiplayer need different teammates, so Duoly prices the two separately. Duo Pro is the Warzone tier at a flat {{p_duo2}} per hour, with a player who knows the current loot pool, the gulag and when a rotation beats a fight. Duo Plus is the multiplayer Ranked Play tier, priced by your own rank: {{p_duo1}} per hour at {{rank_duo1}} and {{p_duo1_high}} at {{rank_duo1_high}}.',
-        'Ranked Play is also where the party rules bite. Activision keeps Crimson, Iridescent and Top 250 players inside one skill division of whoever they queue with, so a {{rank_duo1}} account pairs with a Crimson teammate and stops short of Iridescent. Unranked Warzone and the party playlists carry no such limit, which is why the flat-price services are the easy ones to book. Resurgence sits between the two: Rebirth Duo costs {{p_rebirth}} per hour on the small island, where respawns keep a session moving and a wipe is rarely the end.',
+        'Warzone and multiplayer need different teammates, so Duoly prices the two separately. Duo Pro is the Warzone tier, {{p_duo2}} per hour at {{rank_duo2}}, with a player who knows the current loot pool, the gulag and when a rotation beats a fight. Duo Plus is the multiplayer Ranked Play tier, priced by your own rank: {{p_duo1}} per hour at {{rank_duo1}} and {{p_duo1_high}} at {{rank_duo1_high}}.',
+        'Ranked Play is also where the party rules bite. Activision keeps Crimson, Iridescent and Top 250 players inside one skill division of whoever they queue with, so a {{rank_duo1}} account pairs with a Crimson teammate and stops short of Iridescent. Unranked Warzone and the party playlists carry no such limit, which is why the Warzone and party services are the easy ones to book. Resurgence sits between the two: Rebirth Duo costs {{p_rebirth}} per hour on the small island, where respawns keep a session moving and a wipe is rarely the end.',
       ],
     },
     {
@@ -137,7 +143,7 @@ export const callOfDuty: HubPageCopy = {
       ],
       [
         'How much does a Warzone duo cost?',
-        'Duo Pro is a flat {{p_duo2}} per hour at every rank. Warzone Ranked is {{p_duo3}} per hour at {{rank_duo3}}, because placement points need a stronger player.',
+        'Duo Pro is {{p_duo2}} per hour at {{rank_duo2}}, from {{p_duo2_low}} at the lowest rank, and always costs more than Duo Plus. Warzone Ranked is {{p_duo3}} per hour at {{rank_duo3}}, because placement points need a stronger player.',
       ],
       [
         'Why per hour instead of per match?',
@@ -159,6 +165,6 @@ export const callOfDuty: HubPageCopy = {
   },
   closing: {
     heading: 'Ready to drop into Warzone?',
-    text: 'Duo Pro is the Warzone tier with a Crimson+ teammate at a flat {{p_duo2}} per hour from Duoly, and 3 hours cost {{p_duo2_x3}} with {{pct3}} off. Zombies Run stays {{p_zombies}} per hour. Agree your drop on Discord, then add each other in game.',
+    text: 'Duo Pro is the Warzone tier with a Crimson+ teammate from Duoly, {{p_duo2}} per hour at {{rank_duo2}}, and 3 hours cost {{p_duo2_x3}} with {{pct3}} off. Zombies Run stays {{p_zombies}} per hour. Agree your drop on Discord, then add each other in game.',
   },
 };

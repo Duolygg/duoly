@@ -9,6 +9,7 @@ import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { resolveGame, services } from './catalog';
 import template from './card.html?raw';
 import script from './card-view.js?raw';
+import { QUANTITIES } from '../../contracts/pricing';
 
 export const CARD_URIS: Record<string, string> = {
   find_session: 'ui://duoly/session-v1.html',
@@ -80,7 +81,7 @@ export function cardData(
         .map((s) => {
           const prices = Object.fromEntries(
             (s.ranks.length ? s.ranks : ['']).map((rank) => {
-              const totals = Array.from({ length: 10 }, (_, i) =>
+              const totals = Array.from({ length: QUANTITIES.length }, (_, i) =>
                 calculateQuote(
                   {
                     gameId: game.id,

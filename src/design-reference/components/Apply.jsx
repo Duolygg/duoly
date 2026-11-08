@@ -75,7 +75,12 @@ export default class Apply extends React.Component {
       fc: { min: 'Division 1 in Rivals', ranks: ['Division 1', 'Elite Division'] },
       arc: { min: 'Experienced raider', ranks: ['Experienced raider', 'Veteran raider', 'Elite raider'] },
       mc: { min: 'Skilled PvPer or survival / SMP expert', ranks: ['Skilled PvPer', 'Top PvPer', 'Survival & SMP expert'] },
-      pu: { ranks: ['Ultra', 'Master', 'Legend'] }
+      pu: { ranks: ['Ultra', 'Master', 'Legend'] },
+      dota: { ranks: ['Ancient', 'Divine', 'Immortal'] },
+      wow: { min: 'Mythic+ 2,500+ or Duelist in arena', ranks: ['Mythic+ 2,500–2,999', 'Mythic+ 3,000–3,499', 'Mythic+ 3,500+', 'Duelist 2,100+', 'Elite 2,400+', 'Gladiator'] },
+      pubg: { ranks: ['Diamond', 'Master', 'Survivor'] },
+      wr: { ranks: ['Diamond', 'Master', 'Grandmaster', 'Challenger', 'Sovereign'] },
+      dl: { ranks: ['Oracle', 'Phantom', 'Ascendant', 'Eternus'] }
     };
     const GAMES = GAME_LIST.filter((x) => NEEDS[x.id]).map((x) => ({ ...x, min: NEEDS[x.id].min || NEEDS[x.id].ranks[0] + ' or higher', ranks: NEEDS[x.id].ranks }));
     const g = GAMES.find((x) => x.id === f.game) || GAMES[0];

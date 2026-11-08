@@ -113,7 +113,7 @@ export const counterStrike2: HubPageCopy = {
     {
       heading: 'Example evening: three Duo Plus matches on EU West',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EU West books 3 Duo Plus matches with a Premier 15,000+ teammate, which keeps the party gap small enough to queue comfortably. The total is {{p_duo1_x3}} with the {{pct3}} bundle discount, against {{p_duo1}} for one match. The order chat opens straight after payment, and the first message names the region, the rating and the map pool: Mirage and Anubis, entry on the A side, looking for someone who throws the pop flash.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EU West books 5 Duo Plus matches with a Premier 15,000+ teammate, which keeps the party gap small enough to queue comfortably. The total is {{p_duo1_x5}} with {{pick5}} off, against {{p_duo1}} for one match. The order chat opens straight after payment, and the first message names the region, the rating and the map pool: Mirage and Anubis, entry on the A side, looking for someone who throws the pop flash.',
         'From there the evening runs on a short plan. You agree roles and a default on each map, voice goes on, and the friend request goes out on Steam. After each match you pick one adjustment, such as saving two rounds earlier instead of forcing on 1,500. Duo Pro with a 20,000+ caller costs {{p_duo2}} per match at {{rank_duo2}} if you want the step up, and 5 matches take {{pct5}} off the total.',
       ],
     },

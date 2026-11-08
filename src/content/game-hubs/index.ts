@@ -13,6 +13,11 @@ import { eaSportsFc27 } from './ea-sports-fc-27';
 import { arcRaiders } from './arc-raiders';
 import { minecraft } from './minecraft';
 import { pokemonUnite } from './pokemon-unite';
+import { dota2 } from './dota-2';
+import { worldOfWarcraft } from './world-of-warcraft';
+import { pubg } from './pubg';
+import { wildRift } from './wild-rift';
+import { deadlock } from './deadlock';
 
 /** Finished game hubs, in the order the sitemap lists them (catalog demand order). */
 export const GAME_HUBS: HubPageCopy[] = [
@@ -24,10 +29,15 @@ export const GAME_HUBS: HubPageCopy[] = [
   rainbowSixSiege,
   marvelRivals,
   overwatch2,
+  dota2,
   rocketLeague,
+  worldOfWarcraft,
+  pubg,
   teamfightTactics,
   eaSportsFc27,
   arcRaiders,
+  wildRift,
   minecraft,
+  deadlock,
   pokemonUnite,
 ];

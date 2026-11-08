@@ -732,9 +732,9 @@ export const intentPages: IntentPage[] = [
     faqHeading: 'Questions before you drop?',
     pricesChecked: '2026-11-08',
     pricesIntro:
-      'A Call of Duty teammate booking is an hourly price, and only the 2 Ranked services move with your rank. First, pick the mode, because Warzone duos, Resurgence, round-based Zombies and the party playlists hold one price at every rank. Second, open the rank list on Warzone Ranked or Ranked Play, since a Platinum player and an Iridescent player do not pay the same. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Warzone player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here is read from Duoly checkout, and the line under the cards says when it was last read.',
+      'A Call of Duty teammate booking is an hourly price, and the three duo tiers move with your rank. First, pick the mode, because Resurgence, round-based Zombies and the party playlists hold one price at every rank. Second, open the rank list on Warzone duos, Warzone Ranked or Ranked Play, since a Platinum player and an Iridescent player do not pay the same. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Warzone player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here is read from Duoly checkout, and the line under the cards says when it was last read.',
     format:
-      'A Duoly teammate booking is a paid session where one reviewed Call of Duty player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Warzone duos service at one flat hourly price for every rank. Warzone Ranked and multiplayer Ranked Play are the rank-priced services, with an Iridescent or a Crimson+ teammate, while Resurgence, round-based Zombies and party playlists stay flat. The price table below lists all six together. In a quad your booked teammate fills 1 of the 4 seats, so the rest come from your party or fill. Finally, every booking opens an order chat on Duoly. For example, that is where you agree the mode, the start time and whether voice runs using Discord or in the in-game party. Nobody else logs into your account, and nobody can promise you a placement.',
+      'A Duoly teammate booking is a paid session where one reviewed Call of Duty player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Warzone duos service. It, Warzone Ranked and multiplayer Ranked Play are the rank-priced services, with Crimson+ or Iridescent teammates, while Resurgence, round-based Zombies and party playlists stay flat. The price table below lists all six together. In a quad your booked teammate fills 1 of the 4 seats, so the rest come from your party or fill. Finally, every booking opens an order chat on Duoly. For example, that is where you agree the mode, the start time and whether voice runs using Discord or in the in-game party. Nobody else logs into your account, and nobody can promise you a placement.',
     sections: [
       {
         heading: 'Warzone or multiplayer: which teammate should you book?',
@@ -753,13 +753,13 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'How much does a Call of Duty duo cost?',
         paragraphs: [
-          'Duo Pro is the Warzone duos service on Duoly, and it keeps one flat price of {{codPro}} per hour for every rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Multiplayer Ranked Play with a Crimson+ teammate is {{codPlus}} per hour at Platinum. Finally, every number on this page is read from Duoly checkout rather than a list kept by hand, and the price cards carry the date it was last read.',
-          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank.',
+          'Duo Pro is the Warzone duos service on Duoly, at {{codPro}} per hour for a Diamond player, and like the other duo tiers it follows your own rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Multiplayer Ranked Play with a Crimson+ teammate is {{codPlus}} per hour at Platinum. Finally, every number on this page is read from Duoly checkout rather than a list kept by hand, and the price cards carry the date it was last read.',
+          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank, so only the three duo tiers move with your rank.',
         ],
       },
     ],
     steps: [
-      'Choose a service and a total hour count first, before checkout. Duo Pro is the Warzone duos service from Duoly at one flat hourly price, and the hour count is what decides your bundle discount.',
+      'Choose a service and a total hour count first, before checkout. Duo Pro is the Warzone duos service from Duoly, priced by your rank, and the hour count is what decides your discount.',
       'Second, add your platform, region, rank, input and language. For example, name Europe or North America, PlayStation or PC, and whether the session is Warzone, Resurgence, multiplayer Ranked Play or round-based Zombies.',
       'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the drop and the loadout plan, then invite with your Activision ID. The chat stays open for the whole order, so a later hour starts from the same place.',
     ],
@@ -774,7 +774,7 @@ export const intentPages: IntentPage[] = [
     faq: [
       [
         'Can I book a Warzone duo for one hour?',
-        'Yes, Warzone duos are booked by the hour at one flat price for every rank, starting from a single hour.',
+        'Yes, Warzone duos are booked by the hour at a price that follows your rank, starting from a single hour.',
       ],
       [
         'Can we play Warzone Ranked together?',
@@ -798,7 +798,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Warzone duos session from Duoly, at one flat hourly price for every rank, with bundle discounts on 3, 5 and 10 hours. For example, ask for a Resurgence hour first if the pair has never played together. Name the mode you want, name your platform and book the hours you have time for tonight.',
+      'Duo Pro is the Warzone duos session from Duoly, at an hourly price that follows your rank, with bundle discounts on 3, 5 and 10 hours. For example, ask for a Resurgence hour first if the pair has never played together. Name the mode you want, name your platform and book the hours you have time for tonight.',
   },
   {
     slug: 'lfg',

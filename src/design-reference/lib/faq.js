@@ -36,7 +36,7 @@ export const FAQ_TABS = [
     ['How much does a duo cost?',
       'Duos cost ' + eur(gameLo) + ' to ' + eur(gameHi) + ' per game, depending on the game and how high your teammate is ranked. ' + HOURLY_LINE + ' are booked by the hour instead, from ' + eur(hourLo) + ' to ' + eur(hourHi) + ', because a game there has no fixed length. Fun modes start at ' + eur(funLo) + '. You always see the exact total before you pay, in euros or US dollars.'],
     ['Are there discounts for more games?',
-      'Yes. Bundles save 10% on 3 games or hours, 15% on 5 and 25% on 10. Every game has its own three bundles. Duoly PRO members save another 10% on every order.'],
+      'Yes. Book 5 games or hours at once and you save 20%. Every game also has three bundles of its most popular service in the Bundles tab: 10% off 3, 20% off 5 and 25% off 10. Duoly PRO members save another 10% on every order.'],
     ['Which payment methods can I use?',
       'Apple Pay, Google Pay, PayPal and all major credit and debit cards. Payments go through a secure checkout, and we never see or store your card details.'],
     ['Can I cancel or get a refund?',

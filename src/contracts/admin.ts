@@ -13,11 +13,16 @@ export const GAME_IDS = [
   'r6',
   'mr',
   'ow',
+  'dota',
   'rl',
+  'wow',
+  'pubg',
   'tft',
   'fc',
   'arc',
+  'wr',
   'mc',
+  'dl',
   'pu',
 ] as const;
 export const GameIdSchema = z.enum(GAME_IDS);

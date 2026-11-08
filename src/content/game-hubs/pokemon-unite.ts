@@ -14,7 +14,12 @@ export const pokemonUnite: HubPageCopy = {
     'Ranked, Standard and Quick Battle',
     'Voice on Discord, your own account',
   ],
-  related: ['league-of-legends', 'teamfight-tactics', 'ea-sports-fc-27'],
+  related: [
+    'league-of-legends',
+    'teamfight-tactics',
+    'ea-sports-fc-27',
+    'wild-rift',
+  ],
   intent:
     'After the one-teammate page rather than the whole catalog? It covers lane pairings, objective calls and an example ranked plan in detail.',
   format: {
@@ -104,7 +109,7 @@ export const pokemonUnite: HubPageCopy = {
     {
       heading: 'How does a Full Squad fill work in Unite?',
       paragraphs: [
-        'A Full Squad is one order that hires several players at once, so a part-full group becomes a complete five. The fill covers up to {{seats_squad}} empty seats with Master players at {{p_squad}} per game, and 3 games cost {{p_squad_x3}} with {{pct3}} off. Every seat is priced separately, so a duo short three players sets the seats to three instead of four. Name the roles you want covered, because a second Speedster leaves nobody defending the goal zones.',
+        'A Full Squad is one order that hires several players at once, so a part-full group becomes a complete five. The fill covers up to {{seats_squad}} empty seats with Master players at {{p_squad}} per game, and 5 games cost {{p_squad_x5}} with {{pick5}} off. Every seat is priced separately, so a duo short three players sets the seats to three instead of four. Name the roles you want covered, because a second Speedster leaves nobody defending the goal zones.',
         'Agree the composition before anybody locks a pick: a Defender and a Supporter give your Attacker room to deal damage. Then agree the lane split, who takes the central area, who contests the final objective and who scores. Keep everybody on one call, since Zapdos is decided by whoever groups first. The two-rank invite window applies to a squad as well, so build the five around the ranks you actually have. Bundles still apply, {{pct3}} off 3 games and {{pct5}} off 5.',
       ],
     },

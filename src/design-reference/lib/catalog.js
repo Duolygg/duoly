@@ -227,7 +227,7 @@ export const CATALOG = {
       ['squad', 'other', 'Server Squad', 'Skilled PvPers', 'We fill your team for Bedwars fours, SkyWars teams, Hunger Games or UHC events with players who know the mode.', 9.99, { unit: 'hour' }],
       ['surv', 'duo', 'Survival Together', 'Friendly builder', 'Start a world or join yours: build a base, go mining and explore together at your own pace.', 8.49, { unit: 'hour', fun: true }],
       ['dragon', 'duo', 'Beat the Game', 'Experienced partner', 'From a fresh world to the Ender Dragon: get gear, find a stronghold and take her down together.', 9.49, { unit: 'hour', badge: 'Popular', fun: true }],
-      ['manhunt', 'duo', 'Manhunt', 'Top PvPer · speedrunner vs hunter', 'You speedrun with one life and have to kill the Ender Dragon, while your teammate hunts you with a compass that always points to you. They respawn, you don’t. One flat price per run, however long it takes (most last 30 to 90 minutes). They bring the setup, and you can swap roles.', 16.99, { unit: 'game', badge: 'New', fun: true }],
+      ['manhunt', 'duo', 'Manhunt', 'Top PvPer · speedrunner vs hunter', 'Speedrun to the Ender Dragon with one life while your teammate hunts you down. One price per run, however long it takes, and you can swap roles.', 16.99, { unit: 'game', badge: 'New', fun: true }],
       ['hard', 'duo', 'Hardcore Survival', 'Experienced partner', 'One life, together. See how far you get before it goes wrong.', 8.99, { unit: 'hour', badge: 'Fun', fun: true }],
       ['mini', 'duo', 'Minigames Night', 'Fun partner', 'Bedwars, SkyWars, Build Battle, Murder Mystery, parkour and more on your favourite server.', 7.99, { unit: 'hour', fun: true }],
       ...gg('hour', 'survival, building or minigames', 'PvP-main', 'your Bedwars and SkyWars stats', [10.49, 10.99], 'Minecraft', 'PvP duels with sword, bow and rod'),
@@ -246,6 +246,81 @@ export const CATALOG = {
       ...gg('game', 'Standard or Quick Battle', 'Ultra+', 'Ranked', [2.49, 2.99], 'Pokémon Unite', '1v1 custom matches'),
       playLearn('Master', 4.99, 'Ranked match'),
       ['draft', 'training', 'Draft & Macro', 'Master coach · 1 hour', 'Picks that work together, objective timing and when to rotate.', COACHING_PRICE, { unit: 'hour' }]
+    ]
+  },
+
+  // Added 2026-11-08. Matches run long in Dota 2 (about 40 minutes) and Deadlock (about 35), so a game
+  // costs a little more than in League; Wild Rift games are short (15 to 20 minutes) and priced like
+  // the other mobile MOBA, Pokémon Unite. PUBG and World of Warcraft have no fixed match length: hourly.
+  dota: {
+    unit: 'game', main: 'duo2', bundles: ['First Blood', 'Roshan Pit', 'Aegis Run'],
+    services: [
+      ['duo1', 'duo', 'Duo Plus', 'Ancient+ teammate', 'Ranked with an Ancient player in the position you need. They lane with you, ward, stack and call when to group.', 4.49],
+      ['duo2', 'duo', 'Duo Pro', 'Divine+ teammate', 'Ranked with a Divine player who calls the game: when to smoke, when to take Roshan, which tower is next. Ask anything between games.', 5.49, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Immortal teammate', 'An Immortal player for Ancient and Divine lobbies, when you need a partner who can take over games.', 7.99],
+      ['party5', 'other', 'Ranked 5-Stack', 'Full five · Divine+ players', 'Queue ranked as a real five-stack: Divine+ players in every position you need, a planned draft, one shotcaller and voice comms all game.', 8.49, { badge: 'Popular' }],
+      ['turbo', 'duo', 'Turbo', 'Strong teammate · fast games', 'Fast games of about 20 minutes with more gold and quicker respawns. Great to try a new hero.', 3.49, { badge: 'Fast', fun: true }],
+      ['unranked', 'duo', 'Unranked All Pick', 'Strong teammate', 'A full unranked game to learn a hero or position with a strong player covering for you.', 3.99, { fun: true }],
+      ...gg('game', 'Turbo or unranked games', 'Divine+', 'ranked', [4.99, 5.49], 'Dota 2', '1v1 mid duels: two kills or the first tower wins'),
+      playLearn('Divine+', 0, 'ranked game'),
+      ['replay', 'training', 'Replay Review', 'Immortal coach · 1 hour', 'Send a recent match. Your coach goes through the replay with you (laning, farm, map moves, item timings) and leaves you with three things to fix.', COACHING_PRICE, { unit: 'hour' }],
+      ['hero', 'training', 'Hero & Position Coaching', 'Immortal coach · 1 hour', 'One hero or position, properly: matchups, item builds, farming patterns and when to fight, practised in a live game.', COACHING_PRICE, { unit: 'hour' }]
+    ]
+  },
+  wow: {
+    // Retail World of Warcraft. Mythic+ keys and rated arena have their own rating ladders (lib/ranks.js).
+    unit: 'hour', main: 'duo2', bundles: ['Timed Key', 'Great Vault', 'Keystone Hero'],
+    services: [
+      ['duo1', 'duo', 'Mythic+ Duo', '2,500+ rated teammate', 'An hour of Mythic+ keys with a 2,500+ rated player who knows the routes, the kicks and the pulls, so your keys get timed.', 10.49, { unit: 'hour' }],
+      ['duo2', 'duo', 'Mythic+ Pro', '3,000+ rated teammate', 'An hour of high keys with a 3,000+ rated player who plans the route, calls interrupts and defensives, and explains every pull.', 12.99, { unit: 'hour', badge: 'Most picked' }],
+      ['arena', 'duo', 'Arena 2v2', 'Duelist+ partner · 2v2', 'An hour of rated 2v2 with a Duelist-level partner who calls swaps, crowd control and cooldowns.', 12.99, { unit: 'hour', badge: 'Duo mode' }],
+      ['keys', 'other', 'Key Group Fill', '2,500+ rated players · Mythic+', 'Short on players for your key? We fill your group with 2,500+ rated players on the roles you’re missing.', 10.99, { unit: 'hour' }],
+      ['arena3', 'other', 'Arena 3v3 Team', 'Duelist+ players · 3v3', 'One or two Duelist-level players join you for rated 3v3, with a plan for every comp you meet.', 12.49, { unit: 'hour' }],
+      ['delves', 'duo', 'Delves & World Content', 'Experienced partner', 'Delves, world quests and weekly chores together, done fast and with good company.', 7.99, { unit: 'hour', fun: true }],
+      ['level', 'duo', 'Leveling Buddy', 'Friendly veteran', 'Level a new character together with someone who knows the fastest routes and explains your class as you go.', 7.99, { unit: 'hour', badge: 'Fun', fun: true }],
+      ...gg('hour', 'Delves, leveling or world quests', '2,500+ rated', 'Mythic+', [10.49, 11.49], 'World of Warcraft', 'a classic duel outside the city gates'),
+      playLearn('3,000+ rated', 0, 'hour of Mythic+'),
+      ['class', 'training', 'Class & Rotation Coaching', 'Gladiator or 3,000+ coach · 1 hour', 'Your class and spec, properly: talents, rotation, cooldowns and positioning, checked on a target dummy and in a real key or arena.', COACHING_PRICE, { unit: 'hour' }]
+    ]
+  },
+  pubg: {
+    unit: 'hour', main: 'duo2', bundles: ['Pochinki Drop', 'Blue Zone', 'Chicken Dinner'],
+    services: [
+      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate · Ranked', 'An hour of Ranked with a Diamond player who calls the drop, the rotations and the compound to hold.', 10.49, { unit: 'hour' }],
+      ['duo2', 'duo', 'Duo Pro', 'Master teammate · Ranked', 'An hour of Ranked with a Master player who reads the zone, picks the fights worth taking and gets you to the final circle.', 12.99, { unit: 'hour', badge: 'Most picked' }],
+      ['duos', 'duo', 'Normal Duos', 'Master teammate · 2-player squads', 'The Duos mode: just the two of you, more fights and quicker decisions, with no rank on the line.', 9.99, { unit: 'hour', badge: 'Duo mode' }],
+      ['squad', 'other', 'Squad Fill', 'Master players', 'Bring a friend or two and we fill your squad with Master players who call rotations and trade properly.', 13.99, { unit: 'hour' }],
+      ['arcade', 'duo', 'Arcade & TDM', 'Strong teammate', 'Team Deathmatch, Intense Battle Royale and Arcade modes. Fast, fun and great for warming up your spray.', 7.99, { unit: 'hour', badge: 'Fun', fun: true }],
+      ...gg('hour', 'normal matches or Arcade', 'Diamond+', 'Ranked', [10.49, 10.99], 'PUBG', '1v1 gunfights in a custom match'),
+      playLearn('Master', 0, 'hour of Ranked'),
+      ['spray', 'training', 'Recoil & Positioning', 'Master coach · 1 hour', 'Spray control, attachments and where to stand in every circle, drilled in the Training Mode and practised live.', COACHING_PRICE, { unit: 'hour' }]
+    ]
+  },
+  wr: {
+    unit: 'game', main: 'duo2', bundles: ['Turret Dive', 'Dragon Soul', 'Nexus Push'],
+    services: [
+      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate', 'Ranked with a Diamond player in the lane you need. They play around you, track the jungler and call dragons.', 2.49],
+      ['duo2', 'duo', 'Duo Pro', 'Master+ teammate', 'Ranked with a Master player who shot-calls: when to fight, which objective is next, when to back off.', 2.99, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Grandmaster+ teammate', 'A Grandmaster, Challenger or Sovereign player for your highest-rated games, who can take over a match.', 3.99],
+      ['five', 'other', 'Ranked 5-Stack', 'Master+ players', 'Bring your friends and we fill your five with Master+ players on the lanes you need, on voice.', 4.99],
+      ['aram', 'duo', 'ARAM', 'Strong teammate · one lane', 'Random champions, one lane, nonstop teamfights. Fun games with someone good.', 2.49, { fun: true }],
+      ['norm', 'duo', 'Normal Match', 'Strong teammate', 'Unranked games to try a new champion or lane with backup.', 2.49, { fun: true }],
+      ...gg('game', 'ARAM or normal matches', 'Diamond+', 'ranked', [2.99, 3.49], 'Wild Rift', 'custom 1v1s in mid lane: first blood or the first tower wins'),
+      playLearn('Master+', 0, 'ranked game'),
+      ['champ', 'training', 'Champion Mastery', 'Grandmaster+ coach · 1 hour', 'One champion, properly: combos, builds, matchups and power spikes, practised in a live game.', COACHING_PRICE, { unit: 'hour' }]
+    ]
+  },
+  dl: {
+    unit: 'game', main: 'duo2', bundles: ['Soul Urn', 'Mid Boss', 'Patron Down'],
+    services: [
+      ['duo1', 'duo', 'Duo Plus', 'Oracle+ teammate', 'Ranked with an Oracle player who lanes with you, secures souls and calls when to push or rotate.', 4.49],
+      ['duo2', 'duo', 'Duo Pro', 'Phantom+ teammate', 'Ranked with a Phantom player who calls the map: Urn runs, Mid Boss timings and which lane to take next.', 5.49, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Ascendant+ teammate', 'An Ascendant or Eternus player for high-rank lobbies, who can win fights on their own.', 6.99],
+      ['six', 'other', '6-Stack Fill', 'Phantom+ players', 'Bring your friends and we fill your six with Phantom+ players who know their heroes and their lanes.', 6.49],
+      ['unranked', 'duo', 'Unranked Matches', 'Strong teammate', 'Full matches without rank pressure, to learn a new hero or the map with someone covering you.', 3.99, { fun: true }],
+      ...gg('game', 'unranked matches', 'Phantom+', 'ranked', [4.99, 5.49], 'Deadlock', '1v1 lane duels in a private lobby'),
+      playLearn('Phantom+', 0, 'ranked match'),
+      ['macro', 'training', 'Macro & Souls', 'Ascendant coach · 1 hour', 'Farming patterns, soul economy, item timings and rotations, so every minute of the match counts.', COACHING_PRICE, { unit: 'hour' }]
     ]
   },
 

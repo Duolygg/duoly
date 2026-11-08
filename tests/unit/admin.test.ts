@@ -66,7 +66,7 @@ describe('admin contracts', () => {
       SetAccessSchema.safeParse({
         csrf: 'x',
         userId: id,
-        access: { games: ['wow'], gg: false },
+        access: { games: ['zzz'], gg: false },
       }).success,
     ).toBe(false);
     expect(

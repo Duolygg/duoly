@@ -41,7 +41,7 @@ describe('free versus paid guide', () => {
       ]) {
         const spec = GUIDE_PRICE_SPECS[token]!;
         expect(prices[`pct${units}`]).toBe(
-          `${calculateQuote({ ...spec, units }, eur).quantityDiscountPercent}%`,
+          `${calculateQuote({ ...spec, units, bundle: true }, eur).quantityDiscountPercent}%`,
         );
       }
     }
@@ -66,7 +66,7 @@ describe('free versus paid guide', () => {
     expect(prices.r6Pro3).toBe('€12.12');
     expect([prices.pct3, prices.pct5, prices.pct10]).toEqual([
       '10%',
-      '15%',
+      '20%',
       '25%',
     ]);
   });

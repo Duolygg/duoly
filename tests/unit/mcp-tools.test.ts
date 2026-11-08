@@ -414,7 +414,7 @@ describe('MCP tools', () => {
   it('returns games and service structured content', async () => {
     expect(
       (await callTool('list_games', {})).structuredContent.games,
-    ).toHaveLength(15);
+    ).toHaveLength(20);
     expect(
       (await callTool('list_services', { game: 'val' })).structuredContent
         .services,

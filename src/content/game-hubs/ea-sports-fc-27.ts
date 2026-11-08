@@ -102,7 +102,7 @@ export const eaSportsFc27: HubPageCopy = {
     {
       heading: 'How does a Clubs Lineup fill work?',
       paragraphs: [
-        'A Clubs Lineup is one order that hires several players at once, so a half-full club gets a real eleven. It covers up to {{seats_clubs}} seats with Division 1+ players at {{p_clubs}} per game, and 3 games cost {{p_clubs_x3}} with {{pct3}} off. Every seat is priced separately, so a club two players short books two seats instead of five and keeps the rest of the squad as it is. The hired players hold position and pass, which is what a Clubs match actually needs.',
+        'A Clubs Lineup is one order that hires several players at once, so a half-full club gets a real eleven. It covers up to {{seats_clubs}} seats with Division 1+ players at {{p_clubs}} per game, and 5 games cost {{p_clubs_x5}} with {{pick5}} off. Every seat is priced separately, so a club two players short books two seats instead of five and keeps the rest of the squad as it is. The hired players hold position and pass, which is what a Clubs match actually needs.',
         'Agree the shape before kick-off, and ask for the positions you are missing: a centre back and a holding midfielder beat two more strikers almost every time. Name the formation, then pick one caller for pressing, because five players pressing at once leaves the back line open. Keep everybody on one call so the shout arrives before the tackle. Bundles still apply, so 3 games get {{pct3}} off and 5 get {{pct5}} off the total.',
       ],
     },

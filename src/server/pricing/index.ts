@@ -9,10 +9,13 @@ import {
   isGroupService,
   MAX_SEATS,
 } from '../../contracts/seats';
-import type {
-  QuoteContext,
-  QuoteInput,
-  QuotePreview,
+import {
+  BUNDLE_UNITS,
+  QUANTITIES,
+  quantityDiscountPercent as discountFor,
+  type QuoteContext,
+  type QuoteInput,
+  type QuotePreview,
 } from '../../contracts/pricing';
 
 // Type-only adapter for the existing JS catalog; no copied catalog or price table.
@@ -24,6 +27,7 @@ interface CatalogService {
   unit: 'game' | 'hour';
 }
 const servicesFor = sourceServicesFor as (gameId: string) => {
+  main: string;
   modes: CatalogService[];
 };
 
@@ -41,6 +45,7 @@ const selectionSchema = z.strictObject({
     .refine((value) => value.trim().length >= 2)
     .optional(),
   seats: z.number().int().min(1).max(MAX_SEATS).optional(),
+  bundle: z.boolean().optional(),
 });
 
 /** Throws on invalid selections; revalidated by calculateQuote at the trust boundary. */
@@ -59,6 +64,19 @@ export function parseQuoteInput(input: unknown): QuoteInput {
   )
     throw new Error('Teams services are not supported');
   checkSeats(selection.gameId, selection.serviceId, selection.seats ?? 1);
+  // Quantities (src/contracts/pricing.ts): 1 to 5 normally; Bundles tab packs are the game's main
+  // service in 3, 5 or 10 units, one teammate, never coaching.
+  if (selection.bundle) {
+    if (
+      service.id !== servicesFor(selection.gameId).main ||
+      service.cat === 'training' ||
+      (selection.seats ?? 1) !== 1 ||
+      !(BUNDLE_UNITS as readonly number[]).includes(selection.units)
+    )
+      throw new Error('Invalid bundle');
+  } else if (!(QUANTITIES as readonly number[]).includes(selection.units)) {
+    throw new Error('Invalid quantity');
+  }
   if (selection.gameId === 'mc') {
     if (selection.server.trim().length < 2 || !selection.edition)
       throw new Error('Minecraft needs a server/world and edition');
@@ -123,12 +141,10 @@ export function calculateQuote(
     hasFirstSessionOffer && context.firstCoachingSessionEligible === true
       ? unitPriceEurMinor - Math.round(service.price * 100)
       : 0;
-  const quantityDiscountPercent =
-    service.cat === 'training'
-      ? 0
-      : (({ 3: 10, 5: 15, 10: 25 } as Record<number, number>)[
-          selection.units
-        ] ?? 0);
+  const quantityDiscountPercent = discountFor(selection.units, {
+    bundle: selection.bundle === true,
+    training: service.cat === 'training',
+  });
   // Round the final EUR amount once, half-up to cents; discount is the residual.
   const afterQuantityEurMinor = Math.round(
     (subtotalEurMinor * (100 - quantityDiscountPercent)) / 100,

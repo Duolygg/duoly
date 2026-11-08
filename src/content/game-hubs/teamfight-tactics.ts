@@ -40,7 +40,7 @@ export const teamfightTactics: HubPageCopy = {
   steps: {
     heading: 'How does booking a TFT session work?',
     items: [
-      'Pick a service and the number of games. Double Up is the two-player mode with a Master+ partner, and 3 games at {{rank_duo1}} cost {{p_duo1_x3}} with the {{pct3}} bundle discount. Five games take {{pct5}} off.',
+      'Pick a service and the number of games. Double Up is the two-player mode with a Master+ partner, and 5 games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off. Five games take {{pct5}} off.',
       'Add your server, rank and language at checkout. Name EUW and {{rank_duo1}}, so your partner reads the real request and knows which lobby strength to expect.',
       'Meet your partner in the order chat, agree who takes the contested line and how voice runs, then add each other by Riot ID. Board Coach costs {{p_duo2}} per game with live screen share.',
     ],
@@ -94,14 +94,14 @@ export const teamfightTactics: HubPageCopy = {
     {
       heading: 'Double Up or Board Coach: which TFT booking helps more?',
       paragraphs: [
-        'Double Up is the two-player mode where both players run a board and can send units, gold or items across. A Master+ partner takes the aggressive line while you play the safer one, and the pair places together, so the help arrives inside the game. Three games at {{rank_duo1}} cost {{p_duo1_x3}} with {{pct3}} off.',
+        'Double Up is the two-player mode where both players run a board and can send units, gold or items across. A Master+ partner takes the aggressive line while you play the safer one, and the pair places together, so the help arrives inside the game. Five games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off.',
         'Board Coach is the other shape of help, and the one to pick if the goal is learning rather than placement. You play your own ranked game while a Master+ player watches your screen on Discord and says what to buy, roll and position in real time, at a flat {{p_duo2}} per game. A player who always rolls at the wrong level hears it in the moment instead of reading it in a replay three days later. Pick the goal first and the mode second, then agree whether the evening is for LP or for learning, because the two lines diverge at stage four.',
       ],
     },
     {
       heading: 'Example evening: three Double Up games on EUW',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EUW books 3 Double Up games. The total is {{p_duo1_x3}} with the {{pct3}} bundle discount, against {{p_duo1}} for a single game. The order chat opens straight after payment, and the first message names the server, the rank and the weakness: EUW, {{rank_duo1}}, keeps levelling too late, wants help reading the lobby.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EUW books 5 Double Up games. The total is {{p_duo1_x5}} with {{pick5}} off, against {{p_duo1}} for a single game. The order chat opens straight after payment, and the first message names the server, the rank and the weakness: EUW, {{rank_duo1}}, keeps levelling too late, wants help reading the lobby.',
         'From there the evening runs on a short plan. You agree who commits to the contested comp, voice goes on, and you add each other by Riot ID. After each game you pick one adjustment, such as rolling at level seven instead of eight. The same shape works for Normals and Hyper Roll at {{p_norm}} per game if you would rather play with no LP on the line, and 5 games of anything take {{pct5}} off.',
       ],
     },
@@ -122,7 +122,7 @@ export const teamfightTactics: HubPageCopy = {
       ],
       [
         'How much does a TFT session cost?',
-        'Double Up is {{p_duo1}} per game at {{rank_duo1}}, from {{p_duo1_low}} at the lowest rank. Bundles take {{pct3}} off 3 games, and 10 games cost {{p_duo1_x10}} with {{pct10}} off.',
+        'Double Up is {{p_duo1}} per game at {{rank_duo1}}, from {{p_duo1_low}} at the lowest rank. Five games cost {{p_duo1_x5}} with {{pick5}} off.',
       ],
       [
         'What is Board Coach exactly?',
@@ -144,6 +144,6 @@ export const teamfightTactics: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next TFT lobby?',
-    text: 'Double Up is the two-player session with a Master+ partner from Duoly, and 3 games at {{rank_duo1}} cost {{p_duo1_x3}} with {{pct3}} off. Normals and Hyper Roll stays {{p_norm}} per game with no LP on the line. Pick your server and rank, then agree the plan with your partner in the order chat.',
+    text: 'Double Up is the two-player session with a Master+ partner from Duoly, and 5 games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off. Normals and Hyper Roll stays {{p_norm}} per game with no LP on the line. Pick your server and rank, then agree the plan with your partner in the order chat.',
   },
 };

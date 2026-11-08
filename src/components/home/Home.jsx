@@ -57,6 +57,11 @@ import { DISCORD_INVITE } from '../../site/nav';
 import { HEART } from '../account/FavoriteHeart';
 import { freeCoachingFits, monthName, LEVEL_NAMES } from '../shared/perks';
 import { seatRule } from '../../contracts/seats';
+import {
+  BUNDLE_UNITS,
+  QUANTITIES,
+  quantityDiscountPercent,
+} from '../../contracts/pricing';
 import { characterLabel, rolesFor } from '../../contracts/roles';
 
 const ORDINAL = ['', '1st', '2nd', '3rd', '4th', '5th', '6th'];
@@ -278,14 +283,18 @@ export default class Home extends React.Component {
     const selected = m || g.modes.find((x) => x.id === this.state.mode) || top;
     const { values } = parseBookingPreferences(params, game, selected.id);
     const qty = values.qty;
-    // A requested role must not disappear behind the legacy main-service bundle.
+    // A requested role must not disappear behind the legacy main-service bundle. A count the
+    // Bundles tab sells cheaper than the picker (3 or 10) opens that bundle; 5 stays in the picker,
+    // where it saves more.
     const bundle =
       selected.id === top.id &&
       qty !== undefined &&
+      quantityDiscountPercent(qty, { bundle: true }) >
+        quantityDiscountPercent(qty) &&
       values.role === undefined &&
       values.character === undefined &&
       values.seats === undefined
-        ? (g.bundles || [])[[3, 5, 10].indexOf(qty)] || null
+        ? (g.bundles || [])[BUNDLE_UNITS.indexOf(qty)] || null
         : null;
     this.setState(
       {
@@ -598,6 +607,21 @@ export default class Home extends React.Component {
           id: 'fc',
         },
         {
+          id: 'dota',
+        },
+        {
+          id: 'wow',
+        },
+        {
+          id: 'pubg',
+        },
+        {
+          id: 'wr',
+        },
+        {
+          id: 'dl',
+        },
+        {
           id: 'social',
         },
         // name and icon come from the shared list (lib/games.js), so they match every other page.
@@ -666,7 +690,17 @@ export default class Home extends React.Component {
     const role = roles.includes(s.role) ? s.role : roles[roles.length - 1];
     // coaching in games with characters: "Champion", "Agent"… (optional free text)
     const charLabel = s.bundle ? '' : characterLabel(g.id, sel.cat);
-    const disc = { 1: 0, 3: 0.1, 5: 0.15, 10: 0.25 };
+    // Quantity picker 1 to 5 with 20% off at 5; Bundles tab packs keep 10/15/25% (src/contracts/pricing.ts)
+    const disc = Object.fromEntries(
+      QUANTITIES.map((n) => [n, quantityDiscountPercent(n) / 100]),
+    );
+    const bundleDisc = Object.fromEntries(
+      BUNDLE_UNITS.map((n) => [
+        n,
+        quantityDiscountPercent(n, { bundle: true }) / 100,
+      ]),
+    );
+    const qtyDisc = s.bundle ? bundleDisc : disc;
     const check = (a) =>
       'flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; ' +
       (a
@@ -776,18 +810,18 @@ export default class Home extends React.Component {
         '.',
     };
     const bundles = (g.bundles || [])
-      .map((title, i) => [title, [3, 5, 10][i]])
+      .map((title, i) => [title, BUNDLE_UNITS[i]])
       .map(([title, n]) => {
         const active = s.bundle === title;
         const full = conv(priceOf(top)) * n;
-        const b = '−' + Math.round(disc[n] * 100) + '%';
+        const b = '−' + Math.round(bundleDisc[n] * 100) + '%';
         return {
           title,
           tier: n + ' ' + topUnit + 's · ' + top.tier,
           desc: bundleDesc[n](topUnit),
           badge: b,
           badgeStyle: badgeStyle(b),
-          price: money(full * (1 - disc[n])),
+          price: money(full * (1 - bundleDisc[n])),
           per: '',
           was: money(full),
           pressed: active ? 'true' : 'false',
@@ -957,13 +991,13 @@ export default class Home extends React.Component {
       ['DE', 'arc'],
       ['BR', 'mc'],
       ['JP', 'pu'],
+      ['SE', 'dota'],
+      ['US', 'wow'],
+      ['KR', 'pubg'],
+      ['BR', 'wr'],
+      ['DE', 'dl'],
       ['US', 'lol'],
-      ['DE', 'cs2'],
-      ['FR', 'apex'],
-      ['PL', 'ow'],
-      ['US', 'rl'],
-      ['KR', 'mr'],
-      ['NL', 'lol'],
+      ['NL', 'cs2'],
     ].map((p, i) => ({
       // Ledger #43: the globe is an illustration of the games played, not invented people.
       name: nameOf(p[1]),
@@ -1076,7 +1110,7 @@ export default class Home extends React.Component {
       (playable.length - 3) +
       ' more';
 
-    const qtys = [1, 3, 5, 10].map((n) => ({
+    const qtys = QUANTITIES.map((n) => ({
       n: String(n),
       save: disc[n] ? '−' + Math.round(disc[n] * 100) + '%' : ' ',
       pressed: s.qty === n ? 'true' : 'false',
@@ -1217,7 +1251,7 @@ export default class Home extends React.Component {
       },
     }));
     // multi-game / multi-hour discount on play sessions (coaching is always full price)
-    const save = sub * (sel.cat !== 'training' ? disc[s.qty] || 0 : 0);
+    const save = sub * (sel.cat !== 'training' ? qtyDisc[s.qty] || 0 : 0);
     // Duoly PRO (ledger #39): members get another 10% on top of bundles. The server prices it
     // again (src/server/pro/discounts.ts); this is only what we show.
     const pro = this.props.pro || null;
@@ -1391,6 +1425,10 @@ export default class Home extends React.Component {
           apex: 'Wraith',
           r6: 'Ash',
           pu: 'Pikachu',
+          dota: 'Invoker',
+          wr: 'Ahri',
+          dl: 'Haze',
+          wow: 'Frost Mage',
         }[g.id] || '',
       character: s.character || '',
       setCharacter: (e) => this.setState({ character: e.target.value }),
@@ -1445,7 +1483,10 @@ export default class Home extends React.Component {
       proHref: pro && pro.manage ? '/dashboard#pro' : '/pro',
       proCta:
         pro && pro.trialEligible ? 'Try PRO free for 7 days' : 'Get Duoly PRO',
-      savePct: Math.round((disc[s.qty] || 0) * 100) + '%',
+      savePct: Math.round((qtyDisc[s.qty] || 0) * 100) + '%',
+      saveLabel: s.bundle
+        ? 'Bundle discount'
+        : s.qty + '-' + unit + ' discount',
       hasWallet: hasWallet && !freeOn,
       walletOn: !!s.useWallet,
       walletPressed: s.useWallet ? 'true' : 'false',
@@ -1588,6 +1629,7 @@ export default class Home extends React.Component {
           gameId: g.id,
           serviceId: sel.id,
           units: st.qty,
+          ...(st.bundle ? { bundle: true } : {}),
           // team orders: several teammates on one order
           ...(seats > 1 ? { seats } : {}),
           ...(pickedRole ? { role: pickedRole } : {}),
@@ -1693,6 +1735,7 @@ export default class Home extends React.Component {
         gameId: g.id,
         serviceId: sel.id,
         units: s.qty,
+        ...(s.bundle ? { bundle: true } : {}),
         ...(this.seatsOf(g.id, sel.id, s).seats > 1
           ? { seats: this.seatsOf(g.id, sel.id, s).seats }
           : {}),
@@ -1753,9 +1796,9 @@ export default class Home extends React.Component {
         (s.voice || g.id === 'social' ? 'voice on Discord' : 'text chat'),
       ignLabel,
       ignPlaceholder:
-        g.id === 'lol' || g.id === 'val' || g.id === 'tft'
+        g.id === 'lol' || g.id === 'val' || g.id === 'tft' || g.id === 'wr'
           ? 'Name#TAG'
-          : g.id === 'ow'
+          : g.id === 'ow' || g.id === 'wow'
             ? 'Name#1234'
             : g.id === 'cod'
               ? 'Name#1234567'
@@ -1780,6 +1823,11 @@ export default class Home extends React.Component {
           arc: 'First time on this map, show me good loot spots',
           mc: 'Bedwars, I want to get better at bridging',
           pu: 'I play Attacker, need someone in the jungle',
+          dota: 'I play position 5, need a carry who farms well',
+          wow: 'Resto Druid, EU realm, want to time +12s',
+          pubg: 'TPP squads, I want to win more late-game fights',
+          wr: 'I main Dragon Lane, need a support who roams',
+          dl: 'I play Haze, help me with farming and rotations',
         }[g.id] || 'what you want to work on'),
       orderNote: s.orderNote || '',
       setOrderNote: (e) => this.setState({ orderNote: e.target.value }),
@@ -2929,7 +2977,6 @@ export default class Home extends React.Component {
                               height: '20px',
                               borderRadius: '50%',
                               background: '#D6BBFF',
-                              boxShadow: '0 0 0 3px #1B1033',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -3571,7 +3618,7 @@ export default class Home extends React.Component {
                           aria-labelledby="dl-qty"
                           style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                            gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
                             gap: '4px',
                             padding: '4px',
                             borderRadius: '14px',
@@ -4078,7 +4125,9 @@ export default class Home extends React.Component {
                             color: '#5EEAA8',
                           }}
                         >
-                          <span>Bundle discount ({v.savePct})</span>
+                          <span>
+                            {v.saveLabel} ({v.savePct})
+                          </span>
                           <span>−{v.saveAmt}</span>
                         </div>
                       </>

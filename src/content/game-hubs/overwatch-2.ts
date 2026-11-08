@@ -14,7 +14,13 @@ export const overwatch2: HubPageCopy = {
     'Role Queue, Stadium and Quick Play',
     'Voice on Discord, your own account',
   ],
-  related: ['marvel-rivals', 'apex-legends', 'rainbow-six-siege'],
+  related: [
+    'marvel-rivals',
+    'apex-legends',
+    'rainbow-six-siege',
+    'deadlock',
+    'world-of-warcraft',
+  ],
   intent:
     'Hunting for free Discords, or a teammate chosen by role rather than by tier? The dedicated page sets the free routes next to the paid Role Queue sessions.',
   format: {

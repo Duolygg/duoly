@@ -14,7 +14,12 @@ export const minecraft: HubPageCopy = {
     'Bedwars, SkyWars, SMP and Manhunt',
     'Java or Bedrock, your own account',
   ],
-  related: ['arc-raiders', 'rocket-league', 'ea-sports-fc-27'],
+  related: [
+    'arc-raiders',
+    'rocket-league',
+    'ea-sports-fc-27',
+    'world-of-warcraft',
+  ],
   format: {
     heading: 'What can you book for Minecraft on Duoly?',
     text: 'Duoly sells three things for Minecraft: one teammate who joins your server or your world on your own account, a Server Squad that fills several seats on one order, and coaching by the hour. Minecraft has no ranked ladder and no matchmaking region, so every service keeps one flat price for everybody: PvP Duo costs {{p_duo1}} per hour, PvP Duo Pro {{p_duo2}} with a top player from servers like Hypixel or Minemen, Survival Partner {{p_smp}} for SMP progress and Minigames Night {{p_mini}} for a relaxed evening across several modes. Manhunt is the exception, priced per run at {{p_manhunt}} however long the chase takes. Bundles cut the total, {{pct3}} off 3 up to {{pct10}} off 10. Name the server and the edition in the order chat, because Java and Bedrock cannot join the same world.',

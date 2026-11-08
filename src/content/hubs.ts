@@ -83,7 +83,7 @@ export const socialContent: HubCopy = {
     ],
     [
       'Are several hours discounted?',
-      'Yes. 3 hours get 10 percent off, 5 get 15 percent and 10 get 25 percent.',
+      'Yes. 3 hours get 10 percent off, 5 get 20 percent and 10 get 25 percent.',
     ],
   ],
   closing: {
@@ -154,7 +154,7 @@ export const valorantContent: HubCopy = {
     ],
     [
       'Can I book several games?',
-      'Yes. 3 games get 10 percent off, 5 get 15 percent and 10 get 25 percent.',
+      'Yes. 3 games get 10 percent off, 5 get 20 percent and 10 get 25 percent.',
     ],
     [
       'What does a per-game price mean?',

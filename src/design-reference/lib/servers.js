@@ -2,7 +2,8 @@
 // League & TFT: Riot's server list (Riot support "League of Legends Servers"); Valorant: its six shards;
 // Fortnite: Epic's 8 matchmaking regions; Rocket League: Epic's 12 regions; R6: Ubisoft's data centres;
 // Marvel Rivals: its region nodes; Overwatch: Battle.net's 3 regions. Games that only match by ping
-// (CoD, Apex, EA FC, ARC Raiders, Pokémon Unite) list the broad areas you'd play in.
+// (CoD, Apex, EA FC, ARC Raiders, Pokémon Unite, PUBG, Wild Rift, Deadlock) list the broad areas you'd play in.
+// Dota 2: Valve's matchmaking regions; World of Warcraft: the Battle.net region your account and realm live in.
 // Minecraft has no regions: you tell the teammate the server (or your own world) and the edition instead.
 //
 // SERVERS[game] = [[value, label, group, zones]] · value is stored on the order and shown to the teammate,
@@ -67,6 +68,20 @@ export const SERVERS = {
   fc: AREAS,
   arc: AREAS,
   pu: AREAS.filter((a) => a[0] !== 'Middle East'),
+  dota: [
+    ['EU West', 'Europe West', EU, ['eu-w', 'eu']], ['EU East', 'Europe East', EU, ['eu-e', 'tr']], ['Russia', 'Russia', EU, ['ru']],
+    ['US East', 'US East', AM, ['na-e', 'na-c', 'na']], ['US West', 'US West', AM, ['na-w']], ['South America', 'South America', AM, ['br', 'latam-s', 'latam']],
+    ['Peru', 'Peru', AM, ['latam-n']], ['SE Asia', 'Southeast Asia', AP, ['sea', 'sea-sg', 'sea-ph', 'sea-th', 'sea-vn', 'sea-tw', 'kr']], ['Japan', 'Japan', AP, ['jp']],
+    ['India', 'India', AP, ['in']], ['Australia', 'Australia', AP, ['oce']], ['Dubai', 'Dubai (Middle East)', ME, ['me']], ['South Africa', 'South Africa', ME, ['af']]
+  ],
+  // Oceania and most of Asia play on the US region's Oceanic realms
+  wow: [
+    ['EU', 'Europe', EU, ['eu', 'tr', 'ru', 'me', 'af']], ['US', 'Americas & Oceania', AM, ['na', 'br', 'latam', 'oce', 'jp', 'sea', 'in']],
+    ['KR', 'Korea', AP, ['kr']], ['TW', 'Taiwan', AP, ['sea-tw']]
+  ],
+  pubg: AREAS,
+  wr: AREAS,
+  dl: AREAS,
   // Social has no game server: the area tells the Gamer Girl your time zone
   social: AREAS
 };
@@ -81,7 +96,7 @@ const FLAG = {
   OCE: 'au', Oceania: 'au', 'Australia East': 'au', SG: 'sg', 'Southeast Asia': 'sg', 'Asia-SE Maritime': 'sg', 'Asia South East': 'sg', 'Asia-SE Mainland': 'th',
   PH: 'ph', TH: 'th', TW: 'tw', 'Asia East': 'tw', VN: 'vn', NA: 'us', 'North America': 'us', 'NA East': 'us', 'NA West': 'us', 'NA-East': 'us', 'NA-Central': 'us',
   'NA-West': 'us', 'US East': 'us', 'US Central': 'us', 'US South Central': 'us', 'US West': 'us', 'US-East': 'us', 'US-Central': 'us', 'US-West': 'us',
-  LAN: 'mx', LAS: 'cl', LATAM: 'mx', ME: 'ae', 'Middle East': 'ae', 'UAE North': 'ae', 'South Africa': 'za', 'South Africa North': 'za', India: 'in'
+  LAN: 'mx', LAS: 'cl', Peru: 'pe', 'SE Asia': 'sg', Japan: 'jp', Russia: 'ru', Australia: 'au', Dubai: 'ae', US: 'us', LATAM: 'mx', ME: 'ae', 'Middle East': 'ae', 'UAE North': 'ae', 'South Africa': 'za', 'South Africa North': 'za', India: 'in'
 };
 // where a game's broad region really sits somewhere else (Overwatch Asia → Korea, Marvel Rivals Asia → Tokyo)
 const GAME_FLAG = { ow: { Asia: 'kr' }, mr: { Asia: 'jp' } };

@@ -19,6 +19,7 @@ export const marvelRivals: HubPageCopy = {
     'league-of-legends',
     'teamfight-tactics',
     'valorant',
+    'deadlock',
   ],
   intent:
     'After the two-player page rather than the whole catalog? It covers hero pairings, Team-Up abilities and prices for a pair on their own.',
@@ -109,7 +110,7 @@ export const marvelRivals: HubPageCopy = {
     {
       heading: 'How does a 6-Stack Fill work in Marvel Rivals?',
       paragraphs: [
-        'A 6-stack fill is one order that hires several players at once, so a part-full group becomes a complete six. 6-Stack Fill covers up to {{seats_six}} empty seats with Grandmaster+ players at {{p_six}} per match at {{rank_six}}, and 3 matches cost {{p_six_x3}} with {{pct3}} off. Every seat is priced separately, so a trio short three players sets the seats to three instead of five. Name the roles you want covered, because a second Vanguard changes the whole composition.',
+        'A 6-stack fill is one order that hires several players at once, so a part-full group becomes a complete six. 6-Stack Fill covers up to {{seats_six}} empty seats with Grandmaster+ players at {{p_six}} per match at {{rank_six}}, and 5 matches cost {{p_six_x5}} with {{pick5}} off. Every seat is priced separately, so a trio short three players sets the seats to three instead of five. Name the roles you want covered, because a second Vanguard changes the whole composition.',
         'One rule decides whether a six is even possible: NetEase Games lets Bronze to Grandmaster players queue Competitive in any party size except five, while a single Celestial, Eternity or One Above All player caps the party at two. A six therefore needs everybody at Grandmaster or below. Past that, check the current Team-Up panel, since the pairings change between seasons, agree one caller for dives and resets, and keep everybody on the same call. Bundles still apply, {{pct3}} off 3 matches and {{pct5}} off 5.',
       ],
     },

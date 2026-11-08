@@ -9,6 +9,8 @@ export const comparisonSelection = {
   rank: 'Gold',
   server: 'EUW',
   units: 3,
+  // a Bundles tab pack: Duo Pro is League's main service (src/contracts/pricing.ts)
+  bundle: true,
 };
 const quote = calculateQuote(comparisonSelection, {
   eurToUsd: 1,
@@ -61,7 +63,7 @@ export const comparisonRows: {
     label: 'Catalog breadth',
     duoly: 'part',
     epal: 'yes',
-    duolyNote: '15 games plus Social.',
+    duolyNote: '20 games plus Social.',
     epalNote:
       '100+ games and lifestyle services combined, not a game-only count.',
     epalSource: home,

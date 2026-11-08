@@ -53,6 +53,13 @@ const RULES: Readonly<Record<string, Readonly<Record<string, SeatRule>>>> = {
   arc: { squad: fixedGroup(2), escort: fixedGroup(2) },
   mc: { squad: teams(3), manhunt: party(3), mini: party(3) },
   pu: { squad: teams(4) },
+  dota: { party5: teams(4), turbo: party(4), unranked: party(4) },
+  // Mythic+ is five players and rated 3v3 is three: the customer is one of them
+  wow: { keys: teams(4), arena3: teams(2), delves: party(4) },
+  pubg: { squad: teams(3), arcade: party(3) },
+  wr: { five: teams(4), aram: party(4), norm: party(4) },
+  // Deadlock is 6v6
+  dl: { six: teams(5), unranked: party(5) },
   // Social calls with more than one Gamer Girl (owner request 2026-11-06). Sleep Call stays one.
   social: { chat: party(3), watch: party(3), karaoke: party(3) },
 };

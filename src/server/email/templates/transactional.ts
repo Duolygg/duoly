@@ -94,7 +94,7 @@ export function welcome(data: WelcomeData, site: string): EmailContent {
     blocks: [
       {
         type: 'paragraph',
-        text: 'Your account is confirmed. Book a rank-verified teammate for 15 games, from League of Legends to Pokémon Unite, and play together within minutes.',
+        text: 'Your account is confirmed. Book a rank-verified teammate for 20 games, from League of Legends to Pokémon Unite, and play together within minutes.',
       },
       {
         type: 'list',

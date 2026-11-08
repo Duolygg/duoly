@@ -19,6 +19,7 @@ export const fortnite: HubPageCopy = {
     'call-of-duty',
     'rocket-league',
     'counter-strike-2',
+    'pubg',
   ],
   intent:
     'After the two-player page rather than the whole catalog? It covers partner picks, drop spots and prices for the pair of you on their own.',

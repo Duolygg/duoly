@@ -105,7 +105,7 @@ export const rainbowSixSiege: HubPageCopy = {
     {
       heading: 'How does a 5-Stack Fill work in Siege?',
       paragraphs: [
-        'A stack fill is one order that hires several players at once, so a part-full group becomes a real five. 5-Stack Fill covers up to {{seats_stack}} empty seats with Diamond+ players at {{p_stack}} per match at {{rank_stack}}, and 3 matches cost {{p_stack_x3}} with {{pct3}} off. Every seat is priced separately, so a trio short two players sets the seats to two instead of four. The booked players bring utility plans rather than only aim, which is what a five-stack actually needs.',
+        'A stack fill is one order that hires several players at once, so a part-full group becomes a real five. 5-Stack Fill covers up to {{seats_stack}} empty seats with Diamond+ players at {{p_stack}} per match at {{rank_stack}}, and 5 matches cost {{p_stack_x5}} with {{pick5}} off. Every seat is priced separately, so a trio short two players sets the seats to two instead of four. The booked players bring utility plans rather than only aim, which is what a five-stack actually needs.',
         'Agree the structure before the first lobby: who anchors, who roams and who drones on attack. Pick two maps you all know, then agree one caller, because five voices on one site is worse than silence. Keep everybody on one call so rotations reach the whole team. Note that squad restrictions apply to the stack as well, so a five with a Champion in it has to sit inside two full ranks. Bundles still apply, {{pct3}} off 3 matches and {{pct5}} off 5.',
       ],
     },

@@ -111,7 +111,7 @@ describe('MCP HTTP', () => {
       { ip: '127.0.0.1', limit: allow },
     );
     const json = await response.json();
-    expect(json.result.structuredContent.games).toHaveLength(15);
+    expect(json.result.structuredContent.games).toHaveLength(20);
     expect(json.result.resultType).toBe('complete');
   });
   it.each(['2025-06-18', '2025-11-25', '2026-07-28'])(

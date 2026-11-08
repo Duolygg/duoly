@@ -203,12 +203,21 @@ describe('Sparky bundle totals', () => {
       const duo = servicesFor(game.id).modes.filter(
         (m: { cat: string }) => m.cat === 'duo',
       );
+      const main = servicesFor(game.id).main;
       for (const mode of duo) {
-        for (const units of [3, 5, 10]) {
+        // the quantity picker's 5 on every duo service, the Bundles tab packs on the main one
+        const picks: [number, boolean][] = [
+          [5, false],
+          ...(mode.id === main
+            ? ([3, 5, 10].map((n) => [n, true]) as [number, boolean][])
+            : []),
+        ];
+        for (const [units, bundle] of picks) {
           const input: Record<string, unknown> = {
             gameId: game.id,
             serviceId: mode.id,
             units,
+            ...(bundle ? { bundle: true } : {}),
             server:
               game.id === 'mc' ? 'my own world' : serversFor(game.id)[0][0],
           };
@@ -217,7 +226,7 @@ describe('Sparky bundle totals', () => {
           if (rank) input.rank = rank;
           const quote = calculateQuote(input, { eurToUsd: 1.1 });
           expect(
-            Math.round(bundleTotal(mode.price, units) * 100),
+            Math.round(bundleTotal(mode.price, units, bundle) * 100),
             `${game.id} ${mode.id} ${units}`,
           ).toBe(quote.amountEurMinor);
           checked++;

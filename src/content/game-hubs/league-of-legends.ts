@@ -14,7 +14,13 @@ export const leagueOfLegends: HubPageCopy = {
     'Solo/Duo, Flex, ARAM and Arena',
     'Voice on Discord, your own account',
   ],
-  related: ['teamfight-tactics', 'marvel-rivals', 'pokemon-unite', 'valorant'],
+  related: [
+    'teamfight-tactics',
+    'marvel-rivals',
+    'pokemon-unite',
+    'valorant',
+    'wild-rift',
+  ],
   intent:
     'After the duo partner page rather than the whole catalog? It covers ARAM, normals and ranked duo on their own, with the free routes next to the paid ones.',
   format: {
@@ -119,7 +125,7 @@ export const leagueOfLegends: HubPageCopy = {
     {
       heading: 'Example evening: three ARAM Night games on EUW',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. ARAM Night is the one to show, because the Howling Abyss has no rank gate at all, so any two accounts on EUW can queue it. Three games cost {{p_aram_x3}} with the {{pct3}} bundle discount, against {{p_aram}} for a single game. The order chat opens straight after payment, and the first message names the server and what you want out of the evening: EUW, happy to play frontline, looking for someone who engages first.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. ARAM Night is the one to show, because the Howling Abyss has no rank gate at all, so any two accounts on EUW can queue it. Five games cost {{p_aram_x5}} with {{pick5}} off, against {{p_aram}} for a single game. The order chat opens straight after payment, and the first message names the server and what you want out of the evening: EUW, happy to play frontline, looking for someone who engages first.',
         'From there the evening runs on a short plan. You agree who takes the engage and who holds the poke, voice goes on, and the invite comes from the League client. After each game you pick one adjustment, such as grouping on the enemy side of the bridge instead of defending the tower. The same shape works on Normal Draft or Swiftplay, both {{p_aram}} per game, and ranked pairings follow the Solo/Duo restrictions covered above.',
       ],
     },

@@ -23,6 +23,8 @@ import {
 import { calculateQuote } from '../../src/server/pricing';
 import type { QuoteContext } from '../../src/contracts/pricing';
 import { ranksOf } from '../../src/design-reference/lib/ranks.js';
+import { servicesFor } from '../../src/design-reference/lib/catalog.js';
+import { BUNDLE_UNITS, QUANTITIES } from '../../src/contracts/pricing';
 import { SITE_GAMES, gameBySlug } from '../../src/site/games';
 import { HUB_PATHS, INDEXABLE_PATHS, hubChips } from '../../src/site/seo';
 import { renderLlms } from '../../src/server/seo/llms';
@@ -62,13 +64,21 @@ function quotableEur(gameId: string) {
   for (const serviceId of hubServiceIds(gameId)) {
     const ranks = ranksOf(gameId, serviceId) as string[];
     for (const rank of ranks.length ? ranks : [undefined]) {
-      for (const units of [1, 3, 5, 10]) {
+      // 1 to 5 units for every service, plus the Bundles tab packs on the main service
+      const main = (servicesFor(gameId) as { main: string }).main;
+      const picks = [
+        ...QUANTITIES.map((units) => ({ units })),
+        ...(serviceId === main
+          ? BUNDLE_UNITS.map((units) => ({ units, bundle: true, seats: 1 }))
+          : []),
+      ];
+      for (const pick of picks) {
         const quote = calculateQuote(
           {
             gameId,
             serviceId,
-            units,
             ...offerSelection(gameId, serviceId),
+            ...pick,
             ...(rank ? { rank } : {}),
           },
           { customerCurrency: 'EUR', eurToUsd: 1 },

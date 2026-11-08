@@ -15,11 +15,16 @@ export const STREAM_GAME_IDS = [
   'r6',
   'mr',
   'ow',
+  'dota',
   'rl',
+  'wow',
+  'pubg',
   'tft',
   'fc',
   'arc',
+  'wr',
   'mc',
+  'dl',
   'pu',
 ] as const;
 export const StreamGameSchema = z.enum(STREAM_GAME_IDS);
