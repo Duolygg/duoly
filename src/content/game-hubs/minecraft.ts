@@ -119,7 +119,7 @@ export const minecraft: HubPageCopy = {
       heading: 'When is Minecraft coaching the better booking?',
       paragraphs: [
         'Minecraft coaching is the better booking when the goal is a repeatable fix rather than company for the evening. PvP Coaching and Bedwars Coaching each cost {{p_pvp}} per hour, one on aim, combos, strafing, rod and bow play, the other on rush timing, bridging and bed defence. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
-        'First, name the fight you keep losing. For example, a player who loses every 1v1 in Duels gains more from one practice hour than from Bedwars hour number 4, because a coach can name the habit and drill it. A player who only wants a calm evening gains more from Minigames Night at {{p_mini}} per hour. Minecraft has no separate coaching page on Duoly yet, so lessons are booked from the prices above, and screen share runs using Discord so the coach watches your real clicks.',
+        'First, name the fight you keep losing. For example, a player who loses every 1v1 in Duels gains more from one practice hour at {{p_pvp}} than from a fourth Bedwars hour, because a coach can name the habit and drill it. A player who only wants a calm evening gains more from Minigames Night at {{p_mini}} per hour in 2026. Minecraft has no separate coaching page on Duoly yet, so lessons are booked from the prices above, and screen share runs using Discord so the coach watches your real clicks.',
       ],
     },
   ],

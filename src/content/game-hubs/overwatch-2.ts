@@ -118,7 +118,7 @@ export const overwatch2: HubPageCopy = {
       heading: 'When is Overwatch coaching the better booking?',
       paragraphs: [
         'Overwatch coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between rounds. A coach pauses the replay, names the pattern and leaves you with homework. Role Coaching costs {{p_role}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
-        'First, name the habit you keep repeating. For example, a support who dies first in every fight gains more from one positioning hour than from Competitive game number 4. A player who wants a relaxed evening gains more from Quick Play and Arcade at {{p_qp}} per game. Play and Learn is one live Competitive game with a Grandmaster+ coach at {{p_learn}}, and screen share runs using Discord. Overwatch 2 has no separate Duoly coaching page yet, so lessons are booked from the prices above.',
+        'First, name the habit you keep repeating. For example, a support who dies first in every fight gains more from one positioning hour at {{p_role}} than from a fourth Competitive game. A player who wants a relaxed evening gains more from Quick Play and Arcade at {{p_qp}} per game in 2026. Play and Learn is one live Competitive game with a Grandmaster+ coach at {{p_learn}}, and screen share runs using Discord. Overwatch 2 has no separate Duoly coaching page yet, so lessons are booked from the prices above.',
       ],
     },
   ],

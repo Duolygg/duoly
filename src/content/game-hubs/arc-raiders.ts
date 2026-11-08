@@ -114,7 +114,7 @@ export const arcRaiders: HubPageCopy = {
       heading: 'When is ARC Raiders coaching the better booking?',
       paragraphs: [
         'ARC Raiders coaching is the better booking when the goal is a repeatable fix rather than company for the next raid. PvP and Extraction is one hour with an Elite coach on fights, third parties and clean extractions, at {{p_pvp}} per hour. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to raid hours only.',
-        'First, name the death you keep repeating. For example, a raider who dies to the same third party gains more from one coaching hour than from raid number 4, because a coach can name the pattern and leave you something to practise. A raider who simply does not know the maps gains more from Learn the Maps at {{p_learn}} per hour. ARC Raiders has no separate coaching page on Duoly yet, so the lesson is booked from the prices above, and screen share runs using Discord so the coach watches your real route.',
+        'First, name the death you keep repeating. For example, a raider who dies to the same third party gains more from one coaching hour at {{p_pvp}} than from a fourth raid, because a coach can name the pattern and leave you something to practise. A raider who simply does not know the maps gains more from Learn the Maps at {{p_learn}} per hour in 2026. ARC Raiders has no separate coaching page on Duoly yet, so the lesson is booked from the prices above, and screen share runs using Discord so the coach watches your real route.',
       ],
     },
   ],

@@ -118,7 +118,7 @@ export const rocketLeague: HubPageCopy = {
       heading: 'When is Rocket League coaching the better booking?',
       paragraphs: [
         'Rocket League coaching is the better booking when the goal is a repeatable fix rather than company for the next hour. A partner answers a quick question between matches. A coach drills one touch in free play and leaves you with training packs. Mechanics Training costs {{p_mech}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
-        'First, name the touch you keep missing. For example, a player who misses every aerial gains more from one free play hour than from Doubles hour number 4, because the fix lives outside a ranked lobby. A player who wants a relaxed evening gains more from Extra Modes at {{p_extra}} per hour. Play and Learn sits between the two at {{p_learn}}: one live Doubles hour with a Grand Champion coach, using Discord screen share. The full service list and lesson formats live on the [Rocket League coaching page](/games/rocket-league/coaching).',
+        'First, name the touch you keep missing. For example, a player who misses every aerial gains more from one free play hour at {{p_mech}} than from a fourth Doubles hour, because the fix lives outside a ranked lobby. A player who wants a relaxed evening gains more from Extra Modes at {{p_extra}} per hour in 2026. Play and Learn sits between the two at {{p_learn}}: one live Doubles hour with a Grand Champion coach, using Discord screen share. The full service list and lesson formats live on the [Rocket League coaching page](/games/rocket-league/coaching).',
       ],
     },
   ],

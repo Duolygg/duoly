@@ -109,7 +109,7 @@ export const teamfightTactics: HubPageCopy = {
       heading: 'When is TFT coaching the better booking?',
       paragraphs: [
         'TFT coaching is the better booking when the goal is a repeatable fix rather than a partner for the next lobby. Comp and Econ Review is one hour with a Master+ coach at {{p_econ}}, covering comps that suit how you play, roll and level timing, and gold from stage two. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to Double Up and Board Coach only.',
-        'First, name the placement you keep repeating. For example, a player who finishes fifth in every lobby gains more from one review hour than from Double Up game number 4, because fifth place is usually one economy habit. A player who mostly wants company gains more from Normals and Hyper Roll at {{p_norm}} per game. Set rotations from Riot Games change the comps every few months, so say which set you have been playing. The full lesson list and formats live on the [Teamfight Tactics coaching page](/games/teamfight-tactics/coaching), with screen share using Discord.',
+        'First, name the placement you keep repeating. For example, a player who finishes fifth in every lobby gains more from one review hour at {{p_econ}} than from a fourth Double Up game, because fifth place is usually one economy habit. A player who mostly wants company gains more from Normals and Hyper Roll at {{p_norm}} per game in 2026. Set rotations from Riot Games change the comps every few months, so say which set you have been playing. The full lesson list and formats live on the [Teamfight Tactics coaching page](/games/teamfight-tactics/coaching), with screen share using Discord.',
       ],
     },
   ],

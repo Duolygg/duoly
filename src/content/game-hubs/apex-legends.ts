@@ -117,7 +117,7 @@ export const apexLegends: HubPageCopy = {
       heading: 'When is Apex coaching the better booking?',
       paragraphs: [
         'Apex coaching is the better booking when the goal is a repeatable fix rather than company for the next hour. A duo teammate answers a quick question between games. A coach drills one skill in the Firing Range and leaves you with homework. The Movement Course costs {{p_move}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
-        'For example, a player who cannot escape a bad fight gains more from one movement hour than from a fourth Ranked game. A player who wants a relaxed evening gains more from Mixtape at {{p_mix}} per hour. Play and Learn is one live Ranked hour with a Master coach at {{p_learn}}, and screen share runs using Discord. The full service list, preparation tips and lesson formats live on the [Apex Legends coaching page](/games/apex-legends/coaching).',
+        'First, name the fight you keep losing. For example, a player who cannot escape a bad fight gains more from one movement hour at {{p_move}} than from a fourth Ranked game. A player who wants a relaxed evening gains more from Mixtape at {{p_mix}} per hour in 2026. Play and Learn is one live Ranked hour with a Master coach at {{p_learn}}, and screen share runs using Discord. The full service list, preparation tips and lesson formats live on the [Apex Legends coaching page](/games/apex-legends/coaching).',
       ],
     },
   ],

@@ -124,7 +124,7 @@ export const callOfDuty: HubPageCopy = {
       heading: 'When is Call of Duty coaching the better booking?',
       paragraphs: [
         'Call of Duty coaching is the better booking when the goal is a repeatable fix rather than company for the next hour. A duo teammate answers a quick question between games. A coach watches an hour of your play, names the pattern and leaves you with homework. Loadouts and Movement costs {{p_loadout}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
-        'First, name the pattern you keep repeating. For example, a player who always loses the first gunfight gains more from one movement lesson than from a drop number 4. A player who only wants fun gains more from Party Modes at {{p_party}} per hour. Play and Learn is one live Warzone hour with an Iridescent coach at {{p_learn}}, and screen share runs using Discord. Call of Duty has no separate Duoly coaching page yet, so every lesson is booked from the prices above.',
+        'First, name the pattern you keep repeating. For example, a player who always loses the first gunfight gains more from one movement lesson at {{p_loadout}} than from a fourth Warzone drop. A player who only wants fun gains more from Party Modes at {{p_party}} per hour in 2026. Play and Learn is one live Warzone hour with an Iridescent coach at {{p_learn}}, and screen share runs using Discord. Call of Duty has no separate Duoly coaching page yet, so every lesson is booked from the prices above.',
       ],
     },
   ],

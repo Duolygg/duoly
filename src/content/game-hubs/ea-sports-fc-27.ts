@@ -117,7 +117,7 @@ export const eaSportsFc27: HubPageCopy = {
       heading: 'When is FC 27 coaching the better booking?',
       paragraphs: [
         'FC 27 coaching is the better booking when the goal is a repeatable fix rather than a partner for the next game. Tactics and Squad Builder and Champions Prep each cost {{p_tactics}} per hour, one on formations and custom tactics, the other on weekend-league defending and the current meta. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to partner games only.',
-        'First, name the goal you keep conceding. For example, a player who concedes the same counter attack gains more from one tactics hour than from Rivals game number 4, because the fix lives in the shape. A player who only wants a relaxed evening gains more from Kick-Off and Friendlies at {{p_kickoff}} per game. EA SPORTS FC 27 has no separate coaching page on Duoly yet, so lessons are booked from the prices above, with screen share using Discord.',
+        'First, name the goal you keep conceding. For example, a player who concedes the same counter attack gains more from one tactics hour at {{p_tactics}} than from a fourth Rivals game, because the fix lives in the shape. A player who only wants a relaxed evening gains more from Kick-Off and Friendlies at {{p_kickoff}} per game in 2026. EA SPORTS FC 27 has no separate coaching page on Duoly yet, so lessons are booked from the prices above, with screen share using Discord.',
       ],
     },
   ],

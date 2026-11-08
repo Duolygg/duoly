@@ -119,7 +119,7 @@ export const pokemonUnite: HubPageCopy = {
       heading: 'When is Pokemon Unite coaching the better booking?',
       paragraphs: [
         'Pokemon Unite coaching is the better booking when the goal is a repeatable fix rather than company for the next game. Draft and Macro is one hour with a Master coach on picks that work together, objective timing and when to rotate, at {{p_draft}} per hour. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
-        'First, name the objective you keep losing. For example, a player who loses every Zapdos fight gains more from one macro hour than from Ranked game number 4. A player who wants to try a new Pokemon gains more from Standard and Quick Battle at {{p_quick}} per game. Play and Learn is one live Ranked match with a Master coach at {{p_learn}}, and screen share runs using Discord. The one-teammate side is covered on the [Pokemon Unite teammate](/games/pokemon-unite/teammate) page.',
+        'First, name the objective you keep losing. For example, a player who loses every Zapdos fight gains more from one macro hour at {{p_draft}} than from a fourth Ranked game. A player who wants to try a new Pokemon gains more from Standard and Quick Battle at {{p_quick}} per game in 2026. Play and Learn is one live Ranked match with a Master coach at {{p_learn}}, and screen share runs using Discord. The one-teammate side is covered on the [Pokemon Unite teammate](/games/pokemon-unite/teammate) page.',
       ],
     },
   ],

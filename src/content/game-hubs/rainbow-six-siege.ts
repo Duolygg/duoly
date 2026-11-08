@@ -120,7 +120,7 @@ export const rainbowSixSiege: HubPageCopy = {
       heading: 'When is Siege coaching the better booking?',
       paragraphs: [
         'Siege coaching is the better booking when the goal is a repeatable fix rather than company for the next match. A duo teammate answers a quick question between rounds. A coach stops the clip, names the pattern and leaves you with homework. Operator Lab and Map and Callouts each cost {{p_ops}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate matches only.',
-        'First, name the round you keep losing. For example, a player who drops the same site every match gains more from one map hour than from Ranked queue number 4. A player who only wants to warm up gains more from Arcade and Deathmatch at {{p_arcade}} per match. Play and Learn is one live Ranked match with a Champion coach at {{p_learn}}, and screen share runs using Discord. Rainbow Six Siege has no separate Duoly coaching page yet, so lessons are booked from the prices above.',
+        'First, name the round you keep losing. For example, a player who drops the same site every match gains more from one map hour at {{p_maps}} than from a fourth Ranked queue. A player who only wants to warm up gains more from Arcade and Deathmatch at {{p_arcade}} per match in 2026. Play and Learn is one live Ranked match with a Champion coach at {{p_learn}}, and screen share runs using Discord. Rainbow Six Siege has no separate Duoly coaching page yet, so lessons are booked from the prices above.',
       ],
     },
   ],
