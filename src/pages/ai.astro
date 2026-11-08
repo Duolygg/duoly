@@ -168,9 +168,9 @@ const faq: [string, string][] = [
         {bundle[2]}% bundle discount on a ten game booking. Rate limits sit at{' '}
         {MCP.rateLimits.minute} requests per minute and {MCP.rateLimits.day} per
         day, which is generous for a conversation and small enough to keep
-        answers fast. Additionally, the connector speaks {MCP.transport} over{' '}
+        answers fast. Additionally, the connector supports{' '}
         {MCP.protocolVersions.length} protocol versions, the newest being{' '}
-        {MCP.protocolVersions[0]}.
+        {MCP.protocolVersions[0]}, so an older client keeps working.
       </p>
     </section>
     <Steps
@@ -210,14 +210,14 @@ const faq: [string, string][] = [
         coming soon, which means no Duoly connection exists in those apps yet.
       </p>
       <p>
-        Duoly ships as a custom connector only. Step 1 of a realistic
-        expectation is knowing Duoly is absent from the Claude directory and the
-        ChatGPT store, so each person adds the connector by hand. Assistants
-        with interactive cards can browse games, compare sessions and open a
-        booking link from a card, while plain clients fall back to text and
-        links. For example, a card in Claude shows the {coachingPrice} per hour
-        Valorant VOD Review beside a booking button. Finally, coaching covers
-        all {COACHABLE_GAMES} bookable games from Duoly, with bundle discounts
+        Duoly ships as a custom connector only. It is not listed in the Claude
+        directory or the ChatGPT store. Step 1 of a realistic expectation is
+        knowing each person adds the connector by hand. Assistants with
+        interactive cards can browse games, compare sessions and open a booking
+        link from a card, while plain clients fall back to text and links. For
+        example, a card in Claude shows the {coachingPrice} per hour Valorant
+        VOD Review beside a booking button. Finally, coaching covers all{' '}
+        {COACHABLE_GAMES} bookable games from Duoly, with bundle discounts
         reaching {bundle[2]}%.
       </p>
       <p class="ai-dev-note">

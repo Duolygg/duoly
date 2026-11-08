@@ -148,9 +148,10 @@ const request = JSON.stringify(
         applied. Additionally, list_games and list_services exist for browsing,
         while get_availability reports public online counts without reserving
         anybody. Goal tokens are duo, coaching, ranked, casual and teams, with
-        training and other accepted as category aliases. Finally, every result
-        keeps one readable summary beside schema-validated structuredContent, so
-        a client never parses JSON out of a text field.
+        training and other accepted as category aliases. Finally, each result
+        has one readable summary and full schema-validated structuredContent,
+        without JSON duplicated into text. Card-only data stays in result
+        metadata.
       </p>
     </section>
     <section aria-labelledby="booklink-h">
@@ -171,9 +172,9 @@ const request = JSON.stringify(
         no order, so use get_quote only for a selected service and
         create_booking_link only to produce a final link. Third, leave private
         notes, IGN and payment choices on Duoly, where people confirm remaining
-        options. Finally, rank-priced services show a from price beside a
-        typical one-unit price, while exact totals already include bundle
-        savings of {bundle[0]}%, {bundle[1]}% or {bundle[2]}%.
+        options. Finally, rank-priced services show a from price and a typical
+        one-unit price; exact totals include bundle savings of {bundle[0]}%,{' '}
+        {bundle[1]}% or {bundle[2]}%.
       </p>
     </section>
     <section aria-labelledby="table-h">
@@ -188,12 +189,9 @@ const request = JSON.stringify(
         find_session takes the same selection loosely, filling gaps with a
         labelled from price and a missingInputs list. Finally, get_order_status
         needs only the private <code>dos_</code> code, and returns acceptance,
-        teammate display names and a next step. Every response pairs one
-        readable summary with schema-validated structuredContent, so a client
-        reads fields rather than parsing prose. For example, a find_session call
+        teammate display names and a next step. For example, a find_session call
         for a Valorant duo under five euros returns services, prices and a
-        bookUrl in a single structured result, ready to render using Claude
-        cards or plain text.
+        bookUrl in one structured result, ready to render using Claude cards.
       </p>
     </section>
     <section aria-labelledby="reference-h">
