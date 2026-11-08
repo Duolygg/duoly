@@ -37,10 +37,10 @@ export const arcRaiders: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One raider drops in with you on your own account, from high-risk raids to relaxed map learning.',
-    team: 'Squad orders hire two raiders at once, so the listed price covers the whole group.',
+      'Raid prices are per hour and flat for everybody, because ARC Raiders ships no ranked ladder and nothing on the page asks for a rank. The raider tier is the only thing that moves the number: an experienced player costs least, a Veteran sits in the middle and an Elite raider is for the high-risk maps. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
+    team: 'Squad orders are priced per seat, so a card covers {{seats_squad}} raiders and the three of you drop as a full trio. Full Squad is an open hour where both Veterans hold the area while you loot, and Escort Run is the targeted version that takes you to one piece of loot and back out. Bundles take {{pct3}} off 3 hours.',
     coaching:
-      'The lesson runs for one hour on fights, third parties and clean extractions.',
+      'The lesson is priced by the hour and gets no bundle discount, so the {{pct3}} and {{pct5}} savings on raid hours do not reach it. PvP and Extraction is the hour for the deaths that keep repeating: how a fight starts, how a third party arrives, and how to leave with your kit instead of feeding it. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking an ARC Raiders session work?',

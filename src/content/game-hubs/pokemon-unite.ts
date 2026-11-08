@@ -42,10 +42,10 @@ export const pokemonUnite: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your lobby on your own account, from Ranked to Standard and Quick Battle.',
-    team: 'Full Squad adds several Master players at once, priced for the seats you need covered.',
+      'Teammate prices are per game, and the Ranked tiers read your own rank, so a Legend lobby costs more than a Beginner one. Standard Battle and Quick Battle hold one price for everybody, because neither moves your rank. One teammate joins your lobby on your own account and takes the lane you ask for, and bundles take {{pct3}} off 3 games or {{pct5}} off 5.',
+    team: 'Full Squad is priced per seat, so the card covers up to {{seats_squad}} seats and falls when your group is only one player short. It is a flat price rather than a rank-priced one, and a full five is also the shape that gets past the invite restriction, since a complete party no longer needs two ranks to line up. Bundles take {{pct3}} off 3 games.',
     coaching:
-      'Every lesson runs for one hour, except Play and Learn, which covers one live Ranked match.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Draft and Macro works through the pick phase, lane assignments and the objective timers that decide a game, and Play and Learn is the exception that covers one live Ranked match instead of a clock hour. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking a Pokemon Unite teammate work?',

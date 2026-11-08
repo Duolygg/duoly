@@ -128,6 +128,22 @@ export function intentAnchor(gameName: string, slug: string) {
 }
 
 /**
+ * Headings for the hub's three price groups.
+ *
+ * Each one is a question, because a reader scanning a price grid is asking one.
+ * The game name never follows an article: it is filled in from the catalog, so
+ * "a Apex Legends teammate" is one game away and no list of exceptions would
+ * stay correct. Phrase the question so the name sits elsewhere instead.
+ */
+export function hubPriceHeadings(gameName: string) {
+  return {
+    teammate: `How much does a teammate cost in ${gameName}?`,
+    team: `What does a team fill cost in ${gameName}?`,
+    coaching: `How much do ${gameName} lessons cost?`,
+  };
+}
+
+/**
  * The three price groups a hub renders, in DOM order. The Service schema lists
  * them in the same order, so every visible price has one matching offer.
  */

@@ -40,10 +40,10 @@ export const eaSportsFc27: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One partner joins your games on your own account, from Co-op Rivals to friendlies and Kick-Off.',
-    team: 'A Clubs Lineup adds several Division 1+ players at once, priced for the seats you need.',
+      'Partner prices are per game, and the two Co-op Rivals tiers read your own division, so an Elite partner for the top divisions costs more than one for Division 10. Kick-Off, Friendlies and the Practice Match hold one price for everybody, because none of them touch your Rivals record. Bundles take {{pct3}} off 3 games and {{pct5}} off 5.',
+    team: 'A Clubs Lineup is priced per seat, so the card covers up to {{seats_clubs}} seats and falls when your club is only two players short. It is a flat price rather than a division-priced one, because a Clubs match reads your club rather than your Rivals division. Bundles still apply, {{pct3}} off 3 games and {{pct5}} off 5.',
     coaching:
-      'Both lessons run for one hour, one on tactics and squads and one on weekend-league prep.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on partner sessions stop at this grid. Tactics and Squad Builder works through formations, custom tactics and a squad that fits how you actually play, while Champions Prep covers weekend-league defending, the current meta and keeping your head after a bad run. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking an FC 27 partner work?',

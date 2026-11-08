@@ -50,10 +50,10 @@ export const fortnite: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your games on your own account, from Ranked Duos to Zero Build and Creative.',
-    team: 'Squad fills add several Unreal players at once, priced for the seats you need covered.',
+      'Teammate prices are per hour, because a battle royale match has no fixed length. Ranked services read your own rank, so an Unreal lobby costs more than a Bronze one, while Zero Build, Reload and Box Fight Practice hold one price for everybody. Bundles are the only other discount, {{pct3}} off 3 hours and {{pct5}} off 5, and you keep your own account and your own skin.',
+    team: 'Squad fills are priced per seat, so a card covers the default seats and falls when you only need one more body: Squad Fill covers up to {{seats_squad}} seats and Tournament Teammate {{seats_cup}}. Both are flat hourly prices rather than rank-priced, because a cup lobby is set by the bracket rather than by your rank. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
     coaching:
-      'Both lessons run for one hour, one live in Ranked and one drilled in Creative.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate hours stop at the coaching grid. Build Battle Coaching drills edits, ramp rushes and box fights in Creative, and Play and Learn is the live option where a coach talks through a real Ranked hour as it happens. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking a Fortnite duo work?',

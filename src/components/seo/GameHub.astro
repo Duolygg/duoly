@@ -17,6 +17,7 @@ import { intentForGame, intentPath } from '../../content/intent-pages';
 import { gameBySlug } from '../../site/games';
 import {
   HUB_PRICES_CHECKED,
+  hubPriceHeadings,
   intentAnchor,
   type hubOffers,
 } from '../../server/seo/hub';
@@ -43,6 +44,7 @@ const siblings = copy.related.flatMap((slug) => {
 const intentLink = intent
   ? { href: intentPath(intent), anchor: intentAnchor(game.name, intent.slug) }
   : undefined;
+const priceHeadings = hubPriceHeadings(game.name);
 const line = (id: string) => copy.services[id] ?? '';
 const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
   group.map((offer) => ({ ...offer, desc: line(offer.id) || offer.desc }));
@@ -82,7 +84,7 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
   <Prices
     gameId={game.id}
     offers={withLines(offers.teammate)}
-    heading="Teammate sessions and prices"
+    heading={priceHeadings.teammate}
     intro={copy.intros.teammate}
     updated={HUB_PRICES_CHECKED}
     dated={offers.team.length + offers.coaching.length === 0}
@@ -92,7 +94,7 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
       gameId={game.id}
       offers={withLines(offers.team)}
       id="team-prices"
-      heading="Team sessions and prices"
+      heading={priceHeadings.team}
       intro={copy.intros.team}
       updated={HUB_PRICES_CHECKED}
       dated={offers.coaching.length === 0}
@@ -103,7 +105,7 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
       gameId={game.id}
       offers={withLines(offers.coaching)}
       id="coaching-prices"
-      heading={`${game.name} coaching prices`}
+      heading={priceHeadings.coaching}
       intro={copy.intros.coaching}
       coach
       updated={HUB_PRICES_CHECKED}

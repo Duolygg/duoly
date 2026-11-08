@@ -41,10 +41,10 @@ export const overwatch2: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your games on your own account, from Role Queue Competitive to Stadium.',
-    team: 'A 5-stack fill adds several Master+ players at once, priced for the seats you need covered.',
+      'Teammate prices are per game, and the Competitive services read your own rank, so a Top 500 lobby costs more than a Bronze one. Quick Play, Arcade and Stadium hold one price for everybody. One teammate joins your games on your own account and plays the role your group is short of, and bundles take {{pct3}} off 3 games or {{pct5}} off 5.',
+    team: 'The 5-stack fill is priced per seat, so the card covers the default {{seats_five}} seats and falls when your group already has bodies. It reads your own rank like the Competitive duos do, and a full five is also the party shape that keeps Role Queue locked in rather than leaving the roles to chance. Bundles take {{pct3}} off 3 games.',
     coaching:
-      'Both lessons run for one hour, one live in Competitive and one on your chosen role.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Role Coaching works through one role in depth, from positioning and cooldown tracking to the ultimate economy, and Play and Learn is the live option where a Grandmaster coach talks through a real Competitive game. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking an Overwatch 2 duo work?',

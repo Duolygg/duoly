@@ -43,10 +43,10 @@ export const rainbowSixSiege: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your matches on your own account, from Ranked to Quick Match and Arcade.',
-    team: 'A stack fill adds several Diamond+ players at once, priced for the seats you need covered.',
+      'Teammate prices are per match, and the Ranked services read your own rank, so a Champion lobby costs more than a Copper one. Quick Match and Arcade hold one price for everybody, because neither has a ladder to climb. One teammate joins your matches on your own account, and bundles are the only other discount, {{pct3}} off 3 matches and {{pct5}} off 5.',
+    team: 'The stack fill is priced per seat, so the card covers the default {{seats_stack}} seats and falls when your party already has bodies. It reads your own rank like the Ranked duos do, because the squad restrictions in Ranked 3.0 apply to a five exactly as they apply to a pair. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5.',
     coaching:
-      'Every lesson runs for one hour, except Play and Learn, which covers one live Ranked match.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not reach them. Operator Mastery works through one attacker and one defender, Map and Site Setup covers two maps in detail, and Play and Learn is the exception that covers one live Ranked match. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking a Siege duo work?',

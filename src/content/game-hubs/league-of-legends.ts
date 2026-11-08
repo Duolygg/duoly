@@ -50,10 +50,10 @@ export const leagueOfLegends: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your games on your own account, from ranked Solo/Duo to ARAM and Arena.',
-    team: 'Teams fills add several Master+ players at once, priced for the seats you need covered.',
+      'Teammate prices are per game, and only ranked services move with your own rank: Solo/Duo and Arena cost more in a Challenger lobby than in an Iron one, while ARAM Night, Normal Draft and Swiftplay hold one price for everybody. One teammate joins your games on your own account. Bundles are the only other discount, {{pct3}} off 3 games and {{pct5}} off 5.',
+    team: 'Teams fills are priced per seat, so the number on a card covers the default {{seats_flex}} seats and falls when you need fewer. Flex Squad fills the empty seats in your Ranked Flex party and Ranked 5s books a whole five with a planned draft and one shotcaller, both priced by your own rank. Clash Roster covers a tournament weekend at one flat price. Bundles take {{pct3}} off 3 games.',
     coaching:
-      'Every lesson runs for one hour, except Play and Learn, which covers one live ranked game.',
+      'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on teammate sessions stop here. VOD Review works through one recent game, Champion Mastery drills a single champion live, and Play and Learn is the exception that covers one ranked game rather than a clock hour. Screen share runs on Discord, and the coach never touches your account.',
   },
   steps: {
     heading: 'How does booking a League of Legends duo work?',

@@ -47,10 +47,10 @@ export const marvelRivals: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your matches on your own account, from Competitive to Quick Match and Team-Up.',
-    team: 'A 6-stack fill adds several Grandmaster+ players at once, priced for the seats you need.',
+      'Teammate prices are per match, and the Competitive services read your own rank, so the top of the ladder costs more than a Bronze lobby. Quick Match, Arcade and the Team-Up session hold one price for everybody. One teammate joins your matches on your own account, picking the role your team keeps missing, and bundles take {{pct3}} off 3 matches or {{pct5}} off 5.',
+    team: 'The 6-stack fill is priced per seat, so the card covers the default {{seats_six}} seats and falls when your group already has bodies. It reads your own rank like the Competitive duos do, and a full six is the shape NetEase Games allows where a five is not. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5.',
     coaching:
-      'Both lessons run for one hour, one live in Competitive and one on a single hero.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions stop at this grid. Hero Mastery works through one hero in depth, from ability timings to the matchups that counter you, and Play and Learn is the live option where the coach calls a real Competitive game. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking a Marvel Rivals duo work?',

@@ -40,10 +40,10 @@ export const apexLegends: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your games on your own account, from Ranked to the Duos playlist and Mixtape.',
-    team: 'Full Trio hires two high-rank players on one order, so the listed price covers both seats.',
+      'Teammate prices are per hour, because an Apex match can end on the first ring or go to the last squad. Ranked sessions read your own rank, so an Apex Predator lobby costs more than a Rookie one, while the Duos playlist, Mixtape and Pubs hold one price for everybody. Bundles are the only other discount, {{pct3}} off 3 hours and {{pct5}} off 5.',
+    team: 'Full Trio is priced per seat, so the card covers {{seats_trio}} players and the two of them turn a solo queue into a real trio. It reads your own rank like the Ranked duos do, because Respawn Entertainment keeps a premade squad inside two ranks and a trio has to clear that too. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
     coaching:
-      'Both lessons run for one hour, one live in Ranked and one in the Firing Range.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate hours stop here. Movement and Positioning drills tap strafes, zip rotations and wall bounces in the Firing Range, and Play and Learn is the live option where a Master coach talks through a real Ranked hour. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking an Apex Legends duo work?',

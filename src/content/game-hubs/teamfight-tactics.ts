@@ -33,9 +33,9 @@ export const teamfightTactics: HubPageCopy = {
   },
   intros: {
     teammate:
-      'A partner either plays the lobby with you in Double Up or watches your board live on Discord.',
+      'Session prices are per game, and only Double Up reads your own rank, because matchmaking there runs on the senior player of the pair and a Challenger lobby is a different game from an Iron one. Board Coach and the casual lobbies hold one price for everybody. Bundles are the only other discount, {{pct3}} off 3 games and {{pct5}} off 5.',
     coaching:
-      'The lesson runs for one hour on Discord, with your own boards and replays on screen.',
+      'The review is priced by the hour and gets no bundle discount, so the {{pct3}} and {{pct5}} savings on Double Up and Board Coach do not reach it. Comp and Econ Review is the slower, structured option: it works through the comps that suit how you play, when to roll and when to level, and gold management from stage two onward. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking a TFT session work?',

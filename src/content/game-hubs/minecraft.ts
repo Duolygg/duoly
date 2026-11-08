@@ -42,10 +42,10 @@ export const minecraft: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your server or your world, from ranked-style PvP to relaxed survival.',
-    team: 'A Server Squad adds several skilled PvPers at once, priced for the seats you need covered.',
+      'Session prices are per hour and flat for everybody, because Minecraft has no ranked ladder, with one exception: Manhunt is priced per run, since a chase has no clock. What changes the number is the service, from a relaxed building hour up to an hour with a top PvPer. Bundles take {{pct3}} off 3 and {{pct5}} off 5 of the same service.',
+    team: 'A Server Squad is priced per seat, so the card covers up to {{seats_squad}} seats and falls when your team is only one player short. It is a flat hourly price, because a server has no ladder to read, and the hired players are picked for the mode you name: Bedwars fours, SkyWars teams, Hunger Games or UHC events. Bundles take {{pct3}} off 3 hours.',
     coaching:
-      'Both lessons run for one hour, one on PvP mechanics and one on Bedwars.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate hours stop here. PvP Coaching drills aim, combos, strafing, rod and bow play in practice duels, while Bedwars Coaching works on rush timing, bridging, bed defence and the endgame clutches in real games. Screen share runs on Discord so the coach watches your real clicks.',
   },
   steps: {
     heading: 'How does booking a Minecraft session work?',

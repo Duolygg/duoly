@@ -10,6 +10,7 @@ import { lessons } from '../../src/content/coaching';
 import {
   hubModes,
   hubOffers,
+  hubPriceHeadings,
   hubPrices,
   hubServiceIds,
 } from '../../src/server/seo/hub';
@@ -159,6 +160,17 @@ describe.each(HUB_PAGES.map((page) => page.gameSlug))('%s hub', (slug) => {
       // risk whenever a rank or service name starts with a vowel. Copy avoids
       // "a" before any vowel rather than guessing which ones sound like "you".
       expect(text, text).not.toMatch(/\b[Aa] [AEIOUaeiou]/);
+    }
+  });
+
+  it('asks a grammatical question above every price grid', () => {
+    const { game } = rendered(slug);
+    for (const heading of Object.values(hubPriceHeadings(game.name))) {
+      expect(heading, heading).toMatch(/\?$/);
+      expect(heading).toContain(game.name);
+      // The game name comes from the catalog, so an article in front of it is
+      // one rename away from "a Apex Legends teammate".
+      expect(heading, heading).not.toMatch(/\b[Aa] [AEIOUaeiou]/);
     }
   });
 

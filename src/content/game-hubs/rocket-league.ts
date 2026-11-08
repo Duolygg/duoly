@@ -41,10 +41,10 @@ export const rocketLeague: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One partner joins your games on your own account, from Ranked Doubles to casual and extra modes.',
-    team: 'The Standard fill adds Grand Champion players to your 3v3 team, priced per match.',
+      'Teammate prices are per hour, because a single match runs about seven minutes and an hour is the smallest honest unit. The Ranked Doubles tiers read your own rank, so a Supersonic Legend lobby costs more than a Bronze one, while Casual 3v3 and Extra Modes hold one price for everybody. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
+    team: 'The 3v3 Standard fill is the one service priced per match rather than per hour, because a Standard set is shorter than a Doubles session. The card covers up to {{seats_three}} seats and falls to one when you already have a friend, and it reads your own rank like the Doubles tiers do. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5.',
     coaching:
-      'Both lessons run for one hour, one live in Doubles and one on mechanics.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate hours stop here. Mechanics Training drills aerials, flicks and recoveries and ends with training packs you keep, while Play and Learn is the live option where a Grand Champion coach talks through a real Doubles hour. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking a Rocket League partner work?',
@@ -103,8 +103,8 @@ export const rocketLeague: HubPageCopy = {
     {
       heading: 'Can any rank party up for Ranked Doubles?',
       paragraphs: [
-        'Yes. Psyonix applies no rank disparity limit to 2v2 parties, so a Bronze player and a Supersonic Legend can queue Ranked Doubles together, and matchmaking weights the lobby towards the higher-ranked player instead of blocking the party. The limit that does exist belongs to 3v3: a two-player party can only queue Ranked Standard if both players sit within three ranks of each other. The Standard fill sidesteps that by completing your party to a full three, where the restriction no longer applies.',
-        'The partner you actually want is one who rotates, so the two of you are never both chasing the same ball. Rotation beats raw mechanics at every rank below Supersonic Legend, which is why Duo Plus names a Champion+ partner and Duo Pro a Grand Champion who covers back post and calls boost. Set that up in the order chat: who cheats up on kickoff, who shadows, and one call for boost, because two players starving at once loses the counter.',
+        'Yes, any two ranks can party for Ranked Doubles. Psyonix applies no rank disparity limit to 2v2, so a Bronze player and a Supersonic Legend can queue together. Matchmaking weights the lobby towards the higher-ranked player rather than blocking the party. The limit that does exist belongs to 3v3. A two-player party can only queue Ranked Standard when both players sit within three ranks of each other, and the Standard fill sidesteps it by completing your party to a full three.',
+        'The partner you want is one who rotates, so you are never both chasing the same ball. Rotation beats raw mechanics at every rank below Supersonic Legend. Duo Plus names a Champion+ partner at {{p_duo1}} per hour and Duo Pro a Grand Champion at {{p_duo2}}, who covers back post and calls the boost. Set the rest up in the order chat: who cheats up on kickoff, who shadows, and one caller for boost, because two players starving at once loses the counter.',
       ],
     },
     {

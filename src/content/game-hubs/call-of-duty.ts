@@ -47,10 +47,10 @@ export const callOfDuty: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your games on your own account, from Warzone and Ranked Play to Zombies.',
-    team: 'Quad and team fills add several Crimson+ players at once, priced for the seats you need.',
+      'Teammate prices are per hour, because a Warzone match can end in four minutes or run twenty. Ranked Play sessions read your own skill division, so a Top 250 lobby costs more than a Gold one, while Warzone Duo, Rebirth Duo, Zombies and Party Games hold one price for everybody. Bundles are the only other discount, {{pct3}} off 3 hours and {{pct5}} off 5.',
+    team: 'Team fills are priced per seat, so a card covers the default {{seats_quads}} seats and falls when your party already has bodies. Warzone Quads is a flat hourly price for the big lobby, while the Ranked Play fill reads your own skill division because the party restrictions bite hardest there. Both take {{pct3}} off 3 hours and {{pct5}} off 5.',
     coaching:
-      'Both lessons run for one hour, one live in Warzone and one on loadouts and movement.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate hours do not apply. Loadout and Movement covers guns, attachments, slide cancels and the rotations that keep you off the open ground, and Play and Learn is the live option where the coach calls a real Warzone hour as it happens. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking a Call of Duty duo work?',

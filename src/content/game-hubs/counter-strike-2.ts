@@ -44,10 +44,10 @@ export const counterStrike2: HubPageCopy = {
   },
   intros: {
     teammate:
-      'One teammate joins your matches on your own account, from Premier and FACEIT to Wingman and retakes.',
-    team: 'Stack fills add several high-rated players at once, priced for the seats you need covered.',
+      'Teammate prices are per match, and the ranked services follow your own rating: Premier duos read your CS Rating and the FACEIT duo reads your FACEIT level, so a 25,000+ lobby costs more than a fresh one. Wingman uses the classic skill groups. Casual Match and Retake Practice hold one price for everybody, and bundles take {{pct3}} off 3 matches or {{pct5}} off 5.',
+    team: 'Stack fills are priced per seat, so a card covers the default {{seats_five}} seats and falls when your own party already has bodies. Premier 5-Stack queues the Valve ladder and FACEIT 5-Stack queues FACEIT, each priced by your own rating, and a full five is also the one party shape with no rating gap limit at all. Bundles take {{pct3}} off 3 matches.',
     coaching:
-      'Every lesson runs for one hour, except Play and Learn, which covers one live Premier match.',
+      'Lessons are priced by the hour and carry no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not reach them. Demo Review walks one recent match, Utility and Nades drills smokes, flashes and molotovs on the maps you play, and Play and Learn is the exception that covers one live Premier match. Screen share runs on Discord.',
   },
   steps: {
     heading: 'How does booking a CS2 duo work?',
