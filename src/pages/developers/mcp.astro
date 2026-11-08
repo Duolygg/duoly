@@ -94,11 +94,11 @@ const request = JSON.stringify(
         For example, a client using 2025-11-25 first initializes, lists tools
         and sends the negotiated MCP-Protocol-Version header. No session ID is
         issued. The 2025-06-18 revision follows the same initialization path.
-        For 2026-07-28, start with server/discover instead. Every modern request
-        needs matching Mcp-Method and MCP-Protocol-Version headers, plus
-        Mcp-Name for a tool call. Put protocol version, client info and
-        capabilities in params._meta. An SDK from Anthropic or another MCP
-        client must match the selected protocol revision.
+        For 2026-07-28, start with <code>server/discover</code> instead. Every
+        modern request needs matching Mcp-Method and MCP-Protocol-Version
+        headers, plus Mcp-Name for a tool call. Put protocol version, client
+        info and capabilities in params._meta. An SDK from Anthropic or another
+        MCP client must match the selected protocol revision.
       </p>
     </section>
     <section aria-labelledby="tools-h">
@@ -113,7 +113,7 @@ const request = JSON.stringify(
         requesting an exact price. list_games and list_services exist for
         browsing, while get_availability reports public online counts without
         reserving anybody. Goal tokens are duo, coaching, ranked, casual and
-        teams, with training and other accepted as category aliases. each result
+        teams, with training and other accepted as category aliases. Each result
         has one readable summary and full schema-validated structuredContent,
         without JSON duplicated into text. Card-only data stays in result
         metadata.
@@ -137,9 +137,8 @@ const request = JSON.stringify(
         no order, so use get_quote only for a selected service and
         create_booking_link only to produce a final link. Third, leave private
         notes, IGN and payment choices on Duoly, where people confirm remaining
-        options. rank-priced services show a from price and a typical one-unit
-        price; exact totals include bundle savings of {bundle[0]}%, {bundle[1]}%
-        or {bundle[2]}%.
+        options. Rank-priced services show a from price and a typical one-unit
+        price; an exact quote includes the applicable quantity discount.
       </p>
     </section>
     <section aria-labelledby="table-h">
@@ -205,10 +204,11 @@ const request = JSON.stringify(
         First, treat an online count as an upper bound, because a listed
         teammate may already sit in a session. Second, request a fresh quote
         whenever a game, service, rank, quantity or currency changes. Third,
-        remember that bundle discounts of {bundle[0]}%, {bundle[1]}% and{' '}
-        {bundle[2]}% land in the total rather than in a from price. For example,
-        a single Valorant coaching hour reads {coachingPrice} from Duoly while a
-        five-game duo total includes the applicable quantity discount.
+        remember that quantity discounts land in the total rather than in a from
+        price. The quote does not reserve capacity or lock a checkout amount.
+        For example, a single Valorant coaching hour reads {coachingPrice} from
+        Duoly while a five-game duo total includes the applicable quantity
+        discount.
       </p>
       <p>
         Availability uses a 30-second cached aggregate. Online counts can
@@ -304,8 +304,8 @@ const request = JSON.stringify(
         call for Valorant returns coaching at {coachingPrice} per hour from
         Duoly, which confirms both the transport and the pricing path in a
         single request, and a five-game teammate quote checks the quantity path.
-        an unexpected 405 means a GET or DELETE reached the endpoint, since only
-        POST carries a JSON-RPC message. the command line form below prints the
+        An unexpected 405 means a GET or DELETE reached the endpoint, since only
+        POST carries a JSON-RPC message. The command line form below prints the
         tool list without a browser.
       </p>
       <pre class="ai-code"><code>npx @modelcontextprotocol/inspector</code></pre>
