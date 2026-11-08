@@ -111,6 +111,16 @@ export function renderLlms() {
       );
     }),
     '',
+    '## Comparisons',
+    '',
+    ...INDEXABLE_PATHS.filter((path) => path === '/compare/e-pal').map((path) =>
+      link(
+        'Duoly vs E-Pal',
+        path,
+        'Compare pricing models, catalog breadth, provider choice and refund policies with dated first-party sources.',
+      ),
+    ),
+    '',
     '## Legal',
     '',
     link(

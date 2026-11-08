@@ -30,8 +30,7 @@ describe('Duoly vs E-Pal comparison', () => {
     // The copy names these figures in prose too, so pin them.
     expect(comparisonExample.price).toBe('€10.77');
     expect(comparisonExample.unitPrice).toBe('€3.99');
-    expect(comparisonExample.priceCode).toBe('EUR 10.77');
-    expect(comparisonExample.unitPriceCode).toBe('EUR 3.99');
+
     expect(comparisonExample.discountPercent).toBe(10);
     for (const [units, percent] of [
       [5, 15],
@@ -43,6 +42,30 @@ describe('Duoly vs E-Pal comparison', () => {
           { eurToUsd: 1, customerCurrency: 'EUR' },
         ).quantityDiscountPercent,
       ).toBe(percent);
+  });
+
+  it('uses neutral marks for business models and unknown refund policies', () => {
+    expect(
+      comparisonRows.find((row) => row.label === 'Who sets the price'),
+    ).toMatchObject({ duoly: 'neutral', epal: 'neutral' });
+    expect(
+      comparisonRows.find(
+        (row) => row.label === 'Refund to the original payment method',
+      ),
+    ).toMatchObject({ duoly: 'yes', epal: 'unknown' });
+    for (const label of [
+      'Choose a specific provider before booking',
+      'Public provider reviews before booking',
+    ]) {
+      expect(comparisonRows.find((row) => row.label === label)).toMatchObject({
+        duoly: 'no',
+        epal: 'yes',
+      });
+    }
+    for (const row of comparisonRows)
+      expect(epalSources.some((source) => source.url === row.epalSource)).toBe(
+        true,
+      );
   });
 
   it('books the exact example it prices', () => {
@@ -63,8 +86,8 @@ describe('Duoly vs E-Pal comparison', () => {
   });
 
   it('keeps dated first-party E-Pal sources', () => {
-    expect(CHECKED).toBe('2026-11-07');
-    expect(epalSources).toHaveLength(5);
+    expect(CHECKED).toBe('2026-11-08');
+    expect(epalSources).toHaveLength(6);
     for (const source of epalSources) {
       expect(new URL(source.url).hostname).toMatch(/(^|\.)epal\.gg$/);
       expect(source.accessed).toBe(CHECKED);

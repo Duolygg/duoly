@@ -9,6 +9,12 @@ import { BOOKING_PARAMS } from '../../src/contracts/booking-link';
 import { existsSync } from 'node:fs';
 
 describe('llms.txt', () => {
+  it('includes the indexable E-Pal comparison exactly once', () => {
+    expect(
+      renderLlms().match(/https:\/\/duoly\.gg\/compare\/e-pal/g),
+    ).toHaveLength(1);
+  });
+
   it('publishes the site name and booking summary in the proposal format', () => {
     const text = renderLlms();
     expect(text).toMatch(
