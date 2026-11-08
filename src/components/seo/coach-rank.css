@@ -1,0 +1,105 @@
+/* The queue-rule block on coaching pages: a gap meter plus the published rule. */
+.rank-rule .section-intro {
+  max-width: 75ch;
+}
+.seo-page .rank-meter {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin: 20px 0 22px;
+  padding: 0;
+}
+.rank-rung {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 18px;
+  border: 1px solid rgba(196, 170, 255, 0.12);
+  background: #120b22;
+  padding: 18px;
+}
+/* The widest allowed gap gets the accent, so the honest route reads first. */
+.rank-rung[data-open='true'] {
+  border-color: rgba(214, 187, 255, 0.32);
+  background: linear-gradient(140deg, rgba(214, 187, 255, 0.09), #120b22 60%);
+}
+.seo-page .rank-rung dt {
+  align-self: flex-start;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: rgba(214, 187, 255, 0.12);
+  color: #d6bbff;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+.seo-page .rank-rung dd {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+.rank-rung .rung-value {
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 21px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: #f3eeff;
+  font-weight: 750;
+  text-wrap: balance;
+}
+/* A bar showing how far apart two ranks may sit, drawn from data-gap. */
+.rank-rung .rung-bar {
+  display: block;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(214, 187, 255, 0.14);
+  overflow: hidden;
+}
+.rank-rung .rung-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #a98bff, #d6bbff);
+}
+.rank-rung[data-gap='1'] .rung-bar > span {
+  width: 34%;
+}
+.rank-rung[data-gap='2'] .rung-bar > span {
+  width: 67%;
+}
+.rank-rung[data-gap='3'] .rung-bar > span {
+  width: 100%;
+}
+.rank-rung[data-gap='0'] .rung-bar > span {
+  width: 100%;
+  background: repeating-linear-gradient(
+    115deg,
+    rgba(214, 187, 255, 0.5) 0 7px,
+    rgba(214, 187, 255, 0.16) 7px 14px
+  );
+}
+.rank-rung .rung-note {
+  color: #cfc4ea;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.seo-page .rank-rule .rank-source {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(196, 170, 255, 0.12);
+  font-size: 14px;
+  color: #cfc4ea;
+  max-width: 75ch;
+}
+@media (max-width: 520px) {
+  .seo-page .rank-meter {
+    gap: 12px;
+  }
+  .rank-rung {
+    padding: 16px;
+  }
+  .rank-rung .rung-value {
+    font-size: 19px;
+  }
+}

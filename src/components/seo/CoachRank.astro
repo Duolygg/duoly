@@ -1,0 +1,73 @@
+---
+/**
+ * The honest rank rule for a game's live coaching lesson.
+ *
+ * Play and Learn puts the coach in the customer's own match, so a page may not
+ * promise a coach rank the publisher's ranked queue forbids. This block states
+ * the published rule, shows how wide the gap is, names the mode where a
+ * top-tier coach can still play beside any rank, and cites the publisher page
+ * and the day it was read (src/content/rank-rules.ts).
+ *
+ * The source is a link only where an automated check reached the page with 200
+ * on the check date. Three publishers answer an automated request with 403, so
+ * those pages are named in prose without a hyperlink (LINKABLE_SOURCES).
+ */
+import type { CoachRankCopy } from '../../content/coaching-rank';
+import { LINKABLE_SOURCES } from '../../content/coaching-rank';
+import {
+  rankRuleFor,
+  RANK_RULES_CHECKED_LABEL,
+} from '../../content/rank-rules';
+interface Props {
+  slug: string;
+  copy: CoachRankCopy;
+  /** Already price-filled by the page, so the component never formats money. */
+  rule: string;
+  choice: string;
+}
+const { slug, copy, rule, choice } = Astro.props;
+const source = rankRuleFor(slug);
+const linkable = LINKABLE_SOURCES.includes(slug);
+---
+
+<section class="rank-rule" aria-labelledby="rank-rule-h">
+  <h2 id="rank-rule-h">{copy.heading}</h2>
+  <p class="section-intro">{copy.answer}</p>
+  {/* A queue and the gap it allows are a name/value pair, so the meter is a
+      description list like the rank prices in Prices.astro. */}
+  <dl class="rank-meter">
+    {copy.rungs.map((rung) => (
+      <div
+        class="rank-rung"
+        data-gap={rung.gap}
+        data-open={rung.wide ? 'true' : 'false'}
+      >
+        <dt>{rung.label}</dt>
+        <dd>
+          <span class="rung-value">{rung.value}</span>
+          <span class="rung-bar" aria-hidden="true">
+            <span></span>
+          </span>
+          <span class="rung-note">{rung.note}</span>
+        </dd>
+      </div>
+    ))}
+  </dl>
+  <p>{rule}</p>
+  <p>{choice}</p>
+  {source && (
+    <p class="rank-source">
+      Rule from {source.publisher}, in{' '}
+      {linkable ? (
+        <a href={source.source.url} rel="nofollow noopener" target="_blank">
+          {source.source.label}
+        </a>
+      ) : (
+        <strong>{source.source.label}</strong>
+      )}
+      , read on <time datetime="2026-11-08">{RANK_RULES_CHECKED_LABEL}</time>.
+      {!linkable &&
+        ' That publisher answers an automated link check with 403, so the page is named here without a link.'}
+    </p>
+  )}
+</section>
