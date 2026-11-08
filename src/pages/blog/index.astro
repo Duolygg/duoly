@@ -8,14 +8,7 @@ import {
   CONTENT_DATES,
   organizationSchema,
 } from '../../site/seo';
-import {
-  BUNDLE_PERCENTS as bundle,
-  COACHABLE_GAMES,
-  COACHING_PRICE,
-  SHORT_GAME_PRICE,
-  SOCIAL_MODES,
-  SOCIAL_PRICE,
-} from '../../server/seo/teammate-facts';
+import { SOCIAL_PRICE } from '../../server/seo/teammate-facts';
 const { viewer, csrf } = await pageViewer(Astro);
 const posts = [
   {
@@ -41,37 +34,8 @@ const posts = [
     title="Guides to playing together"
     lead="Practical context for choosing a session and keeping it respectful."
   >
-    <section class="answers" aria-labelledby="what-h">
-      <h2 id="what-h">What do the Duoly guides cover?</h2>
-      <p>
-        The Duoly guides are plain-language articles about playing games with
-        somebody you have not met before. First, each guide explains the words
-        people actually use, so a search for an unfamiliar term lands on an
-        honest answer rather than a sales page. Second, each guide compares free
-        options against paid ones, because a moderated Discord LFG channel often
-        beats a booking. Third, each guide states real Duoly prices where a paid
-        session is relevant, for example {SOCIAL_PRICE} per hour for a Social
-        voice session, {COACHING_PRICE} per hour for coaching, or{' '}
-        {SHORT_GAME_PRICE} for a short Valorant game with a teammate. Decide
-        whether you want a one-off session or a regular group before comparing
-        prices. Teammate bundles reach {bundle[2]}% off; coaching has no
-        quantity discount. Finally, the guides never promise a rank, a win or a
-        result, because no session can.
-      </p>
-    </section>
     <section class="answers" aria-labelledby="posts-h">
       <h2 id="posts-h">Which guides can you read now?</h2>
-      <p>
-        One finished guide is published, and more follow the same shape. The
-        e-girl guide explains where the term comes from, how gamers really use
-        it, and how to arrange a first session safely, using Discord voice and a
-        screen name. It also covers Duoly Social, which sells {SOCIAL_MODES}{' '}
-        voice modes at {SOCIAL_PRICE} per hour. For example, a reader wanting a
-        calm evening finds Sleep Call, while a reader wanting feedback finds
-        coaching at {COACHING_PRICE} per hour across {COACHABLE_GAMES} games.
-        Every guide links back to the game hubs so a decision ends on real
-        prices.
-      </p>
       <ul class="posts">
         {posts.map((post) => (
           <li>
@@ -90,7 +54,20 @@ const posts = [
         ))}
       </ul>
       <p>
-        <a href="/games">Browse game and coaching guides</a>
+        The e-girl guide covers the term's online history, the different ways
+        gamers use it and how to arrange a respectful first session. A label
+        tells you little about someone's skill or willingness to play. Ask about
+        the game, region and mode, use the name a person gives you and agree
+        before recording or streaming.
+      </p>
+      <p>
+        Free communities are useful for finding a regular group. For example, a
+        moderated Discord LFG channel lets you compare schedules and voice
+        preferences before joining a lobby. Paid sessions have a defined
+        activity and length; the guide explains Duoly Social at {SOCIAL_PRICE}{' '}
+        per hour alongside game sessions. Social is for adults and is friendly
+        company only. <a href="/games">Browse games and coaching</a> for service
+        details and current prices.
       </p>
     </section>
   </PageIntro>

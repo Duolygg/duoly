@@ -38,7 +38,7 @@ export const MCP = {
     {
       name: 'get_quote',
       inputs:
-        'game, service, quantity (integer 1 to 10), currency (EUR or USD), server (required); rank and edition (Java or Bedrock) when the service requires them',
+        'game, service, quantity (integer 1 to 5), currency (EUR or USD), server (required); rank and edition (Java or Bedrock) when the service requires them',
       outputs:
         'kind, basis, notReserved, currency, amountMinor, amountEurMinor, formattedPrice, unit, quantity, quotedAt, fx, notice, bookUrl, url. Base price before account perks.',
     },

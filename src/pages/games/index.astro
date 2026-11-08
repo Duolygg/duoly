@@ -60,33 +60,8 @@ const faq: [string, string][] = [
   <PageIntro
     eyebrow="Games"
     title="Gaming teammates and coaching by game"
-    lead={`Browse ${PLAYABLE_GAMES} games plus Social. Choose a game hub or a finished coaching guide.`}
+    lead={`Browse ${PLAYABLE_GAMES} games plus Social. Choose your game or open its coaching guide.`}
   >
-    <section class="answers" aria-labelledby="what-h">
-      <h2 id="what-h">What is Duoly?</h2>
-      <p>
-        Duoly is a booking site for gaming teammates, coaches and friendly voice
-        company, priced by the game or by the hour. Sessions start at{' '}
-        {SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game, and coaching is{' '}
-        {COACHING_PRICE} per hour or game in every coachable title. First, a duo
-        session focuses on playing together. Second, coaching adds a specific
-        learning goal. Third, Social is friendly voice company without a game,
-        for adults only. Step 1 is picking a game below, step 2 is choosing a
-        service and step 3 is agreeing a start time using Discord voice. For
-        example, a Valorant player can book a Skirmish duo tonight or an aim
-        lesson for the weekend, with bundle discounts reaching {bundle[2]}% on a
-        ten-game main-service bundle. Payment, cancellation and refund details
-        are in our <a href="/terms">terms</a>.
-      </p>
-      <p>
-        Prefer to start with a question? See{' '}
-        <a href="/ai">Duoly in AI assistants</a> for connector status and
-        example prompts, or read the{' '}
-        <a href="/developers/mcp">MCP developer guide</a>. Longer reads live in
-        the <a href="/blog">Duoly guides</a>, including{' '}
-        <a href="/compare/e-pal">how Duoly compares with E-Pal</a>.
-      </p>
-    </section>
     {/* A directory of links to the game hubs: a nav landmark rather than a bare
         list, matching the related-links pattern on the other SEO pages. Screen
         reader users reach it from the landmark menu, and text extractors read
@@ -122,6 +97,32 @@ const faq: [string, string][] = [
         ))}
       </ul>
     </nav>
+    <section class="answers" aria-labelledby="what-h">
+      <h2 id="what-h">How do you use the game catalog?</h2>
+      <p>
+        Choose your game to compare its teammate services, coaching and prices.
+        The game links open the full catalog; a coaching link opens a lesson
+        guide, and a play-together link compares free communities with paid
+        sessions. Available services differ by game, so check the mode and unit
+        before choosing a quantity. An hourly review and a session priced per
+        game cover different amounts of play.
+      </p>
+      <p>
+        For example, a Valorant player can compare Competitive, Swiftplay and a
+        VOD Review from the same hub. Ranked parties must still meet the game's
+        queue rules. Match the server and region, agree voice in the order chat
+        and stay on your own account. A booking does not guarantee a win, a
+        particular start time or a rank change. If you are deciding between
+        services, use the comparisons below before opening checkout.
+      </p>
+      <p>
+        Using an assistant? See <a href="/ai">Duoly in AI assistants</a> or the{' '}
+        <a href="/developers/mcp">MCP developer guide</a>. For background,
+        browse <a href="/blog">Duoly guides</a> and{' '}
+        <a href="/compare/e-pal">the E-Pal comparison</a>. Payment, cancellation
+        and refund details are in the <a href="/terms">terms</a>.
+      </p>
+    </section>
     <section class="answers" aria-labelledby="services-h">
       <h2 id="services-h">What can you book on Duoly?</h2>
       <p>
