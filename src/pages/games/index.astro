@@ -90,8 +90,13 @@ const faq: [string, string][] = [
     {/* A directory of links to the game hubs: a nav landmark rather than a bare
         list, matching the related-links pattern on the other SEO pages. Screen
         reader users reach it from the landmark menu, and text extractors read
-        the answers below instead of 40 link labels. */}
-    <nav aria-label={`All ${PLAYABLE_GAMES} games and Social`}>
+        the answers below instead of 40 link labels. The page-directory class
+        marks it as this page's own content index rather than shared site
+        navigation; scripts/seo-built.test.mjs relies on that distinction. */}
+    <nav
+      class="page-directory"
+      aria-label={`All ${PLAYABLE_GAMES} games and Social`}
+    >
       <ul class="grid">
         {SITE_GAMES.map((game) => (
           <li>

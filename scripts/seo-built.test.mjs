@@ -440,11 +440,17 @@ test('intent heroes fit desktop and mobile without changing shared navigation', 
     for (const path of Object.keys(pages)) {
       await page.goto(base + path);
       const forbidden = await page.evaluate((selector) => {
+        // Intent pages must not be reachable from navigation shared across the
+        // site, nor from the homepage. Three in-content navs are the page's own
+        // content and stay allowed: related-links chips, breadcrumbs, and the
+        // games index directory (nav.page-directory).
+        const allowed =
+          'nav:not(.related):not(.page-directory):not([aria-label="Breadcrumb"])';
         return [...document.querySelectorAll(selector)]
           .filter(
             (el) =>
               !el.closest('main') ||
-              el.closest('nav:not(.related):not([aria-label="Breadcrumb"])') ||
+              el.closest(allowed) ||
               location.pathname === '/',
           )
           .map((el) => el.getAttribute('href'));
