@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const overwatch2: HubPageCopy = {
   gameSlug: 'overwatch-2',
-  title: 'Overwatch 2 Duos, 5-Stacks and Coaching | Duoly',
+  title: 'Overwatch 2 Teammates, 5-Stacks and Coaching | Duoly',
   description:
-    'Book an Overwatch 2 duo, a 5-stack Role Queue fill or role coaching on Duoly, {{from_lower}}. Compare Competitive and Stadium prices.',
+    'Book an Overwatch 2 teammate, a 5-stack fill or role coaching on Duoly, {{from_lower}}. Compare Competitive and Stadium prices.',
   eyebrow: 'Overwatch 2 teammates',
-  h1: 'Book an Overwatch 2 duo, a 5-stack or a role coach',
+  h1: 'Book Overwatch 2 teammates, a 5-stack or a role coach',
   lead: 'Free LFG Discords work for a casual five. Duoly books a reviewed Diamond, Master or Grandmaster teammate for your next Competitive games, fills Role Queue and sells role coaching.',
   cta: 'Book an Overwatch teammate',
   facts: [

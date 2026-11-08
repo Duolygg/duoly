@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const teamfightTactics: HubPageCopy = {
   gameSlug: 'teamfight-tactics',
-  title: 'TFT Double Up Partner and Live Board Coaching | Duoly',
+  title: 'TFT Double Up Partners, Duos and Coaching | Duoly',
   description:
-    'Book a Teamfight Tactics Double Up partner, a live board coach or a comp review on Duoly, {{from_lower}}. Compare TFT session prices.',
+    'Book a Teamfight Tactics Double Up partner, a duo or a live board coach on Duoly, {{from_lower}}. Compare every TFT session price.',
   eyebrow: 'Teamfight Tactics partners',
-  h1: 'TFT: find a Double Up partner or a board coach',
+  h1: 'Book TFT Double Up partners, duos or coaching',
   lead: 'Free LFG Discords work for finding a Double Up buddy. Duoly books a reviewed Master+ partner for your next games, or a Master+ player who watches your board live and tells you what to roll.',
   cta: 'Book a TFT session',
   facts: [

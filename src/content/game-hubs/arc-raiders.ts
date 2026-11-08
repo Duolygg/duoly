@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const arcRaiders: HubPageCopy = {
   gameSlug: 'arc-raiders',
-  title: 'ARC Raiders LFG: Find a Raid Partner or Squad | Duoly',
+  title: 'ARC Raiders Duo Lobbies, Squads and Coaching | Duoly',
   description:
-    'Book an ARC Raiders raid partner, a full squad, an escort run or PvP coaching on Duoly, {{from_lower}}. Compare every raid and squad price.',
+    'Book an ARC Raiders duo lobby, a full squad, an escort run or PvP coaching on Duoly, {{from_lower}}. Compare every duo, squad and raid price.',
   eyebrow: 'ARC Raiders teammates',
-  h1: 'ARC Raiders LFG: find a raid partner tonight',
+  h1: 'Book an ARC Raiders duo lobby, a squad or coaching',
   lead: 'Free LFG Discords work for a casual trio. Duoly books a reviewed experienced, Veteran or Elite raider by the hour, sends a full squad with you and sells PvP and extraction coaching.',
   cta: 'Book an ARC Raiders teammate',
   facts: [

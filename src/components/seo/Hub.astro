@@ -12,15 +12,15 @@ import type { SiteGame } from '../../site/games';
 import { lessons } from '../../content/coaching';
 import { intentForGame, intentPath } from '../../content/intent-pages';
 import { priceSummary, type seoOffers } from '../../server/seo/offers';
-import { socialContent, valorantContent } from '../../content/hubs';
+import { socialContent } from '../../content/hubs';
 import { GUIDE_PATH, bookingHref } from '../../site/seo';
 interface Props {
   game: SiteGame;
   offers: ReturnType<typeof seoOffers>;
 }
 const { game, offers } = Astro.props;
-const social = game.id === 'social';
-const copy = social ? socialContent : valorantContent;
+// The one page left on this template: /games/social, which is not a game.
+const copy = socialContent;
 const summary = priceSummary(offers);
 const lesson = lessons[game.slug];
 const book = bookingHref(game.id);
@@ -44,11 +44,7 @@ const intent = intentForGame(game.slug);
     art={[{ src: game.img, alt: `${game.name} category art` }]}
     chip={summary}
     facts={copy.facts}
-    note={
-      social
-        ? '18+ only. Social is friendly company, never dating, romantic or sexual services.'
-        : undefined
-    }
+    note="18+ only. Social is friendly company, never dating, romantic or sexual services."
     analyticsGame={game.id}
   />
   <section aria-labelledby="get-h">
@@ -62,7 +58,7 @@ const intent = intentForGame(game.slug);
       <a href="/contact">contact support</a> any time.
     </p>
   </Steps>
-  <Topics sections={copy.sections} label={social ? 'Social' : 'Valorant LFG'} />
+  <Topics sections={copy.sections} label="Social" />
   <Faq items={copy.faq} />
   <ClosingCta
     heading={copy.closing.heading}
@@ -87,9 +83,7 @@ const intent = intentForGame(game.slug);
       )}
       <a href={GUIDE_PATH}>What is an e-girl?</a>
       <a href="/compare/e-pal">Duoly vs E-Pal compared</a>
-      <a href={social ? '/games/valorant' : '/games/social'}>
-        {social ? 'Find Valorant teammates' : 'Friendly Social sessions'}
-      </a>
+      <a href="/games/valorant">Find Valorant teammates</a>
       <a href="/games">Browse games</a>
     </div>
   </nav>

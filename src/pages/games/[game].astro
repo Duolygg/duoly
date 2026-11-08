@@ -8,7 +8,7 @@ import { pageViewer } from '../../site/viewer';
 import { gameBySlug } from '../../site/games';
 import { lessons } from '../../content/coaching';
 import { intentForGame, intentPath } from '../../content/intent-pages';
-import { socialContent, valorantContent } from '../../content/hubs';
+import { socialContent } from '../../content/hubs';
 import { hubPageFor } from '../../content/hub-pages';
 import { renderTokens } from '../../content/guide-pages';
 import { viewerCurrency } from '../../server/currency';
@@ -27,19 +27,17 @@ if (!game) {
   return Astro.rewrite('/404');
 }
 const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
-// Valorant and Social shipped before the data-driven hubs and keep their own copy.
-const legacy = game.id === 'val' || game.id === 'social';
+// Social is not a game: it shipped before the data-driven hubs and keeps its own copy.
+const legacy = game.id === 'social';
 const hub = legacy ? undefined : hubPageFor(game.slug);
 const finished = legacy || Boolean(hub);
-const copy = game.id === 'social' ? socialContent : valorantContent;
+const copy = socialContent;
 const currency = await viewerCurrency(Astro.cookies, accountCurrency);
 const context = {
   customerCurrency: currency.cur,
   eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
 };
-const offers = legacy
-  ? seoOffers(game.id, game.id === 'social' ? 'gg' : 'teammate', context)
-  : [];
+const offers = legacy ? seoOffers(game.id, 'gg', context) : [];
 const groups = hub ? hubOffers(game.id, context) : undefined;
 // Hub copy quotes prices through tokens filled from the checkout pricing engine.
 const hubCopy =
@@ -53,9 +51,7 @@ const hubCopy =
 const description = hubCopy
   ? hubCopy.description
   : offers.length
-    ? game.id === 'social'
-      ? `Play with an e-girl on Duoly: friendly Social voice sessions with Just Chat, Watch Together, Sleep Call or Karaoke. ${priceSummary(offers)}. 18+ only.`
-      : `Find Valorant teammates: free LFG options plus paid duo sessions ${priceSummary(offers).toLowerCase()}. Compare ranked and casual prices, then book a teammate.`
+    ? `Play with an e-girl on Duoly: friendly Social voice sessions with Just Chat, Watch Together, Sleep Call or Karaoke. ${priceSummary(offers)}. 18+ only.`
     : `Explore ${game.name} booking options on Duoly. Our complete game guide is being prepared.`;
 const title = hubCopy
   ? hubCopy.title

@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const minecraft: HubPageCopy = {
   gameSlug: 'minecraft',
-  title: 'Minecraft LFG: Find a PvP or Survival Partner | Duoly',
+  title: 'Minecraft Player Finder: PvP and Survival Partners | Duoly',
   description:
-    'Book a Minecraft PvP partner, a survival buddy, a Manhunt run or Bedwars coaching on Duoly, {{from_lower}}. Compare every price.',
+    'Find a Minecraft PvP partner, a survival buddy, a Manhunt run or Bedwars coaching on Duoly, {{from_lower}}. Compare every price.',
   eyebrow: 'Minecraft teammates',
-  h1: 'Minecraft LFG: find a PvP or survival partner',
+  h1: 'Minecraft player finder: PvP and survival partners',
   lead: 'Free LFG Discords work for finding a server group. Duoly books a reviewed PvPer or survival expert by the hour, fills a Bedwars four and sells Bedwars and PvP coaching.',
   cta: 'Book a Minecraft teammate',
   facts: [

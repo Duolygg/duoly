@@ -10,7 +10,7 @@
  * the checkout pricing engine, so copy and checkout cannot drift apart.
  * `**Bold**` and `[links](/path)` are rendered by src/components/seo/rich.ts.
  *
- * Valorant and Social keep their own older copy in src/content/hubs.ts.
+ * Social is not a game, so it keeps its own older copy in src/content/hubs.ts.
  */
 import { GAME_HUBS } from './game-hubs';
 
@@ -66,11 +66,10 @@ export const hubPageFor = (slug: string | undefined) =>
   HUB_PAGES.find((page) => page.gameSlug === slug);
 
 /**
- * Game slugs with finished hub copy, in sitemap order. Valorant and Social come
- * first because both shipped before the data-driven hubs.
+ * Game slugs with finished hub copy, in sitemap order. Social comes first
+ * because it shipped before the data-driven hubs and is not a game.
  */
 export const FINISHED_HUB_SLUGS = [
-  'valorant',
   'social',
   ...HUB_PAGES.map((page) => page.gameSlug),
 ];

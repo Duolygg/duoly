@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const counterStrike2: HubPageCopy = {
   gameSlug: 'counter-strike-2',
-  title: 'CS2 LFG: Find a Premier Duo or a 5-Stack | Duoly',
+  title: 'CS2 Coaching and LFG: Premier and FACEIT Duos | Duoly',
   description:
-    'Book a Counter-Strike 2 duo, a FACEIT stack or a coach on Duoly, {{from_lower}}. Compare Premier, Wingman and retake prices.',
+    'Book Counter-Strike 2 coaching, a Premier duo or a FACEIT stack on Duoly, {{from_lower}}. Compare Premier, Wingman and retake prices.',
   eyebrow: 'Counter-Strike 2 teammates',
-  h1: 'CS2 LFG: find a Premier duo for tonight',
+  h1: 'CS2 coaching and LFG: find a Premier or FACEIT duo',
   lead: 'Free LFG servers and Discord channels are fine for a casual five. Duoly books a reviewed Premier or FACEIT teammate for your next matches, fills a stack and sells demo review when you want to learn.',
   cta: 'Book a CS2 teammate',
   facts: [

@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const marvelRivals: HubPageCopy = {
   gameSlug: 'marvel-rivals',
-  title: 'Marvel Rivals LFG: Find Teammates or a Coach | Duoly',
+  title: 'Marvel Rivals Team Finder: Teammates and Coaching | Duoly',
   description:
-    'Book a Marvel Rivals duo, a 6-stack fill or hero coaching on Duoly, {{from_lower}}. Compare Competitive, Quick Match and Team-Up prices.',
+    'Find Marvel Rivals teammates, a 6-stack or hero coaching on Duoly, {{from_lower}}. Compare Competitive, Quick Match and Team-Up prices.',
   eyebrow: 'Marvel Rivals teammates',
-  h1: 'Marvel Rivals LFG: find teammates for tonight',
+  h1: 'Marvel Rivals team finder: book teammates or a coach',
   lead: 'Free LFG Discords work for a casual six. Duoly books a reviewed Diamond, Grandmaster or Celestial teammate for your next matches, fills the whole stack and sells hero coaching.',
   cta: 'Book a Marvel Rivals teammate',
   facts: [

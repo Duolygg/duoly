@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const callOfDuty: HubPageCopy = {
   gameSlug: 'call-of-duty',
-  title: 'Call of Duty Warzone Duos and Coaching | Duoly',
+  title: 'Call of Duty Duos, Warzone Squads and Coaching | Duoly',
   description:
-    'Book a Call of Duty duo, a Warzone quad fill or a coach on Duoly, {{from_lower}}. Compare Ranked Play, Resurgence and Zombies hour prices.',
+    'Book a Call of Duty duo, a Warzone squad fill or a coach on Duoly, {{from_lower}}. Compare Ranked Play, Resurgence and Zombies hour prices.',
   eyebrow: 'Call of Duty teammates',
-  h1: 'Book a Call of Duty Warzone duo by the hour',
+  h1: 'Book a Call of Duty duo, a Warzone squad or a coach',
   lead: 'Free LFG Discords work for a casual lobby. Duoly books a reviewed Crimson or Iridescent teammate by the hour, fills a quad and sells loadout coaching when you want to learn.',
   cta: 'Book a Call of Duty teammate',
   facts: [

@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const rainbowSixSiege: HubPageCopy = {
   gameSlug: 'rainbow-six-siege',
-  title: 'Rainbow Six Siege Duos, Stacks and Coaching | Duoly',
+  title: 'Rainbow Six Siege Coaching, Duos and Stacks | Duoly',
   description:
-    'Book a Rainbow Six Siege duo, a 5-stack fill or a coach on Duoly, {{from_lower}}. Compare Ranked, Quick Match and lesson prices.',
+    'Book Rainbow Six Siege coaching, a duo or a 5-stack fill on Duoly, {{from_lower}}. Compare Ranked, Quick Match and lesson prices.',
   eyebrow: 'Rainbow Six Siege teammates',
-  h1: 'Book a Rainbow Six Siege duo, a stack or a coach',
+  h1: 'Book Rainbow Six Siege coaching, a duo or a stack',
   lead: 'Free LFG Discords work for a casual five. Duoly books a reviewed Emerald, Diamond or Champion teammate for your next ranked matches, fills a stack and sells operator and map lessons.',
   cta: 'Book a Siege teammate',
   facts: [

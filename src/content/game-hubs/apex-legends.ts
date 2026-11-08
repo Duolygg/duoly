@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const apexLegends: HubPageCopy = {
   gameSlug: 'apex-legends',
-  title: 'Apex Legends Ranked Partners and Coaching | Duoly',
+  title: 'Apex Legends Duos, Trios and Coaching | Duoly',
   description:
-    'Book an Apex Legends ranked partner, a full trio or a coach on Duoly, {{from_lower}}. Compare Ranked, Duos, Mixtape and movement lesson prices.',
+    'Book an Apex Legends duo, a full trio or a coach on Duoly, {{from_lower}}. Compare Ranked, Duos, Trios, Mixtape and movement lesson prices.',
   eyebrow: 'Apex Legends teammates',
-  h1: 'Book an Apex Legends ranked partner by the hour',
+  h1: 'Book an Apex Legends duo, a trio or a coach',
   lead: 'Free LFG Discords work for a casual squad. Duoly books a reviewed Diamond, Master or Predator teammate by the hour, fills your trio and sells a movement course when you want to learn.',
   cta: 'Book an Apex teammate',
   facts: [
