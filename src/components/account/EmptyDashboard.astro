@@ -21,7 +21,7 @@ const { viewer } = Astro.props;
     </a>
   </header>
 
-  <div class="account-overview" aria-label="Account overview">
+  <div class="account-overview" role="region" aria-label="Account overview">
     <section class="card summary" aria-labelledby="account-name-heading">
       <h2 id="account-name-heading">Your account</h2>
       <p class="account-name">{viewer.name}</p>

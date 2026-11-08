@@ -28,7 +28,7 @@ const SPEED = 26;
 
 function Stars({ n }) {
   return (
-    <span className="rv-stars" aria-label={n + ' out of 5 stars'}>
+    <span className="rv-stars" role="img" aria-label={n + ' out of 5 stars'}>
       {STARS.map((i) => (
         <svg
           key={i}
