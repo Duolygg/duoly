@@ -227,13 +227,13 @@ const faq: [string, string][] = [
     <section aria-labelledby="setup-h">
       <h2 id="setup-h">How do you add Duoly to Claude?</h2>
       <p>
-        Adding Duoly to Claude is a three step setup inside the assistant. Step
-        1 opens Settings and then Connectors, where custom connectors live. Step
-        2 adds a connector pointing at <code>{MCP.endpoint}</code>, and step 3
-        enables Duoly inside a conversation. No sign-in is needed, because the
-        six public tools read the catalog rather than an account. A paid plan or
-        an administrator permission may be required by the assistant, which is a
-        rule from Anthropic rather than from Duoly.
+        Duoly is a custom connector you add in Claude. Step 1 opens Settings and
+        Connectors. Step 2 adds a connector pointing at{' '}
+        <code>{MCP.endpoint}</code>, and step 3 enables Duoly inside a
+        conversation. No sign-in is needed, because the six public tools read
+        the catalog rather than an account. A paid plan or an administrator
+        permission may be required by the assistant, which is a rule from
+        Anthropic rather than from Duoly.
       </p>
       {/* A status widget, not prose: ARIA list roles rather than ul/li. The styling
         already sets list-style: none, which strips native list semantics in Safari
