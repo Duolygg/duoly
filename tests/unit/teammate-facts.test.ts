@@ -1,4 +1,21 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+
+const mcpGuide = readFileSync(
+  new URL('../../src/pages/developers/mcp.astro', import.meta.url),
+  'utf8',
+).replace(/\s+/g, ' ');
+
+it('the MCP guide separates coaching quotes from teammate bundle discounts', () => {
+  const quote = calculateQuote(
+    { gameId: 'val', serviceId: 'vod', server: 'EU', units: 10 },
+    { customerCurrency: 'EUR', eurToUsd: 1 },
+  );
+  expect(quote.quantityDiscountPercent).toBe(0);
+  expect(mcpGuide).toContain('Coaching is excluded from bundle discounts.');
+  expect(mcpGuide).not.toContain('before a {bundle[0]}%');
+  expect(mcpGuide).not.toContain('and a ten unit total with');
+});
 import { calculateQuote } from '../../src/server/pricing';
 import { servicesFor } from '../../src/design-reference/lib/catalog.js';
 import { ranksOf } from '../../src/design-reference/lib/ranks.js';

@@ -87,9 +87,10 @@ const request = JSON.stringify(
         choosing a protocol version from the {MCP.protocolVersions.length}{' '}
         supported revisions, step 2 is listing tools and step 3 is calling one
         with catalog tokens. For example, a catalog call from Duoly returns{' '}
-        {coachingPrice} per hour for Valorant coaching, before a {bundle[0]}% or{' '}
-        {bundle[2]}% bundle discount lands on a multi-unit total. Finally, order
-        status is the one tool needing a private <code>dos_</code> code.
+        {coachingPrice} per hour for Valorant coaching. Coaching is excluded
+        from bundle discounts. Teammate bookings receive {bundle[0]}% or{' '}
+        {bundle[2]}% off at three or ten units. Order status is the one tool
+        needing a private <code>dos_</code> code.
       </p>
       <dl class="ai-connection">
         <dt>Endpoint</dt>
@@ -143,15 +144,14 @@ const request = JSON.stringify(
         returns up to three priced services with booking links in one round
         trip. Step 1 is find_session, step 2 is get_quote for one exact
         selection, and step 3 is create_booking_link. For example, a Valorant
-        coaching search returns the {coachingPrice} per hour VOD Review, and a
-        ten unit quote from Duoly arrives with the {bundle[2]}% bundle discount
-        applied. Additionally, list_games and list_services exist for browsing,
-        while get_availability reports public online counts without reserving
-        anybody. Goal tokens are duo, coaching, ranked, casual and teams, with
-        training and other accepted as category aliases. Finally, each result
-        has one readable summary and full schema-validated structuredContent,
-        without JSON duplicated into text. Card-only data stays in result
-        metadata.
+        coaching search returns the {coachingPrice} per hour VOD Review. A ten
+        game teammate quote arrives with the {bundle[2]}% bundle discount
+        applied. list_games and list_services exist for browsing, while
+        get_availability reports public online counts without reserving anybody.
+        Goal tokens are duo, coaching, ranked, casual and teams, with training
+        and other accepted as category aliases. Finally, each result has one
+        readable summary and full schema-validated structuredContent, without
+        JSON duplicated into text. Card-only data stays in result metadata.
       </p>
     </section>
     <section aria-labelledby="booklink-h">
@@ -184,8 +184,8 @@ const request = JSON.stringify(
         booking URL. First, list_games needs nothing, while list_services and
         create_booking_link need a game. Second, get_quote needs a game, a
         service, a server, a quantity and a currency, plus a rank when the
-        service is rank priced, and returns {coachingPrice} per hour for
-        Valorant coaching with {bundle[2]}% off a ten unit total. Third,
+        service is rank priced. Coaching returns {coachingPrice} per hour;
+        teammate bookings receive {bundle[2]}% off a ten game total. Third,
         find_session takes the same selection loosely, filling gaps with a
         labelled from price and a missingInputs list. Finally, get_order_status
         needs only the private <code>dos_</code> code, and returns acceptance,
@@ -199,8 +199,9 @@ const request = JSON.stringify(
       <p>
         The v1 tool reference below is the authoritative input and output list,
         matching the live schema. For example, get_quote returns {coachingPrice}{' '}
-        per hour for Valorant coaching from Duoly, and a ten unit total with{' '}
-        {bundle[2]}% removed. On narrow screens, scroll the table.
+        per hour for Valorant coaching from Duoly, without a quantity discount.
+        A ten game teammate quote includes {bundle[2]}% off. On narrow screens,
+        scroll the table.
       </p>
       <div
         class="ai-table-wrap"
@@ -338,10 +339,11 @@ const request = JSON.stringify(
         tries a catalog request before a quote. For example, a list_services
         call for Valorant returns coaching at {coachingPrice} per hour from
         Duoly, which confirms both the transport and the pricing path in a
-        single request, and a ten unit quote confirms the {bundle[2]}% bundle
-        path. Additionally, an unexpected 405 means a GET or DELETE reached the
-        endpoint, since only POST carries a JSON-RPC message. Finally, the
-        command line form below prints the tool list without a browser.
+        single request, and a ten game teammate quote confirms the {bundle[2]}%
+        bundle path. Additionally, an unexpected 405 means a GET or DELETE
+        reached the endpoint, since only POST carries a JSON-RPC message.
+        Finally, the command line form below prints the tool list without a
+        browser.
       </p>
       <pre class="ai-code"><code>npx @modelcontextprotocol/inspector</code></pre>
       <p>For a command-line discovery check:</p>
@@ -357,9 +359,9 @@ const request = JSON.stringify(
         supplied Retry-After rather than retrying in a tight loop or rotating
         addresses. Third, keep request bodies small, because an oversized body
         is rejected before pricing ever runs. For example, pricing Valorant
-        coaching at {coachingPrice} per hour from Duoly and then a ten unit
-        total at {bundle[2]}% off costs only two calls, which leaves plenty of
-        headroom for a long conversation.
+        coaching at {coachingPrice} per hour from Duoly and then a ten game
+        teammate total at {bundle[2]}% off costs only two calls, which leaves
+        plenty of headroom for a long conversation.
       </p>
       <p>
         Limits are {MCP.rateLimits.minute} requests per minute and{' '}
@@ -400,8 +402,9 @@ const request = JSON.stringify(
         service, a rank and a quantity. Second, keep every identifier out of the
         request, because catalog tools read no accounts at all. Finally, prices
         need no identity, which is why a {coachingPrice} per hour quote from
-        Duoly and its {bundle[0]}% or {bundle[2]}% bundle discount arrive
-        without a login.
+        Duoly arrives without a login. Teammate quotes also include any
+        applicable {bundle[0]}% or {bundle[2]}% quantity discount without a
+        login.
       </p>
       <p>
         Send only the structured catalog choices needed by a tool. Never send
@@ -422,7 +425,7 @@ const request = JSON.stringify(
     <ClosingCta
       heading="Building a Duoly integration?"
       text="A Duoly integration is a read-only MCP client that ends on duoly.gg. Contact the team for partner questions and compatibility checks before shipping to users."
-      extra={`Three rules keep an integration correct. First, never present a quote as a reservation, because a teammate accepts each order from the Duoly queue rather than receiving an assignment. Second, always surface bookUrl as the primary link, so a person reviews the final price before paying on duoly.gg. Third, send only catalog tokens, never names, emails or payment details. For example, a Valorant coaching hour reads ${coachingPrice} from Duoly before the ${bundle[0]}%, ${bundle[1]}% and ${bundle[2]}% bundle discounts applied at checkout. Step 1 of a healthy client is handling HTTP 429 with the supplied Retry-After rather than retrying in a tight loop.`}
+      extra={`Three rules keep an integration correct. First, never present a quote as a reservation, because a teammate accepts each order from the Duoly queue rather than receiving an assignment. Second, always surface bookUrl as the primary link, so a person reviews the final price before paying on duoly.gg. Third, send only catalog tokens, never names, emails or payment details. For example, a Valorant coaching hour reads ${coachingPrice} from Duoly without bundle discounts. Teammate bookings receive ${bundle[0]}%, ${bundle[1]}% and ${bundle[2]}% off at three, five and ten units. Handle HTTP 429 with the supplied Retry-After rather than retrying in a tight loop.`}
       href="/contact"
       label="Contact Duoly"
     />
