@@ -1,0 +1,57 @@
+[
+  {
+    "width": 1440,
+    "section": 0,
+    "pixels": 8640000,
+    "changed": 142306,
+    "text": 1021,
+    "images": 141285,
+    "outside": 0,
+    "meanChannelDelta": 0.03349467592592593,
+    "maxChannelDelta": 100
+  },
+  {
+    "width": 1440,
+    "section": 1,
+    "pixels": 3588480,
+    "changed": 14408,
+    "text": 822,
+    "images": 12032,
+    "outside": 1554,
+    "meanChannelDelta": 0.08077514713750669,
+    "maxChannelDelta": 244
+  },
+  {
+    "width": 390,
+    "section": 0,
+    "pixels": 2340000,
+    "changed": 44242,
+    "text": 1021,
+    "images": 43221,
+    "outside": 0,
+    "meanChannelDelta": 0.044943589743589744,
+    "maxChannelDelta": 100
+  },
+  {
+    "width": 390,
+    "section": 1,
+    "pixels": 2340000,
+    "changed": 15092,
+    "text": 0,
+    "images": 14667,
+    "outside": 425,
+    "meanChannelDelta": 0.0478977207977208,
+    "maxChannelDelta": 249
+  },
+  {
+    "width": 390,
+    "section": 2,
+    "pixels": 1113450,
+    "changed": 8659,
+    "text": 822,
+    "images": 6154,
+    "outside": 1683,
+    "meanChannelDelta": 0.2903869355007709,
+    "maxChannelDelta": 244
+  }
+]
