@@ -3,7 +3,7 @@ import { games, services } from '../../src/server/mcp/catalog';
 
 describe('MCP catalog', () => {
   it('lists real games with canonical links and excludes Social', () => {
-    expect(games()).toHaveLength(15);
+    expect(games()).toHaveLength(20);
     expect(games().some((g) => g.id === 'social')).toBe(false);
     expect(games().find((g) => g.id === 'val')).toMatchObject({
       slug: 'valorant',

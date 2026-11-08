@@ -141,8 +141,8 @@ function setup() {
   return `<div class="sec">${label('Your setup')}<div class="setup">${ranks.length ? `<button class="chip" data-rail="rank" aria-expanded="${state.rail === 'rank'}">${gem(state.rank, 'chipgem')}${copy(state.rank || 'Choose rank')}<span class="x">Change</span></button>` : ''}${regions.length ? `<button class="chip" data-rail="region" aria-expanded="${state.rail === 'region'}">${globe}${copy(state.region || 'Choose region')}<span class="x">Change</span></button>` : ''}<span class="from-chat">${card.input.rank || card.input.region || card.input.server ? 'From your message' : 'Choose your setup'}</span></div><div class="rail ${state.rail === 'rank' ? 'show' : ''}">${ranks.map((r) => `<button class="rk ${state.rank === r ? 'on' : ''}" data-rank="${htmlEscape(r)}">${gem(r, 'rank' + ranks.indexOf(r))}<small>${copy(r)}</small></button>`).join('')}</div><div class="regs ${state.rail === 'region' ? 'show' : ''}">${regions.map((r) => `<button class="sel ${state.region === r ? 'on' : ''}" data-region="${htmlEscape(r)}">${copy(r)}</button>`).join('')}</div></div>`;
 }
 function packs(option) {
-  return `<div class="sec">${label(option.unit === 'hour' ? 'Hours' : 'Games', 'Choose a bundle')}<div class="packs">${[
-    1, 3, 5, 10,
+  return `<div class="sec">${label(option.unit === 'hour' ? 'Hours' : 'Games', 'How many')}<div class="packs">${[
+    1, 2, 3, 4, 5,
   ]
     .map((q) => {
       const p = price(option, q);

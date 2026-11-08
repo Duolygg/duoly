@@ -7,6 +7,7 @@ const selection = {
   gameId: 'lol',
   serviceId: 'duo2',
   units: 3,
+  bundle: true,
   server: 'EUW',
   rank: 'Platinum',
   ign: 'Preview',

@@ -83,7 +83,7 @@ it.each(['EUR', 'USD'] as const)(
       const { context } = view(result);
       for (const option of result._meta!['gg.duoly/card'].options) {
         for (const rank of option.ranks) {
-          for (const quantity of [1, 3, 5, 10]) {
+          for (const quantity of [1, 2, 3, 4, 5]) {
             context.selection = { rank, quantity };
             context.option = option;
             const actual = runInContext(
@@ -108,7 +108,7 @@ it.each(['EUR', 'USD'] as const)(
         }
       }
     }
-    expect(combinations).toBe(228);
+    expect(combinations).toBe(285);
   },
 );
 it('renders from view-only metadata without a text payload', async () => {

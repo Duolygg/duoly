@@ -1,3 +1,35 @@
+/**
+ * How many games or hours a customer can book, and what that saves (owner decision 2026-11-08).
+ *
+ * - The quantity picker offers 1 to 5, and only 5 gets a discount (20%), so 5 is the obvious pick.
+ * - The Bundles tab is separate and unchanged: the game's main service in packs of 3, 5 or 10 at
+ *   10%, 20% and 25% off (5 matches the picker's 20%). A bundle is always one teammate.
+ * - Coaching never gets a quantity discount.
+ */
+export const QUANTITIES = [1, 2, 3, 4, 5] as const;
+export const QUANTITY_DISCOUNT_PERCENT: Readonly<Record<number, number>> = {
+  5: 20,
+};
+export const BUNDLE_UNITS = [3, 5, 10] as const;
+export const BUNDLE_DISCOUNT_PERCENT: Readonly<Record<number, number>> = {
+  3: 10,
+  5: 20,
+  10: 25,
+};
+
+/** The discount in percent for a booking of `units`, 0 when there is none. */
+export function quantityDiscountPercent(
+  units: number,
+  options: { bundle?: boolean; training?: boolean } = {},
+): number {
+  if (options.training) return 0;
+  return (
+    (options.bundle ? BUNDLE_DISCOUNT_PERCENT : QUANTITY_DISCOUNT_PERCENT)[
+      units
+    ] ?? 0
+  );
+}
+
 /** Selection only: no client-supplied prices, currencies, FX or eligibility. */
 export interface QuoteInput {
   readonly gameId: string;
@@ -9,6 +41,8 @@ export interface QuoteInput {
   readonly ign?: string;
   /** Teammates on the order (team orders, src/contracts/seats.ts). Left out means one. */
   readonly seats?: number;
+  /** A Bundles tab pack: the game's main service, 3, 5 or 10 units, one teammate. */
+  readonly bundle?: boolean;
 }
 
 /** Supplied by server code, NEVER copied from a request body. */

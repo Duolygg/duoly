@@ -107,7 +107,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: 'pro',
     roles: BUYERS,
     match: /\bpro\b|membership|subscription|abo/,
-    text: 'Duoly PRO costs €9.99 a month ($9.99 for customers who use US dollars, charged in euros): 10% off every order on top of bundle discounts, priority matching and unlimited re-rolls (still in the first 5 minutes after acceptance). The first 7 days are free with no card needed, once per customer and card. To keep PRO after the trial, add a card in Manage PRO on your dashboard; without one it pauses until a card is added. Cancel anytime with Manage PRO; PRO stays active until the end of the paid month. Diamond customers (1000 completed orders) get PRO free while they stay Diamond, with no card; if you were already paying for PRO, cancel it in Manage PRO so you are not charged again.',
+    text: 'Duoly PRO costs €9.99 a month ($9.99 for customers who use US dollars, charged in euros): 10% off every order on top of quantity and bundle discounts, priority matching and unlimited re-rolls (still in the first 5 minutes after acceptance). The first 7 days are free with no card needed, once per customer and card. To keep PRO after the trial, add a card in Manage PRO on your dashboard; without one it pauses until a card is added. Cancel anytime with Manage PRO; PRO stays active until the end of the paid month. Diamond customers (1000 completed orders) get PRO free while they stay Diamond, with no card; if you were already paying for PRO, cancel it in Manage PRO so you are not charged again.',
   },
   // ---- teammates
   {

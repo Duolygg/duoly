@@ -30,13 +30,13 @@ describe('self-contained SEO answers use checkout prices', () => {
           const price = `${quote.customer.currency} ${quote.customer.amountMinor / 100} per ${quote.unit}`;
           expect(closingAnswer(game)).not.toContain(price);
           expect(offerList(offers)).toContain(`${offer.title} at ${price}`);
-          for (const units of [3, 5, 10]) {
+          for (const units of [2, 3, 4, 5]) {
             const bulk = calculateQuote({ ...offer.selection, units }, context);
             expect(bulk.quantityDiscountPercent).toBe(0);
           }
         }
         expect(quantityAnswer(offers)).toBe(
-          'Bundles do not apply to coaching.',
+          'Quantity discounts and bundles do not apply to coaching.',
         );
         if (offers.every((offer) => offer.unit === 'hour')) {
           expect(quantityAnswer(offers)).not.toContain('games');
@@ -63,7 +63,7 @@ describe('self-contained SEO answers use checkout prices', () => {
     expect(JSON.stringify(renderTokens(page, prices))).not.toMatch(/\{\{/);
     for (const units of [3, 5, 10]) {
       const quote = calculateQuote(
-        { ...GUIDE_PRICE_SPECS.puPro!, units },
+        { ...GUIDE_PRICE_SPECS.puPro!, units, bundle: true },
         { customerCurrency: 'EUR', eurToUsd: 1 },
       );
       expect(prices[`pct${units}`]).toBe(`${quote.quantityDiscountPercent}%`);
@@ -75,6 +75,6 @@ describe('self-contained SEO answers use checkout prices', () => {
     const answer = pricesAnswer('pu', offers, false);
     expect(answer).toContain('price for your rank');
     expect(answer).not.toContain('We found');
-    expect(quantityAnswer(offers)).toContain('10%, 15% and 25%');
+    expect(quantityAnswer(offers)).toContain('10%, 20% and 25%');
   });
 });

@@ -23,7 +23,12 @@ const FROM = {
   apex: ['Silver', 'Gold', 'Platinum', 'Diamond'],
   rl: ['Gold 2', 'Platinum 1', 'Platinum 3', 'Diamond 1', 'Champion 1'],
   arc: ['New raider', 'Casual', 'Experienced'],
-  mc: ['Beginner', 'Casual', 'Bedwars 100★', 'Bedwars 300★']
+  mc: ['Beginner', 'Casual', 'Bedwars 100★', 'Bedwars 300★'],
+  dota: ['Crusader', 'Archon', 'Legend', 'Ancient'],
+  wow: ['Mythic+ 1,800', 'Mythic+ 2,200', 'Mythic+ 2,600', 'Challenger 1,600+'],
+  pubg: ['Gold', 'Platinum', 'Crystal', 'Diamond'],
+  wr: ['Gold', 'Platinum', 'Emerald', 'Diamond'],
+  dl: ['Arcanist', 'Ritualist', 'Emissary', 'Archon']
 };
 // [title, badge, possible game counts, USD per game]; repeated entries come up more often
 const SERVICES = [
@@ -40,8 +45,8 @@ export { IGN_LABEL };
 
 function randomIgn(game, name, region) {
   const base = name + pick(['', 'x', 'Main', 'GG', 'Plays', 'Kun']);
-  if (game === 'lol' || game === 'val' || game === 'tft') return base + '#' + (region === 'NA' ? 'NA1' : /^LA/.test(region) ? 'LAN' : pick(['EUW', 'EUW1', '4421']));
-  if (game === 'ow' || game === 'cod') return base + '#' + (1000 + Math.floor(Math.random() * 8999999));
+  if (game === 'lol' || game === 'val' || game === 'tft' || game === 'wr') return base + '#' + (region === 'NA' ? 'NA1' : /^LA/.test(region) ? 'LAN' : pick(['EUW', 'EUW1', '4421']));
+  if (game === 'ow' || game === 'cod' || game === 'wow') return base + '#' + (1000 + Math.floor(Math.random() * 8999999));
   return base + (10 + Math.floor(Math.random() * 989));
 }
 

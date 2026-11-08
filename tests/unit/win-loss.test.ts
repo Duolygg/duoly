@@ -17,9 +17,9 @@ const sql = readFileSync(
   'supabase/migrations/20261102160000_win_loss.sql',
   'utf8',
 );
-// The live order_tracks_wl list is the latest one (20261105170000: Rocket League duos went hourly).
+// The live order_tracks_wl list is the latest one (20261108120000: Dota 2, Wild Rift and Deadlock joined).
 const listSql = readFileSync(
-  'supabase/migrations/20261105170000_rocket_league_hourly.sql',
+  'supabase/migrations/20261108120000_new_games.sql',
   'utf8',
 );
 const id = '11111111-1111-4111-8111-111111111111';

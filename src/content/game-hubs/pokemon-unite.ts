@@ -14,7 +14,12 @@ export const pokemonUnite: HubPageCopy = {
     'Ranked, Standard and Quick Battle',
     'Voice on Discord, your own account',
   ],
-  related: ['league-of-legends', 'teamfight-tactics', 'ea-sports-fc-27'],
+  related: [
+    'league-of-legends',
+    'teamfight-tactics',
+    'ea-sports-fc-27',
+    'wild-rift',
+  ],
   intent:
     'After the one-teammate page rather than every Unite service? It covers lane pairings, objective calls and an example ranked plan in detail.',
   format: {

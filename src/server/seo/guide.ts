@@ -1,4 +1,8 @@
-import type { QuoteContext } from '../../contracts/pricing';
+import {
+  quantityDiscountPercent,
+  type QuoteContext,
+} from '../../contracts/pricing';
+import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { calculateQuote } from '../pricing';
 import { formatPrice } from './offers';
 
@@ -45,7 +49,17 @@ const r6 = on('r6', 'EU West');
  * Every price token the duo pages may quote in copy. Values come from the
  * checkout pricing engine, so page text and checkout cannot drift apart.
  */
-export const GUIDE_PRICE_SPECS: Record<string, PriceSpec> = {
+/**
+ * A multi-unit token on the game's main service is a Bundles tab pack (Duo Pro x3 is "3 games with
+ * the bundle discount"); on any other service it is a quantity picker count.
+ */
+const asSold = (spec: PriceSpec) =>
+  spec.units > 1 &&
+  spec.serviceId === (servicesFor(spec.gameId) as { main: string }).main
+    ? { ...spec, bundle: true as const }
+    : spec;
+
+const SPECS: Record<string, PriceSpec> = {
   puPro: {
     gameId: 'pu',
     serviceId: 'duo2',
@@ -128,10 +142,10 @@ export const GUIDE_PRICE_SPECS: Record<string, PriceSpec> = {
   apexDuos: apex('duos', 1),
   apexMix: apex('mix', 1),
   apexPubs: apex('pubs', 1),
-  codPro: cod('duo2', 1),
-  codPro3: cod('duo2', 3),
-  codPro5: cod('duo2', 5),
-  codPro10: cod('duo2', 10),
+  codPro: cod('duo2', 1, 'Diamond'),
+  codPro3: cod('duo2', 3, 'Diamond'),
+  codPro5: cod('duo2', 5, 'Diamond'),
+  codPro10: cod('duo2', 10, 'Diamond'),
   codRanked: cod('duo3', 1, 'Platinum'),
   codRankedIridescent: cod('duo3', 1, 'Iridescent'),
   codPlus: cod('duo1', 1, 'Platinum'),
@@ -149,6 +163,11 @@ export const GUIDE_PRICE_SPECS: Record<string, PriceSpec> = {
   r6Quick: r6('quick', 1),
   r6Arcade: r6('arcade', 1),
 };
+
+export const GUIDE_PRICE_SPECS: Record<string, PriceSpec & { bundle?: true }> =
+  Object.fromEntries(
+    Object.entries(SPECS).map(([token, spec]) => [token, asSold(spec)]),
+  );
 
 /** Bundle sizes whose quantity discount the copy names as a percentage. */
 export const GUIDE_DISCOUNT_UNITS = [3, 5, 10] as const;
@@ -168,9 +187,10 @@ export function guideExamples(
       'EUR',
     );
   }
-  for (const units of GUIDE_DISCOUNT_UNITS) {
-    const quote = calculateQuote({ ...GUIDE_PRICE_SPECS.lolPro!, units }, eur);
-    prices[`pct${units}`] = `${quote.quantityDiscountPercent}%`;
-  }
+  // The Bundles tab discounts, and the quantity picker's 5-unit one (src/contracts/pricing.ts).
+  for (const units of GUIDE_DISCOUNT_UNITS)
+    prices[`pct${units}`] =
+      `${quantityDiscountPercent(units, { bundle: true })}%`;
+  prices.pick5 = `${quantityDiscountPercent(5)}%`;
   return prices;
 }

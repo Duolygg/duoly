@@ -180,10 +180,10 @@ const dataHubs = hubPaths.filter(
   (path) => !['/games/valorant', '/games/social'].includes(path),
 );
 test('the sitemap lists a hub for every game Duoly sells', () => {
-  // 15 games plus Social (src/design-reference/lib/games.js), 14 of them
+  // 20 games plus Social (src/design-reference/lib/games.js), 19 of them
   // rendered from src/content/game-hubs.
-  assert.equal(hubPaths.length, 16, `hubs in sitemap: ${hubPaths.length}`);
-  assert.equal(dataHubs.length, 14);
+  assert.equal(hubPaths.length, 21, `hubs in sitemap: ${hubPaths.length}`);
+  assert.equal(dataHubs.length, 19);
 });
 for (const path of dataHubs) {
   test(`game hub is finished, indexable and the linking centre: ${path}`, () => {

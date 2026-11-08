@@ -33,7 +33,7 @@ describe('Duoly vs E-Pal comparison', () => {
 
     expect(comparisonExample.discountPercent).toBe(10);
     for (const [units, percent] of [
-      [5, 15],
+      [5, 20],
       [10, 25],
     ])
       expect(

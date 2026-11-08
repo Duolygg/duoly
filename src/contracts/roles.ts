@@ -19,6 +19,9 @@ const ROLES: Readonly<Record<string, readonly string[]>> = {
   apex: ['Assault', 'Skirmisher', 'Recon', 'Support', 'Controller', 'Flex'],
   pu: ['Attacker', 'All-Rounder', 'Speedster', 'Defender', 'Supporter', 'Flex'],
   fc: ['Goalkeeper', 'Defender', 'Midfielder', 'Forward', 'Any'],
+  dota: ['Carry', 'Mid', 'Offlane', 'Soft Support', 'Hard Support', 'Fill'],
+  wr: ['Baron Lane', 'Jungle', 'Mid', 'Dragon Lane', 'Support', 'Fill'],
+  wow: ['Tank', 'Healer', 'DPS', 'Any'],
 };
 
 /** Modes where roles don't exist (no lanes, 1v1 or 2v2, warm-up servers). */
@@ -26,6 +29,9 @@ const NO_ROLES: Readonly<Record<string, readonly string[]>> = {
   lol: ['arena', 'aram'],
   val: ['skirm', 'dm'],
   cs2: ['wing', 'casual', 'retake'],
+  wr: ['aram'],
+  // Open-world content and leveling have no group roles
+  wow: ['delves', 'level'],
 };
 
 /** What the game calls the character a customer wants coaching on. */
@@ -37,6 +43,10 @@ const CHARACTER: Readonly<Record<string, string>> = {
   apex: 'Legend',
   r6: 'Operator',
   pu: 'Pokémon',
+  dota: 'Hero',
+  wr: 'Champion',
+  dl: 'Hero',
+  wow: 'Class & spec',
 };
 
 export const ROLE_MAX = 24;

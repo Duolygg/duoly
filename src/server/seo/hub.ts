@@ -1,6 +1,7 @@
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { defaultRank, ranksOf } from '../../design-reference/lib/ranks.js';
 import { calculateQuote } from '../pricing';
+import { QUANTITIES, quantityDiscountPercent } from '../../contracts/pricing';
 import { cleanCopy, formatPrice, offerSelection, seoOffers } from './offers';
 import type { QuoteContext } from '../../contracts/pricing';
 
@@ -8,7 +9,11 @@ import type { QuoteContext } from '../../contracts/pricing';
 export const HUB_PRICES_CHECKED = '2026-11-08';
 export const HUB_PRICES_CHECKED_LABEL = '8 November 2026';
 
-/** Bundle sizes a hub may quote as a quantity discount. */
+/**
+ * Bundle sizes a hub may quote. On the game's main service these are Bundles tab packs (10%, 20%
+ * and 25% off); on any other service they are quantity picker counts (1 to 5, 20% off at 5), and
+ * 10 isn't sold, so there is no `_x10` token for it (src/contracts/pricing.ts).
+ */
 const BUNDLES = [3, 5, 10] as const;
 
 type HubMode = { id: string; cat: string; title: string; unit: string };
@@ -50,6 +55,7 @@ export function hubPrices(
 ): Record<string, string> {
   const eur = { ...context, customerCurrency: 'EUR' as const };
   const prices: Record<string, string> = { checked: HUB_PRICES_CHECKED_LABEL };
+  const main = (servicesFor(gameId) as { main: string }).main;
   const quote = (serviceId: string, units: number, rank?: string) =>
     calculateQuote(
       {
@@ -58,9 +64,13 @@ export function hubPrices(
         units,
         ...offerSelection(gameId, serviceId),
         ...(rank ? { rank } : {}),
+        ...(units > 1 && serviceId === main ? { bundle: true, seats: 1 } : {}),
       },
       { ...eur, firstCoachingSessionEligible: false },
     );
+  // The main service sells bundles of 3, 5 and 10; every other service 1 to 5 units.
+  const sold = (serviceId: string, units: number) =>
+    serviceId === main || (QUANTITIES as readonly number[]).includes(units);
   const money = (serviceId: string, units: number, rank?: string) =>
     formatPrice(quote(serviceId, units, rank).customer.amountMinor, 'EUR');
   for (const serviceId of hubServiceIds(gameId)) {
@@ -70,7 +80,8 @@ export function hubPrices(
       : undefined;
     prices[`p_${serviceId}`] = money(serviceId, 1, rank);
     for (const units of BUNDLES)
-      prices[`p_${serviceId}_x${units}`] = money(serviceId, units, rank);
+      if (sold(serviceId, units))
+        prices[`p_${serviceId}_x${units}`] = money(serviceId, units, rank);
     prices[`seats_${serviceId}`] = String(quote(serviceId, 1, rank).seats);
     if (rank) {
       prices[`rank_${serviceId}`] = cleanCopy(rank);
@@ -91,15 +102,12 @@ export function hubPrices(
       );
     }
   }
-  // Quantity discounts come from a teammate service: coaching has none.
-  const discounted = hubModes(gameId).teammate[0]!.id;
-  for (const units of BUNDLES) {
-    const ranks = ranksOf(gameId, discounted) as string[];
-    prices[`pct${units}`] = `${
-      quote(discounted, units, ranks.length ? ranks[0] : undefined)
-        .quantityDiscountPercent
-    }%`;
-  }
+  // `{{pct3}}`, `{{pct5}}` and `{{pct10}}` are the Bundles tab discounts (the main service's
+  // packs); `{{pick5}}` is the quantity picker's 5-unit discount on any other service.
+  for (const units of BUNDLES)
+    prices[`pct${units}`] =
+      `${quantityDiscountPercent(units, { bundle: true })}%`;
+  prices.pick5 = `${quantityDiscountPercent(5)}%`;
   return prices;
 }
 

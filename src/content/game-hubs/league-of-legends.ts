@@ -14,7 +14,13 @@ export const leagueOfLegends: HubPageCopy = {
     'Solo/Duo, Flex, ARAM and Arena',
     'Voice on Discord, your own account',
   ],
-  related: ['valorant', 'teamfight-tactics', 'marvel-rivals', 'pokemon-unite'],
+  related: [
+    'teamfight-tactics',
+    'marvel-rivals',
+    'pokemon-unite',
+    'valorant',
+    'wild-rift',
+  ],
   intent:
     'After the duo partner page rather than every League service? It covers ARAM, normals and ranked duo on their own, with the free routes next to the paid ones.',
   format: {

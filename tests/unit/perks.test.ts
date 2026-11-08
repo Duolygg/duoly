@@ -13,7 +13,7 @@ import { GAMES } from '../../src/design-reference/lib/games.js';
 const GAME_IDS = (GAMES as { id: string }[]).map((game) => game.id);
 const MIGRATION = readFileSync(
   new URL(
-    '../../supabase/migrations/20261026160000_perks.sql',
+    '../../supabase/migrations/20261108120000_new_games.sql',
     import.meta.url,
   ),
   'utf8',

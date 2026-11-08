@@ -14,7 +14,7 @@ export const apexLegends: HubPageCopy = {
     'Ranked, Duos playlist and Mixtape',
     'Priced per hour, your own account',
   ],
-  related: ['overwatch-2', 'fortnite', 'call-of-duty'],
+  related: ['overwatch-2', 'fortnite', 'call-of-duty', 'pubg'],
   intent:
     'Want the squad-finding page rather than every Apex service? It sets the free Discords and in-game tools next to the paid Ranked sessions.',
   format: {

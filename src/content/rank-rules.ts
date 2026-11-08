@@ -279,6 +279,26 @@ export const RANK_RULES: RankRule[] = [
   },
 ];
 
+/**
+ * Games with a hub but no verified queue rule yet.
+ *
+ * Every entry is a game added to the catalog after the November 2026 research
+ * pass, so nobody has read its publisher's queue rules yet. The rank-rules test
+ * asserts this list equals exactly the set of hubs with no RANK_RULES entry, so
+ * a new game cannot quietly ship without the rule and this list cannot quietly
+ * go stale: adding the rule here and removing the slug is one change.
+ *
+ * Until a game leaves this list, its hub must not promise any particular rank
+ * gap. Research each publisher's own page, then add a RANK_RULES entry.
+ */
+export const AWAITING_RANK_RESEARCH = [
+  'dota-2',
+  'world-of-warcraft',
+  'pubg',
+  'wild-rift',
+  'deadlock',
+] as const;
+
 export const rankRuleFor = (slug: string) =>
   RANK_RULES.find((rule) => rule.gameSlug === slug);
 

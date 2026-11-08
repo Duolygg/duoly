@@ -232,8 +232,16 @@ describe('homepage booking links', () => {
       qty: 3,
     });
     expect(home.renderVals().total).toBe(total);
-    home.renderVals().qtys[1]!.pick();
+    // The picker sells 1 to 5 (20% off at 5 only), so 3 there costs more than the 3-game bundle.
+    expect(home.renderVals().qtys.map((q) => q.n)).toEqual([
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+    ]);
+    home.renderVals().qtys[2]!.pick();
     expect(home.state).toMatchObject({ bundle: null, qty: 3 });
-    expect(home.renderVals().total).toBe(total);
+    expect(home.renderVals().total).not.toBe(total);
   });
 });

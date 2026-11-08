@@ -1,4 +1,4 @@
-import { calculateQuote } from '../pricing';
+import { BUNDLE_UNITS, quantityDiscountPercent } from '../../contracts/pricing';
 import { SITE_GAMES } from '../../site/games';
 import type { seoOffers } from './offers';
 
@@ -21,20 +21,13 @@ export function offerList(offers: Offers) {
 
 export function quantityAnswer(offers: Offers) {
   const offer = offers[0]!;
-  const discounts = [3, 5, 10].map(
-    (units) =>
-      calculateQuote(
-        { ...offer.selection, units },
-        {
-          customerCurrency: offer.currency,
-          eurToUsd: 1,
-          firstCoachingSessionEligible: false,
-        },
-      ).quantityDiscountPercent,
+  const unit = offer.unit === 'hour' ? 'hours' : 'games';
+  const bundle = BUNDLE_UNITS.map((units) =>
+    quantityDiscountPercent(units, { bundle: true }),
   );
   return offer.cat === 'training'
-    ? 'Bundles do not apply to coaching.'
-    : `Bundles of 3, 5 and 10 ${offer.unit === 'hour' ? 'hours' : 'games'} receive ${discounts[0]}%, ${discounts[1]}% and ${discounts[2]}% off respectively.`;
+    ? 'Quantity discounts and bundles do not apply to coaching.'
+    : `Book 1 to 5 ${unit}, and 5 ${unit} take ${quantityDiscountPercent(5)}% off. Bundles of the main service, 3, 5 and 10 ${unit}, receive ${bundle[0]}%, ${bundle[1]}% and ${bundle[2]}% off respectively.`;
 }
 
 export function pricesAnswer(gameId: string, offers: Offers, coach: boolean) {
@@ -46,7 +39,7 @@ export function pricesAnswer(gameId: string, offers: Offers, coach: boolean) {
       ? `Your ${name} lesson is booked by the hour, including time spent reviewing decisions and answering questions. For live play, the number of matches depends on game length and how much you stop to discuss.`
       : `Choose the ${name} lesson for the problem you want to work on. Play and Learn is priced per game; the focused lessons are hourly, with time to pause, ask questions and practice.`;
   return offers.some((offer) => offer.rank)
-    ? `Choose your mode, then check the ranked price for your rank. ${quantityAnswer(offers)} The bundle discounts apply to casual games too.`
+    ? `Choose your mode, then check the ranked price for your rank. ${quantityAnswer(offers)} The quantity discount applies to casual games too.`
     : `Choose the session and how much time you want to book. ${quantityAnswer(offers)} Agree on voice and a start time in the order chat.`;
 }
 

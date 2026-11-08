@@ -52,6 +52,14 @@ const BELOW_FLOOR = {
     'being rewritten in the parallel quotability branch',
   '/blog/what-is-an-egirl':
     'being rewritten in the parallel quotability branch',
+  // Added to the catalog on main after this branch's copy pass, and still
+  // waiting on the queue-rule research AWAITING_RANK_RESEARCH tracks. Lifting
+  // them needs each publisher's own party rules, not just a rewrite.
+  '/games/dota-2': 'new game, queue rules not researched yet',
+  '/games/world-of-warcraft': 'new game, queue rules not researched yet',
+  '/games/pubg': 'new game, queue rules not researched yet',
+  '/games/wild-rift': 'new game, queue rules not researched yet',
+  '/games/deadlock': 'new game, queue rules not researched yet',
 };
 
 test('every SEO content page holds the citability floor', async () => {

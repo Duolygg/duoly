@@ -184,7 +184,30 @@ describe('channel lookup', () => {
     ]);
     expect(map).toEqual({ lol: '3', pu: '5', fc: '7' });
     expect(norm('Pokémon Unite')).toBe('pokemonunite');
-    expect(Object.keys(POST_GAMES)).toHaveLength(16);
+    expect(Object.keys(POST_GAMES)).toHaveLength(21);
+  });
+  it('finds the new games under their full, short and alias category names', () => {
+    const section = (id: string, name: string) => [
+      { id, type: 4, name },
+      { id: id + 'g', type: 0, name: '💬general', parent_id: id, position: 0 },
+    ];
+    expect(
+      channelMap([
+        ...section('a', 'Dota'),
+        ...section('b', '🌍 World of Warcraft'),
+        ...section('c', 'PUBG: Battlegrounds'),
+        ...section('d', 'League of Legends: Wild Rift'),
+        ...section('e', '💀 DEADLOCK'),
+      ]),
+    ).toEqual({ dota: 'ag', wow: 'bg', pubg: 'cg', wr: 'dg', dl: 'eg' });
+    expect(
+      channelMap([
+        ...section('a', 'Dota 2'),
+        ...section('b', 'WoW'),
+        ...section('c', 'PUBG'),
+        ...section('d', 'LoL Wild Rift'),
+      ]),
+    ).toEqual({ dota: 'ag', wow: 'bg', pubg: 'cg', wr: 'dg' });
   });
   it('sends social and Gamer Girl orders to the Social / Gamer Girl general chat', () => {
     const map = channelMap([

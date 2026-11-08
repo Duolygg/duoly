@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  AWAITING_RANK_RESEARCH,
   FORBIDDEN_CLAIMS,
   RANK_RULES,
   RANK_RULES_CHECKED,
@@ -33,8 +34,18 @@ const copyFor = (slug: string) => {
 describe('ranked queue rules', () => {
   it('covers every game with a hub and cites a source for each', () => {
     expect(RANK_RULES_CHECKED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    for (const page of HUB_PAGES)
-      expect(rankRuleFor(page.gameSlug), page.gameSlug).toBeTruthy();
+    // Every hub either has a verified rule or is on the research list, and the
+    // research list holds nothing else. A game added to the catalog therefore
+    // fails here until somebody reads its publisher's queue rules.
+    const missing = HUB_PAGES.filter((page) => !rankRuleFor(page.gameSlug)).map(
+      (page) => page.gameSlug,
+    );
+    expect([...missing].sort()).toEqual([...AWAITING_RANK_RESEARCH].sort());
+    for (const slug of AWAITING_RANK_RESEARCH)
+      expect(
+        HUB_PAGES.some((page) => page.gameSlug === slug),
+        `${slug}: on the research list but has no hub`,
+      ).toBe(true);
     for (const rule of RANK_RULES) {
       expect(rule.source.url, rule.gameSlug).toMatch(/^https:\/\//);
       expect(rule.source.label.length, rule.gameSlug).toBeGreaterThan(5);

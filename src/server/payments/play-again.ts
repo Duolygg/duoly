@@ -16,6 +16,8 @@ import {
   type CheckoutRequest,
 } from './checkout';
 import { adminFor, paymentsConfig, stripeFor } from './config';
+import { servicesFor } from '../../design-reference/lib/catalog.js';
+import { QUANTITIES } from '../../contracts/pricing';
 import { billingCustomer, existingBillingCustomer } from './customer';
 import { confirmEmail } from './confirm-email';
 import { walletSplit } from './wallet';
@@ -76,10 +78,19 @@ export function replayRequest(order: ReplaySource): CheckoutRequest | null {
     server = order.region.slice(0, at);
     edition = order.region.slice(at + 3);
   }
+  // More units than the quantity picker offers (1 to 5) can only be booked again as a bundle of
+  // the game's main service; anything else can't be booked as it was.
+  const bundle = !(QUANTITIES as readonly number[]).includes(order.units);
+  if (
+    bundle &&
+    order.service !== (servicesFor(order.game) as { main: string }).main
+  )
+    return null;
   const parsed = CheckoutRequestSchema.safeParse({
     gameId: order.game,
     serviceId: order.service,
     units: order.units,
+    ...(bundle ? { bundle: true } : {}),
     server,
     ...(order.rank ? { rank: order.rank } : {}),
     ...(edition ? { edition } : {}),

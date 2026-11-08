@@ -19,6 +19,7 @@ export const marvelRivals: HubPageCopy = {
     'league-of-legends',
     'teamfight-tactics',
     'valorant',
+    'deadlock',
   ],
   intent:
     'After the two-player page rather than every Rivals service? It covers hero pairings, Team-Up abilities and prices for a pair on their own.',

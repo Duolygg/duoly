@@ -1,3 +1,4 @@
+import HomeImage from './HomeImage';
 import React from 'react';
 import Pick from '../../design-reference/components/Pick.jsx';
 import { GAMES } from '../../design-reference/lib/games';
@@ -616,7 +617,7 @@ export default class StreamerBooking extends React.Component {
                     }}
                   >
                     <span style={{ position: 'relative', flex: '0 0 auto' }}>
-                      <img
+                      <HomeImage
                         src={x.image || '/assets/avatars/avatar-1.png'}
                         alt=""
                         width="48"

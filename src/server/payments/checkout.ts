@@ -54,6 +54,8 @@ export const CheckoutRequestSchema = z
     streamer: z.uuid().optional(),
     // Team orders: teammates on the order (src/contracts/seats.ts, 20261106190000_team_orders).
     seats: z.number().int().min(1).max(MAX_SEATS).optional(),
+    // A Bundles tab pack (src/contracts/pricing.ts): the main service in 3, 5 or 10 units.
+    bundle: z.boolean().optional(),
     // The customer's role and the character they want coaching on (src/contracts/roles.ts).
     role: z.string().max(ROLE_MAX).optional(),
     character: z.string().max(CHARACTER_MAX).optional(),
@@ -131,6 +133,7 @@ export function buildCheckout(
       ...(request.edition ? { edition: request.edition } : {}),
       ign: request.ign,
       ...(request.seats && request.seats > 1 ? { seats: request.seats } : {}),
+      ...(request.bundle ? { bundle: true } : {}),
     },
     { eurToUsd: rate, customerCurrency: 'EUR' },
   );

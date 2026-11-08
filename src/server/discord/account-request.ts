@@ -25,6 +25,8 @@ const REGIONS: Record<string, string> = {
 };
 // game names people write (after the clean-up below: lowercase, no accents or symbols), longest first
 const GAME_NAMES: [alias: string, name: string][] = [
+  ['league of legends wild rift', 'Wild Rift'],
+  ['world of warcraft', 'World of Warcraft'],
   ['league of legends', 'League of Legends'],
   ['pokemon unite', 'Pokémon Unite'],
   ['counter strike 2', 'Counter-Strike 2'],
@@ -37,9 +39,18 @@ const GAME_NAMES: [alias: string, name: string][] = [
   ['call of duty', 'Call of Duty'],
   ['apex legends', 'Apex Legends'],
   ['arc raiders', 'ARC Raiders'],
+  ['pubg battlegrounds', 'PUBG: Battlegrounds'],
+  ['lol wild rift', 'Wild Rift'],
+  ['wild rift', 'Wild Rift'],
+  ['dota 2', 'Dota 2'],
   ['ea fc', 'EA SPORTS FC'],
   ['overwatch 2', 'Overwatch 2'],
   ['league', 'League of Legends'],
+  ['dota2', 'Dota 2'],
+  ['dota', 'Dota 2'],
+  ['pubg', 'PUBG: Battlegrounds'],
+  ['wildrift', 'Wild Rift'],
+  ['deadlock', 'Deadlock'],
   ['lol', 'League of Legends'],
   ['valorant', 'Valorant'],
   ['valo', 'Valorant'],

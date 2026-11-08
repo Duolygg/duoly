@@ -37,6 +37,11 @@ export const BANNER_GAMES = {
   arc: ['ARC Raiders', 'arc-raiders'],
   mc: ['Minecraft', 'minecraft'],
   pu: ['Pokémon Unite', 'pokemon-unite'],
+  dota: ['Dota 2', 'dota-2'],
+  wow: ['World of Warcraft', 'world-of-warcraft'],
+  pubg: ['PUBG: Battlegrounds', 'pubg'],
+  wr: ['Wild Rift', 'wild-rift'],
+  dl: ['Deadlock', 'deadlock'],
   social: ['Social', 'social'],
 };
 

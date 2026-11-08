@@ -264,7 +264,7 @@ async function execute(
           status: 'ok',
           output: {
             ...catalog,
-            note: 'Prices are from the base rank and can rise with the asker’s rank. Bundle discounts: 3 games 10%, 5 games 15%, 10 games 25%, not for coaching. The exact total shows before Stripe checkout.',
+            note: 'Prices are from the base rank and can rise with the asker’s rank. Discounts: any service, 5 games 20%; the Bundles tab (main service) 3 games 10%, 5 games 20%, 10 games 25%; not for coaching. The exact total shows before Stripe checkout.',
           },
         }
       : {

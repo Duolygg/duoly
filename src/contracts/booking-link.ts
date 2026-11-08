@@ -3,6 +3,7 @@ import { ranksOf } from '../design-reference/lib/ranks.js';
 import { serversFor } from '../design-reference/lib/servers.js';
 import { characterLabel, rolesFor } from './roles';
 import { seatRule } from './seats';
+import { BUNDLE_UNITS, QUANTITIES } from './pricing';
 
 // Only existing booking controls. Attribution and payment choices are not preferences.
 export const BOOKING_PARAMS = [
@@ -74,7 +75,12 @@ export function parseBookingPreferences(
   );
   accept(
     'qty',
-    (v) => integer(v, 1, 10),
+    // 1 to 5 from the quantity picker, or a bundle count on the game's main service
+    (v) =>
+      integer(v, 1, 10) &&
+      ((QUANTITIES as readonly number[]).includes(Number(v)) ||
+        (service === servicesFor(game).main &&
+          (BUNDLE_UNITS as readonly number[]).includes(Number(v)))),
     (v) => {
       values.qty = Number(v);
     },

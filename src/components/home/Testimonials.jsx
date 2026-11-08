@@ -3,6 +3,7 @@
 // hovered so a card can be read. Each card shows the reviewer's masked name (L***s), avatar and country.
 // Real reviews come in through `items`; until there are any, the hand-written SAMPLE_TESTIMONIALS are
 // shown. Styles: globals.css (rv-*).
+import HomeImage from './HomeImage';
 import React from 'react';
 import { GAME } from '../../design-reference/lib/games';
 import { COUNTRY_NAME, flagSrc } from '../../design-reference/lib/countries';
@@ -65,7 +66,7 @@ function Card({ t }) {
       </div>
       <blockquote className="rv-quote">{t.quote}</blockquote>
       <figcaption className="rv-by">
-        <img
+        <HomeImage
           className="rv-avatar"
           src={t.avatar}
           alt=""

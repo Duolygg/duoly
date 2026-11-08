@@ -2,6 +2,7 @@
 // (src/server/pricing uses servicesFor from this catalog), so Sparky never quotes a stale price.
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { GAMES } from '../../design-reference/lib/games.js';
+import { BUNDLE_UNITS, quantityDiscountPercent } from '../../contracts/pricing';
 
 type Mode = {
   id: string;
@@ -25,26 +26,35 @@ const eur = (n: number) => `€${n.toFixed(2)}`;
 
 let cached: string | null = null;
 
-const BUNDLE_OFF: Record<number, number> = { 3: 10, 5: 15, 10: 25 };
-
-/** Same rounding as calculateQuote: cents, then one half-up rounding after the discount. */
-export function bundleTotal(priceEur: number, units: number): number {
+/**
+ * Same rounding as calculateQuote: cents, then one half-up rounding after the discount. A Bundles
+ * tab pack when `bundle` is set, else the quantity picker (20% off at 5, src/contracts/pricing.ts).
+ */
+export function bundleTotal(
+  priceEur: number,
+  units: number,
+  bundle = true,
+): number {
   const subtotal = Math.round(priceEur * 100) * units;
-  return Math.round((subtotal * (100 - (BUNDLE_OFF[units] ?? 0))) / 100) / 100;
+  const off = quantityDiscountPercent(units, { bundle });
+  return Math.round((subtotal * (100 - off)) / 100) / 100;
 }
 
 export function offerSummary(): string {
   if (cached) return cached;
   const lines = [
     'Duoly matches a player with a verified teammate who joins them in-game and plays together with them on the player’s own account. Duoly also fills seats for teams, offers casual sessions, Gamer Girl sessions and coaching. Nobody ever logs into the customer’s account (no account boosting or account sharing).',
-    'Prices are in EUR per game or per hour (shown in each line) and can vary with the customer’s rank. USD is shown at the ECB rate plus 1%. Bundle discounts (not for coaching): 3 games = 10% off, 5 games = 15% off, 10 games = 25% off. Only quote a bundle total that appears in BUNDLE TOTALS below; otherwise give the per-game price and the discount. Coaching costs a fixed €12.99 per game or hour in every game (no first-session discount). The exact total always shows before Stripe checkout.',
+    'Prices are in EUR per game or per hour (shown in each line) and can vary with the customer’s rank. USD is shown at the ECB rate plus 1%. Quantity (not for coaching): customers pick 1 to 5 games or hours, and 5 gets 20% off; 1 to 4 have no discount. Separately, the Bundles tab sells the game’s main service (Duo Pro in most games) in packs of 3 games = 10% off, 5 games = 20% off and 10 games = 25% off. Only quote a total that appears in BUNDLE TOTALS below; otherwise give the per-game price and the discount. Coaching costs a fixed €12.99 per game or hour in every game (no first-session discount). The exact total always shows before Stripe checkout.',
     'CATALOG (game: category: service, teammate level, price from):',
   ];
   const bundles: string[] = [
-    'BUNDLE TOTALS (Duo services at the base rank, before any rank surcharge):',
+    'BUNDLE TOTALS (Duo services at the base rank, before any rank surcharge; "5x" is the quantity picker, "bundle" the Bundles tab):',
   ];
   for (const game of GAMES) {
-    const { modes } = servicesFor(game.id) as { modes: Mode[] };
+    const { modes, main } = servicesFor(game.id) as {
+      modes: Mode[];
+      main: string;
+    };
     if (!modes.length) continue;
     const byTab = new Map<string, string[]>();
     for (const mode of modes) {
@@ -61,7 +71,7 @@ export function offerSummary(): string {
         .filter((mode) => mode.cat === 'duo')
         .map(
           (mode) =>
-            `${mode.title} ${[3, 5, 10].map((n) => `${n}x ${eur(bundleTotal(mode.price, n))}`).join(', ')}`,
+            `${mode.title} 5x ${eur(bundleTotal(mode.price, 5, false))}${mode.id === main ? `, bundle ${BUNDLE_UNITS.map((n) => `${n}x ${eur(bundleTotal(mode.price, n))}`).join(', ')}` : ''}`,
         )
         .join('; ')}`,
     );
@@ -96,7 +106,10 @@ export function catalogFor(
       (g as { alias?: string }).alias?.toLowerCase() === wanted,
   );
   if (!match) return null;
-  const { modes } = servicesFor(match.id) as { modes: Mode[] };
+  const { modes, main } = servicesFor(match.id) as {
+    modes: Mode[];
+    main: string;
+  };
   return {
     game: match.name,
     services: modes.map((mode) => ({
@@ -110,9 +123,18 @@ export function catalogFor(
         : {}),
       ...(mode.cat === 'duo'
         ? {
-            bundleTotalsEur: Object.fromEntries(
-              [3, 5, 10].map((n) => [`${n}x`, bundleTotal(mode.price, n)]),
-            ),
+            // the quantity picker's 5 (20% off), plus the Bundles tab packs on the main service
+            bundleTotalsEur: {
+              '5x': bundleTotal(mode.price, 5, false),
+              ...(mode.id === main
+                ? Object.fromEntries(
+                    BUNDLE_UNITS.map((n) => [
+                      `bundle ${n}x`,
+                      bundleTotal(mode.price, n),
+                    ]),
+                  )
+                : {}),
+            },
           }
         : {}),
     })),

@@ -8,23 +8,23 @@ const fx = async () => ({
   date: '2026-11-07',
   fetchedAt: 0,
 });
-it('keeps exact discovery lean with explicit bundle savings', async () => {
+it('keeps exact discovery lean with explicit quantity savings', async () => {
   const result = await callTool(
     'find_session',
-    { game: 'lol', rank: 'Gold', server: 'EUW', quantity: 3 },
+    { game: 'lol', rank: 'Gold', server: 'EUW', quantity: 5 },
     { fx },
   );
   expect(result.content).toHaveLength(1);
   expect(result.content[0]!.text.length).toBeLessThan(1500);
   expect(JSON.stringify(result.structuredContent).length).toBeLessThan(3000);
-  expect(result.content[0]!.text).toMatch(/saves EUR .*10% bundle discount/);
+  expect(result.content[0]!.text).toMatch(/saves EUR .*20% off for 5/);
   expect(result.content[0]!.text).not.toContain('{');
   expect(result._meta).toHaveProperty('gg.duoly/card');
 });
-it('labels representative bundle savings without inferring a rank', async () => {
+it('labels representative quantity savings without inferring a rank', async () => {
   const result = await callTool(
     'find_session',
-    { game: 'lol', quantity: 3 },
+    { game: 'lol', quantity: 5 },
     { fx },
   );
   const matches = result.structuredContent.matches as Array<
@@ -32,12 +32,12 @@ it('labels representative bundle savings without inferring a rank', async () => 
   >;
   expect(matches[0]!.representativePrice).toMatchObject({
     rank: 'Gold',
-    quantity: 3,
-    bundleDiscountPercent: 10,
-    savingMinor: 105,
+    quantity: 5,
+    bundleDiscountPercent: 20,
+    savingMinor: 349,
   });
   expect(result.content[0]!.text).toMatch(
-    /Example Gold.*saves EUR 1.05, 10% bundle discount/,
+    /Example Gold.*saves EUR 3.49, 20% off for 5/,
   );
 });
 it('distinguishes rank-priced tiers with a calculated typical price', async () => {

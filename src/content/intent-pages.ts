@@ -736,12 +736,12 @@ export const intentPages: IntentPage[] = [
     pricesIntro:
       'A Call of Duty teammate booking is an hourly price, and only the 2 Ranked services move with your rank. First, pick the mode, because Warzone duos, Resurgence, round-based Zombies and the party playlists hold one price at every rank. Second, open the rank list on Warzone Ranked or Ranked Play: the service is {{codRanked}} per hour at Platinum and {{codRankedIridescent}} at Iridescent. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Warzone player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
-      'A Duoly teammate booking is a paid session where one reviewed Call of Duty player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Warzone duos service at one flat hourly price for every rank, and party playlists are the cheapest booking. First, a tier name describes who Duoly hires and never your own party eligibility. Ranked Play from Activision keeps Crimson and above in parties of one or two inside one rank, so a Gold player books Diamond rather than Iridescent. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the drop using Discord. Nobody can promise you a placement.',
+      'A Duoly teammate booking is a paid session where one reviewed Call of Duty player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Warzone duos service, priced by your own rank, and the party playlists are the cheapest booking. First, a tier name describes who Duoly hires and never your own party eligibility. Ranked Play from Activision keeps Crimson and above in parties of one or two inside one rank, so a Gold player books Diamond rather than Iridescent. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the drop using Discord. Nobody can promise you a placement.',
     sections: [
       {
         heading: 'Warzone or multiplayer: which teammate should you book?',
         paragraphs: [
-          'Warzone is the battle royale side of Call of Duty, where a duo lives on rotations, plates and buy station timing. Multiplayer Ranked Play is the 4v4 side, with fixed maps, known spawns and an objective to hold. First, pick one side before booking an hour, because the 2 sides reward different habits. A Warzone partner who reads the circle is not much use on Hardpoint. Multiplayer Ranked Play costs {{codPlus}} per hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+          'Warzone is the battle royale side of Call of Duty, where a duo lives on rotations, plates and buy station timing. Multiplayer Ranked Play is the 4v4 side, with fixed maps, known spawns and an objective to hold. First, pick one side before booking an hour, because the 2 sides reward different habits. A Warzone partner who reads the circle is not much use on Hardpoint. Multiplayer Ranked Play costs {{codPlus}} per hour at Platinum, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
           'Resurgence on the small map gives respawns, the easiest first session with someone new. Round-based Zombies wants a partner who knows the Easter egg steps rather than one with good aim, while party playlists at {{codParty}} per hour want neither. Name the mode in your request, because a Warzone main and a Ranked Play main rarely overlap. The party rules bite in Ranked Play only: Activision keeps Crimson and above in parties of one or two inside one rank, read in November 2026, while unranked Warzone carries no rank at all. For example, a player who books one Resurgence hour to warm up and then one Warzone hour keeps the same voice across both, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
         ],
       },
@@ -749,19 +749,19 @@ export const intentPages: IntentPage[] = [
         heading: 'How does a Warzone duo win more fights?',
         paragraphs: [
           'A Warzone duo is 2 players sharing one rotation, one loadout plan and one buy station budget. First, agree the landing spot and the contract route, so both players reach the first circle with a loadout and cash. Call the rotation by the circle and the roof you want rather than by the squad you can hear. Keep 1 player plating while the other holds the angle, because 2 players plating at once loses a 2v2. For example, one Warzone hour buys about 2 full games, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026, agreed using Discord.',
-          'Squad Fill in the lobby is the free version of the same idea: Activision drops a random player into the empty seat at no cost, with no agreed time and no agreed comms. A booked hour is the version where the mode, the rank and the voice setup are settled before anyone drops, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Resurgence at {{codRebirth}} per hour is the drill version of either, because respawns let the pair test the same fight 10 times in one hour, agreed using Discord.',
+          'Squad Fill in the lobby is the free version: Activision drops a random player into the empty seat at no cost, with no agreed time and no comms. A booked hour settles the mode, the rank and the voice setup before anyone drops, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Resurgence at {{codRebirth}} per hour is the drill version, because respawns let the pair test one fight 10 times in an hour, agreed using Discord.',
         ],
       },
       {
         heading: 'How much does a Call of Duty duo cost?',
         paragraphs: [
-          'Duo Pro is the Warzone duos service on Duoly, and it keeps one flat price of {{codPro}} per hour for every rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Multiplayer Ranked Play with a Crimson+ teammate is {{codPlus}} per hour at Platinum. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
+          'Duo Pro is the Warzone duos service on Duoly at {{codPro}} per hour for a Diamond player, and like the other duo tiers it follows your own rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Multiplayer Ranked Play with a Crimson+ teammate is {{codPlus}} per hour at Platinum. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
           'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank, agreed using Discord.',
         ],
       },
     ],
     steps: [
-      'Choose a service and a total hour count first, before checkout. Duo Pro is the Warzone duos service from Duoly at one flat hourly price, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
+      'Choose a service and a total hour count first, before checkout. Duo Pro is the Warzone duos service from Duoly, priced by your own rank, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
       'Second, add your platform, region, rank, input and language. For example, name Europe or North America, PlayStation or PC, and whether the session is Warzone, Resurgence, multiplayer Ranked Play or round-based Zombies.',
       'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the drop and the loadout plan, then invite with your Activision ID. On a Ranked Play booking check the party limits from Activision first, because Crimson and above queue inside one rank. Bundles still take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
     ],
@@ -771,13 +771,13 @@ export const intentPages: IntentPage[] = [
       'Pick the region before booking, because Europe, North America, South America, Asia, Oceania and Middle East give different ping.',
       'Decide the mode before the first hour, for example Warzone battle royale, Resurgence, multiplayer Ranked Play or round-based Zombies.',
       'Test your microphone on Discord first, then agree on 1 call for a reset, for example naming the building you fall back to.',
-      'Check the Ranked Play party limits from Activision, read in November 2026: Crimson and above queue in parties of one or two inside one rank, and Diamond allows two ranks.',
+      'Check the Ranked Play party limits from Activision, read in November 2026: Crimson and above queue inside one rank, and Diamond allows two.',
       'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 10 hours cost {{codPro10}} with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
     ],
     faq: [
       [
         'Can I book a Warzone duo for one hour?',
-        'Yes: Warzone duos are booked by the hour at one flat price for every rank, starting from a single hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+        'Yes: Warzone duos are booked by the hour at a price that follows your own rank, starting from a single hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
       ],
       [
         'Can a Gold player party with an Iridescent teammate?',
@@ -793,7 +793,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Does a booking fill a full quad?',
-        'No, a booking adds 1 teammate, so a booked pair covers 2 of 4. For a trio or a quad, bring friends or leave Squad Fill on.',
+        'No: a booking adds 1 teammate, so a pair covers 2 of 4. For a trio or a quad, bring friends or leave Squad Fill on.',
       ],
       [
         'How do I find free Call of Duty teammates?',
@@ -801,7 +801,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Warzone duos session from Duoly at one flat hourly price for every rank, and 5 hours cost {{codPro5}} with {{pct5}} off, against {{pct3}} off 3. Ranked Play from Activision keeps Crimson and above in parties of one or two inside one rank in November 2026, so a Gold player books Diamond and unranked Warzone takes the wider pairings. For example, ask for a Resurgence hour first when the pair has never played together, agreed using Discord.',
+      'Duo Pro is the Warzone duos session from Duoly, priced by your own rank, and 5 hours cost {{codPro5}} with {{pct5}} off, against {{pct3}} off 3. Ranked Play from Activision keeps Crimson and above in parties of one or two inside one rank in November 2026, so a Gold player books Diamond and unranked Warzone takes the wider pairings. For example, ask for a Resurgence hour first when the pair has never played together, agreed using Discord.',
   },
   {
     slug: 'lfg',

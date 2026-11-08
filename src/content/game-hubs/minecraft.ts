@@ -14,7 +14,12 @@ export const minecraft: HubPageCopy = {
     'Bedwars, SkyWars, SMP and Manhunt',
     'Java or Bedrock, your own account',
   ],
-  related: ['arc-raiders', 'rocket-league', 'ea-sports-fc-27'],
+  related: [
+    'arc-raiders',
+    'rocket-league',
+    'ea-sports-fc-27',
+    'world-of-warcraft',
+  ],
   format: {
     heading: 'What can you book for Minecraft on Duoly?',
     text: 'A Minecraft booking on Duoly is a single reviewed teammate, a Server Squad or a coaching hour. First, Minecraft has no universal ranked queue, so every service keeps one flat price: PvP Duo costs {{p_duo1}} per hour, PvP Duo Pro {{p_duo2}} with a top player from servers like Hypixel, Survival Partner {{p_smp}} for SMP progress and Minigames Night {{p_mini}} for a calm evening. Manhunt is the exception, priced per run at {{p_manhunt}} however long the chase takes. Bundles cut the total, {{pct3}} off 3 up to {{pct10}} off 10. The servers page from Mojang describes community servers setting their own rules, read in November 2026, so a server rank is the only rank anybody here can gate on. For example, name the server and edition using Discord first.',

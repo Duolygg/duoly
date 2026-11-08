@@ -15,11 +15,17 @@ export const GAMES = [
   { id: 'r6', name: 'Rainbow Six Siege', short: 'Rainbow Six Siege', alias: 'Rainbow Six', img: '/assets/games/rainbow-six-siege.png', ign: 'Ubisoft name', share: 0.06 },
   { id: 'mr', name: 'Marvel Rivals', short: 'Marvel Rivals', img: '/assets/games/marvel-rivals.png', ign: 'username', share: 0.06 },
   { id: 'ow', name: 'Overwatch 2', short: 'Overwatch 2', alias: 'Overwatch', img: '/assets/games/overwatch-2.png', ign: 'BattleTag', share: 0.05 },
+  // Added 2026-11-08: Dota 2, World of Warcraft, PUBG, Wild Rift and Deadlock, placed by expected demand.
+  { id: 'dota', name: 'Dota 2', short: 'Dota 2', alias: 'Dota', img: '/assets/games/dota-2.png', ign: 'Steam name', share: 0.045 },
   { id: 'rl', name: 'Rocket League', short: 'Rocket League', img: '/assets/games/rocket-league.png', ign: 'Epic name', share: 0.04 },
+  { id: 'wow', name: 'World of Warcraft', short: 'World of Warcraft', alias: 'WoW', img: '/assets/games/world-of-warcraft.png', ign: 'BattleTag', share: 0.035 },
+  { id: 'pubg', name: 'PUBG: Battlegrounds', short: 'PUBG: Battlegrounds', alias: 'PUBG', img: '/assets/games/pubg.png', ign: 'PUBG name', share: 0.03 },
   { id: 'tft', name: 'Teamfight Tactics', short: 'Teamfight Tactics', alias: 'TFT', img: '/assets/games/teamfight-tactics.png', ign: 'Riot ID', share: 0.03 },
   { id: 'fc', name: 'EA SPORTS FC 27', short: 'EA SPORTS FC 27', alias: 'FC 27', img: '/assets/games/ea-sports-fc-27.png', ign: 'EA ID', share: 0.03 },
   { id: 'arc', name: 'ARC Raiders', short: 'ARC Raiders', img: '/assets/games/arc-raiders.png', ign: 'Embark ID', share: 0.025 },
+  { id: 'wr', name: 'Wild Rift', short: 'Wild Rift', alias: 'LoL Wild Rift', img: '/assets/games/wild-rift.png', ign: 'Riot ID', share: 0.025 },
   { id: 'mc', name: 'Minecraft', short: 'Minecraft', img: '/assets/games/minecraft.png', ign: 'Minecraft name', share: 0.02 },
+  { id: 'dl', name: 'Deadlock', short: 'Deadlock', img: '/assets/games/deadlock.png', ign: 'Steam name', share: 0.02 },
   { id: 'pu', name: 'Pokémon Unite', short: 'Pokémon Unite', img: '/assets/games/pokemon-unite.png', ign: 'trainer name', share: 0.015 },
   // Not a game: Gamer Girl only social sessions (just chat, watch together, sleep call, karaoke). See lib/catalog.js.
   { id: 'social', name: 'Social', short: 'Social', img: '/assets/games/social.png', ign: 'Discord name', share: 0.01 }

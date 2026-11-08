@@ -135,10 +135,20 @@ function generalIn(channels: Channel[], category: Channel | undefined) {
  * Plus SOCIAL_GG: the general channel of the category named like "Social / Gamer Girl", where
  * every social and Gamer Girl order goes (2026-11-05).
  */
+/** Other names a game's category may have on the server, besides its full and short name. */
+const CATEGORY_ALIASES: Record<string, string[]> = {
+  dota: ['Dota'],
+  wr: ['League of Legends: Wild Rift', 'LoL Wild Rift', 'LoL: Wild Rift'],
+};
+
 export function channelMap(channels: Channel[]): Record<string, string> {
   const map: Record<string, string> = {};
   for (const game of Object.values(POST_GAMES)) {
-    const names = [norm(game.name), norm(game.short)];
+    const names = [
+      norm(game.name),
+      norm(game.short),
+      ...(CATEGORY_ALIASES[game.id] ?? []).map(norm),
+    ];
     const channel = generalIn(
       channels,
       channels.find((c) => c.type === 4 && names.includes(norm(c.name))),

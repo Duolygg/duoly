@@ -122,7 +122,7 @@ export const teamfightTactics: HubPageCopy = {
       ],
       [
         'How much does a TFT session cost?',
-        'Double Up is {{p_duo1}} per game at {{rank_duo1}}, and {{p_duo1_low}} at the lowest rank. Ten games cost {{p_duo1_x10}} with {{pct10}} off in 2026.',
+        'Double Up is {{p_duo1}} per game at {{rank_duo1}}, and {{p_duo1_low}} at the lowest rank. Five games cost {{p_duo1_x5}} with {{pick5}} off in 2026.',
       ],
       [
         'Can a Master+ partner queue ranked Double Up with me?',

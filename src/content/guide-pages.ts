@@ -781,12 +781,12 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidIntro:
       'You choose the service and the number of hours, pay once, and an order chat opens with the teammate. Duoly reviews every teammate before that chat exists, so the listing you book is the one somebody checked. The chat is also where the mode gets agreed.',
     paidChecks: [
-      { yes: true, text: 'Warzone duos at one flat hourly price' },
+      { yes: true, text: 'Warzone duos at an hourly price for your rank' },
       { yes: true, text: 'A set hour agreed in the order chat' },
       { yes: true, text: 'Warzone, Resurgence, Ranked Play or Zombies' },
       { yes: false, text: 'Costs money for every hour' },
     ],
-    priceCaption: 'Warzone duos, every rank, in euro',
+    priceCaption: 'Warzone duos at Diamond, in euro',
     priceRows: [
       { label: '1 hour', value: '{{codPro}}' },
       { label: '3 hours, {{pct3}} off', value: '{{codPro3}}' },
@@ -833,7 +833,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       ],
       [
         'What does a Warzone duo hour cost?',
-        'Warzone duos cost {{codPro}} per hour, and that price is the same at every rank. Booking 3 or 5 hours at once lowers what each hour costs.',
+        'Warzone duos cost {{codPro}} per hour at Diamond, and the price follows your own rank. Booking 3 or 5 hours at once lowers what each hour costs.',
       ],
     ],
     post: {

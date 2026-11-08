@@ -160,7 +160,7 @@ const inputs = {
       .optional()
       .describe('Exact server token, alias for server.'),
     server: z.string().min(2).max(60).optional(),
-    quantity: z.number().int().min(1).max(10).optional(),
+    quantity: z.number().int().min(1).max(5).optional(),
     budget: z
       .number()
       .positive()
@@ -177,10 +177,10 @@ const inputs = {
     game,
     service,
     rank: z.string().max(40).optional(),
-    quantity: z.number().int().min(1).max(10),
+    quantity: z.number().int().min(1).max(5),
     currency: z.enum(['EUR', 'USD'], {
       error:
-        'currency is required. Valid inputs: game, service, rank when rank-priced, server, quantity (1..10), currency (EUR or USD); Minecraft also requires edition (Java or Bedrock). Use list_services for valid service, rank and server tokens.',
+        'currency is required. Valid inputs: game, service, rank when rank-priced, server, quantity (1..5, 20% off at 5), currency (EUR or USD); Minecraft also requires edition (Java or Bedrock). Use list_services for valid service, rank and server tokens.',
     }),
     server: z
       .string()
@@ -200,7 +200,7 @@ const inputs = {
     service: service.optional(),
     rank: z.string().min(1).max(40).optional(),
     region: z.string().min(2).max(60).optional(),
-    quantity: z.number().int().min(1).max(10).optional(),
+    quantity: z.number().int().min(1).max(5).optional(),
     currency: z.enum(['EUR', 'USD']).optional(),
   }),
 };
@@ -316,7 +316,7 @@ const descriptions = {
   ],
   get_quote: [
     'Calculate base quote',
-    'Use find_session for discovery and pricing. Compatibility tool for a selected service: calculate its base price before account perks. Required inputs: game, service, quantity (1..10), currency (EUR or USD), server, and rank for rank-priced services; Minecraft also needs edition.',
+    'Use find_session for discovery and pricing. Compatibility tool for a selected service: calculate its base price before account perks. Required inputs: game, service, quantity (1..5, 20% off at 5), currency (EUR or USD), server, and rank for rank-priced services; Minecraft also needs edition.',
   ],
   get_availability: [
     'Check session availability',
@@ -392,7 +392,7 @@ function priceDetails(quote: ReturnType<typeof calculateQuote>) {
 const money = (minor: number, currency = 'EUR') =>
   `${currency} ${(minor / 100).toFixed(2)}`;
 function priceText(s: Record<string, unknown>) {
-  return `${s.priceKind === 'from' ? 'from ' : ''}${money(Number(s.amountMinor), String(s.currency))} total for ${s.quantity} ${s.unit ?? 'unit'}${Number(s.quantity) === 1 ? '' : 's'}; ${money(Number(s.perUnitMinor), String(s.currency))} per ${s.unit ?? 'unit'}${Number(s.savingMinor) > 0 ? `; saves ${money(Number(s.savingMinor), String(s.currency))}, ${s.bundleDiscountPercent}% bundle discount` : ''}`;
+  return `${s.priceKind === 'from' ? 'from ' : ''}${money(Number(s.amountMinor), String(s.currency))} total for ${s.quantity} ${s.unit ?? 'unit'}${Number(s.quantity) === 1 ? '' : 's'}; ${money(Number(s.perUnitMinor), String(s.currency))} per ${s.unit ?? 'unit'}${Number(s.savingMinor) > 0 ? `; saves ${money(Number(s.savingMinor), String(s.currency))}, ${s.bundleDiscountPercent}% off for ${s.quantity}` : ''}`;
 }
 export async function callTool(
   name: ToolName,
@@ -726,7 +726,7 @@ export async function callTool(
         );
       } catch {
         throw new ToolInputError(
-          `Invalid quote selection. Valid inputs: game=${g!.id}; service=${selected!.id}; quantity=1..10; currency=EUR or USD; server=${selected!.regions.join(', ') || 'your Minecraft world/server'}; rank=${selected!.ranks.join(', ') || 'none (omit rank)'}${g!.id === 'mc' ? '; edition=Java or Bedrock' : ''}.`,
+          `Invalid quote selection. Valid inputs: game=${g!.id}; service=${selected!.id}; quantity=1..5; currency=EUR or USD; server=${selected!.regions.join(', ') || 'your Minecraft world/server'}; rank=${selected!.ranks.join(', ') || 'none (omit rank)'}${g!.id === 'mc' ? '; edition=Java or Bedrock' : ''}.`,
         );
       }
       const formattedPrice = new Intl.NumberFormat('en-US', {
