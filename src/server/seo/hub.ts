@@ -104,6 +104,30 @@ export function hubPrices(
 }
 
 /**
+ * Anchor text for the link from a game hub to that game's intent page.
+ *
+ * A hub is the broad page for its game, so the specific phrase belongs to the
+ * intent page: the anchor repeats that page's own query instead of a generic
+ * "duo and teammate guide", and the two pages stop competing for it.
+ */
+export function intentAnchor(gameName: string, slug: string) {
+  switch (slug) {
+    case 'lfg':
+      return `${gameName} LFG`;
+    case 'duos':
+      return `${gameName} duos`;
+    case 'duo-partner':
+      return `${gameName} duo partner`;
+    case 'teammate':
+      return `${gameName} teammate`;
+    case 'play-with-someone':
+      return `Play ${gameName} with someone`;
+    default:
+      return `${gameName} ${slug.replaceAll('-', ' ')}`;
+  }
+}
+
+/**
  * The three price groups a hub renders, in DOM order. The Service schema lists
  * them in the same order, so every visible price has one matching offer.
  */

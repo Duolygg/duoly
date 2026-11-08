@@ -4,6 +4,28 @@
 .hub-decide > p {
   max-width: 75ch;
 }
+/* Hands the narrow query (LFG, duos, duo partner) to the page that owns it,
+   right under the intro where a reader looking for it is still scanning. */
+.seo-page .hub-intent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  margin: 18px 0 0;
+  padding: 16px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(196, 170, 255, 0.16);
+  border-left: 3px solid #d6bbff;
+  background: #140d26;
+}
+.seo-page .hub-intent p {
+  flex: 1 1 260px;
+  max-width: 62ch;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #cfc4ea;
+}
 .decide-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

@@ -15,7 +15,11 @@ import { FINISHED_HUB_SLUGS, type HubPageCopy } from '../../content/hub-pages';
 import { lessons } from '../../content/coaching';
 import { intentForGame, intentPath } from '../../content/intent-pages';
 import { gameBySlug } from '../../site/games';
-import { HUB_PRICES_CHECKED, type hubOffers } from '../../server/seo/hub';
+import {
+  HUB_PRICES_CHECKED,
+  intentAnchor,
+  type hubOffers,
+} from '../../server/seo/hub';
 import { priceSummary } from '../../server/seo/offers';
 import { GUIDE_PATH, bookingHref } from '../../site/seo';
 interface Props {
@@ -34,6 +38,11 @@ const siblings = copy.related.flatMap((slug) => {
     : undefined;
   return sibling ? [sibling] : [];
 });
+// The intent page owns the narrow query for its game, so the hub hands it over
+// with that page's own words. No intent page yet means no callout and no link.
+const intentLink = intent
+  ? { href: intentPath(intent), anchor: intentAnchor(game.name, intent.slug) }
+  : undefined;
 const line = (id: string) => copy.services[id] ?? '';
 const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
   group.map((offer) => ({ ...offer, desc: line(offer.id) || offer.desc }));
@@ -61,6 +70,12 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
   <section aria-labelledby="get-h">
     <h2 id="get-h">{copy.format.heading}</h2>
     <p set:html={rich(copy.format.text)} />
+    {intentLink && copy.intent && (
+      <aside class="hub-intent">
+        <p>{copy.intent}</p>
+        <a class="btn-sm" href={intentLink.href}>{intentLink.anchor}</a>
+      </aside>
+    )}
   </section>
   <Prices
     gameId={game.id}
@@ -115,9 +130,7 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
   <nav class="related" aria-label="Related pages">
     <h2>Guides and sessions for {game.name}</h2>
     <div class="chips">
-      {intent && (
-        <a href={intentPath(intent)}>{game.name} duo and teammate guide</a>
-      )}
+      {intentLink && <a href={intentLink.href}>{intentLink.anchor}</a>}
       {lessons[game.slug] && (
         <a href={`/games/${game.slug}/coaching`}>
           {game.name} coaching and lessons

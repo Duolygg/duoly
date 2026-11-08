@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const overwatch2: HubPageCopy = {
   gameSlug: 'overwatch-2',
-  title: 'Overwatch 2 LFG: Find a Duo or a 5-Stack | Duoly',
+  title: 'Overwatch 2 Duos, 5-Stacks and Coaching | Duoly',
   description:
     'Book an Overwatch 2 duo, a 5-stack Role Queue fill or role coaching on Duoly, {{from_lower}}. Compare Competitive and Stadium prices.',
   eyebrow: 'Overwatch 2 teammates',
-  h1: 'Overwatch 2 LFG: find a duo for Competitive',
+  h1: 'Book an Overwatch 2 duo, a 5-stack or a role coach',
   lead: 'Free LFG Discords work for a casual five. Duoly books a reviewed Diamond, Master or Grandmaster teammate for your next Competitive games, fills Role Queue and sells role coaching.',
   cta: 'Book an Overwatch teammate',
   facts: [
@@ -15,9 +15,11 @@ export const overwatch2: HubPageCopy = {
     'Voice on Discord, your own account',
   ],
   related: ['marvel-rivals', 'apex-legends', 'rainbow-six-siege'],
+  intent:
+    'Hunting for free Discords, or a teammate chosen by role rather than by tier? The dedicated page sets the free routes next to the paid Role Queue sessions.',
   format: {
     heading: 'What can you book for Overwatch 2 on Duoly?',
-    text: 'A Duoly Overwatch 2 booking is a paid session where reviewed higher-rank players join your team on your own account. Duo Plus brings a Diamond+ teammate who complements your role, Duo Pro a Master+ player who calls engages and Duo Apex a Grandmaster+ player who can swing fights alone. Prices follow your own rank, so a {{rank_duo2}} player pays {{p_duo2}} per game for Duo Pro in November 2026. For example, Quick Play and Arcade costs {{p_qp}} per game at every rank, because casual modes keep one flat price. Bundles cut the total: 3 games get {{pct3}} off, 5 get {{pct5}} off and 10 get {{pct10}} off. A 5-Stack Role Queue fill covers the empty seats, and the group rules from Blizzard Entertainment still apply. Finally, every booking opens an order chat, where you agree roles, heroes and voice using Discord.',
+    text: 'Duoly sells three things for Overwatch 2: one teammate who joins your games on your own account, a 5-stack fill for the seats you are missing, and coaching by the hour. Duo Plus brings a Diamond+ teammate who complements your role, Duo Pro a Master+ player who calls engages and Duo Apex a Grandmaster or Champion player who can swing a fight alone. Ranked sessions follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while Quick Play and Arcade keeps one flat price of {{p_qp}} per game at every rank. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Blizzard Entertainment sorts groups into narrow and wide by how far apart your ranks are, so share your region and rank in the order chat before you queue.',
   },
   services: {
     duo1: 'Role Queue Competitive with a Diamond player who complements your role and plays around you.',
@@ -47,16 +49,16 @@ export const overwatch2: HubPageCopy = {
   steps: {
     heading: 'How does booking an Overwatch 2 duo work?',
     items: [
-      'First, pick a service and the number of games. Duo Pro is the Competitive option with a Master+ teammate, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount. Five games get {{pct5}} off.',
-      'Second, add your region, rank, role and language at checkout. For example, name Europe, {{rank_duo2}} and support as your role, so your teammate reads the real request from Duoly before accepting.',
-      'Third, meet your teammate in the order chat, agree the hero pair and voice using Discord, then add each other by BattleTag. A single Duo Pro game costs {{p_duo2}} at the same rank in 2026. Ten games get {{pct10}} off.',
+      'Pick a service and the number of games. Duo Pro is the Competitive tier with a Master+ teammate, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount. Five games take {{pct5}} off.',
+      'Add your region, rank, role and language at checkout. Name Europe, {{rank_duo2}} and support as your role, so your teammate reads the real request before accepting.',
+      'Meet your teammate in the order chat, agree the hero pair and the ultimate order, then add each other by BattleTag. A single Duo Pro game costs {{p_duo2}} at the same rank.',
     ],
     note: 'Duoly reviews every Overwatch teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
   decide: {
     heading: 'Which Overwatch 2 session fits you?',
     intro:
-      'The right Overwatch session is the one matching your goal for the evening, so pick the goal first and let the price follow. For example, a {{rank_duo2}} player climbing Competitive pays {{p_duo2}} per game for Duo Pro in 2026, with {{pct3}} off 3 games and {{pct5}} off 5. Voice runs using Discord in every session booked from Duoly.',
+      'The right Overwatch session is the one matching your goal for the evening, so pick the goal first and let the price follow. Competitive sessions are priced by your own rank, from {{p_duo2_low}} per game on Duo Pro, with {{pct3}} off 3 games and {{pct5}} off 5. Voice runs on Discord in every session.',
     picks: [
       {
         goal: 'Climbing Role Queue Competitive?',
@@ -68,7 +70,7 @@ export const overwatch2: HubPageCopy = {
         goal: 'Need a tank who plays around you?',
         service: 'duo1',
         answer:
-          'Duo Plus is the Diamond+ option that fills the role your team keeps lacking, {{p_duo1}} at {{rank_duo1}}.',
+          'Duo Plus is the Diamond+ tier that fills the role your team keeps lacking, {{p_duo1}} at {{rank_duo1}}.',
       },
       {
         goal: 'Prefer Stadium to Role Queue?',
@@ -94,29 +96,29 @@ export const overwatch2: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'A Duoly Overwatch teammate is a reviewed player who applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player, Duo Pro a Master+ player and Duo Apex a Grandmaster or Champion player. The tier describes the teammate, never your own lobby. Group rules from Blizzard Entertainment decide which ranks can queue Competitive together, so share your region and rank in the order chat first. For example, a {{rank_duo2}} player pays {{p_duo2}} per game in 2026.',
-        'What the rank buys you is fight timing. First, a Master+ teammate tracks the enemy cooldowns and calls the engage instead of walking in on cooldown. Second, voice runs using Discord, so the regroup call lands before the next fight. A {{rank_duo2_high}} player pays {{p_duo2_high}} per game, because higher lobbies need stronger teammates, and bundles take {{pct3}} off 3 games or {{pct5}} off 5. You keep your hero and your account.',
+        'Every Duoly Overwatch teammate applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player, Duo Pro a Master+ player and Duo Apex a Grandmaster or Champion player. The tier describes the teammate you are hiring and nothing about your own lobby, because Blizzard Entertainment measures the gap in skill divisions: Bronze through Diamond group inside ten divisions, Master and Grandmaster inside five, Champion inside three. Anything wider counts as a wide group, which still queues 5v5 Role Queue Competitive but meets other wide groups and moves your rank in smaller steps.',
+        'What the rank actually buys you is fight timing. A Master+ teammate tracks the enemy cooldowns and calls the engage instead of walking in while yours are down. Voice runs on Discord, so the regroup lands before the next fight rather than after it. Rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. You keep your hero, your aim and your account.',
       ],
     },
     {
       heading: 'Which role pairs make the best Overwatch duo?',
       paragraphs: [
         'A good Overwatch duo is a pair of roles sharing one plan for each fight. Tank and support is the steadiest pair, because the tank takes space only as far as the healing reaches. Damage and support needs the same agreement about distance, since a flanker out of line of sight gets nothing. Two damage players need a shared entry and an exit, so decide who starts the fight and which cooldown means a reset.',
-        'For example, a {{rank_duo2}} support in Europe books Duo Pro with a Master+ tank at {{p_duo2}} per game in 2026. Three games cost {{p_duo2_x3}} with {{pct3}} off, inside the group rules from Blizzard Entertainment. First, agree the hero pair. Second, agree the ultimate order, because two ultimates on the same target waste a fight. Finally, keep the calls short using Discord. Bundles still apply, so 3 games get {{pct3}} off and 5 get {{pct5}} off the total.',
+        'Agree the hero pair before you queue, then agree the ultimate order, because two ultimates on the same target waste a whole fight. A Zarya grav wants a follow-up, a Kiriko suzu wants to be held for it, and neither works if both players call at once. Keep the calls short on Discord: the enemy support is down, their tank has no shield, reset. Three Duo Pro games cost {{p_duo2_x3}} at {{rank_duo2}} with {{pct3}} off, and 5 games take {{pct5}} off.',
       ],
     },
     {
       heading: 'Example evening: three Duo Pro games in Europe',
       paragraphs: [
-        'For example, here is a real booking, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} support in Europe books 3 Duo Pro games. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one game. The order chat opens straight after payment, and the first message names the region, the rank and the role: Europe, {{rank_duo2}}, main support, looking for a tank who takes space on the first point.',
-        'The evening then runs on a short plan. First, both players agree a hero pair and an ultimate order. Second, voice goes on using Discord and the invite goes out by BattleTag. Third, after each game you agree one adjustment, such as grouping before the first choke instead of trickling. We found the rank spread by running the price tool from Duoly for every tier, so a {{rank_duo2_low}} player pays {{p_duo2_low}} in 2026. Five games take {{pct5}} off.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} support in Europe books 3 Duo Pro games. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one game. The order chat opens straight after payment, and the first message names the region, the rank and the role: Europe, {{rank_duo2}}, main support, looking for a tank who takes space on the first point.',
+        'A {{rank_duo2}} player grouped with a Master teammate sits outside the ten-division narrow window, so expect a wide group: still 5v5 Role Queue, matched against other wide groups, with smaller rank changes. From there the evening runs on a short plan. You agree the hero pair and the ultimate order, add each other by BattleTag, and after each game pick one adjustment, such as grouping before the first choke instead of trickling in. Five games take {{pct5}} off the total.',
       ],
     },
     {
       heading: 'When is Overwatch coaching the better booking?',
       paragraphs: [
-        'Overwatch coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between rounds. A coach pauses the replay, names the pattern and leaves you with homework. Role Coaching costs {{p_role}} per hour in 2026. Finally, coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate sessions only.',
-        'For example, a support who dies first every fight gains more from one positioning hour than from another Competitive game. A player who wants a relaxed evening gains more from Quick Play and Arcade at {{p_qp}} per game. Play and Learn is one live Competitive game with a Grandmaster+ coach at {{p_learn}}. Overwatch 2 has no separate Duoly coaching page yet, so lessons are booked from the prices above, using Discord screen share.',
+        'Overwatch coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between rounds; a coach pauses the replay, names the pattern and leaves you with homework. Role Coaching costs {{p_role}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate sessions only.',
+        'A support who dies first every fight gains more from one positioning hour than from another Competitive game. A player who wants a relaxed evening gains more from Quick Play and Arcade at {{p_qp}} per game. Play and Learn is one live Competitive game with a Grandmaster+ coach at {{p_learn}}. Overwatch 2 has no separate Duoly coaching page yet, so lessons are booked from the prices above, with screen share on Discord.',
       ],
     },
   ],
@@ -125,19 +127,19 @@ export const overwatch2: HubPageCopy = {
     items: [
       [
         'Is Duoly a free Overwatch 2 teammate finder?',
-        'Duoly is a paid marketplace with reviewed players. For example, Discord LFG channels and the in-game social menu from Blizzard Entertainment stay the free routes.',
+        'Duoly is a paid marketplace with reviewed players. Discord LFG channels and the in-game social menu from Blizzard Entertainment stay the free routes.',
       ],
       [
         'How much does an Overwatch duo cost?',
-        'Duo Pro is {{p_duo2}} per game at {{rank_duo2}} in 2026. First, bundles take {{pct3}} off 3 games, and 10 games cost {{p_duo2_x10}} with {{pct10}} off.',
+        'Duo Pro is {{p_duo2}} per game at {{rank_duo2}}, from {{p_duo2_low}} at the lowest rank. Bundles take {{pct3}} off 3 games, and 10 games cost {{p_duo2_x10}} with {{pct10}} off.',
       ],
       [
         'Can I pick my teammate role?',
-        'Yes. Name tank, damage or support in the order chat, using Discord for voice, and your teammate queues the role that complements your own pick.',
+        'Yes. Name tank, damage or support in the order chat, with voice on Discord, and your teammate queues the role that complements your own pick.',
       ],
       [
         'Can every rank group in Competitive?',
-        'No. The group restrictions from Blizzard Entertainment apply, so both accounts need a compatible rank and the same region before queueing.',
+        'Almost. Blizzard Entertainment calls a group narrow when Bronze to Diamond players sit inside ten skill divisions, Master and Grandmaster inside five and Champion inside three. Wider groups still queue 5v5 Role Queue as a wide group, against other wide groups, and stay out of 6v6 Open Queue.',
       ],
       [
         'Can we play Stadium instead?',
@@ -145,12 +147,12 @@ export const overwatch2: HubPageCopy = {
       ],
       [
         'Can a stack fill cover fewer seats?',
-        'Yes. Set the seats to the gaps you actually have, using Discord to agree roles first. 5-Stack Role Queue opens at {{seats_five}} seats.',
+        'Yes. Set the seats to the gaps you actually have, and agree roles on Discord first. 5-Stack Role Queue opens at {{seats_five}} seats.',
       ],
     ],
   },
   closing: {
     heading: 'Ready to queue in Overwatch 2?',
-    text: 'Duo Pro is the Competitive session with a Master+ teammate from Duoly. For example, 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off in 2026. Five games get {{pct5}} off. Finally, agree your hero pair using Discord and add each other by BattleTag.',
+    text: 'Duo Pro is the Competitive tier with a Master+ teammate from Duoly, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Quick Play stays {{p_qp}} per game at any rank. Agree your hero pair on Discord, then add each other by BattleTag.',
   },
 };

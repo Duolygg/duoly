@@ -25,7 +25,11 @@ export interface HubPick {
 
 export interface HubPageCopy {
   gameSlug: string;
-  /** Follows the Valorant hub pattern: keyword phrase, colon, action, "| Duoly". */
+  /**
+   * The broad title for the game. Where a game also has an intent page, that
+   * page owns the narrow query (LFG, duos, duo partner) and the hub stays off
+   * it, so the two never compete. See `intent` below.
+   */
   title: string;
   /** Meta description; 140 to 160 characters once price tokens are filled. */
   description: string;
@@ -36,6 +40,13 @@ export interface HubPageCopy {
   facts: [string, string, string];
   /** Other game hubs the guides block links, by game slug. */
   related: string[];
+  /**
+   * One sentence handing the narrow query to the game's intent page, shown as a
+   * callout under the intro. The link itself comes from src/content/intent-pages
+   * (path) and `intentAnchor` (anchor text), so this text must not repeat
+   * either. Games without an intent page leave it out and render no callout.
+   */
+  intent?: string;
   /** The answer-first intro: what you can book for this game, with real prices. */
   format: { heading: string; text: string };
   /** One short line per price card, by catalog service id. */
