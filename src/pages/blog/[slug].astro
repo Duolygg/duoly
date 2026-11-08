@@ -11,6 +11,7 @@ import {
   GUIDE_PATH,
   bookingHref,
   CONTENT_DATES,
+  organizationSchema,
 } from '../../site/seo';
 if (Astro.params.slug !== 'what-is-an-egirl') {
   Astro.response.status = 404;
@@ -26,12 +27,10 @@ const article = {
   mainEntityOfPage: new URL(GUIDE_PATH, Astro.site!).href,
   datePublished: '2026-11-05',
   dateModified: CONTENT_DATES[GUIDE_PATH],
-  author: {
-    '@type': 'Organization',
-    name: 'Duoly',
-    url: new URL('/contact', Astro.site!).href,
-  },
-  publisher: { '@type': 'Organization', name: 'Duoly', url: Astro.site!.href },
+  // Author and publisher are the same company, so both point at the one Organization
+  // node (logo, description and sameAs included) instead of a bare name and URL.
+  author: organizationSchema(Astro.site!),
+  publisher: organizationSchema(Astro.site!),
   image: new URL('/og/duoly.jpg', Astro.site!).href,
 };
 ---

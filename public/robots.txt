@@ -1,4 +1,73 @@
+# Duoly is open to every crawler. The wildcard group is the policy; the named groups
+# below only state the same thing explicitly for AI assistants, AI training crawlers
+# and the search engines that feed AI answers, so the policy is readable instead of
+# inherited. Page-level robots meta tags decide what gets indexed.
+#
+# Careful: robots.txt groups do not merge. A crawler obeys the single most specific
+# group matching its token and ignores "User-agent: *" completely. Any Disallow added
+# to the wildcard group must be repeated in every named group below, or that crawler
+# keeps full access. tests/unit/seo.test.ts enforces this.
+
 User-agent: *
+Allow: /
+
+# OpenAI: GPTBot trains models, ChatGPT-User fetches pages a user asked about,
+# OAI-SearchBot indexes for ChatGPT search.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic: ClaudeBot trains models, Claude-User fetches pages for a user,
+# Claude-SearchBot indexes for Claude search. anthropic-ai is the legacy token.
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity: PerplexityBot indexes, Perplexity-User fetches on request.
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Gemini and Apple Intelligence training opt-ins. These tokens control AI training
+# only; blocking them would not remove Duoly from Google Search or Siri.
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Bingbot powers the Bing index that Copilot and ChatGPT search read from.
+User-agent: Bingbot
+Allow: /
+
+# Other AI and social crawlers. Bytespider (ByteDance) and CCBot (Common Crawl)
+# collect bulk training data: change these two to "Disallow: /" to opt out of that
+# without touching anything else in this file.
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Amazonbot
 Allow: /
 
 Sitemap: https://duoly.gg/sitemap.xml

@@ -13,10 +13,14 @@ import { readFileSync } from 'node:fs';
 import {
   INDEXABLE_PATHS,
   COACHING_SLUGS,
+  OFFICIAL_PROFILES,
+  SAME_AS,
   breadcrumbs,
   homeSchema,
+  organizationSchema,
   serializeJsonLd,
 } from '../../src/site/seo';
+import { DISCORD_INVITE } from '../../src/site/nav';
 import { seoOffers, serviceSchema } from '../../src/server/seo/offers';
 import { gameBySlug } from '../../src/site/games';
 import { calculateQuote } from '../../src/server/pricing';
@@ -93,8 +97,89 @@ it('keeps both layout policies private by default and uses a canonical', () => {
   }
 });
 
+// robots.txt groups never merge: a crawler obeys only the most specific group that
+// names it. So every named group has to repeat whatever the wildcard group says, or
+// that crawler silently keeps access the wildcard group was meant to take away.
 it('allows crawlers to read page-level indexing policies', () => {
-  expect(readFileSync('public/robots.txt', 'utf8')).toBe(
-    'User-agent: *\nAllow: /\n\nSitemap: https://duoly.gg/sitemap.xml\n',
+  const robots = readFileSync('public/robots.txt', 'utf8');
+  const groups = new Map<string, string[]>();
+  let agents: string[] = [];
+  let ruled = false;
+  for (const raw of robots.split('\n')) {
+    const line = raw.replace(/#.*/, '').trim();
+    if (!line) continue;
+    const split = line.indexOf(':');
+    const directive = line.slice(0, split).trim().toLowerCase();
+    const value = line.slice(split + 1).trim();
+    if (directive === 'user-agent') {
+      if (ruled) {
+        agents = [];
+        ruled = false;
+      }
+      agents.push(value);
+      groups.set(value, groups.get(value) ?? []);
+    } else if (directive === 'allow' || directive === 'disallow') {
+      for (const agent of agents)
+        groups
+          .get(agent)!
+          .push(`${directive === 'allow' ? 'Allow' : 'Disallow'}: ${value}`);
+      ruled = true;
+    }
+  }
+  expect(robots).toContain('Sitemap: https://duoly.gg/sitemap.xml\n');
+  expect(groups.get('*')).toEqual(['Allow: /']);
+  // Every AI crawler, AI search bot and Bing has its own group saying the same thing.
+  for (const agent of [
+    'GPTBot',
+    'ChatGPT-User',
+    'OAI-SearchBot',
+    'ClaudeBot',
+    'Claude-User',
+    'Claude-SearchBot',
+    'anthropic-ai',
+    'PerplexityBot',
+    'Perplexity-User',
+    'Google-Extended',
+    'Applebot-Extended',
+    'Bingbot',
+    'Bytespider',
+    'CCBot',
+    'FacebookBot',
+    'Amazonbot',
+  ])
+    expect(groups.get(agent), agent).toEqual(['Allow: /']);
+  // Keep every group identical, so no crawler escapes a rule meant for all of them.
+  for (const [agent, rules] of groups)
+    expect(rules, agent).toEqual(groups.get('*'));
+});
+
+it('publishes one Organization entity with only profiles we really own', () => {
+  const site = new URL('https://duoly.gg');
+  const organization = organizationSchema(site);
+  expect(organization['@id']).toBe('https://duoly.gg/#organization');
+  expect(organization.logo).toBe('https://duoly.gg/icon-512.png');
+  expect(organization.description.length).toBeGreaterThan(50);
+  // Only accounts that exist. An empty slot in OFFICIAL_PROFILES never reaches sameAs.
+  expect(SAME_AS).toEqual([DISCORD_INVITE]);
+  expect(organization.sameAs).toEqual(SAME_AS);
+  for (const url of SAME_AS) expect(url).toMatch(/^https:\/\//);
+  expect(SAME_AS.join(' ')).not.toMatch(/wikipedia|wikidata/i);
+  expect(Object.keys(OFFICIAL_PROFILES)).toContain('x');
+  // The whole point of the shared constant: one edit reaches every Organization node.
+  const home = JSON.parse(serializeJsonLd(homeSchema(site)))['@graph'][0];
+  expect(home).toEqual(organization);
+  const service = JSON.parse(
+    serializeJsonLd(
+      serviceSchema(
+        'Valorant',
+        '/games/valorant',
+        seoOffers('valorant', 'training', {
+          customerCurrency: 'EUR',
+          eurToUsd: 1.12,
+        }),
+        site,
+      ),
+    ),
   );
+  expect(service.provider).toEqual(organization);
 });
