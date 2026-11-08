@@ -14,49 +14,41 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Valorant coaching with a focused practice plan',
     lead: 'Book a Valorant coach for live Play and Learn, a round-by-round VOD review or an aim lesson. Work on one repeatable decision before adding more drills.',
     format:
-      'Valorant coaching on Duoly is a paid lesson with an Immortal+ coach, held on Discord with voice and screen share. Three services are available. First, **Play and Learn** is one live Competitive game together, at {price:learn}. Second, **VOD Review** is a 1-hour lesson on a recent match, going round by round through positioning, utility and decisions, at {price:vod}. Third, **Aim and Crosshair** is a 1-hour lesson on crosshair placement, peeking and counter-strafing, at {price:aim}. Each Aim and Crosshair lesson ends with a training routine made for you. For example, a player who loses most first duels can book Aim and Crosshair for the mechanics, then VOD Review to see where each duel starts. Pick VOD Review to pause rounds and ask questions. Pick Play and Learn to hear feedback while decisions happen. Finally, every lesson runs on your own Riot account.',
+      'Valorant coaching on Duoly is a paid lesson with an Immortal+ coach, held using Discord with voice and screen share. Three services are available. First, **Play and Learn** is one live Competitive game together, at {price:learn}. Second, **VOD Review** is a 1-hour lesson on a recent match, going round by round through positioning, utility and decisions, at {price:vod}. Third, **Aim and Crosshair** is a 1-hour lesson on crosshair placement, peeking and counter-strafing, at {price:aim}. Each Aim and Crosshair lesson ends with a training routine made for you. For example, a player who loses most first duels can book Aim and Crosshair for the mechanics, then VOD Review to see where each duel starts. Pick VOD Review to pause rounds and ask questions. Pick Play and Learn to hear feedback while decisions happen. Prices checked on 8 November 2026. Finally, every lesson runs on your own Riot account. Coaching from Duoly has a 0% quantity discount.',
     sections: [
       {
         heading: 'Why does a missed shot often start before the peek?',
         paragraphs: [
-          'A missed shot is often the last step of a bad route into a fight. On attack, a duelist needs a teammate close enough to trade. An initiator needs utility timed to the entry, and a controller needs smokes on the right sightlines. A useful Valorant review follows the same order before anyone discusses sensitivity. Sentinels can focus on flank information and the timing of a late rotation instead.',
-          'For a single-agent lesson, bring an agent you actually play. For example, a Sova player can check whether a drone cleared the angle the entry player needed. An Omen player can compare a smoke placed too early with a smoke landing as teammates take space. Agent choice sets the questions. The map, the economy and the team composition set the answers. Your coach ties every point to your own recording or live game. Bring the recording to VOD Review at {price:vod}, or play live in Play and Learn at {price:learn}.',
+          'A missed shot is often the last step of a bad route into a fight. First, on attack, a duelist needs a teammate close enough to trade. An initiator needs utility timed to the entry, and a controller needs smokes on the right sightlines. For step 1 of a Valorant review, check the route into the fight before discussing sensitivity. Sentinels can focus on flank information and the timing of a late rotation instead.',
+          'For a single-agent lesson, bring an agent you actually play. For example, a Sova player can check whether a drone cleared the angle the entry player needed. An Omen player can compare a smoke placed too early with a smoke landing as teammates take space. Your coach from Duoly ties every point to your own recording or live game. Bring the recording to VOD Review at {price:vod}, or play live in Play and Learn at {price:learn}. Repeat the review 3 times before changing the practice goal.',
         ],
       },
       {
         heading: 'Example round: what makes an entry untradeable?',
         paragraphs: [
-          'An untradeable entry is a peek with no teammate ready to answer the kill. For example, your entry player turns a corner while the second player is still behind a smoke. Pause the VOD right before the peek. What information is available? Which angle can the second player see? Is utility about to expire? Moving together or waiting for a flash may help more than a harder shot.',
-          'For practice, mark five first contacts in your next recording. First, note whether a teammate could trade. Second, check whether your crosshair sat at head height before the opponent appeared. Finally, compare each moment with the round result instead of the scoreboard. Your Immortal+ coach adapts the exercise to your role, agent and comfort level, reviewing clips with Discord screen share. For the mechanics side, Aim and Crosshair costs {price:aim}.',
+          'An untradeable entry is a peek with no teammate ready to answer the kill. For example, your entry player turns a corner while the second player is still behind a smoke. Pause the VOD right before the peek. What information is available? Which angle can the second player see? Is utility about to expire? Moving together or waiting for a flash may help more than a harder shot. Step 1 is to pause before the decision.',
+          'For practice, mark five first contacts in your next recording. First, note whether a teammate could trade. Second, check whether your crosshair sat at head height before the opponent appeared. Finally, compare each moment with the round result instead of the scoreboard. Your Immortal+ coach from Duoly adapts the exercise to your role, agent and comfort level, reviewing clips with Discord screen share. For the mechanics side, Aim and Crosshair costs {price:aim}. Repeat the review 3 times before changing the practice goal.',
         ],
       },
     ],
     prepare:
-      'Preparation for Valorant coaching is a short checklist before the lesson starts. For VOD Review, bring a recent full match recording with your HUD and audio. Add two timestamps where you were unsure about a peek or a rotation. A close game is often more useful than a highlight reel. For Aim and Crosshair, keep your usual sensitivity and settings, so the coach sees your real habits. For Play and Learn, confirm your ranks can queue together in Competitive. Test Discord voice and screen share before the session. Hide private notifications and tell the coach your region and platform. Never send login details to anyone, including your coach. Finally, every Valorant lesson runs on your own Riot account, and your coach joins with Discord. Play and Learn costs {price:learn} and covers one Competitive game. VOD Review and Aim and Crosshair each cost {price:vod}.',
+      'Preparation for Valorant coaching is a short checklist before the lesson starts. Step 1: for VOD Review, bring a recent full match recording with your HUD and audio. Add two timestamps where you felt unsure, for example a peek and a rotation. A close game is often more useful than a highlight reel. For Aim and Crosshair, keep your usual sensitivity and settings, so the coach sees your real habits. For Play and Learn, confirm your ranks can queue together in Competitive. Test voice and screen share using Discord before the session. Hide private notifications and tell the coach your region and platform. Never send login details to anyone, including your coach. Finally, every Valorant lesson runs on your own Riot account, and your coach joins with Discord. Play and Learn from Duoly costs {price:learn} and covers one Competitive game. VOD Review and Aim and Crosshair each cost {price:vod}. Review the chosen cue 3 times before adding another goal.',
     faq: [
       [
-        'Which Valorant coaching format should I book?',
-        'VOD Review is the pick for paused analysis of a recent match. Aim and Crosshair is the pick for a mechanics routine. Play and Learn gives feedback during one live Competitive game.',
+        'Which Valorant lesson should I choose?',
+        'VOD Review is a paused analysis of your recent Valorant match. Aim and Crosshair builds a mechanics routine. Play and Learn gives feedback during one Competitive game. Choose the service around one repeatable problem before adding more goals.',
       ],
       [
-        'How much does Valorant coaching cost?',
-        'Play and Learn is {price:learn}. VOD Review and Aim and Crosshair are {price:vod} each, with an Immortal+ coach.',
+        'What are the standard Valorant coaching prices?',
+        'Play and Learn costs {price:learn}; VOD Review and Aim and Crosshair each cost {price:vod}. Coaching from Duoly has a 0% quantity discount. Prices checked on 8 November 2026.',
       ],
       [
-        'Can we focus on one agent?',
-        'Yes. Add the agent as your goal when you book. A single-agent focus keeps utility and positioning advice specific to your role.',
+        'What should I share before the lesson?',
+        'Step 1 is to share your platform, region and one goal, for example a confusing decision. Then, test voice and screen share using Discord. Finally, keep account access private and hide personal notifications before showing a recording.',
       ],
       [
-        'Do I need a recording?',
-        'A recording is needed for VOD Review only. Play and Learn uses the current game, and Aim and Crosshair uses live practice with Discord screen share.',
-      ],
-      [
-        'Is Valorant coaching suitable for beginners?',
-        'Yes. A beginner can work on movement, crosshair height and basic round planning. Tell the coach how much of Valorant you already know.',
-      ],
-      [
-        'Will coaching guarantee a new rank?',
-        'No. Coaching gives you a clear plan to practice. Your rank follows from the games you play after the lesson.',
+        'Will a lesson guarantee better results?',
+        'Coaching provides a practice plan, and match results remain uncertain. For practice, repeat the agreed exercise 3 times before changing the goal. Beginners can choose a familiar setup or a basic decision to keep the lesson focused.',
       ],
     ],
   },
@@ -65,49 +57,41 @@ export const lessons: Record<string, Lesson> = {
     h1: 'League of Legends coaching for your next practice goal',
     lead: 'Choose LoL coaching for lane decisions, champion mastery or a review of your own match. Build a practice goal you can recognize in your next game.',
     format:
-      'League of Legends coaching on Duoly is a paid lesson on Discord, with voice and screen share. Three services are available. First, **Play and Learn** is one live ranked game with a Master+ coach, at {price:learn}. Second, **VOD Review** is a 1-hour lesson with a Grandmaster+ coach on a recent game, covering laning, waves and map moves, at {price:vod}. VOD Review ends with three things to fix. Third, **Champion Mastery** is a 1-hour lesson with a Grandmaster+ coach on one champion, at {price:champ}. Champion Mastery covers matchups, combos, builds and power spikes, practiced in a live game. Coaching can focus on top, jungle, mid, bot or support. For example, a jungler can bring a game with a late objective setup, while a mid laner can bring a costly recall. Finally, tell the coach your role and champion pool when you book.',
+      'League of Legends coaching on Duoly is a paid lesson using Discord, with voice and screen share. Three services are available. First, **Play and Learn** is one live ranked game with a Master+ coach, at {price:learn}. Second, **VOD Review** is a 1-hour lesson with a Grandmaster+ coach on a recent game, covering laning, waves and map moves, at {price:vod}. VOD Review ends with three things to fix. Third, **Champion Mastery** is a 1-hour lesson with a Grandmaster+ coach on one champion, at {price:champ}. Champion Mastery covers matchups, combos, builds and power spikes, practiced in a live game. Coaching can focus on top, jungle, mid, bot or support. For example, a jungler can bring a game with a late objective setup, while a mid laner can bring a costly recall. Prices checked on 8 November 2026. Finally, tell the coach your role and champion pool when you book. Coaching from Duoly has a 0% quantity discount.',
     sections: [
       {
         heading: 'Why does wave state decide a lane trade?',
         paragraphs: [
-          'Wave state is the position and size of the minion waves in a lane, and wave state sets the price of a trade. With a large enemy wave approaching, a long trade can cost health, experience and a safe recall. With your own wave about to crash, staying for another plate can cost a clean reset. A League of Legends coach compares what you knew about the enemy jungler with the risk you took.',
-          'Jungle and support lessons need different evidence. A jungler can track camp sequencing, lane priority and whether an objective setup began early enough. A support can examine the wave before roaming, vision routes and the moment an engage became possible. For example, a bot lane review can focus on spacing with your support and the timing of a shared recall. Bring the replay to VOD Review at {price:vod}, or ask about one champion in Champion Mastery at {price:champ}.',
+          'Wave state is the position and size of the minion waves in a lane, and wave state sets the price of a trade. First, with a large enemy wave approaching, a long trade can cost health, experience and a safe recall. With your own wave about to crash, staying for another plate can cost a clean reset. A League of Legends coach compares what you knew about the enemy jungler with the risk you took. Step 1 is to pause before the decision.',
+          'Jungle and support lessons need different evidence. A jungler can track camp sequencing and lane priority. A support can examine waves and vision routes using Discord screen share. For example, a bot lane review can focus on spacing with your support and the timing of a shared recall. Bring the replay to VOD Review from Duoly at {price:vod}, or ask about one champion in Champion Mastery at {price:champ}. Repeat the review 3 times before changing the practice goal.',
         ],
       },
       {
         heading: 'Example lane review: what makes a recall expensive?',
         paragraphs: [
-          'An expensive recall is a reset that gives away minions, experience or tower plates. For example, a mid laner recalls while the wave stops just outside the opposing tower. The opponent can hold the wave, and the returning player walks forward for experience. First, ask whether the wave could have been fully crashed. Second, ask whether the enemy jungler was visible. Finally, compare the item purchase with the minions likely to be lost.',
-          'A practical take-home exercise is to label your first three recalls in your next game. Use three labels: wave crashed, wave moving toward you, or wave held away from you. Add the information you had before recalling. Your Grandmaster+ coach adjusts the task for your matchup during VOD Review with Discord screen share, priced at {price:vod}. To practice the cue live, Play and Learn costs {price:learn}.',
+          'An expensive recall is a reset that gives away minions, experience or tower plates. For example, a mid laner recalls while the wave stops just outside the opposing tower. The opponent can hold the wave, and the returning player walks forward for experience. First, ask whether the wave could have been fully crashed. Second, ask whether the enemy jungler was visible. Finally, compare the item purchase with the minions likely to be lost. Step 1 is to pause before the decision.',
+          'A practical take-home exercise is to label your first three recalls in your next game. Use three labels: wave crashed, wave moving toward you, or wave held away from you. Add the information you had before recalling. Your Grandmaster+ coach from Duoly adjusts the task for your matchup during VOD Review with Discord screen share, priced at {price:vod}. To practice the cue live, Play and Learn costs {price:learn}. Repeat the review 3 times before changing the practice goal.',
         ],
       },
     ],
     prepare:
-      'Preparation for League of Legends coaching is a replay, a role and a question. For VOD Review, bring a recent full match replay or recording, the patch and your role. Include a loss where you still had decisions to make. Add two questions, for example one about laning and one about map movement. For Champion Mastery, pick one champion and list the matchups you find confusing. For Play and Learn, check your server and confirm your ranks can queue together. Test Discord voice and screen share before the session starts. Keep private chat and notifications out of shared recordings. Use your own Riot account, and never share login details. Finally, tell the coach your champion pool, so the lesson starts in the right place. Play and Learn costs {price:learn} and covers one ranked game. VOD Review and Champion Mastery each cost {price:vod}.',
+      'Preparation for League of Legends coaching is a replay, a role and a question. Step 1: for VOD Review, bring a recent full match replay or recording, the patch and your role. Include a loss where you still had decisions to make. Add two questions, for example one about laning and one about map movement. For Champion Mastery, pick one champion and list the matchups you find confusing. For Play and Learn, check your server and confirm your ranks can queue together. Test voice and screen share using Discord before the session starts. Keep private chat and notifications out of shared recordings. Use your own Riot account, and never share login details. Finally, tell the coach your champion pool, so the lesson starts in the right place. Play and Learn from Duoly costs {price:learn} and covers one ranked game. VOD Review and Champion Mastery each cost {price:vod}. Review the chosen cue 3 times before adding another goal.',
     faq: [
       [
-        'Can I book jungle or support coaching?',
-        'Yes. Add the role when you book. A jungle or support review can focus on pathing, roaming or vision decisions.',
+        'Which League of Legends lesson should I choose?',
+        'Champion Mastery is a focused League of Legends lesson on one champion and matchups. VOD Review follows decisions in a recent game. Play and Learn gives live feedback during one ranked game. Choose the service around your next practice goal.',
       ],
       [
-        'What is the difference between Champion Mastery and VOD Review?',
-        'Champion Mastery centers on one champion and its matchups. VOD Review follows your decisions in a recent game, from laning to map moves.',
+        'What are the standard League of Legends coaching prices?',
+        'Play and Learn costs {price:learn}; VOD Review and Champion Mastery each cost {price:vod}. Coaching from Duoly has a 0% quantity discount. Prices checked on 8 November 2026.',
       ],
       [
-        'How much does League of Legends coaching cost?',
-        'Play and Learn is {price:learn}. VOD Review and Champion Mastery are {price:vod} each. Coaching prices are the same for every rank.',
+        'What should I share before the lesson?',
+        'Step 1 is to share your platform, region and one goal, for example a confusing decision. Then, test voice and screen share using Discord. Finally, keep account access private and hide personal notifications before showing a recording.',
       ],
       [
-        'Does Play and Learn include a full hour?',
-        'Play and Learn is priced per game, so the length follows the match. VOD Review and Champion Mastery are a full hour each.',
-      ],
-      [
-        'What should I take away?',
-        'A short list of priorities and a way to check each priority in later games. VOD Review ends with three things to fix.',
-      ],
-      [
-        'Do I need to be highly ranked?',
-        'No. Pick a realistic goal for your current rank and experience.',
+        'Will a lesson guarantee better results?',
+        'Coaching provides a practice plan, and match results remain uncertain. For practice, repeat the agreed exercise 3 times before changing the goal. Beginners can choose a familiar setup or a basic decision to keep the lesson focused.',
       ],
     ],
   },
@@ -116,45 +100,39 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Rocket League coaching for decisions and mechanics',
     lead: 'Book Rocket League coaching for live Doubles or a mechanics lesson. Turn a replay problem into a drill you can repeat in free play.',
     format:
-      '**Play and Learn** is an hour of live Doubles. **Mechanics Training** is an hourly lesson with practice packs. Both are booked by the hour, however many matches you fit in. Tell the coach whether your priority is a reliable touch, a recovery or your role as second player.',
+      'Rocket League coaching is a paid lesson with Discord voice and screen share, using your own account. Play and Learn costs {price:learn} for live Doubles. Mechanics Training costs {price:mech} for aerials, flicks and recoveries, with training packs to repeat afterward. First, choose the format around the problem you actually see in matches. For example, missed recoveries fit a mechanics lesson, while repeated double commits fit live Doubles. Step 1 is to tell the coach your platform, input, region and usual playlist before starting. Both services are hourly, so the number of matches depends on match length and discussion time. Coaching from Duoly has a 0% quantity discount; extra hours keep the same standard rate. Prices checked on 8 November 2026. Finally, agree on one practice cue and a controlled drill before adding harder variations.',
     sections: [
       {
-        heading: 'Read the next touch before committing',
+        heading: 'How should the second player read a Doubles attack?',
         paragraphs: [
-          'In Doubles, a difficult aerial is only part of the picture. The second player has to decide whether the first player can keep possession, whether the opponent has a clear touch and whether there is enough time to retreat. Reviewing the moment before a double commit often reveals a positioning problem long before the goal goes in.',
-          'Mechanics training should support those situations. Aerial control helps you meet a ball earlier; recoveries return you to the play after a challenge; a controlled first touch keeps possession instead of gifting a clear. Ask for a drill that matches the failure you actually see. A flashy flick helps little if every attempt begins with the ball too far from your car.',
+          'A useful second-player position is a place where you can pressure the next touch and still cover a dangerous clear. First, watch whether your partner can recover after the challenge. For example, a rebound above the opposing net can look inviting while both defenders are already moving toward the ball. Step 1 is to pause before committing and name the worst likely clear. Repeat the review 3 times with different replays, using Discord screen share to explain each choice. A coach from Duoly can check the spacing in Play and Learn at {price:learn}. Mechanics Training costs {price:mech} for aerials and recoveries when execution is the problem. Second, keep enough boost for the route back toward your own net. Finally, compare the decision with the information available before the touch, rather than judging only whether the shot scored.',
         ],
       },
       {
-        heading: 'Example Doubles play: the tempting rebound',
+        heading: 'How can you practice recovering after a tempting rebound?',
         paragraphs: [
-          'Your partner shoots, the ball rebounds high, and both opponents are moving toward it. You are second player at midfield with little boost. Pause before jumping. If your partner cannot recover behind you and the opponent can reach the ball first, a deep commitment can expose the entire net. Consider holding a recoverable position and reading the clear.',
-          'One follow-up task is to review five goals conceded and mark your position when your partner made the touch before them. Could you cover the worst likely clear? Then practice landing on your wheels after a simple aerial and driving into a useful route. Keep the drill simple enough to repeat with control.',
+          'A controlled recovery is a landing and route back into the play after an aerial or challenge. First, choose a replay where a missed rebound left the net open. For example, pause as your partner shoots and compare your boost with the distance to the next safe position. Step 1 is to name where a losing challenge would send the ball. Practice a simple aerial 3 times, landing on your wheels and steering toward a useful route. Mechanics Training from Duoly costs {price:mech} and includes training packs for focused practice with Discord. Play and Learn costs {price:learn} for live Doubles decisions. Second, ask the coach to connect the drill to the replay instead of adding an unrelated trick. Finally, keep the first version slow enough to control the landing before adding height, speed or a harder angle.',
         ],
       },
     ],
     prepare:
-      'Save a replay from a close Doubles match and pick two timestamps. Share your platform, input, region and usual playlist. For mechanics work, warm up in free play without changing every camera or sensitivity setting right before the lesson. Check Discord audio and agree how you will share replays or your screen. Keep your login private.',
+      'Preparation for Rocket League coaching is a replay, two timestamps and one practice question. First, save a close Doubles match showing the approach to a conceded goal. For example, include the touch before a double commit so the coach can compare positioning with execution. Step 1 is to share your platform, input, region and usual playlist. Test voice and screen share using Discord before the lesson. Warm up with familiar camera and sensitivity settings rather than changing everything just before practice. Mechanics Training from Duoly costs {price:mech} and includes training packs. Play and Learn costs {price:learn} for live Doubles. Second, agree on the goal before loading into a drill or queue. Finally, keep account access private and hide personal notifications. Repeat the chosen exercise 3 times at a controlled pace, so the coach can see a habit rather than one lucky attempt.',
     faq: [
       [
-        'Is Rocket League coaching per match?',
-        'No. Both coaching services are hourly. The number of games or drill attempts depends on how you use the hour.',
+        'Which Rocket League lesson should I choose?',
+        'Mechanics Training is a Rocket League lesson on aerials, flicks and recoveries, with training packs for practice. Play and Learn is live Doubles learning. Both services are hourly, so match count depends on game length and time spent reviewing decisions.',
       ],
       [
-        'Can I focus on aerials?',
-        'Yes. Mechanics Training covers aerials, flicks and recoveries. Describe the touch you struggle with so the drill fits.',
+        'What are the standard Rocket League coaching prices?',
+        'Play and Learn costs {price:learn}, and Mechanics Training costs {price:mech}. Coaching from Duoly has a 0% quantity discount. Prices checked on 8 November 2026.',
       ],
       [
-        'Does the coach play Doubles with me?',
-        'Yes, in Play and Learn. Check region, platform and that your ranks can queue together before you start.',
+        'What should I share before the lesson?',
+        'Step 1 is to share your platform, region and one goal, for example a confusing decision. Then, test voice and screen share using Discord. Finally, keep account access private and hide personal notifications before showing a recording.',
       ],
       [
-        'Do I need advanced mechanics?',
-        'No. Reliable contact, landing and positioning are good lesson goals before advanced moves.',
-      ],
-      [
-        'Will I get practice material?',
-        'Yes. Mechanics Training includes training packs. Agree which exercise to repeat and what a controlled attempt looks like.',
+        'Will a lesson guarantee better results?',
+        'Coaching provides a practice plan, and match results remain uncertain. For practice, repeat the agreed exercise 3 times before changing the goal. Beginners can choose a familiar setup or a basic decision to keep the lesson focused.',
       ],
     ],
   },
@@ -163,49 +141,39 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Fortnite coaching for your next practice goal',
     lead: 'Choose a Fortnite coach for live learning or Creative build and edit practice. Set the mode and input first so the lesson fits the fights you play.',
     format:
-      'Both Fortnite lessons are hourly. **Play and Learn** is live Ranked learning. **Build and Edit Course** covers piece control, edits and box fights in Creative. For Zero Build, book Play and Learn and name the mode as your goal.',
+      'Fortnite coaching is a paid hourly lesson with Discord voice and screen share on your own account. Play and Learn costs {price:learn} for live Ranked learning. Build and Edit Course costs {price:build} for piece control, edits and box fights in Creative. First, name your mode and input before choosing the lesson. For example, a Zero Build player can book Play and Learn to review cover, rotations and fight selection. A build player can use Creative to slow down an unsafe edit and practice the reset. Step 1 is to share one clip or describe one repeatable problem. Coaching from Duoly has a 0% quantity discount; extra hours keep the same standard rate. Prices checked on 8 November 2026. Finally, agree on a narrow focus with the coach, so feedback fits your controller or keyboard and your current experience.',
     sections: [
       {
-        heading: 'Build a safer edit before adding speed',
+        heading: 'How do you make an edit safer before adding speed?',
         paragraphs: [
-          'A build lesson can begin with how you protect yourself during an edit. Owning nearby pieces, choosing a right-hand peek and resetting after the shot all affect whether the opponent gets an easy reply. A fast edit that exposes your whole character can reinforce the wrong habit. Ask the coach to watch the setup and recovery as closely as the edit itself.',
-          'For live play, the problem may be a rotation instead of a box fight. Review the route toward the next safe area, available cover and whether starting a fight leaves time to move. A controller player and a keyboard player may need different execution drills, even when the decision is similar. Tell the coach which input you use instead of copying someone else’s routine unchanged.',
+          'A safer edit is an opening which gives a shot while limiting the angle available to the opponent. First, check piece ownership and your position before opening the wall. For example, standing too close to the middle can expose your character even when the edit is fast. Step 1 is to choose one protected peek and explain the escape route. Repeat the setup 3 times using Discord screen share, keeping the same input and sensitivity. Build and Edit Course from Duoly costs {price:build} for Creative practice. Play and Learn costs {price:learn} for applying decisions in live Ranked games. Second, reset after the shot and return to cover before starting another attempt. Finally, ask the coach to judge the setup and recovery alongside the edit. For Zero Build, choose the live service and focus on cover, rotations and fight selection instead.',
         ],
       },
       {
-        heading: 'Example Creative drill: edit, shoot, reset',
+        heading: 'How can you practice an edit, shot and reset together?',
         paragraphs: [
-          'Start inside a box with a wall you own. Choose an opening that lets you see a target while keeping as much of your character protected as possible. Edit, take one controlled shot, reset the wall and return to cover. Begin slowly enough to notice where you stand.',
-          'For the next variation, change the target angle and decide whether the same opening is still useful. Count controlled repetitions where you return to cover, and judge the drill by control before speed. Your coach adapts the setup to your skill and input, then you test one cue in a real fight.',
+          'An edit and reset drill is a controlled sequence of opening a shot, firing and returning behind cover. First, start inside a box with a wall you own. For example, choose an opening which keeps most of your character protected from a target directly ahead. Step 1 is to check your position before touching the edit. Repeat the sequence 3 times, then change the target angle and decide whether the opening still works. Build and Edit Course from Duoly costs {price:build} for the hourly Creative lesson with Discord screen share. Play and Learn costs {price:learn} for live Ranked learning. Second, ask the coach to match the drill to your controller or keyboard. Finally, count controlled returns to cover before trying to go faster. A short clip of an actual lost fight helps connect the practice to a decision you recognize.',
         ],
       },
     ],
     prepare:
-      'Bring your region, platform, input and a short clip showing what happens before the fight. Have Discord ready and check that your microphone works. For Build and Edit Course, be ready to load into Creative. For Play and Learn, pick the mode you want to play.',
+      'Preparation for Fortnite coaching is a clear mode, your input and one clip showing a repeatable problem. First, share your region, platform and experience before the lesson. For example, bring the seconds before a lost box fight, including the setup and the recovery. Step 1 is to name whether the goal belongs in Creative or live Ranked. Build and Edit Course from Duoly costs {price:build} for edits, piece control and box fights. Play and Learn costs {price:learn} for live learning, including Zero Build goals. Test voice and screen share using Discord and hide private notifications. Second, keep familiar settings so the coach sees your usual execution. Finally, load the relevant mode and keep your account under your control. Practice a simple edit and reset 3 times before increasing speed, or describe the cover decision you want to test in live play.',
     faq: [
       [
-        'Can beginners book a Fortnite coach?',
-        'Yes. Basic building, cover use and controlled edits are good starting points. Tell the coach your experience before choosing a drill.',
+        'Which Fortnite lesson should I choose?',
+        'Build and Edit Course is a Fortnite lesson on edits, piece control and box fights in Creative. Play and Learn is live Ranked learning. For Zero Build, choose the live service and name cover, rotations or fight selection as the goal.',
       ],
       [
-        'Is there controller coaching?',
-        'Yes. Share your input when you book so the drills fit your controller or keyboard.',
+        'What are the standard Fortnite coaching prices?',
+        'Play and Learn costs {price:learn}, and Build and Edit Course costs {price:build}. Coaching from Duoly has a 0% quantity discount. Prices checked on 8 November 2026.',
       ],
       [
-        'Can I practice only edits?',
-        'Yes. Build and Edit Course includes edits and piece control. Agree a narrow focus so the hour stays useful.',
+        'What should I share before the lesson?',
+        'Step 1 is to share your platform, region and one goal, for example a confusing decision. Then, test voice and screen share using Discord. Finally, keep account access private and hide personal notifications before showing a recording.',
       ],
       [
-        'Does this include Zero Build?',
-        'Book Play and Learn and name Zero Build as your goal. Build and Edit Course is for building.',
-      ],
-      [
-        'Can we work on Ranked rotations?',
-        'Yes. Play and Learn covers live Ranked decisions such as rotations and fight selection.',
-      ],
-      [
-        'What does the price include?',
-        'One hour with your coach on voice and screen share.',
+        'Will a lesson guarantee better results?',
+        'Coaching provides a practice plan, and match results remain uncertain. For practice, repeat the agreed exercise 3 times before changing the goal. Beginners can choose a familiar setup or a basic decision to keep the lesson focused.',
       ],
     ],
   },
@@ -214,49 +182,39 @@ export const lessons: Record<string, Lesson> = {
     h1: 'TFT coaching for economy and decisions',
     lead: 'Book TFT coaching to review when you level, roll and commit to a board. Build a decision process that adapts when the shop does not cooperate.',
     format:
-      '**Comp and Econ Review** is an hourly session. It covers composition choices, gold management and when to roll or level from stage two. For live help during a game, the Teamfight Tactics hub also offers **Board Coach**, priced per game.',
+      'Teamfight Tactics coaching is a paid hourly lesson on composition, economy and spending decisions with Discord voice and screen share. Comp and Econ Review costs {price:econ} from Duoly. First, bring a full recording showing the shop, bench, items and augment choices. For example, a final board can show missing upgrades without showing why gold was spent earlier. Step 1 is to pick two moments when rolling or leveling felt unclear. The coach can compare board strength, health and available upgrades before discussing the outcome. Coaching has a 0% quantity discount; extra hours keep the same standard rate. Price checked on 8 November 2026. Finally, choose a practice question for the next game and note the current set and patch. The separate Board Coach service on the game hub is live help priced per game, with its own checkout total.',
     sections: [
       {
-        heading: 'Connect economy to board strength',
+        heading: 'How should you connect gold to board strength?',
         paragraphs: [
-          'Saving gold makes sense only in the context of your health, board and lobby. A review compares the cost of spending now with the risk of losing several rounds while waiting. Ask what upgrades were realistically available at each decision and whether your item holders kept the board working. A final placement alone cannot tell you whether an earlier choice was sensible.',
-          'Composition work should include a way out of the first plan. Your items, augments and natural units may point in different directions. A coach can help you find a temporary board, the units worth holding and the point at which a transition becomes too expensive. Unit names change each set, so note the set and patch of the game you bring.',
+          'Economy management is a choice between future buying power and the health cost of keeping a weak board. First, check health, pairs, item holders and the strength of upcoming opponents. For example, saving for interest can be expensive when a small upgrade would avoid repeated heavy losses. Step 1 is to pause before spending and name the upgrades available at the current level. Compare the choice 3 times across a full recording using Discord screen share. Comp and Econ Review from Duoly costs {price:econ} for one hour. The coaching quantity discount is 0%, so buying more hours keeps the standard rate. Second, note a possible temporary board when items and shops disagree with your opening plan. Finally, bring the set and patch with the recording, since unit names and viable transitions change. A final placement alone cannot explain whether the earlier risk was reasonable.',
         ],
       },
       {
-        heading: 'Example economy decision: roll or level?',
+        heading: 'How do you review a decision to roll or level?',
         paragraphs: [
-          'You reach a stage transition with a weak front line, several pairs and enough gold for a real decision. First assess the next opponents and the likely health cost of waiting. Then compare whether leveling adds a useful unit with whether rolling can complete upgrades. Finally consider which items are still unassigned.',
-          'A simple review sheet records gold, health, level and your reason at three decision points. After the game, compare the plan with what happened, knowing no one predicts every shop. Bring the sheet to the lesson so the coach can tell a reasonable risk from an automatic habit. Include both good and bad outcomes.',
+          'A roll or level review is a comparison of immediate upgrades, available gold and the health risk of waiting. First, pause at a stage transition before spending. For example, a weak front line with several pairs may offer a different choice from a stable board needing one extra unit. Step 1 is to write gold, health, level and the reason for the choice. Repeat the review 3 times in a full match recording using Discord screen share. Comp and Econ Review from Duoly costs {price:econ} for an hourly lesson. Coaching has a 0% quantity discount, so additional hours keep the same rate. Second, compare likely upgrades with the next opponents and unassigned items. Finally, judge the plan using information available before the shop refreshed. Include good and bad outcomes, so a lucky shop does not become the entire explanation for a spending habit.',
         ],
       },
     ],
     prepare:
-      'Bring a full recording with the shop, bench, items and augment choices visible. A final-board screenshot hides most economy decisions. Note the patch and the timestamps of two rolls or level-ups you questioned. Keep personal messages off the screen share. You play on your own account, and the review is about choices you make yourself.',
+      'Preparation for Teamfight Tactics coaching is a full recording with the shop, bench, items and augment choices visible. First, note the current set and patch before sending a replay. For example, a final-board screenshot cannot show whether a roll decision made sense before the upgrades appeared. Step 1 is to choose two spending moments and write the reason for each choice. Comp and Econ Review from Duoly costs {price:econ} for an hourly lesson using Discord voice and screen share. Coaching has a 0% quantity discount; additional hours keep the standard rate. Second, hide private notifications and keep your account under your own control. Finally, make a short review sheet for gold, health and level. Use the sheet 3 times across the recording, so the lesson can compare a repeatable decision process with the actual shops and outcomes rather than relying on the final placement.',
     faq: [
       [
-        'What TFT coaching can I book?',
-        'Comp and Econ Review, an hourly lesson on compositions, economy and spending decisions.',
+        'Which Teamfight Tactics lesson should I choose?',
+        'Comp and Econ Review is a Teamfight Tactics lesson on compositions, gold and spending decisions. The hourly format follows key choices from a full game. Board Coach on the game hub is separate live help, sold per game rather than per hour.',
       ],
       [
-        'Is this the same as Board Coach?',
-        'No. Board Coach is live help during one game. Comp and Econ Review is a structured hourly lesson.',
+        'What are the standard Teamfight Tactics coaching prices?',
+        'Comp and Econ Review costs {price:econ}. The listed rate covers one hour of focused review. Coaching from Duoly has a 0% quantity discount. Prices checked on 8 November 2026.',
       ],
       [
-        'Should I record the entire match?',
-        'Yes. A full recording keeps the shop choices and economy context that a final-board image cannot show.',
+        'What should I share before the lesson?',
+        'Step 1 is to share your platform, region and one goal, for example a confusing decision. Then, test voice and screen share using Discord. Finally, keep account access private and hide personal notifications before showing a recording.',
       ],
       [
-        'Can we cover positioning?',
-        'Yes. Add positioning to your goal when you book. The core of the lesson is composition and economy.',
-      ],
-      [
-        'Will I learn meta compositions?',
-        'Yes, plus how to pivot when your items and shops point somewhere else.',
-      ],
-      [
-        'How long is the review?',
-        'One hour, focused on the key decisions from one full game.',
+        'Will a lesson guarantee better results?',
+        'Coaching provides a practice plan, and match results remain uncertain. For practice, repeat the agreed exercise 3 times before changing the goal. Beginners can choose a familiar setup or a basic decision to keep the lesson focused.',
       ],
     ],
   },
@@ -265,49 +223,39 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Apex Legends coaching for movement and rotations',
     lead: 'Choose Apex coaching for live Ranked learning or focused movement practice. Work on reaching the next position with enough options to take the fight.',
     format:
-      'Both Apex lessons are hourly. **Play and Learn** is a live Ranked session. **Movement Course** is a Firing Range lesson on slide jumps, wall bounces and tap-strafes. Share your input and platform when you book so every drill fits your setup.',
+      'Apex Legends coaching is a paid hourly lesson with Discord voice and screen share on your own account. Play and Learn costs {price:learn} for live Ranked learning. Movement Course costs {price:move} for practice in the Firing Range. First, tell the coach your input, platform and preferred legends. For example, a controller player should agree on movement drills suited to the actual setup before practicing a technique from a keyboard clip. Step 1 is to name one problem, such as reaching cover after a challenge or choosing an earlier rotation. Coaching from Duoly has a 0% quantity discount; extra hours keep the same standard rate. Prices checked on 8 November 2026. Finally, confirm your region and queue eligibility for live Ranked. The hour includes the booked lesson time, and match count depends on game length and discussion.',
     sections: [
       {
-        heading: 'Use movement to reach a useful position',
+        heading: 'How should movement connect to cover in Apex Legends?',
         paragraphs: [
-          'A movement lesson should explain where the movement takes you. Sliding quickly into an exposed lane can still leave you without cover. A wall bounce that breaks line of sight may be useful when it gives time to reset, while a simpler route may be better when teammates need a predictable position. Ask the coach to connect each technique to a fight.',
-          'Live coaching can focus on a different layer: choosing a drop, reading the ring, deciding when to rotate and recognizing a fight that will draw in another squad. Legend selection matters too. A mobility legend may create an exit, a controller may help hold a position, and support decisions can change how the squad resets. Set one focus before the hour so the lesson stays on track.',
+          'Useful movement is a route toward cover or a fighting angle with options for the next action. First, ask where a technique leaves your character after landing. For example, a quick slide into an exposed lane may create a harder fight than a slower protected route. Step 1 is to name the next cover and one fallback before leaving safety. Rehearse the route 3 times using Discord screen share to review aim and control. Movement Course from Duoly costs {price:move} for Firing Range practice. Play and Learn costs {price:learn} for live Ranked decisions. Second, match the technique to your input, platform and legend rather than copying an unrelated clip. Finally, consider whether teammates can follow the route and whether another squad already holds the angle. A useful lesson connects execution to ring information, spacing and the choice to take or leave a fight.',
         ],
       },
       {
-        heading: 'Example rotation: arriving after the angle is lost',
+        heading: 'How do you review a rotation after losing the angle?',
         paragraphs: [
-          'Your squad leaves a loot area late while another team already holds the route into the safe area. Before committing, compare available cover, alternate routes and the information your legend abilities can provide. A fast move straight through the open may give the holding team a clean shot. The review question is when the route became risky and what signal you missed earlier.',
-          'For practice, review three rotations and pause before leaving cover. Name the next protected position and one fallback if it is taken. In the Firing Range, rehearse a simple movement toward cover while keeping your aim controlled. The coach adapts the drill to your input.',
+          'A late rotation is a move begun after another squad has gained control of the intended route or position. First, pause before your squad leaves cover. For example, a direct path into the safe area can be risky when opponents already watch the only crossing. Step 1 is to compare cover, alternate routes and information from legend abilities. Review the approach 3 times using Discord screen share and name an earlier signal to move. Play and Learn from Duoly costs {price:learn} for an hourly Ranked lesson. Movement Course costs {price:move} for practicing the execution in the Firing Range. Second, choose the next protected position and a fallback if the position is occupied. Finally, test a simple movement toward cover while keeping aim controlled. Your coach can adapt the drill to your input and platform before adding speed or a more demanding technique.',
         ],
       },
     ],
     prepare:
-      'Share your region, input, platform and preferred legends. For movement, have the Firing Range ready. For live Ranked, check that your ranks can queue together, and keep your own account under your control. A short clip that shows the approach to a fight is more useful than the final elimination. Test Discord voice and mention any accessibility or input needs.',
+      'Preparation for Apex Legends coaching is your region, platform, input and one clear lesson goal. First, name your preferred legends and explain a fight or rotation you want to understand. For example, a clip showing the approach to a crossing gives more context than the final elimination. Step 1 is to choose live Ranked learning or focused Firing Range practice. Play and Learn from Duoly costs {price:learn}. Movement Course costs {price:move} for an hourly lesson on techniques suited to your setup. Test voice and screen share using Discord, hide private notifications and keep login details private. Second, confirm queue eligibility for live Ranked or have the Firing Range ready. Finally, rehearse a simple move toward cover 3 times before adding harder variations. Ask the coach to compare control, aim and the landing position, so practice connects to a situation you recognize in matches.',
     faq: [
       [
-        'Which Apex lesson is live?',
-        'Play and Learn is the live Ranked lesson. Movement Course is practice in the Firing Range.',
+        'Which Apex Legends lesson should I choose?',
+        'Movement Course is an Apex Legends lesson in the Firing Range. Play and Learn is live Ranked learning. Share your input and platform so practice uses suitable techniques. Your coach joins you; booking does not fill every seat in a trio.',
       ],
       [
-        'Does every movement work on controller?',
-        'Share your input and platform, and your coach picks the techniques that work on your setup.',
+        'What are the standard Apex Legends coaching prices?',
+        'Play and Learn costs {price:learn}, and Movement Course costs {price:move}. Coaching from Duoly has a 0% quantity discount. Prices checked on 8 November 2026.',
       ],
       [
-        'Can we focus on rotations?',
-        'Yes. Make rotations your goal for live play. Ring information, cover and fight selection are good review topics.',
+        'What should I share before the lesson?',
+        'Step 1 is to share your platform, region and one goal, for example a confusing decision. Then, test voice and screen share using Discord. Finally, keep account access private and hide personal notifications before showing a recording.',
       ],
       [
-        'Does booking fill my whole trio?',
-        'No. Your coach joins you, and you bring the rest of your squad or queue as usual.',
-      ],
-      [
-        'How many games are included?',
-        'Apex coaching is hourly. The number of games depends on match length and how much time you spend on review.',
-      ],
-      [
-        'Which legend should I bring?',
-        'The legend you play most. Your coach builds the lesson around its abilities.',
+        'Will a lesson guarantee better results?',
+        'Coaching provides a practice plan, and match results remain uncertain. For practice, repeat the agreed exercise 3 times before changing the goal. Beginners can choose a familiar setup or a basic decision to keep the lesson focused.',
       ],
     ],
   },
@@ -316,50 +264,42 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Marvel Rivals coaching for your hero and role',
     lead: 'Book Marvel Rivals coaching for live learning or a focused hero lesson. Learn when to use your abilities and when your team is ready to follow.',
     format:
-      'Marvel Rivals coaching on Duoly is a paid lesson with a Grandmaster+ coach on Discord, with voice and screen share. Two services are available. First, **Play and Learn** is one live Competitive match together, at {price:learn}. Your coach explains every decision out loud, with a quick review after. Second, **Hero Coaching** is a 1-hour lesson on one hero, at {price:hero}. Hero Coaching covers abilities, ultimate timing, positioning and matchups. For example, a Strategist player can work on saving a key ability for the moment an opponent dives. Pick the hourly lesson for hero-specific questions. Pick Play and Learn to see how decisions change as a match unfolds. Finally, every lesson runs on your own account, for Vanguard, Duelist and Strategist players alike.',
+      'Marvel Rivals coaching on Duoly is a paid lesson with a Grandmaster+ coach using Discord, with voice and screen share. Two services are available. First, **Play and Learn** is one live Competitive match together, at {price:learn}. Your coach explains every decision out loud, with a quick review after. Second, **Hero Coaching** is a 1-hour lesson on one hero, at {price:hero}. Hero Coaching covers abilities, ultimate timing, positioning and matchups. For example, a Strategist player can work on saving a key ability for the moment an opponent dives. Pick the hourly lesson for hero-specific questions. Pick Play and Learn to see how decisions change as a match unfolds. Prices checked on 8 November 2026. Finally, every lesson runs on your own account, for Vanguard, Duelist and Strategist players alike. Coaching from Duoly has a 0% quantity discount.',
     sections: [
       {
         heading: 'How does your role change a Marvel Rivals team fight?',
         paragraphs: [
-          'A team fight in Marvel Rivals is a chain of role decisions, and each role carries a different risk. A Vanguard can create space the rest of the team cannot use yet. A Duelist may take an angle without an escape route. A Strategist may spend key resources just before an opponent commits. A useful review connects all three roles, asking who could see the target and which cooldowns were ready before the engage began.',
-          'Hero Coaching stays grounded in the hero you play. A dive hero needs a plan for entering and leaving. A backline hero needs safe sightlines and awareness of flanks. Team-Up abilities add another coordination question, and Team-Up details change with patches. For example, bring the current patch, so the lesson uses combinations available now. Hero Coaching costs {price:hero}, and Play and Learn costs {price:learn}.',
+          'A team fight in Marvel Rivals is a chain of role decisions, and each role carries a different risk. First, a Vanguard can create space the rest of the team cannot use yet. A Duelist may take an angle without an escape route. A Strategist may spend key resources just before an opponent commits. For step 1 of a review, check who could see the target and which cooldowns were ready before the engage.',
+          'Hero Coaching stays grounded in the hero you play. A dive hero needs a plan for entering and leaving. A backline hero needs safe sightlines and awareness of flanks. For example, bring the current patch, so the lesson uses combinations available now. Hero Coaching from Duoly costs {price:hero}, and Play and Learn costs {price:learn}. Repeat the review 3 times before changing the practice goal.',
         ],
       },
       {
         heading:
           'Example team fight: why can an ultimate fail without follow-up?',
         paragraphs: [
-          'An ultimate without follow-up is an ultimate used before teammates can act on the opening. For example, you use an ultimate to open a fight while two teammates are still returning from spawn. The animation looks strong and still leaves the team unable to take space. Pause before the activation. Count who can act, which enemy defensive abilities are known and whether the objective demands an immediate contest.',
-          'A small practice task is to review five ultimate uses from your next matches. First, write the intended purpose before judging the outcome: engage, response, survival or objective contest. Second, check whether the teammates needed for the plan were present. Finally, ask your Grandmaster+ coach for a hero-specific cue to spot the same situation sooner, reviewing clips with Discord screen share. Hero Coaching costs {price:hero} for a full hour.',
+          'An ultimate without follow-up is an ultimate used before teammates can act on the opening. For example, you use an ultimate to open a fight while two teammates are still returning from spawn. The animation looks strong and still leaves the team unable to take space. Pause before the activation. Count who can act, which enemy defensive abilities are known and whether the objective demands an immediate contest. Step 1 is to pause before the decision.',
+          'A small practice task is to review five ultimate uses from your next matches. First, write the intended purpose before judging the outcome: engage, response, survival or objective contest. Second, check whether the teammates needed for the plan were present. Finally, ask your Grandmaster+ coach for a hero-specific cue to spot the same situation sooner, reviewing clips with Discord screen share. Hero Coaching from Duoly costs {price:hero} for a full hour. Repeat the review 3 times before changing the practice goal.',
         ],
       },
     ],
     prepare:
-      'Preparation for Marvel Rivals coaching is about context: hero, role, patch and one problem. Bring your platform, region, hero pool and the current patch. A recording should include the lead-up to fights, teammate positions and the objective. Pick two timestamps where you did not know whether to engage or reset. For Hero Coaching, choose one hero and one matchup you struggle with. For Play and Learn, confirm your ranks can queue together in Competitive. Test Discord voice before the session starts. Hide personal notifications during screen sharing. Keep your own account under your control, and never share login details. Finally, tell the coach your main role, so the lesson starts with the right hero questions. Play and Learn costs {price:learn} and covers one Competitive match. Hero Coaching costs {price:hero} for a full hour. A short written goal, for example one hero matchup, saves time at the start.',
+      'Preparation for Marvel Rivals coaching is about context: hero, role, patch and one problem. Bring your platform, region, hero pool and the current patch. A recording should include the lead-up to fights, teammate positions and the objective. Pick two timestamps where you did not know whether to engage or reset. Step 1: for Hero Coaching, choose one hero and one matchup you struggle with. For Play and Learn, confirm your ranks can queue together in Competitive. Test voice using Discord before the session starts. Hide personal notifications during screen sharing. Keep your own account under your control, and never share login details. Finally, tell the coach your main role, so the lesson starts with the right hero questions. Play and Learn from Duoly costs {price:learn} and covers one Competitive match. Hero Coaching costs {price:hero} for a full hour. A short written goal, for example one hero matchup, saves time at the start. Review the chosen cue 3 times before adding another goal.',
     faq: [
       [
-        'Can I focus on Strategist or Vanguard?',
-        'Yes. Add your role and hero when you book, and the Grandmaster+ coach plans the lesson around both.',
+        'Which Marvel Rivals lesson should I choose?',
+        'Hero Coaching is a Marvel Rivals lesson on abilities, ultimate timing, positioning and matchups for one hero. Play and Learn gives feedback during one Competitive match. Strategist, Vanguard and Duelist players can each choose a narrow goal for the lesson.',
       ],
       [
-        'What does Hero Coaching cover?',
-        'Abilities, ultimate timing, positioning and matchups for one hero. Agree a narrow goal for the hour.',
+        'What are the standard Marvel Rivals coaching prices?',
+        'Play and Learn costs {price:learn}, and Hero Coaching costs {price:hero}. Coaching from Duoly has a 0% quantity discount. Prices checked on 8 November 2026.',
       ],
       [
-        'How much does Marvel Rivals coaching cost?',
-        'Play and Learn is {price:learn} and covers one Competitive match. Hero Coaching is {price:hero}.',
+        'What should I share before the lesson?',
+        'Step 1 is to share your platform, region and one goal, for example a confusing decision. Then, test voice and screen share using Discord. Finally, keep account access private and hide personal notifications before showing a recording.',
       ],
       [
-        'Can we review Team-Up decisions?',
-        'Yes. Bring the current patch, since Team-Up details change between seasons.',
-      ],
-      [
-        'Do I need a large hero pool?',
-        'No. One familiar hero gives the coach enough context to work on fundamentals.',
-      ],
-      [
-        'Are prices tied to my rank?',
-        'No. Coaching costs the same at every rank.',
+        'Will a lesson guarantee better results?',
+        'Coaching provides a practice plan, and match results remain uncertain. For practice, repeat the agreed exercise 3 times before changing the goal. Beginners can choose a familiar setup or a basic decision to keep the lesson focused.',
       ],
     ],
   },

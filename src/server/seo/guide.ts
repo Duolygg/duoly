@@ -31,6 +31,28 @@ const mr = (serviceId: string, units: number, rank?: string): PriceSpec => ({
  * cannot drift apart.
  */
 export const GUIDE_PRICE_SPECS: Record<string, PriceSpec> = {
+  puPro: {
+    gameId: 'pu',
+    serviceId: 'duo2',
+    units: 1,
+    server: 'Europe',
+    rank: 'Expert',
+  },
+  puPlus: {
+    gameId: 'pu',
+    serviceId: 'duo1',
+    units: 1,
+    server: 'Europe',
+    rank: 'Expert',
+  },
+  puQuick: { gameId: 'pu', serviceId: 'quick', units: 1, server: 'Europe' },
+  puPro3: {
+    gameId: 'pu',
+    serviceId: 'duo2',
+    units: 3,
+    server: 'Europe',
+    rank: 'Expert',
+  },
   lolPro: lol('duo2', 1, 'Gold'),
   lolPro3: lol('duo2', 3, 'Gold'),
   lolPro5: lol('duo2', 5, 'Gold'),

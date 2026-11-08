@@ -95,8 +95,8 @@ it('uses converted checkout prices for mixed-unit USD summaries', () => {
   }
 });
 
-it('uses the tested flat-price summary in the rendered service list', () => {
+it('uses the tested price answer in the rendered service list', () => {
   const source = readFileSync('src/components/seo/Prices.astro', 'utf8');
-  expect(source).toContain('activityPriceSummary(offers, coach)');
+  expect(source).toContain('pricesAnswer(gameId, offers, coach)');
   expect(source).not.toContain('Every activity is');
 });

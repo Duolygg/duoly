@@ -328,7 +328,8 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
   apex: {
     learn: {
       goal: 'Rotate before another squad owns the route',
-      bring: 'Your legend, input, platform and region.',
+      bring:
+        'Your legend, input, platform and region, plus one recent rotation question.',
       steps: [
         {
           at: '0 min',

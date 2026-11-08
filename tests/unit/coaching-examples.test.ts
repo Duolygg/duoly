@@ -39,11 +39,11 @@ describe('coaching example pricing', () => {
               '50 min',
             ]);
           else expect(example.steps[0]?.at).toBe('Before');
-          const price = `${offer.display} per ${quote.unit}`;
+          const price = `${quote.customer.currency} ${quote.customer.amountMinor / 100} per ${quote.unit}`;
           expect(sessionLead('Game', offer, example.goal)).toContain(price);
           for (const other of offers.filter((item) => item.id !== offer.id))
             expect(compareOthers(offers, offer.id)).toContain(
-              `${other.title} at ${other.display} per ${other.unit}`,
+              `${other.title} at ${other.currency} ${other.amountMinor / 100} per ${other.unit}`,
             );
         }
       });
@@ -75,11 +75,13 @@ describe('coaching page copy prices', () => {
               customerCurrency,
               eurToUsd: 1.17,
             });
-            expect(filled).toContain(`${offer.display} per ${quote.unit}`);
+            expect(filled).toContain(
+              `${quote.customer.currency} ${quote.customer.amountMinor / 100} per ${quote.unit}`,
+            );
           }
         }
         expect(bookingAnswer(game.name, offers)).toContain(
-          `${offers[0]!.display} per ${offers[0]!.unit}`,
+          `${offers[0]!.currency} ${offers[0]!.amountMinor / 100} per ${offers[0]!.unit}`,
         );
       });
     }
