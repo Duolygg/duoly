@@ -191,14 +191,14 @@ describe('free versus paid guide', () => {
     }
   });
 
-  it('dates the teammate pages once for links and once for prices', () => {
+  it('dates the teammate pages only with the one checked month', () => {
     for (const guide of GUIDE_PAGES) {
       if (!HEADLINE_TOKEN[guide.gameSlug]) continue;
       const page = intentPages.find(
         (entry) => entry.gameSlug === guide.gameSlug,
       )!;
-      // The links note is the only dated claim written into the copy; the price
-      // date is rendered from pricesChecked under the cards instead.
+      // The links note carries the full checked date; the price date is also
+      // rendered from pricesChecked under the cards.
       expect(guide.linksNote).toMatch(/8 November 2026/);
       expect(page.pricesChecked).toBe('2026-11-08');
       const copy = [
@@ -215,10 +215,20 @@ describe('free versus paid guide', () => {
             : value && typeof value === 'object'
               ? Object.values(value).flatMap(strings)
               : [];
+      // A dated claim may appear anywhere on these pages, but only as one of
+      // two kinds of year, so no sentence can quietly go stale:
+      // - 2026, always written "November 2026", the month Duoly read the
+      //   checkout prices, the external links and the publisher queue rules;
+      // - PUBLISHED_YEARS, the year a cited publisher rule was published.
+      const PUBLISHED_YEARS = ['2024'];
       for (const text of strings(copy))
-        expect(text, `${guide.gameSlug}: year in copy`).not.toMatch(
-          /\b(?:19|20)\d\d\b/,
-        );
+        for (const [year] of text.matchAll(/\b(?:19|20)\d\d\b/g))
+          expect(
+            year === '2026'
+              ? text.includes('November 2026')
+              : PUBLISHED_YEARS.includes(year),
+            `${guide.gameSlug}: year ${year} is neither "November 2026" nor a published rule year, in "${text.slice(0, 90)}"`,
+          ).toBe(true);
     }
   });
 

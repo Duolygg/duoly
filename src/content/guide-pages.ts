@@ -298,7 +298,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. Your teammate takes the second seat, so the normal queue still fills the other 3. For example, a Controller main who books an Immortal+ Duelist gets an entry instead of a second set of smokes. Before the first game, settle in the order chat whether voice runs through Discord or in the Valorant party.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a quiet Swiftplay hour and the last night before an act closes rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly.',
+      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a quiet Swiftplay hour and the last night before an act closes rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want casual company for Swiftplay or Unrated?',
@@ -320,7 +320,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Duo Pro session worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session, and pick a bundle if you want more than one game.',
+          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
           kind: 'paid',
         },
         no: {
@@ -343,7 +343,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should a Valorant LFG post say?',
       intro:
-        'A Valorant LFG post is a short message naming your region, rank, role and mode, so the right player answers instead of ten wrong ones. Region comes first, because EU, NA, AP, KR, BR and LATAM keep separate queues and separate ladders. Rank comes second, since Competitive only lets nearby ranks queue together under the current rules from Riot Games. Role comes third: say Duelist, Controller, Initiator, Sentinel or flex, and name 2 agents you actually play. Mode comes last, because a Swiftplay partner and a ranked grind partner are rarely the same person.',
+        'A Valorant LFG post is a short message naming your region, rank, role and mode, so the right player answers instead of ten wrong ones. First, region, because EU, NA, AP, KR, BR and LATAM keep separate queues and separate ladders. Second, rank, since a Competitive party of 2 moves about one tier under the rules from Riot Games read in November 2026. Third, role: say Duelist, Controller, Initiator, Sentinel or flex, and name 2 agents you actually play. Mode comes last, because a Swiftplay partner and a ranked grind partner are rarely the same person, whether the booking takes {{pct3}} off 3 games or {{pct5}} off 5 in November 2026.',
       fields: [
         { label: 'Region', chips: ['EU', 'NA', 'AP', 'KR', 'BR', 'LATAM'] },
         {
@@ -370,7 +370,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         },
       ],
       example:
-        'For example: "EU, Gold 2, Controller main on Omen and Viper, looking for a Duelist for Competitive tonight, English voice on Discord." That post gets answered. The same 4 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
+        'For example: "EU, Gold 2, Controller main on Omen and Viper, looking for a Duelist for Competitive tonight, English voice on Discord." That post gets answered. The same 4 fields go into a paid booking on Duoly, except a booking sets each one instead of hoping a reply happens to match.',
     },
   },
   {
@@ -418,7 +418,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. Your partner takes the second seat in Duos, so a Trio or a Squad still needs the queue for seats 3 and 4. For example, a keyboard player who books a controller main gets a partner who boxes differently. Before the first drop, settle in the order chat whether voice runs through Discord or in the Fortnite party.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a relaxed Zero Build hour and the last weekend of a Ranked season rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly.',
+      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a relaxed Zero Build hour and the last weekend of a Ranked season rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want relaxed games in Zero Build or Reload?',
@@ -438,9 +438,10 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         },
       },
       {
-        question: 'Is a paid Duo Pro hour worth it tonight?',
+        question:
+          'Is {{apexPro3}} for 3 Duo Pro hours at Platinum worth the goal?',
         yes: {
-          text: 'Yes: book a paid session, and pick a bundle if you want more than one hour.',
+          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
           kind: 'paid',
         },
         no: {
@@ -463,7 +464,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should a Fortnite duo post say?',
       intro:
-        'A Fortnite duo post is a short message naming your platform, region, mode and input, so the right partner answers on the first try. Platform comes first, because an invite needs an Epic name and a console player and a PC player warm up differently. Region comes second, since Europe, NA-East, NA-Central, NA-West, Brazil, Asia, Oceania and Middle East are separate queues. Mode comes third: Builds and Zero Build train different habits, and Reload is the respawn playground between them. Input comes last, because controller and keyboard change how a pair fights inside a box.',
+        'A Fortnite duo post is a short message naming your platform, region, mode and input, so the right partner answers on the first try. First, platform, because an invite needs an Epic name and a console player and a PC player warm up differently. Second, region, since Europe, NA-East, NA-Central, NA-West, Brazil, Asia, Oceania and Middle East are separate queues. Third, mode: Builds and Zero Build train different habits, and Reload is the respawn playground in between, with {{pct3}} off 3 hours and {{pct5}} off 5. Rank is worth adding too, because matchmaking reads the highest rank in the party under the rule from Epic Games read in November 2026. Input comes last, because controller and keyboard change how a pair fights inside a box, whether the hour takes {{pct3}} off 3 or {{pct5}} off 5.',
       fields: [
         {
           label: 'Platform',
@@ -489,7 +490,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         { label: 'Input', chips: ['Keyboard', 'Controller'] },
       ],
       example:
-        'For example: "Europe, Platinum, controller, Zero Build duos, want a partner for 2 hours tonight, English voice on Discord." That post gets answered. The same 4 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
+        'For example: "Europe, Platinum, controller, Zero Build duos, want a partner for 2 hours tonight, English voice on Discord." That post gets answered. The same 4 fields go into a paid booking on Duoly, except a booking sets each one instead of hoping a reply happens to match.',
     },
   },
   {
@@ -542,7 +543,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. Your teammate takes the second seat, so the normal queue still fills the other 3. For example, a Support main who books a Tank gets the front line the group is missing instead of a third Damage. Before the first game, settle in the order chat whether voice runs through Discord or in the in-game group.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a relaxed Arcade hour and a Competitive push one Tank short rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly.',
+      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a relaxed Arcade hour and a Competitive push one Tank short rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want casual games in Quick Play or Arcade?',
@@ -564,7 +565,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Duo Pro session worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session, and pick a bundle if you want more than one game.',
+          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
           kind: 'paid',
         },
         no: {
@@ -587,7 +588,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should an Overwatch 2 LFG post say?',
       intro:
-        'An Overwatch 2 LFG post is a short message naming your platform, region, rank, role and mode, in that order. Platform comes first, because an invite needs the BattleTag and console posts are a large share of Overwatch LFG traffic. Region comes second, since Europe, Americas and Asia keep separate queues. Rank comes third, because the Competitive group rules from Blizzard Entertainment limit how far apart a group can be. Role comes fourth, and it is the field most posts forget. Role queue locks every team to 1 Tank, 2 Damage and 2 Support, so the open seat decides who can answer. Finally, say where you want voice, using Discord or the in-game group.',
+        'An Overwatch 2 LFG post is a short message naming your platform, region, rank, role and mode, in that order. First, platform, because an invite needs the BattleTag and console posts are a large share of Overwatch LFG traffic. Second, region, since Europe, Americas and Asia keep separate queues. Duoly read the Blizzard group rules again in November 2026. The wide-group change dates from 2024. Rank comes third: Blizzard dropped the rank-gap limit for wide groups in 2024, so a wide group may cross the ladder and simply gains rank in smaller steps. Role comes fourth, and role is the field most posts forget. Role queue locks every team to 1 Tank, 2 Damage and 2 Support, so the open seat decides who can answer. Finally, say where you want voice, using Discord or the in-game group, whether the booking takes {{pct3}} off 3 games or {{pct5}} off 5.',
       fields: [
         {
           label: 'Platform',
@@ -615,7 +616,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         },
       ],
       example:
-        'For example: "PS5, Europe, Platinum 3, Support main on Kiriko and Juno, looking for a Tank for Competitive tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
+        'For example: "PS5, Europe, Platinum 3, Support main on Kiriko and Juno, looking for a Tank for Competitive tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except a booking sets each one instead of hoping a reply happens to match.',
     },
   },
   {
@@ -663,7 +664,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. In trios your booked teammate takes the second seat, so auto fill or a friend still covers seat 3. For example, a Controller main who books an Assault legend gets the opener the pair is missing instead of a second zone holder. Before the drop, settle in the order chat whether voice runs through Discord or in the in-game squad.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a Mixtape hour and the last push of a ranked split rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly.',
+      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a Mixtape hour and the last push of a ranked split rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want relaxed games in Mixtape or pubs?',
@@ -685,7 +686,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Duo Pro hour worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session, and pick a bundle if you want more than one hour.',
+          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
           kind: 'paid',
         },
         no: {
@@ -708,7 +709,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should an Apex Legends LFG post say?',
       intro:
-        'An Apex Legends LFG post is a short message naming your platform, region, rank, legend class and mode. Platform comes first, because crossplay groups land in the PC pool and an invite needs the EA ID. Region comes second, since Europe, North America, South America, Asia, Oceania and Middle East are separate servers. Rank comes third, because Ranked from Rookie to Apex Predator has real matchmaking limits on how far apart a squad can be. Legend class comes fourth: Assault, Skirmisher, Recon, Controller and Support answer different problems, so name the one you leave open.',
+        'An Apex Legends LFG post is a short message naming your platform, region, rank, legend class and mode. Platform comes first, because crossplay groups land in the PC pool and an invite needs the EA ID. Region comes second, since Europe, North America, South America, Asia, Oceania and Middle East are separate servers. Rank comes third, because every premade Ranked squad stays inside two rank tiers under the rule from EA, read in November 2026, so Gold reaches Diamond and no further. Legend class comes fourth: Assault, Skirmisher, Recon, Controller and Support answer different problems, so name the one you leave open, whether the hour takes {{pct3}} off 3 or {{pct5}} off 5.',
       fields: [
         { label: 'Platform', chips: ['PC', 'PlayStation', 'Xbox'] },
         {
@@ -742,7 +743,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         { label: 'Mode', chips: ['Ranked', 'Duos', 'Mixtape', 'Pubs'] },
       ],
       example:
-        'For example: "Europe, PC, Platinum 2, Controller main on Catalyst, looking for an Assault for Ranked tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
+        'For example: "Europe, PC, Platinum 2, Controller main on Catalyst, looking for an Assault for Ranked tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except a booking sets each one instead of hoping a reply happens to match.',
     },
   },
   {
@@ -794,7 +795,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. In a quad your booked teammate takes the second seat, so your party or fill still covers seats 3 and 4. For example, a player who books one Warzone hour and one Resurgence hour keeps the same partner across both maps instead of meeting two strangers. Before the first drop, settle in the order chat whether voice runs through Discord or in the in-game party.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a party playlist hour and a Warzone Ranked push rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly.',
+      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a party playlist hour and a Warzone Ranked push rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want relaxed games in party modes or pubs?',
@@ -816,7 +817,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Warzone duos hour worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session, and pick a bundle if you want more than one hour.',
+          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
           kind: 'paid',
         },
         no: {
@@ -839,7 +840,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should a Call of Duty LFG post say?',
       intro:
-        'A Call of Duty LFG post is a short message naming your platform, region, mode, rank and input. Platform comes first, because an invite needs the Activision ID and crossplay settings change the lobby. Region comes second, since Europe, North America, South America, Asia, Oceania and Middle East give very different ping. Mode comes third, and it matters more here than in any other shooter: Warzone, Resurgence, multiplayer Ranked Play and round-based Zombies attract 4 different crowds. Rank comes fourth for Ranked Play and Warzone Ranked, which run from Bronze to Top 250.',
+        'A Call of Duty LFG post is a short message naming your platform, region, mode, rank and input. Platform comes first, because an invite needs the Activision ID and crossplay settings change the lobby. Region comes second, since Europe, North America, South America, Asia, Oceania and Middle East give very different ping. Mode comes third, and it matters more here than in any other shooter: Warzone, Resurgence, multiplayer Ranked Play and round-based Zombies attract 4 different crowds. Rank comes fourth for Ranked Play and Warzone Ranked, which run from Bronze to Top 250: Activision keeps Crimson and above in parties of one or two inside one rank, read in November 2026. Input comes last, whether the hour takes {{pct3}} off 3 or {{pct5}} off 5.',
       fields: [
         { label: 'Platform', chips: ['PC', 'PlayStation', 'Xbox'] },
         {
@@ -879,7 +880,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         { label: 'Input', chips: ['Keyboard', 'Controller'] },
       ],
       example:
-        'For example: "Europe, PS5, controller, Warzone duos, Crimson, looking for a partner for 2 hours tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
+        'For example: "Europe, PS5, controller, Warzone duos, Crimson, looking for a partner for 2 hours tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except a booking sets each one instead of hoping a reply happens to match.',
     },
   },
   {
@@ -927,7 +928,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. Your teammate takes the second seat, so the normal queue still fills the other 3. For example, a Thatcher player who books a hard breach gets a wall opened on call instead of a round spent chipping at a reinforcement. Before the first round, settle in the order chat whether voice runs through Discord or in the party.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, an hour spent learning Clubhouse and a Ranked push with a rank on the line rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly.',
+      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, an hour spent learning Clubhouse and a Ranked push with a rank on the line rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want to learn maps and operators?',
@@ -949,7 +950,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       {
         question: 'Is a paid Duo Pro session worth it tonight?',
         yes: {
-          text: 'Yes: book a paid session, and pick a bundle if you want more than one game.',
+          text: 'Yes: book a paid session with the {{pct3}} bundle discount.',
           kind: 'paid',
         },
         no: {
@@ -972,7 +973,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should a Siege LFG post say?',
       intro:
-        'A Siege LFG post is a short message naming your platform, data centre, rank, role and operator pool. Platform comes first, because a PC post and a console post rarely match, and an invite needs the Ubisoft name. Data centre comes second: EU West, EU North, US East, US Central, US West, Brazil and the Asian regions are separate, and ping decides peeks. Rank comes third, from Copper to Champion. Role comes fourth, because a pair without a hard breach or a live drone guesses at every wall.',
+        'A Siege LFG post is a short message naming your platform, data centre, rank, role and operator pool. Platform comes first, because a PC post and a console post rarely match, and an invite needs the Ubisoft name. Data centre comes second: EU West, EU North, US East, US Central, US West, Brazil and the Asian regions are separate, and ping decides peeks. Rank comes third, from Copper to Champion: Ranked 3.0 from Ubisoft lets Copper through Emerald queue within three full ranks and holds Diamond and Champion to two, read in November 2026. Role comes fourth, because a pair without a hard breach or a live drone guesses at every wall, whether the game takes {{pct3}} off 3 or {{pct5}} off 5.',
       fields: [
         { label: 'Platform', chips: ['PC', 'PlayStation', 'Xbox'] },
         {
@@ -1009,7 +1010,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
         { label: 'Mode', chips: ['Ranked', 'Quick Match', 'Arcade'] },
       ],
       example:
-        'For example: "EU West, PC, Gold 2, support main with Thatcher and Mute, looking for a hard breach for Ranked tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except there you set them instead of hoping a reply happens to match.',
+        'For example: "EU West, PC, Gold 2, support main with Thatcher and Mute, looking for a hard breach for Ranked tonight, English voice on Discord." That post gets answered. The same 5 fields go into a paid booking on Duoly, except a booking sets each one instead of hoping a reply happens to match.',
     },
   },
 ];
