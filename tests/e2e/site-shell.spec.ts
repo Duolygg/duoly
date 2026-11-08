@@ -227,9 +227,12 @@ test('sitemap lists public pages and every game page', async ({ request }) => {
   expect(xml).not.toContain('/imprint');
   expect(xml).not.toContain('/admin');
   const robots = await request.get('/robots.txt');
-  expect(await robots.text()).toBe(
-    'User-agent: *\nAllow: /\n\nSitemap: https://duoly.gg/sitemap.xml\n',
-  );
+  // Served as written, with one group per AI crawler. tests/unit/seo.test.ts checks
+  // that every group allows everything; here we only care that it ships intact.
+  const text = await robots.text();
+  expect(text).toContain('User-agent: *\nAllow: /\n');
+  expect(text).toContain('User-agent: GPTBot\nAllow: /\n');
+  expect(text).toContain('Sitemap: https://duoly.gg/sitemap.xml\n');
 });
 
 test('reset password asks for an email and confirms without revealing accounts', async ({

@@ -2,6 +2,7 @@ import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { ranksOf } from '../../design-reference/lib/ranks.js';
 import { serversFor } from '../../design-reference/lib/servers.js';
 import { calculateQuote } from '../pricing';
+import { organizationSchema } from '../../site/seo';
 import type { QuoteContext } from '../../contracts/pricing';
 
 export const cleanCopy = (text: string) =>
@@ -141,7 +142,7 @@ export function serviceSchema(
     '@type': 'Service',
     name,
     url: new URL(path, site).href,
-    provider: { '@type': 'Organization', name: 'Duoly', url: site.href },
+    provider: organizationSchema(site),
     offers: offers.map((offer) => ({
       '@type': 'Offer',
       name: `${offer.title}${offer.rank ? `, ${offer.rank}` : ''}, per ${offer.unit}`,

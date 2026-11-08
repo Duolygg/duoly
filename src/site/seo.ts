@@ -1,5 +1,6 @@
 import { intentPages, intentPath } from '../content/intent-pages';
 import { aiLaunchState } from './ai';
+import { DISCORD_INVITE, SUPPORT_EMAIL } from './nav';
 
 export const COACHING_SLUGS = [
   'valorant',
@@ -59,18 +60,54 @@ export function breadcrumbs(
     })),
   };
 }
+/**
+ * ADD OUR SOCIAL PROFILES HERE. One entry per account Duoly really owns; the URL
+ * flows into schema.org `sameAs` on every page that renders the Organization, with
+ * no other edit anywhere. Empty strings are dropped, so an account that does not
+ * exist yet stays listed as a reminder without ever reaching the markup.
+ *
+ * Rules: only profiles Duoly controls, pasted from the live profile (never a guessed
+ * handle). Never a Wikipedia or Wikidata URL: those are third-party pages about us,
+ * and claiming one we do not have is a false signal.
+ */
+export const OFFICIAL_PROFILES: Record<string, string> = {
+  discord: DISCORD_INVITE,
+  // Not created yet (owner, 2026-11-08). Paste the profile URL when the account is live.
+  x: '',
+  linkedin: '',
+  instagram: '',
+  tiktok: '',
+  youtube: '',
+  twitch: '',
+};
+/** The `sameAs` array: every profile from OFFICIAL_PROFILES that has a URL. */
+export const SAME_AS: string[] = Object.values(OFFICIAL_PROFILES).filter(
+  (url) => url.length > 0,
+);
+/** One sentence about the company, for the Organization `description`. */
+export const ORGANIZATION_DESCRIPTION =
+  'Duoly books rank-verified gaming teammates and coaches by the hour for Valorant, League of Legends, Marvel Rivals and more.';
+/**
+ * The one Organization node. Every page that names Duoly as an author, a publisher or
+ * a provider should use this so the logo, description and sameAs never drift apart.
+ */
+export function organizationSchema(site: URL) {
+  return {
+    '@type': 'Organization',
+    '@id': new URL('/#organization', site).href,
+    name: 'Duoly',
+    url: site.href,
+    logo: new URL('/icon-512.png', site).href,
+    email: SUPPORT_EMAIL,
+    description: ORGANIZATION_DESCRIPTION,
+    sameAs: SAME_AS,
+  };
+}
 export function homeSchema(site: URL) {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'Organization',
-        '@id': new URL('/#organization', site).href,
-        name: 'Duoly',
-        url: site.href,
-        logo: new URL('/icon-512.png', site).href,
-        email: 'hello@duoly.gg',
-      },
+      organizationSchema(site),
       {
         '@type': 'WebSite',
         '@id': new URL('/#website', site).href,
