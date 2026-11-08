@@ -24,6 +24,7 @@ const quote = (
   serviceId: string,
   units: number,
   rank?: string,
+  bundle = false,
 ) =>
   calculateQuote(
     {
@@ -31,6 +32,7 @@ const quote = (
       serviceId,
       server: firstServer(gameId),
       units,
+      bundle,
       ...(rank ? { rank } : {}),
     } as Parameters<typeof calculateQuote>[0],
     { customerCurrency: 'EUR', eurToUsd: 1 },
@@ -46,7 +48,7 @@ export const SHARE_PERCENT = (() => {
 
 /** Customer bundle discounts at 3, 5 and 10 units of a teammate service. */
 export const BUNDLE_PERCENTS = [3, 5, 10].map(
-  (units) => quote('val', 'duo1', units, 'Gold').quantityDiscountPercent,
+  (units) => quote('val', 'duo2', units, 'Gold', true).quantityDiscountPercent,
 );
 
 /** The flat coaching hour every coachable game shares. */

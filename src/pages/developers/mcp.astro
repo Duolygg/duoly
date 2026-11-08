@@ -82,58 +82,23 @@ const request = JSON.stringify(
     <section class="card" aria-labelledby="connection-h">
       <h2 id="connection-h">How do you connect to the Duoly MCP server?</h2>
       <p>
-        The Duoly MCP server is a {MCP.transport} endpoint at{' '}
-        <code>{MCP.endpoint}</code> that needs no account connection. Step 1 is
-        choosing a protocol version from the {MCP.protocolVersions.length}{' '}
-        supported revisions, step 2 is listing tools and step 3 is calling one
-        with catalog tokens. The negotiated revision determines discovery and
-        request headers, so do not mix initialization from an older client with
-        the newest envelope. Order status is the one tool needing a private{' '}
-        <code>dos_</code> code.
-      </p>
-      <dl class="ai-connection">
-        <dt>Endpoint</dt>
-        <dd>
-          <code>{MCP.endpoint}</code>
-        </dd>
-        <dt>Transport</dt>
-        <dd>{MCP.transport}</dd>
-        <dt>Protocol versions</dt>
-        <dd>{MCP.protocolVersions.join(', ')}</dd>
-        <dt>Authentication</dt>
-        <dd>
-          No account connection. Order status requires a private dos_ code.
-        </dd>
-        <dt>Scope</dt>
-        <dd>
-          Public catalog, quotes, availability and booking links, plus limited
-          order status with a customer-generated code. Social sessions are
-          excluded.
-        </dd>
-      </dl>
-      <p>
-        Use POST for one JSON-RPC message with{' '}
-        <code>Content-Type: application/json</code> and{' '}
-        <code>Accept: application/json, text/event-stream</code>. JSON responses
-        are returned. GET and DELETE return 405. Batches, subscriptions and
-        streams are not supported.
+        The Duoly MCP server is a stateless Streamable HTTP endpoint. Connect to{' '}
+        <code>{MCP.endpoint}</code> using an MCP client, without a Duoly account
+        or OAuth flow. The endpoint accepts one JSON-RPC message per POST and
+        returns JSON. GET and DELETE return 405; batches, subscriptions and
+        streams are unsupported. Send Content-Type: application/json and Accept:
+        application/json, text/event-stream.
       </p>
       <p>
-        For 2025-11-25 and 2025-06-18, initialize your client, then use{' '}
-        <code>tools/list</code> and <code>tools/call</code>. Send the negotiated{' '}
-        <code>MCP-Protocol-Version</code> header. The transport is stateless
-        with no session ID. For Claude attribution, use
-        <code>https://duoly.gg/mcp?client=claude</code>. The client query hint
-        also accepts chatgpt or gemini. It affects only the agent tag on booking
-        links, never identity, pricing or permissions.
-      </p>
-      <p>
-        For 2026-07-28, use <code>server/discover</code> without initialization.
-        Each request needs <code>MCP-Protocol-Version: 2026-07-28</code>,{' '}
-        <code>Mcp-Method</code> matching the method, and <code>Mcp-Name</code>{' '}
-        matching the tool for tool calls. Include protocol version, client info
-        and client capabilities in <code>params._meta</code>. Use an SDK
-        matching the protocol revision.
+        Choose one of the three supported revisions before sending tool calls.
+        For example, a client using 2025-11-25 first initializes, lists tools
+        and sends the negotiated MCP-Protocol-Version header. No session ID is
+        issued. The 2025-06-18 revision follows the same initialization path.
+        For 2026-07-28, start with server/discover instead. Every modern request
+        needs matching Mcp-Method and MCP-Protocol-Version headers, plus
+        Mcp-Name for a tool call. Put protocol version, client info and
+        capabilities in params._meta. An SDK from Anthropic or another MCP
+        client must match the selected protocol revision.
       </p>
     </section>
     <section aria-labelledby="tools-h">
@@ -143,14 +108,15 @@ const request = JSON.stringify(
         returns up to three priced services with booking links in one round
         trip. Step 1 is find_session, step 2 is get_quote for one exact
         selection, and step 3 is create_booking_link. For example, a Valorant
-        coaching search returns the {coachingPrice} per hour VOD Review. A ten
-        game teammate quote arrives with the {bundle[2]}% bundle discount
-        applied. list_games and list_services exist for browsing, while
-        get_availability reports public online counts without reserving anybody.
-        Goal tokens are duo, coaching, ranked, casual and teams, with training
-        and other accepted as category aliases. each result has one readable
-        summary and full schema-validated structuredContent, without JSON
-        duplicated into text. Card-only data stays in result metadata.
+        coaching search returns the {coachingPrice} per hour VOD Review. Use the
+        returned missingInputs to ask about rank, region or edition before
+        requesting an exact price. list_games and list_services exist for
+        browsing, while get_availability reports public online counts without
+        reserving anybody. Goal tokens are duo, coaching, ranked, casual and
+        teams, with training and other accepted as category aliases. each result
+        has one readable summary and full schema-validated structuredContent,
+        without JSON duplicated into text. Card-only data stays in result
+        metadata.
       </p>
     </section>
     <section aria-labelledby="booklink-h">
@@ -184,7 +150,7 @@ const request = JSON.stringify(
         create_booking_link need a game. Second, get_quote needs a game, a
         service, a server, a quantity and a currency, plus a rank when the
         service is rank priced. Coaching returns {coachingPrice} per hour;
-        teammate bookings receive {bundle[2]}% off a ten game total. Third,
+        five-unit non-coaching selections receive {bundle[1]}% off. Third,
         find_session takes the same selection loosely, filling gaps with a
         labelled from price and a missingInputs list. get_order_status needs
         only the private <code>dos_</code> code, and returns acceptance,
@@ -242,7 +208,7 @@ const request = JSON.stringify(
         remember that bundle discounts of {bundle[0]}%, {bundle[1]}% and{' '}
         {bundle[2]}% land in the total rather than in a from price. For example,
         a single Valorant coaching hour reads {coachingPrice} from Duoly while a
-        ten game duo total already includes {bundle[2]}% off.
+        five-game duo total includes the applicable quantity discount.
       </p>
       <p>
         Availability uses a 30-second cached aggregate. Online counts can
@@ -256,25 +222,24 @@ const request = JSON.stringify(
     <section aria-labelledby="quoteinputs-h">
       <h2 id="quoteinputs-h">Which inputs change a Duoly quote?</h2>
       <p>
-        A Duoly quote is a calculation over five inputs: game, service, rank,
-        quantity and currency. First, the game and service decide the base rate,
-        so a Valorant coaching hour from Duoly reads {coachingPrice} at any
-        quantity. Second, rank moves the rate on rank-priced teammate services,
-        which is why a from price and a typical one-unit price are both
-        returned. Third, quantity applies the bundle tiers, dropping a three
-        game total by {bundle[0]}%, a five game total by {bundle[1]}% and a ten
-        game total by {bundle[2]}%. For example, a ten game duo booking is
-        cheaper per game than a single booking of the same service. Finally,
-        request a fresh quote whenever one of the five inputs changes, because
-        checkout recalculates the final figure.
+        A Duoly quote is calculated from game, service, rank, quantity and
+        currency. The service decides the unit: one game and one hour are
+        different purchases. Rank changes rank-priced teammate services, while
+        flat-priced services reject a rank token. For example, Valorant VOD
+        Review is {coachingPrice} per hour and takes no rank. Coaching has no
+        quantity discount.
       </p>
       <p>
-        Checkout calculates the final price, including any applicable account
-        eligibility. USD quotes are estimates. Keep the quote currency beside
-        the amount, and use amountMinor for calculations instead of parsing
-        formattedPrice. The response also carries quotedAt and FX information,
-        so a client can distinguish a fresh calculation from a saved
-        conversation answer.
+        The ordinary quantity picker accepts one to five units; five
+        non-coaching units receive {bundle[1]}% off. The separate Bundles tab on
+        Duoly sells the main service in packs of three, five or ten, with{' '}
+        {bundle[0]}%, {bundle[1]}% and {bundle[2]}% discounts. Do not assume
+        every service accepts a ten-unit quote. Request a fresh result after a
+        selection changes. Checkout recalculates the final price, including
+        applicable account eligibility. Keep currency beside the amount,
+        calculate with amountMinor and retain quotedAt plus FX information. USD
+        quotes are estimates, so a saved conversation answer should never become
+        a checkout promise.
       </p>
     </section>
     <section aria-labelledby="tokens-h">
@@ -338,10 +303,10 @@ const request = JSON.stringify(
         tries a catalog request before a quote. For example, a list_services
         call for Valorant returns coaching at {coachingPrice} per hour from
         Duoly, which confirms both the transport and the pricing path in a
-        single request, and a ten game teammate quote confirms the {bundle[2]}%
-        bundle path. an unexpected 405 means a GET or DELETE reached the
-        endpoint, since only POST carries a JSON-RPC message. the command line
-        form below prints the tool list without a browser.
+        single request, and a five-game teammate quote checks the quantity path.
+        an unexpected 405 means a GET or DELETE reached the endpoint, since only
+        POST carries a JSON-RPC message. the command line form below prints the
+        tool list without a browser.
       </p>
       <pre class="ai-code"><code>npx @modelcontextprotocol/inspector</code></pre>
       <p>For a command-line discovery check:</p>
@@ -357,8 +322,8 @@ const request = JSON.stringify(
         supplied Retry-After rather than retrying in a tight loop or rotating
         addresses. Third, keep request bodies small, because an oversized body
         is rejected before pricing ever runs. For example, pricing Valorant
-        coaching at {coachingPrice} per hour from Duoly and then a ten game
-        teammate total at {bundle[2]}% off costs only two calls, which leaves
+        coaching at {coachingPrice} per hour from Duoly and then a five-game
+        teammate total at {bundle[1]}% off costs only two calls, which leaves
         plenty of headroom for a long conversation.
       </p>
       <p>
@@ -375,49 +340,44 @@ const request = JSON.stringify(
     <section class="card" aria-labelledby="origins-h">
       <h2 id="origins-h">Which origins may call the Duoly endpoint?</h2>
       <p>
-        An accepted origin is any HTTPS origin, plus native and server clients
-        that send none at all. First, assistants such as Claude and ChatGPT can
-        connect directly without a proxy in between. Second, malformed, opaque
-        and plain HTTP origins are rejected before a tool runs. Third, no
-        cookies or credentials are ever accepted, because public catalog
-        browsing requires no identity. HTTPS origin validation is a transport
-        boundary, not account authorization. The private order-status code is
-        handled separately by its tool. the optional client query hint accepts
-        claude, chatgpt or gemini, and affects only the agent tag on booking
-        links rather than identity, pricing or permissions.
+        Any well-formed HTTPS origin may call the Duoly endpoint. Native and
+        server clients may omit Origin. A missing Origin is distinct from an
+        empty, malformed or opaque value; invalid origins and plain HTTP origins
+        are rejected before a tool runs. Cookies and browser credentials are not
+        accepted, so a public catalog request never borrows the signed-in
+        session from Duoly.
       </p>
       <p>
-        Any HTTPS origin may call the endpoint, so assistants such as Claude and
-        ChatGPT can connect directly. Native and server clients may omit Origin.
-        Malformed, opaque and plain HTTP origins are rejected. No cookies or
-        credentials are accepted.
+        For example, an integration using Claude can connect directly over HTTPS
+        without putting a proxy in front of the endpoint. Origin validation does
+        not authorize account access or unlock order history. Only
+        get_order_status accepts the separate private code for one order. To
+        attribute a booking link, use the optional client query hint: claude,
+        chatgpt or gemini. The hint changes the agent tag on generated links,
+        never identity, pricing or permissions. Test both a valid HTTPS request
+        and a rejected HTTP origin before releasing a browser client.
       </p>
     </section>
     <section class="card" aria-labelledby="privacy-rules-h">
       <h2 id="privacy-rules-h">What data should a Duoly client send?</h2>
       <p>
-        A Duoly request is a set of catalog choices and nothing else. First,
-        send only the structured values a tool needs, for example a game, a
-        service, a rank and a quantity. Second, keep every identifier out of the
-        request, because catalog tools read no accounts at all. public prices
-        need no identity. A private status code is the exception to the
-        catalog-only input rule: send it only to get_order_status, and never
-        copy the code into a booking URL or an analytics event.
+        Catalog requests need structured choices, never personal details. Send
+        the game, service, rank, region and quantity required by a tool. Names,
+        emails, chat history, passwords, card details and account tokens have no
+        place in a catalog request. A private order-status code is the sole
+        exception: get_order_status accepts a customer-generated dos_ code to
+        read one limited order projection.
       </p>
       <p>
-        Send only the structured catalog choices needed by a tool. Never send
-        names, emails, chat history, passwords, card details or account tokens.
-        Catalog tools do not read accounts. get_order_status reads only the
-        limited order projection authorized by its code. Never log or persist
-        that code. Abuse prevention uses an IP-derived identifier; hosting
-        infrastructure also processes connection metadata.
-      </p>
-      <p>
-        These tools cannot charge, reserve or cancel. A private order code
-        allows only a limited read of that one order. Never promise a specific
-        start time, teammate rank or in-game result. Link users to Duoly to
-        review and complete their own booking. See our{' '}
-        <a href="/privacy">privacy policy</a> and <a href="/terms">terms</a>.
+        For example, using Claude to check an order can reveal acceptance,
+        teammate display names and the next step. Never log or persist the code,
+        put it into a booking URL or send it to an unrelated tool. Codes expire
+        after seven days and can be revoked from the order room. Catalog tools
+        cannot charge, reserve or cancel. Abuse prevention uses an IP-derived
+        identifier; hosting infrastructure also processes connection metadata.
+        Link users to Duoly to complete their booking, and keep the{' '}
+        <a href="/privacy">privacy policy</a> and <a href="/terms">terms</a>{' '}
+        accessible.
       </p>
     </section>
     <ClosingCta

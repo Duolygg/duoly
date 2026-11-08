@@ -8,11 +8,11 @@ const mcpGuide = readFileSync(
 
 it('the MCP guide separates coaching quotes from teammate bundle discounts', () => {
   const quote = calculateQuote(
-    { gameId: 'val', serviceId: 'vod', server: 'EU', units: 10 },
+    { gameId: 'val', serviceId: 'vod', server: 'EU', units: 5 },
     { customerCurrency: 'EUR', eurToUsd: 1 },
   );
   expect(quote.quantityDiscountPercent).toBe(0);
-  expect(mcpGuide).toContain('Coaching is excluded from bundle discounts.');
+  expect(mcpGuide).toContain('Coaching has no quantity discount.');
   expect(mcpGuide).not.toContain('before a {bundle[0]}%');
   expect(mcpGuide).not.toContain('and a ten unit total with');
 });
@@ -38,13 +38,20 @@ import {
 // catalog actually return, so a catalog edit fails here rather than publishing a
 // price the checkout disagrees with.
 
-const quote = (game: string, service: string, units: number, rank?: string) =>
+const quote = (
+  game: string,
+  service: string,
+  units: number,
+  rank?: string,
+  bundle = false,
+) =>
   calculateQuote(
     {
       gameId: game,
       serviceId: service,
       server: game === 'social' ? 'Europe' : 'EU',
       units,
+      bundle,
       ...(rank ? { rank } : {}),
     } as Parameters<typeof calculateQuote>[0],
     { customerCurrency: 'EUR', eurToUsd: 1 },
@@ -63,7 +70,8 @@ describe('teammate facts come from the pricing engine', () => {
   it('states the real bundle discounts at 3, 5 and 10 units', () => {
     expect(BUNDLE_PERCENTS).toEqual(
       [3, 5, 10].map(
-        (units) => quote('val', 'duo1', units, 'Gold').quantityDiscountPercent,
+        (units) =>
+          quote('val', 'duo2', units, 'Gold', true).quantityDiscountPercent,
       ),
     );
     // Rising tiers: the copy says a bigger bundle saves more.
