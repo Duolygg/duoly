@@ -148,7 +148,7 @@ export const intentPages: IntentPage[] = [
         heading: 'Which Marvel Rivals roles make a good duo?',
         paragraphs: [
           'A good Marvel Rivals duo is a pair of roles with one clear plan for each fight. Vanguard and Strategist is the steadiest pair: the Vanguard holds the front line, and the Strategist keeps the Vanguard alive from a safe angle. Agree on the route into the objective first, and call when the front line moves forward. Duelist and Strategist needs the same clarity about distance, because a Duelist chasing a target around a corner leaves healing range.',
-          'Two Duelists need a shared entry and an exit. Decide who starts, who follows and which cooldown means a reset. For example, a Platinum Strategist in Europe books Duo Pro from Duoly for {{mrPro}} per match in 2026 and asks for a Grandmaster+ Vanguard the party rules admit. Duo Plus costs {{mrPlus}} per match at the same rank. Share your main role and one comfortable second role when booking.',
+          'Two Duelists need a shared entry and an exit. Decide who starts, who follows and which cooldown means a reset. For example, a Platinum Strategist in Europe books Duo Pro from Duoly for {{mrPro}} per match in 2026 and asks for a Vanguard who holds the front line. Duo Plus costs {{mrPlus}} per match at the same rank. Share your main role and one comfortable second role when booking.',
         ],
       },
       {
