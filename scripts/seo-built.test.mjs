@@ -385,16 +385,18 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     // teammate pages add the LFG post template on top of that. Keep substantive
     // guides without requiring repeated prices or filler in Unite.
     //
-    // Every ceiling moved up by 180 here. The shared price note
-    // (server/seo/citable-answers priceNote), the closing detail paragraph and
-    // the shared teammate facts add a measured 179 words to every intent page,
-    // the same 179 on all nine, and the rank-rule copy from #189 had already
-    // spent the old headroom: /games/call-of-duty/lfg was at exactly 2900 of
-    // 2900. Measured against origin/main on 9 November 2026, worst page per
-    // bucket: templated 2900 -> 3079, guided 2393 -> 2572, plain 1641 -> 1820.
-    // The headroom is for those three reviewed, shared paragraphs and not for
-    // padding, so raise it again only with the same kind of measurement, and
-    // bring it back down when the rank-gap copy leaves these pages.
+    // Every ceiling moved up by 180 when #187's shared paragraphs landed. The
+    // price note (server/seo/citable-answers priceNote), the closing detail
+    // paragraph and the shared teammate facts add a measured 179 words to every
+    // intent page, and the rank-rule copy from #189 had already spent the old
+    // headroom: /games/call-of-duty/lfg was at exactly 2900 of 2900.
+    //
+    // Withdrawing the rank rule gave part of that back. Measured on 9 November
+    // 2026 after the removal, worst page per bucket: templated 3041 of 3150
+    // (/games/fortnite/duos), guided 2560 of 2650, plain 1803 of 1900. That is
+    // roughly 100 words of headroom each, which is where the ceilings stay: the
+    // shared paragraphs are reviewed copy and the headroom is not for padding,
+    // so move a ceiling only with the same kind of measurement written down.
     const guided = html.includes('id="free-or-paid"');
     const templated = html.includes('id="lfg-post-h"');
     const [minWords, maxWords] = templated
