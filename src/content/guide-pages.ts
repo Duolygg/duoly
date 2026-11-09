@@ -72,7 +72,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'league-of-legends',
     heading: 'Should I find a League duo for free or pay for one?',
     answer:
-      'Finding a League duo for free is the right start for most players. Free LFG is a set of community spaces, such as the League of Legends Discord, RiftQ and DUO.OP.GG, where players post a server, role and rank. A free duo costs €0 and can grow into a regular group over many evenings. A paid duo is a reviewed, higher-rank teammate who joins a booked session at an agreed time. Paying makes sense for a specific goal. For example, a Gold player climbing on EUW in 2026 books 3 Duo Pro games from Duoly for {{lolPro3}} with the {{pct3}} bundle discount, and Solo/Duo caps that partner at Platinum I. Five games cost {{lolPro5}} with {{pct5}} off. Paying makes less sense for casual company, because free communities already cover ARAM and normals well. Try free first, and book when reliability, rank or a fixed time matters more than the price.',
+      'Finding a League duo for free is the right start for most players. Free LFG is a set of community spaces, such as the League of Legends Discord, RiftQ and DUO.OP.GG, where players post a server, role and rank. A free duo costs €0 and can grow into a regular group over many evenings. A paid duo is a reviewed, higher-rank teammate who joins a booked session at an agreed time. Paying makes sense for a specific goal. For example, a Gold player climbing on EUW in 2026 books 3 Duo Pro games from Duoly for {{lolPro3}} with the {{pct3}} bundle discount, and the Master+ partner shot-calls the fights and the objectives. Five games cost {{lolPro5}} with {{pct5}} off. Paying makes less sense for casual company, because free communities already cover ARAM and normals well. Try free first, and book when reliability, rank or a fixed time matters more than the price.',
     freeIntro:
       'Free LFG is the no-cost way to meet League players on your server, and every post costs €0.',
     freeRoutes: [
@@ -103,7 +103,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidIntro:
       'A paid Duoly session is a booked block of games with a reviewed teammate at a known price. The price is fixed before checkout, and the order chat on Duoly sets the start time for the first game. Between games, you can ask the teammate questions about the last match. The teammate tiers are Duo Plus with a Diamond 4+ player and Duo Pro with a Master+ player, so the tier you pick decides who takes the second seat. Casual modes cost the same at every rank, so ARAM Night, Normal Draft and Swiftplay are each {{lolAram}} per game.',
     paidChecks: [
-      { yes: true, text: 'Ranked Solo/Duo up to Platinum I at Gold' },
+      { yes: true, text: 'Ranked Solo/Duo with a Master+ teammate' },
       { yes: true, text: 'A set time agreed in the order chat' },
       { yes: true, text: 'Comms in your language' },
       { yes: false, text: 'Costs money for every game' },
@@ -154,7 +154,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a League duo or find one free?',
-        'Try free communities first for casual games. Book a paid session for a set time, a chosen service or the highest-rank partner Solo/Duo allows, which is Platinum I for a Gold account.',
+        'Try free communities first for casual games. Book a paid session for a set time, a chosen tier and a teammate who shot-calls. Duo Pro books a Master+ player and Duo Apex books a Grandmaster or Challenger player.',
       ],
       [
         'What does a League Duo Pro session cost?',
