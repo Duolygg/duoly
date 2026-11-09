@@ -10,6 +10,7 @@ import { pageViewer } from '../../site/viewer';
 import { intentPages, intentPath } from '../../content/intent-pages';
 import { gameBySlug } from '../../site/games';
 import { faqSchema } from '../../server/seo/offers';
+import { BUNDLE_PERCENTS as bundle } from '../../server/seo/teammate-facts';
 import { viewerCurrency } from '../../server/currency';
 import { eurToUsd } from '../../server/fx';
 import {
@@ -63,7 +64,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'What is the difference between LFG and booking a teammate?',
-    `An LFG post is free and depends on who answers. A booked teammate from Duoly is a reviewed player at an agreed time and rank, from ${from} in 2026.`,
+    `An LFG post is free and depends on who answers. A booked teammate from Duoly is a reviewed player at an agreed time and rank, from ${from} in 2026, with bundles taking ${bundle[0]}% off 3 units and ${bundle[2]}% off 10.`,
   ],
 ];
 const article = {
@@ -144,12 +145,12 @@ const article = {
         seat with a healer wanted and 2) LF2M dps reads as two. Third, an LFG
         Discord is a community server with channels split by game, region and
         mode, where posting costs nothing and a reply depends on who is online
-        in 2026. For example, a World of Warcraft server keeps separate channels
-        for Mythic+ keys and rated arena, because the 2 activities want
-        different players. Finally, many games ship a group finder in the client
-        itself, the same idea with the posting done for you, and a booked
-        teammate from Duoly at {from} is the version with the time and the rank
-        settled first.
+        in 2026. Channels get narrow fast, because Mythic+ keys and rated arena
+        want different players. Finally, many games ship a group finder in the
+        client itself, the same idea with the posting done for you. For example,
+        the Group Finder from Blizzard lists premade World of Warcraft groups by
+        key level, and a booked teammate from Duoly at {from} is the version
+        with the time and the rank settled first.
       </p>
     </section>
     <section aria-labelledby="work-h">
@@ -211,7 +212,8 @@ const article = {
     <Faq heading="Questions about LFG?" items={faqItems} />
     <ClosingCta
       heading="Skip the wait for a reply?"
-      text={`An LFG post is free and depends on who answers. A Duoly booking is a reviewed teammate at an agreed time and rank, from ${from} in 2026. First, pick your game. For example, 1) name your mode and rank, 2) agree on voice using Discord and 3) play on your own account.`}
+      text={`An LFG post is free and depends on who answers. A Duoly booking is a reviewed teammate at an agreed time and rank, from ${from} in 2026. First, pick your game from the ${pages.length} teammate pages above. For example, 1) name your mode and rank, 2) agree on voice using Discord and 3) play on your own account.`}
+      extra={`Finally, the two routes work together rather than against each other. Keep posting in your game Discord, because a regular group costs nothing and a good match there lasts months. Book a session for the evening the post goes unanswered, or for the mode nobody in the channel plays. For example, a Wingman pair in Counter-Strike 2 and a Mythic+ key in World of Warcraft both want one specific player rather than a lobby. Every price quoted here was read from Duoly checkout in November 2026, and the teammate page for your game carries the full card.`}
       href={bookingHref('val', { tab: 'duo' })}
       label="Book a teammate"
       art={{ src: '/assets/games/valorant.png', alt: '' }}

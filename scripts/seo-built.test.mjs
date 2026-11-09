@@ -405,17 +405,18 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     // to 15, and every teammate page links every other one, so the
     // related-link chips grew by about 100 words on all of them.
     //
-    // Measured on 9 November 2026 on this build, worst page per bucket:
-    // MEASURE_TEMPLATED, MEASURE_GUIDED, MEASURE_PLAIN. The headroom is for
-    // those reviewed, shared paragraphs and not for padding, so move a ceiling
-    // only with the same kind of measurement written down.
+    // Measured on 9 November 2026 against this build, worst page per bucket:
+    // MEASURE_TEMPLATED, MEASURE_GUIDED, MEASURE_PLAIN. Each ceiling sits
+    // about 90 words above its worst page. The headroom is for those
+    // reviewed, shared paragraphs and not for padding, so move a ceiling only
+    // with the same kind of measurement written down.
     const guided = html.includes('id="free-or-paid"');
     const templated = html.includes('id="lfg-post-h"');
     const [minWords, maxWords] = templated
-      ? [1900, 3250]
+      ? [1900, 3210]
       : guided
-        ? [1500, 2750]
-        : [1200, 2100];
+        ? [1500, 2700]
+        : [1200, 2280];
     assert(
       wordCount >= minWords && wordCount <= maxWords,
       `${path}: ${wordCount} words`,

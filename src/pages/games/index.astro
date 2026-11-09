@@ -5,7 +5,12 @@ import { pageViewer } from '../../site/viewer';
 import { SITE_GAMES } from '../../site/games';
 import { lessons } from '../../content/coaching';
 import { intentForGame, intentPath } from '../../content/intent-pages';
-import { serializeJsonLd, CONTENT_DATES, bookingHref } from '../../site/seo';
+import {
+  serializeJsonLd,
+  CONTENT_DATES,
+  bookingHref,
+  COACHING_SLUGS,
+} from '../../site/seo';
 import { faqSchema } from '../../server/seo/offers';
 import {
   BUNDLE_PERCENTS as bundle,
@@ -125,18 +130,11 @@ const faq: [string, string][] = [
         the comparisons below before opening checkout.
       </p>
       <p>
-        Want one page across every game? Compare{' '}
-        <a href="/coaching">esports coaching by game</a> for lessons, or{' '}
-        <a href="/find-gaming-buddies">find gaming buddies</a> for playing time.
-      </p>
-      <p>
         Using an assistant? See <a href="/ai">Duoly in AI assistants</a> or the{' '}
         <a href="/developers/mcp">MCP developer guide</a>. For background,
-        browse <a href="/blog">Duoly guides</a>,{' '}
-        <a href="/compare/e-pal">the E-Pal comparison</a> and{' '}
-        <a href="/blog/what-does-lfg-mean">what LFG means in gaming</a>.
-        Payment, cancellation and refund details are in the{' '}
-        <a href="/terms">terms</a>.
+        browse <a href="/blog">Duoly guides</a> and{' '}
+        <a href="/compare/e-pal">the E-Pal comparison</a>. Payment, cancellation
+        and refund details are in the <a href="/terms">terms</a>.
       </p>
     </section>
     <section class="answers" aria-labelledby="services-h">
@@ -199,15 +197,18 @@ const faq: [string, string][] = [
         A Duoly game hub is the page listing every mode, rank and price for one
         title, and every game above links to one. Coaching covers all{' '}
         {COACHABLE_GAMES} bookable games from Duoly at {COACHING_PRICE} per hour
-        or game. Step 1 is opening the hub for your game. Games with a finished
-        coaching guide also show a coaching link, for example Valorant, League
-        of Legends, Rocket League, Fortnite, Teamfight Tactics, Apex Legends and
-        Marvel Rivals. Games with a play-together guide show a sessions link,
-        covering free options using Discord beside paid ones. Both guides name
-        real modes rather than generic advice. Social sits outside the coaching
-        set, because {SOCIAL_MODES} voice modes at {SOCIAL_PRICE} per hour teach
-        nothing about a game. Bundle discounts of {bundle[2]}% cover teammate
-        games rather than lessons.
+        or game, and {COACHING_SLUGS.length} of them carry their own coaching
+        guide with a worked example and a preparation checklist. Step 1 is
+        opening the hub for your game. Games with a play-together guide show a
+        sessions link, covering free options using Discord beside paid ones.
+        Both guides name real modes rather than generic advice. For one page
+        across every game, compare{' '}
+        <a href="/coaching">esports coaching by game</a> for lessons,{' '}
+        <a href="/find-gaming-buddies">find gaming buddies</a> for playing time
+        or read <a href="/blog/what-does-lfg-mean">what LFG means in gaming</a>.
+        Social sits outside the coaching set, because {SOCIAL_MODES} voice modes
+        at {SOCIAL_PRICE} per hour teach nothing about a game. Bundle discounts
+        of {bundle[2]}% cover teammate games rather than lessons.
       </p>
     </section>
     <section class="answers" aria-labelledby="faq-h2">

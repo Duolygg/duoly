@@ -13,6 +13,7 @@ import { viewerCurrency } from '../server/currency';
 import { eurToUsd } from '../server/fx';
 import { teammateDirectory, directoryPrice } from '../server/seo/directories';
 import { faqSchema, seoOffers } from '../server/seo/offers';
+import { BUNDLE_PERCENTS as bundle } from '../server/seo/teammate-facts';
 import {
   serializeJsonLd,
   bookingHref,
@@ -33,6 +34,11 @@ const from = price.replace(/^From /, '');
 const social = seoOffers('social', 'gg', context);
 const socialPrice = social[0]!.display;
 const withPage = games.filter((game) => game.dedicated);
+// The cheapest card in the directory, so the copy names a real floor rather
+// than repeating the "from" line the hero already carries.
+const floor = [...games].sort(
+  (a, b) => a.cheapest.amountMinor - b.cheapest.amountMinor,
+)[0]!;
 const path = '/find-gaming-buddies';
 const title = 'Find Gaming Buddies to Play Games With | Duoly';
 const h1 = 'Find gaming buddies for the game you actually play';
@@ -122,6 +128,8 @@ const article = {
         the mode and the voice setup agreed in the order chat before anyone
         queues. For example, a player tired of silent randoms books a session
         from {from} in 2026 instead, which settles 1) the time and 2) the rank.
+        Third, a {floor.name} session starts at {floor.cheapest.display} per{' '}
+        {floor.cheapest.unit}, which is the floor of the whole directory below.
         Finally, the same person can be booked again from your order history,
         using Discord.
       </p>
@@ -230,7 +238,8 @@ const article = {
     <Faq heading="Questions before you book a buddy?" items={faqItems} />
     <ClosingCta
       heading="Ready to find a gaming buddy?"
-      text={`A Duoly booking is one reviewed player for the games or hours you choose. First, pick your game from the grid above. For example, 1) name your mode and rank in the order chat, 2) agree on voice using Discord and 3) send the invite from your own account.`}
+      text={`A Duoly booking is one reviewed player for the games or hours you choose, across the ${games.length} games above. First, pick your game from the grid. For example, 1) name your mode and rank in the order chat, 2) agree on voice using Discord and 3) send the invite from your own account.`}
+      extra={`Finally, the quantity is the lever most people miss: bundles take ${bundle[0]}% off 3 units, ${bundle[1]}% off 5 and ${bundle[2]}% off 10, applied at checkout rather than on request, so the same buddy booked for an evening costs less per game than one session at a time. A booking adds 1 player to your party, and the Teams services are the ones that fill several seats. ${withPage.length} of the ${games.length} games carry a dedicated teammate page with their modes written out. Sessions start at`}
       href={bookingHref('mr', { tab: 'duo' })}
       label="Find your gaming buddy"
       price={price}

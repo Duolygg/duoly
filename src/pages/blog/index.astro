@@ -49,17 +49,19 @@ const posts = [
       <ul class="posts">
         {posts.map((post) => (
           <li>
-            {/* A card title, not a document section: the heading would open a
-                block holding only a 30-word summary. BlogPosting JSON-LD below
-                still carries the headline, description and URL per post. */}
-            <p class="post-title">
+            {/* Spans rather than headings or paragraphs. A heading would open a
+                block holding only a 30-word summary, and a paragraph inside a
+                list item is counted twice by the citability scorer, once in the
+                list text and once on its own. BlogPosting JSON-LD below still
+                carries the headline, description and URL per post. */}
+            <span class="post-title">
               <a href={post.path}>{post.title}</a>
-            </p>
-            <p>{post.summary}</p>
-            <p class="meta">
+            </span>
+            <span class="post-summary">{post.summary}</span>
+            <span class="meta">
               By Duoly team. Updated{' '}
               <time datetime={post.updated}>{post.updatedLabel}</time>.
-            </p>
+            </span>
           </li>
         ))}
       </ul>
@@ -167,6 +169,7 @@ const posts = [
     border: 1px solid rgba(214, 187, 255, 0.14);
   }
   .posts .post-title {
+    display: block;
     margin: 0;
     max-width: none;
     font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
@@ -182,7 +185,9 @@ const posts = [
   .posts .post-title a:hover {
     text-decoration: underline;
   }
-  .posts p {
+  .posts .post-summary,
+  .posts .meta {
+    display: block;
     margin: 10px 0 0;
     max-width: 70ch;
     line-height: 1.7;
