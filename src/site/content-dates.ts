@@ -34,6 +34,12 @@ export const CONTENT_SOURCES: Record<string, string[]> = {
   '/privacy': ['src/pages/privacy.astro'],
   '/get-paid-to-play-games': ['src/pages/get-paid-to-play-games.astro'],
   '/blog/what-is-an-egirl': ['src/pages/blog/[slug].astro'],
+  '/blog/what-does-lfg-mean': ['src/pages/blog/what-does-lfg-mean.astro'],
+  '/coaching': ['src/pages/coaching.astro', 'src/server/seo/directories.ts'],
+  '/find-gaming-buddies': [
+    'src/pages/find-gaming-buddies.astro',
+    'src/server/seo/directories.ts',
+  ],
   '/compare/e-pal': [
     'src/pages/compare/e-pal.astro',
     'src/content/epal-comparison.ts',

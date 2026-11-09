@@ -559,10 +559,12 @@ test('required editorial links and two related coaching pages exist', () => {
     link(`/games/${slug}`, path);
     link(path, `/games/${slug}`);
     link(path, '/games');
+    // Sibling coaching pages only: /coaching is the all-games directory and
+    // every coaching page links it, so it would otherwise pass this on its own.
     assert(
       new Set(
         pages[path].editorialLinks.filter(
-          (p) => /\/coaching$/.test(p) && p !== path,
+          (p) => /^\/games\/[^/]+\/coaching$/.test(p) && p !== path,
         ),
       ).size >= 2,
     );

@@ -5,6 +5,7 @@ import { pageViewer } from '../../site/viewer';
 import {
   serializeJsonLd,
   GUIDE_PATH,
+  LFG_GUIDE_PATH,
   CONTENT_DATES,
   bookingHref,
   organizationSchema,
@@ -19,6 +20,14 @@ const posts = [
     updatedLabel: '5 November 2026',
     summary:
       'Understand the term, compare free ways to meet teammates and learn how Duoly Social sessions work.',
+  },
+  {
+    path: LFG_GUIDE_PATH,
+    title: 'What does LFG mean in gaming?',
+    updated: CONTENT_DATES[LFG_GUIDE_PATH]!,
+    updatedLabel: '9 November 2026',
+    summary:
+      'LFG means looking for group. Read the LFM and LF1M variants, how LFG Discord servers work and what a post has to name.',
   },
 ];
 ---
@@ -61,6 +70,12 @@ const posts = [
         recording or streaming.
       </p>
       <p>
+        The LFG guide covers the shorthand gamers type in chat: LFG is looking
+        for group, LFM is looking for more, and LF1M names the exact number of
+        open slots. It also shows what a post has to carry to get an answer,
+        which is game, mode, region, rank or level and the hours you can play.
+      </p>
+      <p>
         Free communities are useful for finding a regular group. For example, a
         moderated Discord LFG channel lets you compare schedules and voice
         preferences before joining a lobby. A paid session from Duoly has a
@@ -68,7 +83,10 @@ const posts = [
         {SOCIAL_PRICE} per hour alongside game sessions. Social is for adults
         and is friendly company only.{' '}
         <a href="/games">Browse games and coaching</a> for service details and
-        current prices.
+        current prices, compare{' '}
+        <a href="/coaching">esports coaching by game</a> or{' '}
+        <a href="/find-gaming-buddies">find gaming buddies</a> for the game you
+        play.
       </p>
       <p>
         Ready to book instead of read? The guides point at three popular offers:

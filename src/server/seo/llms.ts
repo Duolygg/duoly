@@ -89,6 +89,24 @@ export function renderLlms() {
     '',
     '## Teammates and coaching',
     '',
+    ...(INDEXABLE_PATHS.includes('/find-gaming-buddies')
+      ? [
+          link(
+            'Find gaming buddies',
+            '/find-gaming-buddies',
+            'Every game with teammate sessions, the cheapest session in each and the free routes beside them.',
+          ),
+        ]
+      : []),
+    ...(INDEXABLE_PATHS.includes('/coaching')
+      ? [
+          link(
+            'Esports coaching by game',
+            '/coaching',
+            'Every game with coaching, the lessons each one sells and the one flat lesson price.',
+          ),
+        ]
+      : []),
     ...intentPages
       .filter(
         (page) =>
@@ -113,6 +131,18 @@ export function renderLlms() {
         `Compare ${names.join(', ')}.`,
       );
     }),
+    '',
+    '## Guides',
+    '',
+    ...INDEXABLE_PATHS.filter(
+      (path) => path === '/blog/what-does-lfg-mean',
+    ).map((path) =>
+      link(
+        'What does LFG mean?',
+        path,
+        'LFG means looking for group: the meaning, the LFM and LF1M variants, LFG Discord servers and what a post has to name.',
+      ),
+    ),
     '',
     '## Comparisons',
     '',

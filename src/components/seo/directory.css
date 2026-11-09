@@ -1,0 +1,75 @@
+/* The all-games directory grids on /coaching and /find-gaming-buddies.
+   One card per game, built from the same tokens as the price cards in seo.css
+   so a directory card and a price card read as the same component family. */
+.directory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+.seo-page .directory-card {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  grid-template-areas:
+    'art name'
+    'list list'
+    'price price'
+    'links links';
+  align-items: center;
+  gap: 6px 12px;
+  padding: 18px;
+}
+.directory-card img {
+  grid-area: art;
+  border-radius: 11px;
+}
+.directory-name {
+  grid-area: name;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  color: #fff;
+}
+.directory-card .directory-list {
+  grid-area: list;
+  display: block;
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #a79dc4;
+}
+.directory-card .directory-price {
+  grid-area: price;
+  display: block;
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #d6bbff;
+}
+.directory-card .directory-price .money {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+}
+.directory-links {
+  grid-area: links;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 14px;
+}
+.directory-links a:not(.btn-sm) {
+  font-size: 14px;
+  font-weight: 600;
+  color: #d6bbff;
+  text-decoration: underline;
+  text-decoration-color: rgba(214, 187, 255, 0.4);
+  text-underline-offset: 3px;
+}
+.directory-links a:not(.btn-sm):hover {
+  color: #fff;
+}
+@media (max-width: 480px) {
+  .directory-grid {
+    grid-template-columns: 1fr;
+  }
+}

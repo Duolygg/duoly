@@ -1,0 +1,264 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
+import SeoHero from '../../components/seo/SeoHero.astro';
+import Steps from '../../components/seo/Steps.astro';
+import Faq from '../../components/seo/Faq.astro';
+import ClosingCta from '../../components/seo/ClosingCta.astro';
+import '../../components/seo/seo.css';
+import { pageViewer } from '../../site/viewer';
+import { intentPages, intentPath } from '../../content/intent-pages';
+import { gameBySlug } from '../../site/games';
+import { faqSchema } from '../../server/seo/offers';
+import { viewerCurrency } from '../../server/currency';
+import { eurToUsd } from '../../server/fx';
+import {
+  teammateDirectory,
+  directoryPrice,
+} from '../../server/seo/directories';
+import {
+  serializeJsonLd,
+  bookingHref,
+  CONTENT_DATES,
+  organizationSchema,
+} from '../../site/seo';
+const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
+const currency = await viewerCurrency(Astro.cookies, accountCurrency);
+// The one price this guide quotes, from the same checkout engine as every
+// other page, so a catalog change moves the guide on the next build.
+const from = directoryPrice(
+  teammateDirectory({
+    customerCurrency: currency.cur,
+    eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+  }),
+).replace(/^From /, '');
+const path = '/blog/what-does-lfg-mean';
+const title = 'What Does LFG Mean? LFG Meaning in Gaming | Duoly';
+const h1 = 'What does LFG mean in gaming?';
+// Every teammate page, so the guide hands a reader straight to their game.
+const pages = intentPages.map((page) => ({
+  name: gameBySlug(page.gameSlug)!.name,
+  path: intentPath(page),
+}));
+const faqItems: [string, string][] = [
+  [
+    'What does LFG stand for?',
+    'LFG stands for looking for group. A player posting LFG is asking for others to join a party, a queue or a run.',
+  ],
+  [
+    'What is the difference between LFG and LFM?',
+    'LFG is posted by a player wanting to join a group. LFM means looking for more, posted by a group with seats open. LF1M names 1 open seat.',
+  ],
+  [
+    'What is an LFG Discord?',
+    'An LFG Discord is a server with channels for finding teammates, split by game, region and mode. Posting costs nothing.',
+  ],
+  [
+    'Does LFG mean something else outside gaming?',
+    'Yes. First, outside a group-finding post, LFG is also used as an excited exclamation, closer to "let us go". Context decides which meaning applies.',
+  ],
+  [
+    'How do I write an LFG post that gets answered?',
+    'Name 5 things: 1) the game, 2) your region, 3) your rank, 4) your role and 5) the mode. For example, a post with all 5 beats a one-line post.',
+  ],
+  [
+    'What is the difference between LFG and booking a teammate?',
+    `An LFG post is free and depends on who answers. A booked teammate from Duoly is a reviewed player at an agreed time and rank, from ${from} in 2026.`,
+  ],
+];
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: h1,
+  mainEntityOfPage: new URL(path, Astro.site!).href,
+  datePublished: '2026-11-09',
+  dateModified: CONTENT_DATES[path],
+  author: organizationSchema(Astro.site!),
+  publisher: organizationSchema(Astro.site!),
+  image: new URL('/og/duoly.jpg', Astro.site!).href,
+};
+---
+
+<SiteLayout
+  title={title}
+  description="LFG means looking for group. Learn the LFG meaning in gaming, the LFM and LF1M variants, how LFG Discord servers work and what a post has to name."
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Blog', path: '/blog' },
+        { name: 'What does LFG mean?', path },
+      ]}
+    />
+    <SeoHero
+      eyebrow="Guide"
+      h1={h1}
+      lead="LFG means looking for group. A player posting LFG wants other players to join a party, a queue or a run, and the post names the game, the mode and the region."
+      cta={{ href: '#games-h', label: 'Find teammates for your game' }}
+      secondary={{ href: '#post-h', label: 'Write a post that works' }}
+      art={[
+        { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
+        {
+          src: '/assets/games/world-of-warcraft.png',
+          alt: 'World of Warcraft game art',
+        },
+      ]}
+      chip="Gaming slang explained"
+      facts={[
+        'LFG, LFM, LF1M and LFG Discord',
+        'How LFG works in each game',
+        'What a post has to name',
+      ]}
+    />
+    <p class="byline">
+      By <a href="/contact">Duoly team</a>. Published{' '}
+      <time datetime="2026-11-09">9 November 2026</time>.
+    </p>
+    <section aria-labelledby="meaning-h">
+      <h2 id="meaning-h">What does LFG stand for?</h2>
+      <p>
+        LFG is the gaming abbreviation for looking for group. First, the term
+        started in multiplayer games where a party of a fixed size had to be
+        assembled by hand, and the 3 letters are still read the same way in
+        2026: somebody has an activity in mind and needs players for the empty
+        seats. Second, LFG works as a label and as a verb, so 1) a channel
+        called lfg and 2) a message saying "LFG ranked, EU, Gold" mean the same
+        thing. Third, LFG also appears as an excited exclamation, closer to "let
+        us go", which is a different use entirely. For example, "LFG!!!" after a
+        clutch is not a group request. Finally, a post naming a game, a region
+        and a mode is always the group meaning, whether the seat ends up free or
+        booked from Duoly at {from} in 2026.
+      </p>
+    </section>
+    <section aria-labelledby="variants-h">
+      <h2 id="variants-h">What do LFM, LF1M and LFG Discord mean?</h2>
+      <p>
+        LFM is the abbreviation for looking for more, and the difference from
+        LFG is which side is posting. First, a player with no group posts LFG,
+        while a group with seats open posts LFM. Second, LF1M, LF2M and LF3M
+        name exactly how many seats are left, so 1) LF1M healer reads as one
+        seat with a healer wanted and 2) LF2M dps reads as two. Third, an LFG
+        Discord is a community server with channels split by game, region and
+        mode, where posting costs nothing and a reply depends on who is online
+        in 2026. For example, a World of Warcraft server keeps separate channels
+        for Mythic+ keys and rated arena, because the 2 activities want
+        different players. Finally, many games ship a group finder in the client
+        itself, the same idea with the posting done for you, and a booked
+        teammate from Duoly at {from} is the version with the time and the rank
+        settled first.
+      </p>
+    </section>
+    <section aria-labelledby="work-h">
+      <h2 id="work-h">How does LFG actually work in a game?</h2>
+      <p>
+        An LFG route is the path a player takes to find teammates, and 3 of them
+        exist side by side. First, the in-game route: a group finder, a Fill
+        button or an auto squad, which costs nothing and fills a seat in seconds
+        with no agreed time and no comms. Second, the community route: a game
+        Discord, a subreddit thread or an LFG site, where a written post buys a
+        choice about who answers. Third, the booked route: a reviewed player at
+        an agreed time and rank, which is what Duoly sells from {from} in 2026.
+        For example, a player who wants a specific role at 9pm on a Tuesday gets
+        there fastest through route 3 and cheapest through route 1. Finally, the
+        routes mix, and most groups start in a Discord and end in a friends
+        list, using Discord voice.
+      </p>
+    </section>
+    <div id="post-h">
+      <Steps
+        heading="What makes an LFG post get answered?"
+        steps={[
+          'First, name the game and the mode in the first 5 words, because a reader scanning 40 posts never reaches your second line. For example, "Valorant Competitive" beats "anyone want to play".',
+          'Second, add your region or server, your rank and the role or hero you play. Those 3 fields are what tells a reader whether the group will actually work, and a post without them gets skipped.',
+          `Finally, say when you are free and how you want to talk, for example "tonight from 8pm, voice on Discord, short calls only". A post naming all 5 fields reads as somebody worth replying to, and a booked session from Duoly at ${from} fixes all 5 before anyone queues, from ${from} per game in 2026.`,
+        ]}
+      >
+        <p>
+          The same 5 fields go into a Duoly booking, except a booking sets each
+          one instead of hoping a reply happens to match. Read the{' '}
+          <a href="/terms">payment, cancellation and refund terms</a>, or{' '}
+          <a href="/contact">contact support</a> with a question about an order.
+        </p>
+      </Steps>
+    </div>
+    <section aria-labelledby="games-h">
+      <h2 id="games-h">Where can you find teammates for your game?</h2>
+      <p class="section-intro">
+        A Duoly teammate page is one page per game naming the modes that game
+        sells, the tier each card hires and the real checkout price, read in
+        November 2026. First, pick your game from the list below, because an LFG
+        post in Valorant names an agent and a rank while an LFG post in World of
+        Warcraft names a spec and a key level. Second, compare the free routes
+        on the page with the booked session beside them: a session starts at{' '}
+        {from} in 2026 and names the time, the rank and the comms before anyone
+        queues. Third, the{' '}
+        <a href="/find-gaming-buddies">gaming buddies directory</a> lists every
+        game at once, from {from}. For example,{' '}
+        <a href="/coaching">esports coaching</a> is the page for a lesson rather
+        than a session. Finally, every booking runs on your own account, agreed
+        using Discord before the first queue.
+      </p>
+      <div class="chips lfg-index">
+        {pages.map((page) => (
+          <a href={page.path}>{page.name} teammates</a>
+        ))}
+      </div>
+    </section>
+    <Faq heading="Questions about LFG?" items={faqItems} />
+    <ClosingCta
+      heading="Skip the wait for a reply?"
+      text={`An LFG post is free and depends on who answers. A Duoly booking is a reviewed teammate at an agreed time and rank, from ${from} in 2026. First, pick your game. For example, 1) name your mode and rank, 2) agree on voice using Discord and 3) play on your own account.`}
+      href={bookingHref('val', { tab: 'duo' })}
+      label="Book a teammate"
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+    />
+    <nav class="related" aria-label="Related pages">
+      <h2>Keep reading</h2>
+      <div class="chips">
+        <a href="/find-gaming-buddies">Find gaming buddies in every game</a>
+        <a href="/coaching">Esports coaching by game</a>
+        <a href="/blog/what-is-an-egirl">What is an e-girl?</a>
+        <a href="/games">All games and services</a>
+        <a href="/blog">All Duoly guides</a>
+        <a href="/compare/e-pal">Duoly vs E-Pal compared</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(article)}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faqItems, path, Astro.site!))}
+  />
+</SiteLayout>
+
+<style>
+  .lfg-index {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .lfg-index a {
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: #140d26;
+    border: 1px solid rgba(214, 187, 255, 0.18);
+    color: #e8dfff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .lfg-index a:hover {
+    border-color: rgba(214, 187, 255, 0.45);
+    color: #fff;
+  }
+</style>

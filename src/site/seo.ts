@@ -26,6 +26,10 @@ export const COACHING_SLUGS = [
   'deadlock',
 ] as const;
 export const GUIDE_PATH = '/blog/what-is-an-egirl';
+export const LFG_GUIDE_PATH = '/blog/what-does-lfg-mean';
+/** The two all-games directories: coaching and teammates, across every game. */
+export const COACHING_INDEX_PATH = '/coaching';
+export const BUDDIES_PATH = '/find-gaming-buddies';
 /** A game hub is indexable once its copy exists (src/content/hub-pages.ts). */
 export const HUB_PATHS = FINISHED_HUB_SLUGS.map((slug) => `/games/${slug}`);
 /**
@@ -51,7 +55,10 @@ export const INDEXABLE_PATHS = [
   ...HUB_PATHS,
   '/get-paid-to-play-games',
   GUIDE_PATH,
+  LFG_GUIDE_PATH,
   '/compare/e-pal',
+  COACHING_INDEX_PATH,
+  BUDDIES_PATH,
   ...intentPages.map(intentPath),
   ...COACHING_SLUGS.map((slug) => `/games/${slug}/coaching`),
 ];
