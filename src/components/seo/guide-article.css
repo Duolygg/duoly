@@ -45,3 +45,17 @@
   align-self: flex-start;
   margin-top: auto;
 }
+
+/*
+ * A section with one card uses .guide-one, not the two-column .guide-grid,
+ * which would leave half the row empty on desktop. The card's own paragraphs
+ * keep the shared 70ch measure, so a full-width card still reads well.
+ */
+.seo-page .guide-one {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+  /* Roughly where the shared 70ch measure wraps, so the card ends with its
+     own text instead of running on past it. */
+  max-width: 840px;
+}
