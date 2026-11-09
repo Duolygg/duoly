@@ -12,6 +12,8 @@ type PriceSpec = {
   units: number;
   server: string;
   rank?: string;
+  /** Minecraft has no regions: the quote needs a server name and an edition. */
+  edition?: 'Java' | 'Bedrock';
 };
 
 const lol = (serviceId: string, units: number, rank?: string): PriceSpec => ({
@@ -44,6 +46,19 @@ const ow = on('ow', 'Europe');
 const apex = on('apex', 'Europe');
 const cod = on('cod', 'Europe');
 const r6 = on('r6', 'EU West');
+const cs2 = on('cs2', 'EU West');
+const rl = on('rl', 'Europe');
+const wow = on('wow', 'EU');
+const arc = on('arc', 'Europe');
+const dl = on('dl', 'Europe');
+/** Minecraft prices are flat, and every quote names a server and an edition. */
+const mc = (serviceId: string, units: number): PriceSpec => ({
+  gameId: 'mc',
+  serviceId,
+  units,
+  server: 'Hypixel',
+  edition: 'Java',
+});
 
 /**
  * Every price token the duo pages may quote in copy. Values come from the
@@ -162,6 +177,66 @@ const SPECS: Record<string, PriceSpec> = {
   r6ProDiamond: r6('duo2', 1, 'Diamond'),
   r6Quick: r6('quick', 1),
   r6Arcade: r6('arcade', 1),
+  // Counter-Strike 2: Premier rating on the duo tiers, FACEIT levels on FACEIT
+  // Duo and the classic skill groups on Wingman (lib/ranks.js).
+  cs2Pro: cs2('duo2', 1, 'Premier 10,000–14,999'),
+  cs2Pro3: cs2('duo2', 3, 'Premier 10,000–14,999'),
+  cs2Pro5: cs2('duo2', 5, 'Premier 10,000–14,999'),
+  cs2Pro10: cs2('duo2', 10, 'Premier 10,000–14,999'),
+  cs2Plus: cs2('duo1', 1, 'Premier 10,000–14,999'),
+  cs2ProLow: cs2('duo2', 1, 'Premier 0–4,999'),
+  cs2ProHigh: cs2('duo2', 1, 'Premier 25,000+'),
+  cs2Faceit: cs2('duo3', 1, 'FACEIT Level 6'),
+  cs2Wing: cs2('wing', 1, 'Master Guardian'),
+  cs2Casual: cs2('casual', 1),
+  cs2Retake: cs2('retake', 1),
+  rlPro: rl('duo2', 1, 'Diamond'),
+  rlPro3: rl('duo2', 3, 'Diamond'),
+  rlPro5: rl('duo2', 5, 'Diamond'),
+  rlPro10: rl('duo2', 10, 'Diamond'),
+  rlPlus: rl('duo1', 1, 'Diamond'),
+  rlTop: rl('duo3', 1, 'Diamond'),
+  rlProGold: rl('duo2', 1, 'Gold'),
+  rlProGc: rl('duo2', 1, 'Grand Champion'),
+  rlCasual: rl('casual', 1),
+  rlExtra: rl('extra', 1),
+  // World of Warcraft has no single ladder: Mythic+ score on the key services,
+  // rated arena on Arena 2v2 (SERVICE_RANKS in lib/ranks.js).
+  wowPro: wow('duo2', 1, 'Mythic+ 2,000–2,499'),
+  wowPro3: wow('duo2', 3, 'Mythic+ 2,000–2,499'),
+  wowPro5: wow('duo2', 5, 'Mythic+ 2,000–2,499'),
+  wowPro10: wow('duo2', 10, 'Mythic+ 2,000–2,499'),
+  wowPlus: wow('duo1', 1, 'Mythic+ 2,000–2,499'),
+  wowProLow: wow('duo2', 1, 'Mythic+ under 1,500'),
+  wowProHigh: wow('duo2', 1, 'Mythic+ 3,500+'),
+  wowArena: wow('arena', 1, 'Challenger 1,600+'),
+  wowDelves: wow('delves', 1),
+  wowLevel: wow('level', 1),
+  arcPro: arc('duo2', 1),
+  arcPro3: arc('duo2', 3),
+  arcPro5: arc('duo2', 5),
+  arcPro10: arc('duo2', 10),
+  arcPlus: arc('duo1', 1),
+  arcTop: arc('duo3', 1),
+  arcLearn: arc('learn', 1),
+  mcPro: mc('duo2', 1),
+  mcPro3: mc('duo2', 3),
+  mcPro5: mc('duo2', 5),
+  mcPro10: mc('duo2', 10),
+  mcPlus: mc('duo1', 1),
+  mcSmp: mc('smp', 1),
+  mcSurv: mc('surv', 1),
+  mcDragon: mc('dragon', 1),
+  mcMini: mc('mini', 1),
+  dlPro: dl('duo2', 1, 'Emissary'),
+  dlPro3: dl('duo2', 3, 'Emissary'),
+  dlPro5: dl('duo2', 5, 'Emissary'),
+  dlPro10: dl('duo2', 10, 'Emissary'),
+  dlPlus: dl('duo1', 1, 'Emissary'),
+  dlTop: dl('duo3', 1, 'Emissary'),
+  dlProLow: dl('duo2', 1, 'Initiate'),
+  dlProHigh: dl('duo2', 1, 'Eternus'),
+  dlUnranked: dl('unranked', 1),
 };
 
 export const GUIDE_PRICE_SPECS: Record<string, PriceSpec & { bundle?: true }> =

@@ -21,6 +21,8 @@ export const worldOfWarcraft: HubPageCopy = {
     'arc-raiders',
     'minecraft',
   ],
+  intent:
+    'After the LFG page rather than every WoW service? It compares Mythic+ keys, rated arena and Delves, with a route and interrupt checklist.',
   format: {
     heading: 'What can you book for World of Warcraft on Duoly?',
     text: 'Duoly sells three things for World of Warcraft: one teammate who joins your group on your own account, group fills for Mythic+ keys and 3v3 arena, and class coaching. Everything is booked by the hour, because a key or an arena session has no fixed length. Mythic+ Duo brings a 2,500+ rated player, Mythic+ Pro a 3,000+ rated player who plans the route, and Arena 2v2 a Duelist partner. Mythic+ follows your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Mythic+ Pro, while Delves and leveling stay {{p_delves}} and {{p_level}} per hour for everybody. Second, the fills: Key Group Fill covers up to {{seats_keys}} seats at {{p_keys}} per hour and Arena 3v3 Team covers {{seats_arena3}} at {{p_arena3}}. Third, Class and Rotation Coaching is one hour at {{p_class}}. Bundles take {{pct3}} off 3 hours up to {{pct10}} off 10. For example, name your region and role using Discord first.',

@@ -903,6 +903,606 @@ export const intentPages: IntentPage[] = [
     closing:
       'Duo Pro is the Ranked Rainbow Six Siege session with a Diamond+ teammate from Duoly, and 5 games at Gold on EU West cost {{r6Pro5}} as one bundle rather than five separate orders. Quick Match, Arcade and Deathmatch hold one price at every rank, so only Ranked moves with your own rank in November 2026. For example, ask for a hard breach main when your own pool is Thatcher and Mute, agreed using Discord.',
   },
+  {
+    slug: 'lfg',
+    gameSlug: 'counter-strike-2',
+    // The CS2 hub title already carries "CS2 LFG", and hub titles are protected,
+    // so this page owns the team finder and teammates side of the same cluster.
+    title: 'CS2 Team Finder: Teammates for Premier | Duoly',
+    h1: 'CS2 team finder: teammates for Premier and FACEIT',
+    lead: 'Find Counter-Strike 2 teammates for Premier, FACEIT, Wingman or a retake server. Pick the mode, name your map pool and book a reviewed teammate who trades every duel.',
+    description: (price) =>
+      `Find CS2 teammates and book a reviewed Counter-Strike 2 duo ${price}. Compare Premier, FACEIT, Wingman 2v2 and community retake servers.`,
+    service: 'duo2',
+    accent: '#d9c37a',
+    services: {
+      duo1: 'Premier with a 15,000+ rated teammate who trades you, throws utility and keeps the buy on track.',
+      duo2: 'Premier with a 20,000+ rated teammate who calls the buy, the rotation and the mid-round read.',
+      duo3: 'FACEIT with a Level 10 teammate for stricter lobbies, sharper calls and a full five that listens.',
+      wing: 'Wingman 2v2 on a small map with a Global Elite partner, where every round is the two of you.',
+      casual:
+        'Casual games and Deathmatch together, as an aim warm-up before a Premier block.',
+      retake:
+        'Community retake servers together: the fastest way to drill a site execute and a clutch.',
+    },
+    facts: [
+      'Checked by Duoly before any order',
+      '15,000+, 20,000+ or FACEIT Level 10 partners',
+      'Entry, support, anchor, lurk or AWP',
+      'Your own account, EU West through to South Africa',
+    ],
+    formatHeading: 'What is a CS2 teammate booking?',
+    stepsHeading: 'How do you book a CS2 teammate?',
+    prepareHeading: 'How should you prepare for your first CS2 session?',
+    faqHeading: 'Questions before you queue?',
+    pricesChecked: '2026-11-09',
+    pricesIntro:
+      'A Counter-Strike 2 teammate booking is a per-game price set by the mode and, in Premier, by your own CS Rating. First, pick the mode, because Casual, Deathmatch and a retake server hold one price at every rating while Premier does not. Second, open the rating list on a Premier card: Duo Pro from Duoly is {{cs2ProLow}} per game under 5,000 and {{cs2ProHigh}} above 25,000. Bundles then cut the total: 3 games take {{pct3}} off, 5 games take {{pct5}} off and 10 games take {{pct10}} off. For example, a 12,000 rated player weighing one game against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
+    format:
+      'A Duoly teammate booking is a paid session where one reviewed Counter-Strike 2 player queues with you on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Premier service with a 20,000+ rated teammate from Duoly at {{cs2Pro}} per game, and a Casual and Deathmatch hour is the cheapest booking at {{cs2Casual}}. First, pick the platform: Premier and Casual run in the Valve client, while FACEIT Duo queues the separate FACEIT ladder of Level 1 to Level 10. Premier is MR12, so a match is a race to 13 rounds with the side swap after 12. Your teammate fills 1 of the 5 seats, so the other 3 players arrive from the queue. Bundles cut the total in November 2026, {{pct3}} off 3 games up to {{pct10}} off 10. For example, the order chat is where you agree the map pool using Discord.',
+    sections: [
+      {
+        heading: 'Which CS2 roles make a good duo?',
+        paragraphs: [
+          'A good Counter-Strike 2 duo is a pair of roles whose utility lands on the same site inside the same few seconds. Entry and support is the classic pair: the support player flashes over the wall, and the entry walks through the flash rather than through a guess. Lurk and entry is the second strong pair, because a lurker holding the far side of the map punishes the rotation the entry forced. AWP and anchor is the third, holding one site cheaply so the other three can stack. First, say which of those jobs you actually want.',
+          'For example, a player who entries every round and owns no flash gets more from a support partner than from a second rifler. Duo Plus pairs you with a 15,000+ rated teammate at {{cs2Plus}} per game and FACEIT Duo with a Level 10 player at {{cs2Faceit}}, both with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026. An AK-47 costs 2700 in game, so a full buy and an eco round want different plans. Finally, name your map pool in the order chat using Discord, so nobody learns Train on the night.',
+        ],
+      },
+      {
+        heading: 'Premier, FACEIT or Wingman: what should you queue?',
+        paragraphs: [
+          'Premier is the Valve ranked mode with the active map pool, a pick and ban phase and a CS Rating number instead of a skill group. Premier is the right queue when you want the rating to move. FACEIT is a separate platform with its own Level 1 to Level 10 ladder, anti-cheat and veto, so FACEIT Duo from Duoly is the booking for a stricter lobby. First, decide which number you care about, because the two ladders do not talk to each other.',
+          'Wingman is the 2v2 mode on a single bombsite, at {{cs2Wing}} per game, and Wingman is the honest pick for playing Counter-Strike 2 as a pair, since nobody fills the other three seats. Casual and Deathmatch cost {{cs2Casual}} per game for an aim warm-up, and a community retake server costs {{cs2Retake}} per game for the drill version: one site, one execute, replayed 20 times in a session. All three hold one price at every rating, with {{pct3}} off 3 games and {{pct5}} off 5. For example, book a retake hour first when your pair keeps losing the same B site.',
+        ],
+      },
+      {
+        heading: 'How much does a CS2 duo cost?',
+        paragraphs: [
+          'Duo Pro is the Premier Counter-Strike 2 service with a 20,000+ rated teammate, priced per game by your own CS Rating. First, find your own rating band on the card. A player at 10,000 to 14,999 pays {{cs2Pro}} per game, a player under 5,000 pays {{cs2ProLow}} and a player above 25,000 pays {{cs2ProHigh}}, so the Duo Pro price rises with your own rating. Finally, we read every number here from Duoly checkout in November 2026, rather than from a list kept by hand.',
+          'Bundles cut the total for every rating. For example, a player at 10,000 to 14,999 pays {{cs2Pro3}} for 3 games with {{pct3}} off, {{cs2Pro5}} for 5 games with {{pct5}} off and {{cs2Pro10}} for 10 games with {{pct10}} off. The unranked modes hold one flat price at every rating instead, so only Premier moves with your rating: a retake server stays {{cs2Retake}} per game. CS2 coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+        ],
+      },
+    ],
+    steps: [
+      'Choose a service and a total game count first, before checkout. Duo Pro is the Premier option from Duoly with a 20,000+ rated teammate, and the game count decides your bundle discount: 3 games take {{pct3}} off and 5 games {{pct5}} off in November 2026.',
+      'Second, add your region, CS Rating or FACEIT level, map pool and language. For example, name EU West or NA East, the three maps you actually know and the role you want covered, such as support or AWP.',
+      'Finally, meet your teammate in the order chat. Agree on voice using Discord, settle who takes utility on a half buy, then add each other by Steam name or FACEIT nickname. A single Duo Pro game costs {{cs2Pro}} at 10,000 to 14,999, and 5 games take {{pct5}} off.',
+    ],
+    prepare: [
+      'A Steam name is the account name your teammate needs for the friend invite, and a FACEIT booking needs your FACEIT nickname instead.',
+      'First, pick the region, because EU West, EU East, NA East, NA West, South America, Asia, Oceania, Middle East and South Africa are separate server groups.',
+      'Bring a map pool of 3 maps you can call, for example 1) Mirage, 2) Inferno and 3) Ancient, then say which map you want to avoid.',
+      'Test your microphone and your audio using Discord, then agree on short calls: a position, a number and a utility state.',
+      'Agree the buy rules before the first half, for example a full save under 2000 and armor before a rifle on a force buy.',
+      'Finally, book the games you want up front, because the bundle discount applies to one order rather than to games added later: 1 game is {{cs2Pro}} and 10 games cost {{cs2Pro10}} with {{pct10}} off in November 2026. Keep your login private.',
+    ],
+    faq: [
+      [
+        'Can I book a teammate for Wingman only?',
+        'Yes: Wingman is the 2v2 mode on one bombsite, booked per game at {{cs2Wing}} with a Global Elite partner, at one flat price for every rating.',
+      ],
+      [
+        'Do you cover FACEIT as well as Premier?',
+        'Yes: FACEIT Duo queues the FACEIT platform with a Level 10 teammate at {{cs2Faceit}} per game, and Premier stays in the Valve client.',
+      ],
+      [
+        'Can someone help me practise retakes?',
+        'Yes: a retake server booking is {{cs2Retake}} per game, and a session replays one site execute many times, with {{pct3}} off 3 games in November 2026.',
+      ],
+      [
+        'Does a duo booking fill all five seats?',
+        'No: a duo booking adds 1 teammate, so a booked pair covers 2 of 5. The other 3 seats come from the queue, and FACEIT Stack is the five-player service.',
+      ],
+      [
+        'Is a duo session the same as CS2 coaching?',
+        'No: a duo is shared playing time at {{cs2Pro}} per game with {{pct5}} off 5. Demo Review and Utility and Lineups are the hourly lessons on the coaching page.',
+      ],
+      [
+        'How do I find free CS2 teammates?',
+        'For example, post in a Counter-Strike LFG Discord or add players after a good match using Steam, naming region, rating, role and map pool.',
+      ],
+    ],
+    closing:
+      'Duo Pro is the Premier Counter-Strike 2 session with a 20,000+ rated teammate from Duoly, and 5 games at 10,000 to 14,999 cost {{cs2Pro5}} with {{pct5}} off, against {{pct3}} off 3. Wingman is the 2v2 pick at {{cs2Wing}} per game when you want the whole match to be the two of you. For example, ask for a support player when you entry every round, agreed using Discord.',
+  },
+  {
+    slug: 'lfg',
+    gameSlug: 'rocket-league',
+    // The Rocket League hub title already carries "Rocket League LFG", so this
+    // page owns the duo and player finder side of the same cluster.
+    title: 'Rocket League Duo: Find a 2v2 Partner | Duoly',
+    h1: 'Rocket League duo: find a 2v2 partner for Doubles',
+    lead: 'Find a Rocket League duo partner for Ranked Doubles, casual 3v3 or the extra modes. Book a reviewed teammate by the hour who rotates properly and calls boost.',
+    description: (price) =>
+      `Find Rocket League teammates and book a reviewed duo partner ${price}. Compare Ranked Doubles, casual 3v3 and the extra modes before you queue.`,
+    service: 'duo2',
+    accent: '#63c8ff',
+    services: {
+      duo1: 'An hour of Ranked Doubles with a Champion+ partner who rotates, so you are never both chasing.',
+      duo2: 'An hour of Ranked Doubles with a Grand Champion who sets you up and covers back post.',
+      duo3: 'An hour of high-rank Doubles with a Supersonic Legend who wins kickoffs and plays like a pro.',
+      casual:
+        'An hour of relaxed casual 3v3 with a strong teammate who actually passes the ball.',
+      extra:
+        'An hour of Rumble, Hoops, Snow Day, Dropshot and Heatseeker, played purely for fun.',
+    },
+    facts: [
+      'Checked by Duoly before any order',
+      'Champion+, Grand Champion or Supersonic Legend',
+      'Doubles, Standard or the extra modes',
+      'Your own account, Europe through to Oceania',
+    ],
+    formatHeading: 'What is a Rocket League duo booking?',
+    stepsHeading: 'How do you book a Rocket League duo partner?',
+    prepareHeading:
+      'How should you prepare for your first Rocket League session?',
+    faqHeading: 'Questions before you queue?',
+    pricesChecked: '2026-11-09',
+    pricesIntro:
+      'A Rocket League duo booking is an hourly price set by the mode and, in Ranked Doubles, by your own rank. First, pick the mode, because casual 3v3 and the extra modes hold one price at every rank while Doubles does not. Second, open the rank list on a Doubles card: Duo Pro from Duoly is {{rlProGold}} per hour at Gold and {{rlProGc}} at Grand Champion. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Diamond player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. An hour holds about 8 matches, since a match runs 5 minutes plus overtime. Finally, we read every figure here from Duoly checkout in November 2026.',
+    format:
+      'A Duoly duo booking is a paid session where one reviewed Rocket League player queues with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Ranked Doubles service with a Grand Champion partner from Duoly at {{rlPro}} per hour, and the extra modes are the cheapest booking at {{rlExtra}}. First, Doubles is 2v2, so a booked partner is the whole rest of the team rather than 1 seat of 5. A Rocket League match runs 5 minutes plus overtime, so an hour covers roughly 8 games including queue time. Bundles cut the total in November 2026, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the car, the camera talk and the voice setup using Discord.',
+    sections: [
+      {
+        heading: 'Which Rocket League duo rotation actually works?',
+        paragraphs: [
+          'A Doubles rotation is the agreement about who goes for the ball and who covers the net behind the challenge. First, one player challenges and the other holds back post, then the two swap roles after every touch. A pair that both commits to the same ball gives up an open net, and a pair that both hangs back gives the opponents free possession. Second, call boost: a player on 12 boost cannot challenge, so the partner takes the next ball and the low player collects the small pads on the way back.',
+          'For example, a Diamond player who books a Grand Champion partner from Duoly spends the hour learning where the second touch should come from rather than chasing. Duo Plus pairs you with a Champion+ partner at {{rlPlus}} per hour and Duo Apex with a Supersonic Legend at {{rlTop}}, both with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. There are 6 big boost pads on a standard field, which is why the back post route is a boost route too. Finally, agree one word for a reset using Discord.',
+        ],
+      },
+      {
+        heading: 'Doubles, casual 3v3 or the extra modes: what to book?',
+        paragraphs: [
+          'Ranked Doubles is the 2v2 playlist, and Doubles is the honest answer for playing Rocket League as a pair, because a booked partner fills the only other seat. Casual 3v3 is the no-stakes version at {{rlCasual}} per hour, which suits a first session with someone new or an evening of mechanics with no rank attached. First, pick the playlist before the hour starts, because a Doubles rotation and a Standard rotation are different habits.',
+          'The extra modes are Rumble, Hoops, Snow Day, Dropshot and Heatseeker, at {{rlExtra}} per hour, and an hour there is pure fun rather than practice. Second, Heatseeker gives the most touches per minute, so a new pair gets comfortable on voice fastest there. Both casual options hold one price at every rank, with {{pct3}} off 3 hours and {{pct5}} off 5, while Doubles is priced by the rank you sit at. For example, book one casual hour and one Doubles hour and keep the same partner across both, agreed using Discord.',
+        ],
+      },
+      {
+        heading: 'How much does a Rocket League duo cost?',
+        paragraphs: [
+          'Duo Pro is the Ranked Doubles service with a Grand Champion partner, priced per hour by your own rank. First, find your own rank on the card. A Diamond player in Europe pays {{rlPro}} per hour, a Gold player pays {{rlProGold}} and a Grand Champion player pays {{rlProGc}}, so the Duo Pro price rises with your own rank. Finally, we read every number here from Duoly checkout in November 2026, and the line under the price cards carries the exact date.',
+          'Bundles cut the total for every rank. For example, a Diamond player pays {{rlPro3}} for 3 hours with {{pct3}} off, {{rlPro5}} for 5 hours with {{pct5}} off and {{rlPro10}} for 10 hours with {{pct10}} off. The casual playlists hold one flat price at every rank instead, so only Doubles moves with your rank: the extra modes stay {{rlExtra}} per hour. Rocket League coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+        ],
+      },
+    ],
+    steps: [
+      'Choose a service and a total hour count first, before checkout. Duo Pro is the Ranked Doubles option from Duoly with a Grand Champion partner, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
+      'Second, add your platform, region, rank, input and language. For example, name Europe or US-East, controller or keyboard, and the car you play, such as Octane or Fennec.',
+      'Finally, meet your partner in the order chat. Agree on voice using Discord, settle who takes the first kickoff, then add each other with the Epic name. A single Duo Pro hour costs {{rlPro}} at Diamond, and 5 hours take {{pct5}} off.',
+    ],
+    prepare: [
+      'An Epic name is the account name your partner needs for the friend request, and the request has to be accepted before the first queue.',
+      'First, name your platform and input. Rocket League runs on PC, PlayStation, Xbox and Nintendo Switch, and crossplay keeps a mixed pair in the same party.',
+      'Pick the region before booking, because Europe, US-East, US-Central, US-West, South America, Asia, India, Oceania, Middle East and South Africa are separate queues.',
+      'Warm up for 10 minutes in free play or a training pack, for example 1) 20 aerials and 2) 10 kickoffs, so the hour goes on rotation.',
+      'Test your microphone using Discord first, then agree on 3 calls: going, cover and boost.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 1 hour is {{rlPro}} and 10 hours cost {{rlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+    ],
+    faq: [
+      [
+        'Is a Rocket League duo booking per match or per hour?',
+        'Per hour: a match runs about 5 minutes, so Duoly sells Doubles by the hour and an hour holds roughly 8 games including queue time.',
+      ],
+      [
+        'Can I book casual games instead of Ranked?',
+        'Yes: casual 3v3 is {{rlCasual}} per hour at one flat price for every rank, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+      ],
+      [
+        'Do you cover Rumble, Hoops and Dropshot?',
+        'Yes: the extra modes booking covers Rumble, Hoops, Snow Day, Dropshot and Heatseeker at {{rlExtra}} per hour with a strong teammate.',
+      ],
+      [
+        'Does a booking fill a 3v3 team?',
+        'A booking adds 1 partner, which is the whole second seat in Doubles. For Ranked Standard, 3v3 Standard is the Teams service that fills more seats.',
+      ],
+      [
+        'Can I learn aerials in a duo session?',
+        'A partner explains each touch as you play. Mechanics Training is the separate hourly lesson with training packs on the Rocket League coaching page.',
+      ],
+      [
+        'How do I find a free Rocket League duo?',
+        'For example, post in a Rocket League LFG Discord with your platform, region and rank, or add a player you enjoyed playing against from the match menu.',
+      ],
+    ],
+    closing:
+      'Duo Pro is the Ranked Doubles session with a Grand Champion partner from Duoly, and 5 hours at Diamond in Europe cost {{rlPro5}} with {{pct5}} off, against {{pct3}} off 3. Doubles is 2v2, so a booked partner is the whole rest of the team. For example, ask for a partner who plays back post when you like to challenge first, agreed using Discord.',
+  },
+  {
+    slug: 'lfg',
+    gameSlug: 'world-of-warcraft',
+    title: 'WoW LFG: Find Mythic+ and Arena Teammates | Duoly',
+    h1: 'WoW LFG: find teammates for Mythic+ and arena',
+    lead: 'Find World of Warcraft teammates for Mythic+ keys, rated arena, Delves or leveling. Book a reviewed player by the hour who knows the route and the interrupts.',
+    description: (price) =>
+      `Find WoW teammates and book a reviewed World of Warcraft player ${price}. Compare Mythic+ keys, rated arena, Delves and a leveling buddy.`,
+    service: 'duo2',
+    accent: '#f2b13f',
+    services: {
+      duo1: 'An hour of Mythic+ keys with a 2,500+ rated teammate who knows the routes, kicks and pulls.',
+      duo2: 'An hour of high keys with a 3,000+ rated teammate who plans the route and calls every pull.',
+      arena:
+        'An hour of rated 2v2 with a Duelist+ partner who calls swaps, crowd control and cooldowns.',
+      delves:
+        'An hour of Delves, world quests and weekly chores together, done fast and with good company.',
+      level:
+        'An hour of leveling with a friendly veteran who knows the routes and explains your class.',
+    },
+    facts: [
+      'Checked by Duoly before any order',
+      '2,500+ or 3,000+ rated Mythic+ partners',
+      'Tank, healer or damage, whichever seat is open',
+      'Your own account, on EU, US, KR or TW',
+    ],
+    formatHeading: 'What is a World of Warcraft teammate booking?',
+    stepsHeading: 'How do you book a World of Warcraft teammate?',
+    prepareHeading: 'How should you prepare for your first WoW session?',
+    faqHeading: 'Questions before you queue?',
+    pricesChecked: '2026-11-09',
+    pricesIntro:
+      'A World of Warcraft teammate booking is an hourly price set by the service and, on the key services, by your own Mythic+ score. First, pick the service, because Delves and a leveling hour hold one price at every score while the key services do not. Second, open the score list on a Mythic+ card: Duo Pro from Duoly is {{wowProLow}} per hour under 1,500 and {{wowProHigh}} above 3,500. Rated arena is priced by arena rating instead, at {{wowArena}} per hour around the Challenger cut. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
+    format:
+      'A Duoly teammate booking is a paid session where one reviewed World of Warcraft player groups with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the high key service with a 3,000+ rated teammate from Duoly at {{wowPro}} per hour, and a Delves hour is the cheapest booking at {{wowDelves}}. First, a Mythic+ group holds 5 players: 1 tank, 1 healer and 3 damage, so a booked teammate fills 1 of those seats and Key Group Fill is the service that fills more. Rated 2v2 holds 2, so there a partner is the whole rest of the team. Bundles cut the total in November 2026, {{pct3}} off 3 hours up to {{pct10}} off 10. For example, the order chat is where you agree the realm and the voice setup using Discord.',
+    sections: [
+      {
+        heading: 'Which Mythic+ roles make a good duo?',
+        paragraphs: [
+          'A Mythic+ duo is a pair of the 5 group seats, and the strongest pairs share one job rather than duplicate it. Tank and healer is the steadiest pair: the tank decides the size of the pull, and the healer decides whether that pull is payable. Healer and damage is the second pair, because an interrupt rotation only works when both players know whose kick is up. Tank and damage is the third, since route knowledge plus a second set of stops keeps a timer alive.',
+          'For example, a healer who books a 3,000+ rated tank from Duoly gets pulls sized to the cooldowns actually available. Duo Plus pairs you with a 2,500+ rated teammate at {{wowPlus}} per hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. The other 3 seats still come from your guild, your friends or the group finder. Finally, name your class, spec and the dungeon you keep failing in the order chat using Discord, so the first key starts on the right route.',
+        ],
+      },
+      {
+        heading: 'Mythic+, rated arena or Delves: what should you book?',
+        paragraphs: [
+          'Mythic+ is the timed 5-player dungeon mode, and a key either times or it does not, so Mythic+ rewards a partner who plans the route before the first pull. Rated arena is the 2v2 and 3v3 PvP ladder with its own rating and its own titles, from Combatant up through Duelist and Elite. First, pick which rating you actually want to move, because a Mythic+ score and an arena rating are separate numbers.',
+          'Delves are the smaller solo or small-group content, at {{wowDelves}} per hour, which makes a Delves hour the relaxed way to clear a weekly list with company. A leveling hour is {{wowLevel}} per hour with a veteran who explains your class on the way up. Second, both hold one price at every score, with {{pct3}} off 3 hours and {{pct5}} off 5. For example, book a Delves hour first when you want to learn a new spec without a timer, then move to keys, agreed using Discord.',
+        ],
+      },
+      {
+        heading: 'How much does a World of Warcraft teammate cost?',
+        paragraphs: [
+          'Duo Pro is the high key service with a 3,000+ rated teammate, priced per hour by your own Mythic+ score. First, find your own score band on the card. A player at 2,000 to 2,499 pays {{wowPro}} per hour, a player under 1,500 pays {{wowProLow}} and a player above 3,500 pays {{wowProHigh}}, so the Duo Pro price rises with your own score. Finally, we read every number here from Duoly checkout in November 2026, and the line under the price cards carries the exact date.',
+          'Bundles cut the total for every score. For example, a player at 2,000 to 2,499 pays {{wowPro3}} for 3 hours with {{pct3}} off, {{wowPro5}} for 5 hours with {{pct5}} off and {{wowPro10}} for 10 hours with {{pct10}} off. Delves and leveling hold one flat price at every score instead, so only the key and arena services move with your rating. World of Warcraft coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+        ],
+      },
+    ],
+    steps: [
+      'Choose a service and a total hour count first, before checkout. Duo Pro is the high key option from Duoly with a 3,000+ rated teammate, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
+      'Second, add your region, realm, class, spec and Mythic+ score or arena rating. For example, name EU, your realm, Restoration Druid and the dungeon you want to run first.',
+      'Finally, meet your teammate in the order chat. Agree on voice using Discord, settle the route and the interrupt order, then invite with your BattleTag. A single Duo Pro hour costs {{wowPro}} at 2,000 to 2,499, and 5 hours take {{pct5}} off.',
+    ],
+    prepare: [
+      'A BattleTag is the Battle.net name plus a number, for example Name#2154, and your teammate needs the full BattleTag to accept a group invite.',
+      'First, pick the region, because EU, US, KR and TW keep separate realms, separate ladders and separate friend lists.',
+      'Name your class and spec, and bring the talent build you actually play, so the route is planned around your real stops and defensives.',
+      'Check your keystone and your gear before the hour starts, for example 1) a key you want to time and 2) an item level you are comfortable at.',
+      'Test your microphone and your audio using Discord, then agree on 3 calls: pull, stop and defensive.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 1 hour is {{wowPro}} and 10 hours cost {{wowPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+    ],
+    faq: [
+      [
+        'Can I book a teammate for one key?',
+        'Bookings are hourly, from 1 hour up to 10 hours, and an hour usually covers more than one key depending on the level and the route.',
+      ],
+      [
+        'Do you cover rated arena as well as Mythic+?',
+        'Yes: Arena 2v2 is an hourly service with a Duelist+ partner at {{wowArena}} per hour around the Challenger cut, priced by arena rating.',
+      ],
+      [
+        'Can someone help with Delves and weekly chores?',
+        'Yes: a Delves hour is {{wowDelves}} per hour with an experienced partner, and a leveling hour is {{wowLevel}} with a veteran who explains your class.',
+      ],
+      [
+        'Does a booking fill a full Mythic+ group?',
+        'No: a booking adds 1 teammate, so a pair covers 2 of 5. Key Group Fill is the Teams service for the remaining seats.',
+      ],
+      [
+        'Is this a WoW coaching session?',
+        'No: a teammate hour is shared playing time at {{wowPro}} per hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Class and Rotation Coaching is the separate lesson.',
+      ],
+      [
+        'How do I find free WoW teammates?',
+        'For example, use the in-game group finder for premade groups, ask in your guild, or post in a World of Warcraft LFG Discord with realm, role and score.',
+      ],
+    ],
+    closing:
+      'Duo Pro is the high Mythic+ session with a 3,000+ rated teammate from Duoly, and 5 hours at a 2,000 to 2,499 score cost {{wowPro5}} with {{pct5}} off, against {{pct3}} off 3. A Mythic+ group holds 5 players, so a booked teammate fills 1 seat and Key Group Fill covers the rest. For example, ask for a tank who plans the route when you heal, agreed using Discord.',
+  },
+  {
+    slug: 'player-finder',
+    gameSlug: 'minecraft',
+    // The Minecraft hub title already carries "Minecraft player finder", so this
+    // page owns the LFG side of the same cluster. The URL keeps the slug the
+    // keyword gap analysis asked for.
+    title: 'Minecraft LFG: Find Players for Bedwars and SMP | Duoly',
+    h1: 'Minecraft LFG: find players for Bedwars and your SMP',
+    lead: 'Find Minecraft players for Bedwars, SkyWars, Duels, an SMP or a fresh survival world. Book a reviewed partner by the hour on Java or Bedrock, on the server you pick.',
+    description: (price) =>
+      `Find Minecraft players and book a reviewed partner ${price}. Compare PvP on Hypixel, an SMP survival partner, minigames and a full Ender Dragon run.`,
+    service: 'duo2',
+    accent: '#86d46b',
+    services: {
+      duo1: 'An hour of PvP on the server and mode you pick: Bedwars, SkyWars, Duels, UHC or Box PvP.',
+      duo2: 'An hour with a top PvPer who takes the hard fights and shows you how each clutch worked.',
+      smp: 'An hour on your SMP or a fresh world: gear up, set up farms and handle the fights.',
+      surv: 'An hour of relaxed survival: build a base, go mining and explore at your own pace.',
+      dragon:
+        'An hour aimed at the Ender Dragon: gear, a stronghold and the fight itself, together.',
+      mini: 'An hour of Bedwars, SkyWars, Build Battle, Murder Mystery and parkour on your server.',
+    },
+    facts: [
+      'Checked by Duoly before any order',
+      'Skilled or top PvP partners',
+      'Java or Bedrock, on the server you name',
+      'Your own account, no rank and no region picker',
+    ],
+    formatHeading: 'What is a Minecraft player finder booking?',
+    stepsHeading: 'How do you book a Minecraft partner?',
+    prepareHeading: 'How should you prepare for your first Minecraft session?',
+    faqHeading: 'Questions before you join?',
+    pricesChecked: '2026-11-09',
+    pricesIntro:
+      'A Minecraft booking is an hourly price, and Minecraft is the one game on Duoly with no rank picker at all: every service holds one flat price. First, pick the hour by what you want to do. PvP Duo Pro from Duoly is {{mcPro}} per hour with a top PvPer, PvP Duo is {{mcPlus}}, a Survival Partner is {{mcSmp}}, relaxed survival is {{mcSurv}} and a minigames night is {{mcMini}}. Second, bundles cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
+    format:
+      'A Minecraft player finder booking is a paid session where one reviewed Minecraft player joins the server you name, on your own account, for the number of hours you select, from 1 hour up to 10 hours. First, Minecraft has no ladder and no matchmaking region, so a booking asks for 2 things instead: the server address or your own world, and the edition, Java or Bedrock. PvP Duo Pro is the top tier from Duoly at {{mcPro}} per hour, and a minigames night is the cheapest booking at {{mcMini}}. Second, bundles cut the total in November 2026, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you send the server address, your Minecraft name and the voice setup using Discord.',
+    sections: [
+      {
+        heading: 'Which Minecraft mode should you book a partner for?',
+        paragraphs: [
+          'A Minecraft booking covers 3 kinds of session, and the mode decides which partner you want. Competitive PvP is Bedwars, SkyWars, Duels, UHC and Box PvP on a network such as Hypixel, where a partner who wins fights changes the result immediately. Survival is your own SMP or a fresh world, where a partner who knows farms and gear changes the next 10 hours instead. Minigames are Build Battle, Murder Mystery and parkour, where the point is the evening rather than the win.',
+          'For example, a Bedwars player who keeps losing the rush books PvP Duo Pro from Duoly at {{mcPro}} per hour and spends the hour on bed defence. A Survival Partner is {{mcSmp}} per hour for an SMP, and a Beat the Game hour is {{mcDragon}} for a run at the Ender Dragon. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Finally, say the edition first, because a Java network and a Bedrock realm need different accounts, agreed using Discord.',
+        ],
+      },
+      {
+        heading: 'How does a Minecraft PvP duo actually practise?',
+        paragraphs: [
+          'A PvP duo is 2 players drilling one situation until the habit changes, rather than queueing random games. First, pick the situation: a Bedwars rush, a bed defence, a SkyWars mid fight or a Duels combo. Second, play the same scenario several times in the hour and let your partner name what went wrong after each one, which is the part a random teammate never does. Bridging speed, block placement and rod timing all improve faster with somebody watching the same thing.',
+          'For example, a pair can replay a four-team Bedwars rush 6 times in an hour and change one thing each time: the bridge angle, the block choice, then the retreat. A top PvPer from Duoly costs {{mcPro}} per hour and a skilled PvPer {{mcPlus}}, with {{pct3}} off 3 hours and {{pct5}} off 5. Finally, a booking is shared playing time. PvP Coaching and Bedwars Coaching are the separate hourly lessons, and both run using Discord screen share.',
+        ],
+      },
+      {
+        heading: 'How much does a Minecraft partner cost?',
+        paragraphs: [
+          'Every Minecraft service on Duoly is a flat hourly price, because Minecraft has no rank to price against. PvP Duo Pro is {{mcPro}} per hour with a top PvPer, PvP Duo is {{mcPlus}} with a skilled PvPer, a Survival Partner is {{mcSmp}}, Survival Together is {{mcSurv}}, Beat the Game is {{mcDragon}} and a minigames night is {{mcMini}}. Finally, we read every number here from Duoly checkout in November 2026, and the line under the price cards carries the exact date.',
+          'Bundles cut the total on the main service. For example, PvP Duo Pro costs {{mcPro3}} for 3 hours with {{pct3}} off, {{mcPro5}} for 5 hours with {{pct5}} off and {{mcPro10}} for 10 hours with {{pct10}} off. Prices in US dollars follow the daily rate from the European Central Bank plus 1%, so the dollar figure moves a little day to day. Minecraft coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+        ],
+      },
+    ],
+    steps: [
+      'Choose a service and a total hour count first, before checkout. PvP Duo Pro is the top option from Duoly at {{mcPro}} per hour, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
+      'Second, add the server and the edition. For example, name Hypixel on Java, your own world, or a realm on Bedrock, then add the mode and the language you want on voice.',
+      'Finally, meet your partner in the order chat. Send your Minecraft name, agree on voice using Discord and whitelist your partner if the session is on your own world. A single PvP Duo hour costs {{mcPlus}}, and 5 hours take {{pct5}} off.',
+    ],
+    prepare: [
+      'A Minecraft name is the account name your partner needs to join, and a private world also needs your partner added to the whitelist.',
+      'First, name the edition. Java and Bedrock are separate clients with separate accounts, so a Hypixel session and a Bedrock realm are different bookings.',
+      'Say which server: a public network such as Hypixel, a private SMP with its address, or your own single-player world opened to a friend.',
+      'For survival, say how far the world has got, for example 1) a fresh spawn, 2) full iron gear or 3) ready for a stronghold.',
+      'Test your microphone and your audio using Discord, then say whether you want quiet building or constant calls.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 1 hour is {{mcPro}} and 10 hours cost {{mcPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+    ],
+    faq: [
+      [
+        'Does a Minecraft booking work on Bedrock?',
+        'Yes: name Java or Bedrock when you book, because the 2 editions are separate clients and your partner needs the right one to join.',
+      ],
+      [
+        'Can a partner join my own survival world?',
+        'Yes: a Survival Partner is {{mcSmp}} per hour on your SMP or a fresh world, and you add your partner to the whitelist before the hour starts.',
+      ],
+      [
+        'Can I book someone just for Bedwars?',
+        'Yes: PvP Duo covers Bedwars, SkyWars, Duels, UHC and Box PvP on the network you name, from {{mcPlus}} per hour with {{pct3}} off 3 hours.',
+      ],
+      [
+        'Is there a rank picker for Minecraft?',
+        'No: Minecraft has no ladder, so every service holds one flat price and a booking asks for 2 things instead, 1) a server and 2) an edition.',
+      ],
+      [
+        'Can we beat the Ender Dragon together?',
+        'Yes: a Beat the Game hour is {{mcDragon}} per hour, covering gear, finding a stronghold and the End fight itself with an experienced partner.',
+      ],
+      [
+        'How do I find free Minecraft players?',
+        'First, try a server lobby party or a Minecraft LFG Discord. For example, post on your SMP forum with the edition, the server and your time zone in November 2026.',
+      ],
+    ],
+    closing:
+      'A Minecraft booking from Duoly is one partner on the server you name, for the hours you choose, with no rank picker anywhere. PvP Duo Pro is {{mcPro}} per hour and 5 hours cost {{mcPro5}} with {{pct5}} off, against {{pct3}} off 3. First, send the server address and the edition. For example, ask for a Bedwars main when your beds keep falling in the first rush, agreed using Discord.',
+  },
+  {
+    slug: 'lfg',
+    gameSlug: 'arc-raiders',
+    title: 'ARC Raiders LFG: Find a Duo for Raids | Duoly',
+    h1: 'ARC Raiders LFG: find a duo for your next raid',
+    lead: 'Find ARC Raiders teammates for raids, loot routes and clean extractions. Book a reviewed raider by the hour who knows the maps and the safe ways out.',
+    description: (price) =>
+      `Find ARC Raiders teammates and book a reviewed duo raider ${price}. Compare a map learning hour, Duo Pro raids and an elite high-risk run.`,
+    service: 'duo2',
+    accent: '#ff9f6e',
+    services: {
+      duo1: 'An hour of raids with an experienced raider who knows the loot spots and the safe ways out.',
+      duo2: 'An hour with a Veteran who handles fights, picks the routes and gets you out with your loot.',
+      duo3: 'An hour with an elite raider for high-risk maps, hard fights and big extractions.',
+      learn:
+        'An hour of relaxed runs to learn the maps, the best loot routes and where to extract.',
+    },
+    facts: [
+      'Checked by Duoly before any order',
+      'Experienced, Veteran or elite raiders',
+      'Loot routes, fights and extraction points',
+      'Your own account, Europe through to Oceania',
+    ],
+    formatHeading: 'What is an ARC Raiders teammate booking?',
+    stepsHeading: 'How do you book an ARC Raiders duo?',
+    prepareHeading: 'How should you prepare for your first raid together?',
+    faqHeading: 'Questions before you drop?',
+    pricesChecked: '2026-11-09',
+    pricesIntro:
+      'An ARC Raiders booking is an hourly price, and ARC Raiders has no rank picker on Duoly: every service holds one flat price for every player. First, pick the tier by the raid you want. Learn the Maps is {{arcLearn}} per hour, Duo Plus is {{arcPlus}}, Duo Pro from Duoly is {{arcPro}} with a Veteran and Duo Apex is {{arcTop}} with an elite raider. Second, bundles cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
+    format:
+      'A Duoly teammate booking is a paid session where one reviewed ARC Raiders player raids with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. ARC Raiders is an extraction shooter from Embark Studios, so the hour is judged by what you carry out rather than by a scoreboard. Duo Pro is the Veteran service from Duoly at {{arcPro}} per hour, and Learn the Maps is the cheapest booking at {{arcLearn}}. First, a raid holds a squad of 3, so a booked partner fills 1 seat and Full Squad is the service that fills 2. Bundles cut the total in November 2026, {{pct3}} off 3 hours up to {{pct10}} off 10. For example, the order chat is where you agree the map and the voice setup using Discord.',
+    sections: [
+      {
+        heading: 'How does an ARC Raiders duo split a raid?',
+        paragraphs: [
+          'A raid is one trip to the surface, and a duo has 3 jobs to share: looting, watching and knowing the way out. First, agree the route before the drop, because a pair that loots the same room twice has spent half the timer on one building. Second, split the work inside a room: one player takes containers while the other watches the door and the sky. Finally, name the extraction point out loud before anyone is heavy, since a full bag changes which exit is realistic.',
+          'For example, a player who keeps dying with a full bag books Duo Pro from Duoly at {{arcPro}} per hour and spends the hour practising the last 2 minutes of a raid instead of the first 20. Duo Plus is {{arcPlus}} per hour with an experienced raider and Duo Apex is {{arcTop}} with an elite one, both with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. ARC machines and other raiders both hit a loud fight, so the quiet route is usually the profitable one.',
+        ],
+      },
+      {
+        heading: 'Learn the Maps or Duo Pro: which hour should you book?',
+        paragraphs: [
+          'Learn the Maps is the relaxed ARC Raiders booking at {{arcLearn}} per hour, and the hour goes on routes, loot spots and extraction points rather than on fights. First, book that hour when the map itself is the problem: a player who cannot name an exit loses kit to the timer rather than to other raiders. Second, Duo Pro is the Veteran hour at {{arcPro}}, which suits a player who already knows the map and keeps losing the fight at the end.',
+          'Duo Apex at {{arcTop}} per hour is the elite tier, for high-risk maps and the big extractions where several squads want the same exit. Finally, all four services hold one flat price for every player, because ARC Raiders has no rank on Duoly, and bundles take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. For example, book one Learn the Maps hour and one Duo Pro hour with the same raider, so the second hour starts with a shared route, agreed using Discord.',
+        ],
+      },
+      {
+        heading: 'How much does an ARC Raiders duo cost?',
+        paragraphs: [
+          'Every ARC Raiders service on Duoly is a flat hourly price, because the game has no ladder to price against. Learn the Maps is {{arcLearn}} per hour, Duo Plus is {{arcPlus}} with an experienced raider, Duo Pro is {{arcPro}} with a Veteran and Duo Apex is {{arcTop}} with an elite raider. Finally, we read every number here from Duoly checkout in November 2026, and the line under the price cards carries the exact date.',
+          'Bundles cut the total on the main service. For example, Duo Pro costs {{arcPro3}} for 3 hours with {{pct3}} off, {{arcPro5}} for 5 hours with {{pct5}} off and {{arcPro10}} for 10 hours with {{pct10}} off. Prices in US dollars follow the daily rate from the European Central Bank plus 1%, so the dollar figure moves a little day to day. ARC Raiders coaching has separate prices: PvP and Extraction is the hourly lesson, agreed using Discord.',
+        ],
+      },
+    ],
+    steps: [
+      'Choose a service and a total hour count first, before checkout. Duo Pro is the Veteran option from Duoly at {{arcPro}} per hour, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
+      'Second, add your platform, the broad area you play in and your language. For example, name Europe or North America, then say which map you want to run and whether you are after loot or fights.',
+      'Finally, meet your raider in the order chat. Agree on voice using Discord, settle the route and the extraction point, then add each other with the Embark ID. A single Learn the Maps hour costs {{arcLearn}}, and 5 hours take {{pct5}} off.',
+    ],
+    prepare: [
+      'An Embark ID is the account name your raider needs for the friend request, and the request has to be accepted before the first raid.',
+      'First, name the broad area you play in, because ARC Raiders matches on ping across Europe, North America, South America, Asia, Oceania and the Middle East.',
+      'Say what you want out of the hour, for example a quiet loot route, a specific quest item or practice at winning the fight near an exit.',
+      'Bring kit you are willing to lose plus a backup loadout, for example 1) a cheap raid kit and 2) one spare weapon, because a raid can take both.',
+      'Test your microphone using Discord first, then agree on 3 calls: contact, moving and extracting.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 1 hour is {{arcPro}} and 10 hours cost {{arcPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+    ],
+    faq: [
+      [
+        'Is there a rank picker for ARC Raiders?',
+        'No: ARC Raiders has no ladder on Duoly, so all 4 teammate services hold one flat hourly price for every player.',
+      ],
+      [
+        'Can I book an hour just to learn a map?',
+        'Yes: Learn the Maps is {{arcLearn}} per hour of relaxed runs covering loot routes and extraction points, with {{pct3}} off 3 hours in November 2026.',
+      ],
+      [
+        'Does a booking fill a full squad?',
+        'No: a booking adds 1 raider, so a pair covers 2 of 3. Full Squad and Escort Run are the Teams services that bring more players.',
+      ],
+      [
+        'What happens if we die mid raid?',
+        'An extraction shooter takes the kit you were carrying, so the hour continues with a fresh loadout and a new raid rather than a retry.',
+      ],
+      [
+        'Is a duo hour the same as ARC Raiders coaching?',
+        'No: a duo hour is shared raiding time. PvP and Extraction is the hourly lesson on fights, third parties and clean extractions.',
+      ],
+      [
+        'How do I find free ARC Raiders teammates?',
+        'For example, post in an ARC Raiders LFG Discord with your area and the map you want to run, or invite a squadmate you got out alive with.',
+      ],
+    ],
+    closing:
+      'Duo Pro is the ARC Raiders session with a Veteran raider from Duoly at {{arcPro}} per hour, and 5 hours cost {{arcPro5}} with {{pct5}} off, against {{pct3}} off 3. A raid squad holds 3, so a booked raider fills 1 seat and Full Squad covers 2. For example, ask for a Learn the Maps hour first when you cannot yet name an extraction point, agreed using Discord.',
+  },
+  {
+    slug: 'lfg',
+    gameSlug: 'deadlock',
+    title: 'Deadlock LFG: Find Teammates for Ranked | Duoly',
+    h1: 'Deadlock LFG: find teammates for your next match',
+    lead: 'Find Deadlock teammates for ranked or unranked matches. Book a reviewed player who lanes with you, secures souls and calls the Urn and Mid Boss timings.',
+    description: (price) =>
+      `Find Deadlock teammates and book a reviewed duo partner ${price}. Compare ranked tiers from Oracle to Ascendant and relaxed unranked matches.`,
+    service: 'duo2',
+    accent: '#8ad6c8',
+    services: {
+      duo1: 'Ranked with an Oracle+ teammate who lanes with you, secures souls and calls the rotation.',
+      duo2: 'Ranked with a Phantom+ teammate who calls Urn runs, Mid Boss timings and the next lane.',
+      duo3: 'Ranked with an Ascendant+ teammate for high lobbies and fights that need one player to win them.',
+      unranked:
+        'Unranked matches with a strong teammate while you learn a hero or the map.',
+    },
+    facts: [
+      'Checked by Duoly before any order',
+      'Oracle+, Phantom+ or Ascendant+ partners',
+      'Souls, Urn runs and Mid Boss timings',
+      'Your own account, Europe through to Oceania',
+    ],
+    formatHeading: 'What is a Deadlock teammate booking?',
+    stepsHeading: 'How do you book a Deadlock teammate?',
+    prepareHeading: 'How should you prepare for your first Deadlock session?',
+    faqHeading: 'Questions before you queue?',
+    pricesChecked: '2026-11-09',
+    pricesIntro:
+      'A Deadlock teammate booking is a per-match price set by the mode and, in ranked, by your own rank. First, pick the mode, because unranked matches hold one price at every rank while ranked does not. Second, open the rank list on a ranked card: Deadlock has 11 ranks from Initiate up to Eternus, and Duo Pro from Duoly is {{dlProLow}} per match at Initiate and {{dlProHigh}} at Eternus. Bundles then cut the total: 3 matches take {{pct3}} off, 5 matches take {{pct5}} off and 10 matches take {{pct10}} off. For example, an Emissary player weighing one match against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
+    format:
+      'A Duoly teammate booking is a paid session where one reviewed Deadlock player queues with you on your own account, for the number of matches you select, from 1 match up to 10 matches. Duo Pro is the ranked service with a Phantom+ teammate from Duoly at {{dlPro}} per match, and unranked is the cheapest booking at {{dlUnranked}}. First, Deadlock is 6v6, so a booked teammate fills 1 of the 6 seats and 6-Stack Fill is the service that fills more. A Deadlock match runs about 35 minutes, so a 3 match bundle is an evening rather than a quick queue. Bundles cut the total in November 2026, {{pct3}} off 3 matches up to {{pct10}} off 10. For example, the order chat is where you agree the hero pair using Discord.',
+    sections: [
+      {
+        heading: 'Which Deadlock lanes and heroes make a good duo?',
+        paragraphs: [
+          'A good Deadlock duo is a pair of heroes who answer different problems in the same lane. A hero with a stun or a slow plus a hero with burst damage is the clearest pair: one player stops the target and the other removes it. Two sustain heroes hold a lane longer but close no fights, and 2 burst heroes trade hard and then both have nothing left. First, say which hero you actually play before the pair is chosen.',
+          'Second, souls are the currency, and a lane partner changes how many you keep: shooting a soul orb confirms it for your team, and shooting it as the enemy denies it. For example, an Emissary player who books a Phantom+ teammate from Duoly at {{dlPro}} per match learns which orbs are worth contesting. Duo Plus is {{dlPlus}} per match with an Oracle+ partner and Duo Apex is {{dlTop}} with an Ascendant+ one, both with {{pct3}} off 3 matches and {{pct5}} off 5. Finally, agree the lane using Discord before the first queue.',
+        ],
+      },
+      {
+        heading: 'Ranked or unranked: which Deadlock match to book?',
+        paragraphs: [
+          'Unranked is the Deadlock mode with no rank attached, at {{dlUnranked}} per match, which makes unranked the honest first session: a new hero, a new item build or a first evening on voice with somebody new. First, book unranked when the hero is new, because a 35 minute match is a long time to learn an ability list under pressure.',
+          'Ranked is the mode with the 11 ranks from Initiate to Eternus, priced by the rank you sit at: Duo Pro is {{dlPro}} per match at Emissary, with {{pct3}} off 3 matches and {{pct5}} off 5 in November 2026. Second, a ranked match rewards the parts a partner actually changes: the Urn run nobody escorts, the Mid Boss attempt with no vision, the lane that goes unanswered for 5 minutes. Items come in 3 categories, Weapon, Vitality and Spirit, so a partner can also name the column your build is missing. For example, ask for a Phantom+ teammate who calls Mid Boss timings, agreed using Discord.',
+        ],
+      },
+      {
+        heading: 'How much does a Deadlock duo cost?',
+        paragraphs: [
+          'Duo Pro is the ranked Deadlock service with a Phantom+ teammate, priced per match by your own rank. First, find your own rank on the card. An Emissary player in Europe pays {{dlPro}} per match, an Initiate player pays {{dlProLow}} and an Eternus player pays {{dlProHigh}}, so the Duo Pro price rises with your own rank. Finally, we read every number here from Duoly checkout in November 2026, and the line under the price cards carries the exact date.',
+          'Bundles cut the total for every rank. For example, an Emissary player pays {{dlPro3}} for 3 matches with {{pct3}} off, {{dlPro5}} for 5 matches with {{pct5}} off and {{dlPro10}} for 10 matches with {{pct10}} off. Unranked holds one flat price at every rank instead, at {{dlUnranked}} per match, so only ranked moves with your rank. Deadlock coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+        ],
+      },
+    ],
+    steps: [
+      'Choose a service and a total match count first, before checkout. Duo Pro is the ranked option from Duoly with a Phantom+ teammate, and the match count decides your bundle discount: 3 matches take {{pct3}} off and 5 matches {{pct5}} off in November 2026.',
+      'Second, add the broad area you play in, your rank, your hero pool and your language. For example, name Europe or North America, Emissary, and 2 heroes you are comfortable on.',
+      'Finally, meet your teammate in the order chat. Agree on voice using Discord, settle the lane and the hero pair, then add each other by Steam name. A single unranked match costs {{dlUnranked}}, and 5 matches take {{pct5}} off.',
+    ],
+    prepare: [
+      'A Steam name is the account name your teammate needs for the friend invite, because Deadlock runs through the Steam client.',
+      'First, name the broad area you play in, since Deadlock matches on ping across Europe, North America, South America, Asia, Oceania and the Middle East.',
+      'Bring 2 heroes you trust plus 1 backup, for example 1) a burst hero and 2) a hero with a stun, so the pair still works when a pick is taken.',
+      'Plan for a long match: about 35 minutes each, so 3 matches fill an evening and a 10 match bundle spans several sessions.',
+      'Test your microphone and your audio using Discord, then agree on 3 calls: Urn, Mid Boss and back.',
+      'Finally, book the matches you want up front, because the bundle discount applies to one order rather than to matches added later: 1 match is {{dlPro}} and 10 matches cost {{dlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+    ],
+    faq: [
+      [
+        'Can I book a teammate for unranked only?',
+        'Yes: unranked is {{dlUnranked}} per match at one flat price for every rank, which suits a new hero or a first evening together.',
+      ],
+      [
+        'How long is a Deadlock match?',
+        'About 35 minutes, so Duoly prices Deadlock per match rather than per hour and a 3 match bundle is usually a full evening.',
+      ],
+      [
+        'Which ranked tiers can I book?',
+        'Three: Duo Plus with an Oracle+ teammate at {{dlPlus}}, Duo Pro with a Phantom+ teammate at {{dlPro}} and Duo Apex with an Ascendant+ teammate at {{dlTop}}.',
+      ],
+      [
+        'Does a booking fill all six seats?',
+        'No: a booking adds 1 teammate, so a booked pair covers 2 of 6. 6-Stack Fill is the Teams service for the remaining seats.',
+      ],
+      [
+        'Is a duo the same as Deadlock coaching?',
+        'No: a duo is shared playing time at {{dlPro}} per match, with {{pct3}} off 3 matches and {{pct5}} off 5 in November 2026. Macro and Souls is the separate hourly lesson.',
+      ],
+      [
+        'How do I find free Deadlock teammates?',
+        'For example, post in a Deadlock LFG Discord with your area, rank and hero pool, or add a player from the Steam match history after a good game.',
+      ],
+    ],
+    closing:
+      'Duo Pro is the ranked Deadlock session with a Phantom+ teammate from Duoly, and 5 matches at Emissary in Europe cost {{dlPro5}} with {{pct5}} off, against {{pct3}} off 3. Deadlock is 6v6, so a booked teammate fills 1 seat and 6-Stack Fill covers the rest. For example, ask for a partner with a stun when your hero is pure burst, agreed using Discord.',
+  },
 ];
 
 export const intentForGame = (slug: string) =>
