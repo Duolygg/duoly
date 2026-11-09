@@ -92,7 +92,7 @@ export const arcRaiders: HubPageCopy = {
     {
       heading: 'Why does ARC Raiders have no rank picker?',
       paragraphs: [
-        'ARC Raiders is an extraction shooter with no ranked tier, so Duoly charges one flat price of {{p_duo2}} per Veteran hour and nothing on the page asks for your rank. First, the matchmaking notes from Embark Studios, published in 2026 and read again in November 2026, name playstyle history, equal squad sizes where possible, queue time and latency as the inputs. No rank tier and no rank-gap gate appear anywhere in the article. For example, a brand new account and an Elite raider may squad up with no eligibility check at all.',
+        'ARC Raiders is an extraction shooter with no ranked tier, so Duoly charges one flat price of {{p_duo2}} per Veteran hour and nothing at checkout asks for your rank. First, pick the raider instead of a rank: Duo Plus is an experienced raider at {{p_duo1}} per hour, Duo Pro a Veteran at {{p_duo2}} and Duo Apex an Elite raider at {{p_duo3}}. Learn the Maps is the gentlest start at {{p_learn}} per hour. For example, a first raid on a new map goes further with a guide than with a gunfighter.',
         'What changes instead is lobby difficulty. Every squad member feeds the matchmaking profile, so a Veteran beside you raises the opposition rather than lowering it. Flat pricing keeps the maths simple: 3 Veteran hours cost {{p_duo2_x3}} with {{pct3}} off and 5 cost {{p_duo2_x5}} with {{pct5}} off. Decide before the drop whether the hour is for loot or for fights, because the route changes completely. Keep comms short out there, because a late call during a third party ends the run, so use Discord.',
       ],
     },

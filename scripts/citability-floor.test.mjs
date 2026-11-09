@@ -51,16 +51,7 @@ const REFERENCE_PAGES = {
  * green is to move a URL out as it is fixed. It cannot quietly grow, and it
  * cannot quietly go stale.
  */
-const BELOW_FLOOR = {
-  // The five games added to the catalog in #184. Their hubs render the generic
-  // rank copy, and lifting them needs each publisher's own party rules, which
-  // AWAITING_RANK_RESEARCH in src/content/rank-rules.ts tracks.
-  '/games/dota-2': 'new game, queue rules not researched yet',
-  '/games/world-of-warcraft': 'new game, queue rules not researched yet',
-  '/games/pubg': 'new game, queue rules not researched yet',
-  '/games/wild-rift': 'new game, queue rules not researched yet',
-  '/games/deadlock': 'new game, queue rules not researched yet',
-};
+const BELOW_FLOOR = {};
 
 /** Score exactly what the sitemap offers Google, read from the running build. */
 async function sitemapPaths() {

@@ -7,7 +7,7 @@ export const marvelRivals: HubPageCopy = {
     'Find Marvel Rivals teammates, a 6-stack or hero coaching on Duoly, {{from_lower}}. Compare Competitive, Quick Match and Team-Up prices.',
   eyebrow: 'Marvel Rivals teammates',
   h1: 'Marvel Rivals team finder: book teammates or a coach',
-  lead: 'Free LFG Discords work for a casual six. Duoly books the highest-ranked teammate your Competitive party may queue with, fills the whole stack and sells hero coaching.',
+  lead: 'Free LFG Discords work for a casual six. Duoly books a reviewed Diamond, Grandmaster or Celestial teammate for Competitive, fills the empty seats of a six and sells hero coaching by the hour.',
   cta: 'Book a Marvel Rivals teammate',
   facts: [
     'Diamond+ to Celestial teammates',
@@ -25,7 +25,7 @@ export const marvelRivals: HubPageCopy = {
     'After the two-player page rather than every Rivals service? It covers hero pairings, Team-Up abilities and prices for a pair on their own.',
   format: {
     heading: 'What can you book for Marvel Rivals on Duoly?',
-    text: 'A Marvel Rivals booking on Duoly is a single reviewed teammate, a 6-stack fill or a coaching hour. First, the Competitive tiers are Duo Plus with a Diamond+ teammate, Duo Pro with a Grandmaster+ player and Duo Apex with a Celestial+ player. Competitive prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per match on Duo Pro. Quick Match and Arcade holds one flat price of {{p_quick}} at every rank, and Team-Up Duo costs {{p_teamup}}. Bundles cut the total, {{pct3}} off 3 matches up to {{pct10}} off 10. The Season 5 notes from NetEase Games, published in 2025 and read again in November 2026, cap party size rather than naming a rank gap: Bronze through Grandmaster may use any party size except 5, and one Celestial player holds the party to 2. For example, name your platform and role using Discord first.',
+    text: 'A Marvel Rivals booking on Duoly is a single reviewed teammate, a 6-stack fill or a coaching hour. First, the Competitive tiers are Duo Plus with a Diamond+ teammate, Duo Pro with a Grandmaster+ player and Duo Apex with a Celestial+ player. Competitive prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per match on Duo Pro. Quick Match and Arcade holds one flat price of {{p_quick}} at every rank, and Team-Up Duo costs {{p_teamup}}. Bundles cut the total, {{pct3}} off 3 matches up to {{pct10}} off 10. Second, the fill: 6-Stack Fill hires Grandmaster+ players for up to {{seats_six}} seats at {{p_six}} per match, which turns a part-full group into a complete six. Third, the lessons, from {{p_hero}} for one hour on a single hero. For example, name your platform and role using Discord first.',
   },
   services: {
     duo1: 'Competitive with a Diamond player who fills the missing role and holds fights together.',
@@ -48,8 +48,8 @@ export const marvelRivals: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per match, and the Competitive services read your own rank: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Quick Match, Arcade and the Team-Up session hold one price for everybody. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the party rule beside the tier. NetEase Games publishes party sizes and a placement limit rather than a general rank-gap table, so the honest promise is the highest-ranked teammate your party may queue with under the rules of the game in 2026. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5. For example, agree the hero pair using Discord before match 1.',
-    team: 'A 6-stack fill is one order that hires several players at once, so a part-full group becomes a complete six. 6-Stack Fill covers up to {{seats_six}} seats at {{p_six}} per match at {{rank_six}}, from {{p_six_low}} at {{rank_six_low}}. First, count the seats you actually need, because every seat is priced on its own. A six does not widen the party rule either: NetEase Games allows any party size except 5 only while nobody sits at Celestial or above, so a stack caps at Grandmaster, read in November 2026. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5. For example, a trio short 3 players books 3 seats rather than 5, agreed using Discord.',
+      'Teammate prices are per match, and the Competitive services read your own rank: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Quick Match, Arcade and the Team-Up session hold one price for everybody. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the teammate tier beside the price: Duo Plus names a Diamond+ player, Duo Pro a Grandmaster+ player and Duo Apex a Celestial+ player at {{p_duo3}} per match. Every teammate booking adds one player to your party, so the tier decides who takes that seat. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5. For example, agree the hero pair using Discord before match 1.',
+    team: 'A 6-stack fill is one order that hires several players at once, so a part-full group becomes a complete six. 6-Stack Fill covers up to {{seats_six}} seats at {{p_six}} per match at {{rank_six}}, from {{p_six_low}} at {{rank_six_low}}. First, count the seats you actually need, because every seat is priced on its own. Second, name the roles, because a Marvel Rivals six usually wants two Vanguards, two Duelists and two Strategists and the fill covers whichever of those your group is short. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5. For example, a trio short 3 players books 3 seats rather than 5, agreed using Discord.',
     coaching:
       'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on teammate matches stop here. Hero Coaching costs {{p_hero}} per hour and works through one hero in depth, from ability timings to the matchups that counter you. Play and Learn is the live option where a Grandmaster+ coach calls one real Competitive match at {{p_learn}}. First, pick the problem rather than the format. For example, a player who dies straight after the ultimate books the hero hour instead of a fourth Competitive match. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
   },
@@ -65,7 +65,7 @@ export const marvelRivals: HubPageCopy = {
   decide: {
     heading: 'Which Marvel Rivals session fits you?',
     intro:
-      'The right Rivals session is the one matching your goal for the evening. First, Quick Match and Arcade stay flat at every rank. Competitive is priced by your own rank, from {{p_duo2_low}} per match on Duo Pro, and the party rules come from NetEase Games rather than from a tier name. For example, 3 matches take {{pct3}} off and 5 matches take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right Rivals session is the one matching your goal for the evening. First, Quick Match and Arcade stay flat at every rank, {{p_quick}} per match. Competitive is priced by your own rank, from {{p_duo2_low}} per match on Duo Pro, and a 6-stack fill is priced per seat instead. For example, 3 matches take {{pct3}} off and 5 matches take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Climbing Competitive this season?',
@@ -89,7 +89,7 @@ export const marvelRivals: HubPageCopy = {
         goal: 'Need a full six?',
         service: 'six',
         answer:
-          '6-Stack Fill covers up to {{seats_six}} seats for {{p_six}}, and a stack caps at Grandmaster.',
+          '6-Stack Fill covers up to {{seats_six}} seats for {{p_six}} per match, with Grandmaster+ players on each one.',
       },
       {
         goal: 'One hero never clicking?',
@@ -103,21 +103,21 @@ export const marvelRivals: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'The teammate you queue with is a reviewed Marvel Rivals player who applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player, Duo Pro a Grandmaster+ player and Duo Apex a Celestial+ player. A tier describes the person Duoly hires and never your own lobby. First, the party rules come from NetEase Games: the Season 5 notes allow any party size except 5 from Bronze through Grandmaster, hold Celestial, Eternity and One Above All to a solo or a duo, and cap a party containing a player in placements at 3 seats with under 3 divisions between the top and the bottom.',
+        'The teammate you queue with is a reviewed Marvel Rivals player who applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player, Duo Pro a Grandmaster+ player and Duo Apex a Celestial+ player at {{p_duo3}} per match, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Nobody from Duoly ever logs into your account.',
         'What the rank buys is fight discipline. A Grandmaster+ teammate tracks the enemy ultimates and calls the reset instead of walking in alone, so the dive lands before a cooldown returns. Voice runs using Discord for exactly that reason. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles cut the total by {{pct3}} on 3 matches and {{pct5}} on 5. For example, you keep your hero and your account in all 3 matches.',
       ],
     },
     {
-      heading: 'How wide can a Marvel Rivals party be?',
+      heading: 'What does a 6-stack fill include in Marvel Rivals?',
       paragraphs: [
-        'NetEase Games publishes party sizes for Marvel Rivals Competitive and no general rank-gap table. First, the Season 5 notes name three rules: Bronze through Grandmaster may queue in any party size except 5, Celestial and above may only queue solo or as a duo, and a party holding anybody in placements is capped at 3 players with under 3 divisions between the highest and the lowest. For example, Duoly read the official notes again in November 2026 and found no published cap for an ordinary Diamond and Grandmaster pairing.',
-        'So the honest promise is the highest-ranked teammate your party may queue with under the rules of the game, checked in the client rather than asserted here. A full six does not open a wider gap: a stack of 6 needs everybody at Grandmaster or below, so a six-stack holding a Celestial player is ruled out entirely. Quick Match and Arcade carry no rank at all and cost {{p_quick}} per match, so a very wide pairing belongs there. Duo Apex is {{p_duo3}} per match, or {{p_duo3_x3}} for 3 matches with {{pct3}} off and {{pct5}} off 5, agreed using Discord.',
+        'A 6-stack fill is 6-Stack Fill: Duoly hires Grandmaster+ players for the seats your group is missing, up to {{seats_six}} seats at {{p_six}} per match. Marvel Rivals Competitive is 6v6, so the fill is how a trio or a four becomes a full team on one order. Every seat is priced on its own, so a trio short 3 players books 3 seats rather than 5. For example, a group with two Duelists and no Strategist books one seat and keeps its own front line.',
+        'The fill starts like any other order. Pick the service, pick the seat count, pay once, then meet everybody in the order chat. Name the platform, the roles you already cover and the evening you want to play, so the hired players arrive knowing the gaps. Voice runs using Discord, invites go out by username, and nobody needs your login. Team-Up Duo is the two-player format built around one hero pairing at {{p_teamup}} per match, and Quick Match and Arcade cost {{p_quick}}.',
       ],
     },
     {
       heading: 'Example evening: three Duo Pro matches in Europe',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} Strategist in Europe books 3 Duo Pro matches with a Grandmaster teammate. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one match. Neither player is in placements and neither sits at Celestial, so the published party rules from NetEase Games leave the duo free to queue. The order chat opens straight after payment, and the first message names the region, the rank and the role: Europe, {{rank_duo2}}, Strategist, looking for a Vanguard who holds the front line.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} Strategist in Europe books 3 Duo Pro matches with a Grandmaster teammate. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one match. Competitive is 6v6, so the booked teammate takes 1 of the 6 seats and the other 4 arrive from the party or the normal queue. The order chat opens straight after payment, and the first message names the region, the rank and the role: Europe, {{rank_duo2}}, Strategist, looking for a Vanguard who holds the front line.',
         'From there the evening runs on a short plan. You agree a hero pair and a Team-Up to try, voice goes on, and the invite goes out by username. After each match you pick one adjustment, for example holding the ultimate for the second push instead of spending it on the first contest, agreed using Discord. Three matches usually fill about 75 minutes, and 5 matches take {{pct5}} off the total.',
       ],
     },
@@ -141,8 +141,8 @@ export const marvelRivals: HubPageCopy = {
         'Duo Pro is {{p_duo2}} per match at {{rank_duo2}}, and {{p_duo2_low}} at the lowest rank. Ten matches cost {{p_duo2_x10}} with {{pct10}} off in 2026.',
       ],
       [
-        'Can a Gold player queue with a Celestial teammate?',
-        'NetEase Games holds Celestial and above to a solo or a duo and publishes no general rank-gap table, so the teammate has to be eligible to queue with you under the rules of the game. Check the party in the client.',
+        'How do I book a full Marvel Rivals six?',
+        '6-Stack Fill hires Grandmaster+ players for up to {{seats_six}} seats at {{p_six}} per match, and you set the seat count to the gaps your group actually has.',
       ],
       [
         'Do you pick the Team-Up heroes for me?',
@@ -160,6 +160,6 @@ export const marvelRivals: HubPageCopy = {
   },
   closing: {
     heading: 'Ready to queue in Marvel Rivals?',
-    text: 'Duo Pro is the Competitive tier with a Grandmaster+ teammate from Duoly. Three matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 matches take {{pct5}} off. Quick Match stays {{p_quick}} per match at any rank, and Team-Up Duo costs {{p_teamup}}. NetEase Games caps party size rather than publishing a rank-gap table, so a stack of 6 caps at Grandmaster and Celestial queues solo or as a duo in 2026. For example, agree your hero pair using Discord before the first queue.',
+    text: 'Duo Pro is the Competitive tier with a Grandmaster+ teammate from Duoly. Three matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 matches take {{pct5}} off. Quick Match stays {{p_quick}} per match at any rank, and Team-Up Duo costs {{p_teamup}}. 6-Stack Fill hires Grandmaster+ players for up to {{seats_six}} seats at {{p_six}} per match when you want a complete six in 2026. For example, agree your hero pair using Discord before the first queue.',
   },
 };

@@ -17,7 +17,7 @@ export const counterStrike2: HubPageCopy = {
   related: ['call-of-duty', 'rainbow-six-siege', 'fortnite', 'valorant'],
   format: {
     heading: 'What can you book for Counter-Strike 2 on Duoly?',
-    text: 'A Counter-Strike 2 booking on Duoly is one of three things: a teammate who queues with you, a stack fill for the seats you are missing, or coaching by the hour. First, Duo Plus brings a Premier 15,000+ teammate, Duo Pro a Premier 20,000+ caller and FACEIT Duo a Level 10 player for the third-party ladder. Premier prices follow your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per match on Duo Pro. Casual and Deathmatch and Retake Servers stay {{p_casual}} per match at every rating. Bundles cut the total, {{pct3}} off 3 matches up to {{pct10}} off 10. Valve publishes no party rating gap for Premier, so the teammate has to be eligible to queue with you under the rules of the game. For example, share your region and rating in the order chat using Discord first.',
+    text: 'A Counter-Strike 2 booking on Duoly is one of three things: a teammate who queues with you, a stack fill for the seats you are missing, or coaching by the hour. First, Duo Plus brings a Premier 15,000+ teammate, Duo Pro a Premier 20,000+ caller and FACEIT Duo a Level 10 player for the third-party ladder. Premier prices follow your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per match on Duo Pro. Casual and Deathmatch and Retake Servers stay {{p_casual}} per match at every rating. Bundles cut the total, {{pct3}} off 3 matches up to {{pct10}} off 10. Second, the fills: Premier 5-Stack hires Premier 20,000+ players for {{seats_five}} seats at {{p_five}} per match, and FACEIT Stack covers the FACEIT ladder at {{p_faceit5}}. Third, the lessons, from {{p_demo}} per hour. For example, share your region and rating in the order chat using Discord first.',
   },
   services: {
     duo1: 'Premier or Competitive with a 15,000+ teammate who trades you and throws the right utility.',
@@ -44,8 +44,8 @@ export const counterStrike2: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per match, and the ranked services follow your own rating: Duo Pro costs {{p_duo2_low}} per match in the lowest Premier band and {{p_duo2_high}} at {{rank_duo2_high}}. Casual Match and Retake Practice hold one price for everybody. First, pick the ladder, because a Premier duo reads your CS Rating while FACEIT Duo reads your FACEIT level. Second, read the queue rule beside the tier. Valve publishes no Premier party gap, so the teammate has to be eligible to queue with you under the rules of the game. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5. For example, agree the map pool in the order chat using Discord before match 1.',
-    team: 'A CS2 stack fill is one order that hires several players at once, so a part-full party becomes a full five. Premier 5-Stack queues the Valve ladder at {{p_five}} for {{seats_five}} seats, and FACEIT Stack queues FACEIT at {{p_faceit5}}. FACEIT is the documented wide-gap route: a FACEIT Standard team has no party Elo restriction at all, on a support FAQ from FACEIT read in November 2026. Super and Premium matches are stricter, capping a party at 3 and 2 players inside 400 Elo. First, count the seats you actually need, because every seat is priced on its own. Bundles still take {{pct3}} off 3 matches and {{pct5}} off 5. For example, a trio short two players books 2 seats rather than 4, agreed using Discord.',
+      'Teammate prices are per match, and the ranked services follow your own rating: Duo Pro costs {{p_duo2_low}} per match in the lowest Premier band and {{p_duo2_high}} at {{rank_duo2_high}}. Casual Match and Retake Practice hold one price for everybody. First, pick the ladder, because a Premier duo reads your CS Rating while FACEIT Duo reads your FACEIT level. Second, read the teammate tier beside the price: Duo Plus names a Premier 15,000+ player, Duo Pro a 20,000+ caller and FACEIT Duo a Level 10 player at {{p_duo3}} per match. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5. For example, agree the map pool in the order chat using Discord before match 1.',
+    team: 'A CS2 stack fill is one order that hires several players at once, so a part-full party becomes a full five. Premier 5-Stack queues the Valve ladder at {{p_five}} for {{seats_five}} seats, and FACEIT Stack queues FACEIT at {{p_faceit5}} with Level 8 and above on every seat. First, pick the ladder, because the two have separate ratings and separate maps in the active pool. Second, count the seats you actually need, because every seat is priced on its own. Bundles still take {{pct3}} off 3 matches and {{pct5}} off 5. For example, a trio short two players books 2 seats rather than 4, agreed using Discord.',
     coaching:
       'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on teammate matches stop here. Demo Review and Utility and Lineups each cost {{p_demo}} per hour. Play and Learn is the exception that covers one live Premier match at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who dies first on every execute onto the A site books Demo Review instead of a fourth Premier match. Screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rating.',
   },
@@ -61,7 +61,7 @@ export const counterStrike2: HubPageCopy = {
   decide: {
     heading: 'Which CS2 session fits you?',
     intro:
-      'The right CS2 session is the one matching your goal tonight. First, warm-up servers carry no rating gate at all. Premier is priced by your own rating, from {{p_duo2_low}} per match on Duo Pro. For example, 3 matches take {{pct3}} off and 5 matches take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right CS2 session is the one matching your goal tonight. First, the warm-up servers hold one price at every rating: Casual and Deathmatch and Retake Servers are each {{p_casual}} per match. Premier is priced by your own rating, from {{p_duo2_low}} per match on Duo Pro, and a stack fill is priced per seat instead. For example, 3 matches take {{pct3}} off and 5 matches take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Grinding Premier rating?',
@@ -82,10 +82,10 @@ export const counterStrike2: HubPageCopy = {
           'Wingman Duo is the real 2v2 on small maps, {{p_wing}} per match at {{rank_wing}}.',
       },
       {
-        goal: 'Want the widest rating gap allowed?',
+        goal: 'Prefer the FACEIT ladder?',
         service: 'faceit5',
         answer:
-          'A FACEIT Standard five has no party Elo limit, {{p_faceit5}} for {{seats_faceit5}} seats.',
+          'FACEIT Stack fills {{seats_faceit5}} seats with Level 8 and above players, {{p_faceit5}} per match.',
       },
       {
         goal: 'Keep losing the same mid-round?',
@@ -104,16 +104,16 @@ export const counterStrike2: HubPageCopy = {
       ],
     },
     {
-      heading: 'How wide can the rating gap in a CS2 party be?',
+      heading: 'What does a CS2 stack fill include?',
       paragraphs: [
-        'Valve does not publish a CS Rating gap for Premier parties. The official skill-group FAQ says only that a lower-skilled friend is taken into account when matchmaking picks a lobby, with no admission threshold named. First, that means the honest promise is the highest-rated teammate the queue accepts for your rating, checked live in the client rather than asserted here. For example, a {{rank_duo1}} player books Duo Plus at {{p_duo1}} per match, or {{p_duo1_x3}} for 3 matches with {{pct3}} off.',
-        'FACEIT is the documented route for a wide gap. A FACEIT Standard match has no party Elo restriction and no party size restriction inside the team, so a full five from FACEIT may mix Level 2 and Level 10. Super and Premium matches are the strict ones, capped at 3 and 2 players within 400 Elo. FACEIT Stack is the booking for that, {{p_faceit5}} for {{seats_faceit5}} seats at {{rank_faceit5}}, with {{pct5}} off 5 matches and voice using Discord.',
+        'A CS2 stack fill is one order that hires several players at once, so a part-full party becomes a full five. First, Premier 5-Stack queues the Valve ladder at {{p_five}} per match for {{seats_five}} seats, with Premier 20,000+ players on each one. Second, FACEIT Stack queues FACEIT instead at {{p_faceit5}}, with Level 8 and above on every seat. For example, a trio short two players books 2 seats rather than 4, because each seat is priced on its own.',
+        'Both fills start the same way. Pick the service, pick the seat count, pay once, then meet the roster in the order chat. Name your region, the maps you actually practise and the roles you already cover, so nobody turns up expecting to entry when you already do. Voice runs using Discord, friend requests go out on Steam, and nobody needs your login. Bundles still take {{pct3}} off 3 matches and {{pct5}} off 5, read from Duoly checkout in 2026.',
       ],
     },
     {
       heading: 'Example evening: three Duo Plus matches on EU West',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EU West books 3 Duo Plus matches with a Premier 15,000+ teammate, which keeps the party gap small enough to queue comfortably. The total is {{p_duo1_x3}} with the {{pct3}} bundle discount, against {{p_duo1}} for one match. The order chat opens straight after payment, and the first message names the region, the rating and the map pool: Mirage and Anubis, entry on the A side, looking for someone who throws the pop flash.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EU West books 3 Duo Plus matches with a Premier 15,000+ teammate. The total is {{p_duo1_x3}} with the {{pct3}} bundle discount, against {{p_duo1}} for one match. The order chat opens straight after payment, and the first message names the region, the rating and the map pool: Mirage and Anubis, entry on the A side, looking for someone who throws the pop flash.',
         'From there the evening runs on a short plan. You agree roles and a default on each map, voice goes on, and the friend request goes out on Steam. After each match you pick one adjustment, for example saving two rounds earlier instead of forcing a half buy, agreed using Discord. Duo Pro with a 20,000+ caller costs {{p_duo2}} per match at {{rank_duo2}} for the step up, and 5 matches take {{pct5}} off the total.',
       ],
     },
@@ -137,8 +137,8 @@ export const counterStrike2: HubPageCopy = {
         'Duo Pro is {{p_duo2}} per match at {{rank_duo2}}, and {{p_duo2_low}} in the lowest band. Casual and Deathmatch and Retake Servers each cost {{p_casual}}.',
       ],
       [
-        'Can any two ratings queue Premier together?',
-        'Valve publishes no rating gap for a Premier party, so the teammate has to be eligible to queue with you under the rules of the game. FACEIT Standard is the documented wide-gap route, with no party Elo limit.',
+        'How do I book a full CS2 five?',
+        'Premier 5-Stack hires Premier 20,000+ players for {{seats_five}} seats at {{p_five}} per match, and FACEIT Stack covers the FACEIT ladder at {{p_faceit5}} with Level 8 and above.',
       ],
       [
         'Can we play FACEIT instead of Premier?',
@@ -156,6 +156,6 @@ export const counterStrike2: HubPageCopy = {
   },
   closing: {
     heading: 'Ready to queue in Counter-Strike 2?',
-    text: 'Duo Pro is the Premier tier with a 20,000+ teammate from Duoly. Three matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 matches take {{pct5}} off. Retake Servers stay {{p_casual}} per match at any rating, and Casual and Deathmatch costs the same. Valve publishes no Premier party gap, so book a FACEIT Stack when you want the widest rating gap the rules allow in 2026. For example, pick your rating and maps, then agree roles in the order chat using Discord.',
+    text: 'Duo Pro is the Premier tier with a 20,000+ teammate from Duoly. Three matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 matches take {{pct5}} off. Retake Servers stay {{p_casual}} per match at any rating, and Casual and Deathmatch costs the same. Premier 5-Stack hires {{seats_five}} Premier 20,000+ players at {{p_five}} per match, and FACEIT Stack covers the FACEIT ladder at {{p_faceit5}} in 2026. For example, pick your rating and maps, then agree roles in the order chat using Discord.',
   },
 };
