@@ -27,9 +27,9 @@ export const CATALOG = {
   lol: {
     unit: 'game', main: 'duo2', bundles: ['Lane Phase', 'Baron Call', 'Elder Soul'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Diamond 4+ teammate', 'Ranked Solo/Duo with a Diamond player in the role you need. They play around your lane, ping objectives and keep the game calm.', 3.49],
-      ['duo2', 'duo', 'Duo Pro', 'Master+ teammate', 'Ranked Solo/Duo with a Master player who shot-calls: when to fight, which objective is next, when to back off. Ask anything between games.', 3.99, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Grandmaster+ teammate', 'A Grandmaster or Challenger player for Diamond and Master lobbies, when you need a partner who can take over games.', 6.49],
+      ['duo1', 'duo', 'Duo Plus', 'Diamond 4+ teammate', 'Ranked Solo/Duo with a Diamond player in the role you need. They play around your lane, ping objectives and keep the game calm.', 5.49],
+      ['duo2', 'duo', 'Duo Pro', 'Master+ teammate', 'Ranked Solo/Duo with a Master player who shot-calls: when to fight, which objective is next, when to back off. Ask anything between games.', 6.49, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Grandmaster+ teammate', 'A Grandmaster or Challenger player for Diamond and Master lobbies, when you need a partner who can take over games.', 8.99],
       ['arena', 'duo', 'Arena Partner', 'Master+ teammate · Arena', 'Team up in Arena while it’s in rotation. Your partner picks augments that combo with yours and talks through every round.', 4.49, { badge: 'Duo mode' }],
       ['ranked5', 'other', 'Ranked 5s', 'Full five · Master+ players', 'Play Ranked Flex as a real five-stack: Master+ players on every role you need, a planned draft, one shotcaller and voice comms the whole game.', 8.99, { badge: 'Popular' }],
       ['flex', 'other', 'Flex Squad', 'Master+ players · Ranked Flex', 'Bring one to three friends to Ranked Flex and we fill the empty seats with Master+ players, so your five finally has a jungler.', 7.99],
@@ -46,9 +46,9 @@ export const CATALOG = {
   val: {
     unit: 'game', main: 'duo2', bundles: ['Spike Plant', 'Retake', 'Ace'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Ascendant+ teammate', 'Competitive with an Ascendant player who plays a role that fits your agent, calls rotations and trades for you.', 4.99],
-      ['duo2', 'duo', 'Duo Pro', 'Immortal+ teammate', 'Competitive with an Immortal player who calls the round: where to play, when to rotate, what the enemy is doing.', 6.49, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Radiant teammate', 'A Radiant-level player for high-elo lobbies who can hold a site alone and win rounds when it gets messy.', 6.99],
+      ['duo1', 'duo', 'Duo Plus', 'Ascendant+ teammate', 'Competitive with an Ascendant player who plays a role that fits your agent, calls rotations and trades for you.', 5.99],
+      ['duo2', 'duo', 'Duo Pro', 'Immortal+ teammate', 'Competitive with an Immortal player who calls the round: where to play, when to rotate, what the enemy is doing.', 7.99, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Radiant teammate', 'A Radiant-level player for high-elo lobbies who can hold a site alone and win rounds when it gets messy.', 8.49],
       ['skirm', 'duo', 'Skirmish 2v2', 'Immortal+ teammate · 2v2', 'Short 2v2 Skirmish games. Pure aim and trading with a strong partner, perfect between ranked sessions.', 1.99, { badge: 'Duo mode' }],
       ['stack', 'other', 'Stack Fill', 'Immortal+ players · Competitive', 'Queue Competitive with your friends and we fill the empty seats with Immortal+ players who call utility.', 7.49],
       ['premier', 'other', 'Premier Roster', 'Immortal+ players · Premier', 'Missing players for your Premier team? We fill the roster for your weekly matches with players who run real strats.', 8.99],
@@ -64,9 +64,9 @@ export const CATALOG = {
   cs2: {
     unit: 'game', main: 'duo2', bundles: ['Eco Round', 'Force Buy', 'Major Run'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Premier 15,000+ teammate', 'Competitive or Premier with a 15k+ player who trades you, throws the right utility and keeps the economy on track.', 5.49],
-      ['duo2', 'duo', 'Duo Pro', 'Premier 20,000+ teammate', 'Premier with a 20k+ player who calls rounds, buys and rotations, and explains the why between halves.', 5.99, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'FACEIT Duo', 'FACEIT Level 10 teammate', 'Queue FACEIT with a Level 10 player for serious matches, sharper calls and better teammates.', 7.49],
+      ['duo1', 'duo', 'Duo Plus', 'Premier 15,000+ teammate', 'Competitive or Premier with a 15k+ player who trades you, throws the right utility and keeps the economy on track.', 6.99],
+      ['duo2', 'duo', 'Duo Pro', 'Premier 20,000+ teammate', 'Premier with a 20k+ player who calls rounds, buys and rotations, and explains the why between halves.', 7.49, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'FACEIT Duo', 'FACEIT Level 10 teammate', 'Queue FACEIT with a Level 10 player for serious matches, sharper calls and better teammates.', 9.49],
       ['wing', 'duo', 'Wingman Duo', 'Global Elite teammate · 2v2', 'The real 2v2 with a Global Elite Wingman player. Short matches on small maps where every round depends on the two of you.', 4.99, { badge: 'Duo mode' }],
       ['five', 'other', '5-Stack Premier', 'Premier 20,000+ players', 'Bring your friends and we fill your five with players who know their positions and their smokes.', 7.99],
       ['faceit5', 'other', 'FACEIT Stack', 'FACEIT 8+ players', 'Queue FACEIT as a full stack with level 8+ players who call and support.', 9.49],
@@ -81,9 +81,9 @@ export const CATALOG = {
   fn: {
     unit: 'hour', main: 'duo2', bundles: ['Hot Drop', 'Storm Surge', 'Final Circle'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Champion+ teammate', 'An hour of Ranked Duos with a Champion player who calls drops and rotations and gets you into endgame alive.', 10.49, { unit: 'hour' }],
-      ['duo2', 'duo', 'Duo Pro', 'Unreal teammate', 'An hour of Ranked Duos or Zero Build with an Unreal player who handles fights while you play your game.', 12.99, { unit: 'hour', badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Unreal · high Power Ranking', 'An hour with a tournament-level player for high Unreal lobbies and endgames full of pros.', 13.99, { unit: 'hour' }],
+      ['duo1', 'duo', 'Duo Plus', 'Champion+ teammate', 'An hour of Ranked Duos with a Champion player who calls drops and rotations and gets you into endgame alive.', 12.99, { unit: 'hour' }],
+      ['duo2', 'duo', 'Duo Pro', 'Unreal teammate', 'An hour of Ranked Duos or Zero Build with an Unreal player who handles fights while you play your game.', 15.99, { unit: 'hour', badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Unreal · high Power Ranking', 'An hour with a tournament-level player for high Unreal lobbies and endgames full of pros.', 17.49, { unit: 'hour' }],
       ['cup', 'other', 'Tournament Teammate', 'Tournament player · cups & FNCS', 'Compete in Cash Cups, Victory Cups or FNCS qualifiers with a teammate who has tournament earnings. You play together, start to finish.', 15.99, { unit: 'hour', badge: 'Competitive' }],
       ['squad', 'other', 'Squad Fill', 'Unreal players', 'Bring a friend or two and we fill your trio or squad with Unreal players who call rotations.', 14.99, { unit: 'hour' }],
       ['zb', 'duo', 'Zero Build', 'Strong teammate', 'Battle royale without building: positioning, cover and aim, at a relaxed pace.', 8.49, { unit: 'hour', fun: true }],
@@ -97,9 +97,9 @@ export const CATALOG = {
   cod: {
     unit: 'hour', main: 'duo2', bundles: ['Drop Zone', 'Loadout Drop', 'Nuke'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Crimson+ teammate · Multiplayer', 'An hour of multiplayer Ranked Play with a Crimson player who holds lanes and plays the objective with you.', 10.49, { unit: 'hour' }],
-      ['duo2', 'duo', 'Duo Pro', 'Crimson+ teammate · Warzone', 'An hour of Warzone duos with a player who knows the loadouts, the rotations and when to take the fight.', 11.49, { unit: 'hour', badge: 'Most picked' }],
-      ['duo3', 'duo', 'Warzone Ranked', 'Iridescent teammate', 'An hour of Warzone Ranked with an Iridescent player, for when every placement point counts.', 15.49, { unit: 'hour' }],
+      ['duo1', 'duo', 'Duo Plus', 'Crimson+ teammate · Multiplayer', 'An hour of multiplayer Ranked Play with a Crimson player who holds lanes and plays the objective with you.', 12.99, { unit: 'hour' }],
+      ['duo2', 'duo', 'Duo Pro', 'Crimson+ teammate · Warzone', 'An hour of Warzone duos with a player who knows the loadouts, the rotations and when to take the fight.', 14.49, { unit: 'hour', badge: 'Most picked' }],
+      ['duo3', 'duo', 'Warzone Ranked', 'Iridescent teammate', 'An hour of Warzone Ranked with an Iridescent player, for when every placement point counts.', 19.49, { unit: 'hour' }],
       ['rebirth', 'duo', 'Rebirth Duo', 'Crimson+ teammate · Resurgence', 'Fast Resurgence games on the small island, where respawns keep the action going. Great for quick sessions.', 10.49, { unit: 'hour', badge: 'Fast' }],
       ['quads', 'other', 'Warzone Quad Fill', 'Crimson+ players', 'Bring a friend or two and we fill your quad with players who play for the win.', 14.99, { unit: 'hour' }],
       ['mp4', 'other', 'Ranked 4-Stack', 'Crimson+ players · Multiplayer', 'Fill your multiplayer Ranked Play team with players who know the maps and the spawns.', 13.99, { unit: 'hour' }],
@@ -113,8 +113,8 @@ export const CATALOG = {
   apex: {
     unit: 'hour', main: 'duo2', bundles: ['Hot Zone', 'Ring Closing', 'Champion Squad'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate · Ranked', 'An hour of Ranked with a Diamond player: you two plus one more, with clear calls on drops, rotations and fights.', 11.49, { unit: 'hour' }],
-      ['duo2', 'duo', 'Duo Pro', 'Master / Predator teammate · Ranked', 'An hour of Ranked with a Master or Apex Predator who reads the ring and takes the right fights.', 13.99, { unit: 'hour', badge: 'Most picked' }],
+      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate · Ranked', 'An hour of Ranked with a Diamond player: you two plus one more, with clear calls on drops, rotations and fights.', 14.49, { unit: 'hour' }],
+      ['duo2', 'duo', 'Duo Pro', 'Master / Predator teammate · Ranked', 'An hour of Ranked with a Master or Apex Predator who reads the ring and takes the right fights.', 17.49, { unit: 'hour', badge: 'Most picked' }],
       ['duos', 'duo', 'Duos Playlist', 'Master teammate · 2-player squads', 'The Duos mode: just the two of you, more fights and quicker games.', 10.49, { unit: 'hour', badge: 'Duo mode' }],
       ['trio', 'other', 'Full Trio', 'Two Master+ players', 'Two high-rank players fill your trio. You play your legend, they handle the rest.', 17.99, { unit: 'hour' }],
       ['mix', 'duo', 'Mixtape', 'Strong teammate', 'Team Deathmatch, Control and Gun Run. Fast, fun modes to warm up or learn a new legend.', 7.99, { unit: 'hour', badge: 'Fun', fun: true }],
@@ -127,9 +127,9 @@ export const CATALOG = {
   r6: {
     unit: 'game', main: 'duo2', bundles: ['Breach', 'Plant', 'Ace Round'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Emerald+ teammate', 'Ranked with an Emerald player who drones, calls and takes anchor or entry, whichever your team needs.', 3.99],
-      ['duo2', 'duo', 'Duo Pro', 'Diamond+ teammate', 'Ranked with a Diamond player who calls the round: drones, rotations, where the defenders are.', 4.99, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Champion teammate', 'A Champion-level player for high-elo lobbies who can win rounds on their own.', 6.99],
+      ['duo1', 'duo', 'Duo Plus', 'Emerald+ teammate', 'Ranked with an Emerald player who drones, calls and takes anchor or entry, whichever your team needs.', 4.99],
+      ['duo2', 'duo', 'Duo Pro', 'Diamond+ teammate', 'Ranked with a Diamond player who calls the round: drones, rotations, where the defenders are.', 5.99, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Champion teammate', 'A Champion-level player for high-elo lobbies who can win rounds on their own.', 8.49],
       ['stack', 'other', '5-Stack Fill', 'Diamond+ players', 'Bring your friends and we fill your five with players who run real strats and utility.', 6.49],
       ['quick', 'duo', 'Quick Match', 'Strong teammate', 'Unranked games to learn maps and operators with someone who explains as you play.', 2.49, { fun: true }],
       ['arcade', 'duo', 'Arcade & Deathmatch', 'Strong teammate', 'Warm-up modes and arcade playlists between ranked games.', 2.49, { fun: true }],
@@ -142,9 +142,9 @@ export const CATALOG = {
   mr: {
     unit: 'game', main: 'duo2', bundles: ['Assemble', 'Heroic Run', 'Infinity Grind'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate', 'Competitive with a Diamond player who fills the role your team is missing and keeps the fights together.', 2.99],
-      ['duo2', 'duo', 'Duo Pro', 'Grandmaster+ teammate', 'Competitive with a Grandmaster player who tracks ults, calls dives and knows when to reset.', 3.49, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Celestial+ teammate', 'A Celestial or higher player for high-rank lobbies who can carry fights on any role.', 3.99],
+      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate', 'Competitive with a Diamond player who fills the role your team is missing and keeps the fights together.', 3.49],
+      ['duo2', 'duo', 'Duo Pro', 'Grandmaster+ teammate', 'Competitive with a Grandmaster player who tracks ults, calls dives and knows when to reset.', 4.49, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Celestial+ teammate', 'A Celestial or higher player for high-rank lobbies who can carry fights on any role.', 4.99],
       ['teamup', 'duo', 'Team-Up Duo', 'Grandmaster+ teammate', 'Pick a hero pair with a Team-Up ability and learn to pull it off together, in Quick Match or Competitive.', 3.99, { badge: 'Fun' }],
       ['six', 'other', '6-Stack Fill', 'Grandmaster+ players', 'Bring your friends and we fill your six with players on the roles you need, on voice.', 5.99],
       ['quick', 'duo', 'Quick Match & Arcade', 'Strong teammate', 'No-pressure games to try new heroes or just have fun.', 2.49, { fun: true }],
@@ -156,9 +156,9 @@ export const CATALOG = {
   ow: {
     unit: 'game', main: 'duo2', bundles: ['Push', 'Payload', 'Ult Charged'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate', 'Role Queue Competitive with a Diamond player who complements your role and plays around you.', 2.99],
-      ['duo2', 'duo', 'Duo Pro', 'Master+ teammate', 'Competitive with a Master player who tracks cooldowns, calls engages and explains fights between rounds.', 3.99, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Grandmaster+ teammate', 'A Grandmaster or Champion player for high-rank lobbies who can swing fights on their own.', 4.49],
+      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate', 'Role Queue Competitive with a Diamond player who complements your role and plays around you.', 3.49],
+      ['duo2', 'duo', 'Duo Pro', 'Master+ teammate', 'Competitive with a Master player who tracks cooldowns, calls engages and explains fights between rounds.', 4.99, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Grandmaster+ teammate', 'A Grandmaster or Champion player for high-rank lobbies who can swing fights on their own.', 5.49],
       ['stadium', 'duo', 'Stadium Duo', 'Master+ teammate · Stadium', 'Stadium runs together: plan your builds round by round and close out the best of seven.', 4.99, { badge: 'Fun' }],
       ['five', 'other', '5-Stack Role Queue', 'Master+ players', 'Bring your friends and we fill your five on the roles you need, for a real comp night.', 5.99],
       ['qp', 'duo', 'Quick Play & Arcade', 'Strong teammate', 'Casual games and arcade modes with someone fun and good.', 2.49, { fun: true }],
@@ -171,9 +171,9 @@ export const CATALOG = {
     // per hour: a match is only ~7 minutes (pricing review 2026-11); the Teams fill stays per game
     unit: 'hour', main: 'duo2', bundles: ['Boost Pad', 'Aerial', 'Supersonic Run'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Champion+ teammate · 2v2', 'An hour of Ranked Doubles with a Champion player who rotates properly, so you’re never both chasing the ball.', 7.99, { unit: 'hour' }],
-      ['duo2', 'duo', 'Duo Pro', 'Grand Champion teammate · 2v2', 'An hour of Ranked Doubles with a Grand Champion who sets you up, covers back post and calls boost.', 9.49, { unit: 'hour', badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Supersonic Legend · 2v2', 'An hour of high-rank Doubles with a Supersonic Legend who wins kickoffs and plays like a pro.', 12.99, { unit: 'hour' }],
+      ['duo1', 'duo', 'Duo Plus', 'Champion+ teammate · 2v2', 'An hour of Ranked Doubles with a Champion player who rotates properly, so you’re never both chasing the ball.', 9.99, { unit: 'hour' }],
+      ['duo2', 'duo', 'Duo Pro', 'Grand Champion teammate · 2v2', 'An hour of Ranked Doubles with a Grand Champion who sets you up, covers back post and calls boost.', 11.99, { unit: 'hour', badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Supersonic Legend · 2v2', 'An hour of high-rank Doubles with a Supersonic Legend who wins kickoffs and plays like a pro.', 15.99, { unit: 'hour' }],
       ['three', 'other', '3v3 Standard', 'Grand Champion players', 'Ranked Standard with your friend and one or two Grand Champions filling the team.', 5.99, { unit: 'game' }],
       ['casual', 'duo', 'Casual 3v3', 'Strong teammate', 'An hour of relaxed casual matches with someone who actually passes.', 6.49, { unit: 'hour', fun: true }],
       ['extra', 'duo', 'Extra Modes', 'Strong teammate', 'An hour of Rumble, Hoops, Snow Day, Dropshot and Heatseeker. Pure fun.', 6.49, { unit: 'hour', badge: 'Fun', fun: true }],
@@ -185,8 +185,8 @@ export const CATALOG = {
   tft: {
     unit: 'game', main: 'duo2', bundles: ['Early Augment', 'Top Four', 'Three-Star Run'],
     services: [
-      ['duo1', 'duo', 'Double Up', 'Master+ partner · team of two', 'Play Double Up with a Master player: you plan the boards together and send help at the right moments.', 6.49, { badge: 'Duo mode' }],
-      ['duo2', 'duo', 'Board Coach', 'Master+ player · live', 'You play your ranked game; a Master player watches your screen on Discord and tells you what to buy, roll and position, live.', 8.49, { badge: 'Most picked' }],
+      ['duo1', 'duo', 'Double Up', 'Master+ partner · team of two', 'Play Double Up with a Master player: you plan the boards together and send help at the right moments.', 7.99, { badge: 'Duo mode' }],
+      ['duo2', 'duo', 'Board Coach', 'Master+ player · live', 'You play your ranked game; a Master player watches your screen on Discord and tells you what to buy, roll and position, live.', 10.49, { badge: 'Most picked' }],
       ['norm', 'duo', 'Normals & Hyper Roll', 'Strong teammate', 'Fast, casual lobbies together, with good chat and no LP on the line.', 3.99, { fun: true }],
       ...gg('game', 'Normals or Hyper Roll', 'Diamond+', 'Double Up', [4.99, 5.49], 'TFT', 'a head-to-head in the same lobby: whoever places higher wins'),
       ['econ', 'training', 'Comp & Econ Review', 'Master+ coach · 1 hour', 'Find comps that suit you, when to roll or level, and how to manage gold from stage two.', COACHING_PRICE, { unit: 'hour' }]
@@ -195,8 +195,8 @@ export const CATALOG = {
   fc: {
     unit: 'game', main: 'duo2', bundles: ['Kick-Off', 'Hat Trick', 'Title Race'],
     services: [
-      ['duo2', 'duo', 'Co-op Rivals', 'Division 1+ partner · 2v2', 'Play Co-op Rivals with a Division 1 partner who links up, tracks back and talks you through it.', 2.99, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Co-op Elite', 'Elite partner · 2v2', 'Co-op Rivals with an Elite-level player for the top divisions.', 4.49],
+      ['duo2', 'duo', 'Co-op Rivals', 'Division 1+ partner · 2v2', 'Play Co-op Rivals with a Division 1 partner who links up, tracks back and talks you through it.', 3.49, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Co-op Elite', 'Elite partner · 2v2', 'Co-op Rivals with an Elite-level player for the top divisions.', 5.49],
       ['clubs', 'other', 'Clubs Lineup', 'Division 1+ players', 'Fill your Clubs team with players who hold their position and actually pass.', 5.49],
       ['friendly', 'duo', 'Practice Match', 'Elite opponent', 'Play an online friendly against an Elite player who tells you what to fix after the match.', 3.99, { fun: true }],
       ['kickoff', 'duo', 'Kick-Off & Friendlies', 'Fun partner', 'Couch-style friendlies on the same team, just for fun.', 2.49, { fun: true }],
@@ -208,9 +208,9 @@ export const CATALOG = {
   arc: {
     unit: 'hour', main: 'duo2', bundles: ['Supply Run', 'Deep Raid', 'Full Expedition'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Experienced raider', 'An hour of raids with a player who knows the loot spots and the safe ways out.', 8.99, { unit: 'hour' }],
-      ['duo2', 'duo', 'Duo Pro', 'Veteran raider', 'An hour with a Veteran who handles fights, picks the routes and gets you out with your loot.', 11.49, { unit: 'hour', badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Elite raider', 'An hour with one of the best raiders around, for high-risk maps and big extractions.', 15.49, { unit: 'hour' }],
+      ['duo1', 'duo', 'Duo Plus', 'Experienced raider', 'An hour of raids with a player who knows the loot spots and the safe ways out.', 10.99, { unit: 'hour' }],
+      ['duo2', 'duo', 'Duo Pro', 'Veteran raider', 'An hour with a Veteran who handles fights, picks the routes and gets you out with your loot.', 14.49, { unit: 'hour', badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Elite raider', 'An hour with one of the best raiders around, for high-risk maps and big extractions.', 19.49, { unit: 'hour' }],
       ['squad', 'other', 'Full Squad', 'Two Veteran raiders', 'Two Veterans join you as a full trio. You loot, they keep you alive.', 17.99, { unit: 'hour' }],
       ['escort', 'other', 'Escort Run', 'Elite squad', 'A squad escorts you to the big loot and back out, safely.', 15.99, { unit: 'hour', badge: 'Popular' }],
       ['learn', 'duo', 'Learn the Maps', 'Friendly raider', 'Relaxed runs to learn the maps, the best loot routes and where to extract.', 7.99, { unit: 'hour', fun: true }],
@@ -221,8 +221,8 @@ export const CATALOG = {
   mc: {
     unit: 'hour', main: 'duo2', bundles: ['Spawn Point', 'Diamond Hunt', 'Ender Run'],
     services: [
-      ['duo1', 'duo', 'PvP Duo', 'Skilled PvPer', 'An hour of PvP on the server and mode you pick: Bedwars, SkyWars, Duels, UHC or Box PvP. Your teammate covers you, calls the fights and shares tips as you go.', 9.49, { unit: 'hour' }],
-      ['duo2', 'duo', 'PvP Duo Pro', 'Top PvPer', 'An hour with a top PvPer from servers like Hypixel or Minemen. They take the hard fights, carry the clutches and show you how they win them.', 12.99, { unit: 'hour', badge: 'Most picked' }],
+      ['duo1', 'duo', 'PvP Duo', 'Skilled PvPer', 'An hour of PvP on the server and mode you pick: Bedwars, SkyWars, Duels, UHC or Box PvP. Your teammate covers you, calls the fights and shares tips as you go.', 11.99, { unit: 'hour' }],
+      ['duo2', 'duo', 'PvP Duo Pro', 'Top PvPer', 'An hour with a top PvPer from servers like Hypixel or Minemen. They take the hard fights, carry the clutches and show you how they win them.', 15.99, { unit: 'hour', badge: 'Most picked' }],
       ['smp', 'duo', 'Survival Partner', 'Survival & SMP expert', 'Get ahead on your SMP or a fresh world: gear up fast, set up farms, build a safe base and handle the fights when someone comes for your stuff.', 8.99, { unit: 'hour' }],
       ['squad', 'other', 'Server Squad', 'Skilled PvPers', 'We fill your team for Bedwars fours, SkyWars teams, Hunger Games or UHC events with players who know the mode.', 9.99, { unit: 'hour' }],
       ['surv', 'duo', 'Survival Together', 'Friendly builder', 'Start a world or join yours: build a base, go mining and explore together at your own pace.', 8.49, { unit: 'hour', fun: true }],
@@ -238,9 +238,9 @@ export const CATALOG = {
   pu: {
     unit: 'game', main: 'duo2', bundles: ['Lane Push', 'Goal Rush', 'Zapdos Steal'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Ultra+ teammate', 'Ranked with an Ultra player who plays the lane next to yours and calls objectives.', 2.49],
-      ['duo2', 'duo', 'Duo Pro', 'Master teammate', 'Ranked with a Master player who plans rotations around Drednaw, Rotom and Zapdos.', 2.99, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Legend teammate', 'A Legend player, the highest rank, for your top-rated games.', 3.99],
+      ['duo1', 'duo', 'Duo Plus', 'Ultra+ teammate', 'Ranked with an Ultra player who plays the lane next to yours and calls objectives.', 2.99],
+      ['duo2', 'duo', 'Duo Pro', 'Master teammate', 'Ranked with a Master player who plans rotations around Drednaw, Rotom and Zapdos.', 3.49, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Legend teammate', 'A Legend player, the highest rank, for your top-rated games.', 4.99],
       ['squad', 'other', 'Full Squad', 'Master players', 'Fill your five with players on set roles, on voice.', 4.99],
       ['quick', 'duo', 'Standard & Quick Battle', 'Strong teammate', 'Relaxed games to practise new Pokémon with backup.', 2.49, { fun: true }],
       ...gg('game', 'Standard or Quick Battle', 'Ultra+', 'Ranked', [2.49, 2.99], 'Pokémon Unite', '1v1 custom matches'),
@@ -255,9 +255,9 @@ export const CATALOG = {
   dota: {
     unit: 'game', main: 'duo2', bundles: ['First Blood', 'Roshan Pit', 'Aegis Run'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Ancient+ teammate', 'Ranked with an Ancient player in the position you need. They lane with you, ward, stack and call when to group.', 4.49],
-      ['duo2', 'duo', 'Duo Pro', 'Divine+ teammate', 'Ranked with a Divine player who calls the game: when to smoke, when to take Roshan, which tower is next. Ask anything between games.', 5.49, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Immortal teammate', 'An Immortal player for Ancient and Divine lobbies, when you need a partner who can take over games.', 7.99],
+      ['duo1', 'duo', 'Duo Plus', 'Ancient+ teammate', 'Ranked with an Ancient player in the position you need. They lane with you, ward, stack and call when to group.', 5.49],
+      ['duo2', 'duo', 'Duo Pro', 'Divine+ teammate', 'Ranked with a Divine player who calls the game: when to smoke, when to take Roshan, which tower is next. Ask anything between games.', 6.99, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Immortal teammate', 'An Immortal player for Ancient and Divine lobbies, when you need a partner who can take over games.', 9.99],
       ['party5', 'other', 'Ranked 5-Stack', 'Full five · Divine+ players', 'Queue ranked as a real five-stack: Divine+ players in every position you need, a planned draft, one shotcaller and voice comms all game.', 8.49, { badge: 'Popular' }],
       ['turbo', 'duo', 'Turbo', 'Strong teammate · fast games', 'Fast games of about 20 minutes with more gold and quicker respawns. Great to try a new hero.', 3.49, { badge: 'Fast', fun: true }],
       ['unranked', 'duo', 'Unranked All Pick', 'Strong teammate', 'A full unranked game to learn a hero or position with a strong player covering for you.', 3.99, { fun: true }],
@@ -271,8 +271,8 @@ export const CATALOG = {
     // Retail World of Warcraft. Mythic+ keys and rated arena have their own rating ladders (lib/ranks.js).
     unit: 'hour', main: 'duo2', bundles: ['Timed Key', 'Great Vault', 'Keystone Hero'],
     services: [
-      ['duo1', 'duo', 'Mythic+ Duo', '2,500+ rated teammate', 'An hour of Mythic+ keys with a 2,500+ rated player who knows the routes, the kicks and the pulls, so your keys get timed.', 10.49, { unit: 'hour' }],
-      ['duo2', 'duo', 'Mythic+ Pro', '3,000+ rated teammate', 'An hour of high keys with a 3,000+ rated player who plans the route, calls interrupts and defensives, and explains every pull.', 12.99, { unit: 'hour', badge: 'Most picked' }],
+      ['duo1', 'duo', 'Mythic+ Duo', '2,500+ rated teammate', 'An hour of Mythic+ keys with a 2,500+ rated player who knows the routes, the kicks and the pulls, so your keys get timed.', 12.99, { unit: 'hour' }],
+      ['duo2', 'duo', 'Mythic+ Pro', '3,000+ rated teammate', 'An hour of high keys with a 3,000+ rated player who plans the route, calls interrupts and defensives, and explains every pull.', 15.99, { unit: 'hour', badge: 'Most picked' }],
       ['arena', 'duo', 'Arena 2v2', 'Duelist+ partner · 2v2', 'An hour of rated 2v2 with a Duelist-level partner who calls swaps, crowd control and cooldowns.', 12.99, { unit: 'hour', badge: 'Duo mode' }],
       ['keys', 'other', 'Key Group Fill', '2,500+ rated players · Mythic+', 'Short on players for your key? We fill your group with 2,500+ rated players on the roles you’re missing.', 10.99, { unit: 'hour' }],
       ['arena3', 'other', 'Arena 3v3 Team', 'Duelist+ players · 3v3', 'One or two Duelist-level players join you for rated 3v3, with a plan for every comp you meet.', 12.49, { unit: 'hour' }],
@@ -286,8 +286,8 @@ export const CATALOG = {
   pubg: {
     unit: 'hour', main: 'duo2', bundles: ['Pochinki Drop', 'Blue Zone', 'Chicken Dinner'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate · Ranked', 'An hour of Ranked with a Diamond player who calls the drop, the rotations and the compound to hold.', 10.49, { unit: 'hour' }],
-      ['duo2', 'duo', 'Duo Pro', 'Master teammate · Ranked', 'An hour of Ranked with a Master player who reads the zone, picks the fights worth taking and gets you to the final circle.', 12.99, { unit: 'hour', badge: 'Most picked' }],
+      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate · Ranked', 'An hour of Ranked with a Diamond player who calls the drop, the rotations and the compound to hold.', 12.99, { unit: 'hour' }],
+      ['duo2', 'duo', 'Duo Pro', 'Master teammate · Ranked', 'An hour of Ranked with a Master player who reads the zone, picks the fights worth taking and gets you to the final circle.', 15.99, { unit: 'hour', badge: 'Most picked' }],
       ['duos', 'duo', 'Normal Duos', 'Master teammate · 2-player squads', 'The Duos mode: just the two of you, more fights and quicker decisions, with no rank on the line.', 9.99, { unit: 'hour', badge: 'Duo mode' }],
       ['squad', 'other', 'Squad Fill', 'Master players', 'Bring a friend or two and we fill your squad with Master players who call rotations and trade properly.', 13.99, { unit: 'hour' }],
       ['arcade', 'duo', 'Arcade & TDM', 'Strong teammate', 'Team Deathmatch, Intense Battle Royale and Arcade modes. Fast, fun and great for warming up your spray.', 7.99, { unit: 'hour', badge: 'Fun', fun: true }],
@@ -299,9 +299,9 @@ export const CATALOG = {
   wr: {
     unit: 'game', main: 'duo2', bundles: ['Turret Dive', 'Dragon Soul', 'Nexus Push'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate', 'Ranked with a Diamond player in the lane you need. They play around you, track the jungler and call dragons.', 2.49],
-      ['duo2', 'duo', 'Duo Pro', 'Master+ teammate', 'Ranked with a Master player who shot-calls: when to fight, which objective is next, when to back off.', 2.99, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Grandmaster+ teammate', 'A Grandmaster, Challenger or Sovereign player for your highest-rated games, who can take over a match.', 3.99],
+      ['duo1', 'duo', 'Duo Plus', 'Diamond+ teammate', 'Ranked with a Diamond player in the lane you need. They play around you, track the jungler and call dragons.', 2.99],
+      ['duo2', 'duo', 'Duo Pro', 'Master+ teammate', 'Ranked with a Master player who shot-calls: when to fight, which objective is next, when to back off.', 3.49, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Grandmaster+ teammate', 'A Grandmaster, Challenger or Sovereign player for your highest-rated games, who can take over a match.', 4.99],
       ['five', 'other', 'Ranked 5-Stack', 'Master+ players', 'Bring your friends and we fill your five with Master+ players on the lanes you need, on voice.', 4.99],
       ['aram', 'duo', 'ARAM', 'Strong teammate · one lane', 'Random champions, one lane, nonstop teamfights. Fun games with someone good.', 2.49, { fun: true }],
       ['norm', 'duo', 'Normal Match', 'Strong teammate', 'Unranked games to try a new champion or lane with backup.', 2.49, { fun: true }],
@@ -313,9 +313,9 @@ export const CATALOG = {
   dl: {
     unit: 'game', main: 'duo2', bundles: ['Soul Urn', 'Mid Boss', 'Patron Down'],
     services: [
-      ['duo1', 'duo', 'Duo Plus', 'Oracle+ teammate', 'Ranked with an Oracle player who lanes with you, secures souls and calls when to push or rotate.', 4.49],
-      ['duo2', 'duo', 'Duo Pro', 'Phantom+ teammate', 'Ranked with a Phantom player who calls the map: Urn runs, Mid Boss timings and which lane to take next.', 5.49, { badge: 'Most picked' }],
-      ['duo3', 'duo', 'Duo Apex', 'Ascendant+ teammate', 'An Ascendant or Eternus player for high-rank lobbies, who can win fights on their own.', 6.99],
+      ['duo1', 'duo', 'Duo Plus', 'Oracle+ teammate', 'Ranked with an Oracle player who lanes with you, secures souls and calls when to push or rotate.', 5.49],
+      ['duo2', 'duo', 'Duo Pro', 'Phantom+ teammate', 'Ranked with a Phantom player who calls the map: Urn runs, Mid Boss timings and which lane to take next.', 6.99, { badge: 'Most picked' }],
+      ['duo3', 'duo', 'Duo Apex', 'Ascendant+ teammate', 'An Ascendant or Eternus player for high-rank lobbies, who can win fights on their own.', 8.49],
       ['six', 'other', '6-Stack Fill', 'Phantom+ players', 'Bring your friends and we fill your six with Phantom+ players who know their heroes and their lanes.', 6.49],
       ['unranked', 'duo', 'Unranked Matches', 'Strong teammate', 'Full matches without rank pressure, to learn a new hero or the map with someone covering you.', 3.99, { fun: true }],
       ...gg('game', 'unranked matches', 'Phantom+', 'ranked', [4.99, 5.49], 'Deadlock', '1v1 lane duels in a private lobby'),

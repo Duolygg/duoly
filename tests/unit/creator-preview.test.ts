@@ -21,8 +21,8 @@ it.each(['EUR', 'USD'] as const)(
       const checkout = applyOrderDiscounts(built, { pro, creator: true }, 10);
       const preview = creatorPricePreview(selection, pro, 1.1, currency);
       expect(preview.amountEurMinor).toBe(checkout.row.amount_eur_cents);
-      expect(built.row.amount_eur_cents).toBe(1077);
-      expect(preview.amountEurMinor).toBe(969);
+      expect(built.row.amount_eur_cents).toBe(1752);
+      expect(preview.amountEurMinor).toBe(1577);
       const rate = currency === 'USD' ? 1.111 : 1;
       expect(preview.amountMinor).toBe(
         Math.round(checkout.row.amount_eur_cents * rate),

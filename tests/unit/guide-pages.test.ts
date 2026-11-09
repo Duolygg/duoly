@@ -48,22 +48,22 @@ describe('free versus paid guide', () => {
   });
 
   it('pins the headline examples shown on the pages', () => {
-    expect(prices.lolPro).toBe('€3.99');
-    expect(prices.lolPro3).toBe('€10.77');
-    expect(prices.mrPro).toBe('€3.49');
-    expect(prices.mrPro3).toBe('€9.42');
-    expect(prices.valPro).toBe('€5.99');
-    expect(prices.valPro3).toBe('€16.17');
-    expect(prices.fnPro).toBe('€12.49');
-    expect(prices.fnPro3).toBe('€33.72');
-    expect(prices.owPro).toBe('€3.99');
-    expect(prices.owPro3).toBe('€10.77');
-    expect(prices.apexPro).toBe('€13.99');
-    expect(prices.apexPro3).toBe('€37.77');
-    expect(prices.codPro).toBe('€11.49');
-    expect(prices.codPro3).toBe('€31.02');
-    expect(prices.r6Pro).toBe('€4.49');
-    expect(prices.r6Pro3).toBe('€12.12');
+    expect(prices.lolPro).toBe('€5.99');
+    expect(prices.lolPro3).toBe('€16.17');
+    expect(prices.mrPro).toBe('€4.49');
+    expect(prices.mrPro3).toBe('€12.12');
+    expect(prices.valPro).toBe('€7.49');
+    expect(prices.valPro3).toBe('€20.22');
+    expect(prices.fnPro).toBe('€14.99');
+    expect(prices.fnPro3).toBe('€40.47');
+    expect(prices.owPro).toBe('€4.99');
+    expect(prices.owPro3).toBe('€13.47');
+    expect(prices.apexPro).toBe('€17.49');
+    expect(prices.apexPro3).toBe('€47.22');
+    expect(prices.codPro).toBe('€14.49');
+    expect(prices.codPro3).toBe('€39.12');
+    expect(prices.r6Pro).toBe('€5.49');
+    expect(prices.r6Pro3).toBe('€14.82');
     expect([prices.pct3, prices.pct5, prices.pct10]).toEqual([
       '10%',
       '20%',
@@ -123,7 +123,7 @@ describe('free versus paid guide', () => {
     const page = intentPages.find((p) => p.gameSlug === 'league-of-legends')!;
     const faq = guideFaq(page, prices);
     expect(faq).toHaveLength(page.faq.length + 2);
-    expect(faq.at(-1)![1]).toContain('€10.77');
+    expect(faq.at(-1)![1]).toContain('€16.17');
   });
 
   // The six teammate guides added in this branch; League and Marvel Rivals keep

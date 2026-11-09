@@ -3,7 +3,7 @@
     "content": [
       {
         "type": "text",
-        "text": "EUR 6.49 total for 1 game; EUR 6.49 per game. Base price before account perks. No reservation. https://duoly.gg/?game=val&service=duo2&agent=claude&rank=Platinum&region=EU&qty=1#modes-h"
+        "text": "EUR 7.99 total for 1 game; EUR 7.99 per game. Base price before account perks. No reservation. https://duoly.gg/?game=val&service=duo2&agent=claude&rank=Platinum&region=EU&qty=1#modes-h"
       }
     ],
     "structuredContent": {
@@ -11,12 +11,12 @@
       "basis": "base price before account perks",
       "notReserved": true,
       "currency": "EUR",
-      "amountMinor": 649,
-      "amountEurMinor": 649,
-      "perUnitMinor": 649,
+      "amountMinor": 799,
+      "amountEurMinor": 799,
+      "perUnitMinor": 799,
       "savingMinor": 0,
       "bundleDiscountPercent": 0,
-      "formattedPrice": "€6.49",
+      "formattedPrice": "€7.99",
       "unit": "game",
       "quantity": 1,
       "quotedAt": "2026-11-07T11:03:03.938Z",
