@@ -74,6 +74,7 @@ export function renderLlms() {
       '/pricing.md',
       'Every game and bookable service with its price per rank, generated from the pricing engine on each deploy.',
     ),
+    '',
     'Tool inputs, outputs and limits, plus the setup steps, are documented at https://duoly.gg/developers/mcp.',
     '',
     '## Setup and pricing',

@@ -74,6 +74,27 @@ const { story, founders, milestones } = ABOUT_STORY;
 /** Discord invite checked on 9 November 2026: 301 to discord.com, then HTTP 200. */
 const LINKS_CHECKED = '9 November 2026';
 /**
+ * The five refusals the terms of service put in writing, as scannable cards
+ * beside the paragraph that states them in full. Each one is a rule in
+ * src/design-reference/lib/legal.js, not a promise invented for this page.
+ */
+const NOT_DUOLY: [string, string][] = [
+  [
+    'No account sharing',
+    'Every session is played together, on your own account.',
+  ],
+  [
+    'No rank or win promised',
+    'A teammate accepts from a queue, and no result is sold.',
+  ],
+  [
+    'No dating services',
+    'Gamer Girl and Social sessions are company and conversation.',
+  ],
+  ['Nobody under 18', 'Customers and teammates both have to be 18 or older.'],
+  ['No off-platform payment', 'Payment, chat and reports stay on duoly.gg.'],
+];
+/**
  * The year the catalog this page quotes belongs to, taken from the shared
  * catalog price date rather than typed, so "in 2026" cannot outlive 2026.
  */
@@ -97,7 +118,7 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
     <SeoHero
       eyebrow="About Duoly"
       h1="About Duoly"
-      lead={`Duoly (duoly.gg) is an online marketplace, based in Austria, where players book rank-verified gaming teammates and coaches by the game or by the hour for ${PLAYABLE_GAMES} games.`}
+      lead={`Duoly (duoly.gg) is an Austrian marketplace for rank-verified gaming teammates and coaches, booked by the game or by the hour across ${PLAYABLE_GAMES} games. Here is who runs it, how players are checked and what a session costs.`}
       cta={{ href: '/games', label: `Browse ${PLAYABLE_GAMES} games` }}
       secondary={{ href: '/fees-and-refunds', label: 'Prices and refunds' }}
       art={[
@@ -133,8 +154,8 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
         {SINGLE_GAME.total}, ten of them cost {BUNDLE_PERCENTS[2]}% less each,
         and {COACHING_HOUR.label} costs {COACHING_HOUR.total}. Duoly also runs
         an MCP server in {CATALOG_YEAR}, so an assistant such as Claude reads a
-        real price and prepares a booking link before you open the site, with
-        session voice running using Discord.
+        real price and prepares a booking link before you open the site. Voice
+        for a session runs using Discord.
       </p>
     </section>
 
@@ -154,7 +175,7 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
         the sole proprietorship in the table below, registered under GISA{' '}
         {BUSINESS.gisa} and listed on the <a href="/imprint">imprint</a>. Third,
         duoly.gg has no mobile app, because booking, payment and the order room
-        all happen in a browser, with voice running using Discord. Duolingo is a
+        all happen in a browser and sessions run using Discord. Duolingo is a
         language learning company and claims no partnership with Duoly.
       </p>
     </section>
@@ -186,8 +207,8 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
         the service has run for weeks rather than years. For example, no
         independent review history exists yet. What exists today is a named
         operator, a trade licence number, published prices from{' '}
-        {SHORT_GAME_PRICE} and refund rules you can read before paying, with{' '}
-        {SHARE_PERCENT}% of each order going to the teammate who plays it using
+        {SHORT_GAME_PRICE} and refund rules you can read before paying.
+        Teammates keep {SHARE_PERCENT}% of each order and meet customers using
         Discord.
       </p>
       <div class="about-table-wrap">
@@ -363,6 +384,18 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
         game beside a Master+ player using Discord voice, and a{' '}
         {BUNDLE_PERCENTS[2]}% bundle discount still buys no result.
       </p>
+      {/* The same five refusals as scannable cards. Plain divs and spans on
+          purpose: the paragraph above is the extractable answer, and repeating
+          it in p or li elements would duplicate the text for a reader and for
+          anything that reads the page as prose. */}
+      <div class="about-nots">
+        {NOT_DUOLY.map(([label, detail]) => (
+          <div>
+            <span class="about-not-label">{label}</span>
+            <span class="about-not-detail">{detail}</span>
+          </div>
+        ))}
+      </div>
     </section>
 
     {milestones.length > 0 && (
@@ -547,6 +580,33 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
   .about-person-link {
     margin: 10px 0 0;
     font-size: 14px;
+  }
+  .about-nots {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .about-nots > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: #120b22;
+    border: 1px solid rgba(196, 170, 255, 0.18);
+  }
+  .about-not-label {
+    font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #f3eeff;
+  }
+  .about-not-detail {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: #a79dc4;
   }
   .about-timeline {
     list-style: none;
