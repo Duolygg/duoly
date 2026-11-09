@@ -29,6 +29,21 @@ export const COACHING_SLUGS = [
 ] as const;
 export const GUIDE_PATH = '/blog/what-is-an-egirl';
 export const LFG_GUIDE_PATH = '/blog/what-does-lfg-mean';
+/**
+ * The answer-first guides added for the November 2026 GEO pass, in the order
+ * /blog lists them. Each one has its own page file under src/pages/blog.
+ */
+export const GUIDE_PATHS = [
+  '/blog/how-to-find-a-valorant-duo',
+  '/blog/how-to-choose-a-gaming-coach',
+  '/blog/free-lfg-or-paid-teammate',
+] as const;
+/** Platform comparisons, each sourced from the rival's own dated pages. */
+export const COMPARE_PATHS = [
+  '/compare/e-pal',
+  '/compare/metafy',
+  '/compare/queueup',
+] as const;
 /** The two all-games directories: coaching and teammates, across every game. */
 export const COACHING_INDEX_PATH = '/coaching';
 export const BUDDIES_PATH = '/find-gaming-buddies';
@@ -60,7 +75,8 @@ export const INDEXABLE_PATHS = [
   '/get-paid-to-play-games',
   GUIDE_PATH,
   LFG_GUIDE_PATH,
-  '/compare/e-pal',
+  ...GUIDE_PATHS,
+  ...COMPARE_PATHS,
   COACHING_INDEX_PATH,
   BUDDIES_PATH,
   ...intentPages.map(intentPath),

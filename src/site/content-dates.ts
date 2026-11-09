@@ -44,6 +44,15 @@ export const CONTENT_SOURCES: Record<string, string[]> = {
   '/get-paid-to-play-games': ['src/pages/get-paid-to-play-games.astro'],
   '/blog/what-is-an-egirl': ['src/pages/blog/[slug].astro'],
   '/blog/what-does-lfg-mean': ['src/pages/blog/what-does-lfg-mean.astro'],
+  '/blog/how-to-find-a-valorant-duo': [
+    'src/pages/blog/how-to-find-a-valorant-duo.astro',
+  ],
+  '/blog/how-to-choose-a-gaming-coach': [
+    'src/pages/blog/how-to-choose-a-gaming-coach.astro',
+  ],
+  '/blog/free-lfg-or-paid-teammate': [
+    'src/pages/blog/free-lfg-or-paid-teammate.astro',
+  ],
   '/coaching': ['src/pages/coaching.astro', 'src/server/seo/directories.ts'],
   '/find-gaming-buddies': [
     'src/pages/find-gaming-buddies.astro',
@@ -52,6 +61,14 @@ export const CONTENT_SOURCES: Record<string, string[]> = {
   '/compare/e-pal': [
     'src/pages/compare/e-pal.astro',
     'src/content/epal-comparison.ts',
+  ],
+  '/compare/metafy': [
+    'src/pages/compare/metafy.astro',
+    'src/content/metafy-comparison.ts',
+  ],
+  '/compare/queueup': [
+    'src/pages/compare/queueup.astro',
+    'src/content/queueup-comparison.ts',
   ],
   '/games/social': ['src/content/hubs.ts'],
 };

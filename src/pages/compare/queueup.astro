@@ -1,0 +1,367 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
+import CompareTable from '../../components/seo/CompareTable.astro';
+import Faq from '../../components/seo/Faq.astro';
+import '../../components/seo/seo.css';
+import '../../components/seo/compare.css';
+import { gameBySlug } from '../../site/games';
+import { pageViewer } from '../../site/viewer';
+import { hubChips, serializeJsonLd } from '../../site/seo';
+import { faqSchema } from '../../server/seo/offers';
+import { COACHABLE_GAMES } from '../../server/seo/teammate-facts';
+import {
+  QUEUEUP_CHECKED as CHECKED,
+  duolyShare,
+  queueupExample,
+  queueupRows,
+  queueupSources,
+} from '../../content/queueup-comparison';
+
+const { viewer, csrf } = await pageViewer(Astro);
+const game = gameBySlug('valorant')!;
+// Additive related links, so the hubs this page names keep editorial inbound links.
+const HUB_LINKS = hubChips(['valorant', 'counter-strike-2', 'marvel-rivals']);
+const path = '/compare/queueup';
+const title = 'Duoly vs QueueUp: Coaching Prices and Refunds | Duoly';
+const description =
+  'Duoly vs QueueUp compared from first-party pages checked in November 2026: QueueCoins, the Learn Or It’s Free refund, and one flat Duoly lesson price in euro.';
+const { price } = queueupExample;
+const faqItems: [string, string][] = [
+  [
+    'Is Duoly or QueueUp cheaper for coaching?',
+    `A Duoly lesson is ${price} per ${queueupExample.unit} in every game Duoly coaches, charged through Stripe with nothing added at checkout. QueueUp prices an Instant session at 24 QueueCoins, which it states is USD 24, for 45 minutes, and every other QueueUp session is priced by the coach.`,
+  ],
+  [
+    'What is a QueueCoin?',
+    'QueueCoins are the QueueUp platform currency, and the documentation states that 1 QueueCoin is USD 1. For example, an Instant session costs 24 QueueCoins, which is USD 24. You can also pay at checkout by card or PayPal without buying coins first, so coins are not a prepayment requirement.',
+  ],
+  [
+    'What is the Learn Or It’s Free guarantee?',
+    'According to the QueueUp documentation, a first paid session can be fully refunded up to USD 35 if you ask before your next session, once per customer. Duoly publishes no learning guarantee, because a lesson is time with a coach rather than a promised outcome.',
+  ],
+  [
+    'Can you get a refund during a session?',
+    'On QueueUp you press Request Refund in the session chat within the first 5 minutes. On Duoly there is no in-session button: report the order and a person reviews it, and an order nobody accepts within 5 minutes cancels itself. Refunds reach the Duoly balance by default.',
+  ],
+  [
+    'Which games does each platform coach?',
+    `QueueUp coaches Counter-Strike 2, Deadlock, League of Legends, Marvel Rivals, Overwatch and Valorant, each with its own coach roster. Duoly sells the same ${price} lesson in ${COACHABLE_GAMES} games, with ${duolyShare} of a flat-priced hour going to the provider.`,
+  ],
+  [
+    'Does Duoly show coach reviews like QueueUp?',
+    'No. Duoly is new and has no public review volume yet, and this page says so rather than quoting a score. For example, the QueueUp Valorant page displays 4.9 out of 5 from 621 or more reviews and about 4,423 sessions coached, as figures for the whole site rather than for Valorant alone.',
+  ],
+];
+const webPage = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: new URL(path, Astro.site!).href,
+  name: title,
+  description,
+  dateModified: CHECKED,
+  isPartOf: { '@id': new URL('/#website', Astro.site!).href },
+};
+---
+
+<SiteLayout
+  title={title}
+  description={description}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page cmp-page" data-compare-page>
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Duoly vs QueueUp', path },
+      ]}
+    />
+    <section class="cmp-hero">
+      <div>
+        <span class="eyebrow">Platform comparison</span>
+        <h1>Duoly vs QueueUp</h1>
+        <p class="lead">
+          QueueUp and Duoly both sell coaching for competitive games. QueueUp is
+          a coaching platform with named coaches, 4 booking modes and a platform
+          currency called QueueCoins. Duoly publishes one lesson price in euro
+          or dollars, charged through Stripe, and sells teammate sessions beside
+          the lessons. For example, {queueupExample.title} costs {price} per{' '}
+          {queueupExample.unit} on Duoly, and we found a QueueUp Instant session
+          priced at 24 QueueCoins for 45 minutes on {CHECKED}.
+        </p>
+        <div class="cmp-actions">
+          <a class="cta" href={queueupExample.href}>
+            Book the {price} lesson
+          </a>
+          <a class="cta-ghost" href="#table-h">
+            See the comparison
+          </a>
+        </div>
+        <div class="cmp-checked">
+          Last checked {CHECKED}. Published by Duoly.
+        </div>
+      </div>
+      <div class="cmp-hero-card">
+        <img
+          src={game.img}
+          alt="Valorant game art"
+          width="96"
+          height="96"
+          loading="eager"
+        />
+        <div>
+          <div class="cmp-label">Example Duoly price</div>
+          <div class="cmp-big">{price}</div>
+          <div class="cmp-sub">
+            {queueupExample.title}, 1 {queueupExample.unit}, Immortal+ coach
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cmp-answer" aria-label="Short answer">
+      <p>
+        <strong>Short answer:</strong> QueueUp is the better fit when you want a
+        named coach, a free intro and a written guarantee, and Duoly is the
+        better fit when you want one published price and a teammate session from
+        the same checkout. QueueUp documents its mechanics unusually well: an
+        Instant session is 24 QueueCoins, which QueueUp states is USD 24, for 45
+        minutes, and the docs describe a 5 minute in-session refund button and a
+        Learn Or It’s Free refund of up to USD 35. Duoly sells{' '}
+        {queueupExample.title} for {price} per {queueupExample.unit}, the same
+        price as every Duoly lesson. We read every QueueUp fact here on
+        queueup.gg on {CHECKED}.
+      </p>
+    </section>
+
+    <section aria-labelledby="well-h">
+      <h2 id="well-h">What does QueueUp do well?</h2>
+      <p>
+        QueueUp is good at telling a buyer what happens after payment, which is
+        rare in this category. First, 1) the documentation sets out all 4
+        booking modes, the 5 minute window to pick an Instant coach and what
+        happens when nobody accepts. Second, 2) risk is written down: a Request
+        Refund button in the first 5 minutes, automatic returns when a coach
+        declines, and the Learn Or It’s Free refund of up to USD 35 on a first
+        paid session. Third, 3) Smart Match is free and needs no account, and
+        some coaches offer a free 15 minute intro, so a first conversation costs
+        nothing. For example, the QueueUp Valorant page labels coaches Verified,
+        Radiant Or Pro and Profile Fact-Checked. We found all 3 strengths on
+        queueup.gg on {CHECKED}, and Duoly offers none of the 3 today.
+      </p>
+    </section>
+
+    <section aria-labelledby="table-h">
+      <h2 id="table-h">How do Duoly and QueueUp compare side by side?</h2>
+      <p>
+        QueueUp is the coaching specialist with named coaches, and Duoly is the
+        flat-price option that also sells teammates. For example, QueueUp prices
+        an Instant session at 24 QueueCoins and Duoly publishes {price} per{' '}
+        {queueupExample.unit} for every lesson in all {COACHABLE_GAMES} coached
+        games. A neutral dot marks a different model or a stated fact, and Not
+        stated means the pages we read do not say it. Unknown is never a No, and
+        a platform is never marked down for a model Duoly simply does not share.
+        For example, QueueUp is marked ahead on named coaches, a free intro and
+        in-session refunds. Every QueueUp cell links the page the fact came
+        from, and we found all of them on queueup.gg on {CHECKED}.
+      </p>
+      <CompareTable
+        rival="QueueUp"
+        rows={queueupRows}
+        sources={queueupSources}
+        sourceId="queueup-source"
+        checked={CHECKED}
+      />
+    </section>
+
+    <section aria-labelledby="price-h">
+      <h2 id="price-h">What does one lesson cost on each platform?</h2>
+      <div class="cmp-two">
+        <div class="cmp-card cmp-duoly">
+          <div class="cmp-card-head">
+            <img src={game.img} alt="" width="48" height="48" loading="lazy" />
+            <div>
+              <div class="cmp-label">Duoly</div>
+              <div class="cmp-card-title">{queueupExample.title}, 1 hour</div>
+            </div>
+          </div>
+          <div class="cmp-big">{price}</div>
+          <div class="cmp-sub">
+            One published price per lesson, the same in every game Duoly
+            coaches, charged by card through Stripe in euro or dollars.
+          </div>
+          <a class="btn-sm" href={queueupExample.href}>
+            Book this lesson
+          </a>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-head">
+            <span class="cmp-coin" aria-hidden="true">
+              Q
+            </span>
+            <div>
+              <div class="cmp-label">QueueUp</div>
+              <div class="cmp-card-title">24 QC for an Instant session</div>
+            </div>
+          </div>
+          <div class="cmp-big">USD 24 · 45 minutes</div>
+          <div class="cmp-sub">
+            The one fixed QueueUp price, read from the documentation on{' '}
+            {CHECKED}. Direct, Booking and Bundle sessions are priced by each
+            coach.
+          </div>
+        </div>
+      </div>
+      <p>
+        The 2 prices answer different questions, so read the unit before the
+        number. First, 1) a Duoly lesson is {price} for a full{' '}
+        {queueupExample.unit}, the same figure in every game Duoly coaches,
+        charged through Stripe with nothing added. Second, 2) a QueueUp Instant
+        session is 24 QueueCoins for 45 minutes, which QueueUp states is USD 24,
+        and buys speed rather than a chosen coach. Third, 3) a coach-set QueueUp
+        session can cost more or less than either number. For example, a bundle
+        is usually cheaper per session than a single booking, according to the
+        QueueUp documentation, which we found on queueup.gg on {CHECKED}.
+        Currency, session length and what counts as a session all differ, so
+        these are not like-for-like prices.
+      </p>
+    </section>
+
+    <section aria-labelledby="pay-h">
+      <h2 id="pay-h">How do payment, guarantees and refunds work?</h2>
+      <p>
+        Payment on Duoly is one card payment through Stripe in EUR or USD, and
+        the published price is the amount charged. For example, a{' '}
+        {queueupExample.title} hour costs {price} and opens an order chat where
+        you send a replay and agree the time. A coach accepts from the queue, an
+        order nobody accepts within 5 minutes cancels itself, and refunds go to
+        the Duoly balance by default under the <a href="/terms">Duoly terms</a>.
+        Duoly publishes the share a teammate keeps, which is {duolyShare} of a
+        flat-priced hour. On QueueUp, prices are shown in QueueCoins at 1
+        QueueCoin per dollar, and the checkout can settle by card or PayPal
+        without buying coins first. Additionally, the docs promise automatic
+        returns when a coach declines or times out, a 5 minute in-session refund
+        request and the Learn Or It’s Free refund of up to USD 35. The docs say
+        the majority of each payment goes to the coach without naming a
+        percentage.
+      </p>
+    </section>
+
+    <section aria-labelledby="fit-h">
+      <h2 id="fit-h">Which one fits you?</h2>
+      <p>
+        The choice is between a specialist coaching platform and a single
+        checkout for playing and learning, and there is no single winner. First,
+        1) QueueUp buys choice and a written guarantee: a named Radiant coach, a
+        free 15 minute intro and a refund of up to USD 35 on a first paid
+        session. Second, 2) Duoly buys certainty, at {price} per{' '}
+        {queueupExample.unit} in every game Duoly coaches, with {duolyShare} of
+        a flat-priced hour published as the provider share, charged through
+        Stripe. For example, a Valorant player who wants a Radiant coach tonight
+        should use QueueUp, and a player who wants a{' '}
+        <a href="/games/valorant/coaching">Valorant lesson</a> and a{' '}
+        <a href="/games/valorant/lfg">Valorant teammate</a> at published prices
+        in one place should use Duoly.
+      </p>
+      <div class="cmp-two">
+        <div class="cmp-card">
+          <div class="cmp-card-title">Choose QueueUp if</div>
+          <ul class="checklist">
+            <li>
+              You want to pick a named coach, or let the free Smart Match pick 3
+              for you.
+            </li>
+            <li>You want a free 15 minute intro before paying anything.</li>
+            <li>
+              You want a written first-session guarantee and an in-session
+              refund button.
+            </li>
+            <li>
+              You are fine with prices in QueueCoins and with coach-set rates.
+            </li>
+          </ul>
+        </div>
+        <div class="cmp-card cmp-duoly">
+          <div class="cmp-card-title">Choose Duoly if</div>
+          <ul class="checklist">
+            <li>
+              You want one published price, for example {price} per{' '}
+              {queueupExample.unit} for any lesson.
+            </li>
+            <li>
+              You want teammate sessions and coaching in the same checkout.
+            </li>
+            <li>You want prices and payment in euro as well as dollars.</li>
+            <li>
+              You want an AI assistant to read prices and build a booking link
+              through the <a href="/developers/mcp">Duoly MCP server</a>.
+            </li>
+          </ul>
+          <a class="btn-sm" href={queueupExample.href}>
+            Book a Duoly lesson
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <Faq heading="Questions about Duoly and QueueUp" items={faqItems} />
+
+    <section aria-labelledby="sources-h">
+      <h2 id="sources-h">Where do these facts come from?</h2>
+      <p>
+        Every QueueUp fact here comes from {queueupSources.length} public
+        QueueUp pages, read on {CHECKED}. For example, we found the Instant
+        price, the refund windows and the age rule in the QueueUp documentation,
+        and the coach labels on its Valorant page. Duoly facts come from the{' '}
+        <a href="/terms">Duoly terms</a> and the live price list, so the {price}{' '}
+        example always matches checkout. Duoly publishes this comparison, so it
+        is not independent. QueueUp is a trademark of its owner and is named
+        here for comparison only. Prices and policies can change, so open the
+        source pages before booking anything.
+      </p>
+      <ol class="cmp-sources">
+        {queueupSources.map((source, index) => (
+          <li id={`queueup-source-${index}`}>
+            <a href={source.url} rel="nofollow noopener">
+              {source.title}
+            </a>{' '}
+            <span class="cmp-sub">(accessed {source.accessed})</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <nav class="related" aria-label="Related pages">
+      <h2>Related Duoly pages</h2>
+      <div class="chips">
+        <a href="/coaching">Esports coaching by game</a>
+        <a href="/games/valorant/coaching">Valorant coaching lessons</a>
+        <a href="/blog/how-to-choose-a-gaming-coach">
+          How to choose a gaming coach
+        </a>
+        <a href="/blog/how-to-find-a-valorant-duo">
+          How to find a Valorant duo
+        </a>
+        <a href="/compare/metafy">Duoly compared with Metafy</a>
+        <a href="/compare/e-pal">Duoly compared with E-Pal</a>
+        <a href="/developers/mcp">Book through an AI assistant</a>
+        {HUB_LINKS.map((hub) => (
+          <a href={hub.path}>{hub.name} teammates and prices</a>
+        ))}
+        <a href="/blog">All Duoly guides</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(webPage)}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faqItems, path, Astro.site!))}
+  />
+</SiteLayout>

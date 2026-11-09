@@ -1,0 +1,61 @@
+/*
+ * Card titles for the November 2026 answer-first guides.
+ *
+ * A card title here is a <p> rather than an <h3> on purpose. The citability
+ * scorer opens a new scored block at every h1 to h4 and drops anything under
+ * 20 words, so an <h3> over a 40-word card splits one good answer into a
+ * card-sized block that scores in the thirties and drags the page average down
+ * with it. src/pages/blog/index.astro carries the same note for the same
+ * reason. The rules below reproduce `.seo-page h3` exactly, so the cards look
+ * unchanged.
+ */
+.seo-page .guide-card-title {
+  margin: 0;
+  max-width: none;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #f3eeff;
+}
+/* The two-column split the guides use outside a .seo-guide section. */
+.seo-page .guide-pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+@media (min-width: 860px) {
+  .seo-page .guide-pair {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+.seo-page .guide-pair > .card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.seo-page .guide-pair > .card > p {
+  margin: 0;
+}
+.seo-page .guide-pair .btn-sm {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+/*
+ * A section with one card uses .guide-one, not the two-column .guide-grid,
+ * which would leave half the row empty on desktop. The card's own paragraphs
+ * keep the shared 70ch measure, so a full-width card still reads well.
+ */
+.seo-page .guide-one {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+  /* Roughly where the shared 70ch measure wraps, so the card ends with its
+     own text instead of running on past it. */
+  max-width: 840px;
+}

@@ -1,0 +1,363 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
+import CompareTable from '../../components/seo/CompareTable.astro';
+import Faq from '../../components/seo/Faq.astro';
+import '../../components/seo/seo.css';
+import '../../components/seo/compare.css';
+import { gameBySlug } from '../../site/games';
+import { pageViewer } from '../../site/viewer';
+import { hubChips, serializeJsonLd } from '../../site/seo';
+import { faqSchema } from '../../server/seo/offers';
+import { COACHABLE_GAMES } from '../../server/seo/teammate-facts';
+import {
+  METAFY_CHECKED as CHECKED,
+  metafyExample,
+  metafyRows,
+  metafySources,
+} from '../../content/metafy-comparison';
+
+const { viewer, csrf } = await pageViewer(Astro);
+const game = gameBySlug('overwatch-2')!;
+// Additive related links, so the hubs this page names keep editorial inbound links.
+const HUB_LINKS = hubChips(['overwatch-2', 'valorant', 'league-of-legends']);
+const path = '/compare/metafy';
+const title = 'Duoly vs Metafy: Coaching Prices and Fees | Duoly';
+const description =
+  'Duoly vs Metafy compared from first-party pages checked in November 2026: coach-set session prices and buyer fees on Metafy, one flat lesson price on Duoly.';
+const { price } = metafyExample;
+const faqItems: [string, string][] = [
+  [
+    'Is Duoly or Metafy cheaper for coaching?',
+    `It depends on the coach. A Duoly lesson is ${price} per ${metafyExample.unit} in every game Duoly coaches. Listed Overwatch 2 sessions on Metafy ran from USD 9.99 for an offline replay review to USD 100 for team coaching on ${CHECKED}, and buyer fees are added at checkout.`,
+  ],
+  [
+    'What fees does Metafy add at checkout?',
+    'According to the Metafy buyer fee page, a 3.7% platform fee plus USD 1.79, capped at the lower of USD 20 or 30% of the total, and a 2.9% processing fee plus USD 0.40. For example, Metafy works a USD 50 purchase out as USD 55.49. Some partners choose to cover one or both fees.',
+  ],
+  [
+    'Can you pick your own coach on Duoly?',
+    'No. The first coach eligible for the service takes the order from the queue, and the service card names the tier it hires, with payment through Stripe. For example, an Overwatch 2 Role Coaching hour names a Grandmaster+ coach. On Metafy you open a named partner profile and schedule with that person.',
+  ],
+  [
+    'Does Metafy publish refund rules?',
+    'Yes. The Metafy refund policy makes an unscheduled session refundable within 21 calendar days to the payment method or 45 days as Metafy credits. A completed session is refundable only for a verified technical problem or partner misconduct.',
+  ],
+  [
+    'How old do you have to be on each platform?',
+    'The Duoly terms require every account holder to be 18 or over. The Metafy guide for parents says teens of 13 and over can use Metafy on their own, with a parent managing a younger account.',
+  ],
+  [
+    'Does Duoly have reviews like Metafy?',
+    'Not yet. Duoly is new and has no public review volume, and this page says so rather than quoting a score. Metafy partner profiles carry scores, and Metafy states its creators have collectively earned over USD 10,000,000.',
+  ],
+];
+const webPage = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: new URL(path, Astro.site!).href,
+  name: title,
+  description,
+  dateModified: CHECKED,
+  isPartOf: { '@id': new URL('/#website', Astro.site!).href },
+};
+---
+
+<SiteLayout
+  title={title}
+  description={description}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page cmp-page" data-compare-page>
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Duoly vs Metafy', path },
+      ]}
+    />
+    <section class="cmp-hero">
+      <div>
+        <span class="eyebrow">Platform comparison</span>
+        <h1>Duoly vs Metafy</h1>
+        <p class="lead">
+          Metafy and Duoly both sell coaching for competitive games, and the two
+          platforms sell it differently. Metafy is a creator platform where each
+          partner sets their own session prices, publishes a profile and runs a
+          community. Duoly publishes one lesson price per service, charged
+          through Stripe, and hires a reviewed coach from a queue. For example,{' '}
+          {metafyExample.title} costs {price} per {metafyExample.unit} on Duoly,
+          and we found Metafy one-hour lessons listed from USD 25 to USD 50 on{' '}
+          {CHECKED}.
+        </p>
+        <div class="cmp-actions">
+          <a class="cta" href={metafyExample.href}>
+            Book the {price} lesson
+          </a>
+          <a class="cta-ghost" href="#table-h">
+            See the comparison
+          </a>
+        </div>
+        <div class="cmp-checked">
+          Last checked {CHECKED}. Published by Duoly.
+        </div>
+      </div>
+      <div class="cmp-hero-card">
+        <img
+          src={game.img}
+          alt="Overwatch 2 game art"
+          width="96"
+          height="96"
+          loading="eager"
+        />
+        <div>
+          <div class="cmp-label">Example Duoly price</div>
+          <div class="cmp-big">{price}</div>
+          <div class="cmp-sub">
+            {metafyExample.title}, 1 {metafyExample.unit}, Grandmaster+ coach
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cmp-answer" aria-label="Short answer">
+      <p>
+        <strong>Short answer:</strong> pick Metafy when you want to choose a
+        named coach with a visible record, and pick Duoly when you want one
+        published price and a reviewed coach without shopping for one. Metafy is
+        the stronger platform for inspectable credentials: on {CHECKED} its
+        Overwatch 2 page listed competitive histories, scores of 10.0 and 9.9,
+        free consultations and sessions from USD 9.99 to USD 100. Duoly sells{' '}
+        {metafyExample.title} for {price} per {metafyExample.unit}, the same
+        lesson price as every other game Duoly coaches, with nothing added at
+        checkout. We read every Metafy fact here on Metafy pages on {CHECKED}.
+      </p>
+    </section>
+
+    <section aria-labelledby="well-h">
+      <h2 id="well-h">What does Metafy do well?</h2>
+      <p>
+        Metafy is good at making a coach inspectable before you pay, which is
+        the hardest part of buying coaching. First, each partner has a profile
+        with a competitive history, a displayed score and session formats. For
+        example, the Overwatch 2 sessions page on {CHECKED} showed a coach with
+        a Liquipedia link, a 10.0 score and a one-hour lesson at USD 25, and
+        another at 9.9 charging USD 30. Second, several partners offer a free
+        consultation, listed as 30 minutes on that page, so a first conversation
+        costs nothing. Third, Metafy sells guides, events and paid communities
+        alongside lessons, and the partner you like keeps teaching after the
+        hour ends. Duoly does none of those three things today.
+      </p>
+    </section>
+
+    <section aria-labelledby="table-h">
+      <h2 id="table-h">How do Duoly and Metafy compare side by side?</h2>
+      <p>
+        Metafy is the marketplace with named coaches and Duoly is the fixed
+        price option, so most rows below are a model difference rather than a
+        score. For example, Metafy partners price their own sessions and Duoly
+        publishes {price} per {metafyExample.unit} for every lesson in all{' '}
+        {COACHABLE_GAMES} coached games. A neutral dot marks a different model
+        or a stated fact, and Not stated means the pages we read do not say.
+        Unknown is never a No. For example, Metafy is marked ahead on named
+        coaches, public scores and free consultations. Every Metafy cell links
+        the page the fact came from, and we found all of them on metafy.gg and
+        help.metafy.gg on {CHECKED}.
+      </p>
+      <CompareTable
+        rival="Metafy"
+        rows={metafyRows}
+        sources={metafySources}
+        sourceId="metafy-source"
+        checked={CHECKED}
+      />
+    </section>
+
+    <section aria-labelledby="price-h">
+      <h2 id="price-h">What does one lesson cost on each platform?</h2>
+      <div class="cmp-two">
+        <div class="cmp-card cmp-duoly">
+          <div class="cmp-card-head">
+            <img src={game.img} alt="" width="48" height="48" loading="lazy" />
+            <div>
+              <div class="cmp-label">Duoly</div>
+              <div class="cmp-card-title">{metafyExample.title}, 1 hour</div>
+            </div>
+          </div>
+          <div class="cmp-big">{price}</div>
+          <div class="cmp-sub">
+            One published price per lesson, the same in every game Duoly
+            coaches, charged by card through Stripe with no fee added.
+          </div>
+          <a class="btn-sm" href={metafyExample.href}>
+            Book this lesson
+          </a>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-card-head">
+            <span class="cmp-coin" aria-hidden="true">
+              M
+            </span>
+            <div>
+              <div class="cmp-label">Metafy</div>
+              <div class="cmp-card-title">Price set by each partner</div>
+            </div>
+          </div>
+          <div class="cmp-big">USD 25 to USD 50</div>
+          <div class="cmp-sub">
+            One-hour Overwatch 2 lessons listed on {CHECKED}. The same page
+            listed an offline replay review at USD 9.99 and team coaching at USD
+            100, before buyer fees.
+          </div>
+        </div>
+      </div>
+      <p>
+        A Duoly lesson costs {price} and a Metafy lesson costs whatever the
+        partner charges, so the honest comparison is the total at checkout.
+        First, Duoly adds nothing: the published price is the amount charged to
+        your card. Second, according to the Metafy buyer fee page, checkout adds
+        a 3.7% platform fee plus USD 1.79, capped at the lower of USD 20 or 30%
+        of the total, and a 2.9% processing fee plus USD 0.40, unless the
+        partner covers them. For example, Metafy works a USD 50 purchase out as
+        USD 55.49. Additionally, a cheap Metafy session can still beat Duoly on
+        price, because USD 9.99 replay reviews exist. Currencies and session
+        lengths differ, so these are not like-for-like numbers.
+      </p>
+    </section>
+
+    <section aria-labelledby="pay-h">
+      <h2 id="pay-h">How do payment, scheduling and refunds work?</h2>
+      <p>
+        Payment on Duoly is a single card payment through Stripe in EUR or USD,
+        and the published price is the amount charged. First, 1) a{' '}
+        {metafyExample.title} hour costs {price} and opens an order chat for the
+        replay and the time. Second, 2) a coach accepts the order from the queue
+        rather than being picked, an order nobody accepts within 5 minutes
+        cancels itself, and cancelling before anyone accepts is free. Third, 3)
+        refunds go to the Duoly balance by default, and the{' '}
+        <a href="/terms">Duoly terms</a> say refunded money can be paid back to
+        the original method on request. On Metafy you open a partner profile,
+        pick a format and schedule it in your own timezone. According to the
+        Metafy refund policy, an unscheduled session is refundable within 21
+        calendar days to the payment method or 45 days as credits, while a
+        completed session is refundable only for a verified technical problem or
+        partner misconduct. Additionally, Metafy checkout adds a 3.7% platform
+        fee plus USD 1.79. We found both policies on help.metafy.gg on {CHECKED}
+        .
+      </p>
+    </section>
+
+    <section aria-labelledby="fit-h">
+      <h2 id="fit-h">Which one fits you?</h2>
+      <p>
+        The choice is between picking a person and picking a price, and there is
+        no single winner. First, Metafy buys choice: a named Overwatch 2
+        specialist with a public competitive record, at a partner price plus a
+        3.7% platform fee and USD 1.79. Second, Duoly buys certainty, at {price}{' '}
+        per {metafyExample.unit} in every game Duoly coaches, charged through
+        Stripe with nothing added. For example, a player who wants a lesson in{' '}
+        <a href="/games/valorant/coaching">Valorant</a> or{' '}
+        <a href="/games/league-of-legends/coaching">League of Legends</a> at a
+        known price tonight should use Duoly.
+      </p>
+      <div class="cmp-two">
+        <div class="cmp-card">
+          <div class="cmp-card-title">Choose Metafy if</div>
+          <ul class="checklist">
+            <li>
+              You want to read a coach profile, competitive history and score
+              before paying.
+            </li>
+            <li>
+              You want a free consultation first, which several partners list.
+            </li>
+            <li>
+              You want guides, events or a paid community from the same person.
+            </li>
+            <li>
+              You are fine with coach-set prices and buyer fees added at
+              checkout.
+            </li>
+          </ul>
+        </div>
+        <div class="cmp-card cmp-duoly">
+          <div class="cmp-card-title">Choose Duoly if</div>
+          <ul class="checklist">
+            <li>
+              You want one published price, for example {price} per{' '}
+              {metafyExample.unit} for any lesson.
+            </li>
+            <li>You want the amount you see to be the amount you pay.</li>
+            <li>
+              You want teammate sessions and coaching in the same checkout.
+            </li>
+            <li>
+              You want an AI assistant to read prices and build a booking link
+              through the <a href="/developers/mcp">Duoly MCP server</a>.
+            </li>
+          </ul>
+          <a class="btn-sm" href={metafyExample.href}>
+            Book a Duoly lesson
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <Faq heading="Questions about Duoly and Metafy" items={faqItems} />
+
+    <section aria-labelledby="sources-h">
+      <h2 id="sources-h">Where do these facts come from?</h2>
+      <p>
+        Every Metafy fact here comes from {metafySources.length} public Metafy
+        pages, read on {CHECKED}. For example, we found the buyer fee
+        calculation on the Metafy help centre and the session prices on the
+        Overwatch 2 sessions page. Duoly facts come from the{' '}
+        <a href="/terms">Duoly terms</a> and the live price list, so the {price}{' '}
+        example always matches checkout. Duoly publishes this comparison, so it
+        is not independent. Metafy is a trademark of its owner and is named here
+        for comparison only. Prices and policies can change, so open the source
+        pages before booking anything.
+      </p>
+      <ol class="cmp-sources">
+        {metafySources.map((source, index) => (
+          <li id={`metafy-source-${index}`}>
+            <a href={source.url} rel="nofollow noopener">
+              {source.title}
+            </a>{' '}
+            <span class="cmp-sub">(accessed {source.accessed})</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <nav class="related" aria-label="Related pages">
+      <h2>Related Duoly pages</h2>
+      <div class="chips">
+        <a href="/coaching">Esports coaching by game</a>
+        <a href="/games/overwatch-2/coaching">Overwatch 2 coaching lessons</a>
+        <a href="/blog/how-to-choose-a-gaming-coach">
+          How to choose a gaming coach
+        </a>
+        <a href="/compare/queueup">Duoly compared with QueueUp</a>
+        <a href="/compare/e-pal">Duoly compared with E-Pal</a>
+        <a href="/developers/mcp">Book through an AI assistant</a>
+        {HUB_LINKS.map((hub) => (
+          <a href={hub.path}>{hub.name} teammates and prices</a>
+        ))}
+        <a href="/games">All games and services</a>
+        <a href="/blog">All Duoly guides</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(webPage)}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faqItems, path, Astro.site!))}
+  />
+</SiteLayout>

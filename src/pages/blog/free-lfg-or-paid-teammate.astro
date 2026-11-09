@@ -1,0 +1,563 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
+import SeoHero from '../../components/seo/SeoHero.astro';
+import Steps from '../../components/seo/Steps.astro';
+import Faq from '../../components/seo/Faq.astro';
+import ClosingCta from '../../components/seo/ClosingCta.astro';
+import '../../components/seo/seo.css';
+import '../../components/seo/free-vs-paid.css';
+import '../../components/seo/guide-article.css';
+import { pageViewer } from '../../site/viewer';
+import { seoOffers, faqSchema } from '../../server/seo/offers';
+import {
+  teammateDirectory,
+  directoryPrice,
+} from '../../server/seo/directories';
+import { BUNDLE_PERCENTS as bundle } from '../../server/seo/teammate-facts';
+import { viewerCurrency } from '../../server/currency';
+import { eurToUsd } from '../../server/fx';
+import {
+  serializeJsonLd,
+  bookingHref,
+  CONTENT_DATES,
+  organizationSchema,
+} from '../../site/seo';
+
+const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
+const currency = await viewerCurrency(Astro.cookies, accountCurrency);
+const context = {
+  customerCurrency: currency.cur,
+  eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+};
+// Prices and the games that have them come from the same checkout engine the
+// price cards use, so a catalog change rewrites this guide on the next build.
+const teammates = teammateDirectory(context);
+const fromPrice = directoryPrice(teammates).replace(/^From /, '');
+const shown = ['valorant', 'marvel-rivals', 'league-of-legends', 'overwatch-2']
+  .flatMap((slug) => teammates.filter((game) => game.slug === slug))
+  .map((game) => ({
+    name: game.name,
+    path: game.path,
+    cheapest: game.cheapest,
+  }));
+const valDuo = seoOffers('val', 'teammate', context).find(
+  (offer) => offer.id === 'duo2' && offer.rank === 'Gold',
+)!;
+const lolDuo = seoOffers('lol', 'teammate', context).find(
+  (offer) => offer.id === 'duo2' && offer.rank === 'Gold',
+)!;
+const path = '/blog/free-lfg-or-paid-teammate';
+const title = 'Free LFG or a Paid Teammate? | Duoly';
+const h1 = 'Free LFG or a paid teammate?';
+const description =
+  'Free LFG is enough most nights, and the big game Discords prove it. Compare member counts, real limits and what a paid teammate session costs before you spend.';
+// Member counts read from the Discord invite API on this date; every link
+// below was requested on the same day and returned HTTP 200.
+const CHECKED_LABEL = '9 November 2026';
+const servers = [
+  {
+    name: 'Marvel Rivals',
+    url: 'https://discord.gg/marvelrivals',
+    members: 'about 4,638,000',
+    hub: '/games/marvel-rivals',
+  },
+  {
+    name: 'VALORANT',
+    url: 'https://discord.gg/valorant',
+    members: 'about 3,046,000',
+    hub: '/games/valorant',
+  },
+  {
+    name: 'VALORANT LFG',
+    url: 'https://discord.gg/valorantlfg',
+    members: 'about 1,181,000',
+    hub: '/games/valorant/lfg',
+  },
+  {
+    name: 'Overwatch',
+    url: 'https://discord.gg/overwatch',
+    members: 'about 783,000',
+    hub: '/games/overwatch-2',
+  },
+  {
+    name: 'League of Legends',
+    url: 'https://discord.gg/leagueoflegends',
+    members: 'about 564,000',
+    hub: '/games/league-of-legends',
+  },
+  {
+    name: 'Counter-Strike',
+    url: 'https://discord.gg/counterstrike',
+    members: 'about 467,000',
+    hub: '/games/counter-strike-2',
+  },
+];
+const boards = [
+  {
+    label: 'r/ValorantLFG',
+    url: 'https://www.reddit.com/r/ValorantLFG/',
+    text: 'duo and team posts with region flair, searchable for days rather than minutes.',
+  },
+  {
+    label: 'r/LeagueConnect',
+    url: 'https://www.reddit.com/r/LeagueConnect/',
+    text: 'the League of Legends board for finding a duo, a flex group or a clubs roster.',
+  },
+  {
+    label: 'r/CounterStrikeLFG',
+    url: 'https://www.reddit.com/r/CounterStrikeLFG/',
+    text: 'Premier and FACEIT posts, where a rating range in the title gets the reply.',
+  },
+  {
+    label: 'r/OverwatchLFG',
+    url: 'https://www.reddit.com/r/OverwatchLFG/',
+    text: 'role queue posts, so say which role you want and which one you are leaving open.',
+  },
+  {
+    label: 'r/MarvelRivalsLFG',
+    url: 'https://www.reddit.com/r/MarvelRivalsLFG/',
+    text: 'Quick Match and Competitive posts, usually naming a rank and a preferred role.',
+  },
+];
+const faqItems: [string, string][] = [
+  [
+    'Is free LFG good enough?',
+    'Free looking-for-group is a post in a public channel, and for most players it is enough. The big game servers on Discord each list hundreds of thousands to millions of members, so a post naming region, rank, role and hours often finds somebody the same evening at no cost.',
+  ],
+  [
+    'What does free LFG not give you?',
+    'Three things: a start time somebody is committed to, a rank anybody has checked, and a guaranteed role. All three are self-reported until the lobby loads.',
+  ],
+  [
+    'When is paying for a teammate worth it?',
+    `When the evening, the rank and the role all have to be settled before you queue. A Duoly session starts at ${fromPrice} and names all 3 in the order chat first.`,
+  ],
+  [
+    'What does a paid teammate cost?',
+    `Duoly teammate sessions start at ${fromPrice}. For example, Valorant Duo Pro is ${valDuo.display} per game at Gold with an ${valDuo.tier}, and bundles take ${bundle[0]}% off 3 games, ${bundle[1]}% off 5 and ${bundle[2]}% off 10.`,
+  ],
+  [
+    'Is paying for a teammate the same as buying a rank?',
+    'No. You play your own games on your own account beside a stronger player, so nobody promises a rank and no account is ever shared or handed over.',
+  ],
+  [
+    'Can you use free LFG and paid sessions together?',
+    'Yes, and most people should. Keep posting in your game Discord for a regular group, and book a session for the night nobody answers or for a mode nobody in the channel plays.',
+  ],
+];
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: h1,
+  mainEntityOfPage: new URL(path, Astro.site!).href,
+  datePublished: '2026-11-09',
+  dateModified: CONTENT_DATES[path],
+  author: organizationSchema(Astro.site!),
+  publisher: organizationSchema(Astro.site!),
+  image: new URL('/og/duoly.jpg', Astro.site!).href,
+};
+const check = 'M6.5 11.2 3.3 8l1.1-1.1 2.1 2.1 5.1-5.1 1.1 1.1z';
+const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
+---
+
+<SiteLayout
+  title={title}
+  description={description}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Blog', path: '/blog' },
+        { name: 'Free LFG or a paid teammate?', path },
+      ]}
+    />
+    <SeoHero
+      eyebrow="Guide"
+      h1={h1}
+      lead="Free looking-for-group is enough for most players most nights, and it costs nothing to try first. Pay for a teammate when the evening, the rank and the role all have to be settled before you queue."
+      cta={{ href: '#free-h', label: 'How good free LFG is' }}
+      secondary={{ href: '#paid-h', label: 'When paying helps' }}
+      art={[
+        { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
+        {
+          src: '/assets/games/marvel-rivals.png',
+          alt: 'Marvel Rivals game art',
+        },
+      ]}
+      chip="Free first, honestly"
+      facts={[
+        '6 servers with real member counts',
+        '3 limits free LFG cannot fix',
+        `Paid sessions from ${fromPrice}`,
+      ]}
+    />
+    <p class="byline">
+      By <a href="/contact">Duoly team</a>. Published{' '}
+      <time datetime="2026-11-09">9 November 2026</time>.
+    </p>
+    <nav class="guide-toc" aria-label="In this guide">
+      <strong>In this guide</strong>
+      <ul>
+        <li>
+          <a href="#free-h">How good is free LFG?</a>
+        </li>
+        <li>
+          <a href="#limits-h">What does free LFG not give you?</a>
+        </li>
+        <li>
+          <a href="#paid-h">When is paying for a teammate worth it?</a>
+        </li>
+        <li>
+          <a href="#decide-h">Which fits tonight, free or paid?</a>
+        </li>
+        <li>
+          <a href="#cost-h">What does each route cost?</a>
+        </li>
+        <li>
+          <a href="#coach-h">Would a coach help more than either?</a>
+        </li>
+        <li>
+          <a href="#faq-h">Questions about free and paid teammates</a>
+        </li>
+      </ul>
+    </nav>
+
+    <section class="seo-guide" aria-labelledby="free-h">
+      <h2 id="free-h">How good is free LFG?</h2>
+      <p class="guide-answer">
+        Free looking-for-group is a post in a public channel, and for most
+        players it is the whole answer. First, 1) the large game servers on
+        Discord list hundreds of thousands to millions of members each, so a
+        post naming region, rank, role and hours often finds somebody the same
+        evening for €0. For example, we found about 4,638,000 members on the
+        Marvel Rivals server and about 3,046,000 on the VALORANT server on{' '}
+        {CHECKED_LABEL}. Second, 2) a looking-for-group subreddit keeps a post
+        searchable for days instead of minutes. Third, 3) the friends list you
+        already have costs nothing and improves every week. A paid session from{' '}
+        {fromPrice} is worth considering only once all 3 routes have failed.
+      </p>
+      <div class="guide-grid">
+        <article
+          class="card guide-card"
+          aria-label="Servers with member counts"
+        >
+          <p class="guide-tag">Free · €0</p>
+          <p class="guide-card-title">6 servers, with member counts</p>
+          <table class="guide-prices">
+            <caption>
+              Read from the Discord invite API on{CHECKED_LABEL}
+            </caption>
+            <tbody>
+              {servers.map((server) => (
+                <tr>
+                  <th scope="row">
+                    <a href={server.url} rel="noopener">
+                      {server.name}
+                    </a>
+                  </th>
+                  <td>{server.members}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="guide-note">
+            A member count is a size rather than a promise of a reply tonight.
+          </p>
+        </article>
+        <article class="card guide-card" aria-label="Looking-for-group boards">
+          <p class="guide-tag">Free · searchable for days</p>
+          <p class="guide-card-title">5 looking-for-group boards</p>
+          <ul class="guide-routes">
+            {boards.map((board) => (
+              <li>
+                <a href={board.url} rel="noopener">
+                  {board.label}
+                </a>
+                : {board.text}
+              </li>
+            ))}
+          </ul>
+          <p class="guide-note">
+            Read the rules of a board before posting, since several want a set
+            title format and remove posts without one.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="limits-h">
+      <h2 id="limits-h">What does free LFG not give you?</h2>
+      <p>
+        Free looking-for-group has 3 real limits, and none of the 3 is about
+        quality. First, 1) nobody is committed to the time, so a planned session
+        dies when one player logs off, which costs an evening rather than money.
+        Second, 2) rank and role stay self-reported until the lobby loads.
+        Third, 3) a reply depends on who happens to be scrolling, which is why
+        the same post reads well at 8pm and dies at 2am. For example, a
+        Controller main who needs a Duelist at 9pm can wait an hour in a channel
+        with 3,046,000 members and still queue alone. Those 3 limits are the
+        reason a paid session exists: Valorant Duo Pro is {valDuo.display} per
+        game at Gold, with {bundle[0]}% off at 3 games, read from Duoly checkout
+        in November 2026.
+      </p>
+    </section>
+
+    <section class="seo-guide" aria-labelledby="paid-h">
+      <h2 id="paid-h">When is paying for a teammate worth it?</h2>
+      <p class="guide-answer">
+        Paying for a teammate is worth it when the hour, the rank and the role
+        all have to be settled before you queue. A booking turns 3 maybes into 3
+        facts: you pick the service, the price is fixed before you pay, and the
+        order chat agrees the start time and the comms. For example, Valorant
+        Duo Pro is {valDuo.display} per game at Gold with an {valDuo.tier}, and
+        League of Legends Duo Pro is {lolDuo.display} per game at Gold with a{' '}
+        {lolDuo.tier}. Bundles take {bundle[0]}% off 3 games, {bundle[1]}% off 5
+        and {bundle[2]}% off 10. Paying is a poor deal for casual company,
+        because a Discord channel fills a casual lobby for €0 in minutes. Book
+        the evening a free post goes unanswered.
+      </p>
+      <div class="guide-grid">
+        <article
+          class="card guide-card guide-paid"
+          aria-label="The cheapest session in four games"
+        >
+          <p class="guide-tag guide-tag-paid">Paid · fixed price</p>
+          <p class="guide-card-title">The cheapest session in 4 games</p>
+          <table class="guide-prices">
+            <caption>Read from Duoly checkout on{CHECKED_LABEL}</caption>
+            <tbody>
+              {shown.map((game) => (
+                <tr>
+                  <th scope="row">
+                    <a href={game.path}>{game.name}</a>, {game.cheapest.title}
+                  </th>
+                  <td>
+                    {game.cheapest.display} per {game.cheapest.unit}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="guide-note">
+            Prices are per unit before the bundle discount. Every game Duoly
+            sells teammate sessions in is listed on the buddies directory.
+          </p>
+          <a class="btn-sm" href={bookingHref('val', { service: 'duo2' })}>
+            Book a Valorant teammate
+          </a>
+        </article>
+        <article class="card guide-card" aria-label="What a booking fixes">
+          <p class="guide-tag">What the money buys</p>
+          <p class="guide-card-title">What a booking fixes</p>
+          <ul class="icon-list">
+            <li class="is-yes">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={check}></path>
+              </svg>
+              <span>
+                <span class="fvp-sr">Included: </span>A start time agreed in the
+                order chat before the first game
+              </span>
+            </li>
+            <li class="is-yes">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={check}></path>
+              </svg>
+              <span>
+                <span class="fvp-sr">Included: </span>A tier named on the
+                service, reviewed before the first order
+              </span>
+            </li>
+            <li class="is-yes">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={check}></path>
+              </svg>
+              <span>
+                <span class="fvp-sr">Included: </span>A fixed total, with the
+                bundle discount already inside it
+              </span>
+            </li>
+            <li class="is-no">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={cross} />
+              </svg>
+              <span>
+                <span class="fvp-sr">Limit: </span>It costs money every game,
+                which free routes never do
+              </span>
+            </li>
+            <li class="is-no">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={cross} />
+              </svg>
+              <span>
+                <span class="fvp-sr">Limit: </span>No result is promised, since
+                you still play your own games
+              </span>
+            </li>
+          </ul>
+          <a class="btn-sm" href={bookingHref('lol', { service: 'duo2' })}>
+            Book a League teammate
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <section class="seo-flow card" aria-labelledby="decide-h">
+      <h2 id="decide-h">Which fits tonight, free or paid?</h2>
+      <p>
+        A decision flow is 3 questions in order, and the first 2 answers are
+        usually free: company, then schedule, then the specific seat you need
+        filled. For example, a {valDuo.display} Valorant game at Gold only wins
+        on question 3, and the start time is agreed in the order chat using
+        Discord.
+      </p>
+      <ol class="flow">
+        <li class="flow-step">
+          <span class="flow-num">Step 1</span>
+          <strong class="flow-q">
+            Do you just want company in any decent lobby?
+          </strong>
+          <span class="flow-answer flow-free">
+            Yes: post in your game server on Discord. It costs €0 and usually
+            answers within the hour.
+          </span>
+          <span class="flow-answer flow-next">
+            No: you want something specific, so keep going.
+          </span>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">Step 2</span>
+          <strong class="flow-q">
+            Does the session have to happen at a set time?
+          </strong>
+          <span class="flow-answer flow-free">
+            No: a subreddit post is the better tool, because it stays searchable
+            for days.
+          </span>
+          <span class="flow-answer flow-next">
+            Yes: a free reply cannot commit to your evening, so keep going.
+          </span>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">Step 3</span>
+          <strong class="flow-q">
+            Do you need a known rank in one specific role?
+          </strong>
+          <span class="flow-answer flow-paid">
+            Yes: book a session from {fromPrice} and settle the rank, the role
+            and the hour first.
+          </span>
+          <span class="flow-answer flow-free">
+            No: go back to step 1 and post again tomorrow. Free is enough.
+          </span>
+        </li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="cost-h">
+      <h2 id="cost-h">What does each route cost?</h2>
+      <p>
+        Free looking-for-group costs €0 and a paid Duoly session starts at{' '}
+        {fromPrice}, so the real question is what each one costs you in time.
+        First, a free post costs the 20 minutes you spend writing it and waiting
+        in the channel, plus the evening it loses when nobody turns up. Second,
+        2) a booking costs money and almost no time, because the order chat
+        settles the time, the roles and the comms using Discord before anyone
+        queues. For example, 3 Valorant Duo Pro games at Gold cost{' '}
+        {valDuo.display} each before the {bundle[0]}% bundle discount, and a
+        League of Legends game is {lolDuo.display}. Additionally, cancelling
+        before anyone accepts is free, and an order nobody accepts within 5
+        minutes cancels itself. Compare the full list on{' '}
+        <a href="/find-gaming-buddies">find gaming buddies</a> and{' '}
+        <a href="/games">all games and services</a>.
+      </p>
+    </section>
+
+    <section aria-labelledby="coach-h">
+      <h2 id="coach-h">Would a coach help more than either?</h2>
+      <p>
+        A coaching hour is the better buy when the same mistake keeps ending
+        your rounds, because neither a free duo nor a paid one stops the game to
+        explain it. First, 1) a teammate plays the round with you and calls what
+        happens next, for {valDuo.display} per Valorant game at Gold. Second, 2)
+        a lesson pauses a replay and shows the better option, using Discord for
+        screen share, then leaves 2 or 3 things to work on. Third, 3) a teammate
+        session starts at {fromPrice} while a lesson is priced by the hour. For
+        example, a player stuck on the same failed retake learns more from one
+        hour of <a href="/coaching">esports coaching</a> than from 5 bought
+        games.{' '}
+        <a href="/blog/how-to-choose-a-gaming-coach">
+          How to choose a gaming coach
+        </a>{' '}
+        lists the 5 checks to run before paying anyone.
+      </p>
+    </section>
+
+    <Steps
+      heading="How do you try free first?"
+      steps={[
+        'First, write one post and reuse it. Name 1) the game, 2) your region, 3) your rank, 4) the role you play, 5) the mode you want and 6) the hours you are free. A post with all 6 fields gets answered, and a one-line post gets skipped.',
+        'Second, post it in a server for your game and in a looking-for-group subreddit, then stay in the channel for half an hour. For example, a reply comes from whoever is scrolling right then, so being present matters more than the wording.',
+        `Finally, add the people you enjoyed. A friends list is the only free route that gets better every week. Book a paid session for ${fromPrice} on the evening the post goes unanswered, or for the mode nobody in the channel plays.`,
+      ]}
+    >
+      <p>
+        Every figure here was read from Duoly checkout in November 2026, and a
+        booked session is agreed in the order chat using Discord, with{' '}
+        {bundle[0]}% off at 3 games and {bundle[2]}% off at 10. Read the{' '}
+        <a href="/terms">payment, cancellation and refund terms</a> before a
+        first booking, or{' '}
+        <a href="/blog/what-does-lfg-mean">read what LFG means</a> if the
+        shorthand in those channels is new to you. The{' '}
+        <a href="/games/valorant/lfg">Valorant looking-for-group page</a> shows
+        both routes side by side for one game.
+      </p>
+    </Steps>
+
+    <Faq heading="Questions about free and paid teammates" items={faqItems} />
+
+    <ClosingCta
+      heading="Try free tonight, book when it matters"
+      text={`Free looking-for-group costs €0 and is the right first move for most players. A Duoly session is the paid alternative for the evening when the time, the rank and the role all have to be fixed in advance, from ${fromPrice}. First, post your region, rank, role and mode in a server for your game. For example, book instead on the night nobody answers.`}
+      extra={`Three facts settle the practical questions. First, Valorant Duo Pro is ${valDuo.display} per game at Gold with an ${valDuo.tier}, and bundles take ${bundle[0]}% off 3 games, ${bundle[1]}% off 5 and ${bundle[2]}% off 10. Second, payment finishes on duoly.gg and never in a private message, and the Duoly terms carry the cancellation and refund rules. Third, a teammate accepts from the queue, sessions run using Discord voice and both players stay on their own accounts. Every price here was read from Duoly checkout in November 2026, and every community link was requested on the same day.`}
+      href={bookingHref('val', { service: 'duo2' })}
+      label="Book a teammate"
+      art={{ src: '/assets/games/marvel-rivals.png', alt: '' }}
+    />
+
+    <nav class="related" aria-label="Related pages">
+      <h2>Keep reading</h2>
+      <div class="chips">
+        <a href="/find-gaming-buddies">Find gaming buddies in every game</a>
+        <a href="/blog/how-to-find-a-valorant-duo">
+          How to find a Valorant duo
+        </a>
+        <a href="/blog/how-to-choose-a-gaming-coach">
+          How to choose a gaming coach
+        </a>
+        <a href="/blog/what-does-lfg-mean">What does LFG mean?</a>
+        <a href="/games/valorant/lfg">Valorant LFG modes and prices</a>
+        <a href="/games/marvel-rivals/duo-partner">Marvel Rivals duo partner</a>
+        <a href="/compare/queueup">Duoly compared with QueueUp</a>
+        <a href="/compare/metafy">Duoly compared with Metafy</a>
+        <a href="/blog">All Duoly guides</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(article)}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faqItems, path, Astro.site!))}
+  />
+</SiteLayout>

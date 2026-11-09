@@ -1,0 +1,89 @@
+---
+import {
+  MARK_ICONS,
+  MARK_WORDS,
+  type CompareRow,
+  type CompareSource,
+} from '../../content/compare-marks';
+interface Props {
+  /** The competitor's name, used in the header and the mobile cell label. */
+  rival: string;
+  rows: CompareRow[];
+  sources: CompareSource[];
+  /** The id prefix of the source list items, so a cell can link its source. */
+  sourceId: string;
+  checked: string;
+}
+const { rival, rows, sources, sourceId, checked } = Astro.props;
+const marks = ['yes', 'part', 'no', 'neutral', 'unknown'] as const;
+const sourceIndex = (url: string) =>
+  sources.findIndex((source) => source.url === url);
+---
+
+<div class="cmp-legend" aria-hidden="true">
+  {marks.map((mark) => (
+    <span>
+      <svg class={`mark mark-${mark}`} viewBox="0 0 16 16" aria-hidden="true">
+        <path d={MARK_ICONS[mark]} />
+      </svg>{' '}
+      {MARK_WORDS[mark]}
+    </span>
+  ))}
+</div>
+<div class="cmp-table-wrap">
+  <table class="cmp-table">
+    <caption class="sr-only">
+      Duoly and{rival}compared on public facts, checked{checked}
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">Topic</th>
+        <th scope="col">Duoly</th>
+        <th scope="col">{rival}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr>
+          <th scope="row">{row.label}</th>
+          <td data-rival="Duoly">
+            <span class="cmp-cell">
+              <svg
+                class={`mark mark-${row.duoly}`}
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+              >
+                <path d={MARK_ICONS[row.duoly]} />
+              </svg>
+              <span>
+                <span class="sr-only">{MARK_WORDS[row.duoly]}.</span>{' '}
+                {row.duolyNote}
+              </span>
+            </span>
+          </td>
+          <td data-rival={rival}>
+            <span class="cmp-cell">
+              <svg
+                class={`mark mark-${row.rival}`}
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+              >
+                <path d={MARK_ICONS[row.rival]} />
+              </svg>
+              <span>
+                <span class="sr-only">{MARK_WORDS[row.rival]}.</span>{' '}
+                {row.rivalNote}{' '}
+                <a
+                  href={`#${sourceId}-${sourceIndex(row.rivalSource)}`}
+                  aria-label={`${rival} source for ${row.label}`}
+                >
+                  Source
+                </a>
+              </span>
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

@@ -329,6 +329,111 @@ test('E-Pal comparison page is factual, dated and internally linked', () => {
   );
 });
 
+// The two comparisons added on 9 November 2026. Each one is sourced from the
+// rival's own pages, so the checks are: the dated label, the coaching price out
+// of the engine, a source link per rival cell, FAQ answers that match the
+// FAQPage markup, and no borrowed rating or logo.
+for (const [slug, rival, host] of [
+  ['metafy', 'Metafy', 'metafy.gg'],
+  ['queueup', 'QueueUp', 'queueup.gg'],
+]) {
+  const path = `/compare/${slug}`;
+  test(`${rival} comparison is factual, dated and internally linked`, () => {
+    const page = pages[path];
+    assert(page, `crawl discovered ${path}`);
+    const html = readFileSync(
+      `.vercel/seo-audit/compare__${slug}.html`,
+      'utf8',
+    );
+    assert.match(html, /Last checked 2026-11-09/);
+    // The flat coaching hour, from the pricing engine through the page.
+    assert.match(html, /€12\.99/);
+    assert(html.includes('/coaching'), 'links the coaching directory');
+    assert(
+      html.includes('/blog/how-to-choose-a-gaming-coach'),
+      'links the coach guide',
+    );
+    assert(html.includes('/developers/mcp'));
+    // Sourced cells: one anchor per rival cell, into the page's own list.
+    const cells = (html.match(/Source<\/a>/g) || []).length;
+    assert(cells >= 10, `${path}: ${cells} sourced cells`);
+    assert(
+      new RegExp(`id="${slug}-source-0"`).test(html),
+      `${path}: numbered source list`,
+    );
+    assert(
+      !new RegExp(
+        `${host.replace('.', '\\.')}[^"'\\s]*\\.(png|svg|jpe?g|webp)`,
+        'i',
+      ).test(html),
+      `${path}: no ${rival} imagery`,
+    );
+    const webPage = page.schemas.find((s) => s['@type'] === 'WebPage');
+    assert.equal(webPage.url, `https://duoly.gg${path}`);
+    assert.equal(webPage.dateModified, '2026-11-09');
+    const faq = page.schemas.find((s) => s['@type'] === 'FAQPage');
+    assert(faq && faq.mainEntity.length >= 5, 'FAQPage questions');
+    for (const question of faq.mainEntity) {
+      assert(html.includes(question.name), `${path}: visible ${question.name}`);
+      assert(
+        html.includes(question.acceptedAnswer.text),
+        `${path}: visible answer for ${question.name}`,
+      );
+    }
+    assert(
+      !page.schemas.some(
+        (s) => s['@type'] === 'AggregateRating' || s['@type'] === 'Review',
+      ),
+    );
+  });
+}
+
+// The three answer-first guides. Each one answers in the first block, dates its
+// external claims and keeps its FAQPage markup equal to the visible questions.
+for (const slug of [
+  'how-to-find-a-valorant-duo',
+  'how-to-choose-a-gaming-coach',
+  'free-lfg-or-paid-teammate',
+]) {
+  const path = `/blog/${slug}`;
+  test(`guide is answer-first, dated and linked: ${path}`, () => {
+    const page = pages[path];
+    assert(page, `crawl discovered ${path}`);
+    const html = readFileSync(`.vercel/seo-audit/blog__${slug}.html`, 'utf8');
+    const article = page.schemas.find((s) => s['@type'] === 'Article');
+    assert.equal(article.author.name, 'Duoly');
+    assert.equal(article.author['@type'], 'Organization');
+    assert(article.datePublished && article.dateModified && article.image);
+    const faq = page.schemas.find((s) => s['@type'] === 'FAQPage');
+    assert(faq && faq.mainEntity.length >= 5, 'FAQPage questions');
+    for (const question of faq.mainEntity) {
+      assert(html.includes(question.name), `${path}: visible ${question.name}`);
+      assert(
+        html.includes(question.acceptedAnswer.text),
+        `${path}: visible answer for ${question.name}`,
+      );
+    }
+    assert((html.match(/<details/g) || []).length >= 5, 'visible FAQs');
+    assert.match(html, /data-cta="closing"/);
+    assert.match(html, /9 November 2026/, 'a dated check or byline');
+    assert.doesNotMatch(html, /\{\{\w+\}\}/, 'price tokens filled');
+    // Two different bookable offers per guide, in the guide's own content. A
+    // game and service pair, because the same lesson in two games is two
+    // offers and the same service id twice is one.
+    const offers = new Set(
+      page.bookingLinks.map((href) => {
+        const { searchParams } = new URL(href, 'https://duoly.gg');
+        return `${searchParams.get('game')}/${searchParams.get('service')}`;
+      }),
+    );
+    assert(
+      offers.size >= 2,
+      `${path}: ${[...offers].join(', ')} bookable offers`,
+    );
+    link(path, '/blog');
+  });
+}
+
 test('sitemap has exactly the indexable self-canonical 200 URLs in both directions', () => {
   assert.deepEqual(
     sitemapEntries.map((e) => new URL(e.url).pathname).sort(),
