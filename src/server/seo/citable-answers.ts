@@ -73,6 +73,16 @@ export function closingAnswer(gameName: string) {
       'one role and one team fight, for example an engage your team could not follow',
     'Rainbow Six Siege':
       'one map and one site, for example a retake that arrived a few seconds late',
+    'Call of Duty':
+      'one mode and one rotation, for example a move that started after the circle closed',
+    'Dota 2':
+      'one position and one item, for example a Black King Bar bought after the fight',
+    Minecraft:
+      'one mode and one lost round, for example a rush that left your own bed open',
+    'World of Warcraft':
+      'one spec and one pull, for example a cast nobody had a kick left for',
+    Deadlock:
+      'one hero and one mid game moment, for example a Mid Boss attempt with no vision',
   };
   return `A ${gameName} lesson from Duoly is one booked session on a problem you pick. First, bring ${goals[gameName] ?? 'one situation from your games'}. Then, 1) share the goal in the order chat, 2) meet your coach using Discord and 3) stay on your own account.`;
 }

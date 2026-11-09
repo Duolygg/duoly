@@ -41,9 +41,9 @@ describe('intent page booking facts', () => {
       }
     },
   );
-  it('publishes nine distinct finished pages with honest revision dates', () => {
-    expect(intentPages).toHaveLength(9);
-    // The six teammate pages added in November 2026 carry their own date.
+  it('publishes fifteen distinct finished pages with honest revision dates', () => {
+    expect(intentPages).toHaveLength(15);
+    // The twelve teammate pages added in November 2026 carry their own date.
     const added = new Set([
       '/games/valorant/lfg',
       '/games/fortnite/duos',
@@ -51,6 +51,12 @@ describe('intent page booking facts', () => {
       '/games/apex-legends/lfg',
       '/games/call-of-duty/lfg',
       '/games/rainbow-six-siege/lfg',
+      '/games/counter-strike-2/lfg',
+      '/games/rocket-league/lfg',
+      '/games/world-of-warcraft/lfg',
+      '/games/minecraft/player-finder',
+      '/games/arc-raiders/lfg',
+      '/games/deadlock/lfg',
     ]);
     for (const page of intentPages) {
       const path = intentPath(page);

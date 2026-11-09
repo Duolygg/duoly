@@ -21,6 +21,8 @@ export const deadlock: HubPageCopy = {
     'dota-2',
     'wild-rift',
   ],
+  intent:
+    'After the LFG page rather than every Deadlock service? It covers lane pairs, soul orbs and the Urn and Mid Boss calls a partner makes.',
   format: {
     heading: 'What can you book for Deadlock on Duoly?',
     text: 'A Deadlock booking on Duoly is one of three things: one teammate who joins your party on your own account, a 6-Stack Fill for the seats you are missing, or a coaching hour. First, the teammate tiers are Duo Plus with an Oracle+ player who lanes with you, Duo Pro with a Phantom player who calls Urn runs and Mid Boss, and Duo Apex with an Ascendant+ player at {{p_duo3}} per game. Ranked follows your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while unranked matches stay {{p_unranked}} at every rank. Second, the fill: 6-Stack Fill covers up to {{seats_six}} seats at {{p_six}} per game. Third, Macro and Souls is one hour on soul economy at {{p_macro}}. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. For example, name your heroes using Discord first.',

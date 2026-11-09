@@ -34,7 +34,13 @@ const EXCLUDED = {
  * Reference and listing pages hold a lower floor: they document tool
  * parameters or list articles, so they cannot be written as long answer
  * passages without padding. Scores on 9 November 2026: /ai 77.1,
- * /developers/mcp 72.2, /blog 78.0.
+ * /developers/mcp 71.9, /blog 73.0.
+ *
+ * /blog moved from 78.0 to 73.0 when the LFG guide was added: its one scored
+ * block carries every card on the index, so a second article is about 45 more
+ * words of card text in a block already past the 167-word peak. Splitting the
+ * block in two scored worse (67.5), because each half then falls under the
+ * peak, so the index keeps one answer.
  */
 const REFERENCE_FLOOR = 70;
 const REFERENCE_PAGES = {

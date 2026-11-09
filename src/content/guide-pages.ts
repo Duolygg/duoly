@@ -310,7 +310,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       },
       {
         question:
-          'Do you need a set time tonight or the top rank Competitive allows?',
+          'Do you need a set time tonight or a Radiant partner for Competitive?',
         yes: { text: 'Yes: go to step 3.', kind: 'next' },
         no: {
           text: 'No: a free LFG post using Discord is enough.',
@@ -810,7 +810,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       },
       {
         question:
-          'Do you need a set hour tonight or the top rank Ranked Play allows?',
+          'Do you need a set hour tonight or an Iridescent partner for Warzone Ranked?',
         yes: { text: 'Yes: go to step 3.', kind: 'next' },
         no: {
           text: 'No: a free LFG post using Discord is enough.',
@@ -832,7 +832,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a Warzone duo or find one free?',
-        'Try Squad Fill and the free Discords first for casual games. Book a paid hour for a set time, or for the top rank Ranked Play admits: Activision holds Crimson and above to one rank, so Diamond reaches Crimson.',
+        'Try Squad Fill and the free Discords first for casual games. Book a paid hour for a set time, or for a teammate tier you pick: Duo Pro books a Crimson+ player for Warzone duos, and Warzone Ranked books an Iridescent player for the placement grind.',
       ],
       [
         'What does a Warzone duo hour cost?',
@@ -843,7 +843,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should a Call of Duty LFG post say?',
       intro:
-        'A Call of Duty LFG post is a short message naming your platform, region, mode, rank and input. Platform comes first, because an invite needs the Activision ID and crossplay settings change the lobby. Region comes second, since Europe, North America, South America, Asia, Oceania and Middle East give very different ping. Mode comes third, and it matters more here than in any other shooter: Warzone, Resurgence, multiplayer Ranked Play and round-based Zombies attract 4 different crowds. Rank comes fourth for Ranked Play and Warzone Ranked, which run from Bronze to Top 250: Activision keeps Crimson and above in parties of one or two inside one rank, and a four-player party mixes ranks only at Diamond or below, read in November 2026. Input comes last, whether the hour takes {{pct3}} off 3 or {{pct5}} off 5.',
+        'A Call of Duty LFG post is a short message naming your platform, region, mode, rank and input. Platform comes first, because an invite needs the Activision ID and crossplay settings change the lobby. Region comes second, since Europe, North America, South America, Asia, Oceania and Middle East give very different ping. Mode comes third, and it matters more here than in any other shooter: Warzone, Resurgence, multiplayer Ranked Play and round-based Zombies attract 4 different crowds. Rank comes fourth, because the Duo Plus, Duo Pro, Warzone Ranked and Ranked 4-Stack cards from Duoly carry a rank list running Bronze to Top 250, while Zombies Run and Party Modes hold one price for everybody. Input comes last, whether the hour takes {{pct3}} off 3 or {{pct5}} off 5.',
       fields: [
         { label: 'Platform', chips: ['PC', 'PlayStation', 'Xbox'] },
         {
@@ -890,7 +890,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     gameSlug: 'rainbow-six-siege',
     heading: 'Should I find a Siege duo for free or pay for one?',
     answer:
-      'Start with the free servers. The Rainbow 6 Discord and the cross-game LFG servers cost nothing to post in, and Quick Match partners turn up there most evenings. What a free post cannot promise is the pair you actually need: without a hard breach or a live drone, two players guess at every wall and every spawn peek. A paid session is the opposite trade. You pick the rank and the role, the order chat sets the time, and Duoly reviews the teammate first. For example, a Gold player on EU West books 3 Duo Pro games from Duoly for {{r6Pro3}}, and Ranked 3.0 applies both players limits at once, so that partner tops out at Emerald rather than Diamond. The {{pct3}} bundle discount is already inside that number. Paying earns its keep on the night a rank is close, and earns nothing while you are still learning maps using Discord.',
+      'Start with the free servers. The Rainbow 6 Discord and the cross-game LFG servers cost nothing to post in, and Quick Match partners turn up there most evenings. What a free post cannot promise is the pair you actually need: without a hard breach or a live drone, two players guess at every wall and every spawn peek. A paid session is the opposite trade. You pick the rank and the role, the order chat sets the time, and Duoly reviews the teammate first. For example, a Gold player on EU West books 3 Duo Pro games from Duoly for {{r6Pro3}}, which brings a Diamond+ teammate who carries a hard breach and drones the site before the push. The {{pct3}} bundle discount is already inside that number, and Duo Apex is the card that books a Champion teammate. Paying earns its keep on the night a rank is close, and earns nothing while you are still learning maps using Discord.',
     freeIntro:
       'The fastest free route is a single post naming platform, data centre, rank and role, and a post costs €0. Stay in the channel afterwards, because replies come from whoever is scrolling.',
     freeRoutes: [
@@ -943,7 +943,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       },
       {
         question:
-          'Do you need a set time tonight or the top rank Ranked allows?',
+          'Do you need a set time tonight or a Champion partner for Ranked?',
         yes: { text: 'Yes: go to step 3.', kind: 'next' },
         no: {
           text: 'No: a free LFG post using Discord is enough.',
@@ -965,7 +965,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     faqExtra: [
       [
         'Should I pay for a Siege duo or find one free?',
-        'Try free servers first for Quick Match and map learning. Book a paid session for a set time, or for the highest rank Ranked 3.0 admits beside your own: Emerald for a Gold account, because Diamond carries its own two-rank window.',
+        'Try free servers first for Quick Match and Arcade, both flat priced at every rank. Book a paid session for a set time, or for a teammate tier you pick: Duo Plus books an Emerald+ player, Duo Pro a Diamond+ player and Duo Apex a Champion.',
       ],
       [
         'What does a Siege Duo Pro game cost?',

@@ -21,6 +21,8 @@ export const arcRaiders: HubPageCopy = {
     'minecraft',
     'ea-sports-fc-27',
   ],
+  intent:
+    'After the LFG page rather than every ARC Raiders service? It covers loot routes, extraction calls and how a duo splits one raid.',
   format: {
     heading: 'What can you book for ARC Raiders on Duoly?',
     text: 'An ARC Raiders booking on Duoly is a single reviewed raider, a squad order or one coaching hour. First, everything is priced per hour, because a raid has no fixed length and the loot you walk out with matters more than the run count. The raider tiers are Duo Plus with an experienced player at {{p_duo1}}, Duo Pro with a Veteran at {{p_duo2}} and Duo Apex with an Elite raider at {{p_duo3}}. Learn the Maps sits below all three at {{p_learn}} for relaxed loot routes. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. There is no rank picker, because the matchmaking notes from Embark Studios describe no ranked tier at all and read playstyle history, squad size and latency instead, checked in November 2026. For example, say whether the hour is for loot or fights using Discord.',

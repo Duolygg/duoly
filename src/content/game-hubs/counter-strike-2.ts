@@ -21,6 +21,8 @@ export const counterStrike2: HubPageCopy = {
     'rainbow-six-siege',
     'overwatch-2',
   ],
+  intent:
+    'After the team finder page rather than every CS2 service? It compares Premier, FACEIT, Wingman and retake servers, with a map pool checklist.',
   format: {
     heading: 'What can you book for Counter-Strike 2 on Duoly?',
     text: 'A Counter-Strike 2 booking on Duoly is one of three things: a teammate who queues with you, a stack fill for the seats you are missing, or coaching by the hour. First, Duo Plus brings a Premier 15,000+ teammate, Duo Pro a Premier 20,000+ caller and FACEIT Duo a Level 10 player for the third-party ladder. Premier prices follow your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per match on Duo Pro. Casual and Deathmatch and Retake Servers stay {{p_casual}} per match at every rating. Bundles cut the total, {{pct3}} off 3 matches up to {{pct10}} off 10. Second, the fills: Premier 5-Stack hires Premier 20,000+ players for {{seats_five}} seats at {{p_five}} per match, and FACEIT Stack covers the FACEIT ladder at {{p_faceit5}}. Third, the lessons, from {{p_demo}} per hour. For example, share your region and rating in the order chat using Discord first.',

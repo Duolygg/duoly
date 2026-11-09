@@ -21,6 +21,12 @@ const coaches = [
   'teamfight-tactics',
   'apex-legends',
   'marvel-rivals',
+  // Added 2026-11-09 from the keyword gap analysis.
+  'call-of-duty',
+  'dota-2',
+  'minecraft',
+  'world-of-warcraft',
+  'deadlock',
 ];
 function link(source, target) {
   assert(
@@ -348,6 +354,12 @@ const intentRoutes = [
   ['apex-legends', 'lfg', 'apex', 'duos'],
   ['call-of-duty', 'lfg', 'cod', 'duo2'],
   ['rainbow-six-siege', 'lfg', 'r6', 'duo2'],
+  ['counter-strike-2', 'lfg', 'cs2', 'duo2'],
+  ['rocket-league', 'lfg', 'rl', 'duo2'],
+  ['world-of-warcraft', 'lfg', 'wow', 'duo2'],
+  ['minecraft', 'player-finder', 'mc', 'duo2'],
+  ['arc-raiders', 'lfg', 'arc', 'duo2'],
+  ['deadlock', 'lfg', 'dl', 'duo2'],
 ];
 for (const [game, slug, id, serviceId] of intentRoutes) {
   const path = `/games/${game}/${slug}`;
@@ -385,25 +397,29 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     // teammate pages add the LFG post template on top of that. Keep substantive
     // guides without requiring repeated prices or filler in Unite.
     //
-    // Every ceiling moved up by 180 when #187's shared paragraphs landed. The
+    // Three measured changes stack in these ceilings. #187 added the shared
     // price note (server/seo/citable-answers priceNote), the closing detail
-    // paragraph and the shared teammate facts add a measured 179 words to every
-    // intent page, and the rank-rule copy from #189 had already spent the old
-    // headroom: /games/call-of-duty/lfg was at exactly 2900 of 2900.
+    // paragraph and the shared teammate facts, a measured 179 words on every
+    // intent page. Withdrawing the rank rule in #193 gave part of that back.
+    // The November 2026 keyword gap pass then took the registry from 9 pages
+    // to 15, and every teammate page links every other one, so the
+    // related-link chips grew by about 100 words on all of them.
     //
-    // Withdrawing the rank rule gave part of that back. Measured on 9 November
-    // 2026 after the removal, worst page per bucket: templated 3041 of 3150
-    // (/games/fortnite/duos), guided 2560 of 2650, plain 1803 of 1900. That is
-    // roughly 100 words of headroom each, which is where the ceilings stay: the
-    // shared paragraphs are reviewed copy and the headroom is not for padding,
-    // so move a ceiling only with the same kind of measurement written down.
+    // Measured on 9 November 2026 against this build, worst page per bucket:
+    // templated 3075 (/games/call-of-duty/lfg), guided 2593
+    // (/games/league-of-legends/play-with-someone) and plain 2185
+    // (/games/counter-strike-2/lfg, the longest plain page because CS2 sells
+    // six teammate services on one card). Each ceiling sits 100 words above
+    // its worst page. The headroom is for those reviewed, shared paragraphs
+    // and not for padding, so move a ceiling only with the same kind of
+    // measurement written down.
     const guided = html.includes('id="free-or-paid"');
     const templated = html.includes('id="lfg-post-h"');
     const [minWords, maxWords] = templated
-      ? [1900, 3150]
+      ? [1900, 3175]
       : guided
-        ? [1500, 2650]
-        : [1200, 1900];
+        ? [1500, 2695]
+        : [1200, 2285];
     assert(
       wordCount >= minWords && wordCount <= maxWords,
       `${path}: ${wordCount} words`,
@@ -547,10 +563,12 @@ test('required editorial links and two related coaching pages exist', () => {
     link(`/games/${slug}`, path);
     link(path, `/games/${slug}`);
     link(path, '/games');
+    // Sibling coaching pages only: /coaching is the all-games directory and
+    // every coaching page links it, so it would otherwise pass this on its own.
     assert(
       new Set(
         pages[path].editorialLinks.filter(
-          (p) => /\/coaching$/.test(p) && p !== path,
+          (p) => /^\/games\/[^/]+\/coaching$/.test(p) && p !== path,
         ),
       ).size >= 2,
     );
