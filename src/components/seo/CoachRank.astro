@@ -8,14 +8,15 @@
  * top-tier coach can still play beside any rank, and cites the publisher page
  * and the day it was read (src/content/rank-rules.ts).
  *
- * The source is a link only where an automated check reached the page with 200
- * on the check date. Three publishers answer an automated request with 403, so
- * those pages are named in prose without a hyperlink (LINKABLE_SOURCES).
+ * Every source is a link, at the canonical address the publisher serves. Three
+ * of them turn away automated requests with 403 (BOT_PROTECTED_SOURCES), so
+ * those say so beside the link rather than implying the check came back 200.
  */
 import type { CoachRankCopy } from '../../content/coaching-rank';
-import { LINKABLE_SOURCES } from '../../content/coaching-rank';
+import { BOT_PROTECTED_SOURCES } from '../../content/coaching-rank';
 import {
   rankRuleFor,
+  RANK_RULES_CHECKED,
   RANK_RULES_CHECKED_LABEL,
 } from '../../content/rank-rules';
 interface Props {
@@ -27,7 +28,7 @@ interface Props {
 }
 const { slug, copy, rule, choice } = Astro.props;
 const source = rankRuleFor(slug);
-const linkable = LINKABLE_SOURCES.includes(slug);
+const botProtected = BOT_PROTECTED_SOURCES.includes(slug);
 ---
 
 <section class="rank-rule" aria-labelledby="rank-rule-h">
@@ -58,16 +59,13 @@ const linkable = LINKABLE_SOURCES.includes(slug);
   {source && (
     <p class="rank-source">
       Rule from {source.publisher}, in{' '}
-      {linkable ? (
-        <a href={source.source.url} rel="nofollow noopener" target="_blank">
-          {source.source.label}
-        </a>
-      ) : (
-        <strong>{source.source.label}</strong>
-      )}
-      , read on <time datetime="2026-11-08">{RANK_RULES_CHECKED_LABEL}</time>.
-      {!linkable &&
-        ' That page blocks automated checks, so the link is left out.'}
+      <a href={source.source.url} rel="nofollow noopener" target="_blank">
+        {source.source.label}
+      </a>
+      , read on{' '}
+      <time datetime={RANK_RULES_CHECKED}>{RANK_RULES_CHECKED_LABEL}</time>.
+      {botProtected &&
+        ' That page turns away automated checks with a 403, so open it yourself to see the rule in full.'}
     </p>
   )}
 </section>

@@ -476,7 +476,7 @@ export const RANK_RULES: RankRule[] = [
     openModes: ['Casual', 'Extra Modes', 'Rumble', 'Dropshot', 'Hoops'],
     source: {
       label: 'How does the matchmaking and rank system work in Rocket League?',
-      url: 'https://epicgames.com/help/c-37599050/c-32343914/how-does-the-matchmaking-and-rank-system-work-in-rocket-league-a12805879',
+      url: 'https://www.epicgames.com/help/en-US/c-Category_RocketLeague/c-RocketLeague_Gameplay/rocket-league-matchmaking-and-ranked-system-faq-a000084518',
     },
   },
   {

@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { lessons } from '../../src/content/coaching';
-import { coachRank, LINKABLE_SOURCES } from '../../src/content/coaching-rank';
+import {
+  coachRank,
+  BOT_PROTECTED_SOURCES,
+} from '../../src/content/coaching-rank';
 import {
   FORBIDDEN_CLAIMS,
   RANK_RULES,
   UNKNOWN_RULE,
+  rankPairingFaults,
   rankRuleFor,
 } from '../../src/content/rank-rules';
 import { withPrices } from '../../src/server/seo/coaching-examples';
@@ -18,8 +22,15 @@ const context = (customerCurrency: (typeof currencies)[number]) => ({
   eurToUsd: 1.17,
 });
 
-/** Everything a coaching page actually renders as sentences, in one string. */
-function pageText(slug: string, customerCurrency: (typeof currencies)[number]) {
+/**
+ * Everything a coaching page renders, as the labelled blocks the rank-pairing
+ * scanner reads. Prices are filled in first, because a filled price can change
+ * where a sentence ends.
+ */
+function pageBlocks(
+  slug: string,
+  customerCurrency: (typeof currencies)[number],
+) {
   const lesson = lessons[slug]!;
   const rank = coachRank[slug]!;
   const offers = seoOffers(
@@ -45,10 +56,20 @@ function pageText(slug: string, customerCurrency: (typeof currencies)[number]) {
     rank.rule,
     rank.choice,
     ...rank.rungs.flatMap((rung) => [rung.label, rung.value, rung.note]),
-  ]
-    .map((text) => withPrices(text, offers))
-    .join(' ');
+  ].map((text) => ({
+    where: `coaching /games/${slug}/coaching (${customerCurrency})`,
+    text: withPrices(text, offers),
+  }));
 }
+
+/** The same copy as one string, for the must-say and banned-claim checks. */
+const pageText = (
+  slug: string,
+  customerCurrency: (typeof currencies)[number],
+) =>
+  pageBlocks(slug, customerCurrency)
+    .map((block) => block.text)
+    .join(' ');
 
 describe('every coaching page has a rank rule', () => {
   it('covers each indexed coaching slug with copy and a published rule', () => {
@@ -59,12 +80,29 @@ describe('every coaching page has a rank rule', () => {
     }
   });
 
-  it('only links a source page an automated check actually reached', () => {
+  it('links every source and flags only the three that answer 403', () => {
     const slugs = RANK_RULES.map((rule) => rule.gameSlug);
-    for (const slug of LINKABLE_SOURCES) expect(slugs).toContain(slug);
-    // The three Cloudflare-protected publishers stay unlinked on purpose.
-    for (const slug of ['counter-strike-2', 'fortnite', 'rocket-league'])
-      expect(LINKABLE_SOURCES).not.toContain(slug);
+    for (const slug of BOT_PROTECTED_SOURCES) {
+      expect(slugs, `${slug} needs a rule to cite`).toContain(slug);
+      expect(COACHING_SLUGS, `${slug} needs a coaching page`).toContain(slug);
+    }
+    // FACEIT, fortnite.com and the Epic help centre sit behind bot protection.
+    // Every other publisher answered 200, so its link carries no caveat.
+    expect([...BOT_PROTECTED_SOURCES].sort()).toEqual([
+      'counter-strike-2',
+      'fortnite',
+      'rocket-league',
+    ]);
+    for (const slug of COACHING_SLUGS) {
+      const url = rankRuleFor(slug)!.source.url;
+      // Every citation is an absolute https URL with a path, and at the host
+      // the publisher actually serves: epicgames.com without the www
+      // redirects, which is how the Rocket League link was cited before.
+      expect(url, `${slug} source`).toMatch(/^https:\/\/[\w.-]+\.\w+\/\S/);
+      expect(url, `${slug} source host`).not.toMatch(
+        /^https:\/\/epicgames\.com/,
+      );
+    }
   });
 
   it('shows three rungs per game, widening left to right', () => {
@@ -93,13 +131,45 @@ describe('coaching copy obeys the publisher queue rules', () => {
         expect(text, `${slug} must say "${rule.mustSay}"`).toContain(
           rule.mustSay,
         );
-        for (const banned of rule.mustNotSay)
-          expect(text, `${slug} must not say "${banned}"`).not.toContain(
-            banned,
-          );
         for (const claim of FORBIDDEN_CLAIMS)
           expect(text, `${slug} vs ${claim}`).not.toMatch(claim);
       });
+
+  // The shared scanner from #189, pointed at coaching copy. rank-rules.test.ts
+  // runs it over hub, intent and guide pages; coaching copy is scanned here
+  // because this is the file that owns it.
+  it('never pairs a customer rank with a coach rank the queue refuses', () => {
+    const faults = COACHING_SLUGS.flatMap((slug) =>
+      currencies.flatMap((customerCurrency) =>
+        rankPairingFaults(
+          pageBlocks(slug, customerCurrency),
+          rankRuleFor(slug),
+        ),
+      ),
+    );
+    expect(
+      faults.map(
+        (fault) =>
+          `${fault.where}: "${fault.sentence}" (${fault.allowed}; name an open mode or the game's own wider route)`,
+      ),
+    ).toEqual([]);
+  });
+
+  it('still catches the claim the rank block was written to remove', () => {
+    // Without this the scan above would pass just as happily on no input.
+    const caught = rankPairingFaults(
+      [
+        {
+          where: 'coaching fixture',
+          text: 'A Gold player books one Competitive match beside an Immortal coach.',
+        },
+      ],
+      rankRuleFor('valorant'),
+    );
+    expect(caught.map((fault) => [fault.lower, fault.higher])).toEqual([
+      ['Gold', 'Immortal'],
+    ]);
+  });
 
   it('never promises a top-tier coach inside a gap-limited ranked queue', () => {
     // The exact claims this change removed, one per game the queue restricts.

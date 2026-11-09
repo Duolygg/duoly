@@ -31,7 +31,6 @@
  * Ubisoft's Player Protection Core Rules prohibit paid rank inflation outright
  * and Duoly sells shared playing time rather than a result.
  */
-import { rankRuleFor } from './rank-rules';
 
 /** One rung of the queue visual. Chips, so the prose never depends on reading them. */
 export interface RankRung {
@@ -64,22 +63,19 @@ export interface CoachRankCopy {
 }
 
 /**
- * Source pages that answered an automated HTTP check with 200 on 8 November
- * 2026, so a coaching page may link them.
+ * Games whose publisher page sits behind bot protection and answers an
+ * automated HTTP request with 403: FACEIT (Counter-Strike 2), fortnite.com and
+ * the Epic Games help centre (Rocket League).
  *
- * Three publishers sit behind bot protection and answer an automated request
- * with 403: FACEIT, Epic Games (fortnite.com) and Epic Games (Rocket League
- * help). Those pages are named in prose and the page's check date, with no
- * hyperlink, rather than shipping a link nobody here could confirm resolves.
+ * All ten sources are linked, at the canonical address each publisher serves.
+ * Seven answered 200 on 8 November 2026 (RANK_RULES_CHECKED). These three
+ * carry a visible note that they turn away automated checks, so a reader is
+ * told the status code was 403 rather than being left to assume a 200.
  */
-export const LINKABLE_SOURCES = [
-  'valorant',
-  'league-of-legends',
-  'teamfight-tactics',
-  'apex-legends',
-  'overwatch-2',
-  'marvel-rivals',
-  'rainbow-six-siege',
+export const BOT_PROTECTED_SOURCES = [
+  'counter-strike-2',
+  'fortnite',
+  'rocket-league',
 ];
 
 export const coachRank: Record<string, CoachRankCopy> = {
@@ -383,6 +379,3 @@ export const coachRank: Record<string, CoachRankCopy> = {
     ],
   },
 };
-
-/** The publisher page a coaching page cites for its rank rule. */
-export const rankSourceFor = (slug: string) => rankRuleFor(slug);
