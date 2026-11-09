@@ -173,7 +173,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Comp and Econ Review is the TFT coaching hour, with a Master+ coach, your own recording and a call using Discord. Nobody joins your lobby: you send a full game and the hour goes on comps, roll timing, levelling and gold from stage two onward.',
     detail:
-      'The other two live options sit in the teammate catalog rather than the coaching one. Board Coach puts a Master+ player on your own board as a live caller, and Double Up puts a Master+ partner on the second board of your team of two. For example, one roll-down at stage 3 can fill most of a review hour at {price:econ}.',
+      'The other two live options are sold as teammate sessions rather than lessons. Board Coach puts a Master+ player on your own board as a live caller, and Double Up puts a Master+ partner on the second board of your team of two. For example, one roll-down at stage 3 can fill most of a review hour at {price:econ}.',
     choice:
       'So pick by the moment you want back: 1) a decision you already made goes to Comp and Econ Review, 2) a decision you are about to make goes to Board Coach, and 3) a shared placement goes to Double Up. The review hour costs {amount:econ}, and bundles never apply to coaching. Finally, record the shop, bench, items and augments.',
     rows: [
