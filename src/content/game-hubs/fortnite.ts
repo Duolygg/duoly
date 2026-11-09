@@ -15,10 +15,10 @@ export const fortnite: HubPageCopy = {
     'Priced per hour, your own account',
   ],
   related: [
-    'apex-legends',
-    'call-of-duty',
     'rocket-league',
-    'counter-strike-2',
+    'ea-sports-fc-27',
+    'minecraft',
+    'apex-legends',
     'pubg',
   ],
   intent:
@@ -128,7 +128,7 @@ export const fortnite: HubPageCopy = {
       heading: 'When is Fortnite coaching the better booking?',
       paragraphs: [
         'Fortnite coaching is the better booking when the goal is a repeatable fix rather than company for the next hour. A duo teammate answers a quick question between games. A coach drills one skill in Creative and leaves you with homework. Build and Edit Course costs {{p_build}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
-        'First, name the pattern you keep repeating. For example, a player who loses every box fight gains more from one Creative hour at {{p_build}} than from a fourth Ranked game. A player who only wants fun gains more from Reload at {{p_reload}} per hour in 2026. Play and Learn is one live Ranked hour with an Unreal coach at {{p_learn}}, and screen share runs using Discord. The full service list, preparation tips and lesson formats live on the [Fortnite coaching page](/games/fortnite/coaching).',
+        'First, name the pattern you keep repeating. For example, a player who loses every box fight gains more from one Creative hour at {{p_build}} than from a fourth Ranked game. A player who only wants fun gains more from Reload at {{p_reload}} per hour in 2026. Play and Learn is one live Ranked hour with an Unreal coach at {{p_learn}}, and screen share runs using Discord. The full service list, preparation tips and lesson formats live on the [Fortnite coaching page](/games/fortnite/coaching). The [Fortnite duos page](/games/fortnite/duos) sets the free Discords and the Fill button beside the paid hours, and [Apex Legends teammates](/games/apex-legends) and [PUBG teammates](/games/pubg) cover the other battle royales.',
       ],
     },
   ],

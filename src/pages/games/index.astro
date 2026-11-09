@@ -5,7 +5,7 @@ import { pageViewer } from '../../site/viewer';
 import { SITE_GAMES } from '../../site/games';
 import { lessons } from '../../content/coaching';
 import { intentForGame, intentPath } from '../../content/intent-pages';
-import { serializeJsonLd, CONTENT_DATES } from '../../site/seo';
+import { serializeJsonLd, CONTENT_DATES, bookingHref } from '../../site/seo';
 import { faqSchema } from '../../server/seo/offers';
 import {
   BUNDLE_PERCENTS as bundle,
@@ -93,6 +93,12 @@ const faq: [string, string][] = [
             {lessons[game.slug] && (
               <a href={`/games/${game.slug}/coaching`}>{game.name} coaching</a>
             )}
+            {/* One booking link per card: the directory is the page's own
+                content index, so a reader can reach checkout from the game
+                they came for rather than one hub hop later. */}
+            <a class="book" href={bookingHref(game.id)}>
+              Book {game.name} now
+            </a>
           </li>
         ))}
       </ul>
@@ -101,19 +107,22 @@ const faq: [string, string][] = [
       <h2 id="what-h">How do you use the game catalog?</h2>
       <p>
         Choose your game first: its hub is the catalog of teammates, coaching
-        and prices. A coaching link opens a lesson guide, and a play-together
-        link compares free communities with paid sessions. Available services
-        differ by game, so check the mode and unit before choosing a quantity.
-        An hourly review and a session priced per game cover different amounts
-        of play.
+        and prices. Second, a coaching link opens a lesson guide, and a
+        play-together link compares free communities with paid sessions. Third,
+        a Book link beside them opens the checkout with that game already
+        chosen. Available services differ by game, so check the mode and the
+        unit before choosing a quantity, because an hourly review and a session
+        priced per game cover different amounts of play.
       </p>
       <p>
         For example, a Valorant player can compare Competitive, Swiftplay and a
-        VOD Review from the same hub. Ranked parties must still meet the game's
-        queue rules. Match the server and region, agree voice in the order chat
-        and stay on your own account. A booking does not guarantee a win, a
-        particular start time or a rank change. If you are deciding between
-        services, use the comparisons below before opening checkout.
+        VOD Review from the same hub, where coaching is {COACHING_PRICE} per
+        hour and the cheapest listed game is {SHORT_GAME_PRICE}. Match the
+        server and region, agree voice in the order chat using Discord and stay
+        on your own account. Finally, a booking does not guarantee a win, a
+        particular start time or a rank change, and every price here was read
+        from Duoly checkout in 2026. If you are deciding between services, use
+        the comparisons below before opening checkout.
       </p>
       <p>
         Using an assistant? See <a href="/ai">Duoly in AI assistants</a> or the{' '}
@@ -170,11 +179,11 @@ const faq: [string, string][] = [
         pauses, explains and reviews at {COACHING_PRICE} per hour. Third, pick
         Social when the goal is company rather than a scoreboard, at{' '}
         {SOCIAL_PRICE} per hour for Just Chat, Watch Together, Sleep Call or
-        Karaoke. Choose by the activity you want, and check ranked party
-        eligibility before booking. A coach can review a lost round without
-        joining your ranked lobby; a duo teammate needs to be eligible to queue
-        with you. A ten game duo bundle from Duoly costs {bundle[2]}% less than
-        ten single games.
+        Karaoke. Finally, a coach pauses and explains while a teammate plays the
+        match beside you, so the activity decides the service rather than the
+        price. For example, a ten game duo bundle from Duoly costs {bundle[2]}%
+        less than ten single games in 2026, and a tenth coaching hour still
+        costs {COACHING_PRICE} like the first.
       </p>
     </section>
     <section class="answers" aria-labelledby="which-h">
@@ -252,6 +261,16 @@ const faq: [string, string][] = [
   }
   .grid img {
     border-radius: 12px;
+  }
+  /* The booking link is the action in each card stack, so it carries the
+     accent the rest of the site gives a call to action. */
+  .grid a.book {
+    color: #d6bbff;
+    border-color: rgba(214, 187, 255, 0.28);
+    background: linear-gradient(140deg, rgba(214, 187, 255, 0.1), #120b22 60%);
+  }
+  .grid a.book:hover {
+    border-color: rgba(214, 187, 255, 0.55);
   }
   .answers {
     margin-top: 48px;

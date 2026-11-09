@@ -8,6 +8,7 @@ import { pageViewer } from '../../site/viewer';
 import {
   CONTENT_DATES,
   serializeJsonLd,
+  bookingHref,
   organizationSchema,
 } from '../../site/seo';
 import { MCP, aiLaunchState } from '../../site/ai';
@@ -126,9 +127,14 @@ const request = JSON.stringify(
         order. Share bookUrl as the primary link so a person can book. The link
         preserves supplied rank, region and quantity, plus role, coaching
         character, voice, mood and teammate count. Minecraft links also preserve
-        server or world and edition. For example, a {coachingPrice} per hour
-        Valorant coaching link from Duoly opens the checkout with the service
-        already chosen.
+        server or world and edition. For example, this{' '}
+        <a href={bookingHref('val', { service: 'vod' })}>
+          Valorant VOD Review booking link
+        </a>{' '}
+        is exactly what create_booking_link returns, and it opens the checkout
+        at {coachingPrice} per hour with the service already chosen. The{' '}
+        <a href="/games/valorant">Valorant teammate hub</a> is the human version
+        of the same catalog entry.
       </p>
       <p>
         Three habits keep a client honest. First, use exact game, rank and

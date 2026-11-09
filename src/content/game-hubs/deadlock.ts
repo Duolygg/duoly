@@ -14,7 +14,13 @@ export const deadlock: HubPageCopy = {
     'Ranked and unranked matches',
     'Voice on Discord, your own account',
   ],
-  related: ['dota-2', 'overwatch-2', 'marvel-rivals', 'world-of-warcraft'],
+  related: [
+    'marvel-rivals',
+    'overwatch-2',
+    'rainbow-six-siege',
+    'dota-2',
+    'wild-rift',
+  ],
   format: {
     heading: 'What can you book for Deadlock on Duoly?',
     text: 'A Deadlock booking on Duoly is one of three things: one teammate who joins your party on your own account, a 6-Stack Fill for the seats you are missing, or a coaching hour. First, the teammate tiers are Duo Plus with an Oracle+ player who lanes with you, Duo Pro with a Phantom player who calls Urn runs and Mid Boss, and Duo Apex with an Ascendant+ player at {{p_duo3}} per game. Ranked follows your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while unranked matches stay {{p_unranked}} at every rank. Second, the fill: 6-Stack Fill covers up to {{seats_six}} seats at {{p_six}} per game. Third, Macro and Souls is one hour on soul economy at {{p_macro}}. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. For example, name your heroes using Discord first.',
@@ -115,7 +121,7 @@ export const deadlock: HubPageCopy = {
       heading: 'When is Deadlock coaching the better booking?',
       paragraphs: [
         'Deadlock coaching is the better booking when the goal is a fix you can repeat rather than company for the next match. First, Macro and Souls is one hour with an Ascendant coach on farming patterns, soul economy, item timings and rotations, at {{p_macro}} per hour. Second, Play and Learn is one live ranked match with a Phantom+ coach at {{p_learn}} instead of a clock hour. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
-        'For example, a player who ends every match behind on souls gains more from one macro hour at {{p_macro}} than from three more ranked matches. A player who wants to try a new hero gains more from unranked matches at {{p_unranked}} each, where nothing is on the line. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every Deadlock coach before any order goes live.',
+        'For example, a player who ends every match behind on souls gains more from one macro hour at {{p_macro}} than from three more ranked matches. A player who wants to try a new hero gains more from unranked matches at {{p_unranked}} each, where nothing is on the line. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every Deadlock coach before any order goes live. Its closest neighbours here are [Dota 2 teammates](/games/dota-2), for the same lane and objective clock, and [Overwatch 2 teammates](/games/overwatch-2) for the hero-shooter half.',
       ],
     },
   ],

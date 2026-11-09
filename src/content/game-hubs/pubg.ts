@@ -14,7 +14,13 @@ export const pubg: HubPageCopy = {
     'Ranked, Normal Duos and Arcade',
     'Voice on Discord, your own account',
   ],
-  related: ['fortnite', 'apex-legends', 'call-of-duty', 'arc-raiders'],
+  related: [
+    'apex-legends',
+    'fortnite',
+    'rocket-league',
+    'call-of-duty',
+    'valorant',
+  ],
   format: {
     heading: 'What can you book for PUBG on Duoly?',
     text: 'Duoly sells three things for PUBG: Battlegrounds: one teammate who joins your squad on your own account, a Squad Fill for the seats you are missing, and coaching. Everything is booked by the hour, because a match ends whenever you die or win. Duo Plus brings a Diamond+ player who calls the drop, Duo Pro a Master player who reads the zone, and Normal Duos a Master partner for the two-player mode. Ranked follows your own tier, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Duo Pro, while Normal Duos stays {{p_duos}} and Arcade {{p_arcade}} per hour for everybody. Second, the fill: Squad Fill covers up to {{seats_squad}} seats at {{p_squad}} per hour. Third, Recoil and Positioning is one hour on spray control at {{p_spray}}. Bundles take {{pct3}} off 3 hours up to {{pct10}} off 10. For example, name your perspective using Discord first.',
@@ -117,7 +123,7 @@ export const pubg: HubPageCopy = {
       heading: 'When is PUBG coaching the better booking?',
       paragraphs: [
         'PUBG coaching is the better booking when you lose fights you should win. First, Recoil and Positioning is one hour with a Master coach on spray control, attachments and where to stand in every circle, at {{p_spray}} per hour, drilled in the Training Mode and practised live. Second, Play and Learn is one live hour of Ranked with a Master coach at {{p_learn}}. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
-        'For example, a player who loses every long range fight gains more from one coaching hour at {{p_spray}} than from three more hours of Ranked. A player who only wants to warm up gains more from Arcade and TDM at {{p_arcade}} per hour, where respawns keep the fights coming. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every PUBG coach before any order goes live.',
+        'For example, a player who loses every long range fight gains more from one coaching hour at {{p_spray}} than from three more hours of Ranked. A player who only wants to warm up gains more from Arcade and TDM at {{p_arcade}} per hour, where respawns keep the fights coming. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every PUBG coach before any order goes live. The nearest neighbours here are [Apex Legends teammates](/games/apex-legends) and [Fortnite teammates](/games/fortnite), both battle royales priced by the hour.',
       ],
     },
   ],

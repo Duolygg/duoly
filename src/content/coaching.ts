@@ -42,7 +42,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'Example round: what makes an entry untradeable?',
         paragraphs: [
           'An untradeable entry is a peek with no teammate ready to answer the kill. For example, the entry player turns a corner while the second player is still behind a smoke. Pause the recording a second before the peek and ask three things: what information was available, which angle the second player could see, and whether utility was about to expire. Moving together or waiting for the flash usually beats a harder shot.',
-          'For practice, mark the first contact of 5 rounds in your next recording. First, note whether a teammate could trade. Second, check whether the crosshair sat at head height before the opponent appeared. Finally, compare each moment with the round result rather than the scoreboard. A Competitive match is a race to 13. Replaying one peek 3 times usually settles whether the route or the shot was the problem, and an Immortal+ coach from Duoly adapts the exercise to your role and agent, reviewing clips using Discord screen share.',
+          'For practice, mark the first contact of 5 rounds in your next recording. First, note whether a teammate could trade. Second, check whether the crosshair sat at head height before the opponent appeared. Finally, compare each moment with the round result rather than the scoreboard. A Competitive match is a race to 13. Replaying one peek 3 times usually settles whether the route or the shot was the problem, and an Immortal+ coach from Duoly adapts the exercise to your role and agent, reviewing clips using Discord screen share. Want the playing side instead? [Valorant teammates](/games/valorant) lists every service, and the [Valorant LFG page](/games/valorant/lfg) compares the free Discords with a paid duo.',
         ],
       },
     ],
@@ -94,7 +94,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'Example lane review: what makes a recall expensive?',
         paragraphs: [
           'An expensive recall is a reset that gives away minions, experience or tower plates. For example, a mid laner recalls while the wave stops just outside the enemy tower. The opponent holds the wave, and the returning laner walks forward for experience. First, ask whether the wave could have been crashed fully. Second, ask whether the enemy jungler was visible on the map. Finally, compare the item bought with the minions and plates likely to be lost.',
-          'A take-home exercise is to label your first 3 recalls in the next game. Use three labels: wave crashed, wave rolling toward you, or wave held away from you. Add the information available before pressing B. Replaying the same recall 3 times usually ends the argument. A recall at 13:30 is a different decision from a recall at 15:00. Plates make the early reset more expensive, and a Grandmaster+ coach from Duoly adapts the task to your matchup, watching the replay using Discord screen share.',
+          'A take-home exercise is to label your first 3 recalls in the next game. Use three labels: wave crashed, wave rolling toward you, or wave held away from you. Add the information available before pressing B. Replaying the same recall 3 times usually ends the argument. A recall at 13:30 is a different decision from a recall at 15:00. Plates make the early reset more expensive, and a Grandmaster+ coach from Duoly adapts the task to your matchup, watching the replay using Discord screen share. Want the playing side instead? [League of Legends teammates](/games/league-of-legends) lists every service, and [Play League of Legends with someone](/games/league-of-legends/play-with-someone) covers ARAM, normals and ranked duo.',
         ],
       },
     ],
@@ -146,7 +146,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'How can you practice recovering after a tempting rebound?',
         paragraphs: [
           'A controlled recovery is a landing and a route back into the play after an aerial or a challenge. First, choose a replay where a missed rebound left the net open. For example, pause as your partner shoots and compare your boost with the distance to the next safe position. Name where a losing challenge would send the ball. A standard Doubles clock runs 5:00. Overtime removes the clock, so a bad landing can decide the whole match.',
-          'Second, practice a simple aerial, land on the wheels and steer toward a useful route. Ask the coach to tie the drill to the replay rather than adding an unrelated trick, since a pack repeated 10 times at a controlled speed beats five attempts at full speed. Finally, keep the first version slow enough to control the landing before adding height, speed or a harder angle. A Grand Champion coach from Duoly watches the attempts using Discord screen share.',
+          'Second, practice a simple aerial, land on the wheels and steer toward a useful route. Ask the coach to tie the drill to the replay rather than adding an unrelated trick, since a pack repeated 10 times at a controlled speed beats five attempts at full speed. Finally, keep the first version slow enough to control the landing before adding height, speed or a harder angle. A Grand Champion coach from Duoly watches the attempts using Discord screen share. Want the playing side instead? [Rocket League teammates](/games/rocket-league) lists every service, from a Doubles hour to the 3v3 Standard fill.',
         ],
       },
     ],
@@ -198,7 +198,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'How can you practice an edit, shot and reset together?',
         paragraphs: [
           'An edit and reset drill is a controlled sequence of opening a shot, firing and returning behind cover. First, start inside a box with a wall you own. For example, choose an opening that keeps most of your character protected from a target directly ahead. Check your position before touching the edit. Repeat the sequence until the reset feels controlled, usually around 10. Then move the target angle and ask whether the same opening still works.',
-          'Second, ask the coach to match the drill to your controller or keyboard, because a keyboard setup can hide a bind problem a controller player never has. Finally, count controlled returns to cover before trying to go faster. A short clip of a lost fight ties the Creative drill to a decision you recognize, and an Unreal coach from Duoly can compare the clip with the drill using Discord screen share.',
+          'Second, ask the coach to match the drill to your controller or keyboard, because a keyboard setup can hide a bind problem a controller player never has. Finally, count controlled returns to cover before trying to go faster. A short clip of a lost fight ties the Creative drill to a decision you recognize, and an Unreal coach from Duoly can compare the clip with the drill using Discord screen share. Want the playing side instead? [Fortnite teammates](/games/fortnite) lists every service, and the [Fortnite duos page](/games/fortnite/duos) compares the free Fill button with a booked hour.',
         ],
       },
     ],
@@ -250,7 +250,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'How do you review a decision to roll or level?',
         paragraphs: [
           'A roll or level review is a comparison of the upgrades on offer, the gold in hand and the health cost of waiting. First, pause at a stage transition before any gold is spent. For example, a weak front line holding several pairs calls for a different answer from a stable board needing one more unit. Rolling at level 8 is a different bet from rolling at 7. Write down gold, health, level and the reason for the choice.',
-          'Second, compare the likely upgrades with the next opponents and the items sitting unassigned on your bench. A Master+ coach from Duoly will often watch the same fight 3 times before answering. Finally, include the games that went well and the games that fell apart, so a lucky shop does not become the whole explanation for a spending habit, and keep the recording open using Discord screen share.',
+          'Second, compare the likely upgrades with the next opponents and the items sitting unassigned on your bench. A Master+ coach from Duoly will often watch the same fight 3 times before answering. Finally, include the games that went well and the games that fell apart, so a lucky shop does not become the whole explanation for a spending habit, and keep the recording open using Discord screen share. Want the playing side instead? [Teamfight Tactics partners](/games/teamfight-tactics) lists every service, from a Double Up partner to a live Board Coach.',
         ],
       },
     ],
@@ -302,7 +302,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'How do you review a rotation after losing the angle?',
         paragraphs: [
           'A late rotation is a move started after another squad already controls the route or the position you wanted. First, pause the clip before your squad leaves cover. For example, the direct path into the next ring gets dangerous when opponents already watch the only crossing. Compare cover, alternate routes and the information your legend abilities gave you, then name an earlier signal to move. A Ranked lobby starts with 20 squads and ends with 1.',
-          'Second, choose the next protected position and a fallback in case the position is occupied. Watching the same rotation 3 times usually reveals the signal the whole squad missed. Finally, test a simple move toward cover while keeping aim under control, and a Master coach from Duoly adapts the drill to your input and platform before adding speed, using Discord screen share.',
+          'Second, choose the next protected position and a fallback in case the position is occupied. Watching the same rotation 3 times usually reveals the signal the whole squad missed. Finally, test a simple move toward cover while keeping aim under control, and a Master coach from Duoly adapts the drill to your input and platform before adding speed, using Discord screen share. Want the playing side instead? [Apex Legends teammates](/games/apex-legends) lists every service, and the [Apex Legends LFG page](/games/apex-legends/lfg) compares auto fill with a booked hour.',
         ],
       },
     ],
@@ -355,7 +355,7 @@ export const lessons: Record<string, Lesson> = {
           'Example team fight: why can an ultimate fail without follow-up?',
         paragraphs: [
           'An ultimate without follow-up is an ultimate used before teammates can act on the opening. For example, the ultimate opens a fight while two teammates are still walking back from spawn. The animation looks strong and the team still cannot take the point. Pause before the activation and count who can act, which enemy defensive abilities are known, and whether the objective needs an immediate contest.',
-          'A small practice task is to review 5 ultimate uses from your next matches. First, write the intended purpose before judging the outcome: 1) engage, 2) response, 3) survival or 4) objective contest. Second, check whether the teammates needed for the plan were alive and close. Watching one ultimate 3 times shows whether the whole team could have followed. Finally, ask a Grandmaster+ coach from Duoly for a hero-specific cue that spots the same moment sooner, reviewing clips using Discord screen share.',
+          'A small practice task is to review 5 ultimate uses from your next matches. First, write the intended purpose before judging the outcome: 1) engage, 2) response, 3) survival or 4) objective contest. Second, check whether the teammates needed for the plan were alive and close. Watching one ultimate 3 times shows whether the whole team could have followed. Finally, ask a Grandmaster+ coach from Duoly for a hero-specific cue that spots the same moment sooner, reviewing clips using Discord screen share. Want the playing side instead? [Marvel Rivals teammates](/games/marvel-rivals) lists every service, and the [Marvel Rivals duo partner](/games/marvel-rivals/duo-partner) page covers hero pairings.',
         ],
       },
     ],
@@ -407,7 +407,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'Example round: what makes a site execute fall apart?',
         paragraphs: [
           'A failed execute is utility spent before anyone can use the space it opened. For example, the smoke lands, the flash goes over the wall and the entry player is still three seconds behind. Pause the demo before the first smoke and ask 1) who was ready to enter, 2) which angle the flash actually covered and 3) whether a defender had already rotated. Moving on the utility usually beats a better spray.',
-          'For practice, mark the first utility of 5 rounds in your next demo. First, note whether a teammate moved on the flash. Second, check whether the smoke sat on the angle the entry had to cross. Finally, compare each moment with the round result rather than the scoreboard. Replaying one execute 3 times usually settles whether the utility or the timing was the problem, and a FACEIT 10 coach from Duoly adapts the exercise to your role and your map pool, reviewing the demo using Discord screen share.',
+          'For practice, mark the first utility of 5 rounds in your next demo. First, note whether a teammate moved on the flash. Second, check whether the smoke sat on the angle the entry had to cross. Finally, compare each moment with the round result rather than the scoreboard. Replaying one execute 3 times usually settles whether the utility or the timing was the problem, and a FACEIT 10 coach from Duoly adapts the exercise to your role and your map pool, reviewing the demo using Discord screen share. Want the playing side instead? [Counter-Strike 2 teammates](/games/counter-strike-2) lists every service, from a Premier duo to a FACEIT stack.',
         ],
       },
     ],
@@ -459,7 +459,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'Example fight: how do you track the ultimate economy?',
         paragraphs: [
           'Ultimate economy is the difference between the ultimates your team holds and the ones the other team holds. First, count out loud before a fight: 1) two ultimates against none is a fight to take, and 2) none against two is a fight to delay. For example, a team that contests a point with no cooldowns ready usually hands over the ultimate charge that wins the next fight.',
-          'A small practice task is to name the enemy ultimate you fear most, once per fight, across 5 fights in your next matches. First, say the hero and the counter your team holds. Second, check whether a defensive ultimate was saved for it. Finally, compare the call with what actually happened rather than with the scoreboard. Overwatch 2 is 5 versus 5, so one missing teammate changes the maths, and a Grandmaster+ coach from Duoly adapts the exercise to your role using Discord screen share.',
+          'A small practice task is to name the enemy ultimate you fear most, once per fight, across 5 fights in your next matches. First, say the hero and the counter your team holds. Second, check whether a defensive ultimate was saved for it. Finally, compare the call with what actually happened rather than with the scoreboard. Overwatch 2 is 5 versus 5, so one missing teammate changes the maths, and a Grandmaster+ coach from Duoly adapts the exercise to your role using Discord screen share. Want the playing side instead? [Overwatch 2 teammates](/games/overwatch-2) lists every service, and the [Overwatch 2 LFG page](/games/overwatch-2/lfg) compares the free servers with a booked role.',
         ],
       },
     ],
@@ -511,7 +511,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'Example round: what makes a site retake fail?',
         paragraphs: [
           'A failed retake is a push onto a planted defuser without the information the push needed. For example, two defenders enter from the same door while the third is still rotating. A defuser runs for 45 seconds once planted, so the clock is the real opponent. Pause the recording as the plant lands and ask 1) who had a line on the defuser, 2) which gadget could have delayed the plant and 3) whether the two pushes could have arrived together.',
-          'For practice, mark the plant in 5 rounds from your next recordings. First, note how many seconds were left when the first defender arrived. Second, check whether a second angle was covered. Finally, compare each retake with the round result rather than the scoreboard. Replaying one retake 3 times usually settles whether the timing or the entry was the problem, and a Champion coach from Duoly adapts the exercise to your operator pool using Discord screen share.',
+          'For practice, mark the plant in 5 rounds from your next recordings. First, note how many seconds were left when the first defender arrived. Second, check whether a second angle was covered. Finally, compare each retake with the round result rather than the scoreboard. Replaying one retake 3 times usually settles whether the timing or the entry was the problem, and a Champion coach from Duoly adapts the exercise to your operator pool using Discord screen share. Want the playing side instead? [Rainbow Six Siege teammates](/games/rainbow-six-siege) lists every service, and the [Siege LFG page](/games/rainbow-six-siege/lfg) compares the free servers with a booked duo.',
         ],
       },
     ],

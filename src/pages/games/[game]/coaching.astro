@@ -60,24 +60,67 @@ const summary = priceSummary(offers);
 const path = `/games/${game.slug}/coaching`;
 const book = bookingHref(game.id, { tab: 'training' });
 /**
- * Sibling coaching pages, grouped by what a player is actually practicing.
- * Every page keeps at least two coaching inbound links, so no page depends on
- * its game hub alone to clear the three-inbound build gate.
+ * Sibling coaching pages, as a ring through what a player is practicing:
+ * tactical shooters, then hero shooters, then battle royale, then the
+ * strategy and arcade end. Each page lists the four nearest neighbours and is
+ * therefore listed by four, so every coaching page clears the inbound gate in
+ * scripts/seo-built.test.mjs without depending on its game hub alone.
  */
 const related: Record<string, string[]> = {
-  valorant: ['counter-strike-2', 'rainbow-six-siege', 'league-of-legends'],
-  'counter-strike-2': ['valorant', 'rainbow-six-siege', 'apex-legends'],
-  'rainbow-six-siege': ['valorant', 'counter-strike-2', 'overwatch-2'],
-  'overwatch-2': ['marvel-rivals', 'rainbow-six-siege', 'rocket-league'],
-  'marvel-rivals': ['overwatch-2', 'valorant', 'apex-legends'],
-  'apex-legends': ['counter-strike-2', 'fortnite', 'marvel-rivals'],
-  fortnite: ['apex-legends', 'rocket-league', 'counter-strike-2'],
-  'rocket-league': ['fortnite', 'teamfight-tactics', 'overwatch-2'],
-  'league-of-legends': ['teamfight-tactics', 'marvel-rivals', 'valorant'],
+  valorant: [
+    'counter-strike-2',
+    'rainbow-six-siege',
+    'teamfight-tactics',
+    'league-of-legends',
+  ],
+  'counter-strike-2': [
+    'rainbow-six-siege',
+    'overwatch-2',
+    'valorant',
+    'teamfight-tactics',
+  ],
+  'rainbow-six-siege': [
+    'overwatch-2',
+    'marvel-rivals',
+    'counter-strike-2',
+    'valorant',
+  ],
+  'overwatch-2': [
+    'marvel-rivals',
+    'apex-legends',
+    'rainbow-six-siege',
+    'counter-strike-2',
+  ],
+  'marvel-rivals': [
+    'apex-legends',
+    'fortnite',
+    'overwatch-2',
+    'rainbow-six-siege',
+  ],
+  'apex-legends': ['fortnite', 'rocket-league', 'marvel-rivals', 'overwatch-2'],
+  fortnite: [
+    'rocket-league',
+    'league-of-legends',
+    'apex-legends',
+    'marvel-rivals',
+  ],
+  'rocket-league': [
+    'league-of-legends',
+    'teamfight-tactics',
+    'fortnite',
+    'apex-legends',
+  ],
+  'league-of-legends': [
+    'teamfight-tactics',
+    'valorant',
+    'rocket-league',
+    'fortnite',
+  ],
   'teamfight-tactics': [
+    'valorant',
+    'counter-strike-2',
     'league-of-legends',
     'rocket-league',
-    'counter-strike-2',
   ],
 };
 const descriptions: Record<string, string> = {

@@ -14,7 +14,13 @@ export const wildRift: HubPageCopy = {
     'Ranked, ARAM and normal matches',
     'Voice on Discord, your own account',
   ],
-  related: ['league-of-legends', 'pokemon-unite', 'dota-2'],
+  related: [
+    'dota-2',
+    'deadlock',
+    'marvel-rivals',
+    'league-of-legends',
+    'teamfight-tactics',
+  ],
   format: {
     heading: 'What can you book for Wild Rift on Duoly?',
     text: 'A Wild Rift booking on Duoly is one of three things: one teammate who joins your lobby on your own account, a Ranked 5-Stack fill for the seats you are missing, or a coaching hour. First, the teammate tiers are Duo Plus with a Diamond+ player in the lane you need, Duo Pro with a Master player who calls dragons and Baron, and Duo Apex with a Grandmaster+ player at {{p_duo3}} per game. Ranked follows your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while ARAM and a normal match stay {{p_aram}} and {{p_norm}} at every rank. Second, the fill: Ranked 5-Stack covers up to {{seats_five}} seats at {{p_five}} per game. Third, Champion Mastery is one hour on a single champion at {{p_champ}}. Games are short, so bundles matter: {{pct3}} off 3 games up to {{pct10}} off 10. For example, name your lane using Discord first.',
@@ -116,7 +122,7 @@ export const wildRift: HubPageCopy = {
       heading: 'When is Wild Rift coaching the better booking?',
       paragraphs: [
         'Wild Rift coaching is the better booking when the goal is a fix you can repeat rather than company for the next game. First, Champion Mastery is one hour with a Grandmaster+ coach on one champion, covering combos, builds, matchups and power spikes, at {{p_champ}} per hour. Second, Play and Learn is one live ranked game with a Master+ coach at {{p_learn}} instead of a clock hour. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
-        'For example, a player who loses lane to the same matchup every game gains more from one mastery hour at {{p_champ}} than from three more ranked games. A player who wants to relax gains more from ARAM at {{p_aram}} per game, where the champions are random and nothing is on the line. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every Wild Rift coach before any order goes live.',
+        'For example, a player who loses lane to the same matchup every game gains more from one mastery hour at {{p_champ}} than from three more ranked games. A player who wants to relax gains more from ARAM at {{p_aram}} per game, where the champions are random and nothing is on the line. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every Wild Rift coach before any order goes live. The nearest neighbours here are [League of Legends teammates](/games/league-of-legends) on PC and [Dota 2 teammates](/games/dota-2).',
       ],
     },
   ],

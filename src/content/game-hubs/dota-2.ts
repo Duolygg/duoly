@@ -14,7 +14,13 @@ export const dota2: HubPageCopy = {
     'Ranked, Turbo and unranked All Pick',
     'Voice on Discord, your own account',
   ],
-  related: ['deadlock', 'league-of-legends', 'wild-rift', 'world-of-warcraft'],
+  related: [
+    'deadlock',
+    'marvel-rivals',
+    'overwatch-2',
+    'wild-rift',
+    'league-of-legends',
+  ],
   format: {
     heading: 'What can you book for Dota 2 on Duoly?',
     text: 'A Dota 2 booking on Duoly is one of three things: one teammate who joins your party on your own account, a Ranked 5-Stack fill for the seats you are missing, or coaching by the hour. First, the teammate tiers are Duo Plus with an Ancient+ player who lanes with you, Duo Pro with a Divine player who calls smokes and Roshan, and Duo Apex with an Immortal player at {{p_duo3}} per game. Ranked follows your own medal, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while Turbo stays {{p_turbo}} and unranked All Pick {{p_unranked}} at every medal. Second, the fill: Ranked 5-Stack covers up to {{seats_party5}} seats at {{p_party5}} per game. Third, the lessons, {{p_replay}} per hour on your own replay. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. For example, name your position in the order chat using Discord so your teammate drafts around it.',
@@ -119,7 +125,7 @@ export const dota2: HubPageCopy = {
       heading: 'When is Dota 2 coaching the better booking?',
       paragraphs: [
         'Dota 2 coaching is the better booking when the goal is a fix you can repeat rather than company for the next game. First, Replay Review is one hour with an Immortal coach on your own match, at {{p_replay}} per hour, covering laning, farm, map moves and items. Second, Hero and Position Coaching spends the same hour on one hero or one position, at {{p_hero}}. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
-        'For example, a player who dies in the same lane every game gains more from one replay hour at {{p_replay}} than from three more ranked games. A player who wants to try a new hero gains more from Turbo at {{p_turbo}} per game, where the clock runs about twenty minutes. Play and Learn is one live ranked game with a Divine coach at {{p_learn}}, and screen share runs using Discord. Finally, Duoly reviews every coach before any order goes live, and nobody needs your Steam login.',
+        'For example, a player who dies in the same lane every game gains more from one replay hour at {{p_replay}} than from three more ranked games. A player who wants to try a new hero gains more from Turbo at {{p_turbo}} per game, where the clock runs about twenty minutes. Play and Learn is one live ranked game with a Divine coach at {{p_learn}}, and screen share runs using Discord. Finally, Duoly reviews every coach before any order goes live, and nobody needs your Steam login. Its closest neighbours here are [Deadlock teammates](/games/deadlock) and [League of Legends teammates](/games/league-of-legends), both MOBAs with the same objective clock.',
       ],
     },
   ],

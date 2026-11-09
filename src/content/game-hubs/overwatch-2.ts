@@ -15,11 +15,11 @@ export const overwatch2: HubPageCopy = {
   ],
   cta: 'Book an Overwatch teammate',
   related: [
-    'marvel-rivals',
-    'apex-legends',
     'rainbow-six-siege',
+    'counter-strike-2',
+    'valorant',
+    'marvel-rivals',
     'deadlock',
-    'world-of-warcraft',
   ],
   intent:
     'Hunting for free Discords, or a teammate chosen by role rather than by tier? The dedicated page sets the free routes next to the paid Role Queue sessions.',
@@ -124,7 +124,7 @@ export const overwatch2: HubPageCopy = {
       heading: 'When is Overwatch coaching the better booking?',
       paragraphs: [
         'Overwatch coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between rounds. A coach pauses the replay, names the pattern and leaves you with homework. Role Coaching costs {{p_role}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
-        'First, name the habit you keep repeating. For example, a support who dies first in every fight gains more from one positioning hour at {{p_role}} than from a fourth Competitive game. A player who wants a relaxed evening gains more from Quick Play and Arcade at {{p_qp}} per game in 2026. Play and Learn is one live Competitive game with a Grandmaster+ coach at {{p_learn}}, and screen share runs using Discord. Overwatch 2 has no separate Duoly coaching page yet, so lessons are booked from the prices above.',
+        'First, name the habit you keep repeating. For example, a support who dies first in every fight gains more from one positioning hour at {{p_role}} than from a fourth Competitive game. A player who wants a relaxed evening gains more from Quick Play and Arcade at {{p_qp}} per game in 2026. Play and Learn is one live Competitive game with a Grandmaster+ coach at {{p_learn}}, and screen share runs using Discord. The full service list, preparation tips and lesson formats live on the [Overwatch 2 coaching page](/games/overwatch-2/coaching). The [Overwatch 2 LFG page](/games/overwatch-2/lfg) sets the free routes beside the paid ones, and [Marvel Rivals teammates](/games/marvel-rivals) is the other hero shooter here.',
       ],
     },
   ],

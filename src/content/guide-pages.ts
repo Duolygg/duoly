@@ -192,7 +192,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidIntro:
       'A paid Duoly session is a booked block of matches with a reviewed teammate at a known price. The price is fixed before checkout, and the order chat on Duoly sets the start time for the first match. Between matches, you can ask the teammate questions about the last fight.',
     paidChecks: [
-      { yes: true, text: 'Competitive with a partner the party rules admit' },
+      { yes: true, text: 'Competitive with a Grandmaster+ partner' },
       { yes: true, text: 'A set time agreed in the order chat' },
       { yes: true, text: 'A Team-Up pair practiced on voice' },
       { yes: false, text: 'Costs money for every match' },

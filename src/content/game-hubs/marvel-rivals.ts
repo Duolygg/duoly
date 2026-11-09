@@ -16,10 +16,10 @@ export const marvelRivals: HubPageCopy = {
   ],
   related: [
     'overwatch-2',
-    'league-of-legends',
-    'teamfight-tactics',
-    'valorant',
+    'rainbow-six-siege',
+    'counter-strike-2',
     'deadlock',
+    'dota-2',
   ],
   intent:
     'After the two-player page rather than every Rivals service? It covers hero pairings, Team-Up abilities and prices for a pair on their own.',
@@ -58,7 +58,7 @@ export const marvelRivals: HubPageCopy = {
     items: [
       'Pick a service and the number of matches first. Duo Pro is the Competitive tier with a Grandmaster+ teammate, and 3 matches at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five matches take {{pct5}} off.',
       'Second, add your region, rank, platform and hero pool at checkout. For example, name Europe, {{rank_duo2}} and two Strategists, so your teammate reads the real request before accepting.',
-      'Finally, meet your teammate in the order chat using Discord. Agree the hero pair and a Team-Up to try, check the party is eligible under the rules from NetEase Games, then invite each other by username. One Duo Pro match costs {{p_duo2}}.',
+      'Finally, meet your teammate in the order chat using Discord. Agree the hero pair and a Team-Up to try, then invite each other by username. One Duo Pro match costs {{p_duo2}}.',
     ],
     note: 'Duoly reviews every Marvel Rivals teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
@@ -125,7 +125,7 @@ export const marvelRivals: HubPageCopy = {
       heading: 'When is Marvel Rivals coaching the better booking?',
       paragraphs: [
         'Marvel Rivals coaching is the better booking when the goal is a repeatable fix rather than company for the next match. A duo teammate answers a quick question between fights. A coach pauses the clip, names the pattern and leaves you with homework. Hero Coaching costs {{p_hero}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate matches only.',
-        'First, name the habit you keep repeating. For example, a player who keeps dying right after the ultimate gains more from one hero hour at {{p_hero}} than from a fourth Competitive match. A player who wants a relaxed evening gains more from Quick Match and Arcade at {{p_quick}} per match in 2026. Play and Learn is one live Competitive match with a Grandmaster+ coach at {{p_learn}}, and screen share runs using Discord. The full lesson list lives on the [Marvel Rivals coaching page](/games/marvel-rivals/coaching), and the two-player side is covered on the [Marvel Rivals duo partner](/games/marvel-rivals/duo-partner) page.',
+        'First, name the habit you keep repeating. For example, a player who keeps dying right after the ultimate gains more from one hero hour at {{p_hero}} than from a fourth Competitive match. A player who wants a relaxed evening gains more from Quick Match and Arcade at {{p_quick}} per match in 2026. Play and Learn is one live Competitive match with a Grandmaster+ coach at {{p_learn}}, and screen share runs using Discord. The full lesson list lives on the [Marvel Rivals coaching page](/games/marvel-rivals/coaching), and the two-player side is covered on the [Marvel Rivals duo partner](/games/marvel-rivals/duo-partner) page. [Overwatch 2 teammates](/games/overwatch-2) and [Deadlock teammates](/games/deadlock) are the other hero shooters here.',
       ],
     },
   ],

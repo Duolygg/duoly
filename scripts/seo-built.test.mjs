@@ -241,19 +241,48 @@ for (const path of dataHubs) {
   });
 }
 
-test('every sitemap URL is a finished page with three inbound links', () => {
+/**
+ * Pages that sell nothing, so no offer link belongs in their copy: the
+ * homepage is the checkout itself, and the legal and support pages are written
+ * for a reader with a question rather than a basket. Everything else in the
+ * sitemap has to reach a prefilled checkout from its own content.
+ */
+const NO_OFFER_LINK = ['/', '/contact', '/terms', '/privacy', '/imprint'];
+
+test('every sitemap URL is a finished page with four inbound links', () => {
   for (const entry of sitemapEntries) {
     const path = new URL(entry.url).pathname;
     const page = pages[path];
     assert(page, `${path} reachable from real anchors`);
     assert(
-      page.inbound.length >= 3,
+      page.inbound.length >= 4,
       `${path}: ${page.inbound.length} inbound internal links`,
     );
+    // Four editorial inbound links, so a page never depends on one sibling
+    // grid alone. The target is six; four is the floor the build enforces.
     assert(
-      page.contextualInbound.length >= 3,
-      `${path}: ${page.contextualInbound.length} contextual inbound links`,
+      page.contextualInbound.length >= 4,
+      `${path}: ${page.contextualInbound.length} contextual inbound links from ${page.contextualInbound}`,
     );
+  }
+});
+
+test('every sitemap URL that sells something links to an offer', () => {
+  for (const entry of sitemapEntries) {
+    const path = new URL(entry.url).pathname;
+    if (NO_OFFER_LINK.includes(path)) continue;
+    const page = pages[path];
+    assert(page, `${path} reachable from real anchors`);
+    assert(
+      page.bookingLinks.length >= 1,
+      `${path}: no booking link in the page's own content`,
+    );
+    for (const href of page.bookingLinks)
+      assert.match(
+        href,
+        /^\/\?game=[a-z0-9]+(&(?:amp;)?(?:service|tab)=[a-z0-9]+)?#modes-h$/,
+        `${path}: ${href} is not a prefilled checkout link`,
+      );
   }
 });
 

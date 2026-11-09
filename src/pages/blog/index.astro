@@ -6,6 +6,7 @@ import {
   serializeJsonLd,
   GUIDE_PATH,
   CONTENT_DATES,
+  bookingHref,
   organizationSchema,
 } from '../../site/seo';
 import { SOCIAL_PRICE } from '../../server/seo/teammate-facts';
@@ -68,6 +69,31 @@ const posts = [
         and is friendly company only.{' '}
         <a href="/games">Browse games and coaching</a> for service details and
         current prices.
+      </p>
+      <p>
+        Ready to book instead of read? The guides point at three popular offers:
+        a{' '}
+        <a href={bookingHref('social', { service: 'chat' })}>
+          Just Chat hour on Duoly Social
+        </a>
+        , a{' '}
+        <a href={bookingHref('val', { service: 'duo2' })}>
+          Valorant Duo Pro game
+        </a>{' '}
+        and a{' '}
+        <a href={bookingHref('lol', { service: 'duo2' })}>
+          League of Legends Duo Pro game
+        </a>
+        . Each link opens the same checkout the game pages use, so the price you
+        see is the price you pay. For deeper reading, the{' '}
+        <a href="/games/valorant">Valorant teammate hub</a> and the{' '}
+        <a href="/games/league-of-legends/coaching">
+          League of Legends coaching page
+        </a>{' '}
+        set out every service, while the{' '}
+        <a href="/developers/mcp">Duoly MCP developer guide</a> documents the
+        same catalog for an assistant. Social sessions are explained on the{' '}
+        <a href="/games/social">Duoly Social page</a>.
       </p>
     </section>
   </PageIntro>

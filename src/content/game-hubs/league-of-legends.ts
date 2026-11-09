@@ -15,11 +15,11 @@ export const leagueOfLegends: HubPageCopy = {
     'Voice on Discord, your own account',
   ],
   related: [
-    'teamfight-tactics',
-    'marvel-rivals',
-    'pokemon-unite',
-    'valorant',
     'wild-rift',
+    'dota-2',
+    'deadlock',
+    'teamfight-tactics',
+    'pokemon-unite',
   ],
   intent:
     'After the duo partner page rather than every League service? It covers ARAM, normals and ranked duo on their own, with the free routes next to the paid ones.',
@@ -133,7 +133,7 @@ export const leagueOfLegends: HubPageCopy = {
       heading: 'When is League coaching the better booking?',
       paragraphs: [
         'League coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between fights. A coach stops the game, names the pattern and leaves you with homework. VOD Review and Champion Mastery each cost {{p_vod}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
-        'For example, a player who keeps dying on the third wave gains more from one review of wave states than from a fourth duo game. A player who wants a calm evening gains more from ARAM Night at {{p_aram}} per game. Screen share runs using Discord, and Play and Learn covers one live ranked game at {{p_learn}} instead of a clock hour. The full service list, preparation tips and lesson formats live on the [League of Legends coaching page](/games/league-of-legends/coaching).',
+        'For example, a player who keeps dying on the third wave gains more from one review of wave states than from a fourth duo game. A player who wants a calm evening gains more from ARAM Night at {{p_aram}} per game. Screen share runs using Discord, and Play and Learn covers one live ranked game at {{p_learn}} instead of a clock hour. The full service list, preparation tips and lesson formats live on the [League of Legends coaching page](/games/league-of-legends/coaching). The [Play League of Legends with someone](/games/league-of-legends/play-with-someone) page covers ARAM, normals and ranked duo on their own, while [Teamfight Tactics partners](/games/teamfight-tactics) and [Wild Rift teammates](/games/wild-rift) are the other Riot games Duoly sells.',
       ],
     },
   ],

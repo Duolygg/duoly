@@ -14,7 +14,13 @@ export const counterStrike2: HubPageCopy = {
     'Premier, Wingman and FACEIT queues',
     'Voice on Discord, your own account',
   ],
-  related: ['call-of-duty', 'rainbow-six-siege', 'fortnite', 'valorant'],
+  related: [
+    'valorant',
+    'call-of-duty',
+    'pubg',
+    'rainbow-six-siege',
+    'overwatch-2',
+  ],
   format: {
     heading: 'What can you book for Counter-Strike 2 on Duoly?',
     text: 'A Counter-Strike 2 booking on Duoly is one of three things: a teammate who queues with you, a stack fill for the seats you are missing, or coaching by the hour. First, Duo Plus brings a Premier 15,000+ teammate, Duo Pro a Premier 20,000+ caller and FACEIT Duo a Level 10 player for the third-party ladder. Premier prices follow your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per match on Duo Pro. Casual and Deathmatch and Retake Servers stay {{p_casual}} per match at every rating. Bundles cut the total, {{pct3}} off 3 matches up to {{pct10}} off 10. Second, the fills: Premier 5-Stack hires Premier 20,000+ players for {{seats_five}} seats at {{p_five}} per match, and FACEIT Stack covers the FACEIT ladder at {{p_faceit5}}. Third, the lessons, from {{p_demo}} per hour. For example, share your region and rating in the order chat using Discord first.',
@@ -99,7 +105,7 @@ export const counterStrike2: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'The teammate you queue with is a reviewed CS2 player who applied for the game and showed a rating before taking orders. Duo Plus names a Premier 15,000+ player, Duo Pro a Premier 20,000+ player and FACEIT Duo a Level 10 player. A tier describes the person Duoly hires and nothing about your own queue eligibility. First, note that FACEIT runs a separate Level 1 to 10 ladder, so a Level 10 teammate and a Premier rating are two systems with two sets of party rules. A CS Rating also appears only once your Premier placement matches are done.',
+        'The teammate you queue with is a reviewed CS2 player who applied for the game and showed a rating before taking orders. Duo Plus names a Premier 15,000+ player, Duo Pro a Premier 20,000+ player and FACEIT Duo a Level 10 player at {{p_duo3}} per match. First, note that FACEIT runs a separate Level 1 to 10 ladder, so a Level 10 teammate and a Premier rating are two different systems. Second, orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request.',
         'What the rating buys is a round that makes sense. A 20,000+ teammate trades your peek instead of watching it, calls the buy and names the rotation. Voice runs using Discord, so the call lands before the execute rather than after. Rating also sets the price: Duo Pro costs {{p_duo2_low}} per match in the lowest band and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles cut that total by {{pct3}} on 3 matches and {{pct5}} on 5. For example, you keep your Steam account and your own decisions in all 3 matches.',
       ],
     },
@@ -121,7 +127,7 @@ export const counterStrike2: HubPageCopy = {
       heading: 'When is CS2 coaching the better booking?',
       paragraphs: [
         'CS2 coaching is the better booking when the goal is a repeatable fix rather than company for the next match. A duo teammate answers a quick question between halves. A coach stops the demo, names the pattern and leaves you with homework. Demo Review and Utility and Lineups each cost {{p_demo}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate matches only.',
-        'For example, a player who dies first on the A site execute gains more from one demo review than from a fourth Premier match. A player who only wants to warm up gains more from Casual and Deathmatch at {{p_casual}} per match. Screen share runs using Discord, and Play and Learn covers one live Premier match with a Level 10 coach at {{p_learn}}. Counter-Strike 2 has no separate Duoly coaching page yet, so every lesson is booked from the prices above.',
+        'For example, a player who dies first on the A site execute gains more from one demo review than from a fourth Premier match. A player who only wants to warm up gains more from Casual and Deathmatch at {{p_casual}} per match. Screen share runs using Discord, and Play and Learn covers one live Premier match with a Level 10 coach at {{p_learn}}. The full service list, preparation tips and lesson formats live on the [Counter-Strike 2 coaching page](/games/counter-strike-2/coaching). [Valorant teammates](/games/valorant) and [Rainbow Six Siege teammates](/games/rainbow-six-siege) are the other two tactical shooters Duoly sells.',
       ],
     },
   ],

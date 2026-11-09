@@ -14,7 +14,13 @@ export const rainbowSixSiege: HubPageCopy = {
     'Ranked, Quick Match and Arcade',
     'Voice on Discord, your own account',
   ],
-  related: ['overwatch-2', 'counter-strike-2', 'arc-raiders', 'valorant'],
+  related: [
+    'counter-strike-2',
+    'valorant',
+    'call-of-duty',
+    'overwatch-2',
+    'marvel-rivals',
+  ],
   intent:
     'Only after teammates for tonight, free or paid? The dedicated page sets the free Discords next to the paid Ranked sessions, rank by rank.',
   format: {
@@ -120,7 +126,7 @@ export const rainbowSixSiege: HubPageCopy = {
       heading: 'When is Siege coaching the better booking?',
       paragraphs: [
         'Siege coaching is the better booking when the goal is a repeatable fix rather than company for the next match. A duo teammate answers a quick question between rounds. A coach stops the clip, names the pattern and leaves you with homework. Operator Lab and Map and Callouts each cost {{p_ops}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate matches only.',
-        'First, name the round you keep losing. For example, a player who drops the same site every match gains more from one map hour at {{p_maps}} than from a fourth Ranked queue. A player who only wants to warm up gains more from Arcade and Deathmatch at {{p_arcade}} per match in 2026. Play and Learn is one live Ranked match with a Champion coach at {{p_learn}}, and screen share runs using Discord. Rainbow Six Siege has no separate Duoly coaching page yet, so lessons are booked from the prices above.',
+        'First, name the round you keep losing. For example, a player who drops the same site every match gains more from one map hour at {{p_maps}} than from a fourth Ranked queue. A player who only wants to warm up gains more from Arcade and Deathmatch at {{p_arcade}} per match in 2026. Play and Learn is one live Ranked match with a Champion coach at {{p_learn}}, and screen share runs using Discord. The full service list, preparation tips and lesson formats live on the [Rainbow Six Siege coaching page](/games/rainbow-six-siege/coaching). The [Rainbow Six Siege LFG page](/games/rainbow-six-siege/lfg) sets the free routes beside the paid ones, and [Counter-Strike 2 teammates](/games/counter-strike-2) is the other tactical shooter here.',
       ],
     },
   ],

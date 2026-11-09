@@ -14,7 +14,13 @@ export const worldOfWarcraft: HubPageCopy = {
     'Mythic+, rated arena, Delves and leveling',
     'Voice on Discord, your own account',
   ],
-  related: ['overwatch-2', 'dota-2', 'minecraft'],
+  related: [
+    'pokemon-unite',
+    'teamfight-tactics',
+    'league-of-legends',
+    'arc-raiders',
+    'minecraft',
+  ],
   format: {
     heading: 'What can you book for World of Warcraft on Duoly?',
     text: 'Duoly sells three things for World of Warcraft: one teammate who joins your group on your own account, group fills for Mythic+ keys and 3v3 arena, and class coaching. Everything is booked by the hour, because a key or an arena session has no fixed length. Mythic+ Duo brings a 2,500+ rated player, Mythic+ Pro a 3,000+ rated player who plans the route, and Arena 2v2 a Duelist partner. Mythic+ follows your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Mythic+ Pro, while Delves and leveling stay {{p_delves}} and {{p_level}} per hour for everybody. Second, the fills: Key Group Fill covers up to {{seats_keys}} seats at {{p_keys}} per hour and Arena 3v3 Team covers {{seats_arena3}} at {{p_arena3}}. Third, Class and Rotation Coaching is one hour at {{p_class}}. Bundles take {{pct3}} off 3 hours up to {{pct10}} off 10. For example, name your region and role using Discord first.',
@@ -120,7 +126,7 @@ export const worldOfWarcraft: HubPageCopy = {
       heading: 'When is WoW coaching the better booking?',
       paragraphs: [
         'World of Warcraft coaching is the better booking when your own numbers are the problem rather than your group. First, Class and Rotation Coaching is one hour with a Gladiator or 3,000+ coach on talents, rotation, cooldowns and positioning, at {{p_class}} per hour, checked on a target dummy and in a real key. Second, Play and Learn spends the hour inside live Mythic+ with a 3,000+ coach at {{p_learn}}. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
-        'For example, a player who keeps depleting the same dungeon gains more from one coaching hour at {{p_class}} than from three more keys. A player who wants a relaxed evening gains more from Delves and World Content at {{p_delves}} per hour, where no rating is on the line. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every World of Warcraft coach before any order goes live.',
+        'For example, a player who keeps depleting the same dungeon gains more from one coaching hour at {{p_class}} than from three more keys. A player who wants a relaxed evening gains more from Delves and World Content at {{p_delves}} per hour, where no rating is on the line. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every World of Warcraft coach before any order goes live. The nearest neighbours here are [Overwatch 2 teammates](/games/overwatch-2), from the same publisher, and [Dota 2 teammates](/games/dota-2) for another objective-driven five.',
       ],
     },
   ],

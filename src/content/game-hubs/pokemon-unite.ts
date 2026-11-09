@@ -15,10 +15,11 @@ export const pokemonUnite: HubPageCopy = {
     'Voice on Discord, your own account',
   ],
   related: [
-    'league-of-legends',
     'teamfight-tactics',
-    'ea-sports-fc-27',
+    'league-of-legends',
     'wild-rift',
+    'world-of-warcraft',
+    'arc-raiders',
   ],
   intent:
     'After the one-teammate page rather than every Unite service? It covers lane pairings, objective calls and an example ranked plan in detail.',
@@ -124,7 +125,7 @@ export const pokemonUnite: HubPageCopy = {
       heading: 'When is Pokemon Unite coaching the better booking?',
       paragraphs: [
         'Pokemon Unite coaching is the better booking when the goal is a repeatable fix rather than company for the next game. Draft and Macro is one hour with a Master coach on picks that work together, objective timing and when to rotate, at {{p_draft}} per hour. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
-        'First, name the objective you keep losing. For example, a player who loses every Zapdos fight gains more from one macro hour at {{p_draft}} than from a fourth Ranked game. A player who wants to try a new Pokemon gains more from Standard and Quick Battle at {{p_quick}} per game in 2026. Play and Learn is one live Ranked match with a Master coach at {{p_learn}}, and screen share runs using Discord. The one-teammate side is covered on the [Pokemon Unite teammate](/games/pokemon-unite/teammate) page.',
+        'First, name the objective you keep losing. For example, a player who loses every Zapdos fight gains more from one macro hour at {{p_draft}} than from a fourth Ranked game. A player who wants to try a new Pokemon gains more from Standard and Quick Battle at {{p_quick}} per game in 2026. Play and Learn is one live Ranked match with a Master coach at {{p_learn}}, and screen share runs using Discord. The one-teammate side is covered on the [Pokemon Unite teammate](/games/pokemon-unite/teammate) page. [League of Legends teammates](/games/league-of-legends) and [Teamfight Tactics partners](/games/teamfight-tactics) are the nearest neighbours here.',
       ],
     },
   ],

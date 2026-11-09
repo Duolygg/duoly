@@ -15,10 +15,11 @@ export const valorant: HubPageCopy = {
     'Your own account, voice on Discord',
   ],
   related: [
-    'league-of-legends',
+    'call-of-duty',
+    'pubg',
+    'apex-legends',
     'counter-strike-2',
-    'marvel-rivals',
-    'overwatch-2',
+    'rainbow-six-siege',
   ],
   intent:
     'After the LFG page rather than every Valorant service? It covers the free Discord routes, what a post should say and the paid duo next to them.',
@@ -129,7 +130,7 @@ export const valorant: HubPageCopy = {
       heading: 'When is Valorant coaching the better booking?',
       paragraphs: [
         'Valorant coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between rounds. A coach stops the match, names the pattern and leaves you with homework. VOD Review and Aim and Crosshair each cost {{p_vod}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
-        'For example, a player who keeps dying on the first peek gains more from one hour on crosshair placement than from a fourth duo game. A player who wants a calm evening gains more from Swiftplay at {{p_swift}} per game. Screen share runs using Discord, and Play and Learn covers one live Competitive game at {{p_learn}} instead of a clock hour. The full service list, preparation tips and lesson formats live on the [Valorant coaching page](/games/valorant/coaching).',
+        'For example, a player who keeps dying on the first peek gains more from one hour on crosshair placement than from a fourth duo game. A player who wants a calm evening gains more from Swiftplay at {{p_swift}} per game. Screen share runs using Discord, and Play and Learn covers one live Competitive game at {{p_learn}} instead of a clock hour. The full service list, preparation tips and lesson formats live on the [Valorant coaching page](/games/valorant/coaching). The [Valorant LFG page](/games/valorant/lfg) sets the free Discords beside the paid duo, and [Counter-Strike 2 teammates](/games/counter-strike-2) and [Rainbow Six Siege teammates](/games/rainbow-six-siege) are the other tactical shooters here.',
       ],
     },
   ],

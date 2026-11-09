@@ -14,7 +14,13 @@ export const eaSportsFc27: HubPageCopy = {
     'Co-op Rivals, Clubs and friendlies',
     'Voice on Discord, your own account',
   ],
-  related: ['minecraft', 'rocket-league', 'pokemon-unite'],
+  related: [
+    'minecraft',
+    'arc-raiders',
+    'world-of-warcraft',
+    'rocket-league',
+    'fortnite',
+  ],
   format: {
     heading: 'What can you book for EA SPORTS FC 27 on Duoly?',
     text: 'An EA SPORTS FC 27 booking on Duoly is a single reviewed partner, a Clubs Lineup or a coaching hour. First, Co-op Rivals is the 2v2 side of Division Rivals and follows your own division, from {{p_duo2_low}} to {{p_duo2_high}} per game, while Co-op Elite brings an Elite-level partner from {{p_duo3_low}}. Casual games keep one flat price at every division, so Kick-Off and Friendlies costs {{p_kickoff}} per game and a Practice Match costs {{p_friendly}}. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Second, the fill: Clubs Lineup hires Division 1+ players for up to {{seats_clubs}} seats at {{p_clubs}} per game, so a half-full club gets a real eleven. Third, the lessons, {{p_tactics}} per hour on tactics and squad building. For example, name your platform using Discord first.',
@@ -117,7 +123,7 @@ export const eaSportsFc27: HubPageCopy = {
       heading: 'When is FC 27 coaching the better booking?',
       paragraphs: [
         'FC 27 coaching is the better booking when the goal is a repeatable fix rather than a partner for the next game. Tactics and Squad Builder and Champions Prep each cost {{p_tactics}} per hour, one on formations and custom tactics, the other on weekend-league defending and the current meta. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to partner games only.',
-        'First, name the goal you keep conceding. For example, a player who concedes the same counter attack gains more from one tactics hour at {{p_tactics}} than from a fourth Rivals game, because the fix lives in the shape. A player who only wants a relaxed evening gains more from Kick-Off and Friendlies at {{p_kickoff}} per game in 2026. EA SPORTS FC 27 has no separate coaching page on Duoly yet, so lessons are booked from the prices above, with screen share using Discord.',
+        'First, name the goal you keep conceding. For example, a player who concedes the same counter attack gains more from one tactics hour at {{p_tactics}} than from a fourth Rivals game, because the fix lives in the shape. A player who only wants a relaxed evening gains more from Kick-Off and Friendlies at {{p_kickoff}} per game in 2026. EA SPORTS FC 27 has no separate coaching page on Duoly yet, so lessons are booked from the prices above, with screen share using Discord. The nearest neighbours here are [Rocket League teammates](/games/rocket-league), football with rocket cars, and [Minecraft teammates](/games/minecraft) for an evening with nothing on the line.',
       ],
     },
   ],

@@ -77,7 +77,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does a League duo cost in 2026?',
         paragraphs: [
           'Duo Pro is the ranked League service with a Master+ teammate, priced per game by your own rank. Every price here comes from the Duoly checkout calculator. We found these numbers by running the calculator on 7 November 2026. A Gold player on EUW pays {{lolPro}} per game for Duo Pro. An Iron player pays {{lolProIron}} per game, and a Diamond player pays {{lolProDiamond}} per game, so the Duo Pro price rises with your own rank.',
-          'Bundles cut the total for every rank. For example, a Gold player pays {{lolPro3}} for 3 games with {{pct3}} off, {{lolPro5}} for 5 games with {{pct5}} off and {{lolPro10}} for 10 games with {{pct10}} off. Casual modes keep one flat price, so ARAM Night, Normal Draft and Swiftplay each cost {{lolAram}} per game for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Coaching has separate prices on the League coaching page.',
+          'Bundles cut the total for every rank. For example, a Gold player pays {{lolPro3}} for 3 games with {{pct3}} off, {{lolPro5}} for 5 games with {{pct5}} off and {{lolPro10}} for 10 games with {{pct10}} off. Casual modes keep one flat price, so ARAM Night, Normal Draft and Swiftplay each cost {{lolAram}} per game for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Coaching has separate prices on the [League of Legends coaching page](/games/league-of-legends/coaching), and the [League of Legends hub](/games/league-of-legends) lists every service for the game.',
         ],
       },
     ],
@@ -169,7 +169,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does a Marvel Rivals duo cost in 2026?',
         paragraphs: [
           'Duo Pro is the Competitive Marvel Rivals service with a Grandmaster+ teammate, priced per match by your own rank. Every price here comes from the Duoly checkout calculator. We found these numbers by running the calculator on 7 November 2026. A Platinum player in Europe pays {{mrPro}} per match for Duo Pro, and a Gold player pays {{mrProGold}} per match, so the Duo Pro price rises with your own rank.',
-          'Bundles cut the total for every rank. For example, a Platinum player pays {{mrPro3}} for 3 matches with {{pct3}} off, {{mrPro5}} for 5 matches with {{pct5}} off and {{mrPro10}} for 10 matches with {{pct10}} off. Quick Match and Arcade keep one flat price of {{mrQuick}} per match for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Hero Coaching has separate prices on the Marvel Rivals coaching page.',
+          'Bundles cut the total for every rank. For example, a Platinum player pays {{mrPro3}} for 3 matches with {{pct3}} off, {{mrPro5}} for 5 matches with {{pct5}} off and {{mrPro10}} for 10 matches with {{pct10}} off. Quick Match and Arcade keep one flat price of {{mrQuick}} per match for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Hero Coaching has separate prices on the [Marvel Rivals coaching page](/games/marvel-rivals/coaching), and the [Marvel Rivals hub](/games/marvel-rivals) lists every service for the game.',
         ],
       },
     ],
@@ -261,7 +261,7 @@ export const intentPages: IntentPage[] = [
         heading: 'Should we play Ranked or a casual mode first?',
         paragraphs: [
           'Standard and Quick Battle is the better starting point when you want to try a role or get used to making calls with a new partner, at {{puQuick}} per game for every rank. Ranked makes more sense once you know your Pokemon and have held items ready. First, share your rank and region at checkout, because Ranked prices follow your own rank while the casual modes do not.',
-          'For example, a player ranked Expert in Europe pays {{puPro}} per game for Duo Pro, and 3 games cost {{puPro3}} after the {{pct3}} bundle discount. Duo Plus brings an Ultra+ teammate for less, and Duo Apex brings a Legend player for more, so the tier is the choice rather than the mode. Second, choose the game count around the time you actually have, and leave room to talk between queues. A Ranked match runs 10:00. Finally, a teammate from Duoly coordinates lanes and objectives with you using Discord voice; nobody can promise a win for a five-player team.',
+          'For example, a player ranked Expert in Europe pays {{puPro}} per game for Duo Pro, and 3 games cost {{puPro3}} after the {{pct3}} bundle discount. Duo Plus brings an Ultra+ teammate for less, and Duo Apex brings a Legend player for more, so the tier is the choice rather than the mode. Second, choose the game count around the time you actually have, and leave room to talk between queues. A Ranked match runs 10:00. Finally, a teammate from Duoly coordinates lanes and objectives with you using Discord voice, and the [Pokemon Unite hub](/games/pokemon-unite) lists every service for the game.',
         ],
       },
     ],
@@ -357,7 +357,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does a Valorant duo cost?',
         paragraphs: [
           'Duo Pro is the Competitive Valorant service with an Immortal+ teammate, priced per game by your own rank. First, find your own rank on the card. A Gold player on EU pays {{valPro}} per game, an Iron player {{valProIron}} and an Immortal player {{valProImmortal}}, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026, rather than from a list kept by hand.',
-          'Bundles cut the total for every rank. For example, a Gold player pays {{valPro3}} for 3 games with {{pct3}} off, {{valPro5}} for 5 games with {{pct5}} off and {{valPro10}} for 10 games with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Competitive moves with your rank. Valorant coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Gold player pays {{valPro3}} for 3 games with {{pct3}} off, {{valPro5}} for 5 games with {{pct5}} off and {{valPro10}} for 10 games with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Competitive moves with your rank. Valorant coaching from Duoly has separate prices on the [Valorant coaching page](/games/valorant/coaching), and the [Valorant hub](/games/valorant) lists every service for the game.',
         ],
       },
     ],
@@ -456,7 +456,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does a Fortnite duo cost?',
         paragraphs: [
           'Duo Pro is the Ranked Fortnite service with an Unreal teammate, priced per hour by your own rank. First, find your own rank on the card. A Platinum player in Europe pays {{fnPro}} per hour. A Gold player pays {{fnProGold}} per hour and an Unreal player {{fnProUnreal}}, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every rank. For example, a Platinum player pays {{fnPro3}} for 3 hours with {{pct3}} off, {{fnPro5}} for 5 hours with {{pct5}} off and {{fnPro10}} for 10 hours with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Ranked moves with your rank: Zero Build is {{fnZb}} per hour. Fortnite coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Platinum player pays {{fnPro3}} for 3 hours with {{pct3}} off, {{fnPro5}} for 5 hours with {{pct5}} off and {{fnPro10}} for 10 hours with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Ranked moves with your rank: Zero Build is {{fnZb}} per hour. Fortnite coaching from Duoly has separate prices on the [Fortnite coaching page](/games/fortnite/coaching), and the [Fortnite hub](/games/fortnite) lists every service for the game.',
         ],
       },
     ],
@@ -555,7 +555,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does an Overwatch 2 duo cost?',
         paragraphs: [
           'Duo Pro is the Competitive Overwatch 2 service with a Master+ teammate, priced per game by your own rank. First, find your own rank on the card. A Platinum player in Europe pays {{owPro}} per game. A Gold player pays {{owProGold}} per game, and a Master player pays {{owProMaster}} per game, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every rank. For example, a Platinum player pays {{owPro3}} for 3 games with {{pct3}} off, {{owPro5}} for 5 games with {{pct5}} off and {{owPro10}} for 10 games with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Competitive moves with your rank. Coaching from Duoly has separate prices on the Overwatch coaching page, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Platinum player pays {{owPro3}} for 3 games with {{pct3}} off, {{owPro5}} for 5 games with {{pct5}} off and {{owPro10}} for 10 games with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Competitive moves with your rank. Coaching from Duoly has separate prices on the [Overwatch 2 coaching page](/games/overwatch-2/coaching), and the [Overwatch 2 hub](/games/overwatch-2) lists every service for the game.',
         ],
       },
     ],
@@ -653,7 +653,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does an Apex Legends duo cost?',
         paragraphs: [
           'Duo Pro is the Ranked Apex service with a Master or Apex Predator teammate, priced per hour by your own rank. First, find your own rank on the card. A Platinum player in Europe pays {{apexPro}} per hour. A Gold player pays {{apexProGold}} per hour, and a Master player pays {{apexProMaster}} per hour, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every rank. For example, a Platinum player pays {{apexPro3}} for 3 hours with {{pct3}} off, {{apexPro5}} for 5 hours with {{pct5}} off and {{apexPro10}} for 10 hours with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Ranked moves with your rank: unranked pubs stay {{apexPubs}} per hour. Apex coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Platinum player pays {{apexPro3}} for 3 hours with {{pct3}} off, {{apexPro5}} for 5 hours with {{pct5}} off and {{apexPro10}} for 10 hours with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Ranked moves with your rank: unranked pubs stay {{apexPubs}} per hour. Apex coaching from Duoly has separate prices on the [Apex Legends coaching page](/games/apex-legends/coaching), and the [Apex Legends hub](/games/apex-legends) lists every service for the game.',
         ],
       },
     ],
@@ -756,7 +756,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does a Call of Duty duo cost?',
         paragraphs: [
           'Duo Pro is the Warzone duos service on Duoly at {{codPro}} per hour for a Diamond player, and like the other duo tiers it follows your own rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Multiplayer Ranked Play is {{codPlus}} per hour at Platinum with a Crimson+ teammate who holds a lane and plays the objective. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank.',
+          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank. The [Call of Duty hub](/games/call-of-duty) lists every service for the game.',
         ],
       },
     ],
@@ -856,7 +856,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does a Rainbow Six Siege duo cost?',
         paragraphs: [
           'Duo Pro is the Ranked Siege service with a Diamond+ teammate, priced per game by your own rank. First, find your own rank on the card. A Gold player on EU West pays {{r6Pro}} per game. A Copper player pays {{r6ProCopper}} per game, and a Diamond player pays {{r6ProDiamond}} per game, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every rank. For example, a Gold player pays {{r6Pro3}} for 3 games with {{pct3}} off, {{r6Pro5}} for 5 games with {{pct5}} off and {{r6Pro10}} for 10 games with {{pct10}} off. The unranked modes hold one flat price at every rank instead, so only Ranked moves with your rank, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Gold player pays {{r6Pro3}} for 3 games with {{pct3}} off, {{r6Pro5}} for 5 games with {{pct5}} off and {{r6Pro10}} for 10 games with {{pct10}} off. The unranked modes hold one flat price at every rank instead, so only Ranked moves with your rank. Lessons have separate prices on the [Rainbow Six Siege coaching page](/games/rainbow-six-siege/coaching), and the [Siege hub](/games/rainbow-six-siege) lists every service.',
         ],
       },
     ],

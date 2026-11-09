@@ -31,13 +31,29 @@ while (queue.length) {
       href: e.getAttribute('href'),
       text: e.textContent.trim() || e.getAttribute('aria-label') || '',
       // Contextual = editorial body copy: inside <main>, outside the shared
-      // header, footer and site navigation. Breadcrumbs and .related blocks
-      // belong to the page itself, so they count.
+      // header, footer and site navigation. Breadcrumbs, .related blocks and
+      // the games index directory (nav.page-directory) belong to the page
+      // itself, so they count. scripts/seo-built.test.mjs draws the same line.
       contextual:
         !!e.closest('main') &&
         !e.closest('header, footer') &&
-        !e.closest('nav:not(.related):not([aria-label="Breadcrumb"])'),
+        !e.closest(
+          'nav:not(.related):not(.page-directory):not([aria-label="Breadcrumb"])',
+        ),
     })),
+    // Offer links: a prefilled checkout selection (src/site/seo.ts bookingHref)
+    // the page offers in its own content. The shared header and footer live
+    // outside <main> in SiteLayout, so <main> is the whole test here: a hero
+    // inside a page is the page's own header and its call to action counts.
+    bookingLinks: [...document.querySelectorAll('a[href*="#modes-h"]')]
+      .filter(
+        (e) =>
+          !!e.closest('main') &&
+          !e.closest(
+            'nav:not(.related):not(.page-directory):not([aria-label="Breadcrumb"])',
+          ),
+      )
+      .map((e) => e.getAttribute('href')),
     prices: [...document.querySelectorAll('[data-price-minor]')].map((e) => ({
       minor: e.getAttribute('data-price-minor'),
       text: e.textContent.trim(),
