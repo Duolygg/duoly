@@ -192,7 +192,7 @@ describe('homepage order room preview', () => {
     expect(html).toContain('rank-verified Pokémon Unite teammates');
     expect(html).toContain('Duo Pro ×3');
     expect(html).toContain('Asia');
-    expect(html).toContain('€8.07');
+    expect(html).toContain('€9.42');
     expect(html).toMatch(/Trainer name<\/dt><dd[^>]*>Alex</);
     expect(html).toContain('IN QUEUE');
     expect(html).toContain('Your order');
@@ -302,7 +302,7 @@ describe('homepage order room preview', () => {
 describe('order room preview prices', () => {
   it('shows the demo order in euros by default, priced from the catalog', () => {
     const html = renderToStaticMarkup(h(QueuePreview));
-    expect(html).toContain('€8.07');
+    expect(html).toContain('€9.42');
     expect(html).not.toContain('$');
   });
 

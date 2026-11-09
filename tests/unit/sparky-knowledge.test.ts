@@ -156,7 +156,7 @@ describe('Sparky identity, offer and memory', () => {
     const { offerSummary } = await import('../../src/server/support/offer');
     const offer = offerSummary();
     expect(offer).toMatch(
-      /Valorant: Duo: Duo Plus \(Ascendant\+ teammate\) €4\.99\/game/,
+      /Valorant: Duo: Duo Plus \(Ascendant\+ teammate\) €5\.99\/game/,
     );
     expect(offer).toContain('Coaching');
     expect(offer).toMatch(/no account boosting/);

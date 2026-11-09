@@ -63,7 +63,7 @@ describe('AI page public contract', () => {
     expect(example.result.content[0]!.text).not.toContain(
       JSON.stringify(example.result.structuredContent),
     );
-    expect(example.result.content[0]!.text).toContain('EUR 6.49');
+    expect(example.result.content[0]!.text).toContain('EUR 7.99');
     expect(example.result.content[0]!.text).toContain(
       example.result.structuredContent.bookUrl,
     );

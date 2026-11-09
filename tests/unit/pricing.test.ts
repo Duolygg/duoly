@@ -75,7 +75,7 @@ describe('server-owned quote preview', () => {
         server: 'my own world',
         edition,
       };
-      expect(calculateQuote(input, trusted).amountEurMinor).toBe(1299);
+      expect(calculateQuote(input, trusted).amountEurMinor).toBe(1599);
     },
   );
 
@@ -235,11 +235,11 @@ describe('server-owned quote preview', () => {
 
   // Owner decision 2026-11-08: the picker sells 1 to 5 and only 5 is discounted (20%).
   it.each([
-    [1, 0, 399],
-    [2, 0, 798],
-    [3, 0, 1197],
-    [4, 0, 1596],
-    [5, 20, 1596],
+    [1, 0, 649],
+    [2, 0, 1298],
+    [3, 0, 1947],
+    [4, 0, 2596],
+    [5, 20, 2596],
   ])(
     'prices %i picker units with 20%% off only at 5',
     (units, percent, expected) => {
@@ -258,9 +258,9 @@ describe('server-owned quote preview', () => {
 
   // The Bundles tab is unchanged: the main service in packs of 3, 5 and 10.
   it.each([
-    [3, 10, 1077],
-    [5, 20, 1596],
-    [10, 25, 2993],
+    [3, 10, 1752],
+    [5, 20, 2596],
+    [10, 25, 4868],
   ])('prices a %i-unit bundle at %i%% off', (units, percent, expected) => {
     const quote = calculateQuote(
       { ...selection, units, bundle: true },
@@ -380,12 +380,12 @@ describe('server-owned quote preview', () => {
       expect(usd.fx).toEqual({ eurToUsd: rate, customerUsdRate: customerRate });
       expect(usd.customer).toEqual({
         currency: 'USD',
-        amountMinor: Math.round(1077 * customerRate),
+        amountMinor: Math.round(1752 * customerRate),
       });
-      expect(eur.customer).toEqual({ currency: 'EUR', amountMinor: 1077 });
+      expect(eur.customer).toEqual({ currency: 'EUR', amountMinor: 1752 });
       expect(usd.teammate).toEqual({
         currency: 'USD',
-        amountMinor: Math.max(99, Math.round(1077 * 0.6 * rate) - 1),
+        amountMinor: Math.max(99, Math.round(1752 * 0.6 * rate) - 1),
       });
       expect(usd.teammate).toEqual(eur.teammate);
     },
@@ -431,8 +431,8 @@ describe('server-owned quote preview', () => {
 
   it('calculates the catalog EUR price without client money', () => {
     const quote = calculateQuote(parseQuoteInput(selection), trusted);
-    expect(quote.amountEurMinor).toBe(399);
+    expect(quote.amountEurMinor).toBe(649);
     expect(quote.kind).toBe('preview');
-    expect(quote.customer).toEqual({ currency: 'EUR', amountMinor: 399 });
+    expect(quote.customer).toEqual({ currency: 'EUR', amountMinor: 649 });
   });
 });

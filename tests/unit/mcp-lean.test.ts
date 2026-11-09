@@ -34,10 +34,10 @@ it('labels representative quantity savings without inferring a rank', async () =
     rank: 'Gold',
     quantity: 5,
     bundleDiscountPercent: 20,
-    savingMinor: 349,
+    savingMinor: 499,
   });
   expect(result.content[0]!.text).toMatch(
-    /Example Gold.*saves EUR 3.49, 20% off for 5/,
+    /Example Gold.*saves EUR 4.99, 20% off for 5/,
   );
 });
 it('distinguishes rank-priced tiers with a calculated typical price', async () => {

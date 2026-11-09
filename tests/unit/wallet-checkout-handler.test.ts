@@ -40,7 +40,7 @@ vi.mock('../../src/server/payments/config', () => {
       state.rpcCalls.push({ fn, args });
       if (fn === 'checkout_reserve_wallet')
         return {
-          data: { wallet_eur_cents: 399, card_eur_cents: 0 },
+          data: { wallet_eur_cents: 599, card_eur_cents: 0 },
           error: null,
         };
       if (fn === 'create_wallet_order')
@@ -113,7 +113,7 @@ describe('wallet checkout handler', () => {
       url: '/queue/order-wallet-1',
       wallet_only: true,
     });
-    expect(state.inserted?.amount_eur_cents).toBe(399);
+    expect(state.inserted?.amount_eur_cents).toBe(599);
     expect(state.inserted).not.toHaveProperty('wallet_eur_cents');
     expect(state.rpcCalls.map((call) => call.fn)).toEqual([
       'checkout_reserve_wallet',

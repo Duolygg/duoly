@@ -51,6 +51,14 @@ The "New" prices in the full table below were then raised. **The catalog is the 
 - tapin's price keeps these where they were: League Duo Plus / Duo Pro (€3.49 / €3.99: €4.49 would be $5.11, over tapin's $4.99), the League, Valorant and CS2 Gamer Girl modes, Valorant Skirmish (€1.99). Examples that went up: Valorant Duo Pro €4.99 → €6.49, CS2 Duo Pro €4.99 → €5.99, League Duo Apex €5.49 → €6.49, Fortnite Duo Pro €9.99 → €12.99/h, Social (Just Chat and the rest) €9.99 → €12.99/h, coaching €12.99 → €14.99–17.49/h.
 - Services tapin also sells are now **0% to 34% under tapin, about 9% under on average**. None is above.
 
+### Duo tiers raised (owner 2026-11-09: "we are not a cheap dog site")
+
+Duo Plus / Pro / Apex (`duo1`–`duo3`, whatever the game calls them) went up again. The "never above tapin" cap no longer applies to these tiers.
+
+- **League:** €3.49 / €3.99 / €6.49 → **€5.49 / €6.49 / €8.99** a game (Platinum list price). At Diamond (×1.15) that's €6.49 / €7.49 / €10.49; four Diamond Duo Pro games: €17.96 → €29.96.
+- **Every other game:** about **+25%**, rounded to the nearest .49 / .99 (e.g. Valorant €4.99 / €6.49 / €6.99 → €5.99 / €7.99 / €8.49, Fortnite €10.49 / €12.99 / €13.99 → €12.99 / €15.99 / €17.49 an hour).
+- Rank ladders, quantity discounts, Gamer Girl, social, side modes (Arena, Skirmish, Wingman, Stadium…) and coaching unchanged.
+
 ## Things to decide
 
 - **Teammate pay drops with the prices** (60% at the mid rate). League Duo Pro goes from $4.05 to $2.70 a game, about $4.60/h. If that's too little to keep Master+ teammates, raise the teammate share instead of the customer price.

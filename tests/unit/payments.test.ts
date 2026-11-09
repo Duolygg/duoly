@@ -50,7 +50,7 @@ describe('checkout pricing', () => {
     const built = buildCheckout(
       CheckoutRequestSchema.parse({ ...lol, bundle: true }),
     );
-    expect(built.row.amount_eur_cents).toBe(1077); // 3-game bundle: 3.99 × 3 − 10%
+    expect(built.row.amount_eur_cents).toBe(1752); // 3-game bundle: 6.49 × 3 − 10%
     expect(built.row).toMatchObject({
       game: 'lol',
       service: 'duo2',

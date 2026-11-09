@@ -28,8 +28,8 @@ describe('Duoly vs E-Pal comparison', () => {
       quote.quantityDiscountPercent,
     );
     // The copy names these figures in prose too, so pin them.
-    expect(comparisonExample.price).toBe('€10.77');
-    expect(comparisonExample.unitPrice).toBe('€3.99');
+    expect(comparisonExample.price).toBe('€16.17');
+    expect(comparisonExample.unitPrice).toBe('€5.99');
 
     expect(comparisonExample.discountPercent).toBe(10);
     for (const [units, percent] of [
