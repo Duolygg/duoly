@@ -8,7 +8,9 @@ it('shows the hero match timer', () => {
   expect(html).toMatch(/Finding your duo/);
   expect(html).toMatch(/2:00/);
 });
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import process from 'node:process';
 
 import {
   HUB_PATHS,
@@ -21,6 +23,7 @@ import {
   organizationSchema,
   serializeJsonLd,
 } from '../../src/site/seo';
+import { CONTENT_SOURCES, CONTENT_UPDATED } from '../../src/site/content-dates';
 import { DISCORD_INVITE } from '../../src/site/nav';
 import { seoOffers, serviceSchema } from '../../src/server/seo/offers';
 import { gameBySlug } from '../../src/site/games';
@@ -45,6 +48,65 @@ it('lists only finished canonical URLs from the configured site', async () => {
   expect(urls.filter((url) => /\/games\/[^/]+$/.test(url!))).toHaveLength(
     HUB_PATHS.length,
   );
+  // Every URL carries a lastmod, and no lastmod is today-by-accident: the
+  // sitemap renders per request, so a request-time date would show up here.
+  const stamps = [...xml.matchAll(/<lastmod>(.*?)<\/lastmod>/g)].map(
+    (match) => match[1]!,
+  );
+  expect(stamps).toHaveLength(INDEXABLE_PATHS.length);
+  for (const stamp of stamps) expect(stamp).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+});
+
+/**
+ * lastmod has to mean "the day this page's copy changed". The runtime value is
+ * declared in src/site/content-dates.ts, so this is the check that keeps the
+ * declaration equal to what git actually records for that copy.
+ *
+ * A source file with uncommitted edits is being changed right now, so its page
+ * is allowed to claim today instead of the last commit date. That is also the
+ * date to commit it on, which is what keeps the two in step.
+ */
+it('derives every sitemap lastmod from the real content change date', () => {
+  const git = (args: string[]) =>
+    spawnSync('git', args, { cwd: process.cwd(), encoding: 'utf8' });
+  const probe = git(['rev-parse', '--is-shallow-repository']);
+  if (probe.status !== 0) {
+    expect(probe.error?.message ?? probe.stderr).toBeTruthy();
+    return; // No git in this environment: nothing to compare against.
+  }
+  expect(
+    probe.stdout.trim(),
+    'shallow clone: fetch full history so lastmod can be verified',
+  ).toBe('false');
+  const today = new Date().toISOString().slice(0, 10);
+  const dirty = new Set(
+    git(['status', '--porcelain', '--'])
+      .stdout.split('\n')
+      .map((line) => line.slice(3).trim())
+      .filter(Boolean),
+  );
+  // Every indexable path declares its sources, and nothing declares sources it
+  // does not need: a stale entry here would silently stop verifying a page.
+  expect(Object.keys(CONTENT_SOURCES).sort()).toEqual(
+    [...INDEXABLE_PATHS].sort(),
+  );
+  for (const [path, files] of Object.entries(CONTENT_SOURCES)) {
+    const dates = files.map((file) => {
+      expect(existsSync(file), `${path}: missing source ${file}`).toBe(true);
+      return dirty.has(file)
+        ? today
+        : git(['log', '-1', '--format=%cs', '--', file]).stdout.trim();
+    });
+    const newest = dates.filter(Boolean).sort().at(-1);
+    expect(
+      newest,
+      `${path}: no git history for ${files.join(', ')}`,
+    ).toBeTruthy();
+    expect(
+      CONTENT_UPDATED[path],
+      `${path}: lastmod says ${CONTENT_UPDATED[path]}, its copy last changed ${newest}. Set CONTENT_UPDATED['${path}'] to '${newest}'.`,
+    ).toBe(newest);
+  }
 });
 
 it.each(['EUR', 'USD'] as const)(

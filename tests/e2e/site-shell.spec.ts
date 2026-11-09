@@ -18,7 +18,9 @@ const shellPages = [
   ['/privacy', 'Privacy | Duoly'],
   ['/imprint', 'Imprint | Duoly'],
   ['/games', 'Gaming Teammates and Coaching by Game | Duoly'],
-  ['/games/valorant', 'Valorant LFG: Find Teammates or Book a Duo | Duoly'],
+  // The hub is the broad page for the game; "Valorant LFG" is now the title of
+  // /games/valorant/lfg, which owns that query. Owner-approved, 2026-11-08.
+  ['/games/valorant', 'Valorant Teammates, Duos and Coaching | Duoly'],
   ['/blog', 'Gaming Guides and Playing Together Safely | Duoly'],
   ['/reset-password', 'Reset password | Duoly'],
   ['/login', ''],

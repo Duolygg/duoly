@@ -1,5 +1,6 @@
 import { intentPages, intentPath } from '../content/intent-pages';
 import { FINISHED_HUB_SLUGS } from '../content/hub-pages';
+import { CONTENT_UPDATED } from './content-dates';
 import { gameBySlug } from './games';
 import { aiLaunchState } from './ai';
 import { DISCORD_INVITE, SUPPORT_EMAIL } from './nav';
@@ -43,34 +44,16 @@ export const INDEXABLE_PATHS = [
   ...intentPages.map(intentPath),
   ...COACHING_SLUGS.map((slug) => `/games/${slug}/coaching`),
 ];
-// Content revision dates, shared by sitemap and editorial metadata. Never request time.
-export const CONTENT_DATES: Record<string, string> = Object.fromEntries(
-  [...INDEXABLE_PATHS, '/ai'].map((path) => [
-    path,
-    ['/ai', '/developers/mcp'].includes(path) ? '2026-11-06' : '2026-11-05',
-  ]),
-);
-Object.assign(CONTENT_DATES, {
-  '/games/league-of-legends/play-with-someone': '2026-11-06',
-  '/games/marvel-rivals/duo-partner': '2026-11-06',
-  '/games/pokemon-unite/teammate': '2026-11-06',
-  '/compare/e-pal': '2026-11-07',
-  '/games/valorant/lfg': '2026-11-08',
-  '/games/fortnite/duos': '2026-11-08',
-  '/games/overwatch-2/lfg': '2026-11-08',
-  '/games/apex-legends/lfg': '2026-11-08',
-  '/games/call-of-duty/lfg': '2026-11-08',
-  '/games/rainbow-six-siege/lfg': '2026-11-08',
-});
-// The data-driven game hubs were written together; Valorant and Social keep their own date.
-Object.assign(
-  CONTENT_DATES,
-  Object.fromEntries(
-    HUB_PATHS.filter(
-      (path) => !['/games/valorant', '/games/social'].includes(path),
-    ).map((path) => [path, '2026-11-08']),
-  ),
-);
+/**
+ * Content revision dates, shared by sitemap.xml and editorial metadata.
+ *
+ * Every value is the day that page's own copy last changed, declared in
+ * src/site/content-dates.ts and checked against git by tests/unit/seo.test.ts.
+ * Never the build time: a build timestamp would re-announce every unchanged
+ * page on every deploy, which is the fastest way to make Google ignore
+ * `lastmod` altogether.
+ */
+export const CONTENT_DATES: Record<string, string> = CONTENT_UPDATED;
 /** "Book a Valorant teammate" but "Book an Apex Legends teammate". */
 export const bookTeammateLabel = (gameName: string) =>
   `Book ${/^[aeiou]/i.test(gameName) ? 'an' : 'a'} ${gameName} teammate`;

@@ -5,7 +5,7 @@ import {
   hubPageFor,
 } from '../../src/content/hub-pages';
 import { renderTokens } from '../../src/content/guide-pages';
-import { socialContent, valorantContent } from '../../src/content/hubs';
+import { socialContent } from '../../src/content/hubs';
 import { lessons } from '../../src/content/coaching';
 import {
   hubModes,
@@ -95,9 +95,12 @@ it('covers every game Duoly sells with finished, indexable hub copy', () => {
   expect([...FINISHED_HUB_SLUGS].sort()).toEqual(
     ['social', ...sellable.map((game) => game.slug)].sort(),
   );
-  // Valorant and Social keep their own copy, so they must stay off the registry.
-  expect(hubPageFor('valorant')).toBeUndefined();
+  // Social is not a game and keeps its own copy, so it stays off the registry.
   expect(hubPageFor('social')).toBeUndefined();
+  // Valorant moved onto the shared hub template (owner decision, 2026-11-08).
+  expect(hubPageFor('valorant')?.title).toBe(
+    'Valorant Teammates, Duos and Coaching | Duoly',
+  );
   for (const path of HUB_PATHS) expect(INDEXABLE_PATHS).toContain(path);
   // Social is not a game, so the public catalog and llms.txt leave it out.
   const llms = renderLlms();
@@ -255,40 +258,20 @@ it('gives every hub at least three inbound links from sibling hubs', () => {
     ).toBeGreaterThanOrEqual(3);
 });
 
-// The Valorant and Social hubs are already indexed, so this change only adds
-// pages. Any edit to their copy has to be a deliberate, reviewed one.
-it('leaves the Valorant and Social hub copy untouched', () => {
-  expect(valorantContent.title).toBe(
-    'Valorant LFG: Find Teammates or Book a Duo | Duoly',
-  );
-  expect(valorantContent.h1).toBe(
-    'Valorant LFG: find teammates for your next session',
-  );
-  expect(valorantContent.lead).toBe(
-    'Looking for Valorant teammates? Free LFG communities are great for an ongoing group. Duoly gets you a strong teammate for the next game, with coaching when you want to learn.',
-  );
-  expect(valorantContent.sections.map((section) => section.heading)).toEqual([
-    'Free Valorant LFG options come first',
-    'Write a post that someone can answer',
-    'When a paid Duoly session makes sense',
-    'Check compatibility before opening the lobby',
-  ]);
-  expect(valorantContent.faq.map(([question]) => question)).toEqual([
-    'Is Duoly a free Valorant teammate finder?',
-    'Can I choose an agent role?',
-    'Can every rank queue together?',
-    'Can I book several games?',
-    'What does a per-game price mean?',
-    'Where do I book a Valorant coach?',
-  ]);
-  expect(valorantContent.closing).toEqual({
-    heading: 'Ready to queue?',
-    text: 'Pick a service and your rank, then meet your teammate in the order chat.',
-  });
+// The Social hub is already indexed, so any edit to its copy has to be a
+// deliberate, reviewed one. Valorant moved to the shared template instead,
+// keeping its URL; its new title, H1 and description are owner-approved.
+it('leaves the Social hub copy untouched and keeps the Valorant URL', () => {
   expect(socialContent.title).toBe(
     'Play With an E-Girl: Social Sessions and Prices | Duoly',
   );
   expect(socialContent.h1).toBe(
     'Play with an e-girl or book friendly Social time',
   );
+  const valorant = hubPageFor('valorant')!;
+  expect(valorant.h1).toBe('Book a Valorant teammate, a duo or a coach');
+  // The LFG query belongs to /games/valorant/lfg, so the hub stays off it.
+  expect(valorant.title).not.toMatch(/LFG/i);
+  expect(valorant.h1).not.toMatch(/LFG/i);
+  expect(HUB_PATHS).toContain('/games/valorant');
 });

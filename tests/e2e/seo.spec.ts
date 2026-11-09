@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { COACHING_SLUGS, INDEXABLE_PATHS } from '../../src/site/seo';
 import { seoOffers } from '../../src/server/seo/offers';
+import { hubOffers } from '../../src/server/seo/hub';
 import { gameBySlug } from '../../src/site/games';
 const pages = [
   ...COACHING_SLUGS.map((slug) => `/games/${slug}/coaching`),
@@ -50,17 +51,14 @@ for (const path of pages) {
     ) {
       const slug = path.split('/')[2]!;
       const game = gameBySlug(slug)!;
-      const offers = seoOffers(
-        game.id,
-        slug === 'social'
-          ? 'gg'
-          : path.endsWith('/coaching')
-            ? 'training'
-            : 'teammate',
-        {
-          eurToUsd: 1,
-        },
-      );
+      // A game hub renders all three price grids (teammate, team fill and
+      // coaching); /games/social and the coaching pages render only their own.
+      const offers =
+        path === '/games/valorant'
+          ? hubOffers(game.id, { eurToUsd: 1 }).all
+          : seoOffers(game.id, slug === 'social' ? 'gg' : 'training', {
+              eurToUsd: 1,
+            });
       await expect(page.locator('[data-price-minor]')).toHaveCount(
         offers.length,
       );

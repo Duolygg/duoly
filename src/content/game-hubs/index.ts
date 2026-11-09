@@ -1,4 +1,5 @@
 import type { HubPageCopy } from '../hub-pages';
+import { valorant } from './valorant';
 import { leagueOfLegends } from './league-of-legends';
 import { counterStrike2 } from './counter-strike-2';
 import { fortnite } from './fortnite';
@@ -21,6 +22,7 @@ import { deadlock } from './deadlock';
 
 /** Finished game hubs, in the order the sitemap lists them (catalog demand order). */
 export const GAME_HUBS: HubPageCopy[] = [
+  valorant,
   leagueOfLegends,
   counterStrike2,
   fortnite,

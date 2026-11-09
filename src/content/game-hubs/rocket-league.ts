@@ -17,7 +17,7 @@ export const rocketLeague: HubPageCopy = {
   related: ['fortnite', 'minecraft', 'ea-sports-fc-27'],
   format: {
     heading: 'What can you book for Rocket League on Duoly?',
-    text: 'Duoly sells three things for Rocket League: one partner who queues with you on your own account, a 3v3 Standard fill that completes your team, and coaching by the hour. Doubles sells by the hour, because a single match runs about seven minutes and an hour is the smallest unit that covers a real session. The partner tiers are Duo Plus with a Champion+ player, Duo Pro with a Grand Champion and Duo Apex with a Supersonic Legend, priced by your own rank from {{p_duo2_low}} to {{p_duo2_high}} on Duo Pro. Casual modes keep one flat price at every rank, so Casual 3v3 and Extra Modes each cost {{p_casual}} per hour. The 3v3 Standard fill is priced per match instead, at {{p_three}} for {{seats_three}} seats. Bundles cut the total, {{pct3}} off 3 up to {{pct10}} off 10.',
+    text: 'A Rocket League booking on Duoly is a single reviewed partner, a 3v3 Standard fill or a coaching hour. First, Doubles sells by the hour, because one match runs about seven minutes. The partner tiers are Duo Plus with a Champion+ player, Duo Pro with a Grand Champion and Duo Apex with a Supersonic Legend, priced by your own rank from {{p_duo2_low}} to {{p_duo2_high}} on Duo Pro. Casual 3v3 and Extra Modes each hold one flat price of {{p_casual}} per hour. The 3v3 Standard fill is priced per match instead, at {{p_three}} for {{seats_three}} seats. Bundles cut the total, {{pct3}} off 3 up to {{pct10}} off 10. The rank disparity restriction from Psyonix reaches only an undersized party, so a Doubles pair is already a full team, read in November 2026. For example, agree kickoff positions using Discord first.',
   },
   services: {
     duo1: 'An hour of Ranked Doubles with a Champion partner who rotates instead of chasing.',
@@ -41,30 +41,30 @@ export const rocketLeague: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per hour, because a single match runs about seven minutes and an hour is the smallest honest unit. The Ranked Doubles tiers read your own rank, so a Supersonic Legend lobby costs more than a Bronze one, while Casual 3v3 and Extra Modes hold one price for everybody. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5.',
-    team: 'The 3v3 Standard fill is the one service priced per match rather than per hour, because a Standard set is shorter than a Doubles session. The card covers up to {{seats_three}} seats and falls to one when you already have a friend, and it reads your own rank like the Doubles tiers do. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5.',
+      'Teammate prices are per hour, because one match runs about seven minutes. The Ranked Doubles tiers read your own rank: Duo Pro costs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Casual 3v3 and Extra Modes hold one price for everybody. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the party rule beside the tier: the rank disparity restriction from Psyonix reaches only an undersized party, so a Doubles pair carries any ranks in 2026 while an incomplete Standard pair stays inside three ranks. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5. For example, agree a boost rule using Discord before hour 1.',
+    team: 'The 3v3 Standard fill is the one service priced per match rather than per hour, because a Standard set is shorter than a Doubles session. 3v3 Standard covers up to {{seats_three}} seats at {{p_three}} at {{rank_three}}, from {{p_three_low}} at {{rank_three_low}}. First, count the seats you actually need, because every seat is priced on its own. A full three is also the shape Psyonix treats as a complete team, so the three-rank window on an undersized Standard party stops applying, read in November 2026. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5. For example, a pair short 1 player books 1 seat rather than 2, agreed using Discord.',
     coaching:
-      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate hours stop here. Mechanics Training drills aerials, flicks and recoveries and ends with training packs you keep, while Play and Learn is the live option where a Grand Champion coach talks through a real Doubles hour. Screen share runs on Discord.',
+      'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on teammate hours stop here. Mechanics Training costs {{p_mech}} per hour, drilling aerials, flicks and recoveries, and ends with training packs you keep. Play and Learn is the live option where a Grand Champion coach talks through one real Doubles hour at {{p_learn}}. First, pick the problem rather than the format. For example, a player who misses every aerial books the free play hour instead of a fourth Doubles hour. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
   },
   steps: {
     heading: 'How does booking a Rocket League partner work?',
     items: [
-      'Pick a service and the number of hours. Duo Pro is the Ranked Doubles tier with a Grand Champion, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount. Five hours take {{pct5}} off.',
-      'Add your region, rank, platform and language at checkout. Name Europe, {{rank_duo2}} and controller, so your partner reads the real request before accepting the order.',
-      'Meet your partner in the order chat, agree kickoff positions, a boost rule and voice, then add each other by Epic name and party up. A single Duo Pro hour costs {{p_duo2}} at the same rank.',
+      'Pick a service and the number of hours first. Duo Pro is the Ranked Doubles tier with a Grand Champion, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
+      'Second, add your region, rank, platform and language at checkout. For example, name Europe, {{rank_duo2}} and controller, so your partner reads the real request before accepting.',
+      'Finally, meet your partner in the order chat using Discord. Agree kickoff positions, a boost rule and voice, then add each other by Epic name and party up. One Duo Pro hour costs {{p_duo2}}.',
     ],
     note: 'Duoly reviews every Rocket League partner before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
   decide: {
     heading: 'Which Rocket League session fits you?',
     intro:
-      'The right Rocket League session is the one matching your goal for the hour, so pick the goal first and let the price follow. Ranked Doubles parties carry no rank gate at all, which is why any tier can queue 2v2 with you, while casual modes keep one flat price for everybody. Bundles cut totals by {{pct3}} on 3 hours and {{pct5}} on 5.',
+      'The right Rocket League session is the one matching your goal for the hour. First, casual modes keep one flat price at every rank. Ranked Doubles is priced by your own rank, from {{p_duo2_low}} per hour on Duo Pro, and a Doubles pair carries any ranks because Psyonix limits only an undersized party. For example, 3 hours take {{pct3}} off and 5 hours take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Climbing Ranked Doubles?',
         service: 'duo2',
         answer:
-          'Duo Pro adds a Grand Champion from {{p_duo2_low}} per hour, priced by your own rank and covering back post.',
+          'Duo Pro adds a Grand Champion from {{p_duo2_low}} per hour, priced by your own rank.',
       },
       {
         goal: 'Facing Supersonic Legend lobbies?',
@@ -76,19 +76,19 @@ export const rocketLeague: HubPageCopy = {
         goal: 'Want 3v3 Standard instead?',
         service: 'three',
         answer:
-          'The Standard fill covers up to {{seats_three}} seats with Grand Champions, priced per match.',
+          'The Standard fill covers up to {{seats_three}} seats for {{p_three}}, priced per match.',
       },
       {
         goal: 'Just want a fun evening?',
         service: 'extra',
         answer:
-          'Extra Modes costs {{p_extra}} per hour across Rumble, Hoops, Snow Day, Dropshot and Heatseeker.',
+          'Extra Modes costs {{p_extra}} per hour across Rumble, Hoops, Snow Day and Heatseeker.',
       },
       {
         goal: 'Mechanics holding you back?',
         service: 'mech',
         answer:
-          'Mechanics Training is one hour with a Grand Champion coach, ending with training packs.',
+          'Mechanics Training is one hour with a Grand Champion coach for {{p_mech}}.',
       },
     ],
   },
@@ -96,29 +96,29 @@ export const rocketLeague: HubPageCopy = {
     {
       heading: 'Why is Rocket League Doubles priced by the hour?',
       paragraphs: [
-        'An hour is the honest unit for Doubles, because a single match runs about seven minutes. Charging per match would price a kickoff and a session the same way, so Doubles sells hourly and only the 3v3 Standard fill stays per match at {{p_three}}. An hour of Duo Pro costs {{p_duo2}} at {{rank_duo2}} and realistically covers six or seven matches once queue time and replays are counted, which is enough to settle one rotation habit rather than chase a single result.',
-        'Ranked prices follow your own rank, so a {{rank_duo2_low}} player pays {{p_duo2_low}} per hour and a {{rank_duo2_high}} player pays {{p_duo2_high}}, because higher lobbies need a stronger partner. Casual hours ignore rank entirely, which is why Casual 3v3 and Extra Modes each cost {{p_casual}}. Agree who takes the diagonal kickoff before the first match, agree a boost rule second, and remember bundles take {{pct3}} off 3 hours or {{pct5}} off 5.',
+        'An hour is the honest unit for Doubles, because one match runs about seven minutes. Charging per match would price a kickoff and a session the same way, so Doubles sells hourly and only the 3v3 Standard fill stays per match at {{p_three}}. An hour of Duo Pro costs {{p_duo2}} at {{rank_duo2}} and realistically covers 6 or 7 matches once queue time is counted. First, settle one rotation habit rather than chasing a single result.',
+        'Ranked prices follow your own rank: a {{rank_duo2_low}} player pays {{p_duo2_low}} per hour and a {{rank_duo2_high}} player pays {{p_duo2_high}}. Casual hours ignore rank entirely, so Casual 3v3 and Extra Modes each cost {{p_casual}} in 2026. Agree who takes the diagonal kickoff before the first match, then agree a boost rule. Bundles take {{pct3}} off 3 hours or {{pct5}} off 5. For example, two players starving for boost at once loses the counter, so name one caller using Discord.',
       ],
     },
     {
       heading: 'Can any rank party up for Ranked Doubles?',
       paragraphs: [
-        'Yes, any two ranks can party for Ranked Doubles. Psyonix applies no rank disparity limit to 2v2, so a Bronze player and a Supersonic Legend can queue together. Matchmaking weights the lobby towards the higher-ranked player rather than blocking the party. The limit that does exist belongs to 3v3. A two-player party can only queue Ranked Standard when both players sit within three ranks of each other, and the Standard fill sidesteps it by completing your party to a full three.',
-        'The partner you want is one who rotates, so you are never both chasing the same ball. Rotation beats raw mechanics at every rank below Supersonic Legend. Duo Plus names a Champion+ partner at {{p_duo1}} per hour and Duo Pro a Grand Champion at {{p_duo2}}, who covers back post and calls the boost. Set the rest up in the order chat: who cheats up on kickoff, who shadows, and one caller for boost, because two players starving at once loses the counter.',
+        'Any two ranks can party for Ranked Doubles in Rocket League. First, the rank disparity restriction from Psyonix reaches only an undersized party, and a pair in 2v2 is already a full team, so a Bronze player and a Supersonic Legend may queue together. Matchmaking weights the lobby towards the higher-ranked player rather than blocking the party, which is the trade you accept. For example, a Gold player books Duo Apex at {{p_duo3}} per hour, or {{p_duo3_x3}} for 3 hours with {{pct3}} off.',
+        'The limit belongs to 3v3 instead. A two-player party may only queue Ranked Standard while both players sit within three ranks of each other, and the official example allows Platinum 3 with Diamond 3 while blocking Platinum 2 with Diamond 3. A full three is not undersized, so the 3v3 Standard fill at {{p_three}} for {{seats_three}} seats sidesteps the window by completing the team. Duoly read the Rocket League support pages again in November 2026. Casual 3v3 costs {{p_casual}} per hour with no rank at all, agreed using Discord.',
       ],
     },
     {
       heading: 'Example evening: three Duo Pro hours in Europe',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} player in Europe books 3 Duo Pro hours of Ranked Doubles. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for a single hour. The order chat opens straight after payment, and the first message names the region, the rank and the goal: Europe, {{rank_duo2}}, controller, looking for a partner who shadows instead of double committing.',
-        'From there the evening runs on a short plan. You agree kickoff positions and a boost rule, voice goes on, and you party up by Epic name. After each match you pick one adjustment, such as holding back post for two more seconds before committing. The same shape works for Extra Modes at {{p_extra}} per hour if you want a lighter night, and 5 hours of anything take {{pct5}} off the total.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} player in Europe books 3 Duo Pro hours of Ranked Doubles. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one hour. A Doubles pair is a full team under the rule from Psyonix, so the pairing queues straight away and simply meets stronger lobbies. The order chat opens straight after payment, and the first message names the region, the rank and the goal: Europe, {{rank_duo2}}, controller, looking for a partner who shadows instead of double committing.',
+        'From there the evening runs on a short plan. You agree kickoff positions and a boost rule, voice goes on, and you party up by Epic name. After each match you pick one adjustment, for example holding back post 2 seconds longer before committing, agreed using Discord. The same shape works for Extra Modes at {{p_extra}} per hour on a lighter night, and 5 hours take {{pct5}} off the total.',
       ],
     },
     {
       heading: 'When is Rocket League coaching the better booking?',
       paragraphs: [
-        'Rocket League coaching is the better booking when the goal is a repeatable fix rather than company for the next hour. A partner answers a quick question between matches; a coach drills one touch in free play and leaves you with training packs. Mechanics Training costs {{p_mech}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate sessions only.',
-        'A player who misses every aerial gains more from that hour than from another Doubles session, because the fix lives in free play rather than in a ranked lobby. A player who wants a relaxed evening gains more from Extra Modes at {{p_extra}} per hour. Play and Learn sits between the two at {{p_learn}}: one live Doubles hour with a Grand Champion coach talking through every decision. The full service list and lesson formats live on the [Rocket League coaching page](/games/rocket-league/coaching).',
+        'Rocket League coaching is the better booking when the goal is a repeatable fix rather than company for the next hour. A partner answers a quick question between matches. A coach drills one touch in free play and leaves you with training packs. Mechanics Training costs {{p_mech}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
+        'First, name the touch you keep missing. For example, a player who misses every aerial gains more from one free play hour at {{p_mech}} than from a fourth Doubles hour, because the fix lives outside a ranked lobby. A player who wants a relaxed evening gains more from Extra Modes at {{p_extra}} per hour in 2026. Play and Learn sits between the two at {{p_learn}}: one live Doubles hour with a Grand Champion coach, using Discord screen share. The full service list and lesson formats live on the [Rocket League coaching page](/games/rocket-league/coaching).',
       ],
     },
   ],
@@ -127,32 +127,32 @@ export const rocketLeague: HubPageCopy = {
     items: [
       [
         'Is Duoly a free Rocket League teammate finder?',
-        'Duoly is a paid marketplace with reviewed players. Discord LFG channels and the in-game party menu from Psyonix stay the free routes to a partner.',
+        'Duoly is a paid marketplace with reviewed players. Discord LFG channels and the in-game party menu from Psyonix are the free routes, so try those first.',
       ],
       [
         'How much does a Doubles partner cost?',
-        'Duo Pro is {{p_duo2}} per hour at {{rank_duo2}}, from {{p_duo2_low}} at the lowest rank. Bundles take {{pct3}} off 3 hours, and 10 hours cost {{p_duo2_x10}} with {{pct10}} off.',
-      ],
-      [
-        'Why is Doubles priced per hour?',
-        'A match runs about seven minutes, so an hour prices the real session. A booked hour realistically covers six or seven Ranked Doubles matches.',
+        'Duo Pro is {{p_duo2}} per hour at {{rank_duo2}}, and {{p_duo2_low}} at the lowest rank. Ten hours cost {{p_duo2_x10}} with {{pct10}} off in 2026.',
       ],
       [
         'Can any rank queue Ranked Doubles together?',
-        'Yes. Psyonix sets no rank disparity limit on 2v2 parties. Only a two-player party queueing Ranked Standard has to stay within three ranks, which a full three avoids.',
+        'Yes: the rank disparity restriction from Psyonix reaches only an undersized party, and a 2v2 pair is a full team. An incomplete Standard pair stays within three ranks.',
+      ],
+      [
+        'Why is Doubles priced per hour?',
+        'A match runs about seven minutes, so an hour prices the real session. A booked hour realistically covers 6 or 7 Ranked Doubles matches.',
       ],
       [
         'Can we play 3v3 Standard?',
-        'Yes. The Standard fill adds Grand Champion players to your team at {{p_three}} per match for {{seats_three}} seats, priced per match rather than per hour.',
+        'Yes: the Standard fill adds Grand Champion players at {{p_three}} per match for {{seats_three}} seats, priced per match rather than per hour.',
       ],
       [
         'Where do I book a Rocket League coach?',
-        'On the Rocket League coaching page, with Mechanics Training by the hour and one live Doubles hour in Play and Learn, using Discord screen share.',
+        'The Rocket League coaching page sells Mechanics Training by the hour, plus one live Doubles hour in Play and Learn. Coaching gets no bundle discount.',
       ],
     ],
   },
   closing: {
     heading: 'Ready for a Rocket League session?',
-    text: 'Duo Pro is the Ranked Doubles hour with a Grand Champion partner from Duoly, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Extra Modes stays {{p_extra}} per hour at any rank. Pick your rank and platform, then agree kickoffs and boost with your partner in the order chat.',
+    text: 'Duo Pro is the Ranked Doubles hour with a Grand Champion partner from Duoly. Three hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Extra Modes stays {{p_extra}} per hour at any rank, and Casual 3v3 costs {{p_casual}}. The rank disparity restriction from Psyonix reaches only an undersized party, so a Doubles pair carries any ranks in 2026 while an incomplete Standard pair stays inside three ranks. For example, agree kickoffs and boost using Discord.',
   },
 };

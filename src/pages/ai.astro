@@ -7,7 +7,7 @@ import ClosingCta from '../components/seo/ClosingCta.astro';
 import '../components/seo/seo.css';
 import '../components/seo/ai.css';
 import { pageViewer } from '../site/viewer';
-import { hubChips, serializeJsonLd } from '../site/seo';
+import { CONTENT_DATES, hubChips, serializeJsonLd } from '../site/seo';
 import { AI_ASSISTANTS, AI_PROMPTS, MCP, aiLaunchState } from '../site/ai';
 import { calculateQuote } from '../server/pricing';
 const launch = aiLaunchState();
@@ -315,7 +315,7 @@ const faq: [string, string][] = [
       name: title,
       description,
       url: new URL('/ai', Astro.site!).href,
-      dateModified: '2026-11-06',
+      dateModified: CONTENT_DATES['/ai'],
     })}
   />
 </SiteLayout>

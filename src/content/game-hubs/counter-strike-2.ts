@@ -2,11 +2,11 @@ import type { HubPageCopy } from '../hub-pages';
 
 export const counterStrike2: HubPageCopy = {
   gameSlug: 'counter-strike-2',
-  title: 'CS2 LFG: Find a Premier Duo or a 5-Stack | Duoly',
+  title: 'CS2 Coaching and LFG: Premier and FACEIT Duos | Duoly',
   description:
-    'Book a Counter-Strike 2 duo, a FACEIT stack or a coach on Duoly, {{from_lower}}. Compare Premier, Wingman and retake prices.',
+    'Book Counter-Strike 2 coaching, a Premier duo or a FACEIT stack on Duoly, {{from_lower}}. Compare Premier, Wingman and retake prices.',
   eyebrow: 'Counter-Strike 2 teammates',
-  h1: 'CS2 LFG: find a Premier duo for tonight',
+  h1: 'CS2 coaching and LFG: find a Premier or FACEIT duo',
   lead: 'Free LFG servers and Discord channels are fine for a casual five. Duoly books a reviewed Premier or FACEIT teammate for your next matches, fills a stack and sells demo review when you want to learn.',
   cta: 'Book a CS2 teammate',
   facts: [
@@ -17,7 +17,7 @@ export const counterStrike2: HubPageCopy = {
   related: ['call-of-duty', 'rainbow-six-siege', 'fortnite', 'valorant'],
   format: {
     heading: 'What can you book for Counter-Strike 2 on Duoly?',
-    text: 'Duoly sells three things for Counter-Strike 2: one teammate who queues with you on your own account, a stack fill for the seats you are missing, and coaching by the hour. Duo Plus brings a Premier 15,000+ teammate, Duo Pro a Premier 20,000+ caller and FACEIT Duo a Level 10 player for the third-party ladder. Premier sessions follow your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per match on Duo Pro, while Casual and Deathmatch and Retake Servers stay {{p_casual}} per match at every rating. Bundles cut the total, {{pct3}} off 3 matches up to {{pct10}} off 10. Valve caps how far apart two ratings can be in a Premier party without ever publishing the number, so share your region and rating in the order chat first.',
+    text: 'A Counter-Strike 2 booking on Duoly is one of three things: a teammate who queues with you, a stack fill for the seats you are missing, or coaching by the hour. First, Duo Plus brings a Premier 15,000+ teammate, Duo Pro a Premier 20,000+ caller and FACEIT Duo a Level 10 player for the third-party ladder. Premier prices follow your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per match on Duo Pro. Casual and Deathmatch and Retake Servers stay {{p_casual}} per match at every rating. Bundles cut the total, {{pct3}} off 3 matches up to {{pct10}} off 10. Valve publishes no party rating gap for Premier, so the teammate has to be eligible to queue with you under the rules of the game. For example, share your region and rating in the order chat using Discord first.',
   },
   services: {
     duo1: 'Premier or Competitive with a 15,000+ teammate who trades you and throws the right utility.',
@@ -44,24 +44,24 @@ export const counterStrike2: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per match, and the ranked services follow your own rating: Premier duos read your CS Rating and the FACEIT duo reads your FACEIT level, so a 25,000+ lobby costs more than a fresh one. Wingman uses the classic skill groups. Casual Match and Retake Practice hold one price for everybody, and bundles take {{pct3}} off 3 matches or {{pct5}} off 5.',
-    team: 'Stack fills are priced per seat, so a card covers the default {{seats_five}} seats and falls when your own party already has bodies. Premier 5-Stack queues the Valve ladder and FACEIT 5-Stack queues FACEIT, each priced by your own rating, and a full five is also the one party shape with no rating gap limit at all. Bundles take {{pct3}} off 3 matches.',
+      'Teammate prices are per match, and the ranked services follow your own rating: Duo Pro costs {{p_duo2_low}} per match in the lowest Premier band and {{p_duo2_high}} at {{rank_duo2_high}}. Casual Match and Retake Practice hold one price for everybody. First, pick the ladder, because a Premier duo reads your CS Rating while FACEIT Duo reads your FACEIT level. Second, read the queue rule beside the tier. Valve publishes no Premier party gap, so the teammate has to be eligible to queue with you under the rules of the game. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5. For example, agree the map pool in the order chat using Discord before match 1.',
+    team: 'A CS2 stack fill is one order that hires several players at once, so a part-full party becomes a full five. Premier 5-Stack queues the Valve ladder at {{p_five}} for {{seats_five}} seats, and FACEIT Stack queues FACEIT at {{p_faceit5}}. FACEIT is the documented wide-gap route: a FACEIT Standard team has no party Elo restriction at all, on a support FAQ from FACEIT read in November 2026. Super and Premium matches are stricter, capping a party at 3 and 2 players inside 400 Elo. First, count the seats you actually need, because every seat is priced on its own. Bundles still take {{pct3}} off 3 matches and {{pct5}} off 5. For example, a trio short two players books 2 seats rather than 4, agreed using Discord.',
     coaching:
-      'Lessons are priced by the hour and carry no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not reach them. Demo Review walks one recent match, Utility and Nades drills smokes, flashes and molotovs on the maps you play, and Play and Learn is the exception that covers one live Premier match. Screen share runs on Discord.',
+      'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on teammate matches stop here. Demo Review and Utility and Lineups each cost {{p_demo}} per hour. Play and Learn is the exception that covers one live Premier match at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who dies first on every execute onto the A site books Demo Review instead of a fourth Premier match. Screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rating.',
   },
   steps: {
     heading: 'How does booking a CS2 duo work?',
     items: [
-      'Pick a service and the number of matches. Duo Pro is the Premier tier with a 20,000+ teammate, and 3 matches at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount. Five matches take {{pct5}} off.',
-      'Add your region, rating, map pool and language at checkout. Name EU West, your Premier rating and the two maps you want to play, so your teammate reads the real request before accepting.',
-      'Meet your teammate in the order chat, agree roles and check the party accepts both ratings, then add each other from Steam. A single Duo Pro match costs {{p_duo2}} at the same rating.',
+      'Pick a service and the number of matches first. Duo Pro is the Premier tier with a 20,000+ teammate, and 3 matches at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five matches take {{pct5}} off.',
+      'Second, add your region, rating, map pool and language at checkout. For example, name EU West, your Premier rating and the 2 maps you want to play, so your teammate reads the real request before accepting.',
+      'Finally, meet your teammate in the order chat using Discord. Agree roles and check the party accepts both ratings, then add each other from Steam. One Duo Pro match costs {{p_duo2}}.',
     ],
     note: 'Duoly reviews every CS2 teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
   decide: {
     heading: 'Which CS2 session fits you?',
     intro:
-      'The right CS2 session is the one matching your goal for the evening, so pick the goal first and let the price follow. Premier is priced by your own rating, from {{p_duo2_low}} per match on Duo Pro, while warm-up servers stay flat. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5.',
+      'The right CS2 session is the one matching your goal tonight. First, warm-up servers carry no rating gate at all. Premier is priced by your own rating, from {{p_duo2_low}} per match on Duo Pro. For example, 3 matches take {{pct3}} off and 5 matches take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Grinding Premier rating?',
@@ -79,13 +79,13 @@ export const counterStrike2: HubPageCopy = {
         goal: 'Only have 30 minutes?',
         service: 'wing',
         answer:
-          'Wingman Duo is the real 2v2 on small maps, where every round depends on the two of you.',
+          'Wingman Duo is the real 2v2 on small maps, {{p_wing}} per match at {{rank_wing}}.',
       },
       {
-        goal: 'Need a fifth, or four?',
-        service: 'five',
+        goal: 'Want the widest rating gap allowed?',
+        service: 'faceit5',
         answer:
-          '5-Stack Premier fills up to {{seats_five}} seats with 20,000+ players for {{p_five}} per match.',
+          'A FACEIT Standard five has no party Elo limit, {{p_faceit5}} for {{seats_faceit5}} seats.',
       },
       {
         goal: 'Keep losing the same mid-round?',
@@ -99,29 +99,29 @@ export const counterStrike2: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'Every Duoly CS2 teammate applied for the game and showed a rating before taking orders. Duo Plus names a Premier 15,000+ player, Duo Pro a Premier 20,000+ player and FACEIT Duo a Level 10 player on the FACEIT ladder. The tier describes the teammate you are hiring and nothing about your own queue eligibility. Valve limits the rating gap inside a Premier party without ever publishing the number, and a full five carries no limit at all, so the practical move is to try the party and fall back on Wingman or a retake server if Premier refuses it.',
-        'Two details catch people out. A CS Rating only appears after ten Premier wins, and an account with no established rating cannot party with a high-rated player at all. FACEIT runs its own ladder, so a Level 10 teammate and a Premier rating are separate systems with separate party rules. Past that, the rating buys you a round that makes sense: a 20,000+ teammate trades your peek instead of watching it, calls the buy and names the rotation. Duo Pro runs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}.',
+        'The teammate you queue with is a reviewed CS2 player who applied for the game and showed a rating before taking orders. Duo Plus names a Premier 15,000+ player, Duo Pro a Premier 20,000+ player and FACEIT Duo a Level 10 player. A tier describes the person Duoly hires and nothing about your own queue eligibility. First, note that FACEIT runs a separate Level 1 to 10 ladder, so a Level 10 teammate and a Premier rating are two systems with two sets of party rules. A CS Rating also appears only once your Premier placement matches are done.',
+        'What the rating buys is a round that makes sense. A 20,000+ teammate trades your peek instead of watching it, calls the buy and names the rotation. Voice runs using Discord, so the call lands before the execute rather than after. Rating also sets the price: Duo Pro costs {{p_duo2_low}} per match in the lowest band and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles cut that total by {{pct3}} on 3 matches and {{pct5}} on 5. For example, you keep your Steam account and your own decisions in all 3 matches.',
       ],
     },
     {
-      heading: 'Should you book Premier, FACEIT or Wingman?',
+      heading: 'How wide can the rating gap in a CS2 party be?',
       paragraphs: [
-        'Premier is the ranked mode from Valve with the pick and ban phase and a visible rating, so Duo Plus and Duo Pro are priced by your own band. FACEIT is a third-party platform with its own Level 1 to 10 ladder, so FACEIT Duo uses Level tokens instead of a rating and costs {{p_duo3}} at {{rank_duo3}}. Wingman is the 2v2 mode on small maps with the classic skill groups, at {{p_wing}} per match at {{rank_wing}}.',
-        'Pick by how much time you have and what you want to practice. Wingman suits a short evening, because every round sits on the two of you and a match rarely passes thirty minutes. Premier suits a steady grind with a caller who talks between halves. Retake Servers and Casual and Deathmatch each cost {{p_casual}} per match and work as a warm-up before the first real queue, with no rating at stake. Bundles still apply, {{pct3}} off 3 matches and {{pct5}} off 5.',
+        'Valve does not publish a CS Rating gap for Premier parties. The official skill-group FAQ says only that a lower-skilled friend is taken into account when matchmaking picks a lobby, with no admission threshold named. First, that means the honest promise is the highest-rated teammate the queue accepts for your rating, checked live in the client rather than asserted here. For example, a {{rank_duo1}} player books Duo Plus at {{p_duo1}} per match, or {{p_duo1_x3}} for 3 matches with {{pct3}} off.',
+        'FACEIT is the documented route for a wide gap. A FACEIT Standard match has no party Elo restriction and no party size restriction inside the team, so a full five from FACEIT may mix Level 2 and Level 10. Super and Premium matches are the strict ones, capped at 3 and 2 players within 400 Elo. FACEIT Stack is the booking for that, {{p_faceit5}} for {{seats_faceit5}} seats at {{rank_faceit5}}, with {{pct5}} off 5 matches and voice using Discord.',
       ],
     },
     {
       heading: 'Example evening: three Duo Plus matches on EU West',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EU West books 5 Duo Plus matches with a Premier 15,000+ teammate, which keeps the party gap small enough to queue comfortably. The total is {{p_duo1_x5}} with {{pick5}} off, against {{p_duo1}} for one match. The order chat opens straight after payment, and the first message names the region, the rating and the map pool: Mirage and Anubis, entry on the A side, looking for someone who throws the pop flash.',
-        'From there the evening runs on a short plan. You agree roles and a default on each map, voice goes on, and the friend request goes out on Steam. After each match you pick one adjustment, such as saving two rounds earlier instead of forcing on 1,500. Duo Pro with a 20,000+ caller costs {{p_duo2}} per match at {{rank_duo2}} if you want the step up, and 5 matches take {{pct5}} off the total.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo1}} player on EU West books 3 Duo Plus matches with a Premier 15,000+ teammate, which keeps the party gap small enough to queue comfortably. The total is {{p_duo1_x3}} with the {{pct3}} bundle discount, against {{p_duo1}} for one match. The order chat opens straight after payment, and the first message names the region, the rating and the map pool: Mirage and Anubis, entry on the A side, looking for someone who throws the pop flash.',
+        'From there the evening runs on a short plan. You agree roles and a default on each map, voice goes on, and the friend request goes out on Steam. After each match you pick one adjustment, for example saving two rounds earlier instead of forcing a half buy, agreed using Discord. Duo Pro with a 20,000+ caller costs {{p_duo2}} per match at {{rank_duo2}} for the step up, and 5 matches take {{pct5}} off the total.',
       ],
     },
     {
       heading: 'When is CS2 coaching the better booking?',
       paragraphs: [
-        'CS2 coaching is the better booking when the goal is a repeatable fix rather than company for the next match. A duo teammate answers a quick question between halves; a coach stops the demo, names the pattern and leaves you with homework. Demo Review and Utility and Lineups each cost {{p_demo}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate sessions only.',
-        'A player who dies first on the A site execute gains more from one demo review than from another Premier match. A player who only wants to warm up gains more from Casual and Deathmatch at {{p_casual}} per match. Screen share runs on Discord, and Play and Learn covers one live Premier match with a Level 10 coach at {{p_learn}}. Counter-Strike 2 has no separate Duoly coaching page yet, so every lesson is booked from the prices above.',
+        'CS2 coaching is the better booking when the goal is a repeatable fix rather than company for the next match. A duo teammate answers a quick question between halves. A coach stops the demo, names the pattern and leaves you with homework. Demo Review and Utility and Lineups each cost {{p_demo}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate matches only.',
+        'For example, a player who dies first on the A site execute gains more from one demo review than from a fourth Premier match. A player who only wants to warm up gains more from Casual and Deathmatch at {{p_casual}} per match. Screen share runs using Discord, and Play and Learn covers one live Premier match with a Level 10 coach at {{p_learn}}. Counter-Strike 2 has no separate Duoly coaching page yet, so every lesson is booked from the prices above.',
       ],
     },
   ],
@@ -130,32 +130,32 @@ export const counterStrike2: HubPageCopy = {
     items: [
       [
         'Is Duoly a free CS2 teammate finder?',
-        'Duoly is a paid marketplace with reviewed players. Discord LFG channels and the community servers listed by Valve stay the free routes to a five.',
+        'Duoly is a paid marketplace with reviewed players. Discord LFG channels and the community servers listed by Valve are the free routes, so try those first.',
       ],
       [
         'How much does a CS2 duo cost?',
-        'Duo Pro is {{p_duo2}} per match at {{rank_duo2}}, from {{p_duo2_low}} at the lowest band. Casual and Deathmatch and Retake Servers each cost {{p_casual}}.',
+        'Duo Pro is {{p_duo2}} per match at {{rank_duo2}}, and {{p_duo2_low}} in the lowest band. Casual and Deathmatch and Retake Servers each cost {{p_casual}}.',
       ],
       [
         'Can any two ratings queue Premier together?',
-        'No. Valve blocks a Premier party when the CS Rating gap is too wide, without publishing the number, and an account with no rating yet cannot party with a high-rated player. A full five has no gap limit.',
+        'Valve publishes no rating gap for a Premier party, so the teammate has to be eligible to queue with you under the rules of the game. FACEIT Standard is the documented wide-gap route, with no party Elo limit.',
       ],
       [
         'Can we play FACEIT instead of Premier?',
-        'Yes. FACEIT Duo is the Level 10 service on the FACEIT ladder, and the rank picker uses FACEIT Levels instead of a Premier rating.',
+        'Yes: FACEIT Duo is the Level 10 service on the FACEIT ladder, and the rank picker uses FACEIT Levels instead of a Premier rating.',
       ],
       [
         'Do I need to share my Steam account?',
-        'No. You play on your own account and add each other as friends on Steam. Never send login details to anyone, including a teammate or a coach.',
+        'No: you play on your own account and add each other as friends on Steam, for example before the first warm-up. Never send login details to anyone, and keep voice using Discord.',
       ],
       [
         'Do bundles make several matches cheaper?',
-        'Yes. Three matches get {{pct3}} off, 5 get {{pct5}} off and 10 get {{pct10}} off, so 3 Duo Pro matches cost {{p_duo2_x3}} at {{rank_duo2}}.',
+        'Yes: 3 matches get {{pct3}} off, 5 get {{pct5}} off and 10 get {{pct10}} off, so 3 Duo Pro matches cost {{p_duo2_x3}} at {{rank_duo2}} in 2026.',
       ],
     ],
   },
   closing: {
     heading: 'Ready to queue in Counter-Strike 2?',
-    text: 'Duo Pro is the Premier tier with a 20,000+ teammate from Duoly, and 3 matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Retake Servers stay {{p_casual}} per match at any rating. Pick your rating and maps, then meet your teammate in the order chat.',
+    text: 'Duo Pro is the Premier tier with a 20,000+ teammate from Duoly. Three matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 matches take {{pct5}} off. Retake Servers stay {{p_casual}} per match at any rating, and Casual and Deathmatch costs the same. Valve publishes no Premier party gap, so book a FACEIT Stack when you want the widest rating gap the rules allow in 2026. For example, pick your rating and maps, then agree roles in the order chat using Discord.',
   },
 };

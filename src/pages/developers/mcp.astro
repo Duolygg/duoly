@@ -5,7 +5,11 @@ import ClosingCta from '../../components/seo/ClosingCta.astro';
 import '../../components/seo/seo.css';
 import '../../components/seo/ai.css';
 import { pageViewer } from '../../site/viewer';
-import { serializeJsonLd, organizationSchema } from '../../site/seo';
+import {
+  CONTENT_DATES,
+  serializeJsonLd,
+  organizationSchema,
+} from '../../site/seo';
 import { MCP, aiLaunchState } from '../../site/ai';
 import quoteExample from '../../content/mcp-quote-example.json';
 const { viewer, csrf } = await pageViewer(Astro);
@@ -281,7 +285,7 @@ const request = JSON.stringify(
       description,
       url: new URL('/developers/mcp', Astro.site!).href,
       datePublished: '2026-11-06',
-      dateModified: '2026-11-06',
+      dateModified: CONTENT_DATES['/developers/mcp'],
       author: organizationSchema(Astro.site!),
       about: 'Public read-only Duoly MCP integration',
     })}

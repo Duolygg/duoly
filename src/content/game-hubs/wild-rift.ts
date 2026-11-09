@@ -39,7 +39,7 @@ export const wildRift: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and the ranked tiers read your own rank, so a Sovereign lobby costs more than an Iron one. ARAM and normal matches hold one price for everybody, because neither moves your rank. One teammate joins your lobby on your own account and takes the lane you ask for, and bundles take {{pct3}} off 3 games or {{pct5}} off 5.',
+      'Teammate prices are per game, and the ranked tiers read your own rank, so a Sovereign lobby costs more than an Iron one. ARAM and normal matches hold one price for everybody, because neither moves your rank. One teammate joins your lobby on your own account and takes the lane you ask for, and bundles take {{pct3}} off 3 games or {{pct5}} off 5. A tier name says who Duoly hires, never who may queue beside you: the ranked party rules come from Riot Games, so the teammate has to be eligible to queue with you under the rules of the game. Check the lobby in the client before the first game.',
     team: 'Ranked 5-Stack is priced per seat, so the card covers up to {{seats_five}} seats and falls when your group is only one player short. It reads your rank like the duo tiers, and bundles take {{pct3}} off 3 games.',
     coaching:
       'Lessons get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Champion Mastery is one clock hour on Discord, and Play and Learn covers one live ranked game instead.',

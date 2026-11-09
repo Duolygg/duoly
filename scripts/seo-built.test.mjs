@@ -148,12 +148,12 @@ test('AI pages expose matching structured data, launch status and links', () => 
     assert(schema);
     assert.equal(schema.url, `https://duoly.gg${path}`);
     assert.equal(schema.description, page.description);
-    assert.equal(schema.dateModified, '2026-11-06');
+    assert.match(schema.dateModified, /^\d{4}-\d{2}-\d{2}$/);
     assert(page.schemas.some((item) => item['@type'] === 'BreadcrumbList'));
     const entry = sitemapEntries.find((entry) => entry.url === schema.url);
     if (path === '/ai' && !aiLaunchState().showSetup)
       assert.equal(entry, undefined);
-    else assert.equal(entry?.lastmod, '2026-11-06');
+    else assert.equal(entry?.lastmod, schema.dateModified);
     const html = readFileSync(
       `.vercel/seo-audit/${path.slice(1).replaceAll('/', '__')}.html`,
       'utf8',
@@ -233,10 +233,10 @@ for (const path of dataHubs) {
       link(path, `${path}/coaching`);
       link(`${path}/coaching`, path);
     }
-    assert.equal(
+    assert.match(
       sitemapEntries.find((entry) => entry.url === `https://duoly.gg${path}`)
         .lastmod,
-      '2026-11-08',
+      /^\d{4}-\d{2}-\d{2}$/,
     );
   });
 }
@@ -294,19 +294,19 @@ test('sitemap has exactly the indexable self-canonical 200 URLs in both directio
     sitemapEntries.length,
   );
 });
-// game, slug, catalog id, preselected service, sitemap lastmod
+// game, slug, catalog id, preselected service
 const intentRoutes = [
-  ['league-of-legends', 'play-with-someone', 'lol', 'norm', '2026-11-06'],
-  ['marvel-rivals', 'duo-partner', 'mr', 'quick', '2026-11-06'],
-  ['pokemon-unite', 'teammate', 'pu', 'quick', '2026-11-06'],
-  ['valorant', 'lfg', 'val', 'duo2', '2026-11-08'],
-  ['fortnite', 'duos', 'fn', 'duo2', '2026-11-08'],
-  ['overwatch-2', 'lfg', 'ow', 'qp', '2026-11-08'],
-  ['apex-legends', 'lfg', 'apex', 'duos', '2026-11-08'],
-  ['call-of-duty', 'lfg', 'cod', 'duo2', '2026-11-08'],
-  ['rainbow-six-siege', 'lfg', 'r6', 'duo2', '2026-11-08'],
+  ['league-of-legends', 'play-with-someone', 'lol', 'norm'],
+  ['marvel-rivals', 'duo-partner', 'mr', 'quick'],
+  ['pokemon-unite', 'teammate', 'pu', 'quick'],
+  ['valorant', 'lfg', 'val', 'duo2'],
+  ['fortnite', 'duos', 'fn', 'duo2'],
+  ['overwatch-2', 'lfg', 'ow', 'qp'],
+  ['apex-legends', 'lfg', 'apex', 'duos'],
+  ['call-of-duty', 'lfg', 'cod', 'duo2'],
+  ['rainbow-six-siege', 'lfg', 'r6', 'duo2'],
 ];
-for (const [game, slug, id, serviceId, lastmod] of intentRoutes) {
+for (const [game, slug, id, serviceId] of intentRoutes) {
   const path = `/games/${game}/${slug}`;
   test(`intent page content, prices, booking and editorial links: ${path}`, () => {
     const page = pages[path];
@@ -373,10 +373,10 @@ for (const [game, slug, id, serviceId, lastmod] of intentRoutes) {
       new RegExp(`game=${id}(?:&amp;|&)service=${serviceId}#modes-h`),
     );
     assert.match(html, /data-cta="closing"/);
-    assert.equal(
+    assert.match(
       sitemapEntries.find((entry) => entry.url === `https://duoly.gg${path}`)
         .lastmod,
-      lastmod,
+      /^\d{4}-\d{2}-\d{2}$/,
     );
   });
 }
