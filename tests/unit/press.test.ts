@@ -18,6 +18,7 @@ import {
   CODEBASE_STARTED_LABEL,
 } from '../../src/site/entity';
 import { SUPPORT_EMAIL } from '../../src/site/nav';
+import { PRESS_EMAIL } from '../../src/site/press-contact';
 import { CATALOG_GAMES, SERVICE_COUNT } from '../../src/server/seo/booking';
 import {
   COACHABLE_GAMES,
@@ -81,7 +82,7 @@ describe('the Duoly fact sheet', () => {
     expect(values.get('Business location')).toBe(BUSINESS_LOCATION);
     expect(values.get('Legally represented by')).toBe(BUSINESS.representedBy);
     expect(values.get('Trade register')).toBe(`GISA ${BUSINESS.gisa}`);
-    expect(values.get('Press contact')).toBe(SUPPORT_EMAIL);
+    expect(values.get('Press contact')).toBe(PRESS_EMAIL);
   });
 
   it('takes the catalog rows from the catalog and the pricing engine', () => {
@@ -116,6 +117,40 @@ describe('the Duoly fact sheet', () => {
         expect(text, label).not.toMatch(forbidden);
       }
     }
+  });
+});
+
+describe('the press address', () => {
+  /**
+   * Both addresses are the same inbox: every address at duoly.gg forwards to
+   * the team (owner, 2026-11-09). So the rule these tests hold is about which
+   * label the page offers to whom, not about a second mailbox existing.
+   */
+  it('is a duoly.gg address of its own, distinct from support', () => {
+    expect(PRESS_EMAIL).toBe('press@duoly.gg');
+    expect(PRESS_EMAIL.endsWith('@duoly.gg')).toBe(true);
+    expect(PRESS_EMAIL).not.toBe(SUPPORT_EMAIL);
+  });
+
+  it('is the address every press enquiry on /press mails', () => {
+    const mailtos = [...page.matchAll(/mailto:\$\{(\w+)\}/g)].map((m) => m[1]!);
+    // Three press enquiry links: the hero call to action, the logo question and
+    // the contact section. None of them may point at the support inbox.
+    expect(mailtos.filter((name) => name === 'PRESS_EMAIL')).toHaveLength(3);
+    expect(mailtos.filter((name) => name === 'SUPPORT_EMAIL')).toHaveLength(1);
+    // No hand-typed address anywhere on the page, so changing either constant
+    // changes every link and every visible line at once.
+    expect(page).not.toMatch(/mailto:[a-z]/);
+    expect(page).not.toContain('@duoly.gg');
+  });
+
+  it('names the support address too, so a customer is not misrouted', () => {
+    expect(page).toContain('SUPPORT_EMAIL');
+    expect(page).toMatch(/answers support at/);
+  });
+
+  it('promises no press office it does not have', () => {
+    expect(page).toMatch(/no separate press office and no agency/);
   });
 });
 

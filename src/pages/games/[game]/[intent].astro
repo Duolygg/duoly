@@ -98,12 +98,7 @@ const faqItems = guideFaq(page, guidePrices);
       </h2>
       <p>{copy.format}</p>
     </section>
-    <Prices
-      gameId={game.id}
-      offers={offers}
-      intro={copy.pricesIntro}
-      updated={page.pricesChecked ?? '2026-11-06'}
-    />
+    <Prices gameId={game.id} offers={offers} intro={copy.pricesIntro} />
     <Steps
       heading={page.stepsHeading ?? 'How matching and booking work'}
       steps={copy.steps}

@@ -5,6 +5,7 @@ import { CONTENT_UPDATED } from './content-dates';
 import { gameBySlug } from './games';
 import { aiLaunchState } from './ai';
 import { DISCORD_INVITE, SUPPORT_EMAIL } from './nav';
+import { PRESS_EMAIL } from './press-contact';
 import { BUSINESS, DISAMBIGUATION, KNOWS_ABOUT, SERVED_AREAS } from './entity';
 
 export const COACHING_SLUGS = [
@@ -174,13 +175,27 @@ export function organizationSchema(site: URL) {
       addressLocality: BUSINESS.city,
       addressCountry: BUSINESS.country,
     },
-    contactPoint: {
-      '@type': 'ContactPoint',
-      contactType: 'customer support',
-      email: SUPPORT_EMAIL,
-      url: new URL('/contact', site).href,
-      availableLanguage: ['en', 'de'],
-    },
+    // Two points rather than one, because an assistant asked "how do I reach
+    // Duoly for a press question" should not be handed the support inbox and
+    // left to guess. Both addresses land with the same team (every address at
+    // duoly.gg forwards there), so the split is a label, not a promise of a
+    // press office: /press says that in words.
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        contactType: 'customer support',
+        email: SUPPORT_EMAIL,
+        url: new URL('/contact', site).href,
+        availableLanguage: ['en', 'de'],
+      },
+      {
+        '@type': 'ContactPoint',
+        contactType: 'press',
+        email: PRESS_EMAIL,
+        url: new URL('/press', site).href,
+        availableLanguage: ['en', 'de'],
+      },
+    ],
     foundingLocation: {
       '@type': 'Place',
       address: {

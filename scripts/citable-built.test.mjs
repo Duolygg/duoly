@@ -23,6 +23,13 @@ const slugs = [
   'world-of-warcraft',
   'deadlock',
 ];
+/**
+ * The one day every page dates its prices to: CATALOG_PRICES_UPDATED_LABEL in
+ * src/site/price-dates.ts, pinned there by tests/unit/price-dates.test.ts.
+ * Pages no longer carry a day of their own, so this moves when the catalog does
+ * and never per page.
+ */
+const PRICES_CHECKED = '9 November 2026';
 const paths = [
   ...slugs.map((slug) => `/games/${slug}/coaching`),
   '/games/pokemon-unite/teammate',
@@ -79,7 +86,7 @@ test('every built coaching page exposes exactly the visible FAQ answers and read
       // from the checkout engine. It is stated once, under the prices.
       assert.deepEqual(
         data.priceDates,
-        ['8 November 2026'],
+        [PRICES_CHECKED],
         `${path}: price date appears once, under the prices`,
       );
       // The formats block promotes what the catalog sells, so every row names a
