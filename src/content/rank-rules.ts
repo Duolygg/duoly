@@ -12,7 +12,8 @@
  *    top-tier teammate where the publisher forbids it.
  * 2. A full lobby widens the gap only where `fullLobby` says `wider`. It does
  *    not in League Flex, Apex, Rainbow Six Siege, Black Ops 7 above Diamond,
- *    Marvel Rivals above Grandmaster or Pokemon UNITE.
+ *    Marvel Rivals above Grandmaster, Pokemon UNITE, Dota 2, PUBG or World of
+ *    Warcraft, and Deadlock's ranked queue has no full lobby to offer at all.
  * 3. Where the publisher does not publish a rule, copy says only that the
  *    teammate has to be eligible to queue with you under the rules of the game.
  *    `UNKNOWN_RULE` is that sentence, so every page words it the same way.
@@ -25,9 +26,19 @@
  * Research notes live in ai-agents-research/12-ranked-queue-rules.md.
  */
 
-/** The day every source URL below was fetched and read. */
+/**
+ * The day every source URL below was fetched and read, unless the rule carries
+ * its own `checked` date. The second pass on 9 November 2026 re-fetched all but
+ * two of these sources and added the five games below; Epic Games refuses
+ * automated requests on its Fortnite and Rocket League help pages, so those two
+ * rules keep the date they were last read on.
+ */
 export const RANK_RULES_CHECKED = '2026-11-08';
 export const RANK_RULES_CHECKED_LABEL = '8 November 2026';
+
+/** The second research pass: the five hubs added after the first one. */
+export const RANK_RULES_RECHECKED = '2026-11-09';
+export const RANK_RULES_RECHECKED_LABEL = '9 November 2026';
 
 /**
  * The honest wording wherever a publisher documents no rank-gap rule.
@@ -43,6 +54,12 @@ export interface RankRule {
   gameSlug: string;
   /** The company whose published rule the copy cites. */
   publisher: string;
+  /**
+   * The day this rule's source was fetched and read, where that is not
+   * `RANK_RULES_CHECKED`. Set on every rule added or corrected in a later pass,
+   * so one stale source cannot hide behind a fresh date on its neighbours.
+   */
+  checked?: string;
   /** Does the game's own full lobby open a wider gap than a duo? */
   fullLobby: 'wider' | 'same' | 'unknown' | 'none';
   /**
@@ -57,9 +74,16 @@ export interface RankRule {
   /** A phrase every page about this game's ranked sessions has to contain. */
   mustSay: string;
   /**
-   * The game's own ranked tier names, lowest first, exactly as the rank picker
-   * at checkout spells them (src/design-reference/lib/ranks.js). Empty for a
-   * game with no tier ladder to pair at all, such as Counter-Strike ratings.
+   * The game's own ranked tier names, lowest first, as the publisher spells
+   * them. Empty for a game with no tier ladder to pair at all, such as
+   * Counter-Strike ratings or World of Warcraft's two separate ratings.
+   *
+   * This normally matches the rank picker at checkout
+   * (src/design-reference/lib/ranks.js) name for name. Where the two disagree
+   * the publisher wins here, because the queue does: Deadlock's picker still
+   * lists Alchemist, Arcanist and Archon, which Valve replaced with Acolyte,
+   * Sentinel and Mystic in the July 2026 ranked revamp. The picker fix is a
+   * proposal in ai-agents-research/18-service-rulebook.md.
    */
   ladder: string[];
   /**
@@ -71,6 +95,18 @@ export interface RankRule {
    * games may not name a cap and has to use `UNKNOWN_RULE` instead.
    */
   duoCaps?: Record<string, string>;
+  /**
+   * The one tier a publisher names as a ceiling without publishing a per-tier
+   * table: the highest teammate anyone below that ceiling may party with. Valve
+   * is the case this exists for, because an Immortal may only party with
+   * Immortal or Divine players, which caps everybody under Divine at Divine
+   * while Valve still publishes no gap table of its own.
+   *
+   * Only set this where `duoCaps` is absent. The scanner treats it as the cap
+   * for every tier at or below it, and copy still has to use `UNKNOWN_RULE`,
+   * because a ceiling is not a promise that everything under it is reachable.
+   */
+  ceiling?: string;
   /**
    * Phrases naming the game's own documented route to a wider gap, so a page
    * may pair ranks beyond `duoCaps` when it names one of them in the same
@@ -404,6 +440,7 @@ export const RANK_RULES: RankRule[] = [
   {
     gameSlug: 'call-of-duty',
     publisher: 'Activision',
+    checked: '2026-11-09',
     fullLobby: 'same',
     duoFrom: 'Gold',
     duoCap: 'Diamond',
@@ -423,9 +460,14 @@ export const RANK_RULES: RankRule[] = [
     // Black Ops 7: Bronze to Platinum mix freely, Diamond reaches two ranks and
     // Crimson and above only one, with the stricter of the two windows winning.
     // Warzone Ranked publishes no party table, so its copy uses UNKNOWN_RULE.
+    //
+    // Corrected on 9 November 2026: Silver read Diamond, which the published
+    // rule refuses. Bronze to Platinum carry no restriction of their own, so
+    // the Diamond player's own two-rank window decides, and two ranks below
+    // Diamond reaches Gold rather than Silver.
     duoCaps: {
       Bronze: 'Platinum',
-      Silver: 'Diamond',
+      Silver: 'Platinum',
       Gold: 'Diamond',
       Platinum: 'Diamond',
       Diamond: 'Crimson',
@@ -547,6 +589,210 @@ export const RANK_RULES: RankRule[] = [
     },
   },
   {
+    gameSlug: 'dota-2',
+    publisher: 'Valve',
+    checked: '2026-11-09',
+    // A five does not widen anything here. It narrows the opponent pool to
+    // other fives, and the party MMR spread limit plus the Immortal rule still
+    // apply inside it, so there is no five-stack loophole to point a customer at.
+    fullLobby: 'same',
+    summary:
+      'Valve publishes one party tier rule: an Immortal may only party with Immortal or Divine players in ranked. The party MMR spread also has a hard limit Valve no longer publishes as a number.',
+    mustSay: 'Immortal or Divine',
+    ladder: [
+      'Herald',
+      'Guardian',
+      'Crusader',
+      'Archon',
+      'Legend',
+      'Ancient',
+      'Divine',
+      'Immortal',
+    ],
+    // No duoCaps on purpose. Valve publishes a ceiling (nobody below Divine
+    // parties with an Immortal) and a hard MMR spread limit whose number was
+    // reverted in October 2019 and never republished, so the client can refuse
+    // a pair that sits inside the medal ceiling. A cap table would read as a
+    // promise the client does not keep, so this game uses UNKNOWN_RULE.
+    ceiling: 'Divine',
+    widerRoutes: [],
+    openModes: ['Turbo', 'Unranked All Pick', 'unranked'],
+    source: {
+      label: 'Dota 2 Update - October 18th, 2019 (Matchmaking Update)',
+      url: 'https://store.steampowered.com/oldnews/55280',
+    },
+  },
+  {
+    gameSlug: 'world-of-warcraft',
+    publisher: 'Blizzard',
+    checked: '2026-11-09',
+    // Nothing to widen: Blizzard publishes no rating gap for a group in any
+    // rated bracket, so a full five in Mythic+ or a full 3v3 is the same deal
+    // as a duo. The published limits are on party size, not on rating.
+    fullLobby: 'same',
+    summary:
+      'Blizzard publishes no rating gap for forming a Mythic+ group or a rated arena team. The published limit is party size: Solo Shuffle is solo only and Rated Battleground Blitz takes a duo only when one player heals.',
+    mustSay: 'solo queue',
+    // Mythic+ runs on a dungeon score and rated PvP on a rating, so there are
+    // no shared tier names for a pair to get wrong.
+    ladder: [],
+    widerRoutes: [],
+    openModes: ['Delves', 'world quests', 'leveling', 'Mythic 0'],
+    source: {
+      label: 'The War Within Pre-Expansion Content Update Notes',
+      url: 'https://news.blizzard.com/en-us/article/24119590/the-war-within-pre-expansion-content-update-notesnow-live',
+    },
+  },
+  {
+    gameSlug: 'pubg',
+    publisher: 'Krafton',
+    checked: '2026-11-09',
+    duoFrom: 'Gold',
+    duoCap: 'Diamond',
+    // The published rule says "premade Ranked parties", so a full squad of four
+    // carries the same 12-division limit a duo does.
+    fullLobby: 'same',
+    summary:
+      'A premade Ranked party may span at most 12 divisions, and every tier below Master holds four divisions, so the window is three full tiers and Gold queues with Diamond.',
+    mustSay: '12 divisions',
+    ladder: [
+      'Bronze',
+      'Silver',
+      'Gold',
+      'Platinum',
+      'Crystal',
+      'Diamond',
+      'Master',
+      'Survivor',
+    ],
+    // Twelve divisions at four divisions a tier is three full tiers, clamped at
+    // the top of the ladder. Master and Survivor carry no divisions of their
+    // own, so they sit one step apart at the end.
+    duoCaps: {
+      Bronze: 'Platinum',
+      Silver: 'Crystal',
+      Gold: 'Diamond',
+      Platinum: 'Master',
+      Crystal: 'Survivor',
+      Diamond: 'Survivor',
+      Master: 'Survivor',
+      Survivor: 'Survivor',
+    },
+    widerRoutes: [],
+    openModes: [
+      'Normal Duos',
+      'Normal',
+      'Arcade',
+      'Team Deathmatch',
+      'TDM',
+      'Intense Battle Royale',
+    ],
+    source: {
+      label: 'PUBG: BATTLEGROUNDS Patch Notes - Update 38.1',
+      url: 'https://pubg.com/en/news/9273?category=patch_notes',
+    },
+  },
+  {
+    gameSlug: 'wild-rift',
+    publisher: 'Riot Games',
+    checked: '2026-11-09',
+    duoFrom: 'Gold',
+    duoCap: 'Platinum',
+    // Riot publishes a second, looser table for a full five: Gold reaches
+    // Emerald there rather than Platinum, and Grandmaster reaches Challenger.
+    fullLobby: 'wider',
+    summary:
+      'A solo, duo or trio queues within one tier either way, so Gold queues with Platinum. A full five-stack has its own looser table, where Gold reaches Emerald.',
+    mustSay: 'one tier above',
+    ladder: [
+      'Iron',
+      'Bronze',
+      'Silver',
+      'Gold',
+      'Platinum',
+      'Emerald',
+      'Diamond',
+      'Master',
+      'Grandmaster',
+      'Challenger',
+      'Sovereign',
+    ],
+    // The published solo, duo and trio table. Iron and Bronze reach Silver,
+    // Silver reaches Gold, then it is one tier either way. Diamond stops at
+    // Diamond here on purpose: only Diamond II and I may add a Master, which is
+    // a division rule rather than a tier rule. Challenger queues with
+    // Challenger alone, and Sovereign adds Challenger.
+    duoCaps: {
+      Iron: 'Silver',
+      Bronze: 'Silver',
+      Silver: 'Gold',
+      Gold: 'Platinum',
+      Platinum: 'Emerald',
+      Emerald: 'Diamond',
+      Diamond: 'Diamond',
+      Master: 'Grandmaster',
+      Grandmaster: 'Grandmaster',
+      Challenger: 'Challenger',
+      Sovereign: 'Sovereign',
+    },
+    widerRoutes: ['five-stack', 'full five', '5-stack', 'full team'],
+    openModes: ['ARAM', 'Normal Match', 'normal queue', 'normals'],
+    source: {
+      label: 'Ranked Overview (Wild Rift)',
+      url: 'https://support.riotgames.com/en-us/wild-rift/gameplay/ranked-overview',
+    },
+  },
+  {
+    gameSlug: 'deadlock',
+    publisher: 'Valve',
+    checked: '2026-11-09',
+    duoFrom: 'Oracle',
+    duoCap: 'Phantom',
+    // Ranked Mode has no full lobby at all: solo and duo are the only party
+    // sizes, so there is nothing a bigger party could widen. Standard Mode is
+    // the open route, and it is unranked.
+    fullLobby: 'same',
+    summary:
+      'Ranked Mode takes solo or duo parties only, and a duo has to sit at most one Rank apart, so Oracle queues with Phantom. Eternus players queue with Eternus alone.',
+    mustSay: 'solo or duo',
+    ladder: [
+      'Initiate',
+      'Seeker',
+      'Acolyte',
+      'Sentinel',
+      'Mystic',
+      'Ritualist',
+      'Emissary',
+      'Oracle',
+      'Phantom',
+      'Ascendant',
+      'Eternus',
+    ],
+    // One Rank up all the way, with Ascendant stopping at itself: a step up
+    // would be Eternus, and an Eternus player may only queue with another
+    // Eternus. Obscurus is the uncalibrated badge rather than a rank, and a
+    // player in calibration may not be in a party at all.
+    duoCaps: {
+      Initiate: 'Seeker',
+      Seeker: 'Acolyte',
+      Acolyte: 'Sentinel',
+      Sentinel: 'Mystic',
+      Mystic: 'Ritualist',
+      Ritualist: 'Emissary',
+      Emissary: 'Oracle',
+      Oracle: 'Phantom',
+      Phantom: 'Ascendant',
+      Ascendant: 'Ascendant',
+      Eternus: 'Eternus',
+    },
+    widerRoutes: [],
+    openModes: ['Standard Mode', 'Standard'],
+    source: {
+      label: 'Deadlock Matchmaking Update',
+      url: 'https://store.steampowered.com/news/app/1422450/view/1839676055886206',
+    },
+  },
+  {
     gameSlug: 'minecraft',
     publisher: 'Mojang',
     fullLobby: 'none',
@@ -566,22 +812,16 @@ export const RANK_RULES: RankRule[] = [
 /**
  * Games with a hub but no verified queue rule yet.
  *
- * Every entry is a game added to the catalog after the November 2026 research
- * pass, so nobody has read its publisher's queue rules yet. The rank-rules test
- * asserts this list equals exactly the set of hubs with no RANK_RULES entry, so
- * a new game cannot quietly ship without the rule and this list cannot quietly
- * go stale: adding the rule here and removing the slug is one change.
+ * Empty since 9 November 2026, when the last five hubs got their publisher's
+ * own rules. The rank-rules test asserts this list equals exactly the set of
+ * hubs with no RANK_RULES entry, so the next game added to the catalog fails
+ * the gate until somebody reads its publisher's queue rules and either adds a
+ * RANK_RULES entry or parks the slug here.
  *
  * Until a game leaves this list, its hub must not promise any particular rank
  * gap. Research each publisher's own page, then add a RANK_RULES entry.
  */
-export const AWAITING_RANK_RESEARCH = [
-  'dota-2',
-  'world-of-warcraft',
-  'pubg',
-  'wild-rift',
-  'deadlock',
-] as const;
+export const AWAITING_RANK_RESEARCH: readonly string[] = [];
 
 export const rankRuleFor = (slug: string) =>
   RANK_RULES.find((rule) => rule.gameSlug === slug);
@@ -782,6 +1022,7 @@ export function rankPairingFaults(
   const ladder = rule ? rule.ladder : GENERIC_LADDER;
   if (ladder.length === 0) return [];
   const caps = rule?.duoCaps;
+  const ceilingIndex = rule?.ceiling ? ladder.indexOf(rule.ceiling) : -1;
   const openModes = rule?.openModes ?? [];
   const widerRoutes = rule?.widerRoutes ?? [];
   const faults: RankPairingFault[] = [];
@@ -803,9 +1044,15 @@ export function rankPairingFaults(
         Math.max(lower.at, higher.at),
       );
       if (!PAIRING_JOINS.test(span)) return; // A price list, not a party.
+      // A cap table answers per tier; a published ceiling caps every tier at
+      // or below it and leaves the tiers above it pairing with themselves; a
+      // game with neither falls back to the generic ladder, where a rank above
+      // Diamond is out of reach for everybody.
       const capTier = caps
         ? caps[lower.tier]
-        : ladder[Math.min(GENERIC_CAP_INDEX, ladder.indexOf(lower.tier))];
+        : ceilingIndex >= 0
+          ? ladder[Math.max(ceilingIndex, ladder.indexOf(lower.tier))]
+          : ladder[Math.min(GENERIC_CAP_INDEX, ladder.indexOf(lower.tier))];
       const capIndex = capTier ? ladder.indexOf(capTier) : -1;
       if (capIndex >= 0 && ladder.indexOf(higher.tier) <= capIndex) return;
       if (NOT_A_PROMISE.some((pattern) => pattern.test(sentence))) return;
@@ -825,7 +1072,9 @@ export function rankPairingFaults(
         higher: higher.tier,
         allowed: caps
           ? `${lower.tier} queues with ${capTier ?? 'its own tier'} at most`
-          : `${rule?.publisher ?? 'the publisher'} documents no rank gap, so say "${UNKNOWN_RULE}"`,
+          : ceilingIndex >= 0
+            ? `${rule?.publisher ?? 'the publisher'} caps the party at ${rule?.ceiling}, and publishes no table below it, so say "${UNKNOWN_RULE}"`
+            : `${rule?.publisher ?? 'the publisher'} documents no rank gap, so say "${UNKNOWN_RULE}"`,
       });
     });
   }
