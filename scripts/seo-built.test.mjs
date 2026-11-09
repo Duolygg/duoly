@@ -250,10 +250,20 @@ for (const path of dataHubs) {
 /**
  * Pages that sell nothing, so no offer link belongs in their copy: the
  * homepage is the checkout itself, and the legal and support pages are written
- * for a reader with a question rather than a basket. Everything else in the
- * sitemap has to reach a prefilled checkout from its own content.
+ * for a reader with a question rather than a basket. /press joins them for the
+ * same reason: it is a fact sheet for a journalist, and a prefilled checkout in
+ * a press kit would be an advert where a source belongs. It links /pricing
+ * instead, which carries the offers. Everything else in the sitemap has to
+ * reach a prefilled checkout from its own content.
  */
-const NO_OFFER_LINK = ['/', '/contact', '/terms', '/privacy', '/imprint'];
+const NO_OFFER_LINK = [
+  '/',
+  '/contact',
+  '/terms',
+  '/privacy',
+  '/imprint',
+  '/press',
+];
 
 test('every sitemap URL is a finished page with four inbound links', () => {
   for (const entry of sitemapEntries) {

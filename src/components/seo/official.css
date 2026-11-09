@@ -1,0 +1,273 @@
+/*
+ * Shared styling for the four owned "official" pages: /how-it-works,
+ * /trust-and-safety, /pricing and /press.
+ *
+ * New rules in a new file, as the design rules require: nothing here changes
+ * seo.css or any existing block. The card and table language is copied from the
+ * /about and /fees-and-refunds blocks rather than invented a second time, so a
+ * reader moving between them sees one site.
+ */
+
+.official-page h2 {
+  scroll-margin-top: 96px;
+}
+
+.official-page .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Scannable chips beside an answer paragraph: label plus one detail line. */
+.official-grid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.official-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: #120b22;
+  border: 1px solid rgba(196, 170, 255, 0.18);
+}
+
+.official-label {
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #f3eeff;
+}
+
+.official-detail {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #a79dc4;
+}
+
+/* A numbered flow: the steps of a review, drawn as a timeline. */
+.official-flow {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.official-flow > li {
+  padding-top: 18px;
+  border-top: 2px solid rgba(196, 170, 255, 0.2);
+}
+
+.official-flow > li:first-child {
+  border-top-color: #d6bbff;
+}
+
+.official-step {
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #d6bbff;
+}
+
+.official-flow .official-label {
+  display: block;
+  margin-top: 6px;
+  font-size: 18px;
+}
+
+.official-flow .official-detail {
+  display: block;
+  margin-top: 4px;
+}
+
+/* Label and value pairs: the operator facts and the press fact sheet. */
+.official-table-wrap {
+  margin-top: 22px;
+  border: 1px solid rgba(196, 170, 255, 0.22);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #120b22;
+}
+
+.official-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.official-table th,
+.official-table td {
+  padding: 13px 18px;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+  font-size: 15px;
+  border-top: 1px solid rgba(196, 170, 255, 0.14);
+}
+
+.official-table thead th {
+  border-top: 0;
+  background: #1b1033;
+  color: #f3eeff;
+  font-weight: 650;
+}
+
+.official-table tbody tr:first-child th,
+.official-table tbody tr:first-child td {
+  border-top: 0;
+}
+
+.official-table tbody th {
+  color: #f3eeff;
+  font-weight: 600;
+}
+
+.official-table td {
+  color: #cfc4ea;
+}
+
+.official-table .official-price {
+  color: #f3eeff;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* The price list: one group header row per game inside one table. */
+.official-table .official-group th {
+  background: #1b1033;
+  color: #f3eeff;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  border-top: 1px solid rgba(196, 170, 255, 0.22);
+}
+
+.official-table .official-group a {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+
+.official-table .official-sub th {
+  background: rgba(27, 16, 51, 0.5);
+  color: #d6bbff;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.official-table .official-tier {
+  font-size: 14px;
+  color: #a79dc4;
+}
+
+.official-table-note {
+  margin-top: 14px;
+  font-size: 15px;
+  color: #a79dc4;
+}
+
+/* Logo downloads: a preview tile plus the file links beside it. */
+.official-logos {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.official-logos > li {
+  padding: 20px;
+  border-radius: 18px;
+  background: #120b22;
+  border: 1px solid rgba(196, 170, 255, 0.18);
+}
+
+.official-logos img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  background: #090414;
+}
+
+.official-logos .official-label {
+  display: block;
+  margin-top: 14px;
+}
+
+.official-logos .official-detail {
+  display: block;
+  margin-top: 4px;
+}
+
+.official-logos .official-files {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 14px;
+}
+
+@media (max-width: 680px) {
+  .official-table th,
+  .official-table td {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .official-table .official-group th {
+    font-size: 16px;
+  }
+  /* The price rows stack: each service becomes a small card of its own. */
+  .official-prices tbody tr:not(.official-group):not(.official-sub) {
+    display: grid;
+    border-top: 1px solid rgba(196, 170, 255, 0.16);
+  }
+  .official-prices thead {
+    display: none;
+  }
+  .official-prices tbody tr:not(.official-group):not(.official-sub) th,
+  .official-prices tbody tr:not(.official-group):not(.official-sub) td {
+    border-top: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .official-prices tbody tr:not(.official-group):not(.official-sub) th {
+    padding-top: 14px;
+  }
+  .official-prices
+    tbody
+    tr:not(.official-group):not(.official-sub)
+    td:last-child {
+    padding-bottom: 14px;
+  }
+  .official-prices tbody td::before {
+    display: inline-block;
+    min-width: 92px;
+    color: #8e84ab;
+  }
+  .official-prices tbody td:nth-of-type(1)::before {
+    content: 'Plays with';
+  }
+  .official-prices tbody td:nth-of-type(2)::before {
+    content: 'Covers';
+  }
+  .official-prices tbody td:nth-of-type(3)::before {
+    content: 'Price';
+  }
+}
