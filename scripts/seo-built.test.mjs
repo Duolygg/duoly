@@ -406,17 +406,20 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     // related-link chips grew by about 100 words on all of them.
     //
     // Measured on 9 November 2026 against this build, worst page per bucket:
-    // MEASURE_TEMPLATED, MEASURE_GUIDED, MEASURE_PLAIN. Each ceiling sits
-    // about 90 words above its worst page. The headroom is for those
-    // reviewed, shared paragraphs and not for padding, so move a ceiling only
-    // with the same kind of measurement written down.
+    // templated 3075 (/games/call-of-duty/lfg), guided 2593
+    // (/games/league-of-legends/play-with-someone) and plain 2185
+    // (/games/counter-strike-2/lfg, the longest plain page because CS2 sells
+    // six teammate services on one card). Each ceiling sits 100 words above
+    // its worst page. The headroom is for those reviewed, shared paragraphs
+    // and not for padding, so move a ceiling only with the same kind of
+    // measurement written down.
     const guided = html.includes('id="free-or-paid"');
     const templated = html.includes('id="lfg-post-h"');
     const [minWords, maxWords] = templated
-      ? [1900, 3210]
+      ? [1900, 3175]
       : guided
-        ? [1500, 2700]
-        : [1200, 2280];
+        ? [1500, 2695]
+        : [1200, 2285];
     assert(
       wordCount >= minWords && wordCount <= maxWords,
       `${path}: ${wordCount} words`,
