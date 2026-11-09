@@ -4,7 +4,8 @@ import { ABOUT_STORY } from '../content/about-story';
 import { CONTENT_UPDATED } from './content-dates';
 import { gameBySlug } from './games';
 import { aiLaunchState } from './ai';
-import { DISCORD_INVITE, PRESS_EMAIL, SUPPORT_EMAIL } from './nav';
+import { DISCORD_INVITE, SUPPORT_EMAIL } from './nav';
+import { PRESS_EMAIL } from './press-contact';
 import { BUSINESS, DISAMBIGUATION, KNOWS_ABOUT, SERVED_AREAS } from './entity';
 
 export const COACHING_SLUGS = [

@@ -1,5 +1,5 @@
 import { BUSINESS, BUSINESS_LOCATION, SERVED_AREAS } from '../../site/entity';
-import { PRESS_EMAIL } from '../../site/nav';
+import { PRESS_EMAIL } from '../../site/press-contact';
 import { ABOUT_STORY } from '../../content/about-story';
 import {
   COACHABLE_GAMES,

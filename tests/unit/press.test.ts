@@ -17,7 +17,8 @@ import {
   BUSINESS_LOCATION,
   CODEBASE_STARTED_LABEL,
 } from '../../src/site/entity';
-import { PRESS_EMAIL, SUPPORT_EMAIL } from '../../src/site/nav';
+import { SUPPORT_EMAIL } from '../../src/site/nav';
+import { PRESS_EMAIL } from '../../src/site/press-contact';
 import { CATALOG_GAMES, SERVICE_COUNT } from '../../src/server/seo/booking';
 import {
   COACHABLE_GAMES,

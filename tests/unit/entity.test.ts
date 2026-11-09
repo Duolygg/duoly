@@ -19,7 +19,8 @@ import {
 } from '../../src/site/seo';
 import { ABOUT_STORY } from '../../src/content/about-story';
 import { SITE_GAMES } from '../../src/site/games';
-import { PRESS_EMAIL, SUPPORT_EMAIL } from '../../src/site/nav';
+import { SUPPORT_EMAIL } from '../../src/site/nav';
+import { PRESS_EMAIL } from '../../src/site/press-contact';
 import { FACT_SHEET } from '../../src/server/seo/press';
 
 const site = new URL('https://duoly.gg');
