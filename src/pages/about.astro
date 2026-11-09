@@ -1,0 +1,542 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Breadcrumbs from '../components/seo/Breadcrumbs.astro';
+import SeoHero from '../components/seo/SeoHero.astro';
+import Steps from '../components/seo/Steps.astro';
+import ClosingCta from '../components/seo/ClosingCta.astro';
+import '../components/seo/seo.css';
+import { pageViewer } from '../site/viewer';
+import {
+  CONTENT_DATES,
+  aboutPageSchema,
+  hubChips,
+  serializeJsonLd,
+} from '../site/seo';
+import { DISCORD_INVITE, SUPPORT_EMAIL } from '../site/nav';
+import {
+  BUSINESS,
+  BUSINESS_LOCATION,
+  CODEBASE_STARTED,
+  CODEBASE_STARTED_LABEL,
+  DISAMBIGUATION_PROSE,
+  SERVED_AREAS,
+} from '../site/entity';
+import { ABOUT_STORY } from '../content/about-story';
+import {
+  COACHABLE_GAMES,
+  COACHING_PRICE,
+  PLAYABLE_GAMES,
+  SHARE_PERCENT,
+  SHORT_GAME_PRICE,
+  SOCIAL_MODES,
+} from '../server/seo/teammate-facts';
+import {
+  AUTO_CANCEL_MINUTES,
+  BUNDLE_PERCENTS,
+  COACHING_HOUR,
+  MAX_QUANTITY,
+  QUANTITY_PERCENT,
+  SINGLE_GAME,
+  USD_MARGIN_PERCENT,
+} from '../server/seo/fees';
+
+const { viewer, csrf } = await pageViewer(Astro);
+const path = '/about';
+const title = 'About Duoly: Gaming Teammate and Coach Marketplace | Duoly';
+const description = `Duoly (duoly.gg) is an Austrian marketplace for rank-verified gaming teammates and coaches in ${PLAYABLE_GAMES} games. Who runs it, how players are checked, how you pay.`;
+// Additive related links, same pattern as the other SEO pages.
+const HUB_LINKS = hubChips([
+  'league-of-legends',
+  'valorant',
+  'marvel-rivals',
+  'counter-strike-2',
+]);
+/** The operator facts, rendered as a table so extractors read them as pairs. */
+const operator: [string, string][] = [
+  ['Business name', BUSINESS.legalName],
+  ['Legal form', BUSINESS.legalForm],
+  ['Business location', BUSINESS_LOCATION],
+  ['Trade register (GISA)', BUSINESS.gisa],
+  ['Legally represented by', BUSINESS.representedBy],
+  ['Contact', SUPPORT_EMAIL],
+];
+/**
+ * The founder story, the named founders and the timeline are owner-supplied
+ * (src/content/about-story.ts). Empty lists render nothing at all: no heading,
+ * no placeholder, no "coming soon". A reader sees a page without that section
+ * rather than a page promising content it does not have.
+ */
+const { story, founders, milestones } = ABOUT_STORY;
+/** Discord invite checked on 9 November 2026: 301 to discord.com, then HTTP 200. */
+const LINKS_CHECKED = '9 November 2026';
+---
+
+<SiteLayout
+  title={title}
+  description={description}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page about-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'About Duoly', path },
+      ]}
+    />
+    <SeoHero
+      eyebrow="About Duoly"
+      h1="About Duoly"
+      lead={`Duoly (duoly.gg) is an online marketplace, based in Austria, where players book rank-verified gaming teammates and coaches by the game or by the hour for ${PLAYABLE_GAMES} games.`}
+      cta={{ href: '/games', label: `Browse ${PLAYABLE_GAMES} games` }}
+      secondary={{ href: '/fees-and-refunds', label: 'Prices and refunds' }}
+      art={[
+        {
+          src: '/assets/games/league-of-legends.png',
+          alt: 'League of Legends game art',
+        },
+        { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
+        { src: '/assets/games/marvel-rivals.png', alt: 'Marvel Rivals art' },
+      ]}
+      chip={`Sessions from ${SHORT_GAME_PRICE}`}
+      facts={[
+        `Based in ${BUSINESS_LOCATION}`,
+        `Trade register GISA ${BUSINESS.gisa}`,
+        `${PLAYABLE_GAMES} games plus voice sessions`,
+        'Card payment through Stripe',
+      ]}
+      note={`Published by Duoly. Links on this page checked ${LINKS_CHECKED}.`}
+    />
+
+    <section aria-labelledby="what-h">
+      <h2 id="what-h">What is Duoly?</h2>
+      <p>
+        Duoly (duoly.gg) is an online marketplace, based in Austria, where
+        players book rank-verified gaming teammates and coaches by the game or
+        by the hour for {PLAYABLE_GAMES} games. You choose a game, a service and
+        a quantity, pay the price shown before checkout, and a teammate accepts
+        the order from a public queue. That teammate then joins your own lobby
+        and plays alongside you, on their own account. Duoly never signs into
+        your account and never asks for your password, which is the line between
+        a duo session and account boosting. For example, {SINGLE_GAME.label}{' '}
+        costs {SINGLE_GAME.total}, and {COACHING_HOUR.label} costs{' '}
+        {COACHING_HOUR.total}. Duoly also publishes an MCP server, so an
+        assistant such as Claude can read a real price and prepare a booking
+        link before you open the site. Every session finishes with payment on
+        duoly.gg rather than in a private message.
+      </p>
+    </section>
+
+    <section aria-labelledby="which-duoly-h">
+      <h2 id="which-duoly-h">
+        Is this the same Duoly as the couples app or Duolingo?
+      </h2>
+      <p>
+        No. {DISAMBIGUATION_PROSE} The names are close enough that search
+        engines mix them up. On {LINKS_CHECKED} we found Google AI Mode
+        answering the question “is Duoly legit” with a description of a
+        relationship app on Google Play rather than this site. Three details
+        tell them apart. First, duoly.gg sells per-game and hourly sessions with
+        human players in named titles such as League of Legends, Valorant and
+        Marvel Rivals. Second, duoly.gg is operated from {BUSINESS.city} in{' '}
+        {BUSINESS.countryName} by the sole proprietorship listed in the table
+        below and in the <a href="/imprint">imprint</a>. Third, duoly.gg has no
+        mobile app: booking, payment and the order room all happen in a browser.
+        Duolingo is a language learning company with no connection to Duoly, and
+        Duoly claims no partnership with it.
+      </p>
+    </section>
+
+    {story.length > 0 && (
+      <section aria-labelledby="story-h">
+        <h2 id="story-h">Why was Duoly built?</h2>
+        {story.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </section>
+    )}
+
+    <section aria-labelledby="who-h">
+      <h2 id="who-h">Who runs Duoly, and how new is it?</h2>
+      <p>
+        Duoly is a sole proprietorship registered in Austria, and the operator
+        details are published rather than hidden. The legal form is{' '}
+        {BUSINESS.legalForm}, the business location is {BUSINESS_LOCATION}, the
+        trade register number is GISA {BUSINESS.gisa}, and the business is
+        legally represented by {BUSINESS.representedBy}. Email reaches the same
+        team at <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>. The
+        street address, chamber membership and supervisory authority are on the{' '}
+        <a href="/imprint">imprint</a>, where Austrian law requires them. Duoly
+        is also young, and saying so is more useful than implying otherwise. The
+        first commit in the public duoly.gg code base is dated{' '}
+        <time datetime={CODEBASE_STARTED}>{CODEBASE_STARTED_LABEL}</time>, so
+        the service has run for weeks rather than years. There is no long review
+        history to point at yet. What exists today is a named operator, a trade
+        licence number, published prices and refund rules you can read before
+        you pay.
+      </p>
+      <div class="about-table-wrap">
+        <table class="about-table">
+          <caption class="sr-only">
+            Operator of duoly.gg, as published on the imprint
+          </caption>
+          <tbody>
+            {operator.map(([label, value]) => (
+              <tr>
+                <th scope="row">{label}</th>
+                <td>
+                  {label === 'Contact' ? (
+                    <a href={`mailto:${value}`}>{value}</a>
+                  ) : (
+                    value
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {founders.length > 0 && (
+      <section aria-labelledby="founders-h">
+        <h2 id="founders-h">Who are the people behind Duoly?</h2>
+        <ul class="about-people">
+          {founders.map((person) => (
+            <li>
+              {person.photo && (
+                <img
+                  src={person.photo.src}
+                  alt={person.photo.alt}
+                  width="72"
+                  height="72"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+              <div>
+                <p class="about-person-name">{person.name}</p>
+                <p class="about-person-role">{person.role}</p>
+                <p class="about-person-bio">{person.bio}</p>
+                {person.profile && (
+                  <p class="about-person-link">
+                    <a href={person.profile} rel="noopener">
+                      {person.name} profile
+                    </a>
+                  </p>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <Steps
+      heading="How do you book a teammate or coach on Duoly?"
+      steps={[
+        `Pick the game and the service, then your rank and how many games or hours you want. The total appears before you pay, for example ${SINGLE_GAME.total} for ${SINGLE_GAME.short}.`,
+        'Pay once with a card through Stripe or from your Duoly balance, and the order goes live to rank-verified teammates for that game.',
+        'The first teammate who accepts joins your lobby, you agree voice on Discord in the order room, and you play together on your own accounts.',
+      ]}
+    >
+      <p>
+        A Duoly booking is one paid block of play, coaching or voice company
+        with a verified player, and it takes three steps. Step 1 is the
+        selection: the service and your own rank set the price, and the figure
+        you see is the figure charged. Step 2 is one upfront payment, never a
+        charge per game. Step 3 is the match: nothing is assigned automatically,
+        so no start time is promised, and an order nobody takes within{' '}
+        {AUTO_CANCEL_MINUTES} minutes cancels itself and refunds in full. For
+        example, you can open{' '}
+        <a href={SINGLE_GAME.href}>
+          {SINGLE_GAME.short} at {SINGLE_GAME.total}
+        </a>{' '}
+        or <a href={COACHING_HOUR.href}>{COACHING_HOUR.short}</a> and read the
+        total before paying anything. The booking flow is summarised step by
+        step under <a href="/#how">how it works</a> on the homepage.
+      </p>
+    </Steps>
+
+    <section aria-labelledby="catalog-h">
+      <h2 id="catalog-h">Which games and services does Duoly sell?</h2>
+      <p>
+        Duoly sells four kinds of session across {PLAYABLE_GAMES} games plus a
+        voice-only category. First, teammate sessions put a ranked player in
+        your lobby for the mode you pick, from {SHORT_GAME_PRICE} for a Valorant
+        Skirmish 2v2 game. Second, team fills add several hired players at once,
+        for example a League of Legends Ranked Flex five-stack. Third, coaching
+        covers all {COACHABLE_GAMES} bookable games at {COACHING_PRICE} per hour
+        or game, including VOD reviews where a coach walks through your own
+        recording. Fourth, {SOCIAL_MODES} voice modes sell friendly company
+        without a scoreboard, for adults only and never as a dating service. The
+        catalog spans League of Legends, Valorant, Counter-Strike 2, Fortnite,
+        Marvel Rivals, Rocket League, Dota 2, World of Warcraft and more, with
+        server pickers covering {SERVED_AREAS.join(', ')}. Browse every listing
+        on <a href="/games">the games page</a>.
+      </p>
+    </section>
+
+    <section aria-labelledby="verify-h">
+      <h2 id="verify-h">
+        How does Duoly check a teammate before a first order?
+      </h2>
+      <p>
+        A Duoly teammate passes a four-step review, and nobody reaches the queue
+        before it finishes. Step 1 is the <a href="/apply">application form</a>:
+        name, email, Discord, a confirmation of being 18 or older, then the
+        rank, the region and a link to a short YouTube video introducing the
+        applicant, which the form requires rather than suggests. Step 2 is the
+        rank check, where Duoly verifies the account and its rank history
+        against the minimum rank published for that game. Step 3 is one tryout
+        game with the Duoly team on Discord. Step 4 switches the account online,
+        after which orders can be accepted. Coaches are listed at the coach rank
+        named on their game’s coaching page, such as Grandmaster+ for League of
+        Legends VOD reviews. Applying guarantees no approval. Teammates are
+        independent players rather than employees, must connect Discord, must
+        keep a verified rank honest, and earn {SHARE_PERCENT}% of a completed
+        order under the <a href="/terms#teammates">terms for teammates</a>.
+      </p>
+    </section>
+
+    <section aria-labelledby="pay-h">
+      <h2 id="pay-h">What does a Duoly session cost, and how do you pay?</h2>
+      <p>
+        A session costs the published price for your selection, paid once, with
+        no fee on top. Teammate games start at {SHORT_GAME_PRICE}, coaching is{' '}
+        {COACHING_PRICE} per hour or game, and {SINGLE_GAME.short} is{' '}
+        {SINGLE_GAME.total}. Two discounts apply automatically: {MAX_QUANTITY}{' '}
+        units take {QUANTITY_PERCENT}% off, and bundles of three, five and ten
+        take {BUNDLE_PERCENTS[0]}%, {BUNDLE_PERCENTS[1]}% and{' '}
+        {BUNDLE_PERCENTS[2]}% off. Payment is one card charge through Stripe or
+        from your Duoly balance, taken when you queue the order, and Duoly never
+        sees or stores full card details. Prices are shown in euros, and a
+        customer who picks US dollars pays the euro price converted at the day’s
+        European Central Bank rate plus a {USD_MARGIN_PERCENT}% currency margin,
+        rounded up to .99. The full model and the refund rules are on{' '}
+        <a href="/fees-and-refunds">fees and refunds</a>, and the complete price
+        list for every game is at <a href="/pricing.md">pricing.md</a>.
+      </p>
+    </section>
+
+    <section aria-labelledby="not-h">
+      <h2 id="not-h">What does Duoly not do?</h2>
+      <p>
+        Five things Duoly refuses are worth knowing before you book, and each
+        one is written into the <a href="/terms">terms</a>. First, no account
+        sharing and no boosting: every session is played together, the teammate
+        is in their own client, and nobody at Duoly will ever ask for your
+        password. Second, no guaranteed rank, win or start time, because a
+        teammate accepts from a queue and no game outcome is sold. Third, no
+        dating, romantic or sexual services: Gamer Girl and Social sessions are
+        company and conversation, and a request like that ends the session.
+        Fourth, nobody under 18 may book or work as a teammate. Fifth, no
+        payment arranged off the platform, and no cheating, scripting or
+        third-party tools a game forbids. Duoly is also not affiliated with Riot
+        Games, Valve, Epic Games, Blizzard, NetEase or any other publisher, and
+        every game name belongs to its owner.
+      </p>
+    </section>
+
+    {milestones.length > 0 && (
+      <section aria-labelledby="timeline-h">
+        <h2 id="timeline-h">What has happened at Duoly so far?</h2>
+        <ol class="about-timeline">
+          {milestones.map((milestone) => (
+            <li>
+              <time datetime={milestone.date}>{milestone.date}</time>
+              <p class="about-milestone-label">{milestone.label}</p>
+              {milestone.detail && <p>{milestone.detail}</p>}
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    <section aria-labelledby="rules-h">
+      <h2 id="rules-h">Where are Duoly’s rules, policies and support?</h2>
+      <p>
+        Every rule Duoly runs on is published, and each link below goes straight
+        to the relevant section. The <a href="/terms">terms of service</a> carry
+        booking, payment and conduct rules, with{' '}
+        <a href="/terms#cancel">cancellations and refunds</a> and{' '}
+        <a href="/terms#balance">the Duoly balance</a> as their own sections.
+        The <a href="/privacy">privacy policy</a> lists what Duoly collects and{' '}
+        <a href="/privacy#rights">your GDPR rights</a>. The{' '}
+        <a href="/imprint">imprint</a> names the operator and the supervisory
+        authority. Teammates additionally follow the Teammate Code, published at
+        duoly.gg/rules once a teammate signs in, on top of{' '}
+        <a href="/terms#teammates">the teammate terms</a>. Steps, timings and
+        the booking flow are summarised under <a href="/#how">how it works</a>{' '}
+        on the homepage. For a question, use{' '}
+        <a href="/contact">the contact form</a> or the chat bubble. Developers
+        and assistants start at <a href="/developers/mcp">the MCP reference</a>{' '}
+        or <a href="/ai">Duoly in AI assistants</a>, and voice comms run in{' '}
+        <a href={DISCORD_INVITE} rel="noopener">
+          the Duoly Discord
+        </a>
+        .
+      </p>
+    </section>
+
+    <ClosingCta
+      heading="Ready to look at the catalog?"
+      text={`Duoly is an Austrian marketplace for rank-verified gaming teammates and coaches, operated from ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}. Browse ${PLAYABLE_GAMES} games, read the price for your rank and book only when the figure suits you.`}
+      extra={`Three things are worth checking before a first booking. First, the price you see is the price Stripe charges, with ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off bundles of three, five and ten applied at checkout. Second, a teammate accepts from a queue, so no start time is promised and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself. Third, every session runs on your own account using Discord voice, and no result or rank is guaranteed.`}
+      href="/games"
+      label={`Browse ${PLAYABLE_GAMES} games`}
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+    />
+
+    <nav class="related" aria-label="Related pages">
+      <h2>Read next</h2>
+      <div class="chips">
+        <a href="/fees-and-refunds">Duoly fees, prices and refunds</a>
+        <a href="/games">All games and services</a>
+        <a href="/compare/e-pal">Duoly compared with E-Pal</a>
+        <a href="/ai">Duoly in AI assistants</a>
+        <a href="/developers/mcp">MCP developer reference</a>
+        <a href="/get-paid-to-play-games">Become a Duoly teammate</a>
+        {HUB_LINKS.map((hub) => (
+          <a href={hub.path}>{hub.name} teammates and prices</a>
+        ))}
+        <a href="/blog">All Duoly guides</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(
+      aboutPageSchema(
+        path,
+        title,
+        description,
+        CONTENT_DATES[path]!,
+        Astro.site!,
+      ),
+    )}
+  />
+</SiteLayout>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .about-page h2 {
+    scroll-margin-top: 96px;
+  }
+  .about-table-wrap {
+    margin-top: 22px;
+    border: 1px solid rgba(196, 170, 255, 0.22);
+    border-radius: 18px;
+    overflow: hidden;
+    background: #120b22;
+  }
+  .about-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .about-table th,
+  .about-table td {
+    padding: 13px 18px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.5;
+    border-top: 1px solid rgba(196, 170, 255, 0.14);
+    font-size: 15px;
+  }
+  .about-table tr:first-child th,
+  .about-table tr:first-child td {
+    border-top: 0;
+  }
+  .about-table th {
+    width: 230px;
+    color: #b9add8;
+    font-weight: 600;
+  }
+  .about-table td {
+    color: #f3eeff;
+  }
+  @media (max-width: 600px) {
+    .about-table th,
+    .about-table td {
+      display: block;
+      width: auto;
+    }
+    .about-table td {
+      padding-top: 0;
+      border-top: 0;
+    }
+  }
+  /* The founder cards and the timeline only render once the owner fills
+     src/content/about-story.ts, so these rules sit unused until then. They
+     follow the card language of the other SEO blocks rather than inventing a
+     second one. */
+  .about-people {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .about-people li {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 18px;
+    background: #120b22;
+    border: 1px solid rgba(196, 170, 255, 0.18);
+  }
+  .about-people img {
+    border-radius: 14px;
+    flex: 0 0 auto;
+  }
+  .about-person-name {
+    margin: 0;
+    font-weight: 700;
+    color: #f3eeff;
+  }
+  .about-person-role {
+    margin: 2px 0 0;
+    font-size: 14px;
+    color: #d6bbff;
+  }
+  .about-page .about-person-bio {
+    margin: 10px 0 0;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .about-person-link {
+    margin: 10px 0 0;
+    font-size: 14px;
+  }
+  .about-timeline {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .about-timeline li {
+    padding: 16px 0 0;
+    border-top: 2px solid rgba(196, 170, 255, 0.2);
+  }
+  .about-timeline time {
+    font-size: 14px;
+    font-weight: 700;
+    color: #d6bbff;
+  }
+  .about-milestone-label {
+    margin: 4px 0 0;
+    font-weight: 650;
+    color: #f3eeff;
+  }
+</style>
