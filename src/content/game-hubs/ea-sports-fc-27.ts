@@ -14,10 +14,16 @@ export const eaSportsFc27: HubPageCopy = {
     'Co-op Rivals, Clubs and friendlies',
     'Voice on Discord, your own account',
   ],
-  related: ['minecraft', 'rocket-league', 'pokemon-unite'],
+  related: [
+    'minecraft',
+    'arc-raiders',
+    'world-of-warcraft',
+    'rocket-league',
+    'fortnite',
+  ],
   format: {
     heading: 'What can you book for EA SPORTS FC 27 on Duoly?',
-    text: 'An EA SPORTS FC 27 booking on Duoly is a single reviewed partner, a Clubs Lineup or a coaching hour. First, Co-op Rivals is the 2v2 side of Division Rivals and follows your own division, from {{p_duo2_low}} to {{p_duo2_high}} per game, while Co-op Elite brings an Elite-level partner from {{p_duo3_low}}. Casual games keep one flat price at every division, so Kick-Off and Friendlies costs {{p_kickoff}} per game and a Practice Match costs {{p_friendly}}. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. The Rivals help page from EA documents co-op matchmaking on the higher-ranked player of the pair and publishes no division-gap cap, read again in November 2026, so the partner has to be eligible to queue with you under the rules of the game. For example, name your platform using Discord first.',
+    text: 'An EA SPORTS FC 27 booking on Duoly is a single reviewed partner, a Clubs Lineup or a coaching hour. First, Co-op Rivals is the 2v2 side of Division Rivals and follows your own division, from {{p_duo2_low}} to {{p_duo2_high}} per game, while Co-op Elite brings an Elite-level partner from {{p_duo3_low}}. Casual games keep one flat price at every division, so Kick-Off and Friendlies costs {{p_kickoff}} per game and a Practice Match costs {{p_friendly}}. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Second, the fill: Clubs Lineup hires Division 1+ players for up to {{seats_clubs}} seats at {{p_clubs}} per game, so a half-full club gets a real eleven. Third, the lessons, {{p_tactics}} per hour on tactics and squad building. For example, name your platform using Discord first.',
   },
   services: {
     duo2: 'Co-op Rivals with a Division 1 partner who links up, tracks back and talks you through it.',
@@ -40,8 +46,8 @@ export const eaSportsFc27: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Partner prices are per game, and the two Co-op Rivals tiers read your own division: Co-op Rivals costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Kick-Off, Friendlies and the Practice Match hold one price for everybody, because none of them touch your Rivals record. First, pick the mode, because the mode decides whether the division list on a card matters. Second, read the queue note beside the tier. EA publishes no division-gap cap for co-op, and matchmaking reads the higher-ranked player, so expect harder opponents rather than a block in 2026. Bundles take {{pct3}} off 3 games and {{pct5}} off 5. For example, agree a formation using Discord before game 1.',
-    team: 'A Clubs Lineup is one order that hires several players at once, so a half-full club gets a real eleven. The card covers up to {{seats_clubs}} seats at {{p_clubs}} per game, and 3 games cost {{p_clubs_x3}} with {{pct3}} off. First, count the seats you actually need, because every seat is priced on its own: a club short 2 players books 2 seats rather than 5. The price is flat rather than division-priced, because a Clubs match reads your club rather than your Rivals division. EA publishes no rank-gap rule for Clubs either, read in November 2026, so every hired player simply has to be eligible to join. For example, ask for a centre back and a holding midfielder using Discord.',
+      'Partner prices are per game, and the two Co-op Rivals tiers read your own division: Co-op Rivals costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Kick-Off, Friendlies and the Practice Match hold one price for everybody, because none of them touch your Rivals record. First, pick the mode, because the mode decides whether the division list on a card matters. Second, read the partner tier beside the price: Co-op Rivals names a Division 1+ partner and Co-op Elite an Elite-level one at {{p_duo3}} per game. Bundles take {{pct3}} off 3 games and {{pct5}} off 5. For example, agree a formation using Discord before game 1.',
+    team: 'A Clubs Lineup is one order that hires several players at once, so a half-full club gets a real eleven. The card covers up to {{seats_clubs}} seats at {{p_clubs}} per game, and 3 games cost {{p_clubs_x3}} with {{pct3}} off. First, count the seats you actually need, because every seat is priced on its own: a club short 2 players books 2 seats rather than 5. The price is flat rather than division-priced, because a Clubs match reads your club rather than your Rivals division. Second, name the positions, because an eleven wants a defence and a midfield rather than four strikers. For example, ask for a centre back and a holding midfielder using Discord.',
     coaching:
       'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on partner games stop here. Tactics and Squad Builder and Champions Prep each cost {{p_tactics}} per hour, one on formations and custom tactics, the other on weekend-league defending and the current meta. First, pick the problem rather than the format. For example, a player who concedes the same counter attack books the tactics hour instead of a fourth Rivals game at {{p_duo2}}. Screen share runs using Discord, and no lesson from Duoly promises a division.',
   },
@@ -57,7 +63,7 @@ export const eaSportsFc27: HubPageCopy = {
   decide: {
     heading: 'Which EA FC 27 session fits you?',
     intro:
-      'The right FC 27 session is the one matching your goal for the evening. First, Kick-Off, friendlies and the Practice Match keep one flat price for everybody. Co-op Rivals and Co-op Elite are priced by your own division, from {{p_duo2_low}} per game, and co-op matchmaking reads the higher-ranked player under the published rule from EA. For example, 3 games take {{pct3}} off and 5 games take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right FC 27 session is the one matching your goal for the evening. First, Kick-Off, friendlies and the Practice Match keep one flat price for everybody. Co-op Rivals and Co-op Elite are priced by your own division, from {{p_duo2_low}} per game, and a Clubs Lineup is priced per seat instead. For example, 3 games take {{pct3}} off and 5 games take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Climbing Co-op Rivals?',
@@ -100,16 +106,16 @@ export const eaSportsFc27: HubPageCopy = {
       ],
     },
     {
-      heading: 'How wide can the division gap in FC 27 co-op be?',
+      heading: 'What does a Clubs Lineup booking include?',
       paragraphs: [
-        'EA publishes no division-gap cap for EA SPORTS FC 27 co-op. First, the Rivals help page documents Divisions 10 through 1 plus the Elite system, and says co-op matchmaking uses the higher-ranked player of the pair. No admission threshold is named anywhere on the page. For example, Duoly read the official Rivals and Clubs pages again in November 2026 and found neither a gap table nor a Clubs rank rule, so the honest promise is a partner eligible to queue with you under the rules of the game.',
-        'What that costs you is opposition strength rather than access. A Division 8 player paired with an Elite partner meets Elite-level opponents, so the pair wins fewer easy games and learns faster. Absence of a published restriction is not proof none exists, so check the co-op screen in the client before a very wide pairing. Kick-Off and Friendlies carries no division at all and costs {{p_kickoff}} per game, and Co-op Rivals is {{p_duo2}} with {{pct3}} off 3 games and {{pct5}} off 5, agreed using Discord.',
+        'A Clubs Lineup is one order that hires several Division 1+ players at once, so a half-full club gets a real eleven. First, the card covers up to {{seats_clubs}} seats at {{p_clubs}} per game, and 3 games cost {{p_clubs_x3}} with {{pct3}} off. Second, count the seats, because every seat is priced on its own, so a club short 2 players books 2 rather than 5. For example, ask for a centre back and a holding midfielder rather than two more wingers.',
+        'Co-op Rivals is the two-player shape instead, at {{p_duo2}} per game at {{rank_duo2}}, with Co-op Elite bringing an Elite-level partner at {{p_duo3}}. Kick-Off and Friendlies carries no division at all and costs {{p_kickoff}} per game, which makes it the calm first session with somebody new. Finally, the order chat is where you name your platform, your formation and who takes set pieces, with voice using Discord before kick-off.',
       ],
     },
     {
       heading: 'Example evening: three Co-op Rivals games in Europe',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} player in Europe books 3 Co-op Rivals games with a Division 1 partner. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one game. Co-op matchmaking reads the higher-ranked player under the rule from EA, so the pair meets stronger opposition. The order chat opens straight after payment, and the first message names the area, the division and the platform: Europe, {{rank_duo2}}, PlayStation, looking for a partner who defends and lets the wing run.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} player in Europe books 3 Co-op Rivals games with a Division 1 partner. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one game. Co-op Rivals is 2v2, so the booked partner is the whole other half of your team. The order chat opens straight after payment, and the first message names the area, the division and the platform: Europe, {{rank_duo2}}, PlayStation, looking for a partner who defends and lets the wing run.',
         'From there the evening runs on a short plan. You agree a formation and who drops deep, voice goes on, and the co-op invite goes out from your friends list. After each game you pick one adjustment, for example holding the line instead of pressing the keeper, agreed using Discord. The same shape works for Kick-Off and Friendlies at {{p_kickoff}} per game, and 5 games take {{pct5}} off.',
       ],
     },
@@ -117,7 +123,7 @@ export const eaSportsFc27: HubPageCopy = {
       heading: 'When is FC 27 coaching the better booking?',
       paragraphs: [
         'FC 27 coaching is the better booking when the goal is a repeatable fix rather than a partner for the next game. Tactics and Squad Builder and Champions Prep each cost {{p_tactics}} per hour, one on formations and custom tactics, the other on weekend-league defending and the current meta. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to partner games only.',
-        'First, name the goal you keep conceding. For example, a player who concedes the same counter attack gains more from one tactics hour at {{p_tactics}} than from a fourth Rivals game, because the fix lives in the shape. A player who only wants a relaxed evening gains more from Kick-Off and Friendlies at {{p_kickoff}} per game in 2026. EA SPORTS FC 27 has no separate coaching page on Duoly yet, so lessons are booked from the prices above, with screen share using Discord.',
+        'First, name the goal you keep conceding. For example, a player who concedes the same counter attack gains more from one tactics hour at {{p_tactics}} than from a fourth Rivals game, because the fix lives in the shape. A player who only wants a relaxed evening gains more from Kick-Off and Friendlies at {{p_kickoff}} per game in 2026. EA SPORTS FC 27 has no separate coaching page on Duoly yet, so lessons are booked from the prices above, with screen share using Discord. The nearest neighbours here are [Rocket League teammates](/games/rocket-league), football with rocket cars, and [Minecraft teammates](/games/minecraft) for an evening with nothing on the line.',
       ],
     },
   ],
@@ -134,7 +140,7 @@ export const eaSportsFc27: HubPageCopy = {
       ],
       [
         'Can any division play co-op together?',
-        'EA publishes no division-gap cap, so the partner has to be eligible to queue with you under the rules of the game. Co-op matchmaking reads the higher-ranked player.',
+        'Clubs Lineup hires Division 1+ players for up to {{seats_clubs}} seats at {{p_clubs}} per game, and you set the seat count to the gaps your club actually has.',
       ],
       [
         'Is this Ultimate Team coin farming?',
@@ -152,6 +158,6 @@ export const eaSportsFc27: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for kick-off in EA FC 27?',
-    text: 'Co-op Rivals is the 2v2 session with a Division 1+ partner from Duoly. Three games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 games take {{pct5}} off. Kick-Off and Friendlies stays {{p_kickoff}} per game at any division, and a Practice Match costs {{p_friendly}}. EA publishes no division-gap cap for co-op and matches on the higher-ranked player, so the partner has to be eligible to queue with you under the rules of the game in 2026. For example, agree the formation using Discord.',
+    text: 'Co-op Rivals is the 2v2 session with a Division 1+ partner from Duoly. Three games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 games take {{pct5}} off. Kick-Off and Friendlies stays {{p_kickoff}} per game at any division, and a Practice Match costs {{p_friendly}}. Clubs Lineup hires Division 1+ players for up to {{seats_clubs}} seats at {{p_clubs}} per game when you want an eleven in 2026. For example, agree the formation using Discord.',
   },
 };

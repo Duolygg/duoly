@@ -1,0 +1,47 @@
+---
+/**
+ * The coaching formats a game actually sells, side by side.
+ *
+ * Owner decision (2026-11-08): the catalog is the co-founder's domain, so this
+ * block promotes what is on offer instead of policing who may book it. It names
+ * each format from src/content/coaching-formats.ts, shows the unit it is sold in
+ * and says what the unit buys. Prices arrive already filled by the page, so the
+ * component never formats money.
+ */
+import type { CoachFormatsCopy } from '../../content/coaching-formats';
+interface Props {
+  copy: CoachFormatsCopy;
+  /** Already price-filled by the page, so the component never formats money. */
+  answer: string;
+  detail: string;
+  choice: string;
+}
+const { copy, answer, detail, choice } = Astro.props;
+---
+
+<section class="lesson-formats" aria-labelledby="formats-h">
+  <h2 id="formats-h">{copy.heading}</h2>
+  <p class="section-intro">{answer}</p>
+  {/* A format and the unit it is sold in are a name/value pair, so the meter is
+      a description list like the rank prices in Prices.astro. */}
+  <dl class="format-meter">
+    {copy.rows.map((row) => (
+      <div
+        class="format-row"
+        data-weight={row.weight}
+        data-lead={row.lead ? 'true' : 'false'}
+      >
+        <dt>{row.label}</dt>
+        <dd>
+          <span class="row-value">{row.value}</span>
+          <span class="row-bar" aria-hidden="true">
+            <span></span>
+          </span>
+          <span class="row-note">{row.note}</span>
+        </dd>
+      </div>
+    ))}
+  </dl>
+  <p>{detail}</p>
+  <p>{choice}</p>
+</section>

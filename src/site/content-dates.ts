@@ -1,6 +1,6 @@
 import { intentPages, intentPath } from '../content/intent-pages';
 import { FINISHED_HUB_SLUGS } from '../content/hub-pages';
-import { coachRank } from '../content/coaching-rank';
+import { coachFormats } from '../content/coaching-formats';
 
 /**
  * Where every indexable page's copy actually lives, and the day that copy last
@@ -51,14 +51,14 @@ for (const page of intentPages)
     'src/content/intent-pages.ts',
     'src/content/guide-pages.ts',
   ];
-// Keyed off coachRank rather than a second hand-written slug list: that list
+// Keyed off coachFormats rather than a second hand-written slug list: that list
 // drifted once already when a coaching page was added, and the sitemap then
 // quietly stopped declaring sources for it.
-for (const slug of Object.keys(coachRank))
+for (const slug of Object.keys(coachFormats))
   CONTENT_SOURCES[`/games/${slug}/coaching`] = [
     'src/content/coaching.ts',
     'src/content/coaching-examples.ts',
-    'src/content/coaching-rank.ts',
+    'src/content/coaching-formats.ts',
   ];
 
 /**
@@ -76,9 +76,9 @@ export const CONTENT_UPDATED: Record<string, string> = {
   '/privacy': '2026-11-05',
   '/compare/e-pal': '2026-11-08',
 };
-// Everything else is copy either the rank-rule work or the quotability pass
-// rewrote: every hub, every teammate page, the coaching pages, /games, /blog
-// and its e-girl guide, /get-paid-to-play-games, /ai and /developers/mcp.
+// Everything else is copy the catalog-promotion pass rewrote: every hub, every
+// teammate page, the coaching pages, /games, /blog and its e-girl guide,
+// /get-paid-to-play-games, /ai and /developers/mcp.
 for (const path of Object.keys(CONTENT_SOURCES))
   CONTENT_UPDATED[path] ??= '2026-11-09';
 

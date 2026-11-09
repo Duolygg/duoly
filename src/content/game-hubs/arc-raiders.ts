@@ -14,7 +14,13 @@ export const arcRaiders: HubPageCopy = {
     'Raids, escort runs and map learning',
     'Priced per hour, your own account',
   ],
-  related: ['rainbow-six-siege', 'call-of-duty', 'minecraft'],
+  related: [
+    'world-of-warcraft',
+    'pokemon-unite',
+    'teamfight-tactics',
+    'minecraft',
+    'ea-sports-fc-27',
+  ],
   format: {
     heading: 'What can you book for ARC Raiders on Duoly?',
     text: 'An ARC Raiders booking on Duoly is a single reviewed raider, a squad order or one coaching hour. First, everything is priced per hour, because a raid has no fixed length and the loot you walk out with matters more than the run count. The raider tiers are Duo Plus with an experienced player at {{p_duo1}}, Duo Pro with a Veteran at {{p_duo2}} and Duo Apex with an Elite raider at {{p_duo3}}. Learn the Maps sits below all three at {{p_learn}} for relaxed loot routes. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. There is no rank picker, because the matchmaking notes from Embark Studios describe no ranked tier at all and read playstyle history, squad size and latency instead, checked in November 2026. For example, say whether the hour is for loot or fights using Discord.',
@@ -92,7 +98,7 @@ export const arcRaiders: HubPageCopy = {
     {
       heading: 'Why does ARC Raiders have no rank picker?',
       paragraphs: [
-        'ARC Raiders is an extraction shooter with no ranked tier, so Duoly charges one flat price of {{p_duo2}} per Veteran hour and nothing on the page asks for your rank. First, the matchmaking notes from Embark Studios, published in 2026 and read again in November 2026, name playstyle history, equal squad sizes where possible, queue time and latency as the inputs. No rank tier and no rank-gap gate appear anywhere in the article. For example, a brand new account and an Elite raider may squad up with no eligibility check at all.',
+        'ARC Raiders is an extraction shooter with no ranked tier, so Duoly charges one flat price of {{p_duo2}} per Veteran hour and nothing at checkout asks for your rank. First, pick the raider instead of a rank: Duo Plus is an experienced raider at {{p_duo1}} per hour, Duo Pro a Veteran at {{p_duo2}} and Duo Apex an Elite raider at {{p_duo3}}. Learn the Maps is the gentlest start at {{p_learn}} per hour. For example, a first raid on a new map goes further with a guide than with a gunfighter.',
         'What changes instead is lobby difficulty. Every squad member feeds the matchmaking profile, so a Veteran beside you raises the opposition rather than lowering it. Flat pricing keeps the maths simple: 3 Veteran hours cost {{p_duo2_x3}} with {{pct3}} off and 5 cost {{p_duo2_x5}} with {{pct5}} off. Decide before the drop whether the hour is for loot or for fights, because the route changes completely. Keep comms short out there, because a late call during a third party ends the run, so use Discord.',
       ],
     },
@@ -106,7 +112,7 @@ export const arcRaiders: HubPageCopy = {
     {
       heading: 'Example raid night: three Duo Pro hours',
       paragraphs: [
-        'Here is an example raid night, priced with the Duoly checkout calculator on {{checked}}. A player in Europe books 3 Duo Pro hours with a Veteran raider. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one hour. ARC Raiders has no ranked tier, so no eligibility check stands between the pair and the drop. The order chat opens straight after payment, and the first message names the area, the goal and the kit: Europe, mid-tier gear, looking for loot runs rather than fights.',
+        'Here is an example raid night, priced with the Duoly checkout calculator on {{checked}}. A player in Europe books 3 Duo Pro hours with a Veteran raider. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one hour. ARC Raiders has no ranked tier, so nothing at checkout asks for a rank and the price is the same for everybody. The order chat opens straight after payment, and the first message names the area, the goal and the kit: Europe, mid-tier gear, looking for loot runs rather than fights.',
         'From there the night runs on a short plan. You agree a map and a loot route, voice goes on, and you squad up in game before the first drop. After each run you pick one adjustment, for example extracting at the first safe window instead of pushing 1 building deeper, agreed using Discord. The same shape works for Learn the Maps at {{p_learn}} per hour, and 5 hours take {{pct5}} off the total.',
       ],
     },
@@ -114,7 +120,7 @@ export const arcRaiders: HubPageCopy = {
       heading: 'When is ARC Raiders coaching the better booking?',
       paragraphs: [
         'ARC Raiders coaching is the better booking when the goal is a repeatable fix rather than company for the next raid. PvP and Extraction is one hour with an Elite coach on fights, third parties and clean extractions, at {{p_pvp}} per hour. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to raid hours only.',
-        'First, name the death you keep repeating. For example, a raider who dies to the same third party gains more from one coaching hour at {{p_pvp}} than from a fourth raid, because a coach can name the pattern and leave you something to practise. A raider who simply does not know the maps gains more from Learn the Maps at {{p_learn}} per hour in 2026. ARC Raiders has no separate coaching page on Duoly yet, so the lesson is booked from the prices above, and screen share runs using Discord so the coach watches your real route.',
+        'First, name the death you keep repeating. For example, a raider who dies to the same third party gains more from one coaching hour at {{p_pvp}} than from a fourth raid, because a coach can name the pattern and leave you something to practise. A raider who simply does not know the maps gains more from Learn the Maps at {{p_learn}} per hour in 2026. ARC Raiders has no separate coaching page on Duoly yet, so the lesson is booked from the prices above, and screen share runs using Discord so the coach watches your real route. Two neighbours are worth a look: [Rainbow Six Siege teammates](/games/rainbow-six-siege) for tight-angle gunfights, and [PUBG teammates](/games/pubg) for the same loot-and-leave tension on a bigger map.',
       ],
     },
   ],

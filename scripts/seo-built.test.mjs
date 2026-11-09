@@ -241,19 +241,62 @@ for (const path of dataHubs) {
   });
 }
 
-test('every sitemap URL is a finished page with three inbound links', () => {
+/**
+ * Pages that sell nothing, so no offer link belongs in their copy: the
+ * homepage is the checkout itself, and the legal and support pages are written
+ * for a reader with a question rather than a basket. Everything else in the
+ * sitemap has to reach a prefilled checkout from its own content.
+ */
+const NO_OFFER_LINK = ['/', '/contact', '/terms', '/privacy', '/imprint'];
+
+test('every sitemap URL is a finished page with four inbound links', () => {
   for (const entry of sitemapEntries) {
     const path = new URL(entry.url).pathname;
     const page = pages[path];
     assert(page, `${path} reachable from real anchors`);
     assert(
-      page.inbound.length >= 3,
+      page.inbound.length >= 4,
       `${path}: ${page.inbound.length} inbound internal links`,
     );
+    // Four editorial inbound links, so a page never depends on one sibling
+    // grid alone. The target is six; four is the floor the build enforces.
     assert(
-      page.contextualInbound.length >= 3,
-      `${path}: ${page.contextualInbound.length} contextual inbound links`,
+      page.contextualInbound.length >= 4,
+      `${path}: ${page.contextualInbound.length} contextual inbound links from ${page.contextualInbound}`,
     );
+  }
+});
+
+test('every sitemap URL that sells something links to an offer', () => {
+  for (const entry of sitemapEntries) {
+    const path = new URL(entry.url).pathname;
+    if (NO_OFFER_LINK.includes(path)) continue;
+    const page = pages[path];
+    assert(page, `${path} reachable from real anchors`);
+    assert(
+      page.bookingLinks.length >= 1,
+      `${path}: no booking link in the page's own content`,
+    );
+    // A booking link opens the real checkout on the game it names. Beyond the
+    // game it may prefill the tab, the service and the figures a worked
+    // example quotes (src/content/epal-comparison.ts does all four), so the
+    // parameter set is allowlisted rather than ordered.
+    const PREFILL = ['game', 'tab', 'service', 'rank', 'region', 'qty'];
+    for (const href of page.bookingLinks) {
+      const url = new URL(href, 'https://duoly.gg');
+      assert.equal(url.pathname, '/', `${path}: ${href} leaves the checkout`);
+      assert.equal(url.hash, '#modes-h', `${path}: ${href} misses #modes-h`);
+      assert.match(
+        url.searchParams.get('game') ?? '',
+        /^[a-z0-9]+$/,
+        `${path}: ${href} names no game`,
+      );
+      for (const key of url.searchParams.keys())
+        assert(
+          PREFILL.includes(key),
+          `${path}: ${href} carries the unknown parameter ${key}`,
+        );
+    }
   }
 });
 
@@ -342,16 +385,18 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     // teammate pages add the LFG post template on top of that. Keep substantive
     // guides without requiring repeated prices or filler in Unite.
     //
-    // Every ceiling moved up by 180 here. The shared price note
-    // (server/seo/citable-answers priceNote), the closing detail paragraph and
-    // the shared teammate facts add a measured 179 words to every intent page,
-    // the same 179 on all nine, and the rank-rule copy from #189 had already
-    // spent the old headroom: /games/call-of-duty/lfg was at exactly 2900 of
-    // 2900. Measured against origin/main on 9 November 2026, worst page per
-    // bucket: templated 2900 -> 3079, guided 2393 -> 2572, plain 1641 -> 1820.
-    // The headroom is for those three reviewed, shared paragraphs and not for
-    // padding, so raise it again only with the same kind of measurement, and
-    // bring it back down when the rank-gap copy leaves these pages.
+    // Every ceiling moved up by 180 when #187's shared paragraphs landed. The
+    // price note (server/seo/citable-answers priceNote), the closing detail
+    // paragraph and the shared teammate facts add a measured 179 words to every
+    // intent page, and the rank-rule copy from #189 had already spent the old
+    // headroom: /games/call-of-duty/lfg was at exactly 2900 of 2900.
+    //
+    // Withdrawing the rank rule gave part of that back. Measured on 9 November
+    // 2026 after the removal, worst page per bucket: templated 3041 of 3150
+    // (/games/fortnite/duos), guided 2560 of 2650, plain 1803 of 1900. That is
+    // roughly 100 words of headroom each, which is where the ceilings stay: the
+    // shared paragraphs are reviewed copy and the headroom is not for padding,
+    // so move a ceiling only with the same kind of measurement written down.
     const guided = html.includes('id="free-or-paid"');
     const templated = html.includes('id="lfg-post-h"');
     const [minWords, maxWords] = templated

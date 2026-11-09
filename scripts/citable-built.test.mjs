@@ -51,9 +51,9 @@ test('every built coaching page exposes exactly the visible FAQ answers and read
         priceDates: [
           ...document.querySelectorAll('[aria-labelledby="prices"] time'),
         ].map((item) => item.textContent.trim()),
-        ruleDates: [...document.querySelectorAll('.rank-rule time')].map(
-          (item) => item.textContent.trim(),
-        ),
+        formats: [
+          ...document.querySelectorAll('.lesson-formats .format-row dt'),
+        ].map((item) => item.textContent.trim()),
         text: document.querySelector('article.seo-page').textContent,
       }));
       assert.deepEqual(
@@ -69,20 +69,20 @@ test('every built coaching page exposes exactly the visible FAQ answers and read
         data.prices,
         /We found|0% quantity|paid lesson|Check each description/,
       );
-      // Two dated facts live on a coaching page and they mean different
-      // things: the day the prices were read, and the day the publisher's
-      // queue rule was read. Each is stated once, in its own section.
+      // One dated fact lives on a coaching page: the day the prices were read
+      // from the checkout engine. It is stated once, under the prices.
       assert.deepEqual(
         data.priceDates,
         ['8 November 2026'],
         `${path}: price date appears once, under the prices`,
       );
-      if (path.endsWith('/coaching'))
-        assert.deepEqual(
-          data.ruleDates,
-          ['8 November 2026'],
-          `${path}: rank rule names its source date once`,
-        );
+      // The formats block promotes what the catalog sells, so every row names a
+      // service and every page shows three of them.
+      if (path.endsWith('/coaching')) {
+        assert.equal(data.formats.length, 3, `${path}: three format rows`);
+        for (const title of data.formats)
+          assert(title.length > 3, `${path}: empty format row`);
+      }
       assert.doesNotMatch(
         data.text,
         /Step 1 is to|match results remain uncertain|familiar setup or a basic decision|Quantity discount: 0%/,

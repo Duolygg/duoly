@@ -14,10 +14,16 @@ export const pubg: HubPageCopy = {
     'Ranked, Normal Duos and Arcade',
     'Voice on Discord, your own account',
   ],
-  related: ['fortnite', 'apex-legends', 'call-of-duty', 'arc-raiders'],
+  related: [
+    'apex-legends',
+    'fortnite',
+    'rocket-league',
+    'call-of-duty',
+    'valorant',
+  ],
   format: {
     heading: 'What can you book for PUBG on Duoly?',
-    text: 'Duoly sells three things for PUBG: Battlegrounds: one teammate who joins your squad on your own account, a Squad Fill for the seats you are missing, and coaching. Everything is booked by the hour, because a match ends whenever you die or win. Duo Plus brings a Diamond+ player who calls the drop, Duo Pro a Master player who reads the zone, and Normal Duos a Master partner for the two-player mode. Ranked follows your own tier, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Duo Pro, while Arcade stays {{p_arcade}} per hour for everybody. Bundles take {{pct3}} off 3 hours up to {{pct10}} off 10.',
+    text: 'Duoly sells three things for PUBG: Battlegrounds: one teammate who joins your squad on your own account, a Squad Fill for the seats you are missing, and coaching. Everything is booked by the hour, because a match ends whenever you die or win. Duo Plus brings a Diamond+ player who calls the drop, Duo Pro a Master player who reads the zone, and Normal Duos a Master partner for the two-player mode. Ranked follows your own tier, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Duo Pro, while Normal Duos stays {{p_duos}} and Arcade {{p_arcade}} per hour for everybody. Second, the fill: Squad Fill covers up to {{seats_squad}} seats at {{p_squad}} per hour. Third, Recoil and Positioning is one hour on spray control at {{p_spray}}. Bundles take {{pct3}} off 3 hours up to {{pct10}} off 10. For example, name your perspective using Discord first.',
   },
   services: {
     duo1: 'An hour of Ranked with a Diamond player who calls drops and rotations.',
@@ -40,24 +46,24 @@ export const pubg: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per hour, and the Ranked tiers read your own tier, so a Master lobby costs more than a Bronze one. Normal Duos and Arcade hold one price for everybody, because neither moves your rank. One teammate joins your squad on your own account, and bundles take {{pct3}} off 3 hours or {{pct5}} off 5. A tier name says who Duoly hires, never who may squad with you: the Ranked squad rules come from Krafton, so the teammate has to be eligible to queue with you under the rules of the game. Check the squad in the client before the first match.',
-    team: 'Squad Fill is priced per seat, so the card covers up to {{seats_squad}} seats and falls when your squad is only one player short. It reads your Ranked tier like the duo tiers, and bundles take {{pct3}} off 3 hours.',
+      'Teammate prices are per hour, and the Ranked tiers read your own tier, so a Master lobby costs more than a Bronze one. Normal Duos and Arcade hold one price for everybody, because neither moves your rank. One teammate joins your squad on your own account, and bundles take {{pct3}} off 3 hours or {{pct5}} off 5. First, pick the mode, because only the Ranked cards carry a tier list. Second, read the tier beside the price: Duo Plus is a Diamond+ player, Duo Pro a Master player and Normal Duos a Master partner at {{p_duos}} per hour. For example, name TPP or FPP and the drop you like in the order chat using Discord.',
+    team: 'Squad Fill is priced per seat, so the card covers up to {{seats_squad}} seats at {{p_squad}} per hour and falls when your squad is only one player short. First, count the seats you actually need, because a duo short two players books 2 rather than 3. Second, agree the jobs, because a four wants somebody on smokes, somebody driving and one caller rather than four lone wolves. The fill reads your Ranked tier like the duo tiers do, from {{p_squad_low}} per hour, and bundles take {{pct3}} off 3 hours and {{pct5}} off 5. For example, a solo player books 3 seats and keeps the drop call using Discord.',
     coaching:
-      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Recoil and Positioning starts in the Training Mode and ends in live matches, and screen share runs on Discord.',
+      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Recoil and Positioning costs {{p_spray}} per hour with a Master coach, starts in the Training Mode and ends in live matches. Play and Learn is the live option at {{p_learn}}, where a Master coach talks through one real Ranked hour. First, pick the problem rather than the format. For example, a player who loses every long range fight books Recoil and Positioning instead of a fourth Ranked hour. Finally, screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a tier.',
   },
   steps: {
     heading: 'How does booking a PUBG teammate work?',
     items: [
-      'Pick a service and the number of hours. Duo Pro is the Ranked tier with a Master teammate, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount. Five hours take {{pct5}} off.',
-      'Add your region, tier, perspective and language at checkout. Name Europe, {{rank_duo2}} and TPP, so your teammate reads the real request before accepting the order.',
-      'Meet your teammate in the order chat, add each other in the game and agree the drop before the plane leaves. A single hour of Duo Pro costs {{p_duo2}} at the same tier.',
+      'First, pick a service and the number of hours. Duo Pro is the Ranked tier with a Master teammate, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
+      'Second, add your region, tier, perspective and language at checkout. For example, name Europe, {{rank_duo2}} and TPP, so your teammate reads the real request before accepting the order.',
+      'Finally, meet your teammate in the order chat using Discord. Add each other in the game and agree the drop before the plane leaves. A single hour of Duo Pro costs {{p_duo2}} at the same tier, and Arcade stays {{p_arcade}}.',
     ],
     note: 'Duoly reviews every PUBG teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
   decide: {
     heading: 'Which PUBG session fits you?',
     intro:
-      'The right PUBG session is the one that matches your goal for the evening, so pick the goal first and let the price follow. Ranked is priced by your own tier, from {{p_duo2_low}} per hour on Duo Pro, with {{pct3}} off 3 hours and {{pct5}} off 5. Normal Duos and Arcade carry no rank.',
+      'The right PUBG session is the one matching your goal for the evening, so pick the goal first and let the price follow. First, Normal Duos and Arcade hold one price for everybody, {{p_duos}} and {{p_arcade}} per hour, because neither moves your rank. Ranked is priced by your own tier instead, from {{p_duo2_low}} per hour on Duo Pro, and a Squad Fill is priced per seat. For example, 3 hours take {{pct3}} off and 5 hours take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Climbing Ranked this season?',
@@ -95,29 +101,29 @@ export const pubg: HubPageCopy = {
     {
       heading: 'Who is the teammate you drop with?',
       paragraphs: [
-        'Every Duoly PUBG teammate applied for the game and showed a Ranked tier before taking orders. Duo Plus names a Diamond+ player and Duo Pro a Master player, and Normal Duos brings a Master partner for the two-player mode. Ranked is played in squads, so a duo teammate takes one seat and the other seats come from your friends or the queue. Tell your teammate whether you play first person or third person in the order chat.',
-        'What the tier buys you is zone reads. A Master teammate picks the compound before the circle closes, knows when to rotate early, and calls which squad to fight and which to leave. Voice runs on Discord, so the call lands before the blue zone does. Your tier also sets the price: Duo Pro runs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. You keep your account and your rank.',
+        'The teammate you drop with is a reviewed PUBG player who applied for the game and showed a Ranked tier before taking orders. First, the tiers: Duo Plus names a Diamond+ player, Duo Pro a Master player at {{p_duo2}} per hour and Normal Duos a Master partner for the two-player mode. Second, orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, say whether you play FPP or TPP in the order chat using Discord.',
+        'What the tier buys you is zone reads. A Master teammate picks the compound before the circle closes, knows when to rotate early, and calls which squad to fight and which to leave. Voice runs using Discord, so the call lands before the blue zone does. Your tier also sets the price: Duo Pro runs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles cut that total by {{pct3}} on 3 hours and {{pct5}} on 5. For example, you keep your account, your loadout and your tier across all 3 hours.',
       ],
     },
     {
       heading: 'How does a PUBG Squad Fill work?',
       paragraphs: [
-        'A Squad Fill is one order that hires several players at once, so a half-empty squad becomes a full four. The fill covers up to {{seats_squad}} seats with Master players at {{p_squad}} per hour at {{rank_squad}}, and 5 hours cost {{p_squad_x5}} with {{pick5}} off. Every seat is priced separately, so a duo short two players books two seats instead of three.',
-        'Agree the plan before the plane: the drop, who carries the smokes and who drives. Then agree one caller, because four people calling rotations on voice is how a top ten turns into a wipe. Keep everybody on one Discord call. Bundles still apply, {{pct3}} off 3 hours and {{pct5}} off 5.',
+        'A Squad Fill is one order that hires several players at once, so a half-empty squad becomes a full four. First, the fill covers up to {{seats_squad}} seats with Master players at {{p_squad}} per hour at {{rank_squad}}, and 5 hours cost {{p_squad_x5}} with {{pick5}} off. Second, every seat is priced separately, so a duo short two players books 2 seats instead of 3. For example, a trio who always run out of smokes book one seat and name the job.',
+        'Agree the plan before the plane: the drop, who carries the smokes and who drives. Then agree one caller, because four people calling rotations on voice is how a top ten turns into a wipe. Keep everybody on one call using Discord, and nobody ever needs your login. Finally, bundles still apply, {{pct3}} off 3 hours and {{pct5}} off 5, read from Duoly checkout in 2026.',
       ],
     },
     {
       heading: 'Example evening: three hours of Duo Pro in Europe',
       paragraphs: [
         'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A {{rank_duo2}} player in Europe books 3 hours of Duo Pro with a Master teammate. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one hour. The order chat opens straight after payment, and the first message names the region, the tier and the perspective: Europe, {{rank_duo2}}, third person squads, looking to win more late game fights.',
-        'From there the evening runs on a short plan. You agree a drop and a backup, voice goes on, and the invite goes out in the game. After each match you pick one change, such as rotating to the edge of the next circle before the zone moves instead of after. Five hours take {{pct5}} off the total.',
+        'From there the evening runs on a short plan. You agree a drop and a backup, voice goes on, and the invite goes out in the game. After each match you pick one change, for example rotating to the edge of the next circle before the zone moves instead of after, agreed using Discord. Five hours take {{pct5}} off the total.',
       ],
     },
     {
       heading: 'When is PUBG coaching the better booking?',
       paragraphs: [
-        'PUBG coaching is the better booking when you lose fights you should win. Recoil and Positioning is one hour with a Master coach on spray control, attachments and where to stand in every circle, at {{p_spray}} per hour, drilled in the Training Mode and practiced live. Coaching carries no bundle discount.',
-        'A player who loses every long range fight gains more from one coaching hour than from three more hours of Ranked. A player who wants to warm up gains more from Arcade at {{p_arcade}} per hour. Play and Learn is one live hour of Ranked with a Master coach at {{p_learn}}, and screen share runs on Discord.',
+        'PUBG coaching is the better booking when you lose fights you should win. First, Recoil and Positioning is one hour with a Master coach on spray control, attachments and where to stand in every circle, at {{p_spray}} per hour, drilled in the Training Mode and practised live. Second, Play and Learn is one live hour of Ranked with a Master coach at {{p_learn}}. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
+        'For example, a player who loses every long range fight gains more from one coaching hour at {{p_spray}} than from three more hours of Ranked. A player who only wants to warm up gains more from Arcade and TDM at {{p_arcade}} per hour, where respawns keep the fights coming. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every PUBG coach before any order goes live. The nearest neighbours here are [Apex Legends teammates](/games/apex-legends) and [Fortnite teammates](/games/fortnite), both battle royales priced by the hour.',
       ],
     },
   ],
@@ -126,7 +132,7 @@ export const pubg: HubPageCopy = {
     items: [
       [
         'Is Duoly a free PUBG squad finder?',
-        'No. Duoly is a paid marketplace with reviewed players. Discord LFG channels and your friends list stay the free routes to a regular squad.',
+        'No: Duoly is a paid marketplace with reviewed players, so Discord LFG channels and your friends list stay the free routes to a regular squad.',
       ],
       [
         'How much does a PUBG teammate cost?',
@@ -134,24 +140,24 @@ export const pubg: HubPageCopy = {
       ],
       [
         'Why is PUBG booked by the hour?',
-        'Because a match ends whenever your squad is out or wins, so a per match price would not be fair to either side. An hour is the same for everybody.',
+        'A PUBG match ends whenever your squad is out or wins, so a per match price would suit neither side, and an hour prices the real session the same for everybody.',
       ],
       [
         'Does my teammate play on my account?',
-        'No. Your teammate plays on their own account in your squad, and you play on yours. Nobody asks for your login.',
+        'No: your teammate plays on their own account in your squad while you play on yours, and nobody from Duoly ever asks for your login.',
       ],
       [
         'Can I play first person or third person?',
-        'Both. Name your perspective in the order chat, and your teammate queues the same one with you.',
+        'Both work: name FPP or TPP in the order chat using Discord, and your teammate queues the same perspective with you for the whole booking.',
       ],
       [
         'Does a teammate booking fill my whole squad?',
-        'No. A duo adds one teammate, and the other seats come from your friends or the queue. Book a Squad Fill when you want several at once.',
+        'No: a duo adds one teammate and the other seats come from your friends or the queue, so book a Squad Fill at {{p_squad}} per hour when you want several at once.',
       ],
     ],
   },
   closing: {
     heading: 'Ready for your next drop?',
-    text: 'Duo Pro is the Ranked tier with a Master teammate from Duoly, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Arcade stays {{p_arcade}} per hour for everybody. Agree your drop on Discord before the plane leaves.',
+    text: 'Duo Pro is the Ranked tier with a Master teammate from Duoly, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five hours take {{pct5}} off and 10 hours take {{pct10}} off. Arcade stays {{p_arcade}} per hour for everybody, and Normal Duos costs {{p_duos}}. Squad Fill hires Master players for up to {{seats_squad}} seats at {{p_squad}} per hour when you want the whole squad in 2026. For example, pick your tier and perspective, then agree the drop in the order chat using Discord.',
   },
 };

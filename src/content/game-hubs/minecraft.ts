@@ -16,9 +16,10 @@ export const minecraft: HubPageCopy = {
   ],
   related: [
     'arc-raiders',
-    'rocket-league',
-    'ea-sports-fc-27',
     'world-of-warcraft',
+    'pokemon-unite',
+    'ea-sports-fc-27',
+    'rocket-league',
   ],
   format: {
     heading: 'What can you book for Minecraft on Duoly?',
@@ -116,7 +117,7 @@ export const minecraft: HubPageCopy = {
     {
       heading: 'Example evening: three PvP Duo Pro hours on Hypixel',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A Java player books 3 PvP Duo Pro hours on Hypixel. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one hour. Minecraft has no universal ranked queue, so no eligibility check stands between the pair and the lobby, only the rules of the server itself. The order chat opens straight after payment, and the first message names the server, the edition and the mode: Hypixel, Java, Bedwars doubles, losing most bed defences in the endgame.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. A Java player books 3 PvP Duo Pro hours on Hypixel. The total is {{p_duo2_x3}} with the {{pct3}} bundle discount, against {{p_duo2}} for one hour. Minecraft has no universal ranked queue, so nothing at checkout asks for a rank and the server sets its own rules. The order chat opens straight after payment, and the first message names the server, the edition and the mode: Hypixel, Java, Bedwars doubles, losing most bed defences in the endgame.',
         'From there the evening runs on a short plan. You agree the mode and a practice target, voice goes on, and your teammate adds you by Minecraft name. After each game you pick one adjustment, for example placing wool before the first rush instead of after, agreed using Discord. The same shape works for Minigames Night at {{p_mini}} per hour, and 5 hours take {{pct5}} off.',
       ],
     },
@@ -124,7 +125,7 @@ export const minecraft: HubPageCopy = {
       heading: 'When is Minecraft coaching the better booking?',
       paragraphs: [
         'Minecraft coaching is the better booking when the goal is a repeatable fix rather than company for the evening. PvP Coaching and Bedwars Coaching each cost {{p_pvp}} per hour, one on aim, combos, strafing, rod and bow play, the other on rush timing, bridging and bed defence. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
-        'First, name the fight you keep losing. For example, a player who loses every 1v1 in Duels gains more from one practice hour at {{p_pvp}} than from a fourth Bedwars hour, because a coach can name the habit and drill it. A player who only wants a calm evening gains more from Minigames Night at {{p_mini}} per hour in 2026. Minecraft has no separate coaching page on Duoly yet, so lessons are booked from the prices above, and screen share runs using Discord so the coach watches your real clicks.',
+        'First, name the fight you keep losing. For example, a player who loses every 1v1 in Duels gains more from one practice hour at {{p_pvp}} than from a fourth Bedwars hour, because a coach can name the habit and drill it. A player who only wants a calm evening gains more from Minigames Night at {{p_mini}} per hour in 2026. Minecraft has no separate coaching page on Duoly yet, so lessons are booked from the prices above, and screen share runs using Discord so the coach watches your real clicks. The nearest neighbours here are [ARC Raiders teammates](/games/arc-raiders) for a tenser evening and [Rocket League teammates](/games/rocket-league) for something quicker.',
       ],
     },
   ],

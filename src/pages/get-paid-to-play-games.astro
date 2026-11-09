@@ -7,7 +7,7 @@ import SeoHero from '../components/seo/SeoHero.astro';
 import Steps from '../components/seo/Steps.astro';
 import '../components/seo/seo.css';
 import { pageViewer } from '../site/viewer';
-import { serializeJsonLd, CONTENT_DATES } from '../site/seo';
+import { serializeJsonLd, CONTENT_DATES, bookingHref } from '../site/seo';
 import { faqSchema } from '../server/seo/offers';
 import {
   SHARE_PERCENT,
@@ -211,6 +211,24 @@ const path = '/get-paid-to-play-games';
         payments on Duoly, promise no rank, and report conduct problems through{' '}
         <a href="/contact">support</a>. A {share} share from Duoly arrives only
         after the order closes.
+      </p>
+      <p>
+        It helps to book once as a customer before taking orders, because the
+        order chat looks the same from both sides. For example, a{' '}
+        <a href={bookingHref('val', { service: 'duo2' })}>
+          Valorant Duo Pro game
+        </a>{' '}
+        or a{' '}
+        <a href={bookingHref('lol', { service: 'learn' })}>
+          League of Legends Play and Learn game
+        </a>{' '}
+        shows the checkout, the queue and the chat a teammate works in. The{' '}
+        <a href="/games/valorant">Valorant teammate hub</a>, the{' '}
+        <a href="/games/valorant/coaching">Valorant coaching page</a> and the{' '}
+        <a href="/games/league-of-legends">League of Legends hub</a> list the
+        services you would be accepting, and the{' '}
+        <a href="/developers/mcp">Duoly MCP developer guide</a> shows how an
+        assistant quotes those same services.
       </p>
     </Steps>
     <Faq

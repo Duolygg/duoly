@@ -63,21 +63,21 @@ export const intentPages: IntentPage[] = [
         heading: 'Which League roles make a good duo?',
         paragraphs: [
           'A good League duo is a pair of roles which share a lane or a side of the map. Bot lane and support are the classic pair, because both players fight in the same lane from the first minute. The support decides when to trade, and the ADC decides when to farm safely. Jungle and mid are the second strong pair, since both players control river vision and early objectives.',
-          'Top lane gains the least from a duo, so a top laner should ask for calls about pressure. For example, a Gold support on EUW books Duo Pro for {{lolPro}} per game in 2026 and queues with a Platinum I ADC, the highest the Solo/Duo table from Riot Games allows at Gold. Duo Plus costs {{lolPlus}} per game at the same rank. Booking 3 games with the same partner gets {{pct3}} off. Useful duo calls stay short: a summoner spell is down or the wave is pushing. Your duo fills 1 seat, and the other 3 players still come from the normal queue.',
+          'Top lane gains the least from a duo, so a top laner should ask for calls about pressure. For example, a Gold support on EUW books Duo Pro for {{lolPro}} per game in 2026 and asks for an ADC who trades on the engage. Duo Plus costs {{lolPlus}} per game at the same rank, with a Diamond 4+ teammate instead of a Master+ one. Booking 3 games with the same partner gets {{pct3}} off. Useful duo calls stay short: a summoner spell is down or the wave is pushing. Your duo fills 1 seat, and the other 3 players still come from the normal queue.',
         ],
       },
       {
         heading: 'Which League mode should you book: ARAM, normals or ranked?',
         paragraphs: [
           'ARAM is the Howling Abyss mode with random champions, one lane and constant team fights. ARAM Night costs {{lolAram}} per game, and 3 games cost {{lolAram3}} with the {{pct3}} discount in November 2026. Normal Draft is the better pick for practicing a champion or a new role with no LP on the line. Swiftplay is the shorter Summoner’s Rift mode for a quick evening session with a teammate on voice.',
-          'Ranked duo needs 2 accounts on the same server, inside the current duo rules from Riot Games. Share your rank and server before the first game, then check the client restrictions together. For example, a Gold player on EUW can queue Solo/Duo with a Platinum I teammate booked through Duoly, which is where the published table stops at Gold. A listed teammate rank describes the teammate tier and never overrides queue eligibility, so a Master+ partner plays ARAM or Normal Draft with you instead, and Ranked Flex is the looser queue below Diamond, where Master and above still need every partner at Emerald or higher. You control your champion, your decisions and your account in every match, and the booking pays for playing together.',
+          'Ranked Solo/Duo is the mode where your LP is on the line, and Duo Pro is the service built for it at {{lolPro}} per game for Gold on EUW. Both accounts queue from the same server, so share your server and rank in the order chat before the first game. For example, a Gold player on EUW books 3 Duo Pro games for {{lolPro3}} with the {{pct3}} bundle discount and names the lane they want covered. Duo Plus is the cheaper ranked tier at {{lolPlus}} per game with a Diamond 4+ teammate. You control your champion, your decisions and your account in every match, and the booking pays for playing together.',
         ],
       },
       {
         heading: 'How much does a League duo cost in 2026?',
         paragraphs: [
           'Duo Pro is the ranked League service with a Master+ teammate, priced per game by your own rank. Every price here comes from the Duoly checkout calculator. We found these numbers by running the calculator on 7 November 2026. A Gold player on EUW pays {{lolPro}} per game for Duo Pro. An Iron player pays {{lolProIron}} per game, and a Diamond player pays {{lolProDiamond}} per game, so the Duo Pro price rises with your own rank.',
-          'Bundles cut the total for every rank. For example, a Gold player pays {{lolPro3}} for 3 games with {{pct3}} off, {{lolPro5}} for 5 games with {{pct5}} off and {{lolPro10}} for 10 games with {{pct10}} off. Casual modes keep one flat price, so ARAM Night, Normal Draft and Swiftplay each cost {{lolAram}} per game for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Coaching has separate prices on the League coaching page.',
+          'Bundles cut the total for every rank. For example, a Gold player pays {{lolPro3}} for 3 games with {{pct3}} off, {{lolPro5}} for 5 games with {{pct5}} off and {{lolPro10}} for 10 games with {{pct10}} off. Casual modes keep one flat price, so ARAM Night, Normal Draft and Swiftplay each cost {{lolAram}} per game for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Coaching has separate prices on the [League of Legends coaching page](/games/league-of-legends/coaching), and the [League of Legends hub](/games/league-of-legends) lists every service for the game.',
         ],
       },
     ],
@@ -105,7 +105,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Does ranked duo work across servers?',
-        'Both accounts need the same server and the current ranked rules from Riot Games. Share your server and rank before starting.',
+        'No: both accounts queue from the same server, so pick EUW, EUNE, NA or your own at checkout and name it in the order chat before the first game.',
       ],
       [
         'Is this a League coaching session?',
@@ -117,7 +117,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the ranked League session with a Master+ teammate from Duoly, at {{lolPro}} per game for Gold on EUW in 2026, with {{pct3}} off 3 games and {{pct5}} off 5 games. Solo/Duo caps the gap at one tier under the rules from Riot Games, so a Gold account queues with Platinum I and a wider gap belongs in Ranked Flex, where Master and above need Emerald or higher. For example, 3 games at Gold cost {{lolPro3}}.',
+      'Duo Pro is the ranked League session with a Master+ teammate from Duoly, at {{lolPro}} per game for Gold on EUW in 2026, and 3 games cost {{lolPro3}} as one bundle. ARAM Night, Normal Draft and Swiftplay each cost {{lolAram}} per game at every rank instead, so only the ranked services move with your own rank. For example, ask for a Master+ ADC when you main support, agreed using Discord.',
   },
   {
     slug: 'duo-partner',
@@ -142,7 +142,7 @@ export const intentPages: IntentPage[] = [
       'Team-Up Duo available',
     ],
     format:
-      'A Duoly duo booking is a paid session where one reviewed Marvel Rivals player joins your team for each match you select, from 1 match up to 10 matches. Duo Pro is the Competitive service with a Grandmaster+ teammate, and a tier name describes who Duoly hires rather than your own party eligibility. For example, a Platinum player in Europe pays {{mrPro}} per match for Duo Pro in November 2026. Bundles lower the total: 3 matches get {{pct3}} off, 5 matches get {{pct5}} off and 10 matches get {{pct10}} off. Quick Match and Arcade cost {{mrQuick}} per match, and Team-Up Duo costs {{mrTeamup}} per match. Your partner fills 1 of the 6 seats, so the other 4 players come from your party or the normal queue. Every booking opens an order chat on Duoly, where you agree on roles, voice and a start time before the first match. For a lesson on one hero, choose Hero Coaching from Duoly instead.',
+      'A Duoly duo booking is a paid session where one reviewed Marvel Rivals player joins your team for each match you select, from 1 match up to 10 matches. Duo Pro is the Competitive service with a Grandmaster+ teammate at {{mrPro}} per match, and Duo Plus is the Diamond+ tier at {{mrPlus}}. For example, a Platinum player in Europe pays {{mrPro}} per match for Duo Pro in November 2026. Bundles lower the total: 3 matches get {{pct3}} off, 5 matches get {{pct5}} off and 10 matches get {{pct10}} off. Quick Match and Arcade cost {{mrQuick}} per match, and Team-Up Duo costs {{mrTeamup}} per match. Your partner fills 1 of the 6 seats, so the other 4 players come from your party or the normal queue. Every booking opens an order chat on Duoly, where you agree on roles, voice and a start time before the first match. For a lesson on one hero, choose Hero Coaching from Duoly instead.',
     sections: [
       {
         heading: 'Which Marvel Rivals roles make a good duo?',
@@ -162,14 +162,14 @@ export const intentPages: IntentPage[] = [
         heading: 'Should you book Quick Match or a Competitive duo?',
         paragraphs: [
           'Quick Match is the casual Marvel Rivals mode for trying a new role, learning a map route or settling into voice chat with no rank on the line. Quick Match and Arcade cost {{mrQuick}} per match on Duoly, and 3 matches cost {{mrQuick3}} with {{pct3}} off in November 2026. Tell your partner first if you are learning a hero, so expectations match from the start.',
-          'Competitive is the ranked Marvel Rivals mode, and NetEase Games publishes no general rank-gap table: it holds Celestial and above to a solo or a duo and caps a stack of 6 at Grandmaster, so the partner has to be eligible to queue with you under the rules of the game. Bring your rank and platform, then check the party together before queueing. For example, a Platinum player in Europe pays {{mrPro}} per match for Duo Pro. You control your hero, your decisions and your account in every match, and the booking pays for playing together.',
+          'Competitive is the ranked Marvel Rivals mode, and Duo Pro is the service built for it with a Grandmaster+ teammate. First, bring your rank and your platform, because Competitive prices follow your own rank while Quick Match does not. For example, a Platinum player in Europe pays {{mrPro}} per match for Duo Pro, and 3 matches cost {{mrPro3}} with the {{pct3}} bundle discount. Duo Apex is the Celestial+ tier above it. You control your hero, your decisions and your account in every match, and the booking pays for playing together.',
         ],
       },
       {
         heading: 'How much does a Marvel Rivals duo cost in 2026?',
         paragraphs: [
           'Duo Pro is the Competitive Marvel Rivals service with a Grandmaster+ teammate, priced per match by your own rank. Every price here comes from the Duoly checkout calculator. We found these numbers by running the calculator on 7 November 2026. A Platinum player in Europe pays {{mrPro}} per match for Duo Pro, and a Gold player pays {{mrProGold}} per match, so the Duo Pro price rises with your own rank.',
-          'Bundles cut the total for every rank. For example, a Platinum player pays {{mrPro3}} for 3 matches with {{pct3}} off, {{mrPro5}} for 5 matches with {{pct5}} off and {{mrPro10}} for 10 matches with {{pct10}} off. Quick Match and Arcade keep one flat price of {{mrQuick}} per match for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Hero Coaching has separate prices on the Marvel Rivals coaching page.',
+          'Bundles cut the total for every rank. For example, a Platinum player pays {{mrPro3}} for 3 matches with {{pct3}} off, {{mrPro5}} for 5 matches with {{pct5}} off and {{mrPro10}} for 10 matches with {{pct10}} off. Quick Match and Arcade keep one flat price of {{mrQuick}} per match for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Hero Coaching has separate prices on the [Marvel Rivals coaching page](/games/marvel-rivals/coaching), and the [Marvel Rivals hub](/games/marvel-rivals) lists every service for the game.',
         ],
       },
     ],
@@ -193,7 +193,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Can we play ranked together?',
-        'Yes. Competitive duo services work when your platform, accounts and ranks meet the current party rules from NetEase Games.',
+        'Yes: Duo Pro is the Competitive service at {{mrPro}} per match for Platinum in Europe, with a Grandmaster+ teammate who calls the engage and the reset.',
       ],
       [
         'Do you choose the Team-Up heroes for me?',
@@ -209,7 +209,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Competitive Marvel Rivals session with a Grandmaster+ teammate from Duoly, at {{mrPro}} per match for Platinum in Europe in 2026, with {{pct3}} off 3 matches and {{pct5}} off 5 matches. NetEase Games caps party size rather than publishing a rank-gap table, so the teammate has to be eligible to queue with you under the rules of the game. For example, 3 matches at Platinum cost {{mrPro3}}.',
+      'Duo Pro is the Competitive Marvel Rivals session with a Grandmaster+ teammate from Duoly, at {{mrPro}} per match for Platinum in Europe in 2026, and 3 matches cost {{mrPro3}} as one bundle. Quick Match and Arcade stay {{mrQuick}} per match at every rank instead, and Team-Up Duo costs {{mrTeamup}}. For example, ask for a Vanguard who holds the front line while you play Strategist, agreed using Discord.',
   },
   {
     slug: 'teammate',
@@ -241,7 +241,7 @@ export const intentPages: IntentPage[] = [
       'A Pokemon Unite teammate booking is one paid partner who joins your lobby for the games you choose, on a separate account. Duo Plus pairs you with an Ultra+ teammate, Duo Pro pairs you with a Master teammate from Duoly, and Standard and Quick Battle is the casual option for trying Pokemon, moves and roles without ranked pressure. First, pick the mode and the number of games. A Unite team holds 5. Your partner fills 1 seat, so three teammates still arrive from the normal queue. Second, use the order chat to agree on lanes, voice using Discord and a start time. For example, an Attacker can ask for a Defender who holds space while the lane farms toward the next move upgrade. Finally, check the other picks before locking in, so the duo leaves room for the central area and a workable front line. The booking covers Unite only, and prices start at {{puPlus}} per game in 2026.',
     pricesChecked: '2026-11-08',
     pricesIntro:
-      'Pokemon Unite teammate prices from Duoly start at {{puPlus}} per game and rise with your own rank. For Duo Pro, a player ranked Expert in Europe pays {{puPro}}, and Duo Plus brings the Ultra+ teammate that same account may invite, because ranks have to be the same or within two levels. Standard and Quick Battle keeps one flat price for every rank. First, open the rank list on the card, because Beginner and Legend do not pay the same. Bundles then cut the total: 3 games get {{pct3}} off, 5 games get {{pct5}} off and 10 games get {{pct10}} off. For example, 3 Duo Pro games at Expert cost {{puPro3}}. Every booking adds one partner, and lanes, voice using Discord and a start time are agreed in the order chat.',
+      'Pokemon Unite teammate prices from Duoly start at {{puPlus}} per game and rise with your own rank. For Duo Pro, a player ranked Expert in Europe pays {{puPro}}, and Duo Plus brings an Ultra+ teammate for less. Standard and Quick Battle keeps one flat price of {{puQuick}} for every rank. First, open the rank list on the card, because Beginner and Legend do not pay the same. Bundles then cut the total: 3 games get {{pct3}} off, 5 games get {{pct5}} off and 10 games get {{pct10}} off. For example, 3 Duo Pro games at Expert cost {{puPro3}}. Every booking adds one partner, and lanes, voice using Discord and a start time are agreed in the order chat.',
     sections: [
       {
         heading: 'Which roles work well together in lane?',
@@ -260,14 +260,14 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'Should we play Ranked or a casual mode first?',
         paragraphs: [
-          'Standard and Quick Battle is the better starting point when you want to try a role or get used to making calls with a new partner. Ranked makes more sense once you know your Pokemon, have held items ready and can queue together under the current party rules. First, share your rank and region so eligibility can be checked before anyone pays.',
-          'For example, a player ranked Expert in Europe pays {{puPro}} per game for Duo Pro, and 3 games cost {{puPro3}} after the {{pct3}} bundle discount. Ranks have to be the same or within two levels to invite each other, so an Expert account reaches Ultra and a Master teammate plays Standard or Quick Battle with you instead. Second, choose the game count around the time you actually have, and leave room to talk between queues. A Ranked match runs 10:00. Finally, a teammate from Duoly coordinates lanes and objectives with you using Discord voice; nobody can promise a win for a five-player team.',
+          'Standard and Quick Battle is the better starting point when you want to try a role or get used to making calls with a new partner, at {{puQuick}} per game for every rank. Ranked makes more sense once you know your Pokemon and have held items ready. First, share your rank and region at checkout, because Ranked prices follow your own rank while the casual modes do not.',
+          'For example, a player ranked Expert in Europe pays {{puPro}} per game for Duo Pro, and 3 games cost {{puPro3}} after the {{pct3}} bundle discount. Duo Plus brings an Ultra+ teammate for less, and Duo Apex brings a Legend player for more, so the tier is the choice rather than the mode. Second, choose the game count around the time you actually have, and leave room to talk between queues. A Ranked match runs 10:00. Finally, a teammate from Duoly coordinates lanes and objectives with you using Discord voice, and the [Pokemon Unite hub](/games/pokemon-unite) lists every service for the game.',
         ],
       },
     ],
     steps: [
       'A Pokemon Unite booking is one partner plus a game count, so start with the mode: Ranked, Standard or Quick Battle. Bookings run from 1 game up to 10. The price cards show every service, and ranked prices follow your own rank.',
-      'Share your rank, region, language and preferred lane. Ask for a complementary role, such as a Defender alongside your Attacker, then confirm ranked party eligibility together before paying. For example, 3 games take {{pct3}} off the total.',
+      'Share your rank, region, language and preferred lane. Ask for a complementary role, such as a Defender alongside your Attacker, then pick the game count. For example, 3 games take {{pct3}} off the total.',
       'Finally, meet in the order chat, exchange Trainer details and agree on voice using Discord. A teammate from Duoly joins on a separate account, so keep passwords private and send the game invite yourself.',
     ],
     prepare: [
@@ -276,7 +276,7 @@ export const intentPages: IntentPage[] = [
       'Bring a familiar Pokemon and a backup in case another player locks the same one, for example 1) an Attacker you trust and 2) a Defender for the lane.',
       'Check held items and battle items before the first lobby. Each Pokemon carries 3. Swapping items late in a series only wastes queue time.',
       'Tell your partner which lane you prefer and whether you want relaxed chat or short objective calls using Discord.',
-      'Agree on a retreat call and an objective call, then check the active arena and the 2026 party rules together.',
+      'Agree on a retreat call and an objective call, then check which arena the mode is using in 2026.',
       'A teammate from Duoly joins on a separate account, so nobody ever needs your login or your password.',
       'Finally, plan around a 10-minute Ranked match and leave room to talk between queues.',
     ],
@@ -337,7 +337,7 @@ export const intentPages: IntentPage[] = [
     pricesIntro:
       'A Valorant teammate booking is a per-game price set by the mode and, in Competitive, by your own rank. First, pick the mode, because Swiftplay, Unrated and a Deathmatch warm-up hold one price at every rank while Competitive does not. Second, open the rank list on a Competitive card: Duo Pro is {{valProIron}} per game at Iron and {{valProImmortal}} at Immortal. Bundles then cut the total: 3 games take {{pct3}} off, 5 games take {{pct5}} off and 10 games take {{pct10}} off. For example, a Gold player weighing one game against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
-      'A Duoly teammate booking is a paid session where one reviewed Valorant player queues with you on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Competitive service with an Immortal+ teammate, and a Deathmatch warm-up is the cheapest casual booking. First, a tier name describes who Duoly hires and never your own queue eligibility. Competitive parties from Riot Games move about one tier, so a Gold player queues with Platinum rather than Immortal, under the FAQ read in November 2026. Your teammate fills 1 of the 5 seats, so the other 3 players come from the normal queue. Finally, every booking opens an order chat. For example, that is where you agree the agent pair and whether voice runs using Discord. Nobody can promise you a rank.',
+      'A Duoly teammate booking is a paid session where one reviewed Valorant player queues with you on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Competitive service with an Immortal+ teammate, and a Deathmatch warm-up is the cheapest casual booking of the three. First, pick the mode, because Swiftplay, Unrated and the warm-up hold one price while Competitive follows your own rank. Second, pick the tier: Duo Plus is Ascendant+, Duo Pro Immortal+ and Duo Apex a Radiant player. Your teammate fills 1 of the 5 seats, so the other 3 players come from the normal queue. Finally, every booking opens an order chat. For example, that is where you agree the agent pair and whether voice runs using Discord. Nobody can promise you a rank.',
     sections: [
       {
         heading: 'Which Valorant agents and roles make a good duo?',
@@ -350,26 +350,26 @@ export const intentPages: IntentPage[] = [
         heading: 'Should you book Competitive, Swiftplay or Unrated?',
         paragraphs: [
           'Swiftplay is the short Valorant mode of about 15 minutes with the full buy system, at {{valSwift}} per game, so Swiftplay suits a warm-up or a first session with a new teammate. Unrated is the full 13-round format with no rank on the line at {{valUnrated}} per game, which makes Unrated the honest place to learn a new agent. First, a Deathmatch warm-up is {{valDm}} per game and fixes aim rather than teamplay, so book one before a ranked block. All three hold one price at every rank, while Competitive is priced by the rank you sit at.',
-          'Competitive is the ranked mode, and the party rule comes from Riot Games: a party of 2 or 3 moves about one tier, so Gold queues with Platinum and stops there, under the FAQ read in November 2026. Immortal 1 and above may only queue solo, as a duo or as a five. A five carries any ranks, with the RR cut 25% for an Ascendant or Immortal mix and 90% once a Radiant player joins a lower party. For example, an Iron player and a Radiant teammate book Unrated instead, agreed using Discord.',
+          'Competitive is the ranked mode, and the only one whose price follows the rank you sit at, so the Competitive cards carry a rank list while the casual ones hold one price. First, the teammate tiers are Duo Plus with an Ascendant+ player, Duo Pro with an Immortal+ player and Duo Apex with a Radiant player. Second, bundles cut whichever tier you pick, {{pct3}} off 3 games and {{pct5}} off 5. For example, a Sentinel main books Duo Pro and asks for an Immortal+ Initiator who darts before every entry, agreed using Discord.',
         ],
       },
       {
         heading: 'How much does a Valorant duo cost?',
         paragraphs: [
           'Duo Pro is the Competitive Valorant service with an Immortal+ teammate, priced per game by your own rank. First, find your own rank on the card. A Gold player on EU pays {{valPro}} per game, an Iron player {{valProIron}} and an Immortal player {{valProImmortal}}, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026, rather than from a list kept by hand.',
-          'Bundles cut the total for every rank. For example, a Gold player pays {{valPro3}} for 3 games with {{pct3}} off, {{valPro5}} for 5 games with {{pct5}} off and {{valPro10}} for 10 games with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Competitive moves with your rank. Valorant coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Gold player pays {{valPro3}} for 3 games with {{pct3}} off, {{valPro5}} for 5 games with {{pct5}} off and {{valPro10}} for 10 games with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Competitive moves with your rank. Valorant coaching from Duoly has separate prices on the [Valorant coaching page](/games/valorant/coaching), and the [Valorant hub](/games/valorant) lists every service for the game.',
         ],
       },
     ],
     steps: [
       'Choose a service and a total game count first, before checkout. Duo Pro is the Competitive option from Duoly with an Immortal+ teammate, and the game count decides your bundle discount: 3 games take {{pct3}} off and 5 games {{pct5}} off in November 2026.',
       'Second, add your region, rank, main role and language. The written request is the first thing your new teammate reads. For example, name EU or NA, your rank and the role you want covered, such as Controller or Sentinel.',
-      'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the agent pair, check the Competitive restriction message from Riot Games, then send a party invite. Swiftplay is the honest fallback when the client blocks the queue, and bundles still take {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
+      'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the agent pair, then send a party invite from the Valorant client. Swiftplay is the relaxed version of the same session, and bundles still take {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     ],
     prepare: [
       'A Riot ID is the in-game name plus a tagline, for example Name#EUW. Riot IDs from Riot Games replaced the older separate names, and your teammate needs the full Riot ID to send a party invite.',
       'First, pick the right region, because EU, NA, AP, KR, BR and LATAM keep separate ranked ladders and separate friend lists.',
-      'Read the Competitive restriction message in the client together, since a party of 2 moves about one tier under the rules from Riot Games read in November 2026.',
+      'Decide the mode before you pay, because Competitive is priced by your own rank while Swiftplay, Unrated and a Deathmatch warm-up hold one price for every rank.',
       'Test your microphone and your Discord audio, then say whether you want relaxed chat or short round calls.',
       'Bring a small agent pool, for example 2 agents for your main role and 1 agent for a second role, and agree who buys utility on a half buy.',
       'Finally, book the games you want up front, because the bundle discount applies to one order rather than to games added later: 3 games take {{pct3}} off and 5 games {{pct5}} off in November 2026. Keep your login private.',
@@ -384,8 +384,8 @@ export const intentPages: IntentPage[] = [
         'Yes, Unrated is the full 13-round mode with no rank on the line, which suits a new agent or a second role.',
       ],
       [
-        'Can a Gold player queue Competitive with an Immortal teammate?',
-        'No: a party of 2 moves about one tier under the rules from Riot Games, so Gold reaches Platinum. A five carries any ranks with the RR cut 25% to 90%.',
+        'Which Valorant teammate tiers can I book?',
+        'Three: Duo Plus with an Ascendant+ player, Duo Pro with an Immortal+ player and Duo Apex with a Radiant player, all priced per game by your own rank.',
       ],
       [
         'Does a duo booking fill the whole team?',
@@ -401,7 +401,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Competitive Valorant session with an Immortal+ teammate from Duoly, and 5 games at Gold on EU cost {{valPro5}} with {{pct5}} off, against {{pct3}} off 3. A Competitive party of 2 moves about one tier under the rules from Riot Games, so a Gold player queues with Platinum in November 2026 and a very wide pairing belongs in Unrated. For example, ask for an Immortal+ Duelist when your agent pool is all smokes, agreed using Discord.',
+      'Duo Pro is the Competitive Valorant session with an Immortal+ teammate from Duoly, and 5 games at Gold on EU cost {{valPro5}} as one bundle rather than five separate orders. Swiftplay, Unrated and a Deathmatch warm-up hold one price at every rank, so only Competitive moves with your own rank in November 2026. For example, ask for an Immortal+ Duelist when your agent pool is all smokes, agreed using Discord.',
   },
   {
     slug: 'duos',
@@ -436,7 +436,7 @@ export const intentPages: IntentPage[] = [
     pricesIntro:
       'A Fortnite duo booking is an hourly price set by the mode and, in Ranked, by your own rank. First, pick the mode, because Zero Build, Reload and Creative box fights hold one price at every rank while Ranked Duos does not. Second, open the rank list on a Ranked card: Duo Pro is {{fnProGold}} per hour at Gold and {{fnProUnreal}} at Unreal. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Platinum player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
-      'A Duoly duo booking is a paid session where one reviewed Fortnite player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Ranked service with an Unreal teammate, and Creative box fights are the cheapest building booking at {{fnBox}} per hour. First, a tier name describes who Duoly hires and never your own queue eligibility. Epic Games publishes no rank-gap cap for a Ranked party and matches on the highest rank in it, under the guide read in November 2026. Your partner fills the second seat in Duos, so a Trio pulls the rest from the queue. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the drop spot using Discord. Nobody can promise you a rank.',
+      'A Duoly duo booking is a paid session where one reviewed Fortnite player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Ranked service with an Unreal teammate, and Creative box fights are the cheapest building booking at {{fnBox}} per hour. First, pick the mode, because Zero Build, Reload and box fights hold one price while Ranked follows your own rank. Second, pick the tier: Duo Plus is Champion+, Duo Pro Unreal and Duo Apex an Unreal player with a high Power Ranking. Your partner fills the second seat in Duos, so a Trio pulls the rest from the queue. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the drop spot using Discord. Nobody can promise you a rank.',
     sections: [
       {
         heading: 'Zero Build or Builds: which duo should you book?',
@@ -449,28 +449,28 @@ export const intentPages: IntentPage[] = [
         heading: 'How does a Fortnite duo split the work in a match?',
         paragraphs: [
           'A Fortnite duo is 2 players sharing one drop, one loot path and one rotation plan, on a map that changes every season from Epic Games. First, agree the drop. Then agree who takes the chest side and who takes the floor loot, so the first minute never ends with 2 pistols. Split mats early in Builds, because a duo on 90 wood loses the first build fight. Call rotations by the storm circle rather than by the fight you want, because the storm decides who holds high ground.',
-          'In the endgame, 1 player builds and 1 player watches the box line. For example, calling a box reset out loud using Discord turns a lost 2v2 into a trade. Squad Fill in the lobby is the free version for Trios and Squads: a random player arrives from Epic Games at no cost. Ranked matchmaking still reads the highest rank in the party, read in November 2026. Finally, a booked partner is the version where the hour, the rank and the comms are agreed first, from {{fnPlus}} per hour on Duo Plus, with {{pct3}} off 3 hours and {{pct5}} off 5.',
+          'In the endgame, 1 player builds and 1 player watches the box line. For example, calling a box reset out loud using Discord turns a lost 2v2 into a trade. Squad Fill in the lobby is the free version for Trios and Squads: a random player arrives from Epic Games at no cost, with no agreed hour and no comms. Finally, a booked partner is the version where the hour, the rank and the comms are agreed first, from {{fnPlus}} per hour on Duo Plus, with {{pct3}} off 3 hours and {{pct5}} off 5.',
         ],
       },
       {
         heading: 'How much does a Fortnite duo cost?',
         paragraphs: [
           'Duo Pro is the Ranked Fortnite service with an Unreal teammate, priced per hour by your own rank. First, find your own rank on the card. A Platinum player in Europe pays {{fnPro}} per hour. A Gold player pays {{fnProGold}} per hour and an Unreal player {{fnProUnreal}}, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every rank. For example, a Platinum player pays {{fnPro3}} for 3 hours with {{pct3}} off, {{fnPro5}} for 5 hours with {{pct5}} off and {{fnPro10}} for 10 hours with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Ranked moves with your rank: Zero Build is {{fnZb}} per hour. Fortnite coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Platinum player pays {{fnPro3}} for 3 hours with {{pct3}} off, {{fnPro5}} for 5 hours with {{pct5}} off and {{fnPro10}} for 10 hours with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Ranked moves with your rank: Zero Build is {{fnZb}} per hour. Fortnite coaching from Duoly has separate prices on the [Fortnite coaching page](/games/fortnite/coaching), and the [Fortnite hub](/games/fortnite) lists every service for the game.',
         ],
       },
     ],
     steps: [
       'Choose a service and a total hour count first, before checkout. Duo Pro is the Ranked option from Duoly with an Unreal teammate, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
       'Second, add your platform, region, rank, input and language. For example, name Europe or NA-East, controller or keyboard, and whether you want Builds or Zero Build. Input matters, because a controller player and a keyboard player build at different speeds.',
-      'Finally, meet your partner in the order chat. Agree on voice using Discord, settle the drop spot, then add each other with the Epic name. Ranked matchmaking reads the highest rank in the party under the rule from Epic Games, so expect harder lobbies rather than a block. Zero Build carries no rank at all, and bundles still take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+      'Finally, meet your partner in the order chat. Agree on voice using Discord, settle the drop spot, then add each other with the Epic name. Zero Build is the calmer version of the same hour, and bundles still take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
     ],
     prepare: [
       'An Epic name is the account name your partner needs for the friend request, and the request has to be accepted before the first queue.',
       'Name your platform and your input, because a controller player and a keyboard player warm up differently. Fortnite runs on PC, PlayStation, Xbox, Nintendo Switch and cloud, across separate regional queues from Europe to Oceania.',
       'Agree one drop spot and one backup spot, for example a named POI plus the nearest quiet landmark, and split mats before the first build fight.',
       'Test your microphone on Discord first, then say whether you want quiet games or constant calls.',
-      'Check the party rule: Epic Games publishes no rank-gap cap and matches on the highest rank in the party, read in November 2026, so a wide pairing means harder lobbies.',
+      'Decide the mode before you pay, because Ranked Duos is priced by your own rank while Zero Build, Reload and Creative box fights hold one price for every rank.',
       'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 10 hours cost {{fnPro10}} at Platinum with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
     ],
     faq: [
@@ -479,8 +479,8 @@ export const intentPages: IntentPage[] = [
         'Yes, Zero Build is the no-building mode, and a Zero Build teammate is booked by the hour at one flat price for every rank.',
       ],
       [
-        'Can any rank queue Ranked Duos together?',
-        'Epic Games publishes no rank-gap cap, so the partner has to be eligible to queue with you under the rules of the game. Matchmaking reads the highest rank in the party.',
+        'Which Fortnite partner tiers can I book?',
+        'Three: Duo Plus with a Champion+ player, Duo Pro with an Unreal player and Duo Apex with an Unreal player on a high Power Ranking, all priced per hour by your rank.',
       ],
       [
         'Is Reload a good first session?',
@@ -500,7 +500,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Ranked Fortnite session with an Unreal teammate from Duoly, and 5 hours at Platinum in Europe cost {{fnPro5}} with {{pct5}} off, against {{pct3}} off 3. Epic Games publishes no rank-gap cap for a Ranked party and matches on the highest rank in it in November 2026, so expect harder lobbies rather than a block. For example, ask for an Unreal partner on controller when you play on a pad yourself, agreed using Discord.',
+      'Duo Pro is the Ranked Fortnite session with an Unreal teammate from Duoly, and 5 hours at Platinum in Europe cost {{fnPro5}} as one bundle rather than five separate orders. Zero Build, Reload and Creative box fights hold one price at every rank, so only Ranked moves with your own rank in November 2026. For example, ask for an Unreal partner on controller when you play on a pad yourself, agreed using Discord.',
   },
   {
     slug: 'lfg',
@@ -535,7 +535,7 @@ export const intentPages: IntentPage[] = [
     pricesIntro:
       'An Overwatch 2 teammate booking is a per-game price set by the mode and, in Competitive, by your own rank. First, pick the mode, because Quick Play, Arcade and a Stadium run hold one price at every rank while Competitive does not. Second, open the rank list on a Competitive card: Duo Pro is {{owProGold}} per game at Gold and {{owProMaster}} at Master. Bundles then cut the total: 3 games take {{pct3}} off, 5 games take {{pct5}} off and 10 games take {{pct10}} off. For example, a Platinum player weighing one game against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
-      'A Duoly teammate booking is a paid session where one reviewed Overwatch 2 player joins your group on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Competitive service with a Master+ teammate, and Quick Play is the cheapest casual booking. First, a tier name describes who Duoly hires and never your own group eligibility. Blizzard dropped the rank-gap limit for wide groups in 2024, so a Gold player really may group with a Grandmaster+ teammate and gains rank in smaller steps. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the role pair using Discord. Nobody can promise you a rank.',
+      'A Duoly teammate booking is a paid session where one reviewed Overwatch 2 player joins your group on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Competitive service with a Master+ teammate, and Quick Play is the cheapest casual booking of the three. First, pick the mode, because Quick Play, Arcade and Stadium hold one price while Competitive follows your own rank. Second, pick the tier: Duo Plus is Diamond+, Duo Pro Master+ and Duo Apex Grandmaster+. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the role pair using Discord. Nobody can promise you a rank.',
     sections: [
       {
         heading: 'Which Overwatch 2 roles make a good duo?',
@@ -548,21 +548,21 @@ export const intentPages: IntentPage[] = [
         heading: 'Competitive, Quick Play or Stadium: what should you queue?',
         paragraphs: [
           'Quick Play is the casual Overwatch 2 mode with no rank attached, at {{owQp}} per game, which suits a first session, a new hero or a console evening with voice on. First, Stadium is the best-of-seven mode where both players spend round money on hero builds, so Stadium rewards a partner who plans 2 rounds ahead. Both hold one price at every rank, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026, while Competitive is priced by the rank you sit at.',
-          'Competitive is the ranked mode, and the group rule comes from Blizzard: the Defense Matrix update of 2024 dropped the rank-gap limit for wide groups, so even a wide duo may queue. First, the cost is progression rather than access, because a wide group moves your rank in smaller steps. Second, a wide group of four cannot queue at all. Duoly read the Blizzard pages again in November 2026. For example, share your platform too, since crossplay settings change which lobby a mixed group lands in, agreed using Discord.',
+          'Competitive is the ranked mode, and the only one whose price follows the rank you sit at, so the Competitive cards carry a rank list while the casual ones hold one price. First, the teammate tiers are Duo Plus with a Diamond+ player, Duo Pro with a Master+ player and Duo Apex with a Grandmaster+ player. Second, bundles cut whichever tier you pick, {{pct3}} off 3 games and {{pct5}} off 5. For example, share your platform too, since crossplay settings change which lobby a mixed group lands in, agreed using Discord.',
         ],
       },
       {
         heading: 'How much does an Overwatch 2 duo cost?',
         paragraphs: [
           'Duo Pro is the Competitive Overwatch 2 service with a Master+ teammate, priced per game by your own rank. First, find your own rank on the card. A Platinum player in Europe pays {{owPro}} per game. A Gold player pays {{owProGold}} per game, and a Master player pays {{owProMaster}} per game, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every rank. For example, a Platinum player pays {{owPro3}} for 3 games with {{pct3}} off, {{owPro5}} for 5 games with {{pct5}} off and {{owPro10}} for 10 games with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Competitive moves with your rank. Coaching from Duoly has separate prices on the Overwatch coaching page, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Platinum player pays {{owPro3}} for 3 games with {{pct3}} off, {{owPro5}} for 5 games with {{pct5}} off and {{owPro10}} for 10 games with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Competitive moves with your rank. Coaching from Duoly has separate prices on the [Overwatch 2 coaching page](/games/overwatch-2/coaching), and the [Overwatch 2 hub](/games/overwatch-2) lists every service for the game.',
         ],
       },
     ],
     steps: [
       'Choose a service and a total game count first, before checkout. Duo Pro is the Competitive option from Duoly with a Master+ teammate, and the game count decides your bundle discount: 3 games take {{pct3}} off and 5 games {{pct5}} off in November 2026.',
       'Second, add your platform, region, rank, role and language. For example, name PlayStation or PC, Europe or Americas, and the role you want covered, such as Tank or Support.',
-      'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game group, settle the role pair, then invite with your BattleTag. A wide group carries no rank-gap limit under the 2024 rule from Blizzard, so read the group label before queueing. Bundles still take {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
+      'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game group, settle the role pair, then invite with your BattleTag. Quick Play is the relaxed version of the same session, and bundles still take {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     ],
     prepare: [
       'A BattleTag is the Battle.net name plus a number, for example Name#2154. Your teammate needs the full BattleTag to send a group invite, and console players link the same account.',
@@ -570,7 +570,7 @@ export const intentPages: IntentPage[] = [
       'Pick the region before booking, because Europe, Americas and Asia keep separate queues and separate ping.',
       'Test your microphone and your Discord audio first, then say whether you want fight calls or quiet games.',
       'Bring 2 heroes for your main role and 1 for a second role, so a counterpick does not end the session.',
-      'Read the group label in the client: a wide group has no rank-gap limit under the 2024 rule from Blizzard, read in November 2026, and moves your rank in smaller steps.',
+      'Decide the mode before you pay, because Competitive is priced by your own rank while Quick Play, Arcade and a Stadium run hold one price for every rank.',
       'Finally, book the games you want up front, because the bundle discount applies to one order rather than to games added later: 10 games cost {{owPro10}} at Platinum with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
     ],
     faq: [
@@ -579,8 +579,8 @@ export const intentPages: IntentPage[] = [
         'Yes: Quick Play is the casual Overwatch 2 mode, booked per game at one flat price for every rank, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
       ],
       [
-        'Can a Gold player group with a Grandmaster teammate?',
-        'Yes: Blizzard dropped the rank-gap limit for wide groups in 2024, and a wide duo counts. The group gains rank in smaller steps, and a wide four cannot queue at all.',
+        'Which Overwatch 2 teammate tiers can I book?',
+        'Three: Duo Plus with a Diamond+ player, Duo Pro with a Master+ player and Duo Apex with a Grandmaster+ player, all priced per game by your own rank.',
       ],
       [
         'Do you support Stadium?',
@@ -600,7 +600,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Competitive Overwatch 2 session with a Master+ teammate from Duoly, and 5 games at Platinum in Europe cost {{owPro5}} with {{pct5}} off, against {{pct3}} off 3. A wide Competitive group carries no rank-gap limit under the 2024 rule from Blizzard, so a Gold player may group with a Grandmaster in November 2026 and gains rank in smaller steps. For example, ask for a Master+ Tank when your group is 2 Damage and a Support, agreed using Discord.',
+      'Duo Pro is the Competitive Overwatch 2 session with a Master+ teammate from Duoly, and 5 games at Platinum in Europe cost {{owPro5}} as one bundle rather than five separate orders. Quick Play, Arcade and a Stadium run hold one price at every rank, so only Competitive moves with your own rank in November 2026. For example, ask for a Master+ Tank when your group is 2 Damage and a Support, agreed using Discord.',
   },
   {
     slug: 'lfg',
@@ -633,7 +633,7 @@ export const intentPages: IntentPage[] = [
     pricesIntro:
       'An Apex Legends teammate booking is an hourly price set by the mode and, in Ranked, by your own rank. First, pick the mode, because the Duos playlist, Mixtape and unranked pubs hold one price at every rank while Ranked does not. Second, open the rank list on a Ranked card: Duo Pro is {{apexProGold}} per hour at Gold and {{apexProMaster}} at Master. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Platinum player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
-      'A Duoly teammate booking is a paid session where one reviewed Apex Legends player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Ranked service with a Master or Apex Predator teammate, and Mixtape is the cheapest casual booking. First, a tier name describes who Duoly hires and never your own squad eligibility. Every premade Ranked squad stays inside two rank tiers under the rule from EA, duos and trios alike, so a Gold player books Diamond rather than Predator. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the legend pair using Discord. Nobody can promise you a rank.',
+      'A Duoly teammate booking is a paid session where one reviewed Apex Legends player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Ranked service with a Master or Apex Predator teammate, and Mixtape is the cheapest casual booking of the three. First, pick the mode, because the Duos playlist, Mixtape and pubs hold one price while Ranked follows your own rank. Second, pick the tier: Duo Plus names a Diamond+ player and Duo Pro a Master or Apex Predator. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the legend pair using Discord. Nobody can promise you a rank.',
     sections: [
       {
         heading: 'Which Apex legend roles make a good duo?',
@@ -646,21 +646,21 @@ export const intentPages: IntentPage[] = [
         heading: 'Ranked or the Duos playlist: which should you book?',
         paragraphs: [
           'The Duos playlist is the Apex battle royale format with 2-player squads, the honest answer for playing Apex as a pair, because nobody fills a third seat. Playlists rotate, so check the live list from Respawn Entertainment before booking an hour. For example, a pair booking a Duos hour in a week when Duos is down end up in trios with a stranger. Unranked pubs with the third seat on auto fill is the closest replacement.',
-          'Ranked is the mode with Rookie up to Apex Predator and a real cost for dying early, so a called rotation actually pays there. First, read the squad rule: every premade Ranked squad stays inside two rank tiers under the rule from EA, read in November 2026, and a full trio does not widen it. The Duos playlist is {{apexDuos}} per hour. Mixtape gives Team Deathmatch, Control and Gun Run with respawns, the fastest way to learn a legend without losing points, and unranked pubs are {{apexPubs}} per hour for the same practice inside a real battle royale. All three hold one price at every rank, with {{pct3}} off 3 hours and {{pct5}} off 5, while Ranked is priced by the rank you sit at.',
+          'Ranked is the mode with Rookie up to Apex Predator and a real cost for dying early, so a called rotation actually pays there. First, Ranked is the one format whose price follows the rank you sit at, so only the Ranked cards carry a rank list. The Duos playlist is {{apexDuos}} per hour with 2-player squads, so nobody fills a third seat. Mixtape gives Team Deathmatch, Control and Gun Run with respawns, the fastest way to learn a legend without losing points, and unranked pubs are {{apexPubs}} per hour for the same practice inside a real battle royale. All three hold one price at every rank, with {{pct3}} off 3 hours and {{pct5}} off 5, while Ranked is priced by the rank you sit at.',
         ],
       },
       {
         heading: 'How much does an Apex Legends duo cost?',
         paragraphs: [
           'Duo Pro is the Ranked Apex service with a Master or Apex Predator teammate, priced per hour by your own rank. First, find your own rank on the card. A Platinum player in Europe pays {{apexPro}} per hour. A Gold player pays {{apexProGold}} per hour, and a Master player pays {{apexProMaster}} per hour, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every rank. For example, a Platinum player pays {{apexPro3}} for 3 hours with {{pct3}} off, {{apexPro5}} for 5 hours with {{pct5}} off and {{apexPro10}} for 10 hours with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Ranked moves with your rank: unranked pubs stay {{apexPubs}} per hour. Apex coaching from Duoly has separate prices on the coaching page, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Platinum player pays {{apexPro3}} for 3 hours with {{pct3}} off, {{apexPro5}} for 5 hours with {{pct5}} off and {{apexPro10}} for 10 hours with {{pct10}} off. The casual modes hold one flat price at every rank instead, so only Ranked moves with your rank: unranked pubs stay {{apexPubs}} per hour. Apex coaching from Duoly has separate prices on the [Apex Legends coaching page](/games/apex-legends/coaching), and the [Apex Legends hub](/games/apex-legends) lists every service for the game.',
         ],
       },
     ],
     steps: [
       'Choose a service and a total hour count first, before checkout. Duo Pro is the Ranked option from Duoly with a Master or Apex Predator teammate, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
       'Second, add your platform, region, rank, legend pool and language. For example, name Europe or North America, PC or PlayStation, and the class you want covered, such as Controller or Recon.',
-      'Finally, meet your teammate in the order chat. Agree on voice using Discord, settle the legend pair and the drop, then invite with your EA ID. Check the squad sits inside two rank tiers under the rule from EA, because a wider pairing belongs in a casual playlist, and bundles still take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+      'Finally, meet your teammate in the order chat. Agree on voice using Discord, settle the legend pair and the drop, then invite with your EA ID. Mixtape is the version with respawns instead of a ring, and bundles still take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
     ],
     prepare: [
       'An EA ID is the account name your teammate needs for the invite, and Apex Legends shows it on the lobby banner.',
@@ -668,7 +668,7 @@ export const intentPages: IntentPage[] = [
       'Pick the region before booking, because Europe, North America, South America, Asia, Oceania and Middle East are separate servers.',
       'Bring 2 legends you trust plus 1 backup from a different class, so the pair still covers scan or cover when a pick is taken.',
       'Test your microphone on Discord first, then agree on 1 call for a reset, for example naming the ring edge before the third party arrives.',
-      'Check the squad rule: every premade Ranked squad stays inside two rank tiers under the rule from EA, read in November 2026, and a full trio does not widen it.',
+      'Decide the mode before you pay, because Ranked is priced by your own rank while the Duos playlist, Mixtape and unranked pubs hold one price for every rank.',
       'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 10 hours cost {{apexPro10}} at Platinum with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
     ],
     faq: [
@@ -677,8 +677,8 @@ export const intentPages: IntentPage[] = [
         'Duos is a 2-player squad playlist that appears in the rotation from Respawn Entertainment, and Duoly books it by the hour. Check the lobby for what is live.',
       ],
       [
-        'Can a Gold player squad with an Apex Predator?',
-        'No: EA keeps every premade Ranked squad within two rank tiers, so Gold reaches Diamond and stops there. A full trio follows the same limit, and casual playlists carry no rank gate.',
+        'Which Apex teammate tiers can I book?',
+        'Two for Ranked: Duo Plus with a Diamond+ player and Duo Pro with a Master or Apex Predator, both priced per hour by your rank. The Duos playlist brings a Master partner.',
       ],
       [
         'Is Mixtape a good first session?',
@@ -698,7 +698,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Ranked Apex Legends session with a Master or Apex Predator teammate from Duoly, and 5 hours at Platinum in Europe cost {{apexPro5}} with {{pct5}} off, against {{pct3}} off 3. Every premade Ranked squad stays inside two rank tiers under the rule from EA in November 2026, so a Gold player books Diamond and a wider pairing belongs in a casual playlist. For example, ask for an Assault legend when you play Controller, agreed using Discord.',
+      'Duo Pro is the Ranked Apex Legends session with a Master or Apex Predator teammate from Duoly, and 5 hours at Platinum in Europe cost {{apexPro5}} as one bundle rather than five separate orders. The Duos playlist, Mixtape and unranked pubs hold one price at every rank, so only Ranked moves with your own rank in November 2026. For example, ask for an Assault legend when you play Controller, agreed using Discord.',
   },
   {
     slug: 'lfg',
@@ -736,13 +736,13 @@ export const intentPages: IntentPage[] = [
     pricesIntro:
       'A Call of Duty teammate booking is an hourly price, and only the 2 Ranked services move with your rank. First, pick the mode, because Warzone duos, Resurgence, round-based Zombies and the party playlists hold one price at every rank. Second, open the rank list on Warzone Ranked or Ranked Play: the service is {{codRanked}} per hour at Platinum and {{codRankedIridescent}} at Iridescent. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Warzone player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
-      'A Duoly teammate booking is a paid session where one reviewed Call of Duty player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Warzone duos service, priced by your own rank, and the party playlists are the cheapest booking. First, a tier name describes who Duoly hires and never your own party eligibility. Ranked Play from Activision keeps Crimson and above in parties of one or two inside one rank, so a Gold player books Diamond rather than Iridescent. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the drop using Discord. Nobody can promise you a placement.',
+      'A Duoly teammate booking is a paid session where one reviewed Call of Duty player drops with you on your own account, for the number of hours you select, from 1 hour up to 10 hours. Duo Pro is the Warzone duos service, priced by your own rank, and the party playlists are the cheapest booking of the lot. First, pick the side, because a Warzone partner and a Ranked Play partner train different habits. Second, pick the tier: Duo Plus is multiplayer Ranked Play with a Crimson+ teammate, Duo Pro is Warzone duos and Warzone Ranked brings an Iridescent player. Bundles cut the total, {{pct3}} off 3 hours up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the drop using Discord. Nobody can promise you a placement.',
     sections: [
       {
         heading: 'Warzone or multiplayer: which teammate should you book?',
         paragraphs: [
           'Warzone is the battle royale side of Call of Duty, where a duo lives on rotations, plates and buy station timing. Multiplayer Ranked Play is the 4v4 side, with fixed maps, known spawns and an objective to hold. First, pick one side before booking an hour, because the 2 sides reward different habits. A Warzone partner who reads the circle is not much use on Hardpoint. Multiplayer Ranked Play costs {{codPlus}} per hour at Platinum.',
-          'Resurgence on the small map gives respawns, the easiest first session with someone new. Round-based Zombies wants a partner who knows the Easter egg steps rather than one with good aim, while party playlists at {{codParty}} per hour want neither. Name the mode in your request, because a Warzone main and a Ranked Play main rarely overlap. The party rules bite in Ranked Play only: Activision keeps Crimson and above in parties of one or two inside one rank, read in November 2026, while unranked Warzone carries no rank at all. For example, a player who books one Resurgence hour to warm up and then one Warzone hour keeps the same voice across both.',
+          'Resurgence on the small map gives respawns, the easiest first session with someone new. Round-based Zombies wants a partner who knows the Easter egg steps rather than one with good aim, while party playlists at {{codParty}} per hour want neither. Name the mode in your request, because a Warzone main and a Ranked Play main rarely overlap. Only the 2 Ranked services move with your own rank, while Resurgence, Zombies and the party playlists hold one price for everybody. For example, a player who books one Resurgence hour to warm up and then one Warzone hour keeps the same voice across both.',
         ],
       },
       {
@@ -755,15 +755,15 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'How much does a Call of Duty duo cost?',
         paragraphs: [
-          'Duo Pro is the Warzone duos service on Duoly at {{codPro}} per hour for a Diamond player, and like the other duo tiers it follows your own rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Activision publishes no party rule for current Warzone Ranked, so that teammate has to be eligible to queue with you under the rules of the game. Multiplayer Ranked Play is {{codPlus}} per hour at Platinum, and its Crimson+ tier needs a Diamond account beside it. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank.',
+          'Duo Pro is the Warzone duos service on Duoly at {{codPro}} per hour for a Diamond player, and like the other duo tiers it follows your own rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Multiplayer Ranked Play is {{codPlus}} per hour at Platinum with a Crimson+ teammate who holds a lane and plays the objective. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
+          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank. The [Call of Duty hub](/games/call-of-duty) lists every service for the game.',
         ],
       },
     ],
     steps: [
       'Choose a service and a total hour count first, before checkout. Duo Pro is the Warzone duos service from Duoly, priced by your own rank, and the hour count decides your bundle discount: 3 hours take {{pct3}} off and 5 hours {{pct5}} off in November 2026.',
       'Second, add your platform, region, rank, input and language. For example, name Europe or North America, PlayStation or PC, and whether the session is Warzone, Resurgence, multiplayer Ranked Play or round-based Zombies.',
-      'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the drop and the loadout plan, then invite with your Activision ID. On a Ranked Play booking check the party limits from Activision first, because Crimson and above queue inside one rank.',
+      'Finally, meet your teammate in the order chat. Agree on voice using Discord or the in-game party, settle the drop and the loadout plan, then invite with your Activision ID. Resurgence is the easiest first session together, because respawns keep a wipe from ending the hour.',
     ],
     prepare: [
       'An Activision ID is the account name plus a number, and your teammate needs the full ID from Activision to send a party invite.',
@@ -771,7 +771,7 @@ export const intentPages: IntentPage[] = [
       'Pick the region before booking, because Europe, North America, South America, Asia, Oceania and Middle East give different ping.',
       'Decide the mode before the first hour, for example Warzone battle royale, Resurgence, multiplayer Ranked Play or round-based Zombies.',
       'Test your microphone on Discord first, then agree on 1 call for a reset, for example naming the building you fall back to.',
-      'Check the Ranked Play party limits from Activision, read in November 2026: Crimson and above queue inside one rank, and Diamond allows two.',
+      'Decide the mode before you pay, because the 2 Ranked services are priced by your own rank while Resurgence, Zombies and the party playlists hold one price for everybody.',
       'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 10 hours cost {{codPro10}} with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
     ],
     faq: [
@@ -780,8 +780,8 @@ export const intentPages: IntentPage[] = [
         'Yes: Warzone duos are booked by the hour at a price that follows your own rank, starting from a single hour.',
       ],
       [
-        'Can a Gold player party with an Iridescent teammate?',
-        'No in Ranked Play: Activision keeps Crimson and above in parties of one or two inside one rank, so Gold reaches Diamond. A four-player party mixes ranks only at Diamond or below, and unranked Warzone carries no rank at all.',
+        'Which Call of Duty teammate tiers can I book?',
+        'Three: Duo Plus is multiplayer Ranked Play with a Crimson+ teammate, Duo Pro is Warzone duos, and Warzone Ranked brings an Iridescent player. All 3 follow your own rank.',
       ],
       [
         'Do you cover multiplayer Ranked Play?',
@@ -801,7 +801,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Warzone duos session from Duoly, priced by your own rank, and 5 hours cost {{codPro5}} with {{pct5}} off, against {{pct3}} off 3. Ranked Play from Activision keeps Crimson and above in parties of one or two inside one rank in November 2026, so a Gold player books Diamond and unranked Warzone takes the wider pairings. For example, ask for a Resurgence hour first when the pair has never played together, agreed using Discord.',
+      'Duo Pro is the Warzone duos session from Duoly, priced by your own rank, and 5 hours cost {{codPro5}} as one bundle rather than five separate orders. Resurgence, Zombies and the party playlists hold one price for everybody, so only the 2 Ranked services move with your own rank in November 2026. For example, ask for a Resurgence hour first when the pair has never played together, agreed using Discord.',
   },
   {
     slug: 'lfg',
@@ -836,7 +836,7 @@ export const intentPages: IntentPage[] = [
     pricesIntro:
       'A Rainbow Six Siege teammate booking is a per-game price set by the mode and, in Ranked, by your own rank. First, pick the mode, because Quick Match, Arcade and Deathmatch hold one price at every rank while Ranked does not. Second, open the rank list on a Ranked card: Duo Pro is {{r6ProCopper}} per game at Copper and {{r6ProDiamond}} at Diamond. Bundles then cut the total: 3 games take {{pct3}} off, 5 games take {{pct5}} off and 10 games take {{pct10}} off. For example, a Gold player weighing one game against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
-      'A Duoly teammate booking is a paid session where one reviewed Rainbow Six Siege player queues with you on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Ranked service with a Diamond+ teammate, and Quick Match is the cheapest unranked booking. First, a tier name describes who Duoly hires and never your own queue eligibility. Ranked 3.0 from Ubisoft lets Copper through Emerald queue within three full ranks and holds Diamond and Champion to two, so a Gold player reaches Emerald. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the first site using Discord.',
+      'A Duoly teammate booking is a paid session where one reviewed Rainbow Six Siege player queues with you on your own account, for the number of games you select, from 1 game up to 10 games. Duo Pro is the Ranked service with a Diamond+ teammate, and Quick Match is the cheapest unranked booking of the three. First, pick the mode, because Quick Match and Arcade hold one price while Ranked follows your own rank. Second, pick the tier: Duo Plus names an Emerald+ player, Duo Pro a Diamond+ caller and Duo Apex a Champion-level player. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Finally, every booking opens an order chat. For example, that is where you agree the first site using Discord.',
     sections: [
       {
         heading: 'Which Siege roles make a good duo?',
@@ -849,21 +849,21 @@ export const intentPages: IntentPage[] = [
         heading: 'Ranked, Quick Match or Arcade: what should you queue?',
         paragraphs: [
           'Quick Match is the unranked Siege mode for learning maps, callouts and operators, at {{r6Quick}} per game, which makes it the right first session: a map you cannot call costs more rounds than a rank point is worth. Arcade and Deathmatch warm up aim and peeks between Ranked games rather than teach anything. Both hold that price at every rank, while Ranked is priced by the rank you sit at.',
-          'Ranked is the mode with Copper up to Champion, and the squad rule comes from Ubisoft: Ranked 3.0 lets Copper through Emerald queue within three full ranks and holds Diamond and Champion to two, read in November 2026. First, both limits apply at once, so a Gold account reaches Emerald rather than Diamond. A full five follows the same limits, and placement matches carry no rank limit. For example, name your platform, then agree 1 attacking site and 1 defending site to practise using Discord.',
+          'Ranked is the mode with Copper up to Champion, and the only one whose price follows the rank you sit at, so the Ranked cards carry a rank list while the unranked ones hold one price. First, the teammate tiers are Duo Plus with an Emerald+ player, Duo Pro with a Diamond+ caller and Duo Apex with a Champion-level player. Second, bundles cut whichever tier you pick, {{pct3}} off 3 games and {{pct5}} off 5. For example, name your platform, then agree 1 attacking site and 1 defending site to practise using Discord.',
         ],
       },
       {
         heading: 'How much does a Rainbow Six Siege duo cost?',
         paragraphs: [
           'Duo Pro is the Ranked Siege service with a Diamond+ teammate, priced per game by your own rank. First, find your own rank on the card. A Gold player on EU West pays {{r6Pro}} per game. A Copper player pays {{r6ProCopper}} per game, and a Diamond player pays {{r6ProDiamond}} per game, so the Duo Pro price rises with your own rank. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every rank. For example, a Gold player pays {{r6Pro3}} for 3 games with {{pct3}} off, {{r6Pro5}} for 5 games with {{pct5}} off and {{r6Pro10}} for 10 games with {{pct10}} off. The unranked modes hold one flat price at every rank instead, so only Ranked moves with your rank, agreed using Discord.',
+          'Bundles cut the total for every rank. For example, a Gold player pays {{r6Pro3}} for 3 games with {{pct3}} off, {{r6Pro5}} for 5 games with {{pct5}} off and {{r6Pro10}} for 10 games with {{pct10}} off. The unranked modes hold one flat price at every rank instead, so only Ranked moves with your rank. Lessons have separate prices on the [Rainbow Six Siege coaching page](/games/rainbow-six-siege/coaching), and the [Siege hub](/games/rainbow-six-siege) lists every service.',
         ],
       },
     ],
     steps: [
       'Choose a service and a total game count first, before checkout. Duo Pro is the Ranked option from Duoly with a Diamond+ teammate, and the game count decides your bundle discount: 3 games take {{pct3}} off and 5 games {{pct5}} off in November 2026.',
       'Second, add your platform, region, rank, role and language. For example, name EU West or US East, PC or PlayStation, and whether you want to entry, support, anchor or roam.',
-      'Finally, meet your teammate in the order chat. Agree on voice using Discord, settle the operator pair and the first site, then invite with your Ubisoft name. Check the squad gap against the Ranked 3.0 limits from Ubisoft, because a wider pairing belongs in Quick Match, and bundles still take {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
+      'Finally, meet your teammate in the order chat. Agree on voice using Discord, settle the operator pair and the first site, then invite with your Ubisoft name. Quick Match is the unranked version of the same session, and bundles still take {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     ],
     prepare: [
       'A Ubisoft name is the account name your teammate needs for the friend request, and the request has to be accepted before the first queue.',
@@ -871,7 +871,7 @@ export const intentPages: IntentPage[] = [
       'Pick the data centre before booking, because EU West, EU North, US East, US Central, US West, Brazil, Asia, Japan, Australia, UAE and South Africa are separate.',
       'Bring 2 attackers and 2 defenders you trust, including 1 hard breach and 1 drone-heavy operator, so the pair always covers the wall.',
       'Test your microphone on Discord first, then agree on short callouts, for example naming the room before the floor.',
-      'Check the squad gap: Ranked 3.0 from Ubisoft applies both players limits at once, read in November 2026, so a Gold account reaches Emerald rather than Diamond.',
+      'Decide the mode before you pay, because Ranked is priced by your own rank while Quick Match, Arcade and Deathmatch hold one price for every rank.',
       'Finally, book the games you want up front, because the bundle discount applies to one order rather than to games added later: 10 games cost {{r6Pro10}} at Gold with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
     ],
     faq: [
@@ -880,8 +880,8 @@ export const intentPages: IntentPage[] = [
         'Yes: Quick Match is the unranked Siege mode, booked per game at one flat price for every rank, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
       ],
       [
-        'Can a Gold player queue with a Champion teammate?',
-        'No: Ranked 3.0 from Ubisoft applies both limits at once, so Gold reaches Emerald and stops there. A full five follows the same limits, and placement matches carry no rank limit.',
+        'Which Siege teammate tiers can I book?',
+        'Three: Duo Plus with an Emerald+ player, Duo Pro with a Diamond+ caller and Duo Apex with a Champion-level player, all priced per game by your own rank.',
       ],
       [
         'Can I ask for a hard breach main?',
@@ -901,7 +901,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Ranked Rainbow Six Siege session with a Diamond+ teammate from Duoly, and 5 games at Gold on EU West cost {{r6Pro5}} with {{pct5}} off, against {{pct3}} off 3. Ranked 3.0 from Ubisoft keeps a squad inside three full ranks, or two once Diamond joins, so a Gold player reaches Emerald in November 2026. For example, ask for a hard breach main when your own pool is Thatcher and Mute, agreed using Discord.',
+      'Duo Pro is the Ranked Rainbow Six Siege session with a Diamond+ teammate from Duoly, and 5 games at Gold on EU West cost {{r6Pro5}} as one bundle rather than five separate orders. Quick Match, Arcade and Deathmatch hold one price at every rank, so only Ranked moves with your own rank in November 2026. For example, ask for a hard breach main when your own pool is Thatcher and Mute, agreed using Discord.',
   },
 ];
 
