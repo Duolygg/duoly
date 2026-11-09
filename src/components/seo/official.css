@@ -175,6 +175,18 @@
   color: #a79dc4;
 }
 
+/* 276 service names are 276 links. The underline stays, because colour alone
+   is not enough to mark a link, but it is quiet at rest and solid on hover or
+   keyboard focus, so a long table reads as a price list rather than a wall of
+   rules. */
+.official-prices tbody th a {
+  text-decoration-color: rgba(214, 187, 255, 0.4);
+}
+.official-prices tbody th a:hover,
+.official-prices tbody th a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
 .official-table-note {
   margin-top: 14px;
   font-size: 15px;
@@ -182,12 +194,14 @@
 }
 
 /* Logo downloads: a preview tile plus the file links beside it. */
+/* Four sets, so four columns at desktop width: a three-column grid left the
+   app icon alone on a second row. */
 .official-logos {
   list-style: none;
   margin: 24px 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
 }
 
@@ -198,10 +212,16 @@
   border: 1px solid rgba(196, 170, 255, 0.18);
 }
 
+/* One preview box of a fixed height for every set, with the artwork contained
+   inside it. The four files have four different aspect ratios, and letting each
+   one size its own card made a ragged grid where the full logo dwarfed the
+   wordmark. */
 .official-logos img {
   display: block;
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  padding: 12px;
   border-radius: 12px;
   background: #090414;
 }
@@ -256,10 +276,25 @@
     td:last-child {
     padding-bottom: 14px;
   }
+  /* A rank-priced service reads "€27.96 per game at Iron, up to €57.96 at
+     Challenger". Held on one line by the desktop rule, that runs past the edge
+     of a 390px card and hides the dearest price, so the stacked layout lets it
+     wrap. */
+  .official-prices tbody .official-price {
+    white-space: normal;
+  }
   .official-prices tbody td::before {
     display: inline-block;
-    min-width: 92px;
+    min-width: 84px;
     color: #8e84ab;
+    vertical-align: top;
+  }
+  .official-prices tbody td:last-child {
+    display: flex;
+    gap: 4px;
+  }
+  .official-prices tbody td:last-child::before {
+    flex: 0 0 auto;
   }
   .official-prices tbody td:nth-of-type(1)::before {
     content: 'Plays with';
