@@ -7,12 +7,12 @@ import Steps from '../../../components/seo/Steps.astro';
 import Topics from '../../../components/seo/Topics.astro';
 import Faq from '../../../components/seo/Faq.astro';
 import SessionExamples from '../../../components/seo/SessionExamples.astro';
-import CoachRank from '../../../components/seo/CoachRank.astro';
+import CoachFormats from '../../../components/seo/CoachFormats.astro';
 import ClosingCta from '../../../components/seo/ClosingCta.astro';
 import '../../../components/seo/seo.css';
-import '../../../components/seo/coach-rank.css';
+import '../../../components/seo/coach-formats.css';
 import { lessons } from '../../../content/coaching';
-import { coachRank } from '../../../content/coaching-rank';
+import { coachFormats } from '../../../content/coaching-formats';
 import {
   closingAnswer,
   closingDetail,
@@ -41,8 +41,8 @@ import {
 } from '../../../site/seo';
 const game = gameBySlug(Astro.params.game);
 const lesson = lessons[Astro.params.game ?? ''];
-const rank = coachRank[Astro.params.game ?? ''];
-if (!game || !lesson || !rank) {
+const formats = coachFormats[Astro.params.game ?? ''];
+if (!game || !lesson || !formats) {
   Astro.response.status = 404;
   return Astro.rewrite('/404');
 }
@@ -125,11 +125,11 @@ const description = descriptions[game.slug]!;
       <h2 id="get-h">What does {game.name} coaching cover?</h2>
       <p>{withPrices(lesson.format, offers).replaceAll('**', '')}</p>
     </section>
-    <CoachRank
-      slug={game.slug}
-      copy={rank}
-      rule={withPrices(rank.rule, offers)}
-      choice={withPrices(rank.choice, offers)}
+    <CoachFormats
+      copy={formats}
+      answer={withPrices(formats.answer, offers)}
+      detail={withPrices(formats.detail, offers)}
+      choice={withPrices(formats.choice, offers)}
     />
     <Prices
       gameId={game.id}
