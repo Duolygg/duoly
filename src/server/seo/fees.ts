@@ -182,20 +182,15 @@ export const USD_MARGIN_PERCENT = 1;
  */
 export const AUTO_CANCEL_MINUTES = 5;
 /**
- * The day the catalog's prices last changed: PR #194 raised Duo Plus, Duo Pro
- * and Duo Apex across every game on 9 November 2026, and those are the tiers
- * the examples above quote.
+ * The day the catalog's prices last changed, re-exported so /fees-and-refunds
+ * and /pricing.md keep importing it from here.
  *
- * Deliberately one day later than `HUB_PRICES_CHECKED` and the
- * src/components/seo/Prices.astro default, which #194 left at 2026-11-08. A
- * page may be vaguer than the catalog, never more confident than it: dating
- * today's Duo Pro figure to yesterday would be the one false claim on a page
- * whose whole purpose is checkable ones. Bringing the other pages forward is a
- * separate pass over existing copy, noted for the owner in the PR.
- *
- * Shared from here so /fees-and-refunds and /pricing.md can never date the
- * same figures differently.
+ * It lives in src/site/price-dates.ts now, because every page whose prices come
+ * out of the engine dates them to the same day and this module pulls in the
+ * engine itself. That is the whole of it: one declared date, no page-local copy
+ * of it anywhere.
  */
-export const CATALOG_PRICES_UPDATED = '2026-11-09';
-/** The same day in the prose form the SEO pages write dates in. */
-export const CATALOG_PRICES_UPDATED_LABEL = '9 November 2026';
+export {
+  CATALOG_PRICES_UPDATED,
+  CATALOG_PRICES_UPDATED_LABEL,
+} from '../../site/price-dates';

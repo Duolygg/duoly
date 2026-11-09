@@ -3,13 +3,16 @@ import { type seoOffers } from '../../server/seo/offers';
 import { pricesAnswer, priceNote } from '../../server/seo/citable-answers';
 import { SITE_GAMES } from '../../site/games';
 import { bookingHref } from '../../site/seo';
+import {
+  CATALOG_PRICES_UPDATED,
+  CATALOG_PRICES_UPDATED_LABEL,
+} from '../../site/price-dates';
 interface Props {
   gameId: string;
   offers: ReturnType<typeof seoOffers>;
   /** What the provider line names: "coach" pages say "Immortal+ coach". */
   coach?: boolean;
   intro?: string;
-  updated?: string;
   /** Heading text and anchor, so a page can show more than one price group. */
   heading?: string;
   id?: string;
@@ -21,7 +24,6 @@ const {
   offers,
   coach = false,
   intro,
-  updated = '2026-11-08',
   heading,
   id = 'prices',
   dated = true,
@@ -30,12 +32,9 @@ const gameName = SITE_GAMES.find((game) => game.id === gameId)?.name;
 const headingText =
   heading ??
   `How much does ${gameName} ${coach ? 'coaching' : 'teammate booking'} cost?`;
-const updatedLabel = new Intl.DateTimeFormat('en-GB', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-  timeZone: 'UTC',
-}).format(new Date(`${updated}T00:00:00Z`));
+// Every card below is a checkout quote, so the day beside them is the day the
+// catalog moved, not a day the page remembers. No page passes one in:
+// src/site/price-dates.ts carries the reasoning.
 // One card per service; ranked services list their price per customer rank.
 const services = [
   ...new Map(offers.map((offer) => [offer.id, offer])).values(),
@@ -124,7 +123,11 @@ const cards = services.map((service) => {
   <p class="price-note">{priceNote(offers, coach)}</p>
   {dated && (
     <p class="price-updated">
-      Prices as of <time datetime={updated}>{updatedLabel}</time>.
+      Prices as of{' '}
+      <time datetime={CATALOG_PRICES_UPDATED}>
+        {CATALOG_PRICES_UPDATED_LABEL}
+      </time>
+      .
     </p>
   )}
 </section>

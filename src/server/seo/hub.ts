@@ -3,11 +3,8 @@ import { defaultRank, ranksOf } from '../../design-reference/lib/ranks.js';
 import { calculateQuote } from '../pricing';
 import { QUANTITIES, quantityDiscountPercent } from '../../contracts/pricing';
 import { cleanCopy, formatPrice, offerSelection, seoOffers } from './offers';
+import { CATALOG_PRICES_UPDATED_LABEL } from '../../site/price-dates';
 import type { QuoteContext } from '../../contracts/pricing';
-
-/** The day the hub price tokens below were last recalculated from the checkout engine. */
-export const HUB_PRICES_CHECKED = '2026-11-08';
-export const HUB_PRICES_CHECKED_LABEL = '8 November 2026';
 
 /**
  * Bundle sizes a hub may quote. On the game's main service these are Bundles tab packs (10%, 20%
@@ -47,14 +44,18 @@ export const hubServiceIds = (gameId: string) => {
  * the three-unit total, `{{p_duo2_low}}` and `{{p_duo2_high}}` the cheapest and
  * dearest rank, `{{rank_duo2}}` the example rank and `{{seats_duo2}}` the hired
  * teammates the price covers. `{{pct3}}`, `{{pct5}}` and `{{pct10}}` are the
- * quantity discounts, and `{{checked}}` the date above.
+ * quantity discounts, and `{{checked}}` the day the catalog's prices last
+ * changed (src/site/price-dates.ts), which is the only date hub copy may state
+ * about a price.
  */
 export function hubPrices(
   gameId: string,
   context: Omit<QuoteContext, 'customerCurrency'>,
 ): Record<string, string> {
   const eur = { ...context, customerCurrency: 'EUR' as const };
-  const prices: Record<string, string> = { checked: HUB_PRICES_CHECKED_LABEL };
+  const prices: Record<string, string> = {
+    checked: CATALOG_PRICES_UPDATED_LABEL,
+  };
   const main = (servicesFor(gameId) as { main: string }).main;
   const quote = (serviceId: string, units: number, rank?: string) =>
     calculateQuote(

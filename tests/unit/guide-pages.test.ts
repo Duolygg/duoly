@@ -197,13 +197,14 @@ describe('free versus paid guide', () => {
       const page = intentPages.find(
         (entry) => entry.gameSlug === guide.gameSlug,
       )!;
-      // The links note carries the full checked date; the price date is also
-      // rendered from pricesChecked under the cards.
+      // The links note carries the day the external links were requested,
+      // which is the page's own observation and stays typed here. The price
+      // date is the catalog's, rendered under the cards from
+      // src/site/price-dates.ts, so no page states one.
       expect(guide.linksNote).toMatch(/8 November 2026/);
-      expect(page.pricesChecked).toBe('2026-11-08');
       const copy = [
         renderTokens({ ...guide, linksNote: '' }, prices),
-        renderTokens({ ...page, pricesChecked: undefined }, prices),
+        renderTokens(page, prices),
         guideFaq(page, prices),
       ];
       // Walk the visible strings so a failure names the sentence, not the page.

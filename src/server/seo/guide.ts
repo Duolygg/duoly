@@ -4,6 +4,7 @@ import {
 } from '../../contracts/pricing';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { calculateQuote } from '../pricing';
+import { CATALOG_PRICES_UPDATED_LABEL } from '../../site/price-dates';
 import { formatPrice } from './offers';
 
 type PriceSpec = {
@@ -262,6 +263,10 @@ export function guideExamples(
       'EUR',
     );
   }
+  // `{{checked}}`: the day the catalog's prices last changed, the same token
+  // the hubs use. A teammate page that wants to say when it read the calculator
+  // says it with this and never with a day of its own.
+  prices.checked = CATALOG_PRICES_UPDATED_LABEL;
   // The Bundles tab discounts, and the quantity picker's 5-unit one (src/contracts/pricing.ts).
   for (const units of GUIDE_DISCOUNT_UNITS)
     prices[`pct${units}`] =

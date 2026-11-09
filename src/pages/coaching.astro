@@ -12,6 +12,7 @@ import { pageViewer } from '../site/viewer';
 import { viewerCurrency } from '../server/currency';
 import { eurToUsd } from '../server/fx';
 import { coachingDirectory, directoryPrice } from '../server/seo/directories';
+import { CATALOG_PRICES_UPDATED_LABEL } from '../site/price-dates';
 import { faqSchema } from '../server/seo/offers';
 import {
   serializeJsonLd,
@@ -37,7 +38,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'How much does a gaming coach cost on Duoly?',
-    `Every lesson costs ${price.replace(/^From /, '')} in all ${games.length} games, read from Duoly checkout on 9 November 2026. Bundles and quantity discounts do not apply to coaching.`,
+    `Every lesson costs ${price.replace(/^From /, '')} in all ${games.length} games, read from Duoly checkout on ${CATALOG_PRICES_UPDATED_LABEL}. Bundles and quantity discounts do not apply to coaching.`,
   ],
   [
     'Do I need a recording for my first lesson?',

@@ -15,11 +15,6 @@ export interface IntentPage {
   format: string;
   /** Optional intro above the price cards; falls back to the shared answer. */
   pricesIntro?: string;
-  /**
-   * When the price cards were last read out of the checkout calculator. This is
-   * the page's single dated price claim, so the prose never carries a second one.
-   */
-  pricesChecked?: string;
   sections: { heading: string; paragraphs: string[] }[];
   steps: string[];
   prepare: string[];
@@ -76,7 +71,7 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'How much does a League duo cost in 2026?',
         paragraphs: [
-          'Duo Pro is the ranked League service with a Master+ teammate, priced per game by your own rank. Every price here comes from the Duoly checkout calculator. We found these numbers by running the calculator on 7 November 2026. A Gold player on EUW pays {{lolPro}} per game for Duo Pro. An Iron player pays {{lolProIron}} per game, and a Diamond player pays {{lolProDiamond}} per game, so the Duo Pro price rises with your own rank.',
+          'Duo Pro is the ranked League service with a Master+ teammate, priced per game by your own rank. Every price here comes from the Duoly checkout calculator. We found these numbers by running the calculator on {{checked}}. A Gold player on EUW pays {{lolPro}} per game for Duo Pro. An Iron player pays {{lolProIron}} per game, and a Diamond player pays {{lolProDiamond}} per game, so the Duo Pro price rises with your own rank.',
           'Bundles cut the total for every rank. For example, a Gold player pays {{lolPro3}} for 3 games with {{pct3}} off, {{lolPro5}} for 5 games with {{pct5}} off and {{lolPro10}} for 10 games with {{pct10}} off. Casual modes keep one flat price, so ARAM Night, Normal Draft and Swiftplay each cost {{lolAram}} per game for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Coaching has separate prices on the [League of Legends coaching page](/games/league-of-legends/coaching), and the [League of Legends hub](/games/league-of-legends) lists every service for the game.',
         ],
       },
@@ -168,7 +163,7 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'How much does a Marvel Rivals duo cost in 2026?',
         paragraphs: [
-          'Duo Pro is the Competitive Marvel Rivals service with a Grandmaster+ teammate, priced per match by your own rank. Every price here comes from the Duoly checkout calculator. We found these numbers by running the calculator on 7 November 2026. A Platinum player in Europe pays {{mrPro}} per match for Duo Pro, and a Gold player pays {{mrProGold}} per match, so the Duo Pro price rises with your own rank.',
+          'Duo Pro is the Competitive Marvel Rivals service with a Grandmaster+ teammate, priced per match by your own rank. Every price here comes from the Duoly checkout calculator. We found these numbers by running the calculator on {{checked}}. A Platinum player in Europe pays {{mrPro}} per match for Duo Pro, and a Gold player pays {{mrProGold}} per match, so the Duo Pro price rises with your own rank.',
           'Bundles cut the total for every rank. For example, a Platinum player pays {{mrPro3}} for 3 matches with {{pct3}} off, {{mrPro5}} for 5 matches with {{pct5}} off and {{mrPro10}} for 10 matches with {{pct10}} off. Quick Match and Arcade keep one flat price of {{mrQuick}} per match for every rank. Prices in US dollars use the daily exchange rate from the European Central Bank plus 1%. Hero Coaching has separate prices on the [Marvel Rivals coaching page](/games/marvel-rivals/coaching), and the [Marvel Rivals hub](/games/marvel-rivals) lists every service for the game.',
         ],
       },
@@ -239,7 +234,6 @@ export const intentPages: IntentPage[] = [
     ],
     format:
       'A Pokemon Unite teammate booking is one paid partner who joins your lobby for the games you choose, on a separate account. Duo Plus pairs you with an Ultra+ teammate, Duo Pro pairs you with a Master teammate from Duoly, and Standard and Quick Battle is the casual option for trying Pokemon, moves and roles without ranked pressure. First, pick the mode and the number of games. A Unite team holds 5. Your partner fills 1 seat, so three teammates still arrive from the normal queue. Second, use the order chat to agree on lanes, voice using Discord and a start time. For example, an Attacker can ask for a Defender who holds space while the lane farms toward the next move upgrade. Finally, check the other picks before locking in, so the duo leaves room for the central area and a workable front line. The booking covers Unite only, and prices start at {{puPlus}} per game in 2026.',
-    pricesChecked: '2026-11-08',
     pricesIntro:
       'Pokemon Unite teammate prices from Duoly start at {{puPlus}} per game and rise with your own rank. For Duo Pro, a player ranked Expert in Europe pays {{puPro}}, and Duo Plus brings an Ultra+ teammate for less. Standard and Quick Battle keeps one flat price of {{puQuick}} for every rank. First, open the rank list on the card, because Beginner and Legend do not pay the same. Bundles then cut the total: 3 games get {{pct3}} off, 5 games get {{pct5}} off and 10 games get {{pct10}} off. For example, 3 Duo Pro games at Expert cost {{puPro3}}. Every booking adds one partner, and lanes, voice using Discord and a start time are agreed in the order chat.',
     sections: [
@@ -333,7 +327,6 @@ export const intentPages: IntentPage[] = [
     stepsHeading: 'How do you book a Valorant teammate?',
     prepareHeading: 'How should you prepare for your first Valorant session?',
     faqHeading: 'Questions before you queue?',
-    pricesChecked: '2026-11-08',
     pricesIntro:
       'A Valorant teammate booking is a per-game price set by the mode and, in Competitive, by your own rank. First, pick the mode, because Swiftplay, Unrated and a Deathmatch warm-up hold one price at every rank while Competitive does not. Second, open the rank list on a Competitive card: Duo Pro is {{valProIron}} per game at Iron and {{valProImmortal}} at Immortal. Bundles then cut the total: 3 games take {{pct3}} off, 5 games take {{pct5}} off and 10 games take {{pct10}} off. For example, a Gold player weighing one game against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
@@ -432,7 +425,6 @@ export const intentPages: IntentPage[] = [
     stepsHeading: 'How do you book a Fortnite duo partner?',
     prepareHeading: 'How should you prepare for your first Fortnite session?',
     faqHeading: 'Questions before you drop?',
-    pricesChecked: '2026-11-08',
     pricesIntro:
       'A Fortnite duo booking is an hourly price set by the mode and, in Ranked, by your own rank. First, pick the mode, because Zero Build, Reload and Creative box fights hold one price at every rank while Ranked Duos does not. Second, open the rank list on a Ranked card: Duo Pro is {{fnProGold}} per hour at Gold and {{fnProUnreal}} at Unreal. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Platinum player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
@@ -531,7 +523,6 @@ export const intentPages: IntentPage[] = [
     prepareHeading:
       'How should you prepare for your first Overwatch 2 session?',
     faqHeading: 'Questions before you queue?',
-    pricesChecked: '2026-11-08',
     pricesIntro:
       'An Overwatch 2 teammate booking is a per-game price set by the mode and, in Competitive, by your own rank. First, pick the mode, because Quick Play, Arcade and a Stadium run hold one price at every rank while Competitive does not. Second, open the rank list on a Competitive card: Duo Pro is {{owProGold}} per game at Gold and {{owProMaster}} at Master. Bundles then cut the total: 3 games take {{pct3}} off, 5 games take {{pct5}} off and 10 games take {{pct10}} off. For example, a Platinum player weighing one game against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
@@ -629,7 +620,6 @@ export const intentPages: IntentPage[] = [
     stepsHeading: 'How do you book an Apex Legends teammate?',
     prepareHeading: 'How should you prepare for your first Apex session?',
     faqHeading: 'Questions before you drop?',
-    pricesChecked: '2026-11-08',
     pricesIntro:
       'An Apex Legends teammate booking is an hourly price set by the mode and, in Ranked, by your own rank. First, pick the mode, because the Duos playlist, Mixtape and unranked pubs hold one price at every rank while Ranked does not. Second, open the rank list on a Ranked card: Duo Pro is {{apexProGold}} per hour at Gold and {{apexProMaster}} at Master. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Platinum player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
@@ -732,7 +722,6 @@ export const intentPages: IntentPage[] = [
     prepareHeading:
       'How should you prepare for your first Call of Duty session?',
     faqHeading: 'Questions before you drop?',
-    pricesChecked: '2026-11-08',
     pricesIntro:
       'A Call of Duty teammate booking is an hourly price, and only the 2 Ranked services move with your rank. First, pick the mode, because Warzone duos, Resurgence, round-based Zombies and the party playlists hold one price at every rank. Second, open the rank list on Warzone Ranked or Ranked Play: the service is {{codRanked}} per hour at Platinum and {{codRankedIridescent}} at Iridescent. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Warzone player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
@@ -832,7 +821,6 @@ export const intentPages: IntentPage[] = [
     stepsHeading: 'How do you book a Siege teammate?',
     prepareHeading: 'How should you prepare for your first Siege session?',
     faqHeading: 'Questions before you queue?',
-    pricesChecked: '2026-11-08',
     pricesIntro:
       'A Rainbow Six Siege teammate booking is a per-game price set by the mode and, in Ranked, by your own rank. First, pick the mode, because Quick Match, Arcade and Deathmatch hold one price at every rank while Ranked does not. Second, open the rank list on a Ranked card: Duo Pro is {{r6ProCopper}} per game at Copper and {{r6ProDiamond}} at Diamond. Bundles then cut the total: 3 games take {{pct3}} off, 5 games take {{pct5}} off and 10 games take {{pct10}} off. For example, a Gold player weighing one game against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, every figure here was read from Duoly checkout in November 2026. The line under the cards gives the exact date.',
     format:
@@ -935,7 +923,6 @@ export const intentPages: IntentPage[] = [
     stepsHeading: 'How do you book a CS2 teammate?',
     prepareHeading: 'How should you prepare for your first CS2 session?',
     faqHeading: 'Questions before you queue?',
-    pricesChecked: '2026-11-09',
     pricesIntro:
       'A Counter-Strike 2 teammate booking is a per-game price set by the mode and, in Premier, by your own CS Rating. First, pick the mode, because Casual, Deathmatch and a retake server hold one price at every rating while Premier does not. Second, open the rating list on a Premier card: Duo Pro from Duoly is {{cs2ProLow}} per game under 5,000 and {{cs2ProHigh}} above 25,000. Bundles then cut the total: 3 games take {{pct3}} off, 5 games take {{pct5}} off and 10 games take {{pct10}} off. For example, a 12,000 rated player weighing one game against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
     format:
@@ -1037,7 +1024,6 @@ export const intentPages: IntentPage[] = [
     prepareHeading:
       'How should you prepare for your first Rocket League session?',
     faqHeading: 'Questions before you queue?',
-    pricesChecked: '2026-11-09',
     pricesIntro:
       'A Rocket League duo booking is an hourly price set by the mode and, in Ranked Doubles, by your own rank. First, pick the mode, because casual 3v3 and the extra modes hold one price at every rank while Doubles does not. Second, open the rank list on a Doubles card: Duo Pro from Duoly is {{rlProGold}} per hour at Gold and {{rlProGc}} at Grand Champion. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a Diamond player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. An hour holds about 8 matches, since a match runs 5 minutes plus overtime. Finally, we read every figure here from Duoly checkout in November 2026.',
     format:
@@ -1137,7 +1123,6 @@ export const intentPages: IntentPage[] = [
     stepsHeading: 'How do you book a World of Warcraft teammate?',
     prepareHeading: 'How should you prepare for your first WoW session?',
     faqHeading: 'Questions before you queue?',
-    pricesChecked: '2026-11-09',
     pricesIntro:
       'A World of Warcraft teammate booking is an hourly price set by the service and, on the key services, by your own Mythic+ score. First, pick the service, because Delves and a leveling hour hold one price at every score while the key services do not. Second, open the score list on a Mythic+ card: Duo Pro from Duoly is {{wowProLow}} per hour under 1,500 and {{wowProHigh}} above 3,500. Rated arena is priced by arena rating instead, at {{wowArena}} per hour around the Challenger cut. Bundles then cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
     format:
@@ -1239,7 +1224,6 @@ export const intentPages: IntentPage[] = [
     stepsHeading: 'How do you book a Minecraft partner?',
     prepareHeading: 'How should you prepare for your first Minecraft session?',
     faqHeading: 'Questions before you join?',
-    pricesChecked: '2026-11-09',
     pricesIntro:
       'A Minecraft booking is an hourly price, and Minecraft is one of the two games on Duoly with no rank picker at all, next to ARC Raiders: every service holds one flat price. First, pick the hour by what you want to do. PvP Duo Pro from Duoly is {{mcPro}} per hour with a top PvPer, PvP Duo is {{mcPlus}}, a Survival Partner is {{mcSmp}}, relaxed survival is {{mcSurv}} and a minigames night is {{mcMini}}. Second, bundles cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
     format:
@@ -1336,7 +1320,6 @@ export const intentPages: IntentPage[] = [
     stepsHeading: 'How do you book an ARC Raiders duo?',
     prepareHeading: 'How should you prepare for your first raid together?',
     faqHeading: 'Questions before you drop?',
-    pricesChecked: '2026-11-09',
     pricesIntro:
       'An ARC Raiders booking is an hourly price, and ARC Raiders has no rank picker on Duoly: every service holds one flat price for every player. First, pick the tier by the raid you want. Learn the Maps is {{arcLearn}} per hour, Duo Plus is {{arcPlus}}, Duo Pro from Duoly is {{arcPro}} with a Veteran and Duo Apex is {{arcTop}} with an elite raider. Second, bundles cut the total: 3 hours take {{pct3}} off, 5 hours take {{pct5}} off and 10 hours take {{pct10}} off. For example, a player weighing one hour against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
     format:
@@ -1433,7 +1416,6 @@ export const intentPages: IntentPage[] = [
     stepsHeading: 'How do you book a Deadlock teammate?',
     prepareHeading: 'How should you prepare for your first Deadlock session?',
     faqHeading: 'Questions before you queue?',
-    pricesChecked: '2026-11-09',
     pricesIntro:
       'A Deadlock teammate booking is a per-match price set by the mode and, in ranked, by your own rank. First, pick the mode, because unranked matches hold one price at every rank while ranked does not. Second, open the rank list on a ranked card: Deadlock has 11 ranks from Initiate up to Eternus, and Duo Pro from Duoly is {{dlProLow}} per match at Initiate and {{dlProHigh}} at Eternus. Bundles then cut the total: 3 matches take {{pct3}} off, 5 matches take {{pct5}} off and 10 matches take {{pct10}} off. For example, an Emissary player weighing one match against a bundle of 5 is comparing 2 rows of the same card. Prices in US dollars follow the daily rate from the European Central Bank plus 1%. Finally, we read every figure here from Duoly checkout in November 2026.',
     format:

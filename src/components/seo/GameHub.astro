@@ -16,7 +16,6 @@ import { lessons } from '../../content/coaching';
 import { intentForGame, intentPath } from '../../content/intent-pages';
 import { gameBySlug } from '../../site/games';
 import {
-  HUB_PRICES_CHECKED,
   hubPriceHeadings,
   intentAnchor,
   type hubOffers,
@@ -87,7 +86,6 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
     offers={withLines(offers.teammate)}
     heading={priceHeadings.teammate}
     intro={copy.intros.teammate}
-    updated={HUB_PRICES_CHECKED}
     dated={offers.team.length + offers.coaching.length === 0}
   />
   {offers.team.length > 0 && (
@@ -97,7 +95,6 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
       id="team-prices"
       heading={priceHeadings.team}
       intro={copy.intros.team}
-      updated={HUB_PRICES_CHECKED}
       dated={offers.coaching.length === 0}
     />
   )}
@@ -109,7 +106,6 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
       heading={priceHeadings.coaching}
       intro={copy.intros.coaching}
       coach
-      updated={HUB_PRICES_CHECKED}
     />
   )}
   <Steps heading={copy.steps.heading} steps={copy.steps.items}>
