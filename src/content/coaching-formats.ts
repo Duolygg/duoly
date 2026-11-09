@@ -384,7 +384,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Three Dota 2 formats are open from Duoly in 2026. Play and Learn is one live ranked game with a Divine+ coach. Replay Review is an hour with an Immortal coach on a match you already played, and Hero and Position Coaching is an hour on one hero in one position: matchups, items and power timings.',
     detail:
-      'The unit is the real difference. Play and Learn is sold per game at {price:learn}, so a 25-minute stomp and a 60-minute grind cost the same. Replay Review and Hero and Position Coaching are clock hours, which buys the pauses and rewinds a live game cannot. For example, a player who already knows the lane goes wrong gets more from an hour of Replay Review than from another queue.',
+      'The unit is the real difference. Play and Learn is sold per game at {amount:learn}, so a 25-minute stomp and a 60-minute grind cost the same. Replay Review and Hero and Position Coaching are clock hours, which buys the pauses and rewinds a live game cannot. For example, a player who already knows the lane goes wrong gets more from an hour of Replay Review than from another queue.',
     choice:
       'So pick by the problem rather than the format: 1) live decisions go to Play and Learn, 2) a pattern across a whole match goes to Replay Review, and 3) one hero or one position goes to Hero and Position Coaching. Both hourly formats cost {amount:replay}, and bundles never apply to coaching. Finally, name your position and your hero pool using Discord.',
     rows: [
@@ -414,7 +414,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Two Minecraft formats are open from Duoly in 2026. PvP Coaching is an hour with a top PvP coach on combos, blocking, aim and crystal fights. Bedwars Coaching is an hour with a 1000 star Bedwars coach on rushing, bridging, defense layouts and when a generator upgrade pays for itself.',
     detail:
-      'Both are clock hours rather than matches, because a Bedwars game can end in 4 minutes or run past 20. An hour at {price:pvp} therefore covers a handful of games plus the practice server work between them, which is where a combo actually gets fixed. For example, losing a fight you started with full gear is usually a blocking and positioning question.',
+      'Both are clock hours rather than matches, because a Bedwars game can end in 4 minutes or run past 20. An hour at {amount:pvp} therefore covers a handful of games plus the practice server work between them, which is where a combo actually gets fixed. For example, losing a fight you started with full gear is usually a blocking and positioning question.',
     choice:
       'So pick by the mode rather than the format: 1) duels, crystal fights and survival PvP go to PvP Coaching, and 2) Hypixel Bedwars goes to Bedwars Coaching. Both cost {amount:bw}, and bundles never apply to coaching. Finally, name your server, your edition and whether you play on keyboard or controller, using Discord.',
     rows: [
@@ -474,7 +474,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Two Deadlock formats are open from Duoly in 2026. Play and Learn is one live ranked match with a Phantom+ coach who calls lane assignments, farm patterns and the Urn and Mid Boss timings. Macro and Souls is an hour with an Ascendant coach on soul leads, item timings and when a lane should rotate.',
     detail:
-      'The unit is the real difference. Play and Learn is sold per game at {price:learn}, so a 25-minute win and a 50-minute slog cost the same. Macro and Souls is a clock hour, which buys the pauses and rewinds a live match cannot. For example, a player with a healthy soul count who still loses teamfights usually has an item timing question.',
+      'The unit is the real difference. Play and Learn is sold per game at {amount:learn}, so a 25-minute win and a 50-minute slog cost the same. Macro and Souls is a clock hour, which buys the pauses and rewinds a live match cannot. For example, a player with a healthy soul count who still loses teamfights usually has an item timing question.',
     choice:
       'So pick by the problem rather than the format: 1) live calls go to Play and Learn, and 2) a pattern across a whole match goes to Macro and Souls. The hour costs {amount:macro}, and bundles never apply to coaching. Finally, name the heroes you play and the lane you usually take, using Discord.',
     rows: [
