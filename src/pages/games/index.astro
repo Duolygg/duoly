@@ -262,9 +262,17 @@ const faq: [string, string][] = [
   .grid img {
     border-radius: 12px;
   }
+  /* Games carry a different number of child pages, so the stacks are uneven.
+     Let each one fill its row and push the booking link to the bottom, and the
+     actions line up across a row instead of landing wherever the links ran out. */
+  .grid li {
+    display: flex;
+    flex-direction: column;
+  }
   /* The booking link is the action in each card stack, so it carries the
      accent the rest of the site gives a call to action. */
   .grid a.book {
+    margin-top: auto;
     color: #d6bbff;
     border-color: rgba(214, 187, 255, 0.28);
     background: linear-gradient(140deg, rgba(214, 187, 255, 0.1), #120b22 60%);
