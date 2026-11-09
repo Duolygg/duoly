@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { calculateQuote } from '../../src/server/pricing';
+import { quantityDiscountPercent } from '../../src/contracts/pricing';
 import { seoOffers } from '../../src/server/seo/offers';
 import {
   pricesAnswer,
@@ -86,6 +87,18 @@ describe('self-contained SEO answers use checkout prices', () => {
     const answer = pricesAnswer('pu', offers, false);
     expect(answer).toContain('price for your rank');
     expect(answer).not.toContain('We found');
-    expect(quantityAnswer(offers)).toContain('10%, 20% and 25%');
+    const quantity = quantityAnswer(offers);
+    const ordinary = quantityDiscountPercent(5);
+    expect(quantity).toContain(`5 games take ${ordinary}% off`);
+    expect(quantity).toContain(
+      `${quantityDiscountPercent(3, { bundle: true })}% off 3 games`,
+    );
+    expect(quantity).toContain(
+      `${quantityDiscountPercent(10, { bundle: true })}% off 10`,
+    );
+    // A bundle of 5 carries the same percentage as an ordinary order of 5, so
+    // naming both rows repeated one figure in consecutive sentences.
+    expect(quantityDiscountPercent(5, { bundle: true })).toBe(ordinary);
+    expect(quantity.match(new RegExp(`${ordinary}%`, 'g'))).toHaveLength(1);
   });
 });

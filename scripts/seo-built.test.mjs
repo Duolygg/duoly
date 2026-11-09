@@ -277,12 +277,26 @@ test('every sitemap URL that sells something links to an offer', () => {
       page.bookingLinks.length >= 1,
       `${path}: no booking link in the page's own content`,
     );
-    for (const href of page.bookingLinks)
+    // A booking link opens the real checkout on the game it names. Beyond the
+    // game it may prefill the tab, the service and the figures a worked
+    // example quotes (src/content/epal-comparison.ts does all four), so the
+    // parameter set is allowlisted rather than ordered.
+    const PREFILL = ['game', 'tab', 'service', 'rank', 'region', 'qty'];
+    for (const href of page.bookingLinks) {
+      const url = new URL(href, 'https://duoly.gg');
+      assert.equal(url.pathname, '/', `${path}: ${href} leaves the checkout`);
+      assert.equal(url.hash, '#modes-h', `${path}: ${href} misses #modes-h`);
       assert.match(
-        href,
-        /^\/\?game=[a-z0-9]+(&(?:amp;)?(?:service|tab)=[a-z0-9]+)?#modes-h$/,
-        `${path}: ${href} is not a prefilled checkout link`,
+        url.searchParams.get('game') ?? '',
+        /^[a-z0-9]+$/,
+        `${path}: ${href} names no game`,
       );
+      for (const key of url.searchParams.keys())
+        assert(
+          PREFILL.includes(key),
+          `${path}: ${href} carries the unknown parameter ${key}`,
+        );
+    }
   }
 });
 
