@@ -123,7 +123,7 @@ const faq: [string, string][] = [
   ],
   [
     'Do I have to give Duoly my game account password?',
-    'No, and nobody at Duoly will ever ask for one. Every session is played together: the teammate joins your lobby from their own account, which is the line between a duo session and account boosting.',
+    `No, and nobody at Duoly will ever ask for one. Every session is played together: the teammate joins your lobby from their own account, which is the line between a duo session and account boosting. The order chat refuses a message asking for a login before it is delivered, and the teammate earns ${SHARE_PERCENT}% of the order for playing rather than for winning.`,
   ],
   [
     'Can I choose which teammate I play with?',
@@ -135,7 +135,7 @@ const faq: [string, string][] = [
   ],
   [
     'Am I charged per game or once for the whole order?',
-    'Once, when you queue. The terms state one upfront payment for every game or hour in the order, with no charge after each game and no subscription.',
+    `Once, when you queue. Step 1 is the total, Step 2 is the single charge, and the terms state one upfront payment for every game or hour in the order, with no charge after each game and no subscription. For example, ${FIVE_GAMES.short} is one payment of ${FIVE_GAMES.total} at ${QUANTITY_PERCENT}% off.`,
   ],
   [
     'What does a Duoly session cost?',
@@ -143,7 +143,7 @@ const faq: [string, string][] = [
   ],
   [
     'What happens if my teammate never shows up?',
-    'Report the order from your order room. The terms cover a no-show, a teammate leaving and toxic behaviour the same way: a real person reviews the report and can refund the order to your balance.',
+    `Report the order from your order room. The terms cover a no-show, a teammate leaving and toxic behaviour the same way: a real person reviews the report and can refund the order to your balance, whether the order was ${SINGLE_GAME.total} or ${TEN_GAME_BUNDLE.total}.`,
   ],
   [
     'Can I book several teammates at once?',
@@ -378,8 +378,8 @@ const faq: [string, string][] = [
 
     <ClosingCta
       heading="Ready to run the three steps for real?"
-      text={`Duoly books rank-verified teammates and coaches across ${PLAYABLE_GAMES} games plus ${SOCIAL_MODES} voice modes, operated from ${BUSINESS_LOCATION}. Open your game, pick the rank you really have and read the total before paying anything.`}
-      extra={`Three things decide whether a first booking goes well. First, pick the rank you really have, because a wrong rank can make a session impossible to play and is not a reason for a refund. Second, add your in-game name and server so the invite can reach you, and choose voice only if you want to talk using Discord. Third, remember what is not promised: no start time, no rank and no win, and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. For example, ${TEN_GAME_BUNDLE.short} costs ${TEN_GAME_BUNDLE.total} in ${CATALOG_YEAR} and saves ${TEN_GAME_BUNDLE.saved}, the largest discount Duoly gives.`}
+      text={`A first Duoly order is a three-step job that ends in a lobby: ${SINGLE_GAME.short} costs ${SINGLE_GAME.total} and coaching is ${COACHING_PRICE} per hour across ${PLAYABLE_GAMES} games plus ${SOCIAL_MODES} voice modes, operated from ${BUSINESS_LOCATION}. Open your game, pick the rank you really have and read the total before paying anything.`}
+      extra={`Three things decide whether a first booking goes well. First, Step 1 is picking the rank you really have, because a wrong rank can make a session impossible to play and, according to the terms, is not a reason for a refund. Second, add your in-game name and server so the invite can reach you, and choose voice only if you want to talk using Discord. Third, remember what is not promised: no start time, no rank and no win, and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. For example, ${TEN_GAME_BUNDLE.short} costs ${TEN_GAME_BUNDLE.total} at ${BUNDLE_PERCENTS[2]}% off in ${CATALOG_YEAR} and saves ${TEN_GAME_BUNDLE.saved}, the largest discount Duoly gives.`}
       href="/pricing"
       label="See every Duoly price"
       art={{ src: '/assets/games/valorant.png', alt: '' }}

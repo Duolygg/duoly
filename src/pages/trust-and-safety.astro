@@ -81,7 +81,7 @@ const NOT_DUOLY: [string, string][] = [
 const faq: [string, string][] = [
   [
     'Is Duoly safe to use?',
-    `Duoly is an Austrian sole proprietorship, registered under trade register number GISA ${BUSINESS.gisa} and operated from ${BUSINESS_LOCATION}, and the operator details are published rather than hidden. Payment runs through ${PAYMENT_PROVIDER}, so Duoly never sees a full card number, and every session is played on your own account.`,
+    `Duoly is an Austrian sole proprietorship, registered under trade register number GISA ${BUSINESS.gisa} and operated from ${BUSINESS_LOCATION}, and the operator details are published rather than hidden. Payment runs through ${PAYMENT_PROVIDER}, so Duoly never sees a full card number, and every session is played on your own account. For example, a ${SINGLE_GAME.total} game in ${CATALOG_YEAR} is one charge with no fee on top, refundable in full until a teammate accepts.`,
   ],
   [
     'Will a Duoly teammate ever ask for my account password?',
@@ -101,11 +101,11 @@ const faq: [string, string][] = [
   ],
   [
     'What happens to a teammate who breaks the rules?',
-    'The terms allow a warning, a cancelled order without a refund, or a blocked account, depending on how serious the case is. A payout can also be held while a report about that order is reviewed, and fake completion proof ends a teammate’s time on Duoly.',
+    `Step 1 is the report, and the terms then allow a warning, a cancelled order without a refund, or a blocked account, depending on how serious the case is. A payout of ${SHARE_PERCENT}% can also be held while a report about that order is reviewed, and fake completion proof ends a teammate’s time on Duoly.`,
   ],
   [
     'Is Duoly allowed by the game publishers?',
-    'Playing together in a party is allowed in every game Duoly sells, and Duoly never signs into a customer account. Duoly is not affiliated with, endorsed or sponsored by Riot Games, Valve, Epic Games, Blizzard, NetEase or any other publisher, and every player stays responsible for the rules of the game being played.',
+    `Playing together in a party is allowed in all ${PLAYABLE_GAMES} games Duoly sells, and Duoly never signs into a customer account. Duoly is not affiliated with, endorsed or sponsored by Riot Games, Valve, Epic Games, Blizzard, NetEase or any other publisher, and every player stays responsible for the rules of the game being played.`,
   ],
   [
     'How do I get my data deleted?',
@@ -289,8 +289,11 @@ const faq: [string, string][] = [
         portability and withdrawing consent, answered within one month. For
         example, orders and payment records stay 7 years because Austrian tax
         law requires it in {CATALOG_YEAR}, while session chats and reports stay
-        up to 2 years. According to the policy, Duoly never sells data and runs
-        no ad pixel at all.
+        up to 2 years and a rejected application stays 6 months. According to
+        the policy, Duoly never sells data and runs no ad pixel at all, so a{' '}
+        {SINGLE_GAME.total} order and a {TEN_GAME_BUNDLE.total} bundle at{' '}
+        {BUNDLE_PERCENTS[2]}% off leave the same record: the order, and nothing
+        sold on.
       </p>
     </section>
 
@@ -326,8 +329,8 @@ const faq: [string, string][] = [
 
     <ClosingCta
       heading="Want to check the rules before you book?"
-      text={`Duoly publishes the operator, the review a teammate passes, the payment provider and the refund rules, all from ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}. Read the documents first and book only when the terms suit you.`}
-      extra={`Three safeguards matter most on a first order. First, your account stays yours: the teammate plays from a personal client, the chat blocks any request for a login, and nobody at Duoly asks for a password. Second, money is reversible until the session runs: cancel free until a teammate accepts, and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. Third, a bad session has a route: report it from the order room with proof and a person at Duoly reviews it. For example, ${TEN_GAME_BUNDLE.short} costs ${TEN_GAME_BUNDLE.total} in ${CATALOG_YEAR} and still promises no rank, no win and no start time, and catalog prices were read on ${pricesLabel}.`}
+      text={`A safe Duoly booking is a checkable one: a ${SINGLE_GAME.total} game names its price, its ${SHARE_PERCENT}% teammate share, its operator and its refund rule before you pay. Everything above comes from the terms, the privacy policy and the imprint, published from ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}.`}
+      extra={`Three safeguards matter most on a first order. First, your account stays yours: Step 1 of any session is an invite rather than a login, the teammate plays from a personal client using Discord, and nobody at Duoly asks for a password. Second, money is reversible until the session runs: cancel free until a teammate accepts, and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. Third, a bad session has a route: report it from the order room with proof and a person at Duoly reviews it. According to the terms, no rank, win or start time is promised at any price. For example, ${TEN_GAME_BUNDLE.short} costs ${TEN_GAME_BUNDLE.total} at ${BUNDLE_PERCENTS[2]}% off in ${CATALOG_YEAR} and still buys no result, and catalog prices were read on ${pricesLabel}.`}
       href="/pricing"
       label={`See prices for ${PLAYABLE_GAMES} games`}
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}

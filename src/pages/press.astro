@@ -130,7 +130,24 @@ const faq: [string, string][] = [
 
     <section aria-labelledby="what-h">
       <h2 id="what-h">What is Duoly?</h2>
+      {/* The boilerplate itself, verbatim and in one paragraph, so it can be
+          copied without editing. The paragraph after it explains how to use
+          it rather than repeating it. */}
       <p>{BOILERPLATE_PARAGRAPH}</p>
+      <p>
+        The paragraph above is the Duoly boilerplate, free to quote in full or
+        in part. Step 1 for a first mention is the single sentence further down,
+        which names the country and the product in one line. Second, the three
+        figures most articles need are {SHORT_GAME_PRICE} for the cheapest
+        teammate game, {COACHING_PRICE} per coaching hour and {SHARE_PERCENT}%
+        as the teammate share of a completed order, all read from Duoly’s
+        pricing engine in {CATALOG_YEAR}. Third, the qualifier worth keeping is
+        “rank-verified”, because a teammate passes a four-stage review before a
+        first order. For example, a session is played together on separate
+        accounts, with voice using Discord, so Duoly is not an account boosting
+        service. According to the terms of service, no rank, win or start time
+        is promised at any price.
+      </p>
     </section>
 
     <section aria-labelledby="facts-h">
@@ -234,10 +251,17 @@ const faq: [string, string][] = [
         is part of the artwork, so the logo sits best on a dark surface. For
         example, <a href={SOCIAL_IMAGE.href}>the social preview image</a> (
         {SOCIAL_IMAGE.label}) is the one ready-made graphic for a post. Duoly
-        licenses no game art or publisher logo, so none is offered here. Step 1
-        before publishing anything unusual is{' '}
+        licenses no game art and no publisher logo, so none is offered here, and
+        the game artwork on <a href="/pricing">the pricing page</a> belongs to
+        its publishers. According to the terms of service, Duoly is unaffiliated
+        with Riot Games, Valve, Epic Games, Blizzard and NetEase, which is the
+        second reason this kit carries none of their marks. Step 1 before
+        publishing anything unusual is{' '}
         <a href={`mailto:${SUPPORT_EMAIL}`}>an email to the team</a>, answered
-        from {BUSINESS_LOCATION}.
+        from {BUSINESS_LOCATION} in {CATALOG_YEAR}. Every file below is served
+        from duoly.gg itself, next to the {SERVICE_COUNT} priced services the
+        same site publishes, so a hotlink keeps working for as long as the site
+        does.
       </p>
       <ul class="official-logos">
         {LOGO_ASSETS.map((asset) => (
@@ -267,17 +291,21 @@ const faq: [string, string][] = [
       <p>
         Press questions go to{' '}
         <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>, which is the
-        same mailbox the Duoly team answers support from. First, Duoly runs no
-        separate press office and no agency, so a question reaches the people
-        who built the site. Second, put the publication, the deadline and the
-        exact figures needed in the first email, because a figure Duoly cannot
-        document will be declined rather than estimated. Third,{' '}
-        <a href="/contact">the contact form</a> and the chat bubble on every
-        page reach the same team. For example, a request for a founder quote, an
-        interview or a number not on this page is a reasonable ask and will be
-        answered in writing. According to <a href="/imprint">the imprint</a>,
-        the business is legally represented by {BUSINESS.representedBy} in{' '}
-        {BUSINESS_LOCATION}, and the supervisory authority is named there too.
+        same mailbox the Duoly team answers support from. Step 1 is the email
+        itself, because Duoly runs no separate press office and no agency, so a
+        question reaches the people who built the site. Second, put the
+        publication, the deadline and the exact figures needed in the first
+        message, because a figure Duoly cannot document will be declined rather
+        than estimated. For example, {SERVICE_COUNT} services, {CATALOG_GAMES}{' '}
+        games, {SHORT_GAME_PRICE} as the lowest price and {COACHING_PRICE} per
+        coaching hour are all documented in {CATALOG_YEAR}, while a user count
+        is not. Third, <a href="/contact">the contact form</a> and the chat
+        bubble on every page reach the same team. For example, a request for a
+        founder quote, an interview or a number not on this page is a reasonable
+        ask and will be answered in writing. According to{' '}
+        <a href="/imprint">the imprint</a>, the business is legally represented
+        by {BUSINESS.representedBy} in {BUSINESS_LOCATION}, and the supervisory
+        authority is named there too.
       </p>
     </section>
 

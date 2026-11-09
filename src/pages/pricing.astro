@@ -83,7 +83,7 @@ const faq: [string, string][] = [
   ],
   [
     'Does Duoly charge a booking fee or a service fee?',
-    'No. The total shown before checkout is the amount charged, with no booking fee, no payment surcharge and no subscription. Duoly’s own cut comes out of the same figure as commission rather than being added on top.',
+    `No. The total shown before checkout is the amount charged, with no booking fee, no payment surcharge and no subscription. Duoly’s own cut comes out of the same figure as commission rather than being added on top, so ${SINGLE_GAME.short} costs ${SINGLE_GAME.total} and nothing else.`,
   ],
   [
     'Do bundle discounts apply to coaching?',
@@ -91,7 +91,7 @@ const faq: [string, string][] = [
   ],
   [
     'Why do two players pay different prices for the same service?',
-    'Because rank sets the price of ranked play. A higher lobby needs a stronger teammate, so the catalog prices each rank separately. Unranked modes and coaching are flat at every rank.',
+    `Because rank sets the price of ranked play. Step 1 of a quote is the service, Step 2 is the rank, and a higher lobby needs a stronger teammate, so the catalog prices each rank separately. Unranked modes and coaching stay flat at every rank, for example ${COACHING_PRICE} per coaching hour in all ${COACHABLE_GAMES} coachable games.`,
   ],
   [
     'Why does a team fill cost so much more than a duo?',
@@ -107,7 +107,7 @@ const faq: [string, string][] = [
   ],
   [
     'Can a Duoly price change after I book?',
-    'Prices can change over time, and an order already placed keeps the price paid. The terms say so directly, and this table is regenerated from the pricing engine on every deploy.',
+    `Prices can change over time, and an order already placed keeps the price paid. The terms say so directly, and this table is regenerated from the pricing engine on every deploy, with catalog prices read on ${pricesLabel}.`,
   ],
 ];
 ---
