@@ -100,7 +100,7 @@ const flags = [
 const faqItems: [string, string][] = [
   [
     'How do you choose a gaming coach?',
-    'Check 5 things: proof of the coach rank, what one session contains, the price per hour including fees, reviews tied to real sessions, and the refund terms. Read all 5 before you pay.',
+    'Check 5 things: 1) proof of the coach rank, 2) what one session contains, 3) the price per hour including fees, 4) feedback tied to finished sessions and 5) the refund terms. Read all 5 before you pay.',
   ],
   [
     'How much does a gaming coach cost?',
@@ -241,13 +241,13 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       <p class="guide-answer">
         A red flag is a claim no honest coach can support, and 5 of them should
         end the conversation. First, 1) a promised rank by a deadline, because
-        nobody can sell the result of a game other people also play. Second, 2)
-        a rank with no way to check it, or a check with no date on it. Third, 3)
-        payment moved into a private message instead of a platform checkout. For
-        example, a {valVod.title} hour from Duoly is {valVod.display}, payment
-        finishes on duoly.gg through Stripe, and the coach tier is named on the
-        service itself. Finally, 4) an hour with no plan and 5) a wall of
-        feedback with no game or date attached to any entry.
+        nobody sells the result of a game other people also play. Second, 2) a
+        rank with no way to check it. Third, 3) payment moved into a private
+        message instead of a platform checkout. For example, a {valVod.title}
+        hour from Duoly is {valVod.display}, payment finishes on duoly.gg
+        through Stripe, and a Metafy checkout adds a stated 3.7% platform fee,
+        read on {CHECKED_LABEL}. Finally, 4) an hour with no plan and 5)
+        feedback with no game or date attached.
       </p>
       <div class="guide-one">
         <article
