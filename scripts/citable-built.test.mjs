@@ -5,6 +5,7 @@ import process from 'node:process';
 import { chromium } from '@playwright/test';
 
 const base = process.env.SEO_BASE || 'http://127.0.0.1:4381';
+/** Every indexed coaching page, which has to carry its own formats block. */
 const slugs = [
   'valorant',
   'league-of-legends',
@@ -16,6 +17,11 @@ const slugs = [
   'counter-strike-2',
   'overwatch-2',
   'rainbow-six-siege',
+  'call-of-duty',
+  'dota-2',
+  'minecraft',
+  'world-of-warcraft',
+  'deadlock',
 ];
 const paths = [
   ...slugs.map((slug) => `/games/${slug}/coaching`),

@@ -536,4 +536,284 @@ export const lessons: Record<string, Lesson> = {
       ],
     ],
   },
+  'call-of-duty': {
+    title: 'Call of Duty Coaching: Warzone and Loadouts | Duoly',
+    h1: 'Call of Duty coaching for Warzone and your loadouts',
+    lead: 'Book a Call of Duty coach for a live Warzone hour or an hour on loadouts and movement. Fix one habit at a time, from the drop to the final circle.',
+    format:
+      'Call of Duty coaching from Duoly is a booked hour at {amount:learn}, and 2 formats are open in 2026. **Play and Learn** is a live hour where your coach drops with you and talks through rotations, plates, buy station timing and which fights are worth taking. **Loadouts and Movement** is an hour on builds, slide cancels, mantles and positioning, drilled in private matches at {amount:loadout}. First, decide which half of Call of Duty the hour belongs to: 1) Warzone, where rotations and the circle decide games, or 2) multiplayer Ranked Play, where spawns and an objective do. For example, a player who wins most gunfights and still finishes 20th has a rotation problem rather than an aim problem. Finally, every lesson runs on your own Activision account using Discord voice and screen share.',
+    prices:
+      'Every Call of Duty lesson from Duoly costs {amount:learn}, and both formats are sold by the hour, because a Warzone match has no fixed length. First, an hour of Play and Learn usually covers about 2 full battle royale games including queue time, so one lesson is a session rather than a single match. Second, Loadouts and Movement spends the hour in private matches and the firing range, where a build can be changed and tested in a minute instead of over a whole game. Bundles and quantity discounts do not apply to coaching, so a second hour costs {amount:loadout} like the first, read from Duoly checkout in November 2026. For example, book the loadout hour first when your weapon list has not changed in 3 seasons, agreed using Discord.',
+    steps: [
+      'First, pick the format for the problem: 1) a live hour in Warzone or Ranked Play, or 2) an hour on loadouts and movement.',
+      'Second, check out once, upfront: both formats cost {amount:learn}, sold by the hour, read from Duoly checkout in November 2026.',
+      'Finally, meet your coach in the order chat and start the hour using Discord.',
+    ],
+    booking:
+      'A Call of Duty booking from Duoly is a single checkout for one hourly lesson at {amount:learn}, so pick the format before paying. The order chat is where a lesson gets set up properly: send your platform, your input, your region and the mode the hour should cover. For example, a line saying you keep dying on the rotation into the second circle on Resurgence saves ten minutes of guessing. Send your Activision ID as well, because a live hour is a real party invite. Finally, keep your login private, since a coach from Duoly never needs a password and only needs a call using Discord.',
+    sections: [
+      {
+        heading: 'Why does a lost Warzone game usually start before the fight?',
+        paragraphs: [
+          'A lost Warzone game is usually a rotation decision made 2 minutes earlier. First, check the route rather than the gunfight. A squad crossing open ground while the circle closes arrives with no plates, no high ground and a third party already watching. Second, check the money, because a loadout bought late means the first real fight happens with a floor weapon. Buy stations, contracts and the circle are the 3 things a plan has to account for before anyone pushes.',
+          'For example, your coach can pause after a wipe and ask 3 questions: 1) where the circle was, 2) what the squad had to spend and 3) which building the plan was aiming at. An Iridescent coach from Duoly ties every answer to what was on your screen at the time, using Discord screen share. Multiplayer Ranked Play gets the same treatment on different terms: spawns, lanes and the objective clock. A live hour costs {amount:learn} in 2026, and one habit per hour is the honest target.',
+        ],
+      },
+      {
+        heading: 'Example hour: what makes a rotation late?',
+        paragraphs: [
+          'A late rotation is a move starting after the circle has already decided who holds the ground. For example, a squad finishes a contract, loots 3 bodies, then leaves with 20 seconds left. First, mark the moment your coach says to go and compare with the moment the squad actually left. Second, note what happened in between, because looting one more crate is the usual answer.',
+          'A take-home exercise is to call the next rotation out loud 3 times in the hour, before your coach does. Compare each call with the circle timer and with where the squad ended up. An hour of Play and Learn from Duoly costs {amount:learn} and usually covers about 2 full games in 2026, so the same decision comes up more than once. Finally, pick one building or one ridge per game, commit early, then review whether the plan survived contact, reviewed using Discord screen share.',
+        ],
+      },
+    ],
+    prepare:
+      'Preparation for Call of Duty coaching is a short checklist, and ten minutes before the call is enough. Name your platform and your input first, because a controller player and a keyboard player move differently. Send your region too, since ping decides how a peek feels. Decide the mode before the hour starts, for example 1) Warzone battle royale, 2) Resurgence or 3) multiplayer Ranked Play. Bring the weapon list you actually use, attachments included, so the loadout hour starts from a real build rather than a video. Have your Activision ID ready, because a live hour is a real party invite. Test voice and screen share using Discord, then hide private notifications. Never send login details to anyone, including a coach from Duoly. Finally, write one line naming the habit you want changed by the end of the hour, at {amount:learn} for the live format and {amount:loadout} for the loadout hour.',
+    faq: [
+      [
+        'Which Call of Duty lesson should I pick?',
+        'Two lessons are open in 2026. Play and Learn is the live hour for rotations, plates and fight selection. Loadouts and Movement is the hour for builds, slide cancels and positioning.',
+      ],
+      [
+        'How much does Call of Duty coaching cost?',
+        'Every Call of Duty lesson from Duoly costs {amount:learn}, sold by the hour. Bundles and quantity discounts do not apply, so a second hour costs {amount:loadout} like the first.',
+      ],
+      [
+        'Can we work on Warzone and multiplayer in one hour?',
+        'You can, and a narrow goal works better. For example, name 1) Resurgence rotations for the first hour and 2) Ranked Play spawns for a second one.',
+      ],
+      [
+        'Do I need a recording?',
+        'No recording is needed, because both formats are live. Bring your current loadouts instead, plus a note of the minute your games usually fall apart.',
+      ],
+      [
+        'Is coaching the same as booking a Warzone duo?',
+        'No. A duo is shared playing time by the hour. Coaching is an hour with a stated learning goal and a review, agreed using Discord.',
+      ],
+    ],
+  },
+  'dota-2': {
+    title: 'Dota 2 Coaching: Replay Review and Hero Lessons | Duoly',
+    h1: 'Dota 2 coaching for your position and hero pool',
+    lead: 'Book a Dota 2 coach for a live ranked game, an hour of replay review or an hour on one hero. Work on laning, farming patterns and item timings.',
+    format:
+      'Dota 2 coaching from Duoly is a booked lesson at {amount:learn}, and 3 formats are open in 2026. **Play and Learn** is a live ranked game where your coach explains laning, smoke timings and when to group, as the game happens. **Replay Review** is an hour on a recent match: laning, farm, map moves and item timings, narrowed to three things to fix at {amount:replay}. **Hero and Position Coaching** is an hour on one hero or one position, practised live. First, bring the position you actually queue, because position 1 and position 5 fail for different reasons. For example, a mid player dying after the first rune usually needs lane equilibrium rather than another combo. Finally, every lesson runs on your own Steam account using Discord voice and screen share.',
+    prices:
+      'Every Dota 2 lesson from Duoly costs {amount:learn}, and the unit is the real difference. Play and Learn is sold per game, which buys one full ranked match beside your coach. Replay Review and Hero and Position Coaching are sold by the hour, which buys the pauses and rewinds a live game cannot. First, pick the unit matching the problem. For example, a player who already knows which lane goes wrong learns more from an hour of Replay Review than from another ranked queue. Second, a Dota 2 match runs about 40 minutes, so one live game is already a long lesson. Bundles and quantity discounts do not apply to coaching, so a second hour costs {amount:replay} like the first, read from Duoly checkout in November 2026.',
+    steps: [
+      'First, pick the format for the problem: 1) a live ranked game, 2) an hour of replay review or 3) an hour on one hero.',
+      'Second, check out once, upfront: every format costs {amount:learn}, read from Duoly checkout in November 2026. The unit is what differs.',
+      'Finally, meet your coach in the order chat and start the lesson using Discord.',
+    ],
+    booking:
+      'A Dota 2 booking from Duoly is a single checkout for one lesson at {amount:learn}, so check whether the format is sold per game or by the hour before paying. The order chat is where a lesson gets set up properly: send your region, your position and the match ID you want opened. For example, a line saying the offlane keeps losing the first 10 minutes against a dual lane saves ten minutes of guessing. Send your Steam name as well, since a live game needs a party invite. Finally, keep your login private, because a coach from Duoly never needs a password and only needs a call using Discord.',
+    sections: [
+      {
+        heading: 'Why does lane equilibrium decide your first 10 minutes?',
+        paragraphs: [
+          'Lane equilibrium is where the creep waves meet, and equilibrium sets the price of every trade. First, read the wave before pressing an ability. With the wave pushing toward the enemy tower, one trade costs vision, safety and the next few last hits. With the wave held near your own tower, the same trade is almost free. Pulling the small camp on time moves equilibrium back without touching the enemy laner at all.',
+          'Second, each position brings different evidence: 1) a carry brings last hit counts at 10 minutes, 2) a mid player brings rune timings and 3) an offlaner brings the moment a dual lane committed. For example, a support review often turns into a ward map and a stack schedule rather than a fight. An Immortal coach from Duoly ties every point to your own replay at {amount:replay}, watched using Discord screen share. Finally, name the patch, because Valve keeps moving gold and item costs through the 2026 season.',
+        ],
+      },
+      {
+        heading: 'Example review: what makes an item timing late?',
+        paragraphs: [
+          'A late item timing is a purchase arriving after the window the item was meant to win. For example, a Black King Bar bought at 25 minutes misses the fight starting at 22. First, find the fight the item was for, then walk the replay backwards to the last minute the gold was reachable. Second, ask what the farm pattern was doing in the same window: a stacked camp cleared on time, or three minutes spent walking.',
+          'A take-home exercise is to label your next 3 purchases: 1) on time, 2) early or 3) late. Add the fight each one was meant for. Roshan respawns 8 to 11 minutes after dying, so the Aegis window is the clearest place to check whether a timing was real. An hour of Replay Review from Duoly costs {amount:replay} in 2026, which leaves room to replay the same 2 minutes twice, reviewed using Discord screen share.',
+        ],
+      },
+    ],
+    prepare:
+      'Preparation for Dota 2 coaching is one replay and one honest question about your position. For Replay Review, bring a recent match ID with the patch and the position you played. Pick a close game rather than a stomp, for example 1) a loss still even at 25 minutes or 2) a win which felt lucky. Valve keeps patching gold, experience and items through the 2026 season, so name the patch you played. For Hero and Position Coaching, name one hero and the matchups going wrong, at {amount:hero} per hour. For Play and Learn, send your region and position so the live game starts on the right lane. Test voice and screen share using Discord, then hide private chat and notifications. Stay on your own Steam account and never send login details, including to a coach from Duoly. Finally, write the one decision you want to make differently.',
+    faq: [
+      [
+        'Which Dota 2 lesson should I pick?',
+        'Three lessons are open in 2026. Replay Review suits laning, farm and map decisions. Hero and Position Coaching is an hour on one hero. Play and Learn is the live ranked game.',
+      ],
+      [
+        'How much does Dota 2 coaching cost?',
+        'Every Dota 2 lesson from Duoly costs {amount:learn}. Play and Learn is billed per game, while the 2 hourly lessons are billed by the hour, so a second hour costs {amount:hero}.',
+      ],
+      [
+        'What replay should I bring?',
+        'First, bring a close game with the match ID, the patch and the position noted. For example, mark 1) a death on a rotation and 2) an item you regret.',
+      ],
+      [
+        'Can I focus on one position?',
+        'Yes. Book Hero and Position Coaching, name the position and the matchups going wrong, then share the replay using Discord screen share.',
+      ],
+      [
+        'Is coaching the same as booking a Dota 2 duo?',
+        'No. A duo is shared playing time priced per match. Coaching is one lesson with a stated goal and three things to fix afterwards.',
+      ],
+    ],
+  },
+  minecraft: {
+    title: 'Minecraft Coaching: PvP and Bedwars Lessons | Duoly',
+    h1: 'Minecraft coaching for PvP and Bedwars',
+    lead: 'Book a Minecraft coach for an hour of PvP drills or an hour on Bedwars. Work on aim, combos, bridging, bed defence and the clutches that end games.',
+    format:
+      'Minecraft coaching from Duoly is a booked hour at {amount:pvp}, and 2 formats are open in 2026. **PvP Coaching** is an hour on aim, combos, strafing, rod and bow play, drilled in duels on practice servers until the habit sticks. **Bedwars Coaching** is an hour on rush timing, bridging, bed defence and endgame clutches, practised in real games at {amount:bw}. First, pick the format by the moment your games end: 1) losing the opening duel is an aim and combo problem, while 2) losing the bed after winning fights is a defence problem. Second, name the edition, because Java and Bedrock are separate clients with different combat feel. For example, a Hypixel player names the server first. Finally, every lesson runs on your own account using Discord voice and screen share.',
+    prices:
+      'Every Minecraft lesson from Duoly costs {amount:pvp}, and both formats are sold by the hour, because a duel lasts a minute while a Bedwars game lasts far longer. First, an hour of PvP Coaching is mostly repetitions: the same duel, replayed with one change each round. Second, an hour of Bedwars Coaching usually covers 3 or 4 real games, so a rush can be tried, reviewed and tried again. Bundles and quantity discounts do not apply to coaching, so a second hour costs {amount:bw} like the first, read from Duoly checkout in November 2026. For example, book PvP Coaching when you lose the opening fight, and Bedwars Coaching when the bed falls while you are away, agreed using Discord.',
+    steps: [
+      'First, pick the format for the problem: 1) an hour of PvP drills, or 2) an hour on Bedwars.',
+      'Second, check out once, upfront: both lessons cost {amount:pvp}, sold by the hour, read from Duoly checkout in November 2026.',
+      'Finally, meet your coach in the order chat and start the hour using Discord.',
+    ],
+    booking:
+      'A Minecraft booking from Duoly is a single checkout for one hourly lesson at {amount:pvp}, so pick the format before paying. The order chat is where a lesson gets set up properly: send the edition, the server and your Minecraft name. For example, a line saying you play Java on Hypixel and keep losing rod fights saves ten minutes of guessing. Say which combat habits you already have, since a player coming from Bedrock and a player coming from Java start in different places. Finally, keep your login private, because a coach from Duoly never needs a password and only needs a call using Discord.',
+    sections: [
+      {
+        heading: 'Why does a lost duel usually start before the first hit?',
+        paragraphs: [
+          'A lost duel is usually a positioning problem wearing an aim problem as a disguise. First, check where you were standing. A player backing up in a straight line gives away a free line of hits, while a player strafing and keeping the block edge behind them forces a miss. Second, check the rod and the bow, because knockback landing at the right moment resets a fight aim alone was losing.',
+          'For example, your coach can run the same duel 10 times in an hour and change one thing each round: 1) the strafe direction, 2) the moment the rod comes out and 3) where the retreat block goes. A top PvPer coach from Duoly explains the change before each round and checks the result after, using Discord screen share. An hour costs {amount:pvp} in 2026. Finally, keep your own sensitivity and keybinds, so the habits built in the hour are the ones you will actually use.',
+        ],
+      },
+      {
+        heading: 'Example hour: what makes a Bedwars rush fail?',
+        paragraphs: [
+          'A failed Bedwars rush is usually a timing problem rather than a fight problem. For example, a player bridges to the nearest team with 8 wool and arrives alone while the defender already has blocks over the bed. First, count what went with you: wool, blocks, a pick and whether the sword upgrade was worth the delay. Second, check whether your own bed was covered before you left.',
+          'A take-home exercise is to run 3 rushes in the hour and change one thing each time: 1) the departure moment, 2) the bridge angle or 3) the block you defend with. Compare each run with what happened to your own bed. An hour of Bedwars Coaching from Duoly costs {amount:bw} in 2026 and usually covers 3 or 4 games. Finally, a Bedwars 1000 star coach adapts the drill to your server and mode, reviewed using Discord screen share.',
+        ],
+      },
+    ],
+    prepare:
+      'Preparation for Minecraft coaching is a short checklist, and ten minutes before the call is enough. Name the edition first, because Java and Bedrock are separate clients and combat feels different in each. Say which server the hour runs on, for example 1) Hypixel, 2) a practice server or 3) your own world. Have your Minecraft name ready, since a lesson is a real party or a whitelist entry. Keep your usual sensitivity, keybinds and resource pack, so your coach sees real habits. Bring one sentence about where your games end, for example losing the opening duel at {amount:pvp} an hour or losing the bed at {amount:bw}. Test voice and screen share using Discord, then hide private notifications. Never send login details to anyone, including a coach from Duoly. Finally, write one line naming the habit you want changed by the end of the hour.',
+    faq: [
+      [
+        'Which Minecraft lesson should I pick?',
+        'Two lessons are open in 2026. PvP Coaching is the hour for aim, combos, strafing and rod play. Bedwars Coaching is the hour for rush timing, bridging and bed defence.',
+      ],
+      [
+        'How much does Minecraft coaching cost?',
+        'Every Minecraft lesson from Duoly costs {amount:pvp}, sold by the hour. Bundles and quantity discounts do not apply, so a second hour costs {amount:bw} like the first.',
+      ],
+      [
+        'Does coaching work on Bedrock?',
+        'Yes. Name Java or Bedrock when you book, because the 2 editions are separate clients and the combat timing has to match the one you play.',
+      ],
+      [
+        'Which server does the lesson run on?',
+        'The one you name in the order chat. For example, 1) a public network such as Hypixel, 2) a practice server or 3) your own world with the coach whitelisted.',
+      ],
+      [
+        'Is coaching the same as booking a PvP duo?',
+        'No. A PvP duo is shared playing time by the hour. Coaching is an hour of drills with a stated goal, agreed using Discord.',
+      ],
+    ],
+  },
+  'world-of-warcraft': {
+    title: 'WoW Coaching: Class, Rotation and Mythic+ | Duoly',
+    h1: 'World of Warcraft coaching for your class and keys',
+    lead: 'Book a WoW coach for a live Mythic+ hour or an hour on your class and rotation. Work on talents, cooldowns, interrupts and the route that times a key.',
+    format:
+      'World of Warcraft coaching from Duoly is a booked hour at {amount:learn}, and 2 formats are open in 2026. **Play and Learn** is a live hour of Mythic+ where your coach runs keys with you and explains every pull, kick and defensive as the key happens. **Class and Rotation Coaching** is an hour on your own class and spec: talents, rotation, cooldowns and positioning, checked on a target dummy and then in a real key at {amount:class}. First, decide where the problem sits: 1) a key dying to one pull is a route and defensive problem, while 2) a key timed with low damage is a rotation problem. For example, a Restoration Druid names the spec first. Finally, every lesson runs on your own Battle.net account using Discord voice and screen share.',
+    prices:
+      'Every World of Warcraft lesson from Duoly costs {amount:learn}, and both formats are sold by the hour, because a key or an arena session has no fixed length. First, an hour of Play and Learn usually covers more than one key, depending on the key level and the route. Second, Class and Rotation Coaching spends part of the hour on a target dummy, where a rotation can be fixed and measured without a timer running. Bundles and quantity discounts do not apply to coaching, so a second hour costs {amount:class} like the first, read from Duoly checkout in November 2026. For example, book the class hour first when your damage is the weak link, agreed using Discord.',
+    steps: [
+      'First, pick the format for the problem: 1) a live hour of keys, or 2) an hour on your class and rotation.',
+      'Second, check out once, upfront: both lessons cost {amount:learn}, sold by the hour, read from Duoly checkout in November 2026.',
+      'Finally, meet your coach in the order chat and start the hour using Discord.',
+    ],
+    booking:
+      'A World of Warcraft booking from Duoly is a single checkout for one hourly lesson at {amount:learn}, so pick the format before paying. The order chat is where a lesson gets set up properly: send your region, your realm, your class and spec, and the dungeon going wrong. For example, a line saying the key dies on the second pull of one dungeon saves ten minutes of guessing. Send your BattleTag as well, because a live hour needs a real group invite. Finally, keep your login private, since a coach from Duoly never needs a password and only needs a call using Discord.',
+    sections: [
+      {
+        heading: 'Why does a key die to one pull rather than to damage?',
+        paragraphs: [
+          'A key usually dies because one pull was taken without the tools to survive the pull. First, count the stops. A pack with 3 casters needs 3 interrupts or a stun, and a group holding only 2 loses a third of the health bar to the third cast. Second, count the defensives, because a personal cooldown spent on a safe pull leaves nothing for the dangerous one. Route knowledge is the cheapest fix, since skipping an unstoppable pack costs nothing at all.',
+          'For example, your coach can pause after a wipe and ask 3 questions: 1) which cast landed, 2) whose kick was available and 3) whether anyone had a defensive left. A 3,000 rated coach from Duoly ties every answer to what was on your bars at the time, using Discord screen share. Rated arena gets the same treatment on different terms: swaps, crowd control chains and cooldowns. An hour costs {amount:learn} in 2026, and one habit per hour is the honest target.',
+        ],
+      },
+      {
+        heading: 'Example hour: what makes a rotation lose damage?',
+        paragraphs: [
+          'A rotation loses damage in 3 places: 1) a cooldown held too long, 2) a filler pressed during a proc window and 3) movement spent where standing still was safe. For example, a cooldown saved for a boss dying before the cast is damage nobody ever had. First, measure the opener on a target dummy, where nothing interrupts the sequence. Second, repeat the same opener in a real pull, where the sequence meets movement and interrupts.',
+          'A take-home exercise is to run the opener 3 times and write down what changed between the dummy and the pull. Add the moment movement became unavoidable. A Gladiator or 3,000 rated coach from Duoly adapts the exercise to your spec and talent build at {amount:class} per hour in 2026, reviewed using Discord screen share. Finally, keep your own keybinds and addons, so the hour practises what you will press in your next key.',
+        ],
+      },
+    ],
+    prepare:
+      'Preparation for World of Warcraft coaching is one spec and one honest question about your keys. Name your region and realm first, because EU, US, KR and TW keep separate realms and separate ladders. Send your class, spec and the talent build you actually play, so the hour starts from real bars rather than a guide. Have your BattleTag ready, since a live hour is a real group invite. Bring a keystone and a note of the dungeon going wrong, for example 1) the pull where the key dies and 2) the pull you always skip. The live hour is {amount:learn}, and for the class hour at {amount:class} be ready to stand on a target dummy first. Test voice and screen share using Discord, then hide private chat and notifications. Never send login details to anyone, including a coach from Duoly. Finally, write one line naming the habit you want changed.',
+    faq: [
+      [
+        'Which WoW lesson should I pick?',
+        'Two lessons are open in 2026. Play and Learn is the live hour for routes, pulls, interrupts and defensives. Class and Rotation Coaching is the hour for talents and cooldowns.',
+      ],
+      [
+        'How much does WoW coaching cost?',
+        'Every World of Warcraft lesson from Duoly costs {amount:learn}, sold by the hour. Bundles and quantity discounts do not apply, so a second hour costs {amount:class} like the first.',
+      ],
+      [
+        'Can we work on rated arena instead of keys?',
+        'Yes. Name arena in the order chat, and the hour covers swaps, crowd control chains and cooldown use rather than a dungeon route, agreed using Discord.',
+      ],
+      [
+        'Do I need a keystone for the live hour?',
+        'Bring one if you want your own key timed. Otherwise the hour runs on the coach keystone, and the lesson stays the same.',
+      ],
+      [
+        'Is coaching the same as booking a Mythic+ teammate?',
+        'No. A teammate hour is shared playing time. Coaching is an hour with a stated learning goal and a review, for example on interrupt order.',
+      ],
+    ],
+  },
+  deadlock: {
+    title: 'Deadlock Coaching: Macro, Souls and Items | Duoly',
+    h1: 'Deadlock coaching for macro, souls and item timings',
+    lead: 'Book a Deadlock coach for a live ranked match or an hour on macro and souls. Work on farming patterns, soul economy, item timings and rotations.',
+    format:
+      'Deadlock coaching from Duoly is a booked lesson at {amount:learn}, and 2 formats are open in 2026. **Play and Learn** is a live ranked match where your coach plays beside you and explains lane decisions, Urn runs and Mid Boss timings as the match happens. **Macro and Souls** is an hour on farming patterns, soul economy, item timings and rotations at {amount:macro}, so every minute of a match counts. First, decide where the problem sits: 1) a player losing lane needs the live match, while 2) a player winning lane and losing at 30 minutes needs the macro hour. For example, a Phantom player farming well and never joining the Urn run books the macro hour. Second, a Deadlock match runs about 35 minutes, so one live match is already a long lesson. Finally, every lesson runs on your own Steam account using Discord voice and screen share.',
+    prices:
+      'Every Deadlock lesson from Duoly costs {amount:learn}, and the unit is the real difference. Play and Learn is sold per match, which buys one full ranked game beside your coach. Macro and Souls is sold by the hour, which buys the pauses and rewinds a live match cannot. First, pick the unit matching the problem. For example, a player who already knows which 10 minutes go wrong learns more from an hour of Macro and Souls than from another ranked queue. Second, bundles and quantity discounts do not apply to coaching, so a second hour costs {amount:macro} like the first, read from Duoly checkout in November 2026. Finally, the hourly lesson runs using Discord screen share.',
+    steps: [
+      'First, pick the format for the problem: 1) a live ranked match, or 2) an hour on macro and souls.',
+      'Second, check out once, upfront: both lessons cost {amount:learn}, read from Duoly checkout in November 2026. The unit is what differs.',
+      'Finally, meet your coach in the order chat and start the lesson using Discord.',
+    ],
+    booking:
+      'A Deadlock booking from Duoly is a single checkout for one lesson at {amount:learn}, so check whether the format is sold per match or by the hour before paying. The order chat is where a lesson gets set up properly: send the broad area you play in, your hero pool and the part of a match going wrong. For example, a line saying you farm well and never join the Urn run saves ten minutes of guessing. Send your Steam name as well, since a live match needs a party invite. Finally, keep your login private, because a coach from Duoly never needs a password and only needs a call using Discord.',
+    sections: [
+      {
+        heading: 'Why do souls decide more matches than fights do?',
+        paragraphs: [
+          'Souls are the Deadlock currency, won in small amounts all match rather than in one fight. First, understand the orb: shooting a soul orb confirms the souls for your team, and an enemy shooting the same orb denies them. A lane losing half the orbs is a losing lane even while the kill score looks even. Second, items come in 3 categories, Weapon, Vitality and Spirit, so the souls you keep decide which column a build can fill.',
+          'For example, your coach can pause the match and ask 3 questions: 1) how many orbs were secured in the last wave, 2) what the enemy build threatens and 3) which column your next item belongs in. An Ascendant coach from Duoly ties every answer to your own screen at {amount:macro} per hour, using Discord screen share. Finally, name one habit you want changed by the end of the lesson, for example checking the shop before walking back to lane in 2026.',
+        ],
+      },
+      {
+        heading: 'Example lesson: what makes a Mid Boss attempt bad?',
+        paragraphs: [
+          'A bad Mid Boss attempt is one started without knowing where the enemy team is. For example, a team walks into the pit with 2 members pushing a far lane and no vision of the approach. First, find the moment the attempt started and walk backwards to the last information anyone had. Second, ask what the team gave up: a wave, a Walker, or farm about to come off a camp.',
+          'A take-home exercise is to call 3 Mid Boss attempts in your next matches before the team commits, writing down what was known each time: 1) enemy positions, 2) the Urn state and 3) your own cooldowns. An hour of Macro and Souls from Duoly costs {amount:macro} in 2026, which leaves room to replay the same 2 minutes twice. Finally, an Ascendant coach adapts the exercise to your hero and lane, reviewed using Discord screen share.',
+        ],
+      },
+    ],
+    prepare:
+      'Preparation for Deadlock coaching is one hero pool and one honest question about the mid game. Name the broad area you play in first, because Deadlock matches on ping across Europe, North America, South America, Asia, Oceania and the Middle East. Send 2 heroes you play and 1 you want to learn, so the lesson covers builds you will actually use. Have your Steam name ready, since a live match needs a party invite. Plan for the length, because a match runs about 35 minutes, a live lesson at {amount:learn} is one full game and the macro hour at {amount:macro} is sold separately. Bring one sentence about where matches turn, for example 1) the first Urn or 2) the first Mid Boss attempt. Test voice and screen share using Discord, then hide private chat and notifications. Never send login details to anyone, including a coach from Duoly. Finally, name the habit you want changed.',
+    faq: [
+      [
+        'Which Deadlock lesson should I pick?',
+        'Two lessons are open in 2026. Play and Learn is the live match for lane decisions, Urn runs and Mid Boss calls. Macro and Souls is the hour for farming and item timings.',
+      ],
+      [
+        'How much does Deadlock coaching cost?',
+        'Every Deadlock lesson from Duoly costs {amount:learn}. Play and Learn is billed per match, while Macro and Souls is billed by the hour, so a second hour costs {amount:macro}.',
+      ],
+      [
+        'How long is a live Deadlock lesson?',
+        'One full ranked match, running about 35 minutes, plus the short review your coach gives afterwards in the order chat.',
+      ],
+      [
+        'Can I focus on one hero?',
+        'Yes, and a narrow goal works better. For example, name the hero and the lane matchup going wrong, then share the match using Discord screen share.',
+      ],
+      [
+        'Is coaching the same as booking a Deadlock duo?',
+        'No. A duo is shared playing time priced per match. Coaching is one lesson with a stated goal and a habit to take into your next match.',
+      ],
+    ],
+  },
 };

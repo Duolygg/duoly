@@ -16,6 +16,14 @@ export const COACHING_SLUGS = [
   'counter-strike-2',
   'overwatch-2',
   'rainbow-six-siege',
+  // Added 2026-11-09 from the keyword gap analysis. Every slug here needs its
+  // own entry in src/content/coaching.ts and src/content/coaching-formats.ts,
+  // which tests/unit/coaching-formats.test.ts checks.
+  'call-of-duty',
+  'dota-2',
+  'minecraft',
+  'world-of-warcraft',
+  'deadlock',
 ] as const;
 export const GUIDE_PATH = '/blog/what-is-an-egirl';
 /** A game hub is indexable once its copy exists (src/content/hub-pages.ts). */

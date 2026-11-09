@@ -21,6 +21,12 @@ const coaches = [
   'teamfight-tactics',
   'apex-legends',
   'marvel-rivals',
+  // Added 2026-11-09 from the keyword gap analysis.
+  'call-of-duty',
+  'dota-2',
+  'minecraft',
+  'world-of-warcraft',
+  'deadlock',
 ];
 function link(source, target) {
   assert(

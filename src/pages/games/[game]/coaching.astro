@@ -122,6 +122,11 @@ const related: Record<string, string[]> = {
     'league-of-legends',
     'rocket-league',
   ],
+  'call-of-duty': ['counter-strike-2', 'apex-legends', 'rainbow-six-siege'],
+  'dota-2': ['league-of-legends', 'deadlock', 'teamfight-tactics'],
+  minecraft: ['rocket-league', 'fortnite', 'counter-strike-2'],
+  'world-of-warcraft': ['dota-2', 'overwatch-2', 'league-of-legends'],
+  deadlock: ['dota-2', 'league-of-legends', 'overwatch-2'],
 };
 const descriptions: Record<string, string> = {
   valorant: `Valorant coaching ${summary.toLowerCase()}. Choose live Play and Learn, VOD Review or Aim and Crosshair. Set a goal and book your coach on Duoly.`,
@@ -134,6 +139,11 @@ const descriptions: Record<string, string> = {
   'counter-strike-2': `CS2 coaching ${summary.toLowerCase()}. Book a live Premier match, an hour of Demo Review or Utility and Lineups for the maps you queue.`,
   'overwatch-2': `Overwatch 2 coaching ${summary.toLowerCase()}. Choose live Play and Learn or hourly Role Coaching for tank, damage or support. Work on cooldowns.`,
   'rainbow-six-siege': `Rainbow Six Siege coaching ${summary.toLowerCase()}. Book a live Ranked match, an hour in the Operator Lab or a room-by-room Map and Callouts pass.`,
+  'call-of-duty': `Call of Duty coaching ${summary.toLowerCase()}. Book a live Warzone hour or an hour on loadouts and movement, and work on rotations, builds and positioning.`,
+  'dota-2': `Dota 2 coaching ${summary.toLowerCase()}. Book a live ranked game, a replay review or an hour on one hero, and work on laning and item timings.`,
+  minecraft: `Minecraft coaching ${summary.toLowerCase()}. Book an hour of PvP drills or an hour on Bedwars, and work on aim, combos, strafing, bridging and bed defence.`,
+  'world-of-warcraft': `WoW coaching ${summary.toLowerCase()}. Book a live Mythic+ hour or an hour on your class and spec, and work on talents, cooldowns, routes and interrupt order.`,
+  deadlock: `Deadlock coaching ${summary.toLowerCase()}. Book a live ranked match or an hour on macro and souls, and work on farming, items and Mid Boss timings.`,
 };
 const description = descriptions[game.slug]!;
 ---
