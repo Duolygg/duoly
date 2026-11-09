@@ -12,6 +12,8 @@ const settle = async (page: Page) => {
 
 const shellPages = [
   ['/apply', 'Become a teammate | Duoly'],
+  ['/about', 'About Duoly: Gaming Teammate and Coach Marketplace | Duoly'],
+  ['/fees-and-refunds', 'Duoly Fees and Refunds: What a Session Costs | Duoly'],
   ['/contact', 'Contact | Duoly'],
   ['/creators', 'Creator program | Duoly'],
   ['/terms', 'Terms | Duoly'],
@@ -43,6 +45,8 @@ for (const [path, title] of shellPages) {
         '/games',
         '/games/valorant',
         '/blog',
+        '/about',
+        '/fees-and-refunds',
         '/contact',
         '/terms',
         '/privacy',

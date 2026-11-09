@@ -31,9 +31,13 @@ describe('llms.txt', () => {
       ...INDEXABLE_PATHS,
       ...SITE_GAMES.map((game) => `/games/${game.slug}`),
       '/mcp',
+      // Machine-readable and therefore outside the sitemap, like /llms.txt
+      // itself: the route has to exist all the same.
+      '/pricing.md',
     ]);
     expect(existsSync('src/pages/games/[game].astro')).toBe(true);
     expect(existsSync('src/pages/mcp.ts')).toBe(true);
+    expect(existsSync('src/pages/pricing.md.ts')).toBe(true);
     const urls = [...text.matchAll(/https:\/\/[^\s)]+/g)].map(
       (match) => new URL(match[0].replace(/\.$/, '')),
     );

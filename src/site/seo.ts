@@ -1,9 +1,11 @@
 import { intentPages, intentPath } from '../content/intent-pages';
 import { FINISHED_HUB_SLUGS } from '../content/hub-pages';
+import { ABOUT_STORY } from '../content/about-story';
 import { CONTENT_UPDATED } from './content-dates';
 import { gameBySlug } from './games';
 import { aiLaunchState } from './ai';
 import { DISCORD_INVITE, SUPPORT_EMAIL } from './nav';
+import { BUSINESS, DISAMBIGUATION, KNOWS_ABOUT, SERVED_AREAS } from './entity';
 
 export const COACHING_SLUGS = [
   'valorant',
@@ -49,6 +51,8 @@ export const INDEXABLE_PATHS = [
   ...aiLaunchState().indexablePaths,
   '/developers/mcp',
   '/blog',
+  '/about',
+  '/fees-and-refunds',
   '/contact',
   '/terms',
   '/privacy',
@@ -101,7 +105,9 @@ export function breadcrumbs(
  *
  * Rules: only profiles Duoly controls, pasted from the live profile (never a guessed
  * handle). Never a Wikipedia or Wikidata URL: those are third-party pages about us,
- * and claiming one we do not have is a false signal.
+ * and claiming one we do not have is a false signal. When a real Wikidata item for
+ * Duoly ever exists, add the key here and relax the assertion in
+ * tests/unit/seo.test.ts in the same commit, so the policy change is explicit.
  */
 export const OFFICIAL_PROFILES: Record<string, string> = {
   discord: DISCORD_INVITE,
@@ -123,17 +129,84 @@ export const ORGANIZATION_DESCRIPTION =
 /**
  * The one Organization node. Every page that names Duoly as an author, a publisher or
  * a provider should use this so the logo, description and sameAs never drift apart.
+ *
+ * The identity fields (legalName, address, contactPoint, foundingLocation,
+ * identifier, disambiguatingDescription) answer the questions AI assistants were
+ * getting wrong on 9 November 2026: who operates duoly.gg, where, how to reach
+ * them, and which of the several products called Duoly this one is. Every value
+ * comes from src/site/entity.ts, which copies the legal notice on /imprint.
  */
 export function organizationSchema(site: URL) {
   return {
     '@type': 'Organization',
     '@id': new URL('/#organization', site).href,
     name: 'Duoly',
+    legalName: BUSINESS.legalName,
     url: site.href,
     logo: new URL('/icon-512.png', site).href,
     email: SUPPORT_EMAIL,
     description: ORGANIZATION_DESCRIPTION,
+    disambiguatingDescription: DISAMBIGUATION,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: BUSINESS.street,
+      postalCode: BUSINESS.postalCode,
+      addressLocality: BUSINESS.city,
+      addressCountry: BUSINESS.country,
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      email: SUPPORT_EMAIL,
+      url: new URL('/contact', site).href,
+      availableLanguage: ['en', 'de'],
+    },
+    foundingLocation: {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: BUSINESS.city,
+        addressCountry: BUSINESS.country,
+      },
+    },
+    // Only once the owner supplies the real date (src/content/about-story.ts).
+    // A guessed foundingDate is the kind of wrong fact this entity work exists
+    // to remove, so the property is absent rather than approximate.
+    ...(ABOUT_STORY.foundedOn ? { foundingDate: ABOUT_STORY.foundedOn } : {}),
+    /** The Austrian trade licence number, the one public registry entry Duoly has. */
+    identifier: {
+      '@type': 'PropertyValue',
+      name: 'GISA',
+      value: BUSINESS.gisa,
+    },
+    areaServed: SERVED_AREAS,
+    knowsAbout: KNOWS_ABOUT,
     sameAs: SAME_AS,
+  };
+}
+/**
+ * The /about page node: an AboutPage whose `mainEntity` is the one Organization,
+ * so an assistant reading the page lands on the same entity the homepage
+ * publishes rather than inferring a second company of the same name.
+ */
+export function aboutPageSchema(
+  path: string,
+  name: string,
+  description: string,
+  dateModified: string,
+  site: URL,
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': new URL('/#about-page', site).href,
+    url: new URL(path, site).href,
+    name,
+    description,
+    dateModified,
+    isPartOf: { '@id': new URL('/#website', site).href },
+    mainEntity: organizationSchema(site),
+    publisher: { '@id': new URL('/#organization', site).href },
   };
 }
 export function homeSchema(site: URL) {

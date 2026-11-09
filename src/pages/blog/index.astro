@@ -10,8 +10,15 @@ import {
   bookingHref,
   organizationSchema,
 } from '../../site/seo';
-import { SOCIAL_PRICE } from '../../server/seo/teammate-facts';
+import {
+  BUNDLE_PERCENTS as bundle,
+  SHORT_GAME_PRICE,
+  SOCIAL_PRICE,
+} from '../../server/seo/teammate-facts';
+import { CATALOG_PRICES_UPDATED } from '../../server/seo/fees';
 const { viewer, csrf } = await pageViewer(Astro);
+/** The catalog year, derived from the shared price date rather than typed. */
+const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
 const posts = [
   {
     path: GUIDE_PATH,
@@ -113,6 +120,25 @@ const posts = [
         <a href="/developers/mcp">Duoly MCP developer guide</a> documents the
         same catalog for an assistant. Social sessions are explained on the{' '}
         <a href="/games/social">Duoly Social page</a>.
+      </p>
+    </section>
+    <section class="answers" aria-labelledby="reference-h">
+      <h2 id="reference-h">Which Duoly pages explain the service itself?</h2>
+      <p>
+        Two reference pages sit behind the guides, and both answer a question a
+        guide only touches. First, <a href="/about">about Duoly</a> states who
+        operates duoly.gg, how a teammate passes the four-step rank check, and
+        which Duoly this is, because a couples app on Google Play and a language
+        app share the name. Second,{' '}
+        <a href="/fees-and-refunds">Duoly fees and refunds</a> sets out the
+        price model, the automatic bundle discounts of {bundle[0]}%, {bundle[1]}
+        % and {bundle[2]}%, and the cancellation rules quoted from the terms.
+        Step 1 before a first booking is reading one of the two rather than
+        guessing. For example, a reader wondering whether anything is added at
+        checkout finds a {SHORT_GAME_PRICE} session stays {SHORT_GAME_PRICE},
+        and <a href="/pricing.md">pricing.md</a> lists every price in{' '}
+        {CATALOG_YEAR} as plain text for an assistant reading using Claude or
+        another model.
       </p>
     </section>
   </PageIntro>

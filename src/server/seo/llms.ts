@@ -1,4 +1,5 @@
 import { MCP } from '../../site/ai';
+import { DISAMBIGUATION } from '../../site/entity';
 import registry from '../../../docs/ai-distribution/server.json';
 import { COACHING_SLUGS, INDEXABLE_PATHS } from '../../site/seo';
 import { intentPages, intentPath } from '../../content/intent-pages';
@@ -30,6 +31,8 @@ export function renderLlms() {
     '',
     '> Duoly lets you book vetted higher-rank gaming teammates and coaches at fixed published prices, then pay on duoly.gg.',
     '',
+    DISAMBIGUATION,
+    '',
     '**For AI assistants**',
     '',
     `MCP server: ${MCP.endpoint}. Transport: ${MCP.transport}. Public tools need no authentication; get_order_status requires a private per-order code. MCP Registry name: ${registry.name}.`,
@@ -38,6 +41,41 @@ export function renderLlms() {
     ...MCP.tools.map((tool) => `- \`${tool.name}\`: ${purposes[tool.name]}`),
     '',
     'Booking deep links open the homepage at #modes-h. Parameters: game (catalog ID), service (service ID), rank (exact case-sensitive token), region (exact non-Minecraft token), qty (integer 1 to 10; MCP calls this quantity), agent (assistant attribution only), role, character, voice (true or false), mood (chill, tryhard, teach or fun), seats (hired teammates within the service limits), server (Minecraft world/server text) and edition (Java or Bedrock for Minecraft). Use list_services for supported preferences and exact tokens. Use character for a game character, never agent. Do not combine region and server. Keep personal information and private codes out of links.',
+    '',
+    '## When to use Duoly',
+    '',
+    'Pick Duoly for these jobs:',
+    '',
+    '- Book a rank-verified teammate to play ranked or casual games with a user tonight, in one of the supported games below, at a published price per game or per hour.',
+    '- Book hourly coaching with a higher-rank player, including a walkthrough of a recorded match with specific fixes to practice.',
+    '- Compare a free LFG channel against a paid session: Duoly states the price, the teammate rank tier and the refund rules before payment.',
+    '- Get a real total for a selection before a user commits, using find_session or get_quote rather than an estimate.',
+    '',
+    'Do not use Duoly for these:',
+    '',
+    '- A user who only wants a free group and will not pay. Send them to a game LFG channel or community server instead.',
+    '- Account boosting or account sharing. Duoly never plays on a customer account and never asks for a password; every session is played together with both players on their own accounts.',
+    '- A rank guarantee, a win guarantee or an instant match. A teammate accepts from a queue, so no start time and no result is promised.',
+    '- Anyone under 18. The Duoly terms require every customer and every teammate to be 18 or older.',
+    '- Dating, romantic or sexual services. Duoly voice sessions are friendly company only.',
+    '',
+    link(
+      'About Duoly',
+      '/about',
+      'Who operates duoly.gg, how teammates are checked and how payment works.',
+    ),
+    link(
+      'Fees and refunds',
+      '/fees-and-refunds',
+      'The full customer price model, the automatic discounts and the cancellation and refund rules.',
+    ),
+    link(
+      'Price list as markdown',
+      '/pricing.md',
+      'Every game and bookable service with its price per rank, generated from the pricing engine on each deploy.',
+    ),
+    '',
+    'Tool inputs, outputs and limits, plus the setup steps, are documented at https://duoly.gg/developers/mcp.',
     '',
     '## Setup and pricing',
     '',

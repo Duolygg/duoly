@@ -29,6 +29,15 @@ export const CONTENT_SOURCES: Record<string, string[]> = {
   '/ai': ['src/pages/ai.astro', 'src/site/ai.ts'],
   '/developers/mcp': ['src/pages/developers/mcp.astro'],
   '/blog': ['src/pages/blog/index.astro'],
+  '/about': [
+    'src/pages/about.astro',
+    'src/site/entity.ts',
+    'src/content/about-story.ts',
+  ],
+  '/fees-and-refunds': [
+    'src/pages/fees-and-refunds.astro',
+    'src/server/seo/fees.ts',
+  ],
   '/contact': ['src/pages/contact.astro'],
   '/terms': ['src/pages/terms.astro'],
   '/privacy': ['src/pages/privacy.astro'],
@@ -77,14 +86,14 @@ for (const slug of Object.keys(coachFormats))
  */
 export const CONTENT_UPDATED: Record<string, string> = {
   '/': '2026-11-05',
-  '/contact': '2026-11-05',
   '/terms': '2026-11-05',
   '/privacy': '2026-11-05',
-  '/compare/e-pal': '2026-11-08',
 };
-// Everything else is copy the catalog-promotion pass rewrote: every hub, every
-// teammate page, the coaching pages, /games, /blog and its e-girl guide,
-// /get-paid-to-play-games, /ai and /developers/mcp.
+// Everything else is copy the catalog-promotion pass rewrote, plus the pages
+// the trust and entity pass touched on the same day: every hub, every teammate
+// page, the coaching pages, /games, /blog and its e-girl guide,
+// /get-paid-to-play-games, /ai, /developers/mcp, /about, /fees-and-refunds,
+// /contact and /compare/e-pal.
 for (const path of Object.keys(CONTENT_SOURCES))
   CONTENT_UPDATED[path] ??= '2026-11-09';
 
