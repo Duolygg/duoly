@@ -1,0 +1,29 @@
+name: IndexNow
+# After every successful Vercel production deployment, tell IndexNow engines
+# (Bing, which feeds ChatGPT search and Copilot, plus Yandex, Seznam, Naver)
+# about every URL in the live sitemap. The key file is public/<key>.txt.
+on:
+  deployment_status:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: indexnow
+  cancel-in-progress: true
+jobs:
+  submit:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - name: Submit sitemap URLs
+        run: node scripts/indexnow.mjs
