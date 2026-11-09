@@ -10,6 +10,13 @@ import { pageViewer } from '../site/viewer';
 import { CONTENT_DATES, hubChips, serializeJsonLd } from '../site/seo';
 import { AI_ASSISTANTS, AI_PROMPTS, MCP, aiLaunchState } from '../site/ai';
 import { calculateQuote } from '../server/pricing';
+import { faqSchema } from '../server/seo/offers';
+import {
+  BUNDLE_PERCENTS as bundle,
+  COACHABLE_GAMES,
+  PLAYABLE_GAMES,
+  SHORT_GAME_PRICE as shortGamePrice,
+} from '../server/seo/teammate-facts';
 const launch = aiLaunchState();
 // Additive related links: game hubs an assistant can be pointed at directly.
 const HUB_LINKS = hubChips([
@@ -34,28 +41,36 @@ const faq: [string, string][] = [
   [
     'Can I book through an AI assistant today?',
     launch.showSetup
-      ? 'Connect Duoly to Claude to find a session. Review your selection and book on duoly.gg.'
-      : 'The Duoly AI connection is coming soon. You can book directly on duoly.gg now.',
+      ? 'Connect Duoly to Claude, then review the selection and book on duoly.gg.'
+      : 'The Duoly AI connection is coming soon, so book directly on duoly.gg for now.',
   ],
   [
     'Do I need a Duoly account to ask for prices?',
-    'No. The public tools need no Duoly login. You sign in on Duoly when you are ready to book. Your assistant may require a paid plan or administrator permission for custom connectors.',
+    'No, the six public tools need no Duoly login, although your assistant may require a paid plan or an administrator permission.',
   ],
   [
     'Can the assistant pay for my session?',
-    'No. Payment always happens on duoly.gg. Review the service, quantity and final price there before confirming.',
+    'No. Review the service, quantity and final price on duoly.gg, then confirm payment there.',
   ],
   [
     'Does an availability result reserve a teammate?',
-    'No. Availability is a public signal, not a reservation. A teammate accepts your order through the Duoly queue. A requested time or rank is never guaranteed by an AI answer.',
+    'No, availability is a public signal rather than a reservation, and a teammate accepts each order from the Duoly queue.',
   ],
   [
     'Which games can I ask about?',
-    'Ask about the games in the Duoly catalog, including Valorant, League of Legends, Marvel Rivals, Pokemon Unite, Rocket League and Fortnite. Social sessions are booked on duoly.gg for now.',
+    `Ask about ${PLAYABLE_GAMES} games, including Valorant and League of Legends. Coaching covers ${COACHABLE_GAMES}; Social is booked on Duoly.`,
   ],
   [
     'Can I still book without an assistant?',
-    'Yes. Choose your game and service directly on duoly.gg. The booking and payment flow is the same destination an assistant prepares for you.',
+    'Yes. Choose a game and service directly on duoly.gg; the assistant is optional.',
+  ],
+  [
+    'How many requests can an assistant make?',
+    `Step 1 is a search, and rate limits from Duoly sit at ${MCP.rateLimits.minute} requests per minute and ${MCP.rateLimits.day} per day.`,
+  ],
+  [
+    'Are the prices an assistant quotes the real prices?',
+    `Yes. For example, get_quote reads the checkout engine, so a Valorant VOD Review reads ${coachingPrice} per hour in both places, before account perks. Coaching has no quantity discount; teammate bundles are priced separately.`,
   ],
 ];
 ---
@@ -135,27 +150,105 @@ const faq: [string, string][] = [
         </div>
       </aside>
     </header>
+    <section aria-labelledby="what-h">
+      <h2 id="what-h">What is the Duoly connector for AI assistants?</h2>
+      <p>
+        The Duoly connector is a Model Context Protocol server at{' '}
+        <code>{MCP.endpoint}</code> that lets an AI assistant search the Duoly
+        catalog, price a session and build a booking link. No Duoly login is
+        needed for the public tools, and no assistant can take a payment.
+      </p>
+      <p>
+        Seven tools cover the whole path from a question to a checkout page.
+        Step 1 is a search, step 2 is a real price and step 3 is a link back to
+        duoly.gg. For example, a request for a Valorant coach under 15 euros
+        returns the {coachingPrice} per hour VOD Review with a booking link
+        attached, and a request for a cheap duo returns games from{' '}
+        {shortGamePrice}. Prices arrive straight from Duoly, including the{' '}
+        {bundle[1]}% quantity discount on five non-coaching units. Rate limits
+        sit at {MCP.rateLimits.minute} requests per minute and{' '}
+        {MCP.rateLimits.day} per day. The connector supports{' '}
+        {MCP.protocolVersions.length} protocol versions, including{' '}
+        {MCP.protocolVersions[0]}. See the developer guide for the headers each
+        revision requires.
+      </p>
+    </section>
     <Steps
-      heading="From a question to your next session"
+      heading="How do you book a Duoly session from an AI assistant?"
       steps={[
         'Ask your AI for a game, mode, budget and coaching goal.',
         'Compare teammates and coaches. Check the price and who is online.',
         'Open your booking link, review the details and book on duoly.gg.',
       ]}
-    />
-    <section aria-labelledby="assistants-h">
-      <h2 id="assistants-h">Assistant status</h2>
+    >
       <p>
+        Booking from an assistant is a three step conversation that always ends
+        on duoly.gg. First, name the game, the mode and a budget. Then let the
+        assistant compare services and check who is online. Open the booking
+        link and pay on Duoly.
+      </p>
+      <p>
+        Step 3 is where the price becomes final. For example, an assistant
+        quoting a Valorant VOD Review at {coachingPrice} per hour is reading the
+        same engine the checkout uses, before account perks, and a five-game
+        teammate booking includes the {bundle[1]}% quantity discount. A teammate
+        or coach then accepts the order from the Duoly queue, so no assistant
+        can reserve a person, a time or a rank on your behalf. Coaching has no
+        quantity discount. Confirm the voice setup in the order room before
+        starting.
+      </p>
+    </Steps>
+    <section aria-labelledby="assistants-h">
+      <h2 id="assistants-h">Which AI assistants can reach Duoly today?</h2>
+      <p>
+        Claude is the one assistant that can reach Duoly today, as a custom
+        connector you add yourself.{' '}
         {launch.showSetup
           ? 'Add Duoly to Claude, then ask about your next session.'
-          : 'Claude launches first. More assistants are coming soon.'}
+          : 'Claude launches first. More assistants are coming soon.'}{' '}
+        ChatGPT, Gemini, Perplexity and Mistral Le Chat are listed below as
+        coming soon, which means no Duoly connection exists in those apps yet.
       </p>
-      <ul class="ai-status">
+      <p>
+        Duoly ships as a custom connector only. It is not listed in the Claude
+        directory or the ChatGPT store. Step 1 of a realistic expectation is
+        knowing each person adds the connector by hand. Assistants with
+        interactive cards can browse games, compare sessions and open a booking
+        link from a card, while plain clients fall back to text and links. For
+        example, a card in Claude shows the {coachingPrice} per hour Valorant
+        VOD Review beside a booking button. Coaching covers all{' '}
+        {COACHABLE_GAMES} games from Duoly. Coaching has no bundle discount.
+      </p>
+      <p class="ai-dev-note">
+        Building your own client? Read the{' '}
+        <a href="/developers/mcp">Duoly MCP developer guide</a>.
+      </p>
+    </section>
+    <section aria-labelledby="setup-h">
+      <h2 id="setup-h">How do you add Duoly to Claude?</h2>
+      <p>
+        Duoly is a custom connector you add in Claude. Step 1 opens Settings and
+        Connectors. Step 2 adds a connector pointing at{' '}
+        <code>{MCP.endpoint}</code>, and step 3 enables Duoly inside a
+        conversation. No sign-in is needed, because the six public tools read
+        the catalog rather than an account. A paid plan or an administrator
+        permission may be required by the assistant, which is a rule from
+        Anthropic rather than from Duoly.
+      </p>
+      {/* A status widget, not prose: ARIA list roles rather than ul/li. The styling
+        already sets list-style: none, which strips native list semantics in Safari
+        with VoiceOver, so the explicit roles are the reliable announcement here.
+        It also keeps the badges and card labels out of the section answer that an
+        extractor quotes, which is the prose above and below. */}
+      <div class="ai-status" role="list">
         {AI_ASSISTANTS.map((assistant, i) => (
-          <li class:list={['ai-assistant', { 'is-first': i === 0 }]}>
+          <div
+            class:list={['ai-assistant', { 'is-first': i === 0 }]}
+            role="listitem"
+          >
             <div class="ai-card-top">
               <div>
-                <h3>{assistant.name}</h3>
+                <p class="ai-name">{assistant.name}</p>
                 <p>{assistant.detail}</p>
               </div>
               <span class="ai-badge">{assistant.status}</span>
@@ -167,30 +260,33 @@ const faq: [string, string][] = [
                 ))}
               </ol>
             )}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
       {launch.showSetup && (
         <p class="ai-endpoint">
           Custom connector URL: <code>{MCP.endpoint}</code>
         </p>
       )}
       <p>
-        Duoly is available as a custom connector. It is not listed in the Claude
-        directory or the ChatGPT store. In assistants that support interactive
-        cards, you can browse games, compare sessions and open a booking link
-        from a card. Other clients can use text results and links.
-      </p>
-      <p class="ai-dev-note">
-        Building your own client? Read the{' '}
-        <a href="/developers/mcp">Duoly MCP developer guide</a>.
+        For example, a first conversation can ask for a Valorant coach under 15
+        euros and receive the {coachingPrice} per hour VOD Review, using Discord
+        voice once the coach accepts the order from the queue.
       </p>
     </section>
     <section aria-labelledby="prompts-h">
-      <h2 id="prompts-h">Start with one of these prompts</h2>
+      <h2 id="prompts-h">Which prompts get a useful Duoly answer?</h2>
       <p>
-        Use these with the Duoly connector in Claude. Include your budget and
-        mode so the assistant can narrow the options.
+        A useful Duoly prompt names the game, the mode and a budget in one
+        sentence. Three details change the answer most. First, the game decides
+        which services exist. Coaching covers {COACHABLE_GAMES} games, and
+        Social is booked on duoly.gg. Second, a budget in euros or dollars lets
+        find_session filter rather than guess. Third, a named goal turns a
+        teammate search into a coaching search. For example, a request for a
+        Valorant coach under 15 euros returns the {coachingPrice} per hour VOD
+        Review. A Valorant duo request returns short games from {shortGamePrice}
+        . Add a server when ping matters, and a quantity from one to five for an
+        exact selection. Five non-coaching units receive {bundle[1]}% off.
       </p>
       <ul class="ai-prompts">
         {AI_PROMPTS.slice(0, 3).map((prompt) => (
@@ -207,7 +303,22 @@ const faq: [string, string][] = [
       </details>
     </section>
     <section aria-labelledby="tools-h">
-      <h2 id="tools-h">Seven tools for your next session</h2>
+      <h2 id="tools-h">Which Duoly tools can an AI assistant call?</h2>
+      <p>
+        Seven tools are available, and six of them need no account at all. The
+        read-only set covers games, services, matching, pricing, availability
+        and booking links, and the seventh reads one order when you hand over a
+        private code.
+      </p>
+      <p>
+        Two tools do most of the work. First, find_session returns up to three
+        matching services with real prices, for example the {coachingPrice} per
+        hour Valorant VOD Review or a {shortGamePrice} Skirmish game. Second,
+        get_quote prices one exact selection, including a {bundle[1]}% discount
+        on five non-coaching units. Search with a game before selecting a
+        service; order status uses its private code instead. get_availability
+        reports public online counts from Duoly without reserving anybody.
+      </p>
       <ul class="ai-tools">
         <li>
           <code>list_games</code>: Browse supported games.
@@ -235,18 +346,40 @@ const faq: [string, string][] = [
           private status code.
         </li>
       </ul>
+    </section>
+    <section aria-labelledby="status-code-h">
+      <h2 id="status-code-h">How does an order status code work?</h2>
       <p>
-        Generate a status code in your order room and share it only with an
-        assistant you trust. You can revoke it there. It expires after seven
-        days. Ask again to refresh the status. It cannot change or cancel your
-        order.
+        An order status code is a private <code>dos_</code> token generated in
+        your own order room, and nothing else unlocks order data. Step 1 is
+        generating the code, step 2 is pasting the code into the conversation,
+        and revoking the code in the same room ends the access immediately.
+      </p>
+      <p>
+        A status code expires after seven days. Each request reads the current
+        order status and can never change or cancel an order. For example, a
+        code shared with Claude returns the current acceptance, the teammate
+        display names, the team seat progress and the next step, and nothing
+        about payment. A code covers one order only, so a second booking needs a
+        second code. Prices stay public rather than private, which is why a
+        public quote needs no code at all. Keep the code out of screenshots,
+        shared links and conversation logs.
       </p>
     </section>
     <section aria-labelledby="boundaries-h">
-      <h2 id="boundaries-h">You stay in control</h2>
+      <h2 id="boundaries-h">
+        What can an AI assistant do, and what stays with you?
+      </h2>
+      <p>
+        An AI assistant is a research layer over the Duoly catalog. First,
+        searching and link building happen inside the conversation. Second,
+        paying and creating an order stay on duoly.gg. Step 1 of staying safe is
+        never sharing a password. For example, Valorant coaching reads{' '}
+        {coachingPrice} per hour from Duoly, with no coaching quantity discount.
+      </p>
       <div class="ai-boundaries">
         <div class="card">
-          <h3>What the AI will do</h3>
+          <p class="ai-card-title">What the AI will do</p>
           <ul>
             <li>Search games and bookable services.</li>
             <li>Compare prices and public availability.</li>
@@ -255,7 +388,7 @@ const faq: [string, string][] = [
           </ul>
         </div>
         <div class="card">
-          <h3>What the AI cannot do</h3>
+          <p class="ai-card-title">What the AI cannot do</p>
           <ul>
             <li>Pay for a session or create an order.</li>
             <li>See your Duoly account, card or private order history.</li>
@@ -265,7 +398,9 @@ const faq: [string, string][] = [
           </ul>
         </div>
         <div class="card">
-          <h3 id="privacy-h">What your AI shares</h3>
+          <p class="ai-card-title" id="privacy-h">
+            What your AI shares
+          </p>
           <ul>
             <li>Your search choices such as game, service, rank and budget.</li>
             <li>
@@ -286,10 +421,14 @@ const faq: [string, string][] = [
         <a href="/privacy">privacy policy</a>.
       </p>
     </section>
-    <Faq items={faq} />
+    <Faq
+      heading="What do players ask about booking through an AI assistant?"
+      items={faq}
+    />
     <ClosingCta
       heading="Your next teammate is on Duoly"
-      text="Choose your game, compare services and review the price before you book."
+      text="Booking on Duoly is the same destination an assistant prepares for you. Choose your game, compare services and review the price before paying. Nothing is charged until you confirm on duoly.gg."
+      extra={`Three facts close the loop. First, the price an assistant quotes is the engine price before account perks, so a Valorant VOD Review reads ${coachingPrice} per hour in both places, and a short Valorant game reads ${shortGamePrice}. Second, a teammate accepts the order from the Duoly queue rather than receiving an assignment, which is why no assistant promises a time or a rank. Third, Social sessions are booked on duoly.gg for now. Step 1 is picking a game from the ${PLAYABLE_GAMES} in the catalog, and coaching covers ${COACHABLE_GAMES} of them using Discord voice and screen share. For example, a five game bundle from Duoly carries a ${bundle[1]}% discount, and ten games carry ${bundle[2]}%.`}
       href="/"
       label="Book on Duoly"
     />
@@ -317,5 +456,10 @@ const faq: [string, string][] = [
       url: new URL('/ai', Astro.site!).href,
       dateModified: CONTENT_DATES['/ai'],
     })}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faq, '/ai', Astro.site!))}
   />
 </SiteLayout>

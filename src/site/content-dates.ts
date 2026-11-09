@@ -64,27 +64,80 @@ for (const slug of Object.keys(coachRank))
 /**
  * The day each page's copy last changed, as `YYYY-MM-DD`.
  *
- * Declared rather than computed, because sitemap.xml renders per request. Keep
- * it equal to the git date of the files in `CONTENT_SOURCES`: the seo unit test
- * compares the two and names the path and the date to write when they differ.
- *
- * A squash merge rewrites the committer date of every file in the pull request
- * to the day it lands on main, so a page's date here is the day its copy
- * reached main and not the day it was written. Changing page copy therefore
- * means setting its date to the day the change merges.
+ * Declared rather than computed, because sitemap.xml renders per request. Set a
+ * page's date to the day you commit its copy; `lastmodProblem` below is the
+ * rule tests/unit/seo.test.ts holds the declaration to, and it names the path
+ * and the date to write when the two disagree.
  */
 export const CONTENT_UPDATED: Record<string, string> = {
   '/': '2026-11-05',
-  '/blog': '2026-11-05',
   '/contact': '2026-11-05',
   '/terms': '2026-11-05',
   '/privacy': '2026-11-05',
-  '/get-paid-to-play-games': '2026-11-06',
-  '/games': '2026-11-08',
-  '/blog/what-is-an-egirl': '2026-11-08',
   '/compare/e-pal': '2026-11-08',
 };
-// Everything else is copy the rank-rule work rewrote: every hub, every
-// teammate page, the coaching pages, /ai, /developers/mcp and the social hub.
+// Everything else is copy either the rank-rule work or the quotability pass
+// rewrote: every hub, every teammate page, the coaching pages, /games, /blog
+// and its e-girl guide, /get-paid-to-play-games, /ai and /developers/mcp.
 for (const path of Object.keys(CONTENT_SOURCES))
   CONTENT_UPDATED[path] ??= '2026-11-09';
+
+/** What git knows about the last two changes to one page's copy. */
+export type ContentHistory = {
+  /** Committer date (`YYYY-MM-DD`) of the newest commit that touched the copy. */
+  landed: string;
+  /**
+   * Committer date of the commit that touched the same copy before that one.
+   * Absent for copy that has only ever been written once.
+   */
+  previous?: string;
+};
+
+/**
+ * The rule that keeps a declared `lastmod` honest. Returns the sentence to fail
+ * with, or undefined when the declaration is defensible.
+ *
+ * It is a window rather than an equality because a committer date is not the day
+ * the copy was written:
+ *
+ *  - A squash merge rewrites it. GitHub sets both the author and the committer
+ *    date of a squashed pull request to the moment it lands, which is why every
+ *    commit on main has `%as` equal to `%cs`. Copy written on the 9th and merged
+ *    on the 10th reads as changed on the 10th, so an equality check failed on
+ *    main for every pull request that merged a day after it was written. That is
+ *    how it broke after #189, and the only ways to satisfy it were to guess the
+ *    merge day while the branch was still open or to patch main afterwards.
+ *  - Rewriting a page and changing your mind rewrites it twice. The second
+ *    commit moves `landed` without changing what the merged page says, so the
+ *    day that copy was written stays where it was.
+ *
+ * So a date is accepted when it falls between the last two commits that touched
+ * the copy, which is the span it could honestly have been written in:
+ *
+ *  - Never later than `landed`. A date git has no commit for is a page
+ *    announcing freshness that did not happen, and that stays a hard failure.
+ *  - Never earlier than `previous`. Writing can precede a merge by any number of
+ *    days, but it cannot precede the previous version of the same copy.
+ *
+ * That keeps the gate's purpose without a day-count tolerance to tune. A
+ * forgotten bump leaves the declaration at the previous change's day, so the
+ * next change to that copy fails it: staleness cannot accumulate past one
+ * change, and it can never reach the scale that makes `lastmod` worthless.
+ *
+ * One thing the window cannot rescue: a branch that edits a page's copy and
+ * reverts it inside a single day leaves two commits on that copy and no honest
+ * date, because the merged page is unchanged while git says it changed today.
+ * Keep that churn out of the history, with a fixup or an amend, and the page
+ * keeps the date it already had.
+ */
+export function lastmodProblem(
+  declared: string | undefined,
+  { landed, previous }: ContentHistory,
+): string | undefined {
+  if (!declared) return `declares no lastmod; its copy changed ${landed}`;
+  if (declared > landed)
+    return `lastmod ${declared} is newer than the commit that changed its copy (${landed}); a page cannot announce a change git has no commit for. Set it to '${landed}'`;
+  if (previous && declared < previous)
+    return `lastmod ${declared} is older than the previous change to the same copy (${previous}), so it was not updated when the copy changed on ${landed}. Set it to the day you wrote the copy`;
+  return undefined;
+}

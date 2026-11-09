@@ -504,6 +504,11 @@
 .seo-page .closing p {
   margin: 0;
 }
+.seo-page .closing .closing-detail {
+  margin-top: 10px;
+  font-size: 15px;
+  color: #b8abd8;
+}
 
 /* Related links */
 .related {

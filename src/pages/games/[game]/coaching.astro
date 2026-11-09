@@ -13,7 +13,10 @@ import '../../../components/seo/seo.css';
 import '../../../components/seo/coach-rank.css';
 import { lessons } from '../../../content/coaching';
 import { coachRank } from '../../../content/coaching-rank';
-import { closingAnswer } from '../../../server/seo/citable-answers';
+import {
+  closingAnswer,
+  closingDetail,
+} from '../../../server/seo/citable-answers';
 import { intentForGame, intentPath } from '../../../content/intent-pages';
 import { gameBySlug } from '../../../site/games';
 import { pageViewer } from '../../../site/viewer';
@@ -176,6 +179,7 @@ const description = descriptions[game.slug]!;
     <ClosingCta
       heading={`Ready for your ${game.name} lesson?`}
       text={closingAnswer(game.name)}
+      extra={closingDetail(offers)}
       href={book}
       label={`Book ${game.name} coaching`}
       price={summary}

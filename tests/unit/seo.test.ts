@@ -23,7 +23,11 @@ import {
   organizationSchema,
   serializeJsonLd,
 } from '../../src/site/seo';
-import { CONTENT_SOURCES, CONTENT_UPDATED } from '../../src/site/content-dates';
+import {
+  CONTENT_SOURCES,
+  CONTENT_UPDATED,
+  lastmodProblem,
+} from '../../src/site/content-dates';
 import { DISCORD_INVITE } from '../../src/site/nav';
 import { seoOffers, serviceSchema } from '../../src/server/seo/offers';
 import { gameBySlug } from '../../src/site/games';
@@ -59,12 +63,13 @@ it('lists only finished canonical URLs from the configured site', async () => {
 
 /**
  * lastmod has to mean "the day this page's copy changed". The runtime value is
- * declared in src/site/content-dates.ts, so this is the check that keeps the
- * declaration equal to what git actually records for that copy.
+ * declared in src/site/content-dates.ts, so this is the check that holds the
+ * declaration to what git records for that copy, under the window
+ * `lastmodProblem` documents.
  *
  * A source file with uncommitted edits is being changed right now, so its page
- * is allowed to claim today instead of the last commit date. That is also the
- * date to commit it on, which is what keeps the two in step.
+ * has to claim today. That is also the date to commit it on, which is what
+ * keeps the two in step.
  */
 it('derives every sitemap lastmod from the real content change date', () => {
   const git = (args: string[]) =>
@@ -90,23 +95,34 @@ it('derives every sitemap lastmod from the real content change date', () => {
   expect(Object.keys(CONTENT_SOURCES).sort()).toEqual(
     [...INDEXABLE_PATHS].sort(),
   );
+  // Committer dates of the two newest commits that touched any of the page's
+  // own copy files. Two, because the window's floor is the change before the
+  // newest one.
+  const history = (files: string[]) =>
+    git(['log', '-2', '--format=%cs', '--', ...files])
+      .stdout.split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+  const problems: string[] = [];
   for (const [path, files] of Object.entries(CONTENT_SOURCES)) {
-    const dates = files.map((file) => {
+    for (const file of files)
       expect(existsSync(file), `${path}: missing source ${file}`).toBe(true);
-      return dirty.has(file)
-        ? today
-        : git(['log', '-1', '--format=%cs', '--', file]).stdout.trim();
-    });
-    const newest = dates.filter(Boolean).sort().at(-1);
-    expect(
-      newest,
-      `${path}: no git history for ${files.join(', ')}`,
-    ).toBeTruthy();
-    expect(
-      CONTENT_UPDATED[path],
-      `${path}: lastmod says ${CONTENT_UPDATED[path]}, its copy last changed ${newest}. Set CONTENT_UPDATED['${path}'] to '${newest}'.`,
-    ).toBe(newest);
+    if (files.some((file) => dirty.has(file))) {
+      if (CONTENT_UPDATED[path] !== today)
+        problems.push(
+          `${path}: its copy has uncommitted edits, so lastmod has to be today (${today}), not ${CONTENT_UPDATED[path]}. Set CONTENT_UPDATED['${path}'] to '${today}'.`,
+        );
+      continue;
+    }
+    const [landed, previous] = history(files);
+    if (!landed) {
+      problems.push(`${path}: no git history for ${files.join(', ')}`);
+      continue;
+    }
+    const problem = lastmodProblem(CONTENT_UPDATED[path], { landed, previous });
+    if (problem) problems.push(`${path}: ${problem}.`);
   }
+  expect(problems).toEqual([]);
 });
 
 it.each(['EUR', 'USD'] as const)(

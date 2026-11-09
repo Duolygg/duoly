@@ -15,6 +15,7 @@ import '../../../components/seo/lfg-post.css';
 import '../../../components/seo/intent-hero.css';
 import { intentPages, intentPath } from '../../../content/intent-pages';
 import { intentOffers } from '../../../server/seo/intent-offers';
+import { closingDetail } from '../../../server/seo/citable-answers';
 import { gameBySlug } from '../../../site/games';
 import { pageViewer } from '../../../site/viewer';
 import { viewerCurrency } from '../../../server/currency';
@@ -142,6 +143,7 @@ const faqItems = guideFaq(page, guidePrices);
         copy.closing ??
         'Choose your mode, share your role and book your next games.'
       }
+      extra={closingDetail(offers)}
       href={book}
       label="Choose your teammate session"
       price={summary}

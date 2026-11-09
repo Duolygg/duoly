@@ -13,6 +13,15 @@ import {
   CONTENT_DATES,
   organizationSchema,
 } from '../../site/seo';
+import {
+  BUNDLE_PERCENTS as bundle,
+  COACHABLE_GAMES,
+  COACHING_PRICE,
+  SHORT_GAME_PRICE,
+  SOCIAL_MODES,
+  SOCIAL_PRICE,
+  VALORANT_GG_PRICE,
+} from '../../server/seo/teammate-facts';
 if (Astro.params.slug !== 'what-is-an-egirl') {
   Astro.response.status = 404;
   return Astro.rewrite('/404');
@@ -74,24 +83,27 @@ const article = {
       <strong>In this guide</strong>
       <ul>
         <li>
-          <a href="#origin-h">Where the term comes from</a>
+          <a href="#origin-h">Where does the term e-girl come from?</a>
         </li>
         <li>
-          <a href="#gaming-h">How gamers use the term e-girl</a>
+          <a href="#gaming-h">How do gamers use the word e-girl?</a>
         </li>
         <li>
-          <a href="#activity-h">
-            Decide whether you want a teammate, a lesson or company
+          <a href="#activity-h">Do you want a teammate, a lesson or company?</a>
+        </li>
+        <li>
+          <a href="#safety-h">How do you find someone to play with safely?</a>
+        </li>
+        <li>
+          <a href="#duoly-h">How do Duoly’s verified Gamer Girls work?</a>
+        </li>
+        <li>
+          <a href="#price-h">What does a Duoly Social session cost?</a>
+        </li>
+        <li>
+          <a href="#checklist-h">
+            What does a respectful first session look like?
           </a>
-        </li>
-        <li>
-          <a href="#safety-h">How to find someone to play with safely</a>
-        </li>
-        <li>
-          <a href="#duoly-h">How Duoly’s verified Gamer Girls work</a>
-        </li>
-        <li>
-          <a href="#checklist-h">A respectful first-session checklist</a>
         </li>
         <li>
           <a href="#company-h">Want company for an hour?</a>
@@ -102,15 +114,15 @@ const article = {
       </ul>
     </nav>
     <section>
-      <h2 id="origin-h">Where the term comes from</h2>
+      <h2 id="origin-h">Where does the term e-girl come from?</h2>
       <p>
-        The letter e points to electronic or internet life. The term grew
-        through online communities, with no single creator or starting date.
-        Earlier gaming uses could be dismissive, treating women’s presence
-        online as a performance for attention. Later uses became
-        self-descriptions too, including fashion and creative identities. That
-        history explains why one person embraces the word and another dislikes
-        it.
+        An e-girl is a girl or woman known for an internet-based persona or
+        style, and the e points to electronic or online life. First, the term
+        grew through online communities, with no single creator. Second, earlier
+        gaming uses could be dismissive, treating a woman’s presence online as a
+        performance for attention. Third, later uses became self-descriptions,
+        covering fashion, streaming and creative identities. The meaning depends
+        on the community, the speaker and whether the label is self-chosen.
       </p>
       <p>
         A{' '}
@@ -120,47 +132,49 @@ const article = {
         >
           2020 Diggit Magazine analysis by Yoanna Manoilova
         </a>{' '}
-        describes both the term’s derogatory gaming history and its later
-        popularity on TikTok and Instagram, particularly around 2019. It
-        discusses gamer, emo and aesthetic uses. Nobody has to qualify for the
-        label: a look, voice or favorite game says little about who someone is.
+        describes the derogatory gaming history alongside the later popularity
+        on TikTok and Instagram around 2019. Source checked on 8 November 2026.
+        For example, gamer, emo and aesthetic uses all appear there. Nobody has
+        to qualify for the label.
       </p>
       <p>
-        That matters when searching for an egirl. A search result may be about
-        makeup, fashion, streaming or finding a teammate, and those are
-        different tasks. If you want someone to queue with, start by naming the
-        game and the kind of session you would enjoy.
+        If you want someone to queue with, start by naming the game and the kind
+        of session you would enjoy.
       </p>
     </section>
     <section>
-      <h2 id="gaming-h">How gamers use the term e-girl</h2>
+      <h2 id="gaming-h">How do gamers use the word e&#8209;girl?</h2>
       <p>
-        In a gaming conversation, e-girl may mean a woman who plays online, a
-        creator with an online persona or a person offering social gaming
-        sessions. It can also be used as an insult. Listen to the context and
-        use the person’s preferred description. Being a woman who plays Valorant
-        does not make someone an e-girl, a streamer or a paid teammate.
+        In a gaming conversation, e-girl can mean a woman who plays online, a
+        creator with an online persona, or a person offering social gaming
+        sessions. It is also used as an insult, so listen to the context and use
+        the description the person chooses.
       </p>
       <p>
-        The label tells you little about skill. A casual player, a new player
-        and an experienced competitive player can all use it. If rank or a role
-        matters to your session, ask about it directly. For Valorant, useful
-        questions cover region, platform, agent preferences and comms. For
-        League, ask about server, role and the mode you both want to play.
+        The label tells you little about skill, because a casual player and an
+        experienced competitive player can both use it. Ask about rank directly
+        if the mode requires it. For Valorant, ask about region, platform, agent
+        preferences and comms. For League of Legends, ask about server, role and
+        the mode you both want. For example, an ARAM night and a ranked climb
+        need different teammates. Some platforms also use the term as a service
+        label. On Duoly, so a Valorant Gamer Girl Duo is listed at{' '}
+        {VALORANT_GG_PRICE} per game.
       </p>
       <p>
-        A person can enjoy a playful online identity and still expect ordinary
-        respect. There is no need to test whether someone is a real gamer or ask
-        them to prove their gender in a lobby. Start with the shared activity.
-        The same courtesy applies whether you met through a community post, a
-        friend group or a booking platform.
+        For a first session, skip tests of whether someone is a real gamer.
+        Start a lobby using Discord voice and respect the name and boundaries
+        your teammate gives you.
       </p>
     </section>
     <section>
-      <h2 id="activity-h">
-        Decide whether you want a teammate, a lesson or company
-      </h2>
-      <p>Choose by the activity:</p>
+      <h2 id="activity-h">Do you want a teammate, a lesson or company?</h2>
+      <p>
+        Choose by the activity rather than by the label. A teammate suits a
+        match played together. Coaching suits feedback on positioning, mechanics
+        or decisions, priced at {COACHING_PRICE} per hour or game. A Social
+        session suits conversation without loading a game, at {SOCIAL_PRICE} per
+        hour across {SOCIAL_MODES} modes.
+      </p>
       <ul>
         <li>
           <strong>A teammate</strong> if you want to play a match together.
@@ -175,91 +189,120 @@ const article = {
         </li>
       </ul>
       <p>
-        A relaxed Valorant duo can include voice chat and casual games without a
-        detailed VOD review. A coaching hour can be friendly and still keep the
-        lesson goal first. A Social hour can cover music or games without a
-        match. Agree the activity, length and boundaries before you start.
+        For example, a relaxed Valorant duo can include voice chat and casual
+        games with no VOD review attached, while a coaching hour stays friendly
+        and still keeps the lesson goal first. Step 1 is agreeing the activity,
+        the length and the boundaries before you start, using Discord voice.
       </p>
       <p>
-        Free communities are a good first option if you want an ongoing group:
+        Free communities remain a good first option for an ongoing group:
         moderated Discord LFG channels, game forums and people you enjoyed
-        playing with. A paid session suits you when you want a game or a chat
-        right now.
+        playing with. A paid session suits a game you want right now, from{' '}
+        {SHORT_GAME_PRICE}.
       </p>
     </section>
     <section>
-      <h2 id="safety-h">How to find someone to play with safely</h2>
+      <h2 id="safety-h">How do you find someone to play with safely?</h2>
       <p>
-        Share what the game needs and keep the rest private. A useful first
-        message includes region, platform, preferred mode, usual play time and
-        whether you want voice. Use a screen name. Nobody needs your home
-        address, workplace, phone number or account password to arrange a game.
+        A safe first contact is one that shares what the game needs and keeps
+        the rest private. Step 1 is a first message with region, platform,
+        preferred mode, usual play time and whether you want voice, under a
+        screen name. Nobody needs your home address, workplace or password to
+        arrange a game.
       </p>
       <p>
-        Check the community’s moderation and reporting options before moving
-        into private messages. Be careful with unsolicited offers, unfamiliar
-        downloads and links that ask you to sign in again. Open a platform
-        through its known address instead of an unexpected payment or login
-        link.
+        First, check the community’s moderation and reporting options before
+        moving into private messages. Second, be careful with unsolicited
+        offers, unfamiliar downloads and links asking you to sign in again, and
+        open a platform through its known address, for example by typing it.
       </p>
       <p>
-        Agree expectations in plain language. You might say that you want two
-        relaxed games, calm voice and no criticism unless you ask. Ask before
-        recording or streaming; joining voice does not cover publishing it. If
-        either person wants to stop, let them. Use the platform’s support for a
-        paid-session issue.
+        Third, agree expectations in plain language, such as two relaxed games
+        and calm voice, usually settled using Discord before you queue. Ask
+        before recording or streaming, because joining voice does not cover
+        publishing it.
       </p>
       <p>
-        For paid bookings, keep payment and messages on the platform so there is
-        a record of what you booked. Never send extra money privately to unlock
-        promised access. Read the cancellation and refund terms before paying,
-        and treat guaranteed results or pressure to skip the normal checkout as
+        For paid bookings, keep payment on the platform, which on Duoly means a{' '}
+        {SOCIAL_PRICE} Social hour is paid once and never topped up privately.
+        Treat guaranteed results or pressure to skip the normal checkout as
         warning signs.
       </p>
     </section>
     <section>
-      <h2 id="duoly-h">How Duoly’s verified Gamer Girls work</h2>
+      <h2 id="duoly-h">How do Duoly’s verified Gamer Girls work?</h2>
       <p>
-        Gamer Girl is a Duoly service category. Duoly reviews each application
-        before granting Gamer Girl access, and only verified Gamer Girls can
-        accept those orders. A booking covers the session you chose.
+        Gamer Girl is the name of a Duoly service category. Duoly reviews each
+        application before granting Gamer Girl access, and only verified Gamer
+        Girls accept those orders. A booking covers the session you chose.
       </p>
       <p>
-        Game-specific Gamer Girl sessions sit under each game on the homepage,
-        with their own modes and prices. For a Valorant e-girl duo, pick
-        Valorant and open the Gamer Girls tab. The{' '}
-        <a href="/games/valorant">Valorant teammate hub</a> compares the wider
-        choices, and the{' '}
+        Step 1 is picking the game: Gamer Girl sessions sit under each game,
+        with their own modes and prices. For a Valorant e-girl duo, open the
+        Gamer Girls tab, where Gamer Girl Duo is listed at {VALORANT_GG_PRICE}{' '}
+        per game. The <a href="/games/valorant">Valorant teammate hub</a>{' '}
+        compares the wider choices, and the{' '}
         <a href="/games/valorant/coaching">Valorant coaching page</a> covers
-        lessons.
+        lessons at {COACHING_PRICE} per hour.
       </p>
       <p>
-        <a href="/games/social">Duoly Social</a> is the no-game option: Just
-        Chat, Watch Together, Sleep Call and Karaoke as hourly voice sessions on
-        Discord. Social sessions cost €12.99 per hour. The Social page lists
-        current prices.
+        <a href="/games/social">Duoly Social</a> is the no-game option, with
+        Just Chat, Watch Together, Sleep Call and Karaoke sold as hourly voice
+        sessions using Discord at {SOCIAL_PRICE} per hour across {SOCIAL_MODES}{' '}
+        modes. For example, a Karaoke hour costs the same as a Just Chat hour.
       </p>
       <p>
-        Everyone on Duoly must be at least 18. Social is friendly company only,
-        never dating, romantic or sexual services, and payment does not change
-        that. You and your host can both decline a topic, a song request or a
-        question about personal details.
+        Everyone on Duoly must be at least 18, and Social is friendly company
+        only, never dating, romantic or sexual services. You and your host can
+        both decline a topic, a song request or a personal question.
+      </p>
+    </section>
+    <section>
+      <h2 id="price-h">What does a Duoly Social session cost?</h2>
+      <p>
+        A Duoly Social session costs {SOCIAL_PRICE} per hour, and the same price
+        covers all {SOCIAL_MODES} voice modes: Just Chat, Watch Together, Sleep
+        Call and Karaoke. Game sessions are priced per game or per hour instead.
+        First, the cheapest listed game session from Duoly is {SHORT_GAME_PRICE}{' '}
+        for a Valorant Skirmish 2v2. Second, coaching is flat at{' '}
+        {COACHING_PRICE} per hour or game across all {COACHABLE_GAMES} coachable
+        games. Third, teammate bundles cut a total by {bundle[0]}% at three
+        units, {bundle[1]}% at five and {bundle[2]}% at ten, applied at
+        checkout.
+      </p>
+      <p>
+        For example, a ten-game Valorant Duo Pro bundle costs {bundle[2]}% less
+        than ten single bookings, while ten Social hours carry no bundle at all.
+        Step 1 is choosing the activity, because a Social hour and a coaching
+        hour cost the same but do different work. Payment finishes on duoly.gg
+        rather than in a private message.
       </p>
     </section>
     <div id="checklist-h">
       <Steps
-        heading="A respectful first-session checklist"
+        heading="What does a respectful first session look like?"
         steps={[
           '**Before booking:** check that the service fits your goal and your region or platform. Have headphones and Discord ready, and keep notifications off a screen share.',
           '**At the start:** use the name your teammate gives you, confirm the activity and say what kind of conversation feels comfortable. An ordinary topic is enough.',
           '**At the end:** say thanks and finish at the agreed time. For a conduct or booking problem, use the order tools and [support](/contact).',
         ]}
-      />
+      >
+        <p>
+          A respectful first session is one where both people agreed the
+          activity before the game loaded. Step 1 is the boundary conversation,
+          before starting. For example, saying you want two relaxed Valorant
+          games with calm voice and no coaching tells your teammate everything
+          needed. Either person can decline a topic, a song request or a
+          personal question, whether the booking is a {SOCIAL_PRICE} Social hour
+          or a {SHORT_GAME_PRICE} Valorant game.
+        </p>
+      </Steps>
     </div>
     <div id="company-h">
       <ClosingCta
         heading="Want company for an hour?"
-        text="Book a friendly Social session with a verified Gamer Girl, or pick a game and play together."
+        text="A Duoly Social hour is friendly voice company with a verified Gamer Girl, with no game required. Book a Social session, or pick a game and play together instead."
+        extra={`Three facts settle the practical questions. First, Social costs ${SOCIAL_PRICE} per hour across ${SOCIAL_MODES} modes, and a game session can start from ${SHORT_GAME_PRICE} for a Valorant Skirmish 2v2. Second, everyone on Duoly is at least 18, and Social is friendly company only, never dating, romantic or sexual services. Third, sessions run using Discord voice on accounts both people own. Step 1 is choosing Social or a game, step 2 is paying on duoly.gg and step 3 is agreeing a start time in the order room. For example, a Karaoke hour and a Sleep Call hour cost the same, and teammate bundle discounts of ${bundle[2]}% never apply to either.`}
         href={bookingHref('social')}
         label="Book a Social session"
         art={{ src: '/assets/games/social.png', alt: '' }}

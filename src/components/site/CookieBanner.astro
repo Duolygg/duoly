@@ -2,7 +2,12 @@
 import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
 ---
 
-<div
+{/* An <aside> rather than a <div>: the banner is complementary chrome that follows
+    the page content in the DOM, and text extractors (Readability-style parsers,
+    citability scorers, LLM crawlers) drop `aside` while they fold a trailing `div`
+    into the last content section. `role="dialog"` keeps the accessible role and
+    name unchanged, so keyboard and screen-reader behaviour is identical. */}
+<aside
   class="cookie-banner"
   data-cookie-banner
   role="dialog"
@@ -76,7 +81,7 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
       </button>
     </div>
   </div>
-</div>
+</aside>
 <script
   is:inline
   define:vars={{ cookieName: CONSENT_COOKIE, days: CONSENT_DAYS }}

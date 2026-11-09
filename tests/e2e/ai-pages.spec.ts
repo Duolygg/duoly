@@ -91,14 +91,17 @@ test('developer guide explains distinct protocol flows and limits', async ({
   const text = await page.locator('article').evaluate((article) => {
     const prose = article.cloneNode(true) as HTMLElement;
     prose.querySelectorAll('pre, code').forEach((node) => node.remove());
-    return prose.innerText || prose.textContent || '';
+    return (prose.innerText || prose.textContent || '').replace(/\s+/g, ' ');
   });
   expect(text).toContain('16,384');
   expect(text).toContain('65,536');
   expect(text).toContain('preserves supplied rank, region and quantity');
   expect(text).toContain('without JSON duplicated into text');
   expect(text).toContain('Card-only data stays in result metadata');
-  expect(text).toContain('exact totals include bundle savings');
+  expect(text).toContain(
+    'an exact quote includes the applicable quantity discount',
+  );
+  expect(text).toContain('Coaching has no quantity discount');
   expect(text).not.toMatch(/[—–&]|not [^.]*, but/i);
   expect(
     await page.evaluate(

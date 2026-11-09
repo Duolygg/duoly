@@ -2,7 +2,24 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageIntro from '../../components/site/PageIntro.astro';
 import { pageViewer } from '../../site/viewer';
+import {
+  serializeJsonLd,
+  GUIDE_PATH,
+  CONTENT_DATES,
+  organizationSchema,
+} from '../../site/seo';
+import { SOCIAL_PRICE } from '../../server/seo/teammate-facts';
 const { viewer, csrf } = await pageViewer(Astro);
+const posts = [
+  {
+    path: GUIDE_PATH,
+    title: 'What is an e-girl? And how to play with one',
+    updated: CONTENT_DATES[GUIDE_PATH]!,
+    updatedLabel: '5 November 2026',
+    summary:
+      'Understand the term, compare free ways to meet teammates and learn how Duoly Social sessions work.',
+  },
+];
 ---
 
 <SiteLayout
@@ -17,18 +34,119 @@ const { viewer, csrf } = await pageViewer(Astro);
     title="Guides to playing together"
     lead="Practical context for choosing a session and keeping it respectful."
   >
-    <h2>
-      <a href="/blog/what-is-an-egirl">
-        What is an e-girl? And how to play with one
-      </a>
-    </h2>
-    <p>
-      Understand the term, compare free ways to meet teammates and learn how
-      Duoly Social sessions work.
-    </p>
-    <p>By Duoly team. Updated 5 November 2026.</p>
-    <p>
-      <a href="/games">Browse game and coaching guides</a>
-    </p>
+    <section class="answers" aria-labelledby="posts-h">
+      <h2 id="posts-h">Which guides can you read now?</h2>
+      <ul class="posts">
+        {posts.map((post) => (
+          <li>
+            {/* A card title, not a document section: the heading would open a
+                block holding only a 30-word summary. BlogPosting JSON-LD below
+                still carries the headline, description and URL per post. */}
+            <p class="post-title">
+              <a href={post.path}>{post.title}</a>
+            </p>
+            <p>{post.summary}</p>
+            <p class="meta">
+              By Duoly team. Updated{' '}
+              <time datetime={post.updated}>{post.updatedLabel}</time>.
+            </p>
+          </li>
+        ))}
+      </ul>
+      <p>
+        The e-girl guide explains the term's online history and how to arrange a
+        respectful first session. A label does not establish skill or
+        willingness to play. Agree on game, region and mode, and ask before
+        recording or streaming.
+      </p>
+      <p>
+        Free communities are useful for finding a regular group. For example, a
+        moderated Discord LFG channel lets you compare schedules and voice
+        preferences before joining a lobby. A paid session from Duoly has a
+        defined activity and length; the guide explains Duoly Social at{' '}
+        {SOCIAL_PRICE} per hour alongside game sessions. Social is for adults
+        and is friendly company only.{' '}
+        <a href="/games">Browse games and coaching</a> for service details and
+        current prices.
+      </p>
+    </section>
   </PageIntro>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'Blog',
+      name: 'Duoly guides',
+      url: new URL('/blog', Astro.site!).href,
+      publisher: organizationSchema(Astro.site!),
+      blogPost: posts.map((post) => ({
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.summary,
+        url: new URL(post.path, Astro.site!).href,
+        dateModified: post.updated,
+        author: organizationSchema(Astro.site!),
+      })),
+    })}
+  />
 </SiteLayout>
+
+<style>
+  .answers {
+    margin-top: 44px;
+  }
+  .answers h2 {
+    margin: 0 0 12px;
+    font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+    font-size: clamp(22px, 2.6vw, 28px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: #f3eeff;
+  }
+  .answers > p {
+    max-width: 70ch;
+    line-height: 1.7;
+    color: #cfc4ea;
+  }
+  .posts {
+    list-style: none;
+    margin: 28px 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .posts li {
+    padding: 22px 24px;
+    border-radius: 22px;
+    background: #120b22;
+    border: 1px solid rgba(214, 187, 255, 0.14);
+  }
+  .posts .post-title {
+    margin: 0;
+    max-width: none;
+    font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+  .posts .post-title a {
+    color: #fff;
+    text-decoration: none;
+  }
+  .posts .post-title a:hover {
+    text-decoration: underline;
+  }
+  .posts p {
+    margin: 10px 0 0;
+    max-width: 70ch;
+    line-height: 1.7;
+    color: #cfc4ea;
+  }
+  .posts .meta {
+    font-size: 14px;
+    color: #a79dc4;
+  }
+</style>
