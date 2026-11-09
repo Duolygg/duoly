@@ -30,6 +30,7 @@ import {
   TEN_GAME_BUNDLE,
   USD_MARGIN_PERCENT,
 } from '../server/seo/fees';
+import { LEGAL_UPDATED } from '../design-reference/lib/site.js';
 
 const { viewer, csrf } = await pageViewer(Astro);
 const path = '/fees-and-refunds';
@@ -44,14 +45,16 @@ const HUB_LINKS = hubChips([
 /** The catalog price date the rest of the SEO pages already state. */
 const PRICES_UPDATED = CATALOG_PRICES_UPDATED;
 const pricesLabel = '8 November 2026';
+/** The catalog year, derived so "in 2026" cannot outlive the prices it dates. */
+const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
 const faq: [string, string][] = [
   [
     'Does Duoly add a booking fee or a service fee?',
-    'No. The total shown before checkout is the amount Stripe charges, and the Duoly terms say the price you see at checkout is the price you pay. There is no booking fee, no payment surcharge and no subscription.',
+    'No. First, the total shown before checkout is the amount Stripe charges, and the Duoly terms say the price you see at checkout is the price you pay. Second, there is no booking fee, no payment surcharge and no subscription.',
   ],
   [
     'How much is the cheapest Duoly session?',
-    `The lowest listed price is ${SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game. Coaching is ${COACHING_PRICE} per hour or game in every coachable title.`,
+    `The lowest listed price is ${SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game. Coaching is ${COACHING_PRICE} per hour or game in every coachable title, for example a ${COACHING_PRICE} Valorant VOD Review run using Discord screen share.`,
   ],
   [
     'Do I get money back if nobody takes my order?',
@@ -63,11 +66,11 @@ const faq: [string, string][] = [
   ],
   [
     'What if my teammate never shows up?',
-    'Report the order from your order room. The terms cover a no-show, a teammate leaving and toxic behaviour the same way: a real person reviews the report and can refund the order to your balance.',
+    'Step 1 is reporting the order from your order room. The terms cover a no-show, a teammate leaving and toxic behaviour the same way: a real person reviews the report and can refund the order to your balance.',
   ],
   [
     'Do bundle discounts apply to coaching?',
-    `No. Coaching never takes a quantity discount, so ${MAX_QUANTITY} lessons cost ${FIVE_COACHING_HOURS.total} at ${COACHING_HOUR.total} each. Teammate bundles of ${BUNDLE_SIZES.join(', ')} units take ${BUNDLE_PERCENTS.join(', ')}% off.`,
+    `No. Coaching never takes a quantity discount, so ${MAX_QUANTITY} lessons cost ${FIVE_COACHING_HOURS.total} at ${COACHING_HOUR.total} each. Teammate bundles of ${BUNDLE_SIZES.join(', ')} units take ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off.`,
   ],
   [
     'Am I charged per game or once for the whole order?',
@@ -75,11 +78,11 @@ const faq: [string, string][] = [
   ],
   [
     'Where can I read every Duoly price in one place?',
-    'duoly.gg/pricing.md lists every game and every bookable service as plain text, with the price for each rank. It is generated from the pricing engine on each deploy, so it matches checkout rather than a copy of it.',
+    `duoly.gg/pricing.md lists every game and every bookable service as plain text, with the price for each rank, and catalog prices as of ${pricesLabel}. The file is generated from the pricing engine on each deploy, so it matches checkout rather than copying it.`,
   ],
   [
     'Who operates Duoly, and where?',
-    `Duoly is a sole proprietorship based in ${BUSINESS_LOCATION}, registered under trade register number GISA ${BUSINESS.gisa} and legally represented by ${BUSINESS.representedBy}. The about page and the imprint carry the full operator details.`,
+    `Duoly is a sole proprietorship based in ${BUSINESS_LOCATION}, registered under trade register number GISA ${BUSINESS.gisa} and legally represented by ${BUSINESS.representedBy}. For example, the about page and the imprint both carry the full operator details.`,
   ],
   [
     'Can I still cancel after paying?',
@@ -139,21 +142,23 @@ const schema = {
     <section aria-labelledby="fees-h">
       <h2 id="fees-h">What fees does Duoly charge on top of the price?</h2>
       <p>
-        None. The total Duoly shows before checkout is the amount Stripe
-        charges, and the <a href="/terms#payment">terms</a> put it plainly: “The
-        price you see at checkout is the price you pay.” There is no booking
-        fee, no payment surcharge and no subscription, so{' '}
+        None. A Duoly total is the service price for your selection, and the
+        amount Stripe charges is that total. According to{' '}
+        <a href="/terms#payment">Duoly’s payment terms</a>, dated{' '}
+        {LEGAL_UPDATED}, “The price you see at checkout is the price you pay.”
+        First, there is no booking fee, no payment surcharge and no
+        subscription, so{' '}
         <a href={SINGLE_GAME.href}>a {SINGLE_GAME.short} order</a> costs{' '}
-        {SINGLE_GAME.total} and nothing else. Duoly’s own cut comes out of that
-        same figure as commission, covered further down, rather than being added
-        to it. Duoly also takes one payment rather than a charge per game: the{' '}
-        <a href="/terms#payment">payment section</a> states that the full price
-        for every game or hour in the order is paid once, when you queue.
-        Additionally, no wallet top-up stands between you and a session, which
-        is how some marketplaces add a percentage before you ever book. For
-        example, a reader comparing{' '}
-        <a href="/compare/e-pal">Duoly with E-Pal</a> will find a 10% top-up
-        service fee on that platform and none here.
+        {SINGLE_GAME.total} and nothing else. Second, Duoly’s own cut comes out
+        of the same figure as commission, covered further down, rather than
+        being added on top. Third, Duoly takes one payment rather than a charge
+        per game: the <a href="/terms#payment">payment section</a> states the
+        full price for every game or hour in an order is paid once, at the
+        moment you queue. Step 1 therefore has no wallet top-up in the way,
+        which is how some marketplaces add a percentage before a first booking.
+        For example, a reader comparing{' '}
+        <a href="/compare/e-pal">Duoly with E-Pal</a> finds a 10% top-up service
+        fee on that platform and 0% here.
       </p>
     </section>
 
@@ -166,10 +171,14 @@ const schema = {
         a Valorant VOD Review are different listings at different prices.
         Second, your own rank, which only applies to ranked play: lower ranks
         pay less and higher ranks pay more, because higher lobbies need stronger
-        teammates. Third, the quantity. Coaching is flat at {COACHING_PRICE} per
-        hour or game in every coachable title, with no rank multiplier at all.
-        The examples below come straight from the same pricing engine checkout
-        uses, so each total is the figure Stripe would charge today.
+        teammates. Third, the quantity, where {MAX_QUANTITY} units take{' '}
+        {QUANTITY_PERCENT}% off. Coaching is flat at {COACHING_PRICE} per hour
+        or game in every coachable title, with no rank multiplier at all. Step 1
+        is picking the unit, because a game and an hour price differently. The
+        examples below come straight from the pricing engine checkout uses, so
+        each total is the figure Stripe would charge today, for example{' '}
+        {SINGLE_GAME.total} for one Gold-rank League of Legends game read on{' '}
+        {pricesLabel}.
       </p>
       <div class="fees-table-wrap">
         <table class="fees-table">
@@ -206,51 +215,53 @@ const schema = {
       </div>
       <p class="fees-note">
         Catalog prices as of{' '}
-        <time datetime={PRICES_UPDATED}>{pricesLabel}</time>. Each selection
-        above opens the checkout with that exact order prefilled. Open{' '}
-        <a href="/games">any game page</a> for the full price list per rank, or{' '}
-        <a href="/pricing.md">pricing.md</a> for every game and service as plain
-        text, generated from the same pricing engine on every deploy.
+        <time datetime={PRICES_UPDATED}>{pricesLabel}</time>. Each row opens the
+        checkout with that order prefilled. Open{' '}
+        <a href="/games">any game page</a> for the price list per rank, or{' '}
+        <a href="/pricing.md">pricing.md</a> for every game as plain text.
       </p>
     </section>
 
     <section aria-labelledby="discount-h">
       <h2 id="discount-h">Which Duoly discounts are automatic?</h2>
       <p>
-        Two quantity discounts exist, and both are applied in the checkout
-        rather than on request. First, the quantity picker offers 1 to{' '}
-        {MAX_QUANTITY} games or hours, and {MAX_QUANTITY} units take{' '}
-        {QUANTITY_PERCENT}% off: {FIVE_GAMES.label} cost {FIVE_GAMES.total}{' '}
-        instead of {MAX_QUANTITY} times {SINGLE_GAME.total}, saving{' '}
-        {FIVE_GAMES.saved}. Second, the Bundles tab sells a game’s main service
-        in packs of {BUNDLE_SIZES.join(', ')} units at {BUNDLE_PERCENTS[0]}%,{' '}
-        {BUNDLE_PERCENTS[1]}% and {BUNDLE_PERCENTS[2]}% off, so{' '}
-        {TEN_GAME_BUNDLE.label} costs {TEN_GAME_BUNDLE.total} and saves{' '}
-        {TEN_GAME_BUNDLE.saved}, the largest discount Duoly offers. A bundle
-        always covers one teammate. Coaching takes no quantity discount, so{' '}
-        {FIVE_COACHING_HOURS.label} cost {FIVE_COACHING_HOURS.total}.
-        Additionally, prices can change over time, and the{' '}
-        <a href="/terms#payment">terms</a> hold an order you already placed to
-        the price you paid.
+        A Duoly discount is a quantity discount, and two of them exist, both
+        applied in the checkout rather than on request. First, the quantity
+        picker offers 1 to {MAX_QUANTITY} games or hours, and {MAX_QUANTITY}{' '}
+        units take {QUANTITY_PERCENT}% off: {FIVE_GAMES.label} cost{' '}
+        {FIVE_GAMES.total} instead of {MAX_QUANTITY} times {SINGLE_GAME.total},
+        saving {FIVE_GAMES.saved}. Second, the Bundles tab sells a game’s main
+        service in packs of {BUNDLE_SIZES.join(', ')} units at{' '}
+        {BUNDLE_PERCENTS[0]}%, {BUNDLE_PERCENTS[1]}% and {BUNDLE_PERCENTS[2]}%
+        off, so {TEN_GAME_BUNDLE.label} costs {TEN_GAME_BUNDLE.total} and saves{' '}
+        {TEN_GAME_BUNDLE.saved}, the largest discount from Duoly in{' '}
+        {CATALOG_YEAR}. A bundle always covers one teammate. Coaching takes no
+        quantity discount, so {FIVE_COACHING_HOURS.label} cost{' '}
+        {FIVE_COACHING_HOURS.total}. Step 1 is choosing the tab, because the
+        picker and the Bundles tab are separate controls. According to{' '}
+        <a href="/terms#payment">Duoly’s payment terms</a>, prices can change
+        over time, and an order already placed keeps the price paid.
       </p>
     </section>
 
     <section aria-labelledby="currency-h">
       <h2 id="currency-h">Does Duoly charge in euros or US dollars?</h2>
       <p>
-        Duoly prices are set in euros and charged in euros or US dollars,
-        whichever you pick. According to the{' '}
-        <a href="/terms#payment">payment terms</a>, a dollar price is the euro
-        price converted at the day’s European Central Bank rate plus a{' '}
-        {USD_MARGIN_PERCENT}% currency margin, rounded up to .99, so a dollar
-        total is a few cents above the plain mid-market conversion. Payment runs
-        through Stripe, which means Duoly never sees or stores full card
-        details. You can also pay part or all of an order from your Duoly
-        balance, where refunds, cashback and level-up gifts land. For example, a
-        customer with {SINGLE_GAME.total} of balance can cover a{' '}
-        {SINGLE_GAME.short} order without a card charge at all. Your bank may
-        still apply its own foreign currency handling, which is outside Duoly’s
-        control.
+        A Duoly price is set in euros and charged in euros or US dollars,
+        whichever you pick. According to{' '}
+        <a href="/terms#payment">Duoly’s payment terms</a>, dated{' '}
+        {LEGAL_UPDATED}, a dollar price is the euro price converted at the day’s
+        European Central Bank rate plus a {USD_MARGIN_PERCENT}% currency margin,
+        rounded up to .99, so a dollar total sits a few cents above the plain
+        mid-market conversion. First, payment runs through Stripe, which means
+        Duoly never sees or stores full card details. Second, you can pay part
+        or all of an order from your Duoly balance, where refunds, cashback and
+        level-up gifts land. Step 1 for a balance payment is switching the
+        balance on at checkout. For example, a customer holding{' '}
+        {SINGLE_GAME.total} of balance can cover a {SINGLE_GAME.short} order
+        without a card charge at all, and 100% of a refund lands in the same
+        place. Your bank may still apply a foreign currency handling fee of its
+        own.
       </p>
     </section>
 
@@ -259,18 +270,21 @@ const schema = {
         When can you cancel a Duoly order and get money back?
       </h2>
       <p>
-        Three cases are written into the{' '}
+        A Duoly order is cancellable for free until a teammate accepts, and
+        three cases are written into the{' '}
         <a href="/terms#cancel">cancellations and refunds section</a> of the
-        Duoly terms, quoted here in order. First, before a teammate accepts:
-        “Cancel any time in your order room, free of charge. The full amount
-        goes back to your Duoly balance.” Second, when nobody accepts within{' '}
+        terms dated {LEGAL_UPDATED}. First, before a teammate accepts: “Cancel
+        any time in your order room, free of charge. The full amount goes back
+        to your Duoly balance.” Second, when nobody accepts within{' '}
         {AUTO_CANCEL_MINUTES} minutes: “The order cancels itself automatically
         and the full amount goes back to your Duoly balance. You don’t need to
         do anything.” Third, when a session goes wrong: “No-show, a teammate
         leaving, toxic behaviour: report it from your order room. A real person
-        reviews it and can refund the order to your balance.” Refunds reach your
-        balance by default, and the same section says money refunded there can
-        be paid back to your original payment method on request.
+        reviews it and can refund the order to your balance.” For example, 100%
+        of a {FIVE_GAMES.total} order returns {FIVE_GAMES.total} rather than a
+        part of it. According to Duoly’s terms, refunds reach the balance by
+        default, and a report about a session agreed using Discord is reviewed
+        by a person.
       </p>
     </section>
 
@@ -279,18 +293,22 @@ const schema = {
         What about the EU right of withdrawal and promotional credit?
       </h2>
       <p>
-        Queueing an order asks Duoly to start the service right away, which
-        shortens the usual EU cooling-off period. The{' '}
-        <a href="/terms#cancel">terms</a> state it directly: for EU and EEA
-        consumers the 14-day right of withdrawal ends once the session has been
-        fully played, and until a teammate accepts you can cancel for free
-        anyway. Promotional money follows a second rule. According to the{' '}
-        <a href="/terms#balance">Duoly balance section</a>, your balance never
-        expires, cashback and level-up gifts can only be spent on Duoly and
-        cannot be paid out as cash, while money refunded to the balance can go
-        back to your card on request. Austrian law governs the terms, consumers
-        keep the mandatory protections of their own country, and EU consumers
-        can use the online dispute resolution platform at
+        The EU right of withdrawal is a 14-day cooling-off period, and queueing
+        a Duoly order shortens the window. According to{' '}
+        <a href="/terms#cancel">Duoly’s cancellations and refunds section</a>,
+        for EU and EEA consumers the 14-day right ends once a session has been
+        fully played, because queueing asks Duoly to start the service right
+        away. First, until a teammate accepts you can cancel for free anyway, so
+        100% of the amount comes back and the practical window is wider than the
+        legal one. Second, promotional money follows a different rule: the{' '}
+        <a href="/terms#balance">Duoly balance section</a> says a balance never
+        expires, cashback and level-up gifts can only be spent on Duoly, and
+        money refunded to a balance can go back to a card on request. Step 1 for
+        a card refund is asking support. For example, {SINGLE_GAME.total} of
+        refunded money is withdrawable while {SINGLE_GAME.total} of level-up
+        gift stays on Duoly. Austrian law governs the terms dated{' '}
+        {LEGAL_UPDATED}, consumers keep the mandatory protections of a home
+        country, and EU consumers can use the dispute platform at
         ec.europa.eu/consumers/odr.
       </p>
     </section>
@@ -298,29 +316,32 @@ const schema = {
     <section aria-labelledby="split-h">
       <h2 id="split-h">Where does the money you pay actually go?</h2>
       <p>
-        A completed Duoly order splits {SHARE_PERCENT}% to the teammate and the
-        rest to Duoly. The <a href="/terms#teammates">teammate terms</a> state
-        the figure: teammates earn {SHARE_PERCENT}% of each order’s price, and
-        Duoly keeps the remainder for payments, matching, support and running
-        the platform. Teammate earnings are paid weekly, Friday to Friday, and{' '}
-        <a href="/get-paid-to-play-games">the teammate guide</a> adds that a
-        payout runs once a balance passes $25, with smaller amounts carried
-        over. A customer discount comes off first, so the {SHARE_PERCENT}% share
-        is calculated on the discounted total: {TEN_GAME_BUNDLE.label} at{' '}
-        {TEN_GAME_BUNDLE.total} pays the teammate a share of that figure rather
-        than of the undiscounted one. Nobody earns a bonus for a win, which is
-        why Duoly promises no rank and no result. The company keeping that share
-        is the sole proprietorship named on <a href="/about">the about page</a>,
-        based in {BUSINESS_LOCATION} under trade register GISA {BUSINESS.gisa}.
+        A completed Duoly order is a split: {SHARE_PERCENT}% to the teammate and
+        the rest to Duoly. According to{' '}
+        <a href="/terms#teammates">Duoly’s teammate terms</a>, teammates earn{' '}
+        {SHARE_PERCENT}% of each order’s price, and Duoly keeps{' '}
+        {100 - SHARE_PERCENT}% for payments, matching, support and running the
+        platform. First, teammate earnings are paid weekly, Friday to Friday.
+        Second, <a href="/get-paid-to-play-games">the teammate guide</a> adds
+        that a payout runs once a balance passes $25, with smaller amounts
+        carried over. Third, a customer discount comes off first, so the{' '}
+        {SHARE_PERCENT}% share is calculated on the discounted total:{' '}
+        {TEN_GAME_BUNDLE.label} at {TEN_GAME_BUNDLE.total} pays a share of that
+        figure rather than of the undiscounted one. Step 1 of a payout is
+        connecting a method using Wise, PayPal or a bank. For example, nobody
+        earns a bonus for a win, which is why Duoly promises no rank and no
+        result. The company keeping the remainder is the sole proprietorship
+        named on <a href="/about">the about page</a>, in {BUSINESS_LOCATION}{' '}
+        under GISA {BUSINESS.gisa}.
       </p>
     </section>
 
     <Faq heading="What do customers ask about Duoly fees?" items={faq} />
 
     <ClosingCta
-      heading="Check a real price before you decide"
-      text={`Every figure on this page comes from the pricing engine behind checkout, operated from ${BUSINESS_LOCATION}. Open your game, pick the rank you really have and read the total before paying anything.`}
-      extra={`Three rules cover almost every question. First, one upfront payment and no fee on top, so ${SINGLE_GAME.short} is ${SINGLE_GAME.total}. Second, discounts are automatic: ${QUANTITY_PERCENT}% at ${MAX_QUANTITY} units and up to ${BUNDLE_PERCENTS[2]}% on bundles, with coaching flat at ${COACHING_PRICE}. Third, cancel free until a teammate accepts, and an unaccepted order refunds itself after ${AUTO_CANCEL_MINUTES} minutes. For anything else, a real person reviews the report you file from the order room.`}
+      heading="Want to check a real price before you decide?"
+      text={`A Duoly total is the price of one selection, and every figure on this page comes from the pricing engine behind checkout, operated from ${BUSINESS_LOCATION}. Open your game, pick the rank you really have and read the total before paying anything.`}
+      extra={`Three rules cover almost every question. First, one upfront payment and no fee on top, so ${SINGLE_GAME.short} is ${SINGLE_GAME.total}. Second, discounts are automatic: ${QUANTITY_PERCENT}% at ${MAX_QUANTITY} units and up to ${BUNDLE_PERCENTS[2]}% on bundles, with coaching flat at ${COACHING_PRICE}. Third, cancel free until a teammate accepts, and an unaccepted order refunds itself after ${AUTO_CANCEL_MINUTES} minutes. For example, a report about a session agreed using Discord is reviewed by a person at Duoly rather than closed by a script, and catalog prices were read on ${pricesLabel}.`}
       href="/games"
       label="Open the game catalog"
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}

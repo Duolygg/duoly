@@ -420,16 +420,27 @@ const faq: [string, string][] = [
         <a href="/terms">booking and refund terms</a> and{' '}
         <a href="/privacy">privacy policy</a>.
       </p>
+    </section>
+    <section aria-labelledby="trust-h">
+      <h2 id="trust-h">
+        How can an assistant check that Duoly is a real company?
+      </h2>
       <p>
-        Checking whether Duoly is a real company is reasonable, and the answer
-        is published rather than implied. <a href="/about">About Duoly</a> names
-        the operator, the Austrian trade register number and the four-step rank
-        check a teammate passes, and states plainly that duoly.gg is a gaming
-        service rather than the Duoly couples app on Google Play.{' '}
+        Duoly is a sole proprietorship registered in Austria, and every fact an
+        assistant needs is on a page rather than implied. First,{' '}
+        <a href="/about">about Duoly</a> names the operator, the Austrian trade
+        register number and the four-step rank check a teammate passes, and
+        states plainly that duoly.gg is a gaming service rather than the Duoly
+        couples app on Google Play. Second,{' '}
         <a href="/fees-and-refunds">Duoly fees and refunds</a> gives the whole
-        price model and quotes the refund rules from the terms, while{' '}
-        <a href="/pricing.md">pricing.md</a> carries every price as plain text
-        for an assistant to read directly.
+        price model and quotes the refund rules from the terms, so a{' '}
+        {coachingPrice} coaching hour and a {shortGamePrice} game both carry 0%
+        in added fees. Third, <a href="/pricing.md">pricing.md</a> carries every
+        price in the catalog as plain text, generated from the pricing engine on
+        each deploy. Step 1 for a cautious reader is the imprint, linked from
+        about Duoly, where Austrian law requires the operator details. For
+        example, an assistant quoting a price can cite pricing.md and a reader
+        can check the same figure at checkout using Stripe.
       </p>
     </section>
     <Faq

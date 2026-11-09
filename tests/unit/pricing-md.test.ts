@@ -50,8 +50,10 @@ const enginePrice = (gameId: string, mode: Mode, rank?: string) => {
  * catalog edit either shows up in the document or breaks the build.
  */
 describe('the generated /pricing.md document', () => {
-  it('is served prerendered as plain text', async () => {
-    expect(prerender).toBe(true);
+  it('is served as plain text from the function, not as a download', async () => {
+    // Deliberately not prerendered: a static .md would be served as
+    // text/markdown and a browser would download it. See src/pages/pricing.md.ts.
+    expect(prerender).toBe(false);
     const response = await GET({} as Parameters<typeof GET>[0]);
     expect(response.headers.get('Content-Type')).toBe(
       'text/plain; charset=utf-8',
