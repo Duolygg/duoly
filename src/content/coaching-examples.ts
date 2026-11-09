@@ -488,4 +488,259 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
       ],
     },
   },
+  cs2: {
+    learn: {
+      goal: 'Buy for the round your team is actually playing',
+      bring: 'Your region, map pool and CS Rating, plus one buy you regret.',
+      steps: [
+        {
+          at: 'Before',
+          title: 'Set the focus',
+          text: 'Tell your coach you want to call the round type out loud before anyone buys.',
+        },
+        {
+          at: 'First half',
+          title: 'Hear the call',
+          text: 'Play a live match together while your coach explains the money, the utility and the mid-round read.',
+        },
+        {
+          at: 'Second half',
+          title: 'Make the call',
+          text: 'Say full buy, force or save before the round starts, then check the money on both teams.',
+        },
+        {
+          at: 'After',
+          title: 'Quick review',
+          text: 'Finally, revisit one force buy and name the utility you would keep next time.',
+        },
+      ],
+      takeaways: [
+        'A round-type call you can make out loud',
+        'A money check before the buy menu closes',
+        'One mid-round read to repeat',
+      ],
+    },
+    demo: {
+      goal: 'Find the decision before the lost duel',
+      bring: 'A recent Premier or FACEIT demo, ready to load.',
+      steps: [
+        {
+          at: '0 min',
+          title: 'Choose the rounds',
+          text: 'Share your demo on Discord and name an attacking or defending problem.',
+        },
+        {
+          at: '10 min',
+          title: 'Pause before contact',
+          text: 'Review positioning and crosshair placement before a peek, using X-ray to check what was knowable.',
+        },
+        {
+          at: '30 min',
+          title: 'Trace the utility',
+          text: 'Compare the timing of a smoke, flash or molotov with the moment your team took space.',
+        },
+        {
+          at: '50 min',
+          title: 'Choose three fixes',
+          text: 'Finally, turn the review into three priorities for your next matches.',
+        },
+      ],
+      takeaways: [
+        'A positioning adjustment for first contact',
+        'A utility timing to test',
+        'Three fixes for your next demo',
+      ],
+    },
+    util: {
+      goal: 'Build a utility set for the maps you queue',
+      bring: 'Your map pool and whether you play Premier, FACEIT or both.',
+      steps: [
+        {
+          at: '0 min',
+          title: 'Pick the map',
+          text: 'Name the map and the site where your executes keep stalling.',
+        },
+        {
+          at: '10 min',
+          title: 'Learn the smokes',
+          text: 'Work through the smokes that cut the sightlines your entry has to cross.',
+        },
+        {
+          at: '30 min',
+          title: 'Add the flashes',
+          text: 'Practice pop flashes and molotovs, checking that a teammate can move on each one.',
+        },
+        {
+          at: '50 min',
+          title: 'Keep the set',
+          text: 'Finally, write down a short lineup set you can throw without thinking.',
+        },
+      ],
+      takeaways: [
+        'A smoke set for one site',
+        'A flash a teammate can move on',
+        'A lineup list to keep practicing',
+      ],
+    },
+  },
+  ow: {
+    learn: {
+      goal: 'Engage when your team can follow',
+      bring:
+        'Your role, hero pool, BattleTag and a fight you want to understand.',
+      steps: [
+        {
+          at: 'Before',
+          title: 'Set the role',
+          text: 'Agree whether your hero takes space, follows an engage or holds the back line.',
+        },
+        {
+          at: 'First point',
+          title: 'Hear the calls',
+          text: 'Play a live Competitive match while your coach explains engages, cooldowns and resets.',
+        },
+        {
+          at: 'Regroup',
+          title: 'Count the follow-up',
+          text: 'Count who can join before committing an ultimate, and call the plan on voice.',
+        },
+        {
+          at: 'After',
+          title: 'Quick review',
+          text: 'Finally, revisit one fight and name the teammate position that changed the decision.',
+        },
+      ],
+      takeaways: [
+        'A teammate-readiness check',
+        'An ultimate call to communicate',
+        'One reset cue for your role',
+      ],
+    },
+    role: {
+      goal: 'Play your role around its cooldowns',
+      bring: 'One role, two heroes and a matchup that keeps going wrong.',
+      steps: [
+        {
+          at: '0 min',
+          title: 'Choose the matchup',
+          text: 'Name the opponent and the situation that makes your role uncomfortable.',
+        },
+        {
+          at: '10 min',
+          title: 'Map the cooldowns',
+          text: 'Work through which ability to spend first and which one to hold for an enemy commit.',
+        },
+        {
+          at: '30 min',
+          title: 'Fix the positioning',
+          text: 'Review sightlines and space so your role can act without being the first target.',
+        },
+        {
+          at: '50 min',
+          title: 'Keep a checklist',
+          text: 'Finally, summarize the matchup cue, the cooldown order and the ultimate timing to practice.',
+        },
+      ],
+      takeaways: [
+        'A cooldown you hold instead of spending',
+        'A positioning cue for your role',
+        'An ultimate-timing checklist',
+      ],
+    },
+  },
+  r6: {
+    learn: {
+      goal: 'Spend the prep phase where the attack is coming',
+      bring: 'Your platform, rank, operator pool and one site you keep losing.',
+      steps: [
+        {
+          at: 'Before',
+          title: 'Set the focus',
+          text: 'Tell your coach you want to place reinforcements based on the drone information.',
+        },
+        {
+          at: 'Prep phase',
+          title: 'Hear the setup',
+          text: 'Play a live match together while your coach explains walls, rotations and who anchors.',
+        },
+        {
+          at: 'Action phase',
+          title: 'Make the read',
+          text: 'Call where the attackers are coming from before the first breach, then compare with the coach.',
+        },
+        {
+          at: 'After',
+          title: 'Quick review',
+          text: 'Finally, revisit one round and name the wall you would spend differently.',
+        },
+      ],
+      takeaways: [
+        'A reinforcement plan for one site',
+        'A rotation hole worth keeping open',
+        'One anchor or roam decision to repeat',
+      ],
+    },
+    ops: {
+      goal: 'Use one attacker and one defender properly',
+      bring: 'One attacker, one defender and the map you play them on.',
+      steps: [
+        {
+          at: '0 min',
+          title: 'Pick the pair',
+          text: 'Choose the attacker and defender you want to own, and name the site.',
+        },
+        {
+          at: '10 min',
+          title: 'Learn the gadget',
+          text: 'Work through where the gadget goes and what the gadget is supposed to deny.',
+        },
+        {
+          at: '30 min',
+          title: 'Time the play',
+          text: 'Practice the setup and the timing in a custom game, with the coach calling the clock.',
+        },
+        {
+          at: '50 min',
+          title: 'Keep the setup',
+          text: 'Finally, write down one attacking setup and one defending setup you can repeat.',
+        },
+      ],
+      takeaways: [
+        'A gadget placement that denies something',
+        'A timing cue for your attacker',
+        'A defending setup to repeat',
+      ],
+    },
+    maps: {
+      goal: 'Learn one map room by room',
+      bring: 'The map you lose most and the site that goes wrong.',
+      steps: [
+        {
+          at: '0 min',
+          title: 'Name the map',
+          text: 'Pick the map and the site, then walk the approach the attackers usually take.',
+        },
+        {
+          at: '10 min',
+          title: 'Learn the callouts',
+          text: 'Go room by room so every call lands on a name your team will recognize.',
+        },
+        {
+          at: '30 min',
+          title: 'Build the setups',
+          text: 'Work through a reinforcement plan and a rotation route for each site.',
+        },
+        {
+          at: '50 min',
+          title: 'Keep the notes',
+          text: 'Finally, keep a short setup sheet for every site on that one map.',
+        },
+      ],
+      takeaways: [
+        'Callouts for one full map',
+        'A setup for every site',
+        'A rotation route you can run',
+      ],
+    },
+  },
 };

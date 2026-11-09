@@ -13,13 +13,16 @@ const slugs = [
   'teamfight-tactics',
   'apex-legends',
   'marvel-rivals',
+  'counter-strike-2',
+  'overwatch-2',
+  'rainbow-six-siege',
 ];
 const paths = [
   ...slugs.map((slug) => `/games/${slug}/coaching`),
   '/games/pokemon-unite/teammate',
 ];
 
-test('all eight built pages expose exactly the visible FAQ answers and readable prices', async () => {
+test('every built coaching page exposes exactly the visible FAQ answers and readable prices', async () => {
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage({ javaScriptEnabled: false });
@@ -45,6 +48,12 @@ test('all eight built pages expose exactly the visible FAQ answers and readable 
         closing: document
           .querySelector('section[aria-labelledby="closing-h"]')
           ?.textContent.trim(),
+        priceDates: [
+          ...document.querySelectorAll('[aria-labelledby="prices"] time'),
+        ].map((item) => item.textContent.trim()),
+        ruleDates: [...document.querySelectorAll('.rank-rule time')].map(
+          (item) => item.textContent.trim(),
+        ),
         text: document.querySelector('article.seo-page').textContent,
       }));
       assert.deepEqual(
@@ -60,11 +69,20 @@ test('all eight built pages expose exactly the visible FAQ answers and readable 
         data.prices,
         /We found|0% quantity|paid lesson|Check each description/,
       );
-      assert.equal(
-        (data.text.match(/8 November 2026/g) || []).length,
-        1,
-        `${path}: price date appears once`,
+      // Two dated facts live on a coaching page and they mean different
+      // things: the day the prices were read, and the day the publisher's
+      // queue rule was read. Each is stated once, in its own section.
+      assert.deepEqual(
+        data.priceDates,
+        ['8 November 2026'],
+        `${path}: price date appears once, under the prices`,
       );
+      if (path.endsWith('/coaching'))
+        assert.deepEqual(
+          data.ruleDates,
+          ['8 November 2026'],
+          `${path}: rank rule names its source date once`,
+        );
       assert.doesNotMatch(
         data.text,
         /Step 1 is to|match results remain uncertain|familiar setup or a basic decision|Quantity discount: 0%/,

@@ -14,7 +14,18 @@ import { gameBySlug } from '../../src/site/games';
 const currencies = ['EUR', 'USD'] as const;
 
 describe('coaching example pricing', () => {
-  for (const game of ['lol', 'val', 'mr', 'rl', 'fn', 'tft', 'apex']) {
+  for (const game of [
+    'lol',
+    'val',
+    'mr',
+    'rl',
+    'fn',
+    'tft',
+    'apex',
+    'cs2',
+    'ow',
+    'r6',
+  ]) {
     for (const customerCurrency of currencies) {
       it(`${game} ${customerCurrency}: every training service has an example with the helper price and unit`, () => {
         const context = { customerCurrency, eurToUsd: 1.17 };

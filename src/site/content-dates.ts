@@ -1,5 +1,6 @@
 import { intentPages, intentPath } from '../content/intent-pages';
 import { FINISHED_HUB_SLUGS } from '../content/hub-pages';
+import { coachRank } from '../content/coaching-rank';
 
 /**
  * Where every indexable page's copy actually lives, and the day that copy last
@@ -50,18 +51,14 @@ for (const page of intentPages)
     'src/content/intent-pages.ts',
     'src/content/guide-pages.ts',
   ];
-for (const slug of [
-  'valorant',
-  'league-of-legends',
-  'rocket-league',
-  'fortnite',
-  'teamfight-tactics',
-  'apex-legends',
-  'marvel-rivals',
-])
+// Keyed off coachRank rather than a second hand-written slug list: that list
+// drifted once already when a coaching page was added, and the sitemap then
+// quietly stopped declaring sources for it.
+for (const slug of Object.keys(coachRank))
   CONTENT_SOURCES[`/games/${slug}/coaching`] = [
     'src/content/coaching.ts',
     'src/content/coaching-examples.ts',
+    'src/content/coaching-rank.ts',
   ];
 
 /**
@@ -70,6 +67,11 @@ for (const slug of [
  * Declared rather than computed, because sitemap.xml renders per request. Keep
  * it equal to the git date of the files in `CONTENT_SOURCES`: the seo unit test
  * compares the two and names the path and the date to write when they differ.
+ *
+ * A squash merge rewrites the committer date of every file in the pull request
+ * to the day it lands on main, so a page's date here is the day its copy
+ * reached main and not the day it was written. Changing page copy therefore
+ * means setting its date to the day the change merges.
  */
 export const CONTENT_UPDATED: Record<string, string> = {
   '/': '2026-11-05',
@@ -78,6 +80,11 @@ export const CONTENT_UPDATED: Record<string, string> = {
   '/terms': '2026-11-05',
   '/privacy': '2026-11-05',
   '/get-paid-to-play-games': '2026-11-06',
+  '/games': '2026-11-08',
+  '/blog/what-is-an-egirl': '2026-11-08',
+  '/compare/e-pal': '2026-11-08',
 };
+// Everything else is copy the rank-rule work rewrote: every hub, every
+// teammate page, the coaching pages, /ai, /developers/mcp and the social hub.
 for (const path of Object.keys(CONTENT_SOURCES))
-  CONTENT_UPDATED[path] ??= '2026-11-08';
+  CONTENT_UPDATED[path] ??= '2026-11-09';

@@ -11,7 +11,18 @@ import { GUIDE_PRICE_SPECS, guideExamples } from '../../src/server/seo/guide';
 import { intentPages } from '../../src/content/intent-pages';
 import { renderTokens } from '../../src/content/guide-pages';
 
-const games = ['val', 'lol', 'rl', 'fn', 'tft', 'apex', 'mr'] as const;
+const games = [
+  'val',
+  'lol',
+  'rl',
+  'fn',
+  'tft',
+  'apex',
+  'mr',
+  'cs2',
+  'ow',
+  'r6',
+] as const;
 describe('self-contained SEO answers use checkout prices', () => {
   for (const game of games)
     for (const customerCurrency of ['EUR', 'USD'] as const) {

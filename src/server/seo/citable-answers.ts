@@ -59,6 +59,12 @@ export function closingAnswer(gameName: string) {
       'one rotation and one fight, for example a crossing that drew a third party',
     'Marvel Rivals':
       'one hero and one team fight, for example an ultimate nobody followed',
+    'Counter-Strike 2':
+      'one demo and two timestamps, for example an execute nobody followed',
+    'Overwatch 2':
+      'one role and one team fight, for example an engage your team could not follow',
+    'Rainbow Six Siege':
+      'one map and one site, for example a retake that arrived a few seconds late',
   };
-  return `A ${gameName} lesson from Duoly is one booked session on a problem you choose. First, bring ${goals[gameName] ?? 'one situation from your recent games'}. Then share the goal in the order chat, meet your coach using Discord voice and stay on your own account.`;
+  return `A ${gameName} lesson from Duoly is one booked session on a problem you pick. First, bring ${goals[gameName] ?? 'one situation from your games'}. Then, 1) share the goal in the order chat, 2) meet your coach using Discord and 3) stay on your own account.`;
 }

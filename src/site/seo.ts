@@ -13,6 +13,9 @@ export const COACHING_SLUGS = [
   'teamfight-tactics',
   'apex-legends',
   'marvel-rivals',
+  'counter-strike-2',
+  'overwatch-2',
+  'rainbow-six-siege',
 ] as const;
 export const GUIDE_PATH = '/blog/what-is-an-egirl';
 /** A game hub is indexable once its copy exists (src/content/hub-pages.ts). */

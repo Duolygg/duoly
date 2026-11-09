@@ -112,7 +112,7 @@ test('sitemap URLs are indexable 200s; private and placeholder pages stay out', 
   for (const path of [
     '/games/not-a-game',
     '/games/not-a-game/coaching',
-    '/games/counter-strike-2/coaching',
+    '/games/pokemon-unite/coaching',
     '/blog/not-an-article',
   ])
     expect((await request.get(path)).status(), path).toBe(404);
