@@ -986,7 +986,7 @@ export const intentPages: IntentPage[] = [
         'Yes: FACEIT Duo queues the FACEIT platform with a Level 10 teammate, priced by your own FACEIT level at {{cs2Faceit}} per game on Level 6. Premier stays in the Valve client.',
       ],
       [
-        'Can someone help me practise retakes?',
+        'Can someone help me practice retakes?',
         'Yes: a retake server booking is {{cs2Retake}} per game, and a session replays one site execute many times, with {{pct3}} off 3 games in November 2026.',
       ],
       [
@@ -1253,7 +1253,7 @@ export const intentPages: IntentPage[] = [
         ],
       },
       {
-        heading: 'How does a Minecraft PvP duo actually practise?',
+        heading: 'How does a Minecraft PvP duo actually practice?',
         paragraphs: [
           'A PvP duo is 2 players drilling one situation until the habit changes, rather than queueing random games. First, pick the situation: a Bedwars rush, a bed defence, a SkyWars mid fight or a Duels combo. Second, play the same scenario several times in the hour and let your partner name what went wrong after each one, which is the part a random teammate never does. Bridging speed, block placement and rod timing all improve faster with somebody watching the same thing.',
           'For example, a pair can replay a four-team Bedwars rush 6 times in an hour and change one thing each time: the bridge angle, the block choice, then the retreat. A top PvPer from Duoly costs {{mcPro}} per hour and a skilled PvPer {{mcPlus}}, with {{pct3}} off 3 hours and {{pct5}} off 5. Finally, a booking is shared playing time. PvP Coaching and Bedwars Coaching are the separate hourly lessons, and both run using Discord screen share.',
@@ -1346,7 +1346,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How does an ARC Raiders duo split a raid?',
         paragraphs: [
           'A raid is one trip to the surface, and a duo has 3 jobs to share: looting, watching and knowing the way out. First, agree the route before the drop, because a pair that loots the same room twice has spent half the timer on one building. Second, split the work inside a room: one player takes containers while the other watches the door and the sky. Finally, name the extraction point out loud before anyone is heavy, since a full bag changes which exit is realistic.',
-          'For example, a player who keeps dying with a full bag books Duo Pro from Duoly at {{arcPro}} per hour and spends the hour practising the last 2 minutes of a raid instead of the first 20. Duo Plus is {{arcPlus}} per hour with an experienced raider and Duo Apex is {{arcTop}} with an elite one, both with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. ARC machines and other raiders both hit a loud fight, so the quiet route is usually the profitable one.',
+          'For example, a player who keeps dying with a full bag books Duo Pro from Duoly at {{arcPro}} per hour and spends the hour practicing the last 2 minutes of a raid instead of the first 20. Duo Plus is {{arcPlus}} per hour with an experienced raider and Duo Apex is {{arcTop}} with an elite one, both with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. ARC machines and other raiders both hit a loud fight, so the quiet route is usually the profitable one.',
         ],
       },
       {

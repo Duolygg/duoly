@@ -8,7 +8,12 @@ const pages = [
   '/games/social',
   '/games/valorant',
   '/blog/what-is-an-egirl',
+  '/blog/what-does-lfg-mean',
   '/get-paid-to-play-games',
+  // The two all-games directories. They render no price grid of their own, so
+  // they only reach the shared copy and structured-data checks below.
+  '/coaching',
+  '/find-gaming-buddies',
 ];
 for (const path of pages) {
   test(`SEO SSR and no-JS content ${path}`, async ({ browser }) => {
@@ -45,7 +50,7 @@ for (const path of pages) {
     for (const schema of schemas)
       expect(JSON.parse(schema)['@context']).toBe('https://schema.org');
     if (
-      path.endsWith('/coaching') ||
+      (path.startsWith('/games/') && path.endsWith('/coaching')) ||
       path === '/games/social' ||
       path === '/games/valorant'
     ) {
