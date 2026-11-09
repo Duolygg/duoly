@@ -9,6 +9,14 @@ const pages = [
   '/games/valorant',
   '/blog/what-is-an-egirl',
   '/blog/what-does-lfg-mean',
+  // The November 2026 GEO set: three answer-first guides and two comparisons.
+  // They render no price grid of their own, so they reach the shared copy and
+  // structured-data checks below only.
+  '/blog/how-to-find-a-valorant-duo',
+  '/blog/how-to-choose-a-gaming-coach',
+  '/blog/free-lfg-or-paid-teammate',
+  '/compare/metafy',
+  '/compare/queueup',
   '/get-paid-to-play-games',
   // The two all-games directories. They render no price grid of their own, so
   // they only reach the shared copy and structured-data checks below.

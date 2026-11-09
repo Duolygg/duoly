@@ -7,6 +7,7 @@ import Faq from '../../components/seo/Faq.astro';
 import ClosingCta from '../../components/seo/ClosingCta.astro';
 import '../../components/seo/seo.css';
 import '../../components/seo/free-vs-paid.css';
+import '../../components/seo/guide-article.css';
 import { pageViewer } from '../../site/viewer';
 import { seoOffers, faqSchema } from '../../server/seo/offers';
 import {
@@ -70,23 +71,23 @@ const sources = [
 const checks = [
   {
     label: 'Rank proof you can look at',
-    text: 'A rank claim is worth what its evidence is worth. Ask for the account, a tracker page or a match history, and ask when it was last checked.',
+    text: 'Ask for the account, a tracker page or a match history, plus the date somebody last checked it.',
   },
   {
     label: 'A session plan in writing',
-    text: 'A good coach can say what the hour contains before you pay: a replay, a live game, a drill list or a written summary afterwards.',
+    text: 'A good coach can name what the hour contains before you pay: a replay, a live game or a drill list.',
   },
   {
     label: 'A price per hour, with fees',
-    text: 'Compare the total at checkout rather than the headline. A coach-set rate plus a platform fee is the number you actually pay.',
+    text: 'Compare the total at checkout. A coach-set rate plus a platform fee is the number you actually pay.',
   },
   {
     label: 'Reviews tied to real sessions',
-    text: 'A review that names the game, the date and what changed is evidence. A star average with no sessions behind it is not.',
+    text: 'Feedback naming the game, the date and what changed is evidence. A bare star average is not.',
   },
   {
     label: 'Refund terms you have read',
-    text: 'Find out what happens when a coach no-shows, when the first five minutes go wrong and when a bundle is half used.',
+    text: 'Find out what happens on a no-show, in the first 5 minutes and when a bundle is half used.',
   },
 ];
 const flags = [
@@ -107,7 +108,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'How can you verify a gaming coach rank?',
-    'Ask for the game account or a public tracker page, then look at the current season rather than a peak. A screenshot with no date and no account name proves nothing.',
+    'In 2 steps: 1) ask for the game account or a public tracker page, then 2) read the current season rather than a peak. A screenshot with no date and no account name proves nothing.',
   ],
   [
     'What should a first coaching session include?',
@@ -183,6 +184,9 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
           <a href="#checks-h">How do you choose a gaming coach?</a>
         </li>
         <li>
+          <a href="#flags-h">What should stop you booking a coach?</a>
+        </li>
+        <li>
           <a href="#rank-h">How do you check a coach rank?</a>
         </li>
         <li>
@@ -206,21 +210,21 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section class="seo-guide" aria-labelledby="checks-h">
       <h2 id="checks-h">How do you choose a gaming coach?</h2>
       <p class="guide-answer">
-        Choosing a gaming coach is 5 checks, and all 5 happen before you pay.
-        First, proof of rank: the account, a tracker page or a match history,
-        with the date somebody last looked at it. Second, the session plan,
-        because an hour with no plan becomes a conversation. Third, the price
-        per hour with fees included, since a coach rate and a checkout total are
-        different numbers. Fourth, reviews tied to real sessions, naming the
-        game and the date. Fifth, the refund terms for a no-show or a session
-        that goes wrong. For example, a {valVod.title} lesson on Duoly is{' '}
-        {valVod.display} per {valVod.unit} with an {valVod.tier}, and the refund
-        rules sit in the public terms.
+        Choosing a gaming coach is a sequence of 5 checks, and all 5 happen
+        before payment. First, 1) proof of rank: the account, a tracker page or
+        a match history, with the date somebody last checked it. Second, 2) the
+        session plan, because an hour with no plan becomes a conversation, and
+        3) the price per hour with fees included. Third, 4) feedback tied to
+        finished sessions and 5) the refund terms for a no-show. For example, a{' '}
+        {valVod.title} lesson from Duoly is {valVod.display} per {valVod.unit}{' '}
+        with an {valVod.tier}, the hour runs using Discord, and the refund rules
+        sit in the public terms. We found every competitor figure on this page
+        on Metafy and QueueUp pages on {CHECKED_LABEL}.
       </p>
       <div class="guide-grid">
-        <article class="card guide-card" aria-labelledby="checks-list-h">
+        <article class="card guide-card" aria-label="The five checks">
           <p class="guide-tag">Ask first · costs nothing</p>
-          <h3 id="checks-list-h">The 5 checks</h3>
+          <p class="guide-card-title">The 5 checks</p>
           <ul class="guide-routes">
             {checks.map((item) => (
               <li>
@@ -229,9 +233,29 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
             ))}
           </ul>
         </article>
-        <article class="card guide-card" aria-labelledby="flags-h">
+      </div>
+    </section>
+
+    <section class="seo-guide" aria-labelledby="flags-h">
+      <h2 id="flags-h">What should stop you booking a coach?</h2>
+      <p class="guide-answer">
+        A red flag is a claim no honest coach can support, and 5 of them should
+        end the conversation. First, 1) a promised rank by a deadline, because
+        nobody can sell the result of a game other people also play. Second, 2)
+        a rank with no way to check it, or a check with no date on it. Third, 3)
+        payment moved into a private message instead of a platform checkout. For
+        example, a {valVod.title} hour from Duoly is {valVod.display}, payment
+        finishes on duoly.gg through Stripe, and the coach tier is named on the
+        service itself. Finally, 4) an hour with no plan and 5) a wall of
+        feedback with no game or date attached to any entry.
+      </p>
+      <div class="guide-grid">
+        <article
+          class="card guide-card"
+          aria-label="What should stop you booking"
+        >
           <p class="guide-tag">Walk away</p>
-          <h3 id="flags-h">What should stop you booking</h3>
+          <p class="guide-card-title">What should stop you booking</p>
           <ul class="icon-list">
             {flags.map((flag) => (
               <li class="is-no">
@@ -256,18 +280,19 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section aria-labelledby="rank-h">
       <h2 id="rank-h">How do you check a coach rank?</h2>
       <p>
-        Checking a coach rank means looking at the account rather than the
-        claim, and it takes about 2 minutes. First, ask for the in-game name and
-        the region, then open a public tracker page for that game. Second, read
-        the current season rather than the peak, because a Radiant peak from 3
-        acts ago and a Radiant player this act are different coaches. Third, ask
-        who checked it on the platform and when. For example, Duoly reviews a
-        coach before the first order and names the tier on the service itself,
-        so {owRole.title} in Overwatch 2 states a {owRole.tier}. According to
-        the QueueUp documentation, every QueueUp coach is labelled Verified,
-        Radiant Or Pro and Profile Fact-Checked, read on {CHECKED_LABEL}.
-        Finally, treat a rank as evidence of playing well and ask separately
-        about teaching, because the 2 skills are not the same skill.
+        Checking a coach rank means reading the account rather than the claim,
+        and 3 steps take about 2 minutes. First, 1) ask for the in-game name and
+        the region, then open a public tracker page for that game. Second, 2)
+        read the current season rather than the peak, because a Radiant peak
+        from 3 acts ago and a Radiant player this act are different coaches.
+        Third, 3) ask who checked the rank on the platform, and when. For
+        example, Duoly reviews a coach before the first order and names the tier
+        on the service, so {owRole.title} in Overwatch 2 states a {owRole.tier}{' '}
+        for {owRole.display} per {owRole.unit}. According to the QueueUp
+        documentation, every QueueUp coach is labelled Verified, Radiant Or Pro
+        and Profile Fact-Checked, read on {CHECKED_LABEL}. Finally, treat a rank
+        as evidence of playing well and ask about teaching separately, using
+        Discord or a message before booking.
       </p>
     </section>
 
@@ -278,17 +303,18 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         paying for. First, a goal agreed before the clock starts, such as one
         map or one role. Second, the material: a recent replay you send, or a
         live game your coach watches while you play. Third, the output, which is
-        2 or 3 things to practice and a written summary. For example,{' '}
+        1) 2 or 3 things to practice and 2) a written summary. For example,{' '}
         {lolVod.title} in League of Legends is {lolVod.display} per{' '}
         {lolVod.unit} with a {lolVod.tier} and goes through laning, waves and
-        map moves. Additionally, {learn.title} is the live version of the same
-        hour, where the coach talks while you play. Ask which format fits your
-        question before booking either.
+        map moves, using Discord for voice and screen share. Additionally,{' '}
+        {learn.title} is the live version of the same hour at the same{' '}
+        {lolVod.display}, where the coach talks while you play. Ask which format
+        fits the question before booking either.
       </p>
       <div class="guide-grid">
-        <article class="card guide-card" aria-labelledby="formats-h">
+        <article class="card guide-card" aria-label="Lesson formats and prices">
           <p class="guide-tag guide-tag-paid">Paid · one flat price</p>
-          <h3 id="formats-h">Lesson formats, with real prices</h3>
+          <p class="guide-card-title">Lesson formats, with real prices</p>
           <table class="guide-prices">
             <caption>Read from Duoly checkout on{CHECKED_LABEL}</caption>
             <tbody>
@@ -318,9 +344,9 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
             Book a Valorant lesson
           </a>
         </article>
-        <article class="card guide-card" aria-labelledby="ask-h">
+        <article class="card guide-card" aria-label="What to bring">
           <p class="guide-tag">Before the hour starts</p>
-          <h3 id="ask-h">Bring these 4 things</h3>
+          <p class="guide-card-title">Bring these 4 things</p>
           <ul class="icon-list">
             <li class="is-yes">
               <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
@@ -394,7 +420,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       <div class="cmp-two">
         <div class="card guide-card">
           <p class="guide-tag guide-tag-paid">Duoly</p>
-          <h3>One published price</h3>
+          <p class="guide-card-title">One published price</p>
           <p>
             {lessonPrice}, in every game Duoly coaches, charged through Stripe
             with no fee added at checkout. A teammate or coach keeps{' '}
@@ -408,7 +434,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         </div>
         <div class="card guide-card">
           <p class="guide-tag">Coach-set marketplaces</p>
-          <h3>A range, plus fees</h3>
+          <p class="guide-card-title">A range, plus fees</p>
           <p>
             Metafy and QueueUp let each coach price their own sessions, which
             buys you choice and named specialists. Read the{' '}
@@ -424,19 +450,20 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section aria-labelledby="trust-h">
       <h2 id="trust-h">What do reviews and refunds tell you?</h2>
       <p>
-        A review is only evidence when a session sits behind it, and a refund
-        rule is only useful when it is published. First, look for the game, the
-        date and the coach on each review, because a platform-wide average can
-        cover thousands of orders that are nothing like yours. For example, the{' '}
+        A review is only evidence when a finished session sits behind it, and a
+        refund rule is only useful once published. First, 1) look for the game,
+        the date and the coach on each entry, because a platform-wide average
+        covers thousands of orders unlike yours. For example, the{' '}
         <a href={queueupDocs} rel="nofollow noopener">
           QueueUp documentation
         </a>{' '}
         describes a Request Refund button in the first 5 minutes of a session
         and a Learn Or It&apos;s Free refund of up to USD 35 on a first paid
-        session, read on {CHECKED_LABEL}. Second, read what happens to a half
-        used bundle. Third, be suspicious of a new platform quoting big numbers:
-        Duoly is new, has no public review volume yet and says so. The{' '}
-        <a href="/terms">Duoly terms</a> carry the cancellation and refund
+        session, read on {CHECKED_LABEL}. Second, 2) read what happens to a half
+        used bundle. Third, 3) be suspicious of a new platform quoting big
+        numbers: Duoly is new, has no public review volume yet and says so, and
+        a Duoly lesson stays {valVod.display} per {valVod.unit} through Stripe.
+        The <a href="/terms">Duoly terms</a> carry the cancellation and refund
         rules, and <a href="/contact">support</a> reviews a reported order.
       </p>
       <ol class="cmp-sources">
@@ -454,14 +481,16 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <Steps
       heading="How do you book a first lesson?"
       steps={[
-        'First, write the question down in one line, for example "my mid-round calls fall apart after the first death". A coach can plan an hour around one sentence and cannot plan around "help me improve".',
+        'A first lesson is an hour built around one question, so write that question down in one line. For example, "my mid-round calls fall apart after the first death" is a plan, while "help me improve" is not.',
         'Second, pick the format that answers it. A replay review suits a habit you can see afterwards, a live game suits decisions you make under pressure, and a single-character hour suits a matchup you keep losing.',
         `Finally, check the rank proof, the price and the refund terms, then book. On Duoly every lesson is ${lessonPrice} with the tier named on the service, and the order chat is where you send the replay and agree the time.`,
       ]}
     >
       <p>
-        Read the <a href="/terms">payment, cancellation and refund terms</a>{' '}
-        before a first booking, compare every game on the{' '}
+        Every Duoly lesson is {lessonPrice}, charged through Stripe, and we
+        found the competitor prices on this page on {CHECKED_LABEL}. Read the{' '}
+        <a href="/terms">payment, cancellation and refund terms</a> before a
+        first booking, compare every game on the{' '}
         <a href="/coaching">esports coaching directory</a>, or open the{' '}
         <a href="/games/valorant/coaching">Valorant coaching page</a> and the{' '}
         <a href="/games/league-of-legends/coaching">
@@ -474,12 +503,14 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section aria-labelledby="duo-h">
       <h2 id="duo-h">Would a teammate help more than a coach?</h2>
       <p>
-        A coach is the better buy when the same mistake keeps costing you
+        A coaching hour is the better buy when the same mistake keeps costing
         rounds, and a teammate is the better buy when you want a second player
-        you can rely on tonight. A lesson stops the game to explain why the
-        retake failed. A teammate plays the retake with you and calls the next
-        one. For example, a Valorant lesson costs {valVod.display} per{' '}
-        {valVod.unit}, and{' '}
+        to rely on tonight. First, 1) a lesson stops the game to explain why the
+        retake failed, using Discord for screen share. Second, 2) a teammate
+        plays the retake with you and calls the next one. For example, a
+        Valorant lesson costs {valVod.display} per {valVod.unit} and an{' '}
+        {owRole.title} hour costs the same {owRole.display}, both read from
+        Duoly checkout in November 2026. Additionally,{' '}
         <a href="/blog/how-to-find-a-valorant-duo">finding a Valorant duo</a>{' '}
         starts free in a community server. Additionally,{' '}
         <a href="/blog/free-lfg-or-paid-teammate">

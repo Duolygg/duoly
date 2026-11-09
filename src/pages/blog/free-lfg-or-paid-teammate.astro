@@ -7,6 +7,7 @@ import Faq from '../../components/seo/Faq.astro';
 import ClosingCta from '../../components/seo/ClosingCta.astro';
 import '../../components/seo/seo.css';
 import '../../components/seo/free-vs-paid.css';
+import '../../components/seo/guide-article.css';
 import { pageViewer } from '../../site/viewer';
 import { seoOffers, faqSchema } from '../../server/seo/offers';
 import {
@@ -122,7 +123,7 @@ const boards = [
 const faqItems: [string, string][] = [
   [
     'Is free LFG good enough?',
-    'For most players, yes. The big game Discords each list hundreds of thousands to millions of members, so a post with your region, rank, role and hours usually finds somebody the same evening at no cost.',
+    'Free looking-for-group is a post in a public channel, and for most players it is enough. The big game servers on Discord each list hundreds of thousands to millions of members, so a post naming region, rank, role and hours often finds somebody the same evening at no cost.',
   ],
   [
     'What does free LFG not give you?',
@@ -229,21 +230,24 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section class="seo-guide" aria-labelledby="free-h">
       <h2 id="free-h">How good is free LFG?</h2>
       <p class="guide-answer">
-        Free looking-for-group is good, and for most players it is the whole
-        answer. The large game servers on Discord each list hundreds of
-        thousands to millions of members, so a post naming your region, rank,
-        role and hours usually finds somebody the same evening for €0. For
-        example, we read about 4,638,000 members on the Marvel Rivals server and
-        about 3,046,000 on the VALORANT server on {CHECKED_LABEL}. Additionally,
-        the looking-for-group subreddits keep a post searchable for days instead
-        of minutes. First try a server for your game, then a subreddit, then the
-        friends list you already have. A paid session is worth considering only
-        once those 3 routes have failed you.
+        Free looking-for-group is a post in a public channel, and for most
+        players it is the whole answer. First, 1) the large game servers on
+        Discord list hundreds of thousands to millions of members each, so a
+        post naming region, rank, role and hours often finds somebody the same
+        evening for €0. For example, we found about 4,638,000 members on the
+        Marvel Rivals server and about 3,046,000 on the VALORANT server on{' '}
+        {CHECKED_LABEL}. Second, 2) a looking-for-group subreddit keeps a post
+        searchable for days instead of minutes. Third, 3) the friends list you
+        already have costs nothing and improves every week. A paid session from{' '}
+        {fromPrice} is worth considering only once all 3 routes have failed.
       </p>
       <div class="guide-grid">
-        <article class="card guide-card" aria-labelledby="servers-h">
+        <article
+          class="card guide-card"
+          aria-label="Servers with member counts"
+        >
           <p class="guide-tag">Free · €0</p>
-          <h3 id="servers-h">6 servers, with member counts</h3>
+          <p class="guide-card-title">6 servers, with member counts</p>
           <table class="guide-prices">
             <caption>
               Read from the Discord invite API on{CHECKED_LABEL}
@@ -262,14 +266,12 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
             </tbody>
           </table>
           <p class="guide-note">
-            Every link in this guide was requested on {CHECKED_LABEL} and
-            answered. A member count is a size, so it is not a promise that
-            anyone replies tonight.
+            A member count is a size rather than a promise of a reply tonight.
           </p>
         </article>
-        <article class="card guide-card" aria-labelledby="boards-h">
+        <article class="card guide-card" aria-label="Looking-for-group boards">
           <p class="guide-tag">Free · searchable for days</p>
-          <h3 id="boards-h">5 looking-for-group boards</h3>
+          <p class="guide-card-title">5 looking-for-group boards</p>
           <ul class="guide-routes">
             {boards.map((board) => (
               <li>
@@ -291,17 +293,17 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section aria-labelledby="limits-h">
       <h2 id="limits-h">What does free LFG not give you?</h2>
       <p>
-        Free looking-for-group has 3 real limits, and none of them is about
-        quality. First, nobody is committed to the time: a planned session dies
-        when one player logs off, and that costs you the evening rather than
-        money. Second, rank and role are self-reported, so the Diamond support
-        in the post is Diamond until the lobby loads. Third, a reply depends on
-        who happens to be scrolling, which is why a post at 2am on a weeknight
-        reads the same and performs differently. For example, a Controller main
-        who needs a Duelist at 9pm can wait an hour in a channel with 3 million
-        members and still queue alone. Additionally, free routes are unmoderated
-        at the pairing level, so the first match is always a gamble. Those
-        limits are the whole reason a paid session exists.
+        Free looking-for-group has 3 real limits, and none of the 3 is about
+        quality. First, 1) nobody is committed to the time, so a planned session
+        dies when one player logs off, which costs an evening rather than money.
+        Second, 2) rank and role stay self-reported until the lobby loads.
+        Third, 3) a reply depends on who happens to be scrolling, which is why
+        the same post reads well at 8pm and dies at 2am. For example, a
+        Controller main who needs a Duelist at 9pm can wait an hour in a channel
+        with 3,046,000 members and still queue alone. Those 3 limits are the
+        reason a paid session exists: Valorant Duo Pro is {valDuo.display} per
+        game at Gold, with {bundle[0]}% off at 3 games, read from Duoly checkout
+        in November 2026.
       </p>
     </section>
 
@@ -320,9 +322,12 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         the evening a free post goes unanswered.
       </p>
       <div class="guide-grid">
-        <article class="card guide-card guide-paid" aria-labelledby="prices-h">
+        <article
+          class="card guide-card guide-paid"
+          aria-label="The cheapest session in four games"
+        >
           <p class="guide-tag guide-tag-paid">Paid · fixed price</p>
-          <h3 id="prices-h">The cheapest session in 4 games</h3>
+          <p class="guide-card-title">The cheapest session in 4 games</p>
           <table class="guide-prices">
             <caption>Read from Duoly checkout on{CHECKED_LABEL}</caption>
             <tbody>
@@ -346,9 +351,9 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
             Book a Valorant teammate
           </a>
         </article>
-        <article class="card guide-card" aria-labelledby="buys-h">
+        <article class="card guide-card" aria-label="What a booking fixes">
           <p class="guide-tag">What the money buys</p>
-          <h3 id="buys-h">What a booking fixes</h3>
+          <p class="guide-card-title">What a booking fixes</p>
           <ul class="icon-list">
             <li class="is-yes">
               <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
@@ -406,9 +411,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section class="seo-flow card" aria-labelledby="decide-h">
       <h2 id="decide-h">Which fits tonight, free or paid?</h2>
       <p>
-        Three questions settle it, and the first 2 answers are usually free. Run
-        them in order: company, then schedule, then the specific seat you need
-        filled.
+        A decision flow is 3 questions in order, and the first 2 answers are
+        usually free: company, then schedule, then the specific seat you need
+        filled. For example, a {valDuo.display} Valorant game at Gold only wins
+        on question 3, and the start time is agreed in the order chat using
+        Discord.
       </p>
       <ol class="flow">
         <li class="flow-step">
@@ -460,12 +467,13 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         {fromPrice}, so the real question is what each one costs you in time.
         First, a free post costs the 20 minutes you spend writing it and waiting
         in the channel, plus the evening it loses when nobody turns up. Second,
-        a booking costs money and almost no time, because the order chat settles
-        the time, the roles and the comms before anyone queues. For example, 3
-        Valorant Duo Pro games at Gold cost {valDuo.display} each before the{' '}
-        {bundle[0]}% bundle discount. Additionally, cancelling before anyone
-        accepts is free, and an order nobody accepts within 5 minutes cancels
-        itself. Compare the full list on{' '}
+        2) a booking costs money and almost no time, because the order chat
+        settles the time, the roles and the comms using Discord before anyone
+        queues. For example, 3 Valorant Duo Pro games at Gold cost{' '}
+        {valDuo.display} each before the {bundle[0]}% bundle discount, and a
+        League of Legends game is {lolDuo.display}. Additionally, cancelling
+        before anyone accepts is free, and an order nobody accepts within 5
+        minutes cancels itself. Compare the full list on{' '}
         <a href="/find-gaming-buddies">find gaming buddies</a> and{' '}
         <a href="/games">all games and services</a>.
       </p>
@@ -474,15 +482,16 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section aria-labelledby="coach-h">
       <h2 id="coach-h">Would a coach help more than either?</h2>
       <p>
-        A coach is the better buy when the same mistake keeps ending your
-        rounds, because neither a free duo nor a paid one stops the game to
-        explain it. First, a teammate plays the round with you and calls what
-        happens next. Second, a lesson pauses a replay and shows the better
-        option, then leaves you with 2 or 3 things to work on. Third, the 2
-        things cost differently: a teammate session starts at {fromPrice} and a
-        lesson is priced by the hour. For example, a player stuck on the same
-        failed retake learns more from one hour of{' '}
-        <a href="/coaching">esports coaching</a> than from 5 bought games.{' '}
+        A coaching hour is the better buy when the same mistake keeps ending
+        your rounds, because neither a free duo nor a paid one stops the game to
+        explain it. First, 1) a teammate plays the round with you and calls what
+        happens next, for {valDuo.display} per Valorant game at Gold. Second, 2)
+        a lesson pauses a replay and shows the better option, using Discord for
+        screen share, then leaves 2 or 3 things to work on. Third, 3) a teammate
+        session starts at {fromPrice} while a lesson is priced by the hour. For
+        example, a player stuck on the same failed retake learns more from one
+        hour of <a href="/coaching">esports coaching</a> than from 5 bought
+        games.{' '}
         <a href="/blog/how-to-choose-a-gaming-coach">
           How to choose a gaming coach
         </a>{' '}
@@ -494,13 +503,15 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       heading="How do you try free first?"
       steps={[
         'First, write one post and reuse it. Name the game, your region, your rank, the role you play, the mode you want and the hours you are free. A post with all 6 fields gets answered, and a one-line post gets skipped.',
-        'Second, post it in a server for your game and in a looking-for-group subreddit, then stay in the channel for half an hour. Replies come from whoever is scrolling right then, so being present matters more than the wording.',
+        'Second, post it in a server for your game and in a looking-for-group subreddit, then stay in the channel for half an hour. For example, a reply comes from whoever is scrolling right then, so being present matters more than the wording.',
         `Finally, add the people you enjoyed. A friends list is the only free route that gets better every week. Book a paid session for ${fromPrice} on the evening the post goes unanswered, or for the mode nobody in the channel plays.`,
       ]}
     >
       <p>
-        Read the <a href="/terms">payment, cancellation and refund terms</a>{' '}
-        before a first booking, or{' '}
+        Every figure here was read from Duoly checkout in November 2026, and a
+        booked session is agreed in the order chat using Discord. Read the{' '}
+        <a href="/terms">payment, cancellation and refund terms</a> before a
+        first booking, or{' '}
         <a href="/blog/what-does-lfg-mean">read what LFG means</a> if the
         shorthand in those channels is new to you. The{' '}
         <a href="/games/valorant/lfg">Valorant looking-for-group page</a> shows

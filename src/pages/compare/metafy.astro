@@ -33,7 +33,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'What fees does Metafy add at checkout?',
-    'According to the Metafy buyer fee page, a 3.7% platform fee plus USD 1.79, capped at the lower of USD 20 or 30% of the total, and a 2.9% processing fee plus USD 0.40. Some partners choose to cover one or both.',
+    'According to the Metafy buyer fee page, a 3.7% platform fee plus USD 1.79, capped at the lower of USD 20 or 30% of the total, and a 2.9% processing fee plus USD 0.40. For example, Metafy works a USD 50 purchase out as USD 55.49. Some partners choose to cover one or both fees.',
   ],
   [
     'Can you pick your own coach on Duoly?',
@@ -82,11 +82,14 @@ const webPage = {
         <span class="eyebrow">Platform comparison</span>
         <h1>Duoly vs Metafy</h1>
         <p class="lead">
-          Metafy and Duoly both sell coaching for competitive games, and they
-          sell it differently. Metafy is a creator platform where each partner
-          sets their own session prices, publishes a profile and runs a
-          community. Duoly publishes one lesson price per service and hires a
-          reviewed coach from a queue.
+          Metafy and Duoly both sell coaching for competitive games, and the two
+          platforms sell it differently. Metafy is a creator platform where each
+          partner sets their own session prices, publishes a profile and runs a
+          community. Duoly publishes one lesson price per service, charged
+          through Stripe, and hires a reviewed coach from a queue. For example,{' '}
+          {metafyExample.title} costs {price} per {metafyExample.unit} on Duoly,
+          and we found Metafy one-hour lessons listed from USD 25 to USD 50 on{' '}
+          {CHECKED}.
         </p>
         <div class="cmp-actions">
           <a class="cta" href={metafyExample.href}>
@@ -157,8 +160,10 @@ const webPage = {
         publishes {price} per {metafyExample.unit} for every lesson in all{' '}
         {COACHABLE_GAMES} coached games. A neutral dot marks a different model
         or a stated fact, and Not stated means the pages we read do not say.
-        Unknown is never a No. Every Metafy cell links the Metafy page the fact
-        came from, read on {CHECKED}.
+        Unknown is never a No. For example, Metafy is marked ahead on named
+        coaches, public scores and free consultations. Every Metafy cell links
+        the page the fact came from, and we found all of them on metafy.gg and
+        help.metafy.gg on {CHECKED}.
       </p>
       <CompareTable
         rival="Metafy"
@@ -224,19 +229,22 @@ const webPage = {
     <section aria-labelledby="pay-h">
       <h2 id="pay-h">How do payment, scheduling and refunds work?</h2>
       <p>
-        Payment on Duoly is one card payment through Stripe in EUR or USD. For
-        example, a {metafyExample.title} hour costs {price} and opens an order
-        chat where you send a replay and agree the time. A coach accepts the
-        order from the queue rather than being picked, an order nobody accepts
-        within 5 minutes cancels itself, and cancelling before anyone accepts is
-        free. Refunds go to the Duoly balance by default, and the{' '}
+        Payment on Duoly is a single card payment through Stripe in EUR or USD,
+        and the published price is the amount charged. First, 1) a{' '}
+        {metafyExample.title} hour costs {price} and opens an order chat for the
+        replay and the time. Second, 2) a coach accepts the order from the queue
+        rather than being picked, an order nobody accepts within 5 minutes
+        cancels itself, and cancelling before anyone accepts is free. Third, 3)
+        refunds go to the Duoly balance by default, and the{' '}
         <a href="/terms">Duoly terms</a> say refunded money can be paid back to
         the original method on request. On Metafy you open a partner profile,
         pick a format and schedule it in your own timezone. According to the
         Metafy refund policy, an unscheduled session is refundable within 21
         calendar days to the payment method or 45 days as credits, while a
         completed session is refundable only for a verified technical problem or
-        partner misconduct. We read both policies on {CHECKED}.
+        partner misconduct. Additionally, Metafy checkout adds a 3.7% platform
+        fee plus USD 1.79. We found both policies on help.metafy.gg on {CHECKED}
+        .
       </p>
     </section>
 
@@ -244,9 +252,12 @@ const webPage = {
       <h2 id="fit-h">Which one fits you?</h2>
       <p>
         The choice is between picking a person and picking a price, and there is
-        no single winner. For example, a player who wants a named Overwatch 2
-        specialist with a public competitive record should use Metafy. A player
-        who wants a lesson in <a href="/games/valorant/coaching">Valorant</a> or{' '}
+        no single winner. First, Metafy buys choice: a named Overwatch 2
+        specialist with a public competitive record, at a partner price plus a
+        3.7% platform fee and USD 1.79. Second, Duoly buys certainty, at {price}{' '}
+        per {metafyExample.unit} in every game Duoly coaches, charged through
+        Stripe with nothing added. For example, a player who wants a lesson in{' '}
+        <a href="/games/valorant/coaching">Valorant</a> or{' '}
         <a href="/games/league-of-legends/coaching">League of Legends</a> at a
         known price tonight should use Duoly.
       </p>
