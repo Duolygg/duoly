@@ -1,0 +1,289 @@
+/*
+ * Shared styling for the /compare/* pages added after /compare/e-pal.
+ *
+ * The rules are the ones /compare/e-pal proved on the live site, lifted into a
+ * stylesheet so a third and fourth comparison do not each carry their own copy.
+ * /compare/e-pal keeps its page-scoped <style> block: the selectors there win
+ * on scoped specificity, and restyling a live indexed page is not part of
+ * adding new ones. Retire that block in a pass that re-screenshots it.
+ *
+ * The mobile column label on the rival cell reads data-rival from the markup,
+ * so the sheet names no competitor.
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.cmp-page > section {
+  margin: 48px 0;
+}
+.cmp-page h2 {
+  scroll-margin-top: 96px;
+}
+.cmp-page > section > p {
+  max-width: 75ch;
+}
+.cmp-page > .cmp-hero {
+  display: grid;
+  gap: 28px;
+  align-items: center;
+  margin-top: 8px;
+}
+@media (min-width: 900px) {
+  .cmp-page > .cmp-hero {
+    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  }
+}
+.cmp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+.cmp-checked {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #c9bfe6;
+}
+.cmp-hero-card,
+.cmp-card {
+  border-radius: 20px;
+  border: 1px solid rgba(196, 170, 255, 0.22);
+  background:
+    radial-gradient(
+      120% 90% at 100% 0%,
+      rgba(255, 79, 176, 0.12),
+      transparent 60%
+    ),
+    linear-gradient(160deg, #1b1033, #120b22 65%);
+  padding: 22px;
+}
+.cmp-hero-card {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+.cmp-hero-card img,
+.cmp-card-head img {
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+  flex: none;
+}
+.cmp-card-head img {
+  border-radius: 12px;
+}
+.cmp-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #d6bbff;
+}
+.cmp-big {
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #f3eeff;
+  margin: 4px 0;
+}
+.cmp-sub {
+  font-size: 15px;
+  color: #b9add8;
+  line-height: 1.5;
+}
+.cmp-answer p {
+  margin: 0;
+  padding: 20px 22px;
+  border-radius: 18px;
+  border-left: 4px solid #d6bbff;
+  background: rgba(214, 187, 255, 0.07);
+  max-width: 80ch;
+}
+.cmp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: #b9add8;
+}
+.cmp-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.cmp-table-wrap {
+  border: 1px solid rgba(196, 170, 255, 0.22);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #120b22;
+}
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.cmp-table th,
+.cmp-table td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid rgba(196, 170, 255, 0.2);
+  line-height: 1.5;
+}
+.cmp-table thead th {
+  border-top: 0;
+  background: #1b1033;
+  color: #f3eeff;
+  font-size: 15px;
+}
+.cmp-table tbody th {
+  color: #f3eeff;
+  font-weight: 650;
+  width: 30%;
+}
+.cmp-table td {
+  width: 35%;
+}
+.cmp-table td:nth-child(2) {
+  background: rgba(214, 187, 255, 0.05);
+}
+.cmp-cell {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 15px;
+}
+.mark {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  border-radius: 50%;
+  border: 1px solid;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mark-yes {
+  background: rgba(74, 222, 128, 0.16);
+  border-color: rgba(74, 222, 128, 0.5);
+  color: #86efac;
+}
+.mark-no {
+  background: rgba(248, 113, 113, 0.18);
+  border-color: rgba(248, 113, 113, 0.7);
+  color: #fecaca;
+}
+.mark-neutral,
+.mark-unknown {
+  background: rgba(185, 173, 216, 0.1);
+  border-color: #b9add8;
+  color: #d8d1e8;
+}
+.mark-part {
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.5);
+  color: #fcd34d;
+}
+@media (max-width: 640px) {
+  .cmp-table thead {
+    display: none;
+  }
+  .cmp-table tr {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-top: 1px solid rgba(196, 170, 255, 0.12);
+  }
+  .cmp-table tbody tr:first-child {
+    border-top: 0;
+  }
+  .cmp-table tbody th {
+    grid-column: 1 / -1;
+    width: auto;
+    padding-bottom: 4px;
+    border-top: 0;
+  }
+  .cmp-table td {
+    display: block;
+    width: auto;
+    border-top: 0;
+    padding-top: 6px;
+  }
+  .cmp-table td::before {
+    display: block;
+    margin-bottom: 6px;
+    content: attr(data-rival);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #d6bbff;
+  }
+}
+.cmp-two {
+  display: grid;
+  gap: 16px;
+  margin: 18px 0;
+}
+@media (min-width: 760px) {
+  .cmp-two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+.cmp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cmp-card .btn-sm {
+  align-self: flex-start;
+  margin-top: 8px;
+}
+.cmp-duoly {
+  border-color: rgba(214, 187, 255, 0.5);
+}
+.cmp-card-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.cmp-card-title {
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: #f3eeff;
+}
+.cmp-coin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(251, 191, 36, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.5);
+  color: #fcd34d;
+  font-weight: 800;
+  font-size: 20px;
+}
+.cmp-card .checklist {
+  margin: 6px 0 0;
+}
+.cmp-sources li {
+  scroll-margin-top: 96px;
+}
+.cmp-sources {
+  display: grid;
+  gap: 8px;
+  padding-left: 22px;
+  overflow-wrap: anywhere;
+}

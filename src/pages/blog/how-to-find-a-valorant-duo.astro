@@ -1,0 +1,502 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
+import SeoHero from '../../components/seo/SeoHero.astro';
+import Steps from '../../components/seo/Steps.astro';
+import Faq from '../../components/seo/Faq.astro';
+import ClosingCta from '../../components/seo/ClosingCta.astro';
+import '../../components/seo/seo.css';
+import '../../components/seo/free-vs-paid.css';
+import '../../components/seo/guide-article.css';
+import { pageViewer } from '../../site/viewer';
+import { seoOffers, faqSchema } from '../../server/seo/offers';
+import { BUNDLE_PERCENTS as bundle } from '../../server/seo/teammate-facts';
+import { viewerCurrency } from '../../server/currency';
+import { eurToUsd } from '../../server/fx';
+import {
+  serializeJsonLd,
+  bookingHref,
+  CONTENT_DATES,
+  organizationSchema,
+} from '../../site/seo';
+
+const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
+const currency = await viewerCurrency(Astro.cookies, accountCurrency);
+const context = {
+  customerCurrency: currency.cur,
+  eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+};
+// Every figure and tier this guide states, read from the same checkout engine
+// the price cards use, so a catalog change rewrites the guide on next build.
+const teammates = seoOffers('val', 'teammate', context);
+const lessons = seoOffers('val', 'training', context);
+const at = (id: string, rank?: string) =>
+  teammates.find(
+    (offer) => offer.id === id && (rank ? offer.rank === rank : true),
+  )!;
+const RANK = 'Gold';
+const duoPlus = at('duo1', RANK);
+const duoPro = at('duo2', RANK);
+const swift = at('swift');
+const deathmatch = at('dm');
+const vod = lessons.find((offer) => offer.id === 'vod')!;
+const path = '/blog/how-to-find-a-valorant-duo';
+const title = 'How to Find a Valorant Duo | Duoly';
+const h1 = 'How to find a Valorant duo';
+// Verified by request on the date in CHECKED_LABEL; each returned HTTP 200.
+const CHECKED_LABEL = '9 November 2026';
+const freeRoutes = [
+  {
+    label: 'The Valorant Discord',
+    url: 'https://discord.gg/valorant',
+    text: 'the large community server for the game, with regional looking-for-group channels. Read the channel rules, then post your region, rank, role and the hours you play.',
+  },
+  {
+    label: 'A Valorant LFG Discord',
+    url: 'https://discord.gg/valorantlfg',
+    text: 'a server that exists only for teammate posts, so the channel list is shorter and a post stays readable for longer.',
+  },
+  {
+    label: 'r/ValorantLFG on Reddit',
+    url: 'https://www.reddit.com/r/ValorantLFG/',
+    text: 'a subreddit for duo and team posts, searchable by region flair. Useful when you want a group for a specific act rather than one evening.',
+  },
+  {
+    label: 'r/VALORANT on Reddit',
+    url: 'https://www.reddit.com/r/VALORANT/',
+    text: 'the main subreddit for the game. Not a looking-for-group board, so read it for agent and map talk and post your duo request in the server channels above.',
+  },
+  {
+    label: 'The friends list you already have',
+    text: 'after a match that went well, add the player through the Riot client and invite them again the next evening. The cheapest duo is a repeat.',
+  },
+];
+const postFields = [
+  { label: 'Region', chips: ['EU', 'NA', 'AP', 'KR', 'BR', 'LATAM'] },
+  {
+    label: 'Rank and act',
+    chips: ['Iron', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Ascendant'],
+  },
+  {
+    label: 'Role you play',
+    chips: ['Duelist', 'Initiator', 'Controller', 'Sentinel', 'Flex'],
+  },
+  {
+    label: 'Mode you want',
+    chips: [
+      'Competitive',
+      'Unrated',
+      'Swiftplay',
+      'Spike Rush',
+      'Deathmatch',
+      'Premier',
+    ],
+  },
+  {
+    label: 'When you play',
+    chips: ['Weeknights', 'Weekends', 'Named timezone', 'One act', 'Tonight'],
+  },
+  { label: 'Comms', chips: ['Voice on Discord', 'Text only', 'Calm comms'] },
+];
+const faqItems: [string, string][] = [
+  [
+    'What is the fastest way to find a Valorant duo?',
+    'Post in a Valorant looking-for-group Discord channel with your region, rank, role, mode and the hours you can play. Most answered posts carry all five fields.',
+  ],
+  [
+    'Can you find a Valorant duo inside the game?',
+    'Yes. Add a player from a match that went well through the Riot client, then invite them again. The friends list beats any board for a duo you want to keep.',
+  ],
+  [
+    'Does finding a Valorant duo cost money?',
+    `No. Discord channels, subreddits and friend invites cost €0. A booked teammate from Duoly is the paid alternative, from ${swift.display} per Swiftplay game.`,
+  ],
+  [
+    'What does a paid Valorant duo cost on Duoly?',
+    `Duo Plus is ${duoPlus.display} per game at ${RANK} and Duo Pro is ${duoPro.display} per game at ${RANK}, read from Duoly checkout in November 2026. Bundles take ${bundle[0]}% off 3 games and ${bundle[2]}% off 10.`,
+  ],
+  [
+    'Can a booked teammate play on your Valorant account?',
+    'No. Every Duoly session runs on the accounts both players already own, and Duoly never asks for a game password.',
+  ],
+  [
+    'Is a duo or a coach the better fix for one bad habit?',
+    `A coach. A Valorant lesson from Duoly costs ${vod.display} per ${vod.unit} and spends the time on your decisions, while a duo spends it on winning the round in front of you.`,
+  ],
+];
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: h1,
+  mainEntityOfPage: new URL(path, Astro.site!).href,
+  datePublished: '2026-11-09',
+  dateModified: CONTENT_DATES[path],
+  author: organizationSchema(Astro.site!),
+  publisher: organizationSchema(Astro.site!),
+  image: new URL('/og/duoly.jpg', Astro.site!).href,
+};
+const check = 'M6.5 11.2 3.3 8l1.1-1.1 2.1 2.1 5.1-5.1 1.1 1.1z';
+const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
+---
+
+<SiteLayout
+  title={title}
+  description="How to find a Valorant duo: the free Discord and Reddit routes first, what a duo post has to name, and when a booked rank-checked teammate is worth paying for."
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Blog', path: '/blog' },
+        { name: 'How to find a Valorant duo', path },
+      ]}
+    />
+    <SeoHero
+      eyebrow="Guide"
+      h1={h1}
+      lead="Start free. Post your region, rank, role and mode in a Valorant looking-for-group Discord channel or a subreddit, and invite the players you enjoyed from your friends list. Pay for a teammate when a set time and a known rank matter more than the price."
+      cta={{ href: '#free-h', label: 'See the free routes' }}
+      secondary={{ href: '#paid-h', label: 'When paying is worth it' }}
+      art={[{ src: '/assets/games/valorant.png', alt: 'Valorant game art' }]}
+      chip="Free first, paid when it helps"
+      facts={[
+        '5 free routes, checked live',
+        '6 fields a duo post has to name',
+        'Real Duoly prices if you book',
+      ]}
+      analyticsGame="val"
+    />
+    <p class="byline">
+      By <a href="/contact">Duoly team</a>. Published{' '}
+      <time datetime="2026-11-09">9 November 2026</time>.
+    </p>
+    <nav class="guide-toc" aria-label="In this guide">
+      <strong>In this guide</strong>
+      <ul>
+        <li><a href="#free-h">How do you find a Valorant duo for free?</a></li>
+        <li><a href="#post-h">What does a Valorant duo post have to say?</a></li>
+        <li><a href="#paid-h">When is paying for a Valorant teammate worth it?</a></li>
+        <li><a href="#steps-h">What do you agree before you queue?</a></li>
+        <li><a href="#session-h">How does a booked Valorant session run?</a></li>
+        <li><a href="#coach-h">Would a coach fix it faster than a duo?</a></li>
+        <li><a href="#faq-h">Questions about finding a Valorant duo</a></li>
+      </ul>
+    </nav>
+
+    <section class="seo-guide" aria-labelledby="free-h">
+      <h2 id="free-h">How do you find a Valorant duo for free?</h2>
+      <p class="guide-answer">
+        Finding a Valorant duo for free is the normal first move, and 5 routes
+        cover almost every player. First, the official-sized community servers
+        on Discord, where regional looking-for-group channels want your region,
+        your rank and the mode you want. Second, a Valorant looking-for-group
+        Discord, which is quieter and faster to read on a weeknight. Third,
+        r/ValorantLFG on Reddit, where posts carry region flair and stay
+        searchable for days. Fourth, r/VALORANT for agent and map discussion
+        rather than duo requests. Fifth, your own friends list, which is where
+        the duos that last actually come from.
+      </p>
+      <div class="guide-grid">
+        <article class="card guide-card" aria-labelledby="free-list-h">
+          <p class="guide-tag">Free · €0</p>
+          <h3 id="free-list-h">The 5 free routes</h3>
+          <ul class="guide-routes">
+            {freeRoutes.map((route) => (
+              <li>
+                {route.url ? (
+                  <a href={route.url} rel="noopener">
+                    {route.label}
+                  </a>
+                ) : (
+                  <strong>{route.label}</strong>
+                )}
+                : {route.text}
+              </li>
+            ))}
+          </ul>
+          <p class="guide-note">
+            We found every link in this list live on {CHECKED_LABEL}.
+          </p>
+        </article>
+        <article class="card guide-card" aria-labelledby="free-truth-h">
+          <p class="guide-tag">What to expect</p>
+          <h3 id="free-truth-h">What free LFG gets you</h3>
+          <ul class="icon-list">
+            <li class="is-yes">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={check}></path>
+              </svg>
+              <span>
+                <span class="fvp-sr">Included: </span>No cost, a large pool of
+                players and a real chance at a regular group
+              </span>
+            </li>
+            <li class="is-yes">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={check}></path>
+              </svg>
+              <span>
+                <span class="fvp-sr">Included: </span>Channels split by region,
+                so the lobby actually works
+              </span>
+            </li>
+            <li class="is-no">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={cross} />
+              </svg>
+              <span>
+                <span class="fvp-sr">Limit: </span>Replies depend on who is
+                online when you post
+              </span>
+            </li>
+            <li class="is-no">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={cross} />
+              </svg>
+              <span>
+                <span class="fvp-sr">Limit: </span>Rank and role are
+                self-reported until you load in
+              </span>
+            </li>
+            <li class="is-no">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={cross} />
+              </svg>
+              <span>
+                <span class="fvp-sr">Limit: </span>A planned session can fall
+                through with no notice
+              </span>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="post-h">
+      <h2 id="post-h">What does a Valorant duo post have to say?</h2>
+      <p>
+        A Valorant duo post has to name 6 fields, because a reader scanning 40
+        posts never reaches your second line. Region is first, since EU, NA, AP,
+        KR, BR and LATAM are separate queues and a cross-region duo cannot
+        happen. Rank and act come next, so a reader can picture the lobby. Then
+        the role you play, which in Valorant means duelist, initiator,
+        controller or sentinel. Then the mode you actually want, because a
+        Competitive climb and a Spike Rush hour want different people. Then the
+        hours you can play, in a named timezone. Finally say how you talk, since
+        a silent duo and a shot-calling duo are different sessions.
+      </p>
+      <ol class="gd-fields">
+        {postFields.map((field) => (
+          <li>
+            <span class="gd-field-label">{field.label}</span>
+            <ul class="gd-chips">
+              {field.chips.map((chip) => (
+                <li class="gd-chip">{chip}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+      <p>
+        For example: "Gold 2, EU, controller or sentinel, Competitive, free from
+        8pm CET on weeknights, voice on Discord." That post answers every
+        question a reader has, so the reply is a party invite rather than
+        another question. The same 6 fields go into a Duoly booking, except a
+        booking settles each one before anyone queues.
+      </p>
+    </section>
+
+    <section class="seo-guide" aria-labelledby="paid-h">
+      <h2 id="paid-h">When is paying for a Valorant teammate worth it?</h2>
+      <p class="guide-answer">
+        Paying for a Valorant teammate is worth it when the hour, the rank and
+        the role all have to be settled before you queue. Free looking-for-group
+        answers when somebody happens to be online, and a booked session names
+        the evening instead. For example, Duo Plus brings an {duoPlus.tier} and
+        costs {duoPlus.display} per game at {RANK} on Duoly, while Duo Pro
+        brings an {duoPro.tier} at {duoPro.display} per game, both read from
+        Duoly checkout in November 2026. Bundles cut the total by {bundle[0]}%
+        at 3 games, {bundle[1]}% at 5 and {bundle[2]}% at 10. Paying is a poor
+        deal for casual company, because a Discord channel fills an Unrated
+        lobby for €0 in minutes. Book the evening a post goes unanswered.
+      </p>
+      <div class="guide-grid">
+        <article class="card guide-card guide-paid" aria-labelledby="paid-card-h">
+          <p class="guide-tag guide-tag-paid">Paid · fixed price</p>
+          <h3 id="paid-card-h">Valorant teammate prices at {RANK}</h3>
+          <table class="guide-prices">
+            <caption>Read from Duoly checkout on {CHECKED_LABEL}</caption>
+            <tbody>
+              <tr>
+                <th scope="row">{deathmatch.title}, {deathmatch.tier}</th>
+                <td>{deathmatch.display}</td>
+              </tr>
+              <tr>
+                <th scope="row">{swift.title}, {swift.tier}</th>
+                <td>{swift.display}</td>
+              </tr>
+              <tr>
+                <th scope="row">Duo Plus, {duoPlus.tier}</th>
+                <td>{duoPlus.display}</td>
+              </tr>
+              <tr>
+                <th scope="row">Duo Pro, {duoPro.tier}</th>
+                <td>{duoPro.display}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="guide-note">
+            Prices are per game at {RANK}, before the bundle discount.
+          </p>
+          <a class="btn-sm" href={bookingHref('val', { service: 'duo2' })}>
+            Book a Valorant teammate
+          </a>
+        </article>
+        <article class="card guide-card" aria-labelledby="paid-when-h">
+          <p class="guide-tag">Decide in one line</p>
+          <h3 id="paid-when-h">Which route fits tonight?</h3>
+          <ul class="icon-list">
+            <li class="is-yes">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={check}></path>
+              </svg>
+              <span>
+                <span class="fvp-sr">Free: </span>You want company and any
+                decent lobby will do
+              </span>
+            </li>
+            <li class="is-yes">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={check}></path>
+              </svg>
+              <span>
+                <span class="fvp-sr">Free: </span>You are building a group for
+                the whole act
+              </span>
+            </li>
+            <li class="is-no">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={cross} />
+              </svg>
+              <span>
+                <span class="fvp-sr">Paid: </span>You need a sentinel at 9pm
+                tonight, not a maybe
+              </span>
+            </li>
+            <li class="is-no">
+              <svg class="mark" viewBox="0 0 16 16" aria-hidden="true">
+                <path d={cross} />
+              </svg>
+              <span>
+                <span class="fvp-sr">Paid: </span>You want a checked higher-rank
+                player on comms
+              </span>
+            </li>
+          </ul>
+          <a class="btn-sm" href="/games/valorant/lfg">
+            Compare every Valorant option
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <Steps
+      heading="What do you agree before you queue?"
+      steps={[
+        'First, agree the mode and the number of games in writing, for example three Competitive games and no more. A pair that agreed the end point never argues about one more after a loss.',
+        'Second, agree the roles and the comms. Say which agents you actually play, who makes the mid-round call and whether voice stays calm after a lost round. Two controllers in the same lobby is a wasted evening.',
+        `Finally, agree the practical details: region, the start time in a named timezone and whether anyone is recording. On Duoly those live in the order chat before the first game, and a session starts from ${deathmatch.display}.`,
+      ]}
+    >
+      <p>
+        Everything above is free to agree and costs nothing to skip, which is
+        why most bad duo evenings come from skipping it. Read the{' '}
+        <a href="/terms">payment, cancellation and refund terms</a> before a
+        paid booking, or <a href="/contact">contact support</a> about an order.
+      </p>
+    </Steps>
+
+    <section aria-labelledby="session-h">
+      <h2 id="session-h">How does a booked Valorant session run?</h2>
+      <p>
+        A booked Valorant session is a paid block of games with one checked
+        teammate on your own account. First, you pick the service, the rank and
+        how many games on duoly.gg, and the price is fixed before you pay. For
+        example, {duoPro.title} at {RANK} is {duoPro.display} per game with an{' '}
+        {duoPro.tier}. Second, the order opens a chat where you agree the start
+        time, the roles and the comms. Third, a teammate accepts the order from
+        the queue rather than being assigned, and an order nobody accepts within
+        5 minutes cancels itself. Cancelling before anyone accepts is free.
+        Everyone on Duoly is 18 or over, sessions run using Discord voice, and
+        nobody ever needs your Riot password. The{' '}
+        <a href="/games/valorant/lfg">Valorant looking-for-group page</a> lists
+        every mode with its price, and the{' '}
+        <a href="/games/valorant">Valorant teammate hub</a> compares the full
+        service list.
+      </p>
+    </section>
+
+    <section aria-labelledby="coach-h">
+      <h2 id="coach-h">Would a coach fix it faster than a duo?</h2>
+      <p>
+        A coach is the better buy when the same mistake keeps ending your
+        rounds, and a duo is the better buy when you want a second player you
+        can rely on. A duo plays the round with you and calls what happens next.
+        A lesson stops the game to explain why a retake failed and what to do on
+        the next one. For example, {vod.title} from Duoly is{' '}
+        {vod.display} per {vod.unit} with an {vod.tier}, the same price as a
+        lesson in every other game Duoly coaches. Bring one map and two
+        timestamps, such as a B site retake that arrived a few seconds late. The{' '}
+        <a href="/games/valorant/coaching">Valorant coaching page</a> lists
+        every lesson, and{' '}
+        <a href="/blog/how-to-choose-a-gaming-coach">
+          how to choose a gaming coach
+        </a>{' '}
+        covers the checks worth running before you pay anyone.
+      </p>
+    </section>
+
+    <Faq heading="Questions about finding a Valorant duo" items={faqItems} />
+
+    <ClosingCta
+      heading="Post free tonight, book when it matters"
+      text={`Free looking-for-group costs €0 and is the right first move for most Valorant players. A Duoly session is the paid alternative when the evening, the rank and the role have to be fixed in advance, from ${deathmatch.display} per game. First, post your region, rank, role and mode in a community channel. For example, book instead on the night a post goes unanswered.`}
+      extra={`Three facts settle the practical questions. First, ${duoPro.title} costs ${duoPro.display} per game at ${RANK} with an ${duoPro.tier}, and bundles take ${bundle[0]}% off 3 games and ${bundle[2]}% off 10. Second, payment finishes on duoly.gg and never in a private message, and the Duoly terms carry the cancellation and refund rules. Third, a teammate accepts from the queue, sessions run using Discord voice and both players stay on their own accounts. Every price here was read from Duoly checkout in November 2026.`}
+      href={bookingHref('val', { service: 'duo2' })}
+      label="Book a Valorant teammate"
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+    />
+
+    <nav class="related" aria-label="Related pages">
+      <h2>Keep reading</h2>
+      <div class="chips">
+        <a href="/games/valorant/lfg">Valorant LFG modes and prices</a>
+        <a href="/games/valorant">Valorant teammates and services</a>
+        <a href="/games/valorant/coaching">Valorant coaching lessons</a>
+        <a href="/blog/free-lfg-or-paid-teammate">
+          Free LFG or a paid teammate?
+        </a>
+        <a href="/blog/how-to-choose-a-gaming-coach">
+          How to choose a gaming coach
+        </a>
+        <a href="/blog/what-does-lfg-mean">What does LFG mean?</a>
+        <a href="/find-gaming-buddies">Find gaming buddies in every game</a>
+        <a href="/compare/queueup">Duoly compared with QueueUp</a>
+        <a href="/blog">All Duoly guides</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(article)}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faqItems, path, Astro.site!))}
+  />
+</SiteLayout>
