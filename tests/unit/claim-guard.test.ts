@@ -13,6 +13,8 @@ import { lessons } from '../../src/content/coaching';
 import { coachFormats } from '../../src/content/coaching-formats';
 import { sessionExamples } from '../../src/content/coaching-examples';
 import { comparisonRows } from '../../src/content/epal-comparison';
+import { metafyRows } from '../../src/content/metafy-comparison';
+import { queueupRows } from '../../src/content/queueup-comparison';
 
 /** Every visible string in a copy registry entry, so a failure names it. */
 const strings = (value: unknown): string[] =>
@@ -38,6 +40,8 @@ const REGISTRIES: Record<string, unknown> = {
   'coaching-formats': coachFormats,
   'coaching-examples': sessionExamples,
   'epal-comparison': comparisonRows,
+  'metafy-comparison': metafyRows,
+  'queueup-comparison': queueupRows,
 };
 
 describe('no customer copy promises a rank', () => {

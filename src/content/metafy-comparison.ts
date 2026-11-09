@@ -1,5 +1,5 @@
 import { calculateQuote } from '../server/pricing';
-import { formatPrice } from '../server/seo/offers';
+import { formatPrice, offerSelection } from '../server/seo/offers';
 import type { CompareRow, CompareSource } from './compare-marks';
 
 /**
@@ -13,12 +13,16 @@ import type { CompareRow, CompareSource } from './compare-marks';
  */
 export const METAFY_CHECKED = '2026-11-09';
 
-/** The Duoly lesson the page prices, quoted through the checkout engine. */
+/**
+ * The Duoly lesson the page prices, quoted through the checkout engine. The
+ * server token comes from offerSelection, because each game names its regions
+ * differently (Overwatch 2 says Europe where Valorant says EU).
+ */
 export const metafySelection = {
   gameId: 'ow',
   serviceId: 'role',
-  server: 'EU',
   units: 1,
+  ...offerSelection('ow', 'role'),
 };
 const quote = calculateQuote(metafySelection as never, {
   eurToUsd: 1,
@@ -35,8 +39,7 @@ export const metafyExample = {
 const home = 'https://metafy.gg/';
 const sessions = 'https://metafy.gg/overwatch/sessions';
 const creators = 'https://metafy.gg/pro';
-const fees =
-  'https://help.metafy.gg/en/articles/14676126-buyer-fees-breakdown';
+const fees = 'https://help.metafy.gg/en/articles/14676126-buyer-fees-breakdown';
 const refunds =
   'https://help.metafy.gg/en/articles/12800628-metafy-refund-policy-updated';
 const booking =
@@ -63,7 +66,7 @@ export const metafyRows: CompareRow[] = [
     rival: 'no',
     duolyNote: 'One flat price per lesson, whichever game you book.',
     rivalNote:
-      'Listed Overwatch 2 sessions ran from USD 25 for an hour to USD 60 for two hours.',
+      'Listed Overwatch 2 sessions ran from USD 9.99 for an offline replay review to USD 100 for team coaching, with one-hour lessons at USD 25 to USD 50.',
     rivalSource: sessions,
   },
   {
@@ -72,7 +75,7 @@ export const metafyRows: CompareRow[] = [
     rival: 'yes',
     duolyNote: 'The published price is the amount Duoly charges your card.',
     rivalNote:
-      'A 3.7% platform fee plus USD 1.79, capped at USD 20 or 30% of the total, and 2.9% plus USD 0.40 processing. Some partners cover one or both.',
+      'A 3.7% platform fee plus USD 1.79, capped at the lower of USD 20 or 30% of the total, and 2.9% plus USD 0.40 processing. Some partners cover one or both.',
     rivalSource: fees,
   },
   {
@@ -110,7 +113,7 @@ export const metafyRows: CompareRow[] = [
     duolyNote:
       'The Duoly terms carry the cancellation and refund rules, and a report is reviewed by a person.',
     rivalNote:
-      'Unscheduled sessions are refundable within 21 days to the payment method or 45 days as credits. Completed sessions are not.',
+      'Unscheduled sessions are refundable within 21 days to the payment method or 45 days as credits. A completed session is refundable only for a verified technical problem or partner misconduct.',
     rivalSource: refunds,
   },
   {
@@ -120,16 +123,16 @@ export const metafyRows: CompareRow[] = [
     duolyNote:
       'Teammate sessions and coaching sit in the same checkout, per game.',
     rivalNote:
-      'The inspected pages sell coaching, guides, events and Discord communities. A play-together session that is not a lesson is not stated.',
+      'The homepage sells guides, coaching, events and Discord communities. A play-together session that is not a lesson is not stated.',
     rivalSource: home,
   },
   {
     label: 'Games that sell coaching',
     duoly: 'neutral',
     rival: 'neutral',
-    duolyNote: '20 games, each at the same lesson price.',
+    duolyNote: 'Every Duoly game sells the same lesson at the same price.',
     rivalNote:
-      'The homepage names Valorant, League of Legends, Rocket League, World of Warcraft, Pokémon TCG and Riftbound, and the sessions page adds Overwatch 2.',
+      'Homepage creators teach Pokémon TCG, Riftbound, Rocket League, Valorant, World of Warcraft and League of Legends, and the sessions page adds Overwatch 2.',
     rivalSource: home,
   },
   {
@@ -146,7 +149,7 @@ export const metafyRows: CompareRow[] = [
     duoly: 'no',
     rival: 'yes',
     duolyNote:
-      'Duoly opened in 2026 and has no public review volume yet, so there is nothing to quote here.',
+      'Duoly is new and has no public review volume yet, so there is nothing to quote here.',
     rivalNote:
       'Partner profiles carry scores, and Metafy states that its creators have collectively earned over USD 10,000,000.',
     rivalSource: creators,

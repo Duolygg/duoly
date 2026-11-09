@@ -23,6 +23,52 @@ const purposes: Record<(typeof MCP.tools)[number]['name'], string> = {
 const link = (name: string, path: string, description: string) =>
   `- [${name}](https://duoly.gg${path}): ${description}`;
 
+/**
+ * The editorial pages an assistant should be able to find: answer-first guides
+ * and the platform comparisons. Name, path and the one line that says what the
+ * page answers, filtered against INDEXABLE_PATHS so an unpublished page never
+ * reaches llms.txt.
+ */
+const GUIDE_ENTRIES: [string, string, string][] = [
+  [
+    'What does LFG mean?',
+    '/blog/what-does-lfg-mean',
+    'LFG means looking for group: the meaning, the LFM and LF1M variants, LFG Discord servers and what a post has to name.',
+  ],
+  [
+    'How to find a Valorant duo',
+    '/blog/how-to-find-a-valorant-duo',
+    'The free Discord and Reddit routes first, the six fields a duo post has to name, and when a booked teammate is worth paying for.',
+  ],
+  [
+    'How to choose a gaming coach',
+    '/blog/how-to-choose-a-gaming-coach',
+    'Five checks before paying a coach: rank proof, the session plan, the price per hour with fees, feedback tied to finished sessions and the refund terms.',
+  ],
+  [
+    'Free LFG or a paid teammate?',
+    '/blog/free-lfg-or-paid-teammate',
+    'How good free looking-for-group is, with real server member counts, the three limits it cannot fix, and what a paid session costs.',
+  ],
+];
+const COMPARE_ENTRIES: [string, string, string][] = [
+  [
+    'Duoly vs E-Pal',
+    '/compare/e-pal',
+    'Compare pricing models, service breadth, provider choice and refund policies with dated first-party sources.',
+  ],
+  [
+    'Duoly vs Metafy',
+    '/compare/metafy',
+    'Coach-set session prices and buyer fees on Metafy against one flat Duoly lesson price, from dated first-party pages.',
+  ],
+  [
+    'Duoly vs QueueUp',
+    '/compare/queueup',
+    'QueueCoins, the Learn Or It’s Free refund and the four booking modes against one flat Duoly lesson price in euro.',
+  ],
+];
+
 /** Build-time guide, using the same public catalog and page registry as the site. */
 export function renderLlms() {
   const catalog = games();
@@ -172,24 +218,14 @@ export function renderLlms() {
     '',
     '## Guides',
     '',
-    ...INDEXABLE_PATHS.filter(
-      (path) => path === '/blog/what-does-lfg-mean',
-    ).map((path) =>
-      link(
-        'What does LFG mean?',
-        path,
-        'LFG means looking for group: the meaning, the LFM and LF1M variants, LFG Discord servers and what a post has to name.',
-      ),
+    ...GUIDE_ENTRIES.filter(([, path]) => INDEXABLE_PATHS.includes(path)).map(
+      ([name, path, description]) => link(name, path, description),
     ),
     '',
     '## Comparisons',
     '',
-    ...INDEXABLE_PATHS.filter((path) => path === '/compare/e-pal').map((path) =>
-      link(
-        'Duoly vs E-Pal',
-        path,
-        'Compare pricing models, catalog breadth, provider choice and refund policies with dated first-party sources.',
-      ),
+    ...COMPARE_ENTRIES.filter(([, path]) => INDEXABLE_PATHS.includes(path)).map(
+      ([name, path, description]) => link(name, path, description),
     ),
     '',
     '## Legal',

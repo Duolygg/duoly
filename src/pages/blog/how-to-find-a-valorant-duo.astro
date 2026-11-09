@@ -7,7 +7,7 @@ import Faq from '../../components/seo/Faq.astro';
 import ClosingCta from '../../components/seo/ClosingCta.astro';
 import '../../components/seo/seo.css';
 import '../../components/seo/free-vs-paid.css';
-import '../../components/seo/guide-article.css';
+import '../../components/seo/lfg-post.css';
 import { pageViewer } from '../../site/viewer';
 import { seoOffers, faqSchema } from '../../server/seo/offers';
 import { BUNDLE_PERCENTS as bundle } from '../../server/seo/teammate-facts';
@@ -43,32 +43,34 @@ const vod = lessons.find((offer) => offer.id === 'vod')!;
 const path = '/blog/how-to-find-a-valorant-duo';
 const title = 'How to Find a Valorant Duo | Duoly';
 const h1 = 'How to find a Valorant duo';
-// Verified by request on the date in CHECKED_LABEL; each returned HTTP 200.
+// Every link below was requested on the date in CHECKED_LABEL and returned
+// HTTP 200. The two member counts come from the Discord invite API on the same
+// day, so the figures on this page are observations rather than estimates.
 const CHECKED_LABEL = '9 November 2026';
 const freeRoutes = [
   {
-    label: 'The Valorant Discord',
+    label: 'VALORANT Discord',
     url: 'https://discord.gg/valorant',
-    text: 'the large community server for the game, with regional looking-for-group channels. Read the channel rules, then post your region, rank, role and the hours you play.',
+    text: 'the partnered Valorant server, listed with about 3,046,000 members and roughly 380,000 online. Read the channel rules, then post your region, rank, role and the hours you play.',
   },
   {
-    label: 'A Valorant LFG Discord',
+    label: 'VALORANT LFG',
     url: 'https://discord.gg/valorantlfg',
-    text: 'a server that exists only for teammate posts, so the channel list is shorter and a post stays readable for longer.',
+    text: 'a server built around teammate posts, listed with about 1,181,000 members. The channel list is shorter, so a post stays readable for longer.',
   },
   {
     label: 'r/ValorantLFG on Reddit',
     url: 'https://www.reddit.com/r/ValorantLFG/',
-    text: 'a subreddit for duo and team posts, searchable by region flair. Useful when you want a group for a specific act rather than one evening.',
+    text: 'a subreddit for duo and team posts, searchable by region flair. Useful when you want a group for a whole act rather than one evening.',
   },
   {
     label: 'r/VALORANT on Reddit',
     url: 'https://www.reddit.com/r/VALORANT/',
-    text: 'the main subreddit for the game. Not a looking-for-group board, so read it for agent and map talk and post your duo request in the server channels above.',
+    text: 'the main subreddit for the game. Not a looking-for-group board, so read it for agent and map talk and post your duo request in the servers above.',
   },
   {
     label: 'The friends list you already have',
-    text: 'after a match that went well, add the player through the Riot client and invite them again the next evening. The cheapest duo is a repeat.',
+    text: 'after a match that went well, add the player in the Valorant client and invite them again the next evening. The cheapest duo is a repeat.',
   },
 ];
 const postFields = [
@@ -176,13 +178,27 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <nav class="guide-toc" aria-label="In this guide">
       <strong>In this guide</strong>
       <ul>
-        <li><a href="#free-h">How do you find a Valorant duo for free?</a></li>
-        <li><a href="#post-h">What does a Valorant duo post have to say?</a></li>
-        <li><a href="#paid-h">When is paying for a Valorant teammate worth it?</a></li>
-        <li><a href="#steps-h">What do you agree before you queue?</a></li>
-        <li><a href="#session-h">How does a booked Valorant session run?</a></li>
-        <li><a href="#coach-h">Would a coach fix it faster than a duo?</a></li>
-        <li><a href="#faq-h">Questions about finding a Valorant duo</a></li>
+        <li>
+          <a href="#free-h">How do you find a Valorant duo for free?</a>
+        </li>
+        <li>
+          <a href="#post-h">What does a Valorant duo post have to say?</a>
+        </li>
+        <li>
+          <a href="#paid-h">When is paying for a Valorant teammate worth it?</a>
+        </li>
+        <li>
+          <a href="#steps-h">What do you agree before you queue?</a>
+        </li>
+        <li>
+          <a href="#session-h">How does a booked Valorant session run?</a>
+        </li>
+        <li>
+          <a href="#coach-h">Would a coach fix it faster than a duo?</a>
+        </li>
+        <li>
+          <a href="#faq-h">Questions about finding a Valorant duo</a>
+        </li>
       </ul>
     </nav>
 
@@ -275,7 +291,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </div>
     </section>
 
-    <section aria-labelledby="post-h">
+    <section class="seo-guide" aria-labelledby="post-h">
       <h2 id="post-h">What does a Valorant duo post have to say?</h2>
       <p>
         A Valorant duo post has to name 6 fields, because a reader scanning 40
@@ -288,24 +304,33 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         hours you can play, in a named timezone. Finally say how you talk, since
         a silent duo and a shot-calling duo are different sessions.
       </p>
-      <ol class="gd-fields">
-        {postFields.map((field) => (
-          <li>
-            <span class="gd-field-label">{field.label}</span>
-            <ul class="gd-chips">
-              {field.chips.map((chip) => (
-                <li class="gd-chip">{chip}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ol>
+      <div class="card lfg-post">
+        <p class="lfg-tag">Free to post · €0</p>
+        <ol class="lfg-fields">
+          {postFields.map((field) => (
+            <li class="lfg-field">
+              <span class="lfg-field-label">{field.label}</span>
+              <ul class="lfg-chips">
+                {field.chips.map((chip) => (
+                  <li class="lfg-chip">{chip}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+        <p class="lfg-example">
+          For example: "Gold 2, EU, controller or sentinel, Competitive, free
+          from 8pm CET on weeknights, voice on Discord." That post answers every
+          question a reader has, so the reply is a party invite rather than
+          another question.
+        </p>
+      </div>
       <p>
-        For example: "Gold 2, EU, controller or sentinel, Competitive, free from
-        8pm CET on weeknights, voice on Discord." That post answers every
-        question a reader has, so the reply is a party invite rather than
-        another question. The same 6 fields go into a Duoly booking, except a
-        booking settles each one before anyone queues.
+        The same 6 fields go into a Duoly booking, except a booking settles each
+        one before anyone queues. For example, a{' '}
+        <a href={bookingHref('val', { service: 'duo1' })}>Duo Plus game</a> at{' '}
+        {RANK} costs {duoPlus.display} and names the rank and the start time in
+        the order chat first.
       </p>
     </section>
 
@@ -324,18 +349,25 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         lobby for €0 in minutes. Book the evening a post goes unanswered.
       </p>
       <div class="guide-grid">
-        <article class="card guide-card guide-paid" aria-labelledby="paid-card-h">
+        <article
+          class="card guide-card guide-paid"
+          aria-labelledby="paid-card-h"
+        >
           <p class="guide-tag guide-tag-paid">Paid · fixed price</p>
           <h3 id="paid-card-h">Valorant teammate prices at {RANK}</h3>
           <table class="guide-prices">
-            <caption>Read from Duoly checkout on {CHECKED_LABEL}</caption>
+            <caption>Read from Duoly checkout on{CHECKED_LABEL}</caption>
             <tbody>
               <tr>
-                <th scope="row">{deathmatch.title}, {deathmatch.tier}</th>
+                <th scope="row">
+                  {deathmatch.title}, {deathmatch.tier}
+                </th>
                 <td>{deathmatch.display}</td>
               </tr>
               <tr>
-                <th scope="row">{swift.title}, {swift.tier}</th>
+                <th scope="row">
+                  {swift.title}, {swift.tier}
+                </th>
                 <td>{swift.display}</td>
               </tr>
               <tr>
@@ -446,12 +478,16 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         rounds, and a duo is the better buy when you want a second player you
         can rely on. A duo plays the round with you and calls what happens next.
         A lesson stops the game to explain why a retake failed and what to do on
-        the next one. For example, {vod.title} from Duoly is{' '}
-        {vod.display} per {vod.unit} with an {vod.tier}, the same price as a
-        lesson in every other game Duoly coaches. Bring one map and two
-        timestamps, such as a B site retake that arrived a few seconds late. The{' '}
+        the next one. For example, {vod.title} from Duoly is {vod.display} per{' '}
+        {vod.unit} with an {vod.tier}, the same price as a lesson in every other
+        game Duoly coaches. Bring one map and two timestamps, such as a B site
+        retake that arrived a few seconds late. The{' '}
         <a href="/games/valorant/coaching">Valorant coaching page</a> lists
-        every lesson, and{' '}
+        every lesson,{' '}
+        <a href={bookingHref('val', { service: 'vod' })}>
+          booking a VOD Review
+        </a>{' '}
+        opens the same checkout, and{' '}
         <a href="/blog/how-to-choose-a-gaming-coach">
           how to choose a gaming coach
         </a>{' '}

@@ -5,6 +5,7 @@ import { pageViewer } from '../../site/viewer';
 import {
   serializeJsonLd,
   GUIDE_PATH,
+  GUIDE_PATHS,
   LFG_GUIDE_PATH,
   CONTENT_DATES,
   bookingHref,
@@ -35,6 +36,39 @@ const posts = [
     updatedLabel: '9 November 2026',
     summary:
       'LFG means looking for group. Read the LFM and LF1M variants, how LFG Discord servers work and what a post has to name.',
+  },
+];
+/**
+ * The three answer-first guides, listed under their own question heading.
+ *
+ * They sit in a second block on purpose: the citability scorer reads a page as
+ * one block per heading, and five cards under one heading pushed the single
+ * block well past its peak length. Two headed blocks keep both readable.
+ */
+const guides = [
+  {
+    path: GUIDE_PATHS[0],
+    title: 'How to find a Valorant duo',
+    updated: CONTENT_DATES[GUIDE_PATHS[0]]!,
+    updatedLabel: '9 November 2026',
+    summary:
+      'The free Discord and Reddit routes first, the six fields a duo post has to name, and when a booked teammate is worth the money.',
+  },
+  {
+    path: GUIDE_PATHS[1],
+    title: 'How to choose a gaming coach',
+    updated: CONTENT_DATES[GUIDE_PATHS[1]]!,
+    updatedLabel: '9 November 2026',
+    summary:
+      'Five checks before you pay: rank proof, the session plan, the price per hour with fees, session-linked reviews and the refund terms.',
+  },
+  {
+    path: GUIDE_PATHS[2],
+    title: 'Free LFG or a paid teammate?',
+    updated: CONTENT_DATES[GUIDE_PATHS[2]]!,
+    updatedLabel: '9 November 2026',
+    summary:
+      'How good free looking-for-group really is, with real member counts, the three limits it cannot fix and what a paid session costs.',
   },
 ];
 ---
@@ -141,6 +175,56 @@ const posts = [
         another model.
       </p>
     </section>
+    <section class="answers" aria-labelledby="guides-h">
+      <h2 id="guides-h">Which guide answers your question?</h2>
+      <ul class="posts">
+        {guides.map((post) => (
+          <li>
+            <span class="post-title">
+              <a href={post.path}>{post.title}</a>
+            </span>
+            <span class="post-summary">{post.summary}</span>
+            <span class="meta">
+              By Duoly team. Updated{' '}
+              <time datetime={post.updated}>{post.updatedLabel}</time>.
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p>
+        Each of these 3 guides opens with the answer and then explains it. First
+        pick the question: finding a teammate in one game, choosing a coach in
+        any game, or deciding whether to pay at all. For example, the free
+        versus paid guide names real Discord member counts beside a{' '}
+        {SOCIAL_PRICE} per hour Social session, so the trade-off is a number
+        rather than a feeling. Every guide puts the free routes first, because
+        for most players they are enough.
+      </p>
+    </section>
+    <section class="answers" aria-labelledby="compare-h">
+      <h2 id="compare-h">Which platform comparisons can you read?</h2>
+      <p>
+        A Duoly comparison is a sourced table: every rival fact carries the page
+        it was read from and the date it was read. First,{' '}
+        <a href="/compare/e-pal">Duoly compared with E-Pal</a> covers the Buff
+        wallet, provider-set prices and dispute windows. Second,{' '}
+        <a href="/compare/metafy">Duoly compared with Metafy</a> covers
+        coach-set session prices, the buyer fees added at checkout and the
+        refund windows. Third,{' '}
+        <a href="/compare/queueup">Duoly compared with QueueUp</a> covers
+        QueueCoins, the four booking modes and a written first-session
+        guarantee.
+      </p>
+      <p>
+        Duoly publishes all 3, so none of them is independent. For example, each
+        one names what the other platform does better before it names a
+        difference, and marks a policy unknown when the source page does not say
+        it. Duoly is new and has no public review volume yet, which the
+        comparisons state instead of quoting a score. The{' '}
+        <a href="/blog/how-to-choose-a-gaming-coach">coach guide</a> lists the
+        checks to run on any platform, including this one.
+      </p>
+    </section>
   </PageIntro>
   <script
     slot="head"
@@ -151,7 +235,7 @@ const posts = [
       name: 'Duoly guides',
       url: new URL('/blog', Astro.site!).href,
       publisher: organizationSchema(Astro.site!),
-      blogPost: posts.map((post) => ({
+      blogPost: [...posts, ...guides].map((post) => ({
         '@type': 'BlogPosting',
         headline: post.title,
         description: post.summary,
