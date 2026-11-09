@@ -20,6 +20,7 @@ import {
   BUNDLE_PERCENTS,
   BUNDLE_SIZES,
   CATALOG_PRICES_UPDATED,
+  CATALOG_PRICES_UPDATED_LABEL,
   COACHING_HOUR,
   FIVE_COACHING_HOURS,
   FIVE_GAMES,
@@ -42,9 +43,9 @@ const HUB_LINKS = hubChips([
   'fortnite',
   'rocket-league',
 ]);
-/** The catalog price date the rest of the SEO pages already state. */
+/** The day the catalog's prices last changed, from one shared constant. */
 const PRICES_UPDATED = CATALOG_PRICES_UPDATED;
-const pricesLabel = '8 November 2026';
+const pricesLabel = CATALOG_PRICES_UPDATED_LABEL;
 /** The catalog year, derived so "in 2026" cannot outlive the prices it dates. */
 const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
 const faq: [string, string][] = [
@@ -182,8 +183,11 @@ const schema = {
       </p>
       <div class="fees-table-wrap">
         <table class="fees-table">
+          {/* One expression rather than prose around `{pricesLabel}`: an
+              adjacent text node and expression render with no space between
+              them here, which read as "on9 November 2026". */}
           <caption class="sr-only">
-            Duoly price examples, read from the pricing engine on{pricesLabel}
+            {`Duoly price examples, read from the pricing engine on ${pricesLabel}`}
           </caption>
           <thead>
             <tr>

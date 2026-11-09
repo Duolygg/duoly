@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
@@ -6,6 +7,7 @@ import {
   BUNDLE_PERCENTS,
   BUNDLE_SIZES,
   CATALOG_PRICES_UPDATED,
+  CATALOG_PRICES_UPDATED_LABEL,
   COACHING_HOUR,
   FIVE_COACHING_HOURS,
   FIVE_GAMES,
@@ -31,6 +33,9 @@ import {
 import { TERMS } from '../../src/design-reference/lib/legal';
 
 const EUR = { customerCurrency: 'EUR' as const, eurToUsd: 1 };
+
+/** The file every price on the page ultimately comes from. */
+const CATALOG_FILE = 'src/design-reference/lib/catalog.js';
 
 /** The same selection the fees page quotes, priced through the real engine. */
 const quote = (
@@ -171,8 +176,29 @@ describe('the policy figures the page quotes', () => {
   it('dates the catalog prices in one shared place', () => {
     expect(CATALOG_PRICES_UPDATED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(Date.parse(CATALOG_PRICES_UPDATED)).toBeLessThanOrEqual(Date.now());
+    const page = readFileSync('src/pages/fees-and-refunds.astro', 'utf8');
+    expect(page).not.toMatch(/const PRICES_UPDATED = '20/);
+    // The prose label is the machine date spelled out, so a reader and a
+    // `datetime` attribute on the same page can never name different days.
+    expect(page).not.toMatch(/const pricesLabel = '/);
     expect(
-      readFileSync('src/pages/fees-and-refunds.astro', 'utf8'),
-    ).not.toMatch(/const PRICES_UPDATED = '20/);
+      new Date(`${CATALOG_PRICES_UPDATED}T00:00:00Z`).toLocaleDateString(
+        'en-GB',
+        { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' },
+      ),
+    ).toBe(CATALOG_PRICES_UPDATED_LABEL);
+  });
+
+  it('dates the catalog no earlier than the last catalog price change', () => {
+    // PR #194 raised the Duo tiers this page quotes. A page may be vaguer than
+    // the catalog, never more confident than it.
+    const log = execFileSync(
+      'git',
+      ['log', '-1', '--format=%ad', '--date=short', '--', CATALOG_FILE],
+      { encoding: 'utf8' },
+    ).trim();
+    expect(Date.parse(CATALOG_PRICES_UPDATED)).toBeGreaterThanOrEqual(
+      Date.parse(log),
+    );
   });
 });
