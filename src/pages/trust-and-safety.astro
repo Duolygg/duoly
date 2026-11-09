@@ -1,0 +1,375 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Breadcrumbs from '../components/seo/Breadcrumbs.astro';
+import SeoHero from '../components/seo/SeoHero.astro';
+import Faq from '../components/seo/Faq.astro';
+import ClosingCta from '../components/seo/ClosingCta.astro';
+import '../components/seo/seo.css';
+import '../components/seo/official.css';
+import { pageViewer } from '../site/viewer';
+import { CONTENT_DATES, hubChips, serializeJsonLd } from '../site/seo';
+import { faqSchema } from '../server/seo/offers';
+import { officialPageSchema } from '../server/seo/official';
+import { BUSINESS, BUSINESS_LOCATION } from '../site/entity';
+import { SUPPORT_EMAIL } from '../site/nav';
+import {
+  COACHING_PRICE,
+  PLAYABLE_GAMES,
+  SHARE_PERCENT,
+  VALORANT_GG_PRICE,
+} from '../server/seo/teammate-facts';
+import {
+  AUTO_CANCEL_MINUTES,
+  BUNDLE_PERCENTS,
+  CATALOG_PRICES_UPDATED,
+  CATALOG_PRICES_UPDATED_LABEL,
+  QUANTITY_PERCENT,
+  SINGLE_GAME,
+  TEN_GAME_BUNDLE,
+  USD_MARGIN_PERCENT,
+} from '../server/seo/fees';
+import {
+  FREE_REROLLS,
+  PAYMENT_PROVIDER,
+  REROLL_MINUTES,
+  REVIEW_STAGES,
+  TEAMMATE_MIN_RANKS,
+} from '../server/seo/booking';
+import { providerTier } from '../server/seo/price-table';
+import { LEGAL_UPDATED } from '../design-reference/lib/site.js';
+
+const { viewer, csrf } = await pageViewer(Astro);
+const path = '/trust-and-safety';
+const title = 'Duoly Trust and Safety: How Players Are Checked | Duoly';
+const description = `How Duoly checks teammates and coaches, who handles the card payment, the conduct rules both sides sign up to, how to report a session and what Duoly never does.`;
+const HUB_LINKS = hubChips([
+  'valorant',
+  'league-of-legends',
+  'marvel-rivals',
+  'overwatch-2',
+]);
+const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
+const pricesLabel = CATALOG_PRICES_UPDATED_LABEL;
+/** Provider tiers read from the catalog, so no page names a rank it invented. */
+const DUO_PRO_TIER = providerTier('lol', 'duo2');
+const DUO_APEX_TIER = providerTier('lol', 'duo3');
+const VALORANT_COACH_TIER = providerTier('val', 'vod');
+
+/**
+ * The five refusals the terms put in writing, as scannable cards beside the
+ * paragraph that states them in full. Same wording as the /about cards, because
+ * the rules are the same rules and two pages disagreeing about them would be
+ * worse than one page carrying them twice.
+ */
+const NOT_DUOLY: [string, string][] = [
+  [
+    'No account sharing',
+    'Every session is played together, on your own account.',
+  ],
+  [
+    'No rank or win promised',
+    'A teammate accepts from a queue, and no result is sold.',
+  ],
+  [
+    'No dating services',
+    'Gamer Girl and Social sessions are company and conversation.',
+  ],
+  ['Nobody under 18', 'Customers and teammates both have to be 18 or older.'],
+  ['No off-platform payment', 'Payment, chat and reports stay on duoly.gg.'],
+];
+
+const faq: [string, string][] = [
+  [
+    'Is Duoly safe to use?',
+    `Duoly is an Austrian sole proprietorship, registered under trade register number GISA ${BUSINESS.gisa} and operated from ${BUSINESS_LOCATION}, and the operator details are published rather than hidden. Payment runs through ${PAYMENT_PROVIDER}, so Duoly never sees a full card number, and every session is played on your own account. For example, a ${SINGLE_GAME.total} game in ${CATALOG_YEAR} is one charge with no fee on top, refundable in full until a teammate accepts.`,
+  ],
+  [
+    'Will a Duoly teammate ever ask for my account password?',
+    'No. Nobody at Duoly asks for a password, and the order chat refuses messages asking for a login before they are delivered. If anybody asks anyway, report the order from your order room.',
+  ],
+  [
+    'How are Duoly coaches checked?',
+    `A coach passes the same four-stage review as a teammate and is listed at the coach rank the game's coaching page names, for example ${VALORANT_COACH_TIER} for a ${COACHING_PRICE} Valorant VOD Review hour. Coaching applicants also send a short sample review of a recorded match.`,
+  ],
+  [
+    'Can I get a different teammate if the match is wrong?',
+    `Yes. The order room offers ${FREE_REROLLS} free re-rolls in the first ${REROLL_MINUTES} minutes after matching, and a team order offers the same switch for each teammate. After that window, report the order instead and a person reviews it.`,
+  ],
+  [
+    'Does Duoly store my card details?',
+    `No. The card form at checkout belongs to ${PAYMENT_PROVIDER}, and the privacy policy states that payment details go straight to the payment provider while Duoly only sees the amount and the method. Ticking save at checkout stores the card with ${PAYMENT_PROVIDER}, and Duoly sees only its brand and last 4 digits.`,
+  ],
+  [
+    'What happens to a teammate who breaks the rules?',
+    `Step 1 is the report, and the terms then allow a warning, a cancelled order without a refund, or a blocked account, depending on how serious the case is. A payout of ${SHARE_PERCENT}% can also be held while a report about that order is reviewed, and fake completion proof ends a teammate’s time on Duoly.`,
+  ],
+  [
+    'Is Duoly allowed by the game publishers?',
+    `Playing together in a party is allowed in all ${PLAYABLE_GAMES} games Duoly sells, and Duoly never signs into a customer account. Duoly is not affiliated with, endorsed or sponsored by Riot Games, Valve, Epic Games, Blizzard, NetEase or any other publisher, and every player stays responsible for the rules of the game being played.`,
+  ],
+  [
+    'How do I get my data deleted?',
+    `Email ${SUPPORT_EMAIL} or use the contact form and pick the privacy topic. The privacy policy lists access, correction, deletion, portability, restriction, objection and withdrawing consent as rights, answered within one month, with a complaint possible to the Austrian data protection authority.`,
+  ],
+];
+---
+
+<SiteLayout
+  title={title}
+  description={description}
+  indexing="index, follow"
+  viewer={viewer}
+  csrf={csrf}
+>
+  <article class="seo-page official-page">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', path: '/' },
+        { name: 'Trust and safety', path },
+      ]}
+    />
+    <SeoHero
+      eyebrow="Trust and safety"
+      h1="Duoly trust and safety"
+      lead={`Every Duoly teammate passes a four-stage review before a first order, payment runs through ${PAYMENT_PROVIDER} rather than through Duoly, and both sides sign up to the same conduct rules. Here is each of those in full, with the document it comes from.`}
+      cta={{ href: '/how-it-works', label: 'See how a booking runs' }}
+      secondary={{ href: '/terms', label: 'Read the terms' }}
+      art={[
+        { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
+        {
+          src: '/assets/games/league-of-legends.png',
+          alt: 'League of Legends game art',
+        },
+        { src: '/assets/games/marvel-rivals.png', alt: 'Marvel Rivals art' },
+      ]}
+      chip="Rank checked before a first order"
+      facts={[
+        'Four-stage teammate review',
+        `Card handling by ${PAYMENT_PROVIDER}`,
+        'Reports read by a person',
+        'Nobody under 18',
+      ]}
+      note={`Rules quoted from the Duoly terms and privacy policy, both dated ${LEGAL_UPDATED}.`}
+    />
+
+    <section aria-labelledby="check-h">
+      <h2 id="check-h">
+        How does Duoly check a teammate before a first order?
+      </h2>
+      <p>
+        A Duoly teammate is an applicant who has passed a four-step review, and
+        nobody reaches the order queue before the review finishes. Step 1 is{' '}
+        <a href="/apply">the application form</a>, which asks for a display
+        name, an email, a Discord username, a country, a confirmation of being
+        18 or older, the main game, the current rank, the server region and a
+        link to a short YouTube intro video. Second, Step 2 is the rank check,
+        where the Duoly team verifies the account and its rank history against
+        the minimum published for that game. Third, Step 3 is one tryout game
+        with the Duoly team using Discord. Fourth, Step 4 switches the account
+        online, and only then can orders be accepted. For example, a League of
+        Legends applicant needs Diamond 4 or higher, a {SINGLE_GAME.total} Duo
+        Pro game pairs a {DUO_PRO_TIER} in {CATALOG_YEAR}, and {SHARE_PERCENT}%
+        of that total reaches the teammate who completes the order.
+      </p>
+      {/* The same four stages as a timeline. Divs and spans, so the paragraph
+          above stays the one extractable answer rather than being repeated. */}
+      <ol class="official-flow">
+        {REVIEW_STAGES.map(([label, detail], index) => (
+          <li>
+            <span class="official-step">Step {index + 1}</span>
+            <span class="official-label">{label}</span>
+            <span class="official-detail">{detail}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section aria-labelledby="rank-h">
+      <h2 id="rank-h">Which rank does a Duoly teammate have to hold?</h2>
+      <p>
+        A Duoly minimum rank is published per game, and the application form
+        offers that rank and everything above rather than a free text box. Step
+        1 for an applicant is finding the game, and a customer can read the same
+        tiers on{' '}
+        <a href={SINGLE_GAME.href}>a real {SINGLE_GAME.short} checkout</a>:{' '}
+        {TEAMMATE_MIN_RANKS.map(
+          ([game, rank], index) =>
+            `${index ? ', ' : ''}${game} asks for ${rank}`,
+        ).join('')}
+        . Second, every service names the tier a customer is paired with, so a{' '}
+        {SINGLE_GAME.total} League of Legends Duo Pro game means a{' '}
+        {DUO_PRO_TIER} while Duo Apex means a {DUO_APEX_TIER}. Third, a coach is
+        listed at the coach rank on that game’s coaching page and sends a sample
+        review, for example {VALORANT_COACH_TIER} for a {COACHING_PRICE}{' '}
+        Valorant VOD Review hour run using Discord. Gamer Girl sessions take any
+        rank, because company rather than rank is the thing booked. According to{' '}
+        <a href="/terms#teammates">Duoly’s teammate terms</a>, a teammate keeps
+        a verified rank honest or loses the account, and earns {SHARE_PERCENT}%
+        of each order in {CATALOG_YEAR}.
+      </p>
+    </section>
+
+    <section aria-labelledby="payment-h">
+      <h2 id="payment-h">How does Duoly handle your payment details?</h2>
+      <p>
+        A Duoly payment is one upfront charge through {PAYMENT_PROVIDER}, and
+        Duoly never sees or stores a full card number. First, a{' '}
+        {SINGLE_GAME.total} game and a {COACHING_PRICE} coaching hour are both
+        taken the moment the order is queued, and the card form at checkout
+        belongs to {PAYMENT_PROVIDER} rather than to Duoly, so card data never
+        reaches a Duoly server. Second,{' '}
+        <a href="/privacy">the privacy policy</a> states that payment details go
+        straight to the payment provider and Duoly only sees the amount and the
+        method, plus a card brand and the last 4 digits when a customer ticks
+        save at checkout. Third, one upfront charge means no stored card is
+        needed for a repeat booking. According to{' '}
+        <a href="/terms#payment">Duoly’s payment terms</a>, prices are set in
+        euros and a US dollar total adds a {USD_MARGIN_PERCENT}% currency
+        margin, rounded up to .99. For example, a {QUANTITY_PERCENT}% quantity
+        discount comes off before the charge in {CATALOG_YEAR}, and a refund
+        lands in the Duoly balance rather than on a card unless asked for.
+      </p>
+    </section>
+
+    <section aria-labelledby="conduct-h">
+      <h2 id="conduct-h">What are the conduct rules on Duoly?</h2>
+      <p>
+        The Duoly conduct rules are five promises both sides make, written into{' '}
+        <a href="/terms#conduct">the terms of service</a> rather than into a
+        help article. Step 1 of any session is respect: no harassment, hate
+        speech, threats, discrimination or sexual content. Second, no account
+        access, because nobody may ask for, give or use another person’s login
+        and nobody at Duoly asks for a password. Third, no cheating, scripting,
+        exploits or third-party tools a game does not allow. Fourth, no payment
+        arranged outside Duoly. Fifth, the rules of the game being played still
+        apply. Gamer Girl and Social sessions are company and conversation,
+        never dating, romantic or sexual services, and a request like that ends
+        the session. For example, a {VALORANT_GG_PRICE} Gamer Girl Duo game in{' '}
+        {CATALOG_YEAR} buys voice company using Discord and the same{' '}
+        {SHARE_PERCENT}% teammate share, never a private contact. Teammates
+        additionally follow the Teammate Code, published at duoly.gg/rules once
+        a teammate signs in.
+      </p>
+    </section>
+
+    <section aria-labelledby="report-h">
+      <h2 id="report-h">How do you report a problem on Duoly?</h2>
+      <p>
+        A Duoly report is a form in the order room, and a person at Duoly reads
+        every one. Step 1 is the report, and{' '}
+        <a href="/terms#cancel">the terms</a> cover three cases identically: a
+        no-show, a teammate leaving and toxic behaviour are all reported from
+        the order room, a real person reviews the report, and the order can be
+        refunded to the Duoly balance. Second, the order chat refuses any
+        message asking for a login or an outside payment before delivery,
+        enforced on the server rather than in the browser alone. Third, a
+        teammate payout can be held while a report about an order is reviewed,
+        so a disputed order is never paid out first and argued about afterwards.
+        For example, a {SINGLE_GAME.total} game and a {TEN_GAME_BUNDLE.total}{' '}
+        ten-game bundle at {BUNDLE_PERCENTS[2]}% off follow one rule in{' '}
+        {CATALOG_YEAR}. Support also answers from the chat bubble and{' '}
+        <a href="/contact">the contact form</a>.
+      </p>
+    </section>
+
+    <section aria-labelledby="data-h">
+      <h2 id="data-h">What does Duoly do with the data you give it?</h2>
+      <p>
+        A Duoly order collects what the session needs and nothing else, and no
+        game account password is ever requested. Step 1 is the order itself: a{' '}
+        {SINGLE_GAME.total} game stores the game, the service, the rank, the
+        server, the in-game name and the note. Second, a teammate sees a first
+        name, a profile picture, the rank, the server, the in-game name, the
+        order note and the order chat, and never an email address or the amount
+        paid. Third, when an order waits, the Duoly bot posts it in the teammate
+        server using Discord with the service, rank, server, order note and
+        teammate pay, never a customer name or email. Fourth,{' '}
+        <a href="/privacy#rights">the privacy policy</a> lists every GDPR right
+        a customer in the EU holds, from access and correction to deletion,
+        portability and withdrawing consent, answered within one month. For
+        example, orders and payment records stay 7 years because Austrian tax
+        law requires it in {CATALOG_YEAR}, while session chats and reports stay
+        up to 2 years and a rejected application stays 6 months. According to
+        the policy, Duoly never sells data and runs no ad pixel at all, so a{' '}
+        {SINGLE_GAME.total} order and a {TEN_GAME_BUNDLE.total} bundle at{' '}
+        {BUNDLE_PERCENTS[2]}% off leave the same record: the order, and nothing
+        sold on.
+      </p>
+    </section>
+
+    <section aria-labelledby="never-h">
+      <h2 id="never-h">What does Duoly never do?</h2>
+      <p>
+        Duoly is a marketplace for played-together sessions, which rules five
+        things out, each one written into{' '}
+        <a href="/terms">the terms of service</a> dated {LEGAL_UPDATED}. Step 1
+        of understanding the service is the first refusal: no account sharing
+        and no boosting, because a session is played together, the teammate
+        stays in a personal client and no password is requested. Second, no
+        guaranteed rank, win or start time, because a teammate accepts from a
+        queue and the {SHARE_PERCENT}% teammate share is paid for a completed
+        order rather than a won one. Third, no dating, romantic or sexual
+        service. Fourth, nobody under 18 may book or work as a teammate. Fifth,
+        no payment arranged off the platform. For example, a {SINGLE_GAME.total}{' '}
+        League of Legends game buys one game beside a {DUO_PRO_TIER} using
+        Discord voice in {CATALOG_YEAR}, and a {BUNDLE_PERCENTS[2]}% bundle
+        discount still buys no result.
+      </p>
+      <div class="official-grid">
+        {NOT_DUOLY.map(([label, detail]) => (
+          <div>
+            <span class="official-label">{label}</span>
+            <span class="official-detail">{detail}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <Faq heading="What do customers ask about Duoly safety?" items={faq} />
+
+    <ClosingCta
+      heading="Want to check the rules before you book?"
+      text={`A safe Duoly booking is a checkable one: a ${SINGLE_GAME.total} game names its price, its ${SHARE_PERCENT}% teammate share, its operator and its refund rule before you pay. Everything above comes from the terms, the privacy policy and the imprint, published from ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}.`}
+      extra={`Three safeguards matter most on a first order. First, your account stays yours: Step 1 of any session is an invite rather than a login, the teammate plays from a personal client using Discord, and nobody at Duoly asks for a password. Second, money is reversible until the session runs: cancel free until a teammate accepts, and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. Third, a bad session has a route: report it from the order room with proof and a person at Duoly reviews it. According to the terms, no rank, win or start time is promised at any price. For example, ${TEN_GAME_BUNDLE.short} costs ${TEN_GAME_BUNDLE.total} at ${BUNDLE_PERCENTS[2]}% off in ${CATALOG_YEAR} and still buys no result, and catalog prices were read on ${pricesLabel}.`}
+      href="/pricing"
+      label={`See prices for ${PLAYABLE_GAMES} games`}
+      art={{ src: '/assets/games/league-of-legends.png', alt: '' }}
+    />
+
+    <nav class="related" aria-label="Related pages">
+      <h2>Read next</h2>
+      <div class="chips">
+        <a href="/how-it-works">How a Duoly booking works step by step</a>
+        <a href="/pricing">Every Duoly game, service and price</a>
+        <a href="/fees-and-refunds">Duoly fees and refunds in full</a>
+        <a href="/about">About Duoly and who runs it</a>
+        <a href="/press">Duoly press kit and fact sheet</a>
+        <a href="/terms">Full terms of service</a>
+        <a href="/privacy">Privacy policy</a>
+        <a href="/get-paid-to-play-games">Become a Duoly teammate</a>
+        {HUB_LINKS.map((hub) => (
+          <a href={hub.path}>{hub.name} teammates and prices</a>
+        ))}
+        <a href="/blog">All Duoly guides</a>
+      </div>
+    </nav>
+  </article>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(faqSchema(faq, path, Astro.site!))}
+  />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(
+      officialPageSchema(
+        path,
+        title,
+        description,
+        CONTENT_DATES[path]!,
+        Astro.site!,
+      ),
+    )}
+  />
+</SiteLayout>

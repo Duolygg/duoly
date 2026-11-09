@@ -111,9 +111,29 @@ export function renderLlms() {
       'Who operates duoly.gg, how teammates are checked and how payment works.',
     ),
     link(
+      'How Duoly works',
+      '/how-it-works',
+      'Every step of a booking as the site runs it: the selections the picker asks for, the payment, matching, the session and the refund rules.',
+    ),
+    link(
+      'Trust and safety',
+      '/trust-and-safety',
+      'How teammates and coaches are checked, how payment is handled, the conduct rules and how to report a session.',
+    ),
+    link(
       'Fees and refunds',
       '/fees-and-refunds',
       'The full customer price model, the automatic discounts and the cancellation and refund rules.',
+    ),
+    link(
+      'Price list for readers',
+      '/pricing',
+      'Every game and bookable service in one table, with the cheapest and dearest price each rank reaches.',
+    ),
+    link(
+      'Press kit',
+      '/press',
+      'The fact sheet, the boilerplate, the logo files and the press contact.',
     ),
     link(
       'Price list as markdown',

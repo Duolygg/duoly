@@ -38,6 +38,16 @@ export const CONTENT_SOURCES: Record<string, string[]> = {
     'src/pages/fees-and-refunds.astro',
     'src/server/seo/fees.ts',
   ],
+  '/how-it-works': [
+    'src/pages/how-it-works.astro',
+    'src/server/seo/booking.ts',
+  ],
+  '/trust-and-safety': [
+    'src/pages/trust-and-safety.astro',
+    'src/server/seo/booking.ts',
+  ],
+  '/pricing': ['src/pages/pricing.astro', 'src/server/seo/price-table.ts'],
+  '/press': ['src/pages/press.astro', 'src/server/seo/press.ts'],
   '/contact': ['src/pages/contact.astro'],
   '/terms': ['src/pages/terms.astro'],
   '/privacy': ['src/pages/privacy.astro'],
