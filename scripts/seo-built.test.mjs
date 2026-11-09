@@ -264,8 +264,8 @@ test('E-Pal comparison page is factual, dated and internally linked', () => {
   assert(page.inbound.length >= 2, 'two inbound links');
   const html = readFileSync('.vercel/seo-audit/compare__e-pal.html', 'utf8');
   assert.match(html, /Last checked 2026-11-08/);
-  assert.match(html, /€10\.77/);
-  assert.match(html, /€3\.99/);
+  assert.match(html, /€16\.17/);
+  assert.match(html, /€5\.99/);
   assert(html.includes('/games/league-of-legends/play-with-someone'));
   assert(html.includes('/games/valorant'));
   assert(html.includes('/developers/mcp'));
