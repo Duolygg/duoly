@@ -10,7 +10,7 @@ import { pageViewer } from '../site/viewer';
 import { CONTENT_DATES, hubChips, serializeJsonLd } from '../site/seo';
 import { faqSchema } from '../server/seo/offers';
 import { officialPageSchema } from '../server/seo/official';
-import { SUPPORT_EMAIL } from '../site/nav';
+import { PRESS_EMAIL, SUPPORT_EMAIL } from '../site/nav';
 import {
   BUSINESS,
   BUSINESS_LOCATION,
@@ -109,7 +109,10 @@ const faq: [string, string][] = [
       h1="Duoly press kit"
       lead={`Everything a journalist needs about Duoly on one page: the fact sheet, the boilerplate to quote, the logo files to download and the contact to email. No metric on this page is estimated, and anything Duoly cannot document is marked as such.`}
       cta={{ href: '#facts-h', label: 'Jump to the fact sheet' }}
-      secondary={{ href: `mailto:${SUPPORT_EMAIL}`, label: 'Email the team' }}
+      secondary={{
+        href: `mailto:${PRESS_EMAIL}`,
+        label: 'Email the press contact',
+      }}
       art={[
         {
           src: '/assets/games/league-of-legends.png',
@@ -257,11 +260,11 @@ const faq: [string, string][] = [
         with Riot Games, Valve, Epic Games, Blizzard and NetEase, which is the
         second reason this kit carries none of their marks. Step 1 before
         publishing anything unusual is{' '}
-        <a href={`mailto:${SUPPORT_EMAIL}`}>an email to the team</a>, answered
-        from {BUSINESS_LOCATION} in {CATALOG_YEAR}. Every file below is served
-        from duoly.gg itself, next to the {SERVICE_COUNT} priced services the
-        same site publishes, so a hotlink keeps working for as long as the site
-        does.
+        <a href={`mailto:${PRESS_EMAIL}`}>an email to the press contact</a>,
+        answered from {BUSINESS_LOCATION} in {CATALOG_YEAR}. Every file below is
+        served from duoly.gg itself, next to the {SERVICE_COUNT} priced services
+        the same site publishes, so a hotlink keeps working for as long as the
+        site does.
       </p>
       <ul class="official-logos">
         {LOGO_ASSETS.map((asset) => (
@@ -290,19 +293,21 @@ const faq: [string, string][] = [
       <h2 id="contact-h">Who do you contact about Duoly?</h2>
       <p>
         Press questions go to{' '}
-        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>, which is the
-        same mailbox the Duoly team answers support from. Step 1 is the email
-        itself, because Duoly runs no separate press office and no agency, so a
-        question reaches the people who built the site. Second, put the
+        <a href={`mailto:${PRESS_EMAIL}`}>{PRESS_EMAIL}</a>, which lands with
+        the same small team that answers support at{' '}
+        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>. Step 1 is the
+        email itself, because Duoly runs no separate press office and no agency,
+        so a question reaches the people who built the site. Second, put the
         publication, the deadline and the exact figures needed in the first
         message, because a figure Duoly cannot document will be declined rather
         than estimated. For example, {SERVICE_COUNT} services, {CATALOG_GAMES}{' '}
         games, {SHORT_GAME_PRICE} as the lowest price and {COACHING_PRICE} per
         coaching hour are all documented in {CATALOG_YEAR}, while a user count
         is not. Third, <a href="/contact">the contact form</a> and the chat
-        bubble on every page reach the same team. For example, a request for a
-        founder quote, an interview or a number not on this page is a reasonable
-        ask and will be answered in writing. According to{' '}
+        bubble on every page reach the same team, and a customer question about
+        an order belongs at {SUPPORT_EMAIL} instead. For example, a request for
+        a founder quote, an interview or a number not on this page is a
+        reasonable ask and will be answered in writing. According to{' '}
         <a href="/imprint">the imprint</a>, the business is legally represented
         by {BUSINESS.representedBy} in {BUSINESS_LOCATION}, and the supervisory
         authority is named there too.

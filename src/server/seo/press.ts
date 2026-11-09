@@ -1,5 +1,5 @@
 import { BUSINESS, BUSINESS_LOCATION, SERVED_AREAS } from '../../site/entity';
-import { SUPPORT_EMAIL } from '../../site/nav';
+import { PRESS_EMAIL } from '../../site/nav';
 import { ABOUT_STORY } from '../../content/about-story';
 import {
   COACHABLE_GAMES,
@@ -51,7 +51,7 @@ export const FACT_SHEET: readonly [string, string][] = [
   ['Payment', 'Card and wallet payment through Stripe, one upfront charge'],
   ['Voice', 'Discord'],
   ['Minimum age', '18 for customers and teammates'],
-  ['Press contact', SUPPORT_EMAIL],
+  ['Press contact', PRESS_EMAIL],
 ];
 
 export interface LogoFile {

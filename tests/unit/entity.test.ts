@@ -19,7 +19,8 @@ import {
 } from '../../src/site/seo';
 import { ABOUT_STORY } from '../../src/content/about-story';
 import { SITE_GAMES } from '../../src/site/games';
-import { SUPPORT_EMAIL } from '../../src/site/nav';
+import { PRESS_EMAIL, SUPPORT_EMAIL } from '../../src/site/nav';
+import { FACT_SHEET } from '../../src/server/seo/press';
 
 const site = new URL('https://duoly.gg');
 const imprint = readFileSync('src/pages/imprint.astro', 'utf8');
@@ -114,12 +115,26 @@ describe('the Organization JSON-LD', () => {
       addressLocality: 'Schwechat',
       addressCountry: 'AT',
     });
-    expect(organization.contactPoint).toMatchObject({
-      '@type': 'ContactPoint',
-      contactType: 'customer support',
-      email: SUPPORT_EMAIL,
-      url: 'https://duoly.gg/contact',
-    });
+    // A list, so a press question and a customer question each have an
+    // address an assistant can quote without guessing.
+    expect(organization.contactPoint).toEqual([
+      {
+        '@type': 'ContactPoint',
+        contactType: 'customer support',
+        email: SUPPORT_EMAIL,
+        url: 'https://duoly.gg/contact',
+        availableLanguage: ['en', 'de'],
+      },
+      {
+        '@type': 'ContactPoint',
+        contactType: 'press',
+        email: PRESS_EMAIL,
+        url: 'https://duoly.gg/press',
+        availableLanguage: ['en', 'de'],
+      },
+    ]);
+    // Every contact type the Organization claims has a page that states it.
+    expect(FACT_SHEET).toContainEqual(['Press contact', PRESS_EMAIL]);
     expect(organization.foundingLocation.address.addressLocality).toBe(
       'Schwechat',
     );
