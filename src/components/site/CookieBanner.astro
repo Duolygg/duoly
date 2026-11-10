@@ -238,7 +238,9 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
     font-size: 14px;
     line-height: 1.55;
   }
-  :global(html[data-cookie-prompt]) .cookie-banner {
+  /* Streaming HTML can expose the paragraph before its buttons arrive. Wait until the final
+     control is parsed so the first visible banner already has its complete height. */
+  :global(html[data-cookie-prompt]) .cookie-banner:has([data-save-choices]) {
     display: block;
   }
   .cookie-banner [hidden] {
