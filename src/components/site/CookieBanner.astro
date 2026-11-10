@@ -5,80 +5,77 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
 {/* An <aside> rather than a <div>: the banner is complementary chrome that follows
     the page content in the DOM, and text extractors (Readability-style parsers,
     citability scorers, LLM crawlers) drop `aside` while they fold a trailing `div`
-    into the last content section. `role="dialog"` keeps the accessible role and
-    name unchanged, so keyboard and screen-reader behaviour is identical. */}
-<aside
-  class="cookie-banner"
-  data-cookie-banner
-  role="dialog"
-  aria-live="polite"
-  aria-label="Cookie settings"
-  hidden
->
-  <p>
-    We use necessary cookies to run the site. Optional analytics help us improve
-    it, marketing measures ads, and a creator cookie remembers whose link you
-    used for 30 days. You choose which to allow.{' '}
-    <a href="/privacy#cookies">Privacy</a>
-  </p>
-  <div class="cookie-actions">
-    <button type="button" data-consent="necessary">
-      Only necessary
-    </button>
-    <button
-      type="button"
-      data-customise
-      aria-expanded="false"
-      aria-controls="cookie-purposes"
-    >
-      Customise
-    </button>
-    <button type="button" data-consent="all">
-      Accept all
-    </button>
-  </div>
-  <div id="cookie-purposes" data-cookie-purposes hidden>
-    <label for="cookie-analytics">
-      <input
-        id="cookie-analytics"
-        type="checkbox"
-        aria-describedby="cookie-analytics-help"
-      />
-      Analytics
-    </label>
-    <p id="cookie-analytics-help">
-      Helps us see which pages and steps work, using PostHog hosted in the EU.
-      Session recordings hide what you type.
-    </p>
-    <label for="cookie-marketing">
-      <input
-        id="cookie-marketing"
-        type="checkbox"
-        aria-describedby="cookie-marketing-help"
-      />
-      Marketing
-    </label>
-    <p id="cookie-marketing-help">
-      Lets us tell Meta and Google Ads when a visit from their ads led to a
-      booking, so we can measure and improve our ads. No ad pixels on the site,
-      we send it from our servers.
-    </p>
-    <label for="cookie-referral">
-      <input
-        id="cookie-referral"
-        type="checkbox"
-        aria-describedby="cookie-referral-help"
-      />
-      Creator link
-    </label>
-    <p id="cookie-referral-help">
-      Remembers the creator whose link you used for 30 days so they get credit
-      for your first order.
+    into the last content section. ARIA does not allow role="dialog" on an aside
+    (Lighthouse "ARIA role should be appropriate for the element"), so the dialog
+    role and name sit on an unstyled inner wrapper. The outer aside keeps the
+    class, hidden state and data hook, so the look and the scripts are unchanged. */}
+<aside class="cookie-banner" data-cookie-banner hidden>
+  <div role="dialog" aria-live="polite" aria-label="Cookie settings">
+    <p>
+      We use necessary cookies to run the site. Optional analytics help us
+      improve it, marketing measures ads, and a creator cookie remembers whose
+      link you used for 30 days. You choose which to allow.{' '}
+      <a href="/privacy#cookies">Privacy</a>
     </p>
     <div class="cookie-actions">
-      <button type="button" data-save-choices>
-        Save choices
+      <button type="button" data-consent="necessary">
+        Only necessary
       </button>
+      <button
+        type="button"
+        data-customise
+        aria-expanded="false"
+        aria-controls="cookie-purposes"
+      >
+        Customise
+      </button>
+      <button type="button" data-consent="all">
+        Accept all
+      </button>
+    </div>
+    <div id="cookie-purposes" data-cookie-purposes hidden>
+      <label for="cookie-analytics">
+        <input
+          id="cookie-analytics"
+          type="checkbox"
+          aria-describedby="cookie-analytics-help"
+        />
+        Analytics
+      </label>
+      <p id="cookie-analytics-help">
+        Helps us see which pages and steps work, using PostHog hosted in the EU.
+        Session recordings hide what you type.
+      </p>
+      <label for="cookie-marketing">
+        <input
+          id="cookie-marketing"
+          type="checkbox"
+          aria-describedby="cookie-marketing-help"
+        />
+        Marketing
+      </label>
+      <p id="cookie-marketing-help">
+        Lets us tell Meta and Google Ads when a visit from their ads led to a
+        booking, so we can measure and improve our ads. No ad pixels on the
+        site, we send it from our servers.
+      </p>
+      <label for="cookie-referral">
+        <input
+          id="cookie-referral"
+          type="checkbox"
+          aria-describedby="cookie-referral-help"
+        />
+        Creator link
+      </label>
+      <p id="cookie-referral-help">
+        Remembers the creator whose link you used for 30 days so they get credit
+        for your first order.
+      </p>
+      <div class="cookie-actions">
+        <button type="button" data-save-choices>
+          Save choices
+        </button>
+      </div>
     </div>
   </div>
 </aside>
