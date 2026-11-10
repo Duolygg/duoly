@@ -204,7 +204,9 @@ const surveySection = () =>
         '',
         ...TABLE.map(
           (row) =>
-            `- ${row.name}: ${row.prices}. Price set by: ${row.priceModel.toLowerCase()}. Fees: ${row.fees} Refunds: ${row.refunds}`,
+            // Only the opening letter, because a price model names things that
+            // keep their case: Buff, KAKI and QueueUp's Instant session.
+            `- ${row.name}: ${row.prices}. Price set by: ${row.priceModel[0]!.toLowerCase()}${row.priceModel.slice(1)}. Fees: ${row.fees} Refunds: ${row.refunds}`,
         ),
         '',
         `Method, limitations and every source link: https://duoly.gg${REPORT_PATH}. Dataset as CSV: https://duoly.gg${REPORT_CSV_PATH}`,
