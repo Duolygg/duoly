@@ -1,4 +1,5 @@
 import { BUSINESS, BUSINESS_LOCATION, SERVED_AREAS } from '../../site/entity';
+import { OFFICIAL_CHANNELS } from '../../site/seo';
 import { PRESS_EMAIL } from '../../site/press-contact';
 import { ABOUT_STORY } from '../../content/about-story';
 import {
@@ -51,6 +52,7 @@ export const FACT_SHEET: readonly [string, string][] = [
   ['Payment', 'Card and wallet payment through Stripe, one upfront charge'],
   ['Voice', 'Discord'],
   ['Minimum age', '18 for customers and teammates'],
+  ['Official channels', OFFICIAL_CHANNELS.map(({ label }) => label).join(', ')],
   ['Press contact', PRESS_EMAIL],
 ];
 

@@ -129,6 +129,8 @@ export const CONTENT_UPDATED: Record<string, string> = {
   '/compare/metafy': '2026-11-10',
   '/compare/queueup': '2026-11-10',
   '/blog': '2026-11-10',
+  // The conversion and visual polish pass: official channels on /press.
+  '/press': '2026-11-10',
 };
 // All fifteen teammate pages share src/content/intent-pages.ts and
 // src/content/guide-pages.ts, so none of them can date its copy apart from the

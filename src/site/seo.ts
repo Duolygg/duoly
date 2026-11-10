@@ -148,18 +148,40 @@ export function breadcrumbs(
  */
 export const OFFICIAL_PROFILES: Record<string, string> = {
   discord: DISCORD_INVITE,
+  // Live accounts, both checked for HTTP 200 on 10 November 2026.
+  youtube: 'https://www.youtube.com/@duolygg',
+  tiktok: 'https://www.tiktok.com/@duolygg',
   // Not created yet (owner, 2026-11-08). Paste the profile URL when the account is live.
   x: '',
   linkedin: '',
   instagram: '',
-  tiktok: '',
-  youtube: '',
   twitch: '',
 };
 /** The `sameAs` array: every profile from OFFICIAL_PROFILES that has a URL. */
 export const SAME_AS: string[] = Object.values(OFFICIAL_PROFILES).filter(
   (url) => url.length > 0,
 );
+/**
+ * The official channels a reader can open, as label and URL pairs in the same
+ * order as `OFFICIAL_PROFILES`. /press renders this list, so a new account
+ * reaches both the markup and the page from the one constant above.
+ */
+export const OFFICIAL_CHANNEL_LABELS: Record<string, string> = {
+  discord: 'Discord',
+  youtube: 'YouTube',
+  tiktok: 'TikTok',
+  x: 'X',
+  linkedin: 'LinkedIn',
+  instagram: 'Instagram',
+  twitch: 'Twitch',
+};
+export const OFFICIAL_CHANNELS: { label: string; href: string }[] =
+  Object.entries(OFFICIAL_PROFILES)
+    .filter(([, url]) => url.length > 0)
+    .map(([key, href]) => ({
+      label: OFFICIAL_CHANNEL_LABELS[key] ?? key,
+      href,
+    }));
 /** One sentence about the company, for the Organization `description`. */
 export const ORGANIZATION_DESCRIPTION =
   'Duoly books rank-verified gaming teammates and coaches by the hour for Valorant, League of Legends, Marvel Rivals and more.';
