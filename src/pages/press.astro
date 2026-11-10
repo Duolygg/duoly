@@ -265,10 +265,10 @@ const faq: [string, string][] = [
         second reason this kit carries none of their marks. Step 1 before
         publishing anything unusual is{' '}
         <a href={`mailto:${PRESS_EMAIL}`}>an email to the press contact</a>,
-        answered from {BUSINESS_LOCATION} in {CATALOG_YEAR}. Every file below is
-        served from duoly.gg itself, next to the {SERVICE_COUNT} priced services
-        the same site publishes, so a hotlink keeps working for as long as the
-        site does.
+        answered from {BUSINESS_LOCATION} in {CATALOG_YEAR}. Every file below
+        comes from Duoly itself, served by duoly.gg next to the {SERVICE_COUNT}{' '}
+        priced services the same site publishes, so a hotlink keeps working for
+        as long as the site does.
       </p>
       <ul class="official-logos">
         {LOGO_ASSETS.map((asset) => (
@@ -335,7 +335,7 @@ const faq: [string, string][] = [
     <ClosingCta
       heading="Need a figure that is not on this page?"
       text={`Duoly publishes what it can document: the operator, the catalog, the prices and the rules. Email the team for anything else, and expect a written answer rather than an estimate.`}
-      extra={`Three things are worth getting right in a piece about Duoly. The product: players book a rank-verified teammate or coach for a published price and play together on separate accounts, so it is not account boosting and no rank or win is promised. The operator: a sole proprietorship in ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}, with the full legal notice on the imprint. The numbers: ${SERVICE_COUNT} services across ${CATALOG_GAMES} games, from ${SHORT_GAME_PRICE} per game and ${COACHING_PRICE} per coaching hour, read from the pricing engine on ${pricesLabel}. For example, ${PLAYABLE_GAMES} games carry teammate sessions and ${COACHABLE_GAMES} carry coaching.`}
+      extra={`Three things are worth getting right in a piece about Duoly. The product: players book a rank-verified teammate or coach for a published price and play together on separate accounts, so it is not account boosting and no rank or win is promised. The operator: a sole proprietorship in ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}, with the full legal notice on the imprint. The numbers: ${SERVICE_COUNT} services across ${CATALOG_GAMES} games, from ${SHORT_GAME_PRICE} per game and ${COACHING_PRICE} per coaching hour, read from Duoly checkout on ${pricesLabel}. For example, ${PLAYABLE_GAMES} games carry teammate sessions and ${COACHABLE_GAMES} carry coaching.`}
       href="/about"
       label="Read about Duoly"
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}

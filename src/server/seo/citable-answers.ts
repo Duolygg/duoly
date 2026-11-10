@@ -143,6 +143,12 @@ export function closingDetail(offers: Offers) {
  * now states the rank rule, the discount rule and where the order finishes, as
  * three plain sentences. The last one was a single clause that mixed two
  * different facts, payment and play, so it is two sentences now.
+ *
+ * On a coaching grid the discount rule names the discounts it is excluding.
+ * "Quantity discounts and bundles do not apply to coaching" is true and leaves
+ * a reader who has just read a teammate page wondering which discounts those
+ * were, so the note states the ladder it rules out, from the same engine that
+ * applies it to teammate orders.
  */
 export function priceNote(offers: Offers, coach = false) {
   const ranked = offers.some((offer) => offer.rank);
@@ -150,6 +156,10 @@ export function priceNote(offers: Offers, coach = false) {
   const rule = ranked
     ? 'Your own rank moves a ranked price.'
     : 'These services are flat priced, so every rank pays the same.';
-  const flat = coach ? ' A first lesson and a fifth cost the same.' : '';
-  return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)}${flat} Payment finishes on duoly.gg. You play on your own account, with voice ${coach ? 'and screen share ' : ''}on Discord.`;
+  if (!coach)
+    return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)} Payment finishes on duoly.gg. You play on your own account, with voice on Discord.`;
+  const ladder = BUNDLE_UNITS.map(
+    (units) => `${quantityDiscountPercent(units, { bundle: true })}%`,
+  );
+  return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} Coaching takes no quantity or bundle discount, so the ${ladder.slice(0, -1).join(', ')} and ${ladder.at(-1)} a teammate bundle takes off never come off a lesson, and a first lesson costs what a fifth does. Payment finishes on duoly.gg. You play on your own account, with voice and screen share on Discord.`;
 }
