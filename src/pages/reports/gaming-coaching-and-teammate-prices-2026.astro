@@ -74,8 +74,8 @@ const kaki = platform('KAKI Gaming');
 const wecoach = platform('WeCoach');
 const duoly = platform('Duoly');
 const bandList = HOURLY_BANDS.map(
-  (band) => `${band.count} in the ${band.label.toLowerCase()} band`,
-).join(', ');
+  (band) => `${band.label}, ${band.count} rates`,
+).join('; ');
 const sources = TABLE.flatMap((row) =>
   row.sources.map((source) => ({
     platform: row.name,
@@ -280,7 +280,7 @@ const dataset = {
             coaching sold as a session with no stated duration ran{' '}
             {SESSION_COACHING.low} to {SESSION_COACHING.high}. Finally, teammate
             time per game ran {TEAMMATE_PER_GAME.low} to{' '}
-            {TEAMMATE_PER_GAME.high} in Buff, which E-Pal prices at USD 1.00.
+            {TEAMMATE_PER_GAME.high}, and E-Pal prices 1 Buff at USD 1.00.
           </span>
         </li>
         <li>
@@ -489,10 +489,17 @@ const dataset = {
         {COMPETITOR_COUNT} pages answered our request.
       </p>
       <div class="official-table-wrap">
-        <table class="official-table">
+        <table class="report-table">
           <caption class="sr-only">
             {`Verified gaming coaching and teammate prices on ${COMPETITOR_COUNT} platforms plus Duoly, read on ${SURVEY_CHECKED_LABEL}`}
           </caption>
+          <colgroup>
+            <col class="report-col-platform" />
+            <col class="report-col-prices" />
+            <col class="report-col-model" />
+            <col class="report-col-fees" />
+            <col class="report-col-refunds" />
+          </colgroup>
           <thead>
             <tr>
               <th scope="col">Platform</th>
@@ -507,9 +514,9 @@ const dataset = {
               <tr>
                 <th scope="row">
                   {row.name}
-                  <span class="official-tier"> {row.sells}</span>
+                  <span class="report-sells">{row.sells}</span>
                 </th>
-                <td class="official-price">{row.prices}</td>
+                <td class="report-prices">{row.prices}</td>
                 <td>{row.priceModel}</td>
                 <td>{row.fees}</td>
                 <td>{row.refunds}</td>

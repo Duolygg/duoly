@@ -156,6 +156,128 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
+/*
+ * The survey table: five columns, which is one more than any table the site
+ * already has. .official-table sizes its columns for four (30% plus 35% each)
+ * and its wrapper hides the overflow, so a fifth column would be clipped at
+ * every width rather than scrolled to. This table therefore sets its own fixed
+ * layout and stacks into cards on a phone.
+ */
+.report-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.report-table th,
+.report-table td {
+  padding: 13px 16px;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+  font-size: 14px;
+  border-top: 1px solid rgba(196, 170, 255, 0.14);
+}
+
+.report-table thead th {
+  border-top: 0;
+  background: #1b1033;
+  color: #f3eeff;
+  font-weight: 650;
+  font-size: 14px;
+}
+
+.report-table tbody tr:first-child th,
+.report-table tbody tr:first-child td {
+  border-top: 0;
+}
+
+.report-table tbody th {
+  color: #f3eeff;
+  font-weight: 650;
+}
+
+.report-table tbody td {
+  color: #cfc4ea;
+}
+
+.report-table .report-prices {
+  color: #f3eeff;
+  font-weight: 650;
+}
+
+.report-table .report-sells {
+  display: block;
+  margin-top: 4px;
+  color: #a79dc4;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.report-table col.report-col-platform {
+  width: 17%;
+}
+.report-table col.report-col-prices {
+  width: 23%;
+}
+.report-table col.report-col-model {
+  width: 16%;
+}
+.report-table col.report-col-fees {
+  width: 22%;
+}
+.report-table col.report-col-refunds {
+  width: 22%;
+}
+
+@media (max-width: 860px) {
+  /* One card per platform, each cell labelled, so nothing is cut off. */
+  .report-table,
+  .report-table tbody,
+  .report-table tbody tr,
+  .report-table tbody th,
+  .report-table tbody td {
+    display: block;
+    width: auto;
+  }
+  .report-table thead {
+    display: none;
+  }
+  .report-table tbody tr {
+    padding: 14px 0;
+    border-top: 1px solid rgba(196, 170, 255, 0.16);
+  }
+  .report-table tbody tr:first-child {
+    border-top: 0;
+  }
+  .report-table tbody th,
+  .report-table tbody td {
+    border-top: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .report-table tbody td::before {
+    display: block;
+    color: #8e84ab;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .report-table tbody td:nth-of-type(1)::before {
+    content: 'Verified prices';
+  }
+  .report-table tbody td:nth-of-type(2)::before {
+    content: 'Who sets the price';
+  }
+  .report-table tbody td:nth-of-type(3)::before {
+    content: 'Published fees';
+  }
+  .report-table tbody td:nth-of-type(4)::before {
+    content: 'Published refunds';
+  }
+}
+
 /* The source list under the table: one dated link per page the survey read. */
 .report-sources {
   display: grid;
