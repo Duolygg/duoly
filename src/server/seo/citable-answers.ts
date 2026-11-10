@@ -1,4 +1,5 @@
 import { BUNDLE_UNITS, quantityDiscountPercent } from '../../contracts/pricing';
+import { CATALOG_PRICES_UPDATED_LABEL } from '../../site/price-dates';
 import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { SITE_GAMES } from '../../site/games';
 import { cleanCopy, type seoOffers } from './offers';
@@ -113,7 +114,7 @@ export function closingAnswer(gameName: string) {
     Deadlock:
       'one hero and one mid game moment, for example a Mid Boss attempt with no vision',
   };
-  return `A ${gameName} lesson from Duoly is one booked session on a problem you pick. Bring ${goals[gameName] ?? 'one situation from your games'}. Then 1) share the goal in the order chat, 2) meet your coach using Discord and 3) stay on your own account.`;
+  return `A ${gameName} lesson from Duoly is one booked session on a problem you pick. Bring ${goals[gameName] ?? 'one situation from your games'}. Then share the goal in the order chat, meet your coach using Discord and stay on your own account.`;
 }
 
 /**
@@ -125,9 +126,11 @@ export function closingAnswer(gameName: string) {
 export function closingDetail(offers: Offers) {
   const coach = offers[0]!.cat === 'training';
   const bundles = coach
-    ? `Coaching has no quantity or bundle discount. ${offers[0]!.title} costs ${offers[0]!.display} per ${offers[0]!.unit}.`
+    ? // The price line under this paragraph is appended by ClosingCta, so
+      // naming the figure again here only repeated it a sentence earlier.
+      `Coaching has no quantity or bundle discount, so booking a second ${offers[0]!.unit} never lowers what a ${offers[0]!.title} costs. Every coaching figure on this page comes from the Duoly pricing engine; prices were last updated on ${CATALOG_PRICES_UPDATED_LABEL}.`
     : `${quantityAnswer(offers)} Bundle pricing is applied in the checkout, not on request.`;
-  return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. Step 2 always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Expect a question about rank, role and region before the first match loads.`;
+  return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. The payment always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Expect a question about rank, role and region before the first match loads.`;
 }
 
 /**
@@ -157,6 +160,6 @@ export function priceNote(offers: Offers, coach = false) {
     ? 'Your own rank moves a ranked price.'
     : 'These services are flat priced, so every rank pays the same.';
   if (!coach)
-    return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)} Payment finishes on duoly.gg. You play on your own account, with voice on Discord.`;
-  return `Each coaching price above covers one ${unit}, before account perks. Your rank does not change it, and quantity discounts and bundles do not apply. Payment finishes on duoly.gg. You keep your own account and meet your coach on Discord for voice and screen share.`;
+    return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)} Payment finishes on duoly.gg. You play on your own account and talk using Discord.`;
+  return `Each coaching price above covers one ${unit}, before account perks. Your rank does not change it, and quantity discounts and bundles do not apply at any size. Payment finishes on duoly.gg. You keep your own account and meet your coach using Discord for voice and screen share.`;
 }

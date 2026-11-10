@@ -99,11 +99,15 @@ const duoly = platform('Duoly');
 const bandList = HOURLY_BANDS.map(
   (band) => `${band.label}, ${band.count} rates`,
 ).join('; ');
-/** The platforms that published a price, numbered, for the answer-first FAQ. */
-const verifiedList = VERIFIED_PLATFORM_NAMES.map(
-  (name, index) =>
-    `${index === VERIFIED_PLATFORM_NAMES.length - 1 ? 'and ' : ''}${index + 1}) ${name}`,
-).join(VERIFIED_PLATFORM_NAMES.length > 2 ? ', ' : ' ');
+/**
+ * The platforms that published a price, named in a sentence.
+ *
+ * They used to be numbered ("1) Metafy, 2) QueueUp"), which is a list marker on
+ * a set of four names that have no order: nothing refers back to platform 2.
+ */
+const verifiedList = new Intl.ListFormat('en', {
+  type: 'conjunction',
+}).format(VERIFIED_PLATFORM_NAMES);
 const sources = TABLE.flatMap((row) =>
   row.sources.map((source) => ({
     platform: row.name,
@@ -345,13 +349,13 @@ const dataset = {
         </a>{' '}
         published on {SURVEY_FX.publishedLabel}. Our survey found{' '}
         {HOURLY_COACHING.count} rates sold explicitly by the hour, from only{' '}
-        {HOURLY_COACHING.platforms.length} platforms that publish one openly. 1){' '}
+        {HOURLY_COACHING.platforms.length} platforms that publish one openly.{' '}
         {weCoachValorant.spread.count} Valorant coach cards on{' '}
         {weCoachValorant.platform} with a median of{' '}
-        {weCoachValorant.spread.median}, then 2) {weCoachLeague.spread.count}{' '}
+        {weCoachValorant.spread.median}, then {weCoachLeague.spread.count}{' '}
         League of Legends cards at the same {weCoachLeague.spread.median}{' '}
-        median, and 3) {metafyHours.spread.count} Overwatch 2 sessions labelled
-        one hour on {metafyHours.platform} at {metafyHours.spread.low} to{' '}
+        median, and {metafyHours.spread.count} Overwatch 2 sessions labelled one
+        hour on {metafyHours.platform} at {metafyHours.spread.low} to{' '}
         {metafyHours.spread.high}. The spread is wide:{' '}
         {HOURLY_BANDS[1]!.percent}% of rates sit between USD 20.00 and USD
         29.99, while {HOURLY_BANDS[4]!.percent}% ask USD 50.00 or more. For
@@ -392,14 +396,14 @@ const dataset = {
       <h2 id="teammate-h">What does a paid gaming teammate cost?</h2>
       <p>
         A paid teammate is a price per game on most platforms, and the figures
-        are far smaller than a coaching hour. 1) on {epal.name},{' '}
+        are far smaller than a coaching hour. On {epal.name},{' '}
         {TEAMMATE_PER_GAME.count} Valorant provider cards showed a single price
         per game from {TEAMMATE_PER_GAME.low} to {TEAMMATE_PER_GAME.high}, with
         a median of {TEAMMATE_PER_GAME.median}, which is{' '}
-        {TEAMMATE_PER_GAME.medianEur} at the recorded rate. 2){' '}
+        {TEAMMATE_PER_GAME.medianEur} at the recorded rate.{' '}
         {EPAL_TWO_FIGURE_CARDS} further cards showed a discount badge with two
         figures each, so our survey left those out rather than publish a price
-        that depends on an offer. 3) one card on the same page sold time rather
+        that depends on an offer. One card on the same page sold time rather
         than games, at 15.00 Buff per 30 minutes, which is the only time-based
         teammate price the survey could read anywhere. For example, a Duoly
         teammate game runs {DUOLY.teammateFrom} for {DUOLY.teammateFromService}{' '}
@@ -515,13 +519,13 @@ const dataset = {
       <h2 id="table-h">Which prices did the survey verify?</h2>
       <p>
         The table below is our survey in full: {COMPETITOR_COUNT} platforms plus
-        Duoly, in alphabetical order, with 1) the prices we verified, 2) who
-        sets them, 3) the published fees and 4) the published refund terms.
-        Alphabetical order is deliberate, because any other order would be an
-        argument rather than a result. For example, {sensei.name} publishes
-        three fixed packages while {wecoach.name} publishes a rate per coach, so
-        the two rows answer different questions. {ANSWERED_COUNT} of the{' '}
-        {COMPETITOR_COUNT} platforms answered our request at all.
+        Duoly, in alphabetical order, with the prices we verified, who sets
+        them, the published fees and the published refund terms. Alphabetical
+        order is deliberate, because any other order would be an argument rather
+        than a result. For example, {sensei.name} publishes three fixed packages
+        while {wecoach.name} publishes a rate per coach, so the two rows answer
+        different questions. {ANSWERED_COUNT} of the {COMPETITOR_COUNT}{' '}
+        platforms answered our request at all.
       </p>
       <div class="official-table-wrap">
         <table class="report-table">
@@ -663,7 +667,7 @@ const dataset = {
     <ClosingCta
       heading="Book a session at a price you can read first"
       text={`The survey median for a coaching hour is ${HOURLY_COACHING.median}, or ${HOURLY_COACHING.medianEur}, across ${HOURLY_COACHING.count} rates read on ${SURVEY_CHECKED_LABEL}. A Duoly lesson is ${DUOLY.coachingHour} an hour in all ${DUOLY.coachedGames} coached games, and a teammate game starts at ${DUOLY.teammateFrom}.`}
-      extra={`Three facts make the Duoly figures checkable. Every Duoly price on this page comes from the pricing engine checkout charges on, with catalog prices last changed on ${DUOLY.pricesUpdated}. Nothing is added at checkout, so the euro figure is the total, and a US dollar price uses the daily ECB rate plus ${DUOLY.usdMarginPercent}%. A teammate or coach keeps ${DUOLY.sharePercent}% of a flat-priced hour, which Duoly publishes. For example, an unaccepted order cancels and refunds itself after ${DUOLY.autoCancelMinutes} minutes.`}
+      extra={`Three facts make the Duoly figures checkable. Every Duoly price on this page comes from the pricing engine checkout charges on, with catalog prices last changed on ${DUOLY.pricesUpdated}. Nothing is added at checkout, so the euro figure is the total, and a US dollar price uses the daily ECB rate plus ${DUOLY.usdMarginPercent}%. A teammate or coach keeps ${DUOLY.sharePercent}% of a flat-priced hour, which Duoly publishes. For example, an unaccepted order cancels and refunds itself after ${DUOLY.autoCancelMinutes} minutes, which is why a Duoly total can be read and compared with this survey before any money moves.`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching hour"
       art={{ src: '/assets/games/valorant.png', alt: '' }}

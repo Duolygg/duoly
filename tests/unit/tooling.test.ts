@@ -56,3 +56,40 @@ it('configures static Vercel security headers to match SSR policy', () => {
     value: 'DENY',
   });
 });
+
+/**
+ * `astro dev` detaches itself when an AI coding agent started the run (Astro
+ * 7.4.5, `wantsBackground`), and Playwright ends a run whose web server process
+ * exits before the URL answers. Every suite therefore starts its own server
+ * through scripts/dev-server.mjs, which is the server rather than a launcher.
+ */
+it('starts every Playwright web server in the foreground', () => {
+  const configs = [
+    'playwright.config.ts',
+    'playwright.chat.config.ts',
+    'playwright.completion.config.ts',
+    'playwright.teammate.config.ts',
+    'playwright.analytics.config.ts',
+  ];
+  const commands = JSON.parse(
+    readFileSync(new URL('../../package.json', import.meta.url), 'utf8'),
+  ).scripts['test:e2e'];
+  for (const config of configs) {
+    const source = readFileSync(
+      new URL(`../../${config}`, import.meta.url),
+      'utf8',
+    );
+    const command = source.match(/command:\s*\n?\s*[`'"]([^`'"]+)/)?.[1];
+    expect(command, `${config} declares a webServer command`).toBeDefined();
+    expect(command, `${config} runs the foreground dev server`).toContain(
+      'node scripts/dev-server.mjs',
+    );
+    expect(command, `${config} does not run the detaching CLI`).not.toContain(
+      'astro.mjs dev',
+    );
+    // pnpm test:e2e has to run this config, or the suite starts no server at all.
+    if (config !== 'playwright.config.ts')
+      expect(commands, `test:e2e runs ${config}`).toContain(config);
+  }
+  expect(commands).toContain('playwright test &&');
+});

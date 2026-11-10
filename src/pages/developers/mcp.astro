@@ -107,17 +107,29 @@ const request = JSON.stringify(
       <p>
         find_session is the tool to call first, because a goal plus a game
         returns up to three priced services with booking links in one round
-        trip. Step 1 is find_session, step 2 is get_quote for one exact
-        selection, and step 3 is create_booking_link. For example, a Valorant
-        coaching search returns the {coachingPrice} per hour VOD Review. Use the
-        returned missingInputs to ask about rank, region or edition before
-        requesting an exact price. list_games and list_services exist for
-        browsing, while get_availability reports public online counts without
-        reserving anybody. Goal tokens are duo, coaching, ranked, casual and
-        teams, with training and other accepted as category aliases. Each result
-        has one readable summary and full schema-validated structuredContent,
-        without JSON duplicated into text. Card-only data stays in result
-        metadata.
+        trip. The whole path from a question to a checkout page is three calls.
+      </p>
+      <ol class="ai-sequence">
+        <li>
+          <code>find_session</code> with a goal and a game.
+        </li>
+        <li>
+          <code>get_quote</code> for one exact selection.
+        </li>
+        <li>
+          <code>create_booking_link</code> for the page a person pays on.
+        </li>
+      </ol>
+      <p>
+        For example, a Valorant coaching search returns the {coachingPrice} per
+        hour VOD Review. Use the returned missingInputs to ask about rank,
+        region or edition before requesting an exact price. list_games and
+        list_services exist for browsing, while get_availability reports public
+        online counts without reserving anybody. Goal tokens are duo, coaching,
+        ranked, casual and teams, with training and other accepted as category
+        aliases. Each result has one readable summary and full schema-validated
+        structuredContent, without JSON duplicated into text. Card-only data
+        stays in result metadata.
       </p>
     </section>
     <section aria-labelledby="booklink-h">
@@ -274,12 +286,18 @@ const request = JSON.stringify(
         A quote request is a single <code>tools/call</code> message naming
         get_quote and a complete selection. The example below uses protocol
         2025-11-25 after initialization, so discover valid service and rank
-        values with <code>list_services</code> first. Step 1 is listing services
-        for the game, step 2 is picking a service and rank token, and step 3 is
-        the call itself. For example, the Platinum Valorant Duo Pro request
-        below returns a formatted price, an amount in minor units and a booking
-        URL from Duoly, while a Valorant coaching hour would return{' '}
-        {coachingPrice} with no rank at all.
+        values with <code>list_services</code> first.
+      </p>
+      <ol class="ai-sequence">
+        <li>List the services for the game.</li>
+        <li>Pick a service token and a rank token from that list.</li>
+        <li>Send the call itself.</li>
+      </ol>
+      <p>
+        For example, the Platinum Valorant Duo Pro request below returns a
+        formatted price, an amount in minor units and a booking URL from Duoly,
+        while a Valorant coaching hour would return {coachingPrice} with no rank
+        at all.
       </p>
       <p class="ai-code-label">Request</p>
       <pre class="ai-code"><code>{request}</code></pre>
@@ -302,16 +320,25 @@ const request = JSON.stringify(
       <h2 id="inspector-h">How do you test a Duoly integration locally?</h2>
       <p>
         MCP Inspector is the fastest way to test a Duoly integration without
-        writing a client. Step 1 starts the Inspector locally and opens the
-        printed URL, step 2 connects using {MCP.transport} with the endpoint
-        above and no authentication, and step 3 initializes, lists tools and
-        tries a catalog request before a quote. For example, a list_services
-        call for Valorant returns coaching at {coachingPrice} per hour from
-        Duoly, which confirms both the transport and the pricing path in a
-        single request, and a five-game teammate quote checks the quantity path.
-        An unexpected 405 means a GET or DELETE reached the endpoint, since only
-        POST carries a JSON-RPC message. The command line form below prints the
-        tool list without a browser.
+        writing a client.
+      </p>
+      <ol class="ai-sequence">
+        <li>Start the Inspector locally and open the printed URL.</li>
+        <li>
+          Connect using {MCP.transport} with the endpoint above and no
+          authentication.
+        </li>
+        <li>
+          Initialize, list the tools, then try a catalog request before a quote.
+        </li>
+      </ol>
+      <p>
+        For example, a list_services call for Valorant returns coaching at{' '}
+        {coachingPrice} per hour from Duoly, which confirms both the transport
+        and the pricing path in a single request, and a five-game teammate quote
+        checks the quantity path. An unexpected 405 means a GET or DELETE
+        reached the endpoint, since only POST carries a JSON-RPC message. The
+        command line form below prints the tool list without a browser.
       </p>
       <pre class="ai-code"><code>npx @modelcontextprotocol/inspector</code></pre>
       <p>For a command-line discovery check:</p>

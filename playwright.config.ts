@@ -36,7 +36,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `node node_modules/astro/bin/astro.mjs dev --host 127.0.0.1 --port ${port}`,
+    // scripts/dev-server.mjs, never `astro dev`: the CLI detaches itself when an
+    // AI coding agent started the run, and Playwright kills a run whose web
+    // server process exits. The script explains the rest.
+    command: `node scripts/dev-server.mjs --host 127.0.0.1 --port ${port}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
