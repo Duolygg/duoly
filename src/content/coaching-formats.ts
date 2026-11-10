@@ -231,7 +231,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
   'marvel-rivals': {
     heading: 'Which Marvel Rivals coaching format should you book?',
     answer:
-      'Two Marvel Rivals formats are open from Duoly in 2026, and both come with a Grandmaster+ coach. Play and Learn is one live match with the coach talking through engages, cooldowns and resets, plus a quick review afterwards. Hero Coaching is an hour on one hero: abilities, ultimate timing, positioning and matchups.',
+      'Both Marvel Rivals formats from Duoly include a Grandmaster+ coach. Play and Learn covers one live match: engages, cooldowns and resets, followed by a quick review. Hero Coaching is an hour on one hero, covering abilities, ultimate timing, positioning and matchups.',
     detail:
       'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a 3-0 sweep and a seven-round decider cost the same. Hero Coaching is a clock hour, which buys the pauses a live match cannot. For example, a Strategist who spends a cooldown just before a dive and a Vanguard who engages too early have very different problems.',
     choice:
@@ -261,7 +261,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
   'counter-strike-2': {
     heading: 'Which CS2 coaching format should you book?',
     answer:
-      'Three CS2 formats are open from Duoly in 2026, and all three come with a FACEIT Level 10 coach. Play and Learn is one live match, Demo Review is an hour on a demo you already played, and Utility and Lineups is an hour of smokes, flashes and molotovs on the maps you queue.',
+      'All three CS2 formats from Duoly include a FACEIT Level 10 coach. Play and Learn covers one live match. Demo Review is an hour on your recording. Utility and Lineups is an hour of smokes, flashes and molotovs for your map pool.',
     detail:
       'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a 13-3 and a double-overtime cost the same. The two hourly lessons buy the rewinds and the practice server a live round cannot. For example, a player who keeps losing the same retake gets more from an hour of lineups than from another Premier queue.',
     choice:

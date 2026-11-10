@@ -311,16 +311,13 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section class="seo-guide" aria-labelledby="session-h">
       <h2 id="session-h">What should one session include?</h2>
       <p class="guide-answer">
-        A coaching session is one hour with a plan, and the plan is what you are
-        paying for. A goal agreed before the clock starts, such as one map or
-        one role. The material: a recent replay you send, or a live game your
-        coach watches while you play. The output, which is 1) 2 or 3 things to
-        practice and 2) a written summary. For example, {lolVod.title} in League
-        of Legends is {lolVod.display} per {lolVod.unit} with a {lolVod.tier}{' '}
-        and goes through laning, waves and map moves, using Discord for voice
-        and screen share. Additionally, {learn.title} is the live version of the
-        same hour at the same {lolVod.display}, where the coach talks while you
-        play. Ask which format fits the question before booking either.
+        A useful coaching session is built around a goal, relevant material and
+        a practice task. Agree the goal before the clock starts. For example,
+        League of Legends {lolVod.title} covers laning, waves and map moves at{' '}
+        {lolVod.display} per {lolVod.unit}. Bring your replay for the{' '}
+        {lolVod.tier} to review using Discord screen share. Prefer feedback
+        while playing? Valorant {learn.title} costs {learn.display} per{' '}
+        {learn.unit}. Check the unit before comparing the totals.
       </p>
       <div class="guide-grid">
         <article class="card guide-card" aria-label="Lesson formats and prices">
@@ -556,7 +553,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <ClosingCta
       heading="Run the 5 checks, then book"
       text={`Check current rank proof, the session plan, the total price, session reviews and refund terms before paying a coach. Duoly names the coach tier on each service. ${valVod.title} costs ${valVod.display} per ${valVod.unit} with an ${valVod.tier}. Choose a replay you want to understand and a question to work through together.`}
-      extra={`Three facts settle the practical questions. Duoly publishes one lesson price for all ${coached.length} coached games, charged through Stripe with nothing added at checkout. A coach never needs your password, because every lesson runs on the accounts both people already own with voice and screen share on Discord. Duoly is a new service with no public review volume yet, so compare the published price and terms instead of a score. Every Duoly price here was read from checkout in November 2026.`}
+      extra={`Check the unit as well as the amount before paying. Across ${coached.length} coached games, a lesson means one live game or one hour. For example, a review hour gives you time to pause a replay; a live lesson follows the match. The service card names the unit. Payment runs through Stripe with nothing added at checkout. Lessons use your own account with voice and screen share on Discord. Keep your password private. Duoly has no public review volume yet, so compare the published price and terms. Prices were checked in November 2026.`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching hour"
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}

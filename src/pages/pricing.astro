@@ -205,21 +205,19 @@ const faq: [string, string][] = [
     <section aria-labelledby="rank-h">
       <h2 id="rank-h">How does rank change a Duoly price?</h2>
       <p>
-        Rank changes the price of ranked play only, and a lower rank pays less
-        than a higher one. The reason is the teammate, because a higher lobby
-        needs a stronger player and the catalog therefore prices every rank
-        separately. A League of Legends Duo Pro game is {LOL_PRO_IRON} at Iron
-        and {LOL_PRO_TOP} at Challenger, which is one service at two ends of the
-        same ladder. Everything unranked stays flat, so a Normal Draft game is{' '}
-        {LOL_NORMAL} at every rank and a {COACHING_PRICE} coaching hour never
-        moves at all. Step 1 for an exact figure is opening{' '}
-        <a href="/games">the game page</a>, which lists the price for each rank
-        in full. For example, the table below gives the cheapest and the dearest
-        price a service reaches in {CATALOG_YEAR}, so a Gold player reads a
-        figure between the two. According to{' '}
-        <a href="/terms#booking">Duoly’s booking terms</a>, picking the rank you
-        really have matters, because a wrong rank can make a session impossible
-        to play and is not a reason for a refund.
+        Ranked teammate prices depend on your current rank. Flat-price casual
+        services and coaching keep the same rate. For example, League of Legends
+        Duo Pro is {LOL_PRO_IRON} per game at Iron and {LOL_PRO_TOP} at
+        Challenger. Normal Draft stays {LOL_NORMAL} per game, and a coaching
+        hour costs {COACHING_PRICE} at either rank. These are different
+        services, so compare the mode and teammate tier alongside the price. The
+        table below shows each service's lowest and highest rate in{' '}
+        {CATALOG_YEAR}. Open <a href="/games">your game page</a> for the exact
+        price at your rank. Select the rank you currently hold before paying.
+        According to <a href="/terms#booking">Duoly’s booking terms</a>, an
+        incorrect rank can prevent a session from being played and is not a
+        reason for a refund. Agree the mode and start time with your teammate in
+        the order chat. Use Discord for voice while playing on your own account.
       </p>
     </section>
 
@@ -304,20 +302,21 @@ const faq: [string, string][] = [
     <section aria-labelledby="coaching-h">
       <h2 id="coaching-h">How much does Duoly coaching cost?</h2>
       <p>
-        Duoly coaching costs {COACHING_PRICE} per hour or per game, the same
-        figure in all {COACHABLE_GAMES} coachable titles. The format changes
-        rather than the price: a Play and Learn session is coaching while you
-        play, a VOD Review is an hour spent on a recording you upload, and a
-        course such as Valorant Aim and Crosshair is an hour on a single skill.
-        Coaching takes no quantity discount at any size, so {MAX_QUANTITY} hours
-        cost {FIVE_COACHING_HOURS.total} rather than less. A coach is listed at
-        the coach rank the game’s own <a href="/coaching">coaching page</a>{' '}
-        names, for example {VALORANT_COACH_TIER} in Valorant and{' '}
-        {LOL_COACH_TIER} in League of Legends. Step 1 for a lesson is picking
-        the format, because the price is already decided. For example,{' '}
-        <a href={COACHING_HOUR.href}>a {COACHING_HOUR.short}</a> runs using
-        Discord screen share and still costs {COACHING_HOUR.total} at every rank
-        in {CATALOG_YEAR}. For a price outside Duoly, our{' '}
+        Duoly coaching costs {COACHING_PRICE} per hour or per game across{' '}
+        {COACHABLE_GAMES} coachable titles. Check the service card for the unit.
+        Play and Learn provides feedback while you play. Some games sell it per
+        match; others sell it by the hour. VOD Review is an hour on your
+        recording. Valorant Aim and Crosshair is an hour focused on one skill.
+        Coaching has no quantity discount: {MAX_QUANTITY} hours cost{' '}
+        {FIVE_COACHING_HOURS.total}. The coach tier is the playing rank named on
+        each game's <a href="/coaching">coaching page</a>, including{' '}
+        {VALORANT_COACH_TIER} in Valorant and {LOL_COACH_TIER} in League of
+        Legends. Choose the format for your goal before paying. For example, to
+        review a recorded game,{' '}
+        <a href={COACHING_HOUR.href}>a {COACHING_HOUR.short}</a> gives you time
+        to pause and compare decisions using Discord screen share. It costs{' '}
+        {COACHING_HOUR.total} at every rank in {CATALOG_YEAR}. For a price
+        outside Duoly, our{' '}
         <a href={REPORT_PATH}>2026 gaming coaching and teammate price report</a>{' '}
         puts the median coaching hour at {HOURLY_COACHING.median} across{' '}
         {HOURLY_COACHING.count} rates read from {COMPETITOR_COUNT} platforms.
