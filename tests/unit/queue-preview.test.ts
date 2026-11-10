@@ -213,7 +213,9 @@ describe('homepage order room preview', () => {
     });
     expect(html).toContain('itskeikooo is on it!');
     expect(html).toContain('/assets/avatars/itskeikooo.jpg');
-    expect(html).toContain('/assets/flags/svg/jp.svg" alt="Japan"');
+    expect(html).toMatch(
+      /<img[^>]*alt="Japan"[^>]*src="\/assets\/flags\/webp\/jp-54\.webp"/,
+    );
     expect(html).toContain('Message itskeikooo');
     expect(html).toContain('Chat with itskeikooo');
     expect(html).toContain('Hey! Sending the invite.');

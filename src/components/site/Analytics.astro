@@ -25,64 +25,8 @@ const boot = analyticsBoot({
   />
 )}
 <script>
-  import {
-    ERROR_EVENT,
-    TRACK_EVENT,
-    track,
-  } from '../../client/analytics/track';
-  import { ANALYTICS_BOOT_ID } from '../../contracts/analytics';
-  import { CONSENT_COOKIE, parseConsent } from '../../contracts/consent';
-
-  /*
-   * posthog-js is 119 KB of the 130 KB of unused JavaScript PageSpeed reports on every page, and
-   * none of it can do anything before the two conditions the boot module itself checks: the
-   * server rendered the data island, and a cookie choice exists. Without a choice the controller
-   * returns before `init`, so nothing leaves the page and nothing is observable; so the module is
-   * fetched after `load` when a choice is already stored, and the moment the visitor answers the
-   * banner otherwise. Product events and handled errors that fire while it is in flight are held
-   * and replayed in order, so no capture is lost and the boot module is unchanged.
-   */
-  const held: Event[] = [];
-  const hold = (event: Event) => {
-    held.push(event);
-  };
-  addEventListener(TRACK_EVENT, hold);
-  addEventListener(ERROR_EVENT, hold);
-  let starting = false;
-  const startAnalytics = () => {
-    if (starting || !document.getElementById(ANALYTICS_BOOT_ID)?.textContent)
-      return;
-    starting = true;
-    // The one deliberate split point. The rule exists so module boundaries stay checkable, and
-    // this crosses none: it defers one browser-only third-party SDK, the same way
-    // components/account/PlayAgain.jsx defers @stripe/stripe-js.
-    // eslint-disable-next-line no-restricted-syntax
-    void import('../../client/analytics/boot').then(() => {
-      removeEventListener(TRACK_EVENT, hold);
-      removeEventListener(ERROR_EVENT, hold);
-      for (const event of held.splice(0))
-        dispatchEvent(
-          new CustomEvent(event.type, {
-            detail: (event as CustomEvent).detail,
-          }),
-        );
-    });
-  };
-  addEventListener('duoly:consent', startAnalytics);
-  const storedChoice = () =>
-    parseConsent(
-      document.cookie
-        .split(';')
-        .map((c) => c.trim())
-        .find((c) => c.startsWith(CONSENT_COOKIE + '='))
-        ?.slice(CONSENT_COOKIE.length + 1),
-    ) !== null;
-  const afterLoad = () => {
-    if (storedChoice()) setTimeout(startAnalytics);
-  };
-  if (document.readyState === 'complete') afterLoad();
-  else addEventListener('load', afterLoad);
-
+  import '../../client/analytics/boot';
+  import { track } from '../../client/analytics/track';
   // Explicit nav CTA allowlist; never derive properties from labels or user content.
   document.addEventListener('click', (event) => {
     const link =
