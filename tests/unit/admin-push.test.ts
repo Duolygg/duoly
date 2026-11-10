@@ -225,7 +225,7 @@ describe('sending alerts', () => {
       svc,
       {
         conversationId: id,
-        title: 'Customer Alex needs a human',
+        title: 'Customer Alex needs help',
         body: 'Help',
       },
       { config, send },
@@ -235,7 +235,7 @@ describe('sending alerts', () => {
     expect(send).toHaveBeenCalledTimes(1);
     const payload = JSON.parse((send.mock.calls[0] as unknown[])[1] as string);
     expect(payload).toEqual({
-      title: 'Customer Alex needs a human',
+      title: 'Customer Alex needs help',
       body: 'Help',
       tag: `duoly-support-${id}`,
       url: `/admin/support?chat=${id}`,

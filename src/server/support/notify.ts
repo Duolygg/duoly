@@ -27,8 +27,11 @@ export async function notifySupportAdmins(
     emailSupportAdmins(service, person, conversationId, message, eventKey),
     sendSupportPush(service, {
       conversationId,
-      title: `${supportWho(person)} needs a human`,
-      body: message,
+      // Same wording as the admin page's own alert ("A guest needs help", quoted message).
+      title: `${supportWho(person)} needs help`,
+      body: plain(message, 160)
+        ? `“${plain(message, 160)}”`
+        : 'Open the support chat to reply.',
     }),
   ]);
 }
