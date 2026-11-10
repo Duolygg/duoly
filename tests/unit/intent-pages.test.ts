@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { intentPages, intentPath } from '../../src/content/intent-pages';
+import {
+  intentPages,
+  intentPath,
+  lfgAliasPath,
+} from '../../src/content/intent-pages';
 import { intentOffers } from '../../src/server/seo/intent-offers';
 import { calculateQuote } from '../../src/server/pricing';
 import { gameBySlug } from '../../src/site/games';
@@ -104,5 +108,25 @@ describe('intent page booking facts', () => {
         expect(page.services[id]!.split(/\s+/).length).toBeLessThanOrEqual(20);
       }
     }
+  });
+});
+
+describe('lfgAliasPath', () => {
+  it('sends the guessed lfg address to the one teammate page a game has', () => {
+    expect(lfgAliasPath('league-of-legends')).toBe(
+      '/games/league-of-legends/play-with-someone',
+    );
+    expect(lfgAliasPath('marvel-rivals')).toBe(
+      '/games/marvel-rivals/duo-partner',
+    );
+    expect(lfgAliasPath('pokemon-unite')).toBe('/games/pokemon-unite/teammate');
+    expect(lfgAliasPath('fortnite')).toBe('/games/fortnite/duos');
+    expect(lfgAliasPath('minecraft')).toBe('/games/minecraft/player-finder');
+  });
+
+  it('leaves real lfg pages and unknown games alone', () => {
+    expect(lfgAliasPath('valorant')).toBeNull();
+    expect(lfgAliasPath('not-a-game')).toBeNull();
+    expect(lfgAliasPath(undefined)).toBeNull();
   });
 });
