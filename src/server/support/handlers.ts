@@ -301,7 +301,9 @@ export const postSupport: APIRoute = async (context) => {
               chips: routed.chips,
             };
           })();
-      if (answer.reply)
+      // On a handoff, handoff() posts the one confirmation; the bot's own
+      // "I'll get someone" reply would only repeat it.
+      if (answer.reply && !answer.handoff)
         await addMessage(
           service,
           conversation.id,
