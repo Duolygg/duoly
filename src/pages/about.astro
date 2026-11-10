@@ -144,18 +144,17 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
       <p>
         Duoly (duoly.gg) is an online marketplace, based in Austria, where
         players book rank-verified gaming teammates and coaches by the game or
-        by the hour for {PLAYABLE_GAMES} games. First, you choose a game, a
-        service and a quantity, and the total appears before checkout. Second,
-        you pay once, and the order goes live to teammates verified for that
-        game. Third, the first teammate to accept joins your own lobby and plays
-        alongside you, on a personal account. Duoly never signs into a customer
-        account and never asks for a password, which is the line between a duo
-        session and account boosting. For example, {SINGLE_GAME.label} costs{' '}
-        {SINGLE_GAME.total}, ten of them cost {BUNDLE_PERCENTS[2]}% less each,
-        and {COACHING_HOUR.label} costs {COACHING_HOUR.total}. Duoly also runs
-        an MCP server in {CATALOG_YEAR}, so an assistant such as Claude reads a
-        real price and prepares a booking link before you open the site. Voice
-        for a session runs using Discord.
+        by the hour for {PLAYABLE_GAMES} games. You choose a game, a service and
+        a quantity, and the total appears before checkout. You pay once, and the
+        order goes live to teammates verified for that game. The first teammate
+        to accept joins your own lobby and plays alongside you, on a personal
+        account. Duoly never signs into a customer account and never asks for a
+        password, which is the line between a duo session and account boosting.
+        For example, {SINGLE_GAME.label} costs {SINGLE_GAME.total}, ten of them
+        cost {BUNDLE_PERCENTS[2]}% less each, and {COACHING_HOUR.label} costs{' '}
+        {COACHING_HOUR.total}. Duoly also runs an MCP server in {CATALOG_YEAR},
+        so an assistant such as Claude reads a real price and prepares a booking
+        link before you open the site. Voice for a session runs using Discord.
       </p>
     </section>
 
@@ -168,15 +167,15 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
         to mix them up. On {LINKS_CHECKED} we found Google AI Mode answering the
         question “is Duoly legit” with a description of a relationship app
         rather than a description of this site. Three details separate them.
-        First, duoly.gg sells per-game and hourly sessions with human players in
-        named titles, for example {SINGLE_GAME.total} for a League of Legends
-        game and {COACHING_HOUR.total} for a Valorant coaching hour. Second,
-        duoly.gg is operated from {BUSINESS.city} in {BUSINESS.countryName} by
-        the sole proprietorship in the table below, registered under GISA{' '}
-        {BUSINESS.gisa} and listed on the <a href="/imprint">imprint</a>. Third,
-        duoly.gg has no mobile app, because booking, payment and the order room
-        all happen in a browser and sessions run using Discord. Duolingo is a
-        language learning company and claims no partnership with Duoly.
+        Duoly.gg sells per-game and hourly sessions with human players in named
+        titles, for example {SINGLE_GAME.total} for a League of Legends game and{' '}
+        {COACHING_HOUR.total} for a Valorant coaching hour. Duoly.gg is operated
+        from {BUSINESS.city} in {BUSINESS.countryName} by the sole
+        proprietorship in the table below, registered under GISA {BUSINESS.gisa}{' '}
+        and listed on the <a href="/imprint">imprint</a>. Duoly.gg has no mobile
+        app, because booking, payment and the order room all happen in a browser
+        and sessions run using Discord. Duolingo is a language learning company
+        and claims no partnership with Duoly.
       </p>
     </section>
 
@@ -194,15 +193,14 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
       <p>
         Duoly is a sole proprietorship registered in Austria, and the operator
         details are published rather than hidden. Step 1 of checking any
-        marketplace is reading its legal notice. First, the legal form is{' '}
+        marketplace is reading its legal notice. The legal form is{' '}
         {BUSINESS.legalForm}, the business location is {BUSINESS_LOCATION}, the
         trade register number is GISA {BUSINESS.gisa}, and the business is
-        legally represented by {BUSINESS.representedBy}. Second, email reaches
-        the same team at <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
-        , and the street address, chamber membership and supervisory authority
-        sit on the <a href="/imprint">imprint</a>, where Austrian law requires
-        them. Third, Duoly is young: the first commit in the public duoly.gg
-        code base is dated{' '}
+        legally represented by {BUSINESS.representedBy}. Email reaches the same
+        team at <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>, and the
+        street address, chamber membership and supervisory authority sit on the{' '}
+        <a href="/imprint">imprint</a>, where Austrian law requires them. Duoly
+        is young: the first commit in the public duoly.gg code base is dated{' '}
         <time datetime={CODEBASE_STARTED}>{CODEBASE_STARTED_LABEL}</time>, so
         the service has run for weeks rather than years. For example, no
         independent review history exists yet. What exists today is a named
@@ -300,21 +298,20 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
       <h2 id="catalog-h">Which games and services does Duoly sell?</h2>
       <p>
         A Duoly service is one bookable session type, and the catalog holds four
-        kinds across {PLAYABLE_GAMES} games plus a voice-only category. First,
-        teammate sessions put a ranked player in your lobby for the mode you
-        pick, from {SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game. Second,
-        team fills add several hired players at once, for example a League of
-        Legends Ranked Flex five-stack. Third, coaching covers all{' '}
-        {COACHABLE_GAMES} bookable games at {COACHING_PRICE} per hour or game,
-        including VOD reviews where a coach walks through your own recording
-        using Discord screen share. Fourth, {SOCIAL_MODES} voice modes sell
-        friendly company without a scoreboard, for adults only and never as a
-        dating service. Step 1 is picking the game: the catalog spans League of
-        Legends, Valorant, Counter-Strike 2, Fortnite, Marvel Rivals, Rocket
-        League, Dota 2 and World of Warcraft, with servers across{' '}
-        {SERVED_AREAS.join(', ')}. Bundles of {BUNDLE_SIZES[2]} take{' '}
-        {BUNDLE_PERCENTS[2]}% off a teammate service in {CATALOG_YEAR}, while
-        coaching stays flat. Browse every listing on{' '}
+        kinds across {PLAYABLE_GAMES} games plus a voice-only category. Teammate
+        sessions put a ranked player in your lobby for the mode you pick, from{' '}
+        {SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game. Team fills add
+        several hired players at once, for example a League of Legends Ranked
+        Flex five-stack. Coaching covers all {COACHABLE_GAMES} bookable games at{' '}
+        {COACHING_PRICE} per hour or game, including VOD reviews where a coach
+        walks through your own recording using Discord screen share.{' '}
+        {SOCIAL_MODES} voice modes sell friendly company without a scoreboard,
+        for adults only and never as a dating service. Step 1 is picking the
+        game: the catalog spans League of Legends, Valorant, Counter-Strike 2,
+        Fortnite, Marvel Rivals, Rocket League, Dota 2 and World of Warcraft,
+        with servers across {SERVED_AREAS.join(', ')}. Bundles of{' '}
+        {BUNDLE_SIZES[2]} take {BUNDLE_PERCENTS[2]}% off a teammate service in{' '}
+        {CATALOG_YEAR}, while coaching stays flat. Browse every listing on{' '}
         <a href="/games">the games page</a>, or read every service and its price
         in one table on <a href="/pricing">the pricing page</a>.
       </p>
@@ -326,14 +323,14 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
       </h2>
       <p>
         A Duoly teammate is an applicant who has passed a four-step review, and
-        nobody reaches the queue before the review finishes. First, Step 1 is
-        the <a href="/apply">application form</a>: name, email, Discord, a
+        nobody reaches the queue before the review finishes. Step 1 is the{' '}
+        <a href="/apply">application form</a>: name, email, Discord, a
         confirmation of being 18 or older, then the rank, the region and a link
         to a short YouTube video introducing the applicant, which the form
-        requires rather than suggests. Second, Step 2 is the rank check, where
-        Duoly verifies the account and its rank history against the minimum rank
-        published for that game in {CATALOG_YEAR}. Third, Step 3 is one tryout
-        game with the Duoly team using Discord, and Step 4 switches the account
+        requires rather than suggests. Step 2 is the rank check, where Duoly
+        verifies the account and its rank history against the minimum rank
+        published for that game in {CATALOG_YEAR}. Step 3 is one tryout game
+        with the Duoly team using Discord, and Step 4 switches the account
         online. Coaches are listed at the coach rank named on their game’s
         coaching page, for example Grandmaster+ for a {COACHING_PRICE} League of
         Legends VOD review, while a {SINGLE_GAME.total} Duo Pro game needs a
@@ -350,14 +347,14 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
       <h2 id="pay-h">What does a Duoly session cost, and how do you pay?</h2>
       <p>
         A Duoly session costs the published price for your selection, paid once,
-        with no fee on top. First, teammate games start at {SHORT_GAME_PRICE},
-        coaching is {COACHING_PRICE} per hour or game, and {SINGLE_GAME.short}{' '}
-        is {SINGLE_GAME.total}. Second, two discounts apply automatically:{' '}
-        {MAX_QUANTITY} units take {QUANTITY_PERCENT}% off, and bundles of three,
-        five and ten take {BUNDLE_PERCENTS[0]}%, {BUNDLE_PERCENTS[1]}% and{' '}
-        {BUNDLE_PERCENTS[2]}% off. Third, payment is one card charge through
-        Stripe or from your Duoly balance, taken when you queue the order, and
-        Duoly never sees or stores full card details. According to{' '}
+        with no fee on top. Teammate games start at {SHORT_GAME_PRICE}, coaching
+        is {COACHING_PRICE} per hour or game, and {SINGLE_GAME.short} is{' '}
+        {SINGLE_GAME.total}. Two discounts apply automatically: {MAX_QUANTITY}{' '}
+        units take {QUANTITY_PERCENT}% off, and bundles of three, five and ten
+        take {BUNDLE_PERCENTS[0]}%, {BUNDLE_PERCENTS[1]}% and{' '}
+        {BUNDLE_PERCENTS[2]}% off. Payment is one card charge through Stripe or
+        from your Duoly balance, taken when you queue the order, and Duoly never
+        sees or stores full card details. According to{' '}
         <a href="/terms#payment">Duoly’s payment terms</a>, prices are set in
         euros, and a customer who picks US dollars pays the euro price converted
         at the day’s European Central Bank rate plus a {USD_MARGIN_PERCENT}%
@@ -373,20 +370,20 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
       <p>
         Duoly is a marketplace for played-together sessions, which rules five
         things out, each one written into the{' '}
-        <a href="/terms">terms of service</a> dated {LEGAL_UPDATED}. First, no
-        account sharing and no boosting: a session is played together, the
-        teammate stays in a personal client, and nobody at Duoly asks for a
-        password. Second, no guaranteed rank, win or start time: a teammate
-        accepts from a queue, and the {SHARE_PERCENT}% teammate share is paid
-        for a completed order rather than a won one. Third, no dating, romantic
-        or sexual service, because Gamer Girl and Social sessions are company
-        and conversation. Fourth, nobody under 18 may book or work as a
-        teammate. Fifth, no payment arranged off the platform, and no cheating,
-        scripting or forbidden third-party tool. According to Duoly’s terms,
-        Duoly is also unaffiliated with Riot Games, Valve, Epic Games, Blizzard
-        and NetEase. For example, {SINGLE_GAME.total} buys one League of Legends
-        game beside a Master+ player using Discord voice, and a{' '}
-        {BUNDLE_PERCENTS[2]}% bundle discount still buys no result.
+        <a href="/terms">terms of service</a> dated {LEGAL_UPDATED}. No account
+        sharing and no boosting: a session is played together, the teammate
+        stays in a personal client, and nobody at Duoly asks for a password. No
+        guaranteed rank, win or start time: a teammate accepts from a queue, and
+        the {SHARE_PERCENT}% teammate share is paid for a completed order rather
+        than a won one. No dating, romantic or sexual service, because Gamer
+        Girl and Social sessions are company and conversation. Nobody under 18
+        may book or work as a teammate. Fifth, no payment arranged off the
+        platform, and no cheating, scripting or forbidden third-party tool.
+        According to Duoly’s terms, Duoly is also unaffiliated with Riot Games,
+        Valve, Epic Games, Blizzard and NetEase. For example,{' '}
+        {SINGLE_GAME.total} buys one League of Legends game beside a Master+
+        player using Discord voice, and a {BUNDLE_PERCENTS[2]}% bundle discount
+        still buys no result.
       </p>
       {/* The same five refusals as scannable cards. Plain divs and spans on
           purpose: the paragraph above is the extractable answer, and repeating
@@ -421,19 +418,17 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
       <h2 id="rules-h">Where are Duoly’s rules, policies and support?</h2>
       <p>
         Every rule Duoly runs on is a published document, and each link below
-        opens the section it names. First, the{' '}
-        <a href="/terms">terms of service</a>, dated {LEGAL_UPDATED}, carry the
-        booking, payment and conduct rules, with{' '}
-        <a href="/terms#cancel">cancellations and refunds</a> and{' '}
+        opens the section it names. The <a href="/terms">terms of service</a>,
+        dated {LEGAL_UPDATED}, carry the booking, payment and conduct rules,
+        with <a href="/terms#cancel">cancellations and refunds</a> and{' '}
         <a href="/terms#balance">the Duoly balance</a> as sections of their own.
-        Second, the <a href="/privacy">privacy policy</a> lists what Duoly
-        collects and <a href="/privacy#rights">the GDPR rights</a> of a customer
-        in the EU. Third, the <a href="/imprint">imprint</a> names the operator
-        and the supervisory authority ({BUSINESS.countryName}). Teammates
-        additionally follow the Teammate Code, published at duoly.gg/rules once
-        a teammate signs in, on top of{' '}
-        <a href="/terms#teammates">the teammate terms</a> setting the{' '}
-        {SHARE_PERCENT}% share. Step 1 for any question is{' '}
+        The <a href="/privacy">privacy policy</a> lists what Duoly collects and{' '}
+        <a href="/privacy#rights">the GDPR rights</a> of a customer in the EU.
+        The <a href="/imprint">imprint</a> names the operator and the
+        supervisory authority ({BUSINESS.countryName}). Teammates additionally
+        follow the Teammate Code, published at duoly.gg/rules once a teammate
+        signs in, on top of <a href="/terms#teammates">the teammate terms</a>{' '}
+        setting the {SHARE_PERCENT}% share. Step 1 for any question is{' '}
         <a href="/contact">the contact form</a> or the chat bubble, answered by
         the Duoly team. For example, a refund question moves fastest with the
         order number to hand, because a {SINGLE_GAME.total} game and a{' '}
@@ -451,7 +446,7 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
     <ClosingCta
       heading="Ready to look at the catalog?"
       text={`Duoly is an Austrian marketplace for rank-verified gaming teammates and coaches, operated from ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}. Browse ${PLAYABLE_GAMES} games, read the price for your rank and book only when the figure suits you.`}
-      extra={`Three things are worth checking before a first booking. First, the price you see is the price Stripe charges, with ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off bundles of three, five and ten applied at checkout. Second, a teammate accepts from a queue, so no start time is promised, and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself. Third, every session runs on your own account using Discord voice, and no result or rank is guaranteed. For example, a ten game League of Legends bundle at Gold rank costs ${TEN_GAME_BUNDLE.total} in ${CATALOG_YEAR} and saves ${TEN_GAME_BUNDLE.saved}, which is the largest discount from Duoly.`}
+      extra={`Three things are worth checking before a first booking. The price you see is the price Stripe charges, with ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off bundles of three, five and ten applied at checkout. A teammate accepts from a queue, so no start time is promised, and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself. Every session runs on your own account using Discord voice, and no result or rank is guaranteed. For example, a ten game League of Legends bundle at Gold rank costs ${TEN_GAME_BUNDLE.total} in ${CATALOG_YEAR} and saves ${TEN_GAME_BUNDLE.saved}, which is the largest discount from Duoly.`}
       href="/games"
       label={`Browse ${PLAYABLE_GAMES} games`}
       art={{ src: '/assets/games/valorant.png', alt: '' }}

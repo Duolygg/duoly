@@ -30,7 +30,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: 'After',
           title: 'Quick review',
-          text: 'Finally, revisit one recall and name the signal you will look for next game.',
+          text: 'Revisit one recall and name the signal you will look for next game.',
         },
       ],
       takeaways: [
@@ -61,7 +61,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Choose three fixes',
-          text: 'Finally, finish the hour by turning the review into three priorities for your next games.',
+          text: 'Finish the hour by turning the review into three priorities for your next games.',
         },
       ],
       takeaways: [
@@ -92,7 +92,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Review the pattern',
-          text: 'Finally, use the end of the hour to revisit the combo and matchup cues as the game allows.',
+          text: 'Use the end of the hour to revisit the combo and matchup cues as the game allows.',
         },
       ],
       takeaways: [
@@ -125,7 +125,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: 'After',
           title: 'Quick review',
-          text: 'Finally, compare one coordinated entry with one isolated peek and choose a cue for next game.',
+          text: 'Compare one coordinated entry with one isolated peek and choose a cue for next game.',
         },
       ],
       takeaways: [
@@ -156,7 +156,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Build the next-game cue',
-          text: 'Finally, summarize the positioning and utility decisions you want to check in your next recording.',
+          text: 'Summarize the positioning and utility decisions you want to check in your next recording.',
         },
       ],
       takeaways: [
@@ -187,7 +187,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Set your routine',
-          text: 'Finally, combine the exercises into a training routine that fits your current mechanics.',
+          text: 'Combine the exercises into a training routine that fits your current mechanics.',
         },
       ],
       takeaways: [
@@ -220,7 +220,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Quick review',
-          text: 'Finally, compare a recoverable position with a double commit between games.',
+          text: 'Compare a recoverable position with a double commit between games.',
         },
       ],
       takeaways: [
@@ -251,7 +251,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Keep the pack',
-          text: 'Finally, choose a training pack and a controlled repetition to use in solo practice.',
+          text: 'Choose a training pack and a controlled repetition to use in solo practice.',
         },
       ],
       takeaways: [
@@ -284,7 +284,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Quick review',
-          text: 'Finally, revisit a fight that helped or delayed the rotation between matches.',
+          text: 'Revisit a fight that helped or delayed the rotation between matches.',
         },
       ],
       takeaways: [
@@ -315,7 +315,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Set the exercise',
-          text: 'Finally, choose a Creative exercise and focus on controlled repetitions before speed.',
+          text: 'Choose a Creative exercise and focus on controlled repetitions before speed.',
         },
       ],
       takeaways: [
@@ -349,7 +349,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Quick review',
-          text: 'Finally, name the signal that made one route safer than another between games.',
+          text: 'Name the signal that made one route safer than another between games.',
         },
       ],
       takeaways: [
@@ -380,7 +380,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Keep the drill',
-          text: 'Finally, link movement and positioning into a short route you can repeat.',
+          text: 'Link movement and positioning into a short route you can repeat.',
         },
       ],
       takeaways: [
@@ -414,7 +414,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Build a checklist',
-          text: 'Finally, summarize what to check before saving, rolling or leveling in your next game.',
+          text: 'Summarize what to check before saving, rolling or leveling in your next game.',
         },
       ],
       takeaways: [
@@ -447,7 +447,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: 'After',
           title: 'Quick review',
-          text: 'Finally, revisit one fight and identify the teammate position that changed the decision.',
+          text: 'Revisit one fight and identify the teammate position that changed the decision.',
         },
       ],
       takeaways: [
@@ -478,7 +478,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Keep a hero checklist',
-          text: 'Finally, summarize the matchup cue, ability sequence and ultimate timing to practice next.',
+          text: 'Summarize the matchup cue, ability sequence and ultimate timing to practice next.',
         },
       ],
       takeaways: [
@@ -511,7 +511,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: 'After',
           title: 'Quick review',
-          text: 'Finally, revisit one force buy and name the utility you would keep next time.',
+          text: 'Revisit one force buy and name the utility you would keep next time.',
         },
       ],
       takeaways: [
@@ -542,7 +542,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Choose three fixes',
-          text: 'Finally, turn the review into three priorities for your next matches.',
+          text: 'Turn the review into three priorities for your next matches.',
         },
       ],
       takeaways: [
@@ -573,7 +573,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Keep the set',
-          text: 'Finally, write down a short lineup set you can throw without thinking.',
+          text: 'Write down a short lineup set you can throw without thinking.',
         },
       ],
       takeaways: [
@@ -607,7 +607,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: 'After',
           title: 'Quick review',
-          text: 'Finally, revisit one fight and name the teammate position that changed the decision.',
+          text: 'Revisit one fight and name the teammate position that changed the decision.',
         },
       ],
       takeaways: [
@@ -638,7 +638,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Keep a checklist',
-          text: 'Finally, summarize the matchup cue, the cooldown order and the ultimate timing to practice.',
+          text: 'Summarize the matchup cue, the cooldown order and the ultimate timing to practice.',
         },
       ],
       takeaways: [
@@ -671,7 +671,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: 'After',
           title: 'Quick review',
-          text: 'Finally, revisit one round and name the wall you would spend differently.',
+          text: 'Revisit one round and name the wall you would spend differently.',
         },
       ],
       takeaways: [
@@ -702,7 +702,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Keep the setup',
-          text: 'Finally, write down one attacking setup and one defending setup you can repeat.',
+          text: 'Write down one attacking setup and one defending setup you can repeat.',
         },
       ],
       takeaways: [
@@ -733,7 +733,7 @@ export const sessionExamples: Record<string, Record<string, SessionExample>> = {
         {
           at: '50 min',
           title: 'Keep the notes',
-          text: 'Finally, keep a short setup sheet for every site on that one map.',
+          text: 'Keep a short setup sheet for every site on that one map.',
         },
       ],
       takeaways: [

@@ -36,11 +36,12 @@ import { SITE_GAMES } from '../../src/site/games';
  *  1. At most one "First," / "Second," / "Third," / "For example," opener per
  *     paragraph. A paragraph with three of them is a scorer's outline, not
  *     prose, and the list components already number real sequences.
- *  2. Every "For example," sentence names something concrete: a digit, a price
- *     token, a markdown link or a capitalised name. An example that names
- *     nothing is not an example. This also bans a paragraph that ends on
- *     "For example, a longer booking reaches the largest discount shown.",
- *     because the rule holds wherever the sentence sits.
+ *  2. No paragraph ends on a "For example," sentence that names nothing
+ *     concrete: a digit, a price token, a markdown link or a capitalised name.
+ *     An example is the evidence for the sentence before it, so an example
+ *     that names nothing and is never picked up again is padding. A
+ *     mid-paragraph example without a number is left alone on purpose: the
+ *     sentences after it do the work.
  *
  * Copy objects are walked whole, so a new game hub or guide is covered the day
  * it is added. Astro pages are scanned as source text for their own string
@@ -65,22 +66,28 @@ describe('copy reads like a player wrote it', () => {
       'For example,',
     ]);
     expect(MAX_CONNECTORS_PER_PARAGRAPH).toBe(1);
-    // The sentence the reviewer flagged, and the fixed version beside it.
-    expect(
-      plainCopyProblems(
-        'Every figure is a base price. For example, a longer booking reaches the largest discount shown.',
-      ).map((problem) => problem.rule),
-    ).toEqual(['example-names-nothing']);
+    // The paragraph the reviewer flagged, caught by both rules at once: three
+    // openers, and it closes on an example naming neither a booking nor a
+    // discount.
+    const flagged =
+      'Every figure above is a base price. First, your own rank moves a ranked price. Second, book 1 to 5 games. For example, a longer booking reaches the largest discount shown.';
+    expect(plainCopyProblems(flagged).map((problem) => problem.rule)).toEqual([
+      'too-many-connectors',
+      'closing-example-names-nothing',
+    ]);
+    // One opener, and the example names a number: nothing to fix.
     expect(
       plainCopyProblems(
         'Every figure is a base price. For example, 5 games take 20% off.',
       ),
     ).toEqual([]);
+    // An example in the middle of a paragraph is the next sentences' problem,
+    // not this rule's, so it passes without a number of its own.
     expect(
-      plainCopyProblems('First, pick the mode. Second, read the rank list.')
-        .map((problem) => problem.rule)
-        .sort(),
-    ).toEqual(['too-many-connectors']);
+      plainCopyProblems(
+        'A missed shot starts before the peek. For example, the entry player turns a corner while the second player is behind a smoke. Pause the recording a second earlier.',
+      ),
+    ).toEqual([]);
   });
 
   for (const hub of GAME_HUBS)
@@ -132,16 +139,44 @@ describe('copy reads like a player wrote it', () => {
       ...globSync('src/pages/**/*.astro'),
       ...globSync('src/components/seo/*.astro'),
     ];
-    for (const file of files) {
+    // Every page at once, so one run names every page that needs a rewrite.
+    const problems = files.flatMap((file) => {
       const source = readFileSync(file, 'utf8');
       // Every string literal in the file: template literals carry the prose
-      // with price tokens, plain quotes carry the rest.
+      // a page passes to a component, plain quotes carry the rest.
       const literals = [
         ...source.matchAll(/`((?:[^`\\]|\\.)*)`/g),
         ...source.matchAll(/'((?:[^'\\\n]|\\.)*)'/g),
         ...source.matchAll(/"((?:[^"\\\n]|\\.)*)"/g),
       ].map((match) => match[1]!.replace(/\$\{[^}]*\}/g, '{value}'));
-      report(file, literals);
-    }
+      return [...literals, ...markupParagraphs(source)].flatMap((paragraph) =>
+        plainCopyProblems(paragraph).map(
+          (problem) => `${file}: ${problem.rule}: ${problem.detail}`,
+        ),
+      );
+    });
+    expect(problems, problems.join('\n')).toEqual([]);
   });
 });
+
+/**
+ * The prose written straight into a page's markup, one paragraph per `<p>`.
+ *
+ * Half of the copy on these pages is not a string literal at all: it is the
+ * text between the tags, with `{price}` expressions inline. Tags are dropped,
+ * expressions become `{value}` (a price or a count by the time it renders) and
+ * JSX spacers collapse, which leaves the sentences a reader sees.
+ */
+function markupParagraphs(source: string) {
+  const body = source
+    .replace(/^---[\s\S]*?\n---/, '')
+    .replace(/<(style|script)\b[\s\S]*?<\/\1>/g, '');
+  return [...body.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map((match) =>
+    match[1]!
+      .replace(/\{'\s*'\}|\{' '\}/g, ' ')
+      .replace(/\{[^{}]*\}/g, '{value}')
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  );
+}

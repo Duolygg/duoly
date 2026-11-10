@@ -163,6 +163,26 @@ for (const page of intentPages)
  */
 for (const path of Object.keys(CONTENT_SOURCES))
   if (path.startsWith('/blog/')) CONTENT_UPDATED[path] = '2026-11-10';
+/**
+ * The 10 November 2026 plain-language pass took the "First, ... Second, ...
+ * For example, ..." scaffolding out of every page that carried it, so the
+ * reference pages and every coaching page changed their copy on the same day.
+ * The coaching pages are keyed off coachFormats for the same reason their
+ * sources are: a hand-written slug list drifted once already.
+ */
+for (const path of [
+  '/games',
+  '/ai',
+  '/developers/mcp',
+  '/about',
+  '/fees-and-refunds',
+  '/how-it-works',
+  '/trust-and-safety',
+  '/get-paid-to-play-games',
+  '/find-gaming-buddies',
+  ...Object.keys(coachFormats).map((slug) => `/games/${slug}/coaching`),
+])
+  CONTENT_UPDATED[path] = '2026-11-10';
 // Everything else is copy the catalog-promotion pass rewrote, plus the pages
 // the trust and entity pass touched on the same day: every hub, every teammate
 // page, the coaching pages, /games, /blog and its e-girl guide,

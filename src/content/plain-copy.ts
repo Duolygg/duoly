@@ -14,15 +14,21 @@
  *
  *  1. One connector opener per paragraph, at most. A real sequence is a list,
  *     and the list components already number their items, so prose needs the
- *     word "First," only when it is the one signpost in the paragraph.
- *  2. A "For example," sentence has to name something concrete: a number, a
- *     price token, or a capitalised name. "For example, a longer booking
- *     reaches the largest discount shown." names nothing, so it is not an
- *     example of anything; "For example, 3 hours cost {{p_duo2_x3}}." is.
+ *     word "First," only when it is the one signpost in the paragraph. This is
+ *     the rule that catches the paragraph the reviewer read: "First, ...
+ *     Second, ... For example, ..." is an outline, not prose.
+ *  2. A paragraph may not end on a "For example," sentence unless that
+ *     sentence names something concrete: a digit, a price token, a link or a
+ *     capitalised name. An example is the evidence for the sentence before it,
+ *     so an example that names nothing and is never picked up again is
+ *     padding. "For example, a longer booking reaches the largest discount
+ *     shown." names no booking and no discount; "For example, 3 hours cost
+ *     {{p_duo2_x3}}." names both.
  *
- * Together they also settle the case the brief calls out: a paragraph may not
- * end on a "For example," sentence unless that sentence carries a number or a
- * named thing, because rule 2 applies wherever the sentence sits.
+ * Deliberately not a rule: a mid-paragraph "For example," without a number.
+ * "For example, the entry player turns a corner while the second player is
+ * still behind a smoke." is a real example, and the sentences after it do the
+ * work. Only the closing position is padding-shaped, so only it is checked.
  */
 
 /** The openers a scorer rewards and a reader trips over. */
@@ -49,13 +55,19 @@ const sentences = (paragraph: string) =>
 /**
  * Something a reader can check: a digit, a price token, a markdown link, or a
  * capitalised name that is not just the first word of the sentence.
+ *
+ * A token counts because a token is a number by the time a reader sees it.
+ * `{{p_duo2_x3}}` on a hub, `{amount:learn}` in a lesson and a `{value}` left
+ * by an interpolated page expression are all a price or a count at build time.
+ * A quoted phrase counts too: "my mid-round calls fall apart after the first
+ * death" is the most concrete thing a sentence about asking for help can hold.
  */
 const NAMES_SOMETHING =
-  /\d|\{\{[^}]+\}\}|\{(?:amount|price|seats):[^}]+\}|\[[^\]]+\]\(|€|\$|[a-z,)"”] [A-Z][A-Za-z+]/;
+  /\d|\{\{[^}]+\}\}|\{[a-z]+(?::[^}]+)?\}|\[[^\]]+\]\(|€|\$|["“][^"”]{6,}["”]|[a-z,)"”] [A-Z][A-Za-z+]/;
 
 export interface PlainCopyProblem {
   paragraph: string;
-  rule: 'too-many-connectors' | 'example-names-nothing';
+  rule: 'too-many-connectors' | 'closing-example-names-nothing';
   detail: string;
 }
 
@@ -71,15 +83,18 @@ export function plainCopyProblems(paragraph: string): PlainCopyProblem[] {
         .map((match) => `${match[1]},`)
         .join(' ')})`,
     });
-  for (const sentence of sentences(paragraph)) {
-    if (!/^For example,/.test(sentence)) continue;
-    if (!NAMES_SOMETHING.test(sentence.replace(/^For example,\s*/, '')))
-      problems.push({
-        paragraph,
-        rule: 'example-names-nothing',
-        detail: sentence,
-      });
-  }
+  // Only the last sentence: an example in the middle of a paragraph is picked
+  // up by the sentences after it, while one at the end has to stand alone.
+  const last = sentences(paragraph).at(-1) ?? '';
+  if (
+    /^For example,/.test(last) &&
+    !NAMES_SOMETHING.test(last.replace(/^For example,\s*/, ''))
+  )
+    problems.push({
+      paragraph,
+      rule: 'closing-example-names-nothing',
+      detail: last,
+    });
   return problems;
 }
 

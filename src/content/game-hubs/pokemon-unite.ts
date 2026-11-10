@@ -25,7 +25,7 @@ export const pokemonUnite: HubPageCopy = {
     'After the one-teammate page rather than every Unite service? It covers lane pairings, objective calls and an example ranked plan in detail.',
   format: {
     heading: 'What can you book for Pokemon Unite on Duoly?',
-    text: 'A Pokemon Unite booking on Duoly is a single reviewed teammate, a Full Squad fill or a coaching hour. First, the Ranked tiers are Duo Plus with an Ultra+ teammate, Duo Pro with a Master player who plans Drednaw, Rotom and Zapdos, and Duo Apex with a Legend player. Ranked prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro. Standard and Quick Battle hold one flat price of {{p_quick}} at every rank. Bundles of {{main}} cut the total, {{bundles}}. Second, the fill: Full Squad hires Master players for up to {{seats_squad}} seats at {{p_squad}} per game, so a part-full group becomes a complete five. Third, the lesson, {{p_draft}} per hour on draft and macro. For example, name your lane using Discord first.',
+    text: 'A Pokemon Unite booking on Duoly is a single reviewed teammate, a Full Squad fill or a coaching hour. The Ranked tiers are Duo Plus with an Ultra+ teammate, Duo Pro with a Master player who plans Drednaw, Rotom and Zapdos, and Duo Apex with a Legend player. Ranked prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro. Standard and Quick Battle hold one flat price of {{p_quick}} at every rank. Bundles of {{main}} cut the total, {{bundles}}. The fill: Full Squad hires Master players for up to {{seats_squad}} seats at {{p_squad}} per game, so a part-full group becomes a complete five. The lesson, {{p_draft}} per hour on draft and macro. Name your lane using Discord first.',
   },
   services: {
     duo1: 'Ranked with an Ultra player who plays the lane next to yours and calls objectives.',
@@ -48,24 +48,24 @@ export const pokemonUnite: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and the Ranked tiers read your own rank: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Standard Battle and Quick Battle hold one price for everybody, because neither moves your rank. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the teammate tier beside the price: Duo Plus names an Ultra+ player, Duo Pro a Master player and Duo Apex a Legend player from {{p_duo3_low}} per game. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the lane pairing using Discord before game 1.',
-    team: 'A Full Squad is one order that hires several players at once, so a part-full group becomes a complete five. The fill covers up to {{seats_squad}} seats at {{p_squad}} per game, and 5 games cost {{p_squad_x5}} with {{pick5}} off. First, count the seats you actually need, because every seat is priced on its own: a duo short 3 players books 3 seats rather than 4. Second, name the roles, because the five wants an Attacker, a Defender, a Supporter and somebody on the central area rather than five Attackers. For example, ask for a Defender and a Supporter using Discord.',
+      'Teammate prices are per game, and the Ranked tiers read your own rank: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Standard and Quick Battle holds one price for everybody, and so do the Gamer Girl sessions, because neither moves your rank. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names an Ultra+ player, Duo Pro a Master player and Duo Apex a Legend player from {{p_duo3_low}} per game. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the lane pairing using Discord before game 1.',
+    team: 'A Full Squad is one order that hires several players at once, so a part-full group becomes a complete five. The fill covers up to {{seats_squad}} seats at {{p_squad}} per game, and 5 games cost {{p_squad_x5}} with {{pick5}} off. Count the seats you actually need, because every seat is priced on its own: a duo short 3 players books 3 seats rather than 4. Name the roles, because the five wants an Attacker, a Defender, a Supporter and somebody on the central area rather than five Attackers. For example, ask for a Defender and a Supporter using Discord.',
     coaching:
-      'Lessons are priced by the hour and get no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on teammate games stop here. Draft and Macro costs {{p_draft}} per hour and works through the pick phase, lane assignments and the objective timers that decide a game. Play and Learn is the exception covering one live Ranked match at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who loses every Zapdos fight books the macro hour instead of a fourth Ranked game. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
+      'Lessons are priced by the hour and get no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on teammate games stop here. Draft and Macro costs {{p_draft}} per hour and works through the pick phase, lane assignments and the objective timers that decide a game. Play and Learn is the exception covering one live Ranked match at {{p_learn}} rather than a clock hour. Pick the problem rather than the format. For example, a player who loses every Zapdos fight books the macro hour instead of a fourth Ranked game. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
   },
   steps: {
     heading: 'How does booking a Pokemon Unite teammate work?',
     items: [
       'Pick a service and the number of games first. Duo Pro is the Ranked tier with a Master teammate, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five games take {{pct5}} off.',
-      'Second, add your area, rank, path and language at checkout. For example, name Europe, {{rank_duo2}} and bottom lane, so your teammate reads the real request before accepting.',
-      'Finally, meet your teammate in the order chat using Discord. Agree the lane pairing and the Pokemon, then invite each other by trainer name. One Duo Pro game costs {{p_duo2}} at {{rank_duo2}}.',
+      'Add your area, rank, path and language at checkout. For example, name Europe, {{rank_duo2}} and bottom lane, so your teammate reads the real request before accepting.',
+      'Meet your teammate in the order chat using Discord. Agree the lane pairing and the Pokemon, then invite each other by trainer name. One Duo Pro game costs {{p_duo2}} at {{rank_duo2}}.',
     ],
     note: 'Duoly reviews every Pokemon Unite teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
   decide: {
     heading: 'Which Pokemon Unite session fits you?',
     intro:
-      'The right Unite session is the one matching your goal for the evening. First, Standard and Quick Battle keep one flat price at every rank, {{p_quick}} per game. Ranked is priced by your own rank, from {{p_duo2_low}} per game on Duo Pro, and a Full Squad fill is priced per seat instead. For example, a {{main}} bundle takes {{bundles}}, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right Unite session is the one matching your goal for the evening. Standard and Quick Battle keep one flat price at every rank, {{p_quick}} per game. Ranked is priced by your own rank, from {{p_duo2_low}} per game on Duo Pro, and a Full Squad fill is priced per seat instead. A {{main}} bundle takes {{bundles}}, so a bundle beats booking 1 at a time. Voice runs using Discord.',
     picks: [
       {
         goal: 'Climbing Ranked this season?',
@@ -110,7 +110,7 @@ export const pokemonUnite: HubPageCopy = {
     {
       heading: 'What does a Full Squad booking include in Unite?',
       paragraphs: [
-        'A Full Squad booking is one order that hires several Master players at once, so a part-full group becomes a complete five at {{p_squad}} per game for up to {{seats_squad}} seats. First, every Unite team holds 5 players, so the seat count is simply the gap between your group and five. Second, name the roles, because the five wants an Attacker, a Defender, a Supporter and somebody on the central area. For example, a duo short 3 players books 3 seats rather than 4.',
+        'A Full Squad booking is one order that hires several Master players at once, so a part-full group becomes a complete five at {{p_squad}} per game for up to {{seats_squad}} seats. Every Unite team holds 5 players, so the seat count is simply the gap between your group and five. Name the roles, because the five wants an Attacker, a Defender, a Supporter and somebody on the central area. For example, a duo short 3 players books 3 seats rather than 4.',
         'The fill starts like any other order. Pick the service, pick the seat count, pay once, then meet everybody in the order chat. Name your area, the lane you want and the Pokemon you trust, so the squad arrives with a workable composition. Voice runs using Discord, lobby invites go out with your Trainer details, and every hired player joins on a separate account. Bundles of {{main}} still take {{bundles}} in 2026.',
       ],
     },
@@ -125,7 +125,7 @@ export const pokemonUnite: HubPageCopy = {
       heading: 'When is Pokemon Unite coaching the better booking?',
       paragraphs: [
         'Pokemon Unite coaching is the better booking when the goal is a repeatable fix rather than company for the next game. Draft and Macro is one hour with a Master coach on picks that work together, objective timing and when to rotate, at {{p_draft}} per hour. Coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to teammate games only.',
-        'First, name the objective you keep losing. For example, a player who loses every Zapdos fight gains more from one macro hour at {{p_draft}} than from a fourth Ranked game. A player who wants to try a new Pokemon gains more from Standard and Quick Battle at {{p_quick}} per game in 2026. Play and Learn is one live Ranked match with a Master coach at {{p_learn}}, and screen share runs using Discord. The one-teammate side is covered on the [Pokemon Unite teammate](/games/pokemon-unite/teammate) page. [League of Legends teammates](/games/league-of-legends) and [Teamfight Tactics partners](/games/teamfight-tactics) are the nearest neighbours here.',
+        'Name the objective you keep losing. For example, a player who loses every Zapdos fight gains more from one macro hour at {{p_draft}} than from a fourth Ranked game. A player who wants to try a new Pokemon gains more from Standard and Quick Battle at {{p_quick}} per game in 2026. Play and Learn is one live Ranked match with a Master coach at {{p_learn}}, and screen share runs using Discord. The one-teammate side is covered on the [Pokemon Unite teammate](/games/pokemon-unite/teammate) page. [League of Legends teammates](/games/league-of-legends) and [Teamfight Tactics partners](/games/teamfight-tactics) are the nearest neighbours here.',
       ],
     },
   ],
