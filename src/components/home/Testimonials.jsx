@@ -54,13 +54,15 @@ function Card({ t }) {
       <div className="rv-card-top">
         <Stars n={t.stars} />
         {game ? (
-          <img
+          <HomeImage
             className="rv-game"
             src={game.img}
             alt={game.name}
             title={game.name}
             width="26"
             height="26"
+            loading="lazy"
+            decoding="async"
           />
         ) : null}
       </div>
@@ -72,12 +74,21 @@ function Card({ t }) {
           alt=""
           width="42"
           height="42"
+          loading="lazy"
+          decoding="async"
         />
         <span className="rv-who">
           <strong>{maskName(t.name)}</strong>
           {country ? (
             <span className="rv-from">
-              <img src={flagSrc(t.country)} alt="" width="18" height="13" />
+              <HomeImage
+                src={flagSrc(t.country)}
+                alt=""
+                width="18"
+                height="13"
+                loading="lazy"
+                decoding="async"
+              />
               {country}
             </span>
           ) : null}

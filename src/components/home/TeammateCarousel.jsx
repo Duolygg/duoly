@@ -21,7 +21,14 @@ function Card({ t }) {
     >
       <div className="tc-head">
         <span className="tc-avatar">
-          <HomeImage src={t.image} alt="" width="52" height="52" />
+          <HomeImage
+            src={t.image}
+            alt=""
+            width="52"
+            height="52"
+            loading="lazy"
+            decoding="async"
+          />
           {t.online ? <span className="tc-dot" /> : null}
         </span>
         <span className="tc-who">
@@ -35,13 +42,15 @@ function Card({ t }) {
       <div className="tc-foot">
         <span className="tc-games">
           {t.icons.map((g) => (
-            <img
+            <HomeImage
               key={g.id}
               src={g.img}
               alt={g.name}
               title={g.name}
               width="26"
               height="26"
+              loading="lazy"
+              decoding="async"
             />
           ))}
         </span>

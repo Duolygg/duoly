@@ -351,9 +351,18 @@ export default class QueuePreview extends React.Component {
                 alt=""
                 width="96"
                 height="36"
+                loading="lazy"
+                decoding="async"
               />
               <span className="qp-user">
-                <HomeImage src={USER.image} alt="" width="30" height="30" />
+                <HomeImage
+                  src={USER.image}
+                  alt=""
+                  width="30"
+                  height="30"
+                  loading="lazy"
+                  decoding="async"
+                />
                 {USER.name}
               </span>
             </div>

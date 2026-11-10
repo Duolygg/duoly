@@ -1,4 +1,5 @@
 ---
+import { gameArtSizes, gameArtSrcSet } from '../../site/game-art';
 import type { GameDuoGuide } from '../../content/guide-pages';
 import { bookTeammateLabel } from '../../site/seo';
 interface Props {
@@ -16,6 +17,8 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
   <div class="guide-head">
     <img
       src={art}
+      srcset={gameArtSrcSet(art)}
+      sizes={gameArtSizes(64)}
       alt=""
       width="64"
       height="64"

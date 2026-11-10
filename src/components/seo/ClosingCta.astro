@@ -1,4 +1,5 @@
 ---
+import { gameArtSizes, gameArtSrcSet } from '../../site/game-art';
 interface Props {
   heading: string;
   text: string;
@@ -17,6 +18,8 @@ const { heading, text, extra, href, label, art, price } = Astro.props;
   {art && (
     <img
       src={art.src}
+      srcset={gameArtSrcSet(art.src)}
+      sizes={gameArtSizes(88)}
       alt={art.alt}
       width="88"
       height="88"

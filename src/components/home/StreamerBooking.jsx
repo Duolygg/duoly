@@ -287,11 +287,13 @@ export default class StreamerBooking extends React.Component {
                     }
                     style={{ ...chip(on), paddingLeft: '4px' }}
                   >
-                    <img
+                    <HomeImage
                       src={g.img}
                       alt=""
                       width="28"
                       height="28"
+                      loading="lazy"
+                      decoding="async"
                       style={{
                         width: '28px',
                         height: '28px',
@@ -622,6 +624,8 @@ export default class StreamerBooking extends React.Component {
                         alt=""
                         width="48"
                         height="48"
+                        loading="lazy"
+                        decoding="async"
                         style={{
                           width: '48px',
                           height: '48px',
@@ -712,11 +716,13 @@ export default class StreamerBooking extends React.Component {
                             fontWeight: '600',
                           }}
                         >
-                          <img
+                          <HomeImage
                             src={g.img}
                             alt=""
                             width="20"
                             height="20"
+                            loading="lazy"
+                            decoding="async"
                             style={{
                               width: '20px',
                               height: '20px',

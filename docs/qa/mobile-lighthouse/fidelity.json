@@ -1,0 +1,150 @@
+{
+  "reference": "HEAD",
+  "background": "#090414",
+  "rows": [
+    {
+      "variant": "/assets/brand/logo-full-342.webp",
+      "replaces": "/assets/brand/logo-full-342.webp",
+      "drawnAt": "342x282",
+      "meanDelta": 0.746,
+      "maxDelta": 29,
+      "channelsOffByMoreThan2": 9.48
+    },
+    {
+      "variant": "/assets/brand/logo-full-560.webp",
+      "replaces": "/assets/brand/logo-full-560.webp",
+      "drawnAt": "560x461",
+      "meanDelta": 0.582,
+      "maxDelta": 29,
+      "channelsOffByMoreThan2": 6.66
+    },
+    {
+      "variant": "/assets/brand/logo-full-684.webp",
+      "replaces": "/assets/brand/logo-full-684.webp",
+      "drawnAt": "342x282",
+      "meanDelta": 0.782,
+      "maxDelta": 44,
+      "channelsOffByMoreThan2": 7.65
+    },
+    {
+      "variant": "/assets/brand/logo-wordmark-192.webp",
+      "replaces": "/assets/brand/logo-wordmark-192.webp",
+      "drawnAt": "104x39",
+      "meanDelta": 1.484,
+      "maxDelta": 29,
+      "channelsOffByMoreThan2": 15.72
+    },
+    {
+      "variant": "/assets/brand/logo-mascots-112.webp",
+      "replaces": "/assets/brand/logo-mascots-112.webp",
+      "drawnAt": "56x35",
+      "meanDelta": 1.94,
+      "maxDelta": 24,
+      "channelsOffByMoreThan2": 22.09
+    },
+    {
+      "variant": "/assets/avatars/avatar-1-100.webp",
+      "replaces": "/assets/avatars/avatar-1-100.webp",
+      "drawnAt": "50x50",
+      "meanDelta": 3.713,
+      "maxDelta": 48,
+      "channelsOffByMoreThan2": 41.83
+    },
+    {
+      "variant": "/assets/avatars/avatar-1-78.webp",
+      "replaces": "/assets/avatars/avatar-1-78.webp",
+      "drawnAt": "42x42",
+      "meanDelta": 2.921,
+      "maxDelta": 29,
+      "channelsOffByMoreThan2": 38.04
+    },
+    {
+      "variant": "/assets/avatars/avatar-1-50.webp",
+      "replaces": "/assets/avatars/avatar-1-50.webp",
+      "drawnAt": "28x28",
+      "meanDelta": 3.711,
+      "maxDelta": 46,
+      "channelsOffByMoreThan2": 48.09
+    },
+    {
+      "variant": "/assets/games/valorant-256.webp",
+      "replaces": "/assets/games/valorant.png",
+      "drawnAt": "120x120",
+      "meanDelta": 1.579,
+      "maxDelta": 91,
+      "channelsOffByMoreThan2": 9.16
+    },
+    {
+      "variant": "/assets/games/valorant-128.webp",
+      "replaces": "/assets/games/valorant.png",
+      "drawnAt": "48x48",
+      "meanDelta": 1.611,
+      "maxDelta": 32,
+      "channelsOffByMoreThan2": 15.51
+    },
+    {
+      "variant": "/assets/games/rocket-league-128.webp",
+      "replaces": "/assets/games/rocket-league.png",
+      "drawnAt": "48x48",
+      "meanDelta": 2.552,
+      "maxDelta": 35,
+      "channelsOffByMoreThan2": 28.96
+    },
+    {
+      "variant": "/assets/games/valorant-48.webp",
+      "replaces": "/assets/games/valorant.png",
+      "drawnAt": "26x26",
+      "meanDelta": 3.605,
+      "maxDelta": 46,
+      "channelsOffByMoreThan2": 36.14
+    },
+    {
+      "variant": "/assets/payments/paypal-112.webp",
+      "replaces": "/assets/payments/paypal.png",
+      "drawnAt": "83x20",
+      "meanDelta": 2.715,
+      "maxDelta": 38,
+      "channelsOffByMoreThan2": 33.82
+    },
+    {
+      "variant": "/assets/payments/google-pay-112.webp",
+      "replaces": "/assets/payments/google-pay.png",
+      "drawnAt": "56x22",
+      "meanDelta": 2.832,
+      "maxDelta": 23,
+      "channelsOffByMoreThan2": 40.77
+    },
+    {
+      "variant": "/assets/payments/apple-pay-112.webp",
+      "replaces": "/assets/payments/apple-pay.png",
+      "drawnAt": "47x22",
+      "meanDelta": 4.76,
+      "maxDelta": 39,
+      "channelsOffByMoreThan2": 47.94
+    },
+    {
+      "variant": "/assets/flags/webp/es-54.webp",
+      "replaces": "/assets/flags/svg/es.svg",
+      "drawnAt": "18x14",
+      "meanDelta": 3.886,
+      "maxDelta": 37,
+      "channelsOffByMoreThan2": 32.01
+    },
+    {
+      "variant": "/assets/flags/webp/de-54.webp",
+      "replaces": "/assets/flags/svg/de.svg",
+      "drawnAt": "18x14",
+      "meanDelta": 4.278,
+      "maxDelta": 63,
+      "channelsOffByMoreThan2": 21.96
+    },
+    {
+      "variant": "/assets/flags/webp/jp-54.webp",
+      "replaces": "/assets/flags/svg/jp.svg",
+      "drawnAt": "16x12",
+      "meanDelta": 3.771,
+      "maxDelta": 20,
+      "channelsOffByMoreThan2": 23.44
+    }
+  ]
+}

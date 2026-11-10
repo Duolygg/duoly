@@ -212,6 +212,8 @@ export default function HeroQuotes({ items }) {
                 alt=""
                 width="40"
                 height="40"
+                loading="lazy"
+                decoding="async"
               />
             ) : null}
             <div className="hq-body">
@@ -232,17 +234,26 @@ export default function HeroQuotes({ items }) {
               <figcaption>
                 <span>{maskName(t.name)}</span>
                 {t.country ? (
-                  <img src={flagSrc(t.country)} alt="" width="16" height="12" />
+                  <HomeImage
+                    src={flagSrc(t.country)}
+                    alt=""
+                    width="16"
+                    height="12"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 ) : null}
                 {game ? (
                   <>
                     <span className="hq-dot" />
-                    <img
+                    <HomeImage
                       className="hq-game"
                       src={game.img}
                       alt=""
                       width="14"
                       height="14"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <span>{game.name}</span>
                   </>

@@ -1196,23 +1196,36 @@ export default class Home extends React.Component {
       };
     });
 
+    // The last number is the badge's drawn width at that height (the badge keeps its own ratio:
+    // 255x120, 303x120 and 360x87). Lighthouse wants both dimensions on the element, and the
+    // responsive variant is picked from the drawn width, not from the full-size badge.
     const payList = [
-      ['apple', 'Apple Pay', '/assets/payments/apple-pay.png', '#000000', 22],
+      [
+        'apple',
+        'Apple Pay',
+        '/assets/payments/apple-pay.png',
+        '#000000',
+        22,
+        47,
+      ],
       [
         'google',
         'Google Pay',
         '/assets/payments/google-pay.png',
         '#FFFFFF',
         22,
+        56,
       ],
-      ['paypal', 'PayPal', '/assets/payments/paypal.png', '#FFC439', 20],
-      ['card', 'Card', '', '#090414', 0],
+      ['paypal', 'PayPal', '/assets/payments/paypal.png', '#FFC439', 20, 83],
+      ['card', 'Card', '', '#090414', 0, 0],
     ];
-    const pays = payList.map(([id, label, img, bg, h]) => {
+    const pays = payList.map(([id, label, img, bg, h, w]) => {
       const a = s.pay === id;
       return {
         label,
         img,
+        imgWidth: w,
+        imgHeight: h,
         noImg: !img,
         active: a,
         pressed: a ? 'true' : 'false',
@@ -2166,6 +2179,8 @@ export default class Home extends React.Component {
                         alt=""
                         width="34"
                         height="34"
+                        loading="lazy"
+                        decoding="async"
                         referrerPolicy="no-referrer"
                         style={{
                           width: '34px',
@@ -2638,12 +2653,14 @@ export default class Home extends React.Component {
                   style={{ display: 'flex', gap: '6px' }}
                 >
                   {v.heroGames.map((x) => (
-                    <img
+                    <HomeImage
                       key={x.id}
                       src={x.img}
                       alt=""
                       width="34"
                       height="34"
+                      loading="lazy"
+                      decoding="async"
                       style={{
                         width: '34px',
                         height: '34px',
@@ -2848,6 +2865,8 @@ export default class Home extends React.Component {
                         alt=""
                         width="22"
                         height="22"
+                        loading="lazy"
+                        decoding="async"
                         style={{
                           width: '22px',
                           height: '22px',
@@ -2954,11 +2973,13 @@ export default class Home extends React.Component {
                           height: '48px',
                         }}
                       >
-                        <img
+                        <HomeImage
                           src={g.img}
                           alt=""
                           width="48"
                           height="48"
+                          loading="lazy"
+                          decoding="async"
                           style={{
                             width: '48px',
                             height: '48px',
@@ -4017,6 +4038,8 @@ export default class Home extends React.Component {
                           alt=""
                           width="56"
                           height="35"
+                          loading="lazy"
+                          decoding="async"
                           style={{ width: '56px', height: '35px' }}
                         />
                         <span style={{ fontSize: '14px', color: '#CFC4EA' }}>
@@ -4067,11 +4090,13 @@ export default class Home extends React.Component {
                       gap: '14px',
                     }}
                   >
-                    <img
+                    <HomeImage
                       src={v.game.img}
                       alt={v.game.name}
                       width="52"
                       height="52"
+                      loading="lazy"
+                      decoding="async"
                       style={{
                         width: '52px',
                         height: '52px',
@@ -4318,9 +4343,13 @@ export default class Home extends React.Component {
                             ) : null}
                             {p.img ? (
                               <>
-                                <img
+                                <HomeImage
                                   src={p.img}
                                   alt=""
+                                  width={p.imgWidth}
+                                  height={p.imgHeight}
+                                  loading="lazy"
+                                  decoding="async"
                                   style={css(p.imgStyle)}
                                 />
                               </>
@@ -4851,6 +4880,8 @@ export default class Home extends React.Component {
                               alt=""
                               width="50"
                               height="50"
+                              loading="lazy"
+                              decoding="async"
                               style={{
                                 width: '50px',
                                 height: '50px',
@@ -4858,11 +4889,13 @@ export default class Home extends React.Component {
                                 display: 'block',
                               }}
                             />
-                            <img
+                            <HomeImage
                               src={p.flag}
                               alt={p.cc}
                               width="18"
                               height="18"
+                              loading="lazy"
+                              decoding="async"
                               style={{
                                 position: 'absolute',
                                 right: '-3px',
@@ -4886,11 +4919,13 @@ export default class Home extends React.Component {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            <img
+                            <HomeImage
                               src={p.img}
                               alt=""
                               width="20"
                               height="20"
+                              loading="lazy"
+                              decoding="async"
                               style={{
                                 width: '20px',
                                 height: '20px',
@@ -5278,6 +5313,8 @@ export default class Home extends React.Component {
                       alt=""
                       width="72"
                       height="45"
+                      loading="lazy"
+                      decoding="async"
                       style={{ width: '72px', height: '45px' }}
                     />
                     <div style={{ lineHeight: '1.35' }}>
@@ -5335,6 +5372,8 @@ export default class Home extends React.Component {
                         alt=""
                         width="20"
                         height="15"
+                        loading="lazy"
+                        decoding="async"
                         style={{ width: '20px', height: '15px' }}
                       />
                       Discord
@@ -5740,11 +5779,13 @@ export default class Home extends React.Component {
                     border: '1px solid rgba(214, 187, 255, .14)',
                   }}
                 >
-                  <img
+                  <HomeImage
                     src={v.game.img}
                     alt=""
                     width="48"
                     height="48"
+                    loading="lazy"
+                    decoding="async"
                     style={{
                       width: '48px',
                       height: '48px',
@@ -5897,11 +5938,13 @@ export default class Home extends React.Component {
                           transform: 'none',
                         }}
                       >
-                        <img
+                        <HomeImage
                           src={v.serverFlag}
                           alt=""
                           width="20"
                           height="20"
+                          loading="lazy"
+                          decoding="async"
                           style={{
                             flex: '0 0 auto',
                             width: '20px',
@@ -6031,11 +6074,13 @@ export default class Home extends React.Component {
                             onClick={it.pick}
                             className={'qc-srv-tile' + (it.on ? ' on' : '')}
                           >
-                            <img
+                            <HomeImage
                               src={it.flag}
                               alt=""
                               width="30"
                               height="30"
+                              loading="lazy"
+                              decoding="async"
                               className="qc-srv-flag"
                             />
                             <span className="qc-srv-text">
@@ -6414,11 +6459,12 @@ export default class Home extends React.Component {
                   minWidth: '0',
                 }}
               >
-                <img
+                <HomeImage
                   src={v.game.img}
                   alt=""
                   width="42"
                   height="42"
+                  decoding="async"
                   className="dl-bar-img"
                 />
                 <div style={{ minWidth: '0', lineHeight: '1.35' }}>
