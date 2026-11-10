@@ -32,7 +32,7 @@ const FAMILIES = [
   },
   {
     match: /^\/assets\/games\/[a-z0-9-]+\.png$/,
-    widths: [48, 96, 128, 256],
+    widths: [48, 96, 128],
     stem: (src) => src.replace(/\.png$/, ''),
   },
   {

@@ -47,7 +47,7 @@ const CASES = [
   ['assets/avatars/avatar-1-100.webp', 50, 'assets/avatars/avatar-1-100.webp'],
   ['assets/avatars/avatar-1-78.webp', 42, 'assets/avatars/avatar-1-78.webp'],
   ['assets/avatars/avatar-1-50.webp', 28, 'assets/avatars/avatar-1-50.webp'],
-  ['assets/games/valorant-256.webp', 120, 'assets/games/valorant.png'],
+  ['assets/games/valorant-128.webp', 120, 'assets/games/valorant.png'],
   ['assets/games/valorant-128.webp', 48, 'assets/games/valorant.png'],
   ['assets/games/rocket-league-128.webp', 48, 'assets/games/rocket-league.png'],
   ['assets/games/valorant-48.webp', 26, 'assets/games/valorant.png'],

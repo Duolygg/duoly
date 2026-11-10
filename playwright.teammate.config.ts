@@ -1,4 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
+const port = process.env.DUOLY_TEST_PORT ?? '4356';
+const baseURL = `http://127.0.0.1:${port}`;
 export default defineConfig({
   testDir: './tests/teammate-browser',
   fullyParallel: true,
@@ -7,7 +9,7 @@ export default defineConfig({
   // teammate requests can land just after the default 5 s (trace of PR 116), so checks get 15 s.
   expect: { timeout: 15_000 },
   use: {
-    baseURL: 'http://127.0.0.1:4356',
+    baseURL: baseURL,
     trace: 'retain-on-failure',
     // Signed-in screens: the visitor answered the cookie banner long ago.
     storageState: {
@@ -35,9 +37,8 @@ export default defineConfig({
   ],
   webServer: {
     // scripts/dev-server.mjs, never `astro dev`: see the comment in that file.
-    command:
-      'node scripts/dev-server.mjs --root tests/fixtures/teammate-ui --host 127.0.0.1 --port 4356',
-    url: 'http://127.0.0.1:4356',
+    command: `node scripts/dev-server.mjs --root tests/fixtures/teammate-ui --host 127.0.0.1 --port ${port}`,
+    url: baseURL,
     reuseExistingServer: false,
   },
 });

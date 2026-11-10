@@ -1,5 +1,5 @@
 {
-  "reference": "HEAD",
+  "reference": "origin/main",
   "background": "#090414",
   "rows": [
     {
@@ -67,12 +67,12 @@
       "channelsOffByMoreThan2": 48.09
     },
     {
-      "variant": "/assets/games/valorant-256.webp",
+      "variant": "/assets/games/valorant-128.webp",
       "replaces": "/assets/games/valorant.png",
       "drawnAt": "120x120",
-      "meanDelta": 1.579,
-      "maxDelta": 91,
-      "channelsOffByMoreThan2": 9.16
+      "meanDelta": 1.823,
+      "maxDelta": 87,
+      "channelsOffByMoreThan2": 11.77
     },
     {
       "variant": "/assets/games/valorant-128.webp",

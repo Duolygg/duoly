@@ -22,6 +22,7 @@ import {
   writeFileSync,
   mkdirSync,
   existsSync,
+  readFileSync,
 } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
@@ -88,9 +89,9 @@ const FAMILIES = [
       readdirSync(join(PUBLIC, 'assets/games'))
         .filter((f) => f.endsWith('.png'))
         .map((f) => `assets/games/${f}`),
-    // 48 covers the homepage picker at 1x, 128 is the master size and covers every homepage
-    // use at 2x, 256 covers the 120 px game-hub hero card on a phone (Lighthouse asks for 180).
-    widths: [48, 96, 128, 256],
+    // Never upscale game masters to satisfy a resolution audit: the largest variant remains
+    // the native 128 px. Higher-density hero screens need higher-resolution originals.
+    widths: [48, 96, 128],
     out: (src, w) => src.replace(/\.png$/, `-${w}.webp`),
     // Lossless would be 12 KB an icon against 3 KB here, for art drawn at 26 to 120 px.
     encode: { quality: 92, effort: 6, alphaQuality: 100 },
@@ -135,15 +136,15 @@ for (const family of FAMILIES) {
       const rel = family.out(src, width);
       const output = join(PUBLIC, rel);
       // The 1120 hero step is wider than its 900 px master; upscaling invents no detail but keeps
-      // the ladder the markup already ships. Game art at 256 is the same deliberate 2x step.
+      // the ladder the markup already ships. No new family upscales its masters.
       const pipeline = sharp(input, { density: 384 })
         .resize({ width, withoutEnlargement: false, kernel: 'lanczos3' })
         .webp(family.encode);
       const buffer = await pipeline.toBuffer();
       const before = existsSync(output) ? statSync(output).size : 0;
       if (check) {
-        if (!before) {
-          console.error(`missing ${rel}`);
+        if (!before || !readFileSync(output).equals(buffer)) {
+          console.error(`missing or stale ${rel}`);
           stale++;
         }
       } else {

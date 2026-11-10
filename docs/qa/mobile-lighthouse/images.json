@@ -419,7 +419,7 @@
     "output": "/assets/brand/logo-wordmark-144.webp",
     "width": 144,
     "masterBytes": 33262,
-    "beforeBytes": 0,
+    "beforeBytes": 6494,
     "bytes": 6494
   },
   {
@@ -446,7 +446,7 @@
     "output": "/assets/brand/logo-wordmark-288.webp",
     "width": 288,
     "masterBytes": 33262,
-    "beforeBytes": 0,
+    "beforeBytes": 17870,
     "bytes": 17870
   },
   {
@@ -532,15 +532,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/apex-legends.png",
-    "output": "/assets/games/apex-legends-256.webp",
-    "width": 256,
-    "masterBytes": 14978,
-    "beforeBytes": 9430,
-    "bytes": 9430
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/arc-raiders.png",
     "output": "/assets/games/arc-raiders-48.webp",
     "width": 48,
@@ -565,15 +556,6 @@
     "masterBytes": 14236,
     "beforeBytes": 3878,
     "bytes": 3878
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/arc-raiders.png",
-    "output": "/assets/games/arc-raiders-256.webp",
-    "width": 256,
-    "masterBytes": 14236,
-    "beforeBytes": 11028,
-    "bytes": 11028
   },
   {
     "family": "game art",
@@ -604,15 +586,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/call-of-duty.png",
-    "output": "/assets/games/call-of-duty-256.webp",
-    "width": 256,
-    "masterBytes": 9236,
-    "beforeBytes": 10928,
-    "bytes": 10928
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/counter-strike-2.png",
     "output": "/assets/games/counter-strike-2-48.webp",
     "width": 48,
@@ -637,15 +610,6 @@
     "masterBytes": 7181,
     "beforeBytes": 3680,
     "bytes": 3680
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/counter-strike-2.png",
-    "output": "/assets/games/counter-strike-2-256.webp",
-    "width": 256,
-    "masterBytes": 7181,
-    "beforeBytes": 10696,
-    "bytes": 10696
   },
   {
     "family": "game art",
@@ -676,15 +640,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/deadlock.png",
-    "output": "/assets/games/deadlock-256.webp",
-    "width": 256,
-    "masterBytes": 18677,
-    "beforeBytes": 11858,
-    "bytes": 11858
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/dota-2.png",
     "output": "/assets/games/dota-2-48.webp",
     "width": 48,
@@ -709,15 +664,6 @@
     "masterBytes": 18685,
     "beforeBytes": 3196,
     "bytes": 3196
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/dota-2.png",
-    "output": "/assets/games/dota-2-256.webp",
-    "width": 256,
-    "masterBytes": 18685,
-    "beforeBytes": 9082,
-    "bytes": 9082
   },
   {
     "family": "game art",
@@ -748,15 +694,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/ea-sports-fc-27.png",
-    "output": "/assets/games/ea-sports-fc-27-256.webp",
-    "width": 256,
-    "masterBytes": 7983,
-    "beforeBytes": 10138,
-    "bytes": 10138
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/fortnite.png",
     "output": "/assets/games/fortnite-48.webp",
     "width": 48,
@@ -781,15 +718,6 @@
     "masterBytes": 11283,
     "beforeBytes": 2240,
     "bytes": 2240
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/fortnite.png",
-    "output": "/assets/games/fortnite-256.webp",
-    "width": 256,
-    "masterBytes": 11283,
-    "beforeBytes": 7470,
-    "bytes": 7470
   },
   {
     "family": "game art",
@@ -820,15 +748,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/league-of-legends.png",
-    "output": "/assets/games/league-of-legends-256.webp",
-    "width": 256,
-    "masterBytes": 13290,
-    "beforeBytes": 9366,
-    "bytes": 9366
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/marvel-rivals.png",
     "output": "/assets/games/marvel-rivals-48.webp",
     "width": 48,
@@ -853,15 +772,6 @@
     "masterBytes": 16148,
     "beforeBytes": 4396,
     "bytes": 4396
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/marvel-rivals.png",
-    "output": "/assets/games/marvel-rivals-256.webp",
-    "width": 256,
-    "masterBytes": 16148,
-    "beforeBytes": 11936,
-    "bytes": 11936
   },
   {
     "family": "game art",
@@ -892,15 +802,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/minecraft.png",
-    "output": "/assets/games/minecraft-256.webp",
-    "width": 256,
-    "masterBytes": 10094,
-    "beforeBytes": 7382,
-    "bytes": 7382
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/overwatch-2.png",
     "output": "/assets/games/overwatch-2-48.webp",
     "width": 48,
@@ -925,15 +826,6 @@
     "masterBytes": 17364,
     "beforeBytes": 4458,
     "bytes": 4458
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/overwatch-2.png",
-    "output": "/assets/games/overwatch-2-256.webp",
-    "width": 256,
-    "masterBytes": 17364,
-    "beforeBytes": 12252,
-    "bytes": 12252
   },
   {
     "family": "game art",
@@ -964,15 +856,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/pokemon-unite.png",
-    "output": "/assets/games/pokemon-unite-256.webp",
-    "width": 256,
-    "masterBytes": 19221,
-    "beforeBytes": 14512,
-    "bytes": 14512
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/pubg.png",
     "output": "/assets/games/pubg-48.webp",
     "width": 48,
@@ -997,15 +880,6 @@
     "masterBytes": 18542,
     "beforeBytes": 3694,
     "bytes": 3694
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/pubg.png",
-    "output": "/assets/games/pubg-256.webp",
-    "width": 256,
-    "masterBytes": 18542,
-    "beforeBytes": 10158,
-    "bytes": 10158
   },
   {
     "family": "game art",
@@ -1036,15 +910,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/rainbow-six-siege.png",
-    "output": "/assets/games/rainbow-six-siege-256.webp",
-    "width": 256,
-    "masterBytes": 8076,
-    "beforeBytes": 8586,
-    "bytes": 8586
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/rocket-league.png",
     "output": "/assets/games/rocket-league-48.webp",
     "width": 48,
@@ -1069,15 +934,6 @@
     "masterBytes": 20666,
     "beforeBytes": 4500,
     "bytes": 4500
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/rocket-league.png",
-    "output": "/assets/games/rocket-league-256.webp",
-    "width": 256,
-    "masterBytes": 20666,
-    "beforeBytes": 11616,
-    "bytes": 11616
   },
   {
     "family": "game art",
@@ -1108,15 +964,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/social.png",
-    "output": "/assets/games/social-256.webp",
-    "width": 256,
-    "masterBytes": 14418,
-    "beforeBytes": 10478,
-    "bytes": 10478
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/teamfight-tactics.png",
     "output": "/assets/games/teamfight-tactics-48.webp",
     "width": 48,
@@ -1141,15 +988,6 @@
     "masterBytes": 8694,
     "beforeBytes": 3740,
     "bytes": 3740
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/teamfight-tactics.png",
-    "output": "/assets/games/teamfight-tactics-256.webp",
-    "width": 256,
-    "masterBytes": 8694,
-    "beforeBytes": 10752,
-    "bytes": 10752
   },
   {
     "family": "game art",
@@ -1180,15 +1018,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/valorant.png",
-    "output": "/assets/games/valorant-256.webp",
-    "width": 256,
-    "masterBytes": 13265,
-    "beforeBytes": 8268,
-    "bytes": 8268
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/wild-rift.png",
     "output": "/assets/games/wild-rift-48.webp",
     "width": 48,
@@ -1216,15 +1045,6 @@
   },
   {
     "family": "game art",
-    "source": "/assets/games/wild-rift.png",
-    "output": "/assets/games/wild-rift-256.webp",
-    "width": 256,
-    "masterBytes": 17614,
-    "beforeBytes": 9478,
-    "bytes": 9478
-  },
-  {
-    "family": "game art",
     "source": "/assets/games/world-of-warcraft.png",
     "output": "/assets/games/world-of-warcraft-48.webp",
     "width": 48,
@@ -1249,15 +1069,6 @@
     "masterBytes": 9950,
     "beforeBytes": 4776,
     "bytes": 4776
-  },
-  {
-    "family": "game art",
-    "source": "/assets/games/world-of-warcraft.png",
-    "output": "/assets/games/world-of-warcraft-256.webp",
-    "width": 256,
-    "masterBytes": 9950,
-    "beforeBytes": 11790,
-    "bytes": 11790
   },
   {
     "family": "payment logos",
