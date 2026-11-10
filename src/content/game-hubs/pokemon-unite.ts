@@ -48,7 +48,7 @@ export const pokemonUnite: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and the Ranked tiers read your own rank: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Standard Battle and Quick Battle hold one price for everybody, because neither moves your rank. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the teammate tier beside the price: Duo Plus names an Ultra+ player, Duo Pro a Master player and Duo Apex a Legend player at {{p_duo3}} per game. Bundles take {{pct3}} off 3 games and {{pct5}} off 5. For example, agree the lane pairing using Discord before game 1.',
+      'Teammate prices are per game, and the Ranked tiers read your own rank: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Standard Battle and Quick Battle hold one price for everybody, because neither moves your rank. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the teammate tier beside the price: Duo Plus names an Ultra+ player, Duo Pro a Master player and Duo Apex a Legend player from {{p_duo3_low}} per game. Bundles take {{pct3}} off 3 games and {{pct5}} off 5. For example, agree the lane pairing using Discord before game 1.',
     team: 'A Full Squad is one order that hires several players at once, so a part-full group becomes a complete five. The fill covers up to {{seats_squad}} seats at {{p_squad}} per game, and 3 games cost {{p_squad_x3}} with {{pct3}} off. First, count the seats you actually need, because every seat is priced on its own: a duo short 3 players books 3 seats rather than 4. Second, name the roles, because the five wants an Attacker, a Defender, a Supporter and somebody on the central area rather than five Attackers. For example, ask for a Defender and a Supporter using Discord.',
     coaching:
       'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on teammate games stop here. Draft and Macro costs {{p_draft}} per hour and works through the pick phase, lane assignments and the objective timers that decide a game. Play and Learn is the exception covering one live Ranked match at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who loses every Zapdos fight books the macro hour instead of a fourth Ranked game. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
@@ -58,7 +58,7 @@ export const pokemonUnite: HubPageCopy = {
     items: [
       'Pick a service and the number of games first. Duo Pro is the Ranked tier with a Master teammate, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five games take {{pct5}} off.',
       'Second, add your area, rank, path and language at checkout. For example, name Europe, {{rank_duo2}} and bottom lane, so your teammate reads the real request before accepting.',
-      'Finally, meet your teammate in the order chat using Discord. Agree the lane pairing and the Pokemon, then invite each other by trainer name. One Duo Pro game costs {{p_duo2}}.',
+      'Finally, meet your teammate in the order chat using Discord. Agree the lane pairing and the Pokemon, then invite each other by trainer name. One Duo Pro game costs {{p_duo2}} at {{rank_duo2}}.',
     ],
     note: 'Duoly reviews every Pokemon Unite teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
@@ -103,7 +103,7 @@ export const pokemonUnite: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'The teammate you queue with is a reviewed Pokemon Unite player who applied for the game and showed a rank before taking orders. Duo Plus names an Ultra+ player, Duo Pro a Master player and Duo Apex a Legend player at {{p_duo3}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Your teammate plays on a separate account, so nobody needs your login.',
+        'The teammate you queue with is a reviewed Pokemon Unite player who applied for the game and showed a rank before taking orders. Duo Plus names an Ultra+ player, Duo Pro a Master player and Duo Apex a Legend player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Your teammate plays on a separate account, so nobody needs your login.',
         'What the rank buys is objective timing. A Master teammate calls the Drednaw group before the timer rather than after, and leaves a lane only with a plan. Voice runs using Discord, so a rotation call lands while the fight is still winnable. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles cut the total by {{pct3}} on 3 games and {{pct5}} on 5. For example, you keep your Pokemon and your account in all 3 games.',
       ],
     },

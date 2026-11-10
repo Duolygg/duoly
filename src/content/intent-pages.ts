@@ -171,7 +171,7 @@ export const intentPages: IntentPage[] = [
     steps: [
       'Choose a service and a total match count first, before checkout. Duo Pro is the Competitive option with a Grandmaster+ teammate, and 3 matches at Platinum in Europe cost {{mrPro3}} with the {{pct3}} bundle discount in November 2026.',
       'Add your platform, region, rank, language and hero pool. For example, ask your partner to cover Vanguard while you play Strategist. Name a voice language too, such as English or German, so calls work from the first fight.',
-      'Meet your partner in the order chat. Check lobby compatibility, agree on voice using Discord or in-game chat, then pick the first hero pairing before queueing. A single Duo Pro match costs {{mrPro}}, and 5 matches get {{pct5}} off.',
+      'Meet your partner in the order chat. Check lobby compatibility, agree on voice using Discord or in-game chat, then pick the first hero pairing before queueing. A single Duo Pro match costs {{mrPro}} at Platinum, and 5 matches get {{pct5}} off.',
     ],
     prepare: [
       'A hero pool is the short list of heroes you play well. First, name 2 heroes plus your preferred role, for example 2 Strategists and 1 Vanguard as a backup.',
@@ -745,7 +745,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does a Call of Duty duo cost?',
         paragraphs: [
           'Duo Pro is the Warzone duos service on Duoly at {{codPro}} per hour for a Diamond player, and like the other duo tiers it follows your own rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Multiplayer Ranked Play is {{codPlus}} per hour at Platinum with a Crimson+ teammate who holds a lane and plays the objective. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank. The [Call of Duty hub](/games/call-of-duty) lists every service for the game.',
+          'Bundles cut the total for every service. For example, a Diamond player pays {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank. The [Call of Duty hub](/games/call-of-duty) lists every service for the game.',
         ],
       },
     ],
@@ -761,7 +761,7 @@ export const intentPages: IntentPage[] = [
       'Decide the mode before the first hour, for example Warzone battle royale, Resurgence, multiplayer Ranked Play or round-based Zombies.',
       'Test your microphone on Discord first, then agree on 1 call for a reset, for example naming the building you fall back to.',
       'Decide the mode before you pay, because the 2 Ranked services are priced by your own rank while Resurgence, Zombies and the party playlists hold one price for everybody.',
-      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 10 hours cost {{codPro10}} with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 10 hours at Diamond cost {{codPro10}} with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -961,7 +961,7 @@ export const intentPages: IntentPage[] = [
       'Bring a map pool of 3 maps you can call, for example 1) Mirage, 2) Inferno and 3) Ancient, then say which map you want to avoid.',
       'Test your microphone and your audio using Discord, then agree on short calls: a position, a number and a utility state.',
       'Agree the buy rules before the first half, for example a full save under 2000 and armor before a rifle on a force buy.',
-      'Finally, book the games you want up front, because the bundle discount applies to one order rather than to games added later: 1 game is {{cs2Pro}} and 10 games cost {{cs2Pro10}} with {{pct10}} off in November 2026. Keep your login private.',
+      'Finally, book the games you want up front, because the bundle discount applies to one order rather than to games added later: At a 10,000 to 14,999 rating 1 game is {{cs2Pro}} and 10 games cost {{cs2Pro10}} with {{pct10}} off in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -982,7 +982,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Is a duo session the same as CS2 coaching?',
-        'No: a duo is shared playing time at {{cs2Pro}} per game with {{pct5}} off 5. Demo Review and Utility and Lineups are the hourly lessons on the coaching page.',
+        'No: a duo is shared playing time at {{cs2Pro}} per game at a 10,000 to 14,999 rating, with {{pct5}} off 5. Demo Review and Utility and Lineups are the hourly lessons on the coaching page.',
       ],
       [
         'How do I find free CS2 teammates?',
@@ -998,7 +998,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Premier Counter-Strike 2 session with a 20,000+ rated teammate from Duoly, and 5 games at 10,000 to 14,999 cost {{cs2Pro5}} with {{pct5}} off, against {{pct3}} off 3. Wingman is the 2v2 pick at {{cs2Wing}} per game when you want the whole match to be the two of you. For example, ask for a support player when you entry every round, agreed using Discord.',
+      'Duo Pro is the Premier Counter-Strike 2 session with a 20,000+ rated teammate from Duoly, and 5 games at 10,000 to 14,999 cost {{cs2Pro5}} with {{pct5}} off, against {{pct3}} off 3. Wingman is the 2v2 pick at {{cs2Wing}} per game at Master Guardian when you want the whole match to be the two of you. For example, ask for a support player when you entry every round, agreed using Discord.',
   },
   {
     slug: 'lfg',
@@ -1070,7 +1070,7 @@ export const intentPages: IntentPage[] = [
       'Pick the region before booking, because Europe, US-East, US-Central, US-West, South America, Asia, India, Oceania, Middle East and South Africa are separate queues.',
       'Warm up for 10 minutes in free play or a training pack, for example 1) 20 aerials and 2) 10 kickoffs, so the hour goes on rotation.',
       'Test your microphone using Discord first, then agree on 3 calls: going, cover and boost.',
-      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 1 hour is {{rlPro}} and 10 hours cost {{rlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: At Diamond 1 hour is {{rlPro}} and 10 hours cost {{rlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -1177,7 +1177,7 @@ export const intentPages: IntentPage[] = [
       'Name your class and spec, and bring the talent build you actually play, so the route is planned around your real stops and defensives.',
       'Check your keystone and your gear before the hour starts, for example 1) a key you want to time and 2) an item level you are comfortable at.',
       'Test your microphone and your audio using Discord, then agree on 3 calls: pull, stop and defensive.',
-      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 1 hour is {{wowPro}} and 10 hours cost {{wowPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: At a Mythic+ 2,000 to 2,499 rating 1 hour is {{wowPro}} and 10 hours cost {{wowPro10}} with {{pct10}} off in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -1198,7 +1198,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Is this a WoW coaching session?',
-        'No: a teammate hour is shared playing time at {{wowPro}} per hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Class and Rotation Coaching is the separate lesson.',
+        'No: a teammate hour is shared playing time at {{wowPro}} per hour at a Mythic+ 2,000 to 2,499 rating, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Class and Rotation Coaching is the separate lesson.',
       ],
       [
         'How do I find free WoW teammates?',
@@ -1486,7 +1486,7 @@ export const intentPages: IntentPage[] = [
       'Bring 2 heroes you trust plus 1 backup, for example 1) a burst hero and 2) a hero with a stun, so the pair still works when a pick is taken.',
       'Plan for a long match: about 35 minutes each, so 3 matches fill an evening and a 10 match bundle spans several sessions.',
       'Test your microphone and your audio using Discord, then agree on 3 calls: Urn, Mid Boss and back.',
-      'Finally, book the matches you want up front, because the bundle discount applies to one order rather than to matches added later: 1 match is {{dlPro}} and 10 matches cost {{dlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+      'Finally, book the matches you want up front, because the bundle discount applies to one order rather than to matches added later: At Emissary 1 match is {{dlPro}} and 10 matches cost {{dlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -1507,7 +1507,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Is a duo the same as Deadlock coaching?',
-        'No: a duo is shared playing time at {{dlPro}} per match, with {{pct3}} off 3 matches and {{pct5}} off 5 in November 2026. Macro and Souls is the separate hourly lesson.',
+        'No: a duo is shared playing time at {{dlPro}} per match at Emissary, with {{pct3}} off 3 matches and {{pct5}} off 5 in November 2026. Macro and Souls is the separate hourly lesson.',
       ],
       [
         'How do I find free Deadlock teammates?',

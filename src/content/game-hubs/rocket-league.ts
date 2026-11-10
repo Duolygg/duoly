@@ -25,7 +25,7 @@ export const rocketLeague: HubPageCopy = {
     'After the duo page rather than every Rocket League service? It covers rotation, boost calls and the casual modes next to Ranked Doubles.',
   format: {
     heading: 'What can you book for Rocket League on Duoly?',
-    text: 'A Rocket League booking on Duoly is a single reviewed partner, a 3v3 Standard fill or a coaching hour. First, Doubles sells by the hour, because one match runs about seven minutes. The partner tiers are Duo Plus with a Champion+ player, Duo Pro with a Grand Champion and Duo Apex with a Supersonic Legend, priced by your own rank from {{p_duo2_low}} to {{p_duo2_high}} on Duo Pro. Casual 3v3 and Extra Modes each hold one flat price of {{p_casual}} per hour. The 3v3 Standard fill is priced per match instead, at {{p_three}} for {{seats_three}} seats. Bundles cut the total, {{pct3}} off 3 up to {{pct10}} off 10. Second, the lessons: Mechanics Training is an hour on aerials, flicks and recoveries at {{p_mech}}, and Play and Learn is a live Doubles hour at {{p_learn}}. For example, agree kickoff positions using Discord first.',
+    text: 'A Rocket League booking on Duoly is a single reviewed partner, a 3v3 Standard fill or a coaching hour. First, Doubles sells by the hour, because one match runs about seven minutes. The partner tiers are Duo Plus with a Champion+ player, Duo Pro with a Grand Champion and Duo Apex with a Supersonic Legend, priced by your own rank from {{p_duo2_low}} to {{p_duo2_high}} on Duo Pro. Casual 3v3 and Extra Modes each hold one flat price of {{p_casual}} per hour. The 3v3 Standard fill is priced per match instead, from {{p_three_low}} for {{seats_three}} seats. Bundles cut the total, {{pct3}} off 3 up to {{pct10}} off 10. Second, the lessons: Mechanics Training is an hour on aerials, flicks and recoveries at {{p_mech}}, and Play and Learn is a live Doubles hour at {{p_learn}}. For example, agree kickoff positions using Discord first.',
   },
   services: {
     duo1: 'An hour of Ranked Doubles with a Champion partner who rotates instead of chasing.',
@@ -49,7 +49,7 @@ export const rocketLeague: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per hour, because one match runs about seven minutes. The Ranked Doubles tiers read your own rank: Duo Pro costs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Casual 3v3 and Extra Modes hold one price for everybody. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the partner tier beside the price: Duo Plus names a Champion+ player, Duo Pro a Grand Champion and Duo Apex a Supersonic Legend at {{p_duo3}} per hour. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5. For example, agree a boost rule using Discord before hour 1.',
+      'Teammate prices are per hour, because one match runs about seven minutes. The Ranked Doubles tiers read your own rank: Duo Pro costs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Casual 3v3 and Extra Modes hold one price for everybody. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the partner tier beside the price: Duo Plus names a Champion+ player, Duo Pro a Grand Champion and Duo Apex a Supersonic Legend from {{p_duo3_low}} per hour. Bundles take {{pct3}} off 3 hours and {{pct5}} off 5. For example, agree a boost rule using Discord before hour 1.',
     team: 'The 3v3 Standard fill is the one service priced per match rather than per hour, because a Standard set is shorter than a Doubles session. 3v3 Standard covers up to {{seats_three}} seats at {{p_three}} at {{rank_three}}, from {{p_three_low}} at {{rank_three_low}}. First, count the seats you actually need, because every seat is priced on its own. Second, agree who takes third man, because a Standard three that all rotates forward concedes the counter. Bundles take {{pct3}} off 3 matches and {{pct5}} off 5. For example, a pair short 1 player books 1 seat rather than 2, agreed using Discord.',
     coaching:
       'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on teammate hours stop here. Mechanics Training costs {{p_mech}} per hour, drilling aerials, flicks and recoveries, and ends with training packs you keep. Play and Learn is the live option where a Grand Champion coach talks through one real Doubles hour at {{p_learn}}. First, pick the problem rather than the format. For example, a player who misses every aerial books the free play hour instead of a fourth Doubles hour. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
@@ -59,7 +59,7 @@ export const rocketLeague: HubPageCopy = {
     items: [
       'Pick a service and the number of hours first. Duo Pro is the Ranked Doubles tier with a Grand Champion, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
       'Second, add your region, rank, platform and language at checkout. For example, name Europe, {{rank_duo2}} and controller, so your partner reads the real request before accepting.',
-      'Finally, meet your partner in the order chat using Discord. Agree kickoff positions, a boost rule and voice, then add each other by Epic name and party up. One Duo Pro hour costs {{p_duo2}}.',
+      'Finally, meet your partner in the order chat using Discord. Agree kickoff positions, a boost rule and voice, then add each other by Epic name and party up. One Duo Pro hour costs {{p_duo2}} at {{rank_duo2}}.',
     ],
     note: 'Duoly reviews every Rocket League partner before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
@@ -84,7 +84,7 @@ export const rocketLeague: HubPageCopy = {
         goal: 'Want 3v3 Standard instead?',
         service: 'three',
         answer:
-          'The Standard fill covers up to {{seats_three}} seats for {{p_three}}, priced per match.',
+          'The Standard fill covers up to {{seats_three}} seats from {{p_three_low}}, priced per match.',
       },
       {
         goal: 'Just want a fun evening?',
@@ -104,7 +104,7 @@ export const rocketLeague: HubPageCopy = {
     {
       heading: 'Why is Rocket League Doubles priced by the hour?',
       paragraphs: [
-        'An hour is the honest unit for Doubles, because one match runs about seven minutes. Charging per match would price a kickoff and a session the same way, so Doubles sells hourly and only the 3v3 Standard fill stays per match at {{p_three}}. An hour of Duo Pro costs {{p_duo2}} at {{rank_duo2}} and realistically covers 6 or 7 matches once queue time is counted. First, settle one rotation habit rather than chasing a single result.',
+        'An hour is the honest unit for Doubles, because one match runs about seven minutes. Charging per match would price a kickoff and a session the same way, so Doubles sells hourly and only the 3v3 Standard fill stays per match from {{p_three_low}}. An hour of Duo Pro costs {{p_duo2}} at {{rank_duo2}} and realistically covers 6 or 7 matches once queue time is counted. First, settle one rotation habit rather than chasing a single result.',
         'Ranked prices follow your own rank: a {{rank_duo2_low}} player pays {{p_duo2_low}} per hour and a {{rank_duo2_high}} player pays {{p_duo2_high}}. Casual hours ignore rank entirely, so Casual 3v3 and Extra Modes each cost {{p_casual}} in 2026. Agree who takes the diagonal kickoff before the first match, then agree a boost rule. Bundles take {{pct3}} off 3 hours or {{pct5}} off 5. For example, two players starving for boost at once loses the counter, so name one caller using Discord.',
       ],
     },
@@ -143,7 +143,7 @@ export const rocketLeague: HubPageCopy = {
       ],
       [
         'How do I book a full Rocket League three?',
-        'The 3v3 Standard fill covers up to {{seats_three}} seats at {{p_three}} per match with Grand Champion players, and it is priced per match rather than per hour.',
+        'The 3v3 Standard fill covers up to {{seats_three}} seats from {{p_three_low}} per match with Grand Champion players, and it is priced per match rather than per hour.',
       ],
       [
         'Why is Doubles priced per hour?',
@@ -151,7 +151,7 @@ export const rocketLeague: HubPageCopy = {
       ],
       [
         'Can we play 3v3 Standard?',
-        'Yes: the Standard fill adds Grand Champion players at {{p_three}} per match for {{seats_three}} seats, priced per match rather than per hour.',
+        'Yes: the Standard fill adds Grand Champion players from {{p_three_low}} per match for {{seats_three}} seats, priced per match rather than per hour.',
       ],
       [
         'Where do I book a Rocket League coach?',
@@ -161,6 +161,6 @@ export const rocketLeague: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for a Rocket League session?',
-    text: 'Duo Pro is the Ranked Doubles hour with a Grand Champion partner from Duoly. Three hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Extra Modes stays {{p_extra}} per hour at any rank, and Casual 3v3 costs {{p_casual}}. The 3v3 Standard fill covers up to {{seats_three}} seats at {{p_three}} per match with Grand Champion players in 2026. For example, agree kickoffs and boost using Discord.',
+    text: 'Duo Pro is the Ranked Doubles hour with a Grand Champion partner from Duoly. Three hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Extra Modes stays {{p_extra}} per hour at any rank, and Casual 3v3 costs {{p_casual}}. The 3v3 Standard fill covers up to {{seats_three}} seats from {{p_three_low}} per match with Grand Champion players in 2026. For example, agree kickoffs and boost using Discord.',
   },
 };
