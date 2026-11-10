@@ -37,13 +37,20 @@
 }
 
 /* The inline offer card */
+/*
+ * The card lines up with the prose it interrupts. It used to run the full
+ * 1,070px content width while the paragraphs above it stopped at 56ch, which
+ * left a 350px empty strip beside its button at 1440 and made the card read as
+ * a different page. Same measure as the prose, same right edge.
+ */
 .seo-page .offer-inline {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
-  gap: 14px 18px;
+  gap: 12px 16px;
+  max-width: 56ch;
   margin: 26px 0;
-  padding: 20px 22px;
+  padding: 18px 20px;
   border-radius: 20px;
   border: 1px solid rgba(214, 187, 255, 0.26);
   background:
@@ -62,7 +69,17 @@
 }
 .seo-page .offer-inline p {
   margin: 0;
-  max-width: 62ch;
+  max-width: none;
+}
+/* A reader deep in a guide should never have to work out whether a block is
+   the advice or the thing being sold. */
+.seo-page .offer-inline-label {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d6bbff;
 }
 .seo-page .offer-inline-title {
   font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
@@ -89,23 +106,46 @@
   font-size: 15px;
   line-height: 1.6;
 }
+/* The fine print is still fine print, and still readable: #c4b8e0 on the card
+   is 9.6:1, where the old #a79dc4 was 7.1:1. */
 .seo-page .offer-inline-note {
-  margin-top: 8px;
+  grid-column: 1 / -1;
+  margin-top: 2px;
   font-size: 13.5px;
   line-height: 1.5;
-  color: #a79dc4;
+  color: #c4b8e0;
 }
-.seo-page .offer-inline .btn-sm {
+/* Text left, price and button right, so the card never ends in a button with
+   an empty strip beside it. */
+.offer-inline-action {
   grid-column: 2;
-  justify-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  margin-top: 4px;
+}
+.seo-page .offer-inline-price {
+  font-size: 14px;
+  color: #b8abd8;
+}
+.seo-page .offer-inline-price .money {
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 22px;
+  font-weight: 750;
+  color: #f3eeff;
+  margin-right: 4px;
 }
 @media (max-width: 560px) {
   .seo-page .offer-inline {
     grid-template-columns: minmax(0, 1fr);
   }
-  .seo-page .offer-inline .btn-sm {
+  .offer-inline-action {
     grid-column: 1;
-    width: 100%;
+  }
+  .seo-page .offer-inline .btn-sm {
+    flex: 1 1 100%;
   }
 }
 

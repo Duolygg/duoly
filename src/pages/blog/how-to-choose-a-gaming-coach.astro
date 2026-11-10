@@ -53,6 +53,8 @@ const pick = (offers: typeof valorant, id: string) =>
 const valVod = pick(valorant, 'vod');
 // The lesson this guide keeps coming back to, priced through the engine.
 const lessonOffer = heroOffer('val', 'vod', valorant)!;
+/** The coach rank without the catalog's format suffix ("Immortal+ coach"). */
+const lessonCoach = lessonOffer.tier.split(' · ')[0]!;
 const valAim = pick(valorant, 'aim');
 const lolVod = pick(league, 'vod');
 const lolChamp = pick(league, 'champ');
@@ -469,7 +471,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <OfferCard
       offer={lessonOffer}
       art={{ src: '/assets/games/valorant.png', alt: '' }}
-      text={`What that price buys in one game: ${lessonOffer.title} is an hour with a ${lessonOffer.tier}, and the link opens checkout with the game and the lesson already chosen.`}
+      text={`Want the five checks done for you? An ${lessonCoach} goes through one of your own matches with you for an hour, with the price and the refund rule published before you pay.`}
     />
     <section aria-labelledby="trust-h">
       <h2 id="trust-h">What do reviews and refunds tell you?</h2>
@@ -549,7 +551,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <OfferCard
       offer={lessonOffer}
       art={{ src: '/assets/games/valorant.png', alt: '' }}
-      text={`Ready to book the hour? ${lessonOffer.title} opens checkout with the game and the lesson already chosen, and every other coachable game sells the same hour at the same price.`}
+      text={`Ready to book the hour? Every game Duoly coaches sells the same lesson at the same price, so the only things left to choose are your game and your start time.`}
     />
     <Faq heading="Questions about choosing a coach" items={faqItems} />
 
