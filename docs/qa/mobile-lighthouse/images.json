@@ -5,7 +5,7 @@
     "output": "/assets/avatars/avatar-1-50.webp",
     "width": 50,
     "masterBytes": 31179,
-    "beforeBytes": 1626,
+    "beforeBytes": 1924,
     "bytes": 1924
   },
   {
@@ -14,7 +14,7 @@
     "output": "/assets/avatars/avatar-1-78.webp",
     "width": 78,
     "masterBytes": 31179,
-    "beforeBytes": 2618,
+    "beforeBytes": 3240,
     "bytes": 3240
   },
   {
@@ -23,7 +23,7 @@
     "output": "/assets/avatars/avatar-1-100.webp",
     "width": 100,
     "masterBytes": 31179,
-    "beforeBytes": 3538,
+    "beforeBytes": 4352,
     "bytes": 4352
   },
   {
@@ -32,7 +32,7 @@
     "output": "/assets/avatars/avatar-1-156.webp",
     "width": 156,
     "masterBytes": 31179,
-    "beforeBytes": 5780,
+    "beforeBytes": 7184,
     "bytes": 7184
   },
   {
@@ -41,7 +41,7 @@
     "output": "/assets/avatars/avatar-10-50.webp",
     "width": 50,
     "masterBytes": 31687,
-    "beforeBytes": 1752,
+    "beforeBytes": 2072,
     "bytes": 2072
   },
   {
@@ -50,7 +50,7 @@
     "output": "/assets/avatars/avatar-10-78.webp",
     "width": 78,
     "masterBytes": 31687,
-    "beforeBytes": 2868,
+    "beforeBytes": 3426,
     "bytes": 3426
   },
   {
@@ -59,7 +59,7 @@
     "output": "/assets/avatars/avatar-10-100.webp",
     "width": 100,
     "masterBytes": 31687,
-    "beforeBytes": 3786,
+    "beforeBytes": 4680,
     "bytes": 4680
   },
   {
@@ -68,7 +68,7 @@
     "output": "/assets/avatars/avatar-10-156.webp",
     "width": 156,
     "masterBytes": 31687,
-    "beforeBytes": 6214,
+    "beforeBytes": 7590,
     "bytes": 7590
   },
   {
@@ -77,7 +77,7 @@
     "output": "/assets/avatars/avatar-2-50.webp",
     "width": 50,
     "masterBytes": 33068,
-    "beforeBytes": 1742,
+    "beforeBytes": 2104,
     "bytes": 2104
   },
   {
@@ -86,7 +86,7 @@
     "output": "/assets/avatars/avatar-2-78.webp",
     "width": 78,
     "masterBytes": 33068,
-    "beforeBytes": 2862,
+    "beforeBytes": 3472,
     "bytes": 3472
   },
   {
@@ -95,7 +95,7 @@
     "output": "/assets/avatars/avatar-2-100.webp",
     "width": 100,
     "masterBytes": 33068,
-    "beforeBytes": 3796,
+    "beforeBytes": 4664,
     "bytes": 4664
   },
   {
@@ -104,7 +104,7 @@
     "output": "/assets/avatars/avatar-2-156.webp",
     "width": 156,
     "masterBytes": 33068,
-    "beforeBytes": 6176,
+    "beforeBytes": 7682,
     "bytes": 7682
   },
   {
@@ -113,7 +113,7 @@
     "output": "/assets/avatars/avatar-3-50.webp",
     "width": 50,
     "masterBytes": 34413,
-    "beforeBytes": 1752,
+    "beforeBytes": 2114,
     "bytes": 2114
   },
   {
@@ -122,7 +122,7 @@
     "output": "/assets/avatars/avatar-3-78.webp",
     "width": 78,
     "masterBytes": 34413,
-    "beforeBytes": 2896,
+    "beforeBytes": 3468,
     "bytes": 3468
   },
   {
@@ -131,7 +131,7 @@
     "output": "/assets/avatars/avatar-3-100.webp",
     "width": 100,
     "masterBytes": 34413,
-    "beforeBytes": 3784,
+    "beforeBytes": 4618,
     "bytes": 4618
   },
   {
@@ -140,7 +140,7 @@
     "output": "/assets/avatars/avatar-3-156.webp",
     "width": 156,
     "masterBytes": 34413,
-    "beforeBytes": 6204,
+    "beforeBytes": 7660,
     "bytes": 7660
   },
   {
@@ -149,7 +149,7 @@
     "output": "/assets/avatars/avatar-4-50.webp",
     "width": 50,
     "masterBytes": 32787,
-    "beforeBytes": 1868,
+    "beforeBytes": 2198,
     "bytes": 2198
   },
   {
@@ -158,7 +158,7 @@
     "output": "/assets/avatars/avatar-4-78.webp",
     "width": 78,
     "masterBytes": 32787,
-    "beforeBytes": 2944,
+    "beforeBytes": 3558,
     "bytes": 3558
   },
   {
@@ -167,7 +167,7 @@
     "output": "/assets/avatars/avatar-4-100.webp",
     "width": 100,
     "masterBytes": 32787,
-    "beforeBytes": 3862,
+    "beforeBytes": 4700,
     "bytes": 4700
   },
   {
@@ -176,7 +176,7 @@
     "output": "/assets/avatars/avatar-4-156.webp",
     "width": 156,
     "masterBytes": 32787,
-    "beforeBytes": 6260,
+    "beforeBytes": 7674,
     "bytes": 7674
   },
   {
@@ -185,7 +185,7 @@
     "output": "/assets/avatars/avatar-5-50.webp",
     "width": 50,
     "masterBytes": 32620,
-    "beforeBytes": 1730,
+    "beforeBytes": 2068,
     "bytes": 2068
   },
   {
@@ -194,7 +194,7 @@
     "output": "/assets/avatars/avatar-5-78.webp",
     "width": 78,
     "masterBytes": 32620,
-    "beforeBytes": 2838,
+    "beforeBytes": 3440,
     "bytes": 3440
   },
   {
@@ -203,7 +203,7 @@
     "output": "/assets/avatars/avatar-5-100.webp",
     "width": 100,
     "masterBytes": 32620,
-    "beforeBytes": 3842,
+    "beforeBytes": 4666,
     "bytes": 4666
   },
   {
@@ -212,7 +212,7 @@
     "output": "/assets/avatars/avatar-5-156.webp",
     "width": 156,
     "masterBytes": 32620,
-    "beforeBytes": 6294,
+    "beforeBytes": 7760,
     "bytes": 7760
   },
   {
@@ -221,7 +221,7 @@
     "output": "/assets/avatars/avatar-6-50.webp",
     "width": 50,
     "masterBytes": 31139,
-    "beforeBytes": 1764,
+    "beforeBytes": 2102,
     "bytes": 2102
   },
   {
@@ -230,7 +230,7 @@
     "output": "/assets/avatars/avatar-6-78.webp",
     "width": 78,
     "masterBytes": 31139,
-    "beforeBytes": 2842,
+    "beforeBytes": 3464,
     "bytes": 3464
   },
   {
@@ -239,7 +239,7 @@
     "output": "/assets/avatars/avatar-6-100.webp",
     "width": 100,
     "masterBytes": 31139,
-    "beforeBytes": 3840,
+    "beforeBytes": 4708,
     "bytes": 4708
   },
   {
@@ -248,7 +248,7 @@
     "output": "/assets/avatars/avatar-6-156.webp",
     "width": 156,
     "masterBytes": 31139,
-    "beforeBytes": 6142,
+    "beforeBytes": 7644,
     "bytes": 7644
   },
   {
@@ -257,7 +257,7 @@
     "output": "/assets/avatars/avatar-7-50.webp",
     "width": 50,
     "masterBytes": 32652,
-    "beforeBytes": 1590,
+    "beforeBytes": 1968,
     "bytes": 1968
   },
   {
@@ -266,7 +266,7 @@
     "output": "/assets/avatars/avatar-7-78.webp",
     "width": 78,
     "masterBytes": 32652,
-    "beforeBytes": 2622,
+    "beforeBytes": 3178,
     "bytes": 3178
   },
   {
@@ -275,7 +275,7 @@
     "output": "/assets/avatars/avatar-7-100.webp",
     "width": 100,
     "masterBytes": 32652,
-    "beforeBytes": 3556,
+    "beforeBytes": 4366,
     "bytes": 4366
   },
   {
@@ -284,7 +284,7 @@
     "output": "/assets/avatars/avatar-7-156.webp",
     "width": 156,
     "masterBytes": 32652,
-    "beforeBytes": 5746,
+    "beforeBytes": 7262,
     "bytes": 7262
   },
   {
@@ -293,7 +293,7 @@
     "output": "/assets/avatars/avatar-8-50.webp",
     "width": 50,
     "masterBytes": 33355,
-    "beforeBytes": 1610,
+    "beforeBytes": 1982,
     "bytes": 1982
   },
   {
@@ -302,7 +302,7 @@
     "output": "/assets/avatars/avatar-8-78.webp",
     "width": 78,
     "masterBytes": 33355,
-    "beforeBytes": 2636,
+    "beforeBytes": 3226,
     "bytes": 3226
   },
   {
@@ -311,7 +311,7 @@
     "output": "/assets/avatars/avatar-8-100.webp",
     "width": 100,
     "masterBytes": 33355,
-    "beforeBytes": 3618,
+    "beforeBytes": 4430,
     "bytes": 4430
   },
   {
@@ -320,7 +320,7 @@
     "output": "/assets/avatars/avatar-8-156.webp",
     "width": 156,
     "masterBytes": 33355,
-    "beforeBytes": 5822,
+    "beforeBytes": 7420,
     "bytes": 7420
   },
   {
@@ -329,7 +329,7 @@
     "output": "/assets/avatars/avatar-9-50.webp",
     "width": 50,
     "masterBytes": 33791,
-    "beforeBytes": 1784,
+    "beforeBytes": 2142,
     "bytes": 2142
   },
   {
@@ -338,7 +338,7 @@
     "output": "/assets/avatars/avatar-9-78.webp",
     "width": 78,
     "masterBytes": 33791,
-    "beforeBytes": 2948,
+    "beforeBytes": 3538,
     "bytes": 3538
   },
   {
@@ -347,7 +347,7 @@
     "output": "/assets/avatars/avatar-9-100.webp",
     "width": 100,
     "masterBytes": 33791,
-    "beforeBytes": 3852,
+    "beforeBytes": 4680,
     "bytes": 4680
   },
   {
@@ -356,7 +356,7 @@
     "output": "/assets/avatars/avatar-9-156.webp",
     "width": 156,
     "masterBytes": 33791,
-    "beforeBytes": 6216,
+    "beforeBytes": 7692,
     "bytes": 7692
   },
   {
@@ -401,7 +401,7 @@
     "output": "/assets/brand/logo-wordmark-96.webp",
     "width": 96,
     "masterBytes": 33262,
-    "beforeBytes": 3392,
+    "beforeBytes": 3676,
     "bytes": 3676
   },
   {
@@ -410,8 +410,17 @@
     "output": "/assets/brand/logo-wordmark-104.webp",
     "width": 104,
     "masterBytes": 33262,
-    "beforeBytes": 3804,
+    "beforeBytes": 4136,
     "bytes": 4136
+  },
+  {
+    "family": "wordmark",
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-144.webp",
+    "width": 144,
+    "masterBytes": 33262,
+    "beforeBytes": 0,
+    "bytes": 6494
   },
   {
     "family": "wordmark",
@@ -419,7 +428,7 @@
     "output": "/assets/brand/logo-wordmark-192.webp",
     "width": 192,
     "masterBytes": 33262,
-    "beforeBytes": 8984,
+    "beforeBytes": 9740,
     "bytes": 9740
   },
   {
@@ -428,8 +437,17 @@
     "output": "/assets/brand/logo-wordmark-208.webp",
     "width": 208,
     "masterBytes": 33262,
-    "beforeBytes": 10082,
+    "beforeBytes": 11034,
     "bytes": 11034
+  },
+  {
+    "family": "wordmark",
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-288.webp",
+    "width": 288,
+    "masterBytes": 33262,
+    "beforeBytes": 0,
+    "bytes": 17870
   },
   {
     "family": "mascots",
@@ -437,7 +455,7 @@
     "output": "/assets/brand/logo-mascots-40.webp",
     "width": 40,
     "masterBytes": 31924,
-    "beforeBytes": 1736,
+    "beforeBytes": 1864,
     "bytes": 1864
   },
   {
@@ -446,7 +464,7 @@
     "output": "/assets/brand/logo-mascots-56.webp",
     "width": 56,
     "masterBytes": 31924,
-    "beforeBytes": 2844,
+    "beforeBytes": 3042,
     "bytes": 3042
   },
   {
@@ -455,7 +473,7 @@
     "output": "/assets/brand/logo-mascots-72.webp",
     "width": 72,
     "masterBytes": 31924,
-    "beforeBytes": 3958,
+    "beforeBytes": 4194,
     "bytes": 4194
   },
   {
@@ -464,7 +482,7 @@
     "output": "/assets/brand/logo-mascots-80.webp",
     "width": 80,
     "masterBytes": 31924,
-    "beforeBytes": 4632,
+    "beforeBytes": 4920,
     "bytes": 4920
   },
   {
@@ -473,7 +491,7 @@
     "output": "/assets/brand/logo-mascots-112.webp",
     "width": 112,
     "masterBytes": 31924,
-    "beforeBytes": 7450,
+    "beforeBytes": 7952,
     "bytes": 7952
   },
   {
@@ -482,7 +500,7 @@
     "output": "/assets/brand/logo-mascots-144.webp",
     "width": 144,
     "masterBytes": 31924,
-    "beforeBytes": 10722,
+    "beforeBytes": 11582,
     "bytes": 11582
   },
   {
@@ -491,7 +509,7 @@
     "output": "/assets/games/apex-legends-48.webp",
     "width": 48,
     "masterBytes": 14978,
-    "beforeBytes": 1146,
+    "beforeBytes": 1298,
     "bytes": 1298
   },
   {
@@ -500,7 +518,7 @@
     "output": "/assets/games/apex-legends-96.webp",
     "width": 96,
     "masterBytes": 14978,
-    "beforeBytes": 2506,
+    "beforeBytes": 2820,
     "bytes": 2820
   },
   {
@@ -509,7 +527,7 @@
     "output": "/assets/games/apex-legends-128.webp",
     "width": 128,
     "masterBytes": 14978,
-    "beforeBytes": 3012,
+    "beforeBytes": 3342,
     "bytes": 3342
   },
   {
@@ -518,7 +536,7 @@
     "output": "/assets/games/apex-legends-256.webp",
     "width": 256,
     "masterBytes": 14978,
-    "beforeBytes": 8292,
+    "beforeBytes": 9430,
     "bytes": 9430
   },
   {
@@ -527,7 +545,7 @@
     "output": "/assets/games/arc-raiders-48.webp",
     "width": 48,
     "masterBytes": 14236,
-    "beforeBytes": 1324,
+    "beforeBytes": 1454,
     "bytes": 1454
   },
   {
@@ -536,7 +554,7 @@
     "output": "/assets/games/arc-raiders-96.webp",
     "width": 96,
     "masterBytes": 14236,
-    "beforeBytes": 3016,
+    "beforeBytes": 3382,
     "bytes": 3382
   },
   {
@@ -545,7 +563,7 @@
     "output": "/assets/games/arc-raiders-128.webp",
     "width": 128,
     "masterBytes": 14236,
-    "beforeBytes": 3482,
+    "beforeBytes": 3878,
     "bytes": 3878
   },
   {
@@ -554,7 +572,7 @@
     "output": "/assets/games/arc-raiders-256.webp",
     "width": 256,
     "masterBytes": 14236,
-    "beforeBytes": 9602,
+    "beforeBytes": 11028,
     "bytes": 11028
   },
   {
@@ -563,7 +581,7 @@
     "output": "/assets/games/call-of-duty-48.webp",
     "width": 48,
     "masterBytes": 9236,
-    "beforeBytes": 1422,
+    "beforeBytes": 1584,
     "bytes": 1584
   },
   {
@@ -572,7 +590,7 @@
     "output": "/assets/games/call-of-duty-96.webp",
     "width": 96,
     "masterBytes": 9236,
-    "beforeBytes": 3146,
+    "beforeBytes": 3528,
     "bytes": 3528
   },
   {
@@ -581,7 +599,7 @@
     "output": "/assets/games/call-of-duty-128.webp",
     "width": 128,
     "masterBytes": 9236,
-    "beforeBytes": 3528,
+    "beforeBytes": 3964,
     "bytes": 3964
   },
   {
@@ -590,7 +608,7 @@
     "output": "/assets/games/call-of-duty-256.webp",
     "width": 256,
     "masterBytes": 9236,
-    "beforeBytes": 9778,
+    "beforeBytes": 10928,
     "bytes": 10928
   },
   {
@@ -599,7 +617,7 @@
     "output": "/assets/games/counter-strike-2-48.webp",
     "width": 48,
     "masterBytes": 7181,
-    "beforeBytes": 1268,
+    "beforeBytes": 1382,
     "bytes": 1382
   },
   {
@@ -608,7 +626,7 @@
     "output": "/assets/games/counter-strike-2-96.webp",
     "width": 96,
     "masterBytes": 7181,
-    "beforeBytes": 2848,
+    "beforeBytes": 3146,
     "bytes": 3146
   },
   {
@@ -617,7 +635,7 @@
     "output": "/assets/games/counter-strike-2-128.webp",
     "width": 128,
     "masterBytes": 7181,
-    "beforeBytes": 3268,
+    "beforeBytes": 3680,
     "bytes": 3680
   },
   {
@@ -626,7 +644,7 @@
     "output": "/assets/games/counter-strike-2-256.webp",
     "width": 256,
     "masterBytes": 7181,
-    "beforeBytes": 9466,
+    "beforeBytes": 10696,
     "bytes": 10696
   },
   {
@@ -635,7 +653,7 @@
     "output": "/assets/games/deadlock-48.webp",
     "width": 48,
     "masterBytes": 18677,
-    "beforeBytes": 1482,
+    "beforeBytes": 1614,
     "bytes": 1614
   },
   {
@@ -644,7 +662,7 @@
     "output": "/assets/games/deadlock-96.webp",
     "width": 96,
     "masterBytes": 18677,
-    "beforeBytes": 3800,
+    "beforeBytes": 4248,
     "bytes": 4248
   },
   {
@@ -653,7 +671,7 @@
     "output": "/assets/games/deadlock-128.webp",
     "width": 128,
     "masterBytes": 18677,
-    "beforeBytes": 4488,
+    "beforeBytes": 4812,
     "bytes": 4812
   },
   {
@@ -662,7 +680,7 @@
     "output": "/assets/games/deadlock-256.webp",
     "width": 256,
     "masterBytes": 18677,
-    "beforeBytes": 10292,
+    "beforeBytes": 11858,
     "bytes": 11858
   },
   {
@@ -671,7 +689,7 @@
     "output": "/assets/games/dota-2-48.webp",
     "width": 48,
     "masterBytes": 18685,
-    "beforeBytes": 1132,
+    "beforeBytes": 1288,
     "bytes": 1288
   },
   {
@@ -680,7 +698,7 @@
     "output": "/assets/games/dota-2-96.webp",
     "width": 96,
     "masterBytes": 18685,
-    "beforeBytes": 2450,
+    "beforeBytes": 2766,
     "bytes": 2766
   },
   {
@@ -689,7 +707,7 @@
     "output": "/assets/games/dota-2-128.webp",
     "width": 128,
     "masterBytes": 18685,
-    "beforeBytes": 2882,
+    "beforeBytes": 3196,
     "bytes": 3196
   },
   {
@@ -698,7 +716,7 @@
     "output": "/assets/games/dota-2-256.webp",
     "width": 256,
     "masterBytes": 18685,
-    "beforeBytes": 8058,
+    "beforeBytes": 9082,
     "bytes": 9082
   },
   {
@@ -707,7 +725,7 @@
     "output": "/assets/games/ea-sports-fc-27-48.webp",
     "width": 48,
     "masterBytes": 7983,
-    "beforeBytes": 1126,
+    "beforeBytes": 1286,
     "bytes": 1286
   },
   {
@@ -716,7 +734,7 @@
     "output": "/assets/games/ea-sports-fc-27-96.webp",
     "width": 96,
     "masterBytes": 7983,
-    "beforeBytes": 2742,
+    "beforeBytes": 3076,
     "bytes": 3076
   },
   {
@@ -725,7 +743,7 @@
     "output": "/assets/games/ea-sports-fc-27-128.webp",
     "width": 128,
     "masterBytes": 7983,
-    "beforeBytes": 3122,
+    "beforeBytes": 3622,
     "bytes": 3622
   },
   {
@@ -734,7 +752,7 @@
     "output": "/assets/games/ea-sports-fc-27-256.webp",
     "width": 256,
     "masterBytes": 7983,
-    "beforeBytes": 8954,
+    "beforeBytes": 10138,
     "bytes": 10138
   },
   {
@@ -743,7 +761,7 @@
     "output": "/assets/games/fortnite-48.webp",
     "width": 48,
     "masterBytes": 11283,
-    "beforeBytes": 828,
+    "beforeBytes": 930,
     "bytes": 930
   },
   {
@@ -752,7 +770,7 @@
     "output": "/assets/games/fortnite-96.webp",
     "width": 96,
     "masterBytes": 11283,
-    "beforeBytes": 1918,
+    "beforeBytes": 2174,
     "bytes": 2174
   },
   {
@@ -761,7 +779,7 @@
     "output": "/assets/games/fortnite-128.webp",
     "width": 128,
     "masterBytes": 11283,
-    "beforeBytes": 2010,
+    "beforeBytes": 2240,
     "bytes": 2240
   },
   {
@@ -770,7 +788,7 @@
     "output": "/assets/games/fortnite-256.webp",
     "width": 256,
     "masterBytes": 11283,
-    "beforeBytes": 6744,
+    "beforeBytes": 7470,
     "bytes": 7470
   },
   {
@@ -779,7 +797,7 @@
     "output": "/assets/games/league-of-legends-48.webp",
     "width": 48,
     "masterBytes": 13290,
-    "beforeBytes": 1238,
+    "beforeBytes": 1384,
     "bytes": 1384
   },
   {
@@ -788,7 +806,7 @@
     "output": "/assets/games/league-of-legends-96.webp",
     "width": 96,
     "masterBytes": 13290,
-    "beforeBytes": 2612,
+    "beforeBytes": 2958,
     "bytes": 2958
   },
   {
@@ -797,7 +815,7 @@
     "output": "/assets/games/league-of-legends-128.webp",
     "width": 128,
     "masterBytes": 13290,
-    "beforeBytes": 2842,
+    "beforeBytes": 3192,
     "bytes": 3192
   },
   {
@@ -806,7 +824,7 @@
     "output": "/assets/games/league-of-legends-256.webp",
     "width": 256,
     "masterBytes": 13290,
-    "beforeBytes": 8416,
+    "beforeBytes": 9366,
     "bytes": 9366
   },
   {
@@ -815,7 +833,7 @@
     "output": "/assets/games/marvel-rivals-48.webp",
     "width": 48,
     "masterBytes": 16148,
-    "beforeBytes": 1518,
+    "beforeBytes": 1662,
     "bytes": 1662
   },
   {
@@ -824,7 +842,7 @@
     "output": "/assets/games/marvel-rivals-96.webp",
     "width": 96,
     "masterBytes": 16148,
-    "beforeBytes": 3462,
+    "beforeBytes": 3830,
     "bytes": 3830
   },
   {
@@ -833,7 +851,7 @@
     "output": "/assets/games/marvel-rivals-128.webp",
     "width": 128,
     "masterBytes": 16148,
-    "beforeBytes": 3976,
+    "beforeBytes": 4396,
     "bytes": 4396
   },
   {
@@ -842,7 +860,7 @@
     "output": "/assets/games/marvel-rivals-256.webp",
     "width": 256,
     "masterBytes": 16148,
-    "beforeBytes": 10670,
+    "beforeBytes": 11936,
     "bytes": 11936
   },
   {
@@ -851,7 +869,7 @@
     "output": "/assets/games/minecraft-48.webp",
     "width": 48,
     "masterBytes": 10094,
-    "beforeBytes": 1006,
+    "beforeBytes": 1102,
     "bytes": 1102
   },
   {
@@ -860,7 +878,7 @@
     "output": "/assets/games/minecraft-96.webp",
     "width": 96,
     "masterBytes": 10094,
-    "beforeBytes": 2060,
+    "beforeBytes": 2268,
     "bytes": 2268
   },
   {
@@ -869,7 +887,7 @@
     "output": "/assets/games/minecraft-128.webp",
     "width": 128,
     "masterBytes": 10094,
-    "beforeBytes": 2104,
+    "beforeBytes": 2272,
     "bytes": 2272
   },
   {
@@ -878,7 +896,7 @@
     "output": "/assets/games/minecraft-256.webp",
     "width": 256,
     "masterBytes": 10094,
-    "beforeBytes": 6758,
+    "beforeBytes": 7382,
     "bytes": 7382
   },
   {
@@ -887,7 +905,7 @@
     "output": "/assets/games/overwatch-2-48.webp",
     "width": 48,
     "masterBytes": 17364,
-    "beforeBytes": 1598,
+    "beforeBytes": 1778,
     "bytes": 1778
   },
   {
@@ -896,7 +914,7 @@
     "output": "/assets/games/overwatch-2-96.webp",
     "width": 96,
     "masterBytes": 17364,
-    "beforeBytes": 3528,
+    "beforeBytes": 3944,
     "bytes": 3944
   },
   {
@@ -905,7 +923,7 @@
     "output": "/assets/games/overwatch-2-128.webp",
     "width": 128,
     "masterBytes": 17364,
-    "beforeBytes": 4020,
+    "beforeBytes": 4458,
     "bytes": 4458
   },
   {
@@ -914,7 +932,7 @@
     "output": "/assets/games/overwatch-2-256.webp",
     "width": 256,
     "masterBytes": 17364,
-    "beforeBytes": 10580,
+    "beforeBytes": 12252,
     "bytes": 12252
   },
   {
@@ -923,7 +941,7 @@
     "output": "/assets/games/pokemon-unite-48.webp",
     "width": 48,
     "masterBytes": 19221,
-    "beforeBytes": 1376,
+    "beforeBytes": 1496,
     "bytes": 1496
   },
   {
@@ -932,7 +950,7 @@
     "output": "/assets/games/pokemon-unite-96.webp",
     "width": 96,
     "masterBytes": 19221,
-    "beforeBytes": 3670,
+    "beforeBytes": 4110,
     "bytes": 4110
   },
   {
@@ -941,7 +959,7 @@
     "output": "/assets/games/pokemon-unite-128.webp",
     "width": 128,
     "masterBytes": 19221,
-    "beforeBytes": 4782,
+    "beforeBytes": 5266,
     "bytes": 5266
   },
   {
@@ -950,7 +968,7 @@
     "output": "/assets/games/pokemon-unite-256.webp",
     "width": 256,
     "masterBytes": 19221,
-    "beforeBytes": 12708,
+    "beforeBytes": 14512,
     "bytes": 14512
   },
   {
@@ -959,7 +977,7 @@
     "output": "/assets/games/pubg-48.webp",
     "width": 48,
     "masterBytes": 18542,
-    "beforeBytes": 1268,
+    "beforeBytes": 1402,
     "bytes": 1402
   },
   {
@@ -968,7 +986,7 @@
     "output": "/assets/games/pubg-96.webp",
     "width": 96,
     "masterBytes": 18542,
-    "beforeBytes": 2958,
+    "beforeBytes": 3288,
     "bytes": 3288
   },
   {
@@ -977,7 +995,7 @@
     "output": "/assets/games/pubg-128.webp",
     "width": 128,
     "masterBytes": 18542,
-    "beforeBytes": 3316,
+    "beforeBytes": 3694,
     "bytes": 3694
   },
   {
@@ -986,7 +1004,7 @@
     "output": "/assets/games/pubg-256.webp",
     "width": 256,
     "masterBytes": 18542,
-    "beforeBytes": 9014,
+    "beforeBytes": 10158,
     "bytes": 10158
   },
   {
@@ -995,7 +1013,7 @@
     "output": "/assets/games/rainbow-six-siege-48.webp",
     "width": 48,
     "masterBytes": 8076,
-    "beforeBytes": 1066,
+    "beforeBytes": 1152,
     "bytes": 1152
   },
   {
@@ -1004,7 +1022,7 @@
     "output": "/assets/games/rainbow-six-siege-96.webp",
     "width": 96,
     "masterBytes": 8076,
-    "beforeBytes": 2310,
+    "beforeBytes": 2570,
     "bytes": 2570
   },
   {
@@ -1013,7 +1031,7 @@
     "output": "/assets/games/rainbow-six-siege-128.webp",
     "width": 128,
     "masterBytes": 8076,
-    "beforeBytes": 2586,
+    "beforeBytes": 2840,
     "bytes": 2840
   },
   {
@@ -1022,7 +1040,7 @@
     "output": "/assets/games/rainbow-six-siege-256.webp",
     "width": 256,
     "masterBytes": 8076,
-    "beforeBytes": 7702,
+    "beforeBytes": 8586,
     "bytes": 8586
   },
   {
@@ -1031,7 +1049,7 @@
     "output": "/assets/games/rocket-league-48.webp",
     "width": 48,
     "masterBytes": 20666,
-    "beforeBytes": 1276,
+    "beforeBytes": 1474,
     "bytes": 1474
   },
   {
@@ -1040,7 +1058,7 @@
     "output": "/assets/games/rocket-league-96.webp",
     "width": 96,
     "masterBytes": 20666,
-    "beforeBytes": 3100,
+    "beforeBytes": 3508,
     "bytes": 3508
   },
   {
@@ -1049,7 +1067,7 @@
     "output": "/assets/games/rocket-league-128.webp",
     "width": 128,
     "masterBytes": 20666,
-    "beforeBytes": 3914,
+    "beforeBytes": 4500,
     "bytes": 4500
   },
   {
@@ -1058,7 +1076,7 @@
     "output": "/assets/games/rocket-league-256.webp",
     "width": 256,
     "masterBytes": 20666,
-    "beforeBytes": 10052,
+    "beforeBytes": 11616,
     "bytes": 11616
   },
   {
@@ -1067,7 +1085,7 @@
     "output": "/assets/games/social-48.webp",
     "width": 48,
     "masterBytes": 14418,
-    "beforeBytes": 1510,
+    "beforeBytes": 1672,
     "bytes": 1672
   },
   {
@@ -1076,7 +1094,7 @@
     "output": "/assets/games/social-96.webp",
     "width": 96,
     "masterBytes": 14418,
-    "beforeBytes": 3434,
+    "beforeBytes": 3770,
     "bytes": 3770
   },
   {
@@ -1085,7 +1103,7 @@
     "output": "/assets/games/social-128.webp",
     "width": 128,
     "masterBytes": 14418,
-    "beforeBytes": 4244,
+    "beforeBytes": 4746,
     "bytes": 4746
   },
   {
@@ -1094,7 +1112,7 @@
     "output": "/assets/games/social-256.webp",
     "width": 256,
     "masterBytes": 14418,
-    "beforeBytes": 9390,
+    "beforeBytes": 10478,
     "bytes": 10478
   },
   {
@@ -1103,7 +1121,7 @@
     "output": "/assets/games/teamfight-tactics-48.webp",
     "width": 48,
     "masterBytes": 8694,
-    "beforeBytes": 1270,
+    "beforeBytes": 1422,
     "bytes": 1422
   },
   {
@@ -1112,7 +1130,7 @@
     "output": "/assets/games/teamfight-tactics-96.webp",
     "width": 96,
     "masterBytes": 8694,
-    "beforeBytes": 2916,
+    "beforeBytes": 3202,
     "bytes": 3202
   },
   {
@@ -1121,7 +1139,7 @@
     "output": "/assets/games/teamfight-tactics-128.webp",
     "width": 128,
     "masterBytes": 8694,
-    "beforeBytes": 3288,
+    "beforeBytes": 3740,
     "bytes": 3740
   },
   {
@@ -1130,7 +1148,7 @@
     "output": "/assets/games/teamfight-tactics-256.webp",
     "width": 256,
     "masterBytes": 8694,
-    "beforeBytes": 9508,
+    "beforeBytes": 10752,
     "bytes": 10752
   },
   {
@@ -1139,7 +1157,7 @@
     "output": "/assets/games/valorant-48.webp",
     "width": 48,
     "masterBytes": 13265,
-    "beforeBytes": 1020,
+    "beforeBytes": 1152,
     "bytes": 1152
   },
   {
@@ -1148,7 +1166,7 @@
     "output": "/assets/games/valorant-96.webp",
     "width": 96,
     "masterBytes": 13265,
-    "beforeBytes": 2248,
+    "beforeBytes": 2522,
     "bytes": 2522
   },
   {
@@ -1157,7 +1175,7 @@
     "output": "/assets/games/valorant-128.webp",
     "width": 128,
     "masterBytes": 13265,
-    "beforeBytes": 2610,
+    "beforeBytes": 2870,
     "bytes": 2870
   },
   {
@@ -1166,7 +1184,7 @@
     "output": "/assets/games/valorant-256.webp",
     "width": 256,
     "masterBytes": 13265,
-    "beforeBytes": 7450,
+    "beforeBytes": 8268,
     "bytes": 8268
   },
   {
@@ -1175,7 +1193,7 @@
     "output": "/assets/games/wild-rift-48.webp",
     "width": 48,
     "masterBytes": 17614,
-    "beforeBytes": 1018,
+    "beforeBytes": 1134,
     "bytes": 1134
   },
   {
@@ -1184,7 +1202,7 @@
     "output": "/assets/games/wild-rift-96.webp",
     "width": 96,
     "masterBytes": 17614,
-    "beforeBytes": 2448,
+    "beforeBytes": 2742,
     "bytes": 2742
   },
   {
@@ -1193,7 +1211,7 @@
     "output": "/assets/games/wild-rift-128.webp",
     "width": 128,
     "masterBytes": 17614,
-    "beforeBytes": 2846,
+    "beforeBytes": 3160,
     "bytes": 3160
   },
   {
@@ -1202,7 +1220,7 @@
     "output": "/assets/games/wild-rift-256.webp",
     "width": 256,
     "masterBytes": 17614,
-    "beforeBytes": 8402,
+    "beforeBytes": 9478,
     "bytes": 9478
   },
   {
@@ -1211,7 +1229,7 @@
     "output": "/assets/games/world-of-warcraft-48.webp",
     "width": 48,
     "masterBytes": 9950,
-    "beforeBytes": 1442,
+    "beforeBytes": 1628,
     "bytes": 1628
   },
   {
@@ -1220,7 +1238,7 @@
     "output": "/assets/games/world-of-warcraft-96.webp",
     "width": 96,
     "masterBytes": 9950,
-    "beforeBytes": 3378,
+    "beforeBytes": 3924,
     "bytes": 3924
   },
   {
@@ -1229,7 +1247,7 @@
     "output": "/assets/games/world-of-warcraft-128.webp",
     "width": 128,
     "masterBytes": 9950,
-    "beforeBytes": 4122,
+    "beforeBytes": 4776,
     "bytes": 4776
   },
   {
@@ -1238,7 +1256,7 @@
     "output": "/assets/games/world-of-warcraft-256.webp",
     "width": 256,
     "masterBytes": 9950,
-    "beforeBytes": 9962,
+    "beforeBytes": 11790,
     "bytes": 11790
   },
   {
@@ -1247,7 +1265,7 @@
     "output": "/assets/payments/apple-pay-56.webp",
     "width": 56,
     "masterBytes": 8376,
-    "beforeBytes": 828,
+    "beforeBytes": 834,
     "bytes": 834
   },
   {
@@ -1256,7 +1274,7 @@
     "output": "/assets/payments/apple-pay-112.webp",
     "width": 112,
     "masterBytes": 8376,
-    "beforeBytes": 1818,
+    "beforeBytes": 1758,
     "bytes": 1758
   },
   {
@@ -1265,7 +1283,7 @@
     "output": "/assets/payments/apple-pay-168.webp",
     "width": 168,
     "masterBytes": 8376,
-    "beforeBytes": 3024,
+    "beforeBytes": 2884,
     "bytes": 2884
   },
   {
@@ -1274,7 +1292,7 @@
     "output": "/assets/payments/apple-pay-252.webp",
     "width": 252,
     "masterBytes": 8376,
-    "beforeBytes": 5366,
+    "beforeBytes": 5218,
     "bytes": 5218
   },
   {
@@ -1283,7 +1301,7 @@
     "output": "/assets/payments/google-pay-56.webp",
     "width": 56,
     "masterBytes": 21805,
-    "beforeBytes": 1700,
+    "beforeBytes": 2124,
     "bytes": 2124
   },
   {
@@ -1292,7 +1310,7 @@
     "output": "/assets/payments/google-pay-112.webp",
     "width": 112,
     "masterBytes": 21805,
-    "beforeBytes": 3812,
+    "beforeBytes": 4852,
     "bytes": 4852
   },
   {
@@ -1301,7 +1319,7 @@
     "output": "/assets/payments/google-pay-168.webp",
     "width": 168,
     "masterBytes": 21805,
-    "beforeBytes": 6002,
+    "beforeBytes": 7564,
     "bytes": 7564
   },
   {
@@ -1310,7 +1328,7 @@
     "output": "/assets/payments/google-pay-252.webp",
     "width": 252,
     "masterBytes": 21805,
-    "beforeBytes": 9574,
+    "beforeBytes": 12926,
     "bytes": 12926
   },
   {
@@ -1319,7 +1337,7 @@
     "output": "/assets/payments/paypal-56.webp",
     "width": 56,
     "masterBytes": 22693,
-    "beforeBytes": 1258,
+    "beforeBytes": 1656,
     "bytes": 1656
   },
   {
@@ -1328,7 +1346,7 @@
     "output": "/assets/payments/paypal-112.webp",
     "width": 112,
     "masterBytes": 22693,
-    "beforeBytes": 3296,
+    "beforeBytes": 4648,
     "bytes": 4648
   },
   {
@@ -1337,7 +1355,7 @@
     "output": "/assets/payments/paypal-168.webp",
     "width": 168,
     "masterBytes": 22693,
-    "beforeBytes": 5682,
+    "beforeBytes": 7476,
     "bytes": 7476
   },
   {
@@ -1346,7 +1364,7 @@
     "output": "/assets/payments/paypal-252.webp",
     "width": 252,
     "masterBytes": 22693,
-    "beforeBytes": 8764,
+    "beforeBytes": 12568,
     "bytes": 12568
   },
   {
@@ -1355,7 +1373,7 @@
     "output": "/assets/flags/webp/ad-54.webp",
     "width": 54,
     "masterBytes": 33675,
-    "beforeBytes": 588,
+    "beforeBytes": 828,
     "bytes": 828
   },
   {
@@ -1364,7 +1382,7 @@
     "output": "/assets/flags/webp/ae-54.webp",
     "width": 54,
     "masterBytes": 266,
-    "beforeBytes": 310,
+    "beforeBytes": 140,
     "bytes": 140
   },
   {
@@ -1373,7 +1391,7 @@
     "output": "/assets/flags/webp/af-54.webp",
     "width": 54,
     "masterBytes": 21056,
-    "beforeBytes": 580,
+    "beforeBytes": 578,
     "bytes": 578
   },
   {
@@ -1382,7 +1400,7 @@
     "output": "/assets/flags/webp/ag-54.webp",
     "width": 54,
     "masterBytes": 743,
-    "beforeBytes": 972,
+    "beforeBytes": 694,
     "bytes": 694
   },
   {
@@ -1391,7 +1409,7 @@
     "output": "/assets/flags/webp/ai-54.webp",
     "width": 54,
     "masterBytes": 2336,
-    "beforeBytes": 982,
+    "beforeBytes": 1024,
     "bytes": 1024
   },
   {
@@ -1400,7 +1418,7 @@
     "output": "/assets/flags/webp/al-54.webp",
     "width": 54,
     "masterBytes": 3231,
-    "beforeBytes": 592,
+    "beforeBytes": 544,
     "bytes": 544
   },
   {
@@ -1409,7 +1427,7 @@
     "output": "/assets/flags/webp/am-54.webp",
     "width": 54,
     "masterBytes": 228,
-    "beforeBytes": 238,
+    "beforeBytes": 110,
     "bytes": 110
   },
   {
@@ -1418,7 +1436,7 @@
     "output": "/assets/flags/webp/ao-54.webp",
     "width": 54,
     "masterBytes": 1606,
-    "beforeBytes": 674,
+    "beforeBytes": 554,
     "bytes": 554
   },
   {
@@ -1427,7 +1445,7 @@
     "output": "/assets/flags/webp/aq-54.webp",
     "width": 54,
     "masterBytes": 2823,
-    "beforeBytes": 668,
+    "beforeBytes": 420,
     "bytes": 420
   },
   {
@@ -1436,7 +1454,7 @@
     "output": "/assets/flags/webp/ar-54.webp",
     "width": 54,
     "masterBytes": 3558,
-    "beforeBytes": 348,
+    "beforeBytes": 360,
     "bytes": 360
   },
   {
@@ -1445,7 +1463,7 @@
     "output": "/assets/flags/webp/as-54.webp",
     "width": 54,
     "masterBytes": 32249,
-    "beforeBytes": 1150,
+    "beforeBytes": 1202,
     "bytes": 1202
   },
   {
@@ -1454,7 +1472,7 @@
     "output": "/assets/flags/webp/at-54.webp",
     "width": 54,
     "masterBytes": 195,
-    "beforeBytes": 236,
+    "beforeBytes": 98,
     "bytes": 98
   },
   {
@@ -1463,7 +1481,7 @@
     "output": "/assets/flags/webp/au-54.webp",
     "width": 54,
     "masterBytes": 1296,
-    "beforeBytes": 1326,
+    "beforeBytes": 1158,
     "bytes": 1158
   },
   {
@@ -1472,7 +1490,7 @@
     "output": "/assets/flags/webp/aw-54.webp",
     "width": 54,
     "masterBytes": 9003,
-    "beforeBytes": 432,
+    "beforeBytes": 350,
     "bytes": 350
   },
   {
@@ -1481,7 +1499,7 @@
     "output": "/assets/flags/webp/ax-54.webp",
     "width": 54,
     "masterBytes": 556,
-    "beforeBytes": 662,
+    "beforeBytes": 234,
     "bytes": 234
   },
   {
@@ -1490,7 +1508,7 @@
     "output": "/assets/flags/webp/az-54.webp",
     "width": 54,
     "masterBytes": 501,
-    "beforeBytes": 512,
+    "beforeBytes": 342,
     "bytes": 342
   },
   {
@@ -1499,7 +1517,7 @@
     "output": "/assets/flags/webp/ba-54.webp",
     "width": 54,
     "masterBytes": 1240,
-    "beforeBytes": 1026,
+    "beforeBytes": 720,
     "bytes": 720
   },
   {
@@ -1508,7 +1526,7 @@
     "output": "/assets/flags/webp/bb-54.webp",
     "width": 54,
     "masterBytes": 628,
-    "beforeBytes": 614,
+    "beforeBytes": 360,
     "bytes": 360
   },
   {
@@ -1517,7 +1535,7 @@
     "output": "/assets/flags/webp/bd-54.webp",
     "width": 54,
     "masterBytes": 187,
-    "beforeBytes": 412,
+    "beforeBytes": 332,
     "bytes": 332
   },
   {
@@ -1526,7 +1544,7 @@
     "output": "/assets/flags/webp/be-54.webp",
     "width": 54,
     "masterBytes": 302,
-    "beforeBytes": 234,
+    "beforeBytes": 104,
     "bytes": 104
   },
   {
@@ -1535,7 +1553,7 @@
     "output": "/assets/flags/webp/bf-54.webp",
     "width": 54,
     "masterBytes": 353,
-    "beforeBytes": 656,
+    "beforeBytes": 442,
     "bytes": 442
   },
   {
@@ -1544,7 +1562,7 @@
     "output": "/assets/flags/webp/bg-54.webp",
     "width": 54,
     "masterBytes": 225,
-    "beforeBytes": 216,
+    "beforeBytes": 106,
     "bytes": 106
   },
   {
@@ -1553,7 +1571,7 @@
     "output": "/assets/flags/webp/bh-54.webp",
     "width": 54,
     "masterBytes": 252,
-    "beforeBytes": 548,
+    "beforeBytes": 316,
     "bytes": 316
   },
   {
@@ -1562,7 +1580,7 @@
     "output": "/assets/flags/webp/bi-54.webp",
     "width": 54,
     "masterBytes": 1078,
-    "beforeBytes": 1274,
+    "beforeBytes": 898,
     "bytes": 898
   },
   {
@@ -1571,7 +1589,7 @@
     "output": "/assets/flags/webp/bj-54.webp",
     "width": 54,
     "masterBytes": 499,
-    "beforeBytes": 284,
+    "beforeBytes": 142,
     "bytes": 142
   },
   {
@@ -1580,7 +1598,7 @@
     "output": "/assets/flags/webp/bl-54.webp",
     "width": 54,
     "masterBytes": 231,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -1589,7 +1607,7 @@
     "output": "/assets/flags/webp/bm-54.webp",
     "width": 54,
     "masterBytes": 22811,
-    "beforeBytes": 1124,
+    "beforeBytes": 1488,
     "bytes": 1488
   },
   {
@@ -1598,7 +1616,7 @@
     "output": "/assets/flags/webp/bn-54.webp",
     "width": 54,
     "masterBytes": 14316,
-    "beforeBytes": 1078,
+    "beforeBytes": 1442,
     "bytes": 1442
   },
   {
@@ -1607,7 +1625,7 @@
     "output": "/assets/flags/webp/bo-54.webp",
     "width": 54,
     "masterBytes": 112084,
-    "beforeBytes": 480,
+    "beforeBytes": 524,
     "bytes": 524
   },
   {
@@ -1616,7 +1634,7 @@
     "output": "/assets/flags/webp/bq-54.webp",
     "width": 54,
     "masterBytes": 221,
-    "beforeBytes": 228,
+    "beforeBytes": 114,
     "bytes": 114
   },
   {
@@ -1625,7 +1643,7 @@
     "output": "/assets/flags/webp/br-54.webp",
     "width": 54,
     "masterBytes": 8096,
-    "beforeBytes": 1036,
+    "beforeBytes": 1194,
     "bytes": 1194
   },
   {
@@ -1634,7 +1652,7 @@
     "output": "/assets/flags/webp/bs-54.webp",
     "width": 54,
     "masterBytes": 557,
-    "beforeBytes": 662,
+    "beforeBytes": 514,
     "bytes": 514
   },
   {
@@ -1643,7 +1661,7 @@
     "output": "/assets/flags/webp/bt-54.webp",
     "width": 54,
     "masterBytes": 25115,
-    "beforeBytes": 970,
+    "beforeBytes": 1208,
     "bytes": 1208
   },
   {
@@ -1652,7 +1670,7 @@
     "output": "/assets/flags/webp/bv-54.webp",
     "width": 54,
     "masterBytes": 582,
-    "beforeBytes": 622,
+    "beforeBytes": 262,
     "bytes": 262
   },
   {
@@ -1661,7 +1679,7 @@
     "output": "/assets/flags/webp/bw-54.webp",
     "width": 54,
     "masterBytes": 264,
-    "beforeBytes": 236,
+    "beforeBytes": 104,
     "bytes": 104
   },
   {
@@ -1670,7 +1688,7 @@
     "output": "/assets/flags/webp/by-54.webp",
     "width": 54,
     "masterBytes": 2124,
-    "beforeBytes": 692,
+    "beforeBytes": 634,
     "bytes": 634
   },
   {
@@ -1679,7 +1697,7 @@
     "output": "/assets/flags/webp/bz-54.webp",
     "width": 54,
     "masterBytes": 46671,
-    "beforeBytes": 1216,
+    "beforeBytes": 2218,
     "bytes": 2218
   },
   {
@@ -1688,7 +1706,7 @@
     "output": "/assets/flags/webp/ca-54.webp",
     "width": 54,
     "masterBytes": 642,
-    "beforeBytes": 626,
+    "beforeBytes": 426,
     "bytes": 426
   },
   {
@@ -1697,7 +1715,7 @@
     "output": "/assets/flags/webp/cc-54.webp",
     "width": 54,
     "masterBytes": 3150,
-    "beforeBytes": 700,
+    "beforeBytes": 512,
     "bytes": 512
   },
   {
@@ -1706,7 +1724,7 @@
     "output": "/assets/flags/webp/cd-54.webp",
     "width": 54,
     "masterBytes": 334,
-    "beforeBytes": 1214,
+    "beforeBytes": 522,
     "bytes": 522
   },
   {
@@ -1715,7 +1733,7 @@
     "output": "/assets/flags/webp/cf-54.webp",
     "width": 54,
     "masterBytes": 687,
-    "beforeBytes": 728,
+    "beforeBytes": 364,
     "bytes": 364
   },
   {
@@ -1724,7 +1742,7 @@
     "output": "/assets/flags/webp/cg-54.webp",
     "width": 54,
     "masterBytes": 470,
-    "beforeBytes": 816,
+    "beforeBytes": 204,
     "bytes": 204
   },
   {
@@ -1733,7 +1751,7 @@
     "output": "/assets/flags/webp/ch-54.webp",
     "width": 54,
     "masterBytes": 290,
-    "beforeBytes": 434,
+    "beforeBytes": 144,
     "bytes": 144
   },
   {
@@ -1742,7 +1760,7 @@
     "output": "/assets/flags/webp/ci-54.webp",
     "width": 54,
     "masterBytes": 277,
-    "beforeBytes": 252,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -1751,7 +1769,7 @@
     "output": "/assets/flags/webp/ck-54.webp",
     "width": 54,
     "masterBytes": 1898,
-    "beforeBytes": 1192,
+    "beforeBytes": 1218,
     "bytes": 1218
   },
   {
@@ -1760,7 +1778,7 @@
     "output": "/assets/flags/webp/cl-54.webp",
     "width": 54,
     "masterBytes": 552,
-    "beforeBytes": 430,
+    "beforeBytes": 278,
     "bytes": 278
   },
   {
@@ -1769,7 +1787,7 @@
     "output": "/assets/flags/webp/cm-54.webp",
     "width": 54,
     "masterBytes": 840,
-    "beforeBytes": 330,
+    "beforeBytes": 234,
     "bytes": 234
   },
   {
@@ -1778,7 +1796,7 @@
     "output": "/assets/flags/webp/cn-54.webp",
     "width": 54,
     "masterBytes": 813,
-    "beforeBytes": 484,
+    "beforeBytes": 284,
     "bytes": 284
   },
   {
@@ -1787,7 +1805,7 @@
     "output": "/assets/flags/webp/co-54.webp",
     "width": 54,
     "masterBytes": 286,
-    "beforeBytes": 234,
+    "beforeBytes": 112,
     "bytes": 112
   },
   {
@@ -1796,7 +1814,7 @@
     "output": "/assets/flags/webp/cp-54.webp",
     "width": 54,
     "masterBytes": 289,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -1805,7 +1823,7 @@
     "output": "/assets/flags/webp/cr-54.webp",
     "width": 54,
     "masterBytes": 290,
-    "beforeBytes": 274,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -1814,7 +1832,7 @@
     "output": "/assets/flags/webp/cu-54.webp",
     "width": 54,
     "masterBytes": 610,
-    "beforeBytes": 756,
+    "beforeBytes": 618,
     "bytes": 618
   },
   {
@@ -1823,7 +1841,7 @@
     "output": "/assets/flags/webp/cv-54.webp",
     "width": 54,
     "masterBytes": 1411,
-    "beforeBytes": 702,
+    "beforeBytes": 668,
     "bytes": 668
   },
   {
@@ -1832,7 +1850,7 @@
     "output": "/assets/flags/webp/cw-54.webp",
     "width": 54,
     "masterBytes": 687,
-    "beforeBytes": 392,
+    "beforeBytes": 276,
     "bytes": 276
   },
   {
@@ -1841,7 +1859,7 @@
     "output": "/assets/flags/webp/cx-54.webp",
     "width": 54,
     "masterBytes": 2462,
-    "beforeBytes": 844,
+    "beforeBytes": 756,
     "bytes": 756
   },
   {
@@ -1850,7 +1868,7 @@
     "output": "/assets/flags/webp/cy-54.webp",
     "width": 54,
     "masterBytes": 5914,
-    "beforeBytes": 678,
+    "beforeBytes": 604,
     "bytes": 604
   },
   {
@@ -1859,7 +1877,7 @@
     "output": "/assets/flags/webp/cz-54.webp",
     "width": 54,
     "masterBytes": 225,
-    "beforeBytes": 502,
+    "beforeBytes": 266,
     "bytes": 266
   },
   {
@@ -1868,7 +1886,7 @@
     "output": "/assets/flags/webp/de-54.webp",
     "width": 54,
     "masterBytes": 221,
-    "beforeBytes": 212,
+    "beforeBytes": 92,
     "bytes": 92
   },
   {
@@ -1877,7 +1895,7 @@
     "output": "/assets/flags/webp/dg-54.webp",
     "width": 54,
     "masterBytes": 23163,
-    "beforeBytes": 2364,
+    "beforeBytes": 3252,
     "bytes": 3252
   },
   {
@@ -1886,7 +1904,7 @@
     "output": "/assets/flags/webp/dj-54.webp",
     "width": 54,
     "masterBytes": 585,
-    "beforeBytes": 612,
+    "beforeBytes": 434,
     "bytes": 434
   },
   {
@@ -1895,7 +1913,7 @@
     "output": "/assets/flags/webp/dk-54.webp",
     "width": 54,
     "masterBytes": 236,
-    "beforeBytes": 328,
+    "beforeBytes": 158,
     "bytes": 158
   },
   {
@@ -1904,7 +1922,7 @@
     "output": "/assets/flags/webp/dm-54.webp",
     "width": 54,
     "masterBytes": 15822,
-    "beforeBytes": 962,
+    "beforeBytes": 1088,
     "bytes": 1088
   },
   {
@@ -1913,7 +1931,7 @@
     "output": "/assets/flags/webp/do-54.webp",
     "width": 54,
     "masterBytes": 50066,
-    "beforeBytes": 526,
+    "beforeBytes": 430,
     "bytes": 430
   },
   {
@@ -1922,7 +1940,7 @@
     "output": "/assets/flags/webp/dz-54.webp",
     "width": 54,
     "masterBytes": 294,
-    "beforeBytes": 520,
+    "beforeBytes": 468,
     "bytes": 468
   },
   {
@@ -1931,7 +1949,7 @@
     "output": "/assets/flags/webp/ec-54.webp",
     "width": 54,
     "masterBytes": 28973,
-    "beforeBytes": 1082,
+    "beforeBytes": 2036,
     "bytes": 2036
   },
   {
@@ -1940,7 +1958,7 @@
     "output": "/assets/flags/webp/ee-54.webp",
     "width": 54,
     "masterBytes": 225,
-    "beforeBytes": 218,
+    "beforeBytes": 108,
     "bytes": 108
   },
   {
@@ -1949,7 +1967,7 @@
     "output": "/assets/flags/webp/eg-54.webp",
     "width": 54,
     "masterBytes": 9854,
-    "beforeBytes": 360,
+    "beforeBytes": 346,
     "bytes": 346
   },
   {
@@ -1958,7 +1976,7 @@
     "output": "/assets/flags/webp/eh-54.webp",
     "width": 54,
     "masterBytes": 804,
-    "beforeBytes": 706,
+    "beforeBytes": 474,
     "bytes": 474
   },
   {
@@ -1967,7 +1985,7 @@
     "output": "/assets/flags/webp/er-54.webp",
     "width": 54,
     "masterBytes": 3188,
-    "beforeBytes": 1130,
+    "beforeBytes": 928,
     "bytes": 928
   },
   {
@@ -1976,7 +1994,7 @@
     "output": "/assets/flags/webp/es-54.webp",
     "width": 54,
     "masterBytes": 91011,
-    "beforeBytes": 504,
+    "beforeBytes": 728,
     "bytes": 728
   },
   {
@@ -1985,7 +2003,7 @@
     "output": "/assets/flags/webp/et-54.webp",
     "width": 54,
     "masterBytes": 1145,
-    "beforeBytes": 648,
+    "beforeBytes": 610,
     "bytes": 610
   },
   {
@@ -1994,7 +2012,7 @@
     "output": "/assets/flags/webp/eu-54.webp",
     "width": 54,
     "masterBytes": 941,
-    "beforeBytes": 626,
+    "beforeBytes": 278,
     "bytes": 278
   },
   {
@@ -2003,7 +2021,7 @@
     "output": "/assets/flags/webp/fi-54.webp",
     "width": 54,
     "masterBytes": 234,
-    "beforeBytes": 460,
+    "beforeBytes": 168,
     "bytes": 168
   },
   {
@@ -2012,7 +2030,7 @@
     "output": "/assets/flags/webp/fj-54.webp",
     "width": 54,
     "masterBytes": 25686,
-    "beforeBytes": 1148,
+    "beforeBytes": 1540,
     "bytes": 1540
   },
   {
@@ -2021,7 +2039,7 @@
     "output": "/assets/flags/webp/fk-54.webp",
     "width": 54,
     "masterBytes": 30044,
-    "beforeBytes": 1248,
+    "beforeBytes": 1926,
     "bytes": 1926
   },
   {
@@ -2030,7 +2048,7 @@
     "output": "/assets/flags/webp/fm-54.webp",
     "width": 54,
     "masterBytes": 771,
-    "beforeBytes": 466,
+    "beforeBytes": 352,
     "bytes": 352
   },
   {
@@ -2039,7 +2057,7 @@
     "output": "/assets/flags/webp/fo-54.webp",
     "width": 54,
     "masterBytes": 555,
-    "beforeBytes": 462,
+    "beforeBytes": 234,
     "bytes": 234
   },
   {
@@ -2048,7 +2066,7 @@
     "output": "/assets/flags/webp/fr-54.webp",
     "width": 54,
     "masterBytes": 231,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -2057,7 +2075,7 @@
     "output": "/assets/flags/webp/ga-54.webp",
     "width": 54,
     "masterBytes": 271,
-    "beforeBytes": 250,
+    "beforeBytes": 108,
     "bytes": 108
   },
   {
@@ -2066,7 +2084,7 @@
     "output": "/assets/flags/webp/gb-54.webp",
     "width": 54,
     "masterBytes": 504,
-    "beforeBytes": 1684,
+    "beforeBytes": 1376,
     "bytes": 1376
   },
   {
@@ -2075,7 +2093,7 @@
     "output": "/assets/flags/webp/gd-54.webp",
     "width": 54,
     "masterBytes": 1720,
-    "beforeBytes": 1216,
+    "beforeBytes": 968,
     "bytes": 968
   },
   {
@@ -2084,7 +2102,7 @@
     "output": "/assets/flags/webp/ge-54.webp",
     "width": 54,
     "masterBytes": 1362,
-    "beforeBytes": 874,
+    "beforeBytes": 310,
     "bytes": 310
   },
   {
@@ -2093,7 +2111,7 @@
     "output": "/assets/flags/webp/gf-54.webp",
     "width": 54,
     "masterBytes": 231,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -2102,7 +2120,7 @@
     "output": "/assets/flags/webp/gg-54.webp",
     "width": 54,
     "masterBytes": 604,
-    "beforeBytes": 818,
+    "beforeBytes": 262,
     "bytes": 262
   },
   {
@@ -2111,7 +2129,7 @@
     "output": "/assets/flags/webp/gh-54.webp",
     "width": 54,
     "masterBytes": 293,
-    "beforeBytes": 544,
+    "beforeBytes": 276,
     "bytes": 276
   },
   {
@@ -2120,7 +2138,7 @@
     "output": "/assets/flags/webp/gi-54.webp",
     "width": 54,
     "masterBytes": 2948,
-    "beforeBytes": 854,
+    "beforeBytes": 904,
     "bytes": 904
   },
   {
@@ -2129,7 +2147,7 @@
     "output": "/assets/flags/webp/gl-54.webp",
     "width": 54,
     "masterBytes": 223,
-    "beforeBytes": 620,
+    "beforeBytes": 346,
     "bytes": 346
   },
   {
@@ -2138,7 +2156,7 @@
     "output": "/assets/flags/webp/gm-54.webp",
     "width": 54,
     "masterBytes": 543,
-    "beforeBytes": 276,
+    "beforeBytes": 122,
     "bytes": 122
   },
   {
@@ -2147,7 +2165,7 @@
     "output": "/assets/flags/webp/gn-54.webp",
     "width": 54,
     "masterBytes": 292,
-    "beforeBytes": 240,
+    "beforeBytes": 90,
     "bytes": 90
   },
   {
@@ -2156,7 +2174,7 @@
     "output": "/assets/flags/webp/gp-54.webp",
     "width": 54,
     "masterBytes": 231,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -2165,7 +2183,7 @@
     "output": "/assets/flags/webp/gq-54.webp",
     "width": 54,
     "masterBytes": 5072,
-    "beforeBytes": 600,
+    "beforeBytes": 618,
     "bytes": 618
   },
   {
@@ -2174,7 +2192,7 @@
     "output": "/assets/flags/webp/gr-54.webp",
     "width": 54,
     "masterBytes": 868,
-    "beforeBytes": 668,
+    "beforeBytes": 246,
     "bytes": 246
   },
   {
@@ -2183,7 +2201,7 @@
     "output": "/assets/flags/webp/gs-54.webp",
     "width": 54,
     "masterBytes": 32525,
-    "beforeBytes": 1406,
+    "beforeBytes": 2282,
     "bytes": 2282
   },
   {
@@ -2192,7 +2210,7 @@
     "output": "/assets/flags/webp/gt-54.webp",
     "width": 54,
     "masterBytes": 35091,
-    "beforeBytes": 468,
+    "beforeBytes": 590,
     "bytes": 590
   },
   {
@@ -2201,7 +2219,7 @@
     "output": "/assets/flags/webp/gu-54.webp",
     "width": 54,
     "masterBytes": 5096,
-    "beforeBytes": 886,
+    "beforeBytes": 1368,
     "bytes": 1368
   },
   {
@@ -2210,7 +2228,7 @@
     "output": "/assets/flags/webp/gw-54.webp",
     "width": 54,
     "masterBytes": 846,
-    "beforeBytes": 454,
+    "beforeBytes": 288,
     "bytes": 288
   },
   {
@@ -2219,7 +2237,7 @@
     "output": "/assets/flags/webp/gy-54.webp",
     "width": 54,
     "masterBytes": 493,
-    "beforeBytes": 958,
+    "beforeBytes": 1072,
     "bytes": 1072
   },
   {
@@ -2228,7 +2246,7 @@
     "output": "/assets/flags/webp/hk-54.webp",
     "width": 54,
     "masterBytes": 727,
-    "beforeBytes": 666,
+    "beforeBytes": 500,
     "bytes": 500
   },
   {
@@ -2237,7 +2255,7 @@
     "output": "/assets/flags/webp/hm-54.webp",
     "width": 54,
     "masterBytes": 1296,
-    "beforeBytes": 1326,
+    "beforeBytes": 1158,
     "bytes": 1158
   },
   {
@@ -2246,7 +2264,7 @@
     "output": "/assets/flags/webp/hn-54.webp",
     "width": 54,
     "masterBytes": 1144,
-    "beforeBytes": 518,
+    "beforeBytes": 274,
     "bytes": 274
   },
   {
@@ -2255,7 +2273,7 @@
     "output": "/assets/flags/webp/hr-54.webp",
     "width": 54,
     "masterBytes": 41177,
-    "beforeBytes": 916,
+    "beforeBytes": 824,
     "bytes": 824
   },
   {
@@ -2264,7 +2282,7 @@
     "output": "/assets/flags/webp/ht-54.webp",
     "width": 54,
     "masterBytes": 14570,
-    "beforeBytes": 518,
+    "beforeBytes": 514,
     "bytes": 514
   },
   {
@@ -2273,7 +2291,7 @@
     "output": "/assets/flags/webp/hu-54.webp",
     "width": 54,
     "masterBytes": 271,
-    "beforeBytes": 244,
+    "beforeBytes": 114,
     "bytes": 114
   },
   {
@@ -2282,7 +2300,7 @@
     "output": "/assets/flags/webp/ic-54.webp",
     "width": 54,
     "masterBytes": 286,
-    "beforeBytes": 306,
+    "beforeBytes": 108,
     "bytes": 108
   },
   {
@@ -2291,7 +2309,7 @@
     "output": "/assets/flags/webp/id-54.webp",
     "width": 54,
     "masterBytes": 178,
-    "beforeBytes": 190,
+    "beforeBytes": 82,
     "bytes": 82
   },
   {
@@ -2300,7 +2318,7 @@
     "output": "/assets/flags/webp/ie-54.webp",
     "width": 54,
     "masterBytes": 289,
-    "beforeBytes": 292,
+    "beforeBytes": 110,
     "bytes": 110
   },
   {
@@ -2309,7 +2327,7 @@
     "output": "/assets/flags/webp/il-54.webp",
     "width": 54,
     "masterBytes": 834,
-    "beforeBytes": 686,
+    "beforeBytes": 434,
     "bytes": 434
   },
   {
@@ -2318,7 +2336,7 @@
     "output": "/assets/flags/webp/im-54.webp",
     "width": 54,
     "masterBytes": 9896,
-    "beforeBytes": 760,
+    "beforeBytes": 932,
     "bytes": 932
   },
   {
@@ -2327,7 +2345,7 @@
     "output": "/assets/flags/webp/in-54.webp",
     "width": 54,
     "masterBytes": 1090,
-    "beforeBytes": 480,
+    "beforeBytes": 330,
     "bytes": 330
   },
   {
@@ -2336,7 +2354,7 @@
     "output": "/assets/flags/webp/io-54.webp",
     "width": 54,
     "masterBytes": 23163,
-    "beforeBytes": 2364,
+    "beforeBytes": 3252,
     "bytes": 3252
   },
   {
@@ -2345,7 +2363,7 @@
     "output": "/assets/flags/webp/iq-54.webp",
     "width": 54,
     "masterBytes": 1466,
-    "beforeBytes": 454,
+    "beforeBytes": 334,
     "bytes": 334
   },
   {
@@ -2354,7 +2372,7 @@
     "output": "/assets/flags/webp/ir-54.webp",
     "width": 54,
     "masterBytes": 15397,
-    "beforeBytes": 850,
+    "beforeBytes": 1076,
     "bytes": 1076
   },
   {
@@ -2363,7 +2381,7 @@
     "output": "/assets/flags/webp/is-54.webp",
     "width": 54,
     "masterBytes": 509,
-    "beforeBytes": 498,
+    "beforeBytes": 206,
     "bytes": 206
   },
   {
@@ -2372,7 +2390,7 @@
     "output": "/assets/flags/webp/it-54.webp",
     "width": 54,
     "masterBytes": 289,
-    "beforeBytes": 290,
+    "beforeBytes": 116,
     "bytes": 116
   },
   {
@@ -2381,7 +2399,7 @@
     "output": "/assets/flags/webp/je-54.webp",
     "width": 54,
     "masterBytes": 46069,
-    "beforeBytes": 1296,
+    "beforeBytes": 1062,
     "bytes": 1062
   },
   {
@@ -2390,7 +2408,7 @@
     "output": "/assets/flags/webp/jm-54.webp",
     "width": 54,
     "masterBytes": 401,
-    "beforeBytes": 1250,
+    "beforeBytes": 336,
     "bytes": 336
   },
   {
@@ -2399,7 +2417,7 @@
     "output": "/assets/flags/webp/jo-54.webp",
     "width": 54,
     "masterBytes": 727,
-    "beforeBytes": 648,
+    "beforeBytes": 384,
     "bytes": 384
   },
   {
@@ -2408,7 +2426,7 @@
     "output": "/assets/flags/webp/jp-54.webp",
     "width": 54,
     "masterBytes": 470,
-    "beforeBytes": 452,
+    "beforeBytes": 302,
     "bytes": 302
   },
   {
@@ -2417,7 +2435,7 @@
     "output": "/assets/flags/webp/ke-54.webp",
     "width": 54,
     "masterBytes": 1421,
-    "beforeBytes": 730,
+    "beforeBytes": 698,
     "bytes": 698
   },
   {
@@ -2426,7 +2444,7 @@
     "output": "/assets/flags/webp/kg-54.webp",
     "width": 54,
     "masterBytes": 3371,
-    "beforeBytes": 688,
+    "beforeBytes": 652,
     "bytes": 652
   },
   {
@@ -2435,7 +2453,7 @@
     "output": "/assets/flags/webp/kh-54.webp",
     "width": 54,
     "masterBytes": 7277,
-    "beforeBytes": 642,
+    "beforeBytes": 712,
     "bytes": 712
   },
   {
@@ -2444,7 +2462,7 @@
     "output": "/assets/flags/webp/ki-54.webp",
     "width": 54,
     "masterBytes": 5637,
-    "beforeBytes": 1358,
+    "beforeBytes": 1916,
     "bytes": 1916
   },
   {
@@ -2453,7 +2471,7 @@
     "output": "/assets/flags/webp/km-54.webp",
     "width": 54,
     "masterBytes": 1053,
-    "beforeBytes": 736,
+    "beforeBytes": 712,
     "bytes": 712
   },
   {
@@ -2462,7 +2480,7 @@
     "output": "/assets/flags/webp/kn-54.webp",
     "width": 54,
     "masterBytes": 796,
-    "beforeBytes": 1190,
+    "beforeBytes": 1030,
     "bytes": 1030
   },
   {
@@ -2471,7 +2489,7 @@
     "output": "/assets/flags/webp/kp-54.webp",
     "width": 54,
     "masterBytes": 790,
-    "beforeBytes": 734,
+    "beforeBytes": 470,
     "bytes": 470
   },
   {
@@ -2480,7 +2498,7 @@
     "output": "/assets/flags/webp/kr-54.webp",
     "width": 54,
     "masterBytes": 1061,
-    "beforeBytes": 1024,
+    "beforeBytes": 1050,
     "bytes": 1050
   },
   {
@@ -2489,7 +2507,7 @@
     "output": "/assets/flags/webp/kw-54.webp",
     "width": 54,
     "masterBytes": 517,
-    "beforeBytes": 514,
+    "beforeBytes": 316,
     "bytes": 316
   },
   {
@@ -2498,7 +2516,7 @@
     "output": "/assets/flags/webp/ky-54.webp",
     "width": 54,
     "masterBytes": 24005,
-    "beforeBytes": 1394,
+    "beforeBytes": 2226,
     "bytes": 2226
   },
   {
@@ -2507,7 +2525,7 @@
     "output": "/assets/flags/webp/kz-54.webp",
     "width": 54,
     "masterBytes": 7289,
-    "beforeBytes": 784,
+    "beforeBytes": 968,
     "bytes": 968
   },
   {
@@ -2516,7 +2534,7 @@
     "output": "/assets/flags/webp/la-54.webp",
     "width": 54,
     "masterBytes": 456,
-    "beforeBytes": 514,
+    "beforeBytes": 262,
     "bytes": 262
   },
   {
@@ -2525,7 +2543,7 @@
     "output": "/assets/flags/webp/lb-54.webp",
     "width": 54,
     "masterBytes": 2803,
-    "beforeBytes": 702,
+    "beforeBytes": 572,
     "bytes": 572
   },
   {
@@ -2534,7 +2552,7 @@
     "output": "/assets/flags/webp/lc-54.webp",
     "width": 54,
     "masterBytes": 352,
-    "beforeBytes": 692,
+    "beforeBytes": 778,
     "bytes": 778
   },
   {
@@ -2543,7 +2561,7 @@
     "output": "/assets/flags/webp/li-54.webp",
     "width": 54,
     "masterBytes": 8245,
-    "beforeBytes": 372,
+    "beforeBytes": 460,
     "bytes": 460
   },
   {
@@ -2552,7 +2570,7 @@
     "output": "/assets/flags/webp/lk-54.webp",
     "width": 54,
     "masterBytes": 11338,
-    "beforeBytes": 936,
+    "beforeBytes": 1042,
     "bytes": 1042
   },
   {
@@ -2561,7 +2579,7 @@
     "output": "/assets/flags/webp/lr-54.webp",
     "width": 54,
     "masterBytes": 713,
-    "beforeBytes": 668,
+    "beforeBytes": 378,
     "bytes": 378
   },
   {
@@ -2570,7 +2588,7 @@
     "output": "/assets/flags/webp/ls-54.webp",
     "width": 54,
     "masterBytes": 1133,
-    "beforeBytes": 430,
+    "beforeBytes": 280,
     "bytes": 280
   },
   {
@@ -2579,7 +2597,7 @@
     "output": "/assets/flags/webp/lt-54.webp",
     "width": 54,
     "masterBytes": 439,
-    "beforeBytes": 250,
+    "beforeBytes": 120,
     "bytes": 120
   },
   {
@@ -2588,7 +2606,7 @@
     "output": "/assets/flags/webp/lu-54.webp",
     "width": 54,
     "masterBytes": 225,
-    "beforeBytes": 230,
+    "beforeBytes": 114,
     "bytes": 114
   },
   {
@@ -2597,7 +2615,7 @@
     "output": "/assets/flags/webp/lv-54.webp",
     "width": 54,
     "masterBytes": 230,
-    "beforeBytes": 210,
+    "beforeBytes": 98,
     "bytes": 98
   },
   {
@@ -2606,7 +2624,7 @@
     "output": "/assets/flags/webp/ly-54.webp",
     "width": 54,
     "masterBytes": 549,
-    "beforeBytes": 434,
+    "beforeBytes": 268,
     "bytes": 268
   },
   {
@@ -2615,7 +2633,7 @@
     "output": "/assets/flags/webp/ma-54.webp",
     "width": 54,
     "masterBytes": 247,
-    "beforeBytes": 246,
+    "beforeBytes": 216,
     "bytes": 216
   },
   {
@@ -2624,7 +2642,7 @@
     "output": "/assets/flags/webp/mc-54.webp",
     "width": 54,
     "masterBytes": 234,
-    "beforeBytes": 184,
+    "beforeBytes": 84,
     "bytes": 84
   },
   {
@@ -2633,7 +2651,7 @@
     "output": "/assets/flags/webp/md-54.webp",
     "width": 54,
     "masterBytes": 11203,
-    "beforeBytes": 806,
+    "beforeBytes": 1446,
     "bytes": 1446
   },
   {
@@ -2642,7 +2660,7 @@
     "output": "/assets/flags/webp/me-54.webp",
     "width": 54,
     "masterBytes": 62566,
-    "beforeBytes": 816,
+    "beforeBytes": 1206,
     "bytes": 1206
   },
   {
@@ -2651,7 +2669,7 @@
     "output": "/assets/flags/webp/mf-54.webp",
     "width": 54,
     "masterBytes": 231,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -2660,7 +2678,7 @@
     "output": "/assets/flags/webp/mg-54.webp",
     "width": 54,
     "masterBytes": 299,
-    "beforeBytes": 260,
+    "beforeBytes": 116,
     "bytes": 116
   },
   {
@@ -2669,7 +2687,7 @@
     "output": "/assets/flags/webp/mh-54.webp",
     "width": 54,
     "masterBytes": 729,
-    "beforeBytes": 1150,
+    "beforeBytes": 1516,
     "bytes": 1516
   },
   {
@@ -2678,7 +2696,7 @@
     "output": "/assets/flags/webp/mk-54.webp",
     "width": 54,
     "masterBytes": 379,
-    "beforeBytes": 1592,
+    "beforeBytes": 684,
     "bytes": 684
   },
   {
@@ -2687,7 +2705,7 @@
     "output": "/assets/flags/webp/ml-54.webp",
     "width": 54,
     "masterBytes": 273,
-    "beforeBytes": 256,
+    "beforeBytes": 112,
     "bytes": 112
   },
   {
@@ -2696,7 +2714,7 @@
     "output": "/assets/flags/webp/mm-54.webp",
     "width": 54,
     "masterBytes": 710,
-    "beforeBytes": 662,
+    "beforeBytes": 506,
     "bytes": 506
   },
   {
@@ -2705,7 +2723,7 @@
     "output": "/assets/flags/webp/mn-54.webp",
     "width": 54,
     "masterBytes": 1437,
-    "beforeBytes": 608,
+    "beforeBytes": 398,
     "bytes": 398
   },
   {
@@ -2714,7 +2732,7 @@
     "output": "/assets/flags/webp/mo-54.webp",
     "width": 54,
     "masterBytes": 1509,
-    "beforeBytes": 582,
+    "beforeBytes": 602,
     "bytes": 602
   },
   {
@@ -2723,7 +2741,7 @@
     "output": "/assets/flags/webp/mp-54.webp",
     "width": 54,
     "masterBytes": 23332,
-    "beforeBytes": 1134,
+    "beforeBytes": 2080,
     "bytes": 2080
   },
   {
@@ -2732,7 +2750,7 @@
     "output": "/assets/flags/webp/mq-54.webp",
     "width": 54,
     "masterBytes": 228,
-    "beforeBytes": 464,
+    "beforeBytes": 278,
     "bytes": 278
   },
   {
@@ -2741,7 +2759,7 @@
     "output": "/assets/flags/webp/mr-54.webp",
     "width": 54,
     "masterBytes": 445,
-    "beforeBytes": 646,
+    "beforeBytes": 404,
     "bytes": 404
   },
   {
@@ -2750,7 +2768,7 @@
     "output": "/assets/flags/webp/ms-54.webp",
     "width": 54,
     "masterBytes": 6066,
-    "beforeBytes": 1152,
+    "beforeBytes": 1486,
     "bytes": 1486
   },
   {
@@ -2759,7 +2777,7 @@
     "output": "/assets/flags/webp/mt-54.webp",
     "width": 54,
     "masterBytes": 14638,
-    "beforeBytes": 436,
+    "beforeBytes": 438,
     "bytes": 438
   },
   {
@@ -2768,7 +2786,7 @@
     "output": "/assets/flags/webp/mu-54.webp",
     "width": 54,
     "masterBytes": 316,
-    "beforeBytes": 258,
+    "beforeBytes": 124,
     "bytes": 124
   },
   {
@@ -2777,7 +2795,7 @@
     "output": "/assets/flags/webp/mv-54.webp",
     "width": 54,
     "masterBytes": 286,
-    "beforeBytes": 380,
+    "beforeBytes": 276,
     "bytes": 276
   },
   {
@@ -2786,7 +2804,7 @@
     "output": "/assets/flags/webp/mw-54.webp",
     "width": 54,
     "masterBytes": 3692,
-    "beforeBytes": 530,
+    "beforeBytes": 476,
     "bytes": 476
   },
   {
@@ -2795,7 +2813,7 @@
     "output": "/assets/flags/webp/mx-54.webp",
     "width": 54,
     "masterBytes": 93451,
-    "beforeBytes": 408,
+    "beforeBytes": 596,
     "bytes": 596
   },
   {
@@ -2804,7 +2822,7 @@
     "output": "/assets/flags/webp/my-54.webp",
     "width": 54,
     "masterBytes": 1386,
-    "beforeBytes": 808,
+    "beforeBytes": 526,
     "bytes": 526
   },
   {
@@ -2813,7 +2831,7 @@
     "output": "/assets/flags/webp/mz-54.webp",
     "width": 54,
     "masterBytes": 2609,
-    "beforeBytes": 724,
+    "beforeBytes": 778,
     "bytes": 778
   },
   {
@@ -2822,7 +2840,7 @@
     "output": "/assets/flags/webp/na-54.webp",
     "width": 54,
     "masterBytes": 993,
-    "beforeBytes": 1148,
+    "beforeBytes": 1208,
     "bytes": 1208
   },
   {
@@ -2831,7 +2849,7 @@
     "output": "/assets/flags/webp/nc-54.webp",
     "width": 54,
     "masterBytes": 1345,
-    "beforeBytes": 860,
+    "beforeBytes": 870,
     "bytes": 870
   },
   {
@@ -2840,7 +2858,7 @@
     "output": "/assets/flags/webp/ne-54.webp",
     "width": 54,
     "masterBytes": 273,
-    "beforeBytes": 480,
+    "beforeBytes": 230,
     "bytes": 230
   },
   {
@@ -2849,7 +2867,7 @@
     "output": "/assets/flags/webp/nf-54.webp",
     "width": 54,
     "masterBytes": 5812,
-    "beforeBytes": 598,
+    "beforeBytes": 806,
     "bytes": 806
   },
   {
@@ -2858,7 +2876,7 @@
     "output": "/assets/flags/webp/ng-54.webp",
     "width": 54,
     "masterBytes": 257,
-    "beforeBytes": 260,
+    "beforeBytes": 98,
     "bytes": 98
   },
   {
@@ -2867,7 +2885,7 @@
     "output": "/assets/flags/webp/ni-54.webp",
     "width": 54,
     "masterBytes": 18435,
-    "beforeBytes": 384,
+    "beforeBytes": 382,
     "bytes": 382
   },
   {
@@ -2876,7 +2894,7 @@
     "output": "/assets/flags/webp/nl-54.webp",
     "width": 54,
     "masterBytes": 225,
-    "beforeBytes": 224,
+    "beforeBytes": 108,
     "bytes": 108
   },
   {
@@ -2885,7 +2903,7 @@
     "output": "/assets/flags/webp/no-54.webp",
     "width": 54,
     "masterBytes": 318,
-    "beforeBytes": 618,
+    "beforeBytes": 220,
     "bytes": 220
   },
   {
@@ -2894,7 +2912,7 @@
     "output": "/assets/flags/webp/np-54.webp",
     "width": 54,
     "masterBytes": 1009,
-    "beforeBytes": 1050,
+    "beforeBytes": 882,
     "bytes": 882
   },
   {
@@ -2903,7 +2921,7 @@
     "output": "/assets/flags/webp/nr-54.webp",
     "width": 54,
     "masterBytes": 646,
-    "beforeBytes": 422,
+    "beforeBytes": 332,
     "bytes": 332
   },
   {
@@ -2912,7 +2930,7 @@
     "output": "/assets/flags/webp/nu-54.webp",
     "width": 54,
     "masterBytes": 864,
-    "beforeBytes": 890,
+    "beforeBytes": 1062,
     "bytes": 1062
   },
   {
@@ -2921,7 +2939,7 @@
     "output": "/assets/flags/webp/nz-54.webp",
     "width": 54,
     "masterBytes": 2172,
-    "beforeBytes": 1050,
+    "beforeBytes": 1048,
     "bytes": 1048
   },
   {
@@ -2930,7 +2948,7 @@
     "output": "/assets/flags/webp/om-54.webp",
     "width": 54,
     "masterBytes": 22623,
-    "beforeBytes": 488,
+    "beforeBytes": 334,
     "bytes": 334
   },
   {
@@ -2939,7 +2957,7 @@
     "output": "/assets/flags/webp/pa-54.webp",
     "width": 54,
     "masterBytes": 744,
-    "beforeBytes": 738,
+    "beforeBytes": 490,
     "bytes": 490
   },
   {
@@ -2948,7 +2966,7 @@
     "output": "/assets/flags/webp/pc-54.webp",
     "width": 54,
     "masterBytes": 3874,
-    "beforeBytes": 644,
+    "beforeBytes": 828,
     "bytes": 828
   },
   {
@@ -2957,7 +2975,7 @@
     "output": "/assets/flags/webp/pe-54.webp",
     "width": 54,
     "masterBytes": 186,
-    "beforeBytes": 260,
+    "beforeBytes": 96,
     "bytes": 96
   },
   {
@@ -2966,7 +2984,7 @@
     "output": "/assets/flags/webp/pf-54.webp",
     "width": 54,
     "masterBytes": 4152,
-    "beforeBytes": 750,
+    "beforeBytes": 948,
     "bytes": 948
   },
   {
@@ -2975,7 +2993,7 @@
     "output": "/assets/flags/webp/pg-54.webp",
     "width": 54,
     "masterBytes": 1656,
-    "beforeBytes": 1060,
+    "beforeBytes": 784,
     "bytes": 784
   },
   {
@@ -2984,7 +3002,7 @@
     "output": "/assets/flags/webp/ph-54.webp",
     "width": 54,
     "masterBytes": 1501,
-    "beforeBytes": 782,
+    "beforeBytes": 840,
     "bytes": 840
   },
   {
@@ -2993,7 +3011,7 @@
     "output": "/assets/flags/webp/pk-54.webp",
     "width": 54,
     "masterBytes": 741,
-    "beforeBytes": 530,
+    "beforeBytes": 396,
     "bytes": 396
   },
   {
@@ -3002,7 +3020,7 @@
     "output": "/assets/flags/webp/pl-54.webp",
     "width": 54,
     "masterBytes": 219,
-    "beforeBytes": 182,
+    "beforeBytes": 96,
     "bytes": 96
   },
   {
@@ -3011,7 +3029,7 @@
     "output": "/assets/flags/webp/pm-54.webp",
     "width": 54,
     "masterBytes": 231,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -3020,7 +3038,7 @@
     "output": "/assets/flags/webp/pn-54.webp",
     "width": 54,
     "masterBytes": 13880,
-    "beforeBytes": 1362,
+    "beforeBytes": 2124,
     "bytes": 2124
   },
   {
@@ -3029,7 +3047,7 @@
     "output": "/assets/flags/webp/pr-54.webp",
     "width": 54,
     "masterBytes": 625,
-    "beforeBytes": 782,
+    "beforeBytes": 602,
     "bytes": 602
   },
   {
@@ -3038,7 +3056,7 @@
     "output": "/assets/flags/webp/ps-54.webp",
     "width": 54,
     "masterBytes": 568,
-    "beforeBytes": 512,
+    "beforeBytes": 282,
     "bytes": 282
   },
   {
@@ -3047,7 +3065,7 @@
     "output": "/assets/flags/webp/pt-54.webp",
     "width": 54,
     "masterBytes": 8316,
-    "beforeBytes": 654,
+    "beforeBytes": 872,
     "bytes": 872
   },
   {
@@ -3056,7 +3074,7 @@
     "output": "/assets/flags/webp/pw-54.webp",
     "width": 54,
     "masterBytes": 466,
-    "beforeBytes": 446,
+    "beforeBytes": 302,
     "bytes": 302
   },
   {
@@ -3065,7 +3083,7 @@
     "output": "/assets/flags/webp/py-54.webp",
     "width": 54,
     "masterBytes": 17194,
-    "beforeBytes": 418,
+    "beforeBytes": 358,
     "bytes": 358
   },
   {
@@ -3074,7 +3092,7 @@
     "output": "/assets/flags/webp/qa-54.webp",
     "width": 54,
     "masterBytes": 354,
-    "beforeBytes": 560,
+    "beforeBytes": 250,
     "bytes": 250
   },
   {
@@ -3083,7 +3101,7 @@
     "output": "/assets/flags/webp/re-54.webp",
     "width": 54,
     "masterBytes": 231,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -3092,7 +3110,7 @@
     "output": "/assets/flags/webp/ro-54.webp",
     "width": 54,
     "masterBytes": 302,
-    "beforeBytes": 238,
+    "beforeBytes": 106,
     "bytes": 106
   },
   {
@@ -3101,7 +3119,7 @@
     "output": "/assets/flags/webp/rs-54.webp",
     "width": 54,
     "masterBytes": 184172,
-    "beforeBytes": 760,
+    "beforeBytes": 1238,
     "bytes": 1238
   },
   {
@@ -3110,7 +3128,7 @@
     "output": "/assets/flags/webp/ru-54.webp",
     "width": 54,
     "masterBytes": 225,
-    "beforeBytes": 224,
+    "beforeBytes": 106,
     "bytes": 106
   },
   {
@@ -3119,7 +3137,7 @@
     "output": "/assets/flags/webp/rw-54.webp",
     "width": 54,
     "masterBytes": 755,
-    "beforeBytes": 358,
+    "beforeBytes": 382,
     "bytes": 382
   },
   {
@@ -3128,7 +3146,7 @@
     "output": "/assets/flags/webp/sa-54.webp",
     "width": 54,
     "masterBytes": 10237,
-    "beforeBytes": 664,
+    "beforeBytes": 692,
     "bytes": 692
   },
   {
@@ -3137,7 +3155,7 @@
     "output": "/assets/flags/webp/sb-54.webp",
     "width": 54,
     "masterBytes": 940,
-    "beforeBytes": 1176,
+    "beforeBytes": 642,
     "bytes": 642
   },
   {
@@ -3146,7 +3164,7 @@
     "output": "/assets/flags/webp/sc-54.webp",
     "width": 54,
     "masterBytes": 317,
-    "beforeBytes": 1086,
+    "beforeBytes": 572,
     "bytes": 572
   },
   {
@@ -3155,7 +3173,7 @@
     "output": "/assets/flags/webp/sd-54.webp",
     "width": 54,
     "masterBytes": 505,
-    "beforeBytes": 542,
+    "beforeBytes": 326,
     "bytes": 326
   },
   {
@@ -3164,7 +3182,7 @@
     "output": "/assets/flags/webp/se-54.webp",
     "width": 54,
     "masterBytes": 209,
-    "beforeBytes": 436,
+    "beforeBytes": 158,
     "bytes": 158
   },
   {
@@ -3173,7 +3191,7 @@
     "output": "/assets/flags/webp/sg-54.webp",
     "width": 54,
     "masterBytes": 889,
-    "beforeBytes": 526,
+    "beforeBytes": 348,
     "bytes": 348
   },
   {
@@ -3182,7 +3200,7 @@
     "output": "/assets/flags/webp/sh-54.webp",
     "width": 54,
     "masterBytes": 504,
-    "beforeBytes": 1684,
+    "beforeBytes": 1376,
     "bytes": 1376
   },
   {
@@ -3191,7 +3209,7 @@
     "output": "/assets/flags/webp/si-54.webp",
     "width": 54,
     "masterBytes": 2017,
-    "beforeBytes": 514,
+    "beforeBytes": 526,
     "bytes": 526
   },
   {
@@ -3200,7 +3218,7 @@
     "output": "/assets/flags/webp/sj-54.webp",
     "width": 54,
     "masterBytes": 318,
-    "beforeBytes": 606,
+    "beforeBytes": 220,
     "bytes": 220
   },
   {
@@ -3209,7 +3227,7 @@
     "output": "/assets/flags/webp/sk-54.webp",
     "width": 54,
     "masterBytes": 1197,
-    "beforeBytes": 708,
+    "beforeBytes": 656,
     "bytes": 656
   },
   {
@@ -3218,7 +3236,7 @@
     "output": "/assets/flags/webp/sl-54.webp",
     "width": 54,
     "masterBytes": 272,
-    "beforeBytes": 252,
+    "beforeBytes": 102,
     "bytes": 102
   },
   {
@@ -3227,7 +3245,7 @@
     "output": "/assets/flags/webp/sm-54.webp",
     "width": 54,
     "masterBytes": 15774,
-    "beforeBytes": 676,
+    "beforeBytes": 1412,
     "bytes": 1412
   },
   {
@@ -3236,7 +3254,7 @@
     "output": "/assets/flags/webp/sn-54.webp",
     "width": 54,
     "masterBytes": 421,
-    "beforeBytes": 528,
+    "beforeBytes": 292,
     "bytes": 292
   },
   {
@@ -3245,7 +3263,7 @@
     "output": "/assets/flags/webp/so-54.webp",
     "width": 54,
     "masterBytes": 483,
-    "beforeBytes": 440,
+    "beforeBytes": 278,
     "bytes": 278
   },
   {
@@ -3254,7 +3272,7 @@
     "output": "/assets/flags/webp/sr-54.webp",
     "width": 54,
     "masterBytes": 312,
-    "beforeBytes": 526,
+    "beforeBytes": 298,
     "bytes": 298
   },
   {
@@ -3263,7 +3281,7 @@
     "output": "/assets/flags/webp/ss-54.webp",
     "width": 54,
     "masterBytes": 398,
-    "beforeBytes": 696,
+    "beforeBytes": 628,
     "bytes": 628
   },
   {
@@ -3272,7 +3290,7 @@
     "output": "/assets/flags/webp/st-54.webp",
     "width": 54,
     "masterBytes": 954,
-    "beforeBytes": 772,
+    "beforeBytes": 490,
     "bytes": 490
   },
   {
@@ -3281,7 +3299,7 @@
     "output": "/assets/flags/webp/sv-54.webp",
     "width": 54,
     "masterBytes": 82815,
-    "beforeBytes": 448,
+    "beforeBytes": 492,
     "bytes": 492
   },
   {
@@ -3290,7 +3308,7 @@
     "output": "/assets/flags/webp/sx-54.webp",
     "width": 54,
     "masterBytes": 13144,
-    "beforeBytes": 784,
+    "beforeBytes": 996,
     "bytes": 996
   },
   {
@@ -3299,7 +3317,7 @@
     "output": "/assets/flags/webp/sy-54.webp",
     "width": 54,
     "masterBytes": 321,
-    "beforeBytes": 498,
+    "beforeBytes": 340,
     "bytes": 340
   },
   {
@@ -3308,7 +3326,7 @@
     "output": "/assets/flags/webp/sz-54.webp",
     "width": 54,
     "masterBytes": 4803,
-    "beforeBytes": 930,
+    "beforeBytes": 982,
     "bytes": 982
   },
   {
@@ -3317,7 +3335,7 @@
     "output": "/assets/flags/webp/tc-54.webp",
     "width": 54,
     "masterBytes": 7150,
-    "beforeBytes": 1198,
+    "beforeBytes": 1712,
     "bytes": 1712
   },
   {
@@ -3326,7 +3344,7 @@
     "output": "/assets/flags/webp/td-54.webp",
     "width": 54,
     "masterBytes": 271,
-    "beforeBytes": 250,
+    "beforeBytes": 120,
     "bytes": 120
   },
   {
@@ -3335,7 +3353,7 @@
     "output": "/assets/flags/webp/tf-54.webp",
     "width": 54,
     "masterBytes": 1099,
-    "beforeBytes": 730,
+    "beforeBytes": 518,
     "bytes": 518
   },
   {
@@ -3344,7 +3362,7 @@
     "output": "/assets/flags/webp/tg-54.webp",
     "width": 54,
     "masterBytes": 717,
-    "beforeBytes": 520,
+    "beforeBytes": 326,
     "bytes": 326
   },
   {
@@ -3353,7 +3371,7 @@
     "output": "/assets/flags/webp/th-54.webp",
     "width": 54,
     "masterBytes": 284,
-    "beforeBytes": 248,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -3362,7 +3380,7 @@
     "output": "/assets/flags/webp/tj-54.webp",
     "width": 54,
     "masterBytes": 1855,
-    "beforeBytes": 520,
+    "beforeBytes": 398,
     "bytes": 398
   },
   {
@@ -3371,7 +3389,7 @@
     "output": "/assets/flags/webp/tk-54.webp",
     "width": 54,
     "masterBytes": 761,
-    "beforeBytes": 780,
+    "beforeBytes": 550,
     "bytes": 550
   },
   {
@@ -3380,7 +3398,7 @@
     "output": "/assets/flags/webp/tl-54.webp",
     "width": 54,
     "masterBytes": 611,
-    "beforeBytes": 886,
+    "beforeBytes": 622,
     "bytes": 622
   },
   {
@@ -3389,7 +3407,7 @@
     "output": "/assets/flags/webp/tm-54.webp",
     "width": 54,
     "masterBytes": 38497,
-    "beforeBytes": 738,
+    "beforeBytes": 1596,
     "bytes": 1596
   },
   {
@@ -3398,7 +3416,7 @@
     "output": "/assets/flags/webp/tn-54.webp",
     "width": 54,
     "masterBytes": 343,
-    "beforeBytes": 652,
+    "beforeBytes": 444,
     "bytes": 444
   },
   {
@@ -3407,7 +3425,7 @@
     "output": "/assets/flags/webp/to-54.webp",
     "width": 54,
     "masterBytes": 352,
-    "beforeBytes": 474,
+    "beforeBytes": 196,
     "bytes": 196
   },
   {
@@ -3416,7 +3434,7 @@
     "output": "/assets/flags/webp/tr-54.webp",
     "width": 54,
     "masterBytes": 549,
-    "beforeBytes": 610,
+    "beforeBytes": 432,
     "bytes": 432
   },
   {
@@ -3425,7 +3443,7 @@
     "output": "/assets/flags/webp/tt-54.webp",
     "width": 54,
     "masterBytes": 304,
-    "beforeBytes": 920,
+    "beforeBytes": 792,
     "bytes": 792
   },
   {
@@ -3434,7 +3452,7 @@
     "output": "/assets/flags/webp/tv-54.webp",
     "width": 54,
     "masterBytes": 1427,
-    "beforeBytes": 1356,
+    "beforeBytes": 1532,
     "bytes": 1532
   },
   {
@@ -3443,7 +3461,7 @@
     "output": "/assets/flags/webp/tw-54.webp",
     "width": 54,
     "masterBytes": 2499,
-    "beforeBytes": 554,
+    "beforeBytes": 410,
     "bytes": 410
   },
   {
@@ -3452,7 +3470,7 @@
     "output": "/assets/flags/webp/tz-54.webp",
     "width": 54,
     "masterBytes": 548,
-    "beforeBytes": 1146,
+    "beforeBytes": 558,
     "bytes": 558
   },
   {
@@ -3461,7 +3479,7 @@
     "output": "/assets/flags/webp/ua-54.webp",
     "width": 54,
     "masterBytes": 232,
-    "beforeBytes": 226,
+    "beforeBytes": 92,
     "bytes": 92
   },
   {
@@ -3470,7 +3488,7 @@
     "output": "/assets/flags/webp/ug-54.webp",
     "width": 54,
     "masterBytes": 3950,
-    "beforeBytes": 672,
+    "beforeBytes": 548,
     "bytes": 548
   },
   {
@@ -3479,7 +3497,7 @@
     "output": "/assets/flags/webp/um-54.webp",
     "width": 54,
     "masterBytes": 648,
-    "beforeBytes": 976,
+    "beforeBytes": 784,
     "bytes": 784
   },
   {
@@ -3488,7 +3506,7 @@
     "output": "/assets/flags/webp/us-54.webp",
     "width": 54,
     "masterBytes": 648,
-    "beforeBytes": 976,
+    "beforeBytes": 784,
     "bytes": 784
   },
   {
@@ -3497,7 +3515,7 @@
     "output": "/assets/flags/webp/uy-54.webp",
     "width": 54,
     "masterBytes": 1724,
-    "beforeBytes": 664,
+    "beforeBytes": 722,
     "bytes": 722
   },
   {
@@ -3506,7 +3524,7 @@
     "output": "/assets/flags/webp/uz-54.webp",
     "width": 54,
     "masterBytes": 1498,
-    "beforeBytes": 504,
+    "beforeBytes": 362,
     "bytes": 362
   },
   {
@@ -3515,7 +3533,7 @@
     "output": "/assets/flags/webp/va-54.webp",
     "width": 54,
     "masterBytes": 29461,
-    "beforeBytes": 480,
+    "beforeBytes": 748,
     "bytes": 748
   },
   {
@@ -3524,7 +3542,7 @@
     "output": "/assets/flags/webp/vc-54.webp",
     "width": 54,
     "masterBytes": 429,
-    "beforeBytes": 640,
+    "beforeBytes": 392,
     "bytes": 392
   },
   {
@@ -3533,7 +3551,7 @@
     "output": "/assets/flags/webp/ve-54.webp",
     "width": 54,
     "masterBytes": 1206,
-    "beforeBytes": 534,
+    "beforeBytes": 342,
     "bytes": 342
   },
   {
@@ -3542,7 +3560,7 @@
     "output": "/assets/flags/webp/vg-54.webp",
     "width": 54,
     "masterBytes": 10413,
-    "beforeBytes": 1276,
+    "beforeBytes": 2026,
     "bytes": 2026
   },
   {
@@ -3551,7 +3569,7 @@
     "output": "/assets/flags/webp/vi-54.webp",
     "width": 54,
     "masterBytes": 8682,
-    "beforeBytes": 1144,
+    "beforeBytes": 2152,
     "bytes": 2152
   },
   {
@@ -3560,7 +3578,7 @@
     "output": "/assets/flags/webp/vn-54.webp",
     "width": 54,
     "masterBytes": 490,
-    "beforeBytes": 494,
+    "beforeBytes": 320,
     "bytes": 320
   },
   {
@@ -3569,7 +3587,7 @@
     "output": "/assets/flags/webp/vu-54.webp",
     "width": 54,
     "masterBytes": 2127,
-    "beforeBytes": 912,
+    "beforeBytes": 764,
     "bytes": 764
   },
   {
@@ -3578,7 +3596,7 @@
     "output": "/assets/flags/webp/wf-54.webp",
     "width": 54,
     "masterBytes": 231,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -3587,7 +3605,7 @@
     "output": "/assets/flags/webp/ws-54.webp",
     "width": 54,
     "masterBytes": 687,
-    "beforeBytes": 530,
+    "beforeBytes": 320,
     "bytes": 320
   },
   {
@@ -3596,7 +3614,7 @@
     "output": "/assets/flags/webp/xk-54.webp",
     "width": 54,
     "masterBytes": 9311,
-    "beforeBytes": 690,
+    "beforeBytes": 566,
     "bytes": 566
   },
   {
@@ -3605,7 +3623,7 @@
     "output": "/assets/flags/webp/ye-54.webp",
     "width": 54,
     "masterBytes": 287,
-    "beforeBytes": 228,
+    "beforeBytes": 112,
     "bytes": 112
   },
   {
@@ -3614,7 +3632,7 @@
     "output": "/assets/flags/webp/yt-54.webp",
     "width": 54,
     "masterBytes": 231,
-    "beforeBytes": 284,
+    "beforeBytes": 118,
     "bytes": 118
   },
   {
@@ -3623,7 +3641,7 @@
     "output": "/assets/flags/webp/za-54.webp",
     "width": 54,
     "masterBytes": 860,
-    "beforeBytes": 1366,
+    "beforeBytes": 1052,
     "bytes": 1052
   },
   {
@@ -3632,7 +3650,7 @@
     "output": "/assets/flags/webp/zm-54.webp",
     "width": 54,
     "masterBytes": 5512,
-    "beforeBytes": 416,
+    "beforeBytes": 428,
     "bytes": 428
   },
   {
@@ -3641,7 +3659,7 @@
     "output": "/assets/flags/webp/zw-54.webp",
     "width": 54,
     "masterBytes": 6672,
-    "beforeBytes": 934,
+    "beforeBytes": 1010,
     "bytes": 1010
   }
 ]

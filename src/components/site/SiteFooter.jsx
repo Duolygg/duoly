@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FOOTER_COLUMNS } from '../../site/nav';
+import BundledImage from '../shared/BundledImage';
 
 // The one footer for every page (Fabian 2026-10-30): the homepage design with "Made in Vienna",
 // the live Vienna clock and the link columns. Home.jsx and SiteLayout.astro both render this, so
@@ -209,11 +210,13 @@ export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <img
+          <BundledImage
             src="/assets/brand/logo-wordmark.webp"
             alt="Duoly"
             width="144"
             height="54"
+            loading="lazy"
+            decoding="async"
             style={{ width: '144px', height: '54px' }}
           />
           <span

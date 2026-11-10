@@ -3,7 +3,7 @@
 // across and leaves at the other, and the other lane starts halfway, so two are on screen at a time.
 // Real reviews come in through `items` (their first sentence, if short enough); until there are
 // any, the hand-written SAMPLE_HERO_QUOTES are shown. Styles: globals.css (hq-*).
-import HomeImage from './HomeImage';
+import BundledImage from '../shared/BundledImage';
 import React from 'react';
 import { GAME } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
@@ -206,7 +206,7 @@ export default function HeroQuotes({ items }) {
             onAnimationEnd={next(i)}
           >
             {t.avatar ? (
-              <HomeImage
+              <BundledImage
                 className="hq-avatar"
                 src={t.avatar}
                 alt=""
@@ -234,7 +234,7 @@ export default function HeroQuotes({ items }) {
               <figcaption>
                 <span>{maskName(t.name)}</span>
                 {t.country ? (
-                  <HomeImage
+                  <BundledImage
                     src={flagSrc(t.country)}
                     alt=""
                     width="16"
@@ -246,7 +246,7 @@ export default function HeroQuotes({ items }) {
                 {game ? (
                   <>
                     <span className="hq-dot" />
-                    <HomeImage
+                    <BundledImage
                       className="hq-game"
                       src={game.img}
                       alt=""

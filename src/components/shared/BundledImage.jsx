@@ -1,7 +1,11 @@
 import React from 'react';
 
-// Only bundled homepage artwork is resized. Uploaded/remote images pass through.
-// Variants come from scripts/assets/optimize-images.mjs; keep the width ladders in step.
+/*
+ * The responsive <img> for artwork that ships with the site: it adds the `srcset` and `sizes`
+ * for the width ladder the variant generator produced, and otherwise renders exactly what it
+ * was given. Uploaded and remote images (teammate avatars, proof shots) pass straight through.
+ * Keep the ladders in step with scripts/assets/optimize-images.mjs.
+ */
 const FAMILIES = [
   {
     match: /^\/assets\/avatars\/avatar-\d+\.png$/,
@@ -18,7 +22,7 @@ const FAMILIES = [
   },
   {
     match: /^\/assets\/brand\/logo-wordmark\.webp$/,
-    widths: [96, 104, 192, 208],
+    widths: [96, 104, 144, 192, 208, 288],
     stem: (src) => src.replace(/\.webp$/, ''),
   },
   {
@@ -42,7 +46,7 @@ const FAMILIES = [
 // replaces SVGs up to 91 KB (es.svg) that each cost a rasterisation on the main thread.
 const FLAG = /^\/assets\/flags\/svg\/([a-z]{2})\.svg$/;
 
-export default function HomeImage({ src, width, style, ...props }) {
+export default function BundledImage({ src, width, style, ...props }) {
   const flag = FLAG.exec(src || '');
   if (flag)
     return (

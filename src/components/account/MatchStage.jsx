@@ -13,6 +13,7 @@ import { MAX_CHAT } from '../../design-reference/lib/chatRules';
 import { isDiscordInvite } from '../../site/nav';
 import DiscordInvite from '../chat/DiscordInvite';
 import FavoriteHeart from './FavoriteHeart';
+import BundledImage from '../shared/BundledImage';
 
 // same palette as QueueRoom.jsx
 const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
@@ -178,11 +179,13 @@ export default function MatchStage({
                 ? 'TEAMMATE ' + (turn + 1) + '/' + crew.length
                 : 'TEAMMATE'}
             {g && g.img ? (
-              <img
+              <BundledImage
                 src={g.img}
                 alt=""
                 width="18"
                 height="18"
+                loading="lazy"
+                decoding="async"
                 style={{
                   width: '18px',
                   height: '18px',
@@ -206,12 +209,14 @@ export default function MatchStage({
                   : 'rgba(196, 170, 255, .14)',
             }}
           >
-            <img
+            <BundledImage
               key={isYou ? 'you' : matched ? 'mate' : face}
               src={img}
               alt=""
               width="78"
               height="78"
+              loading="lazy"
+              decoding="async"
               referrerPolicy="no-referrer"
               style={{
                 width: '78px',
@@ -377,11 +382,13 @@ export default function MatchStage({
           }}
         >
           {g && g.img ? (
-            <img
+            <BundledImage
               src={g.img}
               alt=""
               width="20"
               height="20"
+              loading="lazy"
+              decoding="async"
               style={{ width: '20px', height: '20px', borderRadius: '6px' }}
             />
           ) : null}
@@ -791,11 +798,13 @@ export function OrderCard({
         }}
       >
         {g.img ? (
-          <img
+          <BundledImage
             src={g.img}
             alt=""
             width="52"
             height="52"
+            loading="lazy"
+            decoding="async"
             style={{
               width: '52px',
               height: '52px',
@@ -878,11 +887,13 @@ export function OrderCard({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <img
+            <BundledImage
               src={mate.image || '/assets/avatars/avatar-3.png'}
               alt=""
               width="40"
               height="40"
+              loading="lazy"
+              decoding="async"
               referrerPolicy="no-referrer"
               style={{
                 width: '40px',
@@ -903,12 +914,14 @@ export function OrderCard({
               >
                 {mate.name}
                 {mate.country ? (
-                  <img
+                  <BundledImage
                     src={flagSrc(mate.country)}
                     alt={COUNTRY_NAME[mate.country] || ''}
                     title={COUNTRY_NAME[mate.country] || ''}
                     width="18"
                     height="13"
+                    loading="lazy"
+                    decoding="async"
                     style={{
                       width: '18px',
                       height: '13px',
@@ -1032,11 +1045,13 @@ export function ChatPanel({
             height: '40px',
           }}
         >
-          <img
+          <BundledImage
             src={(mate && mate.image) || '/assets/avatars/avatar-3.png'}
             alt=""
             width="40"
             height="40"
+            loading="lazy"
+            decoding="async"
             referrerPolicy="no-referrer"
             style={{
               width: '40px',

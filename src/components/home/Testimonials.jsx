@@ -3,7 +3,7 @@
 // hovered so a card can be read. Each card shows the reviewer's masked name (L***s), avatar and country.
 // Real reviews come in through `items`; until there are any, the hand-written SAMPLE_TESTIMONIALS are
 // shown. Styles: globals.css (rv-*).
-import HomeImage from './HomeImage';
+import BundledImage from '../shared/BundledImage';
 import React from 'react';
 import { GAME } from '../../design-reference/lib/games';
 import { COUNTRY_NAME, flagSrc } from '../../design-reference/lib/countries';
@@ -54,7 +54,7 @@ function Card({ t }) {
       <div className="rv-card-top">
         <Stars n={t.stars} />
         {game ? (
-          <HomeImage
+          <BundledImage
             className="rv-game"
             src={game.img}
             alt={game.name}
@@ -68,7 +68,7 @@ function Card({ t }) {
       </div>
       <blockquote className="rv-quote">{t.quote}</blockquote>
       <figcaption className="rv-by">
-        <HomeImage
+        <BundledImage
           className="rv-avatar"
           src={t.avatar}
           alt=""
@@ -81,7 +81,7 @@ function Card({ t }) {
           <strong>{maskName(t.name)}</strong>
           {country ? (
             <span className="rv-from">
-              <HomeImage
+              <BundledImage
                 src={flagSrc(t.country)}
                 alt=""
                 width="18"

@@ -70,7 +70,8 @@ const FAMILIES = [
   {
     name: 'wordmark',
     sources: () => ['assets/brand/logo-wordmark.webp'],
-    widths: [96, 104, 192, 208],
+    // 144 and 288 cover the footer wordmark at 1x and 2x.
+    widths: [96, 104, 144, 192, 208, 288],
     out: (src, w) => src.replace(/\.webp$/, `-${w}.webp`),
     encode: { quality: 92, effort: 6, alphaQuality: 100 },
   },

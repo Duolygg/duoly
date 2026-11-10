@@ -1,4 +1,4 @@
-import HomeImage from './HomeImage';
+import BundledImage from '../shared/BundledImage';
 import React from 'react';
 import Pick from '../../design-reference/components/Pick.jsx';
 import { GAMES } from '../../design-reference/lib/games';
@@ -287,7 +287,7 @@ export default class StreamerBooking extends React.Component {
                     }
                     style={{ ...chip(on), paddingLeft: '4px' }}
                   >
-                    <HomeImage
+                    <BundledImage
                       src={g.img}
                       alt=""
                       width="28"
@@ -619,7 +619,7 @@ export default class StreamerBooking extends React.Component {
                     }}
                   >
                     <span style={{ position: 'relative', flex: '0 0 auto' }}>
-                      <HomeImage
+                      <BundledImage
                         src={x.image || '/assets/avatars/avatar-1.png'}
                         alt=""
                         width="48"
@@ -716,7 +716,7 @@ export default class StreamerBooking extends React.Component {
                             fontWeight: '600',
                           }}
                         >
-                          <HomeImage
+                          <BundledImage
                             src={g.img}
                             alt=""
                             width="20"

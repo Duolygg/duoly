@@ -1,6 +1,6 @@
 'use client';
 
-import HomeImage from './HomeImage';
+import BundledImage from '../shared/BundledImage';
 import { track } from '../../client/analytics/track';
 import {
   BOOKING_PARAMS,
@@ -1925,7 +1925,7 @@ export default class Home extends React.Component {
               aria-label="Duoly home"
               style={{ display: 'flex', alignItems: 'center' }}
             >
-              <HomeImage
+              <BundledImage
                 src="/assets/brand/logo-wordmark.webp"
                 alt="Duoly"
                 width="104"
@@ -2174,7 +2174,7 @@ export default class Home extends React.Component {
                         fontWeight: '600',
                       }}
                     >
-                      <HomeImage
+                      <BundledImage
                         src={v.userAvatar}
                         alt=""
                         width="34"
@@ -2487,7 +2487,7 @@ export default class Home extends React.Component {
                 >
                   {['avatar-1', 'avatar-2', 'avatar-3', 'avatar-5'].map(
                     (av, i) => (
-                      <HomeImage
+                      <BundledImage
                         key={av}
                         src={'/assets/avatars/' + av + '.png'}
                         alt=""
@@ -2653,7 +2653,7 @@ export default class Home extends React.Component {
                   style={{ display: 'flex', gap: '6px' }}
                 >
                   {v.heroGames.map((x) => (
-                    <HomeImage
+                    <BundledImage
                       key={x.id}
                       src={x.img}
                       alt=""
@@ -2812,7 +2812,7 @@ export default class Home extends React.Component {
                   maxWidth: '560px',
                 }}
               >
-                <HomeImage
+                <BundledImage
                   src="/assets/brand/logo-full.webp"
                   alt="Duoly mascots: two smiling gamers with headsets"
                   width="560"
@@ -2860,7 +2860,7 @@ export default class Home extends React.Component {
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      <HomeImage
+                      <BundledImage
                         src={t.img}
                         alt=""
                         width="22"
@@ -2973,7 +2973,7 @@ export default class Home extends React.Component {
                           height: '48px',
                         }}
                       >
-                        <HomeImage
+                        <BundledImage
                           src={g.img}
                           alt=""
                           width="48"
@@ -4033,7 +4033,7 @@ export default class Home extends React.Component {
                           gap: '12px',
                         }}
                       >
-                        <HomeImage
+                        <BundledImage
                           src="/assets/brand/logo-mascots.webp"
                           alt=""
                           width="56"
@@ -4090,7 +4090,7 @@ export default class Home extends React.Component {
                       gap: '14px',
                     }}
                   >
-                    <HomeImage
+                    <BundledImage
                       src={v.game.img}
                       alt={v.game.name}
                       width="52"
@@ -4343,7 +4343,7 @@ export default class Home extends React.Component {
                             ) : null}
                             {p.img ? (
                               <>
-                                <HomeImage
+                                <BundledImage
                                   src={p.img}
                                   alt=""
                                   width={p.imgWidth}
@@ -4875,7 +4875,7 @@ export default class Home extends React.Component {
                       <React.Fragment key={$index}>
                         <div style={css(p.wrap)}>
                           <span style={css(p.avatar)}>
-                            <HomeImage
+                            <BundledImage
                               src={p.av}
                               alt=""
                               width="50"
@@ -4889,7 +4889,7 @@ export default class Home extends React.Component {
                                 display: 'block',
                               }}
                             />
-                            <HomeImage
+                            <BundledImage
                               src={p.flag}
                               alt={p.cc}
                               width="18"
@@ -4919,7 +4919,7 @@ export default class Home extends React.Component {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            <HomeImage
+                            <BundledImage
                               src={p.img}
                               alt=""
                               width="20"
@@ -5308,7 +5308,7 @@ export default class Home extends React.Component {
                       gap: '14px',
                     }}
                   >
-                    <HomeImage
+                    <BundledImage
                       src="/assets/brand/logo-mascots.webp"
                       alt=""
                       width="72"
@@ -5779,7 +5779,7 @@ export default class Home extends React.Component {
                     border: '1px solid rgba(214, 187, 255, .14)',
                   }}
                 >
-                  <HomeImage
+                  <BundledImage
                     src={v.game.img}
                     alt=""
                     width="48"
@@ -5938,7 +5938,7 @@ export default class Home extends React.Component {
                           transform: 'none',
                         }}
                       >
-                        <HomeImage
+                        <BundledImage
                           src={v.serverFlag}
                           alt=""
                           width="20"
@@ -6074,7 +6074,7 @@ export default class Home extends React.Component {
                             onClick={it.pick}
                             className={'qc-srv-tile' + (it.on ? ' on' : '')}
                           >
-                            <HomeImage
+                            <BundledImage
                               src={it.flag}
                               alt=""
                               width="30"
@@ -6459,7 +6459,7 @@ export default class Home extends React.Component {
                   minWidth: '0',
                 }}
               >
-                <HomeImage
+                <BundledImage
                   src={v.game.img}
                   alt=""
                   width="42"
