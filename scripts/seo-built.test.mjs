@@ -13,6 +13,17 @@ const { pages, sitemapEntries } = JSON.parse(
 const indexed = Object.entries(pages).filter(
   ([, p]) => p.robots === 'index, follow',
 );
+/**
+ * Editorial inbound links every indexable page has to have, counted from real
+ * anchors in page content rather than shared chrome.
+ *
+ * Six, raised from four on 10 November 2026. Four was the floor while the five
+ * newest coaching pages sat at four or five; the related ring in
+ * src/pages/games/[game]/coaching.astro is symmetric now, so the whole sitemap
+ * clears six and the gate can hold the number the linking plan actually
+ * targets.
+ */
+const MIN_INBOUND = 6;
 const coaches = [
   'valorant',
   'league-of-legends',
@@ -46,9 +57,12 @@ for (const [path, page] of indexed) {
     assert.equal(page.h1.length, 1);
     assert(!page.toolbar);
     assert(page.depth <= 3);
-    assert(page.inbound.length >= 3, `${path}: ${page.inbound.length} inbound`);
     assert(
-      page.contextualInbound.length >= 3,
+      page.inbound.length >= MIN_INBOUND,
+      `${path}: ${page.inbound.length} inbound`,
+    );
+    assert(
+      page.contextualInbound.length >= MIN_INBOUND,
       `${path}: ${page.contextualInbound.length} contextual inbound from ${page.contextualInbound}`,
     );
     assert.equal(page.socialMeta['og:title'], page.title);
@@ -265,19 +279,17 @@ const NO_OFFER_LINK = [
   '/press',
 ];
 
-test('every sitemap URL is a finished page with four inbound links', () => {
+test(`every sitemap URL is a finished page with ${MIN_INBOUND} inbound links`, () => {
   for (const entry of sitemapEntries) {
     const path = new URL(entry.url).pathname;
     const page = pages[path];
     assert(page, `${path} reachable from real anchors`);
     assert(
-      page.inbound.length >= 4,
+      page.inbound.length >= MIN_INBOUND,
       `${path}: ${page.inbound.length} inbound internal links`,
     );
-    // Four editorial inbound links, so a page never depends on one sibling
-    // grid alone. The target is six; four is the floor the build enforces.
     assert(
-      page.contextualInbound.length >= 4,
+      page.contextualInbound.length >= MIN_INBOUND,
       `${path}: ${page.contextualInbound.length} contextual inbound links from ${page.contextualInbound}`,
     );
   }

@@ -60,73 +60,41 @@ const summary = priceSummary(offers);
 const path = `/games/${game.slug}/coaching`;
 const book = bookingHref(game.id, { tab: 'training' });
 /**
- * Sibling coaching pages, as a ring through what a player is practicing:
- * tactical shooters, then hero shooters, then battle royale, then the
- * strategy and arcade end. Each page lists the four nearest neighbours and is
- * therefore listed by four, so every coaching page clears the inbound gate in
- * scripts/seo-built.test.mjs without depending on its game hub alone.
+ * Sibling coaching pages, as one ring through what a player is practicing:
+ * tactical shooters, then the battle royale and sandbox end, then the arcade
+ * and strategy games, then the MOBAs, the MMO and the hero shooters, wrapping
+ * back to Valorant.
+ *
+ * Every page lists the two games before it and the two after it, so every page
+ * is also listed by exactly four others. That symmetry is the point: the five
+ * newest coaching pages were bolted onto an eleven-game ring and ended up with
+ * four or five inbound links each, under the six the build now requires
+ * (scripts/seo-built.test.mjs). A ring cannot develop that gap again, because
+ * adding a game to RELATED_RING gives it four inbound links and four outbound
+ * ones in the same edit.
  */
-const related: Record<string, string[]> = {
-  valorant: [
-    'counter-strike-2',
-    'rainbow-six-siege',
-    'teamfight-tactics',
-    'league-of-legends',
-  ],
-  'counter-strike-2': [
-    'rainbow-six-siege',
-    'overwatch-2',
-    'valorant',
-    'teamfight-tactics',
-  ],
-  'rainbow-six-siege': [
-    'overwatch-2',
-    'marvel-rivals',
-    'counter-strike-2',
-    'valorant',
-  ],
-  'overwatch-2': [
-    'marvel-rivals',
-    'apex-legends',
-    'rainbow-six-siege',
-    'counter-strike-2',
-  ],
-  'marvel-rivals': [
-    'apex-legends',
-    'fortnite',
-    'overwatch-2',
-    'rainbow-six-siege',
-  ],
-  'apex-legends': ['fortnite', 'rocket-league', 'marvel-rivals', 'overwatch-2'],
-  fortnite: [
-    'rocket-league',
-    'league-of-legends',
-    'apex-legends',
-    'marvel-rivals',
-  ],
-  'rocket-league': [
-    'league-of-legends',
-    'teamfight-tactics',
-    'fortnite',
-    'apex-legends',
-  ],
-  'league-of-legends': [
-    'teamfight-tactics',
-    'valorant',
-    'rocket-league',
-    'fortnite',
-  ],
-  'teamfight-tactics': [
-    'valorant',
-    'counter-strike-2',
-    'league-of-legends',
-    'rocket-league',
-  ],
-  'call-of-duty': ['counter-strike-2', 'apex-legends', 'rainbow-six-siege'],
-  'dota-2': ['league-of-legends', 'deadlock', 'teamfight-tactics'],
-  minecraft: ['rocket-league', 'fortnite', 'counter-strike-2'],
-  'world-of-warcraft': ['dota-2', 'overwatch-2', 'league-of-legends'],
-  deadlock: ['dota-2', 'league-of-legends', 'overwatch-2'],
+const RELATED_RING = [
+  'valorant',
+  'counter-strike-2',
+  'rainbow-six-siege',
+  'call-of-duty',
+  'apex-legends',
+  'fortnite',
+  'minecraft',
+  'rocket-league',
+  'teamfight-tactics',
+  'league-of-legends',
+  'dota-2',
+  'deadlock',
+  'world-of-warcraft',
+  'overwatch-2',
+  'marvel-rivals',
+];
+const relatedFor = (slug: string) => {
+  const index = RELATED_RING.indexOf(slug);
+  const at = (step: number) =>
+    RELATED_RING[(index + step + RELATED_RING.length) % RELATED_RING.length]!;
+  return index < 0 ? [] : [at(1), at(2), at(-1), at(-2)];
 };
 const descriptions: Record<string, string> = {
   valorant: `Valorant coaching ${summary.toLowerCase()}. Choose live Play and Learn, VOD Review or Aim and Crosshair. Set a goal and book your coach on Duoly.`,
@@ -253,13 +221,15 @@ const description = descriptions[game.slug]!;
         </a>
         <a href="/compare/queueup">Duoly vs QueueUp compared</a>
         <a href="/games">All games and coaching</a>
-        {related[game.slug]!.filter((slug) =>
-          COACHING_SLUGS.includes(slug as (typeof COACHING_SLUGS)[number]),
-        ).map((slug) => (
-          <a href={`/games/${slug}/coaching`}>
-            {lessons[slug]!.h1.split(' coaching')[0]} coaching
-          </a>
-        ))}
+        {relatedFor(game.slug)
+          .filter((slug) =>
+            COACHING_SLUGS.includes(slug as (typeof COACHING_SLUGS)[number]),
+          )
+          .map((slug) => (
+            <a href={`/games/${slug}/coaching`}>
+              {lessons[slug]!.h1.split(' coaching')[0]} coaching
+            </a>
+          ))}
         <a href={GUIDE_PATH}>Playing together respectfully</a>
         <a href="/get-paid-to-play-games">Become a teammate</a>
       </div>
