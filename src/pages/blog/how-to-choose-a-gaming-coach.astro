@@ -25,7 +25,15 @@ import {
   bookingHref,
   CONTENT_DATES,
   organizationSchema,
+  REPORT_PATH,
 } from '../../site/seo';
+// The survey's own figures, imported rather than retyped, so this guide can
+// never quote a median the report has stopped publishing.
+import {
+  COMPETITOR_COUNT,
+  HOURLY_COACHING,
+} from '../../server/seo/price-report';
+import { SURVEY_CHECKED_LABEL } from '../../content/price-report-2026';
 
 const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
 const currency = await viewerCurrency(Astro.cookies, accountCurrency);
@@ -420,7 +428,13 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         </a>{' '}
         prices an Instant session at 24 QueueCoins, which QueueUp states is USD
         24, for 45 minutes. We read all 3 pages on {CHECKED_LABEL}, and a price
-        set by a person can change any day.
+        set by a person can change any day. For a wider picture than these 3
+        pages, the{' '}
+        <a href={REPORT_PATH}>2026 gaming coaching and teammate price survey</a>{' '}
+        read {COMPETITOR_COUNT} platforms' own public pages on{' '}
+        {SURVEY_CHECKED_LABEL} and puts the median hourly coaching price at{' '}
+        {HOURLY_COACHING.median}, between {HOURLY_COACHING.low} and{' '}
+        {HOURLY_COACHING.high}.
       </p>
       <div class="cmp-two">
         <div class="card guide-card">

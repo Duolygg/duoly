@@ -658,9 +658,12 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     // about 110 words on a page with one price grid and more where a game
     // sells six teammate services.
     //
+    // #199 then gave every teammate page five LFG price FAQs on the same day,
+    // which is the larger of the two additions on the plain pages.
+    //
     // Measured on 10 November 2026 against this build, worst page per bucket:
-    // templated 3183 (/games/call-of-duty/lfg), guided 2678
-    // (/games/league-of-legends/play-with-someone) and plain 2306
+    // templated 3201 (/games/call-of-duty/lfg), guided 2691
+    // (/games/league-of-legends/play-with-someone) and plain 2418
     // (/games/counter-strike-2/lfg, the longest plain page because CS2 sells
     // six teammate services on one card). Each ceiling sits 100 words above
     // its worst page. The headroom is for those reviewed, shared paragraphs
@@ -669,10 +672,10 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     const guided = html.includes('id="free-or-paid"');
     const templated = html.includes('id="lfg-post-h"');
     const [minWords, maxWords] = templated
-      ? [1900, 3285]
+      ? [1900, 3301]
       : guided
-        ? [1500, 2780]
-        : [1200, 2405];
+        ? [1500, 2791]
+        : [1200, 2518];
     assert(
       wordCount >= minWords && wordCount <= maxWords,
       `${path}: ${wordCount} words`,
