@@ -7,6 +7,7 @@ import {
 } from '../../design-reference/components/admin/ui';
 import { adminApi, auditEntry } from './api';
 import { supportInbox } from './support-data';
+import { alertState } from './phone-alerts';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
 import Users from './Users';
 import AuditLog from './AuditLog';
@@ -387,13 +388,19 @@ export default class AdminApp extends React.Component {
     if (this.state.supportWaiting !== needs.length)
       this.setState({ supportWaiting: needs.length });
   };
-  alertSupport = (conversation, count) => {
+  alertSupport = async (conversation, count) => {
     playChatPing(this._ping);
     if (
       (!document.hidden && this.state.section === 'support') ||
       typeof Notification === 'undefined' ||
       Notification.permission !== 'granted'
     )
+      return;
+    const asksForHuman =
+      conversation.status === 'waiting' && Number(conversation.count) <= 6;
+    // A device with phone alerts on already gets the server push for a handoff:
+    // showing our own notification too would alert twice for the same chat.
+    if (asksForHuman && (await alertState().catch(() => 'off')) === 'on')
       return;
     try {
       const who =
@@ -402,7 +409,7 @@ export default class AdminApp extends React.Component {
           : conversation.name +
             (conversation.role === 'teammate' ? ' (teammate)' : '');
       const notification = new Notification(
-        conversation.status === 'waiting' && Number(conversation.count) <= 6
+        asksForHuman
           ? who + ' needs help'
           : 'New message from ' +
               (conversation.role === 'guest' ? 'a guest' : conversation.name),
