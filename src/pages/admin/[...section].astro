@@ -56,9 +56,18 @@ const csrf = account.csrf();
   viewer={identity.viewer}
   csrf={csrf}
   bare
+  adminApp
 >
   <!-- Browser translation rewrites React-managed text and crashes the admin; it's internal. -->
   <meta slot="head" name="google" content="notranslate" />
+  <!-- Android "Install app": the browser offers it once, early; keep it for the Support page. -->
+  <script slot="head" is:inline>
+    window.addEventListener('beforeinstallprompt', function (event) {
+      event.preventDefault();
+      window.__duolyInstall = event;
+      window.dispatchEvent(new Event('duoly-install-ready'));
+    });
+  </script>
   <AdminRoot
     client:load
     admin={identity.viewer}

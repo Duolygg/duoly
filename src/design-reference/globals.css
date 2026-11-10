@@ -314,6 +314,15 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .sp-wrap.sp-noside{grid-template-columns:300px minmax(0,1fr)}
 @media (max-width:1280px){.sp-wrap{grid-template-columns:280px minmax(0,1fr)}.sp-side{grid-column:2}}
 @media (max-width:860px){.sp-wrap{grid-template-columns:minmax(0,1fr)}.sp-side{grid-column:auto}}
+/* Support on phones: the chat list or one chat, never both; the back button returns to the list. */
+.sp-back{display:none!important}
+@media (max-width:860px){
+  .sp-back{display:inline-flex!important}
+  .sp-wrap.sp-chatopen>.sp-list{display:none!important}
+  .sp-wrap:not(.sp-chatopen)>.sp-main,.sp-wrap:not(.sp-chatopen)>.sp-side{display:none}
+  .sp-list{max-height:none!important}
+  .sp-chat{height:calc(100dvh - 150px)!important;min-height:380px!important;max-height:none!important}
+}
 
 /* ---- Checkout: server picker in the "Ready to queue?" dialog (components/Home.jsx) ---- */
 .qc-srv{grid-column:1 / -1;padding:6px;border-radius:18px;background:#090414;box-shadow:0 0 0 1px rgba(214,187,255,.14) inset;animation:dlfade .15s ease-out}

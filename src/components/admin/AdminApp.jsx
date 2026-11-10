@@ -260,6 +260,18 @@ export default class AdminApp extends React.Component {
     this._pop = () =>
       this.setState({ section: sectionFromPath(window.location.pathname) });
     window.addEventListener('popstate', this._pop);
+    // Opened from a phone alert: /admin/support?chat=<id> opens that chat.
+    const chat = new URLSearchParams(window.location.search).get('chat');
+    if (
+      chat &&
+      this.state.section === 'support' &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        chat,
+      )
+    ) {
+      window.history.replaceState(null, '', pathOf('support'));
+      this.setState({ focusChat: chat });
+    }
     this.loadAudit();
     this.loadCounts();
     this._ping = newChatPing();
