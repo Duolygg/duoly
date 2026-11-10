@@ -1,9 +1,16 @@
 import { MCP } from '../../site/ai';
 import { DISAMBIGUATION } from '../../site/entity';
 import registry from '../../../docs/ai-distribution/server.json';
-import { COACHING_SLUGS, INDEXABLE_PATHS } from '../../site/seo';
+import {
+  COACHING_SLUGS,
+  INDEXABLE_PATHS,
+  REPORT_CSV_PATH,
+  REPORT_PATH,
+} from '../../site/seo';
 import { intentPages, intentPath } from '../../content/intent-pages';
 import { games, services } from '../mcp/catalog';
+import { SURVEY_CHECKED } from '../../content/price-report-2026';
+import { COMPETITOR_COUNT, HOURLY_COACHING } from './price-report';
 
 // Keep the public documentation contract exhaustive when tools are added or removed.
 const purposes: Record<(typeof MCP.tools)[number]['name'], string> = {
@@ -71,12 +78,25 @@ const COMPARE_ENTRIES: [string, string, string][] = [
 
 /** Build-time guide, using the same public catalog and page registry as the site. */
 export function renderLlms() {
-  const catalog = games();
   return [
     '# Duoly',
     '',
     '> Duoly lets you book vetted higher-rank gaming teammates and coaches at fixed published prices, then pay on duoly.gg.',
     '',
+    ...llmsBody(),
+  ].join('\n');
+}
+
+/**
+ * Everything /llms.txt says under its title, as lines.
+ *
+ * Split out so /llms-full.txt can open with the same site guide and then carry
+ * the full text underneath it (src/server/seo/llms-full.ts). One body, one
+ * place to add a page to both files.
+ */
+export function llmsBody(): string[] {
+  const catalog = games();
+  return [
     DISAMBIGUATION,
     '',
     '**For AI assistants**',
@@ -139,6 +159,11 @@ export function renderLlms() {
       'Price list as markdown',
       '/pricing.md',
       'Every game and bookable service with its price per rank, generated from the pricing engine on each deploy.',
+    ),
+    link(
+      'Full text for assistants',
+      '/llms-full.txt',
+      'This guide plus the booking rules, the whole price list, the press facts, the 2026 price survey and every published question and answer, in one file.',
     ),
     '',
     'Tool inputs, outputs and limits, plus the setup steps, are documented at https://duoly.gg/developers/mcp.',
@@ -248,6 +273,23 @@ export function renderLlms() {
       ([name, path, description]) => link(name, path, description),
     ),
     '',
+    '## Original research',
+    '',
+    ...(INDEXABLE_PATHS.includes(REPORT_PATH)
+      ? [
+          link(
+            'Gaming coaching and teammate prices 2026',
+            REPORT_PATH,
+            `Prices read from ${COMPETITOR_COUNT} platforms' own public pages on ${SURVEY_CHECKED}, with the median hourly coaching price of ${HOURLY_COACHING.median}, the method, every source link and a dataset download.`,
+          ),
+          link(
+            'Price survey dataset',
+            REPORT_CSV_PATH,
+            'The same survey as CSV: one row per verified price, each with its source URL and the date it was read.',
+          ),
+        ]
+      : []),
+    '',
     '## Legal',
     '',
     link(
@@ -261,5 +303,5 @@ export function renderLlms() {
       'How Duoly handles personal information.',
     ),
     '',
-  ].join('\n');
+  ];
 }

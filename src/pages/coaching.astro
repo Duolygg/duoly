@@ -19,7 +19,10 @@ import {
   bookingHref,
   CONTENT_DATES,
   organizationSchema,
+  REPORT_PATH,
 } from '../site/seo';
+import { HOURLY_COACHING } from '../server/seo/price-report';
+import { SURVEY_CHECKED_LABEL } from '../content/price-report-2026';
 const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
 const currency = await viewerCurrency(Astro.cookies, accountCurrency);
 const games = coachingDirectory({
@@ -138,7 +141,10 @@ const article = {
         {price.replace(/^From /, '')} like the first. Prices in US dollars
         follow the daily rate from the European Central Bank plus 1%. For
         example, we read every figure here from Duoly checkout in November 2026,
-        agreed with your coach using Discord.
+        agreed with your coach using Discord. For the rest of the market, our{' '}
+        <a href={REPORT_PATH}>2026 gaming coaching and teammate price survey</a>{' '}
+        found a median of {HOURLY_COACHING.median} an hour across{' '}
+        {HOURLY_COACHING.count} coach rates read on {SURVEY_CHECKED_LABEL}.
       </p>
     </section>
     <section aria-labelledby="games-h">

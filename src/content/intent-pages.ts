@@ -988,6 +988,14 @@ export const intentPages: IntentPage[] = [
         'How do I find free CS2 teammates?',
         'For example, post in a Counter-Strike LFG Discord or add players after a good match using Steam, naming region, rating, role and map pool.',
       ],
+      [
+        'Should I pay for a CS2 duo or find one free?',
+        'Start free when any fifth player will do, because an LFG post costs nothing. Pay when you want a reviewed teammate at an agreed time: Duo Pro is {{cs2Pro}} per game at Premier 10,000 to 14,999, with {{pct3}} off 3 games.',
+      ],
+      [
+        'What does a CS2 LFG booking cost?',
+        'Duo Pro is {{cs2Pro}} per game at Premier 10,000 to 14,999 and Wingman is {{cs2Wing}} per game at Master Guardian, read from Duoly checkout in November 2026. Bundles take {{pct5}} off 5 games.',
+      ],
     ],
     closing:
       'Duo Pro is the Premier Counter-Strike 2 session with a 20,000+ rated teammate from Duoly, and 5 games at 10,000 to 14,999 cost {{cs2Pro5}} with {{pct5}} off, against {{pct3}} off 3. Wingman is the 2v2 pick at {{cs2Wing}} per game when you want the whole match to be the two of you. For example, ask for a support player when you entry every round, agreed using Discord.',
@@ -1089,6 +1097,14 @@ export const intentPages: IntentPage[] = [
         'How do I find a free Rocket League duo?',
         'For example, post in a Rocket League LFG Discord with your platform, region and rank, or add a player you enjoyed playing against from the match menu.',
       ],
+      [
+        'Should I pay for a Rocket League duo or find one free?',
+        'A free LFG post costs nothing and suits a regular group you can build over weeks. Pay when you want a reviewed partner tonight: Duo Pro is {{rlPro}} per game at Diamond, with {{pct3}} off 3 games in November 2026.',
+      ],
+      [
+        'What does a Rocket League LFG booking cost?',
+        'Duo Pro is {{rlPro}} per game at Diamond and a casual game is {{rlCasual}} at every rank, both read from Duoly checkout in November 2026. Booking 5 games in one order takes {{pct5}} off.',
+      ],
     ],
     closing:
       'Duo Pro is the Ranked Doubles session with a Grand Champion partner from Duoly, and 5 hours at Diamond in Europe cost {{rlPro5}} with {{pct5}} off, against {{pct3}} off 3. Doubles is 2v2, so a booked partner is the whole rest of the team. For example, ask for a partner who plays back post when you like to challenge first, agreed using Discord.',
@@ -1187,6 +1203,14 @@ export const intentPages: IntentPage[] = [
       [
         'How do I find free WoW teammates?',
         'For example, use the in-game group finder for premade groups, ask in your guild, or post in a World of Warcraft LFG Discord with realm, role and score.',
+      ],
+      [
+        'Should I pay for a WoW teammate or find one free?',
+        'The in-game group finder and your guild cost nothing, and both work for a planned key. Pay when you want one reviewed player for a whole evening: a teammate hour is {{wowPro}} at Mythic+ 2,000 to 2,499, with {{pct3}} off 3 hours.',
+      ],
+      [
+        'What does a WoW LFG booking cost?',
+        'A Mythic+ teammate hour is {{wowPro}} at Mythic+ 2,000 to 2,499 and a rated arena hour is {{wowArena}} at Challenger 1,600+, both read from Duoly checkout in November 2026.',
       ],
     ],
     closing:
@@ -1385,6 +1409,14 @@ export const intentPages: IntentPage[] = [
         'How do I find free ARC Raiders teammates?',
         'For example, post in an ARC Raiders LFG Discord with your area and the map you want to run, or invite a squadmate you got out alive with.',
       ],
+      [
+        'Should I pay for an ARC Raiders squadmate or find one free?',
+        'A free LFG post costs nothing when you only need a third for one raid. Pay when you want a reviewed raider for a full evening: Duo Pro is {{arcPro}} per hour, with {{pct3}} off 3 hours in November 2026.',
+      ],
+      [
+        'What does an ARC Raiders LFG booking cost?',
+        'Duo Pro is {{arcPro}} per hour and Duo Plus is {{arcPlus}} per hour, read from Duoly checkout in November 2026. Three hours in one order take {{pct3}} off and 5 hours take {{pct5}} off.',
+      ],
     ],
     closing:
       'Duo Pro is the ARC Raiders session with a Veteran raider from Duoly at {{arcPro}} per hour, and 5 hours cost {{arcPro5}} with {{pct5}} off, against {{pct3}} off 3. A raid squad holds 3, so a booked raider fills 1 seat and Full Squad covers 2. For example, ask for a Learn the Maps hour first when you cannot yet name an extraction point, agreed using Discord.',
@@ -1480,6 +1512,14 @@ export const intentPages: IntentPage[] = [
       [
         'How do I find free Deadlock teammates?',
         'For example, post in a Deadlock LFG Discord with your area, rank and hero pool, or add a player from the Steam match history after a good game.',
+      ],
+      [
+        'Should I pay for a Deadlock teammate or find one free?',
+        'A free LFG post costs nothing and often fills a lane for one evening. Pay when you want a reviewed teammate at an agreed time: Duo Pro is {{dlPro}} per match with a Phantom+ player, and 3 matches take {{pct3}} off.',
+      ],
+      [
+        'What does a Deadlock LFG booking cost?',
+        'Duo Pro is {{dlPro}} per match with a Phantom+ teammate and an unranked match is {{dlUnranked}} at every tier, read from Duoly checkout in November 2026, with {{pct5}} off 5 matches.',
       ],
     ],
     closing:

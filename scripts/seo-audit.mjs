@@ -98,7 +98,16 @@ while (queue.length) {
     )
   ) {
     for (const link of data.links)
-      if (!pages[link.path] && !queue.includes(link.path))
+      if (
+        !pages[link.path] &&
+        !queue.includes(link.path) &&
+        // Data downloads are links, never pages: the price survey's CSV is
+        // served as an attachment, and navigating to an attachment makes the
+        // browser start a download rather than load a document. The link stays
+        // in `links` so the inbound-link checks still see it, and
+        // scripts/seo-built.test.mjs fetches the file itself.
+        !/\.(?:csv|xml|json|zip)$/.test(link.path)
+      )
         queue.push(link.path);
   }
 }
