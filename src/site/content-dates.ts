@@ -123,6 +123,13 @@ export const CONTENT_UPDATED: Record<string, string> = {
   // The price survey was read and written on 10 November 2026, which is also
   // the date the report publishes as its own survey date.
   '/reports/gaming-coaching-and-teammate-prices-2026': '2026-11-10',
+  // The five LFG pages whose FAQ gained the two free-versus-paid questions the
+  // guide-backed teammate pages already carried, on 10 November 2026.
+  '/games/counter-strike-2/lfg': '2026-11-10',
+  '/games/rocket-league/lfg': '2026-11-10',
+  '/games/world-of-warcraft/lfg': '2026-11-10',
+  '/games/arc-raiders/lfg': '2026-11-10',
+  '/games/deadlock/lfg': '2026-11-10',
   // The five pages that gained a paragraph linking the survey on the same day.
   '/pricing': '2026-11-10',
   '/coaching': '2026-11-10',
