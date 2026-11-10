@@ -93,7 +93,7 @@ const faq: [string, string][] = [
   ],
   [
     'Do bundle discounts apply to coaching?',
-    `No. Coaching never takes a quantity discount, so ${MAX_QUANTITY} lessons cost ${FIVE_COACHING_HOURS.total} at ${COACHING_HOUR.total} each. Teammate bundles of ${BUNDLE_SIZES.join(', ')} units take ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off.`,
+    `Coaching has no quantity discount. For example, ${MAX_QUANTITY} hours of ${COACHING_HOUR.short} cost ${FIVE_COACHING_HOURS.total}. Bundles apply to each game's main teammate service: ${BUNDLE_SIZES.join(', ')} units take ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off respectively. Other services use their own quantity options.`,
   ],
   [
     'Why do two players pay different prices for the same service?',
@@ -303,23 +303,20 @@ const faq: [string, string][] = [
       <h2 id="coaching-h">How much does Duoly coaching cost?</h2>
       <p>
         Duoly coaching costs {COACHING_PRICE} per hour or per game across{' '}
-        {COACHABLE_GAMES} coachable titles. Check the service card for the unit.
-        Play and Learn provides feedback while you play. Some games sell it per
-        match; others sell it by the hour. VOD Review is an hour on your
-        recording. Valorant Aim and Crosshair is an hour focused on one skill.
-        Coaching has no quantity discount: {MAX_QUANTITY} hours cost{' '}
-        {FIVE_COACHING_HOURS.total}. The coach tier is the playing rank named on
-        each game's <a href="/coaching">coaching page</a>, including{' '}
-        {VALORANT_COACH_TIER} in Valorant and {LOL_COACH_TIER} in League of
-        Legends. Choose the format for your goal before paying. For example, to
-        review a recorded game,{' '}
-        <a href={COACHING_HOUR.href}>a {COACHING_HOUR.short}</a> gives you time
-        to pause and compare decisions using Discord screen share. It costs{' '}
-        {COACHING_HOUR.total} at every rank in {CATALOG_YEAR}. For a price
-        outside Duoly, our{' '}
+        {COACHABLE_GAMES} coachable titles. Check the unit on the service card:
+        Play and Learn can be sold per match or per hour, depending on the game.
+        VOD Review is an hour on your recording. Coaching has no quantity
+        discount. A second hour costs the same as the first, so {MAX_QUANTITY}{' '}
+        hours cost {FIVE_COACHING_HOURS.total}. Choose a format for the problem
+        you want to work on. For example, use{' '}
+        <a href={COACHING_HOUR.href}>a {COACHING_HOUR.short}</a> to pause and
+        compare decisions using Discord screen share. It costs{' '}
+        {COACHING_HOUR.total} at every rank. Check the coach tier too: Valorant
+        lists {VALORANT_COACH_TIER}, while League of Legends lists{' '}
+        {LOL_COACH_TIER}. For a comparison outside Duoly, the{' '}
         <a href={REPORT_PATH}>2026 gaming coaching and teammate price report</a>{' '}
-        puts the median coaching hour at {HOURLY_COACHING.median} across{' '}
-        {HOURLY_COACHING.count} rates read from {COMPETITOR_COUNT} platforms.
+        gives a median of {HOURLY_COACHING.median} per hour across{' '}
+        {HOURLY_COACHING.count} rates from {COMPETITOR_COUNT} platforms.
       </p>
     </section>
 

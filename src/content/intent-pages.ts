@@ -240,7 +240,7 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'Which roles work well together in lane?',
         paragraphs: [
-          'A Defender and Attacker is the clearest Unite lane pairing: the Defender interrupts an engage while the Attacker deals damage from a safe position. Pokemon Unite groups every Pokemon into 5 roles in 2026: Attacker, Defender, Speedster, All-Rounder and Supporter. A Supporter can do a similar job to a Defender, depending on the moves you choose. Start with picks you know well enough to use under pressure. Say early whether you need farm to evolve before the first Drednaw.',
+          'A Defender and Attacker is a useful Unite lane pairing. For example, the Defender can interrupt an engage while the Attacker deals damage from a safe position. Pokemon Unite groups every Pokemon into 5 roles in 2026: Attacker, Defender, Speedster, All-Rounder and Supporter. A Supporter can do a similar job to a Defender, depending on the moves you choose. Start with picks you know well enough to use under pressure. Say early whether you need farm to evolve before the first Drednaw.',
           'Agree on top path, bottom path or central area before locking in, then look at the other three picks. A Unite team holds 5. Taking central-area resources from the player who needs the farm breaks the whole composition. Call a retreat before leaving a lane partner alone at a goal zone, and keep calls short enough to act on using Discord. A teammate from Duoly can coordinate lanes; nobody can promise the result of a five-player match.',
         ],
       },
