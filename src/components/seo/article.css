@@ -3,17 +3,21 @@
  * an inline offer card and a small comparison table.
  *
  * The body column ran the full 1,070px content width, which is 130 characters
- * a line at 16px. Typographic practice and the site's own `.seo-page p` rule
- * both sit near 70; the article rule below restores that for running prose
- * while leaving cards, grids and timelines at full width, since those are read
- * in columns rather than in lines.
+ * a line at 16px. Typographic practice puts running prose near 70, so the rule
+ * below restores that for prose while leaving cards, grids and timelines at
+ * full width, since those are read in columns rather than in lines.
+ *
+ * The number is 56ch, not 70ch, because `ch` is the advance of a zero, which
+ * is wider than the average letter: measured on the built pages, 72ch held 94
+ * characters a line and 56ch holds 73. The target is the characters a reader
+ * actually sees, so the measurement wins over the unit's name.
  */
 .seo-page.seo-article > section > p,
 .seo-page.seo-article > section > ul:not([class]),
 .seo-page.seo-article > section > ol:not([class]),
 .seo-page.seo-article > section > .section-intro,
 .seo-page.seo-article > p {
-  max-width: 72ch;
+  max-width: 56ch;
 }
 /* Numbered and bulleted lists read as lists: the markers carry the structure
    that "First, ... Second, ..." was carrying inside one paragraph. */

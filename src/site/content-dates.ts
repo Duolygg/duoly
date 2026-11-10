@@ -129,8 +129,11 @@ export const CONTENT_UPDATED: Record<string, string> = {
   '/compare/metafy': '2026-11-10',
   '/compare/queueup': '2026-11-10',
   '/blog': '2026-11-10',
-  // The conversion and visual polish pass: official channels on /press.
+  // The conversion and visual polish pass: official channels on /press, and a
+  // missing space before the checked date in the comparison table's caption
+  // ("checked9 November 2026") on /compare/e-pal.
   '/press': '2026-11-10',
+  '/compare/e-pal': '2026-11-10',
 };
 /**
  * The 10 November 2026 conversion pass rewrote the copy of every game hub and
