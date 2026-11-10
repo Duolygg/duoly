@@ -125,7 +125,7 @@ export function closingAnswer(gameName: string) {
 export function closingDetail(offers: Offers) {
   const coach = offers[0]!.cat === 'training';
   const bundles = coach
-    ? 'Bundles do not apply to coaching, so five lessons cost five times the single price.'
+    ? `Coaching has no quantity or bundle discount. ${offers[0]!.title} costs ${offers[0]!.display} per ${offers[0]!.unit}.`
     : `${quantityAnswer(offers)} Bundle pricing is applied in the checkout, not on request.`;
   return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. Step 2 always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Expect a question about rank, role and region before the first match loads.`;
 }
@@ -158,5 +158,5 @@ export function priceNote(offers: Offers, coach = false) {
     : 'These services are flat priced, so every rank pays the same.';
   if (!coach)
     return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)} Payment finishes on duoly.gg. You play on your own account, with voice on Discord.`;
-  return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} Coaching has no quantity or bundle discount: five lessons cost five times the single lesson price. Choose a live session to discuss decisions as you play, or a review to pause and revisit them with your coach. Payment finishes on duoly.gg. You play on your own account, with voice and screen share on Discord.`;
+  return `Each coaching price above covers one ${unit}, before account perks. Your rank does not change it, and quantity discounts and bundles do not apply. Payment finishes on duoly.gg. You keep your own account and meet your coach on Discord for voice and screen share.`;
 }

@@ -68,7 +68,7 @@ export const worldOfWarcraft: HubPageCopy = {
   decide: {
     heading: 'Which World of Warcraft session fits you?',
     intro:
-      'The right WoW session is the one matching your goal for the week, so pick the goal first and let the price follow. Delves and leveling hold one price for everybody, {{p_delves}} and {{p_level}} per hour, because no rating is on the line. Mythic+ and arena are priced by your own rating instead, from {{p_duo2_low}} per hour on Mythic+ Pro, and a group fill is priced per seat. A {{main}} bundle takes {{bundles}}, so a bundle beats booking 1 at a time. Voice runs using Discord.',
+      'Mythic+ Pro is the key-running option, Arena 2v2 pairs you for rated PvP, and Class and Rotation Coaching works on your own play. Delves and leveling keep one price at every rating, while Mythic+ and rated arena follow your own rating. For example, a player at {{rank_duo2}} who wants three hours of keys can book a Mythic+ Pro bundle at {{p_duo2_x3}}, with {{pct3}} off. A player who wants to understand their rotation can choose Class and Rotation Coaching at {{p_class}} per hour instead. Agree the dungeon, roles and route using Discord before starting.',
     picks: [
       {
         goal: 'Pushing your Mythic+ rating?',

@@ -65,7 +65,7 @@ export const pokemonUnite: HubPageCopy = {
   decide: {
     heading: 'Which Pokemon Unite session fits you?',
     intro:
-      'The right Unite session is the one matching your goal for the evening. Standard and Quick Battle keep one flat price at every rank, {{p_quick}} per game. Ranked is priced by your own rank, from {{p_duo2_low}} per game on Duo Pro, and a Full Squad fill is priced per seat instead. A {{main}} bundle takes {{bundles}}, so a bundle beats booking 1 at a time. Voice runs using Discord.',
+      'Choose the session around what your team needs: a Ranked lane partner, relaxed Standard games, a full five or time to understand your own decisions. Standard and Quick Battle keep one price at every rank, while Ranked prices follow your own rank. For example, a {{rank_duo2}} player who wants three Ranked games can book a Duo Pro bundle at {{p_duo2_x3}}, with {{pct3}} off. A player who wants to understand a late rotation can choose Draft and Macro at {{p_draft}} per hour instead. Agree the lane pairing using Discord before locking in, leaving room for the central area.',
     picks: [
       {
         goal: 'Climbing Ranked this season?',

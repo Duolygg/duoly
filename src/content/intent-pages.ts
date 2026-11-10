@@ -260,8 +260,8 @@ export const intentPages: IntentPage[] = [
       },
     ],
     steps: [
-      'A Pokemon Unite booking is one partner plus a game count, so start with the mode: Ranked, Standard or Quick Battle. Bookings run from 1 game up to 10. The price cards show every service, and ranked prices follow your own rank.',
-      'Share your rank, region, language and preferred lane. Ask for a complementary role, such as a Defender alongside your Attacker, then pick the game count. For example, 3 games take {{pct3}} off the total.',
+      'Choose Ranked, Standard or Quick Battle and a game count. Standard and Quick Battle stays {{puQuick}} per game at every rank. Duo Pro follows your own rank: an Expert player in Europe pays {{puPro}} for one game.',
+      'Share your rank, region, language and preferred lane. Ask for a complementary role, such as a Defender alongside your Attacker. A bundle of 3 Duo Pro games for Expert in Europe costs {{puPro3}} with {{pct3}} off.',
       'Meet in the order chat, exchange Trainer details and agree on voice using Discord. A teammate from Duoly joins on a separate account, so keep passwords private and send the game invite yourself.',
     ],
     prepare: [

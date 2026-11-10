@@ -70,7 +70,7 @@ export const valorant: HubPageCopy = {
   decide: {
     heading: 'Which Valorant session fits you?',
     intro:
-      'The right Valorant session is the one matching your goal tonight. The casual modes hold one price at every rank: Swiftplay {{p_swift}}, Unrated {{p_unrated}} and a Deathmatch warm-up {{p_dm}}. Competitive follows the rank you sit at, and a fill is priced per seat instead. A {{main}} bundle takes {{bundles}}, so a bundle beats booking 1 at a time. Voice runs using Discord.',
+      'Choose the session around the evening you have: Competitive, a short Swiftplay, a full party or time to work on a recurring mistake. Swiftplay and Unrated keep one price at every rank, while Competitive prices follow your own rank. For example, a {{rank_duo2}} player who wants three Competitive games can book a Duo Pro bundle at {{p_duo2_x3}}, with {{pct3}} off. A player who wants to understand repeated deaths on the first peek can choose Aim and Crosshair at {{p_aim}} per hour instead. Agree the agents and roles using Discord before either player queues.',
     picks: [
       {
         goal: 'Climbing Competitive this act?',

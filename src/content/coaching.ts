@@ -237,7 +237,7 @@ export const lessons: Record<string, Lesson> = {
       'Meet your Master+ coach in the order chat and start on Discord.',
     ],
     booking:
-      'A Teamfight Tactics booking is a single checkout for one hour of review, so choose the recording before paying. The order chat is where the hour gets set up properly: send the set, the patch, the recording link and the two spending moments you want opened. For example, a roll-down at stage 3 and a level decision at stage 4 are enough for a full hour. Mark the timestamps rather than describing the game from memory, because the shop you saw matters more than the board you finished with. Keep your login private and your account your own. A Master+ coach from Duoly never needs a password, only a call using Discord.',
+      'Book Comp and Econ Review for one hour at {amount:econ}, then send the recording in the order chat. Include the set, patch and two spending moments you want to discuss. Mark the timestamps so your Master+ coach can see the shop before you spent the gold. For example, pause a stage 3 roll-down with pairs on the bench, then compare rolling for upgrades with saving to level. Write down health, gold and the next opponent before judging the choice. Agree the start time and test screen share using Discord. Keep your login private: a recording and a call are enough.',
     sections: [
       {
         heading: 'How should you connect gold to board strength?',
@@ -250,7 +250,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'How do you review a decision to roll or level?',
         paragraphs: [
           'A roll or level review is a comparison of the upgrades on offer, the gold in hand and the health cost of waiting. Pause at a stage transition before any gold is spent. For example, a weak front line holding several pairs calls for a different answer from a stable board needing one more unit. Rolling at level 8 is a different bet from rolling at 7. Write down gold, health, level and the reason for the choice.',
-          'Compare the likely upgrades with the next opponents and the items sitting unassigned on your bench. A Master+ coach from Duoly will often watch the same fight 3 times before answering. Include the games that went well and the games that fell apart, so a lucky shop does not become the whole explanation for a spending habit, and keep the recording open using Discord screen share. Want the playing side instead? [Teamfight Tactics partners](/games/teamfight-tactics) lists every service, from a Double Up partner to a live Board Coach. One hour of Comp and Econ Review costs {amount:econ}.',
+          'Compare the likely upgrades with the next opponents and the items sitting unassigned on your bench using Discord screen share. Watch the fight before deciding whether the board needed damage, a stronger front line or another level. Want the playing side instead? [Teamfight Tactics partners](/games/teamfight-tactics) lists every service, from a Double Up partner to a live Board Coach. One hour of Comp and Econ Review costs {amount:econ}.',
         ],
       },
     ],
@@ -271,7 +271,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'Can I review a game where I got unlucky?',
-        'Yes. Include the shops before and after the decision, then share the recording using Discord screen share. The review compares econ, health and available upgrades without treating the placement as proof.',
+        'Yes. Include shops before and after the decision, then share the recording using Discord screen share. The review compares econ, health and available upgrades without treating the placement as proof.',
       ],
     ],
   },

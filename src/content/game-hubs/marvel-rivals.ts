@@ -65,7 +65,7 @@ export const marvelRivals: HubPageCopy = {
   decide: {
     heading: 'Which Marvel Rivals session fits you?',
     intro:
-      'The right Rivals session is the one matching your goal for the evening. Quick Match and Arcade stay flat at every rank, {{p_quick}} per match. Competitive is priced by your own rank, from {{p_duo2_low}} per match on Duo Pro, and a 6-stack fill is priced per seat instead. A {{main}} bundle takes {{bundles}}, so a bundle beats booking 1 at a time. Voice runs using Discord.',
+      'Choose the session around what your party needs: a ranked teammate, a specific hero pairing, a full six or a lesson on your own play. Quick Match and Arcade keep one price at every rank, while Competitive prices follow your own rank. For example, a {{rank_duo2}} player who wants three Competitive matches can book a Duo Pro bundle at {{p_duo2_x3}}, with {{pct3}} off. A player who wants to understand ultimate timing can choose Hero Coaching at {{p_hero}} per hour instead. Agree the hero pair using Discord, and check the active Team-Up panel before planning a shared ability.',
     picks: [
       {
         goal: 'Climbing Competitive this season?',

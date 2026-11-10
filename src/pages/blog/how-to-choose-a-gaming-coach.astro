@@ -115,7 +115,7 @@ const flags = [
 const faqItems: [string, string][] = [
   [
     'How do you choose a gaming coach?',
-    'Check 5 things: 1) proof of the coach rank, 2) what one session contains, 3) the price per hour including fees, 4) feedback tied to finished sessions and 5) the refund terms. Read all 5 before you pay.',
+    'Check rank proof, the session plan, the total including fees, reviews tied to sessions and refund terms before paying.',
   ],
   [
     'How much does a gaming coach cost?',
@@ -123,7 +123,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'How can you verify a gaming coach rank?',
-    'In 2 steps: 1) ask for the game account or a public tracker page, then 2) read the current season rather than a peak. A screenshot with no date and no account name proves nothing.',
+    'Ask for the game account or a public tracker page, then check the current season. An undated screenshot does not establish a current rank.',
   ],
   [
     'What should a first coaching session include?',
@@ -131,7 +131,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'Is a cheap coach worse than an expensive one?',
-    'Not by price alone. A rate reflects demand and the time a coach spends preparing, so compare the rank proof and the session plan at both prices before deciding.',
+    'Price alone cannot tell you. Compare current rank proof, the lesson plan and session reviews before choosing.',
   ],
   [
     'Can a coach play on your account?',
@@ -254,15 +254,12 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section class="seo-guide" aria-labelledby="flags-h">
       <h2 id="flags-h">What should stop you booking a coach?</h2>
       <p class="guide-answer">
-        A red flag is a claim no honest coach can support, and 5 of them should
-        end the conversation. 1) a promised rank by a deadline, because nobody
-        sells the result of a game other people also play. 2) a rank with no way
-        to check it. 3) payment moved into a private message instead of a
-        platform checkout. For example, a {valVod.title}
-        hour from Duoly is {valVod.display}, payment finishes on duoly.gg
-        through Stripe, and a Metafy checkout adds a stated 3.7% platform fee,
-        read on {CHECKED_LABEL}. 4) an hour with no plan and 5) feedback with no
-        game or date attached.
+        A red flag is a claim you cannot check or an outcome the coach cannot
+        control. For example, promising a fixed rank after 3 lessons claims
+        control over matches other players also decide. Keep payment in the
+        platform checkout, where the total and refund terms are visible before
+        you pay. A Duoly {valVod.title} hour costs {valVod.display} through
+        Stripe.
       </p>
       <div class="guide-one">
         <article
@@ -536,9 +533,9 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         with you and calls the next one. For example, a Valorant lesson costs{' '}
         {valVod.display} per {valVod.unit} and an {owRole.title} hour costs the
         same {owRole.display}, both read from Duoly checkout in November 2026.
-        Additionally,{' '}
+        Read{' '}
         <a href="/blog/how-to-find-a-valorant-duo">finding a Valorant duo</a>{' '}
-        starts free in a community server. Additionally,{' '}
+        starts free in a community server. Read{' '}
         <a href="/blog/free-lfg-or-paid-teammate">
           free LFG or a paid teammate
         </a>{' '}
@@ -558,8 +555,8 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
 
     <ClosingCta
       heading="Run the 5 checks, then book"
-      text={`A coach who can show a current rank, describe the hour, name the total price, point at real session reviews and explain the refund rule is a coach worth paying. On Duoly a lesson is ${lessonPrice} in every game Duoly coaches, with the coach tier named on the service itself. For example, ${valVod.title} is ${valVod.display} per ${valVod.unit} with an ${valVod.tier}.`}
-      extra={`Three facts settle the practical questions. Duoly publishes one lesson price for all ${coached.length} coached games, charged through Stripe with nothing added at checkout. A coach never needs your password, because every lesson runs on the accounts both people already own with voice and screen share on Discord. Duoly is new and has no public review volume yet, so compare the published price and terms instead of a score. Every Duoly price here was read from checkout in November 2026.`}
+      text={`Check current rank proof, the session plan, the total price, session reviews and refund terms before paying a coach. Duoly names the coach tier on each service. ${valVod.title} costs ${valVod.display} per ${valVod.unit} with an ${valVod.tier}. Choose a replay you want to understand and a question to work through together.`}
+      extra={`Three facts settle the practical questions. Duoly publishes one lesson price for all ${coached.length} coached games, charged through Stripe with nothing added at checkout. A coach never needs your password, because every lesson runs on the accounts both people already own with voice and screen share on Discord. Duoly is a new service with no public review volume yet, so compare the published price and terms instead of a score. Every Duoly price here was read from checkout in November 2026.`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching hour"
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}

@@ -65,7 +65,7 @@ export const dota2: HubPageCopy = {
   decide: {
     heading: 'Which Dota 2 session fits you?',
     intro:
-      'The right Dota session is the one matching your goal for the evening, so pick the goal first and let the price follow. Turbo and unranked All Pick hold one price at every medal, {{p_turbo}} and {{p_unranked}} per game. Ranked is priced by your own medal instead, from {{p_duo2_low}} per game on Duo Pro, and a five-stack fill is priced per seat. A {{main}} bundle takes {{bundles}}, so a bundle beats booking 1 at a time. Voice runs using Discord.',
+      'Turbo is the shorter-game option, Ranked 5-Stack fills your party, and Replay Review helps you understand your own mistakes. Turbo and Unranked All Pick keep one price at every medal, while Ranked Duo Pro follows your medal. For example, a {{rank_duo2}} player who wants company for three ranked games can book a Duo Pro bundle at {{p_duo2_x3}}, with {{pct3}} off. A player who wants to understand a failed lane can book Replay Review at {{p_replay}} per hour instead. Tell your teammate which position you play using Discord, so the draft starts with complementary roles.',
     picks: [
       {
         goal: 'Climbing ranked this season?',
@@ -103,8 +103,8 @@ export const dota2: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'The teammate you queue with is a reviewed Dota 2 player who applied for the game and showed a medal before taking orders. The tiers: Duo Plus names an Ancient+ player, Duo Pro a Divine player and Duo Apex an Immortal player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. Tell them your medal and your two best heroes in the order chat using Discord, so the draft starts from what you actually play.',
-        'What the medal buys you is decisions. A Divine teammate calls the smoke before the enemy carry finishes the item, stacks the camp at the right minute and says when Roshan is safe. Voice runs using Discord, so the call lands while the fight is still winnable. Your medal also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. You keep your heroes, your decisions and your MMR in all 3 games.',
+        'Your teammate is a reviewed Dota 2 player who showed a medal before taking orders. Duo Plus names an Ancient+ player, Duo Pro a Divine player and Duo Apex an Immortal player from {{p_duo3_low}} per game. A teammate chooses your request from the queue. Tell them your medal and your two best heroes in the order chat using Discord before the draft.',
+        'A Divine teammate calls smokes, camp stacks and Roshan attempts. You can discuss the next objective on voice while playing. Your medal also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. You keep your heroes, your decisions and your MMR in all 3 games.',
       ],
     },
     {

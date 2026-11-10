@@ -48,6 +48,9 @@ const shown = ['valorant', 'marvel-rivals', 'league-of-legends', 'overwatch-2']
 const valDuo = seoOffers('val', 'teammate', context).find(
   (offer) => offer.id === 'duo2' && offer.rank === 'Gold',
 )!;
+const valReview = seoOffers('val', 'training', context).find(
+  (offer) => offer.id === 'vod',
+)!;
 const lolDuo = seoOffers('lol', 'teammate', context).find(
   (offer) => offer.id === 'duo2' && offer.rank === 'Gold',
 )!;
@@ -134,7 +137,7 @@ const boards = [
 const faqItems: [string, string][] = [
   [
     'Is free LFG good enough?',
-    'Free looking-for-group is a post in a public channel, and for most players it is enough. The big game servers on Discord each list hundreds of thousands to millions of members, so a post naming region, rank, role and hours often finds somebody the same evening at no cost.',
+    'Free LFG is a useful starting point for finding a regular group. Name your region, rank, role and available hours; a reply still depends on who sees the post.',
   ],
   [
     'What does free LFG not give you?',
@@ -150,11 +153,11 @@ const faqItems: [string, string][] = [
   ],
   [
     'Is paying for a teammate the same as buying a rank?',
-    'No. You play your own games on your own account beside a stronger player, so nobody promises a rank and no account is ever shared or handed over.',
+    'No. Both players keep their own accounts, and no rank or win is promised.',
   ],
   [
     'Can you use free LFG and paid sessions together?',
-    'Yes, and most people should. Keep posting in your game Discord for a regular group, and book a session for the night nobody answers or for a mode nobody in the channel plays.',
+    'Yes. Keep a free post for finding a regular group, and book a session when you prefer an agreed mode and time.',
   ],
 ];
 const article = {
@@ -524,20 +527,22 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <section aria-labelledby="coach-h">
       <h2 id="coach-h">Would a coach help more than either?</h2>
       <p>
-        A coaching hour is the better buy when the same mistake keeps ending
-        your rounds, because neither a free duo nor a paid one stops the game to
-        explain it. 1) a teammate plays the round with you and calls what
-        happens next, for {valDuo.display} per Valorant game at Gold. 2) a
-        lesson pauses a replay and shows the better option, using Discord for
-        screen share, then leaves 2 or 3 things to work on. 3) a teammate
-        session starts at {fromPrice} while a lesson is priced by the hour. For
-        example, a player stuck on the same failed retake learns more from one
-        hour of <a href="/coaching">esports coaching</a> than from 5 bought
-        games.{' '}
+        Choose coaching when you want to understand a recurring mistake. Choose
+        a teammate when you want someone to play beside you. A Valorant Duo Pro
+        game at Gold costs {valDuo.display}; {valReview.title} costs
+        {valReview.display} per {valReview.unit} with an {valReview.tier}. The
+        review gives you time to pause a recording using Discord screen share.
+        Bring the approach to the fight as well as the final death, so the coach
+        can see the decision before the result. For example, a failed retake can
+        start with a late rotation or wasted utility before either player enters
+        the site. A live teammate can call the next retake, but a review lets
+        you compare both attempts without another round starting. The{' '}
+        <a href="/coaching">coaching directory</a> lists the formats in each
+        game. Read{' '}
         <a href="/blog/how-to-choose-a-gaming-coach">
           How to choose a gaming coach
         </a>{' '}
-        lists the 5 checks to run before paying anyone.
+        for the 5 checks to run before paying anyone.
       </p>
     </section>
 
