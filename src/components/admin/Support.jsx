@@ -14,6 +14,7 @@ import {
 } from '../../design-reference/components/admin/ui';
 import { GAMES } from '../../design-reference/lib/adminData';
 import { supportInbox } from './support-data';
+import PhoneAlerts from './PhoneAlerts.jsx';
 
 // Admin support inbox: every chat from the Sparky widget. "Needs reply" = someone asked for a human
 // or wrote again after an admin answered. Admins reply with their own name and picture.
@@ -84,9 +85,8 @@ const statusOf = (c) =>
 export default class Support extends React.Component {
   constructor(props) {
     super(props);
-    // focusChat: opened from a browser notification
+    // focusChat: opened from a browser or phone notification
     this.state = {
-      notif: 'default',
       list: [],
       open: null,
       openId: props.focusChat || null,
@@ -101,13 +101,8 @@ export default class Support extends React.Component {
     this.boxRef = React.createRef();
   }
   componentDidMount() {
-    // (the sound and browser notification for new chats come from AdminApp, on every admin page)
-    this.setState({
-      notif:
-        typeof Notification === 'undefined'
-          ? 'unsupported'
-          : Notification.permission,
-    });
+    // (the sound and browser notification for new chats come from AdminApp, on every admin page;
+    // phone alerts come from the service worker, see PhoneAlerts)
     this.load().then(() => this.toBottom());
     this._t = setInterval(() => this.load(), POLL);
   }
@@ -145,20 +140,6 @@ export default class Support extends React.Component {
         error: 'Can’t reach Duoly right now. Retrying…',
         loaded: true,
       });
-    }
-  }
-  async askNotifications() {
-    if (typeof Notification === 'undefined') return;
-    const p = await Notification.requestPermission();
-    this.setState({ notif: p });
-    if (p === 'granted') {
-      try {
-        new Notification('Notifications are on', {
-          body: 'You’ll get one whenever someone in the support chat needs a human.',
-          icon: '/assets/brand/logo-mascots.webp',
-        });
-      } catch (e) {}
-      this.props.toast('Browser notifications are on for support chats');
     }
   }
   toBottom() {
@@ -663,6 +644,7 @@ export default class Support extends React.Component {
     return (
       <section
         aria-label={'Chat with ' + o.name}
+        className="sp-chat"
         style={{
           ...card,
           display: 'flex',
@@ -683,6 +665,36 @@ export default class Support extends React.Component {
             borderBottom: '1px solid ' + C.line,
           }}
         >
+          {/* Phones show one thing at a time: this goes back to the chat list. */}
+          <button
+            type="button"
+            className="sp-back"
+            aria-label="Back to chats"
+            onClick={() =>
+              this.setState({ openId: null, open: null, draft: '' })
+            }
+            style={{
+              ...btn(),
+              minHeight: '36px',
+              width: '36px',
+              padding: '0',
+              flex: '0 0 auto',
+            }}
+          >
+            <svg
+              aria-hidden="true"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
           <img
             src={o.image || '/assets/avatars/avatar-1.png'}
             alt=""
@@ -985,9 +997,16 @@ export default class Support extends React.Component {
       );
     const count = (f) => s.list.filter((c) => is(c, f)).length;
     return (
-      <div className={'sp-wrap' + (s.open ? '' : ' sp-noside')}>
+      <div
+        className={
+          'sp-wrap' +
+          (s.open ? '' : ' sp-noside') +
+          (s.openId ? ' sp-chatopen' : '')
+        }
+      >
         <section
           aria-label="Chats"
+          className="sp-list"
           style={{
             ...card,
             padding: '14px',
@@ -998,62 +1017,7 @@ export default class Support extends React.Component {
             maxHeight: 'calc(100vh - 190px)',
           }}
         >
-          {s.notif === 'default' || s.notif === 'denied' ? (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '10px 12px',
-                borderRadius: '14px',
-                background: 'rgba(214, 187, 255, .08)',
-                border: '1px solid rgba(214, 187, 255, .18)',
-              }}
-            >
-              <svg
-                aria-hidden="true"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke={C.accent}
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ flex: '0 0 auto' }}
-              >
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.7 21a2 2 0 0 1-3.4 0" />
-              </svg>
-              <span
-                style={{
-                  flex: '1',
-                  minWidth: '0',
-                  fontSize: '12.5px',
-                  lineHeight: '1.4',
-                  color: C.muted,
-                }}
-              >
-                {s.notif === 'denied'
-                  ? 'Notifications are blocked. Allow them for this site in your browser settings.'
-                  : 'Get a browser notification when someone needs a human.'}
-              </span>
-              {s.notif === 'default' ? (
-                <button
-                  type="button"
-                  onClick={() => this.askNotifications()}
-                  style={{
-                    ...btn('primary'),
-                    minHeight: '32px',
-                    padding: '0 12px',
-                    fontSize: '12.5px',
-                  }}
-                >
-                  Turn on
-                </button>
-              ) : null}
-            </div>
-          ) : null}
+          <PhoneAlerts api={this.props.api} toast={this.props.toast} />
           <input
             type="search"
             aria-label="Search chats"
@@ -1276,7 +1240,9 @@ export default class Support extends React.Component {
             ) : null}
           </ul>
         </section>
-        <div style={{ minWidth: '0' }}>{this.renderChat()}</div>
+        <div className="sp-main" style={{ minWidth: '0' }}>
+          {this.renderChat()}
+        </div>
         {s.open ? (
           <div className="sp-side">{this.renderContext(s.open)}</div>
         ) : null}

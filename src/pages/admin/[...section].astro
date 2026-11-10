@@ -59,6 +59,37 @@ const csrf = account.csrf();
 >
   <!-- Browser translation rewrites React-managed text and crashes the admin; it's internal. -->
   <meta slot="head" name="google" content="notranslate" />
+  <!-- The installable "Duoly Admin" app (manifest served to admins only). -->
+  <meta slot="head" name="apple-mobile-web-app-capable" content="yes" />
+  <meta slot="head" name="mobile-web-app-capable" content="yes" />
+  <meta slot="head" name="apple-mobile-web-app-title" content="Duoly Admin" />
+  <meta
+    slot="head"
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  />
+  <meta slot="head" name="theme-color" content="#090414" />
+  <!-- The shared layout links the public site.webmanifest; on admin pages point it at the admin
+       app instead (with the session cookie, since that manifest is admins only). Browsers read the
+       manifest only when installing, so switching it here, in the head, is in time. Android
+       "Install app": the browser offers it once, early; keep it for the Support page. -->
+  <script slot="head" is:inline>
+    (function () {
+      let link = document.querySelector('link[rel="manifest"]');
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'manifest';
+        document.head.appendChild(link);
+      }
+      link.crossOrigin = 'use-credentials';
+      link.href = '/admin/app.webmanifest';
+    })();
+    window.addEventListener('beforeinstallprompt', function (event) {
+      event.preventDefault();
+      window.__duolyInstall = event;
+      window.dispatchEvent(new Event('duoly-install-ready'));
+    });
+  </script>
   <AdminRoot
     client:load
     admin={identity.viewer}

@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { sendEmail } from '../email/send';
 import type { SupportPerson } from './sparky';
+import { sendSupportPush } from './push';
 
 const siteOrigin = () => {
   const value =
@@ -16,6 +17,30 @@ const siteOrigin = () => {
 };
 
 export async function notifySupportAdmins(
+  service: SupabaseClient,
+  person: SupportPerson,
+  conversationId: string,
+  message: string,
+  eventKey: string,
+) {
+  await Promise.all([
+    emailSupportAdmins(service, person, conversationId, message, eventKey),
+    sendSupportPush(service, {
+      conversationId,
+      title: `${supportWho(person)} needs a human`,
+      body: message,
+    }),
+  ]);
+}
+
+/** "A guest", "Customer Alex", "Teammate Sam": never more than a first name. */
+export function supportWho(person: SupportPerson): string {
+  if (person.role === 'guest') return 'A guest';
+  const first = plain(person.name ?? '', 32).split(' ')[0] || 'Player';
+  return `${person.role === 'teammate' ? 'Teammate' : 'Customer'} ${first}`;
+}
+
+async function emailSupportAdmins(
   service: SupabaseClient,
   person: SupportPerson,
   conversationId: string,

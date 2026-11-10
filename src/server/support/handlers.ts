@@ -6,7 +6,12 @@ import { answerMetadata, answerWithAi } from './ai';
 import { trackRequest, requestAnalyticsContext } from '../analytics/client';
 import { sparkyLookup } from './lookup';
 import { sparkyAdminLookup } from './admin-lookup';
-import { notifySupportAdmins, notifySupportDiscord } from './notify';
+import {
+  notifySupportAdmins,
+  notifySupportDiscord,
+  supportWho,
+} from './notify';
+import { sendSupportPush } from './push';
 import { supportPerson } from './person';
 import { CHIPS, greeting, preparedReply, type SupportPerson } from './sparky';
 import {
@@ -217,6 +222,13 @@ export const postSupport: APIRoute = async (context) => {
       // with Sparky). Re-read so the status check below sees the real state.
       conversation =
         (await currentConversation(service, person, guestHash)) ?? conversation;
+      // A human is (or will be) answering: tell the admin phones about the new message.
+      if (conversation.status === 'waiting' || conversation.status === 'human')
+        await sendSupportPush(service, {
+          conversationId: conversation.id,
+          title: `New message from ${supportWho(person)}`,
+          body: text,
+        });
     }
     if (conversation.status !== 'bot')
       return prepared.account.json(

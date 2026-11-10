@@ -2030,6 +2030,20 @@ export type Database = {
         Returns: Json;
       };
       admin_priority_target: { Args: { p_user: string }; Returns: string };
+      admin_push_subscribe: {
+        Args: {
+          p_auth: string;
+          p_device: string;
+          p_endpoint: string;
+          p_p256dh: string;
+        };
+        Returns: Json;
+      };
+      admin_push_targets: {
+        Args: never;
+        Returns: { auth: string; endpoint: string; p256dh: string }[];
+      };
+      admin_push_unsubscribe: { Args: { p_endpoint: string }; Returns: Json };
       admin_refund_order: {
         Args: { p_order_id: string; p_reason: string };
         Returns: Json;
