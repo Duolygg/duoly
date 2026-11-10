@@ -20,22 +20,24 @@ export function offerList(offers: Offers) {
 }
 
 /**
- * The discount ladder, with every figure stated once.
+ * The discount ladder, in full, from the engine that charges it.
  *
- * A bundle of 5 carries the same percentage as an ordinary order of 5
- * (src/contracts/pricing.ts), so naming both rows made the closing paragraph
- * repeat one number in consecutive sentences. The ordinary row states it and
- * the bundle row adds only what it changes: 3 units and 10 units.
+ * The bundle row used to name only what it changed against the quantity row (3
+ * units and 10), because a bundle of 5 carries the same percentage as an
+ * ordinary order of 5 (src/contracts/pricing.ts). Leaving 5 out of the bundle
+ * ladder read as an omission beside the price cards, which show all three
+ * bundle chips, so the row states its whole ladder and repeats the 20%.
  */
 export function quantityAnswer(offers: Offers) {
   const offer = offers[0]!;
   const unit = offer.unit === 'hour' ? 'hours' : 'games';
-  const bundle = BUNDLE_UNITS.map((units) =>
-    quantityDiscountPercent(units, { bundle: true }),
+  const bundle = BUNDLE_UNITS.map(
+    (units, index) =>
+      `${quantityDiscountPercent(units, { bundle: true })}% off ${units}${index === 0 ? ` ${unit}` : ''}`,
   );
   return offer.cat === 'training'
     ? 'Quantity discounts and bundles do not apply to coaching.'
-    : `Book 1 to 5 ${unit}, and 5 ${unit} take ${quantityDiscountPercent(5)}% off. A bundle of the main service takes ${bundle[0]}% off 3 ${unit} and ${bundle[2]}% off 10.`;
+    : `Book 1 to 5 ${unit}, and 5 ${unit} take ${quantityDiscountPercent(5)}% off. Bundles of the main service take ${bundle.slice(0, -1).join(', ')} and ${bundle.at(-1)}.`;
 }
 
 export function pricesAnswer(gameId: string, offers: Offers, coach: boolean) {

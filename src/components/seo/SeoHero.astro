@@ -1,4 +1,5 @@
 ---
+import type { HeroOffer } from '../../server/seo/hero-offer';
 interface Props {
   eyebrow: string;
   h1: string;
@@ -8,8 +9,14 @@ interface Props {
   note?: string;
   secondary?: { href: string; label: string };
   art: { src: string; alt: string }[];
+  /** The at-a-glance price range, for a hero with no offer card. */
   chip?: string;
   facts: string[];
+  /**
+   * The service this page sells, with its own booking button in the hero card.
+   * Without it the card stays the plain at-a-glance panel.
+   */
+  offer?: HeroOffer;
   /** data-analytics-game on the first image (game hubs track game_viewed). */
   analyticsGame?: string;
 }
@@ -28,6 +35,7 @@ const {
   art,
   chip,
   facts,
+  offer,
   analyticsGame,
   note,
 } = Astro.props;
@@ -38,20 +46,26 @@ const {
     <p class="eyebrow">{eyebrow}</p>
     <h1 set:html={nowrapTerms(h1)} />
     <p class="lead">{lead}</p>
-    {price && <p class="hero-price">{price}</p>}
+    {price && !offer && <p class="hero-price">{price}</p>}
+    {/* One primary per viewport. When the card carries its own booking button
+        the left column keeps the same link as a secondary, because two filled
+        buttons for one action make a reader choose between identical things. */}
     <div class="hero-actions">
-      <a class="cta" href={cta.href}>
+      <a class={offer ? 'cta-ghost' : 'cta'} href={cta.href}>
         {cta.label}
       </a>
       {secondary && (
-        <a class="cta-ghost" href={secondary.href}>
+        <a class={offer ? 'hero-link' : 'cta-ghost'} href={secondary.href}>
           {secondary.label}
         </a>
       )}
     </div>
     {note && <p class="hero-note">{note}</p>}
   </div>
-  <aside class="hero-card" aria-label="At a glance">
+  <aside
+    class={offer ? 'hero-card hero-offer' : 'hero-card'}
+    aria-label={offer ? `Book ${offer.title}` : 'At a glance'}
+  >
     <div class="top">
       <div class="art">
         {art.map((image, index) => (
@@ -67,10 +81,44 @@ const {
           />
         ))}
       </div>
-      {chip && <p class="price-chip">{chip}</p>}
+      {offer ? (
+        <div class="offer-head">
+          <p class="offer-service">{offer.title}</p>
+          <p class="offer-tier">{offer.tier}</p>
+          <p class="offer-price">
+            <span class="money">{offer.price}</span> per {offer.unit}
+          </p>
+        </div>
+      ) : (
+        chip && <p class="price-chip">{chip}</p>
+      )}
     </div>
+    {offer && (
+      <>
+        <a
+          class="cta offer-cta"
+          href={offer.href}
+          aria-label={
+            offer.label === offer.labelFull ? undefined : offer.labelFull
+          }
+        >
+          {offer.label}
+        </a>
+        {/* One other price, labelled, and only when something really is
+            cheaper. The card used to carry three figures: this tier's price, a
+            bordered box with the range across every service on the page, and a
+            "Cheapest session" line repeating the bottom of that range. The box
+            also read like a form field. */}
+        {offer.cheapest && (
+          <p class="offer-floor">
+            Cheapest session on this page: {offer.cheapest.title} at{' '}
+            {offer.cheapest.price} per {offer.cheapest.unit}.
+          </p>
+        )}
+      </>
+    )}
     <ul class="facts">
-      {facts.map((fact) => (
+      {(offer ? offer.facts : facts).map((fact) => (
         <li>{fact}</li>
       ))}
     </ul>

@@ -23,7 +23,7 @@ export const wildRift: HubPageCopy = {
   ],
   format: {
     heading: 'What can you book for Wild Rift on Duoly?',
-    text: 'A Wild Rift booking on Duoly is one of three things: one teammate who joins your lobby on your own account, a Ranked 5-Stack fill for the seats you are missing, or a coaching hour. First, the teammate tiers are Duo Plus with a Diamond+ player in the lane you need, Duo Pro with a Master player who calls dragons and Baron, and Duo Apex with a Grandmaster+ player at {{p_duo3}} per game. Ranked follows your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while ARAM and a normal match stay {{p_aram}} and {{p_norm}} at every rank. Second, the fill: Ranked 5-Stack covers up to {{seats_five}} seats at {{p_five}} per game. Third, Champion Mastery is one hour on a single champion at {{p_champ}}. Games are short, so bundles matter: {{pct3}} off 3 games up to {{pct10}} off 10. For example, name your lane using Discord first.',
+    text: 'A Wild Rift booking on Duoly is one of three things: one teammate who joins your lobby on your own account, a Ranked 5-Stack fill for the seats you are missing, or a coaching hour. First, the teammate tiers are Duo Plus with a Diamond+ player in the lane you need, Duo Pro with a Master player who calls dragons and Baron, and Duo Apex with a Grandmaster+ player from {{p_duo3_low}} per game. Ranked follows your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while ARAM and a normal match stay {{p_aram}} and {{p_norm}} at every rank. Second, the fill: Ranked 5-Stack covers up to {{seats_five}} seats from {{p_five_low}} per game. Third, Champion Mastery is one hour on a single champion at {{p_champ}}. Games are short, so bundles of {{main}} matter: {{bundles}}. For example, name your lane using Discord first.',
   },
   services: {
     duo1: 'Ranked with a Diamond player who tracks the jungler and calls dragons.',
@@ -45,10 +45,10 @@ export const wildRift: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and the ranked tiers read your own rank, so a Sovereign lobby costs more than an Iron one. ARAM and normal matches hold one price for everybody, because neither moves your rank. One teammate joins your lobby on your own account and takes the lane you ask for, and bundles take {{pct3}} off 3 games or {{pct5}} off 5. First, pick the mode, because only the ranked cards carry a rank list. Second, read the tier beside the price: Duo Plus is a Diamond+ player, Duo Pro a Master player and Duo Apex a Grandmaster+ one at {{p_duo3}} per game. For example, name Baron Lane, Jungle, Mid, Dragon Lane or Support in the order chat using Discord before the draft.',
-    team: 'Ranked 5-Stack is priced per seat, so the card covers up to {{seats_five}} seats at {{p_five}} per game and falls when your group is only one player short. First, count the seats you actually need, because a trio short two players books 2 rather than 4. Second, name the lanes, because a five wants Baron Lane, Jungle, Mid, Dragon Lane and Support covered rather than three junglers. The fill reads your rank like the duo tiers do, from {{p_five_low}} per game, and bundles take {{pct3}} off 3 games and {{pct5}} off 5. For example, a duo that never finds a jungler books 3 seats and keeps the bot pairing using Discord.',
+      'Teammate prices are per game, and the ranked tiers read your own rank, so a Sovereign lobby costs more than an Iron one. ARAM and normal matches hold one price for everybody, because neither moves your rank. One teammate joins your lobby on your own account and takes the lane you ask for. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. First, pick the mode, because only the ranked cards carry a rank list. Second, read the tier beside the price: Duo Plus is a Diamond+ player, Duo Pro a Master player and Duo Apex a Grandmaster+ one from {{p_duo3_low}} per game. For example, name Baron Lane, Jungle, Mid, Dragon Lane or Support in the order chat using Discord before the draft.',
+    team: 'Ranked 5-Stack is priced per seat, so the card covers up to {{seats_five}} seats from {{p_five_low}} per game and falls when your group is only one player short. First, count the seats you actually need, because a trio short two players books 2 rather than 4. Second, name the lanes, because a five wants Baron Lane, Jungle, Mid, Dragon Lane and Support covered rather than three junglers. The fill reads your rank like the duo tiers do, from {{p_five_low}} per game, and 5 games take {{pick5}} off. For example, a duo that never finds a jungler books 3 seats and keeps the bot pairing using Discord.',
     coaching:
-      'Lessons get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Champion Mastery costs {{p_champ}} per hour with a Grandmaster+ coach and spends the hour on one champion: combos, builds, matchups and power spikes. Play and Learn is the exception that covers one live ranked game at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who loses the same lane matchup every game books Champion Mastery instead of a fourth ranked game. Finally, screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rank.',
+      'Lessons get no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings on teammate sessions do not apply. Champion Mastery costs {{p_champ}} per hour with a Grandmaster+ coach and spends the hour on one champion: combos, builds, matchups and power spikes. Play and Learn is the exception that covers one live ranked game at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who loses the same lane matchup every game books Champion Mastery instead of a fourth ranked game. Finally, screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rank.',
   },
   steps: {
     heading: 'How does booking a Wild Rift teammate work?',
@@ -62,7 +62,7 @@ export const wildRift: HubPageCopy = {
   decide: {
     heading: 'Which Wild Rift session fits you?',
     intro:
-      'The right Wild Rift session is the one matching your goal for the evening, so pick the goal first and let the price follow. First, ARAM and a normal match hold one price at every rank, {{p_aram}} and {{p_norm}} per game. Ranked is priced by your own rank instead, from {{p_duo2_low}} per game on Duo Pro, and a five-stack fill is priced per seat. For example, 3 games take {{pct3}} off and 5 games take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right Wild Rift session is the one matching your goal for the evening, so pick the goal first and let the price follow. First, ARAM and a normal match hold one price at every rank, {{p_aram}} and {{p_norm}} per game. Ranked is priced by your own rank instead, from {{p_duo2_low}} per game on Duo Pro, and a five-stack fill is priced per seat. For example, a {{main}} bundle takes {{bundles}}, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Climbing ranked this season?',
@@ -100,15 +100,15 @@ export const wildRift: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'The teammate you queue with is a reviewed Wild Rift player who applied for the game and showed a rank before taking orders. First, the tiers: Duo Plus names a Diamond+ player, Duo Pro a Master player and Duo Apex a Grandmaster+ player at {{p_duo3}} per game, which is the top tier Duoly sells for the game. Second, orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, tell them your rank and your lane in the order chat using Discord before the first draft.',
-        'What the rank buys you is objective calls. A Master teammate tracks the enemy jungler, calls the dragon before it spawns and says when Baron is safe to start. Voice runs using Discord, so the call lands while the fight is still winnable. Your rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles cut that total by {{pct3}} on 3 games and {{pct5}} on 5. For example, you keep your champions, your decisions and your account in all 3 games.',
+        'The teammate you queue with is a reviewed Wild Rift player who applied for the game and showed a rank before taking orders. First, the tiers: Duo Plus names a Diamond+ player, Duo Pro a Master player and Duo Apex a Grandmaster+ player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Second, orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, tell them your rank and your lane in the order chat using Discord before the first draft.',
+        'What the rank buys you is objective calls. A Master teammate tracks the enemy jungler, calls the dragon before it spawns and says when Baron is safe to start. Voice runs using Discord, so the call lands while the fight is still winnable. Your rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your champions, your decisions and your account in all 3 games.',
       ],
     },
     {
       heading: 'How does a Wild Rift 5-Stack fill work?',
       paragraphs: [
         'A Ranked 5-Stack is one order that hires several players at once, so a part-full group becomes a complete five. First, the fill covers up to {{seats_five}} empty seats with Master+ players at {{p_five}} per game at {{rank_five}}, and 5 games cost {{p_five_x5}} with {{pick5}} off. Second, every seat is priced separately, so a duo short three players books 3 seats instead of 4. For example, a pair who always lose the jungle book one seat and keep their own bot lane.',
-        'Agree the lanes before the draft: Baron Lane, Jungle, Mid, Dragon Lane and Support. Then agree one shotcaller, because five people calling Baron on voice is how a won game gets thrown. Keep everybody on one call using Discord, and nobody ever needs your Riot login. Finally, bundles still apply, {{pct3}} off 3 games and {{pct5}} off 5, read from Duoly checkout in 2026.',
+        'Agree the lanes before the draft: Baron Lane, Jungle, Mid, Dragon Lane and Support. Then agree one shotcaller, because five people calling Baron on voice is how a won game gets thrown. Keep everybody on one call using Discord, and nobody ever needs your Riot login. Finally, bundles of {{main}} still apply, {{bundles}}, read from Duoly checkout in 2026.',
       ],
     },
     {
@@ -121,7 +121,7 @@ export const wildRift: HubPageCopy = {
     {
       heading: 'When is Wild Rift coaching the better booking?',
       paragraphs: [
-        'Wild Rift coaching is the better booking when the goal is a fix you can repeat rather than company for the next game. First, Champion Mastery is one hour with a Grandmaster+ coach on one champion, covering combos, builds, matchups and power spikes, at {{p_champ}} per hour. Second, Play and Learn is one live ranked game with a Master+ coach at {{p_learn}} instead of a clock hour. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
+        'Wild Rift coaching is the better booking when the goal is a fix you can repeat rather than company for the next game. First, Champion Mastery is one hour with a Grandmaster+ coach on one champion, covering combos, builds, matchups and power spikes, at {{p_champ}} per hour. Second, Play and Learn is one live ranked game with a Master+ coach at {{p_learn}} instead of a clock hour. Coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to teammate games only.',
         'For example, a player who loses lane to the same matchup every game gains more from one mastery hour at {{p_champ}} than from three more ranked games. A player who wants to relax gains more from ARAM at {{p_aram}} per game, where the champions are random and nothing is on the line. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every Wild Rift coach before any order goes live. The nearest neighbours here are [League of Legends teammates](/games/league-of-legends) on PC and [Dota 2 teammates](/games/dota-2).',
       ],
     },
@@ -135,7 +135,7 @@ export const wildRift: HubPageCopy = {
       ],
       [
         'How much does a Wild Rift teammate cost?',
-        'Duo Pro is {{p_duo2}} per game at {{rank_duo2}}, from {{p_duo2_low}} at the lowest rank. Bundles take {{pct3}} off 3 games, and 10 games cost {{p_duo2_x10}} with {{pct10}} off.',
+        'Duo Pro is {{p_duo2}} per game at {{rank_duo2}}, from {{p_duo2_low}} at the lowest rank. Bundles of {{main}} take {{bundles}}, so 10 games cost {{p_duo2_x10}}.',
       ],
       [
         'Is this Wild Rift or League of Legends on PC?',
@@ -157,6 +157,6 @@ export const wildRift: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next Wild Rift game?',
-    text: 'Duo Pro is the ranked tier with a Master teammate from Duoly, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five games take {{pct5}} off and 10 games take {{pct10}} off. ARAM stays {{p_aram}} per game at any rank, and a normal match costs {{p_norm}}. Ranked 5-Stack hires Master+ players for up to {{seats_five}} seats at {{p_five}} per game when you want the whole lobby in 2026. For example, pick your rank and lane, then agree the draft in the order chat using Discord.',
+    text: 'Duo Pro is the ranked tier with a Master teammate from Duoly, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five games take {{pct5}} off and 10 games take {{pct10}} off. ARAM stays {{p_aram}} per game at any rank, and a normal match costs {{p_norm}}. Ranked 5-Stack hires Master+ players for up to {{seats_five}} seats from {{p_five_low}} per game when you want the whole lobby in 2026. For example, pick your rank and lane, then agree the draft in the order chat using Discord.',
   },
 };

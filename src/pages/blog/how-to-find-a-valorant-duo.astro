@@ -6,10 +6,13 @@ import Steps from '../../components/seo/Steps.astro';
 import Faq from '../../components/seo/Faq.astro';
 import ClosingCta from '../../components/seo/ClosingCta.astro';
 import '../../components/seo/seo.css';
+import OfferCard from '../../components/seo/OfferCard.astro';
+import '../../components/seo/article.css';
 import '../../components/seo/free-vs-paid.css';
 import '../../components/seo/lfg-post.css';
 import '../../components/seo/guide-article.css';
 import { pageViewer } from '../../site/viewer';
+import { heroOffer } from '../../server/seo/hero-offer';
 import { seoOffers, faqSchema } from '../../server/seo/offers';
 import { BUNDLE_PERCENTS as bundle } from '../../server/seo/teammate-facts';
 import { viewerCurrency } from '../../server/currency';
@@ -41,6 +44,7 @@ const duoPro = at('duo2', RANK);
 const swift = at('swift');
 const deathmatch = at('dm');
 const vod = lessons.find((offer) => offer.id === 'vod')!;
+const paidOffer = heroOffer('val', 'duo2', teammates)!;
 const path = '/blog/how-to-find-a-valorant-duo';
 const title = 'How to Find a Valorant Duo | Duoly';
 const h1 = 'How to find a Valorant duo';
@@ -149,7 +153,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
   viewer={viewer}
   csrf={csrf}
 >
-  <article class="seo-page">
+  <article class="seo-page seo-article">
     <Breadcrumbs
       items={[
         { name: 'Home', path: '/' },
@@ -393,7 +397,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
           <p class="guide-tag guide-tag-paid">Paid · fixed price</p>
           <p class="guide-card-title">Valorant teammate prices at {RANK}</p>
           <table class="guide-prices">
-            <caption>Read from Duoly checkout on{CHECKED_LABEL}</caption>
+            <caption>{`Read from Duoly checkout on ${CHECKED_LABEL}`}</caption>
             <tbody>
               <tr>
                 <th scope="row">
@@ -490,6 +494,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </p>
     </Steps>
 
+    <OfferCard
+      offer={paidOffer}
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+      text={`Want a duo tonight without posting for one? Book ${paidOffer.title} and an ${paidOffer.tier} queues Competitive with you at a time you agree first.`}
+    />
     <section aria-labelledby="session-h">
       <h2 id="session-h">How does a booked Valorant session run?</h2>
       <p>
@@ -536,6 +545,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </p>
     </section>
 
+    <OfferCard
+      offer={paidOffer}
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+      text={`Skipping the post tonight? Pick your region, your rank and how many games, and an ${paidOffer.tier} takes the second slot for all of them.`}
+    />
     <Faq
       heading="What else do people ask about finding a Valorant duo?"
       items={faqItems}

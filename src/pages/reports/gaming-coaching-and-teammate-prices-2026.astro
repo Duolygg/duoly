@@ -4,13 +4,18 @@ import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
 import SeoHero from '../../components/seo/SeoHero.astro';
 import Faq from '../../components/seo/Faq.astro';
 import ClosingCta from '../../components/seo/ClosingCta.astro';
+import OfferCard from '../../components/seo/OfferCard.astro';
+import '../../components/seo/article.css';
 import '../../components/seo/seo.css';
 import '../../components/seo/free-vs-paid.css';
 import '../../components/seo/guide-article.css';
 import '../../components/seo/official.css';
 import '../../components/seo/report.css';
 import { pageViewer } from '../../site/viewer';
-import { faqSchema } from '../../server/seo/offers';
+import { faqSchema, seoOffers } from '../../server/seo/offers';
+import { heroOffer } from '../../server/seo/hero-offer';
+import { viewerCurrency } from '../../server/currency';
+import { eurToUsd } from '../../server/fx';
 import {
   EPAL_TWO_FIGURE_CARDS,
   SURVEY_CHECKED,
@@ -47,7 +52,24 @@ import {
   serializeJsonLd,
 } from '../../site/seo';
 
-const { viewer, csrf } = await pageViewer(Astro);
+const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
+/**
+ * Duoly's own lesson, priced through the engine checkout charges on.
+ *
+ * It sits under the findings rather than in the hero: a reader arriving at a
+ * price survey is owed the numbers first, and a survey that opened with its
+ * publisher's own offer would be an advertisement with a method section.
+ */
+const reportCurrency = await viewerCurrency(Astro.cookies, accountCurrency);
+const reportOffer = heroOffer(
+  'val',
+  'vod',
+  seoOffers('val', 'training', {
+    customerCurrency: reportCurrency.cur,
+    eurToUsd: reportCurrency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+  }),
+  { coach: true },
+)!;
 const path = REPORT_PATH;
 const csv = REPORT_CSV_PATH;
 const title = 'Gaming Coaching and Teammate Prices 2026 | Duoly';
@@ -292,7 +314,7 @@ const dataset = {
           </span>
         </li>
         <li>
-          <span class="report-finding-label">Fees and refunds</span>
+          <span class="report-finding-label">Platform fees vary</span>
           <span class="report-finding-big">3.7% plus USD 1.79</span>
           <span class="report-finding-sub">
             What Metafy states it adds to a buyer's subtotal
@@ -306,6 +328,11 @@ const dataset = {
           </span>
         </li>
       </ul>
+      <OfferCard
+        offer={reportOffer}
+        art={{ src: '/assets/games/valorant.png', alt: '' }}
+        text={`Duoly is one of the platforms in this survey, and this is the price it publishes: the same lesson price in every game it coaches, with nothing added at checkout.`}
+      />
     </section>
 
     <section aria-labelledby="hourly-h">

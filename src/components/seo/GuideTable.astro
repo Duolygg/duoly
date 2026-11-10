@@ -1,0 +1,39 @@
+---
+/**
+ * A small comparison table for a guide that weighs routes against each other.
+ *
+ * Prose can name three routes and still leave a reader unable to line them up.
+ * The table does the lining up. It stacks into labelled rows under 720px, so
+ * no cell is read without its column name on a phone.
+ */
+interface Props {
+  caption: string;
+  /** Header row: the first entry labels the row headings column. */
+  columns: string[];
+  rows: { head: string; cells: string[] }[];
+}
+const { caption, columns, rows } = Astro.props;
+---
+
+<div class="guide-table-wrap">
+  <table class="guide-table">
+    <caption class="sr-only">{caption}</caption>
+    <thead>
+      <tr>
+        {columns.map((column) => (
+          <th scope="col">{column}</th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr>
+          <th scope="row">{row.head}</th>
+          {row.cells.map((cell, index) => (
+            <td data-label={columns[index + 1]}>{cell}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

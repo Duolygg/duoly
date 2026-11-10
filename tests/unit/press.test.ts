@@ -17,6 +17,7 @@ import {
   BUSINESS_LOCATION,
   CODEBASE_STARTED_LABEL,
 } from '../../src/site/entity';
+import { OFFICIAL_CHANNELS } from '../../src/site/seo';
 import { SUPPORT_EMAIL } from '../../src/site/nav';
 import { PRESS_EMAIL } from '../../src/site/press-contact';
 import { CATALOG_GAMES, SERVICE_COUNT } from '../../src/server/seo/booking';
@@ -101,6 +102,22 @@ describe('the Duoly fact sheet', () => {
       expect(label.length, label).toBeGreaterThan(2);
       expect(value.trim().length, label).toBeGreaterThan(0);
     }
+  });
+
+  it('names every official account Duoly really owns', () => {
+    const row = values.get('Official channels');
+    expect(row).toBeTruthy();
+    for (const channel of OFFICIAL_CHANNELS)
+      expect(row, channel.href).toContain(channel.label);
+    expect(OFFICIAL_CHANNELS.map((channel) => channel.href)).toContain(
+      'https://www.youtube.com/@duolygg',
+    );
+    expect(OFFICIAL_CHANNELS.map((channel) => channel.href)).toContain(
+      'https://www.tiktok.com/@duolygg',
+    );
+    // The press page renders the same constant, so the list cannot drift.
+    const page = readFileSync('src/pages/press.astro', 'utf8');
+    expect(page).toContain('OFFICIAL_CHANNELS');
   });
 
   it('states no metric Duoly has not published', () => {

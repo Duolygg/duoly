@@ -16,6 +16,7 @@ import {
   HUB_PATHS,
   INDEXABLE_PATHS,
   COACHING_SLUGS,
+  OFFICIAL_CHANNELS,
   OFFICIAL_PROFILES,
   SAME_AS,
   breadcrumbs,
@@ -244,11 +245,23 @@ it('publishes one Organization entity with only profiles we really own', () => {
   expect(organization.logo).toBe('https://duoly.gg/icon-512.png');
   expect(organization.description.length).toBeGreaterThan(50);
   // Only accounts that exist. An empty slot in OFFICIAL_PROFILES never reaches sameAs.
-  expect(SAME_AS).toEqual([DISCORD_INVITE]);
+  expect(SAME_AS).toEqual([
+    DISCORD_INVITE,
+    'https://www.youtube.com/@duolygg',
+    'https://www.tiktok.com/@duolygg',
+  ]);
   expect(organization.sameAs).toEqual(SAME_AS);
   for (const url of SAME_AS) expect(url).toMatch(/^https:\/\//);
   expect(SAME_AS.join(' ')).not.toMatch(/wikipedia|wikidata/i);
   expect(Object.keys(OFFICIAL_PROFILES)).toContain('x');
+  // Every live profile reaches /press through the same constant, with a label.
+  expect(OFFICIAL_CHANNELS.map((channel) => channel.href)).toEqual(SAME_AS);
+  for (const channel of OFFICIAL_CHANNELS)
+    expect(channel.label.length, channel.href).toBeGreaterThan(0);
+  // An account slot that is still empty is a reminder, never a rendered link.
+  for (const [key, url] of Object.entries(OFFICIAL_PROFILES))
+    if (!url)
+      expect(OFFICIAL_CHANNELS.some((c) => c.label === key)).toBe(false);
   // The whole point of the shared constant: one edit reaches every Organization node.
   const home = JSON.parse(serializeJsonLd(homeSchema(site)))['@graph'][0];
   expect(home).toEqual(organization);

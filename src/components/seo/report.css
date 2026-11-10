@@ -19,11 +19,15 @@
 @media (min-width: 900px) {
   .report-findings {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: start;
+    /* Equal height, so three findings read as one row of three rather than
+       three cards of their own lengths. */
+    align-items: stretch;
   }
 }
 
 .report-findings > li {
+  display: flex;
+  flex-direction: column;
   padding: 20px;
   border-radius: 18px;
   background: #120b22;
@@ -50,10 +54,12 @@
   line-height: 1.1;
 }
 
+/* The subline says what the big number is, so it is read as often as the
+   number: #c4b8e0 on the card is 9.6:1 where the old #a79dc4 was 7.5:1. */
 .report-finding-sub {
   display: block;
   margin-top: 6px;
-  color: #a79dc4;
+  color: #c4b8e0;
   font-size: 14px;
 }
 

@@ -1,6 +1,16 @@
 ---
 import { type seoOffers } from '../../server/seo/offers';
 import { pricesAnswer, priceNote } from '../../server/seo/citable-answers';
+import {
+  LABEL_BUDGET,
+  bookLabel,
+  mainServiceId,
+} from '../../server/seo/hero-offer';
+import {
+  BUNDLE_UNITS,
+  QUANTITY_DISCOUNT_PERCENT,
+  quantityDiscountPercent,
+} from '../../contracts/pricing';
 import { SITE_GAMES } from '../../site/games';
 import { bookingHref } from '../../site/seo';
 import {
@@ -49,76 +59,154 @@ const samePrice =
     (offer) => !offer.rank && offer.amountMinor === offers[0]!.amountMinor,
   );
 const cols = services.length % 3 === 0 ? 3 : Math.min(services.length, 4);
+/**
+ * Which quantity discounts a card can show, as the catalog really sells them.
+ *
+ * The game's main service is the one the Bundles tab is built from, so it is
+ * the only card that can offer 3, 5 and 10 unit packs. Everything else goes
+ * through the quantity picker, where 5 units is the one step that discounts,
+ * and coaching carries no quantity discount at all
+ * (src/contracts/pricing.ts). That difference is a real one between the tiers,
+ * so the cards show it instead of looking interchangeable.
+ */
+const main = coach ? undefined : mainServiceId(gameId);
+const discountsFor = (serviceId: string) => {
+  if (coach) return [];
+  const bundle = serviceId === main;
+  const units = bundle
+    ? [...BUNDLE_UNITS]
+    : Object.keys(QUANTITY_DISCOUNT_PERCENT).map(Number);
+  return units
+    .map((count) => ({
+      units: count,
+      percent: quantityDiscountPercent(count, { bundle }),
+    }))
+    .filter((step) => step.percent > 0);
+};
 const cards = services.map((service) => {
   const rows = offers.filter((offer) => offer.id === service.id);
-  const cheapest = [...rows].sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+  const byPrice = [...rows].sort((a, b) => a.amountMinor - b.amountMinor);
+  const cheapest = byPrice[0]!;
+  const dearest = byPrice[byPrice.length - 1]!;
+  const varies = rows.some((row) => row.amountMinor !== cheapest.amountMinor);
   return {
     service,
     rows,
     cheapest,
+    dearest,
     ranked: Boolean(service.rank),
-    varies: rows.some((row) => row.amountMinor !== cheapest.amountMinor),
+    varies,
+    discounts: discountsFor(service.id),
+    // The button names the tier and what that tier starts at, so a reader
+    // knows what the click costs before making it, inside the width the card
+    // has for it (src/server/seo/hero-offer.ts).
+    action: bookLabel(
+      service.title,
+      varies,
+      cheapest.display,
+      cols >= 4 ? LABEL_BUDGET.cardNarrow : LABEL_BUDGET.card,
+    ),
   };
 });
+const unitWord = (unit: string, count: number) =>
+  `${count} ${unit}${count === 1 ? '' : 's'}`;
 ---
 
 <section aria-labelledby={id}>
   <h2 id={id}>{headingText}</h2>
   <p class="section-intro">{intro ?? pricesAnswer(gameId, offers, coach)}</p>
   <div class="price-grid" data-cols={cols}>
-    {cards.map(({ service, rows, cheapest, ranked, varies }) => (
-      <article class="card price-card">
-        <strong class="service-name">{service.title}</strong>
-        <span class="who">{providerText(service.provider)}</span>
-        <p>{service.desc}</p>
-        {ranked ? (
-          <>
-            <details>
-              <summary>Price by your rank</summary>
-              {/* A rank and its price are a name/value pair, so the rows are a
+    {cards.map(
+      ({
+        service,
+        rows,
+        cheapest,
+        dearest,
+        ranked,
+        varies,
+        discounts,
+        action,
+      }) => (
+        <article
+          class="card price-card"
+          data-main={service.id === main ? '' : undefined}
+        >
+          <div class="price-card-top">
+            <strong class="service-name">{service.title}</strong>
+            <span class="who">{providerText(service.provider)}</span>
+          </div>
+          <p>{service.desc}</p>
+          {ranked ? (
+            <>
+              <p class="price">
+                {varies && <span class="from">From </span>}
+                <span class="money">{cheapest.display}</span> / {cheapest.unit}
+                {cheapest.seats > 1 && (
+                  <span class="seats">for {cheapest.seats} teammates</span>
+                )}
+              </p>
+              {/* The closed summary carries the top of the range, so a reader
+                  who never opens it still knows the price moves and how far. */}
+              <details>
+                <summary>
+                  <span>
+                    Up to {dearest.display} at {dearest.rank}
+                  </span>
+                </summary>
+                {/* A rank and its price are a name/value pair, so the rows are a
                   description list rather than a bullet list. */}
-              <dl class="rank-prices">
-                {rows.map((row) => (
-                  <div
-                    data-service={row.id}
-                    data-rank={row.rank}
-                    data-price-minor={row.amountMinor}
-                  >
-                    <dt>{row.rank}</dt>
-                    <dd>{row.display}</dd>
-                  </div>
-                ))}
-              </dl>
-            </details>
-            <p class="price">
-              {varies && <span class="from">From </span>}
-              <span class="money">{cheapest.display}</span> / {cheapest.unit}
-              {cheapest.seats > 1 && (
-                <span class="seats">for {cheapest.seats} teammates</span>
+                <dl class="rank-prices">
+                  {rows.map((row) => (
+                    <div
+                      data-service={row.id}
+                      data-rank={row.rank}
+                      data-price-minor={row.amountMinor}
+                    >
+                      <dt>{row.rank}</dt>
+                      <dd>{row.display}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </details>
+            </>
+          ) : (
+            <p
+              class={samePrice ? 'price same' : 'price'}
+              data-service={service.id}
+              data-price-minor={service.amountMinor}
+            >
+              <span class="money">{service.display}</span> / {service.unit}
+              {service.seats > 1 && (
+                <span class="seats">for {service.seats} teammates</span>
               )}
             </p>
-          </>
-        ) : (
-          <p
-            class={samePrice ? 'price same' : 'price'}
-            data-service={service.id}
-            data-price-minor={service.amountMinor}
+          )}
+          {discounts.length > 0 && (
+            <ul
+              class="bundle-chips"
+              aria-label={
+                service.id === main
+                  ? `${service.title} bundle discounts`
+                  : `${service.title} quantity discounts`
+              }
+            >
+              {discounts.map((step) => (
+                <li>
+                  {unitWord(cheapest.unit, step.units)} {step.percent}% off
+                </li>
+              ))}
+            </ul>
+          )}
+          <a
+            class="btn-sm"
+            href={bookingHref(gameId, { service: service.id })}
+            aria-label={action.text === action.full ? undefined : action.full}
           >
-            <span class="money">{service.display}</span> / {service.unit}
-            {service.seats > 1 && (
-              <span class="seats">for {service.seats} teammates</span>
-            )}
-          </p>
-        )}
-        <a
-          class="btn-sm"
-          href={bookingHref(gameId, { service: service.id })}
-          aria-label={`Book ${service.title}`}
-        >
-          Book
-        </a>
-      </article>
-    ))}
+            {action.text}
+          </a>
+        </article>
+      ),
+    )}
   </div>
   <p class="price-note">{priceNote(offers, coach)}</p>
   {dated && (

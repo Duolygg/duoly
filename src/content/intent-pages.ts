@@ -64,7 +64,7 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'Which League mode should you book: ARAM, normals or ranked?',
         paragraphs: [
-          'ARAM is the Howling Abyss mode with random champions, one lane and constant team fights. ARAM Night costs {{lolAram}} per game, and 3 games cost {{lolAram3}} with the {{pct3}} discount in November 2026. Normal Draft is the better pick for practicing a champion or a new role with no LP on the line. Swiftplay is the shorter Summoner’s Rift mode for a quick evening session with a teammate on voice.',
+          'ARAM is the Howling Abyss mode with random champions, one lane and constant team fights. ARAM Night costs {{lolAram}} per game, and 3 games cost {{lolAram3}} in November 2026, because the quantity discount starts at 5 games. Normal Draft is the better pick for practicing a champion or a new role with no LP on the line. Swiftplay is the shorter Summoner’s Rift mode for a quick evening session with a teammate on voice.',
           'Ranked Solo/Duo is the mode where your LP is on the line, and Duo Pro is the service built for it at {{lolPro}} per game for Gold on EUW. Both accounts queue from the same server, so share your server and rank in the order chat before the first game. For example, a Gold player on EUW books 3 Duo Pro games for {{lolPro3}} with the {{pct3}} bundle discount and names the lane they want covered. Duo Plus is the cheaper ranked tier at {{lolPlus}} per game with a Diamond 4+ teammate. You control your champion, your decisions and your account in every match, and the booking pays for playing together.',
         ],
       },
@@ -150,13 +150,13 @@ export const intentPages: IntentPage[] = [
         heading: 'How do you use a Team-Up in a real fight?',
         paragraphs: [
           'A Team-Up is a Marvel Rivals hero pairing where one hero gives the partner hero an extra ability. Team-Up Duo is the Duoly service built around one pairing, with a Grandmaster+ teammate at {{mrTeamup}} per match in November 2026. Check the current Team-Up panel in hero selection first, because pairings change between seasons. Agree which player brings the anchor hero, who triggers the shared ability and which call starts the fight.',
-          'For example, your partner is ready to engage while you walk back from spawn. Calling the Team-Up right away leaves only 1 of 2 players in position. Regroup instead, find the objective and choose an angle where both heroes can act. Use one short countdown, then keep the next call about survival. Three Team-Up Duo matches cost {{mrTeamup3}} with the {{pct3}} bundle discount from Duoly.',
+          'For example, your partner is ready to engage while you walk back from spawn. Calling the Team-Up right away leaves only 1 of 2 players in position. Regroup instead, find the objective and choose an angle where both heroes can act. Use one short countdown, then keep the next call about survival. Three Team-Up Duo matches cost {{mrTeamup3}} from Duoly, three times the single price, because the quantity discount starts at 5 matches.',
         ],
       },
       {
         heading: 'Should you book Quick Match or a Competitive duo?',
         paragraphs: [
-          'Quick Match is the casual Marvel Rivals mode for trying a new role, learning a map route or settling into voice chat with no rank on the line. Quick Match and Arcade cost {{mrQuick}} per match on Duoly, and 3 matches cost {{mrQuick3}} with {{pct3}} off in November 2026. Tell your partner first if you are learning a hero, so expectations match from the start.',
+          'Quick Match is the casual Marvel Rivals mode for trying a new role, learning a map route or settling into voice chat with no rank on the line. Quick Match and Arcade cost {{mrQuick}} per match on Duoly, and 3 matches cost {{mrQuick3}} in November 2026, because the quantity discount starts at 5 matches. Tell your partner first if you are learning a hero, so expectations match from the start.',
           'Competitive is the ranked Marvel Rivals mode, and Duo Pro is the service built for it with a Grandmaster+ teammate. First, bring your rank and your platform, because Competitive prices follow your own rank while Quick Match does not. For example, a Platinum player in Europe pays {{mrPro}} per match for Duo Pro, and 3 matches cost {{mrPro3}} with the {{pct3}} bundle discount. Duo Apex is the Celestial+ tier above it. You control your hero, your decisions and your account in every match, and the booking pays for playing together.',
         ],
       },
@@ -171,7 +171,7 @@ export const intentPages: IntentPage[] = [
     steps: [
       'Choose a service and a total match count first, before checkout. Duo Pro is the Competitive option with a Grandmaster+ teammate, and 3 matches at Platinum in Europe cost {{mrPro3}} with the {{pct3}} bundle discount in November 2026.',
       'Add your platform, region, rank, language and hero pool. For example, ask your partner to cover Vanguard while you play Strategist. Name a voice language too, such as English or German, so calls work from the first fight.',
-      'Meet your partner in the order chat. Check lobby compatibility, agree on voice using Discord or in-game chat, then pick the first hero pairing before queueing. A single Duo Pro match costs {{mrPro}}, and 5 matches get {{pct5}} off.',
+      'Meet your partner in the order chat. Check lobby compatibility, agree on voice using Discord or in-game chat, then pick the first hero pairing before queueing. A single Duo Pro match costs {{mrPro}} at Platinum, and 5 matches get {{pct5}} off.',
     ],
     prepare: [
       'A hero pool is the short list of heroes you play well. First, name 2 heroes plus your preferred role, for example 2 Strategists and 1 Vanguard as a backup.',
@@ -336,14 +336,14 @@ export const intentPages: IntentPage[] = [
         heading: 'Which Valorant agents and roles make a good duo?',
         paragraphs: [
           'A good Valorant duo is a pair of agents whose utility lands on the same site inside the same 3 seconds. The 4 agent roles come from Riot Games: Duelist, Controller, Initiator and Sentinel. Controller and Duelist is the classic pair. The smoke goes down, and the Duelist enters through it on a count. Initiator and Duelist is the second strong pair, because a Breach stun or a Sova dart gives the entry a target instead of a guess. Sentinel and Controller is the third, holding the far site and rotating together.',
-          'For example, a Sentinel player who books an Immortal+ Initiator gets a dart before every entry instead of a guess at first contact. Duo Plus pairs you with an Ascendant+ teammate at {{valPlus}} per game and Duo Apex with a Radiant one at {{valTop}}, both with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026. Pick the tier by the lobbies you queue into now rather than the ones you want to reach. Finally, name your agent pool in the order chat using Discord, so neither player instant-locks the same role.',
+          'For example, a Sentinel player who books an Immortal+ Initiator gets a dart before every entry instead of a guess at first contact. Duo Plus pairs you with an Ascendant+ teammate at {{valPlus}} per game and Duo Apex with a Radiant one at {{valTop}}, and 5 games take {{pick5}} off in November 2026. Pick the tier by the lobbies you queue into now rather than the ones you want to reach. Finally, name your agent pool in the order chat using Discord, so neither player instant-locks the same role.',
         ],
       },
       {
         heading: 'Should you book Competitive, Swiftplay or Unrated?',
         paragraphs: [
           'Swiftplay is the short Valorant mode of about 15 minutes with the full buy system, at {{valSwift}} per game, so Swiftplay suits a warm-up or a first session with a new teammate. Unrated is the full 13-round format with no rank on the line at {{valUnrated}} per game, which makes Unrated the honest place to learn a new agent. First, a Deathmatch warm-up is {{valDm}} per game and fixes aim rather than teamplay, so book one before a ranked block. All three hold one price at every rank, while Competitive is priced by the rank you sit at.',
-          'Competitive is the ranked mode, and the only one whose price follows the rank you sit at, so the Competitive cards carry a rank list while the casual ones hold one price. First, the teammate tiers are Duo Plus with an Ascendant+ player, Duo Pro with an Immortal+ player and Duo Apex with a Radiant player. Second, bundles cut whichever tier you pick, {{pct3}} off 3 games and {{pct5}} off 5. For example, a Sentinel main books Duo Pro and asks for an Immortal+ Initiator who darts before every entry, agreed using Discord.',
+          'Competitive is the ranked mode, and the only one whose price follows the rank you sit at, so the Competitive cards carry a rank list while the casual ones hold one price. First, the teammate tiers are Duo Plus with an Ascendant+ player, Duo Pro with an Immortal+ player and Duo Apex with a Radiant player. Second, only Duo Pro is sold in bundles, {{pct3}} off 3 games, {{pct5}} off 5 and {{pct10}} off 10, and 5 games of any tier take {{pick5}} off. For example, a Sentinel main books Duo Pro and asks for an Immortal+ Initiator who darts before every entry, agreed using Discord.',
         ],
       },
       {
@@ -441,7 +441,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How does a Fortnite duo split the work in a match?',
         paragraphs: [
           'A Fortnite duo is 2 players sharing one drop, one loot path and one rotation plan, on a map that changes every season from Epic Games. First, agree the drop. Then agree who takes the chest side and who takes the floor loot, so the first minute never ends with 2 pistols. Split mats early in Builds, because a duo on 90 wood loses the first build fight. Call rotations by the storm circle rather than by the fight you want, because the storm decides who holds high ground.',
-          'In the endgame, 1 player builds and 1 player watches the box line. For example, calling a box reset out loud using Discord turns a lost 2v2 into a trade. Squad Fill in the lobby is the free version for Trios and Squads: a random player arrives from Epic Games at no cost, with no agreed hour and no comms. Finally, a booked partner is the version where the hour, the rank and the comms are agreed first, from {{fnPlus}} per hour on Duo Plus, with {{pct3}} off 3 hours and {{pct5}} off 5.',
+          'In the endgame, 1 player builds and 1 player watches the box line. For example, calling a box reset out loud using Discord turns a lost 2v2 into a trade. Squad Fill in the lobby is the free version for Trios and Squads: a random player arrives from Epic Games at no cost, with no agreed hour and no comms. Finally, a booked partner is the version where the hour, the rank and the comms are agreed first, from {{fnPlus}} per hour on Duo Plus, and 5 hours take {{pick5}} off.',
         ],
       },
       {
@@ -476,7 +476,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Is Reload a good first session?',
-        'Yes: Reload gives respawns on a small map at {{fnReload}} per hour, so a new pair gets many fights inside one hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+        'Yes: Reload gives respawns on a small map at {{fnReload}} per hour, so a new pair gets many fights inside one hour, and 5 hours take {{pick5}} off in November 2026.',
       ],
       [
         'Does a duo booking fill a full squad?',
@@ -532,14 +532,14 @@ export const intentPages: IntentPage[] = [
         heading: 'Which Overwatch 2 roles make a good duo?',
         paragraphs: [
           'Role queue is the Overwatch 2 system from Blizzard Entertainment that locks every team to 1 Tank, 2 Damage and 2 Support, so a duo is a pair of those 5 seats. Tank and Support is the steadiest pair: the Tank takes space, and the Support decides how much space the cooldowns can pay for. Damage and Support is the second pair, because a dive only works when the healing follows the dive. Two Damage players need one shared target and one agreed reset.',
-          'For example, a Damage player who books a Master+ Support gets healing that follows the dive instead of a third player holding the back line. Duo Plus pairs you with a Diamond+ teammate at {{owPlus}} per game and Duo Apex with a Grandmaster+ one at {{owTop}}, both with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026. Finally, name your role and one comfortable second role when booking, so the pair still works when the first pick is taken.',
+          'For example, a Damage player who books a Master+ Support gets healing that follows the dive instead of a third player holding the back line. Duo Plus pairs you with a Diamond+ teammate at {{owPlus}} per game and Duo Apex with a Grandmaster+ one at {{owTop}}, and 5 games take {{pick5}} off in November 2026. Finally, name your role and one comfortable second role when booking, so the pair still works when the first pick is taken.',
         ],
       },
       {
         heading: 'Competitive, Quick Play or Stadium: what should you queue?',
         paragraphs: [
-          'Quick Play is the casual Overwatch 2 mode with no rank attached, at {{owQp}} per game, which suits a first session, a new hero or a console evening with voice on. First, Stadium is the best-of-seven mode where both players spend round money on hero builds, so Stadium rewards a partner who plans 2 rounds ahead. Both hold one price at every rank, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026, while Competitive is priced by the rank you sit at.',
-          'Competitive is the ranked mode, and the only one whose price follows the rank you sit at, so the Competitive cards carry a rank list while the casual ones hold one price. First, the teammate tiers are Duo Plus with a Diamond+ player, Duo Pro with a Master+ player and Duo Apex with a Grandmaster+ player. Second, bundles cut whichever tier you pick, {{pct3}} off 3 games and {{pct5}} off 5. For example, share your platform too, since crossplay settings change which lobby a mixed group lands in, agreed using Discord.',
+          'Quick Play is the casual Overwatch 2 mode with no rank attached, at {{owQp}} per game, which suits a first session, a new hero or a console evening with voice on. First, Stadium is the best-of-seven mode where both players spend round money on hero builds, so Stadium rewards a partner who plans 2 rounds ahead. Both hold one price at every rank, and 5 games take {{pick5}} off in November 2026, while Competitive is priced by the rank you sit at.',
+          'Competitive is the ranked mode, and the only one whose price follows the rank you sit at, so the Competitive cards carry a rank list while the casual ones hold one price. First, the teammate tiers are Duo Plus with a Diamond+ player, Duo Pro with a Master+ player and Duo Apex with a Grandmaster+ player. Second, only Duo Pro is sold in bundles, {{pct3}} off 3 games, {{pct5}} off 5 and {{pct10}} off 10, and 5 games of any tier take {{pick5}} off. For example, share your platform too, since crossplay settings change which lobby a mixed group lands in, agreed using Discord.',
         ],
       },
       {
@@ -629,14 +629,14 @@ export const intentPages: IntentPage[] = [
         heading: 'Which Apex legend roles make a good duo?',
         paragraphs: [
           'Apex Legends sorts every legend into 5 classes from Respawn Entertainment: Assault, Skirmisher, Recon, Controller and Support. A good duo takes 2 classes that answer different problems. Controller and Assault is the steadiest pair, because one player owns the ground and the other converts it into damage. Recon and Skirmisher is the second pair: the scan finds the squad, and the Skirmisher picks the angle to hit it from. Support and anything keeps the pair alive long enough to use the plan.',
-          'For example, a Skirmisher main who books a Master Controller gets ground to fight from instead of a second player looking for an angle. Say which legends you play before the first drop, because 2 Skirmishers with no Controller lose every long hold. Duo Plus pairs you with a Diamond+ partner at {{apexPlus}} per hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Finally, the third seat in trios usually comes from auto fill, so leave one class open and agree the drop using Discord.',
+          'For example, a Skirmisher main who books a Master Controller gets ground to fight from instead of a second player looking for an angle. Say which legends you play before the first drop, because 2 Skirmishers with no Controller lose every long hold. Duo Plus pairs you with a Diamond+ partner at {{apexPlus}} per hour, and 5 hours take {{pick5}} off in November 2026. Finally, the third seat in trios usually comes from auto fill, so leave one class open and agree the drop using Discord.',
         ],
       },
       {
         heading: 'Ranked or the Duos playlist: which should you book?',
         paragraphs: [
           'The Duos playlist is the Apex battle royale format with 2-player squads, the honest answer for playing Apex as a pair, because nobody fills a third seat. Playlists rotate, so check the live list from Respawn Entertainment before booking an hour. For example, a pair booking a Duos hour in a week when Duos is down end up in trios with a stranger. Unranked pubs with the third seat on auto fill is the closest replacement.',
-          'Ranked is the mode with Rookie up to Apex Predator and a real cost for dying early, so a called rotation actually pays there. First, Ranked is the one format whose price follows the rank you sit at, so only the Ranked cards carry a rank list. The Duos playlist is {{apexDuos}} per hour with 2-player squads, so nobody fills a third seat. Mixtape gives Team Deathmatch, Control and Gun Run with respawns, the fastest way to learn a legend without losing points, and unranked pubs are {{apexPubs}} per hour for the same practice inside a real battle royale. All three hold one price at every rank, with {{pct3}} off 3 hours and {{pct5}} off 5, while Ranked is priced by the rank you sit at.',
+          'Ranked is the mode with Rookie up to Apex Predator and a real cost for dying early, so a called rotation actually pays there. First, Ranked is the one format whose price follows the rank you sit at, so only the Ranked cards carry a rank list. The Duos playlist is {{apexDuos}} per hour with 2-player squads, so nobody fills a third seat. Mixtape gives Team Deathmatch, Control and Gun Run with respawns, the fastest way to learn a legend without losing points, and unranked pubs are {{apexPubs}} per hour for the same practice inside a real battle royale. All three hold one price at every rank, and 5 hours take {{pick5}} off, while Ranked is priced by the rank you sit at.',
         ],
       },
       {
@@ -745,7 +745,7 @@ export const intentPages: IntentPage[] = [
         heading: 'How much does a Call of Duty duo cost?',
         paragraphs: [
           'Duo Pro is the Warzone duos service on Duoly at {{codPro}} per hour for a Diamond player, and like the other duo tiers it follows your own rank. Warzone Ranked is the rank-priced service with an Iridescent teammate: a Platinum player pays {{codRanked}} per hour, and an Iridescent player pays {{codRankedIridescent}} per hour, so that price rises with your own rank. Multiplayer Ranked Play is {{codPlus}} per hour at Platinum with a Crimson+ teammate who holds a lane and plays the objective. Finally, every number here was read from Duoly checkout in November 2026. The price cards carry the exact date.',
-          'Bundles cut the total for every service. For example, Warzone duos cost {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank. The [Call of Duty hub](/games/call-of-duty) lists every service for the game.',
+          'Bundles cut the total for every service. For example, a Diamond player pays {{codPro3}} for 3 hours with {{pct3}} off, {{codPro5}} for 5 hours with {{pct5}} off and {{codPro10}} for 10 hours with {{pct10}} off. Resurgence, Zombies and the party playlists hold one flat price at every rank too, so only the 2 Ranked services move with your rank. The [Call of Duty hub](/games/call-of-duty) lists every service for the game.',
         ],
       },
     ],
@@ -761,7 +761,7 @@ export const intentPages: IntentPage[] = [
       'Decide the mode before the first hour, for example Warzone battle royale, Resurgence, multiplayer Ranked Play or round-based Zombies.',
       'Test your microphone on Discord first, then agree on 1 call for a reset, for example naming the building you fall back to.',
       'Decide the mode before you pay, because the 2 Ranked services are priced by your own rank while Resurgence, Zombies and the party playlists hold one price for everybody.',
-      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 10 hours cost {{codPro10}} with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 10 hours at Diamond cost {{codPro10}} with {{pct10}} off, against {{pct3}} off 3 in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -778,7 +778,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Can someone help with round-based Zombies?',
-        'Yes: a Zombies Run is {{codZombies}} per hour with a partner who knows the map and the wonder weapon steps, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+        'Yes: a Zombies Run is {{codZombies}} per hour with a partner who knows the map and the wonder weapon steps, and 5 hours take {{pick5}} off in November 2026.',
       ],
       [
         'Does a booking fill a full quad?',
@@ -830,14 +830,14 @@ export const intentPages: IntentPage[] = [
         heading: 'Which Siege roles make a good duo?',
         paragraphs: [
           'A Siege duo is a pair of jobs inside one round, and the strongest pairs share utility rather than duplicate the same gadget. The operator roles come from Ubisoft: entry, support, anchor and roam. Hard breach and support is the classic attacking pair, one player clearing the Bandit or Mute while the other opens the wall. Entry and drone is the second pair, because a fragger moving without a live drone is guessing. On defence, anchor and roamer buys time: the anchor holds site while the roamer takes first contact elsewhere.',
-          'For example, an entry player who books a Diamond+ teammate on drone duty walks into rooms that have already been cleared instead of guessing at the first angle. Duo Plus pairs you with an Emerald+ teammate at {{r6Plus}} per game and Duo Apex with a Champion-level one at {{r6Top}}, both with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026. Finally, share your operator pool before the first round using Discord, so the pair always has a hard breach and a drone between them.',
+          'For example, an entry player who books a Diamond+ teammate on drone duty walks into rooms that have already been cleared instead of guessing at the first angle. Duo Plus pairs you with an Emerald+ teammate at {{r6Plus}} per game and Duo Apex with a Champion-level one at {{r6Top}}, and 5 games take {{pick5}} off in November 2026. Finally, share your operator pool before the first round using Discord, so the pair always has a hard breach and a drone between them.',
         ],
       },
       {
         heading: 'Ranked, Quick Match or Arcade: what should you queue?',
         paragraphs: [
           'Quick Match is the unranked Siege mode for learning maps, callouts and operators, at {{r6Quick}} per game, which makes it the right first session: a map you cannot call costs more rounds than a rank point is worth. Arcade and Deathmatch warm up aim and peeks between Ranked games rather than teach anything. Both hold that price at every rank, while Ranked is priced by the rank you sit at.',
-          'Ranked is the mode with Copper up to Champion, and the only one whose price follows the rank you sit at, so the Ranked cards carry a rank list while the unranked ones hold one price. First, the teammate tiers are Duo Plus with an Emerald+ player, Duo Pro with a Diamond+ caller and Duo Apex with a Champion-level player. Second, bundles cut whichever tier you pick, {{pct3}} off 3 games and {{pct5}} off 5. For example, name your platform, then agree 1 attacking site and 1 defending site to practise using Discord.',
+          'Ranked is the mode with Copper up to Champion, and the only one whose price follows the rank you sit at, so the Ranked cards carry a rank list while the unranked ones hold one price. First, the teammate tiers are Duo Plus with an Emerald+ player, Duo Pro with a Diamond+ caller and Duo Apex with a Champion-level player. Second, only Duo Pro is sold in bundles, {{pct3}} off 3 games, {{pct5}} off 5 and {{pct10}} off 10, and 5 games of any tier take {{pick5}} off. For example, name your platform, then agree 1 attacking site and 1 defending site to practise using Discord.',
         ],
       },
       {
@@ -932,14 +932,14 @@ export const intentPages: IntentPage[] = [
         heading: 'Which CS2 roles make a good duo?',
         paragraphs: [
           'A good Counter-Strike 2 duo is a pair of roles whose utility lands on the same site inside the same few seconds. Entry and support is the classic pair: the support player flashes over the wall, and the entry walks through the flash rather than through a guess. Lurk and entry is the second strong pair, because a lurker holding the far side of the map punishes the rotation the entry forced. AWP and anchor is the third, holding one site cheaply so the other three can stack. First, say which of those jobs you actually want.',
-          'For example, a player who entries every round and owns no flash gets more from a support partner than from a second rifler. Duo Plus pairs you with a 15,000+ rated teammate at {{cs2Plus}} per game at a 10,000 to 14,999 rating, and FACEIT Duo with a Level 10 player at {{cs2Faceit}} on FACEIT Level 6, both with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026. An AK-47 costs 2700 in game, so a full buy and an eco round want different plans. Finally, name your map pool in the order chat using Discord, so nobody learns Train on the night.',
+          'For example, a player who entries every round and owns no flash gets more from a support partner than from a second rifler. Duo Plus pairs you with a 15,000+ rated teammate at {{cs2Plus}} per game at a 10,000 to 14,999 rating, and FACEIT Duo with a Level 10 player at {{cs2Faceit}} on FACEIT Level 6, and 5 games take {{pick5}} off in November 2026. An AK-47 costs 2700 in game, so a full buy and an eco round want different plans. Finally, name your map pool in the order chat using Discord, so nobody learns Train on the night.',
         ],
       },
       {
         heading: 'Premier, FACEIT or Wingman: what should you queue?',
         paragraphs: [
           'Premier is the Valve ranked mode with the active map pool, a pick and ban phase and a CS Rating number instead of a skill group. Premier is the right queue when you want the rating to move. FACEIT is a separate platform with its own Level 1 to Level 10 ladder, anti-cheat and veto, so FACEIT Duo from Duoly is the booking for a stricter lobby. First, decide which number you care about, because the two ladders do not talk to each other.',
-          'Wingman is the 2v2 mode on a single bombsite, and Wingman is the honest pick for playing Counter-Strike 2 as a pair, since nobody fills the other three seats. Wingman keeps the classic skill groups, so the price follows your group: {{cs2Wing}} per game at Master Guardian. Casual and Deathmatch cost {{cs2Casual}} per game for an aim warm-up, and a community retake server costs {{cs2Retake}} per game for the drill version: one site, one execute, replayed 20 times in a session. Those two hold one price at every rating, with {{pct3}} off 3 games and {{pct5}} off 5. For example, book a retake block first when your pair keeps losing the same B site.',
+          'Wingman is the 2v2 mode on a single bombsite, and Wingman is the honest pick for playing Counter-Strike 2 as a pair, since nobody fills the other three seats. Wingman keeps the classic skill groups, so the price follows your group: {{cs2Wing}} per game at Master Guardian. Casual and Deathmatch cost {{cs2Casual}} per game for an aim warm-up, and a community retake server costs {{cs2Retake}} per game for the drill version: one site, one execute, replayed 20 times in a session. Those two hold one price at every rating, and 5 games take {{pick5}} off. For example, book a retake block first when your pair keeps losing the same B site.',
         ],
       },
       {
@@ -961,7 +961,7 @@ export const intentPages: IntentPage[] = [
       'Bring a map pool of 3 maps you can call, for example 1) Mirage, 2) Inferno and 3) Ancient, then say which map you want to avoid.',
       'Test your microphone and your audio using Discord, then agree on short calls: a position, a number and a utility state.',
       'Agree the buy rules before the first half, for example a full save under 2000 and armor before a rifle on a force buy.',
-      'Finally, book the games you want up front, because the bundle discount applies to one order rather than to games added later: 1 game is {{cs2Pro}} and 10 games cost {{cs2Pro10}} with {{pct10}} off in November 2026. Keep your login private.',
+      'Finally, book the games you want up front, because the bundle discount applies to one order rather than to games added later: At a 10,000 to 14,999 rating 1 game is {{cs2Pro}} and 10 games cost {{cs2Pro10}} with {{pct10}} off in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -974,7 +974,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Can someone help me practice retakes?',
-        'Yes: a retake server booking is {{cs2Retake}} per game, and a session replays one site execute many times, with {{pct3}} off 3 games in November 2026.',
+        'Yes: a retake server booking is {{cs2Retake}} per game, and a session replays one site execute many times, and 5 games take {{pick5}} off in November 2026.',
       ],
       [
         'Does a duo booking fill all five seats?',
@@ -982,7 +982,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Is a duo session the same as CS2 coaching?',
-        'No: a duo is shared playing time at {{cs2Pro}} per game with {{pct5}} off 5. Demo Review and Utility and Lineups are the hourly lessons on the coaching page.',
+        'No: a duo is shared playing time at {{cs2Pro}} per game at a 10,000 to 14,999 rating, with {{pct5}} off 5. Demo Review and Utility and Lineups are the hourly lessons on the coaching page.',
       ],
       [
         'How do I find free CS2 teammates?',
@@ -998,7 +998,7 @@ export const intentPages: IntentPage[] = [
       ],
     ],
     closing:
-      'Duo Pro is the Premier Counter-Strike 2 session with a 20,000+ rated teammate from Duoly, and 5 games at 10,000 to 14,999 cost {{cs2Pro5}} with {{pct5}} off, against {{pct3}} off 3. Wingman is the 2v2 pick at {{cs2Wing}} per game when you want the whole match to be the two of you. For example, ask for a support player when you entry every round, agreed using Discord.',
+      'Duo Pro is the Premier Counter-Strike 2 session with a 20,000+ rated teammate from Duoly, and 5 games at 10,000 to 14,999 cost {{cs2Pro5}} with {{pct5}} off, against {{pct3}} off 3. Wingman is the 2v2 pick at {{cs2Wing}} per game at Master Guardian when you want the whole match to be the two of you. For example, ask for a support player when you entry every round, agreed using Discord.',
   },
   {
     slug: 'lfg',
@@ -1041,14 +1041,14 @@ export const intentPages: IntentPage[] = [
         heading: 'Which Rocket League duo rotation actually works?',
         paragraphs: [
           'A Doubles rotation is the agreement about who goes for the ball and who covers the net behind the challenge. First, one player challenges and the other holds back post, then the two swap roles after every touch. A pair that both commits to the same ball gives up an open net, and a pair that both hangs back gives the opponents free possession. Second, call boost: a player on 12 boost cannot challenge, so the partner takes the next ball and the low player collects the small pads on the way back.',
-          'For example, a Diamond player who books a Grand Champion partner from Duoly spends the hour learning where the second touch should come from rather than chasing. Duo Plus pairs you with a Champion+ partner at {{rlPlus}} per hour and Duo Apex with a Supersonic Legend at {{rlTop}}, both with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. There are 6 big boost pads on a standard field, which is why the back post route is a boost route too. Finally, agree one word for a reset using Discord.',
+          'For example, a Diamond player who books a Grand Champion partner from Duoly spends the hour learning where the second touch should come from rather than chasing. Duo Plus pairs you with a Champion+ partner at {{rlPlus}} per hour and Duo Apex with a Supersonic Legend at {{rlTop}}, and 5 hours take {{pick5}} off in November 2026. There are 6 big boost pads on a standard field, which is why the back post route is a boost route too. Finally, agree one word for a reset using Discord.',
         ],
       },
       {
         heading: 'Doubles, casual 3v3 or the extra modes: what to book?',
         paragraphs: [
           'Ranked Doubles is the 2v2 playlist, and Doubles is the honest answer for playing Rocket League as a pair, because a booked partner fills the only other seat. Casual 3v3 is the no-stakes version at {{rlCasual}} per hour, which suits a first session with someone new or an evening of mechanics with no rank attached. First, pick the playlist before the hour starts, because a Doubles rotation and a Standard rotation are different habits.',
-          'The extra modes are Rumble, Hoops, Snow Day, Dropshot and Heatseeker, at {{rlExtra}} per hour, and an hour there is pure fun rather than practice. Second, Heatseeker gives the most touches per minute, so a new pair gets comfortable on voice fastest there. Both casual options hold one price at every rank, with {{pct3}} off 3 hours and {{pct5}} off 5, while Doubles is priced by the rank you sit at. For example, book one casual hour and one Doubles hour and keep the same partner across both, agreed using Discord.',
+          'The extra modes are Rumble, Hoops, Snow Day, Dropshot and Heatseeker, at {{rlExtra}} per hour, and an hour there is pure fun rather than practice. Second, Heatseeker gives the most touches per minute, so a new pair gets comfortable on voice fastest there. Both casual options hold one price at every rank, and 5 hours take {{pick5}} off, while Doubles is priced by the rank you sit at. For example, book one casual hour and one Doubles hour and keep the same partner across both, agreed using Discord.',
         ],
       },
       {
@@ -1070,7 +1070,7 @@ export const intentPages: IntentPage[] = [
       'Pick the region before booking, because Europe, US-East, US-Central, US-West, South America, Asia, India, Oceania, Middle East and South Africa are separate queues.',
       'Warm up for 10 minutes in free play or a training pack, for example 1) 20 aerials and 2) 10 kickoffs, so the hour goes on rotation.',
       'Test your microphone using Discord first, then agree on 3 calls: going, cover and boost.',
-      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 1 hour is {{rlPro}} and 10 hours cost {{rlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: At Diamond 1 hour is {{rlPro}} and 10 hours cost {{rlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -1079,7 +1079,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Can I book casual games instead of Ranked?',
-        'Yes: casual 3v3 is {{rlCasual}} per hour at one flat price for every rank, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+        'Yes: casual 3v3 is {{rlCasual}} per hour at one flat price for every rank, and 5 hours take {{pick5}} off in November 2026.',
       ],
       [
         'Do you cover Rumble, Hoops and Dropshot?',
@@ -1148,7 +1148,7 @@ export const intentPages: IntentPage[] = [
         heading: 'Which Mythic+ roles make a good duo?',
         paragraphs: [
           'A Mythic+ duo is a pair of the 5 group seats, and the strongest pairs share one job rather than duplicate it. Tank and healer is the steadiest pair: the tank decides the size of the pull, and the healer decides whether that pull is payable. Healer and damage is the second pair, because an interrupt rotation only works when both players know whose kick is up. Tank and damage is the third, since route knowledge plus a second set of stops keeps a timer alive.',
-          'For example, a healer who books a 3,000+ rated tank from Duoly gets pulls sized to the cooldowns actually available. Duo Plus pairs you with a 2,500+ rated teammate at {{wowPlus}} per hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. The other 3 seats still come from your guild, your friends or the group finder. Finally, name your class, spec and the dungeon you keep failing in the order chat using Discord, so the first key starts on the right route.',
+          'For example, a healer who books a 3,000+ rated tank from Duoly gets pulls sized to the cooldowns actually available. Duo Plus pairs you with a 2,500+ rated teammate at {{wowPlus}} per hour, and 5 hours take {{pick5}} off in November 2026. The other 3 seats still come from your guild, your friends or the group finder. Finally, name your class, spec and the dungeon you keep failing in the order chat using Discord, so the first key starts on the right route.',
         ],
       },
       {
@@ -1177,7 +1177,7 @@ export const intentPages: IntentPage[] = [
       'Name your class and spec, and bring the talent build you actually play, so the route is planned around your real stops and defensives.',
       'Check your keystone and your gear before the hour starts, for example 1) a key you want to time and 2) an item level you are comfortable at.',
       'Test your microphone and your audio using Discord, then agree on 3 calls: pull, stop and defensive.',
-      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: 1 hour is {{wowPro}} and 10 hours cost {{wowPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+      'Finally, book the hours you want up front, because the bundle discount applies to one order rather than to hours added later: At a Mythic+ 2,000 to 2,499 rating 1 hour is {{wowPro}} and 10 hours cost {{wowPro10}} with {{pct10}} off in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -1198,7 +1198,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Is this a WoW coaching session?',
-        'No: a teammate hour is shared playing time at {{wowPro}} per hour, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Class and Rotation Coaching is the separate lesson.',
+        'No: a teammate hour is shared playing time at {{wowPro}} per hour at a Mythic+ 2,000 to 2,499 rating, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. Class and Rotation Coaching is the separate lesson.',
       ],
       [
         'How do I find free WoW teammates?',
@@ -1299,7 +1299,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Can I book someone just for Bedwars?',
-        'Yes: PvP Duo covers Bedwars, SkyWars, Duels, UHC and Box PvP on the network you name, from {{mcPlus}} per hour with {{pct3}} off 3 hours.',
+        'Yes: PvP Duo covers Bedwars, SkyWars, Duels, UHC and Box PvP on the network you name, from {{mcPlus}} per hour, and 5 hours take {{pick5}} off.',
       ],
       [
         'Is there a rank picker for Minecraft?',
@@ -1353,14 +1353,14 @@ export const intentPages: IntentPage[] = [
         heading: 'How does an ARC Raiders duo split a raid?',
         paragraphs: [
           'A raid is one trip to the surface, and a duo has 3 jobs to share: looting, watching and knowing the way out. First, agree the route before the drop, because a pair that loots the same room twice has spent half the timer on one building. Second, split the work inside a room: one player takes containers while the other watches the door and the sky. Finally, name the extraction point out loud before anyone is heavy, since a full bag changes which exit is realistic.',
-          'For example, a player who keeps dying with a full bag books Duo Pro from Duoly at {{arcPro}} per hour and spends the hour practicing the last 2 minutes of a raid instead of the first 20. Duo Plus is {{arcPlus}} per hour with an experienced raider and Duo Apex is {{arcTop}} with an elite one, both with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. ARC machines and other raiders both hit a loud fight, so the quiet route is usually the profitable one.',
+          'For example, a player who keeps dying with a full bag books Duo Pro from Duoly at {{arcPro}} per hour and spends the hour practicing the last 2 minutes of a raid instead of the first 20. Duo Plus is {{arcPlus}} per hour with an experienced raider and Duo Apex is {{arcTop}} with an elite one, and 5 hours take {{pick5}} off in November 2026. ARC machines and other raiders both hit a loud fight, so the quiet route is usually the profitable one.',
         ],
       },
       {
         heading: 'Learn the Maps or Duo Pro: which hour should you book?',
         paragraphs: [
           'Learn the Maps is the relaxed ARC Raiders booking at {{arcLearn}} per hour, and the hour goes on routes, loot spots and extraction points rather than on fights. First, book that hour when the map itself is the problem: a player who cannot name an exit loses kit to the timer rather than to other raiders. Second, Duo Pro is the Veteran hour at {{arcPro}}, which suits a player who already knows the map and keeps losing the fight at the end.',
-          'Duo Apex at {{arcTop}} per hour is the elite tier, for high-risk maps and the big extractions where several squads want the same exit. Finally, all four services hold one flat price for every player, because ARC Raiders has no rank on Duoly, and bundles take {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026. For example, book one Learn the Maps hour and one Duo Pro hour with the same raider, so the second hour starts with a shared route, agreed using Discord.',
+          'Duo Apex at {{arcTop}} per hour is the elite tier, for high-risk maps and the big extractions where several squads want the same exit. Finally, all four services hold one flat price for every player, because ARC Raiders has no rank on Duoly, and 5 hours of any of them take {{pick5}} off in November 2026. For example, book one Learn the Maps hour and one Duo Pro hour with the same raider, so the second hour starts with a shared route, agreed using Discord.',
         ],
       },
       {
@@ -1391,7 +1391,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Can I book an hour just to learn a map?',
-        'Yes: Learn the Maps is {{arcLearn}} per hour of relaxed runs covering loot routes and extraction points, with {{pct3}} off 3 hours in November 2026.',
+        'Yes: Learn the Maps is {{arcLearn}} per hour of relaxed runs covering loot routes and extraction points, and 5 hours take {{pick5}} off in November 2026.',
       ],
       [
         'Does a booking fill a full squad?',
@@ -1457,7 +1457,7 @@ export const intentPages: IntentPage[] = [
         heading: 'Which Deadlock lanes and heroes make a good duo?',
         paragraphs: [
           'A good Deadlock duo is a pair of heroes who answer different problems in the same lane. A hero with a stun or a slow plus a hero with burst damage is the clearest pair: one player stops the target and the other removes it. Two sustain heroes hold a lane longer but close no fights, and 2 burst heroes trade hard and then both have nothing left. First, say which hero you actually play before the pair is chosen.',
-          'Second, souls are the currency, and a lane partner changes how many you keep: shooting a soul orb confirms it for your team, and shooting it as the enemy denies it. For example, an Emissary player who books a Phantom+ teammate from Duoly at {{dlPro}} per match learns which orbs are worth contesting. Duo Plus is {{dlPlus}} per match with an Oracle+ partner and Duo Apex is {{dlTop}} with an Ascendant+ one, both with {{pct3}} off 3 matches and {{pct5}} off 5. Finally, agree the lane using Discord before the first queue.',
+          'Second, souls are the currency, and a lane partner changes how many you keep: shooting a soul orb confirms it for your team, and shooting it as the enemy denies it. For example, an Emissary player who books a Phantom+ teammate from Duoly at {{dlPro}} per match learns which orbs are worth contesting. Duo Plus is {{dlPlus}} per match with an Oracle+ partner and Duo Apex is {{dlTop}} with an Ascendant+ one, and 5 matches take {{pick5}} off. Finally, agree the lane using Discord before the first queue.',
         ],
       },
       {
@@ -1486,7 +1486,7 @@ export const intentPages: IntentPage[] = [
       'Bring 2 heroes you trust plus 1 backup, for example 1) a burst hero and 2) a hero with a stun, so the pair still works when a pick is taken.',
       'Plan for a long match: about 35 minutes each, so 3 matches fill an evening and a 10 match bundle spans several sessions.',
       'Test your microphone and your audio using Discord, then agree on 3 calls: Urn, Mid Boss and back.',
-      'Finally, book the matches you want up front, because the bundle discount applies to one order rather than to matches added later: 1 match is {{dlPro}} and 10 matches cost {{dlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
+      'Finally, book the matches you want up front, because the bundle discount applies to one order rather than to matches added later: At Emissary 1 match is {{dlPro}} and 10 matches cost {{dlPro10}} with {{pct10}} off in November 2026. Keep your login private.',
     ],
     faq: [
       [
@@ -1507,7 +1507,7 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Is a duo the same as Deadlock coaching?',
-        'No: a duo is shared playing time at {{dlPro}} per match, with {{pct3}} off 3 matches and {{pct5}} off 5 in November 2026. Macro and Souls is the separate hourly lesson.',
+        'No: a duo is shared playing time at {{dlPro}} per match at Emissary, with {{pct3}} off 3 matches and {{pct5}} off 5 in November 2026. Macro and Souls is the separate hourly lesson.',
       ],
       [
         'How do I find free Deadlock teammates?',

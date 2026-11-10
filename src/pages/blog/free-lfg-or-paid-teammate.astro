@@ -6,9 +6,13 @@ import Steps from '../../components/seo/Steps.astro';
 import Faq from '../../components/seo/Faq.astro';
 import ClosingCta from '../../components/seo/ClosingCta.astro';
 import '../../components/seo/seo.css';
+import OfferCard from '../../components/seo/OfferCard.astro';
+import GuideTable from '../../components/seo/GuideTable.astro';
+import '../../components/seo/article.css';
 import '../../components/seo/free-vs-paid.css';
 import '../../components/seo/guide-article.css';
 import { pageViewer } from '../../site/viewer';
+import { heroOffer } from '../../server/seo/hero-offer';
 import { seoOffers, faqSchema } from '../../server/seo/offers';
 import {
   teammateDirectory,
@@ -46,6 +50,13 @@ const valDuo = seoOffers('val', 'teammate', context).find(
 )!;
 const lolDuo = seoOffers('lol', 'teammate', context).find(
   (offer) => offer.id === 'duo2' && offer.rank === 'Gold',
+)!;
+// The paid route this guide weighs against a free post, priced from the same
+// engine as every price card on the site.
+const paidOffer = heroOffer(
+  'val',
+  'duo2',
+  seoOffers('val', 'teammate', context),
 )!;
 const path = '/blog/free-lfg-or-paid-teammate';
 const title = 'Free LFG or a Paid Teammate? | Duoly';
@@ -168,7 +179,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
   viewer={viewer}
   csrf={csrf}
 >
-  <article class="seo-page">
+  <article class="seo-page seo-article">
     <Breadcrumbs
       items={[
         { name: 'Home', path: '/' },
@@ -250,7 +261,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
           <p class="guide-card-title">6 servers, with member counts</p>
           <table class="guide-prices">
             <caption>
-              Read from the Discord invite API on{CHECKED_LABEL}
+              {`Read from the Discord invite API on ${CHECKED_LABEL}`}
             </caption>
             <tbody>
               {servers.map((server) => (
@@ -329,7 +340,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
           <p class="guide-tag guide-tag-paid">Paid · fixed price</p>
           <p class="guide-card-title">The cheapest session in 4 games</p>
           <table class="guide-prices">
-            <caption>Read from Duoly checkout on{CHECKED_LABEL}</caption>
+            <caption>{`Read from Duoly checkout on ${CHECKED_LABEL}`}</caption>
             <tbody>
               {shown.map((game) => (
                 <tr>
@@ -408,6 +419,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </div>
     </section>
 
+    <OfferCard
+      offer={paidOffer}
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+      text={`Want tonight settled before you queue? Book ${paidOffer.title} and an ${paidOffer.tier} plays your Valorant Competitive games with you, at a time you agree first.`}
+    />
     <section class="seo-flow card" aria-labelledby="decide-h">
       <h2 id="decide-h">Which fits tonight, free or paid?</h2>
       <p>
@@ -477,6 +493,33 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         <a href="/find-gaming-buddies">find gaming buddies</a> and{' '}
         <a href="/games">all games and services</a>.
       </p>
+      <GuideTable
+        caption="Free looking-for-group and a booked Duoly session compared on money, time and what is settled before the game"
+        columns={[
+          'Route',
+          'What it costs',
+          'What it costs you in time',
+          'Settled before the game',
+        ]}
+        rows={[
+          {
+            head: 'Free LFG post',
+            cells: [
+              '€0',
+              'The 20 minutes of writing and waiting, plus the evening nobody answers',
+              'Nothing: the reply decides the rank, the role and the hour',
+            ],
+          },
+          {
+            head: 'Booked session',
+            cells: [
+              `${fromPrice} on Duoly`,
+              'Almost none: the order chat settles everything in one message',
+              'The rank, the role, the mode and the start time',
+            ],
+          },
+        ]}
+      />
     </section>
 
     <section aria-labelledby="coach-h">
@@ -520,6 +563,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </p>
     </Steps>
 
+    <OfferCard
+      offer={paidOffer}
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+      text={`Decided it is a paid night? Choose your region, your rank and how many games, and an ${paidOffer.tier} takes the second slot for all of them.`}
+    />
     <Faq heading="Questions about free and paid teammates" items={faqItems} />
 
     <ClosingCta

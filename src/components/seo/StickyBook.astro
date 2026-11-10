@@ -1,0 +1,104 @@
+---
+import type { HeroOffer } from '../../server/seo/hero-offer';
+import './sticky-book.css';
+/**
+ * The phone-only booking bar that takes over once the hero CTA scrolls away.
+ *
+ * A game hub is about 9,000px tall on a 390px screen. Past the hero a reader
+ * has no way to book without scrolling back up or all the way down, so the
+ * page's offer rides along the bottom edge instead: the service's own price
+ * from the engine and a link into checkout with that service prefilled.
+ *
+ * Decisions worth knowing before changing this:
+ *
+ *  - Phone only (<= 700px). On desktop the hero card and its button stay in
+ *    view far longer and the bar would be clutter, so the CSS hides it there
+ *    outright, which also keeps it out of the tab order.
+ *  - It never covers content. `sticky-book.css` reserves the bar's height at
+ *    the bottom of the document for as long as the bar exists, so the reserve
+ *    is there from first paint and the bar appearing shifts nothing (no CLS).
+ *  - It yields to the cookie banner. The banner is fixed to the same bottom
+ *    edge (z-index 60), so the bar stays hidden while the banner is open and
+ *    appears once a visitor has chosen. That is the only collision on these
+ *    pages: SiteLayout mounts no support chat, unlike the app layouts.
+ *  - It hides again over the closing CTA, which offers the same booking link
+ *    in full width. Two buttons for one action, one on top of the other, is
+ *    just the fixed one hiding the real one.
+ *  - Hidden means `visibility: hidden`: out of the tab order and out of the
+ *    accessibility tree, not merely transparent.
+ */
+interface Props {
+  offer: HeroOffer;
+}
+const { offer } = Astro.props;
+---
+
+<aside class="sticky-book" data-sticky-book aria-label="Book this session">
+  <div class="sticky-book-bar" data-sticky-book-bar>
+    <p class="sticky-book-price">
+      <span class="money">{offer.price}</span>
+      <span class="unit">per {offer.unit}</span>
+    </p>
+    <a class="btn-sm" href={offer.href} data-cta="sticky">
+      Book {offer.title}
+    </a>
+  </div>
+</aside>
+
+<script>
+  import { track } from '../../client/analytics/track';
+  const bar = document.querySelector<HTMLElement>('[data-sticky-book-bar]');
+  // The hero's own button: the bar exists to replace it once it is gone.
+  const heroCta = document.querySelector<HTMLElement>(
+    '.seo-hero .hero-actions',
+  );
+  if (bar && heroCta) {
+    const banner = document.querySelector<HTMLElement>('[data-cookie-banner]');
+    const closing = document.querySelector<HTMLElement>('.closing .cta');
+    let heroGone = false;
+    let closingHere = false;
+    const paint = () => {
+      const bannerOpen = banner ? !banner.hidden : false;
+      const show = heroGone && !closingHere && !bannerOpen;
+      bar.classList.toggle('is-shown', show);
+    };
+    // Only "scrolled past the hero" counts, so the bar never shows while a
+    // reader is still above the hero (a mid-page refresh can land there).
+    const watch = (
+      element: HTMLElement,
+      set: (visible: boolean) => void,
+      margin: string,
+    ) =>
+      new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) set(entry.isIntersecting);
+          paint();
+        },
+        { rootMargin: margin },
+      ).observe(element);
+    watch(
+      heroCta,
+      (visible) => {
+        heroGone = !visible;
+      },
+      '0px',
+    );
+    if (closing)
+      watch(
+        closing,
+        (visible) => {
+          closingHere = visible;
+        },
+        '120px 0px',
+      );
+    if (banner)
+      new MutationObserver(paint).observe(banner, {
+        attributes: true,
+        attributeFilter: ['hidden'],
+      });
+    bar.querySelector('a')?.addEventListener('click', () =>
+      // surface 'game': the bar only ships on the three game page templates.
+      track('cta_clicked', { cta: 'sticky_book', surface: 'game' }),
+    );
+  }
+</script>

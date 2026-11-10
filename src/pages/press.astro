@@ -7,7 +7,12 @@ import ClosingCta from '../components/seo/ClosingCta.astro';
 import '../components/seo/seo.css';
 import '../components/seo/official.css';
 import { pageViewer } from '../site/viewer';
-import { CONTENT_DATES, hubChips, serializeJsonLd } from '../site/seo';
+import {
+  CONTENT_DATES,
+  OFFICIAL_CHANNELS,
+  hubChips,
+  serializeJsonLd,
+} from '../site/seo';
 import { faqSchema } from '../server/seo/offers';
 import { officialPageSchema } from '../server/seo/official';
 import { SUPPORT_EMAIL } from '../site/nav';
@@ -313,6 +318,19 @@ const faq: [string, string][] = [
         by {BUSINESS.representedBy} in {BUSINESS_LOCATION}, and the supervisory
         authority is named there too.
       </p>
+      <p>
+        These are the only accounts Duoly posts from, so an account using the
+        name anywhere else is not Duoly.
+      </p>
+      <ul class="official-channels">
+        {OFFICIAL_CHANNELS.map((channel) => (
+          <li>
+            <a href={channel.href} rel="me noopener">
+              {channel.label}
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
 
     <Faq heading="What do journalists ask about Duoly?" items={faq} />

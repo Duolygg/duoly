@@ -25,7 +25,7 @@ export const valorant: HubPageCopy = {
     'After the LFG page rather than every Valorant service? It covers the free Discord routes, what a post should say and the paid duo next to them.',
   format: {
     heading: 'What can you book for Valorant on Duoly?',
-    text: 'A Valorant booking on Duoly is one of three things: a teammate who queues with you, a fill that completes your party, or a lesson by the hour. First, the teammate tiers are Duo Plus with an Ascendant+ player, Duo Pro with an Immortal+ player and Duo Apex with a Radiant player. Competitive prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro. The casual modes hold one price everywhere: Swiftplay is {{p_swift}}, Unrated {{p_unrated}} and a Deathmatch warm-up {{p_dm}}. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. Second, the fills: Stack Fill puts Immortal+ players in the empty seats of your Competitive party at {{p_stack}}, and Premier Roster covers a Premier match night at {{p_premier}} per game. Third, the lessons, from {{p_learn}} for one live Competitive game. For example, name your region and rank in the order chat using Discord before anybody hits Find Match.',
+    text: 'A Valorant booking on Duoly is one of three things: a teammate who queues with you, a fill that completes your party, or a lesson by the hour. First, the teammate tiers are Duo Plus with an Ascendant+ player, Duo Pro with an Immortal+ player and Duo Apex with a Radiant player. Competitive prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro. The casual modes hold one price everywhere: Swiftplay is {{p_swift}}, Unrated {{p_unrated}} and a Deathmatch warm-up {{p_dm}}. Bundles of {{main}} cut the total, {{bundles}}. Second, the fills: Stack Fill puts Immortal+ players in the empty seats of your Competitive party from {{p_stack_low}}, and Premier Roster covers a Premier match night at {{p_premier}} per game. Third, the lessons, from {{p_learn}} for one live Competitive game. For example, name your region and rank in the order chat using Discord before anybody hits Find Match.',
   },
   services: {
     duo1: 'Competitive with an Ascendant+ teammate who plays around your agent and trades every duel.',
@@ -53,24 +53,24 @@ export const valorant: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and only Competitive moves with your own rank: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Swiftplay, Unrated and a Deathmatch warm-up hold one price for everybody. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the teammate tier beside the price: Duo Plus names an Ascendant+ player, Duo Pro an Immortal+ player and Duo Apex a Radiant player at {{p_duo3}} per game. Every teammate booking adds one player to your party, so the tier decides who takes that seat. Bundles are the only other discount, {{pct3}} off 3 games and {{pct5}} off 5. For example, agree the agent pair in the order chat using Discord before game 1.',
-    team: 'A Valorant fill is one order that hires several Immortal+ players at once, so a part-full party becomes a full five. Stack Fill completes your Competitive party at {{p_stack}} for {{seats_stack}} seats, every one of them reviewed by Duoly before the order went live. Premier Roster covers your weekly Premier night instead, at {{p_premier}} per game, with the same Immortal+ tier on every seat. First, count the seats you actually need, because every seat is priced on its own. For example, a trio short two players books 2 seats rather than 4. Finally, one checkout opens one order chat, so the whole roster lands in the same Discord call.',
+      'Teammate prices are per game, and only Competitive moves with your own rank: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Swiftplay, Unrated and a Deathmatch warm-up hold one price for everybody. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read the teammate tier beside the price: Duo Plus names an Ascendant+ player, Duo Pro an Immortal+ player and Duo Apex a Radiant player from {{p_duo3_low}} per game. Every teammate booking adds one player to your party, so the tier decides who takes that seat. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the agent pair in the order chat using Discord before game 1.',
+    team: 'A Valorant fill is one order that hires several Immortal+ players at once, so a part-full party becomes a full five. Stack Fill completes your Competitive party from {{p_stack_low}} for {{seats_stack}} seats, every one of them reviewed by Duoly before the order went live. Premier Roster covers your weekly Premier night instead, at {{p_premier}} per game, with the same Immortal+ tier on every seat. First, count the seats you actually need, because every seat is priced on its own. For example, a trio short two players books 2 seats rather than 4. Finally, one checkout opens one order chat, so the whole roster lands in the same Discord call.',
     coaching:
-      'Lessons are priced by the hour and get no bundle discount at all, so the {{pct3}} and {{pct5}} savings on teammate games stop here. VOD Review and Aim and Crosshair each cost {{p_vod}} per hour. Play and Learn is the exception that covers one live Competitive game at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who dies on the first peek of every round books Aim and Crosshair instead of a fourth duo game. Screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rank.',
+      'Lessons are priced by the hour and get no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on teammate games stop here. VOD Review and Aim and Crosshair each cost {{p_vod}} per hour. Play and Learn is the exception that covers one live Competitive game at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who dies on the first peek of every round books Aim and Crosshair instead of a fourth duo game. Screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rank.',
   },
   steps: {
     heading: 'How does booking a Valorant teammate work?',
     items: [
       'Pick a service and the number of games first. Duo Pro is the Competitive tier with an Immortal+ teammate, and 3 games at {{rank_duo2}} on EU cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five games take {{pct5}} off.',
       'Second, add your region, rank, main role and language at checkout. For example, name EU, {{rank_duo2}} and the role you want covered, so your teammate reads the real request before accepting.',
-      'Finally, meet your teammate in the order chat using Discord. Agree the agent pair and the mode, then send the party invite from the Valorant client. One Duo Pro game costs {{p_duo2}}.',
+      'Finally, meet your teammate in the order chat using Discord. Agree the agent pair and the mode, then send the party invite from the Valorant client. One Duo Pro game costs {{p_duo2}} at {{rank_duo2}}.',
     ],
     note: 'Duoly reviews every Valorant teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
   decide: {
     heading: 'Which Valorant session fits you?',
     intro:
-      'The right Valorant session is the one matching your goal tonight. First, the casual modes hold one price at every rank: Swiftplay {{p_swift}}, Unrated {{p_unrated}} and a Deathmatch warm-up {{p_dm}}. Competitive follows the rank you sit at, and a fill is priced per seat instead. For example, 3 games take {{pct3}} off and 5 games take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right Valorant session is the one matching your goal tonight. First, the casual modes hold one price at every rank: Swiftplay {{p_swift}}, Unrated {{p_unrated}} and a Deathmatch warm-up {{p_dm}}. Competitive follows the rank you sit at, and a fill is priced per seat instead. For example, a {{main}} bundle takes {{bundles}}, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Climbing Competitive this act?',
@@ -82,13 +82,13 @@ export const valorant: HubPageCopy = {
         goal: 'Need the empty seats of a five filled?',
         service: 'stack',
         answer:
-          'Stack Fill hires Immortal+ players for the seats you are missing, {{p_stack}} for {{seats_stack}} seats.',
+          'Stack Fill hires Immortal+ players for the seats you are missing, from {{p_stack_low}} for {{seats_stack}} seats.',
       },
       {
         goal: 'Just want a relaxed evening?',
         service: 'swift',
         answer:
-          'Swiftplay costs {{p_swift}} per game at every rank, and 5 games get {{pct5}} off.',
+          'Swiftplay costs {{p_swift}} per game at every rank, and 5 games get {{pick5}} off.',
       },
       {
         goal: 'Short players for your Premier night?',
@@ -108,28 +108,28 @@ export const valorant: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'The teammate you queue with is a reviewed Valorant player who applied for the game and showed a rank before taking orders. Duo Plus names an Ascendant+ player, Duo Pro an Immortal+ player and Duo Apex a Radiant player at {{p_duo3}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Nobody from Duoly ever logs into your account.',
-        'What the tier buys is calm, useful comms. An Immortal+ teammate calls the rotate and names the retake plan. Voice runs using Discord, so the call lands before the push rather than after. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles cut that total by {{pct3}} on 3 games and {{pct5}} on 5. For example, you keep your agent, your decisions and your account in all 3 games.',
+        'The teammate you queue with is a reviewed Valorant player who applied for the game and showed a rank before taking orders. Duo Plus names an Ascendant+ player, Duo Pro an Immortal+ player and Duo Apex a Radiant player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Nobody from Duoly ever logs into your account.',
+        'What the tier buys is calm, useful comms. An Immortal+ teammate calls the rotate and names the retake plan. Voice runs using Discord, so the call lands before the push rather than after. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your agent, your decisions and your account in all 3 games.',
       ],
     },
     {
       heading: 'What does a Valorant five-stack booking include?',
       paragraphs: [
-        'A Valorant five-stack booking is Stack Fill: Duoly hires Immortal+ players for the seats your party is missing, at {{p_stack}} for {{seats_stack}} seats. You keep your own account, your own agent and your own party leader. Every seat is priced on its own, so a trio short two players books 2 seats rather than 4. Premier Roster is the match-night version at {{p_premier}} per game, filled with Immortal+ players who run real strats instead of a default setup.',
+        'A Valorant five-stack booking is Stack Fill: Duoly hires Immortal+ players for the seats your party is missing, from {{p_stack_low}} for {{seats_stack}} seats. You keep your own account, your own agent and your own party leader. Every seat is priced on its own, so a trio short two players books 2 seats rather than 4. Premier Roster is the match-night version at {{p_premier}} per game, filled with Immortal+ players who run real strats instead of a default setup.',
         'Both fills start the same way. Pick the service, pick the seat count, pay once, then meet everybody in the order chat. Name the region, the agents you already cover and the night you want to play, so the roster arrives knowing what is left to fill. Voice runs using Discord, the party invite comes from the Valorant client, and nobody needs your login. For example, a Premier Roster of {{seats_premier}} seats costs {{p_premier}} per game, booked per match night.',
       ],
     },
     {
       heading: 'Example evening: three Swiftplay games on EU',
       paragraphs: [
-        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. Swiftplay is the one to show, because the mode has no rank gate at all, so any 2 accounts on EU can queue it. Three games cost {{p_swift_x3}} with the {{pct3}} bundle discount, against {{p_swift}} for a single game. The order chat opens straight after payment, and the first message names the region and the evening you want: EU, happy to play sentinel, looking for someone who entries first.',
+        'Here is an example evening, priced with the Duoly checkout calculator on {{checked}}. Swiftplay is the one to show, because the mode has no rank gate at all, so any 2 accounts on EU can queue it. Three games cost {{p_swift_x3}}, three times {{p_swift}} for a single game, because the discount starts at 5 games. The order chat opens straight after payment, and the first message names the region and the evening you want: EU, happy to play sentinel, looking for someone who entries first.',
         'From there the evening runs on a short plan. You agree who takes the entry and who holds the flank, voice goes on, and the party invite comes from the Valorant client. After each game you pick one adjustment, for example smoking the far side of the site instead of the choke, agreed using Discord. The same shape works on Unrated at {{p_unrated}} per game, and a Deathmatch warm-up before the block costs {{p_dm}}.',
       ],
     },
     {
       heading: 'When is Valorant coaching the better booking?',
       paragraphs: [
-        'Valorant coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between rounds. A coach stops the match, names the pattern and leaves you with homework. VOD Review and Aim and Crosshair each cost {{p_vod}} per hour, and coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
+        'Valorant coaching is the better booking when the goal is a repeatable fix rather than company for the next game. A duo teammate answers a quick question between rounds. A coach stops the match, names the pattern and leaves you with homework. VOD Review and Aim and Crosshair each cost {{p_vod}} per hour, and coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to teammate games only.',
         'For example, a player who keeps dying on the first peek gains more from one hour on crosshair placement than from a fourth duo game. A player who wants a calm evening gains more from Swiftplay at {{p_swift}} per game. Screen share runs using Discord, and Play and Learn covers one live Competitive game at {{p_learn}} instead of a clock hour. The full service list, preparation tips and lesson formats live on the [Valorant coaching page](/games/valorant/coaching). The [Valorant LFG page](/games/valorant/lfg) sets the free Discords beside the paid duo, and [Counter-Strike 2 teammates](/games/counter-strike-2) and [Rainbow Six Siege teammates](/games/rainbow-six-siege) are the other tactical shooters here.',
       ],
     },
@@ -147,7 +147,7 @@ export const valorant: HubPageCopy = {
       ],
       [
         'How do I book a full five-stack in Valorant?',
-        'Stack Fill hires Immortal+ players for the empty seats of your Competitive party at {{p_stack}} for {{seats_stack}} seats, and Premier Roster covers a Premier night at {{p_premier}} per game.',
+        'Stack Fill hires Immortal+ players for the empty seats of your Competitive party from {{p_stack_low}} for {{seats_stack}} seats, and Premier Roster covers a Premier night at {{p_premier}} per game.',
       ],
       [
         'Can I choose my agent and my role?',
@@ -155,16 +155,16 @@ export const valorant: HubPageCopy = {
       ],
       [
         'Do bundles make several games cheaper?',
-        'Yes: 3 games get {{pct3}} off, 5 games get {{pct5}} off and 10 games get {{pct10}} off, so 3 Duo Pro games cost {{p_duo2_x3}} at {{rank_duo2}} in 2026.',
+        'Yes, on {{main}}: {{bundles}}, so 3 Duo Pro games cost {{p_duo2_x3}} at {{rank_duo2}} in 2026.',
       ],
       [
         'Where do I book a Valorant coach?',
-        'The Valorant coaching page sells VOD Review and Aim and Crosshair by the hour, plus one live Competitive game in Play and Learn. Coaching gets no bundle discount.',
+        'The Valorant coaching page sells VOD Review and Aim and Crosshair by the hour, plus one live Competitive game in Play and Learn. Coaching gets no quantity or bundle discount.',
       ],
     ],
   },
   closing: {
     heading: 'Ready to queue in Valorant?',
-    text: 'Duo Pro is the Competitive tier with an Immortal+ teammate from Duoly. Three games at {{rank_duo2}} on EU cost {{p_duo2_x3}} with {{pct3}} off, and 5 games take {{pct5}} off. Swiftplay stays {{p_swift}} per game at any rank, and a Deathmatch warm-up stays {{p_dm}}. Stack Fill hires Immortal+ players for the empty seats of a five at {{p_stack}}, and Premier Roster covers a Premier night at {{p_premier}} per game in 2026. For example, pick your rank and role, then agree the agent pair and the mode in the order chat using Discord.',
+    text: 'Duo Pro is the Competitive tier with an Immortal+ teammate from Duoly. Three games at {{rank_duo2}} on EU cost {{p_duo2_x3}} with {{pct3}} off, and 5 games take {{pct5}} off. Swiftplay stays {{p_swift}} per game at any rank, and a Deathmatch warm-up stays {{p_dm}}. Stack Fill hires Immortal+ players for the empty seats of a five from {{p_stack_low}}, and Premier Roster covers a Premier night at {{p_premier}} per game in 2026. For example, pick your rank and role, then agree the agent pair and the mode in the order chat using Discord.',
   },
 };

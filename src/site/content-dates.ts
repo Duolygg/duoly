@@ -129,7 +129,26 @@ export const CONTENT_UPDATED: Record<string, string> = {
   '/compare/metafy': '2026-11-10',
   '/compare/queueup': '2026-11-10',
   '/blog': '2026-11-10',
+  // The conversion and visual polish pass: official channels on /press, and a
+  // missing space before the checked date in the comparison table's caption
+  // ("checked9 November 2026") on /compare/e-pal.
+  '/press': '2026-11-10',
+  '/compare/e-pal': '2026-11-10',
 };
+/**
+ * The 10 November 2026 conversion pass rewrote the copy of every game hub and
+ * every teammate page, because prose on all of them quoted a rank-priced
+ * service as if it had one price. Hubs and teammate pages share their copy
+ * files, so the whole set moves together rather than page by page.
+ *
+ * ARC Raiders and Minecraft kept their old date at first, because neither has
+ * a ranked ladder (lib/ranks.js lists no entry for them) and so neither page
+ * quoted a rank-priced service. The same day's discount pass reached them
+ * anyway: every hub now states the whole bundle ladder and names the one
+ * service that sells bundles. Social is not a game and keeps its own copy.
+ */
+for (const slug of FINISHED_HUB_SLUGS)
+  if (slug !== 'social') CONTENT_UPDATED[`/games/${slug}`] = '2026-11-10';
 // All fifteen teammate pages share src/content/intent-pages.ts and
 // src/content/guide-pages.ts, so none of them can date its copy apart from the
 // others: the window's floor is the day either registry last changed. Both
@@ -137,6 +156,13 @@ export const CONTENT_UPDATED: Record<string, string> = {
 // the pages, so every teammate page declares that day.
 for (const page of intentPages)
   CONTENT_UPDATED[intentPath(page)] = '2026-11-10';
+/**
+ * The same pass gave every guide under /blog a reading measure, real lists
+ * where the copy was a list in prose, and an inline offer card, so their copy
+ * changed too.
+ */
+for (const path of Object.keys(CONTENT_SOURCES))
+  if (path.startsWith('/blog/')) CONTENT_UPDATED[path] = '2026-11-10';
 // Everything else is copy the catalog-promotion pass rewrote, plus the pages
 // the trust and entity pass touched on the same day: every hub, every teammate
 // page, the coaching pages, /games, /blog and its e-girl guide,

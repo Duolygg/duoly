@@ -173,7 +173,10 @@ describe('free versus paid guide', () => {
         ...values,
         ...[...prose.matchAll(/\{\{(\w+)\}\}/g)].map((m) => m[1]!),
       ])) {
-        if (token.startsWith('pct')) continue;
+        // Percentages are rules, not prices: a page may restate "20% off 5"
+        // wherever it applies. `pick5` is the quantity picker's step and
+        // `pct3`/`pct5`/`pct10` the bundle ladder's.
+        if (/^(pct\d+|pick5)$/.test(token)) continue;
         expect(
           prose.split(`{{${token}}}`).length - 1,
           `${guide.gameSlug}: ${token} in prose`,

@@ -290,7 +290,10 @@
   list-style: none;
   color: #d6bbff;
   font-weight: 650;
-  min-height: 40px;
+  /* A 44px row, so the whole summary is the tap target rather than the text. */
+  min-height: 44px;
+  padding: 4px 0;
+  gap: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -298,12 +301,27 @@
 .price-card summary::-webkit-details-marker {
   display: none;
 }
+/* A chevron, not a plus sign: a reader scanning a card reads a chevron as
+   "there is more below this" without having to try it. */
 .price-card summary::after {
-  content: '+';
-  font-size: 18px;
+  content: '';
+  flex: none;
+  width: 18px;
+  height: 18px;
+  background: #d6bbff;
+  transition: transform 150ms ease;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.3 2.9 6.2 4 5.1l4 4 4-4 1.1 1.1z'/%3E%3C/svg%3E")
+    center / 18px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.3 2.9 6.2 4 5.1l4 4 4-4 1.1 1.1z'/%3E%3C/svg%3E")
+    center / 18px no-repeat;
 }
 .price-card details[open] summary::after {
-  content: '\2212';
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .price-card summary::after {
+    transition: none;
+  }
 }
 .price-card details[open] {
   padding-bottom: 8px;
@@ -789,8 +807,9 @@
   z-index: 1;
 }
 .session-step {
-  color: #a79dc4;
-  font-size: 11px;
+  color: #b8abd8;
+  /* No label on an SEO page goes under 12px (WCAG 1.4.4 in practice). */
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -827,4 +846,221 @@
   .topic .paras {
     display: block;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Hero offer card
+   The at-a-glance panel became the page's offer: the service it sells, the
+   teammate tier that service hires, that service's own starting price and a
+   button into checkout with it prefilled. The price chip stays underneath,
+   labelled, so the range across every service on the page is never mistaken
+   for this one's price.
+   --------------------------------------------------------------------------- */
+.hero-offer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.hero-offer .top {
+  gap: 16px;
+}
+.hero-offer .art {
+  justify-content: flex-start;
+}
+.hero-offer .offer-head {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+}
+.seo-page .hero-offer .offer-service {
+  margin: 0;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 22px;
+  font-weight: 750;
+  line-height: 1.2;
+  color: #f3eeff;
+  letter-spacing: -0.01em;
+}
+.seo-page .hero-offer .offer-tier {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #d6bbff;
+}
+.seo-page .hero-offer .offer-price {
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: #b8abd8;
+}
+.hero-offer .offer-price .money {
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 30px;
+  font-weight: 750;
+  color: #f3eeff;
+  margin-right: 4px;
+}
+.seo-page .hero-offer .offer-cta {
+  width: 100%;
+  text-align: center;
+}
+/* The second price is plain text under the button, not a bordered box: a box
+   with a label inside it read like a disabled input rather than a note. */
+.seo-page .hero-offer .offer-floor {
+  margin: -6px 0 0;
+  max-width: none;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #b8abd8;
+}
+.seo-page .hero-offer .facts {
+  margin-top: 0;
+}
+/* The card is a 352px column at 1440, far narrower than the 70ch running
+   measure, and `text-wrap: pretty` was pulling a word down to avoid an orphan
+   it only had because of that measure. Short lines in a narrow column balance
+   instead, which keeps "Competitive, Swiftplay, Unrated and Premier" from
+   leaving "and Premier" alone on a second line. */
+.seo-page .hero-card p,
+.seo-page .hero-card li {
+  max-width: none;
+  text-wrap: balance;
+}
+/* A one-line secondary beside the card's primary: same destination as the
+   card's button, visibly the quieter of the two. */
+.seo-page .hero-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+  color: #d6bbff;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.seo-page .hero-link:hover {
+  color: #ece0ff;
+}
+/* A hero whose card is taller than its copy left a tall empty block beside the
+   card. Centring the column puts the empty space above and below the copy
+   instead, where it reads as breathing room. */
+@media (min-width: 861px) {
+  .seo-hero:has(.hero-offer) {
+    align-items: center;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Phone hero: get the booking button above the fold
+   The breadcrumb, an eyebrow repeating the H1 and generous heading spacing
+   pushed the primary CTA to about y=485 on a 390x844 screen. The eyebrow goes
+   first: the breadcrumb directly above it already names the game, so the pill
+   was the same words twice.
+   --------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .seo-hero {
+    padding-top: 10px;
+    gap: 22px;
+  }
+  .seo-hero .eyebrow {
+    display: none;
+  }
+  .seo-page .seo-hero h1 {
+    margin: 0 0 12px;
+    font-size: clamp(30px, 8.6vw, 38px);
+  }
+  .seo-hero .lead {
+    font-size: 16.5px;
+    line-height: 1.6;
+  }
+  .seo-hero .hero-actions {
+    margin-top: 18px;
+  }
+  .seo-page .hero-price {
+    font-size: 16px;
+  }
+  .hero-offer .offer-price .money {
+    font-size: 26px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Price cards: tier, price, what the quantity really saves, then the action
+   The cards used to be identical panels ending in a button that said "Book".
+   They now lead with the tier a card hires, put that tier's own starting price
+   under it, show the quantity steps that actually discount, and name the tier
+   and the price on the button.
+   --------------------------------------------------------------------------- */
+.price-card .price-card-top {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+.seo-page .price-card .price {
+  margin-top: 0;
+  padding-top: 0;
+}
+.seo-page .price-card .btn-sm {
+  margin-top: auto;
+  width: 100%;
+  text-align: center;
+  line-height: 1.25;
+  padding: 10px 14px;
+}
+/* A three or four column grid leaves a card 346px or 256px wide, so its button
+   has 282px or 192px for text against 250px on a phone. One step down in size
+   and padding is what keeps "Book Duo Pro from EUR 6.49" on one line there
+   (LABEL_BUDGET in src/server/seo/hero-offer.ts is measured against this). */
+@media (min-width: 861px) {
+  .seo-page .price-grid[data-cols='3'] .btn-sm,
+  .seo-page .price-grid[data-cols='4'] .btn-sm {
+    font-size: 14px;
+    padding: 10px 10px;
+  }
+}
+/* The game's main service is the only one sold as bundle packs, so its card
+   carries the most offers and gets the brighter edge to match. */
+.price-card[data-main] {
+  border-color: rgba(214, 187, 255, 0.34);
+  background:
+    radial-gradient(
+      120% 90% at 100% 0%,
+      rgba(255, 79, 176, 0.09),
+      transparent 62%
+    ),
+    #140d26;
+}
+.bundle-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 2px 0 2px;
+}
+.seo-page .bundle-chips li {
+  max-width: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(214, 187, 255, 0.12);
+  border: 1px solid rgba(214, 187, 255, 0.24);
+  color: #e8dfff;
+  font-size: 12.5px;
+  font-weight: 650;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   Anchored headings clear the sticky site header instead of hiding under it.
+   The header is 64px tall, so 96px leaves a comfortable gap. /compare/* has
+   used the same number since it shipped; this moves it to every SEO page, so
+   "See prices" and every in-page table of contents link land on the heading
+   they name rather than one line above it.
+   --------------------------------------------------------------------------- */
+.seo-page h1,
+.seo-page h2,
+.seo-page h3,
+.seo-page h4,
+.seo-page [id] {
+  scroll-margin-top: 96px;
 }

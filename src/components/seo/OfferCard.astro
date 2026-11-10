@@ -1,0 +1,60 @@
+---
+import type { HeroOffer } from '../../server/seo/hero-offer';
+import { BOOKING_REASSURANCE } from '../../server/seo/reassurance';
+/**
+ * The booking offer, inline in an article.
+ *
+ * A guide answers a question and then leaves the reader at the bottom of a
+ * 2,000 word page with one closing button. This card puts the real offer right
+ * after the answer it belongs to: the service, the tier it hires, that
+ * service's own price from the engine, and a link that opens checkout with
+ * the game and the service already chosen.
+ *
+ * Two things the card owes an editorial page. It says "Duoly offer" out loud,
+ * because a reader deep in a guide should never have to work out whether a
+ * block is advice or the thing being sold. And `text` is a sentence a player
+ * can read on its own: it used to say "The booked route in the table, priced
+ * from the Duoly checkout", which is a note to the writer about a table the
+ * reader may have scrolled past.
+ */
+interface Props {
+  offer: HeroOffer;
+  /** Why this offer answers the section above it, as a plain benefit. */
+  text: string;
+  art?: { src: string; alt: string };
+}
+const { offer, text, art } = Astro.props;
+---
+
+<aside class="offer-inline" aria-label={`Duoly offer: ${offer.title}`}>
+  {art && (
+    <img
+      src={art.src}
+      alt={art.alt}
+      width="56"
+      height="56"
+      loading="lazy"
+      decoding="async"
+    />
+  )}
+  <div class="offer-inline-body">
+    <p class="offer-inline-label">Duoly offer</p>
+    <p class="offer-inline-title">
+      {offer.title} <span class="offer-inline-tier">{offer.tier}</span>
+    </p>
+    <p class="offer-inline-text">{text}</p>
+  </div>
+  <div class="offer-inline-action">
+    <p class="offer-inline-price">
+      <span class="money">{offer.price}</span> per {offer.unit}
+    </p>
+    <a
+      class="btn-sm"
+      href={offer.href}
+      aria-label={offer.label === offer.labelFull ? undefined : offer.labelFull}
+    >
+      {offer.label}
+    </a>
+  </div>
+  <p class="offer-inline-note">{BOOKING_REASSURANCE}</p>
+</aside>

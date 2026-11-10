@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { calculateQuote } from '../../src/server/pricing';
-import { quantityDiscountPercent } from '../../src/contracts/pricing';
+import {
+  BUNDLE_UNITS,
+  quantityDiscountPercent,
+} from '../../src/contracts/pricing';
 import { seoOffers } from '../../src/server/seo/offers';
 import {
   pricesAnswer,
@@ -96,9 +99,14 @@ describe('self-contained SEO answers use checkout prices', () => {
     expect(quantity).toContain(
       `${quantityDiscountPercent(10, { bundle: true })}% off 10`,
     );
-    // A bundle of 5 carries the same percentage as an ordinary order of 5, so
-    // naming both rows repeated one figure in consecutive sentences.
+    // A bundle of 5 carries the same percentage as an ordinary order of 5, and
+    // the bundle ladder states it anyway: the price cards show all three bundle
+    // chips, so a ladder missing its middle step reads as an omission.
     expect(quantityDiscountPercent(5, { bundle: true })).toBe(ordinary);
-    expect(quantity.match(new RegExp(`${ordinary}%`, 'g'))).toHaveLength(1);
+    expect(quantity).toContain(`${ordinary}% off 5`);
+    for (const units of BUNDLE_UNITS)
+      expect(quantity, `${units} unit bundle`).toContain(
+        `${quantityDiscountPercent(units, { bundle: true })}% off ${units}`,
+      );
   });
 });

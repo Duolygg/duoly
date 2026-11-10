@@ -15,6 +15,7 @@ import {
   hubServiceIds,
 } from '../../src/server/seo/hub';
 import {
+  cleanCopy,
   faqSchema,
   formatPrice,
   offerSelection,
@@ -24,7 +25,11 @@ import { calculateQuote } from '../../src/server/pricing';
 import type { QuoteContext } from '../../src/contracts/pricing';
 import { ranksOf } from '../../src/design-reference/lib/ranks.js';
 import { servicesFor } from '../../src/design-reference/lib/catalog.js';
-import { BUNDLE_UNITS, QUANTITIES } from '../../src/contracts/pricing';
+import {
+  BUNDLE_UNITS,
+  QUANTITIES,
+  quantityDiscountPercent,
+} from '../../src/contracts/pricing';
 import { SITE_GAMES, gameBySlug } from '../../src/site/games';
 import { HUB_PATHS, INDEXABLE_PATHS, hubChips } from '../../src/site/seo';
 import { renderLlms } from '../../src/server/seo/llms';
@@ -162,6 +167,46 @@ describe.each(HUB_PAGES.map((page) => page.gameSlug))('%s hub', (slug) => {
     expect(quoted.length).toBeGreaterThan(10);
     for (const price of new Set(quoted))
       expect([...quotable], `${slug}: ${price}`).toContain(price);
+  });
+
+  /**
+   * The discount story, told the same way everywhere on the page.
+   *
+   * The hub intros used to say "Bundles are the only other discount, 10% off 3
+   * games and 20% off 5": it left out the 10 unit pack the engine sells, it
+   * called bundles the only discount when every service gets 20% off 5 through
+   * the quantity picker, and it attributed bundles to services that have none,
+   * while the price cards beside it showed all three bundle chips on the main
+   * service and a single 5 unit chip on the rest. Copy states the ladder
+   * through `{{bundles}}` and `{{picker}}` now, so the engine fills it.
+   */
+  it('names every bundle size the engine offers', () => {
+    const { game, copy } = rendered(slug);
+    const text = strings(copy).join(' ');
+    const main = (servicesFor(game.id) as { main: string }).main;
+    for (const units of BUNDLE_UNITS) {
+      const percent = quantityDiscountPercent(units, { bundle: true });
+      expect(text, `${slug}: ${percent}% off ${units}`).toContain(
+        `${percent}% off ${units}`,
+      );
+    }
+    // Bundles belong to one service, so the copy that names them names it too.
+    const mainTitle = cleanCopy(
+      (servicesFor(game.id).modes as { id: string; title: string }[]).find(
+        (mode) => mode.id === main,
+      )!.title,
+    );
+    expect(text, `${slug}: bundles without ${mainTitle}`).toContain(
+      `sold in bundles, ${quantityDiscountPercent(3, { bundle: true })}%`,
+    );
+    expect(text).toContain(mainTitle);
+    // The quantity picker is the other half of the story: every service can
+    // book up to 5 units, and 5 units discount. Neither half may claim to be
+    // the whole, and no page may promise a bundle step the engine never gives.
+    expect(text, slug).not.toMatch(/only other discount/i);
+    expect(text, slug).toContain(
+      `where 5 take ${quantityDiscountPercent(5)}% off`,
+    );
   });
 
   it('follows the customer copy rules', () => {

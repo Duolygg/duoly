@@ -6,9 +6,12 @@ import Steps from '../../components/seo/Steps.astro';
 import Faq from '../../components/seo/Faq.astro';
 import ClosingCta from '../../components/seo/ClosingCta.astro';
 import '../../components/seo/seo.css';
+import OfferCard from '../../components/seo/OfferCard.astro';
+import '../../components/seo/article.css';
 import '../../components/seo/free-vs-paid.css';
 import '../../components/seo/guide-article.css';
 import { pageViewer } from '../../site/viewer';
+import { heroOffer } from '../../server/seo/hero-offer';
 import { seoOffers, faqSchema } from '../../server/seo/offers';
 import {
   coachingDirectory,
@@ -22,7 +25,15 @@ import {
   bookingHref,
   CONTENT_DATES,
   organizationSchema,
+  REPORT_PATH,
 } from '../../site/seo';
+// The survey's own figures, imported rather than retyped, so this guide can
+// never quote a median the report has stopped publishing.
+import {
+  COMPETITOR_COUNT,
+  HOURLY_COACHING,
+} from '../../server/seo/price-report';
+import { SURVEY_CHECKED_LABEL } from '../../content/price-report-2026';
 
 const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
 const currency = await viewerCurrency(Astro.cookies, accountCurrency);
@@ -40,6 +51,10 @@ const overwatch = seoOffers('ow', 'training', context);
 const pick = (offers: typeof valorant, id: string) =>
   offers.find((offer) => offer.id === id)!;
 const valVod = pick(valorant, 'vod');
+// The lesson this guide keeps coming back to, priced through the engine.
+const lessonOffer = heroOffer('val', 'vod', valorant)!;
+/** The coach rank without the catalog's format suffix ("Immortal+ coach"). */
+const lessonCoach = lessonOffer.tier.split(' · ')[0]!;
 const valAim = pick(valorant, 'aim');
 const lolVod = pick(league, 'vod');
 const lolChamp = pick(league, 'champ');
@@ -145,7 +160,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
   viewer={viewer}
   csrf={csrf}
 >
-  <article class="seo-page">
+  <article class="seo-page seo-article">
     <Breadcrumbs
       items={[
         { name: 'Home', path: '/' },
@@ -316,7 +331,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
           <p class="guide-tag guide-tag-paid">Paid · one flat price</p>
           <p class="guide-card-title">Lesson formats, with real prices</p>
           <table class="guide-prices">
-            <caption>Read from Duoly checkout on{CHECKED_LABEL}</caption>
+            <caption>{`Read from Duoly checkout on ${CHECKED_LABEL}`}</caption>
             <tbody>
               <tr>
                 <th scope="row">{valVod.title}, Valorant</th>
@@ -415,7 +430,13 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         </a>{' '}
         prices an Instant session at 24 QueueCoins, which QueueUp states is USD
         24, for 45 minutes. We read all 3 pages on {CHECKED_LABEL}, and a price
-        set by a person can change any day.
+        set by a person can change any day. For a wider picture than these 3
+        pages, the{' '}
+        <a href={REPORT_PATH}>2026 gaming coaching and teammate price survey</a>{' '}
+        read {COMPETITOR_COUNT} platforms' own public pages on{' '}
+        {SURVEY_CHECKED_LABEL} and puts the median hourly coaching price at{' '}
+        {HOURLY_COACHING.median}, between {HOURLY_COACHING.low} and{' '}
+        {HOURLY_COACHING.high}.
       </p>
       <div class="cmp-two">
         <div class="card guide-card">
@@ -447,6 +468,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </div>
     </section>
 
+    <OfferCard
+      offer={lessonOffer}
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+      text={`Want the five checks done for you? An ${lessonCoach} goes through one of your own matches with you for an hour, with the price and the refund rule published before you pay.`}
+    />
     <section aria-labelledby="trust-h">
       <h2 id="trust-h">What do reviews and refunds tell you?</h2>
       <p>
@@ -522,6 +548,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </p>
     </section>
 
+    <OfferCard
+      offer={lessonOffer}
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+      text={`Ready to book the hour? Every game Duoly coaches sells the same lesson at the same price, so the only things left to choose are your game and your start time.`}
+    />
     <Faq heading="Questions about choosing a coach" items={faqItems} />
 
     <ClosingCta
