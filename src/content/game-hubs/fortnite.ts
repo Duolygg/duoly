@@ -29,7 +29,7 @@ export const fortnite: HubPageCopy = {
   },
   services: {
     duo1: 'An hour of Ranked Duos with a Champion player who calls drops, rotations and endgame.',
-    duo2: 'An hour of Ranked Duos or Zero Build with an Unreal player who takes the hard fights.',
+    duo2: 'An hour of Ranked Duos or Zero Build with an Unreal player who wins the endgame fights.',
     duo3: 'An hour with a tournament-level player for high Unreal lobbies and pro-heavy endgames.',
     zb: 'An hour of Zero Build: positioning, cover and aim, at a relaxed pace.',
     reload:

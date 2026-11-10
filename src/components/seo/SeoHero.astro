@@ -93,29 +93,22 @@ const {
         chip && <p class="price-chip">{chip}</p>
       )}
     </div>
+    {/* One price on the card, and it is this tier's own. The card used to
+        print "Cheapest session on this page: ..." under its booking button,
+        which offered a reader a different, cheaper product in the one place
+        reserved for acting on this one. The cheapest session is stated once in
+        the intro above the price grid (src/components/seo/Prices.astro), where
+        a reader is comparing services rather than booking one. */}
     {offer && (
-      <>
-        <a
-          class="cta offer-cta"
-          href={offer.href}
-          aria-label={
-            offer.label === offer.labelFull ? undefined : offer.labelFull
-          }
-        >
-          {offer.label}
-        </a>
-        {/* One other price, labelled, and only when something really is
-            cheaper. The card used to carry three figures: this tier's price, a
-            bordered box with the range across every service on the page, and a
-            "Cheapest session" line repeating the bottom of that range. The box
-            also read like a form field. */}
-        {offer.cheapest && (
-          <p class="offer-floor">
-            Cheapest session on this page: {offer.cheapest.title} at{' '}
-            {offer.cheapest.price} per {offer.cheapest.unit}.
-          </p>
-        )}
-      </>
+      <a
+        class="cta offer-cta"
+        href={offer.href}
+        aria-label={
+          offer.label === offer.labelFull ? undefined : offer.labelFull
+        }
+      >
+        {offer.label}
+      </a>
     )}
     <ul class="facts">
       {(offer ? offer.facts : facts).map((fact) => (

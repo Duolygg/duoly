@@ -15,8 +15,9 @@ type Offers = ReturnType<typeof seoOffers>;
  * thing on the page. A Valorant hero reading "From €2.49" was quoting a
  * Deathmatch warm-up while Duo Pro, the service the page is about, starts at
  * €6.49: a reader who clicked Book arrived at a price two and a half times the
- * headline. The warm-up price is still on the card, under a label that says
- * what it is ({@link HeroOffer.cheapest}).
+ * headline. The warm-up price is still on the page, in the intro above the
+ * price grid ({@link HeroOffer.cheapest}), where a reader comparing services
+ * is already standing.
  */
 export interface HeroOffer {
   /** Catalog service id, so the booking link opens the same service. */
@@ -36,7 +37,14 @@ export interface HeroOffer {
   label: string;
   /** The same sentence in full, as the button's accessible name. */
   labelFull: string;
-  /** The cheapest session on the page, when something else is cheaper. */
+  /**
+   * The cheapest session on the page, when something else is cheaper.
+   *
+   * It used to print under the card's own booking button as "Cheapest session
+   * on this page: ...", which put a second, cheaper product directly under the
+   * call to action for the first one. The price grid's intro states it instead
+   * (src/components/seo/Prices.astro), beside the cards a reader compares.
+   */
   cheapest?: { title: string; price: string; unit: string };
   /**
    * The card's checklist, about the tier the card sells.
@@ -44,7 +52,7 @@ export interface HeroOffer {
    * It used to list the catalog: every teammate rank the game offers and every
    * mode on the page, beside a card selling one tier. A reader comparing the
    * button to the list was reading about two different products. The three
-   * lines are now what this service covers, what moves its price and what a
+   * lines are now what this tier does for you, what moves its price and what a
    * session needs from the reader.
    */
   facts: string[];
@@ -56,26 +64,37 @@ const cheapestOf = (rows: Offers) =>
 /** A checklist line fits one or two lines in a 352px card. */
 const COVER_LIMIT = 58;
 
+/** A clause cut to the limit at the last phrase boundary that fits. */
+const fit = (clause: string) => {
+  const trimmed = clause.trim().replace(/[,;:.]+$/, '');
+  if (trimmed.length <= COVER_LIMIT) return trimmed;
+  const cuts = [...trimmed.matchAll(/[,;]| and | with | for | plus /g)]
+    .map((match) => match.index!)
+    .filter((index) => index <= COVER_LIMIT);
+  return cuts.length ? trimmed.slice(0, cuts.at(-1)!) : trimmed;
+};
+
 /**
- * The first clause of a service line: what the session is, without the sentence
- * that sells it. "Competitive with an Immortal+ teammate who calls the round,
- * the rotate and the retake." is a card paragraph; "Competitive with an
- * Immortal+ teammate" is a checklist line.
+ * The checklist's first line: what the hired player does for you.
+ *
+ * It used to be the opening clause of the service line, and the opening clause
+ * is the one that names the tier. "Competitive with an Immortal+ teammate" sat
+ * two lines under a subtitle already reading "Immortal+ teammate", so the card
+ * spent its first checkmark repeating itself. The line now prefers the clause
+ * after "who", the part that says what that rank is actually for ("Calls the
+ * round, the rotate and the retake"), and falls back to the opening clause for
+ * a service line written without one.
  *
  * A clause still over the limit is cut at the last phrase boundary that fits,
  * never the first: cutting "Quick Play and Arcade with a strong teammate for
  * relaxed games" at its first boundary leaves "Quick Play".
  */
 const coverLine = (text: string) => {
-  const clause = text
-    .split(/[;:.]| who | whose | while | explaining /)[0]!
-    .trim()
-    .replace(/,$/, '');
-  if (clause.length <= COVER_LIMIT) return clause;
-  const cuts = [...clause.matchAll(/[,;]| and | with | for | plus /g)]
-    .map((match) => match.index!)
-    .filter((index) => index <= COVER_LIMIT);
-  return cuts.length ? clause.slice(0, cuts.at(-1)!) : clause;
+  const sentence = text.split(/(?<=[.!?])\s/)[0]!;
+  const [opening, ...rest] = sentence.split(/ who | whose /);
+  const action = fit(rest.join(' who '));
+  if (action) return action.charAt(0).toUpperCase() + action.slice(1);
+  return fit(opening!.split(/[;:]| while | explaining /)[0]!);
 };
 
 /**
@@ -155,7 +174,7 @@ export function heroOffer(
         ? { title: floor.title, price: floor.display, unit: floor.unit }
         : undefined,
     facts: [
-      coverLine(options.line || low.desc),
+      coverLine(options.line || low.desc) || low.tier,
       // The range, in money rather than rank names: a rank name can itself
       // read as a range ("Premier 0 to 4,999"), and the top of the price range
       // is the one number a "From" headline leaves out.

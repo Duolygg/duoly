@@ -28,6 +28,16 @@ interface Props {
   id?: string;
   /** Pages with several price groups date them once, under the last group. */
   dated?: boolean;
+  /**
+   * The cheapest session on the page, when the hero sells a dearer service.
+   *
+   * It is the hero offer card's own `cheapest` (src/server/seo/hero-offer.ts),
+   * stated here instead of under the card's booking button: a cheaper product
+   * named under the call to action for a dearer one pulls a reader off the
+   * thing they were about to buy, while a reader standing at the price grid is
+   * comparing services anyway. Named once per page, in this intro.
+   */
+  floor?: { title: string; price: string; unit: string };
 }
 const {
   gameId,
@@ -37,6 +47,7 @@ const {
   heading,
   id = 'prices',
   dated = true,
+  floor,
 } = Astro.props;
 const gameName = SITE_GAMES.find((game) => game.id === gameId)?.name;
 const headingText =
@@ -114,7 +125,11 @@ const unitWord = (unit: string, count: number) =>
 
 <section aria-labelledby={id}>
   <h2 id={id}>{headingText}</h2>
-  <p class="section-intro">{intro ?? pricesAnswer(gameId, offers, coach)}</p>
+  <p class="section-intro">
+    {intro ?? pricesAnswer(gameId, offers, coach)}
+    {floor &&
+      ` The cheapest ${coach ? 'lesson' : 'session'} on this page is ${floor.title} at ${floor.price} per ${floor.unit}.`}
+  </p>
   <div class="price-grid" data-cols={cols}>
     {cards.map(
       ({

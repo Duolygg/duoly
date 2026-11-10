@@ -29,7 +29,7 @@ export const minecraft: HubPageCopy = {
   },
   services: {
     duo1: 'An hour of PvP on the server and mode you pick: Bedwars, SkyWars, Duels or UHC.',
-    duo2: 'An hour with a top PvPer from servers like Hypixel who takes the hard fights.',
+    duo2: 'An hour with a top PvPer from servers like Hypixel who carries the clutch fights.',
     smp: 'Gear up fast, set up farms, build a safe base and handle the fights on your SMP.',
     surv: 'Start a world or join yours: build, mine and explore together at your own pace.',
     dragon:

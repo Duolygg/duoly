@@ -903,15 +903,6 @@
   width: 100%;
   text-align: center;
 }
-/* The second price is plain text under the button, not a bordered box: a box
-   with a label inside it read like a disabled input rather than a note. */
-.seo-page .hero-offer .offer-floor {
-  margin: -6px 0 0;
-  max-width: none;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #b8abd8;
-}
 .seo-page .hero-offer .facts {
   margin-top: 0;
 }

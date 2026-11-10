@@ -107,9 +107,13 @@
   line-height: 1.6;
 }
 /* The fine print is still fine print, and still readable: #c4b8e0 on the card
-   is 9.6:1, where the old #a79dc4 was 7.1:1. */
+   is 9.6:1, where the old #a79dc4 was 7.1:1.
+
+   It sits in the text column, not across both. Spanning the whole grid started
+   it under the 56px game art, two indents left of the label, the title, the
+   body sentence and the price above it, so the card had two left edges. */
 .seo-page .offer-inline-note {
-  grid-column: 1 / -1;
+  grid-column: 2;
   margin-top: 2px;
   font-size: 13.5px;
   line-height: 1.5;
@@ -137,11 +141,20 @@
   color: #f3eeff;
   margin-right: 4px;
 }
+/* A card with no game art has one column, so everything lines up in it. */
+.seo-page .offer-inline.no-art {
+  grid-template-columns: minmax(0, 1fr);
+}
+.seo-page .offer-inline.no-art .offer-inline-action,
+.seo-page .offer-inline.no-art .offer-inline-note {
+  grid-column: 1;
+}
 @media (max-width: 560px) {
   .seo-page .offer-inline {
     grid-template-columns: minmax(0, 1fr);
   }
-  .offer-inline-action {
+  .offer-inline-action,
+  .seo-page .offer-inline-note {
     grid-column: 1;
   }
   .seo-page .offer-inline .btn-sm {

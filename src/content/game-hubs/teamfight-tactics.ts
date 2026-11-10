@@ -27,7 +27,7 @@ export const teamfightTactics: HubPageCopy = {
   },
   services: {
     duo1: 'Double Up with a Master+ partner: plan both boards and send help at the right moment.',
-    duo2: 'You play ranked while a Master+ player watches your screen and calls every decision.',
+    duo2: 'Your own ranked game with a Master+ player who calls every buy, roll and position live.',
     norm: 'Fast, casual lobbies together in Normals or Hyper Roll, with no LP on the line.',
     gg1v1:
       'A head-to-head in the same lobby against a verified Gamer Girl: higher placement wins.',
