@@ -34,8 +34,9 @@ export default defineConfig({
     },
   ],
   webServer: {
+    // scripts/dev-server.mjs, never `astro dev`: see the comment in that file.
     command:
-      'node node_modules/astro/bin/astro.mjs dev --root tests/fixtures/teammate-ui --host 127.0.0.1 --port 4356',
+      'node scripts/dev-server.mjs --root tests/fixtures/teammate-ui --host 127.0.0.1 --port 4356',
     url: 'http://127.0.0.1:4356',
     reuseExistingServer: false,
   },

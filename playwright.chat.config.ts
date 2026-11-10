@@ -32,8 +32,9 @@ export default defineConfig({
     },
   ],
   webServer: {
+    // scripts/dev-server.mjs, never `astro dev`: see the comment in that file.
     command:
-      'node node_modules/astro/bin/astro.mjs dev --root tests/fixtures/chat-ui --host 127.0.0.1 --port 4334',
+      'node scripts/dev-server.mjs --root tests/fixtures/chat-ui --host 127.0.0.1 --port 4334',
     url: 'http://127.0.0.1:4334',
     reuseExistingServer: false,
   },

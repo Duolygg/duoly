@@ -26,8 +26,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command:
-      'node node_modules/astro/bin/astro.mjs dev --host 127.0.0.1 --port 4361',
+    // scripts/dev-server.mjs, never `astro dev`: see the comment in that file.
+    command: 'node scripts/dev-server.mjs --host 127.0.0.1 --port 4361',
     url: 'http://127.0.0.1:4361',
     reuseExistingServer: false,
     env: {
