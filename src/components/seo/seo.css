@@ -991,3 +991,18 @@
   line-height: 1.5;
   white-space: nowrap;
 }
+
+/* ---------------------------------------------------------------------------
+   Anchored headings clear the sticky site header instead of hiding under it.
+   The header is 64px tall, so 96px leaves a comfortable gap. /compare/* has
+   used the same number since it shipped; this moves it to every SEO page, so
+   "See prices" and every in-page table of contents link land on the heading
+   they name rather than one line above it.
+   --------------------------------------------------------------------------- */
+.seo-page h1,
+.seo-page h2,
+.seo-page h3,
+.seo-page h4,
+.seo-page [id] {
+  scroll-margin-top: 96px;
+}

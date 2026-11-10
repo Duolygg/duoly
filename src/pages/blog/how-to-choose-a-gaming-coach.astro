@@ -6,9 +6,12 @@ import Steps from '../../components/seo/Steps.astro';
 import Faq from '../../components/seo/Faq.astro';
 import ClosingCta from '../../components/seo/ClosingCta.astro';
 import '../../components/seo/seo.css';
+import OfferCard from '../../components/seo/OfferCard.astro';
+import '../../components/seo/article.css';
 import '../../components/seo/free-vs-paid.css';
 import '../../components/seo/guide-article.css';
 import { pageViewer } from '../../site/viewer';
+import { heroOffer } from '../../server/seo/hero-offer';
 import { seoOffers, faqSchema } from '../../server/seo/offers';
 import {
   coachingDirectory,
@@ -40,6 +43,8 @@ const overwatch = seoOffers('ow', 'training', context);
 const pick = (offers: typeof valorant, id: string) =>
   offers.find((offer) => offer.id === id)!;
 const valVod = pick(valorant, 'vod');
+// The lesson this guide keeps coming back to, priced through the engine.
+const lessonOffer = heroOffer('val', 'vod', valorant)!;
 const valAim = pick(valorant, 'aim');
 const lolVod = pick(league, 'vod');
 const lolChamp = pick(league, 'champ');
@@ -145,7 +150,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
   viewer={viewer}
   csrf={csrf}
 >
-  <article class="seo-page">
+  <article class="seo-page seo-article">
     <Breadcrumbs
       items={[
         { name: 'Home', path: '/' },
@@ -447,6 +452,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </div>
     </section>
 
+    <OfferCard
+      offer={lessonOffer}
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+      text={`What that price buys in one game: ${lessonOffer.title} is an hour with a ${lessonOffer.tier}, and the link opens checkout with the game and the lesson already chosen.`}
+    />
     <section aria-labelledby="trust-h">
       <h2 id="trust-h">What do reviews and refunds tell you?</h2>
       <p>
@@ -522,6 +532,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       </p>
     </section>
 
+    <OfferCard
+      offer={lessonOffer}
+      art={{ src: '/assets/games/valorant.png', alt: '' }}
+      text={`Ready to book the hour? ${lessonOffer.title} opens checkout with the game and the lesson already chosen, and every other coachable game sells the same hour at the same price.`}
+    />
     <Faq heading="Questions about choosing a coach" items={faqItems} />
 
     <ClosingCta

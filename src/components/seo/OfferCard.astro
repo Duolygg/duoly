@@ -1,0 +1,43 @@
+---
+import type { HeroOffer } from '../../server/seo/hero-offer';
+import { BOOKING_REASSURANCE } from '../../server/seo/reassurance';
+/**
+ * The booking offer, inline in an article.
+ *
+ * A guide answers a question and then leaves the reader at the bottom of a
+ * 2,000 word page with one closing button. This card puts the real offer right
+ * after the answer it belongs to: the service, the tier it hires, that
+ * service's own price from the engine, and a link that opens checkout with
+ * the game and the service already chosen.
+ */
+interface Props {
+  offer: HeroOffer;
+  /** Why this offer answers the section above it. */
+  text: string;
+  art?: { src: string; alt: string };
+}
+const { offer, text, art } = Astro.props;
+---
+
+<aside class="offer-inline" aria-label={`Book ${offer.title}`}>
+  {art && (
+    <img
+      src={art.src}
+      alt={art.alt}
+      width="64"
+      height="64"
+      loading="lazy"
+      decoding="async"
+    />
+  )}
+  <div class="offer-inline-body">
+    <p class="offer-inline-title">
+      {offer.title} <span class="offer-inline-tier">{offer.tier}</span>
+    </p>
+    <p class="offer-inline-text">{text}</p>
+    <p class="offer-inline-note">{BOOKING_REASSURANCE}</p>
+  </div>
+  <a class="btn-sm" href={offer.href}>
+    {offer.label}
+  </a>
+</aside>

@@ -5,7 +5,13 @@ import ClosingCta from '../../components/seo/ClosingCta.astro';
 import SeoHero from '../../components/seo/SeoHero.astro';
 import Steps from '../../components/seo/Steps.astro';
 import '../../components/seo/seo.css';
+import OfferCard from '../../components/seo/OfferCard.astro';
+import '../../components/seo/article.css';
 import { pageViewer } from '../../site/viewer';
+import { heroOffer } from '../../server/seo/hero-offer';
+import { seoOffers } from '../../server/seo/offers';
+import { viewerCurrency } from '../../server/currency';
+import { eurToUsd } from '../../server/fx';
 import {
   serializeJsonLd,
   GUIDE_PATH,
@@ -26,7 +32,14 @@ if (Astro.params.slug !== 'what-is-an-egirl') {
   Astro.response.status = 404;
   return Astro.rewrite('/404');
 }
-const { viewer, csrf } = await pageViewer(Astro);
+const { viewer, csrf, currency: accountCurrency } = await pageViewer(Astro);
+const currency = await viewerCurrency(Astro.cookies, accountCurrency);
+// The Social session this guide is about, priced through the checkout engine.
+const socialOffers = seoOffers('social', 'gg', {
+  customerCurrency: currency.cur,
+  eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+});
+const socialOffer = heroOffer('social', socialOffers[0]!.id, socialOffers)!;
 const title = 'What Is an E-Girl? How to Play Together Safely | Duoly';
 const h1 = 'What is an e-girl? And how to play with one';
 const article = {
@@ -51,7 +64,7 @@ const article = {
   viewer={viewer}
   csrf={csrf}
 >
-  <article class="seo-page">
+  <article class="seo-page seo-article">
     <Breadcrumbs
       items={[
         { name: 'Home', path: '/' },
@@ -202,6 +215,11 @@ const article = {
         {SHORT_GAME_PRICE}.
       </p>
     </section>
+    <OfferCard
+      offer={socialOffer}
+      art={{ src: '/assets/games/social.png', alt: '' }}
+      text={`The Duoly version of the third option: ${socialOffer.title} is friendly voice company with a verified Gamer Girl, adults only, with no game required.`}
+    />
     <section>
       <h2 id="safety-h">How do you find someone to play with safely?</h2>
       <p>
@@ -211,23 +229,33 @@ const article = {
         screen name. Nobody needs your home address, workplace or password to
         arrange a game.
       </p>
+      <ul>
+        <li>
+          <strong>First, read the moderation.</strong> Check the community’s
+          reporting options before moving into private messages.
+        </li>
+        <li>
+          <strong>Second, be careful with what arrives.</strong> Unsolicited
+          offers, unfamiliar downloads and links asking you to sign in again are
+          the three to decline, and a platform opens through its known address,
+          for example by typing it.
+        </li>
+        <li>
+          <strong>Third, agree expectations in plain language,</strong> such as
+          two relaxed games and calm voice, usually settled using Discord before
+          you queue.
+        </li>
+      </ul>
       <p>
-        First, check the community’s moderation and reporting options before
-        moving into private messages. Second, be careful with unsolicited
-        offers, unfamiliar downloads and links asking you to sign in again, and
-        open a platform through its known address, for example by typing it.
-      </p>
-      <p>
-        Third, agree expectations in plain language, such as two relaxed games
-        and calm voice, usually settled using Discord before you queue. Ask
-        before recording or streaming, because joining voice does not cover
-        publishing it.
+        Ask before recording or streaming, because joining voice does not cover
+        publishing it. For example, a relaxed duo agreed using Discord is still
+        a private call unless both of you say otherwise.
       </p>
       <p>
         For paid bookings, keep payment on the platform, which on Duoly means a{' '}
-        {SOCIAL_PRICE} Social hour is paid once and never topped up privately.
-        Treat guaranteed results or pressure to skip the normal checkout as
-        warning signs.
+        {SOCIAL_PRICE} Social hour is paid once in 2026 and never topped up
+        privately. Treat guaranteed results or pressure to skip the normal
+        checkout as warning signs.
       </p>
     </section>
     <section>
@@ -302,6 +330,11 @@ const article = {
         </p>
       </Steps>
     </div>
+    <OfferCard
+      offer={socialOffer}
+      art={{ src: '/assets/games/social.png', alt: '' }}
+      text={`Ready for an hour of company? ${socialOffer.title} opens checkout with Social already chosen, and every voice mode on the tab costs the same.`}
+    />
     <div id="company-h">
       <ClosingCta
         heading="Want company for an hour?"

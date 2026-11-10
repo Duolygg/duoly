@@ -1,0 +1,188 @@
+/*
+ * Reading layout for the guides under /blog, plus the two blocks they gained:
+ * an inline offer card and a small comparison table.
+ *
+ * The body column ran the full 1,070px content width, which is 130 characters
+ * a line at 16px. Typographic practice and the site's own `.seo-page p` rule
+ * both sit near 70; the article rule below restores that for running prose
+ * while leaving cards, grids and timelines at full width, since those are read
+ * in columns rather than in lines.
+ */
+.seo-page.seo-article > section > p,
+.seo-page.seo-article > section > ul:not([class]),
+.seo-page.seo-article > section > ol:not([class]),
+.seo-page.seo-article > section > .section-intro,
+.seo-page.seo-article > p {
+  max-width: 72ch;
+}
+/* Numbered and bulleted lists read as lists: the markers carry the structure
+   that "First, ... Second, ..." was carrying inside one paragraph. */
+.seo-page.seo-article > section > ol:not([class]),
+.seo-page.seo-article > section > ul:not([class]) {
+  padding-left: 22px;
+  margin: 14px 0;
+}
+.seo-page.seo-article > section > ol:not([class]) > li,
+.seo-page.seo-article > section > ul:not([class]) > li {
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+.seo-page.seo-article > section > ol:not([class])::marker,
+.seo-page.seo-article li::marker {
+  color: #d6bbff;
+}
+
+/* The inline offer card */
+.seo-page .offer-inline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 14px 18px;
+  margin: 26px 0;
+  padding: 20px 22px;
+  border-radius: 20px;
+  border: 1px solid rgba(214, 187, 255, 0.26);
+  background:
+    radial-gradient(
+      90% 140% at 0% 0%,
+      rgba(255, 79, 176, 0.1),
+      transparent 60%
+    ),
+    linear-gradient(135deg, #1b1033, #120b22 70%);
+}
+.seo-page .offer-inline img {
+  border-radius: 14px;
+}
+.offer-inline-body {
+  min-width: 0;
+}
+.seo-page .offer-inline p {
+  margin: 0;
+  max-width: 62ch;
+}
+.seo-page .offer-inline-title {
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 19px;
+  font-weight: 750;
+  color: #f3eeff;
+  letter-spacing: -0.01em;
+}
+.offer-inline-tier {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: rgba(214, 187, 255, 0.12);
+  color: #d6bbff;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+.seo-page .offer-inline-text {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.seo-page .offer-inline-note {
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #a79dc4;
+}
+.seo-page .offer-inline .btn-sm {
+  grid-column: 2;
+  justify-self: start;
+}
+@media (max-width: 560px) {
+  .seo-page .offer-inline {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .seo-page .offer-inline .btn-sm {
+    grid-column: 1;
+    width: 100%;
+  }
+}
+
+/* The guide comparison table */
+.seo-page .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.guide-table-wrap {
+  margin: 20px 0 6px;
+}
+.guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  text-align: left;
+}
+.guide-table caption {
+  text-align: left;
+}
+.guide-table th,
+.guide-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(196, 170, 255, 0.12);
+  vertical-align: top;
+  line-height: 1.55;
+}
+.guide-table thead th {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #a79dc4;
+  border-bottom-color: rgba(196, 170, 255, 0.22);
+}
+.guide-table tbody th {
+  color: #f3eeff;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.guide-table tbody td {
+  color: #cfc4ea;
+}
+.guide-table tbody tr:last-child th,
+.guide-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+@media (max-width: 720px) {
+  .guide-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .guide-table tbody tr {
+    display: block;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(196, 170, 255, 0.14);
+    background: #120b22;
+    padding: 6px 14px;
+  }
+  .guide-table tbody th,
+  .guide-table tbody td {
+    display: block;
+    padding: 10px 0;
+    white-space: normal;
+  }
+  .guide-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #8e84ab;
+  }
+}

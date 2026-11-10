@@ -5,7 +5,10 @@ import SeoHero from '../../components/seo/SeoHero.astro';
 import Steps from '../../components/seo/Steps.astro';
 import Faq from '../../components/seo/Faq.astro';
 import ClosingCta from '../../components/seo/ClosingCta.astro';
+import OfferCard from '../../components/seo/OfferCard.astro';
+import GuideTable from '../../components/seo/GuideTable.astro';
 import '../../components/seo/seo.css';
+import '../../components/seo/article.css';
 import { pageViewer } from '../../site/viewer';
 import { intentPages, intentPath } from '../../content/intent-pages';
 import { gameBySlug } from '../../site/games';
@@ -17,6 +20,8 @@ import {
   teammateDirectory,
   directoryPrice,
 } from '../../server/seo/directories';
+import { heroOffer } from '../../server/seo/hero-offer';
+import { seoOffers } from '../../server/seo/offers';
 import {
   serializeJsonLd,
   bookingHref,
@@ -33,6 +38,17 @@ const from = directoryPrice(
     eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
   }),
 ).replace(/^From /, '');
+// The one booked route this guide names, priced through the same engine as
+// every price card on the site.
+const valorantOffer = heroOffer(
+  'val',
+  'duo2',
+  seoOffers('val', 'teammate', {
+    customerCurrency: currency.cur,
+    eurToUsd: currency.cur === 'USD' ? (await eurToUsd()).rate : 1,
+  }),
+)!;
+const bookedFrom = valorantOffer.price.replace(/^From /, '');
 const path = '/blog/what-does-lfg-mean';
 const title = 'What Does LFG Mean? LFG Meaning in Gaming | Duoly';
 const h1 = 'What does LFG mean in gaming?';
@@ -87,7 +103,7 @@ const article = {
   viewer={viewer}
   csrf={csrf}
 >
-  <article class="seo-page">
+  <article class="seo-page seo-article">
     <Breadcrumbs
       items={[
         { name: 'Home', path: '/' },
@@ -122,52 +138,125 @@ const article = {
     <section aria-labelledby="meaning-h">
       <h2 id="meaning-h">What does LFG stand for?</h2>
       <p>
-        LFG is the gaming abbreviation for looking for group. First, the term
-        started in multiplayer games where a party of a fixed size had to be
-        assembled by hand, and the 3 letters are still read the same way in
-        2026: somebody has an activity in mind and needs players for the empty
-        seats. Second, LFG works as a label and as a verb, so 1) a channel
-        called lfg and 2) a message saying "LFG ranked, EU, Gold" mean the same
-        thing. Third, LFG also appears as an excited exclamation, closer to "let
-        us go", which is a different use entirely. For example, "LFG!!!" after a
-        clutch is not a group request. Finally, a post naming a game, a region
-        and a mode is always the group meaning, whether the seat ends up free or
-        booked from Duoly at {from} in 2026.
+        LFG is the gaming abbreviation for looking for group. The term started
+        in games where a party of a fixed size had to be assembled by hand, and
+        the 3 letters read the same way in 2026: somebody has an activity in
+        mind and needs players for the empty seats. The word turns up in three
+        places.
+      </p>
+      <ul>
+        <li>
+          <strong>First, as a channel name:</strong> a Discord channel called
+          lfg is where the posts go, split by game, region and mode.
+        </li>
+        <li>
+          <strong>Second, as a post:</strong> a message saying "LFG ranked, EU,
+          Gold" is one player asking for one activity.
+        </li>
+        <li>
+          <strong>Third, as an exclamation:</strong> "LFG!!!" after a clutch is
+          closer to "let us go" and is not a group request.
+        </li>
+      </ul>
+      <p>
+        Step 1 for a reader is deciding which of the three a post means. A post
+        naming a game, a region and a mode is always the group meaning, whether
+        the seat ends up free or booked from Duoly at {from}. For example, a
+        Valorant post asking for Competitive at 9pm reads as the group meaning,
+        and the reply lands using Discord.
       </p>
     </section>
     <section aria-labelledby="variants-h">
       <h2 id="variants-h">What do LFM, LF1M and LFG Discord mean?</h2>
       <p>
         LFM is the abbreviation for looking for more, and the difference from
-        LFG is which side is posting. First, a player with no group posts LFG,
-        while a group with seats open posts LFM. Second, LF1M, LF2M and LF3M
-        name exactly how many seats are left, so 1) LF1M healer reads as one
-        seat with a healer wanted and 2) LF2M dps reads as two. Third, an LFG
-        Discord is a community server with channels split by game, region and
-        mode, where posting costs nothing and a reply depends on who is online
-        in 2026. Channels get narrow fast, because Mythic+ keys and rated arena
-        want different players. Finally, many games ship a group finder in the
-        client itself, the same idea with the posting done for you. For example,
-        the Group Finder from Blizzard lists premade World of Warcraft groups by
-        key level, and a booked teammate from Duoly at {from} is the version
-        with the time and the rank settled first.
+        LFG is which side is posting: a player with no group posts LFG, while a
+        group with seats open posts LFM. Four terms cover almost every post you
+        will read in 2026.
+      </p>
+      <ul>
+        <li>
+          <strong>First, LFG:</strong> one player looking for a group to join.
+        </li>
+        <li>
+          <strong>Second, LFM:</strong> a group with seats open, looking for
+          more players.
+        </li>
+        <li>
+          <strong>Third, LF1M, LF2M and LF3M,</strong> which add the count. LF1M
+          healer reads as one seat with a healer wanted, and LF2M dps reads as
+          two.
+        </li>
+        <li>
+          <strong>Finally, LFG Discord:</strong> a community server with
+          channels split by game, region and mode. Posting there costs nothing,
+          and a reply depends on who is online.
+        </li>
+      </ul>
+      <p>
+        Step 1 in a narrow channel is naming the key level or the rank. For
+        example, the Group Finder from Blizzard lists premade World of Warcraft
+        groups by key level, and a booked teammate from Duoly at {from} settles
+        the time and the rank first, usually agreed using Discord.
       </p>
     </section>
     <section aria-labelledby="work-h">
       <h2 id="work-h">How does LFG actually work in a game?</h2>
       <p>
         An LFG route is the path a player takes to find teammates, and 3 of them
-        exist side by side. First, the in-game route: a group finder, a Fill
-        button or an auto squad, which costs nothing and fills a seat in seconds
-        with no agreed time and no comms. Second, the community route: a game
-        Discord, a subreddit thread or an LFG site, where a written post buys a
-        choice about who answers. Third, the booked route: a reviewed player at
-        an agreed time and rank, which is what Duoly sells from {from} in 2026.
-        For example, a player who wants a specific role at 9pm on a Tuesday gets
-        there fastest through route 3 and cheapest through route 1. Finally, the
-        routes mix, and most groups start in a Discord and end in a friends
-        list, using Discord voice.
+        exist side by side. First, the in-game finder. Second, a community post
+        in a game Discord. Third, a booked session from Duoly, which starts at{' '}
+        {bookedFrom} per {valorantOffer.unit} in 2026. The table lines the three
+        up on what a reader is really choosing between: the cost, who ends up in
+        the seat and when the game happens. Step 1 is deciding which of those
+        three matters tonight. For example, a player who wants a specific role
+        at 9pm on a Tuesday gets there fastest through the booked route and
+        cheapest through the in-game one.
       </p>
+      <GuideTable
+        caption="The three LFG routes compared on cost, who answers and when you play"
+        columns={[
+          'Route',
+          'What it costs',
+          'Who takes the seat',
+          'When you play',
+        ]}
+        rows={[
+          {
+            head: 'In-game finder',
+            cells: [
+              'Nothing',
+              'Whoever the queue assigns, with no comms agreed',
+              'In seconds, whenever you press the button',
+            ],
+          },
+          {
+            head: 'Community post',
+            cells: [
+              'Nothing',
+              'Whoever answers your post, and you choose from the replies',
+              'When somebody online happens to reply',
+            ],
+          },
+          {
+            head: 'Booked session',
+            cells: [
+              `${valorantOffer.price} per ${valorantOffer.unit} on Duoly`,
+              `A reviewed ${valorantOffer.tier} who accepts your order`,
+              'At the time you agree in the order chat',
+            ],
+          },
+        ]}
+      />
+      <p>
+        Finally, the routes mix rather than compete. Most groups start in a
+        Discord and end in a friends list, using Discord voice.
+      </p>
+      <OfferCard
+        offer={valorantOffer}
+        art={{ src: '/assets/games/valorant.png', alt: '' }}
+        text={`The booked route in the table, priced from the Duoly checkout. ${valorantOffer.title} is the ${valorantOffer.tier} tier, and it settles the mode, the rank and the start time before anybody queues.`}
+      />
     </section>
     <div id="post-h">
       <Steps
@@ -208,6 +297,11 @@ const article = {
           <a href={page.path}>{page.name} teammates</a>
         ))}
       </div>
+      <OfferCard
+        offer={valorantOffer}
+        art={{ src: '/assets/games/valorant.png', alt: '' }}
+        text={`Already know it is Valorant? ${valorantOffer.title} is the Competitive tier, and the link opens checkout with the game and the service picked so the only things left are your region, your rank and how many games.`}
+      />
     </section>
     <Faq heading="Questions about LFG?" items={faqItems} />
     <ClosingCta

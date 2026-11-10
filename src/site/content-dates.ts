@@ -153,6 +153,13 @@ for (const slug of FINISHED_HUB_SLUGS)
 // the pages, so every teammate page declares that day.
 for (const page of intentPages)
   CONTENT_UPDATED[intentPath(page)] = '2026-11-10';
+/**
+ * The same pass gave every guide under /blog a reading measure, real lists
+ * where the copy was a list in prose, and an inline offer card, so their copy
+ * changed too.
+ */
+for (const path of Object.keys(CONTENT_SOURCES))
+  if (path.startsWith('/blog/')) CONTENT_UPDATED[path] = '2026-11-10';
 // Everything else is copy the catalog-promotion pass rewrote, plus the pages
 // the trust and entity pass touched on the same day: every hub, every teammate
 // page, the coaching pages, /games, /blog and its e-girl guide,
