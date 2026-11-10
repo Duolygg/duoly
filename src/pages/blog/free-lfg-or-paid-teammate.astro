@@ -247,8 +247,10 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         Free LFG is a public request for people to play with. Invite existing
         friends, then try your game's server using Discord or a subreddit. For
         example, a Valorant post naming EU, Gold, controller and weekday
-        evenings gives readers a concrete match to assess. The community sizes
-        below describe potential partners, never a guaranteed reply.
+        evenings is a concrete request. The member counts below describe
+        potential partners rather than a guaranteed reply. The{' '}
+        {servers[0]!.name} server below held {servers[0]!.members} members on{' '}
+        {CHECKED_LABEL}.
       </p>
       <div class="guide-grid">
         <article
@@ -292,8 +294,8 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
             ))}
           </ul>
           <p class="guide-note">
-            Read the rules of a board before posting, since several want a set
-            title format and remove posts without one.
+            Read a board's rules before posting, since several require a title
+            format and remove posts without one.
           </p>
         </article>
       </div>
@@ -311,7 +313,9 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         Duelist at 9pm can wait an hour in a channel with 3,046,000 members and
         still queue alone. Those 3 limits are the reason a paid session exists:
         Valorant Duo Pro is {valDuo.display} per game at Gold, with {bundle[0]}%
-        off at 3 games, read from Duoly checkout in November 2026.
+        off at 3 games, read from Duoly checkout in November 2026. A paid
+        session settles all 3 before the first queue: the start time, the stated
+        rank and the comms using Discord.
       </p>
     </section>
 
@@ -477,12 +481,13 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       <h2 id="cost-h">What does each route cost?</h2>
       <p>
         Free LFG costs €0; a paid session from Duoly starts at {fromPrice}.
-        Neither route removes the need to agree a time and mode. A free post
-        depends on who replies. A booking reserves the service once a teammate
-        accepts. Agree the start time and comms using Discord in the order chat.
-        For example, 3 Valorant Duo Pro games at Gold cost {valDuo.display} each
-        before the {bundle[0]}% bundle discount. Cancelling before acceptance is
-        free. An order nobody accepts within 5 minutes cancels automatically.
+        Neither route removes the first job, agreeing a time and a mode. A free
+        post depends on who replies, while a booking reserves the service once a
+        teammate accepts. Agree the start time and comms using Discord in the
+        order chat. For example, 3 Valorant Duo Pro games at Gold cost{' '}
+        {valDuo.display} each before the {bundle[0]}% bundle discount.
+        Cancelling before acceptance is free, and an unaccepted order cancels
+        itself after 5 minutes.
         Compare modes on <a href="/games">each game page</a>.
       </p>
       <GuideTable
@@ -519,15 +524,16 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       <p>
         Choose coaching when you want to understand a recurring mistake. Choose
         a teammate when you want someone to play beside you. A Valorant Duo Pro
-        game at Gold costs {valDuo.display}; {valReview.title} costs
-        {valReview.display} per {valReview.unit} with an {valReview.tier}. The
-        review gives you time to pause a recording using Discord screen share.
-        Include the approach to the fight, not just the final death. The coach
-        needs to see the decision before the result. For example, a failed
-        retake may start with a late rotation. Wasted utility can leave both
-        players exposed before they enter the site. Mark the rotation and the
-        first utility use in your recording. Compare those moments with a retake
-        that worked. A live teammate can call the next retake. A review gives
+        game from Duoly at Gold costs {valDuo.display}, while an hour of{' '}
+        {valReview.title} costs {valReview.display} with an{' '}
+        {valReview.provider} coach. The review gives you time to pause a
+        recording using Discord screen share. Include the approach to the fight
+        rather than only the final death, because the coach needs to see the
+        decision before the result. For example, a failed retake may start with
+        a late rotation. Wasted utility can leave both players exposed before
+        they enter the site, so mark the rotation and the first utility use in
+        your recording, then compare those moments with a retake that worked. A
+        live teammate can call the next retake. A review gives
         you time to compare the setup without another round starting. The{' '}
         <a href="/coaching">coaching directory</a> lists the formats in each
         game. Read{' '}

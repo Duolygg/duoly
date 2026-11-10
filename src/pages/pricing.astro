@@ -85,35 +85,35 @@ const groupsOf = (game: (typeof PRICE_TABLE)[number]) =>
 const faq: [string, string][] = [
   [
     'What is the cheapest session on Duoly?',
-    `${CHEAPEST.row.from} for ${CHEAPEST_LABEL}, the lowest catalog price as of ${pricesLabel}.`,
+    `${CHEAPEST.row.from} for a ${CHEAPEST_LABEL}, the lowest catalog price on ${pricesLabel}.`,
   ],
   [
     'Does Duoly charge a booking fee or a service fee?',
-    `No. You pay the total shown before checkout, with no booking fee, payment surcharge or subscription. Duoly takes its commission from that amount.`,
+    `No, you pay the total shown before checkout, with no booking fee, surcharge or subscription, because Duoly takes its commission from that amount.`,
   ],
   [
     'Do bundle discounts apply to coaching?',
-    `Coaching has no quantity discount. For example, ${MAX_QUANTITY} hours of ${COACHING_HOUR.short} cost ${FIVE_COACHING_HOURS.total}. Bundles apply to each game's main teammate service: ${BUNDLE_SIZES.join(', ')} units take ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off respectively. Other services use their own quantity options.`,
+    `Coaching has no quantity discount. For example, ${FIVE_COACHING_HOURS.label} cost ${FIVE_COACHING_HOURS.total}. Bundles apply to each game's main teammate service: ${BUNDLE_SIZES.join(', ')} units take ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off.`,
   ],
   [
     'Why do two players pay different prices for the same service?',
-    `Ranked services charge by your own rank. Unranked modes and coaching have one price at every rank.`,
+    `Ranked services charge by your own rank, while unranked modes and coaching hold one price at every rank.`,
   ],
   [
     'Why does a team fill cost so much more than a duo?',
-    `A fill pays several hired players. ${DEAREST_SINGLE.title} in ${DEAREST.game.name} covers ${DEAREST_SINGLE.seats} players at ${DEAREST_SINGLE.to}.`,
+    `A fill pays several hired players: ${DEAREST_SINGLE.title} in ${DEAREST.game.name} covers ${DEAREST_SINGLE.seats} players at ${DEAREST_SINGLE.to}.`,
   ],
   [
     'Are these prices in euros or US dollars?',
-    `Euros. For US dollars, checkout uses the daily European Central Bank rate plus ${USD_MARGIN_PERCENT}%, rounded up to .99.`,
+    `Euros, and a dollar total uses the daily European Central Bank rate plus ${USD_MARGIN_PERCENT}%, rounded up to .99.`,
   ],
   [
     'Where is the price for my exact rank?',
-    `Open your game page or duoly.gg/pricing.md. Both list every rank; this table shows the lowest and highest price for each service.`,
+    `Open your game page or the plain text file pricing.md, because this table shows only the lowest and highest price of each service.`,
   ],
   [
     'Can a Duoly price change after I book?',
-    `An order already placed keeps the price paid. Future bookings use the current catalog price, as stated in the terms.`,
+    `An order already placed keeps the price paid, and future bookings use the current catalog price, as stated in the terms.`,
   ],
 ];
 ---
@@ -205,19 +205,20 @@ const faq: [string, string][] = [
     <section aria-labelledby="rank-h">
       <h2 id="rank-h">How does rank change a Duoly price?</h2>
       <p>
-        Ranked teammate prices depend on your current rank. Flat-price casual
-        services and coaching keep the same rate. For example, League of Legends
-        Duo Pro is {LOL_PRO_IRON} per game at Iron and {LOL_PRO_TOP} at
-        Challenger. Normal Draft stays {LOL_NORMAL} per game, and a coaching
-        hour costs {COACHING_PRICE} at either rank. These are different
-        services, so compare the mode and teammate tier alongside the price. The
-        table below shows each service's lowest and highest rate in{' '}
-        {CATALOG_YEAR}. Open <a href="/games">your game page</a> for the exact
-        price at your rank. Select the rank you currently hold before paying.
-        According to <a href="/terms#booking">Duoly’s booking terms</a>, an
-        incorrect rank can prevent a session from being played and is not a
-        reason for a refund. Agree the mode and start time with your teammate in
-        the order chat. Use Discord for voice while playing on your own account.
+        Ranked teammate prices depend on your current rank, while flat-price
+        casual services and coaching keep the same rate at every rank. For
+        example, League of Legends Duo Pro is {LOL_PRO_IRON} per game at Iron
+        and {LOL_PRO_TOP} at Challenger. Normal Draft stays {LOL_NORMAL} per
+        game and a coaching hour costs {COACHING_PRICE} at either rank, so
+        compare the mode and the teammate tier alongside the price rather than
+        the two figures alone. The table below shows each service's lowest and
+        highest rate in {CATALOG_YEAR}. Open <a href="/games">your game page</a>
+        {' '}for the exact price at your rank, read from Duoly’s pricing engine,
+        and select the rank you currently hold before paying. According to{' '}
+        <a href="/terms#booking">Duoly’s booking terms</a>, an incorrect rank
+        can prevent a session from being played and is not a reason for a
+        refund. Agree the mode and start time with your teammate in the order
+        chat, then play on your own account using Discord for voice.
       </p>
     </section>
 
@@ -303,14 +304,15 @@ const faq: [string, string][] = [
       <h2 id="coaching-h">How much does Duoly coaching cost?</h2>
       <p>
         Duoly coaching costs {COACHING_PRICE} per hour or per game across{' '}
-        {COACHABLE_GAMES} coachable titles. Check the unit on the service card:
-        Play and Learn can be sold per match or per hour, depending on the game.
-        VOD Review is an hour on your recording. Coaching has no quantity
-        discount. A second hour costs the same as the first, so {MAX_QUANTITY}{' '}
-        hours cost {FIVE_COACHING_HOURS.total}. Choose a format for the problem
-        you want to work on. For example, use{' '}
-        <a href={COACHING_HOUR.href}>a {COACHING_HOUR.short}</a> to pause and
-        compare decisions using Discord screen share. It costs{' '}
+        {COACHABLE_GAMES} coachable titles. Check the unit on the service card,
+        because Play and Learn can be sold per match or per hour depending on
+        the game, while VOD Review is always an hour on your own recording.
+        Coaching has no quantity discount, so a second hour costs the same as
+        the first and {FIVE_COACHING_HOURS.label} cost{' '}
+        {FIVE_COACHING_HOURS.total}. Choose a format for the problem you want to
+        work on. For example,{' '}
+        <a href={COACHING_HOUR.href}>{COACHING_HOUR.label}</a> buys the time to
+        pause and compare decisions using Discord screen share, and costs{' '}
         {COACHING_HOUR.total} at every rank. Check the coach tier too: Valorant
         lists {VALORANT_COACH_TIER}, while League of Legends lists{' '}
         {LOL_COACH_TIER}. For a comparison outside Duoly, the{' '}

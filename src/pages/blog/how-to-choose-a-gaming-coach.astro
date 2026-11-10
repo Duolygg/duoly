@@ -127,7 +127,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'What should a first coaching session include?',
-    `A plan, one replay or one live game, and 2 or 3 things to practice afterwards. For example, ${valVod.title} from Duoly is a ${valVod.unit} with an ${valVod.tier} and ends with the fixes written down.`,
+    `A first session is a plan, one replay or one live game, and 2 or 3 things to practice afterwards. For example, ${valVod.title} from Duoly is one ${valVod.unit} with an ${valVod.provider} coach and ends with the fixes written down.`,
   ],
   [
     'Is a cheap coach worse than an expensive one?',
@@ -256,9 +256,10 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       <p class="guide-answer">
         A red flag is a claim you cannot check or an outcome the coach cannot
         control. For example, promising a fixed rank after 3 lessons claims
-        control over matches other players also decide. Keep payment in the
-        platform checkout. Check the total and refund terms there before paying.
-        A Duoly {valVod.title} hour costs {valVod.display} through Stripe.
+        control over matches other players decide. An hour of {valVod.title}{' '}
+        from Duoly costs {valVod.display} through Stripe, checked in November
+        2026. Keep payment in the platform checkout and check the refund terms
+        there before paying.
       </p>
       <div class="guide-one">
         <article
@@ -311,10 +312,11 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       <h2 id="session-h">What should one session include?</h2>
       <p class="guide-answer">
         A useful coaching session is built around a goal, relevant material and
-        a practice task. Agree the goal before the clock starts. For example,
-        League of Legends {lolVod.title} covers laning, waves and map moves at{' '}
-        {lolVod.display} per {lolVod.unit}. Bring your replay for the{' '}
-        {lolVod.tier} to review using Discord screen share. Prefer feedback
+        a practice task. Agree the goal first, before the clock starts. For
+        example, League of Legends {lolVod.title} covers laning, waves and map
+        moves at {lolVod.display} per {lolVod.unit}. Bring your replay for the{' '}
+        {lolVod.provider} coach to review using Discord screen share. Prefer
+        feedback
         while playing? Valorant {learn.title} costs {learn.display} per{' '}
         {learn.unit}. Check the unit before comparing the totals.
       </p>
@@ -551,8 +553,8 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
 
     <ClosingCta
       heading="Run the 5 checks, then book"
-      text={`Check current rank proof, the session plan, the total price, session reviews and refund terms before paying a coach. Duoly names the coach tier on each service. ${valVod.title} costs ${valVod.display} per ${valVod.unit} with an ${valVod.tier}. Choose a replay and one question to work through together. Ask for a practice task you can test in your next match.`}
-      extra={`Check the unit as well as the amount before paying. Across ${coached.length} coached games, a lesson means one live game or one hour. For example, a review hour gives you time to pause a replay; a live lesson follows the match. The service card names the unit. Payment runs through Stripe with nothing added at checkout. Lessons use your own account with voice and screen share on Discord. Keep your password private. Duoly has no public review volume yet, so compare the published price and terms. Prices were checked in November 2026.`}
+      text={`Check current rank proof, the session plan, the total price, session reviews and refund terms before paying a coach. Duoly names the coach tier on each service, so an hour of ${valVod.title} from Duoly costs ${valVod.display} with an ${valVod.provider} coach. Prices were checked in November 2026. Choose a replay and one question to work through together, then ask for a practice task you can test in your next match.`}
+      extra={`Check the unit as well as the amount before paying, because across ${coached.length} coached games a lesson means one live game or one hour. For example, a review hour gives you time to pause a replay; a live lesson follows the match. The service card names the unit, and payment runs through Stripe with nothing added at checkout. Lessons use your own account with voice and screen share on Discord. Keep your password private. Duoly has no public review volume yet, so compare the published price and terms.`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching hour"
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}
