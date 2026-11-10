@@ -8,8 +8,17 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
     into the last content section. ARIA does not allow role="dialog" on an aside
     (Lighthouse "ARIA role should be appropriate for the element"), so the dialog
     role and name sit on an unstyled inner wrapper. The outer aside keeps the
-    class, hidden state and data hook, so the look and the scripts are unchanged. */}
-<aside class="cookie-banner" data-cookie-banner hidden>
+    class and the data hook, so the look and the scripts are unchanged.
+
+    The banner is hidden by this component's own CSS rather than by the `hidden` attribute, and
+    `html[data-cookie-prompt]` (set from the cookie by a synchronous script in the layout head,
+    before any of <body> is parsed) decides whether it is up. The attribute used to be removed by
+    the script below, which on a throttled phone painted the paragraph 1.4 s after first paint and
+    made it the largest contentful paint; now the first style pass already has the answer. Both
+    states keep the `hidden` attribute's semantics for a visitor with no JavaScript and for one
+    who has already chosen: display:none is not rendered, not focusable and not in the
+    accessibility tree. */}
+<aside class="cookie-banner" data-cookie-banner>
   <div role="dialog" aria-live="polite" aria-label="Cookie settings">
     <p>
       We use necessary cookies to run the site. Optional analytics help us
@@ -117,6 +126,14 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
         : null;
     };
     window.__duolyConsent = parse(read());
+    // One switch for the banner, shared with the head script: an attribute on <html> so the
+    // first style pass can read it before the banner element exists.
+    const root = document.documentElement;
+    const open = (up) => {
+      if (up === root.hasAttribute('data-cookie-prompt')) return;
+      if (up) root.setAttribute('data-cookie-prompt', '');
+      else root.removeAttribute('data-cookie-prompt');
+    };
     const show = (settings = false) => {
       const state = parse(read());
       analytics.checked = state?.analytics ?? false;
@@ -124,8 +141,10 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
       referral.checked = state?.referral ?? false;
       purposes.hidden = !settings;
       customise.setAttribute('aria-expanded', String(settings));
-      banner.hidden = false;
+      open(true);
     };
+    // The head script already put the banner up for a visitor who has not chosen; this fills in
+    // the category boxes for one who has an old or malformed value.
     if (!/^v2\.a[01]\.m[01]\.r[01]$/.test(read() || '')) show();
     if (location.hash === '#cookie-settings') show(true);
     addEventListener('hashchange', () => {
@@ -162,7 +181,7 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
         days * 86400 +
         '; SameSite=Lax' +
         secure;
-      banner.hidden = true;
+      open(false);
       window.__duolyConsent = state;
       window.dispatchEvent(new CustomEvent('duoly:consent', { detail: state }));
       // Apply the referral choice immediately without navigating away.
@@ -195,7 +214,11 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
 </script>
 
 <style>
+  /* Not rendered until the head script says a choice is missing, or the script below reopens
+     the settings. Hiding the banner here rather than with the `hidden` attribute is what lets
+     the first paint already show its final state. */
   .cookie-banner {
+    display: none;
     position: fixed;
     z-index: 60;
     left: 16px;
@@ -215,8 +238,10 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
     font-size: 14px;
     line-height: 1.55;
   }
-  .cookie-banner [hidden],
-  .cookie-banner[hidden] {
+  :global(html[data-cookie-prompt]) .cookie-banner {
+    display: block;
+  }
+  .cookie-banner [hidden] {
     display: none;
   }
   .cookie-banner p {

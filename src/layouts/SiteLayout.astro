@@ -3,6 +3,7 @@ import '../design-reference/globals.css';
 import CookieBanner from '../components/site/CookieBanner.astro';
 import Analytics from '../components/site/Analytics.astro';
 import SiteAuthDialog from '../components/auth/SiteAuthDialog.jsx';
+import { CONSENT_COOKIE } from '../contracts/consent';
 import { UPLOADED_AVATAR, type Viewer } from '../contracts/account';
 import SiteFooter from '../components/site/SiteFooter.jsx';
 import { MAIN_NAV, ROLE_HOME } from '../site/nav';
@@ -97,6 +98,24 @@ const avatar =
       type="font/woff2"
       crossorigin
     />
+    {/* Whether the cookie banner is up, decided before a single byte of <body> is parsed, so
+        CSS paints its final state in the first frame (components/site/CookieBanner.astro). It
+        used to be revealed by script at the end of the document, which on a throttled phone
+        painted 1.4 s after first contentful paint and made the banner the largest contentful
+        paint. Same strict wire format as needsConsentPrompt in contracts/consent.ts, asserted
+        by tests/unit/consent.test.ts. */}
+    <script is:inline define:vars={{ cookieName: CONSENT_COOKIE }}>
+      if (
+        !/^v2\.a[01]\.m[01]\.r[01]$/.test(
+          document.cookie
+            .split(';')
+            .map((c) => c.trim())
+            .find((c) => c.startsWith(cookieName + '='))
+            ?.slice(cookieName.length + 1) || '',
+        )
+      )
+        document.documentElement.setAttribute('data-cookie-prompt', '');
+    </script>
     <slot name="head" />
   </head>
   <body class={bare ? 'site bare' : 'site'}>

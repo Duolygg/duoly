@@ -73,10 +73,14 @@ describe('testimonial carousel', () => {
     // reviewers stay anonymous
     expect(html).toContain('<strong>L***s</strong>');
     expect(html).not.toContain('Lukas');
+    // Flags are drawn in an 18x13 box, so they ship as one 54 px raster each instead of an
+    // SVG that reaches 91 KB (scripts/assets/optimize-images.mjs).
     expect(html).toMatch(
-      /<img src="\/assets\/flags\/svg\/de\.svg"[^>]*>Germany/,
+      /<img[^>]*src="\/assets\/flags\/webp\/de-54\.webp"[^>]*>Germany/,
     );
-    expect(html).toMatch(/<img src="\/assets\/flags\/svg\/jp\.svg"[^>]*>Japan/);
+    expect(html).toMatch(
+      /<img[^>]*src="\/assets\/flags\/webp\/jp-54\.webp"[^>]*>Japan/,
+    );
     expect(html).toContain('4.5');
     expect(html).toContain('from 2 reviews');
     // no tag row above the carousel

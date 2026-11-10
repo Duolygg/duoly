@@ -7,6 +7,7 @@ import {
   needsConsentPrompt,
 } from '../../src/contracts/consent';
 import { consentFromCookies } from '../../src/server/consent';
+import { readFileSync } from 'node:fs';
 
 const values = [false, true].flatMap((analytics) =>
   [false, true].flatMap((marketing) =>
@@ -68,4 +69,42 @@ describe('consent v2', () => {
       >),
     ).toEqual(state);
   });
+});
+
+/*
+ * The banner's final state is painted in the first frame, so two inline scripts read the cookie
+ * before any module can: one in the layout head that sets html[data-cookie-prompt], and the
+ * banner's own. They cannot import needsConsentPrompt (they run before the bundle), so the
+ * literal they carry has to stay equal to it.
+ */
+describe('inline consent prompt check', () => {
+  const sources = {
+    'src/layouts/SiteLayout.astro': readFileSync(
+      'src/layouts/SiteLayout.astro',
+      'utf8',
+    ),
+    'src/components/site/CookieBanner.astro': readFileSync(
+      'src/components/site/CookieBanner.astro',
+      'utf8',
+    ),
+  };
+  it.each(Object.entries(sources))(
+    '%s carries the same wire-format test',
+    (_file, source) => {
+      const inline = /\/\^v2\\\.a\[01\]\\\.m\[01\]\\\.r\[01\]\$\//.exec(source);
+      expect(inline).not.toBeNull();
+      const pattern = new RegExp(inline![0].slice(1, -1));
+      for (const value of [
+        'v2.a0.m0.r0',
+        'v2.a1.m1.r1',
+        'v2.a1.m0.r1',
+        'all',
+        'necessary',
+        'garbage',
+        'v2.a1.r1',
+        '',
+      ])
+        expect(!pattern.test(value)).toBe(needsConsentPrompt(value));
+    },
+  );
 });
