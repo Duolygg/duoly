@@ -330,9 +330,16 @@ export const PLATFORM_COUNT = PLATFORMS.length;
 export const COMPETITOR_COUNT = PLATFORMS.length - 1;
 /** Competitor platforms whose pages answered the survey at all. */
 export const ANSWERED_COUNT = COMPETITOR_COUNT - BLOCKED_PLATFORMS.length;
-export const VERIFIED_PLATFORMS = [
+/**
+ * The platforms that published a price the survey could read, in the order the
+ * survey read them. Derived rather than written out, so a platform that stops
+ * publishing a price leaves this list on the next build instead of leaving the
+ * page claiming it still does.
+ */
+export const VERIFIED_PLATFORM_NAMES: readonly string[] = [
   ...new Set(OBSERVATIONS.map((row) => row.platform)),
-].length;
+];
+export const VERIFIED_PLATFORMS = VERIFIED_PLATFORM_NAMES.length;
 export const OBSERVATION_COUNT = OBSERVATIONS.length;
 
 export interface TableRow extends SurveyPlatform {

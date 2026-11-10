@@ -21,6 +21,7 @@ import {
   SESSION_COACHING,
   TABLE,
   TEAMMATE_PER_GAME,
+  VERIFIED_PLATFORM_NAMES,
   VERIFIED_PLATFORMS,
   eurMinorOf,
   renderReportCsv,
@@ -137,9 +138,9 @@ describe('the 2026 price survey data', () => {
       high: 'USD 100.00',
     });
     expect(TEAMMATE_PER_GAME).toMatchObject({
-      count: 11,
+      count: 12,
       currency: 'Buff',
-      median: 'Buff 3.67',
+      median: 'Buff 3.84',
       low: 'Buff 2.00',
       high: 'Buff 9.00',
       platforms: ['E-Pal'],
@@ -158,9 +159,17 @@ describe('the 2026 price survey data', () => {
     expect(
       PLATFORMS.filter((platform) => platform.name === 'Duoly'),
     ).toHaveLength(1);
-    expect(VERIFIED_PLATFORMS).toBe(6);
+    expect(VERIFIED_PLATFORMS).toBe(5);
+    expect(VERIFIED_PLATFORM_NAMES).toEqual([
+      'WeCoach',
+      'Metafy',
+      'QueueUp',
+      'Gamer Sensei',
+      'E-Pal',
+    ]);
     expect(BLOCKED_PLATFORMS.map((platform) => platform.name)).toEqual([
       'Eloboost24',
+      'Fiverr',
       'ProGuides',
     ]);
     expect(FREE_PLATFORMS.map((platform) => platform.name)).toEqual([
@@ -179,7 +188,7 @@ describe('the 2026 price survey data', () => {
         a.localeCompare(b),
       ),
     );
-    expect(EPAL_TWO_FIGURE_CARDS).toBe(8);
+    expect(EPAL_TWO_FIGURE_CARDS).toBe(7);
   });
 
   it('builds every table price line out of the platform own rows', () => {

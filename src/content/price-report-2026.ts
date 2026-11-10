@@ -260,9 +260,9 @@ export const OBSERVATIONS: readonly PriceObservation[] = [
       currency: 'Buff',
       source: EPAL_VALORANT,
       checked: SURVEY_CHECKED,
-      note: 'One provider card showing a single figure per game. Cards showing two figures are left out.',
+      note: 'One provider card showing a single figure per game. Cards carrying a discount badge and two figures are left out.',
     },
-    [3.25, 6.6, 5, 4.44, 9, 2, 3, 3.67, 5, 3, 2.5],
+    [6.66, 5, 4.44, 9, 2, 3, 3.67, 2, 3, 2.5, 8.99, 4],
   ),
   {
     platform: 'E-Pal',
@@ -275,30 +275,19 @@ export const OBSERVATIONS: readonly PriceObservation[] = [
     source: EPAL_VALORANT,
     checked: SURVEY_CHECKED,
   },
-  {
-    platform: 'Fiverr',
-    game: 'Marvel Rivals',
-    service: 'Seller gig: play Marvel Rivals with you, up to 60 minutes',
-    type: 'teammate',
-    unit: 'session',
-    currency: 'USD',
-    amount: 50,
-    source: FIVERR_GIG,
-    checked: SURVEY_CHECKED,
-    note: 'Price and currency read from the Offer markup on the gig page, which also states service fees are included and taxes may be added at checkout.',
-  },
 ];
 
 /**
  * Provider cards on the E-Pal Valorant page that showed two figures rather
- * than one, for example "2.00/2.50/Game".
+ * than one, for example "20% OFF 2.00 2.50/Game".
  *
- * Which of the two a buyer is charged is not stated on the page, so these
- * cards carry no row in OBSERVATIONS: a guess between a list price and a
- * discounted one would be an invented price. The count is recorded because the
- * report states how many cards it left out and why.
+ * Each of these carries a discount badge, a lower figure and a struck-out
+ * figure, and the badge is conditional: "1st Order 15% OFF" on one card, a
+ * flat percentage on the others. Neither figure is therefore the price every
+ * buyer pays, so these cards carry no row in OBSERVATIONS. The count is
+ * recorded because the report states how many cards it left out and why.
  */
-export const EPAL_TWO_FIGURE_CARDS = 8;
+export const EPAL_TWO_FIGURE_CARDS = 7;
 
 export interface SurveyPlatform {
   readonly name: string;
@@ -378,20 +367,21 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
   {
     name: 'Fiverr',
     sells: 'A general freelance marketplace with gaming gigs',
-    priceModel: 'Sellers price each gig and offer custom quotes',
+    priceModel: 'Unknown: no current price was readable',
     sources: [
       {
-        title: 'Fiverr game coaching category listing',
+        title: 'Fiverr game coaching category listing, which answered HTTP 403',
         url: FIVERR_CATEGORY,
       },
       {
-        title: 'Fiverr Marvel Rivals teammate gig with its offer markup',
+        title: 'Fiverr Marvel Rivals teammate gig, which answered HTTP 403',
         url: FIVERR_GIG,
       },
     ],
-    fees: 'The gig page states service fees are included in the displayed price and that taxes may be added at checkout.',
-    refunds:
-      'No numeric refund term was read. The category page carries a satisfaction-guarantee badge the survey did not exercise.',
+    fees: 'Not read: neither page answered.',
+    refunds: 'Not read: neither page answered.',
+    blocked:
+      'HTTP 403 with a bot-check page on both the category listing and the gig page on 10 November 2026, so no price from this platform is in the survey.',
   },
   {
     name: 'Gamer Sensei',
@@ -464,7 +454,7 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
         url: METAFY_PRO,
       },
     ],
-    fees: 'The help centre states a 3.7% platform fee plus USD 1.79 per transaction, capped at USD 20 or 30% of the total, and a 2.9% processing fee plus USD 0.40, unless a partner covers them.',
+    fees: 'The help centre states a 3.7% platform fee plus USD 1.79 per transaction, capped at USD 20 or 30% of the total whichever is lower, and a 2.9% processing fee plus USD 0.40, unless a partner covers them.',
     refunds:
       'No buyer refund window was stated on the pages the survey read. Several creators list a free consultation of 15 or 30 minutes.',
   },

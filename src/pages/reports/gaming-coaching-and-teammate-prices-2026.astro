@@ -34,6 +34,7 @@ import {
   SESSION_COACHING,
   TABLE,
   TEAMMATE_PER_GAME,
+  VERIFIED_PLATFORM_NAMES,
   VERIFIED_PLATFORMS,
 } from '../../server/seo/price-report';
 import {
@@ -67,7 +68,6 @@ const platform = (name: string) => TABLE.find((row) => row.name === name)!;
 const metafy = platform('Metafy');
 const queueup = platform('QueueUp');
 const epal = platform('E-Pal');
-const fiverr = platform('Fiverr');
 const sensei = platform('Gamer Sensei');
 const silhouette = platform('Silhouette');
 const kaki = platform('KAKI Gaming');
@@ -76,6 +76,11 @@ const duoly = platform('Duoly');
 const bandList = HOURLY_BANDS.map(
   (band) => `${band.label}, ${band.count} rates`,
 ).join('; ');
+/** The platforms that published a price, numbered, for the answer-first FAQ. */
+const verifiedList = VERIFIED_PLATFORM_NAMES.map(
+  (name, index) =>
+    `${index === VERIFIED_PLATFORM_NAMES.length - 1 ? 'and ' : ''}${index + 1}) ${name}`,
+).join(VERIFIED_PLATFORM_NAMES.length > 2 ? ', ' : ' ');
 const sources = TABLE.flatMap((row) =>
   row.sources.map((source) => ({
     platform: row.name,
@@ -94,7 +99,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'Which gaming platforms publish their prices openly?',
-    `${VERIFIED_PLATFORMS} of the ${COMPETITOR_COUNT} did: 1) Metafy, 2) WeCoach, 3) QueueUp, 4) Gamer Sensei, 5) E-Pal and 6) Fiverr. ${FREE_PLATFORMS.length} charge nothing, ${NO_PRICE_PLATFORMS.length - FREE_PLATFORMS.length - BLOCKED_PLATFORMS.length} describe provider-set prices without showing one, and ${BLOCKED_PLATFORMS.length} returned HTTP 403.`,
+    `${VERIFIED_PLATFORMS} of the ${COMPETITOR_COUNT} did: ${verifiedList}. ${FREE_PLATFORMS.length} charge nothing, ${NO_PRICE_PLATFORMS.length - FREE_PLATFORMS.length - BLOCKED_PLATFORMS.length} describe provider-set prices without showing one, and ${BLOCKED_PLATFORMS.length} returned HTTP 403.`,
   ],
   [
     'How were these prices verified?',
@@ -362,12 +367,12 @@ const dataset = {
         per game from {TEAMMATE_PER_GAME.low} to {TEAMMATE_PER_GAME.high}, with
         a median of {TEAMMATE_PER_GAME.median}, which is{' '}
         {TEAMMATE_PER_GAME.medianEur} at the recorded rate. Second, 2){' '}
-        {EPAL_TWO_FIGURE_CARDS} further cards showed two figures each, so our
-        survey left those out rather than guess which one is charged, and one
-        card priced 15.00 Buff per 30 minutes instead. Third, 3) on{' '}
-        {fiverr.name} the cited Marvel Rivals gig sells a session of up to 60
-        minutes for USD 50.00, with service fees included in the figure shown.
-        For example, a Duoly teammate game runs {DUOLY.teammateFrom} for{' '}
+        {EPAL_TWO_FIGURE_CARDS} further cards showed a discount badge with two
+        figures each, so our survey left those out rather than publish a price
+        that depends on an offer. Third, 3) one card on the same page sold time
+        rather than games, at 15.00 Buff per 30 minutes, which is the only
+        time-based teammate price the survey could read anywhere. For example, a
+        Duoly teammate game runs {DUOLY.teammateFrom} for{' '}
         {DUOLY.teammateFromService} in {DUOLY.teammateFromGame} up to{' '}
         {DUOLY.teammateTo} for {DUOLY.teammateToService} in{' '}
         {DUOLY.teammateToGame}, before the {BUNDLE_PERCENTS[0]}% to{' '}
@@ -385,9 +390,9 @@ const dataset = {
               by each provider and changed whenever they like.
             </li>
             <li>
-              <strong>Per session, seller-set.</strong> {fiverr.name} at USD
-              50.00 for the cited gig, with the scope written into the gig
-              rather than a fixed duration.
+              <strong>Per time block, provider-set.</strong> {epal.name} again,
+              at 15.00 Buff for 30 minutes on one card, so the same roster sells
+              both a game and a clock.
             </li>
             <li>
               <strong>Per game, published tariff.</strong> {duoly.name} at{' '}
