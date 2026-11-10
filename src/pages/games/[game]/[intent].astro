@@ -9,6 +9,7 @@ import Faq from '../../../components/seo/Faq.astro';
 import ClosingCta from '../../../components/seo/ClosingCta.astro';
 import FreeVsPaid from '../../../components/seo/FreeVsPaid.astro';
 import LfgPost from '../../../components/seo/LfgPost.astro';
+import StickyBook from '../../../components/seo/StickyBook.astro';
 import '../../../components/seo/seo.css';
 import '../../../components/seo/free-vs-paid.css';
 import '../../../components/seo/lfg-post.css';
@@ -180,6 +181,7 @@ const faqItems = guideFaq(page, guidePrices);
           ))}
       </div>
     </nav>
+    {offer && <StickyBook offer={offer} />}
   </article>
   <script
     slot="head"

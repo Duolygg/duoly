@@ -9,6 +9,7 @@ import Faq from '../../../components/seo/Faq.astro';
 import SessionExamples from '../../../components/seo/SessionExamples.astro';
 import CoachFormats from '../../../components/seo/CoachFormats.astro';
 import ClosingCta from '../../../components/seo/ClosingCta.astro';
+import StickyBook from '../../../components/seo/StickyBook.astro';
 import '../../../components/seo/seo.css';
 import '../../../components/seo/coach-formats.css';
 import { lessons } from '../../../content/coaching';
@@ -242,6 +243,7 @@ const description = descriptions[game.slug]!;
         <a href="/get-paid-to-play-games">Become a teammate</a>
       </div>
     </nav>
+    {offer && <StickyBook offer={offer} />}
   </article>
   <script
     slot="head"

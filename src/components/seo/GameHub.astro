@@ -7,6 +7,7 @@ import HubDecide from './HubDecide.astro';
 import Topics from './Topics.astro';
 import Faq from './Faq.astro';
 import ClosingCta from './ClosingCta.astro';
+import StickyBook from './StickyBook.astro';
 import { rich } from './rich';
 import './seo.css';
 import './hub.css';
@@ -165,4 +166,5 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
       <a href="/games">All games and services</a>
     </div>
   </nav>
+  {offer && <StickyBook offer={offer} />}
 </article>

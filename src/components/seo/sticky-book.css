@@ -1,0 +1,90 @@
+/* ---------------------------------------------------------------------------
+   Phone booking bar (StickyBook.astro)
+   Desktop gets nothing: `display: none` keeps the bar out of the layout, the
+   paint and the tab order above 700px. Colours and radii are the ones the SEO
+   pages already use (#d6bbff on #140d26, 12px and 16px corners).
+   --------------------------------------------------------------------------- */
+.sticky-book {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  /* The in-flow aside reserves the bar's height at the end of the article and
+     the body rule reserves it under the footer, both from first paint, so the
+     bar covers nothing at full scroll and showing it shifts no layout. */
+  .sticky-book {
+    display: block;
+    height: 4px;
+    margin: 0;
+  }
+  body:has(.sticky-book) {
+    padding-bottom: 76px;
+  }
+  .sticky-book-bar {
+    position: fixed;
+    z-index: 50;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-sizing: border-box;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid rgba(214, 187, 255, 0.18);
+    background: rgba(20, 13, 38, 0.94);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4);
+    /* Hidden by default and by `visibility`, so a reader who never scrolls past
+       the hero can neither see nor tab to it. */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(100%);
+    transition:
+      opacity 0.18s ease,
+      transform 0.22s ease,
+      visibility 0.22s;
+  }
+  .sticky-book-bar.is-shown {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+  .seo-page .sticky-book-price {
+    margin: 0;
+    min-width: 0;
+    display: grid;
+    gap: 1px;
+    line-height: 1.2;
+  }
+  .sticky-book-price .money {
+    font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+    font-size: 19px;
+    font-weight: 750;
+    color: #f3eeff;
+    letter-spacing: -0.01em;
+  }
+  .sticky-book-price .unit {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #a79dc4;
+  }
+  .seo-page .sticky-book-bar .btn-sm {
+    flex: 0 1 auto;
+    min-height: 46px;
+    padding: 8px 16px;
+    font-size: 14.5px;
+    line-height: 1.2;
+    text-align: center;
+  }
+}
+
+/* A reader who asks the system for less motion gets the bar without the slide:
+   it is there or it is not. */
+@media (prefers-reduced-motion: reduce) {
+  .sticky-book-bar {
+    transition: none;
+    transform: none;
+  }
+}
