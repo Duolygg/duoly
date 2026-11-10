@@ -22,6 +22,8 @@ import {
 } from '../../server/seo/hub';
 import { priceSummary } from '../../server/seo/offers';
 import { closingDetail } from '../../server/seo/citable-answers';
+import { hubHeroOffer } from '../../server/seo/hero-offer';
+import { BOOKING_REASSURANCE } from '../../server/seo/reassurance';
 import { GUIDE_PATH, bookingHref } from '../../site/seo';
 interface Props {
   game: SiteGame;
@@ -30,6 +32,12 @@ interface Props {
 }
 const { game, copy, offers } = Astro.props;
 const summary = priceSummary(offers.all);
+// The hero sells the game's main service at its own starting price, so the
+// button and the headline figure agree with what checkout charges for it.
+const offer = hubHeroOffer(game.id, offers.all);
+// The two buttons are deliberately different: the hero and closing CTAs keep
+// the game-wide link their generic label promises, while the offer card's
+// button names one service and prefills exactly that one.
 const book = bookingHref(game.id);
 const intent = intentForGame(game.slug);
 // Only link a hub that exists: `related` names game slugs with finished copy.
@@ -64,22 +72,17 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
     lead={copy.lead}
     cta={{ href: book, label: copy.cta }}
     secondary={{ href: '#prices', label: 'See prices' }}
+    note={BOOKING_REASSURANCE}
     art={[{ src: game.img, alt: `${game.name} game art` }]}
     chip={summary}
+    chipLabel={`Every ${game.name} session`}
+    offer={offer}
     facts={copy.facts}
     analyticsGame={game.id}
   />
   <section aria-labelledby="get-h">
     <h2 id="get-h">{copy.format.heading}</h2>
     <p set:html={rich(copy.format.text)} />
-    {intentLink && copy.intent && (
-      <aside class="hub-intent">
-        <p>{copy.intent}</p>
-        <a class="btn-sm" href={intentLink.href}>
-          {intentLink.anchor}
-        </a>
-      </aside>
-    )}
   </section>
   <Prices
     gameId={game.id}
@@ -107,6 +110,17 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
       intro={copy.intros.coaching}
       coach
     />
+  )}
+  {/* The free LFG handover sits after the price cards, not before them: above
+      the prices it offered a reader the free route before they had seen what
+      the paid one costs. */}
+  {intentLink && copy.intent && (
+    <aside class="hub-intent">
+      <p>{copy.intent}</p>
+      <a class="btn-sm" href={intentLink.href}>
+        {intentLink.anchor}
+      </a>
+    </aside>
   )}
   <Steps heading={copy.steps.heading} steps={copy.steps.items}>
     <p set:html={rich(copy.steps.note)} />

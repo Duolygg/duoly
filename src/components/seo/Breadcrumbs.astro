@@ -43,4 +43,27 @@ const { items } = Astro.props;
   li:last-child a {
     color: #f3eeff;
   }
+  /* On a phone the trail is the first thing above the fold and the booking
+     button is the last, so the trail gives up its widest crumb. Home is the
+     one every visitor can reach from the logo anyway, and it stays in the DOM
+     and in the BreadcrumbList for crawlers. Hiding it would leave the next
+     crumb starting with a slash, so that separator goes with it. */
+  @media (max-width: 480px) {
+    ol {
+      gap: 4px 10px;
+      font-size: 13px;
+    }
+    li + li::before {
+      margin-right: 10px;
+    }
+    li:first-child {
+      display: none;
+    }
+    /* Written as a sibling selector so it outranks `li + li::before`: Astro
+       scoping adds an attribute selector to every compound, which would
+       otherwise leave the separator rule the more specific of the two. */
+    li:first-child + li::before {
+      content: none;
+    }
+  }
 </style>

@@ -30,6 +30,8 @@ import {
   faqSchema,
 } from '../../../server/seo/offers';
 import { guideExamples } from '../../../server/seo/guide';
+import { heroOffer } from '../../../server/seo/hero-offer';
+import { BOOKING_REASSURANCE } from '../../../server/seo/reassurance';
 import {
   guideForGame,
   guideFaq,
@@ -62,6 +64,8 @@ const offers = intentOffers(page, game.id, {
 const summary = priceSummary(offers);
 const path = intentPath(page);
 const book = bookingHref(game.id, { service: page.service });
+// The hero card sells the service this page is written about.
+const offer = heroOffer(game.id, page.service, offers);
 const guidePrices = guideExamples({ eurToUsd: 1 });
 const guide = guideForGame(game.slug);
 const guideCopy = guide ? renderTokens(guide, guidePrices) : null;
@@ -95,8 +99,10 @@ const faqItems = guideFaq(page, guidePrices);
       lead={page.lead}
       cta={{ href: book, label: bookTeammateLabel(game.name) }}
       secondary={{ href: '#prices', label: 'Compare prices' }}
+      note={BOOKING_REASSURANCE}
       art={[{ src: game.img, alt: `${game.name} game art` }]}
-      price={summary}
+      price={`Every ${game.name} session: ${summary.toLowerCase()}`}
+      offer={offer}
       facts={page.facts}
     />
     <section aria-labelledby="format-h">
@@ -213,6 +219,14 @@ const faqItems = guideFaq(page, guidePrices);
     [data-intent-page] :global(.seo-hero h1) {
       max-width: none;
       text-wrap: balance;
+    }
+  }
+  /* This page restyles the trail with trailing slashes, so the phone rule in
+     Breadcrumbs.astro cannot reach it. Same decision made here: Home drops out
+     above the fold, and its own trailing slash goes with it. */
+  @media (max-width: 480px) {
+    [data-intent-page] :global(nav[aria-label='Breadcrumb'] li:first-child) {
+      display: none;
     }
   }
 </style>

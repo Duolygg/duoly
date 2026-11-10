@@ -651,9 +651,16 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     // to 15, and every teammate page links every other one, so the
     // related-link chips grew by about 100 words on all of them.
     //
-    // Measured on 9 November 2026 against this build, worst page per bucket:
-    // templated 3075 (/games/call-of-duty/lfg), guided 2593
-    // (/games/league-of-legends/play-with-someone) and plain 2185
+    // The 10 November 2026 conversion pass added three shared blocks to every
+    // teammate page: the hero offer card (service, tier, its own starting
+    // price and a labelled button), one line of refund microcopy under the
+    // primary CTA, and the quantity-discount chips on each price card. That is
+    // about 110 words on a page with one price grid and more where a game
+    // sells six teammate services.
+    //
+    // Measured on 10 November 2026 against this build, worst page per bucket:
+    // templated 3183 (/games/call-of-duty/lfg), guided 2678
+    // (/games/league-of-legends/play-with-someone) and plain 2306
     // (/games/counter-strike-2/lfg, the longest plain page because CS2 sells
     // six teammate services on one card). Each ceiling sits 100 words above
     // its worst page. The headroom is for those reviewed, shared paragraphs
@@ -662,10 +669,10 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
     const guided = html.includes('id="free-or-paid"');
     const templated = html.includes('id="lfg-post-h"');
     const [minWords, maxWords] = templated
-      ? [1900, 3175]
+      ? [1900, 3285]
       : guided
-        ? [1500, 2695]
-        : [1200, 2285];
+        ? [1500, 2780]
+        : [1200, 2405];
     assert(
       wordCount >= minWords && wordCount <= maxWords,
       `${path}: ${wordCount} words`,

@@ -1,4 +1,5 @@
 ---
+import type { HeroOffer } from '../../server/seo/hero-offer';
 interface Props {
   eyebrow: string;
   h1: string;
@@ -9,7 +10,14 @@ interface Props {
   secondary?: { href: string; label: string };
   art: { src: string; alt: string }[];
   chip?: string;
+  /** What the chip price covers, so a range is never read as one price. */
+  chipLabel?: string;
   facts: string[];
+  /**
+   * The service this page sells, with its own booking button in the hero card.
+   * Without it the card stays the plain at-a-glance panel.
+   */
+  offer?: HeroOffer;
   /** data-analytics-game on the first image (game hubs track game_viewed). */
   analyticsGame?: string;
 }
@@ -27,7 +35,9 @@ const {
   secondary,
   art,
   chip,
+  chipLabel,
   facts,
+  offer,
   analyticsGame,
   note,
 } = Astro.props;
@@ -51,7 +61,10 @@ const {
     </div>
     {note && <p class="hero-note">{note}</p>}
   </div>
-  <aside class="hero-card" aria-label="At a glance">
+  <aside
+    class={offer ? 'hero-card hero-offer' : 'hero-card'}
+    aria-label={offer ? `Book ${offer.title}` : 'At a glance'}
+  >
     <div class="top">
       <div class="art">
         {art.map((image, index) => (
@@ -67,8 +80,39 @@ const {
           />
         ))}
       </div>
-      {chip && <p class="price-chip">{chip}</p>}
+      {offer ? (
+        <div class="offer-head">
+          <p class="offer-service">{offer.title}</p>
+          <p class="offer-tier">{offer.tier}</p>
+          <p class="offer-price">
+            <span class="money">{offer.price}</span> per {offer.unit}
+          </p>
+        </div>
+      ) : (
+        chip && <p class="price-chip">{chip}</p>
+      )}
     </div>
+    {offer && (
+      <>
+        <a class="cta offer-cta" href={offer.href}>
+          {offer.label}
+        </a>
+        {/* The chip stays under the button, labelled, so the range across every
+            service on the page can never be read as this service's price. */}
+        {chip && (
+          <p class="price-chip">
+            {chipLabel ? `${chipLabel}: ` : ''}
+            {chip}
+          </p>
+        )}
+        {offer.cheapest && (
+          <p class="offer-floor">
+            Cheapest session: {offer.cheapest.title} at {offer.cheapest.price}{' '}
+            per {offer.cheapest.unit}.
+          </p>
+        )}
+      </>
+    )}
     <ul class="facts">
       {facts.map((fact) => (
         <li>{fact}</li>
