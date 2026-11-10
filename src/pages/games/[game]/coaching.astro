@@ -64,7 +64,9 @@ const path = `/games/${game.slug}/coaching`;
 const book = bookingHref(game.id, { tab: 'training' });
 // The hero card sells the lesson a reader lands on this page for: the first
 // coaching service the catalog lists for the game, at its own price.
-const offer = heroOffer(game.id, offers[0]!.id, offers);
+const offer = heroOffer(game.id, offers[0]!.id, offers, {
+  coach: true,
+});
 /**
  * Sibling coaching pages, as one ring through what a player is practicing:
  * tactical shooters, then the battle royale and sandbox end, then the arcade
@@ -147,7 +149,6 @@ const description = descriptions[game.slug]!;
       note={BOOKING_REASSURANCE}
       art={[{ src: game.img, alt: `${game.name} game art` }]}
       chip={summary}
-      chipLabel={`Every ${game.name} lesson`}
       offer={offer}
       facts={coachingFacts(offers)}
     />

@@ -1,7 +1,11 @@
 ---
 import { type seoOffers } from '../../server/seo/offers';
 import { pricesAnswer, priceNote } from '../../server/seo/citable-answers';
-import { mainServiceId } from '../../server/seo/hero-offer';
+import {
+  LABEL_BUDGET,
+  bookLabel,
+  mainServiceId,
+} from '../../server/seo/hero-offer';
 import {
   BUNDLE_UNITS,
   QUANTITY_DISCOUNT_PERCENT,
@@ -94,8 +98,14 @@ const cards = services.map((service) => {
     varies,
     discounts: discountsFor(service.id),
     // The button names the tier and what that tier starts at, so a reader
-    // knows what the click costs before making it.
-    action: `Book ${service.title} ${varies ? 'from' : 'for'} ${cheapest.display}`,
+    // knows what the click costs before making it, inside the width the card
+    // has for it (src/server/seo/hero-offer.ts).
+    action: bookLabel(
+      service.title,
+      varies,
+      cheapest.display,
+      cols >= 4 ? LABEL_BUDGET.cardNarrow : LABEL_BUDGET.card,
+    ),
   };
 });
 const unitWord = (unit: string, count: number) =>
@@ -172,7 +182,14 @@ const unitWord = (unit: string, count: number) =>
             </p>
           )}
           {discounts.length > 0 && (
-            <ul class="bundle-chips" aria-label={`${service.title} discounts`}>
+            <ul
+              class="bundle-chips"
+              aria-label={
+                service.id === main
+                  ? `${service.title} bundle discounts`
+                  : `${service.title} quantity discounts`
+              }
+            >
               {discounts.map((step) => (
                 <li>
                   {unitWord(cheapest.unit, step.units)} {step.percent}% off
@@ -180,8 +197,12 @@ const unitWord = (unit: string, count: number) =>
               ))}
             </ul>
           )}
-          <a class="btn-sm" href={bookingHref(gameId, { service: service.id })}>
-            {action}
+          <a
+            class="btn-sm"
+            href={bookingHref(gameId, { service: service.id })}
+            aria-label={action.text === action.full ? undefined : action.full}
+          >
+            {action.text}
           </a>
         </article>
       ),

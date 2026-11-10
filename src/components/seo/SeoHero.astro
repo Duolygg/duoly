@@ -9,9 +9,8 @@ interface Props {
   note?: string;
   secondary?: { href: string; label: string };
   art: { src: string; alt: string }[];
+  /** The at-a-glance price range, for a hero with no offer card. */
   chip?: string;
-  /** What the chip price covers, so a range is never read as one price. */
-  chipLabel?: string;
   facts: string[];
   /**
    * The service this page sells, with its own booking button in the hero card.
@@ -35,7 +34,6 @@ const {
   secondary,
   art,
   chip,
-  chipLabel,
   facts,
   offer,
   analyticsGame,
@@ -48,13 +46,16 @@ const {
     <p class="eyebrow">{eyebrow}</p>
     <h1 set:html={nowrapTerms(h1)} />
     <p class="lead">{lead}</p>
-    {price && <p class="hero-price">{price}</p>}
+    {price && !offer && <p class="hero-price">{price}</p>}
+    {/* One primary per viewport. When the card carries its own booking button
+        the left column keeps the same link as a secondary, because two filled
+        buttons for one action make a reader choose between identical things. */}
     <div class="hero-actions">
-      <a class="cta" href={cta.href}>
+      <a class={offer ? 'cta-ghost' : 'cta'} href={cta.href}>
         {cta.label}
       </a>
       {secondary && (
-        <a class="cta-ghost" href={secondary.href}>
+        <a class={offer ? 'hero-link' : 'cta-ghost'} href={secondary.href}>
           {secondary.label}
         </a>
       )}
@@ -94,27 +95,30 @@ const {
     </div>
     {offer && (
       <>
-        <a class="cta offer-cta" href={offer.href}>
+        <a
+          class="cta offer-cta"
+          href={offer.href}
+          aria-label={
+            offer.label === offer.labelFull ? undefined : offer.labelFull
+          }
+        >
           {offer.label}
         </a>
-        {/* The chip stays under the button, labelled, so the range across every
-            service on the page can never be read as this service's price. */}
-        {chip && (
-          <p class="price-chip">
-            {chipLabel ? `${chipLabel}: ` : ''}
-            {chip}
-          </p>
-        )}
+        {/* One other price, labelled, and only when something really is
+            cheaper. The card used to carry three figures: this tier's price, a
+            bordered box with the range across every service on the page, and a
+            "Cheapest session" line repeating the bottom of that range. The box
+            also read like a form field. */}
         {offer.cheapest && (
           <p class="offer-floor">
-            Cheapest session: {offer.cheapest.title} at {offer.cheapest.price}{' '}
-            per {offer.cheapest.unit}.
+            Cheapest session on this page: {offer.cheapest.title} at{' '}
+            {offer.cheapest.price} per {offer.cheapest.unit}.
           </p>
         )}
       </>
     )}
     <ul class="facts">
-      {facts.map((fact) => (
+      {(offer ? offer.facts : facts).map((fact) => (
         <li>{fact}</li>
       ))}
     </ul>

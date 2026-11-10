@@ -113,10 +113,13 @@ for (const [path, page] of indexed) {
           page.description.includes(`per ${unit}`),
           `${path}: description unit ${unit}`,
         );
+        // Every billing unit the schema offers is visible beside a price.
+        // The hero used to carry the whole range in a chip; it sells one
+        // service now, so the price grid is where the units are stated.
         assert(
-          html
-            .match(/<p class="(?:price-chip|hero-price)">([\s\S]*?)<\/p>/)?.[1]
-            .includes(`per ${unit}`),
+          [...html.matchAll(/<p class="price(?: same)?"[^>]*>([\s\S]*?)<\/p>/g)]
+            .map((match) => match[1])
+            .some((price) => price.includes(`/ ${unit}`)),
           `${path}: summary unit ${unit}`,
         );
       }
@@ -748,8 +751,14 @@ test('intent heroes fit desktop and mobile without changing shared navigation', 
         await page.evaluate(() => document.fonts.ready);
         const layout = await page.evaluate(() => ({
           overflow: document.documentElement.scrollWidth > innerWidth,
+          // The hero's own price. The left column used to carry the range
+          // across every service on the page; the offer card carries this
+          // service's price instead, so that is the figure to find.
           priceBottom: document
-            .querySelector('.hero-price')
+            .querySelector('.hero-offer .offer-price, .hero-price')
+            .getBoundingClientRect().bottom,
+          heroBottom: document
+            .querySelector('.seo-hero')
             .getBoundingClientRect().bottom,
           actions: [...document.querySelectorAll('.hero-actions a')].map(
             (el) => {
@@ -771,7 +780,22 @@ test('intent heroes fit desktop and mobile without changing shared navigation', 
           false,
           `${path}: horizontal overflow at ${width}`,
         );
-        assert(layout.priceBottom < 667, `${path}: price above mobile fold`);
+        // On a desktop hero the card sits beside the copy, so its price is
+        // above the fold. On a phone it sits under the copy, where the fold is
+        // the hero itself: the price has to be inside it, and the primary
+        // action above the fold (the phone booking bar covers the rest).
+        if (width === 1440)
+          assert(layout.priceBottom < 667, `${path}: price above the fold`);
+        else {
+          assert(
+            layout.priceBottom <= layout.heroBottom,
+            `${path}: price inside the hero`,
+          );
+          assert(
+            layout.actions[0].bottom < 667,
+            `${path}: first action above the fold`,
+          );
+        }
         for (const action of layout.actions) {
           assert(
             action.left >= 0 && action.right <= width && action.bottom < 844,

@@ -23,7 +23,7 @@ import {
 } from '../../server/seo/hub';
 import { priceSummary } from '../../server/seo/offers';
 import { closingDetail } from '../../server/seo/citable-answers';
-import { hubHeroOffer } from '../../server/seo/hero-offer';
+import { hubHeroOffer, mainServiceId } from '../../server/seo/hero-offer';
 import { BOOKING_REASSURANCE } from '../../server/seo/reassurance';
 import { GUIDE_PATH, bookingHref } from '../../site/seo';
 interface Props {
@@ -35,7 +35,11 @@ const { game, copy, offers } = Astro.props;
 const summary = priceSummary(offers.all);
 // The hero sells the game's main service at its own starting price, so the
 // button and the headline figure agree with what checkout charges for it.
-const offer = hubHeroOffer(game.id, offers.all);
+const offer = hubHeroOffer(
+  game.id,
+  offers.all,
+  copy.services[mainServiceId(game.id)],
+);
 // The two buttons are deliberately different: the hero and closing CTAs keep
 // the game-wide link their generic label promises, while the offer card's
 // button names one service and prefills exactly that one.
@@ -76,7 +80,6 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
     note={BOOKING_REASSURANCE}
     art={[{ src: game.img, alt: `${game.name} game art` }]}
     chip={summary}
-    chipLabel={`Every ${game.name} session`}
     offer={offer}
     facts={copy.facts}
     analyticsGame={game.id}
