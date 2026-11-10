@@ -352,7 +352,7 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
   {
     name: 'Eloboost24',
     sells: 'Coaching, sessions with stronger players and boosting',
-    priceModel: 'Coaches set the price on their own profile',
+    priceModel: 'Unknown: no current price was readable',
     sources: [
       {
         title: 'Eloboost24 coaching directory, which answered HTTP 403',

@@ -356,10 +356,16 @@ const unitLabel = (unit: SurveyUnit) =>
  * rows rather than written out, so the table and the dataset cannot disagree.
  */
 const priceLine = (platform: SurveyPlatform, rows: readonly ReportRow[]) => {
-  if (!rows.length)
-    return platform.priceModel.startsWith('Nothing to buy')
-      ? 'No price to verify: the service is free'
+  if (!rows.length) {
+    // Three empty cells mean three different things, and a reader quoting the
+    // table deserves to see which: a free service, a page that answered and
+    // showed no price, and a page that did not answer at all.
+    if (platform.priceModel.startsWith('Nothing to buy'))
+      return 'No price to verify: the service is free';
+    return platform.blocked?.startsWith('HTTP')
+      ? 'Not read: the page answered HTTP 403'
       : 'No price published on the pages read';
+  }
   const groups = new Map<string, ReportRow[]>();
   for (const row of rows) {
     const key = `${row.currency}:${row.unit}`;

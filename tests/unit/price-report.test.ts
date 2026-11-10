@@ -194,7 +194,11 @@ describe('the 2026 price survey data', () => {
   it('builds every table price line out of the platform own rows', () => {
     for (const row of TABLE) {
       if (!row.rows.length) {
-        expect(row.prices).toMatch(/^No price/);
+        // A blocked page says so; an answered page that priced nothing says
+        // that instead. Neither ever reads as a price.
+        expect(row.prices).toMatch(
+          row.blocked?.startsWith('HTTP') ? /^Not read:/ : /^No price/,
+        );
         continue;
       }
       // One group per currency and billing unit, printed as its own range.
