@@ -4,8 +4,15 @@ import { describe, expect, it } from 'vitest';
 import BundledImage from '../../src/components/shared/BundledImage';
 import { GAME_ART_WIDTHS, gameArtSrcSet } from '../../src/site/game-art';
 
-const render = (props: Record<string, unknown>) =>
-  renderToStaticMarkup(React.createElement(BundledImage, props));
+const render = (
+  props: { src: string; width: number; style?: React.CSSProperties } & Record<
+    string,
+    unknown
+  >,
+) =>
+  renderToStaticMarkup(
+    React.createElement(BundledImage, { style: undefined, ...props }),
+  );
 
 describe('bundled responsive artwork', () => {
   it('adds responsive sources without changing dimensions, style, alt or loading', () => {
