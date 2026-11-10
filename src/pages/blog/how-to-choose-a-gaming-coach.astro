@@ -131,11 +131,11 @@ const faqItems: [string, string][] = [
   ],
   [
     'Is a cheap coach worse than an expensive one?',
-    'Price alone cannot tell you. Compare current rank proof, the lesson plan and session reviews before choosing.',
+    'Compare rank proof, the lesson plan and session reviews. Price alone cannot establish teaching quality.',
   ],
   [
     'Can a coach play on your account?',
-    'No. A Duoly coach never asks for a password, and every lesson runs on the accounts both people already own, using Discord for voice and screen share.',
+    'No. Keep your password private. Duoly lessons use your own account, using Discord for voice and screen share.',
   ],
 ];
 const article = {
@@ -257,9 +257,8 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         A red flag is a claim you cannot check or an outcome the coach cannot
         control. For example, promising a fixed rank after 3 lessons claims
         control over matches other players also decide. Keep payment in the
-        platform checkout, where the total and refund terms are visible before
-        you pay. A Duoly {valVod.title} hour costs {valVod.display} through
-        Stripe.
+        platform checkout. Check the total and refund terms there before paying.
+        A Duoly {valVod.title} hour costs {valVod.display} through Stripe.
       </p>
       <div class="guide-one">
         <article
@@ -552,7 +551,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
 
     <ClosingCta
       heading="Run the 5 checks, then book"
-      text={`Check current rank proof, the session plan, the total price, session reviews and refund terms before paying a coach. Duoly names the coach tier on each service. ${valVod.title} costs ${valVod.display} per ${valVod.unit} with an ${valVod.tier}. Choose a replay you want to understand and a question to work through together.`}
+      text={`Check current rank proof, the session plan, the total price, session reviews and refund terms before paying a coach. Duoly names the coach tier on each service. ${valVod.title} costs ${valVod.display} per ${valVod.unit} with an ${valVod.tier}. Choose a replay and one question to work through together. Ask for a practice task you can test in your next match.`}
       extra={`Check the unit as well as the amount before paying. Across ${coached.length} coached games, a lesson means one live game or one hour. For example, a review hour gives you time to pause a replay; a live lesson follows the match. The service card names the unit. Payment runs through Stripe with nothing added at checkout. Lessons use your own account with voice and screen share on Discord. Keep your password private. Duoly has no public review volume yet, so compare the published price and terms. Prices were checked in November 2026.`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching hour"
