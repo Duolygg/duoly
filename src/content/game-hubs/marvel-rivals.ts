@@ -48,7 +48,7 @@ export const marvelRivals: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per match, and the Competitive services read your own rank: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Quick Match and Arcade, Team-Up Duo and the Gamer Girl sessions hold one price for everybody. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names a Diamond+ player, Duo Pro a Grandmaster+ player and Duo Apex a Celestial+ player from {{p_duo3_low}} per match. Every teammate booking adds one player to your party, so the tier decides who takes that seat. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the hero pair using Discord before match 1.',
+      'Teammate prices are per match, and the Competitive services read your own rank: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Quick Match and Arcade, Team-Up Duo and the Gamer Girl sessions hold one price for everybody. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names a Diamond+ player, Duo Pro a Grandmaster+ player and Duo Apex a Celestial+ player from {{p_duo3_low}} per match. Every teammate booking adds one player to your party, so the tier decides who takes that seat. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. Agree the hero pair using Discord before match 1.',
     team: 'A 6-stack fill is one order that hires several players at once, so a part-full group becomes a complete six. 6-Stack Fill covers up to {{seats_six}} seats at {{p_six}} per match at {{rank_six}}, from {{p_six_low}} at {{rank_six_low}}. Count the seats you actually need, because every seat is priced on its own. Name the roles, because a Marvel Rivals six usually wants two Vanguards, two Duelists and two Strategists and the fill covers whichever of those your group is short. Bundles of {{main}} take {{bundles}}. For example, a trio short 3 players books 3 seats rather than 5, agreed using Discord.',
     coaching:
       'Lessons are priced by the hour and get no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on teammate matches stop here. Hero Coaching costs {{p_hero}} per hour and works through one hero in depth, from ability timings to the matchups that counter you. Play and Learn is the live option where a Grandmaster+ coach calls one real Competitive match at {{p_learn}}. Pick the problem rather than the format. For example, a player who dies straight after the ultimate books the hero hour instead of a fourth Competitive match. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
@@ -57,7 +57,7 @@ export const marvelRivals: HubPageCopy = {
     heading: 'How does booking a Marvel Rivals duo work?',
     items: [
       'Pick a service and the number of matches first. Duo Pro is the Competitive tier with a Grandmaster+ teammate, and 3 matches at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five matches take {{pct5}} off.',
-      'Add your region, rank, platform and hero pool at checkout. For example, name Europe, {{rank_duo2}} and two Strategists, so your teammate reads the real request before accepting.',
+      'Add your region, rank, platform and hero pool at checkout. Name Europe, {{rank_duo2}} and two Strategists, so your teammate reads the real request before accepting.',
       'Meet your teammate in the order chat using Discord. Agree the hero pair and a Team-Up to try, then invite each other by username. One Duo Pro match costs {{p_duo2}} at {{rank_duo2}}.',
     ],
     note: 'Duoly reviews every Marvel Rivals teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -104,7 +104,7 @@ export const marvelRivals: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'The teammate you queue with is a reviewed Marvel Rivals player who applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player, Duo Pro a Grandmaster+ player and Duo Apex a Celestial+ player from {{p_duo3_low}} per match, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Nobody from Duoly ever logs into your account.',
-        'What the rank buys is fight discipline. A Grandmaster+ teammate tracks the enemy ultimates and calls the reset instead of walking in alone, so the dive lands before a cooldown returns. Voice runs using Discord for exactly that reason. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut the total: {{bundles}}. For example, you keep your hero and your account in all 3 matches.',
+        'What the rank buys is fight discipline. A Grandmaster+ teammate tracks the enemy ultimates and calls the reset instead of walking in alone, so the dive lands before a cooldown returns. Voice runs using Discord for exactly that reason. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut the total: {{bundles}}. You keep your hero and your account in all 3 matches.',
       ],
     },
     {
@@ -160,6 +160,6 @@ export const marvelRivals: HubPageCopy = {
   },
   closing: {
     heading: 'Ready to queue in Marvel Rivals?',
-    text: 'Duo Pro is the Competitive tier with a Grandmaster+ teammate from Duoly. Three matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 matches take {{pct5}} off. Quick Match stays {{p_quick}} per match at any rank, and Team-Up Duo costs {{p_teamup}}. 6-Stack Fill hires Grandmaster+ players for up to {{seats_six}} seats from {{p_six_low}} per match when you want a complete six in 2026. For example, agree your hero pair using Discord before the first queue.',
+    text: 'Duo Pro is the Competitive tier with a Grandmaster+ teammate from Duoly. Three matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 matches take {{pct5}} off. Quick Match stays {{p_quick}} per match at any rank, and Team-Up Duo costs {{p_teamup}}. 6-Stack Fill hires Grandmaster+ players for up to {{seats_six}} seats from {{p_six_low}} per match when you want a complete six in 2026. Agree your hero pair using Discord before the first queue.',
   },
 };

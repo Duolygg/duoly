@@ -54,7 +54,7 @@ export const wildRift: HubPageCopy = {
     heading: 'How does booking a Wild Rift teammate work?',
     items: [
       'Pick a service and the number of games. Duo Pro is the ranked tier with a Master teammate, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five games take {{pct5}} off.',
-      'Add your area, rank, lane and language at checkout. For example, name Europe, {{rank_duo2}} and Dragon Lane, so your teammate reads the real request before accepting the order.',
+      'Add your area, rank, lane and language at checkout. Name Europe, {{rank_duo2}} and Dragon Lane, so your teammate reads the real request before accepting the order.',
       'Meet your teammate in the order chat using Discord. Add each other by Riot ID and agree who plays which lane. A single Duo Pro game costs {{p_duo2}} at the same rank, and ARAM stays {{p_aram}}.',
     ],
     note: 'Duoly reviews every Wild Rift teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -100,8 +100,8 @@ export const wildRift: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'The teammate you queue with is a reviewed Wild Rift player who applied for the game and showed a rank before taking orders. The tiers: Duo Plus names a Diamond+ player, Duo Pro a Master player and Duo Apex a Grandmaster+ player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, tell them your rank and your lane in the order chat using Discord before the first draft.',
-        'What the rank buys you is objective calls. A Master teammate tracks the enemy jungler, calls the dragon before it spawns and says when Baron is safe to start. Voice runs using Discord, so the call lands while the fight is still winnable. Your rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your champions, your decisions and your account in all 3 games.',
+        'The teammate you queue with is a reviewed Wild Rift player who applied for the game and showed a rank before taking orders. The tiers: Duo Plus names a Diamond+ player, Duo Pro a Master player and Duo Apex a Grandmaster+ player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. Tell them your rank and your lane in the order chat using Discord before the first draft.',
+        'What the rank buys you is objective calls. A Master teammate tracks the enemy jungler, calls the dragon before it spawns and says when Baron is safe to start. Voice runs using Discord, so the call lands while the fight is still winnable. Your rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. You keep your champions, your decisions and your account in all 3 games.',
       ],
     },
     {
@@ -157,6 +157,6 @@ export const wildRift: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next Wild Rift game?',
-    text: 'Duo Pro is the ranked tier with a Master teammate from Duoly, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five games take {{pct5}} off and 10 games take {{pct10}} off. ARAM stays {{p_aram}} per game at any rank, and a normal match costs {{p_norm}}. Ranked 5-Stack hires Master+ players for up to {{seats_five}} seats from {{p_five_low}} per game when you want the whole lobby in 2026. For example, pick your rank and lane, then agree the draft in the order chat using Discord.',
+    text: 'Duo Pro is the ranked tier with a Master teammate from Duoly, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five games take {{pct5}} off and 10 games take {{pct10}} off. ARAM stays {{p_aram}} per game at any rank, and a normal match costs {{p_norm}}. Ranked 5-Stack hires Master+ players for up to {{seats_five}} seats from {{p_five_low}} per game when you want the whole lobby in 2026. Pick your rank and lane, then agree the draft in the order chat using Discord.',
   },
 };

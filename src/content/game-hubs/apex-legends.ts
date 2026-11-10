@@ -25,7 +25,7 @@ export const apexLegends: HubPageCopy = {
     'Want the squad-finding page rather than every Apex service? It sets the free Discords and in-game tools next to the paid Ranked sessions.',
   format: {
     heading: 'What can you book for Apex Legends on Duoly?',
-    text: 'An Apex Legends booking on Duoly is an hour of play, because a battle royale match has no fixed length. The tiers are Duo Plus with a Diamond+ teammate and Duo Pro with a Master or Apex Predator who reads the ring. Ranked prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Duo Pro. Mixtape keeps one flat price of {{p_mix}} per hour at every rank, and the Duos playlist costs {{p_duos}}. Bundles of {{main}} cut the total, {{bundles}}. The fill: Full Trio hires {{seats_trio}} Master+ players from {{p_trio_low}} per hour, so a solo queue becomes a real trio on one order. Lessons start from {{p_move}} per hour in the Firing Range. For example, share your area and rank in the order chat using Discord first.',
+    text: 'An Apex Legends booking on Duoly is an hour of play, because a battle royale match has no fixed length. The tiers are Duo Plus with a Diamond+ teammate and Duo Pro with a Master or Apex Predator who reads the ring. Ranked prices follow your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Duo Pro. Mixtape keeps one flat price of {{p_mix}} per hour at every rank, and the Duos playlist costs {{p_duos}}. Bundles of {{main}} cut the total, {{bundles}}. The fill: Full Trio hires {{seats_trio}} Master+ players from {{p_trio_low}} per hour, so a solo queue becomes a real trio on one order. Lessons start from {{p_move}} per hour in the Firing Range. Share your area and rank in the order chat using Discord first.',
   },
   services: {
     duo1: 'An hour of Ranked with a Diamond player who calls drops, rotations and fights clearly.',
@@ -46,7 +46,7 @@ export const apexLegends: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per hour, because an Apex match can end on the first ring or run to the last squad. Ranked sessions read your own rank: Duo Pro costs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. The Duos playlist, Mixtape, Pubs and the Gamer Girl sessions hold one price for everybody. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names a Diamond+ player and Duo Pro a Master or Apex Predator at {{p_duo2}} per hour. The Duos playlist is the two-player format at {{p_duos}}, where nobody fills a third seat. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the drop spot using Discord before hour 1.',
+      'Teammate prices are per hour, because an Apex match can end on the first ring or run to the last squad. Ranked sessions read your own rank: Duo Pro costs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. The Duos playlist, Mixtape, Pubs and the Gamer Girl sessions hold one price for everybody. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names a Diamond+ player and Duo Pro a Master or Apex Predator at {{p_duo2}} per hour. The Duos playlist is the two-player format at {{p_duos}}, where nobody fills a third seat. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. Agree the drop spot using Discord before hour 1.',
     team: 'Full Trio is one order that hires two players at once, so a solo queue becomes a real trio from {{p_trio_low}} for {{seats_trio}} seats. Decide whether you want one teammate or two, because a Ranked trio is 3 players and the Duos playlist is 2. Full Trio reads your own rank like the Ranked duos do, from {{p_trio_low}} per hour. Agree the legend classes, since a trio wants scan, cover and damage covered rather than three Skirmishers. For example, a solo player books 2 seats and keeps their own legend. Bundles of {{main}} still take {{bundles}}.',
     coaching:
       'Lessons are priced by the hour and get no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on teammate hours stop here. The Movement Course costs {{p_move}} per hour in the Firing Range, drilling tap strafes, zip rotations and wall bounces. Play and Learn is the live option where a Master coach talks through one real Ranked hour at {{p_learn}}. Pick the problem rather than the format. For example, a player who cannot escape a bad fight books the Movement Course instead of a fourth Ranked hour. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
@@ -55,7 +55,7 @@ export const apexLegends: HubPageCopy = {
     heading: 'How does booking an Apex Legends duo work?',
     items: [
       'Pick a service and the number of hours first. Duo Pro is the Ranked tier with a Master or Predator teammate, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
-      'Add your area, rank, platform and language at checkout. For example, name Europe, {{rank_duo2}} and your legend pool, so your teammate reads the real request before accepting.',
+      'Add your area, rank, platform and language at checkout. Name Europe, {{rank_duo2}} and your legend pool, so your teammate reads the real request before accepting.',
       'Meet your teammate in the order chat using Discord. Agree a drop spot and a backup, then invite each other with your EA ID. One Duo Pro hour costs {{p_duo2}} at {{rank_duo2}}.',
     ],
     note: 'Duoly reviews every Apex teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -102,7 +102,7 @@ export const apexLegends: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'The teammate you queue with is a reviewed Apex player who applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player from {{p_duo1_low}} per hour and Duo Pro a Master or Apex Predator at {{p_duo2}}, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Nobody from Duoly ever logs into your account.',
-        'What the rank buys is a squad that moves together. A Master teammate calls the drop and the first rotation instead of chasing a fight across two zones. Voice runs using Discord, so a knocked call lands before the push rather than after the trade. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your legend and your account in all 3 hours.',
+        'What the rank buys is a squad that moves together. A Master teammate calls the drop and the first rotation instead of chasing a fight across two zones. Voice runs using Discord, so a knocked call lands before the push rather than after the trade. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut that total: {{bundles}}. You keep your legend and your account in all 3 hours.',
       ],
     },
     {
@@ -158,6 +158,6 @@ export const apexLegends: HubPageCopy = {
   },
   closing: {
     heading: 'Ready to drop into Apex Legends?',
-    text: 'Duo Pro is the Ranked tier with a Master or Predator teammate from Duoly. Three hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Mixtape stays {{p_mix}} per hour at any rank, and Pubs costs {{p_pubs}}. Full Trio hires {{seats_trio}} Master+ players from {{p_trio_low}} per hour when you want the whole squad in 2026. For example, agree your drop using Discord, then invite each other in game.',
+    text: 'Duo Pro is the Ranked tier with a Master or Predator teammate from Duoly. Three hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Mixtape stays {{p_mix}} per hour at any rank, and Pubs costs {{p_pubs}}. Full Trio hires {{seats_trio}} Master+ players from {{p_trio_low}} per hour when you want the whole squad in 2026. Agree your drop using Discord, then invite each other in game.',
   },
 };

@@ -55,7 +55,7 @@ export const deadlock: HubPageCopy = {
     heading: 'How does booking a Deadlock teammate work?',
     items: [
       'Pick a service and the number of games. Duo Pro is the ranked tier with a Phantom teammate, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five games take {{pct5}} off.',
-      'Add your area, rank, favourite heroes and language at checkout. For example, name Europe, {{rank_duo2}} and the heroes you play, so your teammate reads the real request before accepting the order.',
+      'Add your area, rank, favourite heroes and language at checkout. Name Europe, {{rank_duo2}} and the heroes you play, so your teammate reads the real request before accepting the order.',
       'Meet your teammate in the order chat using Discord. Add each other on Steam and queue together. A single Duo Pro game costs {{p_duo2}} at the same rank, and an unranked match stays {{p_unranked}}.',
     ],
     note: 'Duoly reviews every Deadlock teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -101,8 +101,8 @@ export const deadlock: HubPageCopy = {
     {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
-        'The teammate you queue with is a reviewed Deadlock player who applied for the game and showed a rank before taking orders. The tiers: Duo Plus names an Oracle+ player, Duo Pro a Phantom player and Duo Apex an Ascendant+ player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, tell them your rank and your two heroes in the order chat using Discord.',
-        'What the rank buys you is map calls. A Phantom teammate knows when to run the Urn, when Mid Boss is safe and which lane to push next, and spends every quiet minute farming souls. Voice runs using Discord, so the call lands while the fight is still winnable. Your rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your heroes, your builds and your account in all 3 games.',
+        'The teammate you queue with is a reviewed Deadlock player who applied for the game and showed a rank before taking orders. The tiers: Duo Plus names an Oracle+ player, Duo Pro a Phantom player and Duo Apex an Ascendant+ player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. Tell them your rank and your two heroes in the order chat using Discord.',
+        'What the rank buys you is map calls. A Phantom teammate knows when to run the Urn, when Mid Boss is safe and which lane to push next, and spends every quiet minute farming souls. Voice runs using Discord, so the call lands while the fight is still winnable. Your rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. You keep your heroes, your builds and your account in all 3 games.',
       ],
     },
     {
@@ -158,6 +158,6 @@ export const deadlock: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next Deadlock match?',
-    text: 'Duo Pro is the ranked tier with a Phantom teammate from Duoly, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five games take {{pct5}} off and 10 games take {{pct10}} off. Unranked matches stay {{p_unranked}} each at any rank. 6-Stack Fill hires Phantom+ players for up to {{seats_six}} seats from {{p_six_low}} per game when you want the whole party in 2026. For example, pick your rank and heroes, then agree the lanes in the order chat using Discord.',
+    text: 'Duo Pro is the ranked tier with a Phantom teammate from Duoly, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five games take {{pct5}} off and 10 games take {{pct10}} off. Unranked matches stay {{p_unranked}} each at any rank. 6-Stack Fill hires Phantom+ players for up to {{seats_six}} seats from {{p_six_low}} per game when you want the whole party in 2026. Pick your rank and heroes, then agree the lanes in the order chat using Discord.',
   },
 };

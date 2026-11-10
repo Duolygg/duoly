@@ -49,7 +49,7 @@ export const rainbowSixSiege: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per match, and the Ranked services read your own rank: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Quick Match, Arcade and Deathmatch, plus the Gamer Girl sessions, hold one price for everybody, because none of them have a ladder to climb. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names an Emerald+ player, Duo Pro a Diamond+ caller and Duo Apex a Champion-level player from {{p_duo3_low}} per match. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the site setup using Discord before match 1.',
+      'Teammate prices are per match, and the Ranked services read your own rank: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Quick Match, Arcade and Deathmatch, plus the Gamer Girl sessions, hold one price for everybody, because none of them have a ladder to climb. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names an Emerald+ player, Duo Pro a Diamond+ caller and Duo Apex a Champion-level player from {{p_duo3_low}} per match. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. Agree the site setup using Discord before match 1.',
     team: 'A stack fill is one order that hires several players at once, so a part-full party becomes a real five. 5-Stack Fill covers up to {{seats_stack}} seats at {{p_stack}} per match at {{rank_stack}}, from {{p_stack_low}} at {{rank_stack_low}}. Count the seats you actually need, because every seat is priced on its own. Name the jobs, because a five wants a hard breach, a drone, an anchor and a roamer covered rather than five fraggers. Bundles of {{main}} take {{bundles}}. For example, a trio short 2 players books 2 seats rather than 4, agreed using Discord.',
     coaching:
       'Lessons are priced by the hour and get no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on teammate matches stop here. Operator Lab and Map and Callouts each cost {{p_ops}} per hour, one on a gadget pair and one on your weakest map. Play and Learn is the live option covering one real Ranked match at {{p_learn}}. Pick the problem rather than the format. For example, a player who loses the same site every match books the map hour instead of a fourth Ranked queue. Screen share runs using Discord, and no lesson from Duoly promises a rank, which the Player Protection rules from Ubisoft prohibit outright.',
@@ -58,7 +58,7 @@ export const rainbowSixSiege: HubPageCopy = {
     heading: 'How does booking a Siege duo work?',
     items: [
       'Pick a service and the number of matches first. Duo Pro is the Ranked tier with a Diamond+ teammate, and 3 matches at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five matches take {{pct5}} off.',
-      'Add your data centre, rank, role and language at checkout. For example, name EU West, {{rank_duo2}} and whether you anchor or entry, so your teammate reads the real request first.',
+      'Add your data centre, rank, role and language at checkout. Name EU West, {{rank_duo2}} and whether you anchor or entry, so your teammate reads the real request first.',
       'Meet your teammate in the order chat using Discord. Agree operators and the first site, then add each other with your Ubisoft name. One Duo Pro match costs {{p_duo2}} at {{rank_duo2}}.',
     ],
     note: 'Duoly reviews every Siege teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -105,7 +105,7 @@ export const rainbowSixSiege: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'The teammate you queue with is a reviewed Siege player who applied for the game and showed a rank before taking orders. Duo Plus names an Emerald+ player, Duo Pro a Diamond+ player and Duo Apex a Champion-level player from {{p_duo3_low}} per match, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Nobody from Duoly ever logs into your account.',
-        'What the rank buys is information. A Diamond+ teammate drones the site before the push and names the defender instead of guessing, so the callout lands while the timer still matters. Voice runs using Discord for exactly that reason. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut the total: {{bundles}}. For example, you keep your operator and your account in all 3 matches.',
+        'What the rank buys is information. A Diamond+ teammate drones the site before the push and names the defender instead of guessing, so the callout lands while the timer still matters. Voice runs using Discord for exactly that reason. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut the total: {{bundles}}. You keep your operator and your account in all 3 matches.',
       ],
     },
     {
@@ -161,6 +161,6 @@ export const rainbowSixSiege: HubPageCopy = {
   },
   closing: {
     heading: 'Ready to queue in Rainbow Six Siege?',
-    text: 'Duo Pro is the Ranked tier with a Diamond+ caller from Duoly. Three matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 matches take {{pct5}} off. Quick Match stays {{p_quick}} per match at any rank, and Arcade costs {{p_arcade}}. 5-Stack Fill hires Diamond+ players for up to {{seats_stack}} seats from {{p_stack_low}} per match when you want a real five in 2026. For example, agree your site setup using Discord, then add each other on Ubisoft Connect.',
+    text: 'Duo Pro is the Ranked tier with a Diamond+ caller from Duoly. Three matches at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 matches take {{pct5}} off. Quick Match stays {{p_quick}} per match at any rank, and Arcade costs {{p_arcade}}. 5-Stack Fill hires Diamond+ players for up to {{seats_stack}} seats from {{p_stack_low}} per match when you want a real five in 2026. Agree your site setup using Discord, then add each other on Ubisoft Connect.',
   },
 };

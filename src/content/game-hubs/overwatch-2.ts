@@ -47,7 +47,7 @@ export const overwatch2: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and the Competitive services read your own rank: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Quick Play and Arcade, Stadium Duo and the Gamer Girl sessions hold one price for everybody. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names a Diamond+ player, Duo Pro a Master+ player and Duo Apex a Grandmaster or Champion player from {{p_duo3_low}} per game. Every teammate booking adds one player to your group, so the tier decides who takes that seat. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the hero pair using Discord before game 1.',
+      'Teammate prices are per game, and the Competitive services read your own rank: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Quick Play and Arcade, Stadium Duo and the Gamer Girl sessions hold one price for everybody. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names a Diamond+ player, Duo Pro a Master+ player and Duo Apex a Grandmaster or Champion player from {{p_duo3_low}} per game. Every teammate booking adds one player to your group, so the tier decides who takes that seat. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. Agree the hero pair using Discord before game 1.',
     team: 'A 5-stack fill is one order that hires several players at once, so a part-full group becomes a real five. 5-Stack Role Queue covers up to {{seats_five}} seats at {{p_five}} per game at {{rank_five}}, from {{p_five_low}} at {{rank_five_low}}. Count the seats you actually need, because every seat is priced on its own. Name the roles, because Role Queue holds 1 tank, 2 damage and 2 support and the fill covers whichever of those your group is missing. Bundles of {{main}} take {{bundles}}. For example, a trio short 2 players books 2 seats rather than 4, agreed using Discord.',
     coaching:
       'Lessons are priced by the hour and get no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on teammate games stop here. Role Coaching costs {{p_role}} per hour and works through one role in depth, from positioning and cooldown tracking to the ultimate economy. Play and Learn is the live option where a Grandmaster+ coach talks through one real Competitive game at {{p_learn}}. Pick the problem rather than the format. For example, a support who dies first in every fight books the positioning hour instead of a fourth Competitive game. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
@@ -56,7 +56,7 @@ export const overwatch2: HubPageCopy = {
     heading: 'How does booking an Overwatch 2 duo work?',
     items: [
       'Pick a service and the number of games first. Duo Pro is the Competitive tier with a Master+ teammate, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five games take {{pct5}} off.',
-      'Add your region, rank, role and language at checkout. For example, name Europe, {{rank_duo2}} and support as your role, so your teammate reads the real request before accepting.',
+      'Add your region, rank, role and language at checkout. Name Europe, {{rank_duo2}} and support as your role, so your teammate reads the real request before accepting.',
       'Meet your teammate in the order chat using Discord. Agree the hero pair and the ultimate order, then add each other by BattleTag. One Duo Pro game costs {{p_duo2}} at {{rank_duo2}}.',
     ],
     note: 'Duoly reviews every Overwatch teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -103,7 +103,7 @@ export const overwatch2: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'The teammate you queue with is a reviewed Overwatch player who applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player, Duo Pro a Master+ player and Duo Apex a Grandmaster or Champion player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Nobody from Duoly ever logs into your account.',
-        'What the rank buys is fight timing. A Master+ teammate tracks the enemy cooldowns and calls the engage instead of walking in while yours are down. Voice runs using Discord, so the regroup lands before the next fight rather than after. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut the total: {{bundles}}. For example, you keep your hero, your aim and your account in all 3 games.',
+        'What the rank buys is fight timing. A Master+ teammate tracks the enemy cooldowns and calls the engage instead of walking in while yours are down. Voice runs using Discord, so the regroup lands before the next fight rather than after. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut the total: {{bundles}}. You keep your hero, your aim and your account in all 3 games.',
       ],
     },
     {
@@ -159,6 +159,6 @@ export const overwatch2: HubPageCopy = {
   },
   closing: {
     heading: 'Ready to queue in Overwatch 2?',
-    text: 'Duo Pro is the Competitive tier with a Master+ teammate from Duoly. Three games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 games take {{pct5}} off. Quick Play stays {{p_qp}} per game at any rank, and Stadium Duo costs {{p_stadium}}. 5-Stack Role Queue hires Master+ players for up to {{seats_five}} seats from {{p_five_low}} per game when you want a full comp night in 2026. For example, agree your hero pair using Discord, then add each other by BattleTag.',
+    text: 'Duo Pro is the Competitive tier with a Master+ teammate from Duoly. Three games at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 games take {{pct5}} off. Quick Play stays {{p_qp}} per game at any rank, and Stadium Duo costs {{p_stadium}}. 5-Stack Role Queue hires Master+ players for up to {{seats_five}} seats from {{p_five_low}} per game when you want a full comp night in 2026. Agree your hero pair using Discord, then add each other by BattleTag.',
   },
 };

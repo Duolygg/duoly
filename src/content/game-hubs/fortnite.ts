@@ -51,7 +51,7 @@ export const fortnite: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per hour, because a battle royale match has no fixed length. Ranked services read your own rank: Duo Pro costs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Zero Build, Reload, Creative Box Fights and the Gamer Girl sessions hold one price for everybody. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names a Champion+ player, Duo Pro an Unreal player and Duo Apex an Unreal player with a high Power Ranking from {{p_duo3_low}} per hour. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the drop spot using Discord before hour 1.',
+      'Teammate prices are per hour, because a battle royale match has no fixed length. Ranked services read your own rank: Duo Pro costs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Zero Build, Reload, Creative Box Fights and the Gamer Girl sessions hold one price for everybody. Pick the mode, because the mode decides whether the rank list on a card matters. Read the teammate tier beside the price: Duo Plus names a Champion+ player, Duo Pro an Unreal player and Duo Apex an Unreal player with a high Power Ranking from {{p_duo3_low}} per hour. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. Agree the drop spot using Discord before hour 1.',
     team: 'A Fortnite squad fill is one order that hires several players at once, so a part-full party becomes a trio or a squad. Squad Fill covers up to {{seats_squad}} seats at {{p_squad}} per hour, and Tournament Teammate covers {{seats_cup}} seats at {{p_cup}}. Both are flat hourly prices rather than rank-priced, because a cup lobby is set by the bracket rather than by your rank. Count the seats you actually need, because every seat is priced on its own. Matchmaking still reads the highest rank in the party, a rule from Epic Games read in November 2026, so expect harder lobbies. Bundles of {{main}} take {{bundles}}. For example, a duo short one player books 1 seat rather than 3, agreed using Discord.',
     coaching:
       'Lessons are priced by the hour and get no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on teammate hours stop here. Build and Edit Course costs {{p_build}} per hour, drilling edits, ramp rushes and box fights in Creative. Play and Learn is the live option where an Unreal coach talks through one real Ranked hour at {{p_learn}}. Pick the problem rather than the format. For example, a player who loses every box fight books the Creative hour instead of a fourth Ranked hour. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
@@ -60,7 +60,7 @@ export const fortnite: HubPageCopy = {
     heading: 'How does booking a Fortnite duo work?',
     items: [
       'Pick a service and the number of hours first. Duo Pro is the Ranked Duos tier with an Unreal teammate, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
-      'Add your region, rank, input and language at checkout. For example, name Europe, {{rank_duo2}} and controller or keyboard, so your teammate reads the real request before accepting.',
+      'Add your region, rank, input and language at checkout. Name Europe, {{rank_duo2}} and controller or keyboard, so your teammate reads the real request before accepting.',
       'Meet your teammate in the order chat using Discord. Agree a drop spot and a rotation route, then add each other with your Epic name. One Duo Pro hour costs {{p_duo2}} at {{rank_duo2}}.',
     ],
     note: 'Duoly reviews every Fortnite teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -107,7 +107,7 @@ export const fortnite: HubPageCopy = {
       heading: 'Why is Fortnite priced by the hour?',
       paragraphs: [
         'An hour is the honest unit for Fortnite, because a battle royale match from Epic Games has no fixed length. One Ranked Duos game can end in the first zone or run twenty minutes into a pro endgame, so a per-match price would charge the same for both. An hour of Duo Pro costs {{p_duo2}} at {{rank_duo2}} and usually covers 3 or 4 games. Agree a drop spot. Then agree whether the hour is for points or for practice, so neither player fights the wrong battle.',
-        'Ranked prices follow your own rank: {{rank_duo2_low}} players pay {{p_duo2_low}} per hour and {{rank_duo2_high}} players pay {{p_duo2_high}}. Casual hours keep one flat price, so Zero Build and Reload each cost {{p_zb}} and Creative box fights cost {{p_box}}. Bundles of {{main}} take {{bundles}}. For example, voice runs using Discord and the invite goes out with your Epic name, both agreed before the bus moves.',
+        'Ranked prices follow your own rank: {{rank_duo2_low}} players pay {{p_duo2_low}} per hour and {{rank_duo2_high}} players pay {{p_duo2_high}}. Casual hours keep one flat price, so Zero Build and Reload each cost {{p_zb}} and Creative box fights cost {{p_box}}. Bundles of {{main}} take {{bundles}}. Voice runs using Discord and the invite goes out with your Epic name, both agreed before the bus moves.',
       ],
     },
     {
@@ -163,6 +163,6 @@ export const fortnite: HubPageCopy = {
   },
   closing: {
     heading: 'Ready to drop into Fortnite?',
-    text: 'Duo Pro is the Ranked Duos tier with an Unreal teammate from Duoly. Three hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Zero Build stays {{p_zb}} per hour at any rank, and Creative box fights cost {{p_box}}. Squad Fill hires Unreal players for the empty seats of a Trio or Squad at {{p_squad}} per hour in 2026. For example, pick your rank and input, then agree the drop using Discord.',
+    text: 'Duo Pro is the Ranked Duos tier with an Unreal teammate from Duoly. Three hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Zero Build stays {{p_zb}} per hour at any rank, and Creative box fights cost {{p_box}}. Squad Fill hires Unreal players for the empty seats of a Trio or Squad at {{p_squad}} per hour in 2026. Pick your rank and input, then agree the drop using Discord.',
   },
 };

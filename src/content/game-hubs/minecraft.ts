@@ -50,7 +50,7 @@ export const minecraft: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Session prices are per hour and flat for everybody, because Minecraft has no universal ranked queue and nothing here asks for a rank. PvP Duo costs {{p_duo1}} per hour and PvP Duo Pro {{p_duo2}}, with Manhunt the one exception at {{p_manhunt}} per run. Pick the service, because a Bedwars duellist and a farm builder are different people. Name Java or Bedrock, since the two editions cannot join one world. Each community server sets its own ranks and rules under the pages from Mojang, read in November 2026, so check the server before booking. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the mode using Discord before hour 1.',
+      'Session prices are per hour and flat for everybody, because Minecraft has no universal ranked queue and nothing here asks for a rank. PvP Duo costs {{p_duo1}} per hour and PvP Duo Pro {{p_duo2}}, with Manhunt the one exception at {{p_manhunt}} per run. Pick the service, because a Bedwars duellist and a farm builder are different people. Name Java or Bedrock, since the two editions cannot join one world. Each community server sets its own ranks and rules under the pages from Mojang, read in November 2026, so check the server before booking. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. Agree the mode using Discord before hour 1.',
     team: 'A Server Squad is one order that hires several players at once, so a part-full team becomes a real four. The card covers up to {{seats_squad}} seats at {{p_squad}} per hour, and 5 hours cost {{p_squad_x5}} with {{pick5}} off. Count the seats you actually need, because every seat is priced on its own: a trio short 1 player books 1 seat rather than 3. The price is flat, because no universal ranked queue exists to read. Hired players are picked for the mode you name, for example Bedwars fours, SkyWars teams, Hunger Games or UHC events, and server rules still apply. Bundles of {{main}} take {{bundles}}, agreed using Discord.',
     coaching:
       'Lessons are priced by the hour and get no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on teammate hours stop here. PvP Coaching and Bedwars Coaching each cost {{p_pvp}} per hour, one on aim, combos, strafing, rod and bow play, the other on rush timing, bridging, bed defence and endgame clutches. Pick the problem rather than the format. For example, a player who loses every 1v1 at mid books the duels hour instead of a fourth Bedwars hour at {{p_duo2}}. Screen share runs using Discord so the coach watches your real clicks, and no lesson from Duoly promises a server rank.',
@@ -59,7 +59,7 @@ export const minecraft: HubPageCopy = {
     heading: 'How does booking a Minecraft session work?',
     items: [
       'Pick a service and the number of hours first. PvP Duo Pro is the top-tier option at {{p_duo2}} per hour, and 3 hours cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
-      'Add your server or world, the edition and your language at checkout. For example, name Hypixel, Java and Bedwars, so your teammate reads the real request before accepting.',
+      'Add your server or world, the edition and your language at checkout. Name Hypixel, Java and Bedwars, so your teammate reads the real request before accepting.',
       'Meet your teammate in the order chat using Discord. Agree the mode, a practice target and voice, then add each other by Minecraft name. One Manhunt run costs {{p_manhunt}}.',
     ],
     note: 'Duoly reviews every Minecraft teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -162,6 +162,6 @@ export const minecraft: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next Minecraft night?',
-    text: 'PvP Duo Pro is the hour with a top PvPer from servers like Hypixel, from Duoly. Three hours cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Manhunt stays one flat {{p_manhunt}} per run, and Minigames Night costs {{p_mini}} per hour. Minecraft has no universal ranked queue, so no rank gate applies in 2026 and each community server keeps its own rules. For example, name your server and edition, then agree the mode using Discord before you log in.',
+    text: 'PvP Duo Pro is the hour with a top PvPer from servers like Hypixel, from Duoly. Three hours cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Manhunt stays one flat {{p_manhunt}} per run, and Minigames Night costs {{p_mini}} per hour. Minecraft has no universal ranked queue, so no rank gate applies in 2026 and each community server keeps its own rules. Name your server and edition, then agree the mode using Discord before you log in.',
   },
 };

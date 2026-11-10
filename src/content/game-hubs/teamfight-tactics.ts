@@ -39,7 +39,7 @@ export const teamfightTactics: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Session prices are per game, and only Double Up reads your own rank: {{rank_duo1_low}} players pay {{p_duo1_low}} per game and {{rank_duo1_high}} players pay {{p_duo1_high}}. Board Coach holds one price for everybody at {{p_duo2}}, and so do the casual lobbies at {{p_norm}} and every Gamer Girl session. Pick the mode, because the mode decides whether the rank list on a card matters. Read what the card actually buys: Double Up puts a Master+ partner on the second board of your team of two, while Board Coach puts a Master+ player on your own board as a live caller. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the contested line using Discord before game 1.',
+      'Session prices are per game, and only Double Up reads your own rank: {{rank_duo1_low}} players pay {{p_duo1_low}} per game and {{rank_duo1_high}} players pay {{p_duo1_high}}. Board Coach holds one price for everybody at {{p_duo2}}, and so do the casual lobbies at {{p_norm}} and every Gamer Girl session. Pick the mode, because the mode decides whether the rank list on a card matters. Read what the card actually buys: Double Up puts a Master+ partner on the second board of your team of two, while Board Coach puts a Master+ player on your own board as a live caller. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. Agree the contested line using Discord before game 1.',
     coaching:
       'The review is priced by the hour and gets no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on {{main}} stop here. Comp and Econ Review costs {{p_econ}} per hour and is the slower, structured option: comps that suit how you play, when to roll, when to level, and gold management from stage two onward. Pick the problem rather than the format. For example, a player who finishes fifth in every lobby books the review hour instead of a fourth Double Up game from {{p_duo1_low}}. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
   },
@@ -47,7 +47,7 @@ export const teamfightTactics: HubPageCopy = {
     heading: 'How does booking a TFT session work?',
     items: [
       'Pick a service and the number of games first. Double Up is the two-player mode with a Master+ partner, and 5 games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off in November 2026. Five games take {{pct5}} off.',
-      'Add your server, rank and language at checkout. For example, name EUW and {{rank_duo1}}, so your partner reads the real request and knows which lobby strength to expect.',
+      'Add your server, rank and language at checkout. Name EUW and {{rank_duo1}}, so your partner reads the real request and knows which lobby strength to expect.',
       'Meet your partner in the order chat using Discord. Agree who takes the contested line and how voice runs, then add each other by Riot ID. Board Coach costs {{p_duo2}} per game with live screen share.',
     ],
     note: 'Duoly reviews every TFT partner before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -150,6 +150,6 @@ export const teamfightTactics: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next TFT lobby?',
-    text: 'Double Up is the two-player session with a Master+ partner from Duoly. Five games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off, and 5 games take {{pick5}} off. Normals and Hyper Roll stays {{p_norm}} per game with no LP on the line, and Board Coach costs {{p_duo2}}. Comp and Econ Review is the hour for comps, roll timing and gold from stage two, at {{p_econ}} in 2026. For example, pick your server, then agree the plan using Discord.',
+    text: 'Double Up is the two-player session with a Master+ partner from Duoly. Five games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off, and 5 games take {{pick5}} off. Normals and Hyper Roll stays {{p_norm}} per game with no LP on the line, and Board Coach costs {{p_duo2}}. Comp and Econ Review is the hour for comps, roll timing and gold from stage two, at {{p_econ}} in 2026. Pick your server, then agree the plan using Discord.',
   },
 };

@@ -63,7 +63,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'Can I work on just one agent?',
-        'Yes, and a narrow goal works better. For example, name Omen smoke timing or clearing space with Sova, then share the clip using Discord screen share.',
+        'Yes, and a narrow goal works better. Name Omen smoke timing or clearing space with Sova, then share the clip using Discord screen share.',
       ],
     ],
   },
@@ -428,7 +428,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'Can I work on just one map?',
-        'Yes, and a narrow goal works better. For example, name Mirage A site executes or Inferno banana control, then share the demo using Discord screen share.',
+        'Yes, and a narrow goal works better. Name Mirage A site executes or Inferno banana control, then share the demo using Discord screen share.',
       ],
     ],
   },
@@ -532,7 +532,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'Can I work on just one site?',
-        'Yes, and a narrow goal works better. For example, name Clubhouse basement or Oregon basement, then share the recording using Discord screen share.',
+        'Yes, and a narrow goal works better. Name Clubhouse basement or Oregon basement, then share the recording using Discord screen share.',
       ],
     ],
   },
@@ -580,7 +580,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'Can we work on Warzone and multiplayer in one hour?',
-        'You can, and a narrow goal works better. For example, name 1) Resurgence rotations for the first hour and 2) Ranked Play spawns for a second one.',
+        'You can, and a narrow goal works better. Name 1) Resurgence rotations for the first hour and 2) Ranked Play spawns for a second one.',
       ],
       [
         'Do I need a recording?',
@@ -808,7 +808,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'Can I focus on one hero?',
-        'Yes, and a narrow goal works better. For example, name the hero and the lane matchup going wrong, then share the match using Discord screen share.',
+        'Yes, and a narrow goal works better. Name the hero and the lane matchup going wrong, then share the match using Discord screen share.',
       ],
       [
         'Is coaching the same as booking a Deadlock duo?',

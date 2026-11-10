@@ -60,7 +60,7 @@ export const worldOfWarcraft: HubPageCopy = {
     heading: 'How does booking a WoW teammate work?',
     items: [
       'Pick a service and the number of hours. Mythic+ Pro is the high key tier with a 3,000+ rated teammate, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
-      'Add your region, rating, role and language at checkout. For example, name Europe, {{rank_duo2}} and Healer, so your teammate reads the real request before accepting the order.',
+      'Add your region, rating, role and language at checkout. Name Europe, {{rank_duo2}} and Healer, so your teammate reads the real request before accepting the order.',
       'Meet your teammate in the order chat using Discord. Add each other by BattleTag and agree the keys you want to run. A single hour of Mythic+ Pro costs {{p_duo2}} at the same rating, and Delves stay {{p_delves}}.',
     ],
     note: 'Duoly reviews every World of Warcraft teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -106,8 +106,8 @@ export const worldOfWarcraft: HubPageCopy = {
     {
       heading: 'Who is the teammate you play with?',
       paragraphs: [
-        'The teammate you play with is a reviewed World of Warcraft player who applied for the game and showed a Mythic+ or arena rating before taking orders. The tiers: Mythic+ Duo names a 2,500+ rated player, Mythic+ Pro a 3,000+ rated player from {{p_duo2_low}} per hour and Arena 2v2 a Duelist+ partner. Orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, pick your region at checkout: Europe, Americas and Oceania, Korea or Taiwan.',
-        'What the rating buys you is a timed key. A 3,000+ teammate knows the route, which pulls to chain, who kicks which cast and when to press a defensive. Voice runs using Discord, so the call lands before the wipe. Your rating also sets the price: Mythic+ Pro runs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because harder keys need stronger players. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your account, your loot and your Great Vault across all 3 hours.',
+        'The teammate you play with is a reviewed World of Warcraft player who applied for the game and showed a Mythic+ or arena rating before taking orders. The tiers: Mythic+ Duo names a 2,500+ rated player, Mythic+ Pro a 3,000+ rated player from {{p_duo2_low}} per hour and Arena 2v2 a Duelist+ partner. Orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. Pick your region at checkout: Europe, Americas and Oceania, Korea or Taiwan.',
+        'What the rating buys you is a timed key. A 3,000+ teammate knows the route, which pulls to chain, who kicks which cast and when to press a defensive. Voice runs using Discord, so the call lands before the wipe. Your rating also sets the price: Mythic+ Pro runs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because harder keys need stronger players. Bundles of {{main}} cut that total: {{bundles}}. You keep your account, your loot and your Great Vault across all 3 hours.',
       ],
     },
     {
@@ -163,6 +163,6 @@ export const worldOfWarcraft: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next key?',
-    text: 'Mythic+ Pro brings a 3,000+ rated teammate from Duoly, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five hours take {{pct5}} off and 10 hours take {{pct10}} off. Delves stay {{p_delves}} per hour for everybody, and a Leveling Buddy costs {{p_level}}. Key Group Fill hires 2,500+ rated players for up to {{seats_keys}} seats from {{p_keys_low}} per hour when your key needs a full five in 2026. For example, pick your rating and role, then agree the keys in the order chat using Discord.',
+    text: 'Mythic+ Pro brings a 3,000+ rated teammate from Duoly, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five hours take {{pct5}} off and 10 hours take {{pct10}} off. Delves stay {{p_delves}} per hour for everybody, and a Leveling Buddy costs {{p_level}}. Key Group Fill hires 2,500+ rated players for up to {{seats_keys}} seats from {{p_keys_low}} per hour when your key needs a full five in 2026. Pick your rating and role, then agree the keys in the order chat using Discord.',
   },
 };

@@ -63,7 +63,7 @@ export function quantityAnswer(offers: Offers) {
   if (offer.cat === 'training')
     return 'Quantity discounts and bundles do not apply to coaching.';
   return main
-    ? `Every service except ${main} books 1 to 5 ${unit}, where 5 ${unit} take ${quantityDiscountPercent(5)}% off. ${main} adds the bundles: ${ladder}.`
+    ? `Teammate services without bundles book 1 to 5 ${unit}, and 5 ${unit} take ${quantityDiscountPercent(5)}% off. ${main} offers bundles: ${ladder}.`
     : `Book 1 to 5 ${unit}, where 5 ${unit} take ${quantityDiscountPercent(5)}% off. Bundles take ${ladder}.`;
 }
 
@@ -158,8 +158,5 @@ export function priceNote(offers: Offers, coach = false) {
     : 'These services are flat priced, so every rank pays the same.';
   if (!coach)
     return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)} Payment finishes on duoly.gg. You play on your own account, with voice on Discord.`;
-  const ladder = BUNDLE_UNITS.map(
-    (units) => `${quantityDiscountPercent(units, { bundle: true })}%`,
-  );
-  return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} Coaching takes no quantity or bundle discount, so the ${ladder.slice(0, -1).join(', ')} and ${ladder.at(-1)} a teammate bundle takes off never come off a lesson, and a first lesson costs what a fifth does. Payment finishes on duoly.gg. You play on your own account, with voice and screen share on Discord.`;
+  return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} Coaching has no quantity or bundle discount: five lessons cost five times the single lesson price. Choose a live session to discuss decisions as you play, or a review to pause and revisit them with your coach. Payment finishes on duoly.gg. You play on your own account, with voice and screen share on Discord.`;
 }

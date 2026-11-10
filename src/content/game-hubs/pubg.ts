@@ -55,7 +55,7 @@ export const pubg: HubPageCopy = {
     heading: 'How does booking a PUBG teammate work?',
     items: [
       'Pick a service and the number of hours. Duo Pro is the Ranked tier with a Master teammate, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
-      'Add your region, tier, perspective and language at checkout. For example, name Europe, {{rank_duo2}} and TPP, so your teammate reads the real request before accepting the order.',
+      'Add your region, tier, perspective and language at checkout. Name Europe, {{rank_duo2}} and TPP, so your teammate reads the real request before accepting the order.',
       'Meet your teammate in the order chat using Discord. Add each other in the game and agree the drop before the plane leaves. A single hour of Duo Pro costs {{p_duo2}} at the same tier, and Arcade stays {{p_arcade}}.',
     ],
     note: 'Duoly reviews every PUBG teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -102,7 +102,7 @@ export const pubg: HubPageCopy = {
       heading: 'Who is the teammate you drop with?',
       paragraphs: [
         'The teammate you drop with is a reviewed PUBG player who applied for the game and showed a Ranked tier before taking orders. The tiers: Duo Plus names a Diamond+ player, Duo Pro a Master player from {{p_duo2_low}} per hour and Normal Duos a Master partner for the two-player mode. Orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, say whether you play FPP or TPP in the order chat using Discord.',
-        'What the tier buys you is zone reads. A Master teammate picks the compound before the circle closes, knows when to rotate early, and calls which squad to fight and which to leave. Voice runs using Discord, so the call lands before the blue zone does. Your tier also sets the price: Duo Pro runs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your account, your loadout and your tier across all 3 hours.',
+        'What the tier buys you is zone reads. A Master teammate picks the compound before the circle closes, knows when to rotate early, and calls which squad to fight and which to leave. Voice runs using Discord, so the call lands before the blue zone does. Your tier also sets the price: Duo Pro runs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. You keep your account, your loadout and your tier across all 3 hours.',
       ],
     },
     {
@@ -158,6 +158,6 @@ export const pubg: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next drop?',
-    text: 'Duo Pro is the Ranked tier with a Master teammate from Duoly, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five hours take {{pct5}} off and 10 hours take {{pct10}} off. Arcade stays {{p_arcade}} per hour for everybody, and Normal Duos costs {{p_duos}}. Squad Fill hires Master players for up to {{seats_squad}} seats from {{p_squad_low}} per hour when you want the whole squad in 2026. For example, pick your tier and perspective, then agree the drop in the order chat using Discord.',
+    text: 'Duo Pro is the Ranked tier with a Master teammate from Duoly, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with {{pct3}} off. Five hours take {{pct5}} off and 10 hours take {{pct10}} off. Arcade stays {{p_arcade}} per hour for everybody, and Normal Duos costs {{p_duos}}. Squad Fill hires Master players for up to {{seats_squad}} seats from {{p_squad_low}} per hour when you want the whole squad in 2026. Pick your tier and perspective, then agree the drop in the order chat using Discord.',
   },
 };
