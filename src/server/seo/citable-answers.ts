@@ -128,7 +128,7 @@ export function closingDetail(offers: Offers) {
   const bundles = coach
     ? // The price line under this paragraph is appended by ClosingCta, so
       // naming the figure again here only repeated it a sentence earlier.
-      `Coaching has no quantity or bundle discount, so booking a second ${offers[0]!.unit} never lowers what a ${offers[0]!.title} costs. Every coaching figure on this page was generated from the Duoly pricing engine on ${CATALOG_PRICES_UPDATED_LABEL}.`
+      `Coaching has no quantity or bundle discount, so booking a second ${offers[0]!.unit} never lowers what a ${offers[0]!.title} costs. Every coaching figure on this page comes from the Duoly pricing engine; prices were last updated on ${CATALOG_PRICES_UPDATED_LABEL}.`
     : `${quantityAnswer(offers)} Bundle pricing is applied in the checkout, not on request.`;
   return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. The payment always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Expect a question about rank, role and region before the first match loads.`;
 }
