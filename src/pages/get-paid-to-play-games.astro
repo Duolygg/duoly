@@ -107,9 +107,10 @@ const path = '/get-paid-to-play-games';
         completed orders rather than screen time. For example, a Valorant
         customer booking a Skirmish 2v2 game at {SHORT_GAME_PRICE} expects the
         booked mode and teammate tier, with timing agreed in the order chat.
-        Step 1 of every order is reading the service, unit and customer notes
-        before accepting. The service list from Duoly spans {PLAYABLE_GAMES}{' '}
-        games plus Social, so a teammate can list one game or several.
+        Every order starts with reading the service, the unit and the customer
+        notes before accepting. The service list from Duoly spans{' '}
+        {PLAYABLE_GAMES} games plus Social, so a teammate can list one game or
+        several.
       </p>
     </section>
     <section aria-labelledby="earn-h">
@@ -146,10 +147,11 @@ const path = '/get-paid-to-play-games';
         or paid.
       </p>
       <p>
-        Step 1 is choosing a method using Wise, PayPal or a bank. Bank transfer,
-        Wise and PayPal are open to every approved teammate, and Stripe is added
-        for accounts that finish Stripe verification. The desk lists the methods
-        open to each account, because the options differ by country.
+        A payout needs a method first, using Wise, PayPal or a bank. Bank
+        transfer, Wise and PayPal are open to every approved teammate, and
+        Stripe is added for accounts that finish Stripe verification. The desk
+        lists the methods open to each account, because the options differ by
+        country.
       </p>
       <p>
         Two points follow from a weekly cycle. A session completed late in a
@@ -169,14 +171,13 @@ const path = '/get-paid-to-play-games';
         for games, services, a region and a communication style.
       </p>
       <p>
-        Evidence beats adjectives, so Step 1 is attaching real rank or
-        experience proof from an account the applicant owns, never a borrowed
-        clip. For example, a Valorant applicant names controller utility, entry
-        timing or VOD decisions, while a Rocket League applicant names Doubles,
-        recoveries or both. Coaching pays a {share} share of {COACHING_PRICE}{' '}
-        per hour from Duoly, and the same {share} rule covers teammate and Gamer
-        Girl orders, so coaching applicants should show teaching as well as
-        rank.
+        Evidence beats adjectives, so attach real rank or experience proof from
+        an account the applicant owns, never a borrowed clip. For example, a
+        Valorant applicant names controller utility, entry timing or VOD
+        decisions, while a Rocket League applicant names Doubles, recoveries or
+        both. Coaching pays a {share} share of {COACHING_PRICE} per hour from
+        Duoly, and the same {share} rule covers teammate and Gamer Girl orders,
+        so coaching applicants should show teaching as well as rank.
       </p>
       <p>
         Duoly reviews every application, and some services need separate access.
@@ -198,7 +199,7 @@ const path = '/get-paid-to-play-games';
         a real schedule and a real rank.
       </p>
       <p>
-        Step 2 is coordination in the order chat. Confirm the activity, agree
+        Coordination then happens in the order chat. Confirm the activity, agree
         the voice setup using Discord, and settle a start time before loading
         the game. Play on a personal account at all times. Duoly never asks a
         teammate to sign into a customer account, and the{' '}
@@ -238,7 +239,7 @@ const path = '/get-paid-to-play-games';
     <ClosingCta
       heading="Ready to apply?"
       text="Applying to Duoly means naming the games and services you can offer, with evidence attached. Duoly reviews every application by hand, and approval arrives before any order can reach your queue."
-      extra={`Three things speed up a review. Name the games and modes you really play, for example Valorant Unrated and Marvel Rivals Quick Match. Attach rank proof from an account you own. Say whether coaching, teammate or Gamer Girl work fits your week. Step 1 of earning is approval. Step 2 is accepting an order from the queue and meeting the customer using Discord voice. Step 3 is the ${share} share landing in your desk, converted to USD. Payouts run weekly above $25, and every coaching hour is listed at ${COACHING_PRICE} per hour.`}
+      extra={`Three things speed up a review. Name the games and modes you really play, for example Valorant Unrated and Marvel Rivals Quick Match. Attach rank proof from an account you own. Say whether coaching, teammate or Gamer Girl work fits your week. Earning starts at approval, then an order accepted from the queue and a customer met using Discord voice, and it ends with the ${share} share landing in your desk, converted to USD. Payouts run weekly above $25, and every coaching hour is listed at ${COACHING_PRICE} per hour.`}
       href="/apply"
       label="Apply to become a teammate"
       art={{ src: '/assets/games/valorant.png', alt: '' }}

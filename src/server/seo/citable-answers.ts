@@ -113,7 +113,7 @@ export function closingAnswer(gameName: string) {
     Deadlock:
       'one hero and one mid game moment, for example a Mid Boss attempt with no vision',
   };
-  return `A ${gameName} lesson from Duoly is one booked session on a problem you pick. Bring ${goals[gameName] ?? 'one situation from your games'}. Then 1) share the goal in the order chat, 2) meet your coach using Discord and 3) stay on your own account.`;
+  return `A ${gameName} lesson from Duoly is one booked session on a problem you pick. Bring ${goals[gameName] ?? 'one situation from your games'}. Then share the goal in the order chat, meet your coach using Discord and stay on your own account.`;
 }
 
 /**
@@ -127,7 +127,7 @@ export function closingDetail(offers: Offers) {
   const bundles = coach
     ? `Coaching has no quantity or bundle discount. ${offers[0]!.title} costs ${offers[0]!.display} per ${offers[0]!.unit}.`
     : `${quantityAnswer(offers)} Bundle pricing is applied in the checkout, not on request.`;
-  return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. Step 2 always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Expect a question about rank, role and region before the first match loads.`;
+  return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. The payment always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Expect a question about rank, role and region before the first match loads.`;
 }
 
 /**

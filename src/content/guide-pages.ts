@@ -298,7 +298,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. Your teammate takes the second seat, so the normal queue still fills the other 3. For example, a Controller main who books an Immortal+ Duelist gets an entry instead of a second set of smokes. Swiftplay and Unrated are the flat-priced versions of the same session, and a Deathmatch warm-up is cheaper still. Before the first game, settle in the order chat whether voice runs through Discord or in the Valorant party.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a quiet Swiftplay hour and the last night before an act closes rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
+      'Three questions are quicker than reading both cards twice. The first question is the one deciding most evenings, so answer the way your week actually looks. For example, a quiet Swiftplay hour and the last night before an act closes rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want casual company for Swiftplay or Unrated?',
@@ -418,7 +418,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. Your partner takes the second seat in Duos, so a Trio or a Squad still needs the queue for seats 3 and 4. For example, a keyboard player who books a controller main gets a partner who boxes differently. Before the first drop, settle in the order chat whether voice runs through Discord or in the Fortnite party.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a relaxed Zero Build hour and the last weekend of a Ranked season rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+      'Three questions are quicker than reading both cards twice. The first question is the one deciding most evenings, so answer the way your week actually looks. For example, a relaxed Zero Build hour and the last weekend of a Ranked season rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want relaxed games in Zero Build or Reload?',
@@ -546,7 +546,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. Your teammate takes the second seat, so the normal queue still fills the other 3. For example, a Support main who books a Tank gets the front line the group is missing instead of a third Damage. Before the first game, settle in the order chat whether voice runs through Discord or in the in-game group.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a relaxed Arcade hour and a Competitive push one Tank short rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
+      'Three questions are quicker than reading both cards twice. The first question is the one deciding most evenings, so answer the way your week actually looks. For example, a relaxed Arcade hour and a Competitive push one Tank short rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want casual games in Quick Play or Arcade?',
@@ -667,7 +667,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. In trios your booked teammate takes the second seat, so auto fill or a friend still covers seat 3. For example, a Controller main who books an Assault legend gets the opener the pair is missing instead of a second zone holder. Before the drop, settle in the order chat whether voice runs through Discord or in the in-game squad.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a Mixtape hour and the last push of a ranked split rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+      'Three questions are quicker than reading both cards twice. The first question is the one deciding most evenings, so answer the way your week actually looks. For example, a Mixtape hour and the last push of a ranked split rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want relaxed games in Mixtape or pubs?',
@@ -798,7 +798,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. In a quad your booked teammate takes the second seat, so your party or fill still covers seats 3 and 4. For example, a player who books one Warzone hour and one Resurgence hour keeps the same partner across both maps instead of meeting two strangers. Before the first drop, settle in the order chat whether voice runs through Discord or in the in-game party.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, a party playlist hour and a Warzone Ranked push rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
+      'Three questions are quicker than reading both cards twice. The first question is the one deciding most evenings, so answer the way your week actually looks. For example, a party playlist hour and a Warzone Ranked push rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 hours and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want relaxed games in party modes or pubs?',
@@ -931,7 +931,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
     paidExample:
       'The row you pick in the table is the whole price, bundle discount included. Your teammate takes the second seat, so the normal queue still fills the other 3. For example, a Thatcher player who books a hard breach gets a wall opened on call instead of a round spent chipping at a reinforcement. Before the first round, settle in the order chat whether voice runs through Discord or in the party.',
     flowIntro:
-      'Three questions are quicker than reading both cards twice. Step 1 is the one deciding most evenings, so answer the way your week actually looks. For example, an hour spent learning Clubhouse and a Ranked push with a rank on the line rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
+      'Three questions are quicker than reading both cards twice. The first question is the one deciding most evenings, so answer the way your week actually looks. For example, an hour spent learning Clubhouse and a Ranked push with a rank on the line rarely land on the same answer. Work down the steps in order, stop at the first honest answer, and take the route named there: a free post, the next step or a paid session from Duoly, with {{pct3}} off 3 games and {{pct5}} off 5 in November 2026.',
     flow: [
       {
         question: 'Do you mainly want to learn maps and operators?',

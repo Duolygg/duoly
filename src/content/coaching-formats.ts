@@ -55,7 +55,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'The unit is the real difference. Play and Learn is sold per game at {price:learn}, so a fast 13-4 and a 16-14 overtime cost the same. VOD Review and Aim and Crosshair are clock hours, which buys the pauses and rewinds a live round cannot. For example, a player who already knows which rounds go wrong gets more from an hour of VOD Review.',
     choice:
-      'So pick by the problem rather than the format: 1) live decisions go to Play and Learn, 2) a pattern across rounds goes to VOD Review, and 3) a lost first duel goes to Aim and Crosshair. Every format costs {amount:vod}, and bundles never apply to coaching. Screen share runs using Discord.',
+      'So pick by the problem rather than the format: live decisions go to Play and Learn, a pattern across rounds goes to VOD Review, and a lost first duel goes to Aim and Crosshair. Every format costs {amount:vod}, and bundles never apply to coaching. Screen share runs using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -85,7 +85,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'The unit is the real difference. Play and Learn is sold per game at {price:learn}, so a 20-minute surrender and a 45-minute slog cost the same. The two hourly lessons buy the pauses and rewinds a live game cannot. For example, a player who already knows the losing matchup gets more from an hour of Champion Mastery than from another ranked queue.',
     choice:
-      'So pick by the problem rather than the format: 1) live decisions go to Play and Learn, 2) a pattern across games goes to VOD Review, and 3) one champion goes to Champion Mastery. Every format costs {amount:vod}, and bundles never apply to coaching. Screen share runs using Discord.',
+      'So pick by the problem rather than the format: live decisions go to Play and Learn, a pattern across games goes to VOD Review, and one champion goes to Champion Mastery. Every format costs {amount:vod}, and bundles never apply to coaching. Screen share runs using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -115,7 +115,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'Both are hours rather than matches, because one Rocket League game runs about seven minutes. A booked hour therefore covers 6 or 7 Doubles matches at {price:learn}, or a full hour of repeated attempts in free play. Missing an aerial after a clean approach is a Mechanics Training question, while jumping for a ball your partner already covered belongs in a live hour.',
     choice:
-      'So pick by the cause rather than the format: 1) a decision before the touch goes to Play and Learn, and 2) the touch itself goes to Mechanics Training. Both cost {amount:mech}, and bundles never apply to coaching. Mechanics Training ends with training packs you keep, and screen share runs using Discord.',
+      'So pick by the cause rather than the format: a decision before the touch goes to Play and Learn, and the touch itself goes to Mechanics Training. Both cost {amount:mech}, and bundles never apply to coaching. Mechanics Training ends with training packs you keep, and screen share runs using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -145,7 +145,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'Both are hours rather than matches, because a battle royale game has no fixed length. A booked hour of Play and Learn at {price:learn} usually covers 3 or 4 games, while the Creative hour runs as many repetitions as you want. A fast edit still exposes your whole character when the wall opens from the wrong position, which is what the Build and Edit Course drills.',
     choice:
-      'So pick by the cause rather than the format: 1) fight selection and rotations go to Play and Learn, and 2) mechanics go to the Build and Edit Course. Both cost {amount:build}, and bundles never apply to coaching. Say whether you play Builds or Zero Build and whether you use controller or keyboard, using Discord.',
+      'So pick by the cause rather than the format: fight selection and rotations go to Play and Learn, and mechanics go to the Build and Edit Course. Both cost {amount:build}, and bundles never apply to coaching. Say whether you play Builds or Zero Build and whether you use controller or keyboard, using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -175,7 +175,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'The other two live options are sold as teammate sessions rather than lessons. Board Coach puts a Master+ player on your own board as a live caller, and Double Up puts a Master+ partner on the second board of your team of two. For example, one roll-down at stage 3 can fill most of a review hour at {price:econ}.',
     choice:
-      'So pick by the moment you want back: 1) a decision you already made goes to Comp and Econ Review, 2) a decision you are about to make goes to Board Coach, and 3) a shared placement goes to Double Up. The review hour costs {amount:econ}, and bundles never apply to coaching. Record the shop, bench, items and augments.',
+      'So pick by the moment you want back: a decision you already made goes to Comp and Econ Review, a decision you are about to make goes to Board Coach, and a shared placement goes to Double Up. The review hour costs {amount:econ}, and bundles never apply to coaching. Record the shop, bench, items and augments.',
     rows: [
       {
         label: 'Comp and Econ Review',
@@ -205,7 +205,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'Both are hours rather than matches, because a Ranked game can end in 4 minutes or run to the last ring. A booked hour of Play and Learn at {price:learn} therefore has no fixed game count, while the Firing Range hour runs as many repetitions as you want. A clean slide into an open crossing still leaves the squad exposed, and the Movement Course hour cannot fix that part on its own.',
     choice:
-      'So pick by the cause rather than the format: 1) rotations and fight selection go to Play and Learn, and 2) control and movement go to the Movement Course. Both cost {amount:move}, and bundles never apply to coaching. Share your input, platform and preferred legends using Discord, because a keyboard clip rarely transfers to a controller.',
+      'So pick by the cause rather than the format: rotations and fight selection go to Play and Learn, and control and movement go to the Movement Course. Both cost {amount:move}, and bundles never apply to coaching. Share your input, platform and preferred legends using Discord, because a keyboard clip rarely transfers to a controller.',
     rows: [
       {
         label: 'Play and Learn',
@@ -235,7 +235,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a 3-0 sweep and a seven-round decider cost the same. Hero Coaching is a clock hour, which buys the pauses a live match cannot. For example, a Strategist who spends a cooldown just before a dive and a Vanguard who engages too early have very different problems.',
     choice:
-      'So pick by the problem rather than the format: 1) team-fight decisions go to Play and Learn, and 2) one hero goes to Hero Coaching. Both cost {amount:hero}, and bundles never apply to coaching. Bring the current patch and your hero pool using Discord, so Team-Ups stay relevant to the lesson.',
+      'So pick by the problem rather than the format: team-fight decisions go to Play and Learn, and one hero goes to Hero Coaching. Both cost {amount:hero}, and bundles never apply to coaching. Bring the current patch and your hero pool using Discord, so Team-Ups stay relevant to the lesson.',
     rows: [
       {
         label: 'Play and Learn',
@@ -265,7 +265,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a 13-3 and a double-overtime cost the same. The two hourly lessons buy the rewinds and the practice server a live round cannot. For example, a player who keeps losing the same retake gets more from an hour of lineups than from another Premier queue.',
     choice:
-      'So pick by the problem rather than the format: 1) live reads go to Play and Learn, 2) a pattern across rounds goes to Demo Review, and 3) a missing smoke goes to Utility and Lineups. Every format costs {amount:demo}, and bundles never apply to coaching. Send your map pool and the demo you want opened using Discord.',
+      'So pick by the problem rather than the format: live reads go to Play and Learn, a pattern across rounds goes to Demo Review, and a missing smoke goes to Utility and Lineups. Every format costs {amount:demo}, and bundles never apply to coaching. Send your map pool and the demo you want opened using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -295,7 +295,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a fast two-round push and a full five-round grind cost the same. Role Coaching is a clock hour, which buys the pauses a live match cannot. A support who dies first in every fight and a tank who engages too early have very different problems, and Role Coaching takes one of them per hour.',
     choice:
-      'So pick by the problem rather than the format: 1) team-fight decisions go to Play and Learn, and 2) one role goes to Role Coaching. Both cost {amount:role}, and bundles never apply to coaching. Send your platform, region, role and BattleTag using Discord, so the hour starts on the right questions.',
+      'So pick by the problem rather than the format: team-fight decisions go to Play and Learn, and one role goes to Role Coaching. Both cost {amount:role}, and bundles never apply to coaching. Send your platform, region, role and BattleTag using Discord, so the hour starts on the right questions.',
     rows: [
       {
         label: 'Play and Learn',
@@ -325,7 +325,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a 4-0 and a 7-6 overtime cost the same. The two hourly lessons buy the custom game and the repeats a live round cannot. For example, a player who keeps losing the same site gets more from an hour on that map than from another Ranked queue.',
     choice:
-      'So pick by the problem rather than the format: 1) live round reads go to Play and Learn, 2) gadgets and timings go to the Operator Lab, and 3) one map goes to Map and Callouts. Every format costs {amount:ops}, and bundles never apply to coaching. Send your platform, your operator pool and the map you keep losing using Discord.',
+      'So pick by the problem rather than the format: live round reads go to Play and Learn, gadgets and timings go to the Operator Lab, and one map goes to Map and Callouts. Every format costs {amount:ops}, and bundles never apply to coaching. Send your platform, your operator pool and the map you keep losing using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -356,7 +356,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'Both are clock hours rather than matches, because a battle royale game has no fixed length. A booked hour of Play and Learn at {price:learn} usually covers about 2 full Warzone games including queue time, while the loadout hour runs in private matches where a build can be changed and tested in a minute. For example, winning most of your gunfights and still finishing 20th is a rotation question rather than an aim question.',
     choice:
-      'So pick by the cause rather than the format: 1) rotations and fight selection go to Play and Learn, and 2) your build and your movement go to Loadouts and Movement. Both cost {amount:loadout}, and bundles never apply to coaching. Say whether the hour is for Warzone or multiplayer Ranked Play, and which input you play on, using Discord.',
+      'So pick by the cause rather than the format: rotations and fight selection go to Play and Learn, and your build and your movement go to Loadouts and Movement. Both cost {amount:loadout}, and bundles never apply to coaching. Say whether the hour is for Warzone or multiplayer Ranked Play, and which input you play on, using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -386,7 +386,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'The unit is the real difference. Play and Learn is sold per game at {amount:learn}, so a 25-minute stomp and a 60-minute grind cost the same. Replay Review and Hero and Position Coaching are clock hours, which buys the pauses and rewinds a live game cannot. For example, a player who already knows the lane goes wrong gets more from an hour of Replay Review than from another queue.',
     choice:
-      'So pick by the problem rather than the format: 1) live decisions go to Play and Learn, 2) a pattern across a whole match goes to Replay Review, and 3) one hero or one position goes to Hero and Position Coaching. Both hourly formats cost {amount:replay}, and bundles never apply to coaching. Name your position and your hero pool using Discord.',
+      'So pick by the problem rather than the format: live decisions go to Play and Learn, a pattern across a whole match goes to Replay Review, and one hero or one position goes to Hero and Position Coaching. Both hourly formats cost {amount:replay}, and bundles never apply to coaching. Name your position and your hero pool using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -416,7 +416,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'Both are clock hours rather than matches, because a Bedwars game can end in 4 minutes or run past 20. An hour at {amount:pvp} therefore covers a handful of games plus the practice server work between them, which is where a combo actually gets fixed. Losing a fight you started with full gear is usually a blocking and positioning question, which is what PvP Coaching drills.',
     choice:
-      'So pick by the mode rather than the format: 1) duels, crystal fights and survival PvP go to PvP Coaching, and 2) Hypixel Bedwars goes to Bedwars Coaching. Both cost {amount:bw}, and bundles never apply to coaching. Name your server, your edition and whether you play on keyboard or controller, using Discord.',
+      'So pick by the mode rather than the format: duels, crystal fights and survival PvP go to PvP Coaching, and Hypixel Bedwars goes to Bedwars Coaching. Both cost {amount:bw}, and bundles never apply to coaching. Name your server, your edition and whether you play on keyboard or controller, using Discord.',
     rows: [
       {
         label: 'PvP Coaching',
@@ -446,7 +446,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'Both are clock hours rather than runs, because a Mythic+ key can time with 10 minutes to spare or end in a wipe at the first pull. An hour of Play and Learn at {price:learn} usually covers 2 keys with a reset between them, while the class hour can stop on one pull and run it again. For example, a group that times a +7 and falls apart on a +10 usually has a route question rather than a damage question.',
     choice:
-      'So pick by the cause rather than the format: 1) routes, pulls and interrupts go to Play and Learn, and 2) talents and cooldowns go to Class and Rotation Coaching. Both cost {amount:class}, and bundles never apply to coaching. Name your class, your spec and the key level you are pushing, using Discord.',
+      'So pick by the cause rather than the format: routes, pulls and interrupts go to Play and Learn, and talents and cooldowns go to Class and Rotation Coaching. Both cost {amount:class}, and bundles never apply to coaching. Name your class, your spec and the key level you are pushing, using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -476,7 +476,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     detail:
       'The unit is the real difference. Play and Learn is sold per game at {amount:learn}, so a 25-minute win and a 50-minute slog cost the same. Macro and Souls is a clock hour, which buys the pauses and rewinds a live match cannot. A player with a healthy soul count who still loses teamfights usually has an item timing question, which is the Macro and Souls hour.',
     choice:
-      'So pick by the problem rather than the format: 1) live calls go to Play and Learn, and 2) a pattern across a whole match goes to Macro and Souls. The hour costs {amount:macro}, and bundles never apply to coaching. Name the heroes you play and the lane you usually take, using Discord.',
+      'So pick by the problem rather than the format: live calls go to Play and Learn, and a pattern across a whole match goes to Macro and Souls. The hour costs {amount:macro}, and bundles never apply to coaching. Name the heroes you play and the lane you usually take, using Discord.',
     rows: [
       {
         label: 'Play and Learn',

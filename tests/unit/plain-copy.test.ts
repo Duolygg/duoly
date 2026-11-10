@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CONNECTOR_OPENERS,
   MAX_CONNECTORS_PER_PARAGRAPH,
+  STEP_WORDS,
   copyStrings,
   plainCopyProblems,
 } from '../../src/content/plain-copy';
@@ -42,6 +43,10 @@ import { SITE_GAMES } from '../../src/site/games';
  *     that names nothing and is never picked up again is padding. A
  *     mid-paragraph example without a number is left alone on purpose: the
  *     sentences after it do the work.
+ *  3. No "Step 1" opener in prose. A real sequence goes in an ordered list,
+ *     where the markers count the steps; a paragraph that numbers its own
+ *     sentences is the same scaffolding rule 1 removed, wearing a number.
+ *     Pointing at a real list from inside it ("No: go to step 2.") passes.
  *
  * Copy objects are walked whole, so a new game hub or guide is covered the day
  * it is added. Astro pages are scanned as source text for their own string
@@ -88,6 +93,33 @@ describe('copy reads like a player wrote it', () => {
         'A missed shot starts before the peek. For example, the entry player turns a corner while the second player is behind a smoke. Pause the recording a second earlier.',
       ),
     ).toEqual([]);
+  });
+
+  it('rejects a numbered step opener outside a real ordered list', () => {
+    expect(STEP_WORDS).toEqual(['step', 'tip', 'point']);
+    // The sentences a reviewer found on the live pages: a "Step 1" that never
+    // reaches a Step 2, and a numbered sentence inside a plain paragraph.
+    for (const flagged of [
+      'A Duoly price is set in euros. Step 1 for a dollar total is switching the currency, which the site remembers for a year.',
+      'Step 1 is the report, and the terms then allow a warning or a blocked account.',
+      'Choosing a coach is a sequence of 5 checks. Tip 1 is proof of rank.',
+      'Booking takes three steps: choose the session, pay, then agree a time. Step 2 always happens on Duoly.',
+      '**Before booking:** Point 3 is the refund rule.',
+    ])
+      expect(
+        plainCopyProblems(flagged).map((problem) => problem.rule),
+        flagged,
+      ).toContain('numbered-step-in-prose');
+    // A reference into a list that really is numbered, and the plain sentences
+    // the pages now use instead. Neither numbers a sentence of its own.
+    for (const clean of [
+      'No: go to step 2.',
+      'Yes: go to step 3.',
+      'No: go back to step 1 and post again tomorrow. Free is enough.',
+      'A dollar total needs the currency switched at checkout, which the site then remembers for a year.',
+      'A rotation loses damage in 3 places: a cooldown held too long, a filler pressed during a proc window and movement spent where standing still was safe.',
+    ])
+      expect(plainCopyProblems(clean), clean).toEqual([]);
   });
 
   for (const hub of GAME_HUBS)

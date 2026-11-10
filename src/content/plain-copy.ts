@@ -25,6 +25,16 @@
  *     shown." names no booking and no discount; "For example, 3 hours cost
  *     {{p_duo2_x3}}." names both.
  *
+ *  3. No sentence opens on a numbered step outside a real ordered list. The
+ *     pass that removed the connectors above replaced many of them with "Step
+ *     1", which reads as a procedure and mostly was not one: "Step 1 for a
+ *     dollar total is switching the currency" never reaches a Step 2, and
+ *     "Step 1 is the report" numbers a single sentence. A genuine sequence
+ *     belongs in an `<ol>`, where the markers do the counting and the copy
+ *     does not have to. Steps.astro and the decision flows already render one,
+ *     and a reference from inside such a list ("No: go to step 2.") is fine,
+ *     because the list it points at is really numbered.
+ *
  * Deliberately not a rule: a mid-paragraph "For example," without a number.
  * "For example, the entry player turns a corner while the second player is
  * still behind a smoke." is a real example, and the sentences after it do the
@@ -44,6 +54,23 @@ export const MAX_CONNECTORS_PER_PARAGRAPH = 1;
 
 const OPENER_PATTERN =
   /(?:^|(?<=[.!?:]\s)|(?<=[.!?:]\s{2})|(?<=\*\*\s)|(?<=\)\s))(First|Second|Third|For example),/g;
+
+/** The words a numbered step is written with when prose numbers itself. */
+export const STEP_WORDS = ['step', 'tip', 'point'] as const;
+
+/**
+ * A numbered step where a sentence starts, or used as a clause subject.
+ *
+ * Both halves matter. "Step 1 is the proof" opens a sentence; "the terms say
+ * Step 2 is on Duoly" hides the same scaffolding mid-sentence. A reference
+ * such as "go to step 2" matches neither, because the step word follows a
+ * preposition and the number is not the subject of anything.
+ */
+const STEP_PATTERN = new RegExp(
+  String.raw`(?:^|[.!?:;]\s*|\*\*\s*)(?:${STEP_WORDS.join('|')})\s+\d+\b` +
+    String.raw`|\b(?:${STEP_WORDS.join('|')})\s+\d+\s+(?:is|are|was|were|of|for)\b`,
+  'i',
+);
 
 /** Sentence-ish split that keeps decimal prices and "2,500+" intact. */
 const sentences = (paragraph: string) =>
@@ -67,7 +94,10 @@ const NAMES_SOMETHING =
 
 export interface PlainCopyProblem {
   paragraph: string;
-  rule: 'too-many-connectors' | 'closing-example-names-nothing';
+  rule:
+    | 'too-many-connectors'
+    | 'closing-example-names-nothing'
+    | 'numbered-step-in-prose';
   detail: string;
 }
 
@@ -94,6 +124,13 @@ export function plainCopyProblems(paragraph: string): PlainCopyProblem[] {
       paragraph,
       rule: 'closing-example-names-nothing',
       detail: last,
+    });
+  const step = STEP_PATTERN.exec(paragraph);
+  if (step)
+    problems.push({
+      paragraph,
+      rule: 'numbered-step-in-prose',
+      detail: `${step[0].trim()} (use an ordered list, or say it in a plain sentence)`,
     });
   return problems;
 }

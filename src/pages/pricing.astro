@@ -171,8 +171,8 @@ const faq: [string, string][] = [
         per hour or game in all {COACHABLE_GAMES} coachable titles, with no rank
         multiplier at all. Team fills cover several hired teammates in one
         price, so a League of Legends Clash Roster pays four players rather than
-        one. Step 1 for a real total is picking the game and the service,
-        because those two decide almost everything else. For example,{' '}
+        one. A real total starts with the game and the service, because those
+        two decide almost everything else. For example,{' '}
         <a href={SINGLE_GAME.href}>a {SINGLE_GAME.short} order</a> costs{' '}
         {SINGLE_GAME.total} in {CATALOG_YEAR}, {MAX_QUANTITY} of the same game
         take {QUANTITY_PERCENT}% off and a {BUNDLE_SIZES[2]} game bundle takes{' '}
@@ -185,20 +185,21 @@ const faq: [string, string][] = [
       <h2 id="discount-h">Which Duoly discounts come off automatically?</h2>
       <p>
         A Duoly discount is a quantity discount, and two of them exist, both
-        applied in the checkout rather than given on request. Step 1 is choosing
-        the tab, because the quantity picker and the Bundles tab are separate
-        controls that never stack. The picker offers one to {MAX_QUANTITY} games
-        or hours, and {MAX_QUANTITY} units take {QUANTITY_PERCENT}% off, so{' '}
-        {FIVE_GAMES.short} costs {FIVE_GAMES.total} and saves {FIVE_GAMES.saved}{' '}
-        against five single games. The Bundles tab sells a game’s main service
-        in packs of {BUNDLE_SIZES.join(', ')} units at {BUNDLE_PERCENTS[0]}%,{' '}
-        {BUNDLE_PERCENTS[1]}% and {BUNDLE_PERCENTS[2]}% off, which makes a{' '}
-        {BUNDLE_SIZES[2]} game bundle the largest discount Duoly gives in{' '}
-        {CATALOG_YEAR} at {TEN_GAME_BUNDLE.total}. A bundle always covers one
-        teammate rather than a group. Coaching never takes a quantity discount
-        at any size, so {MAX_QUANTITY} coaching hours cost exactly{' '}
-        {MAX_QUANTITY} times one hour. No code and no newsletter is needed,
-        because a discount is read from Duoly’s pricing engine at checkout.
+        applied in the checkout rather than given on request. Which tab you open
+        decides which one you get, because the quantity picker and the Bundles
+        tab are separate controls that never stack. The picker offers one to{' '}
+        {MAX_QUANTITY} games or hours, and {MAX_QUANTITY} units take{' '}
+        {QUANTITY_PERCENT}% off, so {FIVE_GAMES.short} costs {FIVE_GAMES.total}{' '}
+        and saves {FIVE_GAMES.saved} against five single games. The Bundles tab
+        sells a game’s main service in packs of {BUNDLE_SIZES.join(', ')} units
+        at {BUNDLE_PERCENTS[0]}%, {BUNDLE_PERCENTS[1]}% and {BUNDLE_PERCENTS[2]}
+        % off, which makes a {BUNDLE_SIZES[2]} game bundle the largest discount
+        Duoly gives in {CATALOG_YEAR} at {TEN_GAME_BUNDLE.total}. A bundle
+        always covers one teammate rather than a group. Coaching never takes a
+        quantity discount at any size, so {MAX_QUANTITY} coaching hours cost
+        exactly {MAX_QUANTITY} times one hour. No code and no newsletter is
+        needed, because a discount is read from Duoly’s pricing engine at
+        checkout.
       </p>
     </section>
 
@@ -227,8 +228,8 @@ const faq: [string, string][] = [
       <p>
         The Duoly price table below is the whole catalog: {CATALOG_GAMES} games,{' '}
         {ROW_COUNT} bookable services and what each one charges in{' '}
-        {CATALOG_YEAR}. Step 1 is finding the game in a group header, then the
-        category underneath, which is one of{' '}
+        {CATALOG_YEAR}. Find the game in a group header, then the category
+        underneath, which is one of{' '}
         {CATEGORY_HEADINGS.map(([, heading]) => heading.toLowerCase()).join(
           ', ',
         )}
@@ -333,11 +334,11 @@ const faq: [string, string][] = [
         {USD_MARGIN_PERCENT}% currency margin, rounded up to .99, so a dollar
         figure sits a few cents above a plain mid-market conversion. A bank can
         add a foreign currency handling fee of its own, which Duoly neither sets
-        nor receives. Step 1 for a dollar total is switching the currency, which
-        the site remembers for a year. For example, a {SINGLE_GAME.total} game
-        and a {COACHING_PRICE} coaching hour both convert the same way in{' '}
-        {CATALOG_YEAR}. The rate itself comes from a public European Central
-        Bank feed, and no personal data is sent there.
+        nor receives. A dollar total needs the currency switched at checkout,
+        which the site then remembers for a year. For example, a{' '}
+        {SINGLE_GAME.total} game and a {COACHING_PRICE} coaching hour both
+        convert the same way in {CATALOG_YEAR}. The rate itself comes from a
+        public European Central Bank feed, and no personal data is sent there.
       </p>
     </section>
 
@@ -354,8 +355,8 @@ const faq: [string, string][] = [
         <a href="/developers/mcp">Duoly MCP server</a> answers get_quote and
         find_session with a calculated price for a selection, which is the same
         engine call the table above makes. Every game page carries the per-rank
-        price list for that title. Step 1 for an assistant is calling
-        find_session, because a quote needs a game and a service first. For
+        price list for that title. An assistant calls find_session before
+        anything else, because a quote needs a game and a service first. For
         example, a {SINGLE_GAME.total} {SINGLE_GAME.short} reads identically on
         this page, in pricing.md and from an assistant{' '}
         <a href="/ai">using Claude</a> in {CATALOG_YEAR}. According to{' '}

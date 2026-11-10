@@ -67,7 +67,7 @@ const faq: [string, string][] = [
   ],
   [
     'What if my teammate never shows up?',
-    'Step 1 is reporting the order from your order room. The terms cover a no-show, a teammate leaving and toxic behaviour the same way: a real person reviews the report and can refund the order to your balance.',
+    'Report the order from your order room. The terms cover a no-show, a teammate leaving and toxic behaviour the same way: a real person reviews the report and can refund the order to your balance.',
   ],
   [
     'Do bundle discounts apply to coaching?',
@@ -153,11 +153,11 @@ const schema = {
         same figure as commission, covered further down, rather than being added
         on top. Duoly takes one payment rather than a charge per game: the{' '}
         <a href="/terms#payment">payment section</a> states the full price for
-        every game or hour in an order is paid once, at the moment you queue.
-        Step 1 therefore has no wallet top-up in the way, which is how some
-        marketplaces add a percentage before a first booking. For example, a
-        reader comparing <a href="/compare/e-pal">Duoly with E-Pal</a> finds a
-        10% top-up service fee on that platform and 0% here.
+        every game or hour in an order is paid once, at the moment you queue. No
+        wallet top-up stands in the way, which is how some marketplaces add a
+        percentage before a first booking. For example, a reader comparing{' '}
+        <a href="/compare/e-pal">Duoly with E-Pal</a> finds a 10% top-up service
+        fee on that platform and 0% here.
       </p>
     </section>
 
@@ -172,7 +172,7 @@ const schema = {
         ranks pay more, because higher lobbies need stronger teammates. The
         quantity, where {MAX_QUANTITY} units take {QUANTITY_PERCENT}% off.
         Coaching is flat at {COACHING_PRICE} per hour or game in every coachable
-        title, with no rank multiplier at all. Step 1 is picking the unit,
+        title, with no rank multiplier at all. Read the unit before the figure,
         because a game and an hour price differently. The examples below come
         straight from the pricing engine checkout uses, so each total is the
         figure Stripe would charge today, for example {SINGLE_GAME.total} for
@@ -240,10 +240,10 @@ const schema = {
         {TEN_GAME_BUNDLE.saved}, the largest discount from Duoly in{' '}
         {CATALOG_YEAR}. A bundle always covers one teammate. Coaching takes no
         quantity discount, so {FIVE_COACHING_HOURS.label} cost{' '}
-        {FIVE_COACHING_HOURS.total}. Step 1 is choosing the tab, because the
-        picker and the Bundles tab are separate controls. According to{' '}
-        <a href="/terms#payment">Duoly’s payment terms</a>, prices can change
-        over time, and an order already placed keeps the price paid.
+        {FIVE_COACHING_HOURS.total}. Which tab you open decides which discount
+        you get, because the picker and the Bundles tab are separate controls.
+        According to <a href="/terms#payment">Duoly’s payment terms</a>, prices
+        can change over time, and an order already placed keeps the price paid.
       </p>
     </section>
 
@@ -259,11 +259,11 @@ const schema = {
         mid-market conversion. Payment runs through Stripe, which means Duoly
         never sees or stores full card details. You can pay part or all of an
         order from your Duoly balance, where refunds, cashback and level-up
-        gifts land. Step 1 for a balance payment is switching the balance on at
-        checkout. For example, a customer holding {SINGLE_GAME.total} of balance
-        can cover a {SINGLE_GAME.short} order without a card charge at all, and
-        100% of a refund lands in the same place. Your bank may still apply a
-        foreign currency handling fee of its own.
+        gifts land. A balance payment needs the balance switched on at checkout.
+        For example, a customer holding {SINGLE_GAME.total} of balance can cover
+        a {SINGLE_GAME.short} order without a card charge at all, and 100% of a
+        refund lands in the same place. Your bank may still apply a foreign
+        currency handling fee of its own.
       </p>
     </section>
 
@@ -306,9 +306,9 @@ const schema = {
         legal one. Promotional money follows a different rule: the{' '}
         <a href="/terms#balance">Duoly balance section</a> says a balance never
         expires, cashback and level-up gifts can only be spent on Duoly, and
-        money refunded to a balance can go back to a card on request. Step 1 for
-        a card refund is asking support. For example, {SINGLE_GAME.total} of
-        refunded money is withdrawable while {SINGLE_GAME.total} of level-up
+        money refunded to a balance can go back to a card on request. A card
+        refund needs that request to support. For example, {SINGLE_GAME.total}{' '}
+        of refunded money is withdrawable while {SINGLE_GAME.total} of level-up
         gift stays on Duoly. Austrian law governs the terms dated{' '}
         {LEGAL_UPDATED}, consumers keep the mandatory protections of a home
         country, and EU consumers can use the dispute platform at
@@ -330,7 +330,7 @@ const schema = {
         over. A customer discount comes off first, so the {SHARE_PERCENT}% share
         is calculated on the discounted total: {TEN_GAME_BUNDLE.label} at{' '}
         {TEN_GAME_BUNDLE.total} pays a share of that figure rather than of the
-        undiscounted one. Step 1 of a payout is connecting a method using Wise,
+        undiscounted one. A payout needs a method connected first, using Wise,
         PayPal or a bank. Nobody earns a bonus for a win, which is why Duoly
         promises no rank and no result. The company keeping the remainder is the
         sole proprietorship named on <a href="/about">the about page</a>, in{' '}

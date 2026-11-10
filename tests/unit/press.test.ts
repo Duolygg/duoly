@@ -167,7 +167,10 @@ describe('the press address', () => {
   });
 
   it('promises no press office it does not have', () => {
-    expect(page).toMatch(/no separate press office and no agency/);
+    // Whitespace-tolerant: this reads the page source, where Prettier owns the
+    // line breaks inside a paragraph, so a rewrap must not read as a promise
+    // the page stopped making.
+    expect(page).toMatch(/no\s+separate\s+press\s+office\s+and\s+no\s+agency/);
   });
 });
 

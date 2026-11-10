@@ -192,13 +192,13 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
       <h2 id="who-h">Who runs Duoly, and how new is it?</h2>
       <p>
         Duoly is a sole proprietorship registered in Austria, and the operator
-        details are published rather than hidden. Step 1 of checking any
-        marketplace is reading its legal notice. The legal form is{' '}
-        {BUSINESS.legalForm}, the business location is {BUSINESS_LOCATION}, the
-        trade register number is GISA {BUSINESS.gisa}, and the business is
-        legally represented by {BUSINESS.representedBy}. Email reaches the same
-        team at <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>, and the
-        street address, chamber membership and supervisory authority sit on the{' '}
+        details are published rather than hidden. Checking any marketplace
+        starts with its legal notice. The legal form is {BUSINESS.legalForm},
+        the business location is {BUSINESS_LOCATION}, the trade register number
+        is GISA {BUSINESS.gisa}, and the business is legally represented by{' '}
+        {BUSINESS.representedBy}. Email reaches the same team at{' '}
+        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>, and the street
+        address, chamber membership and supervisory authority sit on the{' '}
         <a href="/imprint">imprint</a>, where Austrian law requires them. Duoly
         is young: the first commit in the public duoly.gg code base is dated{' '}
         <time datetime={CODEBASE_STARTED}>{CODEBASE_STARTED_LABEL}</time>, so
@@ -276,11 +276,11 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
     >
       <p>
         A Duoly booking is one paid block of play, coaching or voice company
-        with a verified player, and it takes the three steps above. Step 1 sets
-        the price, because the service and your own rank decide it. Step 2 is
-        one upfront payment rather than a charge per game. Step 3 is the match,
-        and an order nobody takes within {AUTO_CANCEL_MINUTES} minutes cancels
-        itself and returns 100% of the amount to your Duoly balance. Open{' '}
+        with a verified player, and it takes the three steps above. The service
+        and your own rank set the price, the payment is one upfront charge
+        rather than a charge per game, and an order nobody takes within{' '}
+        {AUTO_CANCEL_MINUTES} minutes cancels itself and returns 100% of the
+        amount to your Duoly balance. Open{' '}
         <a href={SINGLE_GAME.href}>
           {SINGLE_GAME.short} at {SINGLE_GAME.total}
         </a>{' '}
@@ -306,7 +306,7 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
         {COACHING_PRICE} per hour or game, including VOD reviews where a coach
         walks through your own recording using Discord screen share.{' '}
         {SOCIAL_MODES} voice modes sell friendly company without a scoreboard,
-        for adults only and never as a dating service. Step 1 is picking the
+        for adults only and never as a dating service. A booking starts with the
         game: the catalog spans League of Legends, Valorant, Counter-Strike 2,
         Fortnite, Marvel Rivals, Rocket League, Dota 2 and World of Warcraft,
         with servers across {SERVED_AREAS.join(', ')}. Bundles of{' '}
@@ -323,18 +323,18 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
       </h2>
       <p>
         A Duoly teammate is an applicant who has passed a four-step review, and
-        nobody reaches the queue before the review finishes. Step 1 is the{' '}
+        nobody reaches the queue before the review finishes. It opens with the{' '}
         <a href="/apply">application form</a>: name, email, Discord, a
         confirmation of being 18 or older, then the rank, the region and a link
         to a short YouTube video introducing the applicant, which the form
-        requires rather than suggests. Step 2 is the rank check, where Duoly
+        requires rather than suggests. Then comes the rank check, where Duoly
         verifies the account and its rank history against the minimum rank
-        published for that game in {CATALOG_YEAR}. Step 3 is one tryout game
-        with the Duoly team using Discord, and Step 4 switches the account
-        online. Coaches are listed at the coach rank named on their game’s
-        coaching page, for example Grandmaster+ for a {COACHING_PRICE} League of
-        Legends VOD review, while a {SINGLE_GAME.total} Duo Pro game needs a
-        Master+ teammate. According to{' '}
+        published for that game in {CATALOG_YEAR}. Then one tryout game with the
+        Duoly team using Discord, and only after that does the review switch the
+        account online. Coaches are listed at the coach rank named on their
+        game’s coaching page, for example Grandmaster+ for a {COACHING_PRICE}{' '}
+        League of Legends VOD review, while a {SINGLE_GAME.total} Duo Pro game
+        needs a Master+ teammate. According to{' '}
         <a href="/terms#teammates">Duoly’s teammate terms</a>, teammates are
         independent players rather than employees, must keep a verified rank
         honest, and earn {SHARE_PERCENT}% of each order. The whole review, the
@@ -428,7 +428,7 @@ const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
         supervisory authority ({BUSINESS.countryName}). Teammates additionally
         follow the Teammate Code, published at duoly.gg/rules once a teammate
         signs in, on top of <a href="/terms#teammates">the teammate terms</a>{' '}
-        setting the {SHARE_PERCENT}% share. Step 1 for any question is{' '}
+        setting the {SHARE_PERCENT}% share. Any question goes to{' '}
         <a href="/contact">the contact form</a> or the chat bubble, answered by
         the Duoly team. For example, a refund question moves fastest with the
         order number to hand, because a {SINGLE_GAME.total} game and a{' '}

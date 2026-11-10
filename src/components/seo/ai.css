@@ -470,3 +470,25 @@
   letter-spacing: -0.02em;
   color: #f3eeff;
 }
+
+/* The ordered call sequences in the developer guide. A client calls three tools
+   in a fixed order, so the list markers carry that order instead of a sentence
+   numbering itself ("Step 1 is find_session, step 2 is ..."). */
+.seo-page .ai-sequence {
+  max-width: 56ch;
+  margin: 16px 0 18px;
+  padding-left: 22px;
+  color: #cfc6e2;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.seo-page .ai-sequence li + li {
+  margin-top: 8px;
+}
+.seo-page .ai-sequence li::marker {
+  color: #d6bbff;
+  font-weight: 700;
+}
+.seo-page .ai-sequence code {
+  color: #f3eeff;
+}

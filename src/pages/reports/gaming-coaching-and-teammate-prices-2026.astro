@@ -348,10 +348,10 @@ const dataset = {
         {HOURLY_COACHING.platforms.length} platforms that publish one openly. 1){' '}
         {weCoachValorant.spread.count} Valorant coach cards on{' '}
         {weCoachValorant.platform} with a median of{' '}
-        {weCoachValorant.spread.median}, then 2) {weCoachLeague.spread.count}{' '}
+        {weCoachValorant.spread.median}, then {weCoachLeague.spread.count}{' '}
         League of Legends cards at the same {weCoachLeague.spread.median}{' '}
-        median, and 3) {metafyHours.spread.count} Overwatch 2 sessions labelled
-        one hour on {metafyHours.platform} at {metafyHours.spread.low} to{' '}
+        median, and {metafyHours.spread.count} Overwatch 2 sessions labelled one
+        hour on {metafyHours.platform} at {metafyHours.spread.low} to{' '}
         {metafyHours.spread.high}. The spread is wide:{' '}
         {HOURLY_BANDS[1]!.percent}% of rates sit between USD 20.00 and USD
         29.99, while {HOURLY_BANDS[4]!.percent}% ask USD 50.00 or more. For
@@ -392,14 +392,14 @@ const dataset = {
       <h2 id="teammate-h">What does a paid gaming teammate cost?</h2>
       <p>
         A paid teammate is a price per game on most platforms, and the figures
-        are far smaller than a coaching hour. 1) on {epal.name},{' '}
+        are far smaller than a coaching hour. On {epal.name},{' '}
         {TEAMMATE_PER_GAME.count} Valorant provider cards showed a single price
         per game from {TEAMMATE_PER_GAME.low} to {TEAMMATE_PER_GAME.high}, with
         a median of {TEAMMATE_PER_GAME.median}, which is{' '}
-        {TEAMMATE_PER_GAME.medianEur} at the recorded rate. 2){' '}
+        {TEAMMATE_PER_GAME.medianEur} at the recorded rate.{' '}
         {EPAL_TWO_FIGURE_CARDS} further cards showed a discount badge with two
         figures each, so our survey left those out rather than publish a price
-        that depends on an offer. 3) one card on the same page sold time rather
+        that depends on an offer. One card on the same page sold time rather
         than games, at 15.00 Buff per 30 minutes, which is the only time-based
         teammate price the survey could read anywhere. For example, a Duoly
         teammate game runs {DUOLY.teammateFrom} for {DUOLY.teammateFromService}{' '}
@@ -515,13 +515,13 @@ const dataset = {
       <h2 id="table-h">Which prices did the survey verify?</h2>
       <p>
         The table below is our survey in full: {COMPETITOR_COUNT} platforms plus
-        Duoly, in alphabetical order, with 1) the prices we verified, 2) who
-        sets them, 3) the published fees and 4) the published refund terms.
-        Alphabetical order is deliberate, because any other order would be an
-        argument rather than a result. For example, {sensei.name} publishes
-        three fixed packages while {wecoach.name} publishes a rate per coach, so
-        the two rows answer different questions. {ANSWERED_COUNT} of the{' '}
-        {COMPETITOR_COUNT} platforms answered our request at all.
+        Duoly, in alphabetical order, with the prices we verified, who sets
+        them, the published fees and the published refund terms. Alphabetical
+        order is deliberate, because any other order would be an argument rather
+        than a result. For example, {sensei.name} publishes three fixed packages
+        while {wecoach.name} publishes a rate per coach, so the two rows answer
+        different questions. {ANSWERED_COUNT} of the {COMPETITOR_COUNT}{' '}
+        platforms answered our request at all.
       </p>
       <div class="official-table-wrap">
         <table class="report-table">
