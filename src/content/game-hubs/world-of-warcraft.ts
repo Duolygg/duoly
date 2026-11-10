@@ -25,7 +25,7 @@ export const worldOfWarcraft: HubPageCopy = {
     'After the LFG page rather than every WoW service? It compares Mythic+ keys, rated arena and Delves, with a route and interrupt checklist.',
   format: {
     heading: 'What can you book for World of Warcraft on Duoly?',
-    text: 'Duoly sells three things for World of Warcraft: one teammate who joins your group on your own account, group fills for Mythic+ keys and 3v3 arena, and class coaching. Everything is booked by the hour, because a key or an arena session has no fixed length. Mythic+ Duo brings a 2,500+ rated player, Mythic+ Pro a 3,000+ rated player who plans the route, and Arena 2v2 a Duelist partner. Mythic+ follows your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Mythic+ Pro, while Delves and leveling stay {{p_delves}} and {{p_level}} per hour for everybody. Second, the fills: Key Group Fill covers up to {{seats_keys}} seats from {{p_keys_low}} per hour and Arena 3v3 Team covers {{seats_arena3}} at {{p_arena3}}. Third, Class and Rotation Coaching is one hour at {{p_class}}. Bundles take {{pct3}} off 3 hours up to {{pct10}} off 10. For example, name your region and role using Discord first.',
+    text: 'Duoly sells three things for World of Warcraft: one teammate who joins your group on your own account, group fills for Mythic+ keys and 3v3 arena, and class coaching. Everything is booked by the hour, because a key or an arena session has no fixed length. Mythic+ Duo brings a 2,500+ rated player, Mythic+ Pro a 3,000+ rated player who plans the route, and Arena 2v2 a Duelist partner. Mythic+ follows your own rating, from {{p_duo2_low}} to {{p_duo2_high}} per hour on Mythic+ Pro, while Delves and leveling stay {{p_delves}} and {{p_level}} per hour for everybody. Second, the fills: Key Group Fill covers up to {{seats_keys}} seats from {{p_keys_low}} per hour and Arena 3v3 Team covers {{seats_arena3}} at {{p_arena3}}. Third, Class and Rotation Coaching is one hour at {{p_class}}. Bundles of {{main}} take {{bundles}}. For example, name your region and role using Discord first.',
   },
   services: {
     duo1: 'Mythic+ keys with a 2,500+ rated player who knows the routes and kicks.',
@@ -51,10 +51,10 @@ export const worldOfWarcraft: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per hour, and the rated tiers read your own Mythic+ or arena rating, so a 3,500+ key costs more than an easy one. Delves and leveling hold one price for everybody, because no rating is on the line. One teammate joins your group on your own account and plays the role you ask for, and bundles take {{pct3}} off 3 hours or {{pct5}} off 5. First, pick the format, because only the rated cards carry a rating list. Second, read the tier beside the price: Mythic+ Duo is a 2,500+ rated player, Mythic+ Pro a 3,000+ rated one and Arena 2v2 a Duelist partner from {{p_arena_low}} per hour. For example, name tank, healer or damage in the order chat using Discord.',
-    team: 'Key Group Fill and Arena 3v3 Team are priced per seat, so each card covers the seats your group is missing: up to {{seats_keys}} for a key from {{p_keys_low}} per hour and {{seats_arena3}} for 3v3 at {{p_arena3}}. First, count the seats you actually need, because a group short one healer books 1 rather than 4. Second, name the roles, because a key without a tank does not start. Both read your rating like the duo tiers do, from {{p_keys_low}} per hour, and bundles take {{pct3}} off 3 hours and {{pct5}} off 5. For example, a pair pushing keys books 3 seats using Discord.',
+      'Teammate prices are per hour, and the rated tiers read your own Mythic+ or arena rating, so a 3,500+ key costs more than an easy one. Delves and leveling hold one price for everybody, because no rating is on the line. One teammate joins your group on your own account and plays the role you ask for. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. First, pick the format, because only the rated cards carry a rating list. Second, read the tier beside the price: Mythic+ Duo is a 2,500+ rated player, Mythic+ Pro a 3,000+ rated one and Arena 2v2 a Duelist partner from {{p_arena_low}} per hour. For example, name tank, healer or damage in the order chat using Discord.',
+    team: 'Key Group Fill and Arena 3v3 Team are priced per seat, so each card covers the seats your group is missing: up to {{seats_keys}} for a key from {{p_keys_low}} per hour and {{seats_arena3}} for 3v3 at {{p_arena3}}. First, count the seats you actually need, because a group short one healer books 1 rather than 4. Second, name the roles, because a key without a tank does not start. Both read your rating like the duo tiers do, from {{p_keys_low}} per hour, and 5 hours take {{pick5}} off. For example, a pair pushing keys books 3 seats using Discord.',
     coaching:
-      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Class and Rotation Coaching costs {{p_class}} per hour with a Gladiator or 3,000+ coach and covers talents, rotation, cooldowns and positioning. Play and Learn spends the hour in a real key at {{p_learn}} instead of on a target dummy. First, pick the problem rather than the format. For example, a player who keeps depleting the same dungeon books the class hour instead of three more keys. Finally, screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rating.',
+      'Lessons are priced by the hour and get no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings on teammate sessions do not apply. Class and Rotation Coaching costs {{p_class}} per hour with a Gladiator or 3,000+ coach and covers talents, rotation, cooldowns and positioning. Play and Learn spends the hour in a real key at {{p_learn}} instead of on a target dummy. First, pick the problem rather than the format. For example, a player who keeps depleting the same dungeon books the class hour instead of three more keys. Finally, screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rating.',
   },
   steps: {
     heading: 'How does booking a WoW teammate work?',
@@ -68,7 +68,7 @@ export const worldOfWarcraft: HubPageCopy = {
   decide: {
     heading: 'Which World of Warcraft session fits you?',
     intro:
-      'The right WoW session is the one matching your goal for the week, so pick the goal first and let the price follow. First, Delves and leveling hold one price for everybody, {{p_delves}} and {{p_level}} per hour, because no rating is on the line. Mythic+ and arena are priced by your own rating instead, from {{p_duo2_low}} per hour on Mythic+ Pro, and a group fill is priced per seat. For example, 3 hours take {{pct3}} off and 5 hours take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right WoW session is the one matching your goal for the week, so pick the goal first and let the price follow. First, Delves and leveling hold one price for everybody, {{p_delves}} and {{p_level}} per hour, because no rating is on the line. Mythic+ and arena are priced by your own rating instead, from {{p_duo2_low}} per hour on Mythic+ Pro, and a group fill is priced per seat. For example, a {{main}} bundle takes {{bundles}}, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Pushing your Mythic+ rating?',
@@ -107,14 +107,14 @@ export const worldOfWarcraft: HubPageCopy = {
       heading: 'Who is the teammate you play with?',
       paragraphs: [
         'The teammate you play with is a reviewed World of Warcraft player who applied for the game and showed a Mythic+ or arena rating before taking orders. First, the tiers: Mythic+ Duo names a 2,500+ rated player, Mythic+ Pro a 3,000+ rated player from {{p_duo2_low}} per hour and Arena 2v2 a Duelist partner. Second, orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, pick your region at checkout: Europe, Americas and Oceania, Korea or Taiwan.',
-        'What the rating buys you is a timed key. A 3,000+ teammate knows the route, which pulls to chain, who kicks which cast and when to press a defensive. Voice runs using Discord, so the call lands before the wipe. Your rating also sets the price: Mythic+ Pro runs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because harder keys need stronger players. Bundles cut that total by {{pct3}} on 3 hours and {{pct5}} on 5. For example, you keep your account, your loot and your Great Vault across all 3 hours.',
+        'What the rating buys you is a timed key. A 3,000+ teammate knows the route, which pulls to chain, who kicks which cast and when to press a defensive. Voice runs using Discord, so the call lands before the wipe. Your rating also sets the price: Mythic+ Pro runs {{p_duo2_low}} per hour at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because harder keys need stronger players. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your account, your loot and your Great Vault across all 3 hours.',
       ],
     },
     {
       heading: 'How do Mythic+ and arena group fills work?',
       paragraphs: [
         'Key Group Fill is one order that hires several players at once, so your key finally has a full five. First, it covers up to {{seats_keys}} seats with 2,500+ rated players at {{p_keys}} per hour at {{rank_keys}}, and every seat is priced separately, so a group short one healer books 1 seat. Second, name the roles you are missing, because a key without a tank does not start. For example, a duo pushing keys books 3 seats and keeps its own healer.',
-        'Arena 3v3 Team works the same way for rated 3v3: one or two Duelist players join you, at {{p_arena3}} per hour for {{seats_arena3}} seats at {{rank_arena3}}. Agree the comp and the kill target before you queue, and keep everybody on one call using Discord. Nobody ever needs your Battle.net login. Finally, bundles still apply, {{pct3}} off 3 hours and {{pct5}} off 5, read from Duoly checkout in 2026.',
+        'Arena 3v3 Team works the same way for rated 3v3: one or two Duelist players join you, at {{p_arena3}} per hour for {{seats_arena3}} seats at {{rank_arena3}}. Agree the comp and the kill target before you queue, and keep everybody on one call using Discord. Nobody ever needs your Battle.net login. Finally, bundles of {{main}} still apply, {{bundles}}, read from Duoly checkout in 2026.',
       ],
     },
     {
@@ -127,7 +127,7 @@ export const worldOfWarcraft: HubPageCopy = {
     {
       heading: 'When is WoW coaching the better booking?',
       paragraphs: [
-        'World of Warcraft coaching is the better booking when your own numbers are the problem rather than your group. First, Class and Rotation Coaching is one hour with a Gladiator or 3,000+ coach on talents, rotation, cooldowns and positioning, at {{p_class}} per hour, checked on a target dummy and in a real key. Second, Play and Learn spends the hour inside live Mythic+ with a 3,000+ coach at {{p_learn}}. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate hours only.',
+        'World of Warcraft coaching is the better booking when your own numbers are the problem rather than your group. First, Class and Rotation Coaching is one hour with a Gladiator or 3,000+ coach on talents, rotation, cooldowns and positioning, at {{p_class}} per hour, checked on a target dummy and in a real key. Second, Play and Learn spends the hour inside live Mythic+ with a 3,000+ coach at {{p_learn}}. Coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to teammate hours only.',
         'For example, a player who keeps depleting the same dungeon gains more from one coaching hour at {{p_class}} than from three more keys. A player who wants a relaxed evening gains more from Delves and World Content at {{p_delves}} per hour, where no rating is on the line. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every World of Warcraft coach before any order goes live. The nearest neighbours here are [Overwatch 2 teammates](/games/overwatch-2), from the same publisher, and [Dota 2 teammates](/games/dota-2) for another objective-driven five.',
       ],
     },
@@ -141,7 +141,7 @@ export const worldOfWarcraft: HubPageCopy = {
       ],
       [
         'How much does a Mythic+ teammate cost?',
-        'Mythic+ Pro is {{p_duo2}} per hour at {{rank_duo2}}, from {{p_duo2_low}} at the lowest rating. Bundles take {{pct3}} off 3 hours, and 10 hours cost {{p_duo2_x10}} with {{pct10}} off.',
+        'Mythic+ Pro is {{p_duo2}} per hour at {{rank_duo2}}, from {{p_duo2_low}} at the lowest rating. Bundles of {{main}} take {{bundles}}, so 10 hours cost {{p_duo2_x10}}.',
       ],
       [
         'Does my teammate need to be in my region?',

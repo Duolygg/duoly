@@ -141,14 +141,14 @@ export const CONTENT_UPDATED: Record<string, string> = {
  * service as if it had one price. Hubs and teammate pages share their copy
  * files, so the whole set moves together rather than page by page.
  *
- * Three hubs keep their old date: Social is not a game, and ARC Raiders and
- * Minecraft have no ranked ladder at all (lib/ranks.js lists no entry for
- * them), so no sentence on either page quoted a rank-priced service.
+ * ARC Raiders and Minecraft kept their old date at first, because neither has
+ * a ranked ladder (lib/ranks.js lists no entry for them) and so neither page
+ * quoted a rank-priced service. The same day's discount pass reached them
+ * anyway: every hub now states the whole bundle ladder and names the one
+ * service that sells bundles. Social is not a game and keeps its own copy.
  */
-const UNRANKED_HUBS = ['social', 'arc-raiders', 'minecraft'];
 for (const slug of FINISHED_HUB_SLUGS)
-  if (!UNRANKED_HUBS.includes(slug))
-    CONTENT_UPDATED[`/games/${slug}`] = '2026-11-10';
+  if (slug !== 'social') CONTENT_UPDATED[`/games/${slug}`] = '2026-11-10';
 // All fifteen teammate pages share src/content/intent-pages.ts and
 // src/content/guide-pages.ts, so none of them can date its copy apart from the
 // others: the window's floor is the day either registry last changed. Both

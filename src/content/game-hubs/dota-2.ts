@@ -23,7 +23,7 @@ export const dota2: HubPageCopy = {
   ],
   format: {
     heading: 'What can you book for Dota 2 on Duoly?',
-    text: 'A Dota 2 booking on Duoly is one of three things: one teammate who joins your party on your own account, a Ranked 5-Stack fill for the seats you are missing, or coaching by the hour. First, the teammate tiers are Duo Plus with an Ancient+ player who lanes with you, Duo Pro with a Divine player who calls smokes and Roshan, and Duo Apex with an Immortal player from {{p_duo3_low}} per game. Ranked follows your own medal, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while Turbo stays {{p_turbo}} and unranked All Pick {{p_unranked}} at every medal. Second, the fill: Ranked 5-Stack covers up to {{seats_party5}} seats from {{p_party5_low}} per game. Third, the lessons, {{p_replay}} per hour on your own replay. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. For example, name your position in the order chat using Discord so your teammate drafts around it.',
+    text: 'A Dota 2 booking on Duoly is one of three things: one teammate who joins your party on your own account, a Ranked 5-Stack fill for the seats you are missing, or coaching by the hour. First, the teammate tiers are Duo Plus with an Ancient+ player who lanes with you, Duo Pro with a Divine player who calls smokes and Roshan, and Duo Apex with an Immortal player from {{p_duo3_low}} per game. Ranked follows your own medal, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while Turbo stays {{p_turbo}} and unranked All Pick {{p_unranked}} at every medal. Second, the fill: Ranked 5-Stack covers up to {{seats_party5}} seats from {{p_party5_low}} per game. Third, the lessons, {{p_replay}} per hour on your own replay. Bundles of {{main}} cut the total, {{bundles}}. For example, name your position in the order chat using Discord so your teammate drafts around it.',
   },
   services: {
     duo1: 'Ranked with an Ancient player who lanes with you, wards and calls when to group.',
@@ -48,10 +48,10 @@ export const dota2: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and the ranked tiers read your own medal, so an Immortal lobby costs more than a Herald one. Turbo and unranked All Pick hold one price for everybody, because neither moves your rank. One teammate joins your party on your own account and plays the position you ask for, and bundles take {{pct3}} off 3 games or {{pct5}} off 5. First, pick the mode, because only the ranked cards carry a medal list. Second, read the tier beside the price: Duo Plus is an Ancient+ player, Duo Pro a Divine player and Duo Apex an Immortal from {{p_duo3_low}} per game. For example, name carry, mid, offlane or support in the order chat using Discord before the draft.',
-    team: 'Ranked 5-Stack is priced per seat, so the card covers up to {{seats_party5}} seats from {{p_party5_low}} per game and falls when your party is only one player short. First, count the seats you actually need, because a trio short two players books 2 rather than 4. Second, name the positions, because a five wants carry, mid, offlane and both supports covered rather than five cores. The fill reads your medal like the duo tiers do, from {{p_party5_low}} per game, and bundles take {{pct3}} off 3 games and {{pct5}} off 5. For example, a solo player who hates queueing supports books 4 seats and keeps position 1 using Discord.',
+      'Teammate prices are per game, and the ranked tiers read your own medal, so an Immortal lobby costs more than a Herald one. Turbo and unranked All Pick hold one price for everybody, because neither moves your rank. One teammate joins your party on your own account and plays the position you ask for. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. First, pick the mode, because only the ranked cards carry a medal list. Second, read the tier beside the price: Duo Plus is an Ancient+ player, Duo Pro a Divine player and Duo Apex an Immortal from {{p_duo3_low}} per game. For example, name carry, mid, offlane or support in the order chat using Discord before the draft.',
+    team: 'Ranked 5-Stack is priced per seat, so the card covers up to {{seats_party5}} seats from {{p_party5_low}} per game and falls when your party is only one player short. First, count the seats you actually need, because a trio short two players books 2 rather than 4. Second, name the positions, because a five wants carry, mid, offlane and both supports covered rather than five cores. The fill reads your medal like the duo tiers do, from {{p_party5_low}} per game, and 5 games take {{pick5}} off. For example, a solo player who hates queueing supports books 4 seats and keeps position 1 using Discord.',
     coaching:
-      'Lessons are priced by the hour and get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Replay Review costs {{p_replay}} per hour with an Immortal coach, and Hero and Position Coaching spends the same hour on one hero or one position. Play and Learn is the exception that covers one live ranked game at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who dies in the same lane every game books Replay Review instead of a fourth ranked game. Finally, screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a medal.',
+      'Lessons are priced by the hour and get no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings on teammate sessions do not apply. Replay Review costs {{p_replay}} per hour with an Immortal coach, and Hero and Position Coaching spends the same hour on one hero or one position. Play and Learn is the exception that covers one live ranked game at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who dies in the same lane every game books Replay Review instead of a fourth ranked game. Finally, screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a medal.',
   },
   steps: {
     heading: 'How does booking a Dota 2 teammate work?',
@@ -65,7 +65,7 @@ export const dota2: HubPageCopy = {
   decide: {
     heading: 'Which Dota 2 session fits you?',
     intro:
-      'The right Dota session is the one matching your goal for the evening, so pick the goal first and let the price follow. First, Turbo and unranked All Pick hold one price at every medal, {{p_turbo}} and {{p_unranked}} per game. Ranked is priced by your own medal instead, from {{p_duo2_low}} per game on Duo Pro, and a five-stack fill is priced per seat. For example, 3 games take {{pct3}} off and 5 games take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right Dota session is the one matching your goal for the evening, so pick the goal first and let the price follow. First, Turbo and unranked All Pick hold one price at every medal, {{p_turbo}} and {{p_unranked}} per game. Ranked is priced by your own medal instead, from {{p_duo2_low}} per game on Duo Pro, and a five-stack fill is priced per seat. For example, a {{main}} bundle takes {{bundles}}, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Climbing ranked this season?',
@@ -104,14 +104,14 @@ export const dota2: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'The teammate you queue with is a reviewed Dota 2 player who applied for the game and showed a medal before taking orders. First, the tiers: Duo Plus names an Ancient+ player, Duo Pro a Divine player and Duo Apex an Immortal player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Second, orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, tell them your medal and your two best heroes in the order chat using Discord, so the draft starts from what you actually play.',
-        'What the medal buys you is decisions. A Divine teammate calls the smoke before the enemy carry finishes the item, stacks the camp at the right minute and says when Roshan is safe. Voice runs using Discord, so the call lands while the fight is still winnable. Your medal also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles cut that total by {{pct3}} on 3 games and {{pct5}} on 5. For example, you keep your heroes, your decisions and your MMR in all 3 games.',
+        'What the medal buys you is decisions. A Divine teammate calls the smoke before the enemy carry finishes the item, stacks the camp at the right minute and says when Roshan is safe. Voice runs using Discord, so the call lands while the fight is still winnable. Your medal also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your heroes, your decisions and your MMR in all 3 games.',
       ],
     },
     {
       heading: 'How does a Ranked 5-Stack fill work?',
       paragraphs: [
         'A Ranked 5-Stack is one order that hires several players at once, so a part-full party becomes a complete five. First, the fill covers up to {{seats_party5}} empty seats with Divine+ players at {{p_party5}} per game at {{rank_party5}}, and 5 games cost {{p_party5_x5}} with {{pick5}} off. Second, every seat is priced separately, so a party short two players sets the seats to two instead of four. For example, a solo player who only wants to play position 1 books 4 seats and keeps the carry role.',
-        'Agree the positions before the draft: name who plays carry, mid and offlane, and who supports. Then agree one shotcaller, because five people calling smokes on voice is how a won game gets thrown. Keep everybody on one call using Discord from the draft to the throne, and nobody ever needs your Steam login. Finally, bundles still apply, {{pct3}} off 3 games and {{pct5}} off 5, read from Duoly checkout in 2026.',
+        'Agree the positions before the draft: name who plays carry, mid and offlane, and who supports. Then agree one shotcaller, because five people calling smokes on voice is how a won game gets thrown. Keep everybody on one call using Discord from the draft to the throne, and nobody ever needs your Steam login. Finally, bundles of {{main}} still apply, {{bundles}}, read from Duoly checkout in 2026.',
       ],
     },
     {
@@ -124,7 +124,7 @@ export const dota2: HubPageCopy = {
     {
       heading: 'When is Dota 2 coaching the better booking?',
       paragraphs: [
-        'Dota 2 coaching is the better booking when the goal is a fix you can repeat rather than company for the next game. First, Replay Review is one hour with an Immortal coach on your own match, at {{p_replay}} per hour, covering laning, farm, map moves and items. Second, Hero and Position Coaching spends the same hour on one hero or one position, at {{p_hero}}. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
+        'Dota 2 coaching is the better booking when the goal is a fix you can repeat rather than company for the next game. First, Replay Review is one hour with an Immortal coach on your own match, at {{p_replay}} per hour, covering laning, farm, map moves and items. Second, Hero and Position Coaching spends the same hour on one hero or one position, at {{p_hero}}. Coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to teammate games only.',
         'For example, a player who dies in the same lane every game gains more from one replay hour at {{p_replay}} than from three more ranked games. A player who wants to try a new hero gains more from Turbo at {{p_turbo}} per game, where the clock runs about twenty minutes. Play and Learn is one live ranked game with a Divine coach at {{p_learn}}, and screen share runs using Discord. Finally, Duoly reviews every coach before any order goes live, and nobody needs your Steam login. Its closest neighbours here are [Deadlock teammates](/games/deadlock) and [League of Legends teammates](/games/league-of-legends), both MOBAs with the same objective clock.',
       ],
     },
@@ -138,7 +138,7 @@ export const dota2: HubPageCopy = {
       ],
       [
         'How much does a Dota 2 teammate cost?',
-        'Duo Pro is {{p_duo2}} per game at {{rank_duo2}}, from {{p_duo2_low}} at the lowest medal. Bundles take {{pct3}} off 3 games, and 10 games cost {{p_duo2_x10}} with {{pct10}} off.',
+        'Duo Pro is {{p_duo2}} per game at {{rank_duo2}}, from {{p_duo2_low}} at the lowest medal. Bundles of {{main}} take {{bundles}}, so 10 games cost {{p_duo2_x10}}.',
       ],
       [
         'Can I choose my position?',

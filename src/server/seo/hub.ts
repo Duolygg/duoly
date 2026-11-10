@@ -47,6 +47,14 @@ export const hubServiceIds = (gameId: string) => {
  * quantity discounts, and `{{checked}}` the day the catalog's prices last
  * changed (src/site/price-dates.ts), which is the only date hub copy may state
  * about a price.
+ *
+ * The discount story has three tokens of its own, because stating half of it
+ * is how the copy and the price cards drifted apart: `{{main}}` is the one
+ * service sold in bundles, `{{bundles}}` its whole ladder ("10% off 3 games,
+ * 20% off 5 and 25% off 10") and `{{picker}}` what every other service offers
+ * instead ("up to 5 games, where 5 take 20% off"). Hub copy states discounts
+ * through these rather than assembling a ladder a percentage at a time
+ * (tests/unit/hub-pages.test.ts holds every hub to the complete ladder).
  */
 export function hubPrices(
   gameId: string,
@@ -109,6 +117,20 @@ export function hubPrices(
     prices[`pct${units}`] =
       `${quantityDiscountPercent(units, { bundle: true })}%`;
   prices.pick5 = `${quantityDiscountPercent(5)}%`;
+  // The whole discount story in three tokens, so no page can state half of it.
+  // `{{main}}` is the only service sold in bundles, `{{bundles}}` is its full
+  // ladder and `{{picker}}` is what every other service can do instead.
+  const mainMode = (servicesFor(gameId).modes as HubMode[]).find(
+    (mode) => mode.id === main,
+  )!;
+  const unit = mainMode.unit === 'hour' ? 'hours' : 'games';
+  prices.main = cleanCopy(mainMode.title);
+  const steps = BUNDLES.map(
+    (units, index) =>
+      `${prices[`pct${units}`]} off ${units}${index === 0 ? ` ${unit}` : ''}`,
+  );
+  prices.bundles = `${steps.slice(0, -1).join(', ')} and ${steps.at(-1)}`;
+  prices.picker = `up to 5 ${unit}, where 5 take ${prices.pick5} off`;
   return prices;
 }
 

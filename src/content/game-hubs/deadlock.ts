@@ -25,7 +25,7 @@ export const deadlock: HubPageCopy = {
     'After the LFG page rather than every Deadlock service? It covers lane pairs, soul orbs and the Urn and Mid Boss calls a partner makes.',
   format: {
     heading: 'What can you book for Deadlock on Duoly?',
-    text: 'A Deadlock booking on Duoly is one of three things: one teammate who joins your party on your own account, a 6-Stack Fill for the seats you are missing, or a coaching hour. First, the teammate tiers are Duo Plus with an Oracle+ player who lanes with you, Duo Pro with a Phantom player who calls Urn runs and Mid Boss, and Duo Apex with an Ascendant+ player from {{p_duo3_low}} per game. Ranked follows your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while unranked matches stay {{p_unranked}} at every rank. Second, the fill: 6-Stack Fill covers up to {{seats_six}} seats from {{p_six_low}} per game. Third, Macro and Souls is one hour on soul economy at {{p_macro}}. Bundles cut the total, {{pct3}} off 3 games up to {{pct10}} off 10. For example, name your heroes using Discord first.',
+    text: 'A Deadlock booking on Duoly is one of three things: one teammate who joins your party on your own account, a 6-Stack Fill for the seats you are missing, or a coaching hour. First, the teammate tiers are Duo Plus with an Oracle+ player who lanes with you, Duo Pro with a Phantom player who calls Urn runs and Mid Boss, and Duo Apex with an Ascendant+ player from {{p_duo3_low}} per game. Ranked follows your own rank, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while unranked matches stay {{p_unranked}} at every rank. Second, the fill: 6-Stack Fill covers up to {{seats_six}} seats from {{p_six_low}} per game. Third, Macro and Souls is one hour on soul economy at {{p_macro}}. Bundles of {{main}} cut the total, {{bundles}}. For example, name your heroes using Discord first.',
   },
   services: {
     duo1: 'Ranked with an Oracle player who lanes with you and secures souls.',
@@ -46,10 +46,10 @@ export const deadlock: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Teammate prices are per game, and the ranked tiers read your own rank, so an Eternus lobby costs more than an Initiate one. Unranked matches hold one price for everybody, because they do not move your rank. One teammate joins your party on your own account, and bundles take {{pct3}} off 3 games or {{pct5}} off 5. First, pick the mode, because only the ranked cards carry a rank list. Second, read the tier beside the price: Duo Plus is an Oracle+ player, Duo Pro a Phantom player and Duo Apex an Ascendant+ one from {{p_duo3_low}} per game. For example, name the lane and the two heroes you actually play in the order chat using Discord.',
-    team: '6-Stack Fill is priced per seat, so the card covers up to {{seats_six}} seats from {{p_six_low}} per game and falls when your party is only one player short. First, count the seats you actually need, because a trio short three players books 3 rather than 5. Second, name the lanes and the heroes you already cover, because a six wants farm, roam and a late-game carry rather than six duellists. The fill reads your rank like the duo tiers do, from {{p_six_low}} per game, and bundles take {{pct3}} off 3 games and {{pct5}} off 5. For example, a pair who never find a roamer book one seat using Discord.',
+      'Teammate prices are per game, and the ranked tiers read your own rank, so an Eternus lobby costs more than an Initiate one. Unranked matches hold one price for everybody, because they do not move your rank. One teammate joins your party on your own account. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. First, pick the mode, because only the ranked cards carry a rank list. Second, read the tier beside the price: Duo Plus is an Oracle+ player, Duo Pro a Phantom player and Duo Apex an Ascendant+ one from {{p_duo3_low}} per game. For example, name the lane and the two heroes you actually play in the order chat using Discord.',
+    team: '6-Stack Fill is priced per seat, so the card covers up to {{seats_six}} seats from {{p_six_low}} per game and falls when your party is only one player short. First, count the seats you actually need, because a trio short three players books 3 rather than 5. Second, name the lanes and the heroes you already cover, because a six wants farm, roam and a late-game carry rather than six duellists. The fill reads your rank like the duo tiers do, from {{p_six_low}} per game, and 5 games take {{pick5}} off. For example, a pair who never find a roamer book one seat using Discord.',
     coaching:
-      'Lessons get no bundle discount, so the {{pct3}} and {{pct5}} savings on teammate sessions do not apply. Macro and Souls costs {{p_macro}} per hour with an Ascendant coach and covers farming patterns, soul economy, item timings and rotations. Play and Learn is the exception that covers one live ranked match at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who ends every match behind on souls books Macro and Souls instead of a fourth ranked game. Finally, screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rank.',
+      'Lessons get no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings on teammate sessions do not apply. Macro and Souls costs {{p_macro}} per hour with an Ascendant coach and covers farming patterns, soul economy, item timings and rotations. Play and Learn is the exception that covers one live ranked match at {{p_learn}} rather than a clock hour. First, pick the problem rather than the format. For example, a player who ends every match behind on souls books Macro and Souls instead of a fourth ranked game. Finally, screen share runs using Discord, the coach never logs into your account, and no lesson from Duoly promises a rank.',
   },
   steps: {
     heading: 'How does booking a Deadlock teammate work?',
@@ -63,7 +63,7 @@ export const deadlock: HubPageCopy = {
   decide: {
     heading: 'Which Deadlock session fits you?',
     intro:
-      'The right Deadlock session is the one matching your goal for the evening, so pick the goal first and let the price follow. First, unranked matches hold one price at every rank, {{p_unranked}} per game, because they do not move your rank. Ranked is priced by your own rank instead, from {{p_duo2_low}} per game on Duo Pro, and a six-stack fill is priced per seat. For example, 3 games take {{pct3}} off and 5 games take {{pct5}} off, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right Deadlock session is the one matching your goal for the evening, so pick the goal first and let the price follow. First, unranked matches hold one price at every rank, {{p_unranked}} per game, because they do not move your rank. Ranked is priced by your own rank instead, from {{p_duo2_low}} per game on Duo Pro, and a six-stack fill is priced per seat. For example, a {{main}} bundle takes {{bundles}}, so a bundle beats booking 1. Voice runs using Discord.',
     picks: [
       {
         goal: 'Climbing ranked this season?',
@@ -102,14 +102,14 @@ export const deadlock: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'The teammate you queue with is a reviewed Deadlock player who applied for the game and showed a rank before taking orders. First, the tiers: Duo Plus names an Oracle+ player, Duo Pro a Phantom player and Duo Apex an Ascendant+ player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Second, orders are not auto-assigned, because a teammate picks yours up from the queue, so the person who accepts chose your request. For example, tell them your rank and your two heroes in the order chat using Discord.',
-        'What the rank buys you is map calls. A Phantom teammate knows when to run the Urn, when Mid Boss is safe and which lane to push next, and spends every quiet minute farming souls. Voice runs using Discord, so the call lands while the fight is still winnable. Your rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles cut that total by {{pct3}} on 3 games and {{pct5}} on 5. For example, you keep your heroes, your builds and your account in all 3 games.',
+        'What the rank buys you is map calls. A Phantom teammate knows when to run the Urn, when Mid Boss is safe and which lane to push next, and spends every quiet minute farming souls. Voice runs using Discord, so the call lands while the fight is still winnable. Your rank also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. For example, you keep your heroes, your builds and your account in all 3 games.',
       ],
     },
     {
       heading: 'How does a Deadlock 6-Stack Fill work?',
       paragraphs: [
         'A 6-Stack Fill is one order that hires several players at once, so a part-full party becomes a complete six. First, the fill covers up to {{seats_six}} empty seats with Phantom+ players at {{p_six}} per game at {{rank_six}}, and 5 games cost {{p_six_x5}} with {{pick5}} off. Second, every seat is priced separately, so a party short two players books 2 seats instead of 5. For example, a four who always lack a roamer book 2 seats and keep their own lanes.',
-        'Agree the heroes before the match: who takes which lane, who roams and who carries the late game. Then agree one caller, because six people calling the Patron push on voice is how a won match gets thrown. Keep everybody on one call using Discord, and nobody ever needs your Steam login. Finally, bundles still apply, {{pct3}} off 3 games and {{pct5}} off 5, read from Duoly checkout in 2026.',
+        'Agree the heroes before the match: who takes which lane, who roams and who carries the late game. Then agree one caller, because six people calling the Patron push on voice is how a won match gets thrown. Keep everybody on one call using Discord, and nobody ever needs your Steam login. Finally, bundles of {{main}} still apply, {{bundles}}, read from Duoly checkout in 2026.',
       ],
     },
     {
@@ -122,7 +122,7 @@ export const deadlock: HubPageCopy = {
     {
       heading: 'When is Deadlock coaching the better booking?',
       paragraphs: [
-        'Deadlock coaching is the better booking when the goal is a fix you can repeat rather than company for the next match. First, Macro and Souls is one hour with an Ascendant coach on farming patterns, soul economy, item timings and rotations, at {{p_macro}} per hour. Second, Play and Learn is one live ranked match with a Phantom+ coach at {{p_learn}} instead of a clock hour. Coaching carries no bundle discount, so the {{pct3}} and {{pct5}} savings apply to teammate games only.',
+        'Deadlock coaching is the better booking when the goal is a fix you can repeat rather than company for the next match. First, Macro and Souls is one hour with an Ascendant coach on farming patterns, soul economy, item timings and rotations, at {{p_macro}} per hour. Second, Play and Learn is one live ranked match with a Phantom+ coach at {{p_learn}} instead of a clock hour. Coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to teammate games only.',
         'For example, a player who ends every match behind on souls gains more from one macro hour at {{p_macro}} than from three more ranked matches. A player who wants to try a new hero gains more from unranked matches at {{p_unranked}} each, where nothing is on the line. Screen share runs using Discord, and the coach never logs into your account. Finally, Duoly reviews every Deadlock coach before any order goes live. Its closest neighbours here are [Dota 2 teammates](/games/dota-2), for the same lane and objective clock, and [Overwatch 2 teammates](/games/overwatch-2) for the hero-shooter half.',
       ],
     },
@@ -136,7 +136,7 @@ export const deadlock: HubPageCopy = {
       ],
       [
         'How much does a Deadlock teammate cost?',
-        'Duo Pro is {{p_duo2}} per game at {{rank_duo2}}, from {{p_duo2_low}} at the lowest rank. Bundles take {{pct3}} off 3 games, and 10 games cost {{p_duo2_x10}} with {{pct10}} off.',
+        'Duo Pro is {{p_duo2}} per game at {{rank_duo2}}, from {{p_duo2_low}} at the lowest rank. Bundles of {{main}} take {{bundles}}, so 10 games cost {{p_duo2_x10}}.',
       ],
       [
         'Can I ask for a specific hero or lane?',
@@ -148,7 +148,7 @@ export const deadlock: HubPageCopy = {
       ],
       [
         'Why is Deadlock priced per game?',
-        'A Deadlock match has a clear start and end, so your teammate stays for the whole game however long it runs, and bundles cut the price of several at {{pct3}} off 3.',
+        'A Deadlock match has a clear start and end, so your teammate stays for the whole game however long it runs, and bundles of {{main}} take {{bundles}}.',
       ],
       [
         'Does a teammate booking fill my whole party?',
