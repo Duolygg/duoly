@@ -23,7 +23,7 @@ export const dota2: HubPageCopy = {
   ],
   format: {
     heading: 'What can you book for Dota 2 on Duoly?',
-    text: 'A Dota 2 booking on Duoly is one of three things: one teammate who joins your party on your own account, a Ranked 5-Stack fill for the seats you are missing, or coaching by the hour. The teammate tiers are Duo Plus with an Ancient+ player who lanes with you, Duo Pro with a Divine player who calls smokes and Roshan, and Duo Apex with an Immortal player from {{p_duo3_low}} per game. Ranked follows your own medal, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while Turbo stays {{p_turbo}} and unranked All Pick {{p_unranked}} at every medal. The fill: Ranked 5-Stack covers up to {{seats_party5}} seats from {{p_party5_low}} per game. Lessons cost {{p_replay}} per hour on your own replay. Bundles of {{main}} cut the total, {{bundles}}. Name your position in the order chat using Discord so your teammate drafts around it.',
+    text: 'A Dota 2 booking on Duoly is one of three things: one teammate who joins your party on your own account, a Ranked 5-Stack fill for the seats you are missing, or coaching by the hour. The teammate tiers are Duo Plus with an Ancient+ player who lanes with you, Duo Pro with a Divine player who calls smokes and Roshan, and Duo Apex with an Immortal player from {{p_duo3_low}} per game. Ranked follows your own medal, from {{p_duo2_low}} to {{p_duo2_high}} per game on Duo Pro, while Turbo stays {{p_turbo}} and unranked All Pick {{p_unranked}} at every medal. The fill: Ranked 5-Stack covers up to {{seats_party5}} seats from {{p_party5_low}} per game. For example, a trio missing two players books two seats. Lessons cost {{p_replay}} per hour on your own replay. Bundles of {{main}} cut the total, {{bundles}}. Name your position in the order chat using Discord so your teammate drafts around it.',
   },
   services: {
     duo1: 'Ranked with an Ancient player who lanes with you, wards and calls when to group.',
@@ -57,7 +57,7 @@ export const dota2: HubPageCopy = {
     heading: 'How does booking a Dota 2 teammate work?',
     items: [
       'Pick a service and the number of games. Duo Pro is the ranked tier with a Divine teammate, and 3 games at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five games take {{pct5}} off.',
-      'Add your region, medal, position and language at checkout. Name Europe West, {{rank_duo2}} and position 4, so your teammate reads the real request before accepting the order.',
+      'Add your region, medal, position and language at checkout. For example, a {{rank_duo2}} player on Europe West who plays position 4 can ask for a carry partner who farms the lane while they pull and ward.',
       'Meet your teammate in the order chat using Discord. Agree the lane and the draft, then add each other on Steam and queue together. A single Duo Pro game costs {{p_duo2}} at the same medal, and Turbo stays {{p_turbo}}.',
     ],
     note: 'Duoly reviews every Dota 2 teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
@@ -104,7 +104,7 @@ export const dota2: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'Your teammate is a reviewed Dota 2 player who showed a medal before taking orders. Duo Plus names an Ancient+ player, Duo Pro a Divine player and Duo Apex an Immortal player from {{p_duo3_low}} per game. A teammate chooses your request from the queue. Tell them your medal and your two best heroes in the order chat using Discord before the draft.',
-        'A Divine teammate calls smokes, camp stacks and Roshan attempts. You can discuss the next objective on voice while playing. Your medal also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. You keep your heroes, your decisions and your MMR in all 3 games.',
+        'A Divine teammate calls smokes, camp stacks and Roshan attempts. For example, a support can call a smoke while the carry finishes an item, then agree which lane to push before the party leaves vision. Your medal also sets the price: Duo Pro runs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}, because higher lobbies need stronger teammates. Bundles of {{main}} cut that total: {{bundles}}. You keep your heroes, your decisions and your MMR in all 3 games.',
       ],
     },
     {

@@ -261,7 +261,7 @@ export const intentPages: IntentPage[] = [
     ],
     steps: [
       'Choose Ranked, Standard or Quick Battle and a game count. Standard and Quick Battle stays {{puQuick}} per game at every rank. Duo Pro follows your own rank: an Expert player in Europe pays {{puPro}} for one game.',
-      'Share your rank, region, language and preferred lane. Ask for a complementary role, such as a Defender alongside your Attacker. A bundle of 3 Duo Pro games for Expert in Europe costs {{puPro3}} with {{pct3}} off.',
+      'Share your rank, region, language and preferred lane. For example, an Attacker can ask for a Defender who makes space for the lane to farm. A bundle of 3 Duo Pro games for Expert in Europe costs {{puPro3}} with {{pct3}} off. Leave time for lobby invites and a short discussion between games.',
       'Meet in the order chat, exchange Trainer details and agree on voice using Discord. A teammate from Duoly joins on a separate account, so keep passwords private and send the game invite yourself.',
     ],
     prepare: [
@@ -1048,7 +1048,7 @@ export const intentPages: IntentPage[] = [
         heading: 'Doubles, casual 3v3 or the extra modes: what to book?',
         paragraphs: [
           'Ranked Doubles is the 2v2 playlist, and Doubles is the honest answer for playing Rocket League as a pair, because a booked partner fills the only other seat. Casual 3v3 is the no-stakes version at {{rlCasual}} per hour, which suits a first session with someone new or an evening of mechanics with no rank attached. Pick the playlist before the hour starts, because a Doubles rotation and a Standard rotation are different habits.',
-          'The extra modes are Rumble, Hoops, Snow Day, Dropshot and Heatseeker, at {{rlExtra}} per hour, and an hour there is pure fun rather than practice. Heatseeker gives the most touches per minute, so a new pair gets comfortable on voice fastest there. Both casual options hold one price at every rank, and 5 hours take {{pick5}} off, while Doubles is priced by the rank you sit at. For example, book one casual hour and one Doubles hour and keep the same partner across both, agreed using Discord.',
+          'The extra modes are Rumble, Hoops, Snow Day, Dropshot and Heatseeker, at {{rlExtra}} per hour, and an hour there is pure fun rather than practice. Heatseeker gives the most touches per minute, so a new pair gets comfortable on voice fastest there. Both casual options hold one price at every rank, and 5 hours take {{pick5}} off, while Doubles is priced by the rank you sit at. Book one casual hour and one Doubles hour and keep the same partner across both, agreed using Discord.',
         ],
       },
       {
@@ -1155,7 +1155,7 @@ export const intentPages: IntentPage[] = [
         heading: 'Mythic+, rated arena or Delves: what should you book?',
         paragraphs: [
           'Mythic+ is the timed 5-player dungeon mode, and a key either times or it does not, so Mythic+ rewards a partner who plans the route before the first pull. Rated arena is the 2v2 and 3v3 PvP ladder with its own rating and its own titles, from Combatant up through Duelist and Elite. Pick which rating you actually want to move, because a Mythic+ score and an arena rating are separate numbers.',
-          'Delves are the smaller solo or small-group content, at {{wowDelves}} per hour, which makes a Delves hour the relaxed way to clear a weekly list with company. A leveling hour is {{wowLevel}} per hour with a veteran who explains your class on the way up. Both hold one price at every score, with {{pct3}} off 3 hours and {{pct5}} off 5. For example, book a Delves hour first when you want to learn a new spec without a timer, then move to keys, agreed using Discord.',
+          'Delves are the smaller solo or small-group content, at {{wowDelves}} per hour, which makes a Delves hour the relaxed way to clear a weekly list with company. A leveling hour is {{wowLevel}} per hour with a veteran who explains your class on the way up. Both hold one price at every score, with {{pct3}} off 3 hours and {{pct5}} off 5. Book a Delves hour first when you want to learn a new spec without a timer, then move to keys, agreed using Discord.',
         ],
       },
       {
@@ -1360,7 +1360,7 @@ export const intentPages: IntentPage[] = [
         heading: 'Learn the Maps or Duo Pro: which hour should you book?',
         paragraphs: [
           'Learn the Maps is the relaxed ARC Raiders booking at {{arcLearn}} per hour, and the hour goes on routes, loot spots and extraction points rather than on fights. Book that hour when the map itself is the problem: a player who cannot name an exit loses kit to the timer rather than to other raiders. Duo Pro is the Veteran hour at {{arcPro}}, which suits a player who already knows the map and keeps losing the fight at the end.',
-          'Duo Apex at {{arcTop}} per hour is the elite tier, for high-risk maps and the big extractions where several squads want the same exit. All four services hold one flat price for every player, because ARC Raiders has no rank on Duoly, and 5 hours of any of them take {{pick5}} off in November 2026. For example, book one Learn the Maps hour and one Duo Pro hour with the same raider, so the second hour starts with a shared route, agreed using Discord.',
+          'Duo Apex at {{arcTop}} per hour is the elite tier, for high-risk maps and the big extractions where several squads want the same exit. All four services hold one flat price for every player, because ARC Raiders has no rank on Duoly, and 5 hours of any of them take {{pick5}} off in November 2026. Book one Learn the Maps hour and one Duo Pro hour with the same raider, so the second hour starts with a shared route, agreed using Discord.',
         ],
       },
       {

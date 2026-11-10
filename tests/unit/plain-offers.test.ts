@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { GAME_HUBS } from '../../src/content/game-hubs';
 import { gameBySlug } from '../../src/site/games';
 import { seoOffers } from '../../src/server/seo/offers';
-import { hubHeroOffer, mainServiceId } from '../../src/server/seo/hero-offer';
+import {
+  heroOffer,
+  hubHeroOffer,
+  mainServiceId,
+} from '../../src/server/seo/hero-offer';
 import {
   priceNote,
   quantityAnswer,
@@ -23,7 +27,7 @@ describe('plain offer copy keeps the service and engine price together', () => {
       );
       expect(offer.price).toContain(cheapest.display);
       expect(offer.tier).toBe(cheapest.tier);
-      expect(offer.facts[0].toLowerCase()).not.toBe(offer.tier.toLowerCase());
+      expect(offer.facts[0]!.toLowerCase()).not.toBe(offer.tier.toLowerCase());
       expect(offer.facts[0]).not.toMatch(/[–—]| & /);
       expect(quantityAnswer(offers)).toContain(cheapest.title);
       expect(quantityAnswer(offers)).toContain('services without bundles');
@@ -33,6 +37,11 @@ describe('plain offer copy keeps the service and engine price together', () => {
       );
     });
   }
+  it('a truncated coaching checklist line has no dangling punctuation', () => {
+    const offers = seoOffers('tft', 'training', context);
+    const offer = heroOffer('tft', 'econ', offers, { coach: true })!;
+    expect(offer.facts[0]).not.toMatch(/[,;:]$/);
+  });
   it('coaching describes its own price rules without advertising teammate savings', () => {
     const offers = seoOffers('val', 'training', context);
     expect(priceNote(offers, true)).toContain(

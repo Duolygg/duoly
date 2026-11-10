@@ -60,7 +60,7 @@ export const worldOfWarcraft: HubPageCopy = {
     heading: 'How does booking a WoW teammate work?',
     items: [
       'Pick a service and the number of hours. Mythic+ Pro is the high key tier with a 3,000+ rated teammate, and 3 hours at {{rank_duo2}} cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
-      'Add your region, rating, role and language at checkout. Name Europe, {{rank_duo2}} and Healer, so your teammate reads the real request before accepting the order.',
+      'Add your region, rating, role and language at checkout. For example, a healer in Europe at {{rank_duo2}} can ask for a tank who plans the route, then agree which dungeon to run in the order chat.',
       'Meet your teammate in the order chat using Discord. Add each other by BattleTag and agree the keys you want to run. A single hour of Mythic+ Pro costs {{p_duo2}} at the same rating, and Delves stay {{p_delves}}.',
     ],
     note: 'Duoly reviews every World of Warcraft teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',

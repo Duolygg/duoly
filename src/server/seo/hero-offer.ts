@@ -71,7 +71,9 @@ const fit = (clause: string) => {
   const cuts = [...trimmed.matchAll(/[,;]| and | with | for | plus /g)]
     .map((match) => match.index!)
     .filter((index) => index <= COVER_LIMIT);
-  return cuts.length ? trimmed.slice(0, cuts.at(-1)!) : trimmed;
+  return cuts.length
+    ? trimmed.slice(0, cuts.at(-1)!).replace(/[,;:.]+$/, '')
+    : trimmed;
 };
 
 /**
