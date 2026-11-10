@@ -237,7 +237,7 @@ export const lessons: Record<string, Lesson> = {
       'Meet your Master+ coach in the order chat and start on Discord.',
     ],
     booking:
-      'Book Comp and Econ Review at {amount:econ} per hour. Set up the review in order: 1) send a full recording, 2) name the set and patch, then 3) mark two spending timestamps. Your Master+ coach from Duoly needs the shop as it looked before the gold was spent. For example, a stage 3 roll-down with pairs on the bench shows the upgrades you could buy against the level you could save for. Note the health, gold and next opponent at each timestamp, then test screen share using Discord before the call. Keep your login private: the review needs a recording, never your password.',
+      'Book Comp and Econ Review at {amount:econ} per hour. Set up the review in order: 1) send a full recording, 2) name the set and patch, then 3) mark two spending timestamps. Your Master+ coach from Duoly needs the shop as it looked before the gold was spent. For example, a stage 3 roll-down with pairs on the bench shows the upgrades you could buy against the level you could save for. Note the health, gold and next opponent at each timestamp, then agree a start time in the order chat and test screen share using Discord before the call. Keep your login private: the review needs a recording, never your password.',
     sections: [
       {
         heading: 'How should you connect gold to board strength?',
