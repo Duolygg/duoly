@@ -143,9 +143,9 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Two Fortnite formats are open from Duoly in 2026, and both come with an Unreal coach. Play and Learn is a live hour of Ranked with the coach talking through cover, zone rotations and which fights are worth taking. Build and Edit Course is an hour in Creative on piece control, edits and box fights.',
     detail:
-      'Both are hours rather than matches, because a battle royale game has no fixed length. A booked hour of Play and Learn at {price:learn} usually covers 3 or 4 games, while the Creative hour runs as many repetitions as you want. A fast edit still exposes your whole character when the wall opens from the wrong position, which is what the Build and Edit Course drills.',
+      'Both are hours, because a battle royale game has no fixed length. An hour of Play and Learn at {price:learn} covers 3 or 4 games, while the Creative hour runs as many repeats as you want. For example, a fast edit still exposes your whole character when the wall opens from the wrong position, which the Build and Edit Course drills.',
     choice:
-      'So pick by the cause rather than the format: fight selection and rotations go to Play and Learn, and mechanics go to the Build and Edit Course. Both cost {amount:build}, and bundles never apply to coaching. Say whether you play Builds or Zero Build and whether you use controller or keyboard, using Discord.',
+      'So pick by the cause: fight selection and rotations go to Play and Learn, and mechanics go to the Build and Edit Course. Both cost {amount:build}, and bundles never apply to coaching. Say whether you play Builds or Zero Build, using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -261,7 +261,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
   'counter-strike-2': {
     heading: 'Which CS2 coaching format should you book?',
     answer:
-      'All three CS2 formats from Duoly include a FACEIT Level 10 coach. Play and Learn covers one live match. Demo Review is an hour on your recording. Utility and Lineups is an hour of smokes, flashes and molotovs for your map pool.',
+      'All three CS2 formats are open from Duoly in 2026, and each includes a FACEIT Level 10 coach. Play and Learn covers one live match. Demo Review is an hour on your recording. Utility and Lineups is an hour of smokes, flashes and molotovs for your map pool.',
     detail:
       'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a 13-3 and a double-overtime cost the same. The two hourly lessons buy the rewinds and the practice server a live round cannot. For example, a player who keeps losing the same retake gets more from an hour of lineups than from another Premier queue.',
     choice:
@@ -293,9 +293,9 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Two Overwatch 2 formats are open from Duoly in 2026, and both come with a Grandmaster+ coach. Play and Learn is one live Competitive match with the coach talking through engages, cooldowns and resets. Role Coaching is an hour on tank, damage or support: positioning, cooldown use and when to take space.',
     detail:
-      'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a fast two-round push and a full five-round grind cost the same. Role Coaching is a clock hour, which buys the pauses a live match cannot. A support who dies first in every fight and a tank who engages too early have very different problems, and Role Coaching takes one of them per hour.',
+      'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a fast two-round push and a full five-round grind cost the same. Role Coaching is an hour, which buys the pauses a live match cannot. For example, a support who dies first in every fight and a tank who engages too early have very different problems, and Role Coaching takes one per hour.',
     choice:
-      'So pick by the problem rather than the format: team-fight decisions go to Play and Learn, and one role goes to Role Coaching. Both cost {amount:role}, and bundles never apply to coaching. Send your platform, region, role and BattleTag using Discord, so the hour starts on the right questions.',
+      'So pick by the problem: team-fight decisions go to Play and Learn, and one role goes to Role Coaching. Both cost {amount:role}, and bundles never apply to coaching. Send your role and your BattleTag using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -323,9 +323,9 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Three Siege formats are open from Duoly in 2026, and all three come with a Champion coach. Play and Learn is one live Ranked match, the Operator Lab is an hour on one attacker and one defender, and Map and Callouts is an hour on your weakest map, room by room.',
     detail:
-      'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a 4-0 and a 7-6 overtime cost the same. The two hourly lessons buy the custom game and the repeats a live round cannot. For example, a player who keeps losing the same site gets more from an hour on that map than from another Ranked queue.',
+      'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a 4-0 and a 7-6 overtime cost the same. The hourly lessons buy a custom game. For example, a player who keeps losing the same site gets more from an hour on that map than from another Ranked queue.',
     choice:
-      'So pick by the problem rather than the format: live round reads go to Play and Learn, gadgets and timings go to the Operator Lab, and one map goes to Map and Callouts. Every format costs {amount:ops}, and bundles never apply to coaching. Send your platform, your operator pool and the map you keep losing using Discord.',
+      'So pick by the problem: live round reads go to Play and Learn, gadgets and timings go to the Operator Lab, and one map goes to Map and Callouts. Every format costs {amount:ops}, and bundles never apply to coaching. Send your operator pool and the map you keep losing using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -354,9 +354,9 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Two Call of Duty formats are open from Duoly in 2026, and both come with an Iridescent coach. Play and Learn is a live hour where the coach drops with you and talks through rotations, plates and buy station timing. Loadouts and Movement is an hour on builds, slide cancels and mantles, drilled in private matches.',
     detail:
-      'Both are clock hours rather than matches, because a battle royale game has no fixed length. A booked hour of Play and Learn at {price:learn} usually covers about 2 full Warzone games including queue time, while the loadout hour runs in private matches where a build can be changed and tested in a minute. For example, winning most of your gunfights and still finishing 20th is a rotation question rather than an aim question.',
+      'Both are hours, because a battle royale game has no fixed length. An hour of Play and Learn at {price:learn} covers about 2 full Warzone games including queue time. The loadout hour runs in private matches, where a build can be tested in a minute. For example, winning most of your gunfights and still finishing 20th is a rotation question rather than an aim question.',
     choice:
-      'So pick by the cause rather than the format: rotations and fight selection go to Play and Learn, and your build and your movement go to Loadouts and Movement. Both cost {amount:loadout}, and bundles never apply to coaching. Say whether the hour is for Warzone or multiplayer Ranked Play, and which input you play on, using Discord.',
+      'So pick by the cause: rotations and fight selection go to Play and Learn, and your build and your movement go to Loadouts and Movement. Both cost {amount:loadout}, and bundles never apply to coaching. Say whether the hour is for Warzone or Ranked Play, using Discord.',
     rows: [
       {
         label: 'Play and Learn',
@@ -474,9 +474,9 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Two Deadlock formats are open from Duoly in 2026. Play and Learn is one live ranked match with a Phantom+ coach who calls lane assignments, farm patterns and the Urn and Mid Boss timings. Macro and Souls is an hour with an Ascendant coach on soul leads, item timings and when a lane should rotate.',
     detail:
-      'The unit is the real difference. Play and Learn is sold per game at {amount:learn}, so a 25-minute win and a 50-minute slog cost the same. Macro and Souls is a clock hour, which buys the pauses and rewinds a live match cannot. A player with a healthy soul count who still loses teamfights usually has an item timing question, which is the Macro and Souls hour.',
+      'The unit is the real difference. Play and Learn is sold per game at {amount:learn}, so a 25-minute win and a 50-minute slog cost the same. Macro and Souls is an hour, which buys the rewinds a live match cannot. For example, a player with a healthy soul count who still loses teamfights has an item timing question, which is the Macro and Souls hour.',
     choice:
-      'So pick by the problem rather than the format: live calls go to Play and Learn, and a pattern across a whole match goes to Macro and Souls. The hour costs {amount:macro}, and bundles never apply to coaching. Name the heroes you play and the lane you usually take, using Discord.',
+      'So pick by the problem: live calls go to Play and Learn, and a pattern across a whole match goes to Macro and Souls. The hour costs {amount:macro}, and bundles never apply to coaching. Name the heroes you play, using Discord.',
     rows: [
       {
         label: 'Play and Learn',
