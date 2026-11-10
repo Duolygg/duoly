@@ -329,9 +329,12 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     sells: 'Teammate sessions and coaching hours at published prices',
     priceModel: 'Platform sets one published price per service and rank',
     sources: [
-      { title: 'Duoly price list', url: 'https://duoly.gg/pricing' },
       {
-        title: 'Duoly fees and refunds',
+        title: 'Duoly price list, every game and service',
+        url: 'https://duoly.gg/pricing',
+      },
+      {
+        title: 'Duoly fees, discounts and refund rules',
         url: 'https://duoly.gg/fees-and-refunds',
       },
     ],
@@ -344,8 +347,14 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     sells: 'Paid gaming companions, coaching and chat',
     priceModel: 'Providers set a price per game or per time block in Buff',
     sources: [
-      { title: 'E-Pal Valorant companions', url: EPAL_VALORANT },
-      { title: 'E-Pal wallet help page', url: EPAL_WALLET },
+      {
+        title: 'E-Pal Valorant companion roster with per-game prices',
+        url: EPAL_VALORANT,
+      },
+      {
+        title: 'E-Pal wallet help page with the Buff rate and the fees',
+        url: EPAL_WALLET,
+      },
     ],
     fees: 'The wallet help page states 1 Buff is USD 1.00, a 10% platform service fee on every top-up, a 3% to 4.5% channel fee on the website and 15% to 30% in the app.',
     refunds:
@@ -355,7 +364,12 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     name: 'Eloboost24',
     sells: 'Coaching, sessions with stronger players and boosting',
     priceModel: 'Coaches set the price on their own profile',
-    sources: [{ title: 'Eloboost24 coaching directory', url: ELOBOOST }],
+    sources: [
+      {
+        title: 'Eloboost24 coaching directory, which answered HTTP 403',
+        url: ELOBOOST,
+      },
+    ],
     fees: 'Not read: the page did not answer.',
     refunds: 'Not read: the page did not answer.',
     blocked:
@@ -366,8 +380,14 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     sells: 'A general freelance marketplace with gaming gigs',
     priceModel: 'Sellers price each gig and offer custom quotes',
     sources: [
-      { title: 'Fiverr game coaching category', url: FIVERR_CATEGORY },
-      { title: 'Cited Marvel Rivals teammate gig', url: FIVERR_GIG },
+      {
+        title: 'Fiverr game coaching category listing',
+        url: FIVERR_CATEGORY,
+      },
+      {
+        title: 'Fiverr Marvel Rivals teammate gig with its offer markup',
+        url: FIVERR_GIG,
+      },
     ],
     fees: 'The gig page states service fees are included in the displayed price and that taxes may be added at checkout.',
     refunds:
@@ -377,7 +397,12 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     name: 'Gamer Sensei',
     sells: 'Skills assessment, individual coaching and team training',
     priceModel: 'Platform publishes three fixed packages',
-    sources: [{ title: 'Corsair Gamer Sensei page', url: SENSEI }],
+    sources: [
+      {
+        title: 'Corsair Gamer Sensei page with its three coaching packages',
+        url: SENSEI,
+      },
+    ],
     fees: 'No buyer fee was stated on the page.',
     refunds: 'No refund term was stated on the page.',
   },
@@ -385,7 +410,12 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     name: 'GamerLink',
     sells: 'Free looking-for-group posts and group chat',
     priceModel: 'Nothing to buy: the app is free to download',
-    sources: [{ title: 'GamerLink homepage', url: GAMERLINK }],
+    sources: [
+      {
+        title: 'GamerLink homepage, which prices the app at nothing',
+        url: GAMERLINK,
+      },
+    ],
     fees: 'None stated. The homepage says to download the app for free.',
     refunds: 'Not applicable to a free app.',
   },
@@ -393,7 +423,12 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     name: 'GameTree',
     sells: 'Free looking-for-group matching and a Discord bot',
     priceModel: 'Nothing to buy: the core service is free',
-    sources: [{ title: 'GameTree homepage', url: GAMETREE }],
+    sources: [
+      {
+        title: 'GameTree homepage, which calls the service free',
+        url: GAMETREE,
+      },
+    ],
     fees: 'None stated. The homepage says GameTree is free and that premium options will exist, without naming a price.',
     refunds: 'Not applicable to a free service.',
   },
@@ -401,7 +436,12 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     name: 'KAKI Gaming',
     sells: 'Paid gaming companions and coaching in Malaysia and Singapore',
     priceModel: 'Providers set their own rates in KAKI, the wallet unit',
-    sources: [{ title: 'KAKI Gaming pricing page', url: KAKI_PRICING }],
+    sources: [
+      {
+        title: 'KAKI Gaming pricing page with its platform fee',
+        url: KAKI_PRICING,
+      },
+    ],
     fees: 'The pricing page states a 0% platform fee on regular orders and a review period before a payout. It publishes no KAKI to cash rate.',
     refunds:
       'The page describes locked funds released after a session rather than a refund window.',
@@ -411,9 +451,18 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     sells: 'Coaching sessions, replay reviews, guides and events',
     priceModel: 'Creators price each session format',
     sources: [
-      { title: 'Metafy Overwatch 2 sessions', url: METAFY_SESSIONS },
-      { title: 'Metafy buyer fee breakdown', url: METAFY_FEES },
-      { title: 'Metafy creator plans', url: METAFY_PRO },
+      {
+        title: 'Metafy Overwatch 2 session list with creator prices',
+        url: METAFY_SESSIONS,
+      },
+      {
+        title: 'Metafy help centre buyer fee breakdown',
+        url: METAFY_FEES,
+      },
+      {
+        title: 'Metafy creator plans and revenue share',
+        url: METAFY_PRO,
+      },
     ],
     fees: 'The help centre states a 3.7% platform fee plus USD 1.79 per transaction, capped at USD 20 or 30% of the total, and a 2.9% processing fee plus USD 0.40, unless a partner covers them.',
     refunds:
@@ -423,7 +472,12 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     name: 'ProGuides',
     sells: 'Courses and a legacy coaching brand',
     priceModel: 'Unknown: no current price was readable',
-    sources: [{ title: 'ProGuides League of Legends page', url: PROGUIDES }],
+    sources: [
+      {
+        title: 'ProGuides League of Legends page, which answered HTTP 403',
+        url: PROGUIDES,
+      },
+    ],
     fees: 'Not read: the page did not answer.',
     refunds: 'Not read: the page did not answer.',
     blocked:
@@ -435,8 +489,14 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     priceModel:
       'Coaches set most prices; the platform fixes one Instant session price',
     sources: [
-      { title: 'QueueUp documentation', url: QUEUEUP_DOCS },
-      { title: 'QueueUp Valorant coaching page', url: QUEUEUP_VALORANT },
+      {
+        title: 'QueueUp documentation with the Instant session price',
+        url: QUEUEUP_DOCS,
+      },
+      {
+        title: 'QueueUp Valorant coaching page and coin rate',
+        url: QUEUEUP_VALORANT,
+      },
     ],
     fees: 'Sessions are paid in QueueCoins at 1 QC for USD 1, and checkout can charge the shortfall without buying coins first. No separate buyer fee was stated.',
     refunds:
@@ -447,8 +507,14 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     sells: 'Gaming companions and coaching',
     priceModel: 'Companions set their own price per session',
     sources: [
-      { title: 'Silhouette Counter-Strike 2 coaching', url: SILHOUETTE_CS2 },
-      { title: 'Silhouette Valorant companions', url: SILHOUETTE_VALORANT },
+      {
+        title: 'Silhouette Counter-Strike 2 coaching page and revenue split',
+        url: SILHOUETTE_CS2,
+      },
+      {
+        title: 'Silhouette Valorant companion roster with no prices shown',
+        url: SILHOUETTE_VALORANT,
+      },
     ],
     fees: 'The coaching page states companions keep 83% of a completed session and pay nothing to list. Browsing is free.',
     refunds: 'No refund window was stated on either page.',
@@ -460,8 +526,14 @@ export const PLATFORMS: readonly SurveyPlatform[] = [
     sells: 'Esports coaching and replay review',
     priceModel: 'Coaches set an hourly rate shown on every card',
     sources: [
-      { title: 'WeCoach Valorant coaching', url: WECOACH_VALORANT },
-      { title: 'WeCoach League of Legends coaching', url: WECOACH_LEAGUE },
+      {
+        title: 'WeCoach Valorant coaching roster with hourly rates',
+        url: WECOACH_VALORANT,
+      },
+      {
+        title: 'WeCoach League of Legends roster with hourly rates',
+        url: WECOACH_LEAGUE,
+      },
     ],
     fees: 'No buyer fee or platform commission was stated on either page.',
     refunds:

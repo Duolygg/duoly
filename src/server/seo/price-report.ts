@@ -286,6 +286,31 @@ export const HOURLY_BANDS: readonly {
   });
 })();
 
+/**
+ * The share of hourly rates that came from one platform, as a percentage.
+ *
+ * The limitations section states this rather than leaving a reader to add the
+ * row counts up: two rosters on one site carry most of the hourly sample,
+ * which is the first thing to know before quoting the median.
+ */
+export const HOURLY_TOP_SOURCE = (() => {
+  const rows = of('coaching', 'hour');
+  const byPlatform = [...new Set(rows.map((row) => row.platform))].map(
+    (platform) => ({
+      platform,
+      count: rows.filter((row) => row.platform === platform).length,
+    }),
+  );
+  const top = byPlatform.reduce((high, entry) =>
+    entry.count > high.count ? entry : high,
+  );
+  return {
+    ...top,
+    percent: Math.round((top.count / rows.length) * 100),
+    total: rows.length,
+  };
+})();
+
 /** Platforms that published no price on the pages the survey read. */
 export const NO_PRICE_PLATFORMS = PLATFORMS.filter(
   (platform) =>

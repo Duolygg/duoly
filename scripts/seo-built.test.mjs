@@ -444,6 +444,120 @@ for (const slug of [
   });
 }
 
+// The 2026 price survey: original research with a dataset beside it. The
+// checks are the ones that make it citable: dated Article and Dataset markup, a
+// CSV the Dataset actually points at, the survey date on the page, FAQ markup
+// equal to the visible questions, and editorial inbound links from the five
+// pages a reader would arrive from.
+test('the price report publishes its dataset, its sources and its inbound links', async () => {
+  const path = '/reports/gaming-coaching-and-teammate-prices-2026';
+  const page = pages[path];
+  assert(page, `crawl discovered ${path}`);
+  const html = readFileSync(
+    `.vercel/seo-audit/${path.slice(1).replaceAll('/', '__')}.html`,
+    'utf8',
+  );
+  const article = page.schemas.find((s) => s['@type'] === 'Article');
+  assert.equal(article.author['@type'], 'Organization');
+  assert.equal(article.datePublished, '2026-11-10');
+  assert.equal(article.dateModified, '2026-11-10');
+  const dataset = page.schemas.find((s) => s['@type'] === 'Dataset');
+  assert(dataset, 'Dataset markup');
+  assert.equal(dataset.isAccessibleForFree, true);
+  assert.equal(dataset.temporalCoverage, '2026-11-10');
+  const download = dataset.distribution[0];
+  assert.equal(download.encodingFormat, 'text/csv');
+  assert.equal(download.contentUrl, `https://duoly.gg${path}.csv`);
+  assert(
+    dataset.variableMeasured.includes('source_url') &&
+      dataset.variableMeasured.includes('checked_date'),
+    'every row names its source and date',
+  );
+  // The download the markup promises, served as CSV with its source column.
+  const csv = await fetch(`${base}${path}.csv`);
+  assert.equal(csv.status, 200);
+  assert.match(csv.headers.get('content-type'), /text\/csv/);
+  const body = await csv.text();
+  const header = body.split('\n').find((line) => line.startsWith('platform,'));
+  assert.equal(
+    header,
+    'platform,game,service,service_type,billing_unit,currency,amount,amount_eur,source_url,checked_date,note',
+  );
+  assert(
+    body.split('\n').filter((line) => line.startsWith('WeCoach,')).length >= 60,
+    'the hourly rates are in the download',
+  );
+  // The survey date, the recorded rate and the median, all in the visible copy.
+  assert.match(html, /10 November 2026/, 'the survey date');
+  assert.match(html, /1\.1193/, 'the recorded ECB rate');
+  assert.match(html, /USD 25\.00/, 'the median hourly rate');
+  assert.match(html, /€12\.99/, 'the Duoly coaching hour from the engine');
+  assert.doesNotMatch(html, /\{\{\w+\}\}/, 'price tokens filled');
+  assert.doesNotMatch(html, /[–—]/, 'no em or en dashes');
+  // One table row per platform, each with its sources listed underneath.
+  assert(
+    (html.match(/<tbody>[\s\S]*?<\/tbody>/)[0].match(/<tr>/g) || []).length ===
+      13,
+    'twelve platforms plus Duoly',
+  );
+  for (const host of [
+    'wecoach.gg',
+    'metafy.gg',
+    'queueup.gg',
+    'epal.gg',
+    'corsair.com',
+    'fiverr.com',
+    'silhouette.gg',
+    'kakigaming.com',
+    'gametree.me',
+    'gamerlinkapp.com',
+    'eloboost24.eu',
+    'proguides.com',
+    'ecb.europa.eu',
+  ])
+    assert(html.includes(host), `${path}: source link for ${host}`);
+  const faq = page.schemas.find((s) => s['@type'] === 'FAQPage');
+  assert(faq && faq.mainEntity.length >= 5, 'FAQPage questions');
+  for (const question of faq.mainEntity) {
+    assert(html.includes(question.name), `${path}: visible ${question.name}`);
+    assert(
+      html.includes(question.acceptedAnswer.text),
+      `${path}: visible answer for ${question.name}`,
+    );
+  }
+  assert.match(html, /data-cta="closing"/, 'a booking link in the closing');
+  assert(page.bookingLinks.length >= 2, 'bookable offers');
+  // Editorial inbound links, which is what the four-link gate is about.
+  for (const source of [
+    '/pricing',
+    '/coaching',
+    '/compare/metafy',
+    '/compare/queueup',
+    '/blog',
+  ])
+    link(source, path);
+  assert(
+    page.contextualInbound.length >= 4,
+    `${path}: ${page.contextualInbound.length} contextual inbound`,
+  );
+});
+
+test('llms-full.txt is served and carries the catalog price date', async () => {
+  const response = await fetch(`${base}/llms-full.txt`);
+  assert.equal(response.status, 200);
+  const text = await response.text();
+  assert.match(text, /^# Duoly: full text/);
+  assert.match(text, /9 November 2026/, 'the catalog price date');
+  assert.match(text, /## The complete price list/);
+  assert(text.includes('€12.99'), 'the coaching hour from the engine');
+  assert(
+    (await (await fetch(`${base}/llms.txt`)).text()).includes(
+      'https://duoly.gg/llms-full.txt',
+    ),
+    'llms.txt links the full text',
+  );
+});
+
 test('sitemap has exactly the indexable self-canonical 200 URLs in both directions', () => {
   assert.deepEqual(
     sitemapEntries.map((e) => new URL(e.url).pathname).sort(),
@@ -555,6 +669,31 @@ for (const [game, slug, id, serviceId] of intentRoutes) {
       );
     }
     assert((html.match(/<details/g) || []).length >= 5, 'visible FAQs');
+    // Every teammate page, which includes all ten /lfg pages, publishes its
+    // FAQ as FAQPage markup equal to the visible questions and answers.
+    const faq = page.schemas.find((schema) => schema['@type'] === 'FAQPage');
+    assert(faq && faq.mainEntity.length >= 5, `${path}: FAQPage questions`);
+    // Every marked-up question is visible. The reverse is not asserted,
+    // because the free-versus-paid block uses <details> of its own and the
+    // FAQPage node covers the FAQ section only.
+    assert(
+      (html.match(/<details/g) || []).length >= faq.mainEntity.length,
+      `${path}: fewer visible FAQs than FAQPage questions`,
+    );
+    for (const question of faq.mainEntity) {
+      assert(html.includes(question.name), `${path}: visible ${question.name}`);
+      assert(
+        html.includes(question.acceptedAnswer.text),
+        `${path}: visible answer for ${question.name}`,
+      );
+    }
+    // An LFG page answers the question its URL promises: where the free routes
+    // are, and what paying instead costs.
+    if (slug === 'lfg') {
+      const questions = faq.mainEntity.map((entry) => entry.name).join(' ');
+      assert.match(questions, /free/i, `${path}: a free-route question`);
+      assert.match(questions, /cost|pay/i, `${path}: a price question`);
+    }
     assert.match(
       html,
       new RegExp(`game=${id}(?:&amp;|&)service=${serviceId}#modes-h`),

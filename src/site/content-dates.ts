@@ -123,13 +123,6 @@ export const CONTENT_UPDATED: Record<string, string> = {
   // The price survey was read and written on 10 November 2026, which is also
   // the date the report publishes as its own survey date.
   '/reports/gaming-coaching-and-teammate-prices-2026': '2026-11-10',
-  // The five LFG pages whose FAQ gained the two free-versus-paid questions the
-  // guide-backed teammate pages already carried, on 10 November 2026.
-  '/games/counter-strike-2/lfg': '2026-11-10',
-  '/games/rocket-league/lfg': '2026-11-10',
-  '/games/world-of-warcraft/lfg': '2026-11-10',
-  '/games/arc-raiders/lfg': '2026-11-10',
-  '/games/deadlock/lfg': '2026-11-10',
   // The five pages that gained a paragraph linking the survey on the same day.
   '/pricing': '2026-11-10',
   '/coaching': '2026-11-10',
@@ -137,6 +130,13 @@ export const CONTENT_UPDATED: Record<string, string> = {
   '/compare/queueup': '2026-11-10',
   '/blog': '2026-11-10',
 };
+// All fifteen teammate pages share src/content/intent-pages.ts and
+// src/content/guide-pages.ts, so none of them can date its copy apart from the
+// others: the window's floor is the day either registry last changed. Both
+// changed on 10 November 2026, #198 for the guides and the five LFG FAQs for
+// the pages, so every teammate page declares that day.
+for (const page of intentPages)
+  CONTENT_UPDATED[intentPath(page)] = '2026-11-10';
 // Everything else is copy the catalog-promotion pass rewrote, plus the pages
 // the trust and entity pass touched on the same day: every hub, every teammate
 // page, the coaching pages, /games, /blog and its e-girl guide,
