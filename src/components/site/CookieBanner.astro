@@ -10,15 +10,13 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
     role and name sit on an unstyled inner wrapper. The outer aside keeps the
     class and the data hook, so the look and the scripts are unchanged.
 
-    The banner is hidden by this component's own CSS rather than by the `hidden` attribute, and
-    `html[data-cookie-prompt]` (set from the cookie by a synchronous script in the layout head,
-    before any of <body> is parsed) decides whether it is up. The attribute used to be removed by
-    the script below, which on a throttled phone painted the paragraph 1.4 s after first paint and
-    made it the largest contentful paint; now the first style pass already has the answer. Both
-    states keep the `hidden` attribute's semantics for a visitor with no JavaScript and for one
-    who has already chosen: display:none is not rendered, not focusable and not in the
+    html[data-cookie-prompt] is set synchronously in the layout head before body parsing, so CSS
+    can show the banner even before the inline controller removes its initial hidden attribute.
+    Previously that removal made the paragraph appear after first paint on a throttled phone.
+    The controller still updates hidden for consumers such as the sticky booking bar. Without
+    JavaScript, or with an existing choice, the banner remains display:none and outside the
     accessibility tree. */}
-<aside class="cookie-banner" data-cookie-banner>
+<aside class="cookie-banner" data-cookie-banner hidden>
   <div role="dialog" aria-live="polite" aria-label="Cookie settings">
     <p>
       We use necessary cookies to run the site. Optional analytics help us
@@ -130,6 +128,8 @@ import { CONSENT_COOKIE, CONSENT_DAYS } from '../../contracts/consent';
     // first style pass can read it before the banner element exists.
     const root = document.documentElement;
     const open = (up) => {
+      // Preserve the DOM contract for the sticky booking bar's hidden observer.
+      banner.hidden = !up;
       if (up === root.hasAttribute('data-cookie-prompt')) return;
       if (up) root.setAttribute('data-cookie-prompt', '');
       else root.removeAttribute('data-cookie-prompt');

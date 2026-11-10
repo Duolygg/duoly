@@ -7,7 +7,13 @@ const settle = async (page: Page) => {
       requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
     );
   });
+  // The shared footer is SSR-rendered and hydrates on visibility. Exercise that boundary
+  // rather than assuming every island has already hydrated above the fold.
+  const scrollY = await page.evaluate(() => window.scrollY);
+  const footer = page.locator('footer.site-footer');
+  if (await footer.count()) await footer.scrollIntoViewIfNeeded();
   await expect.poll(() => page.locator('astro-island[ssr]').count()).toBe(0);
+  await page.evaluate((top) => window.scrollTo(0, top), scrollY);
 };
 
 const shellPages = [
