@@ -39,6 +39,7 @@ import {
 } from '../../server/seo/price-report';
 import {
   REPORT_CSV_PATH,
+  REPORT_LICENSE,
   REPORT_PATH,
   bookingHref,
   CONTENT_DATES,
@@ -107,7 +108,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'Can I download this price data?',
-    `Yes. The CSV at duoly.gg${csv} carries all ${OBSERVATION_COUNT} observations plus the Duoly rows, each with its source URL and check date.`,
+    `Yes. The CSV at duoly.gg${csv} carries all ${OBSERVATION_COUNT} observations plus the Duoly rows, each with its source URL and check date. It is free to reuse under ${REPORT_LICENSE.name} with credit to Duoly.`,
   ],
   [
     'Do platform fees change the price you pay?',
@@ -139,6 +140,7 @@ const dataset = {
   dateModified: CONTENT_DATES[path],
   temporalCoverage: SURVEY_CHECKED,
   isAccessibleForFree: true,
+  license: REPORT_LICENSE.url,
   measurementTechnique:
     'Manual reading of each platform public pricing page, one row per displayed price, with no estimated values',
   variableMeasured: [...CSV_HEADER],
@@ -147,6 +149,7 @@ const dataset = {
       '@type': 'DataDownload',
       name: 'Gaming coaching and teammate prices 2026 (CSV)',
       encodingFormat: 'text/csv',
+      license: REPORT_LICENSE.url,
       contentUrl: new URL(csv, Astro.site!).href,
     },
   ],
@@ -606,6 +609,14 @@ const dataset = {
         example, filtering billing_unit to hour and currency to USD gives the{' '}
         {HOURLY_COACHING.count} rates behind the median, of which{' '}
         {HOURLY_BANDS[0]!.percent}% sit under USD 20.00.
+      </p>
+      <p>
+        The data is published under{' '}
+        <a href={REPORT_LICENSE.url} rel="license">
+          {REPORT_LICENSE.name}
+        </a>
+        : you may reuse, share and adapt it, including commercially, as long as
+        you credit Duoly and link to this page.
       </p>
       <div class="report-download">
         <ul class="report-columns">

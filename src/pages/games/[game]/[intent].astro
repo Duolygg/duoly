@@ -13,7 +13,11 @@ import '../../../components/seo/seo.css';
 import '../../../components/seo/free-vs-paid.css';
 import '../../../components/seo/lfg-post.css';
 import '../../../components/seo/intent-hero.css';
-import { intentPages, intentPath } from '../../../content/intent-pages';
+import {
+  intentPages,
+  intentPath,
+  lfgAliasPath,
+} from '../../../content/intent-pages';
 import { intentOffers } from '../../../server/seo/intent-offers';
 import { closingDetail } from '../../../server/seo/citable-answers';
 import { gameBySlug } from '../../../site/games';
@@ -42,6 +46,9 @@ const page = intentPages.find(
     entry.gameSlug === Astro.params.game && entry.slug === Astro.params.intent,
 );
 const game = gameBySlug(Astro.params.game);
+const alias =
+  Astro.params.intent === 'lfg' ? lfgAliasPath(Astro.params.game) : null;
+if (!page && alias) return Astro.redirect(alias, 301);
 if (!page || !game) {
   Astro.response.status = 404;
   return Astro.rewrite('/404');

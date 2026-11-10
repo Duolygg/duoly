@@ -464,6 +464,11 @@ test('the price report publishes its dataset, its sources and its inbound links'
   const dataset = page.schemas.find((s) => s['@type'] === 'Dataset');
   assert(dataset, 'Dataset markup');
   assert.equal(dataset.isAccessibleForFree, true);
+  assert.equal(
+    dataset.license,
+    'https://creativecommons.org/licenses/by/4.0/',
+    'the dataset states its reuse licence',
+  );
   assert.equal(dataset.temporalCoverage, '2026-11-10');
   const download = dataset.distribution[0];
   assert.equal(download.encodingFormat, 'text/csv');

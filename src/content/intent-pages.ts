@@ -1531,3 +1531,15 @@ export const intentForGame = (slug: string) =>
   intentPages.find((page) => page.gameSlug === slug);
 export const intentPath = (page: IntentPage) =>
   `/games/${page.gameSlug}/${page.slug}`;
+
+/**
+ * `/games/<game>/lfg` is the address people guess. A game whose teammate page
+ * lives under another slug (League's play-with-someone, Fortnite's duos)
+ * answers that guess with a permanent redirect instead of a 404.
+ */
+export const lfgAliasPath = (gameSlug: string | undefined) => {
+  if (!gameSlug) return null;
+  const forGame = intentPages.filter((page) => page.gameSlug === gameSlug);
+  if (forGame.length !== 1 || forGame[0]!.slug === 'lfg') return null;
+  return intentPath(forGame[0]!);
+};

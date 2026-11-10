@@ -49,6 +49,11 @@ export const GUIDE_PATHS = [
  */
 export const REPORT_PATH = '/reports/gaming-coaching-and-teammate-prices-2026';
 export const REPORT_CSV_PATH = `${REPORT_PATH}.csv`;
+/** The licence the price survey dataset is published under. */
+export const REPORT_LICENSE = {
+  name: 'CC BY 4.0',
+  url: 'https://creativecommons.org/licenses/by/4.0/',
+} as const;
 /** Platform comparisons, each sourced from the rival's own dated pages. */
 export const COMPARE_PATHS = [
   '/compare/e-pal',
