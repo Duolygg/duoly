@@ -218,7 +218,10 @@ const avatar =
     <main id="main-content" tabindex="-1">
       <slot />
     </main>
-    {!bare && <SiteFooter topSpace={48} client:load />}
+    {/* The footer is always below the fold, so hydrating it on load put React and its chunk on
+        the critical path of every page for markup the server already rendered. client:visible
+        renders the same HTML and hydrates when it is scrolled to. */}
+    {!bare && <SiteFooter topSpace={48} client:visible />}
     {viewer?.role === 'customer' && !bare && <script is:inline>
       fetch('/api/orders/active', {
         credentials: 'same-origin',
@@ -240,9 +243,14 @@ const avatar =
     {viewer?.role === 'teammate' && csrf && path !== '/teammate' && (
       <div hidden data-desk-keeper data-csrf={csrf} />
     )}
+    {/* Only a signed-in teammate has the element above, so only they need the keeper's 10 KB.
+        mountDeskKeeper() already returns null without it; this just stops everyone else from
+        downloading and compiling it. */}
     <script>
-      import { mountDeskKeeper } from '../components/teammate/desk-keeper.js';
-      mountDeskKeeper();
+      if (document.querySelector('[data-desk-keeper]'))
+        void import('../components/teammate/desk-keeper.js').then((keeper) =>
+          keeper.mountDeskKeeper(),
+        );
     </script>
     <CookieBanner />
     <Analytics viewer={viewer} csrf={csrf} />
