@@ -174,9 +174,10 @@ const schema = {
         Coaching is flat at {COACHING_PRICE} per hour or game in every coachable
         title, with no rank multiplier at all. Read the unit before the figure,
         because a game and an hour price differently. The examples below come
-        straight from the pricing engine checkout uses, so each total is the
-        figure Stripe would charge today, for example {SINGLE_GAME.total} for
-        one Gold-rank League of Legends game read on {pricesLabel}.
+        straight from Duoly’s own pricing engine, the one checkout charges on,
+        so each total is the figure Stripe would charge today, for example{' '}
+        {SINGLE_GAME.total} for one Gold-rank League of Legends game read on{' '}
+        {pricesLabel}.
       </p>
       <div class="fees-table-wrap">
         <table class="fees-table">
@@ -231,10 +232,10 @@ const schema = {
         A Duoly discount is a quantity discount, and two of them exist, both
         applied in the checkout rather than on request. The quantity picker
         offers 1 to {MAX_QUANTITY} games or hours, and {MAX_QUANTITY} units take{' '}
-        {QUANTITY_PERCENT}% off: {FIVE_GAMES.label} cost {FIVE_GAMES.total}{' '}
-        instead of {MAX_QUANTITY} times {SINGLE_GAME.total}, saving{' '}
-        {FIVE_GAMES.saved}. The Bundles tab sells a game’s main service in packs
-        of {BUNDLE_SIZES.join(', ')} units at {BUNDLE_PERCENTS[0]}%,{' '}
+        {QUANTITY_PERCENT}% off. For example, {FIVE_GAMES.label} cost{' '}
+        {FIVE_GAMES.total} instead of {MAX_QUANTITY} times {SINGLE_GAME.total},
+        saving {FIVE_GAMES.saved}. The Bundles tab sells a game’s main service
+        in packs of {BUNDLE_SIZES.join(', ')} units at {BUNDLE_PERCENTS[0]}%,{' '}
         {BUNDLE_PERCENTS[1]}% and {BUNDLE_PERCENTS[2]}% off, so{' '}
         {TEN_GAME_BUNDLE.label} costs {TEN_GAME_BUNDLE.total} and saves{' '}
         {TEN_GAME_BUNDLE.saved}, the largest discount from Duoly in{' '}
@@ -283,11 +284,12 @@ const schema = {
         session goes wrong: “No-show, a teammate leaving, toxic behaviour:
         report it from your order room. A real person reviews it and can refund
         the order to your balance.” For example, 100% of a {FIVE_GAMES.total}{' '}
-        order returns {FIVE_GAMES.total} rather than a part of it. According to
-        Duoly’s terms, refunds reach the balance by default, and a report about
-        a session agreed using Discord is reviewed by a person. How that review
-        runs sits on <a href="/trust-and-safety">trust and safety</a>, and the
-        whole booking flow on <a href="/how-it-works">how Duoly works</a>.
+        order returns {FIVE_GAMES.total} rather than part of the order.
+        According to Duoly’s terms, refunds reach the balance by default, and a
+        report about a session agreed using Discord is reviewed by a person. How
+        a review runs sits on <a href="/trust-and-safety">trust and safety</a>,
+        and the whole booking flow on{' '}
+        <a href="/how-it-works">how Duoly works</a>.
       </p>
     </section>
 
@@ -328,13 +330,14 @@ const schema = {
         <a href="/get-paid-to-play-games">The teammate guide</a> adds that a
         payout runs once a balance passes $25, with smaller amounts carried
         over. A customer discount comes off first, so the {SHARE_PERCENT}% share
-        is calculated on the discounted total: {TEN_GAME_BUNDLE.label} at{' '}
-        {TEN_GAME_BUNDLE.total} pays a share of that figure rather than of the
-        undiscounted one. A payout needs a method connected first, using Wise,
-        PayPal or a bank. Nobody earns a bonus for a win, which is why Duoly
-        promises no rank and no result. The company keeping the remainder is the
-        sole proprietorship named on <a href="/about">the about page</a>, in{' '}
-        {BUSINESS_LOCATION} under GISA {BUSINESS.gisa}.
+        is calculated on the discounted total. For example,{' '}
+        {TEN_GAME_BUNDLE.label} at {TEN_GAME_BUNDLE.total} in {CATALOG_YEAR}
+        pays a share of that figure rather than of the undiscounted one. A
+        payout needs a method connected first, using Wise, PayPal or a bank.
+        Nobody earns a bonus for a win, which is why Duoly promises no rank and
+        no result. The company keeping the remainder is the sole proprietorship
+        named on <a href="/about">the about page</a>, in {BUSINESS_LOCATION}{' '}
+        under GISA {BUSINESS.gisa}.
       </p>
     </section>
 

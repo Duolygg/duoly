@@ -47,7 +47,7 @@ const faq: [string, string][] = [
   ],
   [
     'How does a coaching hour pay compared with a short game?',
-    `Coaching is listed at ${COACHING_PRICE} per hour, so one finished coaching hour pays a ${share} share from Duoly in the next weekly transfer.`,
+    `Coaching is listed at ${COACHING_PRICE} per hour in 2026, so one finished coaching hour pays a ${share} share from Duoly in the next weekly transfer. For example, a Valorant VOD Review hour and a League of Legends VOD Review hour pay the same share, because coaching holds one flat price.`,
   ],
   [
     'Which voice tool do teammates use?',
@@ -210,8 +210,7 @@ const path = '/get-paid-to-play-games';
         example, a {COACHING_PRICE} coaching hour shows as a pending USD amount
         within the same desk view. Three habits protect a new teammate: keep
         payments on Duoly, promise no rank, and report conduct problems through{' '}
-        <a href="/contact">support</a>. A {share} share from Duoly arrives only
-        after the order closes.
+        <a href="/contact">support</a>.
       </p>
       <p>
         It helps to book once as a customer before taking orders, because the
@@ -219,17 +218,8 @@ const path = '/get-paid-to-play-games';
         <a href={bookingHref('val', { service: 'duo2' })}>
           Valorant Duo Pro game
         </a>{' '}
-        or a{' '}
-        <a href={bookingHref('lol', { service: 'learn' })}>
-          League of Legends Play and Learn game
-        </a>{' '}
-        shows the checkout, the queue and the chat a teammate works in. The{' '}
-        <a href="/games/valorant">Valorant teammate hub</a>, the{' '}
-        <a href="/games/valorant/coaching">Valorant coaching page</a> and the{' '}
-        <a href="/games/league-of-legends">League of Legends hub</a> list the
-        services you would be accepting, and the{' '}
-        <a href="/developers/mcp">Duoly MCP developer guide</a> shows how an
-        assistant quotes those same services.
+        shows the checkout, the queue and the chat a teammate works in, from
+        Duoly’s own catalog in November 2026.
       </p>
     </Steps>
     <Faq
@@ -239,7 +229,7 @@ const path = '/get-paid-to-play-games';
     <ClosingCta
       heading="Ready to apply?"
       text="Applying to Duoly means naming the games and services you can offer, with evidence attached. Duoly reviews every application by hand, and approval arrives before any order can reach your queue."
-      extra={`Three things speed up a review. Name the games and modes you really play, for example Valorant Unrated and Marvel Rivals Quick Match. Attach rank proof from an account you own. Say whether coaching, teammate or Gamer Girl work fits your week. Earning starts at approval, then an order accepted from the queue and a customer met using Discord voice, and it ends with the ${share} share landing in your desk, converted to USD. Payouts run weekly above $25, and every coaching hour is listed at ${COACHING_PRICE} per hour.`}
+      extra={`Three things speed up a review. Name the games and modes you really play, for example Valorant Unrated and Marvel Rivals Quick Match. Attach rank proof from an account you own. Say whether coaching, teammate or Gamer Girl work fits your week. Earning starts at approval, then an order accepted from the queue and a customer met using Discord voice, and it ends with the ${share} share landing in your desk, converted to USD. Payouts run weekly above $25, and every coaching hour is listed at ${COACHING_PRICE} per hour in 2026. The desk from Duoly shows each amount as pending, scheduled or paid, so a first payout is traceable from the order that earned it to the method it leaves by.`}
       href="/apply"
       label="Apply to become a teammate"
       art={{ src: '/assets/games/valorant.png', alt: '' }}
@@ -248,6 +238,10 @@ const path = '/get-paid-to-play-games';
       <h2>Before you apply</h2>
       <div class="chips">
         <a href="/ai">How customers use Duoly in AI assistants</a>
+        <a href="/games/valorant">Valorant teammate hub</a>
+        <a href="/games/valorant/coaching">Valorant coaching page</a>
+        <a href="/games/league-of-legends">League of Legends hub</a>
+        <a href="/developers/mcp">Duoly MCP developer guide</a>
         <a href="/games">Services by game</a>
         <a href="/games/social">Social rules</a>
         <a href="/terms">Terms</a>

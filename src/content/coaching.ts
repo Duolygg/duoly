@@ -341,7 +341,7 @@ export const lessons: Record<string, Lesson> = {
       'Meet your coach in the order chat and start on Discord.',
     ],
     booking:
-      'A Marvel Rivals booking is a single checkout for one lesson, so check whether the format is sold per match or by the hour before paying. The order chat is where a lesson gets set up properly: send your platform, your region, your hero pool and the patch you are playing. For example, a line naming one hero and one lost team fight is enough to start. NetEase Games has shipped new heroes and Team-Ups every season since the launch in 2024. Send your rank as well, so a Grandmaster+ coach knows which lobbies to expect and the hero pool stays realistic. Keep your login private and a coach from Duoly never needs a password, only a call using Discord.',
+      'A Marvel Rivals booking is a single checkout for one lesson, so check whether the format is sold per match or by the hour before paying. The order chat is where a lesson gets set up properly: send your platform, your region, your hero pool and the patch you are playing. For example, a line naming one hero and one lost team fight is enough to start. NetEase Games has shipped new heroes and Team-Ups every season since the launch in 2024. Send your rank as well, so a Grandmaster+ coach knows which lobbies to expect. Keep your login private and a coach from Duoly never needs a password, only a call using Discord.',
     sections: [
       {
         heading: 'How does your role change a Marvel Rivals team fight?',
@@ -364,7 +364,7 @@ export const lessons: Record<string, Lesson> = {
     faq: [
       [
         'Which lesson should I pick?',
-        'Two Marvel Rivals lessons are open in 2026, and the problem picks the lesson. Hero Coaching is the hour for one hero, including matchups, Team-Ups and ultimate timing. Play and Learn is one live Competitive match with feedback as it happens, beside a Grandmaster+ coach. Bring the role you actually queue: Vanguard, Duelist or Strategist.',
+        'Two Marvel Rivals lessons are open in 2026, and the problem picks the lesson. Hero Coaching is the hour for one hero, including matchups, Team-Ups and ultimate timing. Play and Learn is one live Competitive match with feedback as it happens, beside a Grandmaster+ coach. For example, bring the role you actually queue: Vanguard, Duelist or Strategist.',
       ],
       [
         'How much does it cost?',
@@ -446,7 +446,7 @@ export const lessons: Record<string, Lesson> = {
       'Meet your Grandmaster+ coach in the order chat and start on Discord.',
     ],
     booking:
-      'An Overwatch 2 booking is a single checkout for one lesson, so check whether the format is sold per match or by the hour before paying. The order chat is where a lesson gets set up properly: send your platform, your region, your role and the hero pool you queue. For example, a line naming one hero and one lost team fight is enough to start. Send your BattleTag too, so the invite does not become a search. Say whether you want the live match in Competitive or in Quick Play before the coach queues, because the two read very differently. Keep your login private and a coach from Duoly never needs a password, only a call using Discord.',
+      'An Overwatch 2 booking is a single checkout for one lesson, so check whether the format is sold per match or by the hour before paying. The order chat is where a lesson gets set up properly: send your platform, your region, your role and the hero pool you queue. For example, a line naming one hero and one lost team fight is enough to start. Send your BattleTag too, so the invite does not become a search. Say whether the live match is Competitive or Quick Play, because the two read very differently. Keep your login private and a coach from Duoly never needs a password, only a call using Discord.',
     sections: [
       {
         heading: 'How does your role change an Overwatch 2 team fight?',
@@ -503,7 +503,7 @@ export const lessons: Record<string, Lesson> = {
       {
         heading: 'Why does a defence usually break during the prep phase?',
         paragraphs: [
-          'A prep phase is a budget, and spending the budget badly loses the round before anyone shoots. Count the walls. Each defender carries 2 reinforcements, so a team has 10 to spend, and a wall placed where no attacker was coming is a wall the site never gets.',
+          'A prep phase is a budget, and spending the budget badly loses the round before anyone shoots. Count the walls before the drones go in. Each defender carries 2 reinforcements, so a team has 10 to spend, and a wall placed where no attacker was coming is a wall the site never gets.',
           'Agree who anchors and who roams before the drones land. For example, two roamers on the same side of the map leave the site with one defender and no rotation. Keep one rotation hole open so a defender can reach the second site and one anchor who never leaves, and a Champion coach from Duoly ties every reinforcement to your own recording using Discord screen share, often watching the same prep phase 3 times. One hour of Operator Lab costs {amount:ops} in 2026.',
         ],
       },
@@ -597,7 +597,7 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Dota 2 coaching for your position and hero pool',
     lead: 'Book a Dota 2 coach for a live ranked game, an hour of replay review or an hour on one hero. Work on laning, farming patterns and item timings.',
     format:
-      'Dota 2 coaching from Duoly is a booked lesson at {amount:learn}, and 3 formats are open in 2026. **Play and Learn** is a live ranked game where your coach explains laning, smoke timings and when to group, as the game happens. **Replay Review** is an hour on a recent match: laning, farm, map moves and item timings, narrowed to three things to fix at {amount:replay}. **Hero and Position Coaching** is an hour on one hero or one position, practiced live. Bring the position you actually queue, because position 1 and position 5 fail for different reasons. For example, a mid player dying after the first rune usually needs lane equilibrium rather than another combo. Every lesson runs on your own Steam account using Discord voice and screen share.',
+      'Dota 2 coaching from Duoly is a booked lesson at {amount:learn}, and 3 formats are open in 2026. **Play and Learn** is a live ranked game where your coach explains laning, smoke timings and when to group, as the game happens. **Replay Review** is an hour on a recent match: laning, farm, map moves and item timings, narrowed to three things to fix at {amount:replay}. **Hero and Position Coaching** is an hour on one hero or one position, practiced live. Bring the position you actually queue, because position 1 and position 5 fail for completely different reasons across a 40-minute game. For example, a mid player dying after the first rune usually needs lane equilibrium rather than another combo. Every lesson runs on your own Steam account using Discord voice and screen share.',
     prices:
       'Every Dota 2 lesson from Duoly costs {amount:learn}. Play and Learn is sold per game, which buys one full ranked match beside your coach. Replay Review and Hero and Position Coaching are sold by the hour, which buys the pauses a live game cannot. For example, a player who already knows which lane goes wrong learns more from an hour of Replay Review than from another ranked queue. A Dota 2 match runs about 40 minutes, so one live game is already a long lesson. A second hour costs {amount:replay} like the first.',
     steps: [
@@ -628,7 +628,7 @@ export const lessons: Record<string, Lesson> = {
     faq: [
       [
         'Which Dota 2 lesson should I pick?',
-        'Three lessons are open in 2026. Replay Review suits laning, farm and map decisions. Hero and Position Coaching is an hour on one hero. Play and Learn is the live ranked game.',
+        'Three lessons are open in 2026. Replay Review suits laning, farm and map decisions. Hero and Position Coaching is an hour on one hero. For example, a player who already knows which lane went wrong takes Replay Review rather than the live ranked game.',
       ],
       [
         'How much does Dota 2 coaching cost?',
@@ -653,7 +653,7 @@ export const lessons: Record<string, Lesson> = {
     h1: 'Minecraft coaching for PvP and Bedwars',
     lead: 'Book a Minecraft coach for an hour of PvP drills or an hour on Bedwars. Work on aim, combos, bridging, bed defence and the clutches that end games.',
     format:
-      'Minecraft coaching from Duoly is a booked hour at {amount:pvp}, and 2 formats are open in 2026. **PvP Coaching** is an hour on aim, combos, strafing, rod and bow play, drilled in duels on practice servers until the habit sticks. **Bedwars Coaching** is an hour on rush timing, bridging, bed defence and endgame clutches, practiced in real games at {amount:bw}. Pick the format by the moment your games end: losing the opening duel is an aim and combo problem, while losing the bed after winning fights is a defence problem. Name the edition, because Java and Bedrock are separate clients with different combat feel. For example, a Hypixel player names the server first. Every lesson runs on your own account using Discord voice and screen share.',
+      'Minecraft coaching from Duoly is a booked hour at {amount:pvp}, and 2 formats are open in 2026. **PvP Coaching** is an hour on aim, combos, strafing, rod and bow play, drilled in duels on practice servers until the habit sticks. **Bedwars Coaching** is an hour on rush timing, bridging, bed defence and endgame clutches, practiced in real games at {amount:bw}. Pick the format by the moment your games end: losing the opening duel is an aim and combo problem, while losing the bed after winning fights is a defence problem. Name the edition, because Java and Bedrock are separate clients with different combat feel. For example, a Hypixel player names the server first, because a public network and a practice server drill different habits. Every lesson runs on your own account using Discord voice and screen share.',
     prices:
       'Every Minecraft lesson from Duoly costs {amount:pvp}, and both formats are sold by the hour, because a duel lasts a minute while a Bedwars game lasts far longer. An hour of PvP Coaching is mostly repetitions: the same duel, replayed with one change each round. An hour of Bedwars Coaching usually covers 3 or 4 real games. For example, a bed that falls while you are away is a Bedwars hour rather than a duelling one. A second hour costs {amount:bw} like the first.',
     steps: [

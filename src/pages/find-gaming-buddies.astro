@@ -126,11 +126,12 @@ const article = {
         A booked buddy on Duoly is a reviewed player who joins for a set number
         of games or hours, on your own account, with the rank, the mode and the
         voice setup agreed in the order chat before anyone queues. For example,
-        a player tired of silent randoms books a session from {from} in 2026
-        instead, which settles the time and the rank. A {floor.name} session
-        starts at {floor.cheapest.display} per {floor.cheapest.unit}, which is
-        the floor of the whole directory below. The same person can be booked
-        again from your order history, using Discord.
+        a player tired of silent randoms books a session instead, which settles
+        the time and the rank. A session from Duoly starts at {from}, read from
+        checkout in November 2026. A {floor.name} session starts at{' '}
+        {floor.cheapest.display} per {floor.cheapest.unit}, which is the floor
+        of the whole directory below. The same person can be booked again from
+        your order history, using Discord.
       </p>
     </section>
     <section aria-labelledby="free-h">
@@ -144,9 +145,9 @@ const article = {
         answered far more often than a bare "anyone want to play". The people
         you already enjoyed a match with: add them after the game rather than
         scrolling a server. For example, a post with all 4 fields beats a
-        one-line post. A paid booking from Duoly at {from} buys the parts free
-        routes cannot promise: a set time, a named rank and comms settled before
-        the first queue, agreed using Discord.
+        one-line post. A paid booking from Duoly at {from} in 2026 buys the
+        parts free routes cannot promise: a set time, a named rank and comms
+        settled before the first queue, agreed using Discord.
       </p>
     </section>
     <section aria-labelledby="games-h">
@@ -157,11 +158,11 @@ const article = {
         {withPage.length} of the {games.length} games have a dedicated LFG or
         duo page with the modes, a preparation checklist and a worked example.
         The rest start from a game hub carrying the same price cards, and every
-        session across the directory starts at {from} in 2026, read from Duoly’s
-        pricing engine. A card price is the floor, because a ranked session is
-        priced by your own rank while casual and co-op modes hold one price for
-        everybody. For example, a Minecraft card starts at an hourly price,
-        since a Minecraft session has no fixed length. Press Book to open
+        session across the directory starts at {from}, read from Duoly’s pricing
+        engine in November 2026. A card price is the floor, because a ranked
+        session is priced by your own rank while casual and co-op modes hold one
+        price for everybody. For example, a Minecraft card starts at an hourly
+        price, since a Minecraft session has no fixed length. Press Book to open
         checkout with the game preselected, then agree the mode and the voice
         setup using Discord.
       </p>
@@ -208,8 +209,9 @@ const article = {
       ]}
     >
       <p>
-        Duoly reviews every teammate before any order. Read about{' '}
-        <a href="/contact">the team behind Duoly</a>, check the{' '}
+        Duoly reviews every teammate before any order, and every figure on this
+        page comes from Duoly’s pricing engine, read in November 2026. Read
+        about <a href="/contact">the team behind Duoly</a>, check the{' '}
         <a href="/terms">payment, cancellation and refund terms</a>, or browse{' '}
         <a href="/coaching">esports coaching</a> when you want a lesson rather
         than company.
@@ -229,7 +231,7 @@ const article = {
           heading: 'Do you want a teammate, a coach or just company?',
           paragraphs: [
             'Choose a teammate for playing together, a coach for learning, or Social for company without a game. A teammate is a partner in the mode you choose, with calls and coordination during play. A coach is a teacher for one problem. Bring a replay or a question and ask for a practice task. For example, choose coaching to understand a repeated Valorant retake mistake; choose a teammate to play the next match together.',
-            `Duoly Social is company without a game at ${socialPrice} per hour: Just Chat, Watch Together, Sleep Call or Karaoke on voice, for adults only. For example, somebody who wants conversation on a quiet evening books Social rather than a ranked duo. All 3 run using Discord and on your own account, and teammate sessions start at ${from} in 2026. Bundles cut the total on the main teammate service.`,
+            `Duoly Social is company without a game at ${socialPrice} per hour: Just Chat, Watch Together, Sleep Call or Karaoke on voice, for adults only. For example, somebody who wants conversation on a quiet evening books Social rather than a ranked duo. Teammate sessions from Duoly start at ${from}, read from checkout in November 2026. All 3 run using Discord and on your own account, and bundles cut the total on the main teammate service.`,
           ],
         },
       ]}
@@ -238,7 +240,7 @@ const article = {
     <ClosingCta
       heading="Ready to find a gaming buddy?"
       text={`A Duoly booking is one reviewed player for the games or hours you choose, across the ${games.length} games above. Pick your game from the grid. Before playing, confirm your mode and rank in the order chat. Test voice using Discord and send an invite from your own account, so the booked time starts with the lobby ready.`}
-      extra={`Check the service before choosing a bundle. The main teammate service offers ${bundle[0]}% off 3 units, ${bundle[1]}% off 5 and ${bundle[2]}% off 10. Other services have their own quantity options, so check the unit and total before payment. For example, a Minecraft hour and a Valorant game measure different amounts of playing time. A duo booking adds 1 player to your party. Choose a Teams service when you need several seats filled. ${withPage.length} of the ${games.length} games above have dedicated teammate pages explaining the modes. Sessions start at`}
+      extra={`Check the service before choosing a bundle. The main teammate service offers ${bundle[0]}% off 3 units, ${bundle[1]}% off 5 and ${bundle[2]}% off 10. Other services have their own quantity options, so check the unit and total before payment. For example, a Minecraft hour and a Valorant game measure different amounts of playing time. A duo booking adds 1 player to your party. Choose a Teams service when you need several seats filled. ${withPage.length} of the ${games.length} games above have dedicated teammate pages explaining the modes, and every figure here comes from Duoly’s pricing engine, read in November 2026. Sessions start at`}
       href={bookingHref('mr', { service: 'duo2' })}
       label="Find your gaming buddy"
       price={price}

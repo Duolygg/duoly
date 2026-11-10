@@ -99,11 +99,15 @@ const duoly = platform('Duoly');
 const bandList = HOURLY_BANDS.map(
   (band) => `${band.label}, ${band.count} rates`,
 ).join('; ');
-/** The platforms that published a price, numbered, for the answer-first FAQ. */
-const verifiedList = VERIFIED_PLATFORM_NAMES.map(
-  (name, index) =>
-    `${index === VERIFIED_PLATFORM_NAMES.length - 1 ? 'and ' : ''}${index + 1}) ${name}`,
-).join(VERIFIED_PLATFORM_NAMES.length > 2 ? ', ' : ' ');
+/**
+ * The platforms that published a price, named in a sentence.
+ *
+ * They used to be numbered ("1) Metafy, 2) QueueUp"), which is a list marker on
+ * a set of four names that have no order: nothing refers back to platform 2.
+ */
+const verifiedList = new Intl.ListFormat('en', {
+  type: 'conjunction',
+}).format(VERIFIED_PLATFORM_NAMES);
 const sources = TABLE.flatMap((row) =>
   row.sources.map((source) => ({
     platform: row.name,
@@ -663,7 +667,7 @@ const dataset = {
     <ClosingCta
       heading="Book a session at a price you can read first"
       text={`The survey median for a coaching hour is ${HOURLY_COACHING.median}, or ${HOURLY_COACHING.medianEur}, across ${HOURLY_COACHING.count} rates read on ${SURVEY_CHECKED_LABEL}. A Duoly lesson is ${DUOLY.coachingHour} an hour in all ${DUOLY.coachedGames} coached games, and a teammate game starts at ${DUOLY.teammateFrom}.`}
-      extra={`Three facts make the Duoly figures checkable. Every Duoly price on this page comes from the pricing engine checkout charges on, with catalog prices last changed on ${DUOLY.pricesUpdated}. Nothing is added at checkout, so the euro figure is the total, and a US dollar price uses the daily ECB rate plus ${DUOLY.usdMarginPercent}%. A teammate or coach keeps ${DUOLY.sharePercent}% of a flat-priced hour, which Duoly publishes. For example, an unaccepted order cancels and refunds itself after ${DUOLY.autoCancelMinutes} minutes.`}
+      extra={`Three facts make the Duoly figures checkable. Every Duoly price on this page comes from the pricing engine checkout charges on, with catalog prices last changed on ${DUOLY.pricesUpdated}. Nothing is added at checkout, so the euro figure is the total, and a US dollar price uses the daily ECB rate plus ${DUOLY.usdMarginPercent}%. A teammate or coach keeps ${DUOLY.sharePercent}% of a flat-priced hour, which Duoly publishes. For example, an unaccepted order cancels and refunds itself after ${DUOLY.autoCancelMinutes} minutes, which is why a Duoly total can be read and compared with this survey before any money moves.`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching hour"
       art={{ src: '/assets/games/valorant.png', alt: '' }}

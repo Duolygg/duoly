@@ -149,13 +149,13 @@ const faq: [string, string][] = [
         which names the country and the product in one line. The three figures
         most articles need are {SHORT_GAME_PRICE} for the cheapest teammate
         game, {COACHING_PRICE} per coaching hour and {SHARE_PERCENT}% as the
-        teammate share of a completed order, all read from Duoly’s pricing
-        engine in {CATALOG_YEAR}. The qualifier worth keeping is
-        “rank-verified”, because a teammate passes a four-stage review before a
-        first order. For example, a session is played together on separate
-        accounts, with voice using Discord, so Duoly is not an account boosting
-        service. According to the terms of service, no rank, win or start time
-        is promised at any price.
+        teammate share of a completed order, all read from Duoly’s own pricing
+        engine in {CATALOG_YEAR}, the one checkout charges on. The qualifier
+        worth keeping is “rank-verified”, because a teammate passes a four-stage
+        review before a first order. For example, a session is played together
+        on separate accounts, with voice using Discord, so Duoly is not an
+        account boosting service. According to the terms of service, no rank,
+        win or start time is promised at any price.
       </p>
     </section>
 
@@ -232,17 +232,18 @@ const faq: [string, string][] = [
         The Duoly catalog is {SERVICE_COUNT} bookable services across{' '}
         {CATALOG_GAMES} games, grouped into {CATEGORY_WORDS}. Teammate sessions
         put a ranked player in the customer’s lobby for the mode picked, from{' '}
-        {SHORT_GAME_PRICE} per game. Team fills hire several players at once,
-        for example a League of Legends Ranked Flex five-stack. Coaching covers{' '}
-        {COACHABLE_GAMES} games at {COACHING_PRICE} per hour or game, including
-        VOD reviews run using Discord screen share. {SOCIAL_MODES} voice modes
-        sell friendly company without a scoreboard, for adults only and never as
-        a dating service. A figure for any of them sits on{' '}
-        <a href="/pricing">the pricing page</a>, which lists all {SERVICE_COUNT}{' '}
-        with their prices, or <a href="/pricing.md">pricing.md</a> for the same
-        catalog as plain text. Servers cover {SERVED_AREAS.join(', ')}, and
-        bundles of {BUNDLE_SIZES[2]} take {BUNDLE_PERCENTS[2]}% off a teammate
-        service in {CATALOG_YEAR}.
+        {SHORT_GAME_PRICE} per game, read from Duoly’s pricing engine. Team
+        fills hire several players at once, for example a League of Legends
+        Ranked Flex five-stack. Coaching covers {COACHABLE_GAMES} games at{' '}
+        {COACHING_PRICE} per hour or game, including VOD reviews run using
+        Discord screen share. {SOCIAL_MODES} voice modes sell friendly company
+        without a scoreboard, for adults only and never as a dating service. A
+        figure for any of them sits on <a href="/pricing">the pricing page</a>,
+        which lists all {SERVICE_COUNT} with their prices, or{' '}
+        <a href="/pricing.md">pricing.md</a> for the same catalog as plain text.
+        Servers cover {SERVED_AREAS.join(', ')}, and bundles of{' '}
+        {BUNDLE_SIZES[2]} take {BUNDLE_PERCENTS[2]}% off a teammate service in{' '}
+        {CATALOG_YEAR}.
       </p>
     </section>
 
@@ -299,7 +300,7 @@ const faq: [string, string][] = [
         Press questions go to{' '}
         <a href={`mailto:${PRESS_EMAIL}`}>{PRESS_EMAIL}</a>, which lands with
         the same small team that answers support at{' '}
-        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>. That one
+        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>. One press
         address is the whole route, because Duoly runs no separate press office
         and no agency, so a question reaches the people who built the site. Put
         the publication, the deadline and the exact figures needed in the first
@@ -307,13 +308,12 @@ const faq: [string, string][] = [
         than estimated. For example, {SERVICE_COUNT} services, {CATALOG_GAMES}{' '}
         games, {SHORT_GAME_PRICE} as the lowest price and {COACHING_PRICE} per
         coaching hour are all documented in {CATALOG_YEAR}, while a user count
-        is not. <a href="/contact">The contact form</a> and the chat bubble on
-        every page reach the same team, and a customer question about an order
-        belongs at {SUPPORT_EMAIL} instead. A request for a founder quote, an
-        interview or a number not on this page is a reasonable ask and will be
-        answered in writing. According to <a href="/imprint">the imprint</a>,
-        the business is legally represented by {BUSINESS.representedBy} in{' '}
-        {BUSINESS_LOCATION}, and the supervisory authority is named there too.
+        is not. <a href="/contact">The contact form</a> and the chat bubble
+        reach the same team, and an order question belongs at {SUPPORT_EMAIL}{' '}
+        instead. A founder quote, an interview or a number not on this page is a
+        reasonable ask, answered in writing. According to{' '}
+        <a href="/imprint">the imprint</a>, the business is legally represented
+        by {BUSINESS.representedBy} in {BUSINESS_LOCATION}.
       </p>
       <p>
         These are the only accounts Duoly posts from, so an account using the
@@ -335,7 +335,7 @@ const faq: [string, string][] = [
     <ClosingCta
       heading="Need a figure that is not on this page?"
       text={`Duoly publishes what it can document: the operator, the catalog, the prices and the rules. Email the team for anything else, and expect a written answer rather than an estimate.`}
-      extra={`Three things are worth getting right in a piece about Duoly. The product: players book a rank-verified teammate or coach for a published price and play together on separate accounts, so it is not account boosting and no rank or win is promised. The operator: a sole proprietorship in ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}, with the full legal notice on the imprint. The numbers: ${SERVICE_COUNT} services across ${CATALOG_GAMES} games, from ${SHORT_GAME_PRICE} per game and ${COACHING_PRICE} per coaching hour, read from Duoly checkout on ${pricesLabel}. For example, ${PLAYABLE_GAMES} games carry teammate sessions and ${COACHABLE_GAMES} carry coaching.`}
+      extra={`Three things are worth getting right in a piece about Duoly. The product: players book a rank-verified teammate or coach for a published price and play together on separate accounts, so it is not account boosting and no rank or win is promised. The operator: a sole proprietorship in ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}, with the full legal notice on the imprint. The numbers: ${SERVICE_COUNT} services across ${CATALOG_GAMES} games, from ${SHORT_GAME_PRICE} per game and ${COACHING_PRICE} per coaching hour, read from Duoly checkout on ${pricesLabel}. For example, ${PLAYABLE_GAMES} games carry teammate sessions and ${COACHABLE_GAMES} carry coaching, so almost every title on Duoly sells both a session and a lesson.`}
       href="/about"
       label="Read about Duoly"
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}
