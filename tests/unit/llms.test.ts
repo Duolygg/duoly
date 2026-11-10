@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { renderLlms } from '../../src/server/seo/llms';
 import { GET, prerender } from '../../src/pages/llms.txt';
-import { INDEXABLE_PATHS } from '../../src/site/seo';
+import { INDEXABLE_PATHS, REPORT_CSV_PATH } from '../../src/site/seo';
 import { SITE_GAMES } from '../../src/site/games';
 import { games, services } from '../../src/server/mcp/catalog';
 import { handleMcp } from '../../src/server/mcp/http';
@@ -34,10 +34,16 @@ describe('llms.txt', () => {
       // Machine-readable and therefore outside the sitemap, like /llms.txt
       // itself: the route has to exist all the same.
       '/pricing.md',
+      '/llms-full.txt',
+      REPORT_CSV_PATH,
     ]);
     expect(existsSync('src/pages/games/[game].astro')).toBe(true);
     expect(existsSync('src/pages/mcp.ts')).toBe(true);
     expect(existsSync('src/pages/pricing.md.ts')).toBe(true);
+    expect(existsSync('src/pages/llms-full.txt.ts')).toBe(true);
+    expect(
+      existsSync(`src/pages${REPORT_CSV_PATH.replace('.csv', '')}.csv.ts`),
+    ).toBe(true);
     const urls = [...text.matchAll(/https:\/\/[^\s)]+/g)].map(
       (match) => new URL(match[0].replace(/\.$/, '')),
     );

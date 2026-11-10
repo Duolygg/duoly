@@ -81,6 +81,11 @@ export const CONTENT_SOURCES: Record<string, string[]> = {
     'src/content/queueup-comparison.ts',
   ],
   '/games/social': ['src/content/hubs.ts'],
+  '/reports/gaming-coaching-and-teammate-prices-2026': [
+    'src/pages/reports/gaming-coaching-and-teammate-prices-2026.astro',
+    'src/content/price-report-2026.ts',
+    'src/server/seo/price-report.ts',
+  ],
 };
 for (const slug of FINISHED_HUB_SLUGS)
   if (slug !== 'social')
@@ -115,6 +120,15 @@ export const CONTENT_UPDATED: Record<string, string> = {
   '/': '2026-11-05',
   '/terms': '2026-11-05',
   '/privacy': '2026-11-05',
+  // The price survey was read and written on 10 November 2026, which is also
+  // the date the report publishes as its own survey date.
+  '/reports/gaming-coaching-and-teammate-prices-2026': '2026-11-10',
+  // The five pages that gained a paragraph linking the survey on the same day.
+  '/pricing': '2026-11-10',
+  '/coaching': '2026-11-10',
+  '/compare/metafy': '2026-11-10',
+  '/compare/queueup': '2026-11-10',
+  '/blog': '2026-11-10',
 };
 // Everything else is copy the catalog-promotion pass rewrote, plus the pages
 // the trust and entity pass touched on the same day: every hub, every teammate

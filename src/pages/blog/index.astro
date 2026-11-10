@@ -10,7 +10,16 @@ import {
   CONTENT_DATES,
   bookingHref,
   organizationSchema,
+  REPORT_CSV_PATH,
+  REPORT_PATH,
 } from '../../site/seo';
+import {
+  COMPETITOR_COUNT,
+  DUOLY,
+  HOURLY_COACHING,
+  OBSERVATION_COUNT,
+} from '../../server/seo/price-report';
+import { SURVEY_CHECKED_LABEL } from '../../content/price-report-2026';
 import {
   BUNDLE_PERCENTS as bundle,
   SHORT_GAME_PRICE,
@@ -230,6 +239,26 @@ const guides = [
         November 2026. The{' '}
         <a href="/blog/how-to-choose-a-gaming-coach">coach guide</a> lists the
         checks to run on any platform, including this one.
+      </p>
+    </section>
+    <section class="answers" aria-labelledby="research-h">
+      <h2 id="research-h">Which original research can you read?</h2>
+      <p>
+        One price survey, run by Duoly and published with its data. The{' '}
+        <a href={REPORT_PATH}>2026 gaming coaching and teammate price report</a>{' '}
+        records every price {COMPETITOR_COUNT} platforms published on their own
+        pages on {SURVEY_CHECKED_LABEL}, which is {OBSERVATION_COUNT}{' '}
+        observations in total. First, the headline: the median hourly coaching
+        price was {HOURLY_COACHING.median}, against {HOURLY_COACHING.low} at the
+        bottom and {HOURLY_COACHING.high} at the top. Second, the method section
+        names what was counted, the one European Central Bank rate used for euro
+        figures and the platforms whose pages did not answer. Third, every row
+        is downloadable as{' '}
+        <a href={REPORT_CSV_PATH}>a CSV with the source URL on each line</a>, so
+        a reader can check a figure rather than trust it. For example, a player
+        comparing a {HOURLY_COACHING.median} market median against a{' '}
+        {DUOLY.coachingHour} Duoly lesson is reading two prices from the same
+        page.
       </p>
     </section>
   </PageIntro>

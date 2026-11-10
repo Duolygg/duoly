@@ -39,6 +39,16 @@ export const GUIDE_PATHS = [
   '/blog/how-to-choose-a-gaming-coach',
   '/blog/free-lfg-or-paid-teammate',
 ] as const;
+/**
+ * The 2026 price survey: an original-research page with a dataset beside it.
+ *
+ * Two paths, because the report publishes its own data. The page is the
+ * indexable document; the CSV is the download its Dataset markup points at,
+ * generated from the same data file (src/content/price-report-2026.ts), so the
+ * two can never disagree.
+ */
+export const REPORT_PATH = '/reports/gaming-coaching-and-teammate-prices-2026';
+export const REPORT_CSV_PATH = `${REPORT_PATH}.csv`;
 /** Platform comparisons, each sourced from the rival's own dated pages. */
 export const COMPARE_PATHS = [
   '/compare/e-pal',
@@ -82,6 +92,7 @@ export const INDEXABLE_PATHS = [
   LFG_GUIDE_PATH,
   ...GUIDE_PATHS,
   ...COMPARE_PATHS,
+  REPORT_PATH,
   COACHING_INDEX_PATH,
   BUDDIES_PATH,
   ...intentPages.map(intentPath),

@@ -1,0 +1,172 @@
+/**
+ * The price report: the blocks /reports/gaming-coaching-and-teammate-prices-2026
+ * needs and no existing file already has.
+ *
+ * Everything else on that page reuses seo.css, official.css and the shared SEO
+ * components, so this file is only the three new things: the key-findings
+ * cards, the price-band chart drawn in CSS, and the dataset download block. The
+ * colours are the ones already in official.css rather than new tokens.
+ */
+
+.report-findings {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .report-findings {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+.report-findings > li {
+  padding: 20px;
+  border-radius: 18px;
+  background: #120b22;
+  border: 1px solid rgba(196, 170, 255, 0.18);
+}
+
+.report-finding-label {
+  display: block;
+  color: #d6bbff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.report-finding-big {
+  display: block;
+  margin-top: 10px;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #f3eeff;
+  line-height: 1.1;
+}
+
+.report-finding-sub {
+  display: block;
+  margin-top: 6px;
+  color: #a79dc4;
+  font-size: 14px;
+}
+
+/* A span rather than a paragraph on purpose: the finding text belongs to its
+   list item, and a <p> inside an <li> is read twice by text extractors. */
+.report-finding-text {
+  display: block;
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #cfc4ea;
+}
+
+/* The price-band chart: one row per band, a bar sized by its share. */
+.report-bands {
+  margin: 24px 0 0;
+  padding: 20px;
+  border-radius: 18px;
+  background: #120b22;
+  border: 1px solid rgba(196, 170, 255, 0.18);
+}
+
+.report-band {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 14px;
+  padding: 7px 0;
+}
+
+.report-band-label {
+  color: #cfc4ea;
+  font-size: 14px;
+}
+
+.report-band-track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.report-band-fill {
+  height: 16px;
+  min-width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d6bbff, #8b5cf6);
+}
+
+.report-band-count {
+  color: #f3eeff;
+  font-size: 14px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.report-band-note {
+  margin: 14px 0 0;
+  color: #a79dc4;
+  font-size: 14px;
+}
+
+@media (max-width: 560px) {
+  .report-band {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+/* The download block: the CSV, its columns and the reuse terms. */
+.report-download {
+  margin: 24px 0 0;
+  padding: 22px;
+  border-radius: 18px;
+  background: #120b22;
+  border: 1px solid rgba(196, 170, 255, 0.22);
+  display: grid;
+  gap: 14px;
+}
+
+.report-download .cta {
+  justify-self: start;
+}
+
+.report-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.report-columns > li {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 187, 255, 0.22);
+  background: rgba(214, 187, 255, 0.08);
+  color: #e7defd;
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* The source list under the table: one dated link per page the survey read. */
+.report-sources {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 0;
+  padding-left: 22px;
+  overflow-wrap: anywhere;
+  font-size: 15px;
+}
+
+.report-sources .report-sub {
+  color: #a79dc4;
+  font-size: 13px;
+}

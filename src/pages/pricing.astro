@@ -7,7 +7,13 @@ import ClosingCta from '../components/seo/ClosingCta.astro';
 import '../components/seo/seo.css';
 import '../components/seo/official.css';
 import { pageViewer } from '../site/viewer';
-import { CONTENT_DATES, hubChips, serializeJsonLd } from '../site/seo';
+import {
+  CONTENT_DATES,
+  hubChips,
+  serializeJsonLd,
+  REPORT_PATH,
+} from '../site/seo';
+import { COMPETITOR_COUNT, HOURLY_COACHING } from '../server/seo/price-report';
 import { faqSchema } from '../server/seo/offers';
 import { officialPageSchema } from '../server/seo/official';
 import { BUSINESS_LOCATION } from '../site/entity';
@@ -314,7 +320,10 @@ const faq: [string, string][] = [
         already decided. For example,{' '}
         <a href={COACHING_HOUR.href}>a {COACHING_HOUR.short}</a> runs using
         Discord screen share and still costs {COACHING_HOUR.total} at every rank
-        in {CATALOG_YEAR}.
+        in {CATALOG_YEAR}. For a price outside Duoly, our{' '}
+        <a href={REPORT_PATH}>2026 gaming coaching and teammate price report</a>{' '}
+        puts the median coaching hour at {HOURLY_COACHING.median} across{' '}
+        {HOURLY_COACHING.count} rates read from {COMPETITOR_COUNT} platforms.
       </p>
     </section>
 
