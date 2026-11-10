@@ -17,8 +17,6 @@ interface Props {
   bare?: boolean;
   /** Mark live pages so no design-preview guard ever blocks real forms. */
   live?: boolean;
-  /** Admin pages: link the admin-only "Duoly Admin" phone app instead of the site manifest. */
-  adminApp?: boolean;
 }
 
 const {
@@ -29,7 +27,6 @@ const {
   csrf = '',
   bare = false,
   live = true,
-  adminApp = false,
 } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const home = viewer ? ROLE_HOME[viewer.role] : null;
@@ -64,27 +61,7 @@ const avatar =
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    {adminApp ? (
-      <>
-        {/* Admin pages only: the installable "Duoly Admin" app (served to admins only, so the
-              manifest request must carry the session cookie). */}
-        <link
-          rel="manifest"
-          href="/admin/app.webmanifest"
-          crossorigin="use-credentials"
-        />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-title" content="Duoly Admin" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
-        <meta name="theme-color" content="#090414" />
-      </>
-    ) : (
-      <link rel="manifest" href="/site.webmanifest" />
-    )}
+    <link rel="manifest" href="/site.webmanifest" />
     <!-- Link previews: public/og/duoly.jpg is 1200x630, the size every platform shows uncropped -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Duoly" />
