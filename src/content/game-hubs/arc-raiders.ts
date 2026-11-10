@@ -25,7 +25,7 @@ export const arcRaiders: HubPageCopy = {
     'After the LFG page rather than every ARC Raiders service? It covers loot routes, extraction calls and how a duo splits one raid.',
   format: {
     heading: 'What can you book for ARC Raiders on Duoly?',
-    text: 'An ARC Raiders booking on Duoly is a single reviewed raider, a squad order or one coaching hour. First, everything is priced per hour, because a raid has no fixed length and the loot you walk out with matters more than the run count. The raider tiers are Duo Plus with an experienced player at {{p_duo1}}, Duo Pro with a Veteran at {{p_duo2}} and Duo Apex with an Elite raider at {{p_duo3}}. Learn the Maps sits below all three at {{p_learn}} for relaxed loot routes. Bundles of {{main}} cut the total, {{bundles}}. There is no rank picker, because the matchmaking notes from Embark Studios describe no ranked tier at all and read playstyle history, squad size and latency instead, checked in November 2026. For example, say whether the hour is for loot or fights using Discord.',
+    text: 'An ARC Raiders booking on Duoly is a single reviewed raider, a squad order or one coaching hour. Everything is priced per hour, because a raid has no fixed length and the loot you walk out with matters more than the run count. The raider tiers are Duo Plus with an experienced player at {{p_duo1}}, Duo Pro with a Veteran at {{p_duo2}} and Duo Apex with an Elite raider at {{p_duo3}}. Learn the Maps sits below all three at {{p_learn}} for relaxed loot routes. Bundles of {{main}} cut the total, {{bundles}}. There is no rank picker, because the matchmaking notes from Embark Studios describe no ranked tier at all and read playstyle history, squad size and latency instead, checked in November 2026. For example, say whether the hour is for loot or fights using Discord.',
   },
   services: {
     duo1: 'An hour of raids with a player who knows the loot spots and the safe ways out.',
@@ -45,24 +45,24 @@ export const arcRaiders: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Raid prices are per hour and flat for everybody, because ARC Raiders has no ranked tier and nothing on the page asks for a rank. The raider tier is the only thing that moves the number: {{p_duo1}} per hour for an experienced player, {{p_duo2}} for a Veteran and {{p_duo3}} for an Elite raider. First, pick the goal, because loot routes and fight routes are different hours. Second, read the matchmaking note: Embark Studios published in 2026 that every squad member feeds the matchmaking profile, so a Veteran beside you raises the lobby difficulty rather than lowering it. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the map using Discord before hour 1.',
-    team: 'A squad order is one order that hires two raiders at once, so a solo trip becomes a full trio. Full Squad covers {{seats_squad}} raiders at {{p_squad}} per hour and holds the area while you loot. Escort Run is the targeted version at {{p_escort}}, taking you to one piece of loot and back out. First, decide whether you have a target, because the answer picks the service. Matchmaking from Embark Studios prefers equal squad sizes and reads the whole squad, published in 2026, so a trio meets other trios. Bundles of {{main}} take {{bundles}}. For example, settle the loot split using Discord before anybody drops.',
+      'Raid prices are per hour and flat for everybody, because ARC Raiders has no ranked tier and nothing on the page asks for a rank. The raider tier is the only thing that moves the number: {{p_duo1}} per hour for an experienced player, {{p_duo2}} for a Veteran and {{p_duo3}} for an Elite raider. Pick the goal, because loot routes and fight routes are different hours. Read the matchmaking note: Embark Studios published in 2026 that every squad member feeds the matchmaking profile, so a Veteran beside you raises the lobby difficulty rather than lowering it. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. Agree the map using Discord before hour 1.',
+    team: 'A squad order is one order that hires two raiders at once, so a solo trip becomes a full trio. Full Squad covers {{seats_squad}} raiders at {{p_squad}} per hour and holds the area while you loot. Escort Run is the targeted version at {{p_escort}}, taking you to one piece of loot and back out. Decide whether you have a target, because the answer picks the service. Matchmaking from Embark Studios prefers equal squad sizes and reads the whole squad, published in 2026, so a trio meets other trios. Bundles of {{main}} take {{bundles}}. Settle the loot split using Discord before anybody drops.',
     coaching:
-      'The lesson is priced by the hour and gets no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on raid hours stop here. PvP and Extraction costs {{p_pvp}} per hour and covers the deaths that keep repeating: how a fight starts, how a third party arrives, and how to leave with your kit instead of feeding it. First, pick the problem rather than the format. For example, a raider who dies to the same third party books the coaching hour instead of a fourth raid hour at {{p_duo2}}. Screen share runs using Discord, and no lesson from Duoly promises an extraction.',
+      'The lesson is priced by the hour and gets no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on raid hours stop here. PvP and Extraction costs {{p_pvp}} per hour and covers the deaths that keep repeating: how a fight starts, how a third party arrives, and how to leave with your kit instead of feeding it. Pick the problem rather than the format. For example, a raider who dies to the same third party books the coaching hour instead of a fourth raid hour at {{p_duo2}}. Screen share runs using Discord, and no lesson from Duoly promises an extraction.',
   },
   steps: {
     heading: 'How does booking an ARC Raiders session work?',
     items: [
       'Pick a service and the number of hours first. Duo Pro is the Veteran tier at {{p_duo2}} per hour, and 3 hours cost {{p_duo2_x3}} with the {{pct3}} bundle discount in November 2026. Five hours take {{pct5}} off.',
-      'Second, add your area, platform and language at checkout. For example, name Europe and keyboard, and say whether the hour is for loot or for fights, so your raider reads the real request.',
-      'Finally, meet your raider in the order chat using Discord. Agree a map, a route and the loot split, then add each other in game and squad up before the drop. One Elite hour costs {{p_duo3}}.',
+      'Add your area, platform and language at checkout. Name Europe and keyboard, and say whether the hour is for loot or for fights, so your raider reads the real request.',
+      'Meet your raider in the order chat using Discord. Agree a map, a route and the loot split, then add each other in game and squad up before the drop. One Elite hour costs {{p_duo3}}.',
     ],
     note: 'Duoly reviews every ARC Raiders teammate before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
   decide: {
     heading: 'Which ARC Raiders session fits you?',
     intro:
-      'The right ARC Raiders session is the one matching your goal for the hour. First, every service is flat priced, because the matchmaking notes from Embark Studios describe no ranked tier and no rank gate anywhere in 2026. Duo Pro costs {{p_duo2}} per hour and Learn the Maps {{p_learn}}, so the tier only changes who you bring. For example, a {{main}} bundle takes {{bundles}}, so a bundle beats booking 1. Voice runs using Discord.',
+      'The right ARC Raiders session is the one matching your goal for the hour. Every service is flat priced, because the matchmaking notes from Embark Studios describe no ranked tier and no rank gate anywhere in 2026. Duo Pro costs {{p_duo2}} per hour and Learn the Maps {{p_learn}}, so the tier only changes who you bring. A {{main}} bundle takes {{bundles}}, so a bundle beats booking 1 at a time. Voice runs using Discord.',
     picks: [
       {
         goal: 'New to the maps?',
@@ -100,14 +100,14 @@ export const arcRaiders: HubPageCopy = {
     {
       heading: 'Why does ARC Raiders have no rank picker?',
       paragraphs: [
-        'ARC Raiders is an extraction shooter with no ranked tier, so Duoly charges one flat price of {{p_duo2}} per Veteran hour and nothing at checkout asks for your rank. First, pick the raider instead of a rank: Duo Plus is an experienced raider at {{p_duo1}} per hour, Duo Pro a Veteran at {{p_duo2}} and Duo Apex an Elite raider at {{p_duo3}}. Learn the Maps is the gentlest start at {{p_learn}} per hour. For example, a first raid on a new map goes further with a guide than with a gunfighter.',
+        'ARC Raiders is an extraction shooter with no ranked tier, so Duoly charges one flat price of {{p_duo2}} per Veteran hour and nothing at checkout asks for your rank. Pick the raider instead of a rank: Duo Plus is an experienced raider at {{p_duo1}} per hour, Duo Pro a Veteran at {{p_duo2}} and Duo Apex an Elite raider at {{p_duo3}}. Learn the Maps is the gentlest start at {{p_learn}} per hour. A first raid on a new map goes further with a guide than with a gunfighter.',
         'What changes instead is lobby difficulty. Every squad member feeds the matchmaking profile, so a Veteran beside you raises the opposition rather than lowering it. Flat pricing keeps the maths simple: 3 Veteran hours cost {{p_duo2_x3}} with {{pct3}} off and 5 cost {{p_duo2_x5}} with {{pct5}} off. Decide before the drop whether the hour is for loot or for fights, because the route changes completely. Keep comms short out there, because a late call during a third party ends the run, so use Discord.',
       ],
     },
     {
       heading: 'How do Full Squad and Escort Run differ?',
       paragraphs: [
-        'Full Squad is one order that hires two Veteran raiders, so the listed {{p_squad}} per hour covers the whole group rather than a single seat. You loot while both raiders hold the area and watch the extraction, which turns a solo trip into a proper trio. Escort Run is the other shape at {{p_escort}} per hour: an Elite squad takes you to one specific piece of loot and back out, which suits a single planned objective. First, decide whether you have a target.',
+        'Full Squad is one order that hires two Veteran raiders, so the listed {{p_squad}} per hour covers the whole group rather than a single seat. You loot while both raiders hold the area and watch the extraction, which turns a solo trip into a proper trio. Escort Run is the other shape at {{p_escort}} per hour: an Elite squad takes you to one specific piece of loot and back out, which suits a single planned objective. Decide whether you have a target.',
         'For example, a player chasing one workbench upgrade gains more from an Escort Run than from an open raid hour, while a player who wants company for the evening gains more from the open hour at {{p_duo2}}. Name the map and the item, agree the extraction point and a fallback, then settle the loot split in the order chat before anybody drops. Matchmaking from Embark Studios prefers equal squad sizes, published in 2026, so a trio normally meets other trios. Bundles of {{main}} take {{bundles}}, agreed using Discord.',
       ],
     },
@@ -122,7 +122,7 @@ export const arcRaiders: HubPageCopy = {
       heading: 'When is ARC Raiders coaching the better booking?',
       paragraphs: [
         'ARC Raiders coaching is the better booking when the goal is a repeatable fix rather than company for the next raid. PvP and Extraction is one hour with an Elite coach on fights, third parties and clean extractions, at {{p_pvp}} per hour. Coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to raid hours only.',
-        'First, name the death you keep repeating. For example, a raider who dies to the same third party gains more from one coaching hour at {{p_pvp}} than from a fourth raid, because a coach can name the pattern and leave you something to practise. A raider who simply does not know the maps gains more from Learn the Maps at {{p_learn}} per hour in 2026. ARC Raiders has no separate coaching page on Duoly yet, so the lesson is booked from the prices above, and screen share runs using Discord so the coach watches your real route. Two neighbours are worth a look: [Rainbow Six Siege teammates](/games/rainbow-six-siege) for tight-angle gunfights, and [PUBG teammates](/games/pubg) for the same loot-and-leave tension on a bigger map.',
+        'Name the death you keep repeating. For example, a raider who dies to the same third party gains more from one coaching hour at {{p_pvp}} than from a fourth raid, because a coach can name the pattern and leave you something to practise. A raider who simply does not know the maps gains more from Learn the Maps at {{p_learn}} per hour in 2026. ARC Raiders has no separate coaching page on Duoly yet, so the lesson is booked from the prices above, and screen share runs using Discord so the coach watches your real route. Two neighbours are worth a look: [Rainbow Six Siege teammates](/games/rainbow-six-siege) for tight-angle gunfights, and [PUBG teammates](/games/pubg) for the same loot-and-leave tension on a bigger map.',
       ],
     },
   ],
@@ -157,6 +157,6 @@ export const arcRaiders: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next ARC Raiders run?',
-    text: 'Duo Pro is the raid hour with a Veteran raider from Duoly. Three hours cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Learn the Maps stays {{p_learn}} per hour for the routes first, and Full Squad costs {{p_squad}}. ARC Raiders has no ranked tier, so no rank gate stands between any two accounts, and matchmaking from Embark Studios reads playstyle history and squad size in 2026. For example, agree the map and the extraction point using Discord.',
+    text: 'Duo Pro is the raid hour with a Veteran raider from Duoly. Three hours cost {{p_duo2_x3}} with {{pct3}} off, and 5 hours take {{pct5}} off. Learn the Maps stays {{p_learn}} per hour for the routes first, and Full Squad costs {{p_squad}}. ARC Raiders has no ranked tier, so no rank gate stands between any two accounts, and matchmaking from Embark Studios reads playstyle history and squad size in 2026. Agree the map and the extraction point using Discord.',
   },
 };

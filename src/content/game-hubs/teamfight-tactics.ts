@@ -23,11 +23,11 @@ export const teamfightTactics: HubPageCopy = {
   ],
   format: {
     heading: 'What can you book for Teamfight Tactics on Duoly?',
-    text: 'A Teamfight Tactics booking on Duoly is a Double Up partner, a live Board Coach or a comp and econ review. First, Double Up puts a Master+ partner on the second board of your team of two, priced by your own rank from {{p_duo1_low}} to {{p_duo1_high}} per game. Board Coach keeps one flat price of {{p_duo2}} per game, and Normals and Hyper Roll cost {{p_norm}} at every rank. Bundles of {{main}} cut the total, {{bundles}}. Second, the lesson: Comp and Econ Review is one hour with a Master+ coach at {{p_econ}}, on comps, roll timing and gold from stage two onward. For example, name your server and comps using Discord first.',
+    text: 'A Teamfight Tactics booking on Duoly is a Double Up partner, a live Board Coach or a comp and econ review. Double Up puts a Master+ partner on the second board of your team of two, priced by your own rank from {{p_duo1_low}} to {{p_duo1_high}} per game. Board Coach keeps one flat price of {{p_duo2}} per game, and Normals and Hyper Roll cost {{p_norm}} at every rank. Bundles of {{main}} cut the total, {{bundles}}. The lesson: Comp and Econ Review is one hour with a Master+ coach at {{p_econ}}, on comps, roll timing and gold from stage two onward. Name your server and comps using Discord first.',
   },
   services: {
     duo1: 'Double Up with a Master+ partner: plan both boards and send help at the right moment.',
-    duo2: 'You play ranked while a Master+ player watches your screen and calls every decision.',
+    duo2: 'Your own ranked game with a Master+ player who calls every buy, roll and position live.',
     norm: 'Fast, casual lobbies together in Normals or Hyper Roll, with no LP on the line.',
     gg1v1:
       'A head-to-head in the same lobby against a verified Gamer Girl: higher placement wins.',
@@ -39,23 +39,23 @@ export const teamfightTactics: HubPageCopy = {
   },
   intros: {
     teammate:
-      'Session prices are per game, and only Double Up reads your own rank: {{rank_duo1_low}} players pay {{p_duo1_low}} per game and {{rank_duo1_high}} players pay {{p_duo1_high}}. Board Coach and the casual lobbies hold one price for everybody at {{p_duo2}} and {{p_norm}}. First, pick the mode, because the mode decides whether the rank list on a card matters. Second, read what the card actually buys: Double Up puts a Master+ partner on the second board of your team of two, while Board Coach puts a Master+ player on your own board as a live caller. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. For example, agree the contested line using Discord before game 1.',
+      'Session prices are per game, and only Double Up reads your own rank: {{rank_duo1_low}} players pay {{p_duo1_low}} per game and {{rank_duo1_high}} players pay {{p_duo1_high}}. Board Coach holds one price for everybody at {{p_duo2}}, and so do the casual lobbies at {{p_norm}} and every Gamer Girl session. Pick the mode, because the mode decides whether the rank list on a card matters. Read what the card actually buys: Double Up puts a Master+ partner on the second board of your team of two, while Board Coach puts a Master+ player on your own board as a live caller. Only {{main}} is sold in bundles, {{bundles}}, and every other service books {{picker}}. Agree the contested line using Discord before game 1.',
     coaching:
-      'The review is priced by the hour and gets no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on {{main}} stop here. Comp and Econ Review costs {{p_econ}} per hour and is the slower, structured option: comps that suit how you play, when to roll, when to level, and gold management from stage two onward. First, pick the problem rather than the format. For example, a player who finishes fifth in every lobby books the review hour instead of a fourth Double Up game from {{p_duo1_low}}. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
+      'The review is priced by the hour and gets no quantity or bundle discount at all, so the {{pct3}} to {{pct10}} bundle savings on {{main}} stop here. Comp and Econ Review costs {{p_econ}} per hour and is the slower, structured option: comps that suit how you play, when to roll, when to level, and gold management from stage two onward. Pick the problem rather than the format. For example, a player who finishes fifth in every lobby books the review hour instead of a fourth Double Up game from {{p_duo1_low}}. Screen share runs using Discord, and no lesson from Duoly promises a rank.',
   },
   steps: {
     heading: 'How does booking a TFT session work?',
     items: [
       'Pick a service and the number of games first. Double Up is the two-player mode with a Master+ partner, and 5 games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off in November 2026. Five games take {{pct5}} off.',
-      'Second, add your server, rank and language at checkout. For example, name EUW and {{rank_duo1}}, so your partner reads the real request and knows which lobby strength to expect.',
-      'Finally, meet your partner in the order chat using Discord. Agree who takes the contested line and how voice runs, then add each other by Riot ID. Board Coach costs {{p_duo2}} per game with live screen share.',
+      'Add your server, rank and language at checkout. Name EUW and {{rank_duo1}}, so your partner reads the real request and knows which lobby strength to expect.',
+      'Meet your partner in the order chat using Discord. Agree who takes the contested line and how voice runs, then add each other by Riot ID. Board Coach costs {{p_duo2}} per game with live screen share.',
     ],
     note: 'Duoly reviews every TFT partner before any order goes live. See the [payment and refund terms](/terms), read the [privacy policy](/privacy) for what gets stored, or [contact support](/contact) any time.',
   },
   decide: {
     heading: 'Which TFT session fits you?',
     intro:
-      'The right TFT session is the one matching your goal for the evening. First, Board Coach, Normals and Hyper Roll keep one flat price for everybody, {{p_duo2}} and {{p_norm}} per game. Double Up follows your own rank instead, from {{p_duo1_low}} per game, and the review hour is priced by the clock at {{p_econ}}. For example, a {{main}} bundle takes {{bundles}}, so a bundle beats booking 1. Screen share runs using Discord.',
+      'The right TFT session is the one matching your goal for the evening. Board Coach, Normals and Hyper Roll keep one flat price for everybody, {{p_duo2}} and {{p_norm}} per game. Double Up follows your own rank instead, from {{p_duo1_low}} per game, and the review hour is priced by the clock at {{p_econ}}. A {{main}} bundle takes {{bundles}}, so a bundle beats booking 1 at a time. Screen share runs using Discord.',
     picks: [
       {
         goal: 'Want a real Double Up partner?',
@@ -93,14 +93,14 @@ export const teamfightTactics: HubPageCopy = {
     {
       heading: 'What is a TFT Double Up booking?',
       paragraphs: [
-        'A TFT Double Up booking is one Master+ partner on the second board of your team of two, for the games you choose. First, Double Up is the Riot Games mode where two boards share a placement and can send units, gold or items across, so a booked partner plays beside you rather than for you. Second, the price follows your own rank: {{rank_duo1_low}} players pay {{p_duo1_low}} per game and {{rank_duo1_high}} players pay {{p_duo1_high}}. For example, 5 games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off.',
-        'Board Coach is the other live service at a flat {{p_duo2}} per game. There a Master+ player watches your own board and calls what to buy, roll and position while the lobby happens, so nobody joins your game. Normals and Hyper Roll is the casual option at {{p_norm}} per game, with no LP on the line. Finally, every booking opens an order chat where you name the server, the set and the comps you like, with screen share using Discord.',
+        'A TFT Double Up booking is one Master+ partner on the second board of your team of two, for the games you choose. Double Up is the Riot Games mode where two boards share a placement and can send units, gold or items across, so a booked partner plays beside you rather than for you. The price follows your own rank: {{rank_duo1_low}} players pay {{p_duo1_low}} per game and {{rank_duo1_high}} players pay {{p_duo1_high}}. For example, 5 games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off.',
+        'Board Coach is the other live service at a flat {{p_duo2}} per game. There a Master+ player watches your own board and calls what to buy, roll and position while the lobby happens, so nobody joins your game. Normals and Hyper Roll is the casual option at {{p_norm}} per game, with no LP on the line. Every booking opens an order chat where you name the server, the set and the comps you like, with screen share using Discord.',
       ],
     },
     {
       heading: 'Double Up or Board Coach: which TFT booking helps more?',
       paragraphs: [
-        'Double Up is the two-player mode where both players run a board and can send units, gold or items across. First, a Master+ partner takes the aggressive line while you play the safer one, and the pair places together, so the help arrives inside the game rather than after. Five games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off, and 5 games take {{pick5}} off. For example, one partner commits to the contested comp while the other scouts the lobby using Discord.',
+        'Double Up is the two-player mode where both players run a board and can send units, gold or items across. A Master+ partner takes the aggressive line while you play the safer one, and the pair places together, so the help arrives inside the game rather than after. Five games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off, and 5 games take {{pick5}} off. For example, one partner commits to the contested comp while the other scouts the lobby using Discord.',
         'Board Coach is the other shape of help, and the one to pick when the goal is learning rather than placement. You play a personal ranked game while a Master+ player watches your screen and says what to buy, roll and position in real time, at a flat {{p_duo2}} per game in 2026. A player who always rolls at the wrong level hears the call in the moment instead of reading a replay 3 days later. Pick the goal first and the mode second, then agree whether the evening is for LP or for learning, because the two lines diverge at stage four.',
       ],
     },
@@ -115,7 +115,7 @@ export const teamfightTactics: HubPageCopy = {
       heading: 'When is TFT coaching the better booking?',
       paragraphs: [
         'TFT coaching is the better booking when the goal is a repeatable fix rather than a partner for the next lobby. Comp and Econ Review is one hour with a Master+ coach at {{p_econ}}, covering comps that suit how you play, roll and level timing, and gold from stage two. Coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to {{main}} only.',
-        'First, name the placement you keep repeating. For example, a player who finishes fifth in every lobby gains more from one review hour at {{p_econ}} than from a fourth Double Up game, because fifth place is usually one economy habit. A player who mostly wants company gains more from Normals and Hyper Roll at {{p_norm}} per game in 2026. Set rotations from Riot Games change the comps every few months, so say which set you have been playing. The full lesson list and formats live on the [Teamfight Tactics coaching page](/games/teamfight-tactics/coaching), with screen share using Discord. [League of Legends teammates](/games/league-of-legends) and [Wild Rift teammates](/games/wild-rift) are the other Riot games Duoly sells.',
+        'Name the placement you keep repeating. For example, a player who finishes fifth in every lobby gains more from one review hour at {{p_econ}} than from a fourth Double Up game, because fifth place is usually one economy habit. A player who mostly wants company gains more from Normals and Hyper Roll at {{p_norm}} per game in 2026. Set rotations from Riot Games change the comps every few months, so say which set you have been playing. The full lesson list and formats live on the [Teamfight Tactics coaching page](/games/teamfight-tactics/coaching), with screen share using Discord. [League of Legends teammates](/games/league-of-legends) and [Wild Rift teammates](/games/wild-rift) are the other Riot games Duoly sells.',
       ],
     },
   ],
@@ -150,6 +150,6 @@ export const teamfightTactics: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next TFT lobby?',
-    text: 'Double Up is the two-player session with a Master+ partner from Duoly. Five games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off, and 5 games take {{pick5}} off. Normals and Hyper Roll stays {{p_norm}} per game with no LP on the line, and Board Coach costs {{p_duo2}}. Comp and Econ Review is the hour for comps, roll timing and gold from stage two, at {{p_econ}} in 2026. For example, pick your server, then agree the plan using Discord.',
+    text: 'Double Up is the two-player session with a Master+ partner from Duoly. Five games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off, and 5 games take {{pick5}} off. Normals and Hyper Roll stays {{p_norm}} per game with no LP on the line, and Board Coach costs {{p_duo2}}. Comp and Econ Review is the hour for comps, roll timing and gold from stage two, at {{p_econ}} in 2026. Pick your server, then agree the plan using Discord.',
   },
 };

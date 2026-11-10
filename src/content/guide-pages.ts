@@ -343,7 +343,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should a Valorant LFG post say?',
       intro:
-        'A Valorant LFG post is a short message naming your region, rank, role and mode, so the right player answers instead of ten wrong ones. First, region, because EU, NA, AP, KR, BR and LATAM keep separate queues and separate ladders. Second, rank, because only the Competitive cards from Duoly carry a rank list while Swiftplay and Unrated hold one price for everybody. Third, role: say Duelist, Controller, Initiator, Sentinel or flex, and name 2 agents you actually play. Mode comes last, because a Swiftplay partner and a ranked grind partner are rarely the same person, whether the booking takes {{pct3}} off 3 games or {{pct5}} off 5 in November 2026.',
+        'A Valorant LFG post is a short message naming your region, rank, role and mode, so the right player answers instead of ten wrong ones. Region, because EU, NA, AP, KR, BR and LATAM keep separate queues and separate ladders. Rank, because only the Competitive cards from Duoly carry a rank list while Swiftplay and Unrated hold one price for everybody. Role: say Duelist, Controller, Initiator, Sentinel or flex, and name 2 agents you actually play. Mode comes last, because a Swiftplay partner and a ranked grind partner are rarely the same person, whether the booking takes {{pct3}} off 3 games or {{pct5}} off 5 in November 2026.',
       fields: [
         { label: 'Region', chips: ['EU', 'NA', 'AP', 'KR', 'BR', 'LATAM'] },
         {
@@ -464,7 +464,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should a Fortnite duo post say?',
       intro:
-        'A Fortnite duo post is a short message naming your platform, region, mode and input, so the right partner answers on the first try. First, platform, because an invite needs an Epic name and a console player and a PC player warm up differently. Second, region, since Europe, NA-East, NA-Central, NA-West, Brazil, Asia, Oceania and Middle East are separate queues. Third, mode: Builds and Zero Build train different habits, and Reload is the respawn playground in between, with {{pct3}} off 3 hours and {{pct5}} off 5. Rank is worth adding too, because matchmaking reads the highest rank in the party under the rule from Epic Games read in November 2026. Input comes last, because controller and keyboard change how a pair fights inside a box, whether the hour takes {{pct3}} off 3 or {{pct5}} off 5.',
+        'A Fortnite duo post is a short message naming your platform, region, mode and input, so the right partner answers on the first try. Platform, because an invite needs an Epic name and a console player and a PC player warm up differently. Region, since Europe, NA-East, NA-Central, NA-West, Brazil, Asia, Oceania and Middle East are separate queues. Mode: Builds and Zero Build train different habits, and Reload is the respawn playground in between, with {{pct3}} off 3 hours and {{pct5}} off 5. Rank is worth adding too, because matchmaking reads the highest rank in the party under the rule from Epic Games read in November 2026. Input comes last, because controller and keyboard change how a pair fights inside a box, whether the hour takes {{pct3}} off 3 or {{pct5}} off 5.',
       fields: [
         {
           label: 'Platform',
@@ -591,7 +591,7 @@ export const GUIDE_PAGES: GameDuoGuide[] = [
       pill: 'LFG post template',
       heading: 'What should an Overwatch 2 LFG post say?',
       intro:
-        'An Overwatch 2 LFG post is a short message naming your platform, region, rank, role and mode, in that order. First, platform, because an invite needs the BattleTag and console posts are a large share of Overwatch LFG traffic. Second, region, since Europe, Americas and Asia keep separate queues. Rank comes third, because only the Competitive cards from Duoly carry a rank list while Quick Play and Arcade hold one price. Role comes fourth, and role is the field most posts forget. Role queue locks every team to 1 Tank, 2 Damage and 2 Support, so the open seat decides who can answer. Finally, say where you want voice, using Discord or the in-game group, whether the booking takes {{pct3}} off 3 games or {{pct5}} off 5.',
+        'An Overwatch 2 LFG post is a short message naming your platform, region, rank, role and mode, in that order. Platform, because an invite needs the BattleTag and console posts are a large share of Overwatch LFG traffic. Region, since Europe, Americas and Asia keep separate queues. Rank comes third, because only the Competitive cards from Duoly carry a rank list while Quick Play and Arcade hold one price. Role comes fourth, and role is the field most posts forget. Role queue locks every team to 1 Tank, 2 Damage and 2 Support, so the open seat decides who can answer. Say where you want voice, using Discord or the in-game group, whether the booking takes {{pct3}} off 3 games or {{pct5}} off 5.',
       fields: [
         {
           label: 'Platform',

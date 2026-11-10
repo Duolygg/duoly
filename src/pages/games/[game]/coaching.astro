@@ -35,7 +35,7 @@ import {
   withPrices,
 } from '../../../server/seo/coaching-examples';
 import { heroOffer } from '../../../server/seo/hero-offer';
-import { BOOKING_REASSURANCE } from '../../../server/seo/reassurance';
+import { COACHING_REASSURANCE } from '../../../server/seo/reassurance';
 import {
   serializeJsonLd,
   GUIDE_PATH,
@@ -146,7 +146,7 @@ const description = descriptions[game.slug]!;
       lead={lesson.lead}
       cta={{ href: book, label: `Book ${game.name} coaching` }}
       secondary={{ href: '#prices', label: 'See prices' }}
-      note={BOOKING_REASSURANCE}
+      note={COACHING_REASSURANCE}
       art={[{ src: game.img, alt: `${game.name} game art` }]}
       chip={summary}
       offer={offer}

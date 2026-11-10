@@ -22,7 +22,21 @@ import { AUTO_CANCEL_MINUTES } from './fees';
  * nobody accepts refunds itself" made the order the actor and left the reader
  * to work out whose money came back; the line now says who gets what.
  */
-export const BOOKING_REASSURANCE = `One payment, no subscription. Cancel free until a teammate accepts, and if no teammate accepts within ${AUTO_CANCEL_MINUTES} minutes you get your money back automatically.`;
+const reassurance = (who: 'teammate' | 'coach') =>
+  `One payment, no subscription. Cancel free until a ${who} accepts, and if no ${who} accepts within ${AUTO_CANCEL_MINUTES} minutes you get your money back automatically.`;
 
-/** Where a reader checks the line above, in the order the clauses appear. */
+export const BOOKING_REASSURANCE = reassurance('teammate');
+
+/**
+ * The same line for a coaching page, which hires a coach and not a teammate.
+ *
+ * The rules are identical, because a lesson is an ordinary order: it queues to
+ * the coaches verified for that game, the first to accept takes it, and an
+ * order nobody accepts refunds itself on the same clock. Only the noun changes.
+ * A coaching page that said "until a teammate accepts" was describing a product
+ * the reader was not buying.
+ */
+export const COACHING_REASSURANCE = reassurance('coach');
+
+/** Where a reader checks the lines above, in the order the clauses appear. */
 export const REASSURANCE_SOURCES = ['/how-it-works', '/fees-and-refunds'];

@@ -1,4 +1,5 @@
 import { sessionExamples } from '../../content/coaching-examples';
+import { CATALOG_PRICES_UPDATED } from '../../site/price-dates';
 import type { seoOffers } from './offers';
 import { prosePrice } from './citable-answers';
 
@@ -34,7 +35,14 @@ export const withPrices = (text: string, offers: Offers) =>
 
 const article = (word: string) => (/^[AEIOU]/i.test(word) ? 'an' : 'a');
 
-// First sentence of an example session: what the service is, who coaches it and what it costs.
+/** The year the catalog's prices belong to, so a quoted figure is dated. */
+const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
+
+/**
+ * First sentence of an example session: what the service is, who coaches it,
+ * what it costs and the year that price is from. The year is the catalog's own
+ * (src/site/price-dates.ts), not a day this card remembers.
+ */
 export function sessionLead(
   gameName: string,
   offer: Offers[number],
@@ -47,7 +55,7 @@ export function sessionLead(
         ? `one live ${gameName} game with ${coach}`
         : `a live 1-hour ${gameName} session with ${coach}`
       : `a 1-hour ${gameName} lesson with ${coach}`;
-  return `${offer.title} is ${what}, at ${prosePrice(offer)} from Duoly, using Discord voice and screen share. For example, the goal can be to ${goal.charAt(0).toLowerCase()}${goal.slice(1)}.`;
+  return `${offer.title} is ${what}, at ${prosePrice(offer)} from Duoly in ${CATALOG_YEAR}, using Discord voice and screen share. For example, the goal can be to ${goal.charAt(0).toLowerCase()}${goal.slice(1)}.`;
 }
 
 // Point to alternatives without repeating the price cards.

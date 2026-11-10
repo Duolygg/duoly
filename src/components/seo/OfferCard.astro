@@ -1,6 +1,9 @@
 ---
 import type { HeroOffer } from '../../server/seo/hero-offer';
-import { BOOKING_REASSURANCE } from '../../server/seo/reassurance';
+import {
+  BOOKING_REASSURANCE,
+  COACHING_REASSURANCE,
+} from '../../server/seo/reassurance';
 /**
  * The booking offer, inline in an article.
  *
@@ -22,11 +25,16 @@ interface Props {
   /** Why this offer answers the section above it, as a plain benefit. */
   text: string;
   art?: { src: string; alt: string };
+  /** A lesson rather than a session, so the fine print names a coach. */
+  coach?: boolean;
 }
-const { offer, text, art } = Astro.props;
+const { offer, text, art, coach = false } = Astro.props;
 ---
 
-<aside class="offer-inline" aria-label={`Duoly offer: ${offer.title}`}>
+<aside
+  class={art ? 'offer-inline' : 'offer-inline no-art'}
+  aria-label={`Duoly offer: ${offer.title}`}
+>
   {art && (
     <img
       src={art.src}
@@ -56,5 +64,7 @@ const { offer, text, art } = Astro.props;
       {offer.label}
     </a>
   </div>
-  <p class="offer-inline-note">{BOOKING_REASSURANCE}</p>
+  <p class="offer-inline-note">
+    {coach ? COACHING_REASSURANCE : BOOKING_REASSURANCE}
+  </p>
 </aside>

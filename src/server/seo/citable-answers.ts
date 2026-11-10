@@ -1,6 +1,7 @@
 import { BUNDLE_UNITS, quantityDiscountPercent } from '../../contracts/pricing';
+import { servicesFor } from '../../design-reference/lib/catalog.js';
 import { SITE_GAMES } from '../../site/games';
-import type { seoOffers } from './offers';
+import { cleanCopy, type seoOffers } from './offers';
 
 type Offers = ReturnType<typeof seoOffers>;
 
@@ -20,6 +21,22 @@ export function offerList(offers: Offers) {
 }
 
 /**
+ * The game's main service by name: the one its Bundles tab is built from.
+ *
+ * Copy used to say "the main service", which is the catalog's word for it and
+ * not a thing a reader can point at. The name comes from the catalog, so the
+ * sentence and the Bundles tab always agree.
+ */
+export function mainServiceTitle(gameId: string) {
+  const { main, modes } = servicesFor(gameId) as {
+    main: string;
+    modes: { id: string; title: string }[];
+  };
+  const mode = modes.find((item) => item.id === main);
+  return mode ? cleanCopy(mode.title) : '';
+}
+
+/**
  * The discount ladder, in full, from the engine that charges it.
  *
  * The bundle row used to name only what it changed against the quantity row (3
@@ -27,6 +44,12 @@ export function offerList(offers: Offers) {
  * ordinary order of 5 (src/contracts/pricing.ts). Leaving 5 out of the bundle
  * ladder read as an omission beside the price cards, which show all three
  * bundle chips, so the row states its whole ladder and repeats the 20%.
+ *
+ * The quantity sentence names who it is about. "Book 1 to 5 games, and 5 take
+ * 20% off" sat directly beside a bundle ladder of 3, 5 and 10 on the same
+ * grid, so a reader had two ranges for one picker. Only the main service sells
+ * bundles, so the picker sentence covers everything else and the bundle
+ * sentence names the service it belongs to.
  */
 export function quantityAnswer(offers: Offers) {
   const offer = offers[0]!;
@@ -35,9 +58,13 @@ export function quantityAnswer(offers: Offers) {
     (units, index) =>
       `${quantityDiscountPercent(units, { bundle: true })}% off ${units}${index === 0 ? ` ${unit}` : ''}`,
   );
-  return offer.cat === 'training'
-    ? 'Quantity discounts and bundles do not apply to coaching.'
-    : `Book 1 to 5 ${unit}, and 5 ${unit} take ${quantityDiscountPercent(5)}% off. Bundles of the main service take ${bundle.slice(0, -1).join(', ')} and ${bundle.at(-1)}.`;
+  const main = mainServiceTitle(offer.selection.gameId);
+  const ladder = `${bundle.slice(0, -1).join(', ')} and ${bundle.at(-1)}`;
+  if (offer.cat === 'training')
+    return 'Quantity discounts and bundles do not apply to coaching.';
+  return main
+    ? `Teammate services without bundles book 1 to 5 ${unit}, and 5 ${unit} take ${quantityDiscountPercent(5)}% off. ${main} offers bundles: ${ladder}.`
+    : `Book 1 to 5 ${unit}, where 5 ${unit} take ${quantityDiscountPercent(5)}% off. Bundles take ${ladder}.`;
 }
 
 export function pricesAnswer(gameId: string, offers: Offers, coach: boolean) {
@@ -86,7 +113,7 @@ export function closingAnswer(gameName: string) {
     Deadlock:
       'one hero and one mid game moment, for example a Mid Boss attempt with no vision',
   };
-  return `A ${gameName} lesson from Duoly is one booked session on a problem you pick. First, bring ${goals[gameName] ?? 'one situation from your games'}. Then, 1) share the goal in the order chat, 2) meet your coach using Discord and 3) stay on your own account.`;
+  return `A ${gameName} lesson from Duoly is one booked session on a problem you pick. Bring ${goals[gameName] ?? 'one situation from your games'}. Then 1) share the goal in the order chat, 2) meet your coach using Discord and 3) stay on your own account.`;
 }
 
 /**
@@ -98,9 +125,9 @@ export function closingAnswer(gameName: string) {
 export function closingDetail(offers: Offers) {
   const coach = offers[0]!.cat === 'training';
   const bundles = coach
-    ? 'Bundles do not apply to coaching, so five lessons cost five times the single price.'
+    ? `Coaching has no quantity or bundle discount. ${offers[0]!.title} costs ${offers[0]!.display} per ${offers[0]!.unit}.`
     : `${quantityAnswer(offers)} Bundle pricing is applied in the checkout, not on request.`;
-  return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. Step 2 always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Finally, expect a question about rank, role and region before the first match loads.`;
+  return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. Step 2 always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Expect a question about rank, role and region before the first match loads.`;
 }
 
 /**
@@ -108,20 +135,28 @@ export function closingDetail(offers: Offers) {
  * what moves it, and where it becomes final. Shared by the hub, intent and
  * coaching price sections so the rules are stated once and stay true per
  * category: bundles come from calculateQuote, and coaching has none.
+ *
+ * It used to be four clauses wired together with "First, ... Second, ... For
+ * example, ...", and the example was not one: "a longer booking reaches the
+ * largest discount shown" named no booking and no discount, and it was wrong
+ * beside a grid where 25% off 10 belongs to the main service alone. The note
+ * now states the rank rule, the discount rule and where the order finishes, as
+ * three plain sentences. The last one was a single clause that mixed two
+ * different facts, payment and play, so it is two sentences now.
+ *
+ * On a coaching grid the discount rule names the discounts it is excluding.
+ * "Quantity discounts and bundles do not apply to coaching" is true and leaves
+ * a reader who has just read a teammate page wondering which discounts those
+ * were, so the note states the ladder it rules out, from the same engine that
+ * applies it to teammate orders.
  */
-const lowerFirst = (text: string) =>
-  text.charAt(0).toLowerCase() + text.slice(1);
-
 export function priceNote(offers: Offers, coach = false) {
   const ranked = offers.some((offer) => offer.rank);
   const unit = offers[0]!.unit === 'hour' ? 'hour' : 'game';
-  return `Every figure above is the base price from Duoly for one ${unit}, before account perks. First, ${
-    ranked
-      ? 'your own rank moves a ranked price'
-      : 'these services are flat priced'
-  }. Second, ${lowerFirst(quantityAnswer(offers))} For example, ${
-    coach
-      ? 'a first lesson and a fifth cost the same'
-      : 'a longer booking reaches the largest discount shown'
-  }. Payment finishes on duoly.gg, using Discord voice on your own account.`;
+  const rule = ranked
+    ? 'Your own rank moves a ranked price.'
+    : 'These services are flat priced, so every rank pays the same.';
+  if (!coach)
+    return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)} Payment finishes on duoly.gg. You play on your own account, with voice on Discord.`;
+  return `Each coaching price above covers one ${unit}, before account perks. Your rank does not change it, and quantity discounts and bundles do not apply. Payment finishes on duoly.gg. You keep your own account and meet your coach on Discord for voice and screen share.`;
 }
