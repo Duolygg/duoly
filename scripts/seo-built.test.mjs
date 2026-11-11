@@ -474,8 +474,16 @@ test('the price report publishes its dataset, its sources and its inbound links'
   );
   const article = page.schemas.find((s) => s['@type'] === 'Article');
   assert.equal(article.author['@type'], 'Organization');
+  // The survey ran on one day and the report was published that day, so
+  // datePublished never moves. dateModified follows the copy, which is why it
+  // is a floor rather than the same literal: an edit to the prose is allowed
+  // to move it, an edit that pre-dates publication is not.
   assert.equal(article.datePublished, '2026-11-10');
-  assert.equal(article.dateModified, '2026-11-10');
+  assert.match(article.dateModified, /^\d{4}-\d{2}-\d{2}$/);
+  assert(
+    article.dateModified >= article.datePublished,
+    `dateModified ${article.dateModified} precedes publication`,
+  );
   const dataset = page.schemas.find((s) => s['@type'] === 'Dataset');
   assert(dataset, 'Dataset markup');
   assert.equal(dataset.isAccessibleForFree, true);
