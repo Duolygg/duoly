@@ -81,6 +81,20 @@ describe('testimonial carousel', () => {
     expect(SAMPLE_TESTIMONIALS.length).toBeGreaterThan(PHONE_REVIEWS.length);
   });
 
+  it('averages the reviews a phone never sees along with the ones it does', () => {
+    // every sample review is five stars, so make the two the phone leaves out the only ones
+    // that could pull the average down: a header reading off the sample would still say 5.0
+    const reviews = SAMPLE_TESTIMONIALS.slice(0, PHONE_ROW_CARDS * 2 + 2).map(
+      (t, i) => ({ ...t, stars: i < PHONE_ROW_CARDS * 2 ? 5 : 1 }),
+    );
+    const html = render({ testimonials: reviews });
+    expect(listedCards(html)).toBe(PHONE_ROW_CARDS * 2);
+    expect(html).toContain('from ' + reviews.length + ' reviews');
+    // (12 x 5 + 2 x 1) / 14
+    expect(html).toContain('<strong>4.4</strong>');
+    expect(html).not.toContain('<strong>5.0</strong>');
+  });
+
   it('keeps a phone row a full loop, at the speed it already drifts at', () => {
     const html = render();
     // 6 cards × 446px ÷ 26px per second, the same formula every width uses

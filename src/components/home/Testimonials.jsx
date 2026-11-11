@@ -45,9 +45,10 @@ const PHONE_WIDTH = '(max-width: 560px)';
  * The server cannot know the viewport, so it has to guess, and it guesses phone: the reviews
  * sit 12,100px down a phone homepage, past fourteen screens, which is exactly where the
  * cheapest markup belongs. Anything wider swaps the full set in from its first client render,
- * thousands of pixels before the rows can be scrolled to, so nothing visible moves. The rows
- * are a fixed height whatever they hold (a horizontal strip of same-height cards), so the swap
- * adds no layout shift at any width and leaves offscreen.css's contain-intrinsic-size correct.
+ * thousands of pixels before the rows can be scrolled to, so nothing visible moves. A row's
+ * height comes from its cards and not from how many of them it holds, so the swap moves nothing
+ * below the strip either; on a phone offscreen.css pins that height, so sampling cannot change
+ * it and its contain-intrinsic-size stays exact.
  */
 function usePhoneSample() {
   const [phone, setPhone] = React.useState(true);
