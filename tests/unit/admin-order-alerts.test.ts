@@ -27,7 +27,9 @@ describe('admin new-order alerts', () => {
       q('a'),
       q('d', 'in_progress'),
     ]);
-    expect(next.fresh.map((o) => o.orderId)).toEqual(['c']);
+    expect(next.fresh.map((o: { orderId: string }) => o.orderId)).toEqual([
+      'c',
+    ]);
     expect([...next.seen]).toEqual(['c', 'a']);
   });
 
