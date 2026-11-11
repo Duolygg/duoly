@@ -266,6 +266,12 @@ const avatar =
         mountDeskKeeper() already returns null without it; this just stops everyone else from
         downloading and compiling it. */}
     <script>
+      // The ticker, carousels, badge rows and pulsing dots loop for ever. Off screen they look
+      // the same stopped as running, and stopping them takes a style, paint and lazy-image
+      // intersection pass per frame off the main thread while the page is still loading.
+      import { startIdleAnimations } from '../client/idle-animations';
+      startIdleAnimations();
+
       if (document.querySelector('[data-desk-keeper]'))
         void import('../components/teammate/desk-keeper.js').then((keeper) =>
           keeper.mountDeskKeeper(),
