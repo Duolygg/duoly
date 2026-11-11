@@ -15,7 +15,6 @@ import {
 } from '../../site/seo';
 import {
   COMPETITOR_COUNT,
-  DUOLY,
   HOURLY_COACHING,
   OBSERVATION_COUNT,
 } from '../../server/seo/price-report';
@@ -25,10 +24,7 @@ import {
   SHORT_GAME_PRICE,
   SOCIAL_PRICE,
 } from '../../server/seo/teammate-facts';
-import { CATALOG_PRICES_UPDATED } from '../../server/seo/fees';
 const { viewer, csrf } = await pageViewer(Astro);
-/** The catalog year, derived from the shared price date rather than typed. */
-const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
 const posts = [
   {
     path: GUIDE_PATH,
@@ -142,7 +138,7 @@ const guides = [
         play.
       </p>
       <p>
-        Rather book than read? The guides point at three popular offers: a{' '}
+        The guides also point straight at three popular offers: a{' '}
         <a href={bookingHref('social', { service: 'chat' })}>
           Just Chat hour on Duoly Social
         </a>
@@ -162,7 +158,7 @@ const guides = [
         </a>{' '}
         set out every service, while the{' '}
         <a href="/developers/mcp">Duoly MCP developer guide</a> documents the
-        same catalog for an assistant. Social sessions are explained on the{' '}
+        same price list for an assistant. Social sessions are explained on the{' '}
         <a href="/games/social">Duoly Social page</a>.
       </p>
     </section>
@@ -188,8 +184,8 @@ const guides = [
         carries the fact sheet and the logo files. If the question is simply
         whether anything gets added at checkout, the answer is on the fees page:
         a {SHORT_GAME_PRICE} session stays {SHORT_GAME_PRICE}. And{' '}
-        <a href="/pricing.md">pricing.md</a> is every price in {CATALOG_YEAR} as
-        plain text, for an assistant reading with Claude or another model.
+        <a href="/pricing.md">pricing.md</a> is every current price as plain
+        text, for an assistant reading with Claude or another model.
       </p>
     </section>
     <section class="answers" aria-labelledby="guides-h">
@@ -212,10 +208,10 @@ const guides = [
         Pick by the question you actually have: finding a teammate in one game,
         choosing a coach in any game, or deciding whether to pay at all. Each
         guide opens with the answer and then explains it. The free versus paid
-        guide, for example, puts real Discord member counts next to a{' '}
-        {SOCIAL_PRICE} Social hour, so you can weigh two numbers instead of two
-        feelings. All three put the free routes first, because for most players
-        the free routes are enough.
+        guide, for example, puts real Discord member counts next to a Social
+        hour, so you can weigh two numbers instead of two feelings. All three
+        put the free routes first, because for most players the free routes are
+        enough.
       </p>
     </section>
     <section class="answers" aria-labelledby="compare-h">
@@ -259,9 +255,9 @@ const guides = [
         Bank rate used for the euro figures, and the platforms whose pages never
         answered. Every row is downloadable as{' '}
         <a href={REPORT_CSV_PATH}>a CSV with the source URL on each line</a>, so
-        you can check a figure instead of trusting it. It also means a{' '}
-        {HOURLY_COACHING.median} market median and a {DUOLY.coachingHour} Duoly
-        lesson sit on the same page, which is the comparison worth having.
+        you can check a figure instead of trusting it. It also puts a{' '}
+        {HOURLY_COACHING.median} market median on the same page as the Duoly
+        lesson price, so you can read both at once.
       </p>
     </section>
   </PageIntro>

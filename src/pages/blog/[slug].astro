@@ -147,7 +147,7 @@ const article = {
         </a>{' '}
         describes the derogatory gaming history alongside the later popularity
         through TikTok and Instagram around 2019. Source checked on 8 November
-        2026. For example, gamer, emo and aesthetic uses all appear there.
+        2026. It sets the gamer, emo and aesthetic uses alongside one another.
         Nobody has to qualify for the label.
       </p>
       <p>
@@ -184,9 +184,9 @@ const article = {
       <p>
         Choose by the activity, not by the label. A teammate is for a match
         played together. Coaching is for feedback on positioning, mechanics or
-        decisions, at {COACHING_PRICE} per hour or game. A Social session is for
-        conversation with no game loaded at all, at {SOCIAL_PRICE} an hour
-        across {SOCIAL_MODES} modes.
+        decisions, sold by the hour or by the game. A Social session is for
+        conversation with no game loaded at all, across {SOCIAL_MODES} hourly
+        voice modes.
       </p>
       <ul>
         <li>
@@ -217,7 +217,7 @@ const article = {
     <OfferCard
       offer={socialOffer}
       art={{ src: '/assets/games/social.png', alt: '' }}
-      text={`Want company without a game tonight? ${socialOffer.title} is an hour of friendly voice time with a verified Gamer Girl, adults only, on a call you both join.`}
+      text={`${socialOffer.title} is an hour of friendly voice time with a verified Gamer Girl, adults only, on a call you both join. No game has to be loaded.`}
     />
     <section>
       <h2 id="safety-h">How do you find someone to play with safely?</h2>
@@ -249,10 +249,9 @@ const article = {
         of you say otherwise.
       </p>
       <p>
-        For paid bookings, keep the payment on the platform: a {SOCIAL_PRICE}{' '}
-        Social hour is paid once at checkout and never topped up privately.
-        Treat a guaranteed result, or pressure to skip the normal checkout, as a
-        reason to stop.
+        For paid bookings, keep the payment on the platform. A Social hour is
+        paid once at checkout and never topped up privately. Treat a guaranteed
+        result, or pressure to skip the normal checkout, as a reason to stop.
       </p>
     </section>
     <section>
@@ -268,8 +267,8 @@ const article = {
         Girls tab, where Gamer Girl Duo is {VALORANT_GG_PRICE} per game. The{' '}
         <a href="/games/valorant">Valorant teammate hub</a> compares the wider
         choices, and the{' '}
-        <a href="/games/valorant/coaching">Valorant coaching page</a> covers
-        lessons at {COACHING_PRICE} per hour. Every game has the tab, so{' '}
+        <a href="/games/valorant/coaching">Valorant coaching page</a> covers the
+        lessons. Every game has the tab, so{' '}
         <a href="/games/league-of-legends">League of Legends teammates</a>,{' '}
         <a href="/games/marvel-rivals">Marvel Rivals teammates</a> and{' '}
         <a href="/games/minecraft">Minecraft teammates</a> list their own.
@@ -277,8 +276,8 @@ const article = {
       <p>
         <a href="/games/social">Duoly Social</a> is the no-game option: Just
         Chat, Watch Together, Sleep Call and Karaoke, sold as hourly voice
-        sessions on Discord at {SOCIAL_PRICE} an hour across {SOCIAL_MODES}{' '}
-        modes. A Karaoke hour costs exactly what a Just Chat hour costs.
+        sessions on Discord across {SOCIAL_MODES} modes. A Karaoke hour costs
+        exactly what a Just Chat hour costs.
       </p>
       <p>
         Everyone on Duoly must be at least 18, and Social is friendly company
@@ -321,21 +320,20 @@ const article = {
           clock starts. "Two relaxed Valorant games, calm voice, no coaching"
           tells your teammate everything they need. And either of you can
           decline a topic, a song request or a personal question, whether the
-          booking is a {SOCIAL_PRICE} Social hour or a {SHORT_GAME_PRICE}{' '}
-          Valorant game.
+          booking is a Social hour or a Valorant game.
         </p>
       </Steps>
     </div>
     <OfferCard
       offer={socialOffer}
       art={{ src: '/assets/games/social.png', alt: '' }}
-      text={`Ready for an hour of company? Book ${socialOffer.title} and you agree the start time in the order room, with every Social mode at the same price.`}
+      text={`Book ${socialOffer.title} and you agree the start time in the order room. Every Social mode costs the same.`}
     />
     <div id="company-h">
       <ClosingCta
         heading="Want company for an hour?"
         text="A Duoly Social hour is friendly voice company with a verified Gamer Girl, with no game required. Book a Social session, or pick a game and play together instead."
-        extra={`Social is ${SOCIAL_PRICE} an hour across all ${SOCIAL_MODES} modes, so a Karaoke hour costs exactly what a Sleep Call hour costs. If you would rather play something, a game session starts at ${SHORT_GAME_PRICE} for a Valorant Skirmish 2v2. Either way the order works the same: choose it, pay on duoly.gg, then agree a start time in the order room. Everyone on Duoly is at least 18, Social is friendly company and never dating, romantic or sexual services, and sessions run with Discord voice on accounts both people own. The ${bundle[2]}% teammate bundle discount does not reach Social, because Social is sold one hour at a time.`}
+        extra={`Social holds one price across all ${SOCIAL_MODES} modes, so a Karaoke hour costs exactly what a Sleep Call hour costs. If you would rather play something, a game session starts lower, at the price of a Valorant Skirmish 2v2. Either way the order works the same: choose it, pay on duoly.gg, then agree a start time in the order room. Everyone on Duoly is at least 18, Social is friendly company and never dating, romantic or sexual services, and sessions run with Discord voice on accounts both people own. The ${bundle[2]}% teammate bundle discount does not reach Social, because Social is sold one hour at a time.`}
         href={bookingHref('social')}
         label="Book a Social session"
         art={{ src: '/assets/games/social.png', alt: '' }}

@@ -160,9 +160,9 @@ const article = {
       <p>
         Context decides which meaning a post carries, and it is rarely
         ambiguous. A post naming a game, a region and a mode is always the group
-        meaning, whether the seat ends up filled for free or booked on Duoly
-        from {from}. A Valorant post asking for Competitive at 9pm is a request;
-        "LFG!!!" after a clutch is just somebody shouting.
+        meaning, whether the seat ends up filled for free or booked on Duoly. A
+        Valorant post asking for Competitive at 9pm is a request; "LFG!!!" after
+        a clutch is just somebody shouting.
       </p>
     </section>
     <section aria-labelledby="variants-h">
@@ -195,8 +195,8 @@ const article = {
         In a narrow channel, name the key level or the rank as well. Blizzard's
         own Group Finder lists premade World of Warcraft groups by key level
         exactly because that is the number people filter on. A booked teammate
-        from {from} settles the rank and the time before anyone queues, which is
-        the one thing a post cannot do.
+        settles the rank and the time before anyone queues, which is the one
+        thing a post cannot do.
       </p>
     </section>
     <section aria-labelledby="work-h">
@@ -261,7 +261,7 @@ const article = {
         steps={[
           'Name the game and the mode in the first five words, because somebody scanning forty posts never reaches your second line. "Valorant Competitive" beats "anyone want to play".',
           'Add your region or server, your rank and the role or hero you play. Those are the fields that tell a reader whether the group will actually work, and a post without them gets skipped.',
-          `Say when you are free and how you want to talk: "tonight from 8pm, voice on Discord, short calls only". A post that answers all of it reads as somebody worth replying to, and a booked session from ${from} settles the same questions before anyone queues.`,
+          'Say when you are free and how you want to talk: "tonight from 8pm, voice on Discord, short calls only". A post that answers all of it reads as somebody worth replying to, and a booked session settles the same questions before anyone queues.',
         ]}
       >
         <p>
@@ -287,8 +287,8 @@ const article = {
         comms before anyone queues, on your own account. If you would rather see
         every game at once, the{' '}
         <a href="/find-gaming-buddies">gaming buddies directory</a> lists all of
-        them from {from}, and <a href="/coaching">esports coaching</a> is the
-        page to open if what you want is a lesson instead.
+        them, and <a href="/coaching">esports coaching</a> is the page to open
+        if what you want is a lesson instead.
       </p>
       <div class="chips lfg-index">
         {pages.map((page) => (
@@ -304,7 +304,7 @@ const article = {
     <Faq heading="Questions about LFG?" items={faqItems} />
     <ClosingCta
       heading="Skip the wait for a reply?"
-      text={`An LFG post costs nothing and depends on who happens to answer. A Duoly booking is a reviewed teammate at an agreed time and rank, from ${from}. Pick your game from the ${pages.length} teammate pages above, name your mode and rank, agree voice with Discord and send the invite from your own account.`}
+      text={`An LFG post costs nothing and depends on who happens to answer. A Duoly booking is a reviewed teammate at an agreed time and rank. Pick your game from the ${pages.length} teammate pages above, name your mode and rank, agree voice with Discord and send the invite from your own account.`}
       extra={`Use both routes. Keep posting in your game Discord, because a regular group costs nothing and a good match there lasts months. Book a session on the evening a post goes unanswered, or for the mode nobody in the channel plays. A Wingman pair in Counter-Strike 2 and a Mythic+ key in World of Warcraft both want one specific player rather than whoever the queue hands over, and that is exactly the gap a booking fills. The teammate page for your game carries the full card.`}
       href={bookingHref('val', { service: 'duo2' })}
       label="Book a teammate"

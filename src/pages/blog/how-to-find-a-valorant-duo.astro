@@ -224,8 +224,8 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         days instead of minutes. And the friends list you already have, which is
         where the duos worth keeping actually come from. A {RANK} player on EU
         who posts at 8pm often has a party invite inside the hour, for €0. A
-        booked {duoPro.title} game costs {duoPro.display} at {RANK} and only
-        earns its keep once a free post has gone unanswered.
+        booked {duoPro.title} game only earns its keep once a free post has gone
+        unanswered.
       </p>
     </section>
 
@@ -271,10 +271,9 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         loads. And a reply depends on who happens to be scrolling right then: a
         Controller main who needs a Duelist at 9pm can wait an hour in a channel
         with 3,046,000 members and still queue alone. Those three gaps are
-        exactly what a paid session closes. A {duoPro.title} game at{' '}
-        {duoPro.display} fixes the hour, the rank and the role in the order chat
-        before anyone queues, with {bundle[0]}% off at 3 games, and a{' '}
-        {swift.title} game costs {swift.display}.
+        exactly what a paid session closes. A booked {duoPro.title} game fixes
+        the hour, the rank and the role in the order chat before anyone queues,
+        and the cheaper {swift.title} game does the same for a shorter format.
       </p>
       <div class="guide-one">
         <article class="card guide-card" aria-label="What free LFG gets you">
@@ -342,8 +341,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         Competitive climb and a Spike Rush hour want different people. Then the
         hours, in a named timezone, and how you like comms. A post that answers
         all six gets a party invite for €0, and a booked {duoPro.title} game
-        settles the same six before anyone queues at {duoPro.display} per game,{' '}
-        {bundle[0]}% off at 3.
+        settles the same six before anyone queues.
       </p>
       <div class="card lfg-post">
         <p class="lfg-tag">Free to post · €0</p>
@@ -367,9 +365,8 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         </p>
       </div>
       <p>
-        A <a href={bookingHref('val', { service: 'duo1' })}>Duo Plus game</a> at{' '}
-        {RANK} costs {duoPlus.display} and settles the same six fields in the
-        order chat, with Discord for voice.
+        A <a href={bookingHref('val', { service: 'duo1' })}>Duo Plus game</a>{' '}
+        settles the same six fields in the order chat, with Discord for voice.
       </p>
     </section>
 
@@ -484,8 +481,8 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       <p>
         Every agreement above is free to make and costs nothing to skip, which
         is exactly why most bad duo evenings come from skipping one. A paid
-        booking adds a fixed total through Stripe, {duoPro.display} per game at{' '}
-        {RANK} with {bundle[0]}% off at 3 games. Read the{' '}
+        booking adds a fixed total through Stripe, with the bundle discount
+        already inside it. Read the{' '}
         <a href="/terms">payment, cancellation and refund terms</a> before a
         paid booking, or <a href="/contact">contact support</a> about an order.
       </p>
@@ -494,23 +491,23 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <OfferCard
       offer={paidOffer}
       art={{ src: '/assets/games/valorant.png', alt: '' }}
-      text={`Want a duo tonight without posting for one? Book ${paidOffer.title} and an ${paidOffer.tier} queues Competitive with you, at a time you both agree in the order chat.`}
+      text={`Book ${paidOffer.title} and an ${paidOffer.tier} queues Competitive with you, at a time you both agree in the order chat. There is no post to write and no reply to wait for.`}
     />
     <section aria-labelledby="session-h">
       <h2 id="session-h">How does a booked Valorant session run?</h2>
       <p>
         A booked Valorant session is a paid block of games with one checked
         teammate, played on your own account. Pick the service, the rank and the
-        number of games on duoly.gg and the price is fixed before payment:{' '}
-        {duoPro.title} at {RANK} is {duoPro.display} per game with an{' '}
-        {duoPro.tier}, with {bundle[0]}% off at 3 games. The order then opens a
-        chat for the start time, the roles and the comms. A teammate accepts
-        from the queue rather than being assigned, an order nobody accepts
-        within 5 minutes cancels itself, and cancelling before anyone accepts is
-        free. Everyone on Duoly is 18 or over, payment runs through Stripe,
-        sessions run on Discord voice, and nobody ever needs your Riot password.
-        The <a href="/games/valorant/lfg">Valorant looking-for-group page</a>{' '}
-        lists every mode with its price, and the{' '}
+        number of games on duoly.gg and the price is fixed before payment, with
+        any bundle discount already inside it. {duoPro.title} pairs you with an{' '}
+        {duoPro.tier}. The order then opens a chat for the start time, the roles
+        and the comms. A teammate accepts from the queue rather than being
+        assigned, an order nobody accepts within 5 minutes cancels itself, and
+        cancelling before anyone accepts is free. Everyone on Duoly is 18 or
+        over, payment runs through Stripe, sessions run on Discord voice, and
+        nobody ever needs your Riot password. The{' '}
+        <a href="/games/valorant/lfg">Valorant looking-for-group page</a> lists
+        every mode with its price, and the{' '}
         <a href="/games/valorant">Valorant teammate hub</a> compares the full
         service list.
       </p>
@@ -523,11 +520,10 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         your rounds. A duo is the better buy when you want a second player to
         rely on tonight. A duo plays the round with you and calls what happens
         next; a lesson stops the game to explain why the retake failed and what
-        to do on the next one. {vod.title} is {vod.display} per {vod.unit} with
-        an {vod.tier}, the same price as a lesson in every other game Duoly
-        coaches, and a {duoPro.title} game is {duoPro.display} with {bundle[0]}%
-        off at 3 games. If you book the lesson, bring one map and two
-        timestamps, such as a B site retake that arrived a few seconds late. The{' '}
+        to do on the next one. {vod.title} is an hour with an {vod.tier}, at the
+        same price as a lesson in every other game Duoly coaches. If you book
+        the lesson, bring one map and two timestamps, such as a B site retake
+        that arrived a few seconds late. The{' '}
         <a href="/games/valorant/coaching">Valorant coaching page</a> lists
         every lesson,{' '}
         <a href={bookingHref('val', { service: 'vod' })}>
@@ -544,7 +540,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <OfferCard
       offer={paidOffer}
       art={{ src: '/assets/games/valorant.png', alt: '' }}
-      text={`Skipping the post tonight? Pick your region, your rank and how many games, and an ${paidOffer.tier} plays all of them beside you.`}
+      text={`Pick your region, your rank and how many games, and an ${paidOffer.tier} plays all of them beside you.`}
     />
     <Faq
       heading="What else do people ask about finding a Valorant duo?"
@@ -554,7 +550,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <ClosingCta
       heading="Post free tonight, book when it matters"
       text={`Free looking-for-group costs €0 and is the right first move for most Valorant players. A Duoly session is the paid alternative when the evening, the rank and the role have to be fixed in advance, from ${deathmatch.display} per game. Post your region, rank, role and mode in a community channel. Book instead on the night a post goes unanswered.`}
-      extra={`${duoPro.title} costs ${duoPro.display} per game at ${RANK} with an ${duoPro.tier}, and bundles take ${bundle[0]}% off 3 games and ${bundle[2]}% off 10. Payment finishes on duoly.gg and never in a private message, and the cancellation and refund rules live in the Duoly terms. The teammate accepts your order from the queue, you talk with Discord voice, and you each play your own account. Every link and member count in this guide was checked on ${CHECKED_LABEL}.`}
+      extra={`${duoPro.title} pairs you with an ${duoPro.tier}, and bundles take ${bundle[0]}% off 3 games and ${bundle[2]}% off 10. Payment finishes on duoly.gg and never in a private message, and the cancellation and refund rules live in the Duoly terms. The teammate accepts your order from the queue, you talk with Discord voice, and you each play your own account. Every link and member count in this guide was checked on ${CHECKED_LABEL}.`}
       href={bookingHref('val', { service: 'duo2' })}
       label="Book a Valorant teammate"
       art={{ src: '/assets/games/valorant.png', alt: '' }}
