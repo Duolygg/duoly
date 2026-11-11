@@ -63,6 +63,8 @@ insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) v
  ('5c000000-0000-4000-8000-000000000005','authenticated','authenticated','loyalty-teammate@example.invalid','{}','{}'),
  ('5c000000-0000-4000-8000-000000000006','authenticated','authenticated','loyalty-admin@example.invalid','{}','{}');
 update public.account_roles set role='teammate' where user_id='5c000000-0000-4000-8000-000000000005';
+-- Current admin section model: this synthetic admin exercises all historical sections.
+insert into public.admin_permissions(user_id, sections) values ('5c000000-0000-4000-8000-000000000006', public.admin_section_ids());
 update public.account_roles set role='admin' where user_id='5c000000-0000-4000-8000-000000000006';
 
 -- L1 thresholds are Fabian's exact table.

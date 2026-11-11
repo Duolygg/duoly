@@ -52,6 +52,8 @@ update public.profiles set name=case id
  country=case when id='6e000000-0000-4000-8000-000000000001' then 'at' else country end
 where id::text like '6e000000-0000-4000-8000-00000000000%';
 update public.account_roles set role='teammate' where user_id in ('6e000000-0000-4000-8000-000000000001','6e000000-0000-4000-8000-000000000002');
+-- Current admin section model: this synthetic admin exercises all historical sections.
+insert into public.admin_permissions(user_id, sections) values ('6e000000-0000-4000-8000-000000000004', public.admin_section_ids());
 update public.account_roles set role='admin' where user_id='6e000000-0000-4000-8000-000000000004';
 
 -- Vienna Friday boundaries remain local-midnight boundaries across both DST changes.
