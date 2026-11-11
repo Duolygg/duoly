@@ -88,10 +88,15 @@ describe('teammate facts come from the pricing engine', () => {
     const ai = readFileSync(
       new URL('../../src/pages/ai.astro', import.meta.url),
       'utf8',
-    ).replace(/\s+/g, ' ');
+    )
+      .replace(/\{' '\}/g, ' ')
+      .replace(/\s+/g, ' ');
     expect(ai).not.toContain('three game booking carries');
     expect(ai).not.toContain('on five games or {bundle[2]}% on ten');
-    expect(ai).toContain('Five non-coaching units receive {bundle[1]}% off.');
+    // The claim, not one wording of it: the page may say this in whatever
+    // sentence reads best, as long as it names five non-coaching units and
+    // takes the percentage from the shared constant.
+    expect(ai).toMatch(/Five non-coaching units \w+ \{bundle\[1\]\}% off/);
   });
 
   it('states prices the checkout would charge', () => {

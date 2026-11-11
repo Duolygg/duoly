@@ -12,21 +12,16 @@ import {
   SOCIAL_IMAGE,
 } from '../../src/server/seo/press';
 import { ABOUT_STORY } from '../../src/content/about-story';
-import {
-  BUSINESS,
-  BUSINESS_LOCATION,
-  CODEBASE_STARTED_LABEL,
-} from '../../src/site/entity';
+import { BUSINESS, BUSINESS_LOCATION } from '../../src/site/entity';
 import { OFFICIAL_CHANNELS } from '../../src/site/seo';
 import { SUPPORT_EMAIL } from '../../src/site/nav';
 import { PRESS_EMAIL } from '../../src/site/press-contact';
-import { CATALOG_GAMES, SERVICE_COUNT } from '../../src/server/seo/booking';
+import { SERVICE_COUNT } from '../../src/server/seo/booking';
 import {
   COACHABLE_GAMES,
   COACHING_PRICE,
   PLAYABLE_GAMES,
   SHORT_GAME_PRICE,
-  SOCIAL_MODES,
 } from '../../src/server/seo/teammate-facts';
 
 /**
@@ -36,7 +31,10 @@ import {
  * all.
  */
 
-const page = readFileSync('src/pages/press.astro', 'utf8');
+const page = readFileSync('src/pages/press.astro', 'utf8').replace(
+  /\{' '\}/g,
+  ' ',
+);
 
 describe('the Duoly boilerplate', () => {
   it('carries the facts an article needs, all derived', () => {
@@ -45,27 +43,21 @@ describe('the Duoly boilerplate', () => {
       expect(text).toContain('Austria');
     }
     expect(BOILERPLATE_SENTENCE).toContain(`${PLAYABLE_GAMES} games`);
-    expect(BOILERPLATE_PARAGRAPH).toContain(String(SERVICE_COUNT));
-    expect(BOILERPLATE_PARAGRAPH).toContain(`${CATALOG_GAMES} games`);
-    expect(BOILERPLATE_PARAGRAPH).toContain(SHORT_GAME_PRICE);
-    expect(BOILERPLATE_PARAGRAPH).toContain(COACHING_PRICE);
-    expect(BOILERPLATE_PARAGRAPH).toContain(`${COACHABLE_GAMES} titles`);
-    expect(BOILERPLATE_PARAGRAPH).toContain(
-      `${SOCIAL_MODES} voice session types`,
-    );
-    expect(BOILERPLATE_PARAGRAPH).toContain(`GISA ${BUSINESS.gisa}`);
-    expect(BOILERPLATE_PARAGRAPH).toContain(BUSINESS_LOCATION);
+    expect(BOILERPLATE_PARAGRAPH).toContain(`${PLAYABLE_GAMES} games`);
+    expect(BOILERPLATE_PARAGRAPH).toContain('Austria and Switzerland');
+    expect(BOILERPLATE_PARAGRAPH).toContain('own accounts');
+    // Rates and operator details belong in the fact sheet, not in every description.
+    expect(BOILERPLATE_PARAGRAPH).not.toContain('€');
   });
 
-  it('is one sentence and one paragraph, and says what is not promised', () => {
+  it('is one sentence and one paragraph, with separate player accounts', () => {
     // One sentence: a terminal full stop and no sentence break inside it.
     // "duoly.gg" carries a dot of its own, so the test looks for a break
     // rather than for the character.
     expect(BOILERPLATE_SENTENCE.trim().endsWith('.')).toBe(true);
     expect(BOILERPLATE_SENTENCE.slice(0, -1)).not.toMatch(/[.!?]\s/);
-    expect(BOILERPLATE_PARAGRAPH).toMatch(
-      /no rank, no win and no start time|never asks for a password/,
-    );
+    expect(BOILERPLATE_PARAGRAPH).toContain('Both play on their own accounts');
+    expect(BOILERPLATE_PARAGRAPH).not.toContain('\n');
   });
 
   it('follows the customer copy rules', () => {
@@ -116,7 +108,10 @@ describe('the Duoly fact sheet', () => {
       'https://www.tiktok.com/@duolygg',
     );
     // The press page renders the same constant, so the list cannot drift.
-    const page = readFileSync('src/pages/press.astro', 'utf8');
+    const page = readFileSync('src/pages/press.astro', 'utf8').replace(
+      /\{' '\}/g,
+      ' ',
+    );
     expect(page).toContain('OFFICIAL_CHANNELS');
   });
 
@@ -151,9 +146,9 @@ describe('the press address', () => {
 
   it('is the address every press enquiry on /press mails', () => {
     const mailtos = [...page.matchAll(/mailto:\$\{(\w+)\}/g)].map((m) => m[1]!);
-    // Three press enquiry links: the hero call to action, the logo question and
-    // the contact section. None of them may point at the support inbox.
-    expect(mailtos.filter((name) => name === 'PRESS_EMAIL')).toHaveLength(3);
+    // Four press links: hero, logo use, contact and the closing call to action.
+    // None of them may point at the support inbox.
+    expect(mailtos.filter((name) => name === 'PRESS_EMAIL')).toHaveLength(4);
     expect(mailtos.filter((name) => name === 'SUPPORT_EMAIL')).toHaveLength(1);
     // No hand-typed address anywhere on the page, so changing either constant
     // changes every link and every visible line at once.
@@ -163,29 +158,34 @@ describe('the press address', () => {
 
   it('names the support address too, so a customer is not misrouted', () => {
     expect(page).toContain('SUPPORT_EMAIL');
-    expect(page).toMatch(/answers support at/);
+    expect(page).toMatch(/For help with a booking/);
   });
 
   it('promises no press office it does not have', () => {
     // Whitespace-tolerant: this reads the page source, where Prettier owns the
     // line breaks inside a paragraph, so a rewrap must not read as a promise
     // the page stopped making.
-    expect(page).toMatch(/no\s+separate\s+press\s+office\s+and\s+no\s+agency/);
+    expect(page).not.toMatch(/our press office|our agency/i);
   });
 });
 
 describe('the launch date', () => {
   /**
-   * The owner has not published one, so the page says so and quotes the first
-   * commit date instead. When `foundedOn` is filled in, this test is the one to
+   * The owner has not published one, so the FAQ says so and points at the
+   * trade licence. When `foundedOn` is filled in, this test is the one to
    * update in the same commit as the content.
    */
   it('is absent while the owner has not supplied one', () => {
     expect(ABOUT_STORY.foundedOn).toBeUndefined();
     expect(HAS_LAUNCH_DATE).toBe(false);
     expect(LAUNCH_DATE).toBeUndefined();
-    expect(page).toContain('CODEBASE_STARTED_LABEL');
-    expect(CODEBASE_STARTED_LABEL).toMatch(/^\d{1,2} \w+ \d{4}$/);
+    expect(page).toMatch(/has not published a launch date/);
+  });
+
+  it('tells a journalist nothing about the code base', () => {
+    // A commit date is not a founding date, and a customer-facing page has no
+    // business discussing our git history.
+    expect(page).not.toMatch(/first commit|code base|weeks rather than years/i);
   });
 
   it('is never guessed in the page copy', () => {
@@ -232,6 +232,6 @@ describe('the logo downloads', () => {
 
   it('offers no game art or publisher logo', () => {
     for (const href of LOGO_FILES) expect(href).not.toContain('/games/');
-    expect(page).toMatch(/licenses no game art|no game art/i);
+    expect(page).toMatch(/Game art and publisher logos\s+are not included/);
   });
 });

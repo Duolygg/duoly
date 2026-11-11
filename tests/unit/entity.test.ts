@@ -1,12 +1,9 @@
 import { readFileSync } from 'node:fs';
-import { spawnSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 
 import {
   BUSINESS,
   BUSINESS_LOCATION,
-  CODEBASE_STARTED,
-  CODEBASE_STARTED_LABEL,
   DISAMBIGUATION,
   DISAMBIGUATION_PROSE,
   KNOWS_ABOUT,
@@ -34,8 +31,8 @@ const imprint = readFileSync('src/pages/imprint.astro', 'utf8');
  * structure could not be verified. The fix is checkable facts, which is only
  * worth anything while they stay true: /imprint is the legal notice under §5
  * ECG, so a value here that disagrees with it is a legal problem before it is
- * an SEO problem. These tests read the imprint and the git history rather than
- * trusting the constants.
+ * an SEO problem. These tests read the imprint itself instead of trusting the
+ * constants.
  */
 describe('the Duoly business facts', () => {
   it('repeats the legal notice on /imprint without drifting from it', () => {
@@ -53,27 +50,18 @@ describe('the Duoly business facts', () => {
     expect(BUSINESS.country).toBe('AT');
   });
 
-  it('dates the code base from git rather than from a guess', () => {
-    const first = spawnSync(
-      'git',
-      ['log', '--reverse', '--format=%cs', '--max-parents=0'],
-      { encoding: 'utf8' },
-    );
-    // A shallow CI clone has no root commit to read, so the check is skipped
-    // there rather than inventing a date to compare against.
-    const dates = first.stdout.trim().split('\n').filter(Boolean);
-    if (first.status === 0 && dates.length)
-      expect(dates).toContain(CODEBASE_STARTED);
-    expect(CODEBASE_STARTED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    // The human label and the machine date are the same day.
-    expect(
-      new Date(`${CODEBASE_STARTED}T00:00:00Z`).toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        timeZone: 'UTC',
-      }),
-    ).toBe(CODEBASE_STARTED_LABEL);
+  it('publishes no date it cannot stand behind', () => {
+    // The code base's first commit used to be exported from here and printed
+    // on /about and /press. A customer does not want our git history, and a
+    // commit date is not a founding date, so neither the constant nor the
+    // sentence may come back. The honest date is `foundedOn`, which only the
+    // owner can supply.
+    const source = readFileSync('src/site/entity.ts', 'utf8');
+    expect(source).not.toMatch(/CODEBASE_STARTED/);
+    for (const file of ['src/pages/about.astro', 'src/pages/press.astro']) {
+      const page = readFileSync(file, 'utf8');
+      expect(page, file).not.toMatch(/first commit|weeks rather than years/i);
+    }
   });
 
   it('names both products the brand is confused with, once each', () => {

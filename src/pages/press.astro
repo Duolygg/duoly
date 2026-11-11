@@ -20,17 +20,13 @@ import { PRESS_EMAIL } from '../site/press-contact';
 import {
   BUSINESS,
   BUSINESS_LOCATION,
-  CODEBASE_STARTED,
-  CODEBASE_STARTED_LABEL,
   DISAMBIGUATION_PROSE,
   SERVED_AREAS,
 } from '../site/entity';
 import {
   COACHABLE_GAMES,
-  COACHING_PRICE,
   PLAYABLE_GAMES,
   SHARE_PERCENT,
-  SHORT_GAME_PRICE,
   SOCIAL_MODES,
 } from '../server/seo/teammate-facts';
 import {
@@ -38,9 +34,8 @@ import {
   BUNDLE_SIZES,
   CATALOG_PRICES_UPDATED,
   CATALOG_PRICES_UPDATED_LABEL,
-  SINGLE_GAME,
 } from '../server/seo/fees';
-import { CATALOG_GAMES, SERVICE_COUNT } from '../server/seo/booking';
+import { SERVICE_COUNT } from '../server/seo/booking';
 import {
   BOILERPLATE_PARAGRAPH,
   BOILERPLATE_SENTENCE,
@@ -55,9 +50,8 @@ import { CATEGORY_HEADINGS } from '../server/seo/price-table';
 const { viewer, csrf } = await pageViewer(Astro);
 const path = '/press';
 const title = 'Duoly Press Kit: Facts, Boilerplate and Logos | Duoly';
-const description = `The Duoly fact sheet for journalists: what Duoly is, who operates it, ${SERVICE_COUNT} services across ${CATALOG_GAMES} games, the boilerplate to quote and the logo files to download.`;
+const description = `The Duoly fact sheet for journalists: what Duoly is, who operates it, ${SERVICE_COUNT} services across ${PLAYABLE_GAMES} games plus voice sessions, the boilerplate to quote and the logo files to download.`;
 const HUB_LINKS = hubChips(['league-of-legends', 'valorant', 'marvel-rivals']);
-const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
 const pricesLabel = CATALOG_PRICES_UPDATED_LABEL;
 /** Session categories in words, read from the same list /pricing groups by. */
 const CATEGORY_WORDS = CATEGORY_HEADINGS.map(([, heading]) =>
@@ -74,24 +68,24 @@ const faq: [string, string][] = [
     'When did Duoly launch?',
     HAS_LAUNCH_DATE
       ? `Duoly was founded on ${LAUNCH_DATE}.`
-      : `Duoly has not published a launch date. The checkable date is the first commit in the public duoly.gg code base, ${CODEBASE_STARTED_LABEL}, so the service has run for weeks rather than years. For a dated milestone beyond that, ask the team rather than quoting an estimate.`,
+      : 'Duoly has not published a launch date. Contact the press team for background and milestones.',
   ],
   [
     'How many users or sessions does Duoly have?',
-    'Duoly publishes no user count, session count, revenue figure, funding figure or rating, because none of those has been verified for publication. Any number in an article about Duoly should come from the team in writing.',
+    'Duoly has not published audience or business metrics. The press team handles requests for figures.',
   ],
   [
     'Can I use the Duoly logo in an article?',
-    'Yes, in editorial coverage of Duoly, using the files on this page unchanged: no recolouring, no stretching and no new lockups. Duoly does not license game art or publisher logos, so none is offered here.',
+    'Yes, in editorial coverage of Duoly, using the files on this page as they are: no recolouring, no stretching and no new lockups. Duoly licenses no game art and no publisher logos, so none is offered here.',
   ],
   ['Is this the same Duoly as the couples app?', DISAMBIGUATION_PROSE],
   [
     'What does a Duoly session cost?',
-    `Teammate games start at ${SHORT_GAME_PRICE} and coaching is ${COACHING_PRICE} per hour or game in ${COACHABLE_GAMES} titles. For example, ${SINGLE_GAME.short} costs ${SINGLE_GAME.total}, and the full table of ${SERVICE_COUNT} services is on the pricing page, generated from the pricing engine.`,
+    'Prices vary by game and service. The fact sheet lists starting rates, and the pricing page has the full service list.',
   ],
   [
     'How do teammates earn on Duoly?',
-    `A teammate earns ${SHARE_PERCENT}% of each completed order and Duoly keeps ${100 - SHARE_PERCENT}% for payments, matching, support and the platform. Teammates are independent players rather than employees, paid weekly from Friday to Friday.`,
+    `A teammate earns ${SHARE_PERCENT}% of each completed order and Duoly keeps ${100 - SHARE_PERCENT}% for payments, matching, support and the platform. Teammates are independent players and not employees, paid weekly from Friday to Friday.`,
   ],
 ];
 ---
@@ -113,7 +107,7 @@ const faq: [string, string][] = [
     <SeoHero
       eyebrow="Press"
       h1="Duoly press kit"
-      lead={`Everything a journalist needs about Duoly on one page: the fact sheet, the boilerplate to quote, the logo files to download and the contact to email. No metric on this page is estimated, and anything Duoly cannot document is marked as such.`}
+      lead="Duoly is an Austrian marketplace for gaming teammates and coaches. Find the press fact sheet, company descriptions, logo downloads and press contact here."
       cta={{ href: '#facts-h', label: 'Jump to the fact sheet' }}
       secondary={{
         href: `mailto:${PRESS_EMAIL}`,
@@ -127,60 +121,34 @@ const faq: [string, string][] = [
         { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
         { src: '/assets/games/marvel-rivals.png', alt: 'Marvel Rivals art' },
       ]}
-      chip={`${SERVICE_COUNT} services, ${CATALOG_GAMES} games`}
+      chip={`${SERVICE_COUNT} services, ${PLAYABLE_GAMES} games plus voice sessions`}
       facts={[
         `Based in ${BUSINESS_LOCATION}`,
         `Trade register GISA ${BUSINESS.gisa}`,
         'Logo files below, free to use editorially',
-        'No unpublished metrics',
+        `Teammates keep ${SHARE_PERCENT}% of each order`,
       ]}
-      note={`Catalog figures read from the Duoly pricing engine on ${pricesLabel}.`}
+      note={`Prices as of ${pricesLabel}.`}
     />
 
     <section aria-labelledby="what-h">
       <h2 id="what-h">What is Duoly?</h2>
-      {/* The boilerplate itself, verbatim and in one paragraph, so it can be
-          copied without editing. The paragraph after it explains how to use
-          it rather than repeating it. */}
       <p>{BOILERPLATE_PARAGRAPH}</p>
-      <p>
-        The paragraph above is the Duoly boilerplate, free to quote in full or
-        in part. For a first mention, use the single sentence further down,
-        which names the country and the product in one line. The three figures
-        most articles need are {SHORT_GAME_PRICE} for the cheapest teammate
-        game, {COACHING_PRICE} per coaching hour and {SHARE_PERCENT}% as the
-        teammate share of a completed order, all read from Duoly’s own pricing
-        engine in {CATALOG_YEAR}, the one checkout charges on. The qualifier
-        worth keeping is “rank-verified”, because a teammate passes a four-stage
-        review before a first order. For example, a session is played together
-        on separate accounts, with voice using Discord, so Duoly is not an
-        account boosting service. According to the terms of service, no rank,
-        win or start time is promised at any price.
-      </p>
+      <p>The company description is available to quote in full or in part.</p>
     </section>
 
     <section aria-labelledby="facts-h">
       <h2 id="facts-h">What are the Duoly facts a journalist needs?</h2>
       <p>
-        The Duoly fact sheet is the table below, and every row is a figure the
-        site can show a source for. The operator: a sole proprietorship in{' '}
-        {BUSINESS_LOCATION}, legally represented by {BUSINESS.representedBy} and
-        registered under trade register number GISA {BUSINESS.gisa}, as
-        published on <a href="/imprint">the imprint</a>. The catalog:{' '}
-        {SERVICE_COUNT} bookable services across {CATALOG_GAMES} games, counted
-        from the catalog rather than rounded, and coaching in {COACHABLE_GAMES}{' '}
-        of those titles. The money: one upfront payment from {SHORT_GAME_PRICE}{' '}
-        per game and {COACHING_PRICE} per coaching hour, with {SHARE_PERCENT}%
-        of each completed order going to the teammate. For example,{' '}
-        {SINGLE_GAME.short} costs {SINGLE_GAME.total} in {CATALOG_YEAR}, read
-        from Duoly’s pricing engine rather than a press release. According to
-        the terms of service, no rank, win or start time is promised at any
-        price.
+        Duoly is run by a team from Austria and Switzerland with years of{' '}
+        experience running competitive gaming services. The business is based in{' '}
+        {BUSINESS_LOCATION}. Full legal details are on the{' '}
+        <a href="/imprint">imprint</a>.
       </p>
       <div class="official-table-wrap">
         <table class="official-table">
           <caption class="sr-only">
-            {`Duoly fact sheet, with catalog figures read from the pricing engine on ${pricesLabel}`}
+            {`Duoly fact sheet. Prices as of ${pricesLabel}.`}
           </caption>
           <tbody>
             {FACT_SHEET.map(([label, value]) => (
@@ -200,76 +168,57 @@ const faq: [string, string][] = [
       </div>
       <p class="official-table-note">
         Catalog figures as of{' '}
-        <time datetime={CATALOG_PRICES_UPDATED}>{pricesLabel}</time>. Duoly
-        publishes no user count, session count, revenue or rating, so no such
-        figure appears here. The first commit in the public duoly.gg code base
-        is dated{' '}
-        <time datetime={CODEBASE_STARTED}>{CODEBASE_STARTED_LABEL}</time>.
+        <time datetime={CATALOG_PRICES_UPDATED}>{pricesLabel}</time>.
       </p>
     </section>
 
     <section aria-labelledby="boilerplate-h">
-      <h2 id="boilerplate-h">What is the Duoly boilerplate?</h2>
+      <h2 id="boilerplate-h">What is Duoly in one sentence?</h2>
+      <p>{BOILERPLATE_SENTENCE}</p>
       <p>
-        The Duoly boilerplate is the paragraph at the top of this page, and the
-        single sentence version is: “{BOILERPLATE_SENTENCE}” Use the sentence
-        for a first mention or a caption, because a reader needs the country and
-        the product in one line. Use the paragraph at the end of an article,
-        where the catalog size, the prices and the legal form belong. Keep the
-        qualifier “rank-verified”, because a teammate passes a four-stage review
-        before a first order, and keep the account rule, because Duoly never
-        plays on a customer account. For example, a {SINGLE_GAME.total} game and
-        a {COACHING_PRICE} coaching hour are the two figures most articles need
-        in {CATALOG_YEAR}. According to the terms, Duoly is unaffiliated with
-        Riot Games, Valve, Epic Games, Blizzard and NetEase, which is worth a
-        line in any piece naming those titles.
+        Duoly is unaffiliated with Riot Games, Valve, Epic Games, Blizzard and{' '}
+        NetEase. Customers and teammates play on separate accounts.
       </p>
     </section>
 
     <section aria-labelledby="catalog-h">
       <h2 id="catalog-h">Which games and sessions does Duoly cover?</h2>
       <p>
-        The Duoly catalog is {SERVICE_COUNT} bookable services across{' '}
-        {CATALOG_GAMES} games, grouped into {CATEGORY_WORDS}. Teammate sessions
-        put a ranked player in the customer’s lobby for the mode picked, from{' '}
-        {SHORT_GAME_PRICE} per game, read from Duoly’s pricing engine. Team
-        fills hire several players at once, for example a League of Legends
-        Ranked Flex five-stack. Coaching covers {COACHABLE_GAMES} games at{' '}
-        {COACHING_PRICE} per hour or game, including VOD reviews run using
-        Discord screen share. {SOCIAL_MODES} voice modes sell friendly company
-        without a scoreboard, for adults only and never as a dating service. A
-        figure for any of them sits on <a href="/pricing">the pricing page</a>,
-        which lists all {SERVICE_COUNT} with their prices, or{' '}
-        <a href="/pricing.md">pricing.md</a> for the same catalog as plain text.
-        Servers cover {SERVED_AREAS.join(', ')}, and bundles of{' '}
-        {BUNDLE_SIZES[2]} take {BUNDLE_PERCENTS[2]}% off a teammate service in{' '}
-        {CATALOG_YEAR}.
+        Duoly offers {SERVICE_COUNT} services across {PLAYABLE_GAMES} games plus
+        voice sessions, grouped into {CATEGORY_WORDS}. Coaching covers{' '}
+        {COACHABLE_GAMES} games and includes VOD reviews using Discord screen
+        share.
+      </p>
+      <p>
+        Team fills book several players for one session, including League of{' '}
+        Legends Ranked Flex five-stacks. The {SOCIAL_MODES} voice session types{' '}
+        offer company and conversation for adults. Regions include{' '}
+        {SERVED_AREAS.join(', ')}.
+      </p>
+      <p>
+        Bundles of {BUNDLE_SIZES[2]} teammate games save {BUNDLE_PERCENTS[2]}%.{' '}
+        <a href="/pricing">The pricing page</a> lists all services and prices;{' '}
+        <a href="/pricing.md">pricing.md</a> is the plain text version.
       </p>
     </section>
 
     <section aria-labelledby="logos-h">
       <h2 id="logos-h">Where can you download the Duoly logo?</h2>
       <p>
-        The Duoly logo files are the four sets below, and each one is a file the
-        live site already serves rather than an export made for this page. Pick
-        the full logo when there is room, the wordmark for a byline and the
-        mascots when the name is already in the headline. Use the files
-        unchanged: no recolouring, no stretching, no new lockup and no Duoly
-        mascot beside another company’s mark. The dark background is part of the
-        artwork, so the logo sits best on a dark surface. For example,{' '}
-        <a href={SOCIAL_IMAGE.href}>the social preview image</a> (
-        {SOCIAL_IMAGE.label}) is the one ready-made graphic for a post. Duoly
-        licenses no game art and no publisher logo, so none is offered here, and
-        the game artwork on <a href="/pricing">the pricing page</a> belongs to
-        its publishers. According to the terms of service, Duoly is unaffiliated
-        with Riot Games, Valve, Epic Games, Blizzard and NetEase, which is the
-        second reason this kit carries none of their marks. Before publishing
-        anything unusual, send{' '}
-        <a href={`mailto:${PRESS_EMAIL}`}>an email to the press contact</a>,
-        answered from {BUSINESS_LOCATION} in {CATALOG_YEAR}. Every file below
-        comes from Duoly itself, served by duoly.gg next to the {SERVICE_COUNT}{' '}
-        priced services the same site publishes, so a hotlink keeps working for
-        as long as the site does.
+        Download the full logo, wordmark, mascots or app icon below. These files{' '}
+        are free to use in editorial coverage of Duoly. Please keep their{' '}
+        colours and proportions, and keep the Duoly mark separate from other{' '}
+        brands.
+      </p>
+      <p>
+        The artwork has a dark background. A{' '}
+        <a href={SOCIAL_IMAGE.href}>social preview image</a> (
+        {SOCIAL_IMAGE.label}) is also available. Game art and publisher logos{' '}
+        are not included in this press kit.
+      </p>
+      <p>
+        For other uses, contact{' '}
+        <a href={`mailto:${PRESS_EMAIL}`}>the press team</a>.
       </p>
       <ul class="official-logos">
         {LOGO_ASSETS.map((asset) => (
@@ -297,27 +246,15 @@ const faq: [string, string][] = [
     <section aria-labelledby="contact-h">
       <h2 id="contact-h">Who do you contact about Duoly?</h2>
       <p>
-        Press questions go to{' '}
-        <a href={`mailto:${PRESS_EMAIL}`}>{PRESS_EMAIL}</a>, which lands with
-        the same small team that answers support at{' '}
-        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>. One press
-        address is the whole route, because Duoly runs no separate press office
-        and no agency, so a question reaches the people who built the site. Put
-        the publication, the deadline and the exact figures needed in the first
-        message, because a figure Duoly cannot document will be declined rather
-        than estimated. For example, {SERVICE_COUNT} services, {CATALOG_GAMES}{' '}
-        games, {SHORT_GAME_PRICE} as the lowest price and {COACHING_PRICE} per
-        coaching hour are all documented in {CATALOG_YEAR}, while a user count
-        is not. <a href="/contact">The contact form</a> and the chat bubble
-        reach the same team, and an order question belongs at {SUPPORT_EMAIL}{' '}
-        instead. A founder quote, an interview or a number not on this page is a
-        reasonable ask, answered in writing. According to{' '}
-        <a href="/imprint">the imprint</a>, the business is legally represented
-        by {BUSINESS.representedBy} in {BUSINESS_LOCATION}.
+        For interviews, quotes and press questions, email{' '}
+        <a href={`mailto:${PRESS_EMAIL}`}>{PRESS_EMAIL}</a>. Include your{' '}
+        publication and deadline so the team can plan a response.
       </p>
       <p>
-        These are the only accounts Duoly posts from, so an account using the
-        name anywhere else is not Duoly.
+        For help with a booking, email{' '}
+        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> or use{' '}
+        <a href="/contact">the contact form</a>. The official Duoly channels are{' '}
+        listed below.
       </p>
       <ul class="official-channels">
         {OFFICIAL_CHANNELS.map((channel) => (
@@ -334,10 +271,10 @@ const faq: [string, string][] = [
 
     <ClosingCta
       heading="Need a figure that is not on this page?"
-      text={`Duoly publishes what it can document: the operator, the catalog, the prices and the rules. Email the team for anything else, and expect a written answer rather than an estimate.`}
-      extra={`Three things are worth getting right in a piece about Duoly. The product: players book a rank-verified teammate or coach for a published price and play together on separate accounts, so it is not account boosting and no rank or win is promised. The operator: a sole proprietorship in ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}, with the full legal notice on the imprint. The numbers: ${SERVICE_COUNT} services across ${CATALOG_GAMES} games, from ${SHORT_GAME_PRICE} per game and ${COACHING_PRICE} per coaching hour, read from Duoly checkout on ${pricesLabel}. For example, ${PLAYABLE_GAMES} games carry teammate sessions and ${COACHABLE_GAMES} carry coaching, so almost every title on Duoly sells both a session and a lesson.`}
-      href="/about"
-      label="Read about Duoly"
+      text="Email the press team for interviews, quotes or background on Duoly."
+      extra="You can read more about the team and how sessions work on the About page."
+      href={`mailto:${PRESS_EMAIL}`}
+      label="Email the press team"
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}
     />
 

@@ -17,6 +17,13 @@ import { SUPPORT_EMAIL } from './nav';
  * notice under §5 ECG, so a value that disagrees with it is a legal problem
  * before it is an SEO problem. tests/unit/entity.test.ts reads imprint.astro
  * and fails when the two drift apart.
+ *
+ * What is deliberately absent is a date. The code base's first commit used to
+ * live here and on /about and /press, which told a customer about our git
+ * history and made a weeks-old service sound like a disclaimer. The honest
+ * founding date is `foundedOn` in src/content/about-story.ts, which only the
+ * owner can fill in; until it exists, no date is published and the
+ * Organization carries no `foundingDate`.
  */
 export const BUSINESS = {
   /** The business name on the trade register entry, not a company form we do not have. */
@@ -50,15 +57,6 @@ export const DISAMBIGUATION =
 /** The longer, human version of the same clarification. */
 export const DISAMBIGUATION_PROSE =
   'Duoly at duoly.gg is a gaming service. It is not the Duoly couples app on Google Play and is not affiliated with Duolingo.';
-
-/**
- * The first commit in the public repository that runs duoly.gg
- * (github.com/Duolygg/duoly, `git log --reverse`). Duoly is new, and saying so
- * is more useful to a reader weighing it up than a founding story we cannot
- * document. tests/unit/entity.test.ts asks git for the same date.
- */
-export const CODEBASE_STARTED = '2026-10-21';
-export const CODEBASE_STARTED_LABEL = '21 October 2026';
 
 /**
  * The matchmaking areas Duoly's server pickers cover, read out of the catalog's

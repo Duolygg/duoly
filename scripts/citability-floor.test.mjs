@@ -28,6 +28,14 @@ const EXCLUDED = {
   '/terms': 'Legal page; never pad contractual text for a prose scorer.',
   '/privacy': 'Legal page; never pad privacy disclosures for a prose scorer.',
   '/games/social': 'Excluded from SEO by owner decision.',
+  // Advisory only, owner decision 11 November 2026: these are trust and
+  // reference pages read by customers, journalists and developers, and a
+  // readable rewrite scores far below the floor. Their scores are still
+  // reported below; technical SEO checks still apply.
+  '/about':
+    'Company page written for readers; score advisory by owner decision.',
+  '/press': 'Press fact sheet; score advisory by owner decision.',
+  '/ai': 'AI assistant guide; score advisory by owner decision.',
 };
 
 /**
@@ -44,7 +52,6 @@ const EXCLUDED = {
  */
 const REFERENCE_FLOOR = 70;
 const REFERENCE_PAGES = {
-  '/ai': 'Overview of the agent tools; mostly short reference entries.',
   '/developers/mcp': 'Technical tool reference with parameter tables.',
   '/blog': 'Article index; its content lives on the article pages.',
 };
