@@ -212,6 +212,7 @@ const faq: [string, string][] = [
 
     <Steps
       heading="What are the three steps to book a Duoly session?"
+      answer="The three steps are picking what you want, paying for it once, and playing with the teammate who accepts the order."
       steps={STEPS.map(([, text]) => text)}
     >
       <p>
@@ -228,12 +229,13 @@ const faq: [string, string][] = [
     <section aria-labelledby="choices-h">
       <h2 id="choices-h">Which choices does the Duoly booking form ask for?</h2>
       <p>
-        The Duoly booking form asks for eight things, all on one screen. It
-        opens on the game, from {PLAYABLE_GAMES} titles plus a voice-only
-        category, then the service: one session type out of {SERVICE_COUNT},
-        such as Duo Pro, a League of Legends Ranked 5s or a VOD Review hour.
-        Ranked play asks for your own rank, because rank sets the price, and
-        every service asks which server or region your account plays on.
+        The Duoly booking form asks for eight things, and they are all on one
+        screen. It opens on the game, from {PLAYABLE_GAMES} titles plus a
+        voice-only category, then the service: one session type out of{' '}
+        {SERVICE_COUNT}, such as Duo Pro, a League of Legends Ranked 5s or a VOD
+        Review hour. Ranked play asks for your own rank, because rank sets the
+        price, and every service asks which server or region your account plays
+        on.
       </p>
       <p>
         Quantity runs {QUANTITY_STEPS[0]} to {MAX_QUANTITY} games or hours,
@@ -344,10 +346,10 @@ const faq: [string, string][] = [
     <section aria-labelledby="wrong-h">
       <h2 id="wrong-h">What if a Duoly session goes wrong?</h2>
       <p>
-        Report it from the order room, and a person at Duoly reads it.{' '}
-        <a href="/terms#cancel">The terms</a> cover three cases in one line:
-        “No-show, a teammate leaving, toxic behaviour: report it from your order
-        room. A real person reviews it and can refund the order to your
+        The route out is a report from the order room, and a person at Duoly
+        reads it. <a href="/terms#cancel">The terms</a> cover three cases in one
+        line: “No-show, a teammate leaving, toxic behaviour: report it from your
+        order room. A real person reviews it and can refund the order to your
         balance.” The size of the order makes no difference to that.
       </p>
       <p>
@@ -366,7 +368,7 @@ const faq: [string, string][] = [
 
     <ClosingCta
       heading="What should you get right on a first booking?"
-      text={`The rank. Pick the one you really hold, because a wrong rank can make a session impossible to play, and the terms do not treat that as a reason for a refund. Then add your in-game name and server so the invite can reach you, and choose voice only if you actually want to talk. Duoly runs across ${PLAYABLE_GAMES} games plus ${SOCIAL_MODES} voice modes, from ${BUSINESS_LOCATION}.`}
+      text={`The rank is the thing most first bookings get wrong, so pick the one you really hold. A wrong rank can make a session impossible to play, and the terms do not treat that as a reason for a refund. Then add your in-game name and server so the invite can reach you, and choose voice only if you actually want to talk. Duoly runs across ${PLAYABLE_GAMES} games plus ${SOCIAL_MODES} voice modes, from ${BUSINESS_LOCATION}.`}
       extra={`Duoly also promises less than you might expect. There is no fixed start time, because a teammate accepts the order when one is free, and there is no promise about your rank or your win rate. An order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. The biggest saving on the site is ${TEN_GAME_BUNDLE.short} at ${TEN_GAME_BUNDLE.total}, which takes ${TEN_GAME_BUNDLE.saved} off.`}
       href="/pricing"
       label="See every Duoly price"
