@@ -22,8 +22,8 @@ suite chat_flag_audit.sql
 # skip connect_payouts.sql historical 10 USD minimum fixture expects four scheduled lines; latest minimum is 25 USD
 # skip creator_referrals.sql after adding explicit admin sections, unchanged existing-customer-attribution assertion still fails on latest schema; requires current referral eligibility fixture port
 suite discord_links.sql
-# skip discord_order_posts.sql historical scheduler contract asserts old orders cron active; gated dispatcher intentionally pauses it
-# skip discord_role_sync.sql historical scheduler contract asserts old roles sweep active; gated dispatcher intentionally pauses it
+suite discord_order_posts.sql
+suite discord_role_sync.sql
 suite gated_dispatch.sql
 suite gold_priority_badges.sql
 # skip handover_admin_actions.sql historical cancellation refund assertion conflicts with latest charge-at-queue/team payment semantics: queued order refunded

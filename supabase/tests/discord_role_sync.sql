@@ -113,13 +113,25 @@ do $$ declare r jsonb; ids text[]; p jsonb; begin
 end $$;
 reset role;
 
--- The sweep is scheduled, active, and its command holds no secret, only the Vault lookup.
+-- Retain the paused sweep and Vault-only command for rollback; dispatch centrally.
 do $$ declare j record; begin
- select * into j from cron.job where jobname='duoly-discord-roles-tick';
- if j.jobid is null or not j.active or j.schedule <> '30 seconds' then raise exception 'sweep job missing: %',j; end if;
+ select * into j from cron.job where jobname='duoly-discord-roles-tick' and username=current_user;
+ if j.jobid is null or j.active or j.schedule <> '30 seconds' then raise exception 'sweep job not retained paused: %',j; end if;
  if j.command not like '%https://duoly.gg/api/discord/roles/tick%' or j.command not like '%discord_roles_tick_secret%' or j.command ~ 'Bearer [A-Za-z0-9]' then
   raise exception 'sweep command wrong'; end if;
- if not exists (select 1 from cron.job where jobname='duoly-discord-roles-log-prune' and active) then raise exception 'log prune missing'; end if;
+ if not exists (select 1 from cron.job where jobname='duoly-discord-roles-log-prune'
+     and username=current_user and not active) then raise exception 'old log prune not retained paused'; end if;
+ if not exists (select 1 from cron.job where jobname='duoly-dispatch'
+     and username=current_user and active and schedule='10 seconds'
+     and command='select public.duoly_dispatch();') then
+  raise exception 'shared dispatcher not active at 10 seconds'; end if;
+ if not exists (select 1 from cron.job where jobname='duoly-cron-log-prune'
+     and username=current_user and active and schedule='0 * * * *'
+     and command like '%delete from cron.job_run_details%'
+     and command like '%end_time < pg_catalog.clock_timestamp() - interval ''24 hours''%'
+     and command like '%order by end_time, runid limit 50000%'
+     and command not like '%jobname%') then
+  raise exception 'bounded global cron log prune missing'; end if;
 end $$;
 
 -- Unlinking or deleting an account keeps the applied row so the sweep can take the roles away.
