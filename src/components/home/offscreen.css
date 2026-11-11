@@ -1,0 +1,41 @@
+/*
+ * Homepage: let the browser skip the review strips until they are scrolled towards.
+ *
+ * "What players say" is two rows that drift sideways, each holding every review twice so the
+ * loop has no gap. With the hundred sample reviews that is 200 cards: about 4,900 of the
+ * homepage's 6,200 elements and 600 of its 745 images, all of it starting 12,100 px down the
+ * page, past fourteen phone screens. The browser still laid every card out, kept all 600 images
+ * in its lazy-loading observer and re-checked them on every frame, which a trace at the
+ * PageSpeed CPU speed showed as a few milliseconds of layout, paint and intersection work in
+ * frame after frame of the load.
+ *
+ * `content-visibility: auto` skips that work until the row comes near the viewport, and the
+ * content stays in the accessibility tree and findable with the browser's find-in-page.
+ * `contain-intrinsic-size` is the measured content height of a row (a row is 267 px tall at
+ * 390 px wide and 266 px at 1440 px, less its own 10 px top and bottom padding), so the page is
+ * the same length whether a row has been rendered or not and nothing below it moves; the `auto`
+ * keyword then pins the real height once a row has been laid out.
+ *
+ * Only the rows, never the `.rv` section around them: its radial glow (`.rv::before`) reaches
+ * 40 px below the section, and containment would clip it.
+ */
+.rv-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 247px;
+}
+
+/*
+ * "Pay your way" is the same shape: two drifting rows that repeat the badges so the loop has no
+ * gap, 64 images in all, 7,200 px down the page. A row's content is exactly one tile tall
+ * (globals.css .pm-tile, 64 px, 56 px under 560 px wide), so these sizes are exact at every
+ * width and the page length does not change.
+ */
+.pm-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 64px;
+}
+@media (max-width: 560px) {
+  .pm-row {
+    contain-intrinsic-size: auto 56px;
+  }
+}

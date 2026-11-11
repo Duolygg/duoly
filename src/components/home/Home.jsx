@@ -36,6 +36,9 @@ import StreamerBooking from './StreamerBooking';
 import SoloVsDuoly from './SoloVsDuoly';
 import Testimonials from './Testimonials';
 import HeroQuotes from './HeroQuotes';
+// Lets the browser skip the layout and paint of the drifting review and payment rows until they
+// are scrolled towards. Between them they are most of this page's elements and images.
+import './offscreen.css';
 import { servicesFor } from '../../design-reference/lib/catalog';
 import {
   ranksOf,

@@ -11,16 +11,21 @@
  * content six screens below the fold.
  *
  * An animation nobody can see looks the same whether it runs or not, so this pauses it and
- * resumes it when it comes near the viewport. It works off `document.getAnimations()` rather
+ * resumes it the moment it touches the viewport. It works off `document.getAnimations()` rather
  * than a list of selectors, so it covers animations declared in the design stylesheet and ones
- * set inline in the homepage JSX alike, and it only ever touches animations that repeat for
- * ever: one-shot entrances, spinners inside a pending button and the hero's drifting quotes are
- * left alone. Pausing holds an animation's current time, so a strip that comes back into view
- * carries on from where it stopped instead of jumping.
+ * set inline in the homepage JSX alike. It takes the endless ones and the long ones: the hero's
+ * quote cards cross in 12 s each and the component starts the next card when one ends, so they
+ * are a loop too, and they are the most expensive animation on the page because each card
+ * carries a `backdrop-filter: blur(14px)` that has to be recomputed wherever it lands. Short
+ * animations are left alone, so entrances, the hero's match-timer bar and the spinner in a
+ * pending button all play exactly once, exactly when they always did.
+ *
+ * Pausing holds an animation's current time, so a strip that comes back into view carries on
+ * from where it stopped rather than jumping, the same as a tab coming back from the background.
  */
 
-/** Resume this far outside the viewport, so nothing is ever caught standing still. */
-const MARGIN = '300px 0px';
+/** Longer than any entrance in the design, shorter than anything that reads as a loop. */
+const LOOP_MS = 3000;
 /** A rescan is cheap, but not free; at most one per this many ms. */
 const RESCAN_MS = 1500;
 
@@ -47,26 +52,26 @@ export function startIdleAnimations(): () => void {
     }
   };
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        const managed = byElement.get(entry.target);
-        if (!managed) continue;
-        managed.visible = entry.isIntersecting;
-        for (const animation of managed.animations) apply(animation, managed);
-      }
-    },
-    { rootMargin: MARGIN },
-  );
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const managed = byElement.get(entry.target);
+      if (!managed) continue;
+      managed.visible = entry.isIntersecting;
+      for (const animation of managed.animations) apply(animation, managed);
+    }
+  });
 
   const scan = () => {
     for (const animation of document.getAnimations()) {
       if (seen.has(animation)) continue;
       seen.add(animation);
       const effect = animation.effect;
-      // Only endless ones. getComputedTiming().iterations is Infinity for `infinite`.
       if (!(effect instanceof KeyframeEffect) || !effect.target) continue;
-      if (effect.getComputedTiming().iterations !== Infinity) continue;
+      const timing = effect.getComputedTiming();
+      const loops =
+        timing.iterations === Infinity ||
+        Number(timing.activeDuration) >= LOOP_MS;
+      if (!loops) continue;
       const target = effect.target;
       let managed = byElement.get(target);
       if (!managed) {
