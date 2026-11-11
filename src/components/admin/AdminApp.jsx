@@ -9,6 +9,16 @@ import { adminApi, auditEntry } from './api';
 import { supportInbox } from './support-data';
 import { alertState } from './phone-alerts';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
+import { backgroundTicker } from '../teammate/desk-keeper';
+import {
+  BELL_SRC,
+  ORDER_WATCH_MS,
+  ORDER_WATCH_PATH,
+  claimAdminAlert,
+  freshQueued,
+  playBell,
+  showAdminOrderNotification,
+} from './order-alerts';
 import Users from './Users';
 import AuditLog from './AuditLog';
 import Orders from './Orders';
@@ -255,6 +265,7 @@ export default class AdminApp extends React.Component {
       supportWaiting: 0,
       focusChat: null,
       openReports: 0,
+      notif: 'unsupported',
     };
   }
   componentDidMount() {
@@ -276,6 +287,20 @@ export default class AdminApp extends React.Component {
     this.loadAudit();
     this.loadCounts();
     this._ping = newChatPing();
+    this._bell = new Audio(BELL_SRC);
+    this._bell.preload = 'auto';
+    this.setState({
+      notif:
+        typeof Notification === 'undefined'
+          ? 'unsupported'
+          : Notification.permission,
+    });
+    // New orders: bell + browser notification on every admin page, also in a background tab
+    // (worker-driven ticks, like the teammate desk), so the Live desk needn't stay open.
+    if (this.can('live')) {
+      this._stopOrders = backgroundTicker(ORDER_WATCH_MS, this.watchOrders);
+      this.watchOrders();
+    }
     this.watchSupport();
     this.presenceCheckIn();
     this.revealNav();
@@ -307,6 +332,8 @@ export default class AdminApp extends React.Component {
     clearInterval(this._counts);
     clearInterval(this._support);
     clearInterval(this._presence);
+    this._stopOrders?.();
+    if (this._bell) this._bell.pause();
     (this._toastTimers || []).forEach(clearTimeout);
   }
   // On phones the sidebar is a scrolling tab row: keep the current section in view.
@@ -364,6 +391,60 @@ export default class AdminApp extends React.Component {
     this.api
       .post('/api/admin/presence', { action: 'check-in', online: true })
       .catch(() => undefined);
+  // ---- new orders in the shared queue: the teammate desk's bell and "New Order Available!" popup
+  watchOrders = async () => {
+    if (this._watchingOrders) return;
+    this._watchingOrders = true;
+    try {
+      const r = await this.api.get(ORDER_WATCH_PATH);
+      if (!r.ok) return;
+      const { fresh, seen } = freshQueued(this._seenOrders, r.data.orders);
+      this._seenOrders = seen;
+      // one bell and one popup per order across this admin's open tabs
+      const mine = fresh.filter((o) => claimAdminAlert(o.orderId));
+      if (!mine.length) return;
+      playBell(this._bell);
+      showAdminOrderNotification(mine[0], mine.length, () => this.go('live'));
+    } catch {
+      /* best effort */
+    } finally {
+      this._watchingOrders = false;
+    }
+  };
+  askNotifications = () => {
+    if (
+      typeof Notification === 'undefined' ||
+      Notification.permission !== 'default'
+    )
+      return;
+    Notification.requestPermission()
+      .then((p) => this.setState({ notif: p }))
+      .catch(() => {});
+  };
+  // "Test": the same bell and a sample popup, so admins can check their volume and notification settings.
+  testOrderAlert = () => {
+    playBell(this._bell);
+    if (
+      typeof Notification === 'undefined' ||
+      Notification.permission !== 'granted'
+    )
+      return;
+    try {
+      // a reused tag only replaces the last test quietly: give each test its own
+      if (this._testNote) this._testNote.close();
+      const n = new Notification('This is how new orders reach you!', {
+        body: 'When a customer books an order, you’ll hear this bell and get a popup like this one, on any admin page.',
+        icon: '/assets/brand/logo-full.webp',
+        tag: 'duoly-admin-order-test-' + Date.now(),
+        silent: true,
+      });
+      n.onclick = () => {
+        window.focus();
+        n.close();
+      };
+      this._testNote = n;
+    } catch {}
+  };
   watchSupport = async () => {
     if (!this.can('support')) return;
     let response;
@@ -693,7 +774,17 @@ export default class AdminApp extends React.Component {
       );
     else if (s.section === 'overview')
       body = <Overview {...props} chatEnabled={this.props.chatEnabled} />;
-    else if (s.section === 'live') body = <LiveDesk {...props} />;
+    else if (s.section === 'live')
+      body = (
+        <LiveDesk
+          {...props}
+          alerts={{
+            notif: s.notif,
+            ask: this.askNotifications,
+            test: this.testOrderAlert,
+          }}
+        />
+      );
     else if (s.section === 'priority') body = <Priority {...props} />;
     else if (s.section === 'performance') body = <Performance {...props} />;
     else if (s.section === 'customers') body = <Customers {...props} />;

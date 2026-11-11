@@ -10,6 +10,7 @@ import {
   AFK_OFFLINE_REASON,
   AFK_WARN_SECONDS,
   backgroundTicker,
+  claimOrderNotification,
   readSeenOrders,
   showAfkWarning,
   saveSeenOrders,
@@ -728,9 +729,9 @@ export default class Teammate extends React.Component {
       .catch(() => {});
   }
   // Desktop notification for a new order (the bell already plays, so the notification stays silent).
-  // Shared with the other pages (desk-keeper): one popup per order across open tabs.
+  // The caller already claimed the order (one popup per order across open tabs, desk-keeper).
   notify(o) {
-    showOrderNotification(o);
+    showOrderNotification(o, undefined, { claimed: true });
   }
   // "Test" in queue settings: the same bell and a sample popup, worded as a preview, so teammates
   // know what a new order looks and sounds like (and can check their volume and notification settings).
@@ -834,9 +835,11 @@ export default class Teammate extends React.Component {
         : [];
       this._seen = data.queue.map((order) => order.id);
       saveSeenOrders(this._seen);
-      if (fresh.length) {
+      // Other pages ring too (desk-keeper): only the tab that sees an order first rings and pops up.
+      const mine = fresh.filter((order) => claimOrderNotification(order.id));
+      if (mine.length) {
         this.playBell();
-        fresh.forEach((order) => this.notify(order));
+        mine.forEach((order) => this.notify(order));
       }
       this.setState({
         queue: data.queue,
