@@ -65,6 +65,16 @@ describe('gated cron dispatcher migration', () => {
     expect(sql).not.toMatch(/delete from vault\./i);
   });
 
+  it('inherits a hand-created payments timeout without silently changing it', () => {
+    const sql = migration();
+    expect(sql).toContain(
+      'unrecognized payments timeout; inspect before rollout',
+    );
+    expect(sql).toContain('pg_catalog.regexp_match');
+    expect(sql).toContain('if v_timeout is null then');
+    expect(sql).toContain('installed pg_net default');
+  });
+
   it('never modifies existing migration history', () => {
     const changed = execFileSync(
       'git',

@@ -1,6 +1,8 @@
 -- Step A only: gate the existing app handlers; no timers or application changes.
--- Rollout: verify the payments job's timeout (not recorded in source; pg_net default
--- 1000 ms below), owners, Vault secrets and net queue ACLs before owner applies this.
+-- Rollout: verify job owners, Vault secrets and net queue ACLs before owner applies this.
+-- Payments inherits a literal timeout from its retained hand-made cron command;
+-- absent explicit configuration uses the installed pg_net default (also locally).
+-- An unfamiliar timeout expression aborts migration BEFORE any old job is paused.
 -- Never enqueue service-role credentials. Existing narrow tick credentials are reused.
 -- Rollback (owner, one transaction):
 --   begin;
@@ -12,6 +14,19 @@
 -- Keep bounded retention on rollback; never delete shared discord_roles_tick_secret
 -- (duoly-performance-recalc still uses it). In-flight HTTP requests can still finish.
 begin;
+
+-- Refuse to silently replace a nonliteral hand-configured payments timeout.
+do $preflight$
+declare v_command text;
+begin
+  select command into v_command from cron.job
+    where jobname = 'duoly-payments-tick' and username = current_user;
+  if v_command ~* 'timeout_milliseconds' and pg_catalog.regexp_match(v_command,
+    'timeout_milliseconds\s*(?::=|=>)\s*([0-9]+)\s*[,)]', 'i') is null then
+    raise exception 'unrecognized payments timeout; inspect before rollout';
+  end if;
+end;
+$preflight$;
 
 create table public.duoly_dispatch_state (
   kind text primary key check (kind in ('orders','payments','analytics','roles')),
@@ -106,7 +121,7 @@ begin
   for v_kind, v_url, v_secret_name, v_timeout in
     select * from (values
       ('orders', 'https://duoly.gg/api/discord/orders/tick', 'discord_roles_tick_secret', 9000),
-      ('payments', 'https://duoly.gg/api/payments/tick', 'payments_tick_secret', 1000),
+      ('payments', 'https://duoly.gg/api/payments/tick', 'payments_tick_secret', null::integer),
       ('analytics', 'https://duoly.gg/api/internal/analytics/drain', 'analytics_drain_secret', 25000),
       ('roles', 'https://duoly.gg/api/discord/roles/tick', 'discord_roles_tick_secret', 25000)
     ) as kinds(kind, url, secret_name, timeout_ms)
@@ -129,9 +144,24 @@ begin
         raise warning 'duoly_dispatch % missing/invalid Vault configuration', v_kind;
         continue;
       end if;
-      perform net.http_post(url := v_url,
-        headers := pg_catalog.jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || v_secret),
-        body := '{}'::jsonb, timeout_milliseconds := v_timeout);
+      if v_kind = 'payments' then
+        -- Keep the actual production timeout without a hosted lookup or guessed value.
+        -- The old job is paused, not dropped; its command remains the source of truth.
+        select (pg_catalog.regexp_match(command,
+          'timeout_milliseconds\s*(?::=|=>)\s*([0-9]+)\s*[,)]', 'i'))[1]::integer
+          into v_timeout from cron.job
+          where jobname = 'duoly-payments-tick' and username = current_user;
+      end if;
+      if v_timeout is null then
+        -- Omit the argument to preserve the installed pg_net default, not a guessed version.
+        perform net.http_post(url := v_url,
+          headers := pg_catalog.jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || v_secret),
+          body := '{}'::jsonb);
+      else
+        perform net.http_post(url := v_url,
+          headers := pg_catalog.jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || v_secret),
+          body := '{}'::jsonb, timeout_milliseconds := v_timeout);
+      end if;
       -- Only successful enqueue advances the fallback; this is NOT a delivery acknowledgement.
       insert into public.duoly_dispatch_state(kind, last_called_at) values (v_kind, pg_catalog.clock_timestamp())
         on conflict (kind) do update set last_called_at = excluded.last_called_at;
