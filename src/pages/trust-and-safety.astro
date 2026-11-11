@@ -24,7 +24,6 @@ import {
   CATALOG_PRICES_UPDATED_LABEL,
   QUANTITY_PERCENT,
   SINGLE_GAME,
-  TEN_GAME_BUNDLE,
   USD_MARGIN_PERCENT,
 } from '../server/seo/fees';
 import {
@@ -79,7 +78,7 @@ const NOT_DUOLY: [string, string][] = [
 const faq: [string, string][] = [
   [
     'Is Duoly safe to use?',
-    `Duoly is an Austrian sole proprietorship, registered under trade register number GISA ${BUSINESS.gisa} and operated from ${BUSINESS_LOCATION}, with the operator details published in full. Payment runs through ${PAYMENT_PROVIDER}, so Duoly never sees a full card number, and every session is played on your own account. A ${SINGLE_GAME.total} game is one charge with nothing added on top, refundable in full until a teammate accepts.`,
+    `Duoly is an Austrian sole proprietorship, registered under trade register number GISA ${BUSINESS.gisa} and operated from ${BUSINESS_LOCATION}, with the operator details published in full. Payment runs through ${PAYMENT_PROVIDER}, so Duoly never sees a full card number, and every session is played on your own account. An order is one charge with nothing added on top, refundable in full until a teammate accepts.`,
   ],
   [
     'Will a Duoly teammate ever ask for my account password?',
@@ -189,7 +188,7 @@ const faq: [string, string][] = [
       <h2 id="rank-h">Which rank does a Duoly teammate have to hold?</h2>
       <p>
         Each game publishes its own minimum, and the application form offers
-        that rank and everything above it instead of a free text box:{' '}
+        that rank and everything above it as a fixed list:{' '}
         {TEAMMATE_MIN_RANKS.map(
           ([game, rank], index) =>
             `${index ? ', ' : ''}${game} asks for ${rank}`,
@@ -198,15 +197,14 @@ const faq: [string, string][] = [
         <a href={SINGLE_GAME.href}>a real {SINGLE_GAME.short} checkout</a>.
       </p>
       <p>
-        Every service names the tier it pairs you with, so a {SINGLE_GAME.total}{' '}
-        League of Legends Duo Pro game means a {DUO_PRO_TIER}, while Duo Apex
-        means a {DUO_APEX_TIER}. Coaches carry the coach rank on their game’s
-        coaching page and send a sample review before they are approved, which
-        is why a {COACHING_PRICE} Valorant VOD Review hour names a{' '}
-        {VALORANT_COACH_TIER}. Gamer Girl sessions take any rank, because rank
-        is not what is being booked. According to{' '}
-        <a href="/terms#teammates">Duoly’s teammate terms</a>, a teammate keeps
-        a verified rank honest or loses the account.
+        Every service names the tier it pairs you with, so a League of Legends
+        Duo Pro game means a {DUO_PRO_TIER}, while Duo Apex means a{' '}
+        {DUO_APEX_TIER}. Coaches carry the coach rank on their game’s coaching
+        page and send a sample review before they are approved, which is why a
+        Valorant VOD Review hour names a {VALORANT_COACH_TIER}. Gamer Girl
+        sessions take any rank, because rank is not what is being booked. A
+        teammate who stops keeping a verified rank honest loses the account,
+        under the <a href="/terms#teammates">teammate terms</a>.
       </p>
     </section>
 
@@ -215,21 +213,19 @@ const faq: [string, string][] = [
       <p>
         A Duoly payment is one upfront charge through {PAYMENT_PROVIDER}, and
         Duoly never sees or stores a full card number. The card form at checkout
-        belongs to {PAYMENT_PROVIDER} rather than to Duoly, so card data never
-        reaches a Duoly server at all. <a href="/privacy">The privacy policy</a>{' '}
-        states that payment details go straight to the payment provider and that
-        Duoly only sees the amount and the method, plus the card brand and the
-        last 4 digits if you tick save at checkout.
+        belongs to {PAYMENT_PROVIDER}, so card data never reaches a Duoly server
+        at all. <a href="/privacy">The privacy policy</a> states that payment
+        details go straight to the payment provider and that Duoly only sees the
+        amount and the method, plus the card brand and the last 4 digits if you
+        tick save at checkout.
       </p>
       <p>
-        One charge covers the whole order, whether that is a {SINGLE_GAME.total}{' '}
-        game or a {COACHING_PRICE} coaching hour, which also means no stored
-        card is needed to book again. Any {QUANTITY_PERCENT}% quantity discount
-        comes off before the charge. According to{' '}
-        <a href="/terms#payment">Duoly’s payment terms</a>, prices are set in
-        euros and a US dollar total adds a {USD_MARGIN_PERCENT}% currency
-        margin, rounded up to .99. A refund lands in your Duoly balance unless
-        you ask for it back on the card.
+        One charge covers the whole order, a game or a coaching hour alike, so
+        no stored card is needed to book again. Any {QUANTITY_PERCENT}% quantity
+        discount comes off before the charge. Prices are set in euros, and a US
+        dollar total adds a {USD_MARGIN_PERCENT}% currency margin, rounded up to
+        .99, under the <a href="/terms#payment">payment terms</a>. A refund
+        lands in your Duoly balance unless you ask for it back on the card.
       </p>
     </section>
 
@@ -263,15 +259,13 @@ const faq: [string, string][] = [
         same way: a no-show, a teammate leaving and toxic behaviour all get
         reported from the order room, a real person reviews the report, and the
         order can be refunded to your Duoly balance. One rule, whether the order
-        was {SINGLE_GAME.total} or a {TEN_GAME_BUNDLE.total} ten-game bundle at{' '}
-        {BUNDLE_PERCENTS[2]}% off.
+        was a single game or a ten-game bundle.
       </p>
       <p>
-        Two things sit behind that. The order chat refuses any message asking
-        for a login or an outside payment before it is delivered, and that is
-        enforced on the server rather than in the browser alone. And a teammate
-        payout can be held while a report about the order is reviewed, so a
-        disputed order is never paid out first and argued about afterwards.
+        Two things sit behind that. The order chat blocks any message asking for
+        a login or an outside payment before it reaches the other person. And a
+        teammate payout can be held while a report about the order is reviewed,
+        so a disputed order is never paid out first and argued about afterwards.
         Support also answers from the chat bubble and{' '}
         <a href="/contact">the contact form</a>.
       </p>
@@ -307,19 +301,19 @@ const faq: [string, string][] = [
       <p>
         Duoly is a marketplace for played-together sessions, and that rules five
         things out. Each one is written into{' '}
-        <a href="/terms">the terms of service</a>, dated {LEGAL_UPDATED}.
-        Account sharing and boosting: a session is played together, the teammate
-        stays in a personal client, and no password is requested. A guaranteed
-        rank, win or start time: a teammate accepts from a queue, and the{' '}
-        {SHARE_PERCENT}% teammate share is paid for a completed order rather
-        than a won one. Dating, romantic or sexual services. Anybody under 18,
-        on either side of a booking. And payment arranged off the platform.
+        <a href="/terms">the terms of service</a>. Account sharing and boosting:
+        a session is played together, the teammate stays in a personal client,
+        and no password is requested. A guaranteed rank, win or start time: a
+        teammate accepts from a queue, and the {SHARE_PERCENT}% teammate share
+        is paid for a completed order rather than a won one. Dating, romantic or
+        sexual services. Anybody under 18, on either side of a booking. And
+        payment arranged off the platform.
       </p>
       <p>
-        That is what the price buys and what it does not. A {SINGLE_GAME.total}{' '}
-        League of Legends game buys one game beside a {DUO_PRO_TIER}, with
-        Discord voice if you want it. A {BUNDLE_PERCENTS[2]}% bundle discount
-        buys ten of those games, and still no result.
+        What the price buys is playing time. A League of Legends Duo Pro game
+        buys one game beside a {DUO_PRO_TIER}, with Discord voice if you want
+        it, and a {BUNDLE_PERCENTS[2]}% bundle discount buys ten of those games
+        more cheaply. Neither one buys a result.
       </p>
       <div class="official-grid">
         {NOT_DUOLY.map(([label, detail]) => (
@@ -334,9 +328,9 @@ const faq: [string, string][] = [
     <Faq heading="What do customers ask about Duoly safety?" items={faq} />
 
     <ClosingCta
-      heading="Want to check the rules before you book?"
-      text={`Before you pay, a ${SINGLE_GAME.total} game tells you its price, the ${SHARE_PERCENT}% share the teammate keeps, who operates the site and what happens if the session fails. Everything above comes from the terms, the privacy policy and the imprint, published from ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}.`}
-      extra={`On a first order, your account stays yours: a session starts with an invite, never a login, and nobody at Duoly asks for a password. Your money stays reversible until the session runs, since cancelling is free until a teammate accepts and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. A session that goes badly has a route out, which is a report from the order room that a person at Duoly reads. None of that buys a result, though. According to the terms, no rank, win or start time is promised at any price, including on a ${TEN_GAME_BUNDLE.total} bundle at ${BUNDLE_PERCENTS[2]}% off. Catalog prices as of ${pricesLabel}.`}
+      heading="What can you check before you book?"
+      text={`All of it. Before you pay, the booking screen shows the price, the ${SHARE_PERCENT}% share the teammate keeps, who operates the site and what happens if the session fails. Everything above comes from the terms, the privacy policy and the imprint, published from ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}.`}
+      extra={`On a first order, your account stays yours: a session starts with an invite, never a login, and nobody at Duoly asks for a password. Your money stays reversible until the session runs, since cancelling is free until a teammate accepts and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. A session that goes badly has a route out, which is a report from the order room that a person at Duoly reads. None of that buys a result, though. No rank, win or start time is promised at any price, on the cheapest game or the largest bundle. Prices as of ${pricesLabel}.`}
       href="/pricing"
       label={`See prices for ${PLAYABLE_GAMES} games`}
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}

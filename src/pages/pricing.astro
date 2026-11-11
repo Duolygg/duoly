@@ -57,7 +57,6 @@ const HUB_LINKS = hubChips([
   'counter-strike-2',
   'rocket-league',
 ]);
-const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
 const pricesLabel = CATALOG_PRICES_UPDATED_LABEL;
 /** Worked rank spread for the paragraph about rank, from the engine. */
 const LOL_PRO_IRON = spotPrice('lol', 'duo2', 'Iron');
@@ -85,7 +84,7 @@ const groupsOf = (game: (typeof PRICE_TABLE)[number]) =>
 const faq: [string, string][] = [
   [
     'What is the cheapest session on Duoly?',
-    `${CHEAPEST.row.from} for a ${CHEAPEST_LABEL}, the lowest catalog price on ${pricesLabel}.`,
+    `${CHEAPEST.row.from} for a ${CHEAPEST_LABEL}, the lowest price on the site as of ${pricesLabel}.`,
   ],
   [
     'Does Duoly charge a booking fee or a service fee?',
@@ -93,7 +92,7 @@ const faq: [string, string][] = [
   ],
   [
     'Do bundle discounts apply to coaching?',
-    `Coaching has no quantity discount. For example, ${FIVE_COACHING_HOURS.label} cost ${FIVE_COACHING_HOURS.total}. Bundles apply to each game's main teammate service: ${BUNDLE_SIZES.join(', ')} units take ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off.`,
+    `No. Coaching takes no quantity discount, so ${FIVE_COACHING_HOURS.label} cost five times one hour. Bundles apply to each game's main teammate service: ${BUNDLE_SIZES.join(', ')} units take ${BUNDLE_PERCENTS[0]}%, ${BUNDLE_PERCENTS[1]}% and ${BUNDLE_PERCENTS[2]}% off.`,
   ],
   [
     'Why do two players pay different prices for the same service?',
@@ -113,7 +112,7 @@ const faq: [string, string][] = [
   ],
   [
     'Can a Duoly price change after I book?',
-    `An order already placed keeps the price paid, and future bookings use the current catalog price, as stated in the terms.`,
+    'No. An order already placed keeps the price you paid, and only later bookings use the current price. The terms say so in writing.',
   ],
 ];
 ---
@@ -135,7 +134,7 @@ const faq: [string, string][] = [
     <SeoHero
       eyebrow="Pricing"
       h1="Duoly pricing"
-      lead={`Every bookable Duoly service and what it charges, in one table: ${ROW_COUNT} services across ${CATALOG_GAMES} games. Each figure here is the figure checkout charges, with nothing added on top.`}
+      lead={`Every bookable Duoly service and what it charges, in one table: ${ROW_COUNT} services across ${CATALOG_GAMES} games. You pay the figure you see, and nothing is added on top.`}
       price={`${SINGLE_GAME.short}: ${SINGLE_GAME.total}`}
       cta={{ href: '#table-h', label: 'Jump to the price table' }}
       secondary={{ href: '/fees-and-refunds', label: 'Fees and refunds' }}
@@ -157,7 +156,7 @@ const faq: [string, string][] = [
         `Bundles up to ${BUNDLE_PERCENTS[2]}% off`,
         'Prices set in euros',
       ]}
-      note={`Catalog prices as of ${pricesLabel}.`}
+      note={`Prices as of ${pricesLabel}.`}
     />
 
     <section aria-labelledby="cost-h">
@@ -175,10 +174,9 @@ const faq: [string, string][] = [
       <p>
         The game and the service decide almost everything else, so start there.{' '}
         <a href={SINGLE_GAME.href}>A {SINGLE_GAME.short} order</a> is{' '}
-        {SINGLE_GAME.total}; {MAX_QUANTITY} of the same game take{' '}
-        {QUANTITY_PERCENT}% off, and a {BUNDLE_SIZES[2]} game bundle takes{' '}
-        {BUNDLE_PERCENTS[2]}% off. Every figure in the table below is the one
-        checkout would charge today, in {CATALOG_YEAR}.
+        {SINGLE_GAME.total}. Buy more of the same game and the rate drops:{' '}
+        {MAX_QUANTITY} games take {QUANTITY_PERCENT}% off, and a{' '}
+        {BUNDLE_SIZES[2]} game bundle takes {BUNDLE_PERCENTS[2]}% off.
       </p>
     </section>
 
@@ -219,20 +217,22 @@ const faq: [string, string][] = [
       <p>
         The table below shows each service’s lowest and highest rate.{' '}
         <a href="/games">Your game page</a> carries the exact price at your own
-        rank. Pick the rank you really hold before paying: according to{' '}
-        <a href="/terms#booking">Duoly’s booking terms</a>, a wrong rank can
-        make a session impossible to play and is not a reason for a refund.
-        Agree the mode and the start time with your teammate in the order chat,
-        then play on your own account with Discord voice.
+        rank. Pick the rank you really hold before paying. A wrong rank can make
+        a session impossible to play, and{' '}
+        <a href="/terms#booking">the booking terms</a> do not treat that as a
+        reason for a refund. Agree the mode and the start time with your
+        teammate in the order chat, then play on your own account with Discord
+        voice.
       </p>
     </section>
 
     <section aria-labelledby="table-h">
       <h2 id="table-h">What does every Duoly game and service cost?</h2>
       <p>
-        The table below is the whole catalog: {CATALOG_GAMES} games, {ROW_COUNT}{' '}
-        bookable services and what each one charges in {CATALOG_YEAR}. Find your
-        game in a group header, then the category underneath, which is one of{' '}
+        The table below holds every game and service Duoly sells:{' '}
+        {CATALOG_GAMES} games and {ROW_COUNT} bookable services with what each
+        one charges. Find your game in a group header, then the category
+        underneath, which is one of{' '}
         {CATEGORY_HEADINGS.map(([, heading]) => heading.toLowerCase()).join(
           ', ',
         )}
@@ -243,9 +243,9 @@ const faq: [string, string][] = [
         for a flat service, and the cheapest and dearest figure with its rank
         for a rank-priced one. The covers column matters because a team fill
         pays several hired players out of that single price. Coaching has no
-        rank spread at all: a {COACHING_PRICE} VOD Review hour reads the same in
-        every coachable game. Click any service name and checkout opens with
-        that game and service already filled in.
+        rank spread at all, so a VOD Review hour reads the same in every
+        coachable game. Click any service name and checkout opens with that game
+        and service already filled in.
       </p>
       <div class="official-table-wrap">
         <table class="official-table official-prices">
@@ -296,7 +296,7 @@ const faq: [string, string][] = [
         </table>
       </div>
       <p class="official-table-note">
-        Catalog prices as of{' '}
+        Prices as of{' '}
         <time datetime={CATALOG_PRICES_UPDATED}>{pricesLabel}</time>. Each
         service name opens the checkout with that game and service prefilled.
         For the price at one exact rank, open <a href="/games">the game page</a>{' '}
@@ -318,11 +318,11 @@ const faq: [string, string][] = [
       </p>
       <p>
         Pick the format for the problem you have.{' '}
-        <a href={COACHING_HOUR.href}>{COACHING_HOUR.label}</a> costs{' '}
-        {COACHING_HOUR.total} at every rank and buys the time to pause and
-        compare decisions with Discord screen share. Check the coach tier too,
-        since it differs by game: Valorant lists {VALORANT_COACH_TIER}, League
-        of Legends lists {LOL_COACH_TIER}. For the market outside Duoly, our{' '}
+        <a href={COACHING_HOUR.href}>{COACHING_HOUR.label}</a> costs the same at
+        every rank and buys the time to pause a recording and compare decisions
+        over a Discord screen share. Check the coach tier too, since it differs
+        by game: Valorant lists {VALORANT_COACH_TIER}, League of Legends lists{' '}
+        {LOL_COACH_TIER}. For the market outside Duoly, our{' '}
         <a href={REPORT_PATH}>2026 gaming coaching and teammate price report</a>{' '}
         found a median of {HOURLY_COACHING.median} an hour across{' '}
         {HOURLY_COACHING.count} rates from {COMPETITOR_COUNT} platforms.
@@ -334,19 +334,17 @@ const faq: [string, string][] = [
       <p>
         A Duoly price is set in euros and charged in euros or US dollars,
         whichever you pick at checkout. Every figure on this page is the euro
-        price, because the whole catalog is priced in euros. According to{' '}
-        <a href="/terms#payment">Duoly’s payment terms</a>, a dollar total is
-        that euro price converted at the day’s European Central Bank rate plus a{' '}
-        {USD_MARGIN_PERCENT}% currency margin, rounded up to .99, so it sits a
-        few cents above a plain mid-market conversion.
+        price. A dollar total is that euro price converted at the day’s European
+        Central Bank rate plus a {USD_MARGIN_PERCENT}% currency margin, rounded
+        up to .99, so it sits a few cents above a plain mid-market conversion.
+        The <a href="/terms#payment">payment terms</a> hold Duoly to that.
       </p>
       <p>
         Switching currency happens at checkout, and the site remembers the
-        choice for a year. The same conversion applies to everything, from a{' '}
-        {SINGLE_GAME.total} game to a {COACHING_PRICE} coaching hour. Your bank
-        may add a foreign currency handling fee of its own, which Duoly neither
-        sets nor receives. The rate comes from a public European Central Bank
-        feed, and nothing about you is sent there.
+        choice for a year. The same conversion applies to every service in the
+        table. Your bank may add a foreign currency handling fee of its own,
+        which Duoly neither sets nor receives. The rate comes from a public
+        European Central Bank feed, and nothing about you is sent there.
       </p>
     </section>
 
@@ -355,7 +353,7 @@ const faq: [string, string][] = [
         Where can an AI assistant read the same Duoly prices?
       </h2>
       <p>
-        Duoly publishes the same catalog in three places, so a reader and an
+        Duoly publishes the same price list in three places, so a reader and an
         assistant never see different numbers.{' '}
         <a href="/pricing.md">Duoly.gg/pricing.md</a> is the whole price list as
         plain markdown, with the figure for every rank rather than a range. The{' '}
@@ -365,20 +363,20 @@ const faq: [string, string][] = [
       </p>
       <p>
         An assistant should call find_session first, because a quote needs a
-        game and a service before it can return anything. A {SINGLE_GAME.total}{' '}
-        {SINGLE_GAME.short} reads identically on this page, in pricing.md, and
-        from an assistant <a href="/ai">using Claude</a>. According to{' '}
-        <a href="/terms#payment">the Duoly terms</a>, a price can change over
-        time, and an order already placed keeps the price paid.
+        game and a service before it can return anything. A {SINGLE_GAME.short}{' '}
+        reads identically on this page, in pricing.md, and from an assistant{' '}
+        <a href="/ai">using Claude</a>. Prices can change over time, and an
+        order already placed keeps the price paid, which is written into the{' '}
+        <a href="/terms#payment">terms</a>.
       </p>
     </section>
 
     <Faq heading="What do customers ask about Duoly prices?" items={faq} />
 
     <ClosingCta
-      heading="Found your price?"
-      text={`Every figure above is what checkout charges, from a sole proprietorship in ${BUSINESS_LOCATION}. Open your game, pick the rank you really hold and read the total before paying anything.`}
-      extra={`Rank moves ranked play and nothing else, so the two figures in a price cell are the ends of one ladder with your own rank somewhere between them. Coaching ignores the ladder entirely and stays flat at ${COACHING_PRICE} in all ${COACHABLE_GAMES} coachable games. You pay once and nothing is added on top, so ${SINGLE_GAME.short} is ${SINGLE_GAME.total}, and discounts come off by themselves: ${QUANTITY_PERCENT}% at ${MAX_QUANTITY} units and up to ${BUNDLE_PERCENTS[2]}% on a ${BUNDLE_SIZES[2]} unit bundle. The biggest saving on the site is ${TEN_GAME_BUNDLE.short} at ${TEN_GAME_BUNDLE.total}, which takes ${TEN_GAME_BUNDLE.saved} off.`}
+      heading="Which figure in a price cell applies to you?"
+      text={`The one at the rank you hold. The two figures in a cell are the ends of one ladder, and ranked play moves along it while the casual modes and coaching sit still at every rank. Open your game, pick the rank you really hold, and read the total before paying anything.`}
+      extra={`You pay once and nothing is added on top. Discounts come off by themselves, at ${QUANTITY_PERCENT}% for ${MAX_QUANTITY} units and up to ${BUNDLE_PERCENTS[2]}% on a ${BUNDLE_SIZES[2]} unit bundle, and the biggest saving on the site is ${TEN_GAME_BUNDLE.short}, which takes ${TEN_GAME_BUNDLE.saved} off. Duoly is a sole proprietorship in ${BUSINESS_LOCATION}.`}
       href="/how-it-works"
       label="See how a booking works"
       art={{ src: '/assets/games/valorant.png', alt: '' }}
