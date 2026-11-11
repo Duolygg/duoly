@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
   createTeammateFetch,
+  maskName,
   newEligibleOrders,
   toOriginalPresence,
   toOriginalTeammateOrder,
@@ -145,7 +146,8 @@ describe('original teammate adapter', () => {
     const read = createTeammateFetch({ csrf: 'token', fetcher: transport });
     const response = await read('/api/desk');
     expect(await response.json()).toEqual({
-      queue: [toOriginalTeammateOrder(order)],
+      // the queue never shows the customer's full name before an accept
+      queue: [{ ...toOriginalTeammateOrder(order), customer: 'C******r' }],
       mine: null,
     });
     expect(transport.mock.calls.map((c) => c[0])).toEqual([
@@ -308,5 +310,15 @@ describe('original teammate adapter', () => {
       realCustomer: true,
       assignmentId: null,
     });
+  });
+});
+
+describe('maskName', () => {
+  it('keeps only the first and last letter of the customer name', () => {
+    expect(maskName('Chester')).toBe('C*****r');
+    expect(maskName('C*****r')).toBe('C*****r');
+    expect(maskName('Al')).toBe('A*');
+    expect(maskName('X')).toBe('X*');
+    expect(maskName('')).toBe('*');
   });
 });

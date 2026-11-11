@@ -406,7 +406,7 @@ export default class Apply extends React.Component {
               <h2 id="perks-h" style={{ margin: "0 0 20px", fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: "34px", fontWeight: "800", letterSpacing: "-.03em", color: "#FFFFFF" }}>
                 Why play on Duoly
               </h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "14px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(250px, 100%), 1fr))", gap: "14px" }}>
                 {v.perks.map((p, $index) => (
                   <React.Fragment key={$index}>
                     <div style={{ padding: "24px", borderRadius: "22px", background: "#120B22", border: "1px solid rgba(196, 170, 255, .08)" }}>
@@ -433,7 +433,7 @@ export default class Apply extends React.Component {
                   Coaches and Gamer Girls have their own requirements — see below
                 </span>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "10px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(220px, 100%), 1fr))", gap: "10px" }}>
                 {v.reqs.map((r, $index) => (
                   <React.Fragment key={$index}>
                     <div style={{ display: "flex", alignItems: "center", gap: "14px", padding: "14px", borderRadius: "18px", background: "#120B22", border: "1px solid rgba(196, 170, 255, .08)" }}>
@@ -450,7 +450,7 @@ export default class Apply extends React.Component {
                   </React.Fragment>
                 ))}
               </div>
-              <div style={{ marginTop: "12px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "10px" }}>
+              <div style={{ marginTop: "12px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: "10px" }}>
                 <div style={{ padding: "18px 20px", borderRadius: "18px", border: "1px solid rgba(196, 170, 255, .1)" }}>
                   <div style={{ fontWeight: "600", color: "#FFFFFF" }}>
                     Coaches
@@ -473,7 +473,7 @@ export default class Apply extends React.Component {
               <h2 id="steps-h" style={{ margin: "0", fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: "34px", fontWeight: "800", letterSpacing: "-.03em", color: "#FFFFFF" }}>
                 From application to first payout
               </h2>
-              <ol style={{ listStyle: "none", margin: "28px 0 0", padding: "0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
+              <ol style={{ listStyle: "none", margin: "28px 0 0", padding: "0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))", gap: "24px" }}>
                 <li style={{ paddingTop: "18px", borderTop: "2px solid #D6BBFF" }}>
                   <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: "14px", fontWeight: "700", color: "#D6BBFF" }}>
                     Day 1
@@ -549,7 +549,7 @@ export default class Apply extends React.Component {
                     <div style={{ padding: "26px 32px 30px", display: "flex", flexDirection: "column", gap: "18px" }}>
                       {v.isStep1 ? (
                         <>
-                          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px", animation: "appop .25s ease-out" }}>
+                          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: "16px", animation: "appop .25s ease-out" }}>
                             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                               <label htmlFor="ap-name" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
                                 Display name
@@ -592,7 +592,7 @@ export default class Apply extends React.Component {
                               <span id="ap-game-l" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
                                 Your main game
                               </span>
-                              <div role="radiogroup" aria-labelledby="ap-game-l" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(124px, 1fr))", gap: "8px" }}>
+                              <div role="radiogroup" aria-labelledby="ap-game-l" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(124px, 100%), 1fr))", gap: "8px" }}>
                                 {v.games.map((g, $index) => (
                                   <React.Fragment key={$index}>
                                     <button type="button" role="radio" aria-checked={g.pressed} onClick={g.pick} style={css(g.style)}>
@@ -605,7 +605,7 @@ export default class Apply extends React.Component {
                                 ))}
                               </div>
                             </div>
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: "16px" }}>
                               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                                 <label htmlFor="ap-rank" style={{ fontSize: "13px", fontWeight: "600", color: "#CFC4EA" }}>
                                   Current rank
@@ -664,7 +664,7 @@ export default class Apply extends React.Component {
                                   Pick all that fit
                                 </span>
                               </span>
-                              <div role="group" aria-labelledby="ap-svc-l" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "8px" }}>
+                              <div role="group" aria-labelledby="ap-svc-l" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))", gap: "8px" }}>
                                 {v.services.map((s, $index) => (
                                   <React.Fragment key={$index}>
                                     <button type="button" role="checkbox" aria-checked={s.pressed} onClick={s.toggle} style={css(s.style)}>

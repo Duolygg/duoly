@@ -104,7 +104,11 @@ export function createTeammateFetch({ csrf, fetcher = fetch }) {
         )
           throw new Error('Invalid assignment');
         return json({
-          queue: queue.orders.map(toOriginalTeammateOrder),
+          // the full name only shows once the order is accepted (the server masks it too)
+          queue: queue.orders.map((o) => ({
+            ...toOriginalTeammateOrder(o),
+            customer: maskName(o.customer_name),
+          })),
           mine: assignment.order
             ? toOriginalTeammateOrder(assignment.order)
             : null,
@@ -265,6 +269,14 @@ export function newEligibleOrders(previousIds, orders, access, settings) {
       enabled.has(order.game) &&
       (settings?.voiceOptIn || !order.voice),
   );
+}
+
+/** "Chester" -> "C*****r": what a teammate sees of the customer before accepting. */
+export function maskName(name) {
+  const chars = Array.from(String(name || ''));
+  if (chars.length === 0) return '*';
+  if (chars.length <= 2) return chars[0] + '*';
+  return chars[0] + '*'.repeat(chars.length - 2) + chars[chars.length - 1];
 }
 
 /** Privacy-safe DTO to Fabian's display shape. UUIDs remain command bindings. */

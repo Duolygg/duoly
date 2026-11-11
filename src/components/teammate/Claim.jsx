@@ -12,6 +12,8 @@ const claimOrder = (order) =>
         payout: Number(order.payout_usd_cents || 0) / 100,
         customer: order.customer_name,
         customerImage: order.customer_image,
+        // the customer's rank for this order
+        from: order.rank || '',
       }
     : null;
 

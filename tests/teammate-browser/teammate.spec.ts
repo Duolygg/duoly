@@ -269,7 +269,7 @@ test('original layout, server queue, real chat transport and private completion 
   await detailsForm.getByLabel('Payout method').click();
   await detailsForm.getByRole('option', { name: 'Wise' }).click();
   await detailsForm
-    .getByLabel('Account (IBAN, Wise or PayPal email)')
+    .getByLabel('Account (IBAN, or Wise, PayPal or Payoneer email)')
     .fill('wise@example.invalid');
   await detailsForm
     .getByRole('button', { name: 'Save payout details' })

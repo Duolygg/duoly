@@ -628,6 +628,7 @@ export default class Teammates extends React.Component {
           minHeight: '40px',
           padding: '0 16px',
           fontSize: '14px',
+          whiteSpace: 'nowrap',
         }}
       >
         {label}
@@ -658,7 +659,13 @@ export default class Teammates extends React.Component {
         <div
           role="tablist"
           aria-label="Teammates"
-          style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}
+          // wraps onto a second line on a phone instead of running off the screen
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '8px',
+            marginBottom: '14px',
+          }}
         >
           {tab('roster', 'Teammates', s.list.length)}
           {tab('apps', 'Applications', pending, pending > 0)}

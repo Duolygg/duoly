@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const csrf = z.string().min(1).max(128);
 const reference = z.string().trim().min(1).max(120);
-const method = z.enum(['bank', 'wise', 'paypal', 'other']);
+const method = z.enum(['bank', 'wise', 'paypal', 'payoneer', 'other']);
 
 export const AdminPayoutCommandSchema = z.discriminatedUnion('action', [
   z
@@ -56,7 +56,7 @@ export const PayoutDetailsCommandSchema = z
       .max(40)
       .refine((v) => v === '' || v.length >= 2)
       .default(''),
-    method: z.enum(['bank', 'wise', 'paypal']),
+    method: z.enum(['bank', 'wise', 'paypal', 'payoneer']),
     account: z.string().trim().min(3).max(200),
   })
   .strict();

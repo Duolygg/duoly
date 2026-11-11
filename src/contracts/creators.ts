@@ -69,7 +69,7 @@ export const AdminCreatorCommandSchema = z.discriminatedUnion('action', [
       action: z.literal('pay'),
       creatorId: z.uuid(),
       month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
-      method: z.enum(['bank', 'wise', 'paypal', 'other']),
+      method: z.enum(['bank', 'wise', 'paypal', 'payoneer', 'other']),
       reference: z.string().trim().min(1).max(120),
     })
     .strict(),
