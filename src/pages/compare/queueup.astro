@@ -38,11 +38,11 @@ const faqItems: [string, string][] = [
   ],
   [
     'What is a QueueCoin?',
-    'QueueCoins are the QueueUp platform currency, and the documentation states that 1 QueueCoin is USD 1. For example, an Instant session costs 24 QueueCoins, which is USD 24. You can also pay at checkout by card or PayPal without buying coins first, so coins are not a prepayment requirement.',
+    'QueueCoins are the QueueUp platform currency, and the documentation states that 1 QueueCoin is USD 1. An Instant session costs 24 QueueCoins, which is USD 24. You can also pay at checkout by card or PayPal without buying coins first, so coins are not a prepayment requirement.',
   ],
   [
     'What is the Learn Or It’s Free guarantee?',
-    'According to the QueueUp documentation, a first paid session can be fully refunded up to USD 35 if you ask before your next session, once per customer. Duoly publishes no learning guarantee, because a lesson is time with a coach rather than a promised outcome.',
+    'The QueueUp documentation offers a full refund on a first paid session, up to USD 35, if you ask before your next session, once per customer. Duoly publishes no learning guarantee, because a lesson is time with a coach and not a promised outcome.',
   ],
   [
     'Can you get a refund during a session?',
@@ -91,7 +91,7 @@ const webPage = {
           a coaching platform with named coaches, 4 booking modes and a platform
           currency called QueueCoins. Duoly publishes one lesson price in euro
           or dollars, charged through Stripe, and sells teammate sessions beside
-          the lessons. For example, {queueupExample.title} costs {price} per{' '}
+          the lessons. {queueupExample.title} costs {price} per{' '}
           {queueupExample.unit} on Duoly, and we found a QueueUp Instant session
           priced at 24 QueueCoins for 45 minutes on {CHECKED}.
         </p>
@@ -222,10 +222,10 @@ const webPage = {
         charged through Stripe with nothing added. A QueueUp Instant session is
         24 QueueCoins for 45 minutes, which QueueUp states is USD 24, and what
         it buys is speed rather than a coach you chose. Any coach-set QueueUp
-        session can land either side of those numbers, and according to the
-        QueueUp documentation a bundle usually works out cheaper per session
-        than a single booking. Currency, session length and what counts as a
-        session all differ, so these are not like-for-like prices.
+        session can land either side of those numbers, and the QueueUp
+        documentation says a bundle usually works out cheaper per session than a
+        single booking. Currency, session length and what counts as a session
+        all differ, so these are not like-for-like prices.
       </p>
     </section>
 
@@ -233,12 +233,12 @@ const webPage = {
       <h2 id="pay-h">How do payment, guarantees and refunds work?</h2>
       <p>
         Payment on Duoly is one card payment through Stripe in EUR or USD, and
-        the published price is the amount charged. For example, a{' '}
-        {queueupExample.title} hour costs {price} and opens an order chat where
-        you send a replay and agree the time. A coach accepts from the queue, an
-        order nobody accepts within 5 minutes cancels itself, and refunds go to
-        the Duoly balance by default under the <a href="/terms">Duoly terms</a>.
-        Duoly also publishes the share a teammate or coach keeps, which is{' '}
+        the published price is the amount charged. Booking a{' '}
+        {queueupExample.title} hour opens an order chat where you send a replay
+        and agree the time. A coach accepts from the queue, an order nobody
+        accepts within 5 minutes cancels itself, and refunds go to the Duoly
+        balance by default under the <a href="/terms">Duoly terms</a>. Duoly
+        also publishes the share a teammate or coach keeps, which is{' '}
         {duolyShare} of a flat-priced hour.
       </p>
       <p>
@@ -288,8 +288,8 @@ const webPage = {
           <div class="cmp-card-title">Choose Duoly if</div>
           <ul class="checklist">
             <li>
-              You want one published price, for example {price} per{' '}
-              {queueupExample.unit} for any lesson.
+              You want one published price, {price} per {queueupExample.unit},
+              for any lesson.
             </li>
             <li>
               You want teammate sessions and coaching in the same checkout.
