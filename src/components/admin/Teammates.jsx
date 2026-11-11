@@ -369,8 +369,15 @@ export default class Teammates extends React.Component {
                             color: C.pink,
                           }}
                         >
-                          GAMER GIRL · all games
+                          Gamer Girl · all games
                         </span>
+                      ) : null}
+                      {/* the comp game icons start on their own line under the Gamer Girl badge */}
+                      {t.gg && t.games.length ? (
+                        <span
+                          aria-hidden="true"
+                          style={{ flexBasis: '100%', height: '0' }}
+                        />
                       ) : null}
                       {/* comp games: also for Gamer Girl teammates (20261102140000) */}
                       {t.games.map((g) =>

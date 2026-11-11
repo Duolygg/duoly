@@ -647,7 +647,8 @@ export default class Users extends React.Component {
             style={{
               marginTop: '8px',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+              // 190px fits the longest full name ("PUBG: Battlegrounds", ~132px) on one line
+              gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))',
               gap: '6px',
             }}
           >
