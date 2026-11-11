@@ -56,7 +56,7 @@ const path = '/how-it-works';
 /** The worked Valorant example, priced through the engine like every figure. */
 const VALORANT_IMMORTAL_DUO = spotPrice('val', 'duo2', 'Immortal');
 const title = 'How Duoly Works: Booking a Teammate Step by Step | Duoly';
-const description = `Every step of a Duoly booking as the site really runs it: the eight choices the picker asks for, one upfront ${PAYMENT_PROVIDER} payment, matching, the session and the refund rules.`;
+const description = `Every step of a Duoly booking, start to finish: the eight choices the picker asks for, one upfront ${PAYMENT_PROVIDER} payment, how matching works, the session itself and the refund rules.`;
 const HUB_LINKS = hubChips([
   'league-of-legends',
   'valorant',
@@ -107,7 +107,7 @@ const STEPS: [string, string][] = [
   ],
   [
     'Accept the invite and play',
-    'The first teammate who accepts joins your lobby, voice is agreed using Discord in the order room, and both players stay on their own accounts.',
+    'The first teammate who accepts joins your lobby. You agree voice in the order room and move to Discord for it, and both of you stay on your own accounts.',
   ],
 ];
 const HOW_TO_STEPS = STEPS.map(([name, text], index) => ({
@@ -139,7 +139,7 @@ const faq: [string, string][] = [
   ],
   [
     'What does a Duoly session cost?',
-    `Teammate games start at ${SHORT_GAME_PRICE} and coaching is ${COACHING_PRICE} per hour or game in every coachable title. For example, ${SINGLE_GAME.short} costs ${SINGLE_GAME.total}, and ${MAX_QUANTITY} of them take ${QUANTITY_PERCENT}% off. Every price for every game is on the pricing page.`,
+    `Teammate games start at ${SHORT_GAME_PRICE} and coaching is ${COACHING_PRICE} per hour or game in every coachable title. For example, ${SINGLE_GAME.short} costs ${SINGLE_GAME.total}, and ${MAX_QUANTITY} of them take ${QUANTITY_PERCENT}% off. The pricing page lists every game and service.`,
   ],
   [
     'What happens if my teammate never shows up?',
@@ -169,7 +169,7 @@ const faq: [string, string][] = [
     <SeoHero
       eyebrow="How it works"
       h1="How Duoly works"
-      lead={`A Duoly booking is one paid block of play, coaching or voice company with a rank-verified player. Here is every step as the site really runs it, from the eight choices the picker asks for to the refund rules.`}
+      lead={`A Duoly booking is one paid block of play, coaching or voice company with a rank-verified player. Here is the whole thing, from the eight choices the picker asks for to what happens when a session goes wrong.`}
       price={`${SINGLE_GAME.short}: ${SINGLE_GAME.total}`}
       cta={{ href: SINGLE_GAME.href, label: 'Open a real booking' }}
       secondary={{ href: '/pricing', label: 'See every price' }}
@@ -191,7 +191,7 @@ const faq: [string, string][] = [
         `Free cancel until a teammate accepts`,
         `Unaccepted after ${AUTO_CANCEL_MINUTES} minutes refunds itself`,
       ]}
-      note={`Prices read from the Duoly pricing engine. Catalog prices as of ${pricesLabel}.`}
+      note={`Catalog prices as of ${pricesLabel}.`}
     />
 
     <section aria-labelledby="book-h">
@@ -200,17 +200,19 @@ const faq: [string, string][] = [
         A Duoly booking is one paid block of play, coaching or voice company
         with a rank-verified player, bought before the session rather than
         billed after. You pick the game, the service and the quantity, and the
-        total appears before any payment. Payment is one upfront charge through{' '}
-        {PAYMENT_PROVIDER}, taken the moment the order is queued. The match
-        comes last, because a teammate accepts from a queue rather than being
-        assigned. For example, {SINGLE_GAME.short} costs {SINGLE_GAME.total} in{' '}
-        {CATALOG_YEAR}, {MAX_QUANTITY} of the same game take {QUANTITY_PERCENT}%
-        off and a {BUNDLE_SIZES[2]} game bundle takes {BUNDLE_PERCENTS[2]}% off.
-        A {COACHING_HOUR.short} is {COACHING_HOUR.total}, read live from Duoly’s
-        pricing engine. According to{' '}
+        total appears before you pay anything. Payment is a single upfront
+        charge through {PAYMENT_PROVIDER}, taken the moment the order joins the
+        queue. The match comes last, because a teammate accepts an order rather
+        than being assigned one.
+      </p>
+      <p>
+        {SINGLE_GAME.short} costs {SINGLE_GAME.total} in {CATALOG_YEAR}.{' '}
+        {MAX_QUANTITY} of the same game take {QUANTITY_PERCENT}% off, a{' '}
+        {BUNDLE_SIZES[2]} game bundle takes {BUNDLE_PERCENTS[2]}% off, and a{' '}
+        {COACHING_HOUR.short} is {COACHING_HOUR.total}. According to{' '}
         <a href="/terms#payment">the terms of service</a>, dated {LEGAL_UPDATED}
-        , the price you see at checkout is the price you pay, and nobody at
-        Duoly asks for a password.
+        , the price you see at checkout is the price you pay. And nobody at
+        Duoly asks for a password, ever.
       </p>
     </section>
 
@@ -219,19 +221,19 @@ const faq: [string, string][] = [
       steps={STEPS.map(([, text]) => text)}
     >
       <p>
-        The three steps above set the price, take the payment and find the
-        player, in that order. The service and the customer rank decide the
-        figure, the payment is one upfront charge rather than a charge per game,
-        and an order nobody accepts within {AUTO_CANCEL_MINUTES} minutes cancels
-        itself and returns 100% of the amount to the Duoly balance. According to{' '}
-        <a href="/terms#payment">Duoly’s payment terms</a>, prices are set in
-        euros and a US dollar total adds a {USD_MARGIN_PERCENT}% currency
-        margin. For example, a {COACHING_HOUR.label} costs {COACHING_HOUR.total}{' '}
-        using Discord screen share, and{' '}
+        Those three steps set the price, take the payment and find the player,
+        in that order. The service and your own rank decide the figure. The
+        payment is one charge for the whole order rather than a charge per game.
+        And an order nobody accepts within {AUTO_CANCEL_MINUTES} minutes cancels
+        itself, returning 100% of the amount to your Duoly balance. Prices are
+        set in euros, and according to{' '}
+        <a href="/terms#payment">Duoly’s payment terms</a> a US dollar total
+        adds a {USD_MARGIN_PERCENT}% currency margin. Want to see it for
+        yourself?{' '}
         <a href={SINGLE_GAME.href}>
           {SINGLE_GAME.short} at {SINGLE_GAME.total}
         </a>{' '}
-        opens the same checkout this page describes.
+        opens the exact checkout this page describes.
       </p>
     </Steps>
 
@@ -239,22 +241,22 @@ const faq: [string, string][] = [
       <h2 id="choices-h">Which choices does the Duoly booking form ask for?</h2>
       <p>
         A Duoly order is a selection of eight things, asked for in one picker
-        rather than across a checkout funnel. The picker opens on the game, from{' '}
+        instead of spread across a checkout funnel. It opens on the game, from{' '}
         {PLAYABLE_GAMES} titles plus a voice-only category, then the service:
         one bookable session type out of {SERVICE_COUNT} in the catalog, such as
         Duo Pro at {SINGLE_GAME.perUnit} per game, a League of Legends Ranked 5s
-        or a {COACHING_HOUR.total} VOD Review hour. Ranked play also asks for
-        your own rank, because rank sets the price, and every service asks for
-        the server or region the account plays on. The quantity runs{' '}
-        {QUANTITY_STEPS[0]} to {MAX_QUANTITY} games or hours, where{' '}
-        {MAX_QUANTITY} units take {QUANTITY_PERCENT}% off, or a Bundles pack of{' '}
-        {BUNDLE_SIZES.join(', ')} units at {BUNDLE_PERCENTS[0]}%,{' '}
+        or a {COACHING_HOUR.total} VOD Review hour. Ranked play asks for your
+        own rank, because rank sets the price, and every service asks which
+        server or region your account plays on.
+      </p>
+      <p>
+        Quantity runs {QUANTITY_STEPS[0]} to {MAX_QUANTITY} games or hours,
+        where {MAX_QUANTITY} units take {QUANTITY_PERCENT}% off, or a Bundles
+        pack of {BUNDLE_SIZES.join(', ')} units at {BUNDLE_PERCENTS[0]}%,{' '}
         {BUNDLE_PERCENTS[1]}% and {BUNDLE_PERCENTS[2]}% off. A team service asks
-        how many teammates you want, up to {MAX_TEAMMATES}. The in-game name
-        sends the invite to the right account, and the last two choices are
-        voice and a mood, from {MOODS.join(', ')}. For example, a voice order
-        meets the teammate using Discord, and every figure here comes from
-        Duoly’s own pricing engine in {CATALOG_YEAR}.
+        how many teammates you want, up to {MAX_TEAMMATES}. Your in-game name is
+        what sends the invite to the right account. The last two choices are
+        voice, which runs on Discord, and a mood, from {MOODS.join(', ')}.
       </p>
       {/* The same eight selections as scannable chips. Divs and spans on
           purpose: the paragraph above is the answer a reader and an extractor
@@ -273,19 +275,21 @@ const faq: [string, string][] = [
       <h2 id="pay-h">How do you pay for a Duoly session?</h2>
       <p>
         Payment is one upfront charge through {PAYMENT_PROVIDER}, taken when the
-        order is queued. Checkout opens on the amount, which is the total
-        already shown: no booking fee, no payment surcharge and no subscription
-        in {CATALOG_YEAR}. The methods are the ones switched on in{' '}
-        {PAYMENT_PROVIDER}, from {CARD_BRANDS.join(' and ')} to {WALLET_LIST}{' '}
-        and local options such as {LOCAL_LIST}. Duoly never sees or stores full
-        card details, because the card form belongs to {PAYMENT_PROVIDER}.
-        According to <a href="/privacy">Duoly’s privacy policy</a>, payment
-        details go straight to the payment provider and Duoly only sees the
-        amount and the method. Part or all of an order can also come from a
-        Duoly balance, where refunds and level-up gifts land. For example,{' '}
+        order joins the queue. Checkout opens on the amount you were already
+        shown, with no booking fee, no payment surcharge and no subscription.
+        You can pay with {CARD_BRANDS.join(' and ')}, with {WALLET_LIST}, or
+        with a local method such as {LOCAL_LIST}.
+      </p>
+      <p>
+        Duoly never sees or stores full card details, because the card form
+        belongs to {PAYMENT_PROVIDER} rather than to Duoly. According to{' '}
+        <a href="/privacy">Duoly’s privacy policy</a>, payment details go
+        straight to the payment provider and Duoly only sees the amount and the
+        method. Part or all of an order can come from your Duoly balance
+        instead, which is where refunds and level-up gifts land:{' '}
         {SINGLE_GAME.total} of balance covers {SINGLE_GAME.short} with no card
-        charge, and a {QUANTITY_PERCENT}% quantity discount still comes off
-        first. The whole model sits on{' '}
+        charge at all, and a {QUANTITY_PERCENT}% quantity discount still comes
+        off first. The whole model sits on{' '}
         <a href="/fees-and-refunds">fees and refunds</a>.
       </p>
     </section>
@@ -293,81 +297,88 @@ const faq: [string, string][] = [
     <section aria-labelledby="queue-h">
       <h2 id="queue-h">What happens after you pay for a Duoly order?</h2>
       <p>
-        A queued Duoly order is an open offer to every teammate verified for
-        that game, and the first to accept takes it. The order room opens with
-        your selection, the chat and the teammate’s rank once somebody accepts.
-        An order that waits a while is posted by the Duoly bot in the teammate
-        server using Discord, carrying the service, rank, server, order note and
-        teammate pay, and never a customer name or email. No start time is
-        promised, so an order nobody accepts within {AUTO_CANCEL_MINUTES}{' '}
-        minutes cancels itself and returns 100% of the amount to your Duoly
-        balance. According to{' '}
-        <a href="/terms#cancel">Duoly’s cancellation terms</a>, you can also
-        cancel free of charge in the order room until a teammate accepts. For
-        example, a {FIVE_GAMES.total} five-game order bought at{' '}
-        {QUANTITY_PERCENT}% off refunds {FIVE_GAMES.total} in full rather than a
-        part of the total, as published from Duoly’s refund rules in{' '}
-        {CATALOG_YEAR}.
+        A queued order is an open offer to every teammate verified for that
+        game, and the first one to accept takes it. The order room opens with
+        your selection and the chat, and shows the teammate’s rank as soon as
+        somebody accepts. An order that waits a while also gets posted by the
+        Duoly bot in the teammate server on Discord, carrying the service, the
+        rank, the server, your order note and the teammate pay. Never your name
+        or your email.
+      </p>
+      <p>
+        No start time is promised. An order nobody accepts within{' '}
+        {AUTO_CANCEL_MINUTES} minutes cancels itself and returns 100% of the
+        amount to your Duoly balance, and according to{' '}
+        <a href="/terms#cancel">Duoly’s cancellation terms</a> you can cancel
+        free of charge yourself until a teammate accepts. A refund is the whole
+        amount: a five-game order bought at {QUANTITY_PERCENT}% off comes back
+        as {FIVE_GAMES.total}, the full discounted total.
       </p>
     </section>
 
     <section aria-labelledby="session-h">
       <h2 id="session-h">What happens during a Duoly session?</h2>
       <p>
-        A Duoly session is played together, with the customer and the teammate
-        on separate accounts in the same lobby. The in-game invite goes out as
-        soon as a teammate accepts, to the in-game name on the order. Voice runs
-        using Discord when voice was booked, and the order chat carries
-        everything else. The chat refuses any message asking for a login or an
-        outside payment, enforced on the server rather than in the browser
-        alone. According to the Teammate Code, a teammate plays every game that
-        was booked and never asks for account access. A teammate who is not the
-        right fit can be re-rolled free of charge {FREE_REROLLS} times in the
-        first {REROLL_MINUTES} minutes after matching. For example, a Valorant
-        Duo Pro order at Immortal rank pairs an Immortal+ player at{' '}
-        {VALORANT_IMMORTAL_DUO} per game in {CATALOG_YEAR}, with no rank and no
-        win promised, while a {SHORT_GAME_PRICE} Skirmish 2v2 game buys the same{' '}
-        {SHARE_PERCENT}% teammate share of a smaller total.
+        A Duoly session is played together, with you and your teammate on
+        separate accounts in the same lobby. The in-game invite goes out to the
+        name on your order as soon as somebody accepts. Voice runs on Discord
+        when you booked voice, and the order chat carries everything else. That
+        chat refuses any message asking for a login or an outside payment, and
+        it is enforced on the server rather than in the browser alone.
+      </p>
+      <p>
+        Under the Teammate Code, a teammate plays every game that was booked and
+        never asks for account access. If the match is wrong anyway, you can
+        re-roll free of charge {FREE_REROLLS} times in the first{' '}
+        {REROLL_MINUTES} minutes. What you are buying is the playing time and
+        nothing else: a Valorant Duo Pro order at Immortal pairs you with an
+        Immortal+ player at {VALORANT_IMMORTAL_DUO} per game, with no rank and
+        no win promised, and a {SHORT_GAME_PRICE} Skirmish 2v2 game pays that
+        teammate the same {SHARE_PERCENT}% share of a smaller total.
       </p>
     </section>
 
     <section aria-labelledby="end-h">
       <h2 id="end-h">How does a Duoly session end?</h2>
       <p>
-        A Duoly session ends when the teammate uploads proof and marks the order
+        A session ends when your teammate uploads proof and marks the order
         done. The proof is {PROOF_MIN} to {PROOF_MAX} screenshots of the match
-        history or the end screens with both players visible, which the
-        completion flow requires rather than suggests. You can rate the
-        teammate, and a review stays about the session. The money splits: a
-        teammate earns {SHARE_PERCENT}% of the order price, paid weekly from
-        Friday to Friday, and Duoly keeps {100 - SHARE_PERCENT}% for payments,
-        matching, support and the platform. For example, a completed{' '}
-        {COACHING_HOUR.total} Valorant VOD Review hour pays the coach{' '}
-        {SHARE_PERCENT}% of that total. According to{' '}
+        history or the end screens with both players visible, and the completion
+        flow requires them rather than suggesting them. You can rate the
+        teammate afterwards, and a rating stays about the session.
+      </p>
+      <p>
+        Then the money splits. A teammate earns {SHARE_PERCENT}% of the order
+        price, paid weekly from Friday to Friday, and Duoly keeps{' '}
+        {100 - SHARE_PERCENT}% for payments, matching, support and running the
+        place. A completed {COACHING_HOUR.total} Valorant VOD Review hour pays
+        the coach {SHARE_PERCENT}% of that figure. According to{' '}
         <a href="/terms#teammates">Duoly’s teammate terms</a>, a payout can be
-        held while a report about an order is reviewed, and the Teammate Code
-        ends a teammate’s time on Duoly for fake proof. Nobody earns a bonus for
-        a win, which is why Duoly promises no result.
+        held while a report about the order is reviewed, and fake proof ends a
+        teammate’s time on Duoly outright. Nobody earns a bonus for a win, which
+        is exactly why Duoly promises no result.
       </p>
     </section>
 
     <section aria-labelledby="wrong-h">
       <h2 id="wrong-h">What if a Duoly session goes wrong?</h2>
       <p>
-        A report from the order room is the route, and a person at Duoly reads
-        every one. The report comes from the order room, and{' '}
-        <a href="/terms#cancel">the terms</a> dated {LEGAL_UPDATED} cover three
-        cases identically: “No-show, a teammate leaving, toxic behaviour: report
-        it from your order room. A real person reviews it and can refund the
-        order to your balance.” A refund reaches your Duoly balance by default,
-        so rebooking is immediate, and money refunded to a balance can go back
-        to a card on request. For EU and EEA consumers the 14-day right of
-        withdrawal ends once a session has been fully played, because queueing
-        asks Duoly to start right away. For example, a {SINGLE_GAME.total} game
-        and a {TEN_GAME_BUNDLE.total} ten-game bundle at {BUNDLE_PERCENTS[2]}%
-        off follow one rule in {CATALOG_YEAR}. Under Austrian law, quoted from
-        Duoly’s terms, a consumer keeps every mandatory home-country protection.
-        Full detail sits on <a href="/fees-and-refunds">fees and refunds</a> and{' '}
+        Report it from the order room, and a person at Duoly reads it.{' '}
+        <a href="/terms#cancel">The terms</a>, dated {LEGAL_UPDATED}, cover
+        three cases in one line: “No-show, a teammate leaving, toxic behaviour:
+        report it from your order room. A real person reviews it and can refund
+        the order to your balance.” The same rule applies to a{' '}
+        {SINGLE_GAME.total} game and to a {TEN_GAME_BUNDLE.total} ten-game
+        bundle at {BUNDLE_PERCENTS[2]}% off.
+      </p>
+      <p>
+        A refund reaches your Duoly balance by default, so you can rebook
+        straight away, and money in a balance can go back to a card on request.
+        For EU and EEA consumers the 14-day right of withdrawal ends once a
+        session has been fully played, because queueing an order asks Duoly to
+        start right away. Austrian law governs the terms, and a consumer keeps
+        every mandatory protection of their home country. Full detail sits on{' '}
+        <a href="/fees-and-refunds">fees and refunds</a> and{' '}
         <a href="/trust-and-safety">trust and safety</a>.
       </p>
     </section>
@@ -376,8 +387,8 @@ const faq: [string, string][] = [
 
     <ClosingCta
       heading="Ready to run the three steps for real?"
-      text={`A first Duoly order is a three-step job that ends in a lobby: ${SINGLE_GAME.short} costs ${SINGLE_GAME.total} and coaching is ${COACHING_PRICE} per hour across ${PLAYABLE_GAMES} games plus ${SOCIAL_MODES} voice modes, operated from ${BUSINESS_LOCATION}. Open your game, pick the rank you really have and read the total before paying anything.`}
-      extra={`Three things decide whether a first booking goes well. Pick the rank you really have, because a wrong rank can make a session impossible to play and, according to the terms, is not a reason for a refund. Add your in-game name and server so the invite can reach you, and choose voice only if you want to talk using Discord. Remember what is not promised: no start time, no rank and no win, and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. For example, ${TEN_GAME_BUNDLE.short} costs ${TEN_GAME_BUNDLE.total} at ${BUNDLE_PERCENTS[2]}% off in ${CATALOG_YEAR} and saves ${TEN_GAME_BUNDLE.saved}, the largest discount Duoly gives.`}
+      text={`A first order is a three-step job that ends in a lobby. ${SINGLE_GAME.short} costs ${SINGLE_GAME.total}, coaching is ${COACHING_PRICE} per hour across ${PLAYABLE_GAMES} games plus ${SOCIAL_MODES} voice modes, and the whole thing is run from ${BUSINESS_LOCATION}. Open your game, pick the rank you really hold and read the total before paying anything.`}
+      extra={`Three things decide whether a first booking goes well. Pick the rank you really hold, because a wrong rank can make a session impossible to play and, according to the terms, is not a reason for a refund. Add your in-game name and server so the invite can reach you, and choose voice only if you actually want to talk. Then remember what nobody promises: no start time, no rank and no win. An order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full, and the biggest discount on the site is ${TEN_GAME_BUNDLE.short} at ${TEN_GAME_BUNDLE.total}, which saves ${TEN_GAME_BUNDLE.saved}.`}
       href="/pricing"
       label="See every Duoly price"
       art={{ src: '/assets/games/valorant.png', alt: '' }}
