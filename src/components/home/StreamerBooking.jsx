@@ -94,11 +94,12 @@ export default class StreamerBooking extends React.Component {
     this.state = { list: [], open: '', form: null, placing: false, err: '' };
   }
   // "Live on Twitch" sits six screens down the homepage, and the section renders nothing until
-  // the list arrives, so fetching it during hydration only lengthened the homepage's critical
-  // request chain (PageSpeed Insights had /api/home/streamers finishing at 1,299 ms). The first
-  // load now waits for the page to finish loading and the main thread to go idle after that,
-  // and any scroll, tap or key press brings it forward, so a visitor heading for the section
-  // still finds it filled in. Polling only runs while the tab is visible.
+  // the list arrives, so fetching it during hydration only lengthened the homepage's request
+  // chain (PageSpeed Insights listed /api/home/streamers at 1,299 ms, and still at 2,477 ms when
+  // it waited for idle). The first load now waits for the visitor to scroll, tap or press a key,
+  // which every visitor heading six screens down does long before reaching the section. A page
+  // that opens already scrolled (restored position, or a #streamers link) loads at once.
+  // Polling only runs while the tab is visible.
   componentDidMount() {
     const first = () => {
       if (this._started) return;
@@ -113,25 +114,13 @@ export default class StreamerBooking extends React.Component {
     this._first = first;
     for (const name of WAKE_EVENTS)
       window.addEventListener(name, first, WAKE_OPTIONS);
-    const atIdle = () => {
-      this._idle =
-        typeof window.requestIdleCallback === 'function'
-          ? window.requestIdleCallback(first, { timeout: 2500 })
-          : window.setTimeout(first, 1200);
-    };
-    this._afterLoad = atIdle;
-    if (document.readyState === 'complete') atIdle();
-    else window.addEventListener('load', atIdle, { once: true });
+    if (window.scrollY > 0 || window.location.hash === '#streamers') first();
   }
   componentWillUnmount() {
     this._gone = true;
     clearInterval(this._t);
     for (const name of WAKE_EVENTS)
       window.removeEventListener(name, this._first, WAKE_OPTIONS);
-    window.removeEventListener('load', this._afterLoad);
-    if (typeof window.cancelIdleCallback === 'function')
-      window.cancelIdleCallback(this._idle);
-    clearTimeout(this._idle);
   }
   async load() {
     try {
