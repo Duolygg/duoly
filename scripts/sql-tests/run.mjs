@@ -175,7 +175,7 @@ function run() {
       `create schema duoly_test_marker;\n${guard}`,
       true,
       'absent vault branches safely',
-      url.replace('/postgres', '/duoly_guard_probe'),
+      url.replace(/\/postgres$/, '/duoly_guard_probe'),
     );
   } finally {
     query('drop database duoly_guard_probe');

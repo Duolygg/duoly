@@ -17,6 +17,9 @@ on:
       - 'workers/**'
       - '.github/workflows/sql-tests.yml'
   workflow_dispatch:
+concurrency:
+  group: sql-tests-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -34,7 +37,7 @@ jobs:
           pnpm install --frozen-lockfile
           sudo apt-get update -qq
           sudo apt-get install -y postgresql-client
-      - name: Bind disposable Docker services exclusively to loopback
+      - name: Default Docker bridge publications to loopback
         run: |
           sudo python3 -c 'import json,pathlib; p=pathlib.Path("/etc/docker/daemon.json"); d=json.loads(p.read_text()) if p.exists() else {}; d["ip"]="127.0.0.1"; p.write_text(json.dumps(d))'
           sudo systemctl restart docker
