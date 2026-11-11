@@ -76,11 +76,11 @@ const faqItems: [string, string][] = [
   ],
   [
     'How do I write an LFG post that gets answered?',
-    'Name 5 things: the game, your region, your rank, your role and the mode. For example, a post with all 5 beats a one-line post.',
+    'Name five things: the game, your region, your rank, your role and the mode. A post that answers all five gets a party invite; a one-line post gets scrolled past.',
   ],
   [
     'What is the difference between LFG and booking a teammate?',
-    `An LFG post is free and depends on who answers. A booked teammate from Duoly is a reviewed player at an agreed time and rank, from ${from} in 2026, with bundles taking ${bundle[0]}% off 3 units and ${bundle[2]}% off 10.`,
+    `An LFG post costs nothing and depends on who answers it. A booked teammate is a reviewed player at an agreed time and rank, from ${from}, with bundles taking ${bundle[0]}% off 3 units and ${bundle[2]}% off 10.`,
   ],
 ];
 const article = {
@@ -138,10 +138,10 @@ const article = {
     <section aria-labelledby="meaning-h">
       <h2 id="meaning-h">What does LFG stand for?</h2>
       <p>
-        LFG is the gaming abbreviation for looking for group. The term started
-        in games where a fixed-size party had to be assembled by hand, and the 3
-        letters read the same way in 2026: somebody has an activity in mind and
-        needs players for the empty seats. The word turns up in three places.
+        LFG is the gaming abbreviation for looking for group. It started in
+        games where a fixed-size party had to be assembled by hand, and it still
+        means the same thing: somebody has an activity in mind and needs players
+        for the empty seats. You will meet it in three places.
       </p>
       <ul>
         <li>
@@ -158,20 +158,20 @@ const article = {
         </li>
       </ul>
       <p>
-        A reader decides which meaning a post carries. A post naming a game, a
-        region and a mode is always the group meaning, whether the seat ends up
-        free or booked from Duoly at {from}. For example, a Valorant post asking
-        for Competitive at 9pm reads as the group meaning, and the reply lands
-        using Discord.
+        Context decides which meaning a post carries, and it is rarely
+        ambiguous. A post naming a game, a region and a mode is always the group
+        meaning, whether the seat ends up filled for free or booked on Duoly
+        from {from}. A Valorant post asking for Competitive at 9pm is a request;
+        "LFG!!!" after a clutch is just somebody shouting.
       </p>
     </section>
     <section aria-labelledby="variants-h">
       <h2 id="variants-h">What do LFM, LF1M and LFG Discord mean?</h2>
       <p>
-        LFM is the abbreviation for looking for more, and the difference from
-        LFG is which side is posting: a player with no group posts LFG, while a
-        group with seats open posts LFM. Four terms cover almost every post you
-        will read in 2026.
+        LFM is the abbreviation for looking for more. The difference from LFG is
+        which side is posting: a player with no group posts LFG, a group with
+        seats open posts LFM. Four terms cover almost every post you will scroll
+        past.
       </p>
       <ul>
         <li>
@@ -192,24 +192,23 @@ const article = {
         </li>
       </ul>
       <p>
-        A post in a narrow channel names the key level or the rank. For example,
-        the Group Finder from Blizzard lists premade World of Warcraft groups by
-        key level, and a booked teammate from Duoly at {from} settles the time
-        and the rank first, usually agreed using Discord.
+        In a narrow channel, name the key level or the rank as well. Blizzard's
+        own Group Finder lists premade World of Warcraft groups by key level
+        exactly because that is the number people filter on. A booked teammate
+        from {from} settles the rank and the time before anyone queues, which is
+        the one thing a post cannot do.
       </p>
     </section>
     <section aria-labelledby="work-h">
       <h2 id="work-h">How does LFG actually work in a game?</h2>
       <p>
-        An LFG route is the path a player takes to find teammates, and 3 of them
-        exist side by side. The in-game finder. A community post in a game
-        Discord. A booked session from Duoly, which starts at {bookedFrom} per{' '}
-        {valorantOffer.unit} in 2026. The table lines the three up on what a
-        reader is really choosing between: the cost, who ends up in the seat and
-        when the game happens. Decide which of those three matters tonight. For
-        example, a player who wants a specific role at 9pm on a Tuesday gets
-        there fastest through the booked route and cheapest through the in-game
-        one.
+        An LFG route is the path you take to find teammates, and three run side
+        by side: the in-game finder, a community post in a game Discord, and a
+        booked session, which starts at {bookedFrom} per {valorantOffer.unit}.
+        What separates them is the cost, who ends up in the seat and when the
+        game happens, which is what the table below lines up. Decide which of
+        those three matters tonight. Somebody who wants a specific role at 9pm
+        on a Tuesday gets there fastest by booking and cheapest by queueing.
       </p>
       <GuideTable
         caption="The three LFG routes compared on cost, who answers and when you play"
@@ -247,8 +246,8 @@ const article = {
         ]}
       />
       <p>
-        The routes mix rather than compete. Most groups start in a Discord and
-        end in a friends list, using Discord voice.
+        None of the three cancels the others out. Most good groups start in a
+        Discord channel and end up on a friends list.
       </p>
       <OfferCard
         offer={valorantOffer}
@@ -260,14 +259,15 @@ const article = {
       <Steps
         heading="What makes an LFG post get answered?"
         steps={[
-          'Name the game and the mode in the first 5 words, because a reader scanning 40 posts never reaches your second line. For example, "Valorant Competitive" beats "anyone want to play".',
-          'Add your region or server, your rank and the role or hero you play. Those 3 fields are what tells a reader whether the group will actually work, and a post without them gets skipped.',
-          `Say when you are free and how you want to talk, for example "tonight from 8pm, voice on Discord, short calls only". A post naming all 5 fields reads as somebody worth replying to, and a booked session from Duoly fixes all 5 before anyone queues, from ${from} in 2026.`,
+          'Name the game and the mode in the first five words, because somebody scanning forty posts never reaches your second line. "Valorant Competitive" beats "anyone want to play".',
+          'Add your region or server, your rank and the role or hero you play. Those are the fields that tell a reader whether the group will actually work, and a post without them gets skipped.',
+          `Say when you are free and how you want to talk: "tonight from 8pm, voice on Discord, short calls only". A post that answers all of it reads as somebody worth replying to, and a booked session from ${from} settles the same questions before anyone queues.`,
         ]}
       >
         <p>
-          The same 5 fields go into a Duoly booking, except a booking sets each
-          one instead of hoping a reply happens to match. Read the{' '}
+          A booking asks for the same things a good post names, with one
+          difference: it sets each of them instead of hoping a reply happens to
+          match. Read the{' '}
           <a href="/terms">payment, cancellation and refund terms</a>, or{' '}
           <a href="/contact">contact support</a> with a question about an order.
         </p>
@@ -276,18 +276,19 @@ const article = {
     <section aria-labelledby="games-h">
       <h2 id="games-h">Where can you find teammates for your game?</h2>
       <p class="section-intro">
-        A Duoly teammate page is one page per game naming the modes that game
-        sells, the tier each card hires and the real checkout price, read in
-        November 2026. Pick your game from the list below, because an LFG post
-        in Valorant names an agent and a rank while an LFG post in World of
-        Warcraft names a spec and a key level. Compare the free routes on the
-        page with the booked session beside them: a session starts at {from} in
-        2026 and names the time, the rank and the comms before anyone queues.
-        The <a href="/find-gaming-buddies">gaming buddies directory</a> lists
-        every game at once, from {from}. For example,{' '}
-        <a href="/coaching">esports coaching</a> is the page for a lesson rather
-        than a session. Every booking runs on your own account, agreed using
-        Discord before the first queue.
+        Pick your game from the list below. Each page names the modes that game
+        sells, the tier each card hires and the price at checkout, and it sets
+        the free routes next to the booked ones. Game matters more than it
+        sounds: an LFG post in Valorant names an agent and a rank, while one in
+        World of Warcraft names a spec and a key level.
+      </p>
+      <p class="section-intro">
+        A booked session starts at {from} and settles the time, the rank and the
+        comms before anyone queues, on your own account. If you would rather see
+        every game at once, the{' '}
+        <a href="/find-gaming-buddies">gaming buddies directory</a> lists all of
+        them from {from}, and <a href="/coaching">esports coaching</a> is the
+        page to open if what you want is a lesson instead.
       </p>
       <div class="chips lfg-index">
         {pages.map((page) => (
@@ -303,8 +304,8 @@ const article = {
     <Faq heading="Questions about LFG?" items={faqItems} />
     <ClosingCta
       heading="Skip the wait for a reply?"
-      text={`An LFG post is free and depends on who answers. A Duoly booking is a reviewed teammate at an agreed time and rank, from ${from} in 2026. Pick your game from the ${pages.length} teammate pages above. Before you queue, name your mode and rank, agree on voice using Discord and send the invite from your own account.`}
-      extra={`The two routes work together rather than against each other. Keep posting in your game Discord, because a regular group costs nothing and a good match there lasts months. Book a session for the evening the post goes unanswered, or for the mode nobody in the channel plays. For example, a Wingman pair in Counter-Strike 2 and a Mythic+ key in World of Warcraft both want one specific player rather than a lobby. Every price quoted here was read from Duoly checkout in November 2026, and the teammate page for your game carries the full card.`}
+      text={`An LFG post costs nothing and depends on who happens to answer. A Duoly booking is a reviewed teammate at an agreed time and rank, from ${from}. Pick your game from the ${pages.length} teammate pages above, name your mode and rank, agree voice with Discord and send the invite from your own account.`}
+      extra={`Use both routes. Keep posting in your game Discord, because a regular group costs nothing and a good match there lasts months. Book a session on the evening a post goes unanswered, or for the mode nobody in the channel plays. A Wingman pair in Counter-Strike 2 and a Mythic+ key in World of Warcraft both want one specific player rather than whoever the queue hands over, and that is exactly the gap a booking fills. The teammate page for your game carries the full card.`}
       href={bookingHref('val', { service: 'duo2' })}
       label="Book a teammate"
       art={{ src: '/assets/games/valorant.png', alt: '' }}
