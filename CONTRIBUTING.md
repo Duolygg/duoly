@@ -42,4 +42,4 @@ Behavior changes require test-first evidence. Completion means acceptance criter
 
 SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
 
-See `supabase/tests/MANIFEST.md` for ordered fixture groups and explicit exclusions. The runner accepts no remote URL, project ref or credentials. It verifies loopback port binding, disposable Supabase Docker identity and PostgreSQL system identity before creating the marker. SQL guards run before role changes or fixtures; optional Vault checks branch safely. Rollback is not permission to test a shared database.
+See `supabase/tests/MANIFEST.md` for ordered fixture groups and explicit exclusions. The runner accepts no remote URL, project ref or credentials. It verifies the loopback client connection, disposable Supabase Docker identity and PostgreSQL system identity before creating the marker. SQL guards run before role changes or fixtures; optional Vault checks branch safely. Rollback is not permission to test a shared database.

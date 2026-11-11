@@ -17,6 +17,8 @@ Discord application: **Duoly**, client id `1561389796239220816`. Client secret a
 
 Migration `20261023100000_discord_links.sql`, rollback-only checks in `supabase/tests/discord_links.sql`, unit tests in `tests/unit/discord-link.test.ts`.
 
+SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
+
 Discord developer portal → OAuth2 → Redirects must contain `https://omnejesspybaxuacjlah.supabase.co/auth/v1/callback` (login and linking both return through Supabase).
 
 ## Phase 2: bot over HTTP (needs bot token and server id)
