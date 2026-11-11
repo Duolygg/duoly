@@ -196,14 +196,55 @@ export const TeammateOrderSchema = z.strictObject({
   ...RoleFields,
 });
 
-export const RefundCreditSchema = z.strictObject({
+/**
+ * One row of public.customer_refund_credits: since the wallet ledger (20261025140000) it lists
+ * the customer's wallet entries, not refund_credits rows. A cancelled order's money comes back
+ * as a 'refund' entry (or 'checkout_release' for the wallet part); spends and holds are negative.
+ */
+export const WALLET_ENTRY_KINDS = [
+  'refund',
+  'cashback',
+  'cashback_reversal',
+  'level_gift',
+  'bounty',
+  'admin_credit',
+  'admin_debit',
+  'checkout_hold',
+  'checkout_spend',
+  'checkout_release',
+] as const;
+export const WalletEntrySchema = z.strictObject({
   id: z.uuid(),
-  order_id: z.uuid(),
-  // 'paid_refund' (20261106190000, charge at queue): what the card paid for a cancelled order,
-  // back as Duoly balance; it can be any part of the order, so any amount from 1 cent.
-  kind: z.enum(['queued_refund', 'paid_refund']),
-  amount_eur_cents: z.number().int().min(1).max(100000),
+  // null for entries with no order (level gifts, bounties, admin credits, unused holds)
+  order_id: z.uuid().nullable(),
+  kind: z.enum(WALLET_ENTRY_KINDS),
+  amount_eur_cents: z
+    .number()
+    .int()
+    .min(-10_000_000)
+    .max(10_000_000)
+    .refine((cents) => cents !== 0),
+  cashable: z.boolean(),
   created_at: TimestampSchema,
+});
+
+const Cents = z.number().int().min(-1_000_000_000).max(1_000_000_000);
+/**
+ * public.wallet_balances for the customer (without customer_id). Every field is optional because
+ * the RPC sends {} when there is no row; unknown fields are dropped rather than failing the whole
+ * response, so a new column on the view can never hide the balance again.
+ */
+export const WalletBalanceSchema = z.object({
+  total_eur_cents: Cents.optional(),
+  cashable_eur_cents: Cents.optional(),
+  promo_eur_cents: Cents.optional(),
+  refunds_eur_cents: Cents.optional(),
+  cashback_eur_cents: Cents.optional(),
+  level_gifts_eur_cents: Cents.optional(),
+  bounty_eur_cents: Cents.optional(),
+  admin_eur_cents: Cents.optional(),
+  spent_eur_cents: Cents.optional(),
+  held_eur_cents: Cents.optional(),
 });
 
 /** public.customer_perks_for: what the customer's loyalty level unlocks right now. */
@@ -391,7 +432,8 @@ export const OrderResponseSchemas = {
     orders: z.array(CustomerOrderSchema).max(100),
   }),
   refundCredits: z.strictObject({
-    credits: z.array(RefundCreditSchema).max(100),
+    credits: z.array(WalletEntrySchema).max(100),
+    balance: WalletBalanceSchema,
   }),
   customerRewards: CustomerRewardsSchema,
   customerPerks: CustomerPerksSchema,
@@ -413,7 +455,8 @@ export const OrderResponseSchemas = {
 
 export type CustomerOrder = z.infer<typeof CustomerOrderSchema>;
 export type TeammateOrder = z.infer<typeof TeammateOrderSchema>;
-export type RefundCredit = z.infer<typeof RefundCreditSchema>;
+export type WalletEntry = z.infer<typeof WalletEntrySchema>;
+export type WalletBalance = z.infer<typeof WalletBalanceSchema>;
 export type OrderCommand = z.infer<typeof OrderCommandSchema>;
 export type OrderPagination = z.infer<typeof OrderPaginationSchema>;
 export type OrderRpcError = z.infer<typeof OrderRpcErrorSchema>;
