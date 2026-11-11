@@ -6,7 +6,7 @@ import {
   OrderPaginationSchema,
   OrderRpcErrorSchema,
   OrderResponseSchemas,
-  RefundCreditSchema,
+  WalletEntrySchema,
 } from '../../src/contracts/orders';
 
 import { decodeOrderRpcResult } from '../../src/server/orders/results';
@@ -55,9 +55,22 @@ const teammate = {
 const credit = {
   id,
   order_id: id,
-  kind: 'queued_refund',
+  kind: 'refund',
   amount_eur_cents: 599,
+  cashable: true,
   created_at: timestamp,
+};
+const balance = {
+  total_eur_cents: 599,
+  cashable_eur_cents: 599,
+  promo_eur_cents: 0,
+  refunds_eur_cents: 599,
+  cashback_eur_cents: 0,
+  level_gifts_eur_cents: 0,
+  bounty_eur_cents: 0,
+  admin_eur_cents: 0,
+  spent_eur_cents: 0,
+  held_eur_cents: 0,
 };
 const rewards = {
   orders: 100,
@@ -103,7 +116,7 @@ describe('pure RPC result decoder', () => {
       customerOrder: { order: customer },
       customerActive: { order: customer },
       customerHistory: { orders: [customer] },
-      refundCredits: { credits: [credit] },
+      refundCredits: { credits: [credit], balance },
       customerRewards: rewards,
       teammateOrder: { order: teammate },
       teammateQueue: { orders: [teammate] },
@@ -259,15 +272,15 @@ describe('strict SQL order contracts', () => {
   });
 
   it('validates exact success envelopes and refund projections, allowing explicit null active orders only', () => {
-    expect(RefundCreditSchema.parse(credit)).toEqual(credit);
+    expect(WalletEntrySchema.parse(credit)).toEqual(credit);
     expect(
-      RefundCreditSchema.safeParse({ ...credit, customer_id: id }).success,
+      WalletEntrySchema.safeParse({ ...credit, customer_id: id }).success,
     ).toBe(false);
     const responses = {
       customerOrder: { order: customer },
       customerActive: { order: null },
       customerHistory: { orders: [customer] },
-      refundCredits: { credits: [credit] },
+      refundCredits: { credits: [credit], balance },
       customerRewards: rewards,
       teammateOrder: { order: teammate },
       teammateQueue: { orders: [teammate] },
@@ -409,14 +422,57 @@ describe('strict SQL order contracts', () => {
     ).toBe(false);
   });
 
+  it('accepts the credits response the database sends after a cancelled card order', () => {
+    // Exact customer_refund_credits shape: wallet entries plus the wallet_balances row.
+    // Rejecting it made /api/orders/credits a 502, so every balance showed as 0.
+    const live = {
+      credits: [
+        {
+          id: '997dddb4-444d-477f-a533-81607f24fef6',
+          order_id: '2a3820f5-cd82-425d-8b8c-60c54603aab3',
+          kind: 'refund',
+          amount_eur_cents: 1699,
+          cashable: true,
+          created_at: '2026-11-11T15:27:05.107667+00:00',
+        },
+        {
+          id,
+          order_id: null,
+          kind: 'level_gift',
+          amount_eur_cents: 200,
+          cashable: false,
+          created_at: timestamp,
+        },
+        {
+          id,
+          order_id: id,
+          kind: 'checkout_spend',
+          amount_eur_cents: -500,
+          cashable: true,
+          created_at: timestamp,
+        },
+      ],
+      balance: { ...balance, total_eur_cents: 1699 },
+    };
+    const result = decodeOrderRpcResult('refundCredits', live, null);
+    expect(result).toEqual({ ok: true, status: 200, payload: live });
+    // A brand-new customer without a balance row, and a view that grew a column.
+    for (const reply of [
+      { credits: [], balance: {} },
+      { credits: [], balance: { ...balance, new_column_eur_cents: 1 } },
+    ])
+      expect(decodeOrderRpcResult('refundCredits', reply, null).ok).toBe(true);
+  });
+
   it.each([
-    { kind: 'cashback' },
+    { kind: 'queued_refund' },
+    { cashable: undefined },
     { amount_eur_cents: 0 },
-    { amount_eur_cents: 100001 },
+    { amount_eur_cents: 10_000_001 },
     { created_at: null },
     { order_id: 'bad' },
   ])('rejects malformed refund patch %j', (patch) => {
-    expect(RefundCreditSchema.safeParse({ ...credit, ...patch }).success).toBe(
+    expect(WalletEntrySchema.safeParse({ ...credit, ...patch }).success).toBe(
       false,
     );
   });

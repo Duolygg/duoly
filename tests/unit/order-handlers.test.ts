@@ -105,7 +105,11 @@ it.each([
   'reads paginated %s with bounded defaults and explicit args',
   async (name, procedure, key) => {
     identity.mockResolvedValue({ viewer: { role: 'customer' } });
-    rpc.mockResolvedValue({ data: { [key]: [] }, error: null });
+    // customer_refund_credits also sends the wallet balance (20261025140000).
+    rpc.mockResolvedValue({
+      data: name === 'credits' ? { [key]: [], balance: {} } : { [key]: [] },
+      error: null,
+    });
     expect((await run(handlers[name])).status).toBe(200);
     expect(rpc).toHaveBeenLastCalledWith(procedure, {
       p_limit: 50,
