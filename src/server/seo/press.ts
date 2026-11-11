@@ -7,9 +7,8 @@ import {
   COACHING_PRICE,
   PLAYABLE_GAMES,
   SHORT_GAME_PRICE,
-  SOCIAL_MODES,
 } from './teammate-facts';
-import { CATALOG_GAMES, SERVICE_COUNT } from './booking';
+import { SERVICE_COUNT } from './booking';
 
 /**
  * The press kit: the boilerplate, the fact sheet and the logo files.
@@ -32,7 +31,7 @@ import { CATALOG_GAMES, SERVICE_COUNT } from './booking';
 export const BOILERPLATE_SENTENCE = `Duoly (duoly.gg) is an Austrian online marketplace where players book rank-verified gaming teammates and coaches by the game or by the hour across ${PLAYABLE_GAMES} games.`;
 
 /** The one-paragraph boilerplate, for the end of an article. */
-export const BOILERPLATE_PARAGRAPH = `Duoly (duoly.gg) is an online marketplace for rank-verified gaming teammates and coaches, operated from ${BUSINESS_LOCATION}. Customers pick a game, a session type and a quantity, pay once at a published price and are matched with a verified player who joins their lobby on a separate account. The catalog spans ${SERVICE_COUNT} bookable services across ${CATALOG_GAMES} games, from ${SHORT_GAME_PRICE} for a short teammate game to ${COACHING_PRICE} per hour for coaching in ${COACHABLE_GAMES} titles, plus ${SOCIAL_MODES} voice session types. Duoly never signs into a customer account, never asks for a password and promises no rank, no win and no start time. The business is a sole proprietorship registered in Austria under trade register number GISA ${BUSINESS.gisa}.`;
+export const BOILERPLATE_PARAGRAPH = `Duoly (duoly.gg) is an Austrian online marketplace for rank-verified gaming teammates and coaches across ${PLAYABLE_GAMES} games. Customers book by the game or by the hour, and a verified player accepts the order and joins their lobby. Both play on their own accounts, with Discord for voice. Duoly is run by a team from Austria and Switzerland with years of experience running competitive gaming services.`;
 
 /** The fact sheet, as label and value pairs so extractors read them as pairs. */
 export const FACT_SHEET: readonly [string, string][] = [

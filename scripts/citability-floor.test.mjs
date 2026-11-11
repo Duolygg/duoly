@@ -44,6 +44,8 @@ const EXCLUDED = {
  */
 const REFERENCE_FLOOR = 70;
 const REFERENCE_PAGES = {
+  '/press':
+    'Press fact sheet and assets; short reference copy, not a search landing page.',
   '/ai': 'Overview of the agent tools; mostly short reference entries.',
   '/developers/mcp': 'Technical tool reference with parameter tables.',
   '/blog': 'Article index; its content lives on the article pages.',

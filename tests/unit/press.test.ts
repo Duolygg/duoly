@@ -16,13 +16,12 @@ import { BUSINESS, BUSINESS_LOCATION } from '../../src/site/entity';
 import { OFFICIAL_CHANNELS } from '../../src/site/seo';
 import { SUPPORT_EMAIL } from '../../src/site/nav';
 import { PRESS_EMAIL } from '../../src/site/press-contact';
-import { CATALOG_GAMES, SERVICE_COUNT } from '../../src/server/seo/booking';
+import { SERVICE_COUNT } from '../../src/server/seo/booking';
 import {
   COACHABLE_GAMES,
   COACHING_PRICE,
   PLAYABLE_GAMES,
   SHORT_GAME_PRICE,
-  SOCIAL_MODES,
 } from '../../src/server/seo/teammate-facts';
 
 /**
@@ -41,27 +40,21 @@ describe('the Duoly boilerplate', () => {
       expect(text).toContain('Austria');
     }
     expect(BOILERPLATE_SENTENCE).toContain(`${PLAYABLE_GAMES} games`);
-    expect(BOILERPLATE_PARAGRAPH).toContain(String(SERVICE_COUNT));
-    expect(BOILERPLATE_PARAGRAPH).toContain(`${CATALOG_GAMES} games`);
-    expect(BOILERPLATE_PARAGRAPH).toContain(SHORT_GAME_PRICE);
-    expect(BOILERPLATE_PARAGRAPH).toContain(COACHING_PRICE);
-    expect(BOILERPLATE_PARAGRAPH).toContain(`${COACHABLE_GAMES} titles`);
-    expect(BOILERPLATE_PARAGRAPH).toContain(
-      `${SOCIAL_MODES} voice session types`,
-    );
-    expect(BOILERPLATE_PARAGRAPH).toContain(`GISA ${BUSINESS.gisa}`);
-    expect(BOILERPLATE_PARAGRAPH).toContain(BUSINESS_LOCATION);
+    expect(BOILERPLATE_PARAGRAPH).toContain(`${PLAYABLE_GAMES} games`);
+    expect(BOILERPLATE_PARAGRAPH).toContain('Austria and Switzerland');
+    expect(BOILERPLATE_PARAGRAPH).toContain('own accounts');
+    // Rates and operator details belong in the fact sheet, not in every description.
+    expect(BOILERPLATE_PARAGRAPH).not.toContain('€');
   });
 
-  it('is one sentence and one paragraph, and says what is not promised', () => {
+  it('is one sentence and one paragraph, with separate player accounts', () => {
     // One sentence: a terminal full stop and no sentence break inside it.
     // "duoly.gg" carries a dot of its own, so the test looks for a break
     // rather than for the character.
     expect(BOILERPLATE_SENTENCE.trim().endsWith('.')).toBe(true);
     expect(BOILERPLATE_SENTENCE.slice(0, -1)).not.toMatch(/[.!?]\s/);
-    expect(BOILERPLATE_PARAGRAPH).toMatch(
-      /no rank, no win and no start time|never asks for a password/,
-    );
+    expect(BOILERPLATE_PARAGRAPH).toContain('Both play on their own accounts');
+    expect(BOILERPLATE_PARAGRAPH).not.toContain('\n');
   });
 
   it('follows the customer copy rules', () => {
@@ -159,14 +152,14 @@ describe('the press address', () => {
 
   it('names the support address too, so a customer is not misrouted', () => {
     expect(page).toContain('SUPPORT_EMAIL');
-    expect(page).toMatch(/answers support at/);
+    expect(page).toMatch(/For help with a booking/);
   });
 
   it('promises no press office it does not have', () => {
     // Whitespace-tolerant: this reads the page source, where Prettier owns the
     // line breaks inside a paragraph, so a rewrap must not read as a promise
     // the page stopped making.
-    expect(page).toMatch(/no\s+separate\s+press\s+office\s+and\s+no\s+agency/);
+    expect(page).not.toMatch(/our press office|our agency/i);
   });
 });
 
@@ -233,6 +226,6 @@ describe('the logo downloads', () => {
 
   it('offers no game art or publisher logo', () => {
     for (const href of LOGO_FILES) expect(href).not.toContain('/games/');
-    expect(page).toMatch(/licenses no game art|no game art/i);
+    expect(page).toMatch(/Game art and publisher logos\s+are not included/);
   });
 });
