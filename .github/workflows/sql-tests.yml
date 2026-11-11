@@ -9,7 +9,7 @@ on:
       - 'tests/unit/sql-test-guard.test.ts'
       - '.github/workflows/sql-tests.yml'
   push:
-    branches: [main, ci/sql-tests-local]
+    branches: [main]
     paths:
       - 'supabase/**'
       - 'scripts/sql-tests/**'

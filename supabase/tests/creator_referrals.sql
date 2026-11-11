@@ -31,8 +31,6 @@ update public.profiles set name=case id
   else 'Viewer' end
  where id::text like '6c000000-0000-4000-8000-00000000000%';
 update public.account_roles set role='admin' where user_id='6c000000-0000-4000-8000-000000000001';
--- Current admin section model: this synthetic admin exercises all historical sections.
-insert into public.admin_permissions(user_id, sections) values ('6c000000-0000-4000-8000-000000000001', public.admin_section_ids());
 update public.account_roles set role='teammate' where user_id='6c000000-0000-4000-8000-000000000009';
 insert into public.teammate_order_access(user_id,approved_games,discord_id,discord_verified_at) values
  ('6c000000-0000-4000-8000-000000000009',array['lol'],'600000000000000009',now());

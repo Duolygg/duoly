@@ -57,7 +57,7 @@ describe('SQL test isolation', () => {
   it('classifies every executable test file exactly once', () => {
     const manifest = readFileSync(dir + 'ci-manifest.txt', 'utf8');
     for (const file of readdirSync(dir).filter((f) =>
-      /\.(sql|py|mjs|cjs)$/.test(f),
+      /\.(sql|py|[cm]?js)$/.test(f),
     )) {
       expect(
         manifest.split(/\s+/).filter((word) => word === file),

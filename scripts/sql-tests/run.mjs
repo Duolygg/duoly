@@ -34,7 +34,7 @@ export function inventory() {
     if (!skip && !['suite', 'group'].includes(words[0]))
       throw new Error(`Invalid entry: ${line}`);
     for (const name of names) {
-      if (!/^[\w.-]+\.(sql|py|mjs|cjs)$/.test(name) || seen.has(name))
+      if (!/^[\w.-]+\.(sql|py|[cm]?js)$/.test(name) || seen.has(name))
         throw new Error(`Invalid/duplicate: ${name}`);
       readFileSync(path.join(dir, name));
       seen.add(name);
@@ -43,7 +43,7 @@ export function inventory() {
     else entries.push({ name: words[1], files: names });
   }
   for (const name of readdirSync(dir).filter((f) =>
-    /\.(sql|py|mjs|cjs)$/.test(f),
+    /\.(sql|py|[cm]?js)$/.test(f),
   )) {
     if (!seen.has(name)) throw new Error(`Unclassified test: ${name}`);
   }
