@@ -5,6 +5,7 @@ import re
 import sys
 
 root = Path(__file__).resolve().parents[2]
+guard = (root / 'scripts/sql-tests/guard.sql').read_text()
 names = [
     '20261029130000_social_sessions.sql',
     '20261030100000_home_teammates.sql',
@@ -28,4 +29,4 @@ allowed = {'pr110.sql', 'perks.sql', 'priority_admin.sql', 'gold_priority_badges
 assert test_name in allowed, 'Choose an allowlisted rollback test'
 parts = [body(root / 'supabase/migrations' / name) for name in names]
 parts.append(body(root / 'supabase/tests' / test_name))
-Path(sys.argv[1]).write_text('begin;\nset local statement_timeout = \'120s\';\n' + '\n'.join(parts) + '\nrollback;\n')
+Path(sys.argv[1]).write_text(guard + 'begin;\nset local statement_timeout = \'120s\';\n' + '\n'.join(parts) + '\nrollback;\n')

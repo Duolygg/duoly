@@ -1,16 +1,20 @@
-begin;
--- Defense in depth: runner must also allowlist a disposable loopback target.
-do $guard$
-declare v_production boolean := false;
+do $duoly_test_guard$
+declare production_secret boolean := false;
 begin
-  if pg_catalog.to_regclass('vault.secrets') is not null then
-    execute 'select exists (select 1 from vault.secrets where name = ''payments_tick_secret'')' into v_production;
+  if not exists (select 1 from pg_catalog.pg_namespace where nspname = 'duoly_test_marker') then
+    raise exception 'refusing to run tests on production';
   end if;
-  if v_production or not exists (select 1 from pg_catalog.pg_namespace where nspname = 'duoly_test_marker') then
+  if pg_catalog.to_regclass('vault.secrets') is not null then
+    execute 'select exists (select 1 from vault.secrets where name = ''payments_tick_secret'')' into production_secret;
+  end if;
+  if production_secret then
     raise exception 'refusing to run tests on production';
   end if;
 end;
-$guard$;
+$duoly_test_guard$;
+
+begin;
+
 
 create function pg_temp.assert_true(ok boolean, label text) returns void language plpgsql as $$
 begin

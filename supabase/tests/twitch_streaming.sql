@@ -1,3 +1,18 @@
+do $duoly_test_guard$
+declare production_secret boolean := false;
+begin
+  if not exists (select 1 from pg_catalog.pg_namespace where nspname = 'duoly_test_marker') then
+    raise exception 'refusing to run tests on production';
+  end if;
+  if pg_catalog.to_regclass('vault.secrets') is not null then
+    execute 'select exists (select 1 from vault.secrets where name = ''payments_tick_secret'')' into production_secret;
+  end if;
+  if production_secret then
+    raise exception 'refusing to run tests on production';
+  end if;
+end;
+$duoly_test_guard$;
+
 -- Rollback-only checks for 20261105100000_twitch_streaming.sql (with 20261105110000 and 20261105150000). Run after the migration bodies in one
 -- transaction (begin; <migration without begin/commit>; <this file>; rollback;).
 -- Fixtures: A admin, S streamer (lol + val approved), T other teammate (lol), C customer.

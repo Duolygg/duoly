@@ -1,0 +1,67 @@
+# Explicit inventory: unknown executable files fail closed.
+# Suite order is explicit; completion fragments share one transaction/session.
+suite account_authorization.sql
+suite admin_correct_results.sql
+suite admin_customers.sql
+suite admin_foundation.sql
+suite admin_orders.sql
+suite admin_parity.sql
+suite admin_permissions.sql
+suite admin_teammates.sql
+# skip build_connect_payouts_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance
+# skip build_gold_priority_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance
+# skip build_loyalty_cashback_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance
+# skip build_order_tips_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance
+# skip build_perks_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance
+# skip build_pr110_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance
+# skip build_trust_deposits_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance
+suite chat_flag_audit.sql
+# skip completion_local.mjs native PostgreSQL multi-session harness; external embedded-postgres dependency, not local Supabase coverage
+# skip completion_local_bootstrap.sql native-only bootstrap creates managed roles/schemas; not a Supabase suite
+# skip completion_run.py compatibility entrypoint delegates to manifest runner; not a second suite
+suite connect_payouts.sql
+suite creator_referrals.sql
+suite discord_links.sql
+suite discord_order_posts.sql
+suite discord_role_sync.sql
+suite gated_dispatch.sql
+suite gold_priority_badges.sql
+suite handover_admin_actions.sql
+suite home_live.sql
+suite home_public_stats.sql
+suite leaderboard.sql
+suite loyalty_cashback.sql
+suite mcp_rate_limits.sql
+suite order_authorization.sql
+suite order_chat.sql
+# skip order_concurrency.py separate multi-session acceptance runner; legacy remote transport disabled pending local port
+suite order_deadline.sql
+suite order_moods.sql
+suite order_proofs.sql
+suite order_reports.sql
+suite order_reviews.sql
+suite order_status_tokens.sql
+suite order_tips.sql
+suite payout_minimum_25.sql
+suite perks.sql
+suite pr110.sql
+suite presence.sql
+suite presence_afk.sql
+suite priority_admin.sql
+suite pro_subscription.sql
+suite profile_bio_currency.sql
+# skip proof_http_acceptance.cjs HTTP/browser acceptance requires app/provider fixtures; legacy hosted execution disabled
+# skip proof_http_acceptance.safety.test.cjs offline HTTP runner safety tests, not SQL acceptance
+suite queue_settings.sql
+suite referral_first_order_discount.sql
+suite sparky_presence_read.sql
+suite stripe_payments.sql
+suite support_sparky.sql
+suite support_sparky_limits.sql
+# skip test_order_concurrency.py offline Python transport tests, not SQL acceptance
+suite trust_deposits.sql
+suite twitch_streaming.sql
+suite wallet_checkout.sql
+suite wallet_ledger.sql
+suite weekly_payouts.sql
+group completion completion_fixture.sql completion_happy.sql completion_replay.sql completion_immutable.sql completion_chat.sql completion_history.sql completion_tiers.sql completion_tier_integration.sql completion_security.sql completion_integrity.sql completion_constraints.sql completion_history_order.sql

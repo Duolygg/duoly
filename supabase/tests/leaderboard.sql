@@ -1,7 +1,22 @@
+do $duoly_test_guard$
+declare production_secret boolean := false;
+begin
+  if not exists (select 1 from pg_catalog.pg_namespace where nspname = 'duoly_test_marker') then
+    raise exception 'refusing to run tests on production';
+  end if;
+  if pg_catalog.to_regclass('vault.secrets') is not null then
+    execute 'select exists (select 1 from vault.secrets where name = ''payments_tick_secret'')' into production_secret;
+  end if;
+  if production_secret then
+    raise exception 'refusing to run tests on production';
+  end if;
+end;
+$duoly_test_guard$;
+
 -- Rollback-only checks for 20261024200000_leaderboard.sql.
 -- Run with the migration body (without its begin/commit) inserted right after this begin, in one transaction:
 --   (echo 'begin;'; sed '/^begin;$/d;/^commit;$/d' supabase/migrations/20261024200000_leaderboard.sql; sed '1,/^begin;$/d' supabase/tests/leaderboard.sql) > /tmp/lb.sql
---   node_modules/.bin/supabase db query --linked -f /tmp/lb.sql
+-- Execute only using disposable local CI.
 begin;
 insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) values
  ('7b000000-0000-4000-8000-000000000001','authenticated','authenticated','lb-customer@example.invalid','{}','{}'),
