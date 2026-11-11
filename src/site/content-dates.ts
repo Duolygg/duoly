@@ -213,12 +213,39 @@ for (const path of [
 // /contact and /compare/e-pal.
 for (const path of Object.keys(CONTENT_SOURCES))
   CONTENT_UPDATED[path] ??= '2026-11-09';
-// 11 November 2026: Payoneer joined the payout methods on /fees-and-refunds and
-// /get-paid-to-play-games, and /compare/e-pal's grid stopped overflowing a phone.
+/**
+ * The 11 November 2026 human-voice pass over everything outside the game pages.
+ *
+ * It rewrote the provenance clauses that described how a price was worked out,
+ * the "For example," that introduced no example, the "Three facts settle the
+ * practical questions" closer that nine pages shared, and the price restated
+ * once per section. Facts, headings, links and FAQ answers kept their meaning,
+ * so this is a copy date and not a content change.
+ *
+ * The same day also added Payoneer to the payout methods on /fees-and-refunds
+ * and /get-paid-to-play-games, and stopped /compare/e-pal's grid overflowing a
+ * phone. All three pages are in the list below already.
+ */
 for (const path of [
-  '/fees-and-refunds',
-  '/get-paid-to-play-games',
+  '/blog',
+  '/blog/what-is-an-egirl',
+  '/blog/what-does-lfg-mean',
+  '/blog/how-to-find-a-valorant-duo',
+  '/blog/how-to-choose-a-gaming-coach',
+  '/blog/free-lfg-or-paid-teammate',
   '/compare/e-pal',
+  '/compare/metafy',
+  '/compare/queueup',
+  '/reports/gaming-coaching-and-teammate-prices-2026',
+  '/trust-and-safety',
+  '/pricing',
+  '/how-it-works',
+  '/get-paid-to-play-games',
+  '/games',
+  '/find-gaming-buddies',
+  '/fees-and-refunds',
+  '/developers/mcp',
+  '/coaching',
 ])
   CONTENT_UPDATED[path] = '2026-11-11';
 
