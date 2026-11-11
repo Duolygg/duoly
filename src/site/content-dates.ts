@@ -183,6 +183,15 @@ for (const path of [
   ...Object.keys(coachFormats).map((slug) => `/games/${slug}/coaching`),
 ])
   CONTENT_UPDATED[path] = '2026-11-10';
+/**
+ * The 11 November 2026 voice pass rewrote /about, /press and /ai paragraph by
+ * paragraph: the owner read /about and found a page written for a scorer
+ * instead of for a reader. The code base's first commit left the
+ * customer-facing copy on the same day, and /about gained the one thing it was
+ * missing, which is who actually runs Duoly.
+ */
+for (const path of ['/about', '/press', '/ai'])
+  CONTENT_UPDATED[path] = '2026-11-11';
 // Everything else is copy the catalog-promotion pass rewrote, plus the pages
 // the trust and entity pass touched on the same day: every hub, every teammate
 // page, the coaching pages, /games, /blog and its e-girl guide,

@@ -54,7 +54,7 @@ const faq: [string, string][] = [
   ],
   [
     'Does an availability result reserve a teammate?',
-    'No, availability is a public signal rather than a reservation, and a teammate accepts each order from the Duoly queue.',
+    'No. Availability is a public signal and never a reservation, and a teammate accepts each order from the Duoly queue.',
   ],
   [
     'Which games can I ask about?',
@@ -70,7 +70,7 @@ const faq: [string, string][] = [
   ],
   [
     'Are the prices an assistant quotes the real prices?',
-    `Yes. For example, get_quote reads the checkout engine, so a Valorant VOD Review reads ${coachingPrice} per hour in both places, before account perks. Coaching has no quantity discount; teammate bundles are priced separately.`,
+    `Yes. get_quote reads the checkout engine, so a Valorant VOD Review reads ${coachingPrice} per hour in both places, before account perks. Coaching has no quantity discount, and teammate bundles are priced separately.`,
   ],
 ];
 ---
@@ -159,17 +159,19 @@ const faq: [string, string][] = [
         needed for the public tools, and no assistant can take a payment.
       </p>
       <p>
-        Seven tools cover the whole path from a question to a checkout page. A
-        search comes first, then a real price, then a link back to duoly.gg. For
-        example, a request for a Valorant coach under 15 euros returns the{' '}
-        {coachingPrice} per hour VOD Review with a booking link attached, and a
-        request for a cheap duo returns games from {shortGamePrice}. Prices
-        arrive straight from Duoly, including the {bundle[1]}% quantity discount
-        on five non-coaching units. Rate limits sit at {MCP.rateLimits.minute}{' '}
-        requests per minute and {MCP.rateLimits.day} per day. The connector
-        supports {MCP.protocolVersions.length} protocol versions, including{' '}
-        {MCP.protocolVersions[0]}. See the developer guide for the headers each
-        revision requires.
+        Seven tools cover the path from a question to a checkout page: a search
+        first, then a real price, then a link back to duoly.gg. Ask for a
+        Valorant coach under 15 euros and you get the {coachingPrice} per hour
+        VOD Review with a booking link attached. Ask for a cheap duo and you get
+        games from {shortGamePrice}. Prices arrive straight from Duoly,
+        including the {bundle[1]}% quantity discount on five non-coaching units.
+      </p>
+      <p>
+        Rate limits sit at {MCP.rateLimits.minute} requests per minute and{' '}
+        {MCP.rateLimits.day} per day. The connector speaks{' '}
+        {MCP.protocolVersions.length} protocol versions, the newest being{' '}
+        {MCP.protocolVersions[0]}. The developer guide lists the headers each
+        revision needs.
       </p>
     </section>
     <Steps
@@ -182,19 +184,19 @@ const faq: [string, string][] = [
     >
       <p>
         Booking from an assistant is a three step conversation that always ends
-        on duoly.gg. Name the game, the mode and a budget. Then let the
-        assistant compare services and check who is online. Open the booking
-        link and pay on Duoly.
+        on duoly.gg. Name the game, the mode and a budget. Let the assistant
+        compare services and check who is online. Open the booking link and pay
+        on Duoly.
       </p>
       <p>
         The booking link is where the price becomes final. For example, an
         assistant quoting a Valorant VOD Review at {coachingPrice} per hour is
         reading the same engine the checkout uses, before account perks, and a
-        five-game teammate booking includes the {bundle[1]}% quantity discount.
-        A teammate or coach then accepts the order from the Duoly queue, so no
-        assistant can reserve a person, a time or a rank on your behalf.
-        Coaching has no quantity discount. Confirm the voice setup in the order
-        room before starting.
+        five game teammate booking includes the {bundle[1]}% quantity discount.
+        Coaching has no quantity discount. A teammate or coach then accepts the
+        order from the Duoly queue, which is why no assistant can reserve a
+        person, a time or a rank for you. Settle the voice setup in the order
+        room, usually Discord, before you start.
       </p>
     </Steps>
     <section aria-labelledby="assistants-h">
@@ -210,13 +212,12 @@ const faq: [string, string][] = [
       </p>
       <p>
         Duoly ships as a custom connector only. It is not listed in the Claude
-        directory or the ChatGPT store. Each person adds the connector by hand,
-        which is the realistic expectation to set. Assistants with interactive
-        cards can browse games, compare sessions and open a booking link from a
-        card, while plain clients fall back to text and links. For example, a
-        card in Claude shows the {coachingPrice} per hour Valorant VOD Review
-        beside a booking button. Coaching covers all {COACHABLE_GAMES} games
-        from Duoly. Coaching has no bundle discount.
+        directory or the ChatGPT store, so each person adds it by hand.
+        Assistants with interactive cards can browse games, compare sessions and
+        open a booking link straight from a card, and plain clients fall back to
+        text and links. For example, a card in Claude shows the {coachingPrice}{' '}
+        per hour Valorant VOD Review beside a booking button. Coaching covers
+        all {COACHABLE_GAMES} games from Duoly and carries no bundle discount.
       </p>
       <p class="ai-dev-note">
         Building your own client? Read the{' '}
@@ -229,9 +230,9 @@ const faq: [string, string][] = [
         Duoly is a custom connector you add in Claude. Open Settings and
         Connectors, add a connector pointing at <code>{MCP.endpoint}</code>,
         then enable Duoly inside a conversation. No sign-in is needed, because
-        the six public tools read the catalog rather than an account. A paid
-        plan or an administrator permission may be required by the assistant,
-        which is a rule from Anthropic rather than from Duoly.
+        the six public tools read the catalog and never an account. Claude may
+        ask for a paid plan or an administrator permission first, which is a
+        rule from Anthropic and not from Duoly.
       </p>
       {/* A status widget, not prose: ARIA list roles rather than ul/li. The styling
         already sets list-style: none, which strips native list semantics in Safari
@@ -267,24 +268,27 @@ const faq: [string, string][] = [
         </p>
       )}
       <p>
-        For example, a first conversation can ask for a Valorant coach under 15
-        euros and receive the {coachingPrice} per hour VOD Review, using Discord
-        voice once the coach accepts the order from the queue.
+        For a first conversation, ask for a Valorant coach under 15 euros. You
+        get the {coachingPrice} per hour VOD Review, played using Discord voice
+        once the coach accepts the order from the queue.
       </p>
     </section>
     <section aria-labelledby="prompts-h">
       <h2 id="prompts-h">Which prompts get a useful Duoly answer?</h2>
       <p>
         A useful Duoly prompt names the game, the mode and a budget in one
-        sentence. Three details change the answer most. The game decides which
-        services exist. Coaching covers {COACHABLE_GAMES} games, and Social is
-        booked on duoly.gg. A budget in euros or dollars lets find_session
-        filter rather than guess. A named goal turns a teammate search into a
-        coaching search. For example, a request for a Valorant coach under 15
-        euros returns the {coachingPrice} per hour VOD Review. A Valorant duo
-        request returns short games from {shortGamePrice}. Add a server when
-        ping matters, and a quantity from one to five for an exact selection.
-        Five non-coaching units receive {bundle[1]}% off.
+        sentence. The game decides which services exist, and coaching covers{' '}
+        {COACHABLE_GAMES} of them while Social is booked on duoly.gg. A budget
+        in euros or dollars lets find_session filter instead of guess. A named
+        goal turns a teammate search into a coaching search.
+      </p>
+      <p>
+        For example, ask for a Valorant coach under 15 euros and you get the{' '}
+        {coachingPrice} per hour VOD Review, while a Valorant duo request
+        returns short games from {shortGamePrice}. Add a server when ping
+        matters, and a quantity from one to five when you want an exact
+        selection. Five non-coaching units take {bundle[1]}% off, and coaching
+        sessions run using Discord screen share.
       </p>
       <ul class="ai-prompts">
         {AI_PROMPTS.slice(0, 3).map((prompt) => (
@@ -312,9 +316,9 @@ const faq: [string, string][] = [
         Two tools do most of the work. Find_session returns up to three matching
         services with real prices, for example the {coachingPrice} per hour
         Valorant VOD Review or a {shortGamePrice} Skirmish game. Get_quote
-        prices one exact selection, including a {bundle[1]}% discount on five
-        non-coaching units. Search with a game before selecting a service; order
-        status uses its private code instead. get_availability reports public
+        prices one exact selection, including the {bundle[1]}% discount on five
+        non-coaching units. Name a game before you select a service, and use the
+        private code for order status. Get_availability reports the public
         online counts from Duoly without reserving anybody.
       </p>
       <ul class="ai-tools">
@@ -356,12 +360,12 @@ const faq: [string, string][] = [
       <p>
         A status code expires after seven days. Each request reads the current
         order status and can never change or cancel an order. For example, a
-        code shared with Claude returns the current acceptance, the teammate
-        display names, the team seat progress and the next step, and nothing
-        about payment. A code covers one order only, so a second booking needs a
-        second code. Prices stay public rather than private, which is why a
-        public quote needs no code at all. Keep the code out of screenshots,
-        shared links and conversation logs.
+        code shared with Claude reads back the current acceptance, the teammate
+        display names, the team seat progress and the next step, with nothing
+        about payment. A code covers one order, so a second booking needs a
+        second code. Prices are public, which is why a quote needs no code at
+        all. Keep the code out of screenshots, shared links and conversation
+        logs.
       </p>
     </section>
     <section aria-labelledby="boundaries-h">
@@ -371,9 +375,10 @@ const faq: [string, string][] = [
       <p>
         An AI assistant is a research layer over the Duoly catalog. Searching
         and link building happen inside the conversation. Paying and creating an
-        order stay on duoly.gg. Staying safe comes down to never sharing a
-        password. For example, Valorant coaching reads {coachingPrice} per hour
-        from Duoly, with no coaching quantity discount.
+        order stay on duoly.gg. Staying safe comes down to one habit: never
+        share a password. For example, Valorant coaching reads {coachingPrice}{' '}
+        per hour from Duoly in the conversation and at checkout, with no
+        coaching quantity discount on either side.
       </p>
       <div class="ai-boundaries">
         <div class="card">
@@ -425,20 +430,21 @@ const faq: [string, string][] = [
       </h2>
       <p>
         Duoly is a sole proprietorship registered in Austria, and every fact an
-        assistant needs is on a page rather than implied.{' '}
+        assistant needs sits on a page it can cite.
+      </p>
+      <p>
         <a href="/about">About Duoly</a> names the operator, the Austrian trade
-        register number and the four-step rank check a teammate passes, and
-        states plainly that duoly.gg is a gaming service rather than the Duoly
-        couples app on Google Play.{' '}
+        register number and the four-step rank check a teammate passes, and says
+        plainly that duoly.gg is the gaming service and not the Duoly couples
+        app on Google Play.{' '}
         <a href="/fees-and-refunds">Duoly fees and refunds</a> gives the whole
         price model and quotes the refund rules from the terms, so a{' '}
         {coachingPrice} coaching hour and a {shortGamePrice} game both carry 0%
         in added fees. <a href="/pricing.md">Pricing.md</a> carries every price
         in the catalog as plain text, generated from the pricing engine on each
-        deploy. A cautious reader starts at the imprint, linked from about
-        Duoly, where Austrian law requires the operator details. For example, an
-        assistant quoting a price can cite pricing.md and a reader can check the
-        same figure at checkout using Stripe.
+        deploy. The imprint, linked from about Duoly, holds the operator details
+        Austrian law requires. So an assistant can cite pricing.md for a price
+        and a reader can check the same figure at checkout using Stripe.
       </p>
     </section>
     <Faq
@@ -448,7 +454,7 @@ const faq: [string, string][] = [
     <ClosingCta
       heading="Your next teammate is on Duoly"
       text="Booking on Duoly is the same destination an assistant prepares for you. Choose your game, compare services and review the price before paying. Nothing is charged until you confirm on duoly.gg."
-      extra={`Three facts close the loop. The price an assistant quotes is the engine price before account perks, so a Valorant VOD Review reads ${coachingPrice} per hour in both places, and a short Valorant game reads ${shortGamePrice}. A teammate accepts the order from the Duoly queue rather than receiving an assignment, which is why no assistant promises a time or a rank. Social sessions are booked on duoly.gg for now. A conversation starts with a game from the ${PLAYABLE_GAMES} in the catalog, and coaching covers ${COACHABLE_GAMES} of them using Discord voice and screen share. For example, a five game bundle from Duoly carries a ${bundle[1]}% discount, and ten games carry ${bundle[2]}%.`}
+      extra={`What closes the loop. The price an assistant quotes is the engine price before account perks, so a Valorant VOD Review reads ${coachingPrice} per hour in both places and a short Valorant game reads ${shortGamePrice}. A teammate accepts the order from the Duoly queue and is never assigned one, which is why no assistant promises a time or a rank. Social sessions are booked on duoly.gg for now. A conversation starts with a game from the ${PLAYABLE_GAMES} in the catalog, and coaching covers ${COACHABLE_GAMES} of them using Discord voice and screen share. Five games take ${bundle[1]}% off and ten games take ${bundle[2]}%.`}
       href="/"
       label="Book on Duoly"
     />

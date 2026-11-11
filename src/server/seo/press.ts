@@ -22,10 +22,10 @@ import { CATALOG_GAMES, SERVICE_COUNT } from './booking';
  *
  * Two things are deliberately absent. There is no launch date, because the
  * owner has not published one (src/content/about-story.ts carries `foundedOn`
- * for exactly this, and it is still empty); the page states the first commit
- * date in the public code base instead, which is checkable. And there are no
- * metrics: no user count, no session count, no funding, no rating. A press
- * page that invents those is the reason journalists stop trusting press pages.
+ * for exactly this, and it is still empty); the FAQ points a journalist at the
+ * trade licence instead. And there are no metrics: no user count, no session
+ * count, no funding, no rating. A press page that invents those is the reason
+ * journalists stop trusting press pages.
  */
 
 /** The one-sentence boilerplate, for a caption or an article's first mention. */

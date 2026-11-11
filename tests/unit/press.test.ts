@@ -12,11 +12,7 @@ import {
   SOCIAL_IMAGE,
 } from '../../src/server/seo/press';
 import { ABOUT_STORY } from '../../src/content/about-story';
-import {
-  BUSINESS,
-  BUSINESS_LOCATION,
-  CODEBASE_STARTED_LABEL,
-} from '../../src/site/entity';
+import { BUSINESS, BUSINESS_LOCATION } from '../../src/site/entity';
 import { OFFICIAL_CHANNELS } from '../../src/site/seo';
 import { SUPPORT_EMAIL } from '../../src/site/nav';
 import { PRESS_EMAIL } from '../../src/site/press-contact';
@@ -176,16 +172,21 @@ describe('the press address', () => {
 
 describe('the launch date', () => {
   /**
-   * The owner has not published one, so the page says so and quotes the first
-   * commit date instead. When `foundedOn` is filled in, this test is the one to
+   * The owner has not published one, so the FAQ says so and points at the
+   * trade licence. When `foundedOn` is filled in, this test is the one to
    * update in the same commit as the content.
    */
   it('is absent while the owner has not supplied one', () => {
     expect(ABOUT_STORY.foundedOn).toBeUndefined();
     expect(HAS_LAUNCH_DATE).toBe(false);
     expect(LAUNCH_DATE).toBeUndefined();
-    expect(page).toContain('CODEBASE_STARTED_LABEL');
-    expect(CODEBASE_STARTED_LABEL).toMatch(/^\d{1,2} \w+ \d{4}$/);
+    expect(page).toMatch(/has not published a launch date/);
+  });
+
+  it('tells a journalist nothing about the code base', () => {
+    // A commit date is not a founding date, and a customer-facing page has no
+    // business discussing our git history.
+    expect(page).not.toMatch(/first commit|code base|weeks rather than years/i);
   });
 
   it('is never guessed in the page copy', () => {
