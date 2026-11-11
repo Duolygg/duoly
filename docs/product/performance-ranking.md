@@ -150,14 +150,8 @@ runtime deliberately ignores noncanonical duplicates and never adopts, edits or 
 Changing canonical IDs also needs manual inspection and cleanup of the superseded role holders;
 the identity ledger tracks people, not a history of configuration changes.
 
-## Rollback-only hosted verification
+## SQL verification
 
 SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
 
-The builder wraps all five migration bodies and real SQL fixtures in one `BEGIN` and `ROLLBACK`,
-stripping only their outer transaction statements. It never applies migration history or commits
-fixtures. Use `--test perks.sql` (or `priority_admin.sql`, `gold_priority_badges.sql`,
-`handover_admin_actions.sql`, `discord_links.sql`, `discord_role_sync.sql`) to build each existing
-regression suite on top of all five migrations. Execute each generated file separately: PostgreSQL
-`now()` is fixed at transaction start, so stacking long fixture suites in one transaction ages
-later fixtures and can invalidate their real-time priority assertions.
+Historical builders compose earlier migrations and are explicitly excluded from latest-schema acceptance. The manifest runner executes the behavioral suite on the fully migrated disposable database without replaying those old definitions.

@@ -141,8 +141,11 @@ function run() {
   ]);
   if (query(identitySql) !== expected)
     throw new Error('Container/connection identity mismatch');
-  const probe = (sql, shouldPass, label) => {
-    const result = spawnSync('psql', args, { input: sql, encoding: 'utf8' });
+  const probe = (sql, shouldPass, label, target = url) => {
+    const result = spawnSync('psql', [...args.slice(0, -1), target], {
+      input: sql,
+      encoding: 'utf8',
+    });
     if (
       (result.status === 0) !== shouldPass ||
       (!shouldPass &&
@@ -166,28 +169,30 @@ function run() {
     false,
     'production sentinel refuses (fake secret rolled back)',
   );
-  probe(
-    `begin; alter schema vault rename to hidden_vault;\n${guard}\nrollback;`,
-    true,
-    'absent vault branches safely',
-  );
-  query('update cron.job set active = false');
+  query('create database duoly_guard_probe template template0');
+  try {
+    probe(
+      `create schema duoly_test_marker;\n${guard}`,
+      true,
+      'absent vault branches safely',
+      url.replace('/postgres', '/duoly_guard_probe'),
+    );
+  } finally {
+    query('drop database duoly_guard_probe');
+  }
   // Scheduling assertions inspect migration state, while the worker is stopped globally.
   command('docker', [
     'exec',
     container,
     'psql',
     '-U',
-    'postgres',
+    'supabase_admin',
     '-d',
     'postgres',
     '-c',
     'alter system set cron.launch_active_jobs = off',
   ]);
   query('select pg_reload_conf()');
-  query(
-    "update cron.job set active = true where jobname in ('duoly-dispatch','duoly-cron-log-prune','private-proof-cleanup','private-proof-cleanup-log-prune')",
-  );
   const results = [];
   for (const entry of entries) {
     let sql = '';
