@@ -1,6 +1,6 @@
 'use client';
 
-import HomeImage from './HomeImage';
+import BundledImage from '../shared/BundledImage';
 import { track } from '../../client/analytics/track';
 import {
   BOOKING_PARAMS,
@@ -1196,23 +1196,36 @@ export default class Home extends React.Component {
       };
     });
 
+    // The last number is the badge's drawn width at that height (the badge keeps its own ratio:
+    // 255x120, 303x120 and 360x87). Lighthouse wants both dimensions on the element, and the
+    // responsive variant is picked from the drawn width, not from the full-size badge.
     const payList = [
-      ['apple', 'Apple Pay', '/assets/payments/apple-pay.png', '#000000', 22],
+      [
+        'apple',
+        'Apple Pay',
+        '/assets/payments/apple-pay.png',
+        '#000000',
+        22,
+        47,
+      ],
       [
         'google',
         'Google Pay',
         '/assets/payments/google-pay.png',
         '#FFFFFF',
         22,
+        56,
       ],
-      ['paypal', 'PayPal', '/assets/payments/paypal.png', '#FFC439', 20],
-      ['card', 'Card', '', '#090414', 0],
+      ['paypal', 'PayPal', '/assets/payments/paypal.png', '#FFC439', 20, 83],
+      ['card', 'Card', '', '#090414', 0, 0],
     ];
-    const pays = payList.map(([id, label, img, bg, h]) => {
+    const pays = payList.map(([id, label, img, bg, h, w]) => {
       const a = s.pay === id;
       return {
         label,
         img,
+        imgWidth: w,
+        imgHeight: h,
         noImg: !img,
         active: a,
         pressed: a ? 'true' : 'false',
@@ -1912,7 +1925,7 @@ export default class Home extends React.Component {
               aria-label="Duoly home"
               style={{ display: 'flex', alignItems: 'center' }}
             >
-              <HomeImage
+              <BundledImage
                 src="/assets/brand/logo-wordmark.webp"
                 alt="Duoly"
                 width="104"
@@ -2161,11 +2174,13 @@ export default class Home extends React.Component {
                         fontWeight: '600',
                       }}
                     >
-                      <HomeImage
+                      <BundledImage
                         src={v.userAvatar}
                         alt=""
                         width="34"
                         height="34"
+                        loading="lazy"
+                        decoding="async"
                         referrerPolicy="no-referrer"
                         style={{
                           width: '34px',
@@ -2472,7 +2487,7 @@ export default class Home extends React.Component {
                 >
                   {['avatar-1', 'avatar-2', 'avatar-3', 'avatar-5'].map(
                     (av, i) => (
-                      <HomeImage
+                      <BundledImage
                         key={av}
                         src={'/assets/avatars/' + av + '.png'}
                         alt=""
@@ -2638,12 +2653,14 @@ export default class Home extends React.Component {
                   style={{ display: 'flex', gap: '6px' }}
                 >
                   {v.heroGames.map((x) => (
-                    <img
+                    <BundledImage
                       key={x.id}
                       src={x.img}
                       alt=""
                       width="34"
                       height="34"
+                      loading="lazy"
+                      decoding="async"
                       style={{
                         width: '34px',
                         height: '34px',
@@ -2795,7 +2812,7 @@ export default class Home extends React.Component {
                   maxWidth: '560px',
                 }}
               >
-                <HomeImage
+                <BundledImage
                   src="/assets/brand/logo-full.webp"
                   alt="Duoly mascots: two smiling gamers with headsets"
                   width="560"
@@ -2843,11 +2860,13 @@ export default class Home extends React.Component {
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      <HomeImage
+                      <BundledImage
                         src={t.img}
                         alt=""
                         width="22"
                         height="22"
+                        loading="lazy"
+                        decoding="async"
                         style={{
                           width: '22px',
                           height: '22px',
@@ -2954,11 +2973,13 @@ export default class Home extends React.Component {
                           height: '48px',
                         }}
                       >
-                        <img
+                        <BundledImage
                           src={g.img}
                           alt=""
                           width="48"
                           height="48"
+                          loading="lazy"
+                          decoding="async"
                           style={{
                             width: '48px',
                             height: '48px',
@@ -4012,11 +4033,13 @@ export default class Home extends React.Component {
                           gap: '12px',
                         }}
                       >
-                        <HomeImage
+                        <BundledImage
                           src="/assets/brand/logo-mascots.webp"
                           alt=""
                           width="56"
                           height="35"
+                          loading="lazy"
+                          decoding="async"
                           style={{ width: '56px', height: '35px' }}
                         />
                         <span style={{ fontSize: '14px', color: '#CFC4EA' }}>
@@ -4067,11 +4090,13 @@ export default class Home extends React.Component {
                       gap: '14px',
                     }}
                   >
-                    <img
+                    <BundledImage
                       src={v.game.img}
                       alt={v.game.name}
                       width="52"
                       height="52"
+                      loading="lazy"
+                      decoding="async"
                       style={{
                         width: '52px',
                         height: '52px',
@@ -4318,9 +4343,13 @@ export default class Home extends React.Component {
                             ) : null}
                             {p.img ? (
                               <>
-                                <img
+                                <BundledImage
                                   src={p.img}
                                   alt=""
+                                  width={p.imgWidth}
+                                  height={p.imgHeight}
+                                  loading="lazy"
+                                  decoding="async"
                                   style={css(p.imgStyle)}
                                 />
                               </>
@@ -4846,11 +4875,13 @@ export default class Home extends React.Component {
                       <React.Fragment key={$index}>
                         <div style={css(p.wrap)}>
                           <span style={css(p.avatar)}>
-                            <HomeImage
+                            <BundledImage
                               src={p.av}
                               alt=""
                               width="50"
                               height="50"
+                              loading="lazy"
+                              decoding="async"
                               style={{
                                 width: '50px',
                                 height: '50px',
@@ -4858,11 +4889,13 @@ export default class Home extends React.Component {
                                 display: 'block',
                               }}
                             />
-                            <img
+                            <BundledImage
                               src={p.flag}
                               alt={p.cc}
                               width="18"
                               height="18"
+                              loading="lazy"
+                              decoding="async"
                               style={{
                                 position: 'absolute',
                                 right: '-3px',
@@ -4886,11 +4919,13 @@ export default class Home extends React.Component {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            <img
+                            <BundledImage
                               src={p.img}
                               alt=""
                               width="20"
                               height="20"
+                              loading="lazy"
+                              decoding="async"
                               style={{
                                 width: '20px',
                                 height: '20px',
@@ -5273,11 +5308,13 @@ export default class Home extends React.Component {
                       gap: '14px',
                     }}
                   >
-                    <HomeImage
+                    <BundledImage
                       src="/assets/brand/logo-mascots.webp"
                       alt=""
                       width="72"
                       height="45"
+                      loading="lazy"
+                      decoding="async"
                       style={{ width: '72px', height: '45px' }}
                     />
                     <div style={{ lineHeight: '1.35' }}>
@@ -5335,6 +5372,8 @@ export default class Home extends React.Component {
                         alt=""
                         width="20"
                         height="15"
+                        loading="lazy"
+                        decoding="async"
                         style={{ width: '20px', height: '15px' }}
                       />
                       Discord
@@ -5740,11 +5779,13 @@ export default class Home extends React.Component {
                     border: '1px solid rgba(214, 187, 255, .14)',
                   }}
                 >
-                  <img
+                  <BundledImage
                     src={v.game.img}
                     alt=""
                     width="48"
                     height="48"
+                    loading="lazy"
+                    decoding="async"
                     style={{
                       width: '48px',
                       height: '48px',
@@ -5897,11 +5938,13 @@ export default class Home extends React.Component {
                           transform: 'none',
                         }}
                       >
-                        <img
+                        <BundledImage
                           src={v.serverFlag}
                           alt=""
                           width="20"
                           height="20"
+                          loading="lazy"
+                          decoding="async"
                           style={{
                             flex: '0 0 auto',
                             width: '20px',
@@ -6031,11 +6074,13 @@ export default class Home extends React.Component {
                             onClick={it.pick}
                             className={'qc-srv-tile' + (it.on ? ' on' : '')}
                           >
-                            <img
+                            <BundledImage
                               src={it.flag}
                               alt=""
                               width="30"
                               height="30"
+                              loading="lazy"
+                              decoding="async"
                               className="qc-srv-flag"
                             />
                             <span className="qc-srv-text">
@@ -6414,11 +6459,12 @@ export default class Home extends React.Component {
                   minWidth: '0',
                 }}
               >
-                <img
+                <BundledImage
                   src={v.game.img}
                   alt=""
                   width="42"
                   height="42"
+                  decoding="async"
                   className="dl-bar-img"
                 />
                 <div style={{ minWidth: '0', lineHeight: '1.35' }}>

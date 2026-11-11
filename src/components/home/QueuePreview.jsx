@@ -7,7 +7,7 @@
 // room's wording.
 // It is a picture: nothing in it can be clicked or focused. Runs only while on screen and starts
 // from the search each time it comes into view. Styles: globals.css (qp-*).
-import HomeImage from './HomeImage';
+import BundledImage from '../shared/BundledImage';
 import React from 'react';
 import MatchStage, {
   ChatPanel,
@@ -346,14 +346,23 @@ export default class QueuePreview extends React.Component {
           {/* the order room page itself (QueueRoom.jsx render), driven by the script above */}
           <div className="qp-body" aria-hidden="true" inert>
             <div className="qp-top">
-              <HomeImage
+              <BundledImage
                 src="/assets/brand/logo-wordmark.webp"
                 alt=""
                 width="96"
                 height="36"
+                loading="lazy"
+                decoding="async"
               />
               <span className="qp-user">
-                <HomeImage src={USER.image} alt="" width="30" height="30" />
+                <BundledImage
+                  src={USER.image}
+                  alt=""
+                  width="30"
+                  height="30"
+                  loading="lazy"
+                  decoding="async"
+                />
                 {USER.name}
               </span>
             </div>

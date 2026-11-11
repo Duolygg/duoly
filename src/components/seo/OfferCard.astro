@@ -1,4 +1,5 @@
 ---
+import { gameArtSizes, gameArtSrcSet } from '../../site/game-art';
 import type { HeroOffer } from '../../server/seo/hero-offer';
 import {
   BOOKING_REASSURANCE,
@@ -38,6 +39,8 @@ const { offer, text, art, coach = false } = Astro.props;
   {art && (
     <img
       src={art.src}
+      srcset={gameArtSrcSet(art.src)}
+      sizes={gameArtSizes(56)}
       alt={art.alt}
       width="56"
       height="56"

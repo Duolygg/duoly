@@ -1,0 +1,3476 @@
+[
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-1.png",
+    "output": "/assets/avatars/avatar-1-50.webp",
+    "width": 50,
+    "masterBytes": 31179,
+    "beforeBytes": 1924,
+    "bytes": 1924
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-1.png",
+    "output": "/assets/avatars/avatar-1-78.webp",
+    "width": 78,
+    "masterBytes": 31179,
+    "beforeBytes": 3240,
+    "bytes": 3240
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-1.png",
+    "output": "/assets/avatars/avatar-1-100.webp",
+    "width": 100,
+    "masterBytes": 31179,
+    "beforeBytes": 4352,
+    "bytes": 4352
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-1.png",
+    "output": "/assets/avatars/avatar-1-156.webp",
+    "width": 156,
+    "masterBytes": 31179,
+    "beforeBytes": 7184,
+    "bytes": 7184
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-10.png",
+    "output": "/assets/avatars/avatar-10-50.webp",
+    "width": 50,
+    "masterBytes": 31687,
+    "beforeBytes": 2072,
+    "bytes": 2072
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-10.png",
+    "output": "/assets/avatars/avatar-10-78.webp",
+    "width": 78,
+    "masterBytes": 31687,
+    "beforeBytes": 3426,
+    "bytes": 3426
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-10.png",
+    "output": "/assets/avatars/avatar-10-100.webp",
+    "width": 100,
+    "masterBytes": 31687,
+    "beforeBytes": 4680,
+    "bytes": 4680
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-10.png",
+    "output": "/assets/avatars/avatar-10-156.webp",
+    "width": 156,
+    "masterBytes": 31687,
+    "beforeBytes": 7590,
+    "bytes": 7590
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-2.png",
+    "output": "/assets/avatars/avatar-2-50.webp",
+    "width": 50,
+    "masterBytes": 33068,
+    "beforeBytes": 2104,
+    "bytes": 2104
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-2.png",
+    "output": "/assets/avatars/avatar-2-78.webp",
+    "width": 78,
+    "masterBytes": 33068,
+    "beforeBytes": 3472,
+    "bytes": 3472
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-2.png",
+    "output": "/assets/avatars/avatar-2-100.webp",
+    "width": 100,
+    "masterBytes": 33068,
+    "beforeBytes": 4664,
+    "bytes": 4664
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-2.png",
+    "output": "/assets/avatars/avatar-2-156.webp",
+    "width": 156,
+    "masterBytes": 33068,
+    "beforeBytes": 7682,
+    "bytes": 7682
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-3.png",
+    "output": "/assets/avatars/avatar-3-50.webp",
+    "width": 50,
+    "masterBytes": 34413,
+    "beforeBytes": 2114,
+    "bytes": 2114
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-3.png",
+    "output": "/assets/avatars/avatar-3-78.webp",
+    "width": 78,
+    "masterBytes": 34413,
+    "beforeBytes": 3468,
+    "bytes": 3468
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-3.png",
+    "output": "/assets/avatars/avatar-3-100.webp",
+    "width": 100,
+    "masterBytes": 34413,
+    "beforeBytes": 4618,
+    "bytes": 4618
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-3.png",
+    "output": "/assets/avatars/avatar-3-156.webp",
+    "width": 156,
+    "masterBytes": 34413,
+    "beforeBytes": 7660,
+    "bytes": 7660
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-4.png",
+    "output": "/assets/avatars/avatar-4-50.webp",
+    "width": 50,
+    "masterBytes": 32787,
+    "beforeBytes": 2198,
+    "bytes": 2198
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-4.png",
+    "output": "/assets/avatars/avatar-4-78.webp",
+    "width": 78,
+    "masterBytes": 32787,
+    "beforeBytes": 3558,
+    "bytes": 3558
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-4.png",
+    "output": "/assets/avatars/avatar-4-100.webp",
+    "width": 100,
+    "masterBytes": 32787,
+    "beforeBytes": 4700,
+    "bytes": 4700
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-4.png",
+    "output": "/assets/avatars/avatar-4-156.webp",
+    "width": 156,
+    "masterBytes": 32787,
+    "beforeBytes": 7674,
+    "bytes": 7674
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-5.png",
+    "output": "/assets/avatars/avatar-5-50.webp",
+    "width": 50,
+    "masterBytes": 32620,
+    "beforeBytes": 2068,
+    "bytes": 2068
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-5.png",
+    "output": "/assets/avatars/avatar-5-78.webp",
+    "width": 78,
+    "masterBytes": 32620,
+    "beforeBytes": 3440,
+    "bytes": 3440
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-5.png",
+    "output": "/assets/avatars/avatar-5-100.webp",
+    "width": 100,
+    "masterBytes": 32620,
+    "beforeBytes": 4666,
+    "bytes": 4666
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-5.png",
+    "output": "/assets/avatars/avatar-5-156.webp",
+    "width": 156,
+    "masterBytes": 32620,
+    "beforeBytes": 7760,
+    "bytes": 7760
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-6.png",
+    "output": "/assets/avatars/avatar-6-50.webp",
+    "width": 50,
+    "masterBytes": 31139,
+    "beforeBytes": 2102,
+    "bytes": 2102
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-6.png",
+    "output": "/assets/avatars/avatar-6-78.webp",
+    "width": 78,
+    "masterBytes": 31139,
+    "beforeBytes": 3464,
+    "bytes": 3464
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-6.png",
+    "output": "/assets/avatars/avatar-6-100.webp",
+    "width": 100,
+    "masterBytes": 31139,
+    "beforeBytes": 4708,
+    "bytes": 4708
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-6.png",
+    "output": "/assets/avatars/avatar-6-156.webp",
+    "width": 156,
+    "masterBytes": 31139,
+    "beforeBytes": 7644,
+    "bytes": 7644
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-7.png",
+    "output": "/assets/avatars/avatar-7-50.webp",
+    "width": 50,
+    "masterBytes": 32652,
+    "beforeBytes": 1968,
+    "bytes": 1968
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-7.png",
+    "output": "/assets/avatars/avatar-7-78.webp",
+    "width": 78,
+    "masterBytes": 32652,
+    "beforeBytes": 3178,
+    "bytes": 3178
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-7.png",
+    "output": "/assets/avatars/avatar-7-100.webp",
+    "width": 100,
+    "masterBytes": 32652,
+    "beforeBytes": 4366,
+    "bytes": 4366
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-7.png",
+    "output": "/assets/avatars/avatar-7-156.webp",
+    "width": 156,
+    "masterBytes": 32652,
+    "beforeBytes": 7262,
+    "bytes": 7262
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-8.png",
+    "output": "/assets/avatars/avatar-8-50.webp",
+    "width": 50,
+    "masterBytes": 33355,
+    "beforeBytes": 1982,
+    "bytes": 1982
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-8.png",
+    "output": "/assets/avatars/avatar-8-78.webp",
+    "width": 78,
+    "masterBytes": 33355,
+    "beforeBytes": 3226,
+    "bytes": 3226
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-8.png",
+    "output": "/assets/avatars/avatar-8-100.webp",
+    "width": 100,
+    "masterBytes": 33355,
+    "beforeBytes": 4430,
+    "bytes": 4430
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-8.png",
+    "output": "/assets/avatars/avatar-8-156.webp",
+    "width": 156,
+    "masterBytes": 33355,
+    "beforeBytes": 7420,
+    "bytes": 7420
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-9.png",
+    "output": "/assets/avatars/avatar-9-50.webp",
+    "width": 50,
+    "masterBytes": 33791,
+    "beforeBytes": 2142,
+    "bytes": 2142
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-9.png",
+    "output": "/assets/avatars/avatar-9-78.webp",
+    "width": 78,
+    "masterBytes": 33791,
+    "beforeBytes": 3538,
+    "bytes": 3538
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-9.png",
+    "output": "/assets/avatars/avatar-9-100.webp",
+    "width": 100,
+    "masterBytes": 33791,
+    "beforeBytes": 4680,
+    "bytes": 4680
+  },
+  {
+    "family": "avatars",
+    "source": "/assets/avatars/avatar-9.png",
+    "output": "/assets/avatars/avatar-9-156.webp",
+    "width": 156,
+    "masterBytes": 33791,
+    "beforeBytes": 7692,
+    "bytes": 7692
+  },
+  {
+    "family": "hero art",
+    "source": "/assets/brand/logo-full.webp",
+    "output": "/assets/brand/logo-full-342.webp",
+    "width": 342,
+    "masterBytes": 253862,
+    "beforeBytes": 39276,
+    "bytes": 39276
+  },
+  {
+    "family": "hero art",
+    "source": "/assets/brand/logo-full.webp",
+    "output": "/assets/brand/logo-full-560.webp",
+    "width": 560,
+    "masterBytes": 253862,
+    "beforeBytes": 88056,
+    "bytes": 88056
+  },
+  {
+    "family": "hero art",
+    "source": "/assets/brand/logo-full.webp",
+    "output": "/assets/brand/logo-full-684.webp",
+    "width": 684,
+    "masterBytes": 253862,
+    "beforeBytes": 122306,
+    "bytes": 122306
+  },
+  {
+    "family": "hero art",
+    "source": "/assets/brand/logo-full.webp",
+    "output": "/assets/brand/logo-full-1120.webp",
+    "width": 1120,
+    "masterBytes": 253862,
+    "beforeBytes": 311502,
+    "bytes": 311502
+  },
+  {
+    "family": "wordmark",
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-96.webp",
+    "width": 96,
+    "masterBytes": 33262,
+    "beforeBytes": 3676,
+    "bytes": 3676
+  },
+  {
+    "family": "wordmark",
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-104.webp",
+    "width": 104,
+    "masterBytes": 33262,
+    "beforeBytes": 4136,
+    "bytes": 4136
+  },
+  {
+    "family": "wordmark",
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-144.webp",
+    "width": 144,
+    "masterBytes": 33262,
+    "beforeBytes": 6494,
+    "bytes": 6494
+  },
+  {
+    "family": "wordmark",
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-192.webp",
+    "width": 192,
+    "masterBytes": 33262,
+    "beforeBytes": 9740,
+    "bytes": 9740
+  },
+  {
+    "family": "wordmark",
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-208.webp",
+    "width": 208,
+    "masterBytes": 33262,
+    "beforeBytes": 11034,
+    "bytes": 11034
+  },
+  {
+    "family": "wordmark",
+    "source": "/assets/brand/logo-wordmark.webp",
+    "output": "/assets/brand/logo-wordmark-288.webp",
+    "width": 288,
+    "masterBytes": 33262,
+    "beforeBytes": 17870,
+    "bytes": 17870
+  },
+  {
+    "family": "mascots",
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-40.webp",
+    "width": 40,
+    "masterBytes": 31924,
+    "beforeBytes": 1864,
+    "bytes": 1864
+  },
+  {
+    "family": "mascots",
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-56.webp",
+    "width": 56,
+    "masterBytes": 31924,
+    "beforeBytes": 3042,
+    "bytes": 3042
+  },
+  {
+    "family": "mascots",
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-72.webp",
+    "width": 72,
+    "masterBytes": 31924,
+    "beforeBytes": 4194,
+    "bytes": 4194
+  },
+  {
+    "family": "mascots",
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-80.webp",
+    "width": 80,
+    "masterBytes": 31924,
+    "beforeBytes": 4920,
+    "bytes": 4920
+  },
+  {
+    "family": "mascots",
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-112.webp",
+    "width": 112,
+    "masterBytes": 31924,
+    "beforeBytes": 7952,
+    "bytes": 7952
+  },
+  {
+    "family": "mascots",
+    "source": "/assets/brand/logo-mascots.webp",
+    "output": "/assets/brand/logo-mascots-144.webp",
+    "width": 144,
+    "masterBytes": 31924,
+    "beforeBytes": 11582,
+    "bytes": 11582
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/apex-legends.png",
+    "output": "/assets/games/apex-legends-48.webp",
+    "width": 48,
+    "masterBytes": 14978,
+    "beforeBytes": 1298,
+    "bytes": 1298
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/apex-legends.png",
+    "output": "/assets/games/apex-legends-96.webp",
+    "width": 96,
+    "masterBytes": 14978,
+    "beforeBytes": 2820,
+    "bytes": 2820
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/apex-legends.png",
+    "output": "/assets/games/apex-legends-128.webp",
+    "width": 128,
+    "masterBytes": 14978,
+    "beforeBytes": 3342,
+    "bytes": 3342
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/arc-raiders.png",
+    "output": "/assets/games/arc-raiders-48.webp",
+    "width": 48,
+    "masterBytes": 14236,
+    "beforeBytes": 1454,
+    "bytes": 1454
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/arc-raiders.png",
+    "output": "/assets/games/arc-raiders-96.webp",
+    "width": 96,
+    "masterBytes": 14236,
+    "beforeBytes": 3382,
+    "bytes": 3382
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/arc-raiders.png",
+    "output": "/assets/games/arc-raiders-128.webp",
+    "width": 128,
+    "masterBytes": 14236,
+    "beforeBytes": 3878,
+    "bytes": 3878
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/call-of-duty.png",
+    "output": "/assets/games/call-of-duty-48.webp",
+    "width": 48,
+    "masterBytes": 9236,
+    "beforeBytes": 1584,
+    "bytes": 1584
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/call-of-duty.png",
+    "output": "/assets/games/call-of-duty-96.webp",
+    "width": 96,
+    "masterBytes": 9236,
+    "beforeBytes": 3528,
+    "bytes": 3528
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/call-of-duty.png",
+    "output": "/assets/games/call-of-duty-128.webp",
+    "width": 128,
+    "masterBytes": 9236,
+    "beforeBytes": 3964,
+    "bytes": 3964
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/counter-strike-2.png",
+    "output": "/assets/games/counter-strike-2-48.webp",
+    "width": 48,
+    "masterBytes": 7181,
+    "beforeBytes": 1382,
+    "bytes": 1382
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/counter-strike-2.png",
+    "output": "/assets/games/counter-strike-2-96.webp",
+    "width": 96,
+    "masterBytes": 7181,
+    "beforeBytes": 3146,
+    "bytes": 3146
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/counter-strike-2.png",
+    "output": "/assets/games/counter-strike-2-128.webp",
+    "width": 128,
+    "masterBytes": 7181,
+    "beforeBytes": 3680,
+    "bytes": 3680
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/deadlock.png",
+    "output": "/assets/games/deadlock-48.webp",
+    "width": 48,
+    "masterBytes": 18677,
+    "beforeBytes": 1614,
+    "bytes": 1614
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/deadlock.png",
+    "output": "/assets/games/deadlock-96.webp",
+    "width": 96,
+    "masterBytes": 18677,
+    "beforeBytes": 4248,
+    "bytes": 4248
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/deadlock.png",
+    "output": "/assets/games/deadlock-128.webp",
+    "width": 128,
+    "masterBytes": 18677,
+    "beforeBytes": 4812,
+    "bytes": 4812
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/dota-2.png",
+    "output": "/assets/games/dota-2-48.webp",
+    "width": 48,
+    "masterBytes": 18685,
+    "beforeBytes": 1288,
+    "bytes": 1288
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/dota-2.png",
+    "output": "/assets/games/dota-2-96.webp",
+    "width": 96,
+    "masterBytes": 18685,
+    "beforeBytes": 2766,
+    "bytes": 2766
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/dota-2.png",
+    "output": "/assets/games/dota-2-128.webp",
+    "width": 128,
+    "masterBytes": 18685,
+    "beforeBytes": 3196,
+    "bytes": 3196
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/ea-sports-fc-27.png",
+    "output": "/assets/games/ea-sports-fc-27-48.webp",
+    "width": 48,
+    "masterBytes": 7983,
+    "beforeBytes": 1286,
+    "bytes": 1286
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/ea-sports-fc-27.png",
+    "output": "/assets/games/ea-sports-fc-27-96.webp",
+    "width": 96,
+    "masterBytes": 7983,
+    "beforeBytes": 3076,
+    "bytes": 3076
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/ea-sports-fc-27.png",
+    "output": "/assets/games/ea-sports-fc-27-128.webp",
+    "width": 128,
+    "masterBytes": 7983,
+    "beforeBytes": 3622,
+    "bytes": 3622
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/fortnite.png",
+    "output": "/assets/games/fortnite-48.webp",
+    "width": 48,
+    "masterBytes": 11283,
+    "beforeBytes": 930,
+    "bytes": 930
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/fortnite.png",
+    "output": "/assets/games/fortnite-96.webp",
+    "width": 96,
+    "masterBytes": 11283,
+    "beforeBytes": 2174,
+    "bytes": 2174
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/fortnite.png",
+    "output": "/assets/games/fortnite-128.webp",
+    "width": 128,
+    "masterBytes": 11283,
+    "beforeBytes": 2240,
+    "bytes": 2240
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/league-of-legends.png",
+    "output": "/assets/games/league-of-legends-48.webp",
+    "width": 48,
+    "masterBytes": 13290,
+    "beforeBytes": 1384,
+    "bytes": 1384
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/league-of-legends.png",
+    "output": "/assets/games/league-of-legends-96.webp",
+    "width": 96,
+    "masterBytes": 13290,
+    "beforeBytes": 2958,
+    "bytes": 2958
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/league-of-legends.png",
+    "output": "/assets/games/league-of-legends-128.webp",
+    "width": 128,
+    "masterBytes": 13290,
+    "beforeBytes": 3192,
+    "bytes": 3192
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/marvel-rivals.png",
+    "output": "/assets/games/marvel-rivals-48.webp",
+    "width": 48,
+    "masterBytes": 16148,
+    "beforeBytes": 1662,
+    "bytes": 1662
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/marvel-rivals.png",
+    "output": "/assets/games/marvel-rivals-96.webp",
+    "width": 96,
+    "masterBytes": 16148,
+    "beforeBytes": 3830,
+    "bytes": 3830
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/marvel-rivals.png",
+    "output": "/assets/games/marvel-rivals-128.webp",
+    "width": 128,
+    "masterBytes": 16148,
+    "beforeBytes": 4396,
+    "bytes": 4396
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/minecraft.png",
+    "output": "/assets/games/minecraft-48.webp",
+    "width": 48,
+    "masterBytes": 10094,
+    "beforeBytes": 1102,
+    "bytes": 1102
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/minecraft.png",
+    "output": "/assets/games/minecraft-96.webp",
+    "width": 96,
+    "masterBytes": 10094,
+    "beforeBytes": 2268,
+    "bytes": 2268
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/minecraft.png",
+    "output": "/assets/games/minecraft-128.webp",
+    "width": 128,
+    "masterBytes": 10094,
+    "beforeBytes": 2272,
+    "bytes": 2272
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/overwatch-2.png",
+    "output": "/assets/games/overwatch-2-48.webp",
+    "width": 48,
+    "masterBytes": 17364,
+    "beforeBytes": 1778,
+    "bytes": 1778
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/overwatch-2.png",
+    "output": "/assets/games/overwatch-2-96.webp",
+    "width": 96,
+    "masterBytes": 17364,
+    "beforeBytes": 3944,
+    "bytes": 3944
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/overwatch-2.png",
+    "output": "/assets/games/overwatch-2-128.webp",
+    "width": 128,
+    "masterBytes": 17364,
+    "beforeBytes": 4458,
+    "bytes": 4458
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/pokemon-unite.png",
+    "output": "/assets/games/pokemon-unite-48.webp",
+    "width": 48,
+    "masterBytes": 19221,
+    "beforeBytes": 1496,
+    "bytes": 1496
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/pokemon-unite.png",
+    "output": "/assets/games/pokemon-unite-96.webp",
+    "width": 96,
+    "masterBytes": 19221,
+    "beforeBytes": 4110,
+    "bytes": 4110
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/pokemon-unite.png",
+    "output": "/assets/games/pokemon-unite-128.webp",
+    "width": 128,
+    "masterBytes": 19221,
+    "beforeBytes": 5266,
+    "bytes": 5266
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/pubg.png",
+    "output": "/assets/games/pubg-48.webp",
+    "width": 48,
+    "masterBytes": 18542,
+    "beforeBytes": 1402,
+    "bytes": 1402
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/pubg.png",
+    "output": "/assets/games/pubg-96.webp",
+    "width": 96,
+    "masterBytes": 18542,
+    "beforeBytes": 3288,
+    "bytes": 3288
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/pubg.png",
+    "output": "/assets/games/pubg-128.webp",
+    "width": 128,
+    "masterBytes": 18542,
+    "beforeBytes": 3694,
+    "bytes": 3694
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/rainbow-six-siege.png",
+    "output": "/assets/games/rainbow-six-siege-48.webp",
+    "width": 48,
+    "masterBytes": 8076,
+    "beforeBytes": 1152,
+    "bytes": 1152
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/rainbow-six-siege.png",
+    "output": "/assets/games/rainbow-six-siege-96.webp",
+    "width": 96,
+    "masterBytes": 8076,
+    "beforeBytes": 2570,
+    "bytes": 2570
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/rainbow-six-siege.png",
+    "output": "/assets/games/rainbow-six-siege-128.webp",
+    "width": 128,
+    "masterBytes": 8076,
+    "beforeBytes": 2840,
+    "bytes": 2840
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/rocket-league.png",
+    "output": "/assets/games/rocket-league-48.webp",
+    "width": 48,
+    "masterBytes": 20666,
+    "beforeBytes": 1474,
+    "bytes": 1474
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/rocket-league.png",
+    "output": "/assets/games/rocket-league-96.webp",
+    "width": 96,
+    "masterBytes": 20666,
+    "beforeBytes": 3508,
+    "bytes": 3508
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/rocket-league.png",
+    "output": "/assets/games/rocket-league-128.webp",
+    "width": 128,
+    "masterBytes": 20666,
+    "beforeBytes": 4500,
+    "bytes": 4500
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/social.png",
+    "output": "/assets/games/social-48.webp",
+    "width": 48,
+    "masterBytes": 14418,
+    "beforeBytes": 1672,
+    "bytes": 1672
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/social.png",
+    "output": "/assets/games/social-96.webp",
+    "width": 96,
+    "masterBytes": 14418,
+    "beforeBytes": 3770,
+    "bytes": 3770
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/social.png",
+    "output": "/assets/games/social-128.webp",
+    "width": 128,
+    "masterBytes": 14418,
+    "beforeBytes": 4746,
+    "bytes": 4746
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/teamfight-tactics.png",
+    "output": "/assets/games/teamfight-tactics-48.webp",
+    "width": 48,
+    "masterBytes": 8694,
+    "beforeBytes": 1422,
+    "bytes": 1422
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/teamfight-tactics.png",
+    "output": "/assets/games/teamfight-tactics-96.webp",
+    "width": 96,
+    "masterBytes": 8694,
+    "beforeBytes": 3202,
+    "bytes": 3202
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/teamfight-tactics.png",
+    "output": "/assets/games/teamfight-tactics-128.webp",
+    "width": 128,
+    "masterBytes": 8694,
+    "beforeBytes": 3740,
+    "bytes": 3740
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/valorant.png",
+    "output": "/assets/games/valorant-48.webp",
+    "width": 48,
+    "masterBytes": 13265,
+    "beforeBytes": 1152,
+    "bytes": 1152
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/valorant.png",
+    "output": "/assets/games/valorant-96.webp",
+    "width": 96,
+    "masterBytes": 13265,
+    "beforeBytes": 2522,
+    "bytes": 2522
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/valorant.png",
+    "output": "/assets/games/valorant-128.webp",
+    "width": 128,
+    "masterBytes": 13265,
+    "beforeBytes": 2870,
+    "bytes": 2870
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/wild-rift.png",
+    "output": "/assets/games/wild-rift-48.webp",
+    "width": 48,
+    "masterBytes": 17614,
+    "beforeBytes": 1134,
+    "bytes": 1134
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/wild-rift.png",
+    "output": "/assets/games/wild-rift-96.webp",
+    "width": 96,
+    "masterBytes": 17614,
+    "beforeBytes": 2742,
+    "bytes": 2742
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/wild-rift.png",
+    "output": "/assets/games/wild-rift-128.webp",
+    "width": 128,
+    "masterBytes": 17614,
+    "beforeBytes": 3160,
+    "bytes": 3160
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/world-of-warcraft.png",
+    "output": "/assets/games/world-of-warcraft-48.webp",
+    "width": 48,
+    "masterBytes": 9950,
+    "beforeBytes": 1628,
+    "bytes": 1628
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/world-of-warcraft.png",
+    "output": "/assets/games/world-of-warcraft-96.webp",
+    "width": 96,
+    "masterBytes": 9950,
+    "beforeBytes": 3924,
+    "bytes": 3924
+  },
+  {
+    "family": "game art",
+    "source": "/assets/games/world-of-warcraft.png",
+    "output": "/assets/games/world-of-warcraft-128.webp",
+    "width": 128,
+    "masterBytes": 9950,
+    "beforeBytes": 4776,
+    "bytes": 4776
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/apple-pay.png",
+    "output": "/assets/payments/apple-pay-56.webp",
+    "width": 56,
+    "masterBytes": 8376,
+    "beforeBytes": 834,
+    "bytes": 834
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/apple-pay.png",
+    "output": "/assets/payments/apple-pay-112.webp",
+    "width": 112,
+    "masterBytes": 8376,
+    "beforeBytes": 1758,
+    "bytes": 1758
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/apple-pay.png",
+    "output": "/assets/payments/apple-pay-168.webp",
+    "width": 168,
+    "masterBytes": 8376,
+    "beforeBytes": 2884,
+    "bytes": 2884
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/apple-pay.png",
+    "output": "/assets/payments/apple-pay-252.webp",
+    "width": 252,
+    "masterBytes": 8376,
+    "beforeBytes": 5218,
+    "bytes": 5218
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/google-pay.png",
+    "output": "/assets/payments/google-pay-56.webp",
+    "width": 56,
+    "masterBytes": 21805,
+    "beforeBytes": 2124,
+    "bytes": 2124
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/google-pay.png",
+    "output": "/assets/payments/google-pay-112.webp",
+    "width": 112,
+    "masterBytes": 21805,
+    "beforeBytes": 4852,
+    "bytes": 4852
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/google-pay.png",
+    "output": "/assets/payments/google-pay-168.webp",
+    "width": 168,
+    "masterBytes": 21805,
+    "beforeBytes": 7564,
+    "bytes": 7564
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/google-pay.png",
+    "output": "/assets/payments/google-pay-252.webp",
+    "width": 252,
+    "masterBytes": 21805,
+    "beforeBytes": 12926,
+    "bytes": 12926
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/paypal.png",
+    "output": "/assets/payments/paypal-56.webp",
+    "width": 56,
+    "masterBytes": 22693,
+    "beforeBytes": 1656,
+    "bytes": 1656
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/paypal.png",
+    "output": "/assets/payments/paypal-112.webp",
+    "width": 112,
+    "masterBytes": 22693,
+    "beforeBytes": 4648,
+    "bytes": 4648
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/paypal.png",
+    "output": "/assets/payments/paypal-168.webp",
+    "width": 168,
+    "masterBytes": 22693,
+    "beforeBytes": 7476,
+    "bytes": 7476
+  },
+  {
+    "family": "payment logos",
+    "source": "/assets/payments/paypal.png",
+    "output": "/assets/payments/paypal-252.webp",
+    "width": 252,
+    "masterBytes": 22693,
+    "beforeBytes": 12568,
+    "bytes": 12568
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ad.svg",
+    "output": "/assets/flags/webp/ad-54.webp",
+    "width": 54,
+    "masterBytes": 33675,
+    "beforeBytes": 828,
+    "bytes": 828
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ae.svg",
+    "output": "/assets/flags/webp/ae-54.webp",
+    "width": 54,
+    "masterBytes": 266,
+    "beforeBytes": 140,
+    "bytes": 140
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/af.svg",
+    "output": "/assets/flags/webp/af-54.webp",
+    "width": 54,
+    "masterBytes": 21056,
+    "beforeBytes": 578,
+    "bytes": 578
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ag.svg",
+    "output": "/assets/flags/webp/ag-54.webp",
+    "width": 54,
+    "masterBytes": 743,
+    "beforeBytes": 694,
+    "bytes": 694
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ai.svg",
+    "output": "/assets/flags/webp/ai-54.webp",
+    "width": 54,
+    "masterBytes": 2336,
+    "beforeBytes": 1024,
+    "bytes": 1024
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/al.svg",
+    "output": "/assets/flags/webp/al-54.webp",
+    "width": 54,
+    "masterBytes": 3231,
+    "beforeBytes": 544,
+    "bytes": 544
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/am.svg",
+    "output": "/assets/flags/webp/am-54.webp",
+    "width": 54,
+    "masterBytes": 228,
+    "beforeBytes": 110,
+    "bytes": 110
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ao.svg",
+    "output": "/assets/flags/webp/ao-54.webp",
+    "width": 54,
+    "masterBytes": 1606,
+    "beforeBytes": 554,
+    "bytes": 554
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/aq.svg",
+    "output": "/assets/flags/webp/aq-54.webp",
+    "width": 54,
+    "masterBytes": 2823,
+    "beforeBytes": 420,
+    "bytes": 420
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ar.svg",
+    "output": "/assets/flags/webp/ar-54.webp",
+    "width": 54,
+    "masterBytes": 3558,
+    "beforeBytes": 360,
+    "bytes": 360
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/as.svg",
+    "output": "/assets/flags/webp/as-54.webp",
+    "width": 54,
+    "masterBytes": 32249,
+    "beforeBytes": 1202,
+    "bytes": 1202
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/at.svg",
+    "output": "/assets/flags/webp/at-54.webp",
+    "width": 54,
+    "masterBytes": 195,
+    "beforeBytes": 98,
+    "bytes": 98
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/au.svg",
+    "output": "/assets/flags/webp/au-54.webp",
+    "width": 54,
+    "masterBytes": 1296,
+    "beforeBytes": 1158,
+    "bytes": 1158
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/aw.svg",
+    "output": "/assets/flags/webp/aw-54.webp",
+    "width": 54,
+    "masterBytes": 9003,
+    "beforeBytes": 350,
+    "bytes": 350
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ax.svg",
+    "output": "/assets/flags/webp/ax-54.webp",
+    "width": 54,
+    "masterBytes": 556,
+    "beforeBytes": 234,
+    "bytes": 234
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/az.svg",
+    "output": "/assets/flags/webp/az-54.webp",
+    "width": 54,
+    "masterBytes": 501,
+    "beforeBytes": 342,
+    "bytes": 342
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ba.svg",
+    "output": "/assets/flags/webp/ba-54.webp",
+    "width": 54,
+    "masterBytes": 1240,
+    "beforeBytes": 720,
+    "bytes": 720
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bb.svg",
+    "output": "/assets/flags/webp/bb-54.webp",
+    "width": 54,
+    "masterBytes": 628,
+    "beforeBytes": 360,
+    "bytes": 360
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bd.svg",
+    "output": "/assets/flags/webp/bd-54.webp",
+    "width": 54,
+    "masterBytes": 187,
+    "beforeBytes": 332,
+    "bytes": 332
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/be.svg",
+    "output": "/assets/flags/webp/be-54.webp",
+    "width": 54,
+    "masterBytes": 302,
+    "beforeBytes": 104,
+    "bytes": 104
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bf.svg",
+    "output": "/assets/flags/webp/bf-54.webp",
+    "width": 54,
+    "masterBytes": 353,
+    "beforeBytes": 442,
+    "bytes": 442
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bg.svg",
+    "output": "/assets/flags/webp/bg-54.webp",
+    "width": 54,
+    "masterBytes": 225,
+    "beforeBytes": 106,
+    "bytes": 106
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bh.svg",
+    "output": "/assets/flags/webp/bh-54.webp",
+    "width": 54,
+    "masterBytes": 252,
+    "beforeBytes": 316,
+    "bytes": 316
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bi.svg",
+    "output": "/assets/flags/webp/bi-54.webp",
+    "width": 54,
+    "masterBytes": 1078,
+    "beforeBytes": 898,
+    "bytes": 898
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bj.svg",
+    "output": "/assets/flags/webp/bj-54.webp",
+    "width": 54,
+    "masterBytes": 499,
+    "beforeBytes": 142,
+    "bytes": 142
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bl.svg",
+    "output": "/assets/flags/webp/bl-54.webp",
+    "width": 54,
+    "masterBytes": 231,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bm.svg",
+    "output": "/assets/flags/webp/bm-54.webp",
+    "width": 54,
+    "masterBytes": 22811,
+    "beforeBytes": 1488,
+    "bytes": 1488
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bn.svg",
+    "output": "/assets/flags/webp/bn-54.webp",
+    "width": 54,
+    "masterBytes": 14316,
+    "beforeBytes": 1442,
+    "bytes": 1442
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bo.svg",
+    "output": "/assets/flags/webp/bo-54.webp",
+    "width": 54,
+    "masterBytes": 112084,
+    "beforeBytes": 524,
+    "bytes": 524
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bq.svg",
+    "output": "/assets/flags/webp/bq-54.webp",
+    "width": 54,
+    "masterBytes": 221,
+    "beforeBytes": 114,
+    "bytes": 114
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/br.svg",
+    "output": "/assets/flags/webp/br-54.webp",
+    "width": 54,
+    "masterBytes": 8096,
+    "beforeBytes": 1194,
+    "bytes": 1194
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bs.svg",
+    "output": "/assets/flags/webp/bs-54.webp",
+    "width": 54,
+    "masterBytes": 557,
+    "beforeBytes": 514,
+    "bytes": 514
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bt.svg",
+    "output": "/assets/flags/webp/bt-54.webp",
+    "width": 54,
+    "masterBytes": 25115,
+    "beforeBytes": 1208,
+    "bytes": 1208
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bv.svg",
+    "output": "/assets/flags/webp/bv-54.webp",
+    "width": 54,
+    "masterBytes": 582,
+    "beforeBytes": 262,
+    "bytes": 262
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bw.svg",
+    "output": "/assets/flags/webp/bw-54.webp",
+    "width": 54,
+    "masterBytes": 264,
+    "beforeBytes": 104,
+    "bytes": 104
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/by.svg",
+    "output": "/assets/flags/webp/by-54.webp",
+    "width": 54,
+    "masterBytes": 2124,
+    "beforeBytes": 634,
+    "bytes": 634
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/bz.svg",
+    "output": "/assets/flags/webp/bz-54.webp",
+    "width": 54,
+    "masterBytes": 46671,
+    "beforeBytes": 2218,
+    "bytes": 2218
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ca.svg",
+    "output": "/assets/flags/webp/ca-54.webp",
+    "width": 54,
+    "masterBytes": 642,
+    "beforeBytes": 426,
+    "bytes": 426
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cc.svg",
+    "output": "/assets/flags/webp/cc-54.webp",
+    "width": 54,
+    "masterBytes": 3150,
+    "beforeBytes": 512,
+    "bytes": 512
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cd.svg",
+    "output": "/assets/flags/webp/cd-54.webp",
+    "width": 54,
+    "masterBytes": 334,
+    "beforeBytes": 522,
+    "bytes": 522
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cf.svg",
+    "output": "/assets/flags/webp/cf-54.webp",
+    "width": 54,
+    "masterBytes": 687,
+    "beforeBytes": 364,
+    "bytes": 364
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cg.svg",
+    "output": "/assets/flags/webp/cg-54.webp",
+    "width": 54,
+    "masterBytes": 470,
+    "beforeBytes": 204,
+    "bytes": 204
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ch.svg",
+    "output": "/assets/flags/webp/ch-54.webp",
+    "width": 54,
+    "masterBytes": 290,
+    "beforeBytes": 144,
+    "bytes": 144
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ci.svg",
+    "output": "/assets/flags/webp/ci-54.webp",
+    "width": 54,
+    "masterBytes": 277,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ck.svg",
+    "output": "/assets/flags/webp/ck-54.webp",
+    "width": 54,
+    "masterBytes": 1898,
+    "beforeBytes": 1218,
+    "bytes": 1218
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cl.svg",
+    "output": "/assets/flags/webp/cl-54.webp",
+    "width": 54,
+    "masterBytes": 552,
+    "beforeBytes": 278,
+    "bytes": 278
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cm.svg",
+    "output": "/assets/flags/webp/cm-54.webp",
+    "width": 54,
+    "masterBytes": 840,
+    "beforeBytes": 234,
+    "bytes": 234
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cn.svg",
+    "output": "/assets/flags/webp/cn-54.webp",
+    "width": 54,
+    "masterBytes": 813,
+    "beforeBytes": 284,
+    "bytes": 284
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/co.svg",
+    "output": "/assets/flags/webp/co-54.webp",
+    "width": 54,
+    "masterBytes": 286,
+    "beforeBytes": 112,
+    "bytes": 112
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cp.svg",
+    "output": "/assets/flags/webp/cp-54.webp",
+    "width": 54,
+    "masterBytes": 289,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cr.svg",
+    "output": "/assets/flags/webp/cr-54.webp",
+    "width": 54,
+    "masterBytes": 290,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cu.svg",
+    "output": "/assets/flags/webp/cu-54.webp",
+    "width": 54,
+    "masterBytes": 610,
+    "beforeBytes": 618,
+    "bytes": 618
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cv.svg",
+    "output": "/assets/flags/webp/cv-54.webp",
+    "width": 54,
+    "masterBytes": 1411,
+    "beforeBytes": 668,
+    "bytes": 668
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cw.svg",
+    "output": "/assets/flags/webp/cw-54.webp",
+    "width": 54,
+    "masterBytes": 687,
+    "beforeBytes": 276,
+    "bytes": 276
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cx.svg",
+    "output": "/assets/flags/webp/cx-54.webp",
+    "width": 54,
+    "masterBytes": 2462,
+    "beforeBytes": 756,
+    "bytes": 756
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cy.svg",
+    "output": "/assets/flags/webp/cy-54.webp",
+    "width": 54,
+    "masterBytes": 5914,
+    "beforeBytes": 604,
+    "bytes": 604
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/cz.svg",
+    "output": "/assets/flags/webp/cz-54.webp",
+    "width": 54,
+    "masterBytes": 225,
+    "beforeBytes": 266,
+    "bytes": 266
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/de.svg",
+    "output": "/assets/flags/webp/de-54.webp",
+    "width": 54,
+    "masterBytes": 221,
+    "beforeBytes": 92,
+    "bytes": 92
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/dg.svg",
+    "output": "/assets/flags/webp/dg-54.webp",
+    "width": 54,
+    "masterBytes": 23163,
+    "beforeBytes": 3252,
+    "bytes": 3252
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/dj.svg",
+    "output": "/assets/flags/webp/dj-54.webp",
+    "width": 54,
+    "masterBytes": 585,
+    "beforeBytes": 434,
+    "bytes": 434
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/dk.svg",
+    "output": "/assets/flags/webp/dk-54.webp",
+    "width": 54,
+    "masterBytes": 236,
+    "beforeBytes": 158,
+    "bytes": 158
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/dm.svg",
+    "output": "/assets/flags/webp/dm-54.webp",
+    "width": 54,
+    "masterBytes": 15822,
+    "beforeBytes": 1088,
+    "bytes": 1088
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/do.svg",
+    "output": "/assets/flags/webp/do-54.webp",
+    "width": 54,
+    "masterBytes": 50066,
+    "beforeBytes": 430,
+    "bytes": 430
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/dz.svg",
+    "output": "/assets/flags/webp/dz-54.webp",
+    "width": 54,
+    "masterBytes": 294,
+    "beforeBytes": 468,
+    "bytes": 468
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ec.svg",
+    "output": "/assets/flags/webp/ec-54.webp",
+    "width": 54,
+    "masterBytes": 28973,
+    "beforeBytes": 2036,
+    "bytes": 2036
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ee.svg",
+    "output": "/assets/flags/webp/ee-54.webp",
+    "width": 54,
+    "masterBytes": 225,
+    "beforeBytes": 108,
+    "bytes": 108
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/eg.svg",
+    "output": "/assets/flags/webp/eg-54.webp",
+    "width": 54,
+    "masterBytes": 9854,
+    "beforeBytes": 346,
+    "bytes": 346
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/eh.svg",
+    "output": "/assets/flags/webp/eh-54.webp",
+    "width": 54,
+    "masterBytes": 804,
+    "beforeBytes": 474,
+    "bytes": 474
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/er.svg",
+    "output": "/assets/flags/webp/er-54.webp",
+    "width": 54,
+    "masterBytes": 3188,
+    "beforeBytes": 928,
+    "bytes": 928
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/es.svg",
+    "output": "/assets/flags/webp/es-54.webp",
+    "width": 54,
+    "masterBytes": 91011,
+    "beforeBytes": 728,
+    "bytes": 728
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/et.svg",
+    "output": "/assets/flags/webp/et-54.webp",
+    "width": 54,
+    "masterBytes": 1145,
+    "beforeBytes": 610,
+    "bytes": 610
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/eu.svg",
+    "output": "/assets/flags/webp/eu-54.webp",
+    "width": 54,
+    "masterBytes": 941,
+    "beforeBytes": 278,
+    "bytes": 278
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/fi.svg",
+    "output": "/assets/flags/webp/fi-54.webp",
+    "width": 54,
+    "masterBytes": 234,
+    "beforeBytes": 168,
+    "bytes": 168
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/fj.svg",
+    "output": "/assets/flags/webp/fj-54.webp",
+    "width": 54,
+    "masterBytes": 25686,
+    "beforeBytes": 1540,
+    "bytes": 1540
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/fk.svg",
+    "output": "/assets/flags/webp/fk-54.webp",
+    "width": 54,
+    "masterBytes": 30044,
+    "beforeBytes": 1926,
+    "bytes": 1926
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/fm.svg",
+    "output": "/assets/flags/webp/fm-54.webp",
+    "width": 54,
+    "masterBytes": 771,
+    "beforeBytes": 352,
+    "bytes": 352
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/fo.svg",
+    "output": "/assets/flags/webp/fo-54.webp",
+    "width": 54,
+    "masterBytes": 555,
+    "beforeBytes": 234,
+    "bytes": 234
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/fr.svg",
+    "output": "/assets/flags/webp/fr-54.webp",
+    "width": 54,
+    "masterBytes": 231,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ga.svg",
+    "output": "/assets/flags/webp/ga-54.webp",
+    "width": 54,
+    "masterBytes": 271,
+    "beforeBytes": 108,
+    "bytes": 108
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gb.svg",
+    "output": "/assets/flags/webp/gb-54.webp",
+    "width": 54,
+    "masterBytes": 504,
+    "beforeBytes": 1376,
+    "bytes": 1376
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gd.svg",
+    "output": "/assets/flags/webp/gd-54.webp",
+    "width": 54,
+    "masterBytes": 1720,
+    "beforeBytes": 968,
+    "bytes": 968
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ge.svg",
+    "output": "/assets/flags/webp/ge-54.webp",
+    "width": 54,
+    "masterBytes": 1362,
+    "beforeBytes": 310,
+    "bytes": 310
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gf.svg",
+    "output": "/assets/flags/webp/gf-54.webp",
+    "width": 54,
+    "masterBytes": 231,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gg.svg",
+    "output": "/assets/flags/webp/gg-54.webp",
+    "width": 54,
+    "masterBytes": 604,
+    "beforeBytes": 262,
+    "bytes": 262
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gh.svg",
+    "output": "/assets/flags/webp/gh-54.webp",
+    "width": 54,
+    "masterBytes": 293,
+    "beforeBytes": 276,
+    "bytes": 276
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gi.svg",
+    "output": "/assets/flags/webp/gi-54.webp",
+    "width": 54,
+    "masterBytes": 2948,
+    "beforeBytes": 904,
+    "bytes": 904
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gl.svg",
+    "output": "/assets/flags/webp/gl-54.webp",
+    "width": 54,
+    "masterBytes": 223,
+    "beforeBytes": 346,
+    "bytes": 346
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gm.svg",
+    "output": "/assets/flags/webp/gm-54.webp",
+    "width": 54,
+    "masterBytes": 543,
+    "beforeBytes": 122,
+    "bytes": 122
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gn.svg",
+    "output": "/assets/flags/webp/gn-54.webp",
+    "width": 54,
+    "masterBytes": 292,
+    "beforeBytes": 90,
+    "bytes": 90
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gp.svg",
+    "output": "/assets/flags/webp/gp-54.webp",
+    "width": 54,
+    "masterBytes": 231,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gq.svg",
+    "output": "/assets/flags/webp/gq-54.webp",
+    "width": 54,
+    "masterBytes": 5072,
+    "beforeBytes": 618,
+    "bytes": 618
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gr.svg",
+    "output": "/assets/flags/webp/gr-54.webp",
+    "width": 54,
+    "masterBytes": 868,
+    "beforeBytes": 246,
+    "bytes": 246
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gs.svg",
+    "output": "/assets/flags/webp/gs-54.webp",
+    "width": 54,
+    "masterBytes": 32525,
+    "beforeBytes": 2282,
+    "bytes": 2282
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gt.svg",
+    "output": "/assets/flags/webp/gt-54.webp",
+    "width": 54,
+    "masterBytes": 35091,
+    "beforeBytes": 590,
+    "bytes": 590
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gu.svg",
+    "output": "/assets/flags/webp/gu-54.webp",
+    "width": 54,
+    "masterBytes": 5096,
+    "beforeBytes": 1368,
+    "bytes": 1368
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gw.svg",
+    "output": "/assets/flags/webp/gw-54.webp",
+    "width": 54,
+    "masterBytes": 846,
+    "beforeBytes": 288,
+    "bytes": 288
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/gy.svg",
+    "output": "/assets/flags/webp/gy-54.webp",
+    "width": 54,
+    "masterBytes": 493,
+    "beforeBytes": 1072,
+    "bytes": 1072
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/hk.svg",
+    "output": "/assets/flags/webp/hk-54.webp",
+    "width": 54,
+    "masterBytes": 727,
+    "beforeBytes": 500,
+    "bytes": 500
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/hm.svg",
+    "output": "/assets/flags/webp/hm-54.webp",
+    "width": 54,
+    "masterBytes": 1296,
+    "beforeBytes": 1158,
+    "bytes": 1158
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/hn.svg",
+    "output": "/assets/flags/webp/hn-54.webp",
+    "width": 54,
+    "masterBytes": 1144,
+    "beforeBytes": 274,
+    "bytes": 274
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/hr.svg",
+    "output": "/assets/flags/webp/hr-54.webp",
+    "width": 54,
+    "masterBytes": 41177,
+    "beforeBytes": 824,
+    "bytes": 824
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ht.svg",
+    "output": "/assets/flags/webp/ht-54.webp",
+    "width": 54,
+    "masterBytes": 14570,
+    "beforeBytes": 514,
+    "bytes": 514
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/hu.svg",
+    "output": "/assets/flags/webp/hu-54.webp",
+    "width": 54,
+    "masterBytes": 271,
+    "beforeBytes": 114,
+    "bytes": 114
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ic.svg",
+    "output": "/assets/flags/webp/ic-54.webp",
+    "width": 54,
+    "masterBytes": 286,
+    "beforeBytes": 108,
+    "bytes": 108
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/id.svg",
+    "output": "/assets/flags/webp/id-54.webp",
+    "width": 54,
+    "masterBytes": 178,
+    "beforeBytes": 82,
+    "bytes": 82
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ie.svg",
+    "output": "/assets/flags/webp/ie-54.webp",
+    "width": 54,
+    "masterBytes": 289,
+    "beforeBytes": 110,
+    "bytes": 110
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/il.svg",
+    "output": "/assets/flags/webp/il-54.webp",
+    "width": 54,
+    "masterBytes": 834,
+    "beforeBytes": 434,
+    "bytes": 434
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/im.svg",
+    "output": "/assets/flags/webp/im-54.webp",
+    "width": 54,
+    "masterBytes": 9896,
+    "beforeBytes": 932,
+    "bytes": 932
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/in.svg",
+    "output": "/assets/flags/webp/in-54.webp",
+    "width": 54,
+    "masterBytes": 1090,
+    "beforeBytes": 330,
+    "bytes": 330
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/io.svg",
+    "output": "/assets/flags/webp/io-54.webp",
+    "width": 54,
+    "masterBytes": 23163,
+    "beforeBytes": 3252,
+    "bytes": 3252
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/iq.svg",
+    "output": "/assets/flags/webp/iq-54.webp",
+    "width": 54,
+    "masterBytes": 1466,
+    "beforeBytes": 334,
+    "bytes": 334
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ir.svg",
+    "output": "/assets/flags/webp/ir-54.webp",
+    "width": 54,
+    "masterBytes": 15397,
+    "beforeBytes": 1076,
+    "bytes": 1076
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/is.svg",
+    "output": "/assets/flags/webp/is-54.webp",
+    "width": 54,
+    "masterBytes": 509,
+    "beforeBytes": 206,
+    "bytes": 206
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/it.svg",
+    "output": "/assets/flags/webp/it-54.webp",
+    "width": 54,
+    "masterBytes": 289,
+    "beforeBytes": 116,
+    "bytes": 116
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/je.svg",
+    "output": "/assets/flags/webp/je-54.webp",
+    "width": 54,
+    "masterBytes": 46069,
+    "beforeBytes": 1062,
+    "bytes": 1062
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/jm.svg",
+    "output": "/assets/flags/webp/jm-54.webp",
+    "width": 54,
+    "masterBytes": 401,
+    "beforeBytes": 336,
+    "bytes": 336
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/jo.svg",
+    "output": "/assets/flags/webp/jo-54.webp",
+    "width": 54,
+    "masterBytes": 727,
+    "beforeBytes": 384,
+    "bytes": 384
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/jp.svg",
+    "output": "/assets/flags/webp/jp-54.webp",
+    "width": 54,
+    "masterBytes": 470,
+    "beforeBytes": 302,
+    "bytes": 302
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ke.svg",
+    "output": "/assets/flags/webp/ke-54.webp",
+    "width": 54,
+    "masterBytes": 1421,
+    "beforeBytes": 698,
+    "bytes": 698
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/kg.svg",
+    "output": "/assets/flags/webp/kg-54.webp",
+    "width": 54,
+    "masterBytes": 3371,
+    "beforeBytes": 652,
+    "bytes": 652
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/kh.svg",
+    "output": "/assets/flags/webp/kh-54.webp",
+    "width": 54,
+    "masterBytes": 7277,
+    "beforeBytes": 712,
+    "bytes": 712
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ki.svg",
+    "output": "/assets/flags/webp/ki-54.webp",
+    "width": 54,
+    "masterBytes": 5637,
+    "beforeBytes": 1916,
+    "bytes": 1916
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/km.svg",
+    "output": "/assets/flags/webp/km-54.webp",
+    "width": 54,
+    "masterBytes": 1053,
+    "beforeBytes": 712,
+    "bytes": 712
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/kn.svg",
+    "output": "/assets/flags/webp/kn-54.webp",
+    "width": 54,
+    "masterBytes": 796,
+    "beforeBytes": 1030,
+    "bytes": 1030
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/kp.svg",
+    "output": "/assets/flags/webp/kp-54.webp",
+    "width": 54,
+    "masterBytes": 790,
+    "beforeBytes": 470,
+    "bytes": 470
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/kr.svg",
+    "output": "/assets/flags/webp/kr-54.webp",
+    "width": 54,
+    "masterBytes": 1061,
+    "beforeBytes": 1050,
+    "bytes": 1050
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/kw.svg",
+    "output": "/assets/flags/webp/kw-54.webp",
+    "width": 54,
+    "masterBytes": 517,
+    "beforeBytes": 316,
+    "bytes": 316
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ky.svg",
+    "output": "/assets/flags/webp/ky-54.webp",
+    "width": 54,
+    "masterBytes": 24005,
+    "beforeBytes": 2226,
+    "bytes": 2226
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/kz.svg",
+    "output": "/assets/flags/webp/kz-54.webp",
+    "width": 54,
+    "masterBytes": 7289,
+    "beforeBytes": 968,
+    "bytes": 968
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/la.svg",
+    "output": "/assets/flags/webp/la-54.webp",
+    "width": 54,
+    "masterBytes": 456,
+    "beforeBytes": 262,
+    "bytes": 262
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/lb.svg",
+    "output": "/assets/flags/webp/lb-54.webp",
+    "width": 54,
+    "masterBytes": 2803,
+    "beforeBytes": 572,
+    "bytes": 572
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/lc.svg",
+    "output": "/assets/flags/webp/lc-54.webp",
+    "width": 54,
+    "masterBytes": 352,
+    "beforeBytes": 778,
+    "bytes": 778
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/li.svg",
+    "output": "/assets/flags/webp/li-54.webp",
+    "width": 54,
+    "masterBytes": 8245,
+    "beforeBytes": 460,
+    "bytes": 460
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/lk.svg",
+    "output": "/assets/flags/webp/lk-54.webp",
+    "width": 54,
+    "masterBytes": 11338,
+    "beforeBytes": 1042,
+    "bytes": 1042
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/lr.svg",
+    "output": "/assets/flags/webp/lr-54.webp",
+    "width": 54,
+    "masterBytes": 713,
+    "beforeBytes": 378,
+    "bytes": 378
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ls.svg",
+    "output": "/assets/flags/webp/ls-54.webp",
+    "width": 54,
+    "masterBytes": 1133,
+    "beforeBytes": 280,
+    "bytes": 280
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/lt.svg",
+    "output": "/assets/flags/webp/lt-54.webp",
+    "width": 54,
+    "masterBytes": 439,
+    "beforeBytes": 120,
+    "bytes": 120
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/lu.svg",
+    "output": "/assets/flags/webp/lu-54.webp",
+    "width": 54,
+    "masterBytes": 225,
+    "beforeBytes": 114,
+    "bytes": 114
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/lv.svg",
+    "output": "/assets/flags/webp/lv-54.webp",
+    "width": 54,
+    "masterBytes": 230,
+    "beforeBytes": 98,
+    "bytes": 98
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ly.svg",
+    "output": "/assets/flags/webp/ly-54.webp",
+    "width": 54,
+    "masterBytes": 549,
+    "beforeBytes": 268,
+    "bytes": 268
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ma.svg",
+    "output": "/assets/flags/webp/ma-54.webp",
+    "width": 54,
+    "masterBytes": 247,
+    "beforeBytes": 216,
+    "bytes": 216
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mc.svg",
+    "output": "/assets/flags/webp/mc-54.webp",
+    "width": 54,
+    "masterBytes": 234,
+    "beforeBytes": 84,
+    "bytes": 84
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/md.svg",
+    "output": "/assets/flags/webp/md-54.webp",
+    "width": 54,
+    "masterBytes": 11203,
+    "beforeBytes": 1446,
+    "bytes": 1446
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/me.svg",
+    "output": "/assets/flags/webp/me-54.webp",
+    "width": 54,
+    "masterBytes": 62566,
+    "beforeBytes": 1206,
+    "bytes": 1206
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mf.svg",
+    "output": "/assets/flags/webp/mf-54.webp",
+    "width": 54,
+    "masterBytes": 231,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mg.svg",
+    "output": "/assets/flags/webp/mg-54.webp",
+    "width": 54,
+    "masterBytes": 299,
+    "beforeBytes": 116,
+    "bytes": 116
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mh.svg",
+    "output": "/assets/flags/webp/mh-54.webp",
+    "width": 54,
+    "masterBytes": 729,
+    "beforeBytes": 1516,
+    "bytes": 1516
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mk.svg",
+    "output": "/assets/flags/webp/mk-54.webp",
+    "width": 54,
+    "masterBytes": 379,
+    "beforeBytes": 684,
+    "bytes": 684
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ml.svg",
+    "output": "/assets/flags/webp/ml-54.webp",
+    "width": 54,
+    "masterBytes": 273,
+    "beforeBytes": 112,
+    "bytes": 112
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mm.svg",
+    "output": "/assets/flags/webp/mm-54.webp",
+    "width": 54,
+    "masterBytes": 710,
+    "beforeBytes": 506,
+    "bytes": 506
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mn.svg",
+    "output": "/assets/flags/webp/mn-54.webp",
+    "width": 54,
+    "masterBytes": 1437,
+    "beforeBytes": 398,
+    "bytes": 398
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mo.svg",
+    "output": "/assets/flags/webp/mo-54.webp",
+    "width": 54,
+    "masterBytes": 1509,
+    "beforeBytes": 602,
+    "bytes": 602
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mp.svg",
+    "output": "/assets/flags/webp/mp-54.webp",
+    "width": 54,
+    "masterBytes": 23332,
+    "beforeBytes": 2080,
+    "bytes": 2080
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mq.svg",
+    "output": "/assets/flags/webp/mq-54.webp",
+    "width": 54,
+    "masterBytes": 228,
+    "beforeBytes": 278,
+    "bytes": 278
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mr.svg",
+    "output": "/assets/flags/webp/mr-54.webp",
+    "width": 54,
+    "masterBytes": 445,
+    "beforeBytes": 404,
+    "bytes": 404
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ms.svg",
+    "output": "/assets/flags/webp/ms-54.webp",
+    "width": 54,
+    "masterBytes": 6066,
+    "beforeBytes": 1486,
+    "bytes": 1486
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mt.svg",
+    "output": "/assets/flags/webp/mt-54.webp",
+    "width": 54,
+    "masterBytes": 14638,
+    "beforeBytes": 438,
+    "bytes": 438
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mu.svg",
+    "output": "/assets/flags/webp/mu-54.webp",
+    "width": 54,
+    "masterBytes": 316,
+    "beforeBytes": 124,
+    "bytes": 124
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mv.svg",
+    "output": "/assets/flags/webp/mv-54.webp",
+    "width": 54,
+    "masterBytes": 286,
+    "beforeBytes": 276,
+    "bytes": 276
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mw.svg",
+    "output": "/assets/flags/webp/mw-54.webp",
+    "width": 54,
+    "masterBytes": 3692,
+    "beforeBytes": 476,
+    "bytes": 476
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mx.svg",
+    "output": "/assets/flags/webp/mx-54.webp",
+    "width": 54,
+    "masterBytes": 93451,
+    "beforeBytes": 596,
+    "bytes": 596
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/my.svg",
+    "output": "/assets/flags/webp/my-54.webp",
+    "width": 54,
+    "masterBytes": 1386,
+    "beforeBytes": 526,
+    "bytes": 526
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/mz.svg",
+    "output": "/assets/flags/webp/mz-54.webp",
+    "width": 54,
+    "masterBytes": 2609,
+    "beforeBytes": 778,
+    "bytes": 778
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/na.svg",
+    "output": "/assets/flags/webp/na-54.webp",
+    "width": 54,
+    "masterBytes": 993,
+    "beforeBytes": 1208,
+    "bytes": 1208
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/nc.svg",
+    "output": "/assets/flags/webp/nc-54.webp",
+    "width": 54,
+    "masterBytes": 1345,
+    "beforeBytes": 870,
+    "bytes": 870
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ne.svg",
+    "output": "/assets/flags/webp/ne-54.webp",
+    "width": 54,
+    "masterBytes": 273,
+    "beforeBytes": 230,
+    "bytes": 230
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/nf.svg",
+    "output": "/assets/flags/webp/nf-54.webp",
+    "width": 54,
+    "masterBytes": 5812,
+    "beforeBytes": 806,
+    "bytes": 806
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ng.svg",
+    "output": "/assets/flags/webp/ng-54.webp",
+    "width": 54,
+    "masterBytes": 257,
+    "beforeBytes": 98,
+    "bytes": 98
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ni.svg",
+    "output": "/assets/flags/webp/ni-54.webp",
+    "width": 54,
+    "masterBytes": 18435,
+    "beforeBytes": 382,
+    "bytes": 382
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/nl.svg",
+    "output": "/assets/flags/webp/nl-54.webp",
+    "width": 54,
+    "masterBytes": 225,
+    "beforeBytes": 108,
+    "bytes": 108
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/no.svg",
+    "output": "/assets/flags/webp/no-54.webp",
+    "width": 54,
+    "masterBytes": 318,
+    "beforeBytes": 220,
+    "bytes": 220
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/np.svg",
+    "output": "/assets/flags/webp/np-54.webp",
+    "width": 54,
+    "masterBytes": 1009,
+    "beforeBytes": 882,
+    "bytes": 882
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/nr.svg",
+    "output": "/assets/flags/webp/nr-54.webp",
+    "width": 54,
+    "masterBytes": 646,
+    "beforeBytes": 332,
+    "bytes": 332
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/nu.svg",
+    "output": "/assets/flags/webp/nu-54.webp",
+    "width": 54,
+    "masterBytes": 864,
+    "beforeBytes": 1062,
+    "bytes": 1062
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/nz.svg",
+    "output": "/assets/flags/webp/nz-54.webp",
+    "width": 54,
+    "masterBytes": 2172,
+    "beforeBytes": 1048,
+    "bytes": 1048
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/om.svg",
+    "output": "/assets/flags/webp/om-54.webp",
+    "width": 54,
+    "masterBytes": 22623,
+    "beforeBytes": 334,
+    "bytes": 334
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pa.svg",
+    "output": "/assets/flags/webp/pa-54.webp",
+    "width": 54,
+    "masterBytes": 744,
+    "beforeBytes": 490,
+    "bytes": 490
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pc.svg",
+    "output": "/assets/flags/webp/pc-54.webp",
+    "width": 54,
+    "masterBytes": 3874,
+    "beforeBytes": 828,
+    "bytes": 828
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pe.svg",
+    "output": "/assets/flags/webp/pe-54.webp",
+    "width": 54,
+    "masterBytes": 186,
+    "beforeBytes": 96,
+    "bytes": 96
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pf.svg",
+    "output": "/assets/flags/webp/pf-54.webp",
+    "width": 54,
+    "masterBytes": 4152,
+    "beforeBytes": 948,
+    "bytes": 948
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pg.svg",
+    "output": "/assets/flags/webp/pg-54.webp",
+    "width": 54,
+    "masterBytes": 1656,
+    "beforeBytes": 784,
+    "bytes": 784
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ph.svg",
+    "output": "/assets/flags/webp/ph-54.webp",
+    "width": 54,
+    "masterBytes": 1501,
+    "beforeBytes": 840,
+    "bytes": 840
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pk.svg",
+    "output": "/assets/flags/webp/pk-54.webp",
+    "width": 54,
+    "masterBytes": 741,
+    "beforeBytes": 396,
+    "bytes": 396
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pl.svg",
+    "output": "/assets/flags/webp/pl-54.webp",
+    "width": 54,
+    "masterBytes": 219,
+    "beforeBytes": 96,
+    "bytes": 96
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pm.svg",
+    "output": "/assets/flags/webp/pm-54.webp",
+    "width": 54,
+    "masterBytes": 231,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pn.svg",
+    "output": "/assets/flags/webp/pn-54.webp",
+    "width": 54,
+    "masterBytes": 13880,
+    "beforeBytes": 2124,
+    "bytes": 2124
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pr.svg",
+    "output": "/assets/flags/webp/pr-54.webp",
+    "width": 54,
+    "masterBytes": 625,
+    "beforeBytes": 602,
+    "bytes": 602
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ps.svg",
+    "output": "/assets/flags/webp/ps-54.webp",
+    "width": 54,
+    "masterBytes": 568,
+    "beforeBytes": 282,
+    "bytes": 282
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pt.svg",
+    "output": "/assets/flags/webp/pt-54.webp",
+    "width": 54,
+    "masterBytes": 8316,
+    "beforeBytes": 872,
+    "bytes": 872
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/pw.svg",
+    "output": "/assets/flags/webp/pw-54.webp",
+    "width": 54,
+    "masterBytes": 466,
+    "beforeBytes": 302,
+    "bytes": 302
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/py.svg",
+    "output": "/assets/flags/webp/py-54.webp",
+    "width": 54,
+    "masterBytes": 17194,
+    "beforeBytes": 358,
+    "bytes": 358
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/qa.svg",
+    "output": "/assets/flags/webp/qa-54.webp",
+    "width": 54,
+    "masterBytes": 354,
+    "beforeBytes": 250,
+    "bytes": 250
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/re.svg",
+    "output": "/assets/flags/webp/re-54.webp",
+    "width": 54,
+    "masterBytes": 231,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ro.svg",
+    "output": "/assets/flags/webp/ro-54.webp",
+    "width": 54,
+    "masterBytes": 302,
+    "beforeBytes": 106,
+    "bytes": 106
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/rs.svg",
+    "output": "/assets/flags/webp/rs-54.webp",
+    "width": 54,
+    "masterBytes": 184172,
+    "beforeBytes": 1238,
+    "bytes": 1238
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ru.svg",
+    "output": "/assets/flags/webp/ru-54.webp",
+    "width": 54,
+    "masterBytes": 225,
+    "beforeBytes": 106,
+    "bytes": 106
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/rw.svg",
+    "output": "/assets/flags/webp/rw-54.webp",
+    "width": 54,
+    "masterBytes": 755,
+    "beforeBytes": 382,
+    "bytes": 382
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sa.svg",
+    "output": "/assets/flags/webp/sa-54.webp",
+    "width": 54,
+    "masterBytes": 10237,
+    "beforeBytes": 692,
+    "bytes": 692
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sb.svg",
+    "output": "/assets/flags/webp/sb-54.webp",
+    "width": 54,
+    "masterBytes": 940,
+    "beforeBytes": 642,
+    "bytes": 642
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sc.svg",
+    "output": "/assets/flags/webp/sc-54.webp",
+    "width": 54,
+    "masterBytes": 317,
+    "beforeBytes": 572,
+    "bytes": 572
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sd.svg",
+    "output": "/assets/flags/webp/sd-54.webp",
+    "width": 54,
+    "masterBytes": 505,
+    "beforeBytes": 326,
+    "bytes": 326
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/se.svg",
+    "output": "/assets/flags/webp/se-54.webp",
+    "width": 54,
+    "masterBytes": 209,
+    "beforeBytes": 158,
+    "bytes": 158
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sg.svg",
+    "output": "/assets/flags/webp/sg-54.webp",
+    "width": 54,
+    "masterBytes": 889,
+    "beforeBytes": 348,
+    "bytes": 348
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sh.svg",
+    "output": "/assets/flags/webp/sh-54.webp",
+    "width": 54,
+    "masterBytes": 504,
+    "beforeBytes": 1376,
+    "bytes": 1376
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/si.svg",
+    "output": "/assets/flags/webp/si-54.webp",
+    "width": 54,
+    "masterBytes": 2017,
+    "beforeBytes": 526,
+    "bytes": 526
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sj.svg",
+    "output": "/assets/flags/webp/sj-54.webp",
+    "width": 54,
+    "masterBytes": 318,
+    "beforeBytes": 220,
+    "bytes": 220
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sk.svg",
+    "output": "/assets/flags/webp/sk-54.webp",
+    "width": 54,
+    "masterBytes": 1197,
+    "beforeBytes": 656,
+    "bytes": 656
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sl.svg",
+    "output": "/assets/flags/webp/sl-54.webp",
+    "width": 54,
+    "masterBytes": 272,
+    "beforeBytes": 102,
+    "bytes": 102
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sm.svg",
+    "output": "/assets/flags/webp/sm-54.webp",
+    "width": 54,
+    "masterBytes": 15774,
+    "beforeBytes": 1412,
+    "bytes": 1412
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sn.svg",
+    "output": "/assets/flags/webp/sn-54.webp",
+    "width": 54,
+    "masterBytes": 421,
+    "beforeBytes": 292,
+    "bytes": 292
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/so.svg",
+    "output": "/assets/flags/webp/so-54.webp",
+    "width": 54,
+    "masterBytes": 483,
+    "beforeBytes": 278,
+    "bytes": 278
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sr.svg",
+    "output": "/assets/flags/webp/sr-54.webp",
+    "width": 54,
+    "masterBytes": 312,
+    "beforeBytes": 298,
+    "bytes": 298
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ss.svg",
+    "output": "/assets/flags/webp/ss-54.webp",
+    "width": 54,
+    "masterBytes": 398,
+    "beforeBytes": 628,
+    "bytes": 628
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/st.svg",
+    "output": "/assets/flags/webp/st-54.webp",
+    "width": 54,
+    "masterBytes": 954,
+    "beforeBytes": 490,
+    "bytes": 490
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sv.svg",
+    "output": "/assets/flags/webp/sv-54.webp",
+    "width": 54,
+    "masterBytes": 82815,
+    "beforeBytes": 492,
+    "bytes": 492
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sx.svg",
+    "output": "/assets/flags/webp/sx-54.webp",
+    "width": 54,
+    "masterBytes": 13144,
+    "beforeBytes": 996,
+    "bytes": 996
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sy.svg",
+    "output": "/assets/flags/webp/sy-54.webp",
+    "width": 54,
+    "masterBytes": 321,
+    "beforeBytes": 340,
+    "bytes": 340
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/sz.svg",
+    "output": "/assets/flags/webp/sz-54.webp",
+    "width": 54,
+    "masterBytes": 4803,
+    "beforeBytes": 982,
+    "bytes": 982
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tc.svg",
+    "output": "/assets/flags/webp/tc-54.webp",
+    "width": 54,
+    "masterBytes": 7150,
+    "beforeBytes": 1712,
+    "bytes": 1712
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/td.svg",
+    "output": "/assets/flags/webp/td-54.webp",
+    "width": 54,
+    "masterBytes": 271,
+    "beforeBytes": 120,
+    "bytes": 120
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tf.svg",
+    "output": "/assets/flags/webp/tf-54.webp",
+    "width": 54,
+    "masterBytes": 1099,
+    "beforeBytes": 518,
+    "bytes": 518
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tg.svg",
+    "output": "/assets/flags/webp/tg-54.webp",
+    "width": 54,
+    "masterBytes": 717,
+    "beforeBytes": 326,
+    "bytes": 326
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/th.svg",
+    "output": "/assets/flags/webp/th-54.webp",
+    "width": 54,
+    "masterBytes": 284,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tj.svg",
+    "output": "/assets/flags/webp/tj-54.webp",
+    "width": 54,
+    "masterBytes": 1855,
+    "beforeBytes": 398,
+    "bytes": 398
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tk.svg",
+    "output": "/assets/flags/webp/tk-54.webp",
+    "width": 54,
+    "masterBytes": 761,
+    "beforeBytes": 550,
+    "bytes": 550
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tl.svg",
+    "output": "/assets/flags/webp/tl-54.webp",
+    "width": 54,
+    "masterBytes": 611,
+    "beforeBytes": 622,
+    "bytes": 622
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tm.svg",
+    "output": "/assets/flags/webp/tm-54.webp",
+    "width": 54,
+    "masterBytes": 38497,
+    "beforeBytes": 1596,
+    "bytes": 1596
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tn.svg",
+    "output": "/assets/flags/webp/tn-54.webp",
+    "width": 54,
+    "masterBytes": 343,
+    "beforeBytes": 444,
+    "bytes": 444
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/to.svg",
+    "output": "/assets/flags/webp/to-54.webp",
+    "width": 54,
+    "masterBytes": 352,
+    "beforeBytes": 196,
+    "bytes": 196
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tr.svg",
+    "output": "/assets/flags/webp/tr-54.webp",
+    "width": 54,
+    "masterBytes": 549,
+    "beforeBytes": 432,
+    "bytes": 432
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tt.svg",
+    "output": "/assets/flags/webp/tt-54.webp",
+    "width": 54,
+    "masterBytes": 304,
+    "beforeBytes": 792,
+    "bytes": 792
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tv.svg",
+    "output": "/assets/flags/webp/tv-54.webp",
+    "width": 54,
+    "masterBytes": 1427,
+    "beforeBytes": 1532,
+    "bytes": 1532
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tw.svg",
+    "output": "/assets/flags/webp/tw-54.webp",
+    "width": 54,
+    "masterBytes": 2499,
+    "beforeBytes": 410,
+    "bytes": 410
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/tz.svg",
+    "output": "/assets/flags/webp/tz-54.webp",
+    "width": 54,
+    "masterBytes": 548,
+    "beforeBytes": 558,
+    "bytes": 558
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ua.svg",
+    "output": "/assets/flags/webp/ua-54.webp",
+    "width": 54,
+    "masterBytes": 232,
+    "beforeBytes": 92,
+    "bytes": 92
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ug.svg",
+    "output": "/assets/flags/webp/ug-54.webp",
+    "width": 54,
+    "masterBytes": 3950,
+    "beforeBytes": 548,
+    "bytes": 548
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/um.svg",
+    "output": "/assets/flags/webp/um-54.webp",
+    "width": 54,
+    "masterBytes": 648,
+    "beforeBytes": 784,
+    "bytes": 784
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/us.svg",
+    "output": "/assets/flags/webp/us-54.webp",
+    "width": 54,
+    "masterBytes": 648,
+    "beforeBytes": 784,
+    "bytes": 784
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/uy.svg",
+    "output": "/assets/flags/webp/uy-54.webp",
+    "width": 54,
+    "masterBytes": 1724,
+    "beforeBytes": 722,
+    "bytes": 722
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/uz.svg",
+    "output": "/assets/flags/webp/uz-54.webp",
+    "width": 54,
+    "masterBytes": 1498,
+    "beforeBytes": 362,
+    "bytes": 362
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/va.svg",
+    "output": "/assets/flags/webp/va-54.webp",
+    "width": 54,
+    "masterBytes": 29461,
+    "beforeBytes": 748,
+    "bytes": 748
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/vc.svg",
+    "output": "/assets/flags/webp/vc-54.webp",
+    "width": 54,
+    "masterBytes": 429,
+    "beforeBytes": 392,
+    "bytes": 392
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ve.svg",
+    "output": "/assets/flags/webp/ve-54.webp",
+    "width": 54,
+    "masterBytes": 1206,
+    "beforeBytes": 342,
+    "bytes": 342
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/vg.svg",
+    "output": "/assets/flags/webp/vg-54.webp",
+    "width": 54,
+    "masterBytes": 10413,
+    "beforeBytes": 2026,
+    "bytes": 2026
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/vi.svg",
+    "output": "/assets/flags/webp/vi-54.webp",
+    "width": 54,
+    "masterBytes": 8682,
+    "beforeBytes": 2152,
+    "bytes": 2152
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/vn.svg",
+    "output": "/assets/flags/webp/vn-54.webp",
+    "width": 54,
+    "masterBytes": 490,
+    "beforeBytes": 320,
+    "bytes": 320
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/vu.svg",
+    "output": "/assets/flags/webp/vu-54.webp",
+    "width": 54,
+    "masterBytes": 2127,
+    "beforeBytes": 764,
+    "bytes": 764
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/wf.svg",
+    "output": "/assets/flags/webp/wf-54.webp",
+    "width": 54,
+    "masterBytes": 231,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ws.svg",
+    "output": "/assets/flags/webp/ws-54.webp",
+    "width": 54,
+    "masterBytes": 687,
+    "beforeBytes": 320,
+    "bytes": 320
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/xk.svg",
+    "output": "/assets/flags/webp/xk-54.webp",
+    "width": 54,
+    "masterBytes": 9311,
+    "beforeBytes": 566,
+    "bytes": 566
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/ye.svg",
+    "output": "/assets/flags/webp/ye-54.webp",
+    "width": 54,
+    "masterBytes": 287,
+    "beforeBytes": 112,
+    "bytes": 112
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/yt.svg",
+    "output": "/assets/flags/webp/yt-54.webp",
+    "width": 54,
+    "masterBytes": 231,
+    "beforeBytes": 118,
+    "bytes": 118
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/za.svg",
+    "output": "/assets/flags/webp/za-54.webp",
+    "width": 54,
+    "masterBytes": 860,
+    "beforeBytes": 1052,
+    "bytes": 1052
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/zm.svg",
+    "output": "/assets/flags/webp/zm-54.webp",
+    "width": 54,
+    "masterBytes": 5512,
+    "beforeBytes": 428,
+    "bytes": 428
+  },
+  {
+    "family": "flags",
+    "source": "/assets/flags/svg/zw.svg",
+    "output": "/assets/flags/webp/zw-54.webp",
+    "width": 54,
+    "masterBytes": 6672,
+    "beforeBytes": 1010,
+    "bytes": 1010
+  }
+]

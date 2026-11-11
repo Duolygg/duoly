@@ -23,7 +23,9 @@ test('only necessary: one cookieless pageview, templated, nothing else', async (
   const sent = events();
   expect(new Set(sent.map((e) => e.event))).toEqual(new Set(['$pageview']));
   const pv = sent[0]!;
-  expect(pv.properties.$current_url).toBe('http://127.0.0.1:4361/games');
+  expect(pv.properties.$current_url).toBe(
+    `http://127.0.0.1:${process.env.DUOLY_TEST_PORT ?? '4361'}/games`,
+  );
   expect(pv.properties.route).toBe('/games');
   expect(pv.properties.utm_source).toBeUndefined();
   expect(JSON.stringify(sent)).not.toContain('someone');
@@ -43,7 +45,7 @@ test('accept all: pageview with campaign data and no secrets', async ({
   await expect.poll(() => events().map((e) => e.event)).toContain('$pageview');
   const pv = events().find((e) => e.event === '$pageview')!;
   expect(pv.properties.$current_url).toBe(
-    'http://127.0.0.1:4361/games?utm_source=tiktok',
+    `http://127.0.0.1:${process.env.DUOLY_TEST_PORT ?? '4361'}/games?utm_source=tiktok`,
   );
   expect(pv.properties.token).toBe('phc_testtesttesttesttest0123456789');
   expect(JSON.stringify(events())).not.toMatch(/cs_live_secret|frag/);

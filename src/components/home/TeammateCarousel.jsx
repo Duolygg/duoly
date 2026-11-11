@@ -2,7 +2,7 @@
 // between "Pick a mode" and "Check out". People who play the picked game come first; each card
 // shows only that teammate's own games. Pauses while hovered. Without teammates it falls back to the live online line.
 // Styles: globals.css (tc-*).
-import HomeImage from './HomeImage';
+import BundledImage from '../shared/BundledImage';
 import React from 'react';
 
 // One loop holds at least this many cards (5 × 288px is wider than the 1240px page), so a short
@@ -21,7 +21,14 @@ function Card({ t }) {
     >
       <div className="tc-head">
         <span className="tc-avatar">
-          <HomeImage src={t.image} alt="" width="52" height="52" />
+          <BundledImage
+            src={t.image}
+            alt=""
+            width="52"
+            height="52"
+            loading="lazy"
+            decoding="async"
+          />
           {t.online ? <span className="tc-dot" /> : null}
         </span>
         <span className="tc-who">
@@ -35,13 +42,15 @@ function Card({ t }) {
       <div className="tc-foot">
         <span className="tc-games">
           {t.icons.map((g) => (
-            <img
+            <BundledImage
               key={g.id}
               src={g.img}
               alt={g.name}
               title={g.name}
               width="26"
               height="26"
+              loading="lazy"
+              decoding="async"
             />
           ))}
         </span>

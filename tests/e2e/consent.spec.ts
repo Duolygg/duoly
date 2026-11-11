@@ -4,6 +4,35 @@ test.beforeEach(async ({ context }) => {
   await context.clearCookies();
 });
 
+test('the banner first appears fully sized, never as partially parsed text', async ({
+  page,
+}) => {
+  await page.goto('/rules');
+  await expect(page.locator('[data-cookie-banner]')).toBeVisible();
+  const measured = await page.evaluate(() => {
+    const original = document.querySelector<HTMLElement>(
+      '[data-cookie-banner]',
+    )!;
+    const clone = original.cloneNode(true) as HTMLElement;
+    clone.hidden = true;
+    clone.querySelector('.cookie-actions')!.remove();
+    clone.querySelector('[data-cookie-purposes]')!.remove();
+    document.body.append(clone);
+    const partial = getComputedStyle(clone).display;
+    clone.replaceChildren(
+      ...(original.cloneNode(true) as HTMLElement).childNodes,
+    );
+    const complete = getComputedStyle(clone).display;
+    const height = clone.getBoundingClientRect().height;
+    const expectedHeight = original.getBoundingClientRect().height;
+    clone.remove();
+    return { partial, complete, height, expectedHeight };
+  });
+  expect(measured.partial).toBe('none');
+  expect(measured.complete).toBe('block');
+  expect(measured.height).toBe(measured.expectedHeight);
+});
+
 for (const [button, value, analytics, referral] of [
   ['Only necessary', 'v2.a0.m0.r0', false, false],
   ['Accept all', 'v2.a1.m1.r1', true, true],

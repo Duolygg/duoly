@@ -4,6 +4,7 @@ import { track } from '../../client/analytics/track';
 import React from 'react';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
 import { createSupportFetch } from './support-data';
+import BundledImage from '../shared/BundledImage';
 
 // The support chat (Sparky + the real admins). Talks to /api/support, which knows who's asking:
 // guests, customers (their order and wallet) and teammates (payouts, deposit, games). When someone asks
@@ -254,11 +255,13 @@ export default class SupportChat extends React.Component {
         ? d.suggest || []
         : [];
     const avatar = (img, size, round) => (
-      <img
+      <BundledImage
         src={img || '/assets/avatars/avatar-1.png'}
         alt=""
         width={size}
         height={size}
+        loading="lazy"
+        decoding="async"
         referrerPolicy="no-referrer"
         style={{
           width: size + 'px',
@@ -282,11 +285,13 @@ export default class SupportChat extends React.Component {
           justifyContent: 'center',
         }}
       >
-        <img
+        <BundledImage
           src={MASCOT}
           alt=""
           width="24"
           height="15"
+          loading="lazy"
+          decoding="async"
           style={{ width: '24px', height: '15px' }}
         />
       </span>
@@ -373,11 +378,13 @@ export default class SupportChat extends React.Component {
                       justifyContent: 'center',
                     }}
                   >
-                    <img
+                    <BundledImage
                       src={MASCOT}
                       alt=""
                       width="40"
                       height="25"
+                      loading="lazy"
+                      decoding="async"
                       style={{ width: '40px', height: '25px' }}
                     />
                   </span>
@@ -905,11 +912,14 @@ export default class SupportChat extends React.Component {
             </svg>
           ) : (
             <>
-              <img
+              {/* The launcher is on screen from the first paint, so it stays eager; the
+                  srcset just stops it from fetching the 31 KB full-size mascot for 52 px. */}
+              <BundledImage
                 src={MASCOT}
                 alt=""
                 width="52"
                 height="33"
+                decoding="async"
                 style={{ width: '52px', height: '33px' }}
               />
               {s.unread ? (

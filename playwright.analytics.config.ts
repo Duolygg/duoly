@@ -1,4 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
+const port = process.env.DUOLY_TEST_PORT ?? '4361';
+const baseURL = `http://127.0.0.1:${port}`;
 
 /**
  * Analytics transport checks (POSTHOG-SPEC section 12). The SDK is pointed at a fake host
@@ -11,7 +13,7 @@ export default defineConfig({
   workers: 2,
   expect: { timeout: 15_000 },
   use: {
-    baseURL: 'http://127.0.0.1:4361',
+    baseURL: baseURL,
     trace: 'retain-on-failure',
   },
   projects: [
@@ -27,8 +29,8 @@ export default defineConfig({
   ],
   webServer: {
     // scripts/dev-server.mjs, never `astro dev`: see the comment in that file.
-    command: 'node scripts/dev-server.mjs --host 127.0.0.1 --port 4361',
-    url: 'http://127.0.0.1:4361',
+    command: `node scripts/dev-server.mjs --host 127.0.0.1 --port ${port}`,
+    url: baseURL,
     reuseExistingServer: false,
     env: {
       PUBLIC_ANALYTICS_ENABLED: 'true',

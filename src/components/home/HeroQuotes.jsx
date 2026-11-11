@@ -3,7 +3,7 @@
 // across and leaves at the other, and the other lane starts halfway, so two are on screen at a time.
 // Real reviews come in through `items` (their first sentence, if short enough); until there are
 // any, the hand-written SAMPLE_HERO_QUOTES are shown. Styles: globals.css (hq-*).
-import HomeImage from './HomeImage';
+import BundledImage from '../shared/BundledImage';
 import React from 'react';
 import { GAME } from '../../design-reference/lib/games';
 import { flagSrc } from '../../design-reference/lib/countries';
@@ -206,12 +206,14 @@ export default function HeroQuotes({ items }) {
             onAnimationEnd={next(i)}
           >
             {t.avatar ? (
-              <HomeImage
+              <BundledImage
                 className="hq-avatar"
                 src={t.avatar}
                 alt=""
                 width="40"
                 height="40"
+                loading="lazy"
+                decoding="async"
               />
             ) : null}
             <div className="hq-body">
@@ -232,17 +234,26 @@ export default function HeroQuotes({ items }) {
               <figcaption>
                 <span>{maskName(t.name)}</span>
                 {t.country ? (
-                  <img src={flagSrc(t.country)} alt="" width="16" height="12" />
+                  <BundledImage
+                    src={flagSrc(t.country)}
+                    alt=""
+                    width="16"
+                    height="12"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 ) : null}
                 {game ? (
                   <>
                     <span className="hq-dot" />
-                    <img
+                    <BundledImage
                       className="hq-game"
                       src={game.img}
                       alt=""
                       width="14"
                       height="14"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <span>{game.name}</span>
                   </>
