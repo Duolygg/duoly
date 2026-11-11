@@ -1,4 +1,4 @@
-/* global window, document, localStorage, sessionStorage, Notification, Worker, Blob, URL, navigator, setInterval, clearInterval, setTimeout, clearTimeout, fetch, Event */
+/* global window, document, localStorage, sessionStorage, Notification, Worker, Blob, URL, navigator, setInterval, clearInterval, setTimeout, clearTimeout, fetch, Event, Audio */
 import { createTeammateFetch, newEligibleOrders } from './teammate-data';
 import { gameOf } from '../../design-reference/lib/games';
 
@@ -10,8 +10,9 @@ import { gameOf } from '../../design-reference/lib/games';
  *   heartbeat timeout (migration 20261024142000_presence.sql).
  * - Background tabs: browsers slow page timers down to once a minute, which is past the 20 s
  *   timeout. The ticks come from a small worker, whose timers aren't slowed that way.
- * - New orders: a browser notification (no sound off the desk) for orders that fit the
- *   teammate's games and voice setting. One notification per order across all open tabs.
+ * - New orders: the order bell and a browser notification for orders that fit the teammate's
+ *   games and voice setting, on the desk and every other page. One bell and one notification
+ *   per order across all open tabs: whichever tab sees the order first rings.
  * - Twitch streaming: the streaming panel's Twitch live check (migration 20261105150000) keeps
  *   running while they're on other pages.
  * - AFK: 4 hours without any activity on any Duoly page switch them offline (migration
@@ -94,17 +95,47 @@ export function saveSeenOrders(ids) {
   }
 }
 
+// ---- the bell ---------------------------------------------------------------------------------
+
+export const ORDER_BELL_SRC = '/assets/sounds/order-bell.wav';
+
+export function newOrderBell() {
+  if (typeof Audio === 'undefined') return null;
+  const bell = new Audio(ORDER_BELL_SRC);
+  bell.preload = 'auto';
+  return bell;
+}
+
+/** The clip is ~3 s, played twice back to back (~6 s). */
+export function playOrderBell(bell) {
+  if (!bell) return;
+  let plays = 0;
+  bell.onended = () => {
+    plays += 1;
+    if (plays < 2) {
+      bell.currentTime = 0;
+      bell.play().catch(() => {});
+    }
+  };
+  bell.currentTime = 0;
+  bell.play().catch(() => {}); // browsers may block sound until the page has been clicked
+}
+
 // ---- the notification -------------------------------------------------------------------------
 
 /**
- * "New Order Available!" for one order, once across tabs. Silent: the desk plays its own bell,
- * other pages play nothing.
+ * "New Order Available!" for one order, once across tabs. Silent: the tab that shows it plays
+ * the bell. Pass { claimed: true } when the caller already claimed the order.
  */
-export function showOrderNotification(order, onClick) {
+export function showOrderNotification(
+  order,
+  onClick,
+  { claimed = false } = {},
+) {
   if (
     typeof Notification === 'undefined' ||
     Notification.permission !== 'granted' ||
-    !claimOrderNotification(order.id)
+    (!claimed && !claimOrderNotification(order.id))
   )
     return;
   try {
@@ -229,12 +260,8 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
     }
   }
 
+  let bell = null;
   async function checkQueue(now) {
-    if (
-      typeof Notification === 'undefined' ||
-      Notification.permission !== 'granted'
-    )
-      return;
     await loadSettings(now);
     if (!settings) return;
     try {
@@ -248,10 +275,19 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
             voiceOptIn: settings.voiceOptIn,
           });
       saveSeenOrders(data.queue.map((o) => o.id));
-      fresh.forEach((order) =>
-        showOrderNotification(order, () => {
-          location.href = '/teammate';
-        }),
+      // the bell and the popup, in the one tab that sees the order first
+      const mine = fresh.filter((order) => claimOrderNotification(order.id));
+      if (!mine.length) return;
+      bell = bell || newOrderBell();
+      playOrderBell(bell);
+      mine.forEach((order) =>
+        showOrderNotification(
+          order,
+          () => {
+            location.href = '/teammate';
+          },
+          { claimed: true },
+        ),
       );
     } catch {
       /* best effort */
@@ -297,6 +333,7 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
     stopTicker();
     events.forEach((ev) => window.removeEventListener(ev, activity));
     clearTimeout(afkCheck);
+    if (bell) bell.pause();
   }
   tick();
   return stop;

@@ -203,6 +203,62 @@ export default class LiveDesk extends React.Component {
     });
   }
 
+  // New-order bell and popup (they come from AdminApp, on every admin page): turn on / test.
+  renderAlerts() {
+    const al = this.props.alerts;
+    if (!al) return null;
+    const bellIcon = (
+      <svg
+        aria-hidden="true"
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+      </svg>
+    );
+    return (
+      <span
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          gap: '8px',
+          marginTop: '10px',
+        }}
+      >
+        {al.notif === 'default' ? (
+          <button
+            type="button"
+            onClick={al.ask}
+            style={{ ...btn(), color: '#D6BBFF' }}
+          >
+            {bellIcon}
+            Turn on notifications
+          </button>
+        ) : null}
+        <button type="button" onClick={al.test} style={btn()}>
+          Test sound and popup
+        </button>
+        {al.notif === 'denied' ? (
+          <span style={{ fontSize: '12.5px', color: C.dim }}>
+            Notifications are blocked for this site: allow them in your
+            browser’s site settings. The bell still plays.
+          </span>
+        ) : al.notif === 'granted' ? (
+          <span style={{ fontSize: '12.5px', color: C.dim }}>
+            New orders ring a bell and pop up on any admin page.
+          </span>
+        ) : null}
+      </span>
+    );
+  }
   renderStatus(waiting) {
     const a = this.props.admin || {};
     const s = this.state;
@@ -304,6 +360,7 @@ export default class LiveDesk extends React.Component {
             before it hits 5:00 and is cancelled. Watching for{' '}
             {since(s.watchingSince, s.now)}.
           </span>
+          {this.renderAlerts()}
         </span>
         <span style={{ display: 'flex', gap: '8px' }}>
           {[
