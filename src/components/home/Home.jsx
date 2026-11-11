@@ -96,7 +96,6 @@ export default class Home extends React.Component {
     // So does the one auto-detected on an earlier visit (detectCurrency still re-checks it).
     const initAuto = props.initialAutoCurrency || null;
     this.state = {
-      now: 0,
       mood: '', // checkout session mood (MoodPicker); '' = no preference
       game: 'lol',
       mode: 'duo2',
@@ -183,8 +182,11 @@ export default class Home extends React.Component {
     this.openCoachingFromLink();
     this.openRebookFromLink();
     this.openGameFromLink();
-    this.setState({ now: Date.now() });
-    this._clock = setInterval(() => this.setState({ now: Date.now() }), 1000);
+    // No page-wide clock: nothing in this component's render reads the time, so the second-by-
+    // second setState this used to run only re-rendered the whole homepage for an identical
+    // result (about 15 ms of script plus a style, layout and paint pass every second on a
+    // mid-range phone). The parts that do tick keep their own timers: QueuePreview's order room
+    // clock and the Vienna clock in SiteFooter.
     this.resumeQueue();
   }
   // today's EUR → USD rate for customers (ECB rate + a small margin, lib/fx.js); until it loads, a close default
@@ -467,7 +469,6 @@ export default class Home extends React.Component {
     });
   }
   componentWillUnmount() {
-    clearInterval(this._clock);
     clearTimeout(this._chatT);
   }
   // game cards: a soft light follows the cursor (styles: globals.css dl-gcard). Set straight on

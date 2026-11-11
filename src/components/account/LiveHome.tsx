@@ -5,6 +5,11 @@ import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';
 import Home from '../home/Home.jsx';
 import '../checkout/creator-code.css';
+// Lets the browser skip the layout and paint of the homepage's drifting review and payment rows
+// until they are scrolled towards; between them they are most of that page's elements and
+// images. The import belongs to the island rather than to Home.jsx itself, because the browser
+// tests import Home.jsx straight into Node, where a stylesheet import is a syntax error.
+import '../home/offscreen.css';
 import { emailAuth, signInWith } from '../../client/auth-actions';
 import type { Currency, Viewer } from '../../contracts/account';
 import type {

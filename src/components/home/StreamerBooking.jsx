@@ -17,6 +17,9 @@ import { PublicStreamerSchema } from '../../contracts/streaming';
  * Hidden when nobody is streaming.
  */
 const POLL_MS = 15000;
+// Anything that says the visitor is going somewhere loads the list straight away.
+const WAKE_EVENTS = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+const WAKE_OPTIONS = { passive: true, capture: true };
 const TWITCH = '#A970FF';
 const DISPLAY = "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif";
 const gameOf = (id) => GAMES.find((g) => g.id === id);
@@ -90,13 +93,45 @@ export default class StreamerBooking extends React.Component {
     super(props);
     this.state = { list: [], open: '', form: null, placing: false, err: '' };
   }
+  // "Live on Twitch" sits six screens down the homepage, and the section renders nothing until
+  // the list arrives, so fetching it during hydration only lengthened the homepage's critical
+  // request chain (PageSpeed Insights had /api/home/streamers finishing at 1,299 ms). The first
+  // load now waits for the page to finish loading and the main thread to go idle after that,
+  // and any scroll, tap or key press brings it forward, so a visitor heading for the section
+  // still finds it filled in. Polling only runs while the tab is visible.
   componentDidMount() {
-    this.load();
-    this._t = setInterval(() => this.load(), POLL_MS);
+    const first = () => {
+      if (this._started) return;
+      this._started = true;
+      for (const name of WAKE_EVENTS)
+        window.removeEventListener(name, first, WAKE_OPTIONS);
+      this.load();
+      this._t = setInterval(() => {
+        if (document.visibilityState === 'visible') this.load();
+      }, POLL_MS);
+    };
+    this._first = first;
+    for (const name of WAKE_EVENTS)
+      window.addEventListener(name, first, WAKE_OPTIONS);
+    const atIdle = () => {
+      this._idle =
+        typeof window.requestIdleCallback === 'function'
+          ? window.requestIdleCallback(first, { timeout: 2500 })
+          : window.setTimeout(first, 1200);
+    };
+    this._afterLoad = atIdle;
+    if (document.readyState === 'complete') atIdle();
+    else window.addEventListener('load', atIdle, { once: true });
   }
   componentWillUnmount() {
     this._gone = true;
     clearInterval(this._t);
+    for (const name of WAKE_EVENTS)
+      window.removeEventListener(name, this._first, WAKE_OPTIONS);
+    window.removeEventListener('load', this._afterLoad);
+    if (typeof window.cancelIdleCallback === 'function')
+      window.cancelIdleCallback(this._idle);
+    clearTimeout(this._idle);
   }
   async load() {
     try {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FOOTER_COLUMNS } from '../../site/nav';
 import BundledImage from '../shared/BundledImage';
 
@@ -42,14 +42,49 @@ export function viennaClock(now) {
 
 export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
   const [now, setNow] = useState(null);
+  const root = useRef(null);
+  // The clock reads the right time from its first render on, but it only re-renders while the
+  // footer is actually on screen. Ticking it once a second from load cost a React render plus a
+  // style and paint pass every second of the page's life, for seconds nobody was looking at:
+  // on the homepage the footer sits past six screens of content. Scrolling to it resumes the
+  // tick in the same frame the observer fires, so it never shows a stale second.
   useEffect(() => {
-    setNow(Date.now());
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
+    let timer = 0;
+    let onScreen = true;
+    const tick = () => setNow(Date.now());
+    const stop = () => {
+      window.clearInterval(timer);
+      timer = 0;
+    };
+    const sync = () => {
+      const run = onScreen && document.visibilityState === 'visible';
+      if (!run) return stop();
+      tick();
+      if (!timer) timer = window.setInterval(tick, 1000);
+    };
+    tick();
+    const element = root.current;
+    let observer = null;
+    if (element && typeof IntersectionObserver !== 'undefined') {
+      onScreen = false;
+      observer = new IntersectionObserver(([entry]) => {
+        onScreen = entry.isIntersecting;
+        sync();
+      });
+      observer.observe(element);
+    }
+    document.addEventListener('visibilitychange', sync);
+    sync();
+    return () => {
+      if (observer) observer.disconnect();
+      document.removeEventListener('visibilitychange', sync);
+      stop();
+    };
   }, []);
   const clock = viennaClock(now);
   return (
     <footer
+      ref={root}
       className="site-footer"
       style={{
         marginTop: topSpace + 'px',
