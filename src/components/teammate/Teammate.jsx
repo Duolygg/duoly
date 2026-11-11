@@ -2,6 +2,7 @@
 
 import {
   createTeammateFetch,
+  maskName,
   newEligibleOrders,
   teamLine,
 } from './teammate-data';
@@ -33,6 +34,7 @@ import PayoutPanel from './PayoutPanel';
 import StreamingPanel from './StreamingPanel';
 import SupportChat from '../support/SupportChat';
 import TrustScore, { tierFor } from './TrustScore';
+import DeskRules from './DeskRules';
 import {
   GAMES,
   GAME_IDS,
@@ -1395,9 +1397,6 @@ export default class Teammate extends React.Component {
     // trust level decides the security deposit held from each payout
     const tier = tierFor(st ? st.completed : 0);
     const depositRate = this.props.admin ? 0 : tier.deposit / 100;
-    const depositNote = tier.deposit
-      ? '−' + tier.deposit + '% deposit'
-      : 'no deposit';
 
     // available orders: the shared queue, newest first; same for teammates and admins
     const admin = !!this.props.admin;
@@ -1420,11 +1419,10 @@ export default class Teammate extends React.Component {
           img: g.img,
           gameName: g.name,
           payoutLabel: money(o.payout),
-          depositNote: FEATURES.trust
-            ? admin
-              ? 'teammate rate'
-              : depositNote
-            : 'Order payout',
+          // the customer's full name only shows once the order is accepted
+          customer: admin ? o.customer : maskName(o.customer),
+          // the customer's rank for this order ("from" is the sample orders' name for it)
+          from: o.rank || o.from || '',
           gamesLabel:
             o.games + ' ' + (o.unit || 'game') + (o.games === 1 ? '' : 's'),
           // Only the server-projected customer avatar and country are available.
@@ -3372,6 +3370,9 @@ export default class Teammate extends React.Component {
             </section>
           )}
 
+          {/* the rules, right above the orders: nobody takes an order without passing them */}
+          {v.admin ? null : <DeskRules />}
+
           <div
             className="tm-grid"
             style={
@@ -5057,11 +5058,6 @@ export default class Teammate extends React.Component {
                                 }}
                               >
                                 {o.payoutLabel}
-                              </div>
-                              <div
-                                style={{ fontSize: '11.5px', color: '#8E84AB' }}
-                              >
-                                {o.depositNote}
                               </div>
                             </div>
                             {FEATURES.handovers && v.admin ? (

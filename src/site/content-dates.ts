@@ -190,6 +190,14 @@ for (const path of [
 // /contact and /compare/e-pal.
 for (const path of Object.keys(CONTENT_SOURCES))
   CONTENT_UPDATED[path] ??= '2026-11-09';
+// 11 November 2026: Payoneer joined the payout methods on /fees-and-refunds and
+// /get-paid-to-play-games, and /compare/e-pal's grid stopped overflowing a phone.
+for (const path of [
+  '/fees-and-refunds',
+  '/get-paid-to-play-games',
+  '/compare/e-pal',
+])
+  CONTENT_UPDATED[path] = '2026-11-11';
 
 /** What git knows about the last two changes to one page's copy. */
 export type ContentHistory = {

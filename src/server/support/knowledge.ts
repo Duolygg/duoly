@@ -188,8 +188,9 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
   {
     id: 'rules',
     roles: TEAM,
-    match: /rule|outside|off platform|socials/,
-    text: 'The golden rules: online means ready, finish what you start, everything stays on Duoly (no outside payments or socials), never touch a customer’s account, and be the teammate you’d want.',
+    match:
+      /rule|outside|off platform|socials|toxic|make.?up|lost|losing|fine|nerf/,
+    text: 'The teammate rules (shown on your dashboard and in full on /rules): online means ready, so only go online and take an order when you can play within 2 minutes; finish what you start; zero toxicity, no flaming, insults or blaming the customer; if a game is lost because of how you played, give the customer one free make-up game for each of those games, and skipping one can lead to a priority cut or a fine from an admin; everything stays on Duoly (no outside payments or socials); never touch a customer’s account; and be the teammate you’d want.',
   },
   {
     id: 'play-again-teammate',

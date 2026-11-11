@@ -143,13 +143,13 @@ export default class Payouts extends React.Component {
       confirm: 'Mark paid',
       field: {
         label: 'Payment method',
-        options: ['wise', 'bank', 'paypal', 'other'],
+        options: ['wise', 'bank', 'paypal', 'payoneer', 'other'],
         value: 'wise',
         required: true,
       },
       field2: {
         label: 'Transfer reference',
-        placeholder: 'Bank or Wise reference',
+        placeholder: 'Bank, Wise, PayPal or Payoneer reference',
         required: true,
       },
       onConfirm,

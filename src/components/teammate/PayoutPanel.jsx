@@ -25,6 +25,7 @@ const METHODS = [
   { value: 'wise', label: 'Wise' },
   { value: 'bank', label: 'Bank transfer' },
   { value: 'paypal', label: 'PayPal' },
+  { value: 'payoneer', label: 'Payoneer' },
 ];
 // Stored as the English country name, like before this was a free-text field.
 const COUNTRY_OPTIONS = COUNTRIES.map(([code, name]) => ({
@@ -486,7 +487,7 @@ export default class PayoutPanel extends React.Component {
               />
             </div>
             <label style={{ ...field, gridColumn: '1 / -1' }}>
-              Account (IBAN, Wise or PayPal email)
+              Account (IBAN, or Wise, PayPal or Payoneer email)
               <input
                 className="pf-input"
                 required

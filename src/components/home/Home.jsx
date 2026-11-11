@@ -530,7 +530,15 @@ export default class Home extends React.Component {
       accountOpen: !!s.accountMenu,
       accountOpenStr: s.accountMenu ? 'true' : 'false',
       toggleAccount: () =>
-        this.setState({ accountMenu: !this.state.accountMenu }),
+        this.setState({ accountMenu: !this.state.accountMenu, navMenu: false }),
+      navOpen: !!s.navMenu,
+      toggleNav: () =>
+        this.setState({
+          navMenu: !this.state.navMenu,
+          accountMenu: false,
+          curMenu: false,
+        }),
+      closeNav: () => this.setState({ navMenu: false }),
       openAuth: () => {
         if (P.onOpenLogin) {
           P.onOpenLogin();
@@ -1250,9 +1258,13 @@ export default class Home extends React.Component {
 
     // per-seat services cost the seat price for every teammate; group prices are the whole group
     const sub = conv(priceOf(sel)) * team.factor * s.qty;
-    // the rank picker: every rank of this service's ladder with its price per unit
+    // the rank picker: every rank of this service's ladder with its price per unit.
+    // CS2's "Premier" prefix is dropped on screen only (the rating range says it all and
+    // fits a phone); the stored rank keeps the full name the server prices by.
+    const rankLabel = (r) => r.replace(/^Premier /, '');
     const rankOpts = ranks.map((r) => ({
       name: r,
+      label: rankLabel(r),
       active: r === rank,
       sel: r === rank ? 'true' : 'false',
       price: eur(rankPrice(g.id, sel.id, sel.price, r)),
@@ -1357,7 +1369,8 @@ export default class Home extends React.Component {
           ? 'Your choice · saved to your account'
           : 'Your choice · saved on this device'
         : 'Auto-detected' + (s.curCity ? ' · ' + s.curCity : ''),
-      toggleCur: () => this.setState({ curMenu: !this.state.curMenu }),
+      toggleCur: () =>
+        this.setState({ curMenu: !this.state.curMenu, navMenu: false }),
       curOptions: [
         ['EUR', 'Euro', '€', '€9.99'],
         ['USD', 'US Dollar', '$', '$10.99'],
@@ -1419,7 +1432,8 @@ export default class Home extends React.Component {
       rankKey: (e) => {
         if (e.key === 'Escape') this.setState({ rankOpen: false });
       },
-      rankLine: sel.tier + (ranked ? ' · from ' + rank : ''),
+      rankShown: rankLabel(rank),
+      rankLine: sel.tier + (ranked ? ' · from ' + rankLabel(rank) : ''),
       qty: s.qty,
       qtyUnit: s.qty === 1 ? unit : unit + 's',
       qtyLabel: 'How many ' + unit + 's',
@@ -1911,7 +1925,9 @@ export default class Home extends React.Component {
           }}
         >
           <div
+            className="dl-head"
             style={{
+              position: 'relative',
               maxWidth: '1240px',
               margin: '0 auto',
               padding: '10px 24px',
@@ -1936,6 +1952,7 @@ export default class Home extends React.Component {
             </a>
             <nav
               aria-label="Main"
+              className="dl-nav"
               style={{
                 display: 'flex',
                 flexWrap: 'wrap',
@@ -1960,6 +1977,7 @@ export default class Home extends React.Component {
               ) : null}
             </nav>
             <div
+              className="dl-head-actions"
               style={{
                 marginLeft: 'auto',
                 display: 'flex',
@@ -1970,7 +1988,7 @@ export default class Home extends React.Component {
             >
               {v.curKnown ? (
                 <>
-                  <div style={{ position: 'relative' }}>
+                  <div className="dl-head-pop" style={{ position: 'relative' }}>
                     <button
                       type="button"
                       aria-haspopup="listbox"
@@ -2007,7 +2025,7 @@ export default class Home extends React.Component {
                       >
                         {v.curSymbol}
                       </span>
-                      {v.curCode}
+                      <span className="dl-cur-code">{v.curCode}</span>
                       <svg
                         aria-hidden="true"
                         width="14"
@@ -2134,6 +2152,7 @@ export default class Home extends React.Component {
                 <>
                   <button
                     type="button"
+                    className="dl-signin"
                     onClick={v.openAuth}
                     style={{
                       display: 'flex',
@@ -2154,7 +2173,11 @@ export default class Home extends React.Component {
               ) : null}
               {v.signedIn ? (
                 <>
-                  <div data-private-block="" style={{ position: 'relative' }}>
+                  <div
+                    className="dl-head-pop"
+                    data-private-block=""
+                    style={{ position: 'relative' }}
+                  >
                     <button
                       type="button"
                       onClick={v.toggleAccount}
@@ -2191,6 +2214,7 @@ export default class Home extends React.Component {
                         }}
                       />
                       <span
+                        className="dl-acct-name"
                         style={{
                           display: 'flex',
                           flexDirection: 'column',
@@ -2446,7 +2470,54 @@ export default class Home extends React.Component {
                   </div>
                 </>
               ) : null}
+              {/* Phones and narrow tablets: the section links fold into this menu
+                  (globals.css .dl-nav, .dl-burger). */}
+              <button
+                type="button"
+                className="dl-burger"
+                aria-label={v.navOpen ? 'Close menu' : 'Menu'}
+                aria-expanded={v.navOpen ? 'true' : 'false'}
+                aria-controls="dl-nav-menu"
+                onClick={v.toggleNav}
+              >
+                <svg
+                  aria-hidden="true"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                >
+                  <path
+                    d={
+                      v.navOpen
+                        ? 'M6 6l12 12M18 6L6 18'
+                        : 'M4 7h16M4 12h16M4 17h16'
+                    }
+                  />
+                </svg>
+              </button>
             </div>
+            {v.navOpen ? (
+              <nav
+                id="dl-nav-menu"
+                aria-label="Menu"
+                className="dl-nav-menu"
+                onClick={(e) => {
+                  if (e.target.closest && e.target.closest('a')) v.closeNav();
+                }}
+              >
+                <a href="#games">Games</a>
+                <a href="#how">How it works</a>
+                <a href="#faq">FAQ</a>
+                {v.isCustomer || v.signedOut ? (
+                  <a href="/apply">Become a teammate</a>
+                ) : null}
+                <a href="/contact">Contact</a>
+              </nav>
+            ) : null}
           </div>
         </header>
         <main id="top">
@@ -2807,6 +2878,7 @@ export default class Home extends React.Component {
               }}
             >
               <div
+                className="dl-hero-art"
                 style={{
                   position: 'relative',
                   width: '100%',
@@ -2948,6 +3020,7 @@ export default class Home extends React.Component {
                 </h2>
               </div>
               <div
+                className="dl-games-grid"
                 onPointerMove={this.cardGlow}
                 style={{
                   display: 'grid',
@@ -2967,6 +3040,7 @@ export default class Home extends React.Component {
                     >
                       {/* selected: highlighted card plus a check badge on the icon (no radio column, so names fit on one line) */}
                       <span
+                        className="dl-gcard-icon"
                         style={{
                           position: 'relative',
                           flex: '0 0 auto',
@@ -3030,6 +3104,7 @@ export default class Home extends React.Component {
                         }}
                       >
                         <span
+                          className="dl-gcard-name"
                           style={{
                             maxWidth: '100%',
                             fontWeight: '600',
@@ -3152,6 +3227,7 @@ export default class Home extends React.Component {
                   <React.Fragment key={$index}>
                     <button
                       type="button"
+                      className="dl-mode"
                       onClick={m.pick}
                       aria-pressed={m.pressed}
                       style={css(m.style)}
@@ -3173,6 +3249,7 @@ export default class Home extends React.Component {
                           }}
                         >
                           <span
+                            className="dl-mode-title"
                             style={{
                               fontFamily:
                                 "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
@@ -3221,6 +3298,7 @@ export default class Home extends React.Component {
                         {m.desc}
                       </span>
                       <span
+                        className="dl-mode-foot"
                         style={{
                           marginTop: 'auto',
                           paddingTop: '16px',
@@ -3231,6 +3309,7 @@ export default class Home extends React.Component {
                         }}
                       >
                         <span
+                          className="dl-mode-price"
                           style={{
                             fontFamily:
                               "'Bricolage Grotesque', 'Bricolage Fallback', sans-serif",
@@ -3403,7 +3482,7 @@ export default class Home extends React.Component {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            {v.rank}
+                            {v.rankShown}
                           </span>
                           <span
                             style={{
@@ -3498,7 +3577,7 @@ export default class Home extends React.Component {
                                   }}
                                 >
                                   <span style={{ flex: '1', minWidth: '0' }}>
-                                    {r.name}
+                                    {r.label}
                                   </span>
                                   <span
                                     style={{
@@ -6428,7 +6507,7 @@ export default class Home extends React.Component {
           </div>
         ) : null}
         {/* order bar: always at the bottom, so you can check out from anywhere on the page.
-            Sizes live in globals.css (dl-bar-*) so phones get one compact row. */}
+            Sizes live in globals.css (dl-bar-*); phones get the summary on its own row. */}
         <div
           className="dl-bar"
           style={{

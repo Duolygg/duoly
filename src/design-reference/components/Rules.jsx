@@ -63,6 +63,7 @@ const CHAPTERS = [
     rules: [
       [ICON.bolt, 'Join fast', 'Send the invite as soon as you accept. The in-game name is on the order, ready to copy.'],
       [ICON.flag, 'Play every game you were booked for', 'Never leave mid-game, never throw, never “just one more” and disappear. If something real comes up, message the customer and an admin right away.'],
+      [ICON.heart, 'Lost because of you? Make it up', 'If a game is lost because of how you played, give the customer one free make-up game for each of those games. Skipping a make-up game can lead to a priority cut or a fine from an admin.'],
       [ICON.trophy, 'Play at the level they paid for', 'A Duo Apex customer gets your best. Coaching orders get explanations. Social orders get good vibes, not tryhard.'],
       [ICON.check, 'Prove it honestly', 'When you’re done, upload 1 to 5 screenshots of your match history or end screens with both of you in them, then mark the order as done. Fake proof ends your time on Duoly.'],
       [ICON.mic, 'Respect their comms choice', 'If they picked text chat, don’t push voice. If they picked voice, be on it and be clear.'],
