@@ -45,19 +45,22 @@ pick no mood are unaffected either way.
 
 1. Check the version is still free: `select max(version) from supabase_migrations.schema_migrations`
    on the linked project, and `ls supabase/migrations` in any other open worktree.
-2. Run the rollback-only check against the linked project (it applies the migration inside a
+   SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
    transaction, runs the checks, and rolls everything back):
 
    ```bash
    { echo 'begin;'; sed -e '/^begin;$/d' -e '/^commit;$/d' supabase/migrations/20261101120000_order_moods.sql; echo 'savepoint s;'; cat supabase/tests/order_moods.sql; echo 'rollback;'; } > order_moods_check.sql
-   supabase db query --linked -f order_moods_check.sql
    ```
 
-   It should end with `order_moods: all checks passed`. Delete `order_moods_check.sql` afterwards.
+SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
+
+```
+
+It should end with `order_moods: all checks passed`. Delete `order_moods_check.sql` afterwards.
 
 3. Apply the migration with the pinned Supabase CLI, development project first, then production.
 4. Regenerate the database types and compare with `src/server/auth/database.types.ts` (the `mood`
-   lines were added by hand to match).
+lines were added by hand to match).
 5. Deploy the code.
 
 Old code keeps working after step 3: the new columns are nullable, the teammate DTO and the Discord
@@ -66,7 +69,8 @@ due list only gain a key, and the teammate contract accepts the key being there 
 ## Tests
 
 - `supabase/tests/order_moods.sql` (rollback only): mood copied onto the order, `null` without one,
-  unknown moods refused by both tables, mood in the teammate DTO and the Discord due list.
+unknown moods refused by both tables, mood in the teammate DTO and the Discord due list.
 - `tests/unit/order-moods.test.ts`: checkout schema and row, Social without mood, teammate contract
-  and desk mapping, Discord post text, and that the three copied SQL functions differ from their
-  originals only by the mood.
+and desk mapping, Discord post text, and that the three copied SQL functions differ from their
+originals only by the mood.
+```

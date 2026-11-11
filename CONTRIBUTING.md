@@ -37,3 +37,9 @@ Migrations live in supabase/migrations/<timestamp>_<description>.sql. Coordinate
 Keep secrets, customer data, local service state and production credentials outside Git. No live email, payments, DNS changes, paid services or production activation without approval. Use additive expand/contract changes; application rollback does not revert database migrations.
 
 Behavior changes require test-first evidence. Completion means acceptance criteria, current-commit checks, independent review, docs and a verified preview where available. Update docs/setup-status.md with exact blockers and checkpoint each chunk for safe resumption.
+
+## SQL test isolation
+
+SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
+
+See `supabase/tests/MANIFEST.md` for ordered fixture groups and explicit exclusions. The runner accepts no remote URL, project ref or credentials. It verifies loopback port binding, disposable Supabase Docker identity and PostgreSQL system identity before creating the marker. SQL guards run before role changes or fixtures; optional Vault checks branch safely. Rollback is not permission to test a shared database.

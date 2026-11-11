@@ -177,7 +177,8 @@ describe('private proof safeguards (static only; NOT SQL acceptance)', () => {
     const sql = readFileSync(file, 'utf8')
       .replace(/--[^\n]*/g, '')
       .toLowerCase();
-    expect(sql.trim()).toMatch(/^begin;/);
+    expect(sql.trim()).toMatch(/^do \$duoly_test_guard\$/);
+    expect(sql).toMatch(/\$duoly_test_guard\$;\s+begin;/);
     expect(sql.trim()).toMatch(/rollback;$/);
     for (const role of ['anon', 'authenticated', 'service_role'])
       expect(sql).toContain(`set local role ${role}`);

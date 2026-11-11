@@ -152,10 +152,7 @@ the identity ledger tracks people, not a history of configuration changes.
 
 ## Rollback-only hosted verification
 
-```sh
-python3 supabase/tests/build_pr110_rollback.py "$TMPDIR/pr110.sql"
-node_modules/.bin/supabase db query --linked -f "$TMPDIR/pr110.sql"
-```
+SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
 
 The builder wraps all five migration bodies and real SQL fixtures in one `BEGIN` and `ROLLBACK`,
 stripping only their outer transaction statements. It never applies migration history or commits

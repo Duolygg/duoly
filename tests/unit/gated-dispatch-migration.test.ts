@@ -18,7 +18,11 @@ describe('gated cron dispatcher migration', () => {
     expect(sql).toContain("when 'roles' then interval '30 seconds'");
     expect(sql).toContain("when 'analytics' then interval '60 seconds'");
     expect(sql).toContain("else interval '10 seconds'");
-    expect(sql.indexOf('s.last_called_at > pg_catalog.clock_timestamp() - case v_kind')).toBeLessThan(sql.indexOf('v_due := not exists'));
+    expect(
+      sql.indexOf(
+        's.last_called_at > pg_catalog.clock_timestamp() - case v_kind',
+      ),
+    ).toBeLessThan(sql.indexOf('v_due := not exists'));
   });
   it('restricts the dispatcher, predicates and state to the database owner', () => {
     const sql = migration();

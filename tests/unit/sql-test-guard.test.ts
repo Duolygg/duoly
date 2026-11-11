@@ -7,15 +7,21 @@ describe('SQL test isolation', () => {
     for (const file of readdirSync(dir).filter((f) => f.endsWith('.sql'))) {
       const sql = readFileSync(dir + file, 'utf8');
       expect(sql.startsWith('do $duoly_test_guard$'), file).toBe(true);
-      expect(sql.slice(0, sql.indexOf('$duoly_test_guard$;', 30)), file).toContain(
-        'refusing to run tests on production',
-      );
+      expect(
+        sql.slice(0, sql.indexOf('$duoly_test_guard$;', 30)),
+        file,
+      ).toContain('refusing to run tests on production');
     }
   });
   it('classifies every executable test file exactly once', () => {
     const manifest = readFileSync(dir + 'ci-manifest.txt', 'utf8');
-    for (const file of readdirSync(dir).filter((f) => /\.(sql|py|mjs|cjs)$/.test(f))) {
-      expect(manifest.split(/\s+/).filter((word) => word === file), file).toHaveLength(1);
+    for (const file of readdirSync(dir).filter((f) =>
+      /\.(sql|py|mjs|cjs)$/.test(f),
+    )) {
+      expect(
+        manifest.split(/\s+/).filter((word) => word === file),
+        file,
+      ).toHaveLength(1);
     }
   });
 });

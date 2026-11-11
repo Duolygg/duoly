@@ -75,7 +75,7 @@ Real hosted test command (all tentative schema/fixtures **one transaction ending
 python3 supabase/tests/completion_run.py
 ```
 
-The runner strips only the migration's outer BEGIN/COMMIT, adds all `completion_*` behavioral suites in dependency order, and invokes pinned local Supabase CLI `db query --linked --project-ref omnejesspybaxuacjlah --file ... --output-format json`. Fixtures use explicit order references (no order-sequence consumption), temporary helpers, no actual provider calls or storage bytes. The final read asserts `migration_rolled_back:true`. Do not run fixture SQL standalone on a shared/hosted DB.
+SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
 
 Covered: actual role-switched raw-table denial; current role/access revocation; payment states; zero/six/duplicates/null/multidimensional/nonready/foreign proof; five-proof canonical replay; request conflict; immutable update/delete and selected-evidence delete denial; forced ledger failure and forced failure **after** all transitions restore order/assignment/ledger/proofs/chat; next acceptance; pending abandonment/late finalization rejection; former/replacement isolation; closed chat reads/sends/typing; tier thresholds and actual 100-entry posting; exact own history, order and pagination; unchanged payment/refund state.
 
