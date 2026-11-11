@@ -55,7 +55,7 @@ const faq: [string, string][] = [
   ],
   [
     'How much is the cheapest Duoly session?',
-    `The lowest listed price is ${SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game. Coaching is ${COACHING_PRICE} per hour or game in every coachable title, for example a ${COACHING_PRICE} Valorant VOD Review run using Discord screen share.`,
+    `The lowest listed price is ${SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game. Coaching is ${COACHING_PRICE} per hour or game in every coachable title, for example a ${COACHING_PRICE} Valorant VOD Review, which runs with Discord screen share.`,
   ],
   [
     'Do I get money back if nobody takes my order?',
@@ -358,7 +358,7 @@ const schema = {
     <ClosingCta
       heading="Want to check a real price before you decide?"
       text={`A Duoly total is the price of one selection, charged once, by a sole proprietorship in ${BUSINESS_LOCATION}. Open your game, pick the rank you really hold and read the total before paying anything.`}
-      extra={`Three rules cover almost every question. You pay once and nothing is added on top, so ${SINGLE_GAME.short} is ${SINGLE_GAME.total}. Discounts come off by themselves: ${QUANTITY_PERCENT}% at ${MAX_QUANTITY} units, up to ${BUNDLE_PERCENTS[2]}% on bundles, coaching flat at ${COACHING_PRICE}. And you can cancel free until a teammate accepts, while an order nobody takes refunds itself after ${AUTO_CANCEL_MINUTES} minutes. If a session does go wrong, a person at Duoly reads the report rather than a script closing it. Catalog prices as of ${pricesLabel}.`}
+      extra={`You pay once and nothing is added on top, so ${SINGLE_GAME.short} is ${SINGLE_GAME.total} and that is the whole charge. Discounts come off by themselves: ${QUANTITY_PERCENT}% at ${MAX_QUANTITY} units, up to ${BUNDLE_PERCENTS[2]}% on a bundle, and coaching flat at ${COACHING_PRICE}. Cancelling is free until a teammate accepts, and an order nobody takes refunds itself after ${AUTO_CANCEL_MINUTES} minutes. If a session does go wrong, a person at Duoly reads your report; no script closes it for you. Catalog prices as of ${pricesLabel}.`}
       href="/games"
       label="Open the game catalog"
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}

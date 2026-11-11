@@ -79,7 +79,7 @@ const NOT_DUOLY: [string, string][] = [
 const faq: [string, string][] = [
   [
     'Is Duoly safe to use?',
-    `Duoly is an Austrian sole proprietorship, registered under trade register number GISA ${BUSINESS.gisa} and operated from ${BUSINESS_LOCATION}, with the operator details published rather than hidden. Payment runs through ${PAYMENT_PROVIDER}, so Duoly never sees a full card number, and every session is played on your own account. A ${SINGLE_GAME.total} game is one charge with nothing added on top, refundable in full until a teammate accepts.`,
+    `Duoly is an Austrian sole proprietorship, registered under trade register number GISA ${BUSINESS.gisa} and operated from ${BUSINESS_LOCATION}, with the operator details published in full. Payment runs through ${PAYMENT_PROVIDER}, so Duoly never sees a full card number, and every session is played on your own account. A ${SINGLE_GAME.total} game is one charge with nothing added on top, refundable in full until a teammate accepts.`,
   ],
   [
     'Will a Duoly teammate ever ask for my account password?',
@@ -129,7 +129,7 @@ const faq: [string, string][] = [
     <SeoHero
       eyebrow="Trust and safety"
       h1="Duoly trust and safety"
-      lead={`Every Duoly teammate passes a four-stage review before a first order, payment runs through ${PAYMENT_PROVIDER} rather than through Duoly, and both sides sign up to the same conduct rules. Here is each of those in full, and where to read the rule for yourself.`}
+      lead={`Every Duoly teammate passes a four-stage review before a first order, payment runs through ${PAYMENT_PROVIDER} and never through Duoly, and both sides sign up to the same conduct rules. Each one is set out below, with the rule you can go and read for yourself.`}
       cta={{ href: '/how-it-works', label: 'See how a booking runs' }}
       secondary={{ href: '/terms', label: 'Read the terms' }}
       art={[
@@ -236,9 +236,9 @@ const faq: [string, string][] = [
     <section aria-labelledby="conduct-h">
       <h2 id="conduct-h">What are the conduct rules on Duoly?</h2>
       <p>
-        The Duoly conduct rules are five promises both sides make, and they live
-        in <a href="/terms#conduct">the terms of service</a> rather than in a
-        help article. Respect comes first: no harassment, hate speech, threats,
+        The Duoly conduct rules are five promises both sides make, and they sit
+        in <a href="/terms#conduct">the terms of service</a>, where they bind
+        everyone. Respect comes first: no harassment, hate speech, threats,
         discrimination or sexual content. Nobody may ask for, give or use
         another person’s login, and nobody at Duoly asks for a password. No
         cheating, scripting, exploits or third-party tools a game does not
@@ -336,7 +336,7 @@ const faq: [string, string][] = [
     <ClosingCta
       heading="Want to check the rules before you book?"
       text={`Before you pay, a ${SINGLE_GAME.total} game tells you its price, the ${SHARE_PERCENT}% share the teammate keeps, who operates the site and what happens if the session fails. Everything above comes from the terms, the privacy policy and the imprint, published from ${BUSINESS_LOCATION} under trade register GISA ${BUSINESS.gisa}.`}
-      extra={`Three safeguards matter most on a first order. Your account stays yours, because a session starts with an invite rather than a login and nobody at Duoly asks for a password. Your money is reversible until the session runs: cancel free until a teammate accepts, and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. And a bad session has a route, which is a report from the order room that a person reads. What none of that buys is a result. According to the terms, no rank, win or start time is promised at any price, including on a ${TEN_GAME_BUNDLE.total} bundle at ${BUNDLE_PERCENTS[2]}% off. Catalog prices as of ${pricesLabel}.`}
+      extra={`On a first order, your account stays yours: a session starts with an invite, never a login, and nobody at Duoly asks for a password. Your money stays reversible until the session runs, since cancelling is free until a teammate accepts and an order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full. A session that goes badly has a route out, which is a report from the order room that a person at Duoly reads. None of that buys a result, though. According to the terms, no rank, win or start time is promised at any price, including on a ${TEN_GAME_BUNDLE.total} bundle at ${BUNDLE_PERCENTS[2]}% off. Catalog prices as of ${pricesLabel}.`}
       href="/pricing"
       label={`See prices for ${PLAYABLE_GAMES} games`}
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}

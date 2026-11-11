@@ -141,7 +141,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'What does free LFG not give you?',
-    'Three things: a start time somebody is committed to, a rank anybody has checked, and a guaranteed role. All three are self-reported until the lobby loads.',
+    'A start time somebody is committed to, a rank anybody has checked, and a guaranteed role. All three stay self-reported until the lobby loads.',
   ],
   [
     'When is paying for a teammate worth it?',
@@ -245,7 +245,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
       <h2 id="free-h">How good is free LFG?</h2>
       <p class="guide-answer">
         Free LFG is a public request for people to play with. Invite existing
-        friends, then try your game's server using Discord or a subreddit. For
+        friends, then try your game's own Discord server or its subreddit. For
         example, a Valorant post naming EU, Gold, controller and weekday
         evenings is a concrete request. The member counts below describe
         potential partners rather than a guaranteed reply. The{' '}
@@ -527,15 +527,15 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
         a teammate when you want someone to play beside you. A Valorant Duo Pro
         game from Duoly at Gold costs {valDuo.display}, while an hour of{' '}
         {valReview.title} costs {valReview.display} with an {valReview.provider}{' '}
-        coach. The review gives you time to pause a recording using Discord
-        screen share. Include the approach to the fight rather than only the
-        final death, because the coach needs to see the decision before the
-        result. For example, a failed retake may start with a late rotation.
-        Wasted utility can leave both players exposed before they enter the
-        site, so mark the rotation and the first utility use in your recording,
-        then compare those moments with a retake that worked. A live teammate
-        can call the next retake. A review gives you time to compare the setup
-        without another round starting. The{' '}
+        coach. The review gives you time to stop a recording with Discord screen
+        share and talk through the moment. Include the approach to the fight
+        rather than only the final death, because the coach needs to see the
+        decision before the result. For example, a failed retake may start with
+        a late rotation. Wasted utility can leave both players exposed before
+        they enter the site, so mark the rotation and the first utility use in
+        your recording, then compare those moments with a retake that worked. A
+        live teammate can call the next retake. A review gives you time to
+        compare the setup without another round starting. The{' '}
         <a href="/coaching">coaching directory</a> lists the formats in each
         game. Read{' '}
         <a href="/blog/how-to-choose-a-gaming-coach">
@@ -575,7 +575,7 @@ const cross = 'M4.6 4.6l6.8 6.8m0-6.8-6.8 6.8';
     <ClosingCta
       heading="Try free tonight, book when it matters"
       text={`Free looking-for-group costs €0 and is the right first move for most players. A Duoly session is the paid alternative for the evening when the time, the rank and the role all have to be fixed in advance, from ${fromPrice}. Post your region, rank, role and mode in a server for your game, and book instead on the night nobody answers.`}
-      extra={`Three facts settle the practical questions. Valorant Duo Pro is ${valDuo.display} per game at Gold with an ${valDuo.tier}, and bundles take ${bundle[0]}% off 3 games, ${bundle[1]}% off 5 and ${bundle[2]}% off 10. Payment finishes on duoly.gg and never in a private message, and the Duoly terms carry the cancellation and refund rules. A teammate accepts from the queue, sessions run on Discord voice, and both players stay on accounts they own. Every community link above was requested on ${CHECKED_LABEL} and answered.`}
+      extra={`If tonight turns into a paid night, these are the numbers. Valorant Duo Pro is ${valDuo.display} per game at Gold with an ${valDuo.tier}, and bundles take ${bundle[0]}% off 3 games, ${bundle[1]}% off 5 and ${bundle[2]}% off 10. Payment finishes on duoly.gg and never in a private message, and the cancellation and refund rules live in the Duoly terms. Your teammate accepts the order out of the queue, you both talk with Discord voice, and you both stay on accounts you own. Every community link above was requested on ${CHECKED_LABEL} and answered.`}
       href={bookingHref('val', { service: 'duo2' })}
       label="Book a teammate"
       art={{ src: '/assets/games/marvel-rivals.png', alt: '' }}

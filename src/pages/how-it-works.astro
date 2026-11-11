@@ -131,7 +131,7 @@ const faq: [string, string][] = [
   ],
   [
     'Do I need Discord to book on Duoly?',
-    `Only for voice. Text orders run in the order chat on duoly.gg, while voice sessions and coaching screen shares run using Discord, which is why a ${COACHING_PRICE} VOD Review asks for it.`,
+    `Only for voice. Text orders run in the order chat on duoly.gg, while voice sessions and coaching screen shares happen on Discord, which is why a ${COACHING_PRICE} VOD Review asks for it.`,
   ],
   [
     'Am I charged per game or once for the whole order?',
@@ -202,8 +202,8 @@ const faq: [string, string][] = [
         billed after. You pick the game, the service and the quantity, and the
         total appears before you pay anything. Payment is a single upfront
         charge through {PAYMENT_PROVIDER}, taken the moment the order joins the
-        queue. The match comes last, because a teammate accepts an order rather
-        than being assigned one.
+        queue. The match comes last, because a teammate chooses to accept your
+        order and nobody is assigned to it.
       </p>
       <p>
         {SINGLE_GAME.short} costs {SINGLE_GAME.total} in {CATALOG_YEAR}.{' '}
@@ -223,8 +223,8 @@ const faq: [string, string][] = [
       <p>
         Those three steps set the price, take the payment and find the player,
         in that order. The service and your own rank decide the figure. The
-        payment is one charge for the whole order rather than a charge per game.
-        And an order nobody accepts within {AUTO_CANCEL_MINUTES} minutes cancels
+        payment is one charge for the whole order, never a charge per game. And
+        an order nobody accepts within {AUTO_CANCEL_MINUTES} minutes cancels
         itself, returning 100% of the amount to your Duoly balance. Prices are
         set in euros, and according to{' '}
         <a href="/terms#payment">Duoly’s payment terms</a> a US dollar total
@@ -344,8 +344,8 @@ const faq: [string, string][] = [
         A session ends when your teammate uploads proof and marks the order
         done. The proof is {PROOF_MIN} to {PROOF_MAX} screenshots of the match
         history or the end screens with both players visible, and the completion
-        flow requires them rather than suggesting them. You can rate the
-        teammate afterwards, and a rating stays about the session.
+        flow will not close the order without them. You can rate the teammate
+        afterwards, and a rating stays about the session.
       </p>
       <p>
         Then the money splits. A teammate earns {SHARE_PERCENT}% of the order
@@ -388,7 +388,7 @@ const faq: [string, string][] = [
     <ClosingCta
       heading="Ready to run the three steps for real?"
       text={`A first order is a three-step job that ends in a lobby. ${SINGLE_GAME.short} costs ${SINGLE_GAME.total}, coaching is ${COACHING_PRICE} per hour across ${PLAYABLE_GAMES} games plus ${SOCIAL_MODES} voice modes, and the whole thing is run from ${BUSINESS_LOCATION}. Open your game, pick the rank you really hold and read the total before paying anything.`}
-      extra={`Three things decide whether a first booking goes well. Pick the rank you really hold, because a wrong rank can make a session impossible to play and, according to the terms, is not a reason for a refund. Add your in-game name and server so the invite can reach you, and choose voice only if you actually want to talk. Then remember what nobody promises: no start time, no rank and no win. An order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full, and the biggest discount on the site is ${TEN_GAME_BUNDLE.short} at ${TEN_GAME_BUNDLE.total}, which saves ${TEN_GAME_BUNDLE.saved}.`}
+      extra={`Most first bookings go wrong on the rank, so pick the one you really hold. A wrong rank can make a session impossible to play, and according to the terms that is not a reason for a refund. Add your in-game name and server so the invite can reach you, and choose voice only if you actually want to talk. Duoly also promises less than you might expect. There is no fixed start time, because a teammate accepts the order when one is free, and there is no promise about your rank or your win rate. An order nobody takes within ${AUTO_CANCEL_MINUTES} minutes refunds itself in full, and the biggest saving on the site is ${TEN_GAME_BUNDLE.short} at ${TEN_GAME_BUNDLE.total}, which takes ${TEN_GAME_BUNDLE.saved} off.`}
       href="/pricing"
       label="See every Duoly price"
       art={{ src: '/assets/games/valorant.png', alt: '' }}
