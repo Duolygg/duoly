@@ -17,18 +17,34 @@
  * shrinks at that breakpoint, globals.css .rv-card), less its own 10 px top and bottom padding.
  * Rounding these to whole pixels left everything below the strips sitting one pixel low while
  * they were skipped, so they are written out in full: the page is exactly as long as before at
- * 360, 390, 430, 768, 1024 and 1440 px wide, rendered or not.
+ * 360, 390, 430, 768, 1024 and 1440 px wide, rendered or not. The phone size is also what a
+ * phone card is pinned to, so which reviews a phone samples cannot change it.
  *
  * Only the rows, never the `.rv` section around them: its radial glow (`.rv::before`) reaches
  * 40 px below the section, and containment would clip it.
  */
 .rv-row {
+  --rv-strip: 246.172px;
   content-visibility: auto;
-  contain-intrinsic-size: auto 246.172px;
+  contain-intrinsic-size: auto var(--rv-strip);
 }
 @media (max-width: 560px) {
   .rv-row {
-    contain-intrinsic-size: auto 246.672px;
+    --rv-strip: 246.672px;
+  }
+  /*
+   * On a phone the height above has to be pinned rather than measured, because a phone only
+   * drifts through a sample of the reviews (Testimonials.jsx PHONE_ROW_CARDS) and a row is as
+   * tall as its tallest card. A card's footer wraps to a third line when a long country name
+   * and a long teammate name land in it together ("United Kingdom" with "FreemaN"), which makes
+   * that card 13.281 px taller and stretches the rest of its row to match. Somewhere in a
+   * hundred reviews that always happens; in six it need not, and then the strip would render
+   * 14 px shorter than the height reserved for it and everything below would jump as the rows
+   * scrolled into view. The card's own 20 px and 16 px padding and its 1 px border sit outside
+   * its min-height (the card is content-box, globals.css .rv-card), hence the 38 px.
+   */
+  .rv-card {
+    min-height: calc(var(--rv-strip) - 38px);
   }
 }
 
