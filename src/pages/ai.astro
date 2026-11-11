@@ -116,7 +116,7 @@ const faq: [string, string][] = [
           <span>Example conversation</span>
         </div>
         <p class="ai-bubble-user">
-          Find me a Valorant coach for tonight under 15 euros
+          Find me a Valorant VOD review under 15 euros
         </p>
         <p class="ai-tool">
           <span aria-hidden="true"></span>Checked Duoly
@@ -152,14 +152,14 @@ const faq: [string, string][] = [
     <section aria-labelledby="what-h">
       <h2 id="what-h">What is the Duoly connector for AI assistants?</h2>
       <p>
-        The Duoly connector lets your AI assistant find gaming teammates and
-        coaching, compare prices and prepare a booking link. It uses the Model
-        Context Protocol (MCP) at <code>{MCP.endpoint}</code>. You can browse
+        The Duoly connector lets your AI assistant find gaming teammates and{' '}
+        coaching, compare prices and prepare a booking link. It uses the Model{' '}
+        Context Protocol (MCP) at <code>{MCP.endpoint}</code>. You can browse{' '}
         without a Duoly account.
       </p>
       <p>
-        Ask about any of {PLAYABLE_GAMES} games, with coaching available in
-        {COACHABLE_GAMES}. Your assistant narrows down the choices; you open the
+        Ask about any of {PLAYABLE_GAMES} games, with coaching available in{' '}
+        {COACHABLE_GAMES}. Your assistant narrows down the choices; you open the{' '}
         link to review and pay on duoly.gg.
       </p>
     </section>
@@ -172,15 +172,15 @@ const faq: [string, string][] = [
       ]}
     >
       <p>
-        Start with the game you want to play and what you want from the session.
-        Your assistant can compare suitable services and prepare a link with
+        Start with the game you want to play and what you want from the session.{' '}
+        Your assistant can compare suitable services and prepare a link with{' '}
         your choices already selected.
       </p>
       <p>
-        Check the final price on Duoly before paying. Five non-coaching units
-        take {bundle[1]}% off; coaching has no quantity discount. A teammate or
-        coach accepts your order from the queue. Availability does not reserve a
-        person or a start time. Agree the voice setup in the order room before
+        Check the final price on Duoly before paying. Five non-coaching units{' '}
+        take {bundle[1]}% off; coaching has no quantity discount. A teammate or{' '}
+        coach accepts your order from the queue. Availability does not reserve a{' '}
+        person or a start time. Agree the voice setup in the order room before{' '}
         you play.
       </p>
     </Steps>
@@ -189,25 +189,25 @@ const faq: [string, string][] = [
       <p>
         {launch.showSetup
           ? 'Duoly is available in Claude as a custom connector you add yourself.'
-          : 'The Duoly connection is coming soon. Claude will be the first supported assistant.'}
+          : 'The Duoly connection is coming soon. Claude will be the first supported assistant.'}{' '}
         ChatGPT, Gemini, Perplexity and Mistral Le Chat are coming soon.
       </p>
       <p>
-        The connector is not listed in the Claude directory or the ChatGPT
-        store. In clients that support interactive cards, you can browse games
-        and open booking links from a card. Other clients show text and links.
+        It is not listed in the Claude directory or the ChatGPT store. In
+        clients that support interactive cards, you can browse games and open
+        booking links from a card. Other clients show text and links.
       </p>
       <p class="ai-dev-note">
-        Building your own client? Read the
+        Building your own client? Read the{' '}
         <a href="/developers/mcp">Duoly MCP developer guide</a>.
       </p>
     </section>
     <section aria-labelledby="setup-h">
       <h2 id="setup-h">How do you add Duoly to Claude?</h2>
       <p>
-        In Claude, open Settings and Connectors, then add a custom connector
-        using <code>{MCP.endpoint}</code>. Enable Duoly in a conversation and
-        ask for a session. Claude may require a paid plan or permission from
+        In Claude, open Settings and Connectors, then add a custom connector{' '}
+        using <code>{MCP.endpoint}</code>. Enable Duoly in a conversation and{' '}
+        ask for a session. Claude may require a paid plan or permission from{' '}
         your administrator.
       </p>
       {/* A status widget, not prose: ARIA list roles rather than ul/li. The styling
@@ -244,20 +244,20 @@ const faq: [string, string][] = [
         </p>
       )}
       <p>
-        The six public tools work without a Duoly login. Access to an order’s
+        The six public tools work without a Duoly login. Access to an order’s{' '}
         status needs a private code that you choose to share.
       </p>
     </section>
     <section aria-labelledby="prompts-h">
       <h2 id="prompts-h">Which prompts get a useful Duoly answer?</h2>
       <p>
-        Name your game and budget, then add a mode or coaching goal. Include
-        your server region if it matters to you. “Review my Valorant
-        positioning” gives the assistant more to work with than “find me a
+        Name your game and budget, then add a mode or coaching goal. Include{' '}
+        your server region if it matters to you. “Review my Valorant{' '}
+        positioning” gives the assistant more to work with than “find me a{' '}
         coach”.
       </p>
       <p>
-        These prompts are a starting point. You can ask follow-up questions to
+        These prompts are a starting point. You can ask follow-up questions to{' '}
         compare options before opening a booking link.
       </p>
       <ul class="ai-prompts">
@@ -277,13 +277,13 @@ const faq: [string, string][] = [
     <section aria-labelledby="tools-h">
       <h2 id="tools-h">Which Duoly tools can an AI assistant call?</h2>
       <p>
-        Duoly has seven tools. Six browse the public catalog and prepare booking
-        links without a login. The seventh checks one order’s progress when you
+        Duoly has seven tools. Six browse the public catalog and prepare booking{' '}
+        links without a login. The seventh checks one order’s progress when you{' '}
         share its private status code.
       </p>
       <p>
-        <code>find_session</code> returns up to three matching services.
-        <code>get_quote</code> gives the price for a specific selection.
+        <code>find_session</code> returns up to three matching services.{' '}
+        <code>get_quote</code> gives the price for a specific selection.{' '}
         Availability shows who is online, without reserving anybody.
       </p>
       <ul class="ai-tools">
@@ -317,14 +317,14 @@ const faq: [string, string][] = [
     <section aria-labelledby="status-code-h">
       <h2 id="status-code-h">How does an order status code work?</h2>
       <p>
-        An order status code lets your assistant read the progress of one
-        booking. Create it in your Duoly order room, then paste it into your
+        An order status code lets your assistant read the progress of one{' '}
+        booking. Create it in your Duoly order room, then paste it into your{' '}
         conversation. You can revoke it in the order room at any time.
       </p>
       <p>
-        The code expires after seven days. It shares the order’s current stage,
-        teammate display names and next step, including progress filling team
-        seats. It cannot change or cancel an order or reveal payment details.
+        The code expires after seven days. It shares the order’s current stage,{' '}
+        teammate display names and next step, including progress filling team{' '}
+        seats. It cannot change or cancel an order or reveal payment details.{' '}
         Keep it out of screenshots, shared links and public conversations.
       </p>
     </section>
@@ -333,8 +333,8 @@ const faq: [string, string][] = [
         What can an AI assistant do, and what stays with you?
       </h2>
       <p>
-        Your assistant helps you choose a session and follow its progress.
-        Payment and booking stay on duoly.gg. You decide whether to share a
+        Your assistant helps you choose a session and follow its progress.{' '}
+        Payment and booking stay on duoly.gg. You decide whether to share a{' '}
         private order status code; never share passwords or card details.
       </p>
       <div class="ai-boundaries">
@@ -375,7 +375,7 @@ const faq: [string, string][] = [
         </div>
       </div>
       <p>
-        Social sessions are booked on duoly.gg for now. Play on your own game
+        Social sessions are booked on duoly.gg for now. Play on your own game{' '}
         account and follow each game’s rules. Read our{' '}
         <a href="/terms">booking and refund terms</a> and{' '}
         <a href="/privacy">privacy policy</a>.
@@ -384,15 +384,15 @@ const faq: [string, string][] = [
     <section aria-labelledby="trust-h">
       <h2 id="trust-h">Where can I read more about Duoly?</h2>
       <p>
-        <a href="/about">About Duoly</a> introduces the team and explains the
-        player checks. The <a href="/imprint">imprint</a> lists the Austrian
+        <a href="/about">About Duoly</a> introduces the team and explains the{' '}
+        player checks. The <a href="/imprint">imprint</a> lists the Austrian{' '}
         operator and trade registration.
       </p>
       <p>
-        For payment and cancellation questions, read
-        <a href="/fees-and-refunds">Duoly fees and refunds</a>.
-        <a href="/pricing.md">Pricing.md</a> has the full price list in plain
-        text, ready to share with your assistant. Social sessions are booked
+        For payment and cancellation questions, read{' '}
+        <a href="/fees-and-refunds">Duoly fees and refunds</a>.{' '}
+        <a href="/pricing.md">Pricing.md</a> has the full price list in plain{' '}
+        text, ready to share with your assistant. Social sessions are booked{' '}
         directly on Duoly.
       </p>
     </section>

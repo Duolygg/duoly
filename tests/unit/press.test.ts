@@ -31,7 +31,10 @@ import {
  * all.
  */
 
-const page = readFileSync('src/pages/press.astro', 'utf8');
+const page = readFileSync('src/pages/press.astro', 'utf8').replace(
+  /\{' '\}/g,
+  ' ',
+);
 
 describe('the Duoly boilerplate', () => {
   it('carries the facts an article needs, all derived', () => {
@@ -105,7 +108,10 @@ describe('the Duoly fact sheet', () => {
       'https://www.tiktok.com/@duolygg',
     );
     // The press page renders the same constant, so the list cannot drift.
-    const page = readFileSync('src/pages/press.astro', 'utf8');
+    const page = readFileSync('src/pages/press.astro', 'utf8').replace(
+      /\{' '\}/g,
+      ' ',
+    );
     expect(page).toContain('OFFICIAL_CHANNELS');
   });
 
@@ -140,9 +146,9 @@ describe('the press address', () => {
 
   it('is the address every press enquiry on /press mails', () => {
     const mailtos = [...page.matchAll(/mailto:\$\{(\w+)\}/g)].map((m) => m[1]!);
-    // Three press enquiry links: the hero call to action, the logo question and
-    // the contact section. None of them may point at the support inbox.
-    expect(mailtos.filter((name) => name === 'PRESS_EMAIL')).toHaveLength(3);
+    // Four press links: hero, logo use, contact and the closing call to action.
+    // None of them may point at the support inbox.
+    expect(mailtos.filter((name) => name === 'PRESS_EMAIL')).toHaveLength(4);
     expect(mailtos.filter((name) => name === 'SUPPORT_EMAIL')).toHaveLength(1);
     // No hand-typed address anywhere on the page, so changing either constant
     // changes every link and every visible line at once.

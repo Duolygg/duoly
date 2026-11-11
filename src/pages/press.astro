@@ -25,6 +25,7 @@ import {
 } from '../site/entity';
 import {
   COACHABLE_GAMES,
+  PLAYABLE_GAMES,
   SHARE_PERCENT,
   SOCIAL_MODES,
 } from '../server/seo/teammate-facts';
@@ -34,7 +35,7 @@ import {
   CATALOG_PRICES_UPDATED,
   CATALOG_PRICES_UPDATED_LABEL,
 } from '../server/seo/fees';
-import { CATALOG_GAMES, SERVICE_COUNT } from '../server/seo/booking';
+import { SERVICE_COUNT } from '../server/seo/booking';
 import {
   BOILERPLATE_PARAGRAPH,
   BOILERPLATE_SENTENCE,
@@ -49,7 +50,7 @@ import { CATEGORY_HEADINGS } from '../server/seo/price-table';
 const { viewer, csrf } = await pageViewer(Astro);
 const path = '/press';
 const title = 'Duoly Press Kit: Facts, Boilerplate and Logos | Duoly';
-const description = `The Duoly fact sheet for journalists: what Duoly is, who operates it, ${SERVICE_COUNT} services across ${CATALOG_GAMES} games, the boilerplate to quote and the logo files to download.`;
+const description = `The Duoly fact sheet for journalists: what Duoly is, who operates it, ${SERVICE_COUNT} services across ${PLAYABLE_GAMES} games plus voice sessions, the boilerplate to quote and the logo files to download.`;
 const HUB_LINKS = hubChips(['league-of-legends', 'valorant', 'marvel-rivals']);
 const pricesLabel = CATALOG_PRICES_UPDATED_LABEL;
 /** Session categories in words, read from the same list /pricing groups by. */
@@ -120,7 +121,7 @@ const faq: [string, string][] = [
         { src: '/assets/games/valorant.png', alt: 'Valorant game art' },
         { src: '/assets/games/marvel-rivals.png', alt: 'Marvel Rivals art' },
       ]}
-      chip={`${SERVICE_COUNT} services, ${CATALOG_GAMES} games`}
+      chip={`${SERVICE_COUNT} services, ${PLAYABLE_GAMES} games plus voice sessions`}
       facts={[
         `Based in ${BUSINESS_LOCATION}`,
         `Trade register GISA ${BUSINESS.gisa}`,
@@ -139,9 +140,9 @@ const faq: [string, string][] = [
     <section aria-labelledby="facts-h">
       <h2 id="facts-h">What are the Duoly facts a journalist needs?</h2>
       <p>
-        Duoly is run by a team from Austria and Switzerland with years of
-        experience running competitive gaming services. The business is based in
-        {BUSINESS_LOCATION}. Full legal details are on the
+        Duoly is run by a team from Austria and Switzerland with years of{' '}
+        experience running competitive gaming services. The business is based in{' '}
+        {BUSINESS_LOCATION}. Full legal details are on the{' '}
         <a href="/imprint">imprint</a>.
       </p>
       <div class="official-table-wrap">
@@ -175,7 +176,7 @@ const faq: [string, string][] = [
       <h2 id="boilerplate-h">What is Duoly in one sentence?</h2>
       <p>{BOILERPLATE_SENTENCE}</p>
       <p>
-        Duoly is unaffiliated with Riot Games, Valve, Epic Games, Blizzard and
+        Duoly is unaffiliated with Riot Games, Valve, Epic Games, Blizzard and{' '}
         NetEase. Customers and teammates play on separate accounts.
       </p>
     </section>
@@ -183,19 +184,20 @@ const faq: [string, string][] = [
     <section aria-labelledby="catalog-h">
       <h2 id="catalog-h">Which games and sessions does Duoly cover?</h2>
       <p>
-        Duoly offers {SERVICE_COUNT} services across {CATALOG_GAMES} games,
-        grouped into {CATEGORY_WORDS}. Coaching covers {COACHABLE_GAMES} games
-        and includes VOD reviews using Discord screen share.
+        Duoly offers {SERVICE_COUNT} services across {PLAYABLE_GAMES} games plus
+        voice sessions, grouped into {CATEGORY_WORDS}. Coaching covers{' '}
+        {COACHABLE_GAMES} games and includes VOD reviews using Discord screen
+        share.
       </p>
       <p>
-        Team fills book several players for one session, including League of
-        Legends Ranked Flex five-stacks. The {SOCIAL_MODES} voice session types
-        offer company and conversation for adults. Regions include
+        Team fills book several players for one session, including League of{' '}
+        Legends Ranked Flex five-stacks. The {SOCIAL_MODES} voice session types{' '}
+        offer company and conversation for adults. Regions include{' '}
         {SERVED_AREAS.join(', ')}.
       </p>
       <p>
-        Bundles of {BUNDLE_SIZES[2]} teammate games save {BUNDLE_PERCENTS[2]}%.
-        <a href="/pricing">The pricing page</a> lists all services and prices;
+        Bundles of {BUNDLE_SIZES[2]} teammate games save {BUNDLE_PERCENTS[2]}%.{' '}
+        <a href="/pricing">The pricing page</a> lists all services and prices;{' '}
         <a href="/pricing.md">pricing.md</a> is the plain text version.
       </p>
     </section>
@@ -203,15 +205,15 @@ const faq: [string, string][] = [
     <section aria-labelledby="logos-h">
       <h2 id="logos-h">Where can you download the Duoly logo?</h2>
       <p>
-        Download the full logo, wordmark, mascots or app icon below. These files
-        are free to use in editorial coverage of Duoly. Please keep their
-        colours and proportions, and keep the Duoly mark separate from other
+        Download the full logo, wordmark, mascots or app icon below. These files{' '}
+        are free to use in editorial coverage of Duoly. Please keep their{' '}
+        colours and proportions, and keep the Duoly mark separate from other{' '}
         brands.
       </p>
       <p>
-        The artwork has a dark background. A
-        <a href={SOCIAL_IMAGE.href}>social preview image</a>(
-        {SOCIAL_IMAGE.label}) is also available. Game art and publisher logos
+        The artwork has a dark background. A{' '}
+        <a href={SOCIAL_IMAGE.href}>social preview image</a>({' '}
+        {SOCIAL_IMAGE.label}) is also available. Game art and publisher logos{' '}
         are not included in this press kit.
       </p>
       <p>
@@ -244,14 +246,14 @@ const faq: [string, string][] = [
     <section aria-labelledby="contact-h">
       <h2 id="contact-h">Who do you contact about Duoly?</h2>
       <p>
-        For interviews, quotes and press questions, email
-        <a href={`mailto:${PRESS_EMAIL}`}>{PRESS_EMAIL}</a>. Include your
+        For interviews, quotes and press questions, email{' '}
+        <a href={`mailto:${PRESS_EMAIL}`}>{PRESS_EMAIL}</a>. Include your{' '}
         publication and deadline so the team can plan a response.
       </p>
       <p>
-        For help with a booking, email
-        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> or use
-        <a href="/contact">the contact form</a>. The official Duoly channels are
+        For help with a booking, email{' '}
+        <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> or use{' '}
+        <a href="/contact">the contact form</a>. The official Duoly channels are{' '}
         listed below.
       </p>
       <ul class="official-channels">
@@ -271,8 +273,8 @@ const faq: [string, string][] = [
       heading="Need a figure that is not on this page?"
       text="Email the press team for interviews, quotes or background on Duoly."
       extra="You can read more about the team and how sessions work on the About page."
-      href="/about"
-      label="Read about Duoly"
+      href={`mailto:${PRESS_EMAIL}`}
+      label="Email the press team"
       art={{ src: '/assets/games/league-of-legends.png', alt: '' }}
     />
 

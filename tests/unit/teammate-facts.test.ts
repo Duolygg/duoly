@@ -88,7 +88,9 @@ describe('teammate facts come from the pricing engine', () => {
     const ai = readFileSync(
       new URL('../../src/pages/ai.astro', import.meta.url),
       'utf8',
-    ).replace(/\s+/g, ' ');
+    )
+      .replace(/\{' '\}/g, ' ')
+      .replace(/\s+/g, ' ');
     expect(ai).not.toContain('three game booking carries');
     expect(ai).not.toContain('on five games or {bundle[2]}% on ten');
     // The claim, not one wording of it: the page may say this in whatever
