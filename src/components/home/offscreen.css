@@ -11,17 +11,24 @@
  *
  * `content-visibility: auto` skips that work until the row comes near the viewport, and the
  * content stays in the accessibility tree and findable with the browser's find-in-page.
- * `contain-intrinsic-size` is the measured content height of a row (a row is 267 px tall at
- * 390 px wide and 266 px at 1440 px, less its own 10 px top and bottom padding), so the page is
- * the same length whether a row has been rendered or not and nothing below it moves; the `auto`
- * keyword then pins the real height once a row has been laid out.
+ * `contain-intrinsic-size` is the row's measured content height to the sub-pixel: a row is
+ * 266.672 px tall under 561 px wide and 266.172 px above it (the card narrows and its padding
+ * shrinks at that breakpoint, globals.css .rv-card), less its own 10 px top and bottom padding.
+ * Rounding these to whole pixels left everything below the strips sitting one pixel low while
+ * they were skipped, so they are written out in full: the page is exactly as long as before at
+ * 360, 390, 430, 768, 1024 and 1440 px wide, rendered or not.
  *
  * Only the rows, never the `.rv` section around them: its radial glow (`.rv::before`) reaches
  * 40 px below the section, and containment would clip it.
  */
 .rv-row {
   content-visibility: auto;
-  contain-intrinsic-size: auto 247px;
+  contain-intrinsic-size: auto 246.172px;
+}
+@media (max-width: 560px) {
+  .rv-row {
+    contain-intrinsic-size: auto 246.672px;
+  }
 }
 
 /*
