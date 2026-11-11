@@ -49,7 +49,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'How much does it cost to play games with someone?',
-    `Teammate sessions start at ${from} in 2026, and the price follows the mode and, in ranked modes, your own rank. For example, 3 games take a bundle discount.`,
+    `Teammate sessions start at ${from}. The price follows the mode and, in ranked modes, your own rank, and a bundle of 3 or more games takes a discount off the total.`,
   ],
   [
     'Can I find people to play games with for free?',
@@ -61,11 +61,11 @@ const faqItems: [string, string][] = [
   ],
   [
     'Can I play with a pro?',
-    'Duoly books reviewed higher-ranked players rather than signed professionals, and each card names the tier it hires. For example, a Grand Champion partner in Rocket League.',
+    'Duoly books reviewed higher-ranked players, not signed professionals, and every card names the tier it hires, such as a Grand Champion partner in Rocket League.',
   ],
   [
     'What if I just want company without a game?',
-    `Duoly Social is the game-free option at ${socialPrice} per hour in 2026: Just Chat, Watch Together, Sleep Call or Karaoke, for adults only.`,
+    `Duoly Social is the game-free option at ${socialPrice} an hour: Just Chat, Watch Together, Sleep Call or Karaoke, for adults only.`,
   ],
 ];
 const article = {
@@ -119,52 +119,56 @@ const article = {
       <h2 id="what-h">What is a gaming buddy?</h2>
       <p>
         A gaming buddy is somebody who plays with you regularly rather than
-        once, and the word covers 3 quite different asks: a duo partner for
+        once. The word covers three fairly different asks: a duo partner for
         ranked, a relaxed companion for casual or co-op evenings, and a filled
-        seat when a group is short. Name which of the 3 you want, because a
-        ranked duo and a survival partner want opposite things from an evening.
+        seat when a group is short one player. Say which you want, because a
+        ranked grinder and a survival partner want opposite things from an
+        evening.
+      </p>
+      <p>
         A booked buddy on Duoly is a reviewed player who joins for a set number
         of games or hours, on your own account, with the rank, the mode and the
-        voice setup agreed in the order chat before anyone queues. For example,
-        a player tired of silent randoms books a session instead, which settles
-        the time and the rank. A session from Duoly starts at {from}, read from
-        checkout in November 2026. A {floor.name} session starts at{' '}
-        {floor.cheapest.display} per {floor.cheapest.unit}, which is the floor
-        of the whole directory below. The same person can be booked again from
-        your order history, using Discord.
+        voice setup agreed in the order chat before anyone queues. Sessions
+        start at {from}, and the cheapest card in the whole directory below is a{' '}
+        {floor.name} session at {floor.cheapest.display} per{' '}
+        {floor.cheapest.unit}. If the evening goes well, you can book the same
+        person again from your order history.
       </p>
     </section>
     <section aria-labelledby="free-h">
       <h2 id="free-h">How do you find people to play games with for free?</h2>
       <p>
-        Finding people to play games with for free is the right first try, and 3
-        routes cost nothing at all. The game itself: in-client group finders,
-        Squad Fill and party invites put a stranger beside you in seconds, with
-        no agreed time and no comms. Game Discords and LFG channels, where a
-        post naming your region, your rank, your role and your mode gets
-        answered far more often than a bare "anyone want to play". The people
-        you already enjoyed a match with: add them after the game rather than
-        scrolling a server. For example, a post with all 4 fields beats a
-        one-line post. A paid booking from Duoly at {from} in 2026 buys the
-        parts free routes cannot promise: a set time, a named rank and comms
-        settled before the first queue, agreed using Discord.
+        Free is the right first try, and three routes cost nothing at all. The
+        game itself is the fastest: in-client group finders, Squad Fill and
+        party invites put a stranger beside you in seconds, with no agreed time
+        and no comms. Game Discords and LFG channels are slower and much better,
+        as long as your post names your region, your rank, your role and your
+        mode. "Anyone want to play" gets scrolled past. And the people you
+        already enjoyed a match with are the best route of all, so add them
+        after the game instead of going back to a server next week.
+      </p>
+      <p>
+        A booked session at {from} buys the parts a free post cannot promise: a
+        set time, a named rank, and comms agreed with Discord before the first
+        queue.
       </p>
     </section>
     <section aria-labelledby="games-h">
       <h2 id="games-h">Which game do you want a buddy for?</h2>
       <p class="section-intro">
-        A teammate directory is one card per game Duoly sells sessions in, with
-        the cheapest real session in that game rather than a headline number.
-        {withPage.length} of the {games.length} games have a dedicated LFG or
-        duo page with the modes, a preparation checklist and a worked example.
-        The rest start from a game hub carrying the same price cards, and every
-        session across the directory starts at {from}, read from Duoly’s pricing
-        engine in November 2026. A card price is the floor, because a ranked
-        session is priced by your own rank while casual and co-op modes hold one
-        price for everybody. For example, a Minecraft card starts at an hourly
-        price, since a Minecraft session has no fixed length. Press Book to open
-        checkout with the game preselected, then agree the mode and the voice
-        setup using Discord.
+        Every card below shows the cheapest real session in that game rather
+        than a headline number. Treat it as a floor: ranked modes are priced by
+        your own rank, while casual and co-op modes hold one price for
+        everybody. Some cards are priced per game and some per hour, because a
+        Minecraft evening has no fixed length and a Valorant match does, so
+        check the unit before you choose a quantity.
+      </p>
+      <p class="section-intro">
+        {withPage.length} of the {games.length} games have an LFG or duo page of
+        their own, with the modes written out and a worked example. The rest
+        book from their game hub, carrying the same price cards. Press Book and
+        checkout opens with that game already chosen, which is where you settle
+        the mode and the voice setup.
       </p>
       <div class="directory-grid">
         {games.map((game) => (
@@ -203,18 +207,17 @@ const article = {
     <Steps
       heading="How do you book a gaming buddy?"
       steps={[
-        `Pick the game, the mode and how much time you want: a single game, a bundle of 3 or 5, or an hour in the games sold by time. Sessions start at ${from} in 2026.`,
-        'Add your region, rank, role and language. The written request is the first thing your buddy reads, so name the mode and the kind of evening you want. For example, "EU, Gold, support, ranked, short calls" answers all 5 at once.',
-        'Meet in the order chat, agree on voice using Discord and send the invite yourself. Your buddy plays from a separate account, so your login stays private.',
+        `Pick the game, the mode and how much time you want: a single game, a bundle of 3 or 5, or an hour in the games sold by time. Sessions start at ${from}.`,
+        'Add your region, rank, role and language. That written request is the first thing your buddy reads, so name the mode and the kind of evening you have in mind. "EU, Gold, support, ranked, short calls" tells somebody everything in six words.',
+        'Meet in the order chat, agree on voice with Discord and send the invite yourself. Your buddy plays from a separate account, so your login stays private.',
       ]}
     >
       <p>
-        Duoly reviews every teammate before any order, and every figure on this
-        page comes from Duoly’s pricing engine, read in November 2026. Read
-        about <a href="/contact">the team behind Duoly</a>, check the{' '}
+        Every teammate passes a review before taking a first order. Read about{' '}
+        <a href="/contact">the team behind Duoly</a>, check the{' '}
         <a href="/terms">payment, cancellation and refund terms</a>, or browse{' '}
-        <a href="/coaching">esports coaching</a> when you want a lesson rather
-        than company.
+        <a href="/coaching">esports coaching</a> if what you want is a lesson
+        rather than company.
       </p>
     </Steps>
     <Topics
@@ -223,15 +226,15 @@ const article = {
         {
           heading: 'What makes a good gaming partner?',
           paragraphs: [
-            'A good gaming partner is a match on 3 things rather than on rank alone: the mode you both want to play, the hours you are both online, and how much talking you each want. Mode is the one people skip. A ranked grinder and a player who wants a relaxed evening will annoy each other inside one match, however well matched the ranks are.',
-            `Say early how you like comms, because "short calls only" and "chat the whole time" are both fine and only one of them is what you want. For example, a player who hates being coached mid game should say so before the first queue. A booked buddy from Duoly starts at ${from} in 2026 and arrives already knowing all 3 answers, because the order chat asked for them first, agreed using Discord.`,
+            'A good gaming partner is a match on the mode you both want, the hours you are both online, and how much talking you each want. Rank matters least of the four. Mode is the one people skip, and it is the one that ruins evenings: a ranked grinder and somebody who wants a relaxed hour will annoy each other inside a single match, however well the ranks line up.',
+            `Say how you like comms early, because "short calls only" and "chat the whole time" are both perfectly fine and only one of them is what you want. If being coached mid game irritates you, say so before the first queue rather than after a lost round. A booked buddy from ${from} turns up already knowing all of that, because the order chat asks for it before anyone queues.`,
           ],
         },
         {
           heading: 'Do you want a teammate, a coach or just company?',
           paragraphs: [
-            'Choose a teammate for playing together, a coach for learning, or Social for company without a game. A teammate is a partner in the mode you choose, with calls and coordination during play. A coach is a teacher for one problem. Bring a replay or a question and ask for a practice task. For example, choose coaching to understand a repeated Valorant retake mistake; choose a teammate to play the next match together.',
-            `Duoly Social is company without a game at ${socialPrice} per hour: Just Chat, Watch Together, Sleep Call or Karaoke on voice, for adults only. For example, somebody who wants conversation on a quiet evening books Social rather than a ranked duo. Teammate sessions from Duoly start at ${from}, read from checkout in November 2026. All 3 run using Discord and on your own account, and bundles cut the total on the main teammate service.`,
+            'Book a teammate for playing together, a coach for learning, or Social for company without a game at all. A teammate plays the mode you choose and talks through it with you. A coach is a teacher working on one problem: bring a replay or a question, and ask for a practice task at the end. If a Valorant retake keeps going wrong and you cannot say why, that is a coach. If you want to win the next match, that is a teammate.',
+            `Duoly Social is the game-free option at ${socialPrice} an hour: Just Chat, Watch Together, Sleep Call or Karaoke on voice, adults only. Somebody who wants conversation on a quiet evening is better served there than in a ranked queue. Teammate sessions start at ${from}. All three run with Discord voice on accounts both people own, and bundles cut the total on each game's main teammate service.`,
           ],
         },
       ]}
@@ -239,8 +242,8 @@ const article = {
     <Faq heading="Questions before you book a buddy?" items={faqItems} />
     <ClosingCta
       heading="Ready to find a gaming buddy?"
-      text={`A Duoly booking is one reviewed player for the games or hours you choose, across the ${games.length} games above. Pick your game from the grid. Before playing, confirm your mode and rank in the order chat. Test voice using Discord and send an invite from your own account, so the booked time starts with the lobby ready.`}
-      extra={`Check the service before choosing a bundle. The main teammate service offers ${bundle[0]}% off 3 units, ${bundle[1]}% off 5 and ${bundle[2]}% off 10. Other services have their own quantity options, so check the unit and total before payment. For example, a Minecraft hour and a Valorant game measure different amounts of playing time. A duo booking adds 1 player to your party. Choose a Teams service when you need several seats filled. ${withPage.length} of the ${games.length} games above have dedicated teammate pages explaining the modes, and every figure here comes from Duoly’s pricing engine, read in November 2026. Sessions start at`}
+      text={`A booking is one reviewed player for the games or hours you choose, in any of the ${games.length} games above. Pick your game from the grid, confirm the mode and your rank in the order chat, then test voice with Discord and send the invite from your own account. Do that and the paid time starts with the lobby already full.`}
+      extra={`Check the service before you choose a bundle. Each game's main teammate service takes ${bundle[0]}% off 3 units, ${bundle[1]}% off 5 and ${bundle[2]}% off 10, while other services have their own quantity options. Check the unit too: a Minecraft hour and a Valorant game buy different amounts of playing time. A duo booking adds one player to your party, so pick a Teams service when you need several seats filled instead. Sessions start at`}
       href={bookingHref('mr', { service: 'duo2' })}
       label="Find your gaming buddy"
       price={price}
