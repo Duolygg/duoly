@@ -189,8 +189,22 @@ for (const path of [
  * instead of for a reader. The code base's first commit left the
  * customer-facing copy on the same day, and /about gained the one thing it was
  * missing, which is who actually runs Duoly.
+ *
+ * The same pass took the "Three facts settle the practical questions" and
+ * "Three facts make the Duoly figures checkable" openers off the four pages
+ * that still carried them, and gave the price report's closing paragraph a
+ * real example where it used to say "For example" in front of one more rule.
+ * That is a sentence of copy on each, so each moves its date with it.
  */
-for (const path of ['/about', '/press', '/ai'])
+for (const path of [
+  '/about',
+  '/press',
+  '/ai',
+  '/blog/what-is-an-egirl',
+  '/blog/free-lfg-or-paid-teammate',
+  '/blog/how-to-find-a-valorant-duo',
+  '/reports/gaming-coaching-and-teammate-prices-2026',
+])
   CONTENT_UPDATED[path] = '2026-11-11';
 // Everything else is copy the catalog-promotion pass rewrote, plus the pages
 // the trust and entity pass touched on the same day: every hub, every teammate
