@@ -113,7 +113,7 @@ export const DUOLY_ROWS: readonly ReportRow[] = [
     amount: DUOLY.coachingHourEurMinor / 100,
     source: 'https://duoly.gg/pricing',
     checked: SURVEY_CHECKED,
-    note: `The same hourly price in all ${DUOLY.coachedGames} coached games, read from the pricing engine.`,
+    note: `The same hourly price in all ${DUOLY.coachedGames} coached games, published on the Duoly price list.`,
   }),
   withEuro({
     platform: 'Duoly',
@@ -441,7 +441,7 @@ export function renderReportCsv() {
     `# Duoly gaming coaching and teammate price survey, read ${SURVEY_CHECKED}`,
     `# amount_eur converted at 1 EUR = ${SURVEY_FX.usdPerEur} USD, ${SURVEY_FX.source}, ${SURVEY_FX.published}`,
     '# Buff is E-Pal wallet currency, priced at USD 1.00 on the E-Pal wallet help page',
-    '# Duoly rows come from the Duoly pricing engine, not from a page read',
+    "# Duoly rows are Duoly's own published prices, not a reading of a rival page",
     CSV_HEADER.join(','),
     ...lines,
     '',

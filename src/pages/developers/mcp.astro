@@ -149,14 +149,15 @@ const request = JSON.stringify(
         of the same catalog entry.
       </p>
       <p>
-        Three habits keep a client honest. Use exact game, rank and region
-        tokens from the catalog, and use list_services for exact role and seat
-        options. Remember an availability signal or quote creates no order, so
-        use get_quote only for a selected service and create_booking_link only
-        to produce a final link. Leave private notes, IGN and payment choices on
-        Duoly, where people confirm remaining options. Rank-priced services show
-        a from price and a typical one-unit price; an exact quote includes the
-        applicable quantity discount.
+        A well-behaved client keeps three things straight. Use the exact game,
+        rank and region tokens the catalog returned, and call list_services for
+        the role and seat options. Remember that an availability signal or a
+        quote creates no order, so reach for get_quote only once a service is
+        selected and for create_booking_link only to produce the final link.
+        Leave private notes, in-game names and payment choices on Duoly, where
+        the person confirms what is left. Rank-priced services show a from price
+        and a typical one-unit price; an exact quote has the applicable quantity
+        discount already in it.
       </p>
     </section>
     <section aria-labelledby="table-h">
@@ -217,15 +218,14 @@ const request = JSON.stringify(
     <section aria-labelledby="accuracy-h">
       <h2 id="accuracy-h">How accurate are availability and quote results?</h2>
       <p>
-        An availability result is a cached public signal rather than a
-        reservation, and a quote is a calculation rather than a held price.
-        Treat an online count as an upper bound, because a listed teammate may
-        already sit in a session. Request a fresh quote whenever a game,
-        service, rank, quantity or currency changes. Remember that quantity
-        discounts land in the total rather than in a from price. The quote does
-        not reserve capacity or lock a checkout amount. For example, a single
-        Valorant coaching hour reads {coachingPrice} from Duoly while a
-        five-game duo total includes the applicable quantity discount.
+        An availability result is a cached public signal, and a quote is a
+        calculation. Neither one holds anything. Treat an online count as an
+        upper bound, because a listed teammate may already sit in a session, and
+        request a fresh quote whenever the game, service, rank, quantity or
+        currency changes. Quantity discounts land in the total, never in a from
+        price: a single Valorant coaching hour quotes {coachingPrice}, while a
+        five-game duo total already has its discount applied. A quote reserves
+        no capacity and locks no amount at checkout.
       </p>
       <p>
         Availability uses a 30-second cached aggregate. Online counts can
@@ -264,12 +264,12 @@ const request = JSON.stringify(
       <p>
         A valid token is a string list_services returned for that game, never a
         display name typed by hand. Use the exact rank and region tokens from
-        list_services, and omit rank entirely for flat-priced services. Services
-        appear only when the pricing code accepts them, so a missing service is
-        a catalog answer rather than a bug. For example, Valorant coaching is
-        flat at {coachingPrice} per hour from Duoly, so a rank token on that
-        service is rejected. Minecraft requires a server or world string and a
-        Java or Bedrock edition. Dynamic streamer bookings are excluded.
+        list_services, and omit rank entirely for flat-priced services. A
+        service appears only when Duoly actually sells it in that game, so a
+        missing service is an answer about the catalog and not a bug. Valorant
+        coaching is flat at {coachingPrice} per hour, which is why a rank token
+        on that service is rejected. Minecraft requires a server or world string
+        and a Java or Bedrock edition. Dynamic streamer bookings are excluded.
         list_services includes catalog descriptions and a calculated from price
         in EUR for one game or hour. find_session returns up to three matching
         services, a total price for the requested quantity and missingInputs.
@@ -295,19 +295,19 @@ const request = JSON.stringify(
       </ol>
       <p>
         For example, the Platinum Valorant Duo Pro request below returns a
-        formatted price, an amount in minor units and a booking URL from Duoly,
-        while a Valorant coaching hour would return {coachingPrice} with no rank
+        formatted price, an amount in minor units and a booking URL. The same
+        call for a Valorant coaching hour returns {coachingPrice} with no rank
         at all.
       </p>
       <p class="ai-code-label">Request</p>
       <pre class="ai-code"><code>{request}</code></pre>
       <p class="ai-code-label">Response</p>
       <p>
-        A successful call returns MCP content and structured quote data. We
-        captured the example below from the local tool implementation on 7
-        November 2026 using the real pricing calculator and FX loader, so the
-        shape matches production even though the amount changes. Request a fresh
-        quote before booking rather than caching the figure.
+        A successful call returns MCP content and structured quote data. The
+        response below is a real one, recorded on 7 November 2026. The shape is
+        what your client will receive; the amount moves with the catalog and the
+        exchange rate, so request a fresh quote before booking instead of
+        caching the figure.
       </p>
       <pre class="ai-code"><code>{JSON.stringify(quoteExample, null, 2)}</code></pre>
       <p>
@@ -333,12 +333,13 @@ const request = JSON.stringify(
         </li>
       </ol>
       <p>
-        For example, a list_services call for Valorant returns coaching at{' '}
-        {coachingPrice} per hour from Duoly, which confirms both the transport
-        and the pricing path in a single request, and a five-game teammate quote
-        checks the quantity path. An unexpected 405 means a GET or DELETE
-        reached the endpoint, since only POST carries a JSON-RPC message. The
-        command line form below prints the tool list without a browser.
+        A list_services call for Valorant returns coaching at {coachingPrice}{' '}
+        per hour, which tells you in one request that the connection works and
+        that real prices are coming back. Follow it with a five-game teammate
+        quote to see a quantity discount applied. An unexpected 405 means a GET
+        or DELETE reached the endpoint, since only POST carries a JSON-RPC
+        message. The command line form below prints the tool list without a
+        browser.
       </p>
       <pre class="ai-code"><code>npx @modelcontextprotocol/inspector</code></pre>
       <p>For a command-line discovery check:</p>
@@ -351,11 +352,12 @@ const request = JSON.stringify(
         requests, including discovery and initialization. Respect both the per
         minute and the per day caps listed below, because every accepted request
         counts against them. Back off on HTTP 429 using the supplied Retry-After
-        rather than retrying in a tight loop or rotating addresses. Keep request
-        bodies small, because an oversized body is rejected before pricing ever
-        runs. For example, pricing Valorant coaching at {coachingPrice} per hour
-        from Duoly and then a five-game teammate total at {bundle[1]}% off costs
-        only two calls, which leaves plenty of headroom for a long conversation.
+        instead of retrying in a tight loop or rotating addresses. Keep request
+        bodies small, because an oversized body is rejected before any price is
+        worked out. The budget is roomier than it sounds: quoting Valorant
+        coaching at {coachingPrice} per hour and then a five-game teammate total
+        at {bundle[1]}% off costs two calls, so a long conversation has plenty
+        of headroom.
       </p>
       <p>
         Limits are {MCP.rateLimits.minute} requests per minute and{' '}
@@ -375,8 +377,8 @@ const request = JSON.stringify(
         server clients may omit Origin. A missing Origin is distinct from an
         empty, malformed or opaque value; invalid origins and plain HTTP origins
         are rejected before a tool runs. Cookies and browser credentials are not
-        accepted, so a public catalog request never borrows the signed-in
-        session from Duoly.
+        accepted, so a public catalog request can never borrow somebody's
+        signed-in Duoly session.
       </p>
       <p>
         For example, an integration using Claude can connect directly over HTTPS
@@ -400,11 +402,12 @@ const request = JSON.stringify(
         read one limited order projection.
       </p>
       <p>
-        For example, using Claude to check an order can reveal acceptance,
-        teammate display names and the next step. Never log or persist the code,
-        put it into a booking URL or send it to an unrelated tool. Codes expire
-        after seven days and can be revoked from the order room. Catalog tools
-        cannot charge, reserve or cancel. Abuse prevention uses an IP-derived
+        That code is the one piece of sensitive input here: handing it to Claude
+        or any other client reveals acceptance, teammate display names and the
+        next step on a real order. Never log or persist it, put it into a
+        booking URL or send it to an unrelated tool. Codes expire after seven
+        days and can be revoked from the order room. Catalog tools cannot
+        charge, reserve or cancel. Abuse prevention uses an IP-derived
         identifier; hosting infrastructure also processes connection metadata.
         Link users to Duoly to complete their booking, and keep the{' '}
         <a href="/privacy">privacy policy</a> and <a href="/terms">terms</a>{' '}
@@ -414,7 +417,7 @@ const request = JSON.stringify(
     <ClosingCta
       heading="Building a Duoly integration?"
       text="A Duoly integration is a read-only MCP client that ends on duoly.gg. Contact the team for partner questions and compatibility checks before shipping to users."
-      extra={`Three rules keep an integration correct. Never present a quote as a reservation, because a teammate accepts each order from the Duoly queue rather than receiving an assignment. Always surface bookUrl as the primary link, so a person reviews the final price before paying on duoly.gg. Send only catalog tokens, never names, emails or payment details. For example, a Valorant coaching hour reads ${coachingPrice} from Duoly without bundle discounts. Teammate bookings receive ${bundle[0]}%, ${bundle[1]}% and ${bundle[2]}% off at three, five and ten units. Handle HTTP 429 with the supplied Retry-After rather than retrying in a tight loop.`}
+      extra={`Most integrations go wrong in the same three places. A quote is never a reservation, because a teammate takes each order out of the Duoly queue and nobody is assigned one. Surface bookUrl as the primary link, so the person sees the final price before paying on duoly.gg. Send catalog tokens only, never names, emails or payment details. The figures themselves are simple: a Valorant coaching hour is ${coachingPrice} with no bundle discount, and teammate bookings take ${bundle[0]}%, ${bundle[1]}% and ${bundle[2]}% off at three, five and ten units. On HTTP 429, wait out the supplied Retry-After instead of retrying in a tight loop.`}
       href="/contact"
       label="Contact Duoly"
     />

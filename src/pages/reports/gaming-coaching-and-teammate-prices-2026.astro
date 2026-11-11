@@ -230,10 +230,10 @@ const dataset = {
       {HOURLY_BANDS[0]!.percent}% of hourly rates under USD 20.00 and{' '}
       {HOURLY_BANDS[4]!.percent}% at USD 50.00 or more. Every euro figure in the
       report uses one rate, the {SURVEY_FX.source} of {SURVEY_FX.publishedLabel}
-      , so a reader can reproduce the arithmetic. A listed price is a listed
-      price: our survey ran no checkout, measured no coaching outcome and
-      compared no quality. For example, provider-set prices move daily, so treat
-      each figure as the price a page showed on {SURVEY_CHECKED_LABEL}.
+      , so anyone can reproduce the arithmetic. What we did not do matters as
+      much: our survey bought nothing, measured no coaching outcome and compared
+      no quality. Provider-set prices also move daily, so treat every figure
+      here as the price one page showed on {SURVEY_CHECKED_LABEL}.
     </p>
     <nav class="guide-toc" aria-label="In this report">
       <strong>In this report</strong>
@@ -326,8 +326,8 @@ const dataset = {
             Fees decide the total. Metafy publishes a 3.7% platform fee plus USD
             1.79 and a 2.9% processing fee plus USD 0.40. E-Pal charges 10% on a
             wallet top-up. QueueUp refunds up to USD 35.00 after a first paid
-            session. For example, a Duoly order nobody accepts refunds itself
-            after {DUOLY.autoCancelMinutes} minutes.
+            session. A Duoly order nobody accepts refunds itself after{' '}
+            {DUOLY.autoCancelMinutes} minutes.
           </span>
         </li>
       </ul>
@@ -358,8 +358,8 @@ const dataset = {
         hour on {metafyHours.platform} at {metafyHours.spread.low} to{' '}
         {metafyHours.spread.high}. The spread is wide:{' '}
         {HOURLY_BANDS[1]!.percent}% of rates sit between USD 20.00 and USD
-        29.99, while {HOURLY_BANDS[4]!.percent}% ask USD 50.00 or more. For
-        example, the dearest single hour was {HOURLY_COACHING.high}, which is{' '}
+        29.99, while {HOURLY_BANDS[4]!.percent}% ask USD 50.00 or more. The
+        dearest single hour anywhere was {HOURLY_COACHING.high}, or{' '}
         {HOURLY_COACHING.highEur}. Two prices come close to an hour without
         being one: {queueup.name} fixes an Instant session at USD 24.00 for 45
         minutes, and {sensei.name} sells a 30 minute skills assessment at USD
@@ -402,10 +402,10 @@ const dataset = {
         a median of {TEAMMATE_PER_GAME.median}, which is{' '}
         {TEAMMATE_PER_GAME.medianEur} at the recorded rate.{' '}
         {EPAL_TWO_FIGURE_CARDS} further cards showed a discount badge with two
-        figures each, so our survey left those out rather than publish a price
-        that depends on an offer. One card on the same page sold time rather
-        than games, at 15.00 Buff per 30 minutes, which is the only time-based
-        teammate price the survey could read anywhere. For example, a Duoly
+        figures each, so our survey left those out, because the figure on a
+        badge depends on an offer that ends. One card on the same page sold time
+        instead of games, at 15.00 Buff per 30 minutes, and it is the only
+        time-based teammate price the survey could read anywhere. A Duoly
         teammate game runs {DUOLY.teammateFrom} for {DUOLY.teammateFromService}{' '}
         in {DUOLY.teammateFromGame} up to {DUOLY.teammateTo} for{' '}
         {DUOLY.teammateToService} in {DUOLY.teammateToGame}, before the{' '}
@@ -458,7 +458,7 @@ const dataset = {
         wallet top-up plus a 3% to 4.5% channel fee on the web.{' '}
         {silhouette.name} states companions keep 83% of a completed session, and{' '}
         {kaki.name} states a 0% platform fee on regular orders. Refund wording
-        is thinner. For example, {queueup.name} publishes the most of it: a full
+        is thinner everywhere. {queueup.name} publishes the most of it: a full
         refund of up to USD 35.00 after a first paid session, a refund when a
         coach does not show, and a free intro of 10 to 15 minutes.{' '}
         {wecoach.name} advertises a free first intro with participating coaches.
@@ -471,20 +471,20 @@ const dataset = {
     <section aria-labelledby="method-h">
       <h2 id="method-h">How was this survey done?</h2>
       <p>
-        The method is a reading of public pages rather than a test of the
-        services. On {SURVEY_CHECKED_LABEL} our survey opened the pricing,
-        coaching or provider page of each of the {COMPETITOR_COUNT} platforms
-        and recorded every price shown, one row per displayed figure, with the
-        URL and the date on each row. We created no account and contacted
-        nobody, so a logged-in price is outside this survey. Each row keeps the
-        billing unit the page stated, which is why {HOURLY_COACHING.count} of{' '}
+        Every figure in this report came off a public page anyone can open. On{' '}
+        {SURVEY_CHECKED_LABEL} our survey opened the pricing, coaching or
+        provider page of each of the {COMPETITOR_COUNT} platforms and recorded
+        every price shown, one row per displayed figure, with the URL and the
+        date on each row. We created no account and contacted nobody, so a
+        logged-in price is outside this survey. Each row keeps the billing unit
+        the page stated, which is why only {HOURLY_COACHING.count} of{' '}
         {OBSERVATION_COUNT} rows reach the hourly median. For example, a USD
         44.99 package with no stated duration stays a session and never becomes
         an hour. Euro figures use one rate, 1 euro to {SURVEY_FX.usdPerEur} US
         dollars, from the {SURVEY_FX.source} of {SURVEY_FX.publishedLabel}, and
         a wallet unit converts only where the platform publishes the rate:{' '}
-        {epal.name} prices 1 Buff at USD 1.00. Duoly figures come from the
-        pricing engine at build time.
+        {epal.name} prices 1 Buff at USD 1.00. The Duoly rows are the prices
+        Duoly published on the same day, taken from its own price list.
       </p>
       <div class="guide-one">
         <article class="card guide-card" aria-label="Survey rules">
@@ -566,9 +566,8 @@ const dataset = {
       </div>
       <p class="official-table-note">
         Read on <time datetime={SURVEY_CHECKED}>{SURVEY_CHECKED_LABEL}</time>.
-        Prices in a wallet unit are written in that unit. Duoly prices come from
-        the <a href="/pricing">Duoly price list</a>, which is generated from the
-        pricing engine.
+        Prices in a wallet unit are written in that unit. The Duoly figures are
+        the ones published on the <a href="/pricing">Duoly price list</a>.
       </p>
     </section>
 
@@ -577,15 +576,15 @@ const dataset = {
       <p>
         A source list is the whole point of a price report, so every page our
         survey opened is listed below with the date it was read. Each entry is a
-        first-party page published by the platform itself rather than a roundup
-        written about it. The {BLOCKED_PLATFORMS.length} pages that answered
-        with HTTP 403 are listed anyway, because a reader deserves to know which
-        pages we tried and failed to read. The {SURVEY_FX.source} entry is the{' '}
-        {SURVEY_FX.usdPerEur} rate every euro figure here is converted at. For
-        example, {HOURLY_TOP_SOURCE.percent}% of the hourly rates came from the
-        two {wecoach.name} rosters and the other{' '}
-        {100 - HOURLY_TOP_SOURCE.percent}% from the {metafy.name} session list,
-        so three pages rebuild the {HOURLY_COACHING.median} median.
+        page the platform published itself. The {BLOCKED_PLATFORMS.length} pages
+        that answered with HTTP 403 are listed anyway, because a reader deserves
+        to know which pages we tried and failed to read. The {SURVEY_FX.source}{' '}
+        entry is the {SURVEY_FX.usdPerEur} rate every euro figure here is
+        converted at. Three of these pages do most of the work:{' '}
+        {HOURLY_TOP_SOURCE.percent}% of the hourly rates came from the two{' '}
+        {wecoach.name} rosters and the other {100 - HOURLY_TOP_SOURCE.percent}%
+        from the {metafy.name} session list, which together rebuild the{' '}
+        {HOURLY_COACHING.median} median.
       </p>
       <ol class="report-sources">
         {sources.map((source) => (
@@ -625,19 +624,19 @@ const dataset = {
     <section aria-labelledby="data-h">
       <h2 id="data-h">Where can you download the data?</h2>
       <p>
-        The dataset is a CSV at <a href={csv}>duoly.gg{csv}</a>, generated at
-        build time from the same data file this page renders from. It carries
-        one line per observation our survey recorded, {OBSERVATION_COUNT} of
-        them from the platforms plus the Duoly rows out of the pricing engine,
-        and every line names its source URL and the date it was read. The amount
-        column keeps the figure the page showed and amount_eur converts it at
-        the one recorded rate of {SURVEY_FX.usdPerEur}, so the{' '}
-        {HOURLY_COACHING.median} median and the {HOURLY_COACHING.medianEur}{' '}
-        conversion can both be rebuilt in a spreadsheet. Quote any figure with a
-        link to this page and the check date, or go straight to the source page
-        named in the row. For example, filtering billing_unit to hour and
-        currency to USD gives the {HOURLY_COACHING.count} rates behind the
-        median, of which {HOURLY_BANDS[0]!.percent}% sit under USD 20.00.
+        The dataset is a CSV at <a href={csv}>duoly.gg{csv}</a>, holding exactly
+        the numbers this page is written from. It carries one line per
+        observation our survey recorded, {OBSERVATION_COUNT} of them from the
+        platforms plus the Duoly rows, and every line names its source URL and
+        the date it was read. The amount column keeps the figure the page showed
+        and amount_eur converts it at the one recorded rate of{' '}
+        {SURVEY_FX.usdPerEur}, so the {HOURLY_COACHING.median} median and the{' '}
+        {HOURLY_COACHING.medianEur} conversion can both be rebuilt in a
+        spreadsheet. Quote any figure with a link to this page and the check
+        date, or go straight to the source page named in the row. For example,
+        filtering billing_unit to hour and currency to USD gives the{' '}
+        {HOURLY_COACHING.count} rates behind the median, of which{' '}
+        {HOURLY_BANDS[0]!.percent}% sit under USD 20.00.
       </p>
       <p>
         The data is published under{' '}
@@ -667,7 +666,7 @@ const dataset = {
     <ClosingCta
       heading="Book a session at a price you can read first"
       text={`The survey median for a coaching hour is ${HOURLY_COACHING.median}, or ${HOURLY_COACHING.medianEur}, across ${HOURLY_COACHING.count} rates read on ${SURVEY_CHECKED_LABEL}. A Duoly lesson is ${DUOLY.coachingHour} an hour in all ${DUOLY.coachedGames} coached games, and a teammate game starts at ${DUOLY.teammateFrom}.`}
-      extra={`Why the Duoly figures are checkable. Every Duoly price on this page comes from the pricing engine checkout charges on, with catalog prices last changed on ${DUOLY.pricesUpdated}. Nothing is added at checkout, so the euro figure is the total, and a US dollar price uses the daily ECB rate plus ${DUOLY.usdMarginPercent}%. A teammate or coach keeps ${DUOLY.sharePercent}% of a flat-priced hour, which Duoly publishes, and an unaccepted order cancels and refunds itself after ${DUOLY.autoCancelMinutes} minutes. For example, the booking link beside this paragraph opens a Valorant VOD review at ${DUOLY.coachingHour} an hour, the same figure this survey compares, so a Duoly total can be read before any money moves.`}
+      extra={`The Duoly side of the table is easy to check against your own total. Every Duoly price here is the one on the price list, last changed on ${DUOLY.pricesUpdated}, and nothing is added on top, so the euro figure is what you pay. A US dollar price uses the daily ECB rate plus ${DUOLY.usdMarginPercent}%. The teammate or coach keeps ${DUOLY.sharePercent}% of a flat-priced hour, a share Duoly publishes. An order nobody accepts cancels and refunds itself after ${DUOLY.autoCancelMinutes} minutes, so you can read a total, compare it with this survey and still walk away before any money moves.`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching hour"
       art={{ src: '/assets/games/valorant.png', alt: '' }}
