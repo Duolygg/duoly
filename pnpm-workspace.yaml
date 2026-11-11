@@ -3,6 +3,8 @@ overrides:
   '@vercel/routing-utils>path-to-regexp': 6.3.0
   'esbuild@>=0.27.3 <0.28.1': 0.28.1
   '@astrojs/react>@vitejs/plugin-react': 6.1.0
+  'minimatch@>=7.0.0 <11.0.1': 11.0.8
+  'glob@>=9.0.0 <=14.0.1': 14.0.5
 allowBuilds:
   # Binary is fetched by scripts/posthog-sourcemaps.mjs only when uploading.
   '@posthog/cli': false
@@ -16,6 +18,8 @@ minimumReleaseAgeExclude:
   - '@astrojs/markdown-satteri@0.4.5'
   - '@astrojs/prism@4.1.1'
   - '@astrojs/telemetry@3.4.1'
+  - glob@14.0.5
+  - minimatch@11.0.8
 onlyBuiltDependencies:
   - esbuild
   - sharp
