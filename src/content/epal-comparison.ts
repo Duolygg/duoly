@@ -90,7 +90,7 @@ export const comparisonRows: {
     duoly: 'no',
     epal: 'yes',
     duolyNote: 'No public provider review directory in the booking flow.',
-    epalNote: 'Profiles show client reviews, for example on Serolae’s profile.',
+    epalNote: 'Profiles show client reviews, as Serolae’s profile does.',
     epalSource: profile,
   },
   {

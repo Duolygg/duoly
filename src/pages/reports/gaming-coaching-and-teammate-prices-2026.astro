@@ -665,7 +665,7 @@ const dataset = {
 
     <ClosingCta
       heading="Book a session at a price you can read first"
-      text={`The survey median for a coaching hour is ${HOURLY_COACHING.median}, or ${HOURLY_COACHING.medianEur}, across ${HOURLY_COACHING.count} rates read on ${SURVEY_CHECKED_LABEL}. A Duoly lesson is ${DUOLY.coachingHour} an hour in all ${DUOLY.coachedGames} coached games, and a teammate game starts at ${DUOLY.teammateFrom}.`}
+      text={`The survey median for a coaching hour is ${HOURLY_COACHING.median}, across ${HOURLY_COACHING.count} rates read on ${SURVEY_CHECKED_LABEL}. A Duoly lesson is ${DUOLY.coachingHour} an hour in all ${DUOLY.coachedGames} coached games, and a teammate game starts at ${DUOLY.teammateFrom}.`}
       extra={`The Duoly side of the table is easy to check against your own total. Every Duoly price here is the one on the price list, last changed on ${DUOLY.pricesUpdated}, and nothing is added on top, so the euro figure is what you pay. A US dollar price uses the daily ECB rate plus ${DUOLY.usdMarginPercent}%. The teammate or coach keeps ${DUOLY.sharePercent}% of a flat-priced hour, a share Duoly publishes. An order nobody accepts cancels and refunds itself after ${DUOLY.autoCancelMinutes} minutes, so you can read a total, compare it with this survey and still walk away before any money moves.`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching hour"

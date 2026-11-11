@@ -132,9 +132,9 @@ const webPage = {
         better fit when you want one published price and a teammate session from
         the same checkout. QueueUp documents its mechanics unusually well: the
         docs describe a 5 minute in-session refund button and a Learn Or It’s
-        Free refund of up to USD 35. Duoly sells {queueupExample.title} for{' '}
-        {price} per {queueupExample.unit}, the same price as every other Duoly
-        lesson. Every QueueUp fact here was read on queueup.gg on {CHECKED}.
+        Free refund of up to USD 35. Duoly sells {queueupExample.title} at one
+        published price, the same price as every other Duoly lesson. Every
+        QueueUp fact here was read on queueup.gg on {CHECKED}.
       </p>
     </section>
 
@@ -160,13 +160,12 @@ const webPage = {
       <p>
         QueueUp is the coaching specialist with named coaches; Duoly is the
         flat-price option that also sells teammates. QueueUp prices an Instant
-        session at 24 QueueCoins, while Duoly publishes {price} per{' '}
-        {queueupExample.unit} for every lesson in all {COACHABLE_GAMES} coached
-        games. QueueUp is marked ahead on named coaches, a free intro and
-        in-session refunds, because it is ahead on all three. A neutral dot
-        marks a model or a stated fact, and Not stated means the pages we read
-        do not say it. Every QueueUp cell links the page its fact came from, all
-        of them read on queueup.gg on {CHECKED}.
+        session at 24 QueueCoins, while Duoly publishes one lesson price for all{' '}
+        {COACHABLE_GAMES} coached games. QueueUp is marked ahead on named
+        coaches, a free intro and in-session refunds, because it is ahead on all
+        three. A neutral dot marks a model or a stated fact, and Not stated
+        means the pages we read do not say it. Every QueueUp cell links the page
+        its fact came from, all of them read on queueup.gg on {CHECKED}.
       </p>
       <CompareTable
         rival="QueueUp"
@@ -258,11 +257,11 @@ const webPage = {
         checkout for playing and learning, and there is no single winner.
         QueueUp buys choice and a written guarantee: a named Radiant coach, a
         free 15 minute intro and a refund of up to USD 35 on a first paid
-        session. Duoly buys certainty, at {price} per {queueupExample.unit} in
-        every game it coaches, charged through Stripe, with {duolyShare} of a
-        flat-priced hour published as the provider share. So a Valorant player
-        who wants a Radiant coach tonight should use QueueUp, and a player who
-        wants a <a href="/games/valorant/coaching">Valorant lesson</a> and a{' '}
+        session. Duoly buys certainty: one hourly price in every game it
+        coaches, charged through Stripe, with {duolyShare} of a flat-priced hour
+        published as the provider share. So a Valorant player who wants a
+        Radiant coach tonight should use QueueUp, and a player who wants a{' '}
+        <a href="/games/valorant/coaching">Valorant lesson</a> and a{' '}
         <a href="/games/valorant/lfg">Valorant teammate</a> at published prices
         in one place should use Duoly.
       </p>
@@ -316,11 +315,11 @@ const webPage = {
         QueueUp pages, read on {CHECKED} and listed below. The Instant price,
         the refund windows and the age rule are in the QueueUp documentation;
         the coach labels are on its Valorant page. The Duoly facts come from the{' '}
-        <a href="/terms">Duoly terms</a> and the live price list, so the {price}{' '}
-        example always matches checkout. Duoly publishes this comparison, so it
-        is not independent. QueueUp is a trademark of its owner and is named
-        here for comparison only. Prices and policies can change, so open the
-        source pages before booking anything. For the wider market, our{' '}
+        <a href="/terms">Duoly terms</a> and the live price list, so the example
+        above always matches checkout. Duoly publishes this comparison, so it is
+        not independent. QueueUp is a trademark of its owner and is named here
+        for comparison only. Prices and policies can change, so open the source
+        pages before booking anything. For the wider market, our{' '}
         <a href={REPORT_PATH}>2026 gaming coaching price survey</a> reads{' '}
         {COMPETITOR_COUNT} platforms on one day and publishes{' '}
         {HOURLY_COACHING.count} hourly rates with a median of{' '}

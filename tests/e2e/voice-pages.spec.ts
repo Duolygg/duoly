@@ -79,3 +79,66 @@ for (const path of VOICE_PAGES) {
     expect(prose).not.toMatch(/[—–&]|not [^.]*, but/i);
   });
 }
+
+/**
+ * The second voice pass, in the same hard form.
+ *
+ * The 11 November 2026 review found four habits the first pass left behind, all
+ * of them produced by writing for a citability scorer:
+ *
+ * 1. Duoly citing its own legal documents in front of a fact ("According to the
+ *    terms of service, dated 1 November 2026, the price you see at checkout is
+ *    the price you pay"). The fact comes first now, and the terms page is a
+ *    link inside the sentence that states it. Citing somebody else's page, as
+ *    the comparisons and the price report must, is untouched by this check.
+ * 2. A year welded to a price ("costs €5.99 in 2026"), which dates a sentence
+ *    that would otherwise still read correctly next year.
+ * 3. "rather than" and "instead of" as a default sentence shape. The cap leaves
+ *    room for the real contrasts, which a price report and an API reference
+ *    both need.
+ * 4. The same price in paragraph after paragraph. The cap is two, because a
+ *    price page can carry two question headings that each ask for the same
+ *    figure, and anything past that is the page selling to itself.
+ */
+for (const path of VOICE_PAGES) {
+  test(`${path} states a fact once and attributes it to nobody`, async ({
+    page,
+  }) => {
+    await page.goto(path);
+    const text = await page.locator('article, main').first().innerText();
+    expect(text).not.toMatch(
+      /according to (?:duoly|the duoly|our|the terms|the privacy|the payment terms|the booking terms|the cancellation)/i,
+    );
+    expect(text).not.toMatch(/€\s?[\d.,]*\d[^.?!]{0,40}\bin \d{4}\b/);
+    const contrasts = (text.match(/rather than|instead of/gi) ?? []).length;
+    expect(contrasts, `${path}: rather than / instead of`).toBeLessThanOrEqual(
+      5,
+    );
+    expect(
+      (text.match(/for example/gi) ?? []).length,
+      `${path}: for example`,
+    ).toBeLessThanOrEqual(3);
+
+    // The running prose only: an FAQ answer and a price table row are lifted on
+    // their own, so each one has to carry its own figure.
+    const repeats = await page.evaluate(() => {
+      const root = document.querySelector('article, main')!;
+      const seen = new Map<string, number>();
+      for (const p of root.querySelectorAll('p')) {
+        if (p.closest('details, .qa, table')) continue;
+        const words = (p.textContent ?? '').trim().split(/\s+/);
+        if (words.length < 15) continue;
+        const prices = new Set(
+          (p.textContent ?? '').match(/€[\d.,]*[1-9][\d.,]*/g) ?? [],
+        );
+        for (const price of prices) seen.set(price, (seen.get(price) ?? 0) + 1);
+      }
+      return Object.fromEntries(seen);
+    });
+    for (const [price, count] of Object.entries(repeats))
+      expect(
+        count,
+        `${path}: ${price} in ${count} paragraphs`,
+      ).toBeLessThanOrEqual(2);
+  });
+}
