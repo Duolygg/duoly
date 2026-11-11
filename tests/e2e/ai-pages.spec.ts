@@ -18,8 +18,10 @@ test('AI launch state, example price and progressive prompts', async ({
   await expect(page.locator('.ai-tools li')).toHaveCount(7);
   await expect(page.locator('article')).toContainText('interactive cards');
   await expect(page.locator('article')).toContainText('private status code');
+  // The claim, not one wording of it: /ai has to set the expectation that
+  // nobody finds Duoly in a directory and every person adds it by hand.
   await expect(page.locator('article')).toContainText(
-    'It is not listed in the Claude directory or the ChatGPT store.',
+    'It is not listed in the Claude directory or the ChatGPT store',
   );
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
