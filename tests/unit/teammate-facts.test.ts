@@ -12,7 +12,9 @@ it('the MCP guide separates coaching quotes from teammate bundle discounts', () 
     { customerCurrency: 'EUR', eurToUsd: 1 },
   );
   expect(quote.quantityDiscountPercent).toBe(0);
-  expect(mcpGuide).toContain('Coaching has no quantity discount.');
+  // The fact, not one sentence of it: a copy edit may reword the clause, and
+  // one did ("Coaching has no quantity discount either"), so match the claim.
+  expect(mcpGuide).toMatch(/coaching (?:has|takes) no quantity discount/i);
   expect(mcpGuide).not.toContain('before a {bundle[0]}%');
   expect(mcpGuide).not.toContain('and a ten unit total with');
 });

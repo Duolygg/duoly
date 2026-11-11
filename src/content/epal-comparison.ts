@@ -60,7 +60,7 @@ export const comparisonRows: {
     epalSource: wallet,
   },
   {
-    label: 'Catalog breadth',
+    label: 'Games and services',
     duoly: 'part',
     epal: 'yes',
     duolyNote: '20 games plus Social.',
