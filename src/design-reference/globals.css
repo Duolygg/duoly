@@ -72,6 +72,7 @@ textarea:focus-visible,input:focus-visible{outline:2px solid #D6BBFF;outline-off
 /* Apply page earnings calculator: game icons in even rows (8 + 7, or 3 × 5 on phones) instead of one leftover */
 .ap-calcgames{display:grid;grid-template-columns:repeat(8,max-content);gap:8px}
 @media (max-width:560px){.ap-calcgames{grid-template-columns:repeat(5,max-content)}}
+@media (max-width:380px){.ap-calcgames{grid-template-columns:repeat(4,max-content)}}
 /* Profile settings (/profile) */
 .pf-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
 .pf-preview{position:sticky;top:84px}
@@ -302,7 +303,7 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .ops-tr{cursor:pointer;transition:background-color .12s}
 .ops-tr:hover,.ops-tr:focus-visible{background:rgba(196,170,255,.045);outline:none}
 .ops-tr:focus-visible td:first-child{box-shadow:inset 3px 0 0 #D6BBFF}
-.ops-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.ops-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:14px}
 @keyframes adin{0%{opacity:0;transform:translateX(24px)}100%{opacity:1;transform:none}}
 @keyframes adtoast{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:none}}
 
@@ -426,7 +427,7 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .ct-avatars{display:flex}
 .ct-av{position:relative;width:40px;height:40px;margin-left:-10px}
 .ct-av:first-child{margin-left:0}
-.ct-av img{width:40px;height:40px;border-radius:50%;object-fit:cover;display:block;box-shadow:0 0 0 3px #120B22}
+.ct-av img{width:40px;height:40px;border-radius:50%;object-fit:cover;display:block}
 .ct-av-dot{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;background:#5EEAA8;box-shadow:0 0 0 3px #120B22;animation:dlonline 2s infinite}
 .ct-team-text{display:flex;flex-direction:column;line-height:1.35}
 .ct-team-text strong{font-size:14.5px;color:#FFFFFF}
@@ -787,7 +788,8 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 @keyframes htdone{to{background:#5EEAA8;box-shadow:0 0 16px rgba(94,234,168,.6)}}
 @keyframes htout{to{opacity:0;transform:translateY(-5px)}}
 @keyframes htin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-/* Homepage order bar (Home.jsx): always at the bottom of the screen; one compact row on phones */
+/* Homepage order bar (Home.jsx): always at the bottom of the screen. On phones the order summary
+   gets its own full-width row so it reads in full, with the total and button underneath. */
 .dl-bar{padding:12px 16px calc(16px + env(safe-area-inset-bottom))}
 .dl-bar-in{flex-wrap:wrap;gap:12px 20px;padding:10px 10px 10px 12px}
 .dl-bar-info{flex:1 1 280px;gap:12px}
@@ -796,14 +798,56 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .dl-bar-cta{min-height:52px;padding:0 28px;font-size:16px}
 @media (max-width:560px){
 .dl-bar{padding:8px 10px calc(10px + env(safe-area-inset-bottom))}
-.dl-bar-in{flex-wrap:nowrap;gap:10px;padding:8px 8px 8px 10px;border-radius:18px!important}
-.dl-bar-info{flex:1 1 auto;gap:10px}
+.dl-bar-in{flex-wrap:wrap;gap:8px 14px;padding:10px 8px 8px 10px;border-radius:18px!important}
+.dl-bar-info{flex:1 1 100%;gap:10px}
 .dl-bar-img{width:36px;height:36px;border-radius:10px}
-.dl-bar-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px}
-.dl-bar-line+.dl-bar-line{font-size:12px!important}
-.dl-bar-total{font-size:19px}
-.dl-bar-cta{flex:0 0 auto;min-height:46px;padding:0 16px;font-size:15px}
+.dl-bar-line{font-size:14px}
+.dl-bar-line+.dl-bar-line{font-size:12.5px!important}
+.dl-bar-total{flex:0 0 auto;padding-left:2px;font-size:21px}
+.dl-bar-cta{flex:1 1 auto;min-height:46px;padding:0 16px;font-size:15px}
 }
+/* Homepage header (Home.jsx): one row at every width. Under 900px the section links fold into
+   the menu button (.dl-burger) and its panel (.dl-nav-menu); on a phone the currency button
+   keeps only its symbol so logo, currency, sign-in and menu fit side by side at 320px. */
+.dl-burger{display:none;place-items:center;flex:0 0 auto;width:44px;height:44px;padding:0;border-radius:12px;border:1px solid rgba(196,170,255,.14);background:transparent;color:#F3EEFF;transform:none}
+.dl-burger[aria-expanded="true"]{background:rgba(214,187,255,.1);border-color:rgba(214,187,255,.3)}
+.dl-nav-menu{display:none}
+@media (max-width:900px){
+.dl-head{flex-wrap:nowrap!important;gap:8px!important}
+.dl-nav,.dl-acct-name{display:none!important}
+.dl-head-actions{flex-wrap:nowrap!important}
+.dl-burger{display:grid}
+.dl-nav-menu{position:absolute;z-index:20;top:calc(100% + 6px);right:16px;width:min(280px,calc(100vw - 32px));padding:8px;display:flex;flex-direction:column;border-radius:18px;background:#170E2C;border:1px solid rgba(214,187,255,.18);box-shadow:0 24px 60px rgba(0,0,0,.6);animation:dlpop .18s ease-out}
+.dl-nav-menu a{display:flex;align-items:center;min-height:46px;padding:0 12px;border-radius:10px;color:#F3EEFF;font-size:15px;font-weight:600;text-decoration:none}
+.dl-nav-menu a:hover,.dl-nav-menu a:focus-visible{background:rgba(214,187,255,.08)}
+/* the currency and account popups hang from the header's right edge, not their button, so they stay on screen */
+.dl-head-pop{position:static!important}
+.dl-head-pop>.dl-pop{left:auto!important;right:16px!important;max-width:calc(100vw - 32px)}
+}
+@media (max-width:480px){
+.dl-head{padding:8px 16px!important}
+.dl-cur-code{display:none}
+.dl-signin{white-space:nowrap;padding:0 14px!important}
+}
+/* Homepage sections on a phone: the art above "Choose your game" shrinks, games sit two to a
+   row (the full-width Social card still spans both) and the mode cards drop their desktop
+   height, so the page reads in far less scrolling. */
+@media (max-width:560px){
+.dl-hero-art{max-width:240px!important}
+.dl-games-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.dl-gcard{gap:8px!important;padding:10px 8px!important;border-radius:16px!important}
+.dl-gcard-icon,.dl-gcard-icon>img{width:36px!important;height:36px!important}
+.dl-gcard-icon>img{border-radius:10px!important}
+.dl-gcard-name{font-size:14px!important;overflow-wrap:break-word!important}
+.dl-gcard span:has(>.dl-tagline){flex-wrap:wrap;white-space:nowrap}
+.dl-tagline{flex-basis:100%;white-space:normal}
+.dl-mode{min-height:0!important;padding:16px 16px 14px!important;gap:6px!important}
+.dl-mode-title{font-size:19px!important}
+.dl-mode-foot{padding-top:8px!important}
+.dl-mode-price{font-size:22px!important}
+}
+@media (max-width:360px){.dl-gcard-name{font-size:12.5px!important}.dl-head{gap:6px!important;padding:8px 12px!important}.dl-head>a:first-child img{width:86px!important;height:auto!important}}
+@media (prefers-reduced-motion:reduce){.dl-nav-menu{animation:none}}
 /* Checkout session mood (components/home/MoodPicker.jsx). Each card carries its mood colour in
    --mc: a hint of it on hover, the full glow, a filled icon tile and a check when picked. */
 .mp{display:flex;flex-direction:column;gap:10px}

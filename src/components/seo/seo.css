@@ -563,20 +563,20 @@
 
 @media (max-width: 860px) {
   .seo-hero {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
   }
   .steps,
   .split,
   .price-grid[data-cols] {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .topic .paras {
     display: block;
   }
   .closing,
   .closing.no-art {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 480px) {
@@ -683,6 +683,12 @@
 }
 .nowrap {
   white-space: nowrap;
+}
+/* A whole price phrase ("From €2.49 per game or €12.99 per hour") is wider than a small phone. */
+@media (max-width: 480px) {
+  .closing .nowrap {
+    white-space: normal;
+  }
 }
 .seo-page .steps li > span {
   min-width: 0;

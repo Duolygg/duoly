@@ -55,6 +55,14 @@ export default class SupportChat extends React.Component {
     if (hasActiveChat()) this.load().then(() => this.schedule());
     // other parts of the page can open the chat: window.dispatchEvent(new Event('duoly:chat')) (e.g. /contact)
     window.addEventListener('duoly:chat', this.openFromPage);
+    // On a phone the "Need a hand?" bubble sits over the page itself, so it steps aside once
+    // the visitor scrolls on: they are browsing, and the chat button stays right there.
+    if (
+      this.state.teaser &&
+      window.matchMedia &&
+      window.matchMedia('(max-width: 560px)').matches
+    )
+      window.addEventListener('scroll', this.teaserOnScroll, { passive: true });
     if (this.props.dockAbove) {
       window.addEventListener('scroll', this.queueDock, { passive: true });
       window.addEventListener('resize', this.queueDock);
@@ -68,11 +76,17 @@ export default class SupportChat extends React.Component {
   componentWillUnmount() {
     clearTimeout(this._t);
     window.removeEventListener('duoly:chat', this.openFromPage);
+    window.removeEventListener('scroll', this.teaserOnScroll);
     window.removeEventListener('scroll', this.queueDock);
     window.removeEventListener('resize', this.queueDock);
     if (this._ro) this._ro.disconnect();
     if (this._raf) cancelAnimationFrame(this._raf);
   }
+  teaserOnScroll = () => {
+    if (window.scrollY < window.innerHeight * 0.6) return;
+    window.removeEventListener('scroll', this.teaserOnScroll);
+    if (this.state.teaser) this.setState({ teaser: false });
+  };
   queueDock = () => {
     if (this._raf) return;
     this._raf = requestAnimationFrame(() => {
@@ -312,7 +326,7 @@ export default class SupportChat extends React.Component {
         {this.props.dockAbove ? (
           // Matches the order bar sizes in globals.css (.dl-bar, .dl-bar-in); the live
           // measurement in measureDock takes over once the page is interactive.
-          <style>{`@media (max-width:1119px){body:has(${this.props.dockAbove}){--chat-dock-lift:calc(78px + env(safe-area-inset-bottom))}}@media (max-width:560px){body:has(${this.props.dockAbove}){--chat-dock-lift:calc(62px + env(safe-area-inset-bottom))}}`}</style>
+          <style>{`@media (max-width:1119px){body:has(${this.props.dockAbove}){--chat-dock-lift:calc(78px + env(safe-area-inset-bottom))}}@media (max-width:560px){body:has(${this.props.dockAbove}){--chat-dock-lift:calc(110px + env(safe-area-inset-bottom))}}`}</style>
         ) : null}
         {s.open ? (
           <section

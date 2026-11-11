@@ -344,13 +344,20 @@ export default class Creators extends React.Component {
                           confirm: 'Mark paid',
                           field: {
                             label: 'Payment method',
-                            options: ['bank', 'wise', 'paypal', 'other'],
+                            options: [
+                              'bank',
+                              'wise',
+                              'paypal',
+                              'payoneer',
+                              'other',
+                            ],
                             value: 'bank',
                             required: true,
                           },
                           field2: {
                             label: 'Transfer reference',
-                            placeholder: 'Bank or Wise reference',
+                            placeholder:
+                              'Bank, Wise, PayPal or Payoneer reference',
                             required: true,
                           },
                           onConfirm: (method, reference) =>

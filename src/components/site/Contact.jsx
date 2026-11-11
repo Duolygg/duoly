@@ -199,7 +199,8 @@ export default class Contact extends React.Component {
               </h1>
               <p className="lg-intro">
                 Questions about an order, a payment, becoming a teammate or your
-                data: we read every message ourselves, from Vienna.
+                data: we read and answer every message ourselves, whatever your
+                time zone.
               </p>
               {this.renderTeam()}
             </div>
