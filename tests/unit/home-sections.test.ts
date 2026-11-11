@@ -3,7 +3,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Home from '../../src/components/home/Home.jsx';
 import { SAMPLE_TESTIMONIALS } from '../../src/components/home/sampleTestimonials';
-import { maskName } from '../../src/components/home/Testimonials.jsx';
+import {
+  maskName,
+  PHONE_ROW_CARDS,
+} from '../../src/components/home/Testimonials.jsx';
 import SoloVsDuoly, {
   OPPONENTS,
 } from '../../src/components/home/SoloVsDuoly.jsx';
@@ -12,6 +15,17 @@ const render = (props: Record<string, unknown> = {}) =>
   renderToStaticMarkup(
     React.createElement(Home, { recentMatches: [], ...props }),
   );
+
+// The server renders the phone sample of the reviews (Testimonials.jsx usePhoneSample), so this
+// is what every assertion below sees; a wider screen fills the rows in after hydration, which
+// tests/e2e/home-reviews.spec.ts checks in a real browser at both widths.
+const PHONE_REVIEWS = SAMPLE_TESTIMONIALS.slice(0, PHONE_ROW_CARDS * 2);
+/** The cards a screen reader is offered, without the aria-hidden copies the loop is padded with. */
+const listedCards = (html: string) =>
+  html
+    .match(/role="list"[\s\S]*?(?=<div class="rv-set" aria-hidden)/g)!
+    .join('')
+    .match(/class="rv-card"/g)!.length;
 
 afterEach(() => vi.unstubAllEnvs());
 
@@ -40,8 +54,46 @@ describe('testimonial carousel', () => {
       /role="list"[\s\S]*?(?=<div class="rv-set" aria-hidden)/g,
     )!;
     expect(lists).toHaveLength(2);
-    const shown = lists.join('').match(/class="rv-card"/g)!.length;
-    expect(shown).toBe(SAMPLE_TESTIMONIALS.length);
+    expect(listedCards(html)).toBe(PHONE_REVIEWS.length);
+  });
+
+  it('sends a phone a sample of the reviews, not all of them', () => {
+    const html = render();
+    // one loop per row plus its one aria-hidden copy: 24 cards, down from 200
+    expect(html.match(/class="rv-card"/g)!).toHaveLength(
+      PHONE_ROW_CARDS * 2 * 2,
+    );
+    expect(html.match(/class="rv-set" aria-hidden="true"/g)!).toHaveLength(2);
+    // the front of each row in the order the reviews arrive in, alternating rows as before
+    for (const t of PHONE_REVIEWS) expect(html).toContain(t.quote);
+    for (const t of SAMPLE_TESTIMONIALS.slice(PHONE_ROW_CARDS * 2))
+      expect(html).not.toContain(t.quote);
+  });
+
+  it('keeps the score and the count honest about every review', () => {
+    const html = render();
+    // 24 cards on screen, a hundred reviews behind the average
+    expect(html).toContain('from ' + SAMPLE_TESTIMONIALS.length + ' reviews');
+    const avg =
+      SAMPLE_TESTIMONIALS.reduce((sum, t) => sum + t.stars, 0) /
+      SAMPLE_TESTIMONIALS.length;
+    expect(html).toContain('<strong>' + avg.toFixed(1) + '</strong>');
+    expect(SAMPLE_TESTIMONIALS.length).toBeGreaterThan(PHONE_REVIEWS.length);
+  });
+
+  it('keeps a phone row a full loop, at the speed it already drifts at', () => {
+    const html = render();
+    // 6 cards × 446px ÷ 26px per second, the same formula every width uses
+    expect(html.match(/animation-duration:103s/g)!).toHaveLength(2);
+  });
+
+  it('shows every review when a row is shorter than the phone sample', () => {
+    const html = render({
+      testimonials: SAMPLE_TESTIMONIALS.slice(0, 4),
+    });
+    expect(listedCards(html)).toBe(4);
+    for (const t of SAMPLE_TESTIMONIALS.slice(0, 4))
+      expect(html).toContain(t.quote);
   });
 
   it('shows who wrote it and where from; real reviews replace the placeholders', () => {
@@ -213,9 +265,11 @@ describe('reviewer names', () => {
 
   it('never shows a full sample name on the page', () => {
     const html = render();
-    for (const t of SAMPLE_TESTIMONIALS) {
+    // the reviews a phone is sent are on the page masked
+    for (const t of PHONE_REVIEWS)
       expect(html).toContain('<strong>' + maskName(t.name) + '</strong>');
+    // and no sample reviewer's real name is anywhere on it, shown or not
+    for (const t of SAMPLE_TESTIMONIALS)
       expect(html).not.toContain('<strong>' + t.name + '</strong>');
-    }
   });
 });
