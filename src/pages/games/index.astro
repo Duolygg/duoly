@@ -109,74 +109,69 @@ const faq: [string, string][] = [
       </ul>
     </nav>
     <section class="answers" aria-labelledby="what-h">
-      <h2 id="what-h">How do you use the game catalog?</h2>
+      <h2 id="what-h">How do you pick a game on Duoly?</h2>
       <p>
-        Choose your game first. Its hub is the full catalog of teammates,
-        coaching and prices for that title. A coaching link opens the lesson
-        guide, a play-together link weighs the free communities against a paid
-        session, and the Book link beside them opens checkout with the game
-        already chosen. Services differ by game, so check the mode and the unit
-        before you pick a quantity: an hourly review and a session priced per
-        game buy very different amounts of play.
+        Choose your game first. Its hub lists every teammate service, lesson and
+        price for that title. A coaching link opens the lesson guide, a
+        play-together link weighs the free communities against a paid session,
+        and the Book link beside them opens checkout with the game already
+        chosen. Services differ by game, so check the mode and the unit before
+        you pick a quantity: an hourly review and a session priced per game buy
+        very different amounts of play.
       </p>
       <p>
-        For example, a Valorant player can compare Competitive, Swiftplay and a
-        VOD Review from one hub, where coaching is {COACHING_PRICE} an hour and
-        the cheapest game in the catalog is {SHORT_GAME_PRICE}. Match the server
-        and region, agree voice in the order chat, and stay on your own account.
-        Nothing here promises a win, a start time or a rank change. If you are
-        still deciding between services, the comparisons below are the quickest
-        way through it.
+        A Valorant player can compare Competitive, Swiftplay and a VOD Review
+        from one hub. Match the server and region, agree voice in the order
+        chat, and stay on your own account. Nothing here promises a win, a start
+        time or a rank change.
       </p>
       <p>
-        Using an assistant? See <a href="/ai">Duoly in AI assistants</a> or the{' '}
-        <a href="/developers/mcp">MCP developer guide</a>. For background,
-        browse <a href="/blog">Duoly guides</a> and{' '}
+        An assistant can read the same prices:{' '}
+        <a href="/ai">Duoly in AI assistants</a> covers the chat side and the{' '}
+        <a href="/developers/mcp">MCP developer guide</a> the API. For
+        background, browse <a href="/blog">Duoly guides</a> and{' '}
         <a href="/compare/e-pal">the E-Pal comparison</a>. Payment, cancellation
         and refund details are in the <a href="/terms">terms</a> and summarised
         on <a href="/fees-and-refunds">Duoly fees and refunds</a>, and{' '}
-        <a href="/about">about Duoly</a> names the company behind the catalog.
+        <a href="/about">about Duoly</a> names the company behind the site.
       </p>
     </section>
     <section class="answers" aria-labelledby="services-h">
       <h2 id="services-h">What can you book on Duoly?</h2>
       <p>
-        A Duoly booking is one agreed block of play, coaching or voice company
-        with a verified teammate. A duo session puts a ranked teammate in your
-        lobby for the mode you choose, from {SHORT_GAME_PRICE} for a Valorant
-        Skirmish game. Coaching adds a stated learning goal, flat at{' '}
-        {COACHING_PRICE} per hour or game across all {COACHABLE_GAMES} coachable
-        titles. Social sells {SOCIAL_MODES} voice modes at {SOCIAL_PRICE} an
-        hour with no game at all. Teammate bundles reach {bundle[2]}% off;
+        Three things. A duo session puts a ranked teammate in your lobby for the
+        mode you choose. Coaching adds a stated learning goal and runs in all{' '}
+        {COACHABLE_GAMES} coachable titles. Social sells {SOCIAL_MODES} voice
+        modes with no game at all. Teammate bundles reach {bundle[2]}% off, and
         coaching stays flat whatever you buy.
       </p>
       <p>
         Every booking starts with the mode, because a Swiftplay teammate and a
-        Ranked teammate are separate listings at separate prices. For example, a
-        Valorant player who wants better entries books coaching, while the same
-        player who just wants a calmer queue books a duo. Sessions run with
-        Discord voice on accounts both people own, and Duoly never asks you for
-        a login or a password.
+        Ranked teammate are separate listings at separate prices. A Valorant
+        player who wants better entries books coaching, while the same player
+        who just wants a calmer queue books a duo. Sessions run with Discord
+        voice on accounts both people own, and Duoly never asks you for a login
+        or a password.
       </p>
     </section>
     <section class="answers" aria-labelledby="cost-h">
       <h2 id="cost-h">How much does a Duoly session cost?</h2>
       <p>
         A Duoly price depends on the game, the service, the teammate rank and
-        how many units you book. The cheapest session in the catalog is{' '}
-        {SHORT_GAME_PRICE} for a Valorant Skirmish 2v2 game. Coaching is flat at{' '}
-        {COACHING_PRICE} per hour or game in every coachable title, which is why
-        a Grandmaster League of Legends review costs the same as a Valorant aim
-        lesson. Social is {SOCIAL_PRICE} an hour.
+        how many units you book. The cheapest session is {SHORT_GAME_PRICE} for
+        a Valorant Skirmish 2v2 game. Coaching is flat at {COACHING_PRICE} per
+        hour or game in every coachable title, which is why a Grandmaster League
+        of Legends review costs the same as a Valorant aim lesson, and Social
+        holds that same hourly rate.
       </p>
       <p>
         Teammate bundles cut the total by {bundle[0]}% at three units,{' '}
         {bundle[1]}% at five and {bundle[2]}% at ten, and they come off at
-        checkout rather than on request. A ten-game Valorant Duo Pro bundle is
-        the largest discount in the catalog at {bundle[2]}% below ten single
-        bookings. Bundles never reach coaching. Read the unit before the figure,
-        since a game and an hour price differently, and nothing is added on top
-        of either: <a href="/fees-and-refunds">the fees and refunds page</a>{' '}
+        checkout without a code. A ten-game Valorant Duo Pro bundle is the
+        largest discount on the site at {bundle[2]}% below ten single bookings.
+        Bundles never reach coaching. Read the unit before the figure, since a
+        game and an hour price differently, and nothing is added on top of
+        either: <a href="/fees-and-refunds">the fees and refunds page</a>{' '}
         carries the cancellation rules and <a href="/pricing.md">pricing.md</a>{' '}
         lists every rank.
       </p>
@@ -189,13 +184,13 @@ const faq: [string, string][] = [
         Immortal Valorant teammate can hold a site while you take map control
         and call it with Discord voice. Pick coaching when the goal is
         understanding why a round keeps going wrong, because a coach pauses,
-        explains and reviews at {COACHING_PRICE} an hour. Pick Social when the
-        goal is company and not a scoreboard: Just Chat, Watch Together, Sleep
-        Call or Karaoke, on voice and nothing else.
+        explains and reviews. Pick Social when the goal is company and not a
+        scoreboard: Just Chat, Watch Together, Sleep Call or Karaoke, on voice
+        and nothing else.
       </p>
       <p>
-        Let the activity decide, because the prices will not settle it for you.
-        A coach stops the game to explain it; a teammate plays the next round
+        The price will not settle the choice for you, so go by the activity. A
+        coach stops the game to explain it; a teammate plays the next round
         beside you. A ten game duo bundle costs {bundle[2]}% less than ten
         single games, while a tenth coaching hour costs the same as the first.
       </p>
@@ -205,11 +200,10 @@ const faq: [string, string][] = [
       <p>
         Every game above links to a hub, which is the page listing each mode,
         rank and price for that title. Coaching covers all {COACHABLE_GAMES}{' '}
-        bookable games at {COACHING_PRICE} per hour or game, and{' '}
-        {COACHING_SLUGS.length} of them carry a coaching guide with a worked
-        lesson and a checklist for what to bring. Games with a play-together
-        guide show a sessions link, which sets the free Discord routes beside
-        the paid ones.
+        bookable games, and {COACHING_SLUGS.length} of them carry a coaching
+        guide with a worked lesson and a checklist for what to bring. Games with
+        a play-together guide show a sessions link, which sets the free Discord
+        routes beside the paid ones.
       </p>
       <p>
         If you would rather see one page across every title,{' '}

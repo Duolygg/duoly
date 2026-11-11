@@ -45,7 +45,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'Do I need a recording for my first lesson?',
-    'Only for a review format: VOD Review, Demo Review or Replay Review. For example, live Play and Learn needs no recording at all.',
+    'Only for a review format: VOD Review, Demo Review or Replay Review. A live Play and Learn needs no recording at all.',
   ],
   [
     'Does a coach play on my account?',
@@ -123,9 +123,9 @@ const article = {
         rotation.
       </p>
       <p>
-        A lesson pays for the explanation. A teammate booking pays for the
-        playing time you share. So if you win your fights and still lose games,
-        the honest answer is a review hour rather than another duo. Every lesson
+        A lesson pays for the explanation, and a teammate booking pays for the
+        shared playing time. So if you win your fights and still lose games, a
+        review hour will tell you more than another duo would. Every lesson
         costs the same whichever of the {games.length} games you play, it runs
         on your own account, and it uses Discord for voice and screen share.
       </p>
@@ -205,7 +205,7 @@ const article = {
       heading="How do you book a gaming coach?"
       steps={[
         `Pick the game and the format: a live lesson, a review of a recording of your own, or a drill hour on one skill. Every format costs the same.`,
-        'Pay once, upfront. Coaching takes no bundle and no quantity discount, so the figure on the card is the figure you pay. Two hours of review cost twice one hour, and nothing is added at checkout.',
+        'Pay once, upfront. The figure on the card is the figure you pay, and two hours of review cost twice what one hour does.',
         'Send your region, your rank and one sentence naming the habit you want changed by the end of the session. Your coach reads that first, then you meet in the order chat and move to Discord for voice and screen share.',
       ]}
     >
@@ -224,14 +224,14 @@ const article = {
           heading: 'What happens in a coaching hour?',
           paragraphs: [
             'A coaching hour is one goal, one worked example and one habit to take away. The goal gets agreed in the order chat before anyone loads a game. That one step is what keeps an hour from drifting into general chat about the game. The middle of the hour is the worked example: one round, one pull, one rotation or one duel, replayed and explained until the decision behind the result is obvious.',
-            `The last few minutes are the review. A good coach leaves you with three things: the signal to watch for, the change to make, and the drill to repeat before the next session. A second hour costs the same as the first, because coaching takes no quantity discount. You stay on your own account the whole time, with voice and screen share on Discord, and nobody at Duoly ever asks for a password.`,
+            'The last few minutes are the review. A good coach leaves you with three things: the signal to watch for, the change to make, and the drill to repeat before the next session. You stay on your own account the whole time, with voice and screen share on Discord, and nobody at Duoly ever asks for a password.',
           ],
         },
         {
           heading: 'Should you book a coach or a teammate?',
           paragraphs: [
-            'Book a coach when you know something is going wrong and cannot name it. Book a teammate when you want company, a filled seat, or simply a better evening of games. Ask yourself whether you want the next session explained or played. A player who can already describe the losing pattern is ready for a review hour, because an hour of pausing will beat another live match.',
-            `Losing the same site retake every match? That is a review hour. Short one player for a five-stack? That is a Teams service. Coaching holds one price whichever game you pick, while teammate prices follow the mode and, in ranked modes, your own rank. Those sit on each game hub and on the [teammate and LFG pages](/find-gaming-buddies). Both run on your own account with Discord voice.`,
+            'Book a coach when you know something is going wrong and cannot name it. Book a teammate when you want company, a filled seat, or simply a better evening of games. A player who can already describe the losing pattern is ready for a review hour, because an hour of pausing will beat another live match.',
+            `Losing the same site retake every match is a review hour. Being short one player for a five-stack is a Teams service. Coaching holds one price whichever game you pick, while teammate prices follow the mode and, in ranked modes, your own rank. Those sit on each game hub and on the [teammate and LFG pages](/find-gaming-buddies). Both run on your own account with Discord voice.`,
           ],
         },
       ]}
@@ -241,9 +241,9 @@ const article = {
       items={faqItems}
     />
     <ClosingCta
-      heading="Ready to book a gaming coach?"
-      text={`An esports lesson is one booked session on one problem you pick, in any of the ${games.length} games above. Choose your game from the grid, name the goal in the order chat, then meet your coach with Discord voice. You stay on your own account, and nobody here needs a password.`}
-      extra={`Lessons are sold one unit at a time: one hour, or one game in the titles where a match has a fixed length. A Dota 2 Replay Review, for example, ends with three things to fix, written out after the hour. Bundles and quantity discounts do not reach coaching, so the figure on the card is the figure you pay. Coaching is`}
+      heading="What do you bring to a first lesson?"
+      text={`One problem you can name, plus a recording if you booked a review format. Choose your game from the grid above, write the goal in the order chat, then meet your coach with Discord voice. You stay on your own account, and nobody here needs a password.`}
+      extra={`Lessons are sold one unit at a time: one hour, or one game in the titles where a match has a fixed length. A Dota 2 Replay Review, for example, ends with three things to fix, written out after the hour. Coaching is`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching session"
       price={price}
