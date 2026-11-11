@@ -100,9 +100,11 @@ test('developer guide explains distinct protocol flows and limits', async ({
   expect(text).toContain('preserves supplied rank, region and quantity');
   expect(text).toContain('without JSON duplicated into text');
   expect(text).toContain('Card-only data stays in result metadata');
-  expect(text).toContain(
-    'an exact quote includes the applicable quantity discount',
-  );
+  // The fact a client has to take away, not the sentence that carries it: a
+  // from price is pre-discount and an exact quote is not, so a client that
+  // shows the from price as the total overcharges the reader.
+  expect(text).toMatch(/from price and a typical one-unit price/);
+  expect(text).toMatch(/exact quote has the applicable quantity discount/);
   expect(text).toContain('Coaching has no quantity discount');
   expect(text).not.toMatch(/[—–&]|not [^.]*, but/i);
   expect(
