@@ -32,9 +32,12 @@ select vault.create_secret(pg_catalog.repeat('test-only-',5), 'payments_tick_sec
 select vault.create_secret(pg_catalog.repeat('test-only-',5), 'discord_roles_tick_secret');
 select vault.create_secret(pg_catalog.repeat('test-only-',5), 'analytics_drain_secret');
 
-create function pg_temp.expect_dispatch(kinds text[], label text) returns void language plpgsql as $$
+create function pg_temp.expect_dispatch(kinds text[], label text, elapse boolean default true) returns void language plpgsql as $$
 declare actual text[]; before_state jsonb;
 begin
+  if elapse then
+    update public.duoly_dispatch_state set last_called_at = least(last_called_at, pg_catalog.clock_timestamp() - interval '61 seconds');
+  end if;
   -- Trigger-generated analytics must be asserted separately from each isolated kind.
   truncate public.analytics_outbox;
   truncate net.http_request_queue;
@@ -218,6 +221,7 @@ truncate public.analytics_outbox;
 insert into public.analytics_outbox(event,dedup_key) values ('test','gated-test');
 select pg_temp.assert_true(public.duoly_dispatch_has_work('analytics'), 'claimable outbox');
 truncate net.http_request_queue;
+update public.duoly_dispatch_state set last_called_at = pg_catalog.clock_timestamp() - interval '61 seconds';
 select public.duoly_dispatch();
 select pg_temp.assert_true((select count(*) = 1 and bool_and(url = 'https://duoly.gg/api/internal/analytics/drain')
   from net.http_request_queue), 'analytics exact queue');
@@ -272,6 +276,30 @@ end;
 $$;
 select pg_temp.expect_dispatch(array['orders','roles'], 'fail-open isolation');
 rollback to predicate_failure;
+
+-- Every kind: repeated calls while work exists (including fail-open), then boundary.
+savepoint cadence;
+create or replace function public.duoly_dispatch_has_work(p_kind text) returns boolean
+language plpgsql stable security definer set search_path = '' as $$
+begin
+  if p_kind = 'orders' then raise exception 'cadence injected predicate failure'; end if;
+  return true;
+end;
+$$;
+do $$
+declare k text; seconds integer;
+begin
+  for k, seconds in select * from (values ('orders',10),('payments',20),('roles',30),('analytics',60)) v(k,s)
+  loop
+    update public.duoly_dispatch_state set last_called_at = pg_catalog.clock_timestamp();
+    perform pg_temp.expect_dispatch('{}', k || ' inside cadence', false);
+    update public.duoly_dispatch_state set last_called_at = pg_catalog.clock_timestamp() - pg_catalog.make_interval(secs => seconds) where kind = k;
+    perform pg_temp.expect_dispatch(array[k], k || ' at cadence boundary', false);
+    perform pg_temp.expect_dispatch('{}', k || ' repeated dispatch coalesces', false);
+  end loop;
+end;
+$$;
+rollback to cadence;
 
 -- Missing secret: no enqueue or fallback advance; later kinds still run.
 savepoint missing_secret;

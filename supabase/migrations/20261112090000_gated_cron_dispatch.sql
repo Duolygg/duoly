@@ -126,6 +126,16 @@ begin
       ('roles', 'https://duoly.gg/api/discord/roles/tick', 'discord_roles_tick_secret', 25000)
     ) as kinds(kind, url, secret_name, timeout_ms)
   loop
+    -- Preserve each old handler's minimum cadence even on predicate fail-open.
+    -- State lookup errors fail closed rather than bypassing the safety bound.
+    if exists (select 1 from public.duoly_dispatch_state s where s.kind = v_kind
+      and s.last_called_at > pg_catalog.clock_timestamp() - case v_kind
+        when 'payments' then interval '20 seconds'
+        when 'roles' then interval '30 seconds'
+        when 'analytics' then interval '60 seconds'
+        else interval '10 seconds' end) then
+      continue;
+    end if;
     begin
       v_due := not exists (select 1 from public.duoly_dispatch_state s
         where s.kind = v_kind and s.last_called_at > pg_catalog.clock_timestamp() - interval '10 minutes');
