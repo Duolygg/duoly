@@ -150,11 +150,29 @@ values ('d5530000-0000-4000-8000-000000000001','d5500000-0000-4000-8000-00000000
   'd5520000-0000-4000-8000-000000000001',2,2000,'cancelled',pg_catalog.clock_timestamp());
 update public.orders set team_id = 'd5530000-0000-4000-8000-000000000001',seat = 1;
 select pg_temp.expect_dispatch(array['payments'], 'cancelled-team queued straggler');
+savepoint team_posting;
+update public.order_teams set status = 'waiting',ended_at = null;
+update public.orders set queued_at = pg_catalog.clock_timestamp() - interval '2 minutes';
+insert into public.orders(id,customer_id,game,service,title,units,unit,region,ign,customer_name,
+  amount_eur_cents,payout_usd_cents,booking_fx,created_at,queued_at,team_id,seat)
+select 'd5510000-0000-4000-8000-000000000002',customer_id,game,service,title,units,unit,region,ign,customer_name,
+  amount_eur_cents,payout_usd_cents,booking_fx,created_at,queued_at,team_id,2 from public.orders;
+select pg_temp.assert_true(pg_catalog.jsonb_array_length(public.discord_order_posts_due(100)) = 1, 'only lowest free team seat due');
+select pg_temp.expect_dispatch(array['orders'], 'team first seat due');
+insert into public.discord_order_posts(order_id,queue_key,channel_id,state)
+select id,queued_at,'99550000000000001','posting' from public.orders where seat = 1;
+select pg_temp.expect_dispatch('{}', 'team fresh claim blocks other seat');
+update public.discord_order_posts set created_at = pg_catalog.clock_timestamp() - interval '2 minutes';
+select pg_temp.expect_dispatch(array['orders'], 'team stale claim is a superset');
+rollback to team_posting;
+-- Reproduce a skipped in-progress seat by changing the team row only after accept.
+update public.order_teams set status = 'waiting',ended_at = null;
 insert into public.order_assignments(id,order_id,teammate_id,accepted_at)
 values ('d5540000-0000-4000-8000-000000000001','d5510000-0000-4000-8000-000000000001',
   'd5500000-0000-4000-8000-000000000002',pg_catalog.clock_timestamp());
 update public.orders set status = 'in_progress',assigned_teammate_id = 'd5500000-0000-4000-8000-000000000002',
   current_assignment_id = 'd5540000-0000-4000-8000-000000000001',accepted_at = pg_catalog.clock_timestamp();
+update public.order_teams set status = 'cancelled',ended_at = pg_catalog.clock_timestamp();
 select pg_temp.expect_dispatch(array['payments'], 'cancelled-team in-progress straggler');
 rollback to fixture;
 
