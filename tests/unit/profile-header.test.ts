@@ -24,10 +24,25 @@ it('accepts only bounded WebP data URLs with the real signature', () => {
     webp(12),
     webp(MAX_HEADER_BYTES + 1),
     webp().replace('webp;', 'jpeg;'),
+    jpeg().replace('jpeg;', 'webp;'),
+    'data:image/png;base64,' + Buffer.alloc(64).toString('base64'),
     'data:image/webp;base64,' + Buffer.alloc(64).toString('base64'),
   ]) {
     expect(decodeHeader(value)).toBeNull();
   }
+});
+export function jpeg(size = 64) {
+  const bytes = Buffer.alloc(size);
+  bytes[0] = 0xff;
+  bytes[1] = 0xd8;
+  bytes[2] = 0xff;
+  return 'data:image/jpeg;base64,' + bytes.toString('base64');
+}
+it('accepts a real JPEG for browsers that cannot encode WebP', () => {
+  const decoded = decodeHeader(jpeg());
+  expect(decoded?.type).toBe('image/jpeg');
+  expect(decoded?.ext).toBe('jpg');
+  expect(decodeHeader(jpeg(MAX_HEADER_BYTES + 1))).toBeNull();
 });
 const upload = vi.fn();
 const remove = vi.fn();

@@ -39,7 +39,7 @@ export const publicProfileSchema = z.object({
   header: z
     .string()
     .regex(
-      /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/profile-headers\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{16}\.webp$/,
+      /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/profile-headers\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{16}\.(webp|jpg)$/,
     )
     .nullable()
     .optional(),

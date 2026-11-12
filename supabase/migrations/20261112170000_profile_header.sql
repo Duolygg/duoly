@@ -3,7 +3,7 @@
 begin;
 
 insert into storage.buckets(id, name, public, file_size_limit, allowed_mime_types)
-values ('profile-headers', 'profile-headers', true, 307200, array['image/webp'])
+values ('profile-headers', 'profile-headers', true, 307200, array['image/webp','image/jpeg'])
 on conflict (id) do update set public = true,
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
@@ -12,7 +12,7 @@ alter table public.teammate_public_profiles add column header_image text
   constraint teammate_public_profiles_header_image_check check (
     header_image is null or header_image ~ (
       '^https://[a-z0-9]+\.supabase\.co/storage/v1/object/public/profile-headers/'
-      || user_id::text || '/[0-9a-f]{16}\.webp$')
+      || user_id::text || '/[0-9a-f]{16}\.(webp|jpg)$')
   );
 
 -- Copied from the current 20261112120000 definition; only header is added.

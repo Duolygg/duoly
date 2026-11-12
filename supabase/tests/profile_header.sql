@@ -28,7 +28,7 @@ insert into public.teammate_order_access(user_id,approved_games)
  values ('9e000000-0000-4000-8000-000000000001',array['lol']);
 update public.teammate_public_profiles set slug='header-fixture' where user_id='9e000000-0000-4000-8000-000000000001';
 select pg_temp.ok(exists(select 1 from storage.buckets where id='profile-headers' and public
- and file_size_limit=307200 and allowed_mime_types=array['image/webp']),'public bounded webp bucket');
+ and file_size_limit=307200 and allowed_mime_types=array['image/webp','image/jpeg']),'public bounded webp bucket');
 select pg_temp.ok(public.public_teammate_profile('header-fixture')->'header'='null'::jsonb,'absent header is null');
 update public.teammate_public_profiles set header_image=
  'https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.webp'

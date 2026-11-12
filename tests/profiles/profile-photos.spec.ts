@@ -6,6 +6,7 @@ import {
   PHOTO_URL,
   servePhotos,
 } from './photo-fixture';
+import { serveHeaders } from './header-fixture';
 
 /*
  * Teammates who uploaded a profile picture see their own face on their public page, their card,
@@ -15,6 +16,7 @@ import {
 
 test.beforeEach(async ({ page }) => {
   await servePhotos(page);
+  await serveHeaders(page);
 });
 
 /** Everything the page promises about one avatar image, measured in the browser. */

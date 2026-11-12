@@ -2,25 +2,35 @@ import { createHash } from 'node:crypto';
 import { supportService } from '../support/store';
 
 export const MAX_HEADER_BYTES = 300 * 1024;
-export type DecodedHeader = { bytes: Buffer; ext: 'webp'; type: 'image/webp' };
+export type DecodedHeader =
+  | { bytes: Buffer; ext: 'webp'; type: 'image/webp' }
+  | { bytes: Buffer; ext: 'jpg'; type: 'image/jpeg' };
 
-/** Only accept WebP, never a MIME label standing in for a file signature. */
+/**
+ * WebP, or JPEG for browsers that cannot encode WebP from a canvas (Safari). The file
+ * signature decides, never the MIME label.
+ */
 export function decodeHeader(dataUrl: unknown): DecodedHeader | null {
-  if (typeof dataUrl !== 'string' || dataUrl.length > 409_623) return null;
-  const match = /^data:image\/webp;base64,([A-Za-z0-9+/]+={0,2})$/.exec(
+  if (typeof dataUrl !== 'string' || dataUrl.length > 409_624) return null;
+  const match = /^data:image\/(webp|jpeg);base64,([A-Za-z0-9+/]+={0,2})$/.exec(
     dataUrl,
   );
   if (!match) return null;
-  const bytes = Buffer.from(match[1]!, 'base64');
+  const bytes = Buffer.from(match[2]!, 'base64');
+  const webp =
+    bytes.subarray(0, 4).toString('ascii') === 'RIFF' &&
+    bytes.subarray(8, 12).toString('ascii') === 'WEBP';
+  const jpeg = bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
   if (
     bytes.length < 64 ||
     bytes.length > MAX_HEADER_BYTES ||
-    bytes.toString('base64') !== match[1] ||
-    bytes.subarray(0, 4).toString('ascii') !== 'RIFF' ||
-    bytes.subarray(8, 12).toString('ascii') !== 'WEBP'
+    bytes.toString('base64') !== match[2] ||
+    (match[1] === 'webp' ? !webp : !jpeg)
   )
     return null;
-  return { bytes, ext: 'webp', type: 'image/webp' };
+  return match[1] === 'webp'
+    ? { bytes, ext: 'webp', type: 'image/webp' }
+    : { bytes, ext: 'jpg', type: 'image/jpeg' };
 }
 
 /** Paths come from the constrained database column, never from a caller-supplied URL. */
@@ -28,7 +38,7 @@ function objectPath(url: string, userId: string): string | null {
   const path = new URL(url).pathname.split('/profile-headers/')[1];
   return path &&
     path.startsWith(userId + '/') &&
-    /^[0-9a-f-]{36}\/[0-9a-f]{16}\.webp$/.test(path)
+    /^[0-9a-f-]{36}\/[0-9a-f]{16}\.(webp|jpg)$/.test(path)
     ? path
     : null;
 }
@@ -59,9 +69,9 @@ async function changeHeader(
       .update(header.bytes)
       .digest('hex')
       .slice(0, 16);
-    const path = `${userId}/${name}.webp`;
+    const path = `${userId}/${name}.${header.ext}`;
     const { error } = await bucket.upload(path, header.bytes, {
-      contentType: 'image/webp',
+      contentType: header.type,
       cacheControl: '31536000',
       upsert: true,
     });
