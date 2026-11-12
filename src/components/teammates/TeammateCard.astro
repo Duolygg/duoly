@@ -29,7 +29,9 @@ const rating =
     <span class="tp-card-name">{card.name}</span>
     <span class="tp-card-game">{game.name}</span>
   </span>
-  <span class="tp-card-tier">{card.tier}</span>
+  {/* The tier is a track record, so a teammate without one shows nothing there and the
+      footer carries "New on Duoly" instead of two labels saying the same thing. */}
+  {card.tier !== 'rookie' && <span class="tp-card-tier">{card.tier}</span>}
   <span class="tp-card-foot">
     <strong>{card.rank ?? 'Teammate'}</strong>
     <span class="tp-card-score">

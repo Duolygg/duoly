@@ -9,11 +9,42 @@ import {
   type PublicProfileReview,
   type PublicTeammateProfile,
 } from '../../contracts/teammate-profile';
-import { SITE_GAMES } from '../../site/games';
+import { SITE_GAMES, type SiteGame } from '../../site/games';
 import { bookingHref, organizationSchema } from '../../site/seo';
 import { seoOffers } from '../seo/offers';
 import type { ProfileLookup } from './public-profiles';
-export const profileGame = (id: string) => SITE_GAMES.find((g) => g.id === id)!;
+/**
+ * The catalog entry for a game id. A profile only ever features a game an admin approved, so a
+ * miss means the catalog and the database disagree; the page then prints the raw id rather than
+ * throwing a 500 at a visitor.
+ */
+export const profileGame = (id: string): SiteGame =>
+  SITE_GAMES.find((g) => g.id === id) ?? {
+    id,
+    name: id,
+    img: '/assets/games/social.png',
+    slug: id,
+  };
+/**
+ * What a teammate's picks are called in each game. Roles and picks are typed by the teammate, so
+ * the label has to be right for twenty games, not just the two the design started with. Anything
+ * without an established word for it gets "Mains", which is what a player would say.
+ */
+const PICK_LABELS: Record<string, string> = {
+  lol: 'Champions',
+  wr: 'Champions',
+  dota: 'Heroes',
+  val: 'Agents',
+  mr: 'Heroes',
+  ow: 'Heroes',
+  apex: 'Legends',
+  r6: 'Operators',
+  dl: 'Heroes',
+  pu: 'Pokémon',
+  rl: 'Cars',
+  fc: 'Clubs',
+};
+export const pickLabel = (id: string) => PICK_LABELS[id] ?? 'Mains';
 /**
  * The rank emblem: one solid geometric crest per game, filled with the game colour, never
  * an official rank badge and never a second copy of the game logo. The hero lockup prints
@@ -42,7 +73,8 @@ export function profilePresentation(p: PublicTeammateProfile) {
     seoOffers(game.id, category, context).sort(
       (a, b) => a.amountMinor - b.amountMinor,
     )[0] ?? null;
-  const offer = cheapest('teammate')!;
+  /** Null when the catalog sells nothing for this game: the page then shows no price at all. */
+  const offer = cheapest('teammate');
   /** The coaching entry price, only when the catalog actually sells coaching here. */
   const coachOffer = p.coaching ? cheapest('training') : null;
   const booking = (id: string, coaching = false) => {
@@ -51,6 +83,11 @@ export function profilePresentation(p: PublicTeammateProfile) {
     if (p.online) url.searchParams.set('teammate', p.slug);
     return `${url.pathname}${url.search}${url.hash}`;
   };
+  const rating =
+    p.rating && p.rating.count >= MIN_REVIEWS_FOR_RATING ? p.rating : null;
+  const winRate =
+    p.winRate && p.winRate.games >= MIN_GAMES_FOR_WINRATE ? p.winRate : null;
+  const showSessions = p.tier !== 'rookie' && p.sessions >= 5;
   return {
     game,
     offer,
@@ -58,11 +95,13 @@ export function profilePresentation(p: PublicTeammateProfile) {
     booking,
     book: booking(game.id),
     primary: p.online ? `Book with ${p.name}` : `Book a ${game.name} teammate`,
-    rating:
-      p.rating && p.rating.count >= MIN_REVIEWS_FOR_RATING ? p.rating : null,
-    winRate:
-      p.winRate && p.winRate.games >= MIN_GAMES_FOR_WINRATE ? p.winRate : null,
-    showSessions: p.tier !== 'rookie' && p.sessions >= 5,
+    rating,
+    winRate,
+    showSessions,
+    /** No stat has reached its sample minimum, so the row would be empty: show the new state. */
+    showStats: Boolean(rating || winRate || showSessions),
+    /** The trust plaque is a track record. A teammate without one does not wear it. */
+    showTier: p.tier !== 'rookie',
   };
 }
 /**
@@ -77,13 +116,30 @@ export function profileReviewLayout(reviews: PublicProfileReview[]) {
   const lead = written.length % 2 === 1 ? (written[0] ?? null) : null;
   return { lead, rest: lead ? written.slice(1) : written };
 }
+/** "German", "German and English", "German, English and Dutch". Never an ampersand. */
+export function profileList(items: string[]) {
+  if (items.length < 2) return items[0] ?? '';
+  return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+}
+/**
+ * Title and description are built only from facts that are on the page. A teammate without a
+ * verified rank, without languages or without a bio simply gets a shorter description instead of
+ * an empty "Speaks ." or a sentence that trails off.
+ */
 export function profileMetadata(p: PublicTeammateProfile) {
   const game = profileGame(p.featuredGame);
   const rank = p.games.find((g) => g.game === game.id && g.verified)?.rank;
   const { showSessions } = profilePresentation(p);
+  const sentences = [
+    `Meet ${p.name}, a ${rank ? `${rank} ` : ''}${game.name} teammate on Duoly.`,
+  ];
+  if (p.languages.length) sentences.push(`Speaks ${profileList(p.languages)}.`);
+  if (showSessions)
+    sentences.push(`${p.sessions} sessions completed on Duoly.`);
+  if (p.bio.trim()) sentences.push(p.bio.trim());
   return {
     title: `${p.name}, ${game.name}${rank ? ` ${rank}` : ''} teammate | Duoly`,
-    description: `Meet ${p.name}, ${rank ? `${rank} in ` : ''}${game.name} teammate. Speaks ${p.languages.join(' and ')}.${showSessions ? ` ${p.sessions} sessions completed on Duoly.` : ''} ${p.bio}`,
+    description: sentences.join(' '),
     indexing: profileIndexable(p)
       ? ('index, follow' as const)
       : ('noindex, follow' as const),
@@ -111,8 +167,8 @@ export function profileSchemas(p: PublicTeammateProfile, site: URL) {
         '@type': 'Person',
         name: p.name,
         image: new URL(p.avatar, site).href,
-        description: p.bio,
-        knowsLanguage: p.languages,
+        ...(p.bio.trim() ? { description: p.bio.trim() } : {}),
+        ...(p.languages.length ? { knowsLanguage: p.languages } : {}),
         knowsAbout: p.games.map((g) => profileGame(g.game).name),
         ...(view.showSessions
           ? {
@@ -139,18 +195,23 @@ export function profileSchemas(p: PublicTeammateProfile, site: URL) {
         item: new URL(path!, site).href,
       })),
     },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Service',
-      name: `${view.game.name} teammate sessions`,
-      provider: organizationSchema(site),
-      url,
-      offers: {
-        '@type': 'Offer',
-        price: view.offer.price,
-        priceCurrency: view.offer.currency,
-        url: new URL(view.book, site).href,
-      },
-    },
+    /* The offered service, only while the catalog actually sells it for this game. */
+    ...(view.offer
+      ? [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            name: `${view.game.name} teammate sessions`,
+            provider: organizationSchema(site),
+            url,
+            offers: {
+              '@type': 'Offer',
+              price: view.offer.price,
+              priceCurrency: view.offer.currency,
+              url: new URL(view.book, site).href,
+            },
+          },
+        ]
+      : []),
   ];
 }

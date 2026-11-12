@@ -19,6 +19,7 @@ import {
   profileGame,
   profileMonth,
   profileReviewLayout,
+  pickLabel,
   rankEmblem,
 } from '../../server/teammates/profile-page';
 import { serializeJsonLd } from '../../site/seo';
@@ -58,11 +59,26 @@ const featuredRank =
 const availability = p?.online
   ? 'Online now, usually accepts within 2 minutes'
   : null;
+/*
+ * Nothing on this page is rendered with a placeholder. Every teammate on Duoly today is new, so
+ * the sections that have no data yet are simply not there, and the section nav lists what the
+ * page actually contains. An empty reviews heading reads as a broken page; leaving it out does
+ * not.
+ */
+const hasReviews = Boolean(
+  p && (p.reviewTags.length > 0 || reviews.lead || reviews.rest.length > 0),
+);
 const sections = [
   { id: 'games', label: 'Games' },
-  { id: 'reviews', label: 'Reviews' },
-  { id: 'more', label: 'More teammates' },
+  ...(hasReviews ? [{ id: 'reviews', label: 'Reviews' }] : []),
+  ...(related.length > 0 ? [{ id: 'more', label: 'More teammates' }] : []),
 ];
+/** One tab is not a nav, so the first section draws its own rule instead. */
+const showTabs = sections.length > 1;
+const freshDetail =
+  p && p.games.some((g) => g.roles.length > 0)
+    ? 'the games and roles below'
+    : 'the games below';
 ---
 
 <SiteLayout {...meta} viewer={viewer} csrf={csrf}>
@@ -168,29 +184,33 @@ const sections = [
               {p.online && <span class="tp-ring-dot" aria-hidden="true"></span>}
             </div>
             <div class="tp-identity">
-              <p class="tp-plate">
-                <svg viewBox="0 0 40 48" fill="none" aria-hidden="true">
-                  <path
-                    d="M20 2 37 11 33 33 20 45 7 33 3 11Z"
-                    stroke="currentColor"
-                  />
-                  <path
-                    d="m10 17 10 17 10-17M13 12l7 12 7-12"
-                    stroke="currentColor"
-                    stroke-width="3"
-                  />
-                </svg>
-                <strong>{p.tier}</strong>
-              </p>
+              {view.showTier && (
+                <p class="tp-plate">
+                  <svg viewBox="0 0 40 48" fill="none" aria-hidden="true">
+                    <path
+                      d="M20 2 37 11 33 33 20 45 7 33 3 11Z"
+                      stroke="currentColor"
+                    />
+                    <path
+                      d="m10 17 10 17 10-17M13 12l7 12 7-12"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    />
+                  </svg>
+                  <strong>{p.tier}</strong>
+                </p>
+              )}
               <dl class="tp-idlist">
                 <div>
                   <dt>Member since</dt>
                   <dd>{profileMonth(p.memberSince)}</dd>
                 </div>
-                <div>
-                  <dt>Speaks</dt>
-                  <dd>{p.languages.join(', ')}</dd>
-                </div>
+                {p.languages.length > 0 && (
+                  <div>
+                    <dt>Speaks</dt>
+                    <dd>{p.languages.join(', ')}</dd>
+                  </div>
+                )}
                 {p.country && (
                   <div>
                     <dt>Based in</dt>
@@ -201,22 +221,26 @@ const sections = [
             </div>
           </div>
           <div class="tp-hero-body">
-            <p class="tp-bio">{p.bio}</p>
-            <ul class="tp-vibes" aria-label="Play style">
-              {p.vibeTags.map((tag) => (
-                <li>{tag}</li>
-              ))}
-            </ul>
+            {p.bio && <p class="tp-bio">{p.bio}</p>}
+            {p.vibeTags.length > 0 && (
+              <ul class="tp-vibes" aria-label="Play style">
+                {p.vibeTags.map((tag) => (
+                  <li>{tag}</li>
+                ))}
+              </ul>
+            )}
             <div class="tp-cta" data-hero-booking>
               <div class="tp-buy">
                 <a class="tp-button tp-primary" href={view.book}>
                   {view.primary}
                   <Icon name="arrow" />
                 </a>
-                <p class="tp-price" data-profile-price>
-                  from <strong>{view.offer.display}</strong> per{' '}
-                  {view.offer.unit}
-                </p>
+                {view.offer && (
+                  <p class="tp-price" data-profile-price>
+                    from <strong>{view.offer.display}</strong> per{' '}
+                    {view.offer.unit}
+                  </p>
+                )}
               </div>
               {p.coaching && (
                 <div class="tp-buy tp-buy-quiet">
@@ -248,62 +272,77 @@ const sections = [
             </p>
           </div>
         </div>
-        <div class="tp-scoreboard" aria-label={`${p.name}'s track record`}>
-          {view.rating && (
-            <a class="tp-stat" href="#reviews">
-              <strong>
-                {view.rating.average.toFixed(1)}
-                <span class="tp-unit" aria-hidden="true">
-                  ★
+        {view.showStats ? (
+          <div class="tp-scoreboard" aria-label={`${p.name}'s track record`}>
+            {view.rating && (
+              <a class="tp-stat" href="#reviews">
+                <strong>
+                  {view.rating.average.toFixed(1)}
+                  <span class="tp-unit" aria-hidden="true">
+                    ★
+                  </span>
+                </strong>
+                <span class="tp-stat-name">Customer rating</span>
+                <span class="tp-stat-sub">
+                  from {view.rating.count} reviews
                 </span>
-              </strong>
-              <span class="tp-stat-name">Customer rating</span>
-              <span class="tp-stat-sub">from {view.rating.count} reviews</span>
-            </a>
-          )}
-          {view.showSessions && (
-            <div class="tp-stat">
-              <strong>{p.sessions.toLocaleString('en-US')}</strong>
-              <span class="tp-stat-name">Sessions completed</span>
-              <span class="tp-stat-sub">on Duoly</span>
+              </a>
+            )}
+            {view.showSessions && (
+              <div class="tp-stat">
+                <strong>{p.sessions.toLocaleString('en-US')}</strong>
+                <span class="tp-stat-name">Sessions completed</span>
+                <span class="tp-stat-sub">on Duoly</span>
+              </div>
+            )}
+            {view.winRate && (
+              <div class="tp-stat">
+                <strong>
+                  {view.winRate.percent}
+                  <span class="tp-unit">%</span>
+                </strong>
+                <span class="tp-stat-name">Win rate</span>
+                <span class="tp-stat-sub">
+                  from {view.winRate.games} reported matches
+                </span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div class="tp-fresh" data-profile-new>
+            <p class="tp-kicker">New on Duoly</p>
+            <div>
+              <strong>No sessions to show yet.</strong>
+              <p>
+                Ratings and session counts appear here once {p.name} has played
+                on Duoly. Until then {freshDetail} are the whole picture.
+              </p>
             </div>
-          )}
-          {view.winRate && (
-            <div class="tp-stat">
-              <strong>
-                {view.winRate.percent}
-                <span class="tp-unit">%</span>
-              </strong>
-              <span class="tp-stat-name">Win rate</span>
-              <span class="tp-stat-sub">
-                from {view.winRate.games} reported matches
-              </span>
-            </div>
-          )}
-          {p.tier === 'rookie' && (
-            <div class="tp-welcome">
-              <strong>A fresh face for your next queue.</strong>
-              <p>Meet {p.name} through their games and play style.</p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </section>
-      <nav class="tp-tabs" aria-label="Profile sections" data-tabs>
-        {sections.map((section, i) => (
-          <a
-            href={`#${section.id}`}
-            class:list={{ 'is-current': i === 0 }}
-            aria-current={i === 0 ? 'true' : undefined}
-          >
-            {section.label}
-          </a>
-        ))}
-      </nav>
+      {showTabs && (
+        <nav class="tp-tabs" aria-label="Profile sections" data-tabs>
+          {sections.map((section, i) => (
+            <a
+              href={`#${section.id}`}
+              class:list={{ 'is-current': i === 0 }}
+              aria-current={i === 0 ? 'true' : undefined}
+            >
+              {section.label}
+            </a>
+          ))}
+        </nav>
+      )}
       <section id="games" class="tp-section" aria-labelledby="games-title">
         <div class="tp-section-head">
           <div>
             <h2 id="games-title">Games</h2>
-            <p>Ranks verified by Duoly, with the roles {p.name} plays.</p>
+            <p>
+              {p.games.some((g) => g.verified && g.rank)
+                ? `Ranks verified by Duoly, with the roles ${p.name} plays.`
+                : `What ${p.name} is approved to play on Duoly, and how they play it.`}
+            </p>
           </div>
         </div>
         <div class="tp-games">
@@ -354,7 +393,7 @@ const sections = [
                   </div>
                   {g.picks.length > 0 && (
                     <div>
-                      <dt>{g.game === 'lol' ? 'Champions' : 'Agents'}</dt>
+                      <dt>{pickLabel(g.game)}</dt>
                       <dd>{g.picks.join(', ')}</dd>
                     </div>
                   )}
@@ -377,78 +416,78 @@ const sections = [
           })}
         </div>
       </section>
-      <section
-        id="reviews"
-        class="tp-section tp-reviews"
-        aria-labelledby="reviews-title"
-      >
-        <div class="tp-section-head">
-          <div>
-            <h2 id="reviews-title">Reviews</h2>
-            <p>What customers said after playing with {p.name}.</p>
+      {hasReviews && (
+        <section
+          id="reviews"
+          class="tp-section tp-reviews"
+          aria-labelledby="reviews-title"
+        >
+          <div class="tp-section-head">
+            <div>
+              <h2 id="reviews-title">Reviews</h2>
+              <p>What customers said after playing with {p.name}.</p>
+            </div>
           </div>
-        </div>
-        {p.reviewTags.length > 0 && (
-          <div class="tp-tags">
-            {p.reviewTags.map((tag) => (
-              <div
-                class="tp-tag"
-                style={`--bar:${Math.min(100, Math.round((tag.count / (p.reviewTags[0]?.count || tag.count)) * 100))}%`}
-              >
-                <span>{tag.tag}</span>
-                <strong>{tag.count} mentions</strong>
-              </div>
+          {p.reviewTags.length > 0 && (
+            <div class="tp-tags">
+              {p.reviewTags.map((tag) => (
+                <div
+                  class="tp-tag"
+                  style={`--bar:${Math.min(100, Math.round((tag.count / (p.reviewTags[0]?.count || tag.count)) * 100))}%`}
+                >
+                  <span>{tag.tag}</span>
+                  <strong>{tag.count} mentions</strong>
+                </div>
+              ))}
+            </div>
+          )}
+          {(reviews.lead || reviews.rest.length > 0) && (
+            <div class="tp-review-wrap">
+              {(reviews.lead ? [reviews.lead] : [])
+                .concat(reviews.rest)
+                .map((review, i) => (
+                  <figure
+                    class:list={[
+                      'tp-review',
+                      { 'tp-review-lead': i === 0 && reviews.lead },
+                    ]}
+                  >
+                    <div
+                      class="tp-stars"
+                      aria-label={`${review.rating} out of 5 stars`}
+                    >
+                      {'★'.repeat(review.rating)}
+                    </div>
+                    <blockquote>{review.text}</blockquote>
+                    <figcaption>
+                      Verified customer, {profileGame(review.game).name},{' '}
+                      {profileMonth(review.month)}
+                    </figcaption>
+                  </figure>
+                ))}
+            </div>
+          )}
+        </section>
+      )}
+      {related.length > 0 && (
+        <section id="more" class="tp-section" aria-labelledby="more-title">
+          <div class="tp-section-head">
+            <div>
+              <h2 id="more-title">More teammates</h2>
+              <p>Other {view.game.name} players on Duoly.</p>
+            </div>
+            <a class="tp-more-link" href="/teammates">
+              See all teammates
+              <Icon name="arrow" />
+            </a>
+          </div>
+          <div class="tp-cards">
+            {related.map((card) => (
+              <TeammateCard card={card} />
             ))}
           </div>
-        )}
-        {reviews.lead || reviews.rest.length > 0 ? (
-          <div class="tp-review-wrap">
-            {(reviews.lead ? [reviews.lead] : [])
-              .concat(reviews.rest)
-              .map((review, i) => (
-                <figure
-                  class:list={[
-                    'tp-review',
-                    { 'tp-review-lead': i === 0 && reviews.lead },
-                  ]}
-                >
-                  <div
-                    class="tp-stars"
-                    aria-label={`${review.rating} out of 5 stars`}
-                  >
-                    {'★'.repeat(review.rating)}
-                  </div>
-                  <blockquote>{review.text}</blockquote>
-                  <figcaption>
-                    Verified customer, {profileGame(review.game).name},{' '}
-                    {profileMonth(review.month)}
-                  </figcaption>
-                </figure>
-              ))}
-          </div>
-        ) : (
-          <p class="tp-empty">
-            Reviews will appear here after completed sessions.
-          </p>
-        )}
-      </section>
-      <section id="more" class="tp-section" aria-labelledby="more-title">
-        <div class="tp-section-head">
-          <div>
-            <h2 id="more-title">More teammates</h2>
-            <p>Other {view.game.name} players on Duoly.</p>
-          </div>
-          <a class="tp-more-link" href="/teammates">
-            See all teammates
-            <Icon name="arrow" />
-          </a>
-        </div>
-        <div class="tp-cards">
-          {related.map((card) => (
-            <TeammateCard card={card} />
-          ))}
-        </div>
-      </section>
+        </section>
+      )}
       <section class="tp-closing" aria-label={`Book ${p.name}`} data-closing>
         <div class="tp-figure tp-figure-small">
           <span class="tp-ring" aria-hidden="true"></span>

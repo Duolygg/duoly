@@ -7,6 +7,9 @@ import {
   profileSchemas,
   profileRoute,
   profileReviewLayout,
+  profileGame,
+  profileList,
+  pickLabel,
 } from '../../src/server/teammates/profile-page';
 import { fixtureLookup } from '../../src/server/teammates/profile-fixtures';
 import { seoOffers } from '../../src/server/seo/offers';
@@ -61,7 +64,7 @@ describe('public profile page', () => {
       eurToUsd: 1,
     }).sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
     expect(view.coachOffer).toEqual(coaching);
-    expect(view.coachOffer!.display).not.toBe(view.offer.display);
+    expect(view.coachOffer!.display).not.toBe(view.offer!.display);
     expect(profilePresentation({ ...nyx, coaching: false }).coachOffer).toBe(
       null,
     );
@@ -150,6 +153,114 @@ describe('public profile page', () => {
     expect(val.shape).not.toBe(lol.shape);
     expect(val.mark).toBe(lol.mark);
     expect(rankEmblem('unknown').shape).toBe(val.shape);
+  });
+  /*
+   * Production today: ten teammates, no reviews, no completed sessions, no verified ranks. These
+   * three fixtures are that state, so the page is tested in the shape every real profile has
+   * rather than only in the shape the design was drawn in.
+   */
+  describe('a teammate with no track record yet', () => {
+    const load = (slug: string) => {
+      const found = fixtureLookup(slug);
+      if (found.status !== 'ok') throw new Error(`${slug} fixture missing`);
+      return found.profile;
+    };
+    const rhea = load('rhea');
+    const pip = load('pip');
+    const crafty = load('crafty');
+    it('hides every stat and the trust plaque instead of printing zeroes', () => {
+      for (const p of [rhea, pip, crafty]) {
+        expect(profilePresentation(p)).toMatchObject({
+          rating: null,
+          winRate: null,
+          showSessions: false,
+          showStats: false,
+          showTier: false,
+        });
+        expect(
+          profileSchemas(p, new URL('https://duoly.gg'))[0]!.mainEntity,
+        ).not.toHaveProperty('interactionStatistic');
+      }
+      /* A track record puts both back. */
+      expect(profilePresentation(nyx)).toMatchObject({
+        showStats: true,
+        showTier: true,
+      });
+    });
+    it('indexes a written bio and keeps a page with nothing on it out', () => {
+      expect(profileMetadata(rhea).indexing).toBe('index, follow');
+      expect(profileMetadata(crafty).indexing).toBe('index, follow');
+      /* No bio, no rank, no sessions: nothing to index. */
+      expect(profileMetadata(pip).indexing).toBe('noindex, follow');
+    });
+    it('writes a description out of the facts that exist and nothing else', () => {
+      expect(profileMetadata(rhea).description).toBe(
+        'Meet Rhea, a League of Legends teammate on Duoly. Speaks German and English. ' +
+          rhea.bio,
+      );
+      /* No languages and no bio, so neither sentence is there at all. */
+      expect(profileMetadata(pip).description).toBe(
+        'Meet Pip, a Teamfight Tactics teammate on Duoly.',
+      );
+      expect(profileMetadata(pip).description).not.toContain('Speaks');
+      expect(profileMetadata(pip).title).toBe(
+        'Pip, Teamfight Tactics teammate | Duoly',
+      );
+      for (const p of [rhea, pip, crafty])
+        expect(JSON.stringify(profileMetadata(p))).not.toMatch(/[–—&]/);
+    });
+    it('keeps the empty Person fields out of the structured data', () => {
+      const person = profileSchemas(pip, new URL('https://duoly.gg'))[0]!
+        .mainEntity as Record<string, unknown>;
+      expect(person).not.toHaveProperty('description');
+      expect(person).not.toHaveProperty('knowsLanguage');
+      expect(person.knowsAbout).toEqual(['Teamfight Tactics']);
+    });
+    it('prices Minecraft and Teamfight Tactics from the same helper as Valorant', () => {
+      for (const p of [pip, crafty]) {
+        const view = profilePresentation(p);
+        const cheapest = seoOffers(p.featuredGame, 'teammate', {
+          customerCurrency: 'EUR',
+          eurToUsd: 1,
+        }).sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+        expect(view.offer).toEqual(cheapest);
+        expect(profileSchemas(p, new URL('https://duoly.gg'))).toHaveLength(3);
+      }
+    });
+    it('drops the Service schema when the catalog sells nothing for the game', () => {
+      /* Social is the one catalog entry with no teammate sessions, and a profile can never
+         feature it, but the page still has to answer rather than throw. */
+      const schemas = profileSchemas(
+        { ...pip, featuredGame: 'social', games: [] },
+        new URL('https://duoly.gg'),
+      );
+      expect(schemas).toHaveLength(2);
+      expect(JSON.stringify(schemas)).not.toContain('"Service"');
+    });
+    it('names picks the way players name them in each game', () => {
+      expect(pickLabel('lol')).toBe('Champions');
+      expect(pickLabel('val')).toBe('Agents');
+      expect(pickLabel('apex')).toBe('Legends');
+      expect(pickLabel('r6')).toBe('Operators');
+      /* Games without an established word get the one a player would use anyway. */
+      expect(pickLabel('mc')).toBe('Mains');
+      expect(pickLabel('cs2')).toBe('Mains');
+    });
+    it('falls back to the raw id when the catalog does not know a game', () => {
+      expect(profileGame('lol').name).toBe('League of Legends');
+      expect(profileGame('not-a-game')).toMatchObject({
+        id: 'not-a-game',
+        name: 'not-a-game',
+      });
+    });
+    it('joins lists with and, never with an ampersand', () => {
+      expect(profileList([])).toBe('');
+      expect(profileList(['German'])).toBe('German');
+      expect(profileList(['German', 'English'])).toBe('German and English');
+      expect(profileList(['German', 'English', 'Dutch'])).toBe(
+        'German, English and Dutch',
+      );
+    });
   });
   it('builds anonymous, dash-free profile copy and offline booking without preference', () => {
     expect(

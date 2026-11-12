@@ -43,8 +43,23 @@ async function readRpc(
 export const publicProfilesEnabled = () =>
   process.env.PUBLIC_PROFILES_ENABLED === 'true';
 
+/**
+ * Production never runs on fixtures. Vercel sets VERCEL_ENV on every deployment and the server
+ * bundle runs with NODE_ENV=production, so either one is enough to decide; both are checked so a
+ * self-hosted run is covered too.
+ */
+export const productionRuntime = () =>
+  process.env.VERCEL_ENV === 'production' ||
+  process.env.NODE_ENV === 'production';
+
+/**
+ * Fixtures are design and test data: fictional teammates and fictional reviews. The flag is only
+ * honoured outside production, so a stray PUBLIC_PROFILE_FIXTURES=true in the production
+ * environment cannot put a made up teammate on duoly.gg. profile-fixtures.ts repeats the same
+ * check, so the data is unreachable even if something called into it directly.
+ */
 export const fixturesEnabled = () =>
-  process.env.PUBLIC_PROFILE_FIXTURES === 'true';
+  !productionRuntime() && process.env.PUBLIC_PROFILE_FIXTURES === 'true';
 
 export type ProfileLookup =
   | { status: 'ok'; profile: PublicTeammateProfile }

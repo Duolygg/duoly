@@ -70,6 +70,127 @@ const nyx: PublicTeammateProfile = {
   ],
   updatedAt: '2026-11-12T12:00:00.000Z',
 };
+/**
+ * The state every real profile is in today: zero reviews, zero completed sessions, zero verified
+ * ranks, and games beyond Valorant and League. These three exist so the "New on Duoly" layout, the
+ * generic game accents and the missing-bio and missing-languages cases are all covered by tests
+ * and screenshots instead of being discovered in production.
+ */
+const newcomers: PublicTeammateProfile[] = [
+  {
+    slug: 'rhea',
+    name: 'Rhea',
+    avatar: '/assets/avatars/avatar-6.png',
+    country: null,
+    languages: ['German', 'English'],
+    bio: 'Jungle and support main. I like setting up vision before an objective instead of guessing, and I will say out loud what I am about to do.',
+    accent: 'violet',
+    banner: 'grid',
+    vibeTags: ['Shotcaller', 'Teaches as we play'],
+    featuredGame: 'lol',
+    coaching: false,
+    online: true,
+    memberSince: '2026-11',
+    sessions: 0,
+    tier: 'rookie',
+    rating: null,
+    reviewTags: [],
+    winRate: null,
+    games: [
+      {
+        game: 'lol',
+        rank: null,
+        peakRank: null,
+        verified: false,
+        roles: ['Jungle', 'Support'],
+        picks: ['Sejuani', 'Rell'],
+      },
+      {
+        game: 'tft',
+        rank: null,
+        peakRank: null,
+        verified: false,
+        roles: [],
+        picks: [],
+      },
+    ],
+    reviews: [],
+    updatedAt: '2026-11-12T12:00:00.000Z',
+  },
+  {
+    slug: 'pip',
+    name: 'Pip',
+    avatar: '/assets/avatars/avatar-2.png',
+    country: null,
+    /* No bio and no languages: both fields are optional on an account. */
+    languages: [],
+    bio: '',
+    accent: 'gold',
+    banner: 'pulse',
+    vibeTags: [],
+    featuredGame: 'tft',
+    coaching: false,
+    online: false,
+    memberSince: '2026-11',
+    sessions: 0,
+    tier: 'rookie',
+    rating: null,
+    reviewTags: [],
+    winRate: null,
+    games: [
+      {
+        game: 'tft',
+        rank: null,
+        peakRank: null,
+        verified: false,
+        roles: [],
+        picks: [],
+      },
+    ],
+    reviews: [],
+    updatedAt: '2026-11-12T12:00:00.000Z',
+  },
+  {
+    slug: 'crafty',
+    name: 'Crafty',
+    avatar: '/assets/avatars/avatar-9.png',
+    country: 'Netherlands',
+    languages: ['English', 'Dutch'],
+    bio: 'Survival and redstone. I build the farm with you rather than handing over a finished world, and I keep the pace to whatever you feel like playing.',
+    accent: 'mint',
+    banner: 'orbit',
+    vibeTags: ['Chill', 'Patient'],
+    featuredGame: 'mc',
+    coaching: false,
+    online: false,
+    memberSince: '2026-10',
+    sessions: 0,
+    tier: 'rookie',
+    rating: null,
+    reviewTags: [],
+    winRate: null,
+    games: [
+      {
+        game: 'mc',
+        rank: null,
+        peakRank: null,
+        verified: false,
+        roles: ['Builder'],
+        picks: [],
+      },
+      {
+        game: 'pu',
+        rank: null,
+        peakRank: null,
+        verified: false,
+        roles: ['Support'],
+        picks: [],
+      },
+    ],
+    reviews: [],
+    updatedAt: '2026-11-12T12:00:00.000Z',
+  },
+];
 const profiles: PublicTeammateProfile[] = [
   nyx,
   {
@@ -90,12 +211,14 @@ const profiles: PublicTeammateProfile[] = [
     winRate: null,
     reviewTags: [],
     reviews: [],
+    /* No verified rank, a bio under 60 characters and two sessions: the thin page the
+       quality rule has to keep out of the index. */
     games: [
       {
         game: 'val',
-        rank: 'Ascendant 2',
-        peakRank: 'Ascendant 3',
-        verified: true,
+        rank: null,
+        peakRank: null,
+        verified: false,
         roles: ['Sentinel'],
         picks: ['Killjoy', 'Cypher'],
       },
@@ -157,6 +280,7 @@ const profiles: PublicTeammateProfile[] = [
     rating: { average: 4.9, count: 230 },
     online: false,
   },
+  ...newcomers,
 ];
 const fixtureSafe = () =>
   process.env.NODE_ENV !== 'production' &&

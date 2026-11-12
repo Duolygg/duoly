@@ -187,12 +187,19 @@ export type PublicTeammateCard = {
   rating: { average: number; count: number } | null;
 };
 
-/** Plan section 5: index only real, substantial profiles. */
+/**
+ * Index only profiles with something real on them. Mirrors public_teammate_indexable() in
+ * 20261112130000_public_profiles_default_on.sql exactly: a profile needs at least one approved
+ * game and then one of three signs of substance, an admin-verified rank, a bio someone actually
+ * wrote, or a track record. Published, not hidden and active are already true of anything the
+ * read function hands back, so they are not re-tested here.
+ */
 export function profileIndexable(p: PublicTeammateProfile): boolean {
   const verifiedRank = p.games.some((g) => g.verified && g.rank);
   return (
-    verifiedRank &&
-    (p.bio.trim().length >= INDEX_MIN_BIO_CHARS ||
+    p.games.length > 0 &&
+    (verifiedRank ||
+      p.bio.trim().length >= INDEX_MIN_BIO_CHARS ||
       p.sessions >= INDEX_MIN_SESSIONS)
   );
 }

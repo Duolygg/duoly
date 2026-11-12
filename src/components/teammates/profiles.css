@@ -269,11 +269,71 @@
   flex: none;
   fill: var(--game, var(--accent));
 }
+/*
+ * One colour per game for the rank crest and the game card's hairline. These are tints chosen to
+ * sit on this page, not brand colours and not logos: every one of them is light enough to read on
+ * the near black background, and games Duoly adds later simply inherit --accent until they get a
+ * line here. Only --game is set, so the crest, the rank label and the card wash all move at once.
+ */
+.tp-page [data-game='lol'] {
+  --game: #e8ca8c;
+}
 .tp-page [data-game='val'] {
   --game: #ff6b73;
 }
-.tp-page [data-game='lol'] {
-  --game: #e8ca8c;
+.tp-page [data-game='cs2'] {
+  --game: #f3b765;
+}
+.tp-page [data-game='fn'] {
+  --game: #96bcff;
+}
+.tp-page [data-game='cod'] {
+  --game: #cfd6a4;
+}
+.tp-page [data-game='apex'] {
+  --game: #ff8d78;
+}
+.tp-page [data-game='r6'] {
+  --game: #ffc775;
+}
+.tp-page [data-game='mr'] {
+  --game: #ff9ed8;
+}
+.tp-page [data-game='ow'] {
+  --game: #ffb478;
+}
+.tp-page [data-game='dota'] {
+  --game: #e8947e;
+}
+.tp-page [data-game='rl'] {
+  --game: #84c9ff;
+}
+.tp-page [data-game='wow'] {
+  --game: #e9c771;
+}
+.tp-page [data-game='pubg'] {
+  --game: #f2d273;
+}
+.tp-page [data-game='tft'] {
+  --game: #c9a7ff;
+}
+.tp-page [data-game='fc'] {
+  --game: #90efbf;
+}
+.tp-page [data-game='arc'] {
+  --game: #ddbd92;
+}
+.tp-page [data-game='wr'] {
+  --game: #a4daff;
+}
+.tp-page [data-game='mc'] {
+  --game: #95dc8f;
+}
+.tp-page [data-game='dl'] {
+  --game: #d7a9ff;
+}
+.tp-page [data-game='pu'] {
+  --game: #ffdc93;
 }
 .tp-verified {
   display: inline-grid;
@@ -691,8 +751,7 @@
   display: block !important;
   padding: 0 30px;
 }
-.tp-stat:first-child,
-.tp-welcome:first-child {
+.tp-stat:first-child {
   padding-left: 0;
 }
 .tp-stat + .tp-stat {
@@ -740,21 +799,38 @@ a.tp-stat:hover .tp-stat-sub,
 a.tp-stat:hover > strong {
   color: var(--accent);
 }
-.tp-welcome {
-  padding: 0 30px;
-  color: #e9e0f7;
-  flex: 1;
+/*
+ * Every teammate on Duoly is new, so this is the row most profiles close their hero with. It
+ * takes the scoreboard's place and keeps its rhythm (48 above the rule, 24 below) instead of
+ * leaving a gap where three numbers would have been: a page with nothing to average should read
+ * as finished, not as a row that failed to load.
+ */
+.tp-fresh {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 24px 30px;
+  align-items: start;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--tp-line);
 }
-.tp-welcome strong {
+.tp-fresh .tp-kicker {
+  padding-top: 7px;
+}
+.tp-fresh strong {
+  display: block;
   font:
-    700 26px 'Bricolage Grotesque',
+    700 clamp(24px, 1.9vw, 28px) / 1.15 'Bricolage Grotesque',
     sans-serif;
+  letter-spacing: -0.035em;
   color: #fff;
 }
-.tp-welcome p {
-  margin-top: 9px;
+.tp-fresh p:last-child {
+  margin-top: 10px !important;
+  max-width: 62ch;
   color: var(--tp-muted);
-  font-size: 14px;
+  line-height: 1.7;
+  text-wrap: pretty;
 }
 
 /* ---------- section nav ---------- */
@@ -1512,10 +1588,16 @@ a.tp-stat:hover > strong {
     margin-top: 4px;
     line-height: 1.4;
   }
-  .tp-welcome {
-    padding: 16px 0 0;
+  .tp-fresh {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 32px;
+    padding-top: 20px;
   }
-  .tp-welcome strong {
+  .tp-fresh .tp-kicker {
+    padding-top: 0;
+  }
+  .tp-fresh strong {
     font-size: 23px;
   }
   .tp-tabs {
