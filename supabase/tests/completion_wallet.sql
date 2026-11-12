@@ -56,7 +56,7 @@ insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) v
  ('5d000000-0000-4000-8000-000000000005','authenticated','authenticated','wallet-admin@example.invalid','{}','{}');
 update public.account_roles set role='teammate' where user_id='5d000000-0000-4000-8000-000000000004';
 insert into public.teammate_order_access(user_id,approved_games,discord_id,discord_verified_at,priority_base)
-values('5d000000-0000-4000-8000-000000000004',array['lol'],'95d0000000000000004',pg_catalog.clock_timestamp(),0);
+values('5d000000-0000-4000-8000-000000000004',array['lol'],'9540000000000000004',pg_catalog.clock_timestamp(),0);
 
 do $$
 declare t uuid:='5d000000-0000-4000-8000-000000000004'; adm uuid:='5d000000-0000-4000-8000-000000000005';

@@ -41,8 +41,8 @@ insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) v
  ('5e000000-0000-4000-8000-000000000003','authenticated','authenticated','removal-other@example.invalid','{}','{}');
 update public.account_roles set role='teammate' where user_id in ('5e000000-0000-4000-8000-000000000002','5e000000-0000-4000-8000-000000000003');
 insert into public.teammate_order_access(user_id,approved_games,discord_id,discord_verified_at,priority_base) values
- ('5e000000-0000-4000-8000-000000000002',array['lol'],'95e0000000000000002',pg_catalog.clock_timestamp(),0),
- ('5e000000-0000-4000-8000-000000000003',array['lol'],'95e0000000000000003',pg_catalog.clock_timestamp(),0);
+ ('5e000000-0000-4000-8000-000000000002',array['lol'],'9550000000000000002',pg_catalog.clock_timestamp(),0),
+ ('5e000000-0000-4000-8000-000000000003',array['lol'],'9550000000000000003',pg_catalog.clock_timestamp(),0);
 
 do $$
 declare c uuid:='5e000000-0000-4000-8000-000000000001'; t uuid:='5e000000-0000-4000-8000-000000000002';
