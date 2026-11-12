@@ -900,6 +900,13 @@ deliberately do something else and say why.
   Two flakes, both reproduced as flakes and not as regressions: the known chat "anchored on resize"
   test failed once under load and passed alone, and `desk-keeper.spec.ts` "other pages warn too,
   once" failed once on desktop under load and then passed 30 times out of 30 with
-  `--repeat-each=3`, plus a clean 80 of 80 for the whole teammate config afterwards. The SQL suite
-  runs in CI on this PR (`supabase/tests/background_switches.sql`, entry 38 of the manifest, 46 SQL
-  files covered); the CI result is recorded on the PR.
+  `--repeat-each=3`, plus a clean 80 of 80 for the whole teammate config afterwards.
+
+  CI on PR #228 is green on every check: `sql-tests` (run 43214218918) started a disposable local
+  Supabase, applied every migration in order and ran 38 of 38 manifest suites with 0 failures and
+  the same 33 skips as before, `background_switches.sql` among the passes. So the signature really
+  does verify over the bytes `pg_net` sends and pgcrypto agrees with Web Crypto on the
+  known-answer vector. `gated_dispatch.sql` still passes against the replaced
+  `duoly_dispatch`. Browser smoke, Quality, Design guard and all three CodeQL analyses pass too.
+  Nothing is deployed, no secret is set, no migration is applied and the production database was
+  never touched: the owner does all of that, in the order under [Deploy order](#deploy-order).
