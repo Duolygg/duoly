@@ -1,7 +1,8 @@
 // "Meet your teammates": real teammates (public.home_teammates) drifting right to left on cards
 // between "Pick a mode" and "Check out". People who play the picked game come first; each card
 // shows only that teammate's own games. Pauses while hovered. Without teammates it falls back to the live online line.
-// Styles: globals.css (tc-*).
+// A card whose teammate has a public profile (HeroTeammate.slug) opens it; the rest are unchanged.
+// Styles: globals.css (tc-*), link states in carousel-links.css (imported by LiveHome.tsx).
 import BundledImage from '../shared/BundledImage';
 import React from 'react';
 
@@ -12,8 +13,8 @@ const LOOP_CARDS = 5;
 const SPEED = 32;
 const CARD_PX = 288;
 
-function Card({ t }) {
-  return (
+function Card({ t, hidden = false }) {
+  const card = (
     <div
       className={
         'tc-card' + (t.gg ? ' tc-gg' : '') + (t.plays ? ' tc-plays' : '')
@@ -65,19 +66,42 @@ function Card({ t }) {
       </div>
     </div>
   );
+  if (!t.slug) return card;
+  // The name and the games are already in the card, so the link says what following it does
+  // instead of reading the whole card out a second time. In the copied loops below the card sits
+  // in an aria-hidden wrapper, where a focusable element is a tab stop a screen reader cannot
+  // announce, so there the same link is taken out of the tab order.
+  return (
+    <a
+      className="tc-link"
+      href={'/teammates/' + t.slug}
+      aria-label={t.name + ', view profile'}
+      tabIndex={hidden ? -1 : undefined}
+    >
+      {card}
+    </a>
+  );
 }
 
 export default function TeammateCarousel({ crew, game, onlineText }) {
   const online = Number(game.online || 0);
+  const row = React.useRef(null);
   const perLoop = crew.length
     ? Math.max(1, Math.ceil(LOOP_CARDS / crew.length))
     : 0;
   const duration = Math.round((crew.length * perLoop * CARD_PX) / SPEED) + 's';
+  // One card with a profile means /teammates has at least that teammate on it, so the heading can
+  // lead there. It is the signal the page already holds: no second read, no extra request.
+  const directory = crew.some((t) => t.slug);
   return (
     <section data-private-block="" className="tc" aria-labelledby="tc-h">
       <div className="tc-top">
         <h2 id="tc-h" className="tc-title">
-          Meet your teammates
+          {directory ? (
+            <a href="/teammates">Meet your teammates</a>
+          ) : (
+            'Meet your teammates'
+          )}
         </h2>
         {game.online !== '' ? (
           <span className={'tc-live' + (online ? ' is-on' : '')}>
@@ -93,7 +117,25 @@ export default function TeammateCarousel({ crew, game, onlineText }) {
         off.
       </p>
       {crew.length ? (
-        <div className="tc-row">
+        <div
+          className="tc-row"
+          ref={row}
+          /*
+           * A card narrower screens cannot fit on at once is scrolled into view by the browser
+           * when it takes focus, which is what makes tabbing through the strip usable. The strip
+           * hides its overflow rather than scrolling, so that scroll would then stay: the loop
+           * would sit shifted and its end could drift into view. It goes back as focus leaves.
+           */
+          onBlur={
+            directory
+              ? (event) => {
+                  const strip = row.current;
+                  if (strip && !strip.contains(event.relatedTarget))
+                    strip.scrollLeft = 0;
+                }
+              : undefined
+          }
+        >
           <div className="tc-track" style={{ animationDuration: duration }}>
             <div className="tc-set" role="list" aria-label="Our teammates">
               {crew.map((t, i) => (
@@ -106,7 +148,7 @@ export default function TeammateCarousel({ crew, game, onlineText }) {
             {Array.from({ length: perLoop * 2 - 1 }, (_, n) => (
               <div className="tc-set" aria-hidden="true" key={n}>
                 {crew.map((t, i) => (
-                  <Card t={t} key={i} />
+                  <Card t={t} hidden key={i} />
                 ))}
               </div>
             ))}
