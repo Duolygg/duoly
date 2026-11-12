@@ -882,13 +882,23 @@ deliberately do something else and say why.
   and does nothing. The desk heartbeat is the one change with no switch, because it changes no
   behaviour, only the number of writes.
 - Chunk 6: integration. The whole branch was reviewed against the master brief and every
-  `oai-review.md` finding, and the three gaps that review found are fixed: the `background_fix`
-  comment in the migration claimed the endpoint alerts an admin Discord channel, which this build
-  deliberately does not do (the two log lines are the whole alert), the leader watchdog's worst case
-  is 19 s and not the 18 s its comment said, and `backgroundModes` was an unused export whose
-  comment named consumers it never had. The suite's assertion count in chunk 3's entry above was
-  also overstated and is now the measured 78. Nothing else needed changing: all 21 findings are
-  handled in code, not only in prose, and every path this doc cites exists.
+  `oai-review.md` finding, and the four gaps that review and CI found are fixed:
+  - `tests/unit/background-endpoints.test.ts` built its fixture order from the literal date
+    `2026-11-12T12:00:00Z` while the real ports it exercises read `Date.now()`. The SQL due
+    predicate refuses to post an order with less than 20 s of its 5 minutes left, so that queue
+    epoch stopped being postable at 12:03:20Z and the shadow assertion flipped from `would=post`
+    to `would=stale` for everybody after it. CI caught it 11 minutes after the first green run.
+    The fixture is now relative to the clock, which is what every other suite in this build
+    already did (they inject `now` through their ports).
+  - the `background_fix` comment in the migration claimed the endpoint alerts an admin Discord
+    channel, which this build deliberately does not do: the two log lines are the whole alert.
+  - the leader watchdog's worst case is 19 s, not the 18 s its comment said. Still inside the
+    20 s window.
+  - `backgroundModes` was an unused export whose comment named consumers it never had.
+
+  Chunk 3's entry above also overstated the SQL suite's assertion count; it is the measured 78
+  now. Nothing else needed changing: all 21 review findings are handled in code, not only in
+  prose, and every path this doc cites exists.
 
   Gates, all from this worktree on this head: `pnpm check` 0 errors and 0 warnings over 914 files,
   `pnpm lint` clean, `pnpm format:check` clean, `pnpm test:unit` 3918 tests in 217 files (235 of
@@ -902,11 +912,12 @@ deliberately do something else and say why.
   once" failed once on desktop under load and then passed 30 times out of 30 with
   `--repeat-each=3`, plus a clean 80 of 80 for the whole teammate config afterwards.
 
-  CI on PR #228 is green on every check: `sql-tests` (run 43214218918) started a disposable local
-  Supabase, applied every migration in order and ran 38 of 38 manifest suites with 0 failures and
-  the same 33 skips as before, `background_switches.sql` among the passes. So the signature really
-  does verify over the bytes `pg_net` sends and pgcrypto agrees with Web Crypto on the
-  known-answer vector. `gated_dispatch.sql` still passes against the replaced
-  `duoly_dispatch`. Browser smoke, Quality, Design guard and all three CodeQL analyses pass too.
+  CI on PR #228: `sql-tests` started a disposable local Supabase, applied every migration in order
+  and ran 38 of 38 manifest suites with 0 failures and the same 33 skips as before,
+  `background_switches.sql` among the passes. So the signature really does verify over the bytes
+  `pg_net` sends and pgcrypto agrees with Web Crypto on the known-answer vector.
+  `gated_dispatch.sql` still passes against the replaced `duoly_dispatch`. Browser smoke, Quality,
+  Design guard and all three CodeQL analyses pass too.
+
   Nothing is deployed, no secret is set, no migration is applied and the production database was
   never touched: the owner does all of that, in the order under [Deploy order](#deploy-order).

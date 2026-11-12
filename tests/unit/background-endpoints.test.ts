@@ -25,7 +25,14 @@ const { reconcileTick, timerFire } =
 const FIRE_SECRET = 'duoly-background-fire-secret-0123456789';
 const RECONCILE_SECRET = 'duoly-background-reconcile-secret-0123456789';
 const ORDER = 'b1a77e3c-0f2a-4a6e-9c21-9e4f0a1d3b55';
-const NOW = Date.parse('2026-11-12T12:00:00.000Z');
+/**
+ * Relative to the real clock, never a literal date. These tests run the real ports, which read
+ * `Date.now()`, so a fixed `queued_at` would be a time bomb: the SQL due predicate refuses to post
+ * an order with less than 20 s of its 5 minutes left, so a hard-coded queue epoch stops being
+ * postable about 4 minutes 40 seconds after the date it names, and the shadow assertion below
+ * would flip from `would=post` to `would=stale` for everybody after that.
+ */
+const NOW = Date.now();
 const QUEUED = NOW - ORDER_POST_DELAY_MS;
 
 type Row = Record<string, unknown>;
