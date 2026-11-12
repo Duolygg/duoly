@@ -68,9 +68,9 @@ function Card({ t, hidden = false }) {
   );
   if (!t.slug) return card;
   // The name and the games are already in the card, so the link says what following it does
-  // instead of reading the whole card out a second time. In the copied loops below the card is
-  // inside an aria-hidden wrapper, where a focusable element would be a tab stop with no
-  // accessible name: there the same link is taken out of the tab order.
+  // instead of reading the whole card out a second time. In the copied loops below the card sits
+  // in an aria-hidden wrapper, where a focusable element is a tab stop a screen reader cannot
+  // announce, so there the same link is taken out of the tab order.
   return (
     <a
       className="tc-link"
