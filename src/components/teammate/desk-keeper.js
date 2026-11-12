@@ -10,9 +10,10 @@ import { gameOf } from '../../design-reference/lib/games';
  *   heartbeat timeout (migration 20261024142000_presence.sql).
  * - Background tabs: browsers slow page timers down to once a minute, which is past the 20 s
  *   timeout. The ticks come from a small worker, whose timers aren't slowed that way.
- * - New orders: the order bell and a browser notification for orders that fit the teammate's
- *   games and voice setting, on the desk and every other page. One bell and one notification
- *   per order across all open tabs: whichever tab sees the order first rings.
+ * - New orders: a browser notification for orders that fit the teammate's games and voice
+ *   setting, on the desk and every other page, once per order across all open tabs. The bell
+ *   rings only on the desk, where the order can be seen and accepted. Off the desk, one open
+ *   page watches the queue for all of them (takePollLease), so five tabs cost one poll.
  * - Twitch streaming: the streaming panel's Twitch live check (migration 20261105150000) keeps
  *   running while they're on other pages.
  * - AFK: 4 hours without any activity on any Duoly page switch them offline (migration
@@ -25,6 +26,7 @@ export const PRESENCE_MS = 10000;
 export const AFK_OFFLINE_REASON = 'No activity for 4 hours';
 export const AFK_WARN_SECONDS = 5 * 60;
 const QUEUE_MS = 5000;
+const KEEPER_LEASE = 'teammate-keeper';
 const SETTINGS_MS = 60000;
 const STREAMING_MS = 30000;
 
@@ -68,6 +70,63 @@ export function claimOrderNotification(orderId, now = Date.now()) {
     return true;
   } catch {
     return true; // no storage: better a second popup than none
+  }
+}
+
+/**
+ * The bell has its own claim, apart from the popup: the desk rings even when another page of the
+ * site already showed the popup for that order, and two open desks still ring only once.
+ */
+export function claimOrderBell(orderId, now = Date.now()) {
+  return claimOrderNotification('bell:' + orderId, now);
+}
+
+// ---- one polling tab per watcher ----------------------------------------------------------------
+
+/**
+ * Each open tab used to poll the API on its own, and every poll costs a sign-in check plus three
+ * lookups on the shared Supabase project. A lease in localStorage lets one tab per watcher poll
+ * for all of them: the holder renews it on every tick, the others skip their tick, and when the
+ * holder closes (pagehide releases it) or stops renewing, the next tab to tick takes over.
+ */
+const LEASE_PREFIX = 'duoly-poll-lease:';
+const TAB_ID = Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+/**
+ * True when this tab may poll `name` now (and holds the lease for `ttlMs`). `force` takes it over
+ * from another tab: the page where the alert matters most (the Live desk, the support inbox).
+ */
+export function takePollLease(
+  name,
+  ttlMs,
+  { force = false, now = Date.now(), tab = TAB_ID } = {},
+) {
+  try {
+    const key = LEASE_PREFIX + name;
+    const held = JSON.parse(localStorage.getItem(key) || 'null');
+    if (
+      !force &&
+      held &&
+      held.tab !== tab &&
+      typeof held.until === 'number' &&
+      held.until > now
+    )
+      return false;
+    localStorage.setItem(key, JSON.stringify({ tab, until: now + ttlMs }));
+    return true;
+  } catch {
+    return true; // no storage: every tab polls, as before
+  }
+}
+
+/** Gives the lease up (pagehide) so another open tab takes over on its next tick. */
+export function releasePollLease(name, { tab = TAB_ID } = {}) {
+  try {
+    const key = LEASE_PREFIX + name;
+    const held = JSON.parse(localStorage.getItem(key) || 'null');
+    if (held && held.tab === tab) localStorage.removeItem(key);
+  } catch {
+    /* best effort */
   }
 }
 
@@ -124,13 +183,14 @@ export function playOrderBell(bell) {
 // ---- the notification -------------------------------------------------------------------------
 
 /**
- * "New Order Available!" for one order, once across tabs. Silent: the tab that shows it plays
- * the bell. Pass { claimed: true } when the caller already claimed the order.
+ * "New Order Available!" for one order, once across tabs. Pass { claimed: true } when the caller
+ * already claimed the order. Silent on the desk, where the bell plays; off the desk there is no
+ * bell, so the popup keeps the system's own notification sound ({ silent: false }).
  */
 export function showOrderNotification(
   order,
   onClick,
-  { claimed = false } = {},
+  { claimed = false, silent = true } = {},
 ) {
   if (
     typeof Notification === 'undefined' ||
@@ -146,10 +206,10 @@ export function showOrderNotification(
       gameOf(order.game).name;
     const n = new Notification('New Order Available!', {
       body: 'New Order: ' + title + '\nPrice: $' + order.payout.toFixed(2),
-      icon: '/assets/brand/logo-full.webp',
+      icon: '/icon-192.png',
       // one tag per order: a shared tag only replaces the previous popup quietly
       tag: 'duoly-order-' + (order.id || Date.now()),
-      silent: true,
+      silent,
     });
     n.onclick = () => {
       window.focus();
@@ -175,7 +235,7 @@ export function showAfkWarning(afkIn, now = Date.now()) {
   try {
     const n = new Notification('Still there?', {
       body: 'You’ll go offline in a few minutes: no activity on Duoly for almost 4 hours. Click here to stay online.',
-      icon: '/assets/brand/logo-full.webp',
+      icon: '/icon-192.png',
       tag: 'duoly-afk',
       requireInteraction: true,
     });
@@ -260,7 +320,6 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
     }
   }
 
-  let bell = null;
   async function checkQueue(now) {
     await loadSettings(now);
     if (!settings) return;
@@ -275,18 +334,16 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
             voiceOptIn: settings.voiceOptIn,
           });
       saveSeenOrders(data.queue.map((o) => o.id));
-      // the bell and the popup, in the one tab that sees the order first
+      // Off the desk: the popup only, once across tabs. The bell rings on the desk alone, where
+      // the teammate can see and accept the order (owner decision 12 November 2026).
       const mine = fresh.filter((order) => claimOrderNotification(order.id));
-      if (!mine.length) return;
-      bell = bell || newOrderBell();
-      playOrderBell(bell);
       mine.forEach((order) =>
         showOrderNotification(
           order,
           () => {
             location.href = '/teammate';
           },
-          { claimed: true },
+          { claimed: true, silent: false },
         ),
       );
     } catch {
@@ -316,6 +373,9 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
       // check in every PRESENCE_MS; the ticker runs at QUEUE_MS
       if (n++ % Math.round(PRESENCE_MS / QUEUE_MS) === 0) await checkIn();
       if (!online || stopped) return stop();
+      // With several pages open, one of them watches the queue and Twitch for all of them.
+      // Check-ins stay per tab: each one carries that tab's own last activity for the AFK timer.
+      if (!takePollLease(KEEPER_LEASE, QUEUE_MS * 3, { now })) return;
       if (now - lastQueue >= QUEUE_MS - 500) {
         lastQueue = now;
         await checkQueue(now);
@@ -327,13 +387,16 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
   }
 
   const stopTicker = backgroundTicker(QUEUE_MS, tick);
+  const leave = () => releasePollLease(KEEPER_LEASE);
+  window.addEventListener('pagehide', leave);
   function stop() {
     if (stopped) return;
     stopped = true;
     stopTicker();
     events.forEach((ev) => window.removeEventListener(ev, activity));
+    window.removeEventListener('pagehide', leave);
+    leave();
     clearTimeout(afkCheck);
-    if (bell) bell.pause();
   }
   tick();
   return stop;
@@ -344,5 +407,10 @@ export function mountDeskKeeper(doc = document) {
   const el = doc.querySelector('[data-desk-keeper]');
   const csrf = el?.getAttribute('data-csrf');
   if (!csrf || typeof navigator === 'undefined') return null;
+  // "You got a tip!" on every page but the desk, also while offline (the desk checks on its own
+  // stats load). Loaded here rather than from the owner-designed site layout.
+  void import('./tip-alerts.js')
+    .then((tips) => tips.startTipWatch())
+    .catch(() => {});
   return startDeskKeeper({ csrf });
 }

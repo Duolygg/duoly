@@ -353,7 +353,7 @@ export default class QueueRoom extends React.Component {
                 ' accepted your ' +
                 o.title +
                 '. Jump back in.',
-            icon: '/assets/brand/logo-full.webp',
+            icon: '/icon-192.png',
             tag: 'duoly-match-' + o.id,
             silent: true,
           },
