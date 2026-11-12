@@ -4,61 +4,458 @@ import PageIntro from '../../components/site/PageIntro.astro';
 import TeammateCard from '../../components/teammates/TeammateCard.astro';
 import '../../components/teammates/profiles.css';
 import { PROFILE_ACCENTS } from '../../contracts/teammate-profile';
-import { loadPublicProfile, loadTeammateCards, publicProfilesEnabled, fixturesEnabled } from '../../server/teammates/public-profiles';
-import { profileRoute, profileMetadata, profilePresentation, profileSchemas, profileGame, profileMonth } from '../../server/teammates/profile-page';
+import {
+  loadPublicProfile,
+  loadTeammateCards,
+  publicProfilesEnabled,
+  fixturesEnabled,
+} from '../../server/teammates/public-profiles';
+import {
+  profileRoute,
+  profileMetadata,
+  profilePresentation,
+  profileSchemas,
+  profileGame,
+  profileMonth,
+} from '../../server/teammates/profile-page';
 import { serializeJsonLd } from '../../site/seo';
 import { pageViewer } from '../../site/viewer';
-const result = publicProfilesEnabled() ? await loadPublicProfile(Astro.params.slug ?? '') : {status:'missing'} as const;
-const route = profileRoute(publicProfilesEnabled(),result);
-if(route.status === 404) return Astro.rewrite('/404');
-if(route.status === 301) return Astro.redirect(route.location!,301);
+const result = publicProfilesEnabled()
+  ? await loadPublicProfile(Astro.params.slug ?? '')
+  : ({ status: 'missing' } as const);
+const route = profileRoute(publicProfilesEnabled(), result);
+if (route.status === 404) return Astro.rewrite('/404');
+if (route.status === 301) return Astro.redirect(route.location!, 301);
 Astro.response.status = route.status;
-const {viewer,csrf} = await pageViewer(Astro);
-Astro.response.headers.set('Cache-Control','no-store');
+const { viewer, csrf } = await pageViewer(Astro);
+Astro.response.headers.set('Cache-Control', 'no-store');
 const p = result.status === 'ok' ? result.profile : null;
 const view = p ? profilePresentation(p) : null;
-const meta = p ? profileMetadata(p) : {title:'Profile no longer available | Duoly',description:'This teammate profile is no longer public. Find another teammate on Duoly.',indexing:'noindex, follow' as const};
-const related = p ? await loadTeammateCards({game:p.featuredGame,excludeSlug:p.slug,limit:3}) : [];
-const schemas = p ? profileSchemas(p,Astro.site!) : [];
+const meta = p
+  ? profileMetadata(p)
+  : {
+      title: 'Profile no longer available | Duoly',
+      description:
+        'This teammate profile is no longer public. Find another teammate on Duoly.',
+      indexing: 'noindex, follow' as const,
+    };
+const related = p
+  ? await loadTeammateCards({
+      game: p.featuredGame,
+      excludeSlug: p.slug,
+      limit: 3,
+    })
+  : [];
+const schemas = p ? profileSchemas(p, Astro.site!) : [];
 const fixture = fixturesEnabled();
 ---
+
 <SiteLayout {...meta} viewer={viewer} csrf={csrf}>
-  <script slot="head" type="application/ld+json" set:html={serializeJsonLd(schemas)} />
-  {p && view ? <article class="tp-page" style={`--accent:${PROFILE_ACCENTS[p.accent]}`} data-banner={p.banner} data-tier={p.tier} data-profile={p.slug}>
-    <nav class="tp-crumbs" aria-label="Breadcrumb"><a href="/">Duoly</a><span>/</span><a href="/teammates">Teammates</a><span>/</span><span aria-current="page">{p.name}</span></nav>
-    {fixture && <p class="tp-fixture">Design preview. These teammates and reviews are fictional.</p>}
-    <section class="tp-hero" aria-labelledby="profile-name">
-      <div class="tp-hero-top"><span class="tp-kicker">Teammate spotlight</span><span class:list={['tp-presence',{'is-online':p.online}]}><i aria-hidden="true"></i>{p.online?'On air / Online now':'Off air / Offline'}</span></div>
-      <div class="tp-hero-main"><div class="tp-identity"><p class="tp-eyebrow">{view.game.name} / {p.games.find(g=>g.game===p.featuredGame && g.verified)?.rank ?? 'Teammate'}</p><div class="tp-name-line"><h1 id="profile-name">{p.name}</h1>{p.games.some(g=>g.verified && g.rank) && <span class="tp-verified" aria-label="Rank verified">✓</span>}</div><p class="tp-location">{p.country && <><span>{p.country}</span><span aria-hidden="true">/</span></>}{p.languages.join(', ')}</p><p class="tp-bio">{p.bio}</p><div class="tp-vibes" aria-label="Play style">{p.vibeTags.map(tag=><span>{tag}</span>)}</div></div>
-      <div class="tp-stage"><span class="tp-stage-label">Player / {p.name}</span><div class="tp-stage-art" aria-hidden="true"></div><div class="tp-portrait"><img src={p.avatar} width="240" height="240" alt={`${p.name}'s robot avatar`} fetchpriority="high" /></div><div class="tp-tier"><svg viewBox="0 0 40 48" fill="none" aria-hidden="true"><path d="M20 2 37 11 33 33 20 45 7 33 3 11Z" stroke="currentColor"/><path d="m10 17 10 17 10-17M13 12l7 12 7-12" stroke="currentColor" stroke-width="3"/></svg><div><strong>{p.tier}</strong><span>{p.tier==='rookie'?'New on Duoly':'Earned through completed sessions'}</span></div><span class="tp-tier-stripes" aria-hidden="true">///</span></div></div></div>
-      <div class="tp-scoreboard" aria-label={`${p.name}'s track record`}>
-      {view.rating && <div class="tp-stat"><strong>{view.rating.average.toFixed(1)}<span aria-hidden="true">★</span></strong><p>Customer rating<span>from {view.rating.count} reviews</span></p></div>}
-      {view.showSessions && <div class="tp-stat"><strong>{p.sessions.toLocaleString('en-US')}</strong><p>Sessions completed<span>on Duoly</span></p></div>}
-      {view.winRate && <div class="tp-stat"><strong>{view.winRate.percent}<span>%</span></strong><p>Reported win rate<span>across {view.winRate.games} games</span></p></div>}
-      {p.tier==='rookie' && <div class="tp-welcome"><strong>A fresh face for your next queue.</strong><p>Meet {p.name} through their games and play style.</p></div>}
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(schemas)}
+  />
+  {p && view ? (
+    <article
+      class="tp-page"
+      style={`--accent:${PROFILE_ACCENTS[p.accent]}`}
+      data-banner={p.banner}
+      data-tier={p.tier}
+      data-profile={p.slug}
+    >
+      <nav class="tp-crumbs" aria-label="Breadcrumb">
+        <a href="/">Duoly</a>
+        <span>/</span>
+        <a href="/teammates">Teammates</a>
+        <span>/</span>
+        <span aria-current="page">{p.name}</span>
+      </nav>
+      {fixture && (
+        <p class="tp-fixture">
+          Design preview. These teammates and reviews are fictional.
+        </p>
+      )}
+      <section class="tp-hero" aria-labelledby="profile-name">
+        <div class="tp-hero-top">
+          <span class="tp-kicker">Teammate spotlight</span>
+          <span class:list={['tp-presence', { 'is-online': p.online }]}>
+            <i aria-hidden="true"></i>
+            {p.online ? 'Online now' : 'Offline'}
+          </span>
+        </div>
+        <div class="tp-hero-main">
+          <div class="tp-identity">
+            <p class="tp-eyebrow">
+              {view.game.name} /{' '}
+              {p.games.find((g) => g.game === p.featuredGame && g.verified)
+                ?.rank ?? 'Teammate'}
+            </p>
+            <div class="tp-name-line">
+              <h1 id="profile-name">{p.name}</h1>
+              {p.games.some((g) => g.verified && g.rank) && (
+                <span class="tp-verified" aria-label="Rank verified">
+                  ✓
+                </span>
+              )}
+            </div>
+            <p class="tp-location">
+              {p.country && (
+                <>
+                  <span>{p.country}</span>
+                  <span aria-hidden="true">/</span>
+                </>
+              )}
+              {p.languages.join(', ')}
+            </p>
+            <p class="tp-bio">{p.bio}</p>
+            <div class="tp-vibes" aria-label="Play style">
+              {p.vibeTags.map((tag) => (
+                <span>{tag}</span>
+              ))}
+            </div>
+            <a class="tp-hero-jump" href="#booking-title">
+              {p.online ? `Queue with ${p.name}` : `Find your next teammate`}{' '}
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+          <div class="tp-stage">
+            <span class="tp-stage-label">Player / {p.name}</span>
+            <div class="tp-stage-art" aria-hidden="true"></div>
+            <div class="tp-portrait">
+              <img
+                src={p.avatar}
+                width="240"
+                height="240"
+                alt={`${p.name}'s robot avatar`}
+                fetchpriority="high"
+              />
+            </div>
+            <div class="tp-tier">
+              <svg viewBox="0 0 40 48" fill="none" aria-hidden="true">
+                <path
+                  d="M20 2 37 11 33 33 20 45 7 33 3 11Z"
+                  stroke="currentColor"
+                />
+                <path
+                  d="m10 17 10 17 10-17M13 12l7 12 7-12"
+                  stroke="currentColor"
+                  stroke-width="3"
+                />
+              </svg>
+              <div>
+                <strong>{p.tier}</strong>
+                <span>
+                  {p.tier === 'rookie'
+                    ? 'New on Duoly'
+                    : 'Earned through sessions'}
+                </span>
+              </div>
+              <span class="tp-tier-stripes" aria-hidden="true">
+                ///
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="tp-scoreboard" aria-label={`${p.name}'s track record`}>
+          {view.rating && (
+            <div class="tp-stat">
+              <strong>
+                {view.rating.average.toFixed(1)}
+                <span aria-hidden="true">★</span>
+              </strong>
+              <p>
+                Customer rating<span>from {view.rating.count} reviews</span>
+              </p>
+            </div>
+          )}
+          {view.showSessions && (
+            <div class="tp-stat">
+              <strong>{p.sessions.toLocaleString('en-US')}</strong>
+              <p>
+                Sessions completed<span>on Duoly</span>
+              </p>
+            </div>
+          )}
+          {view.winRate && (
+            <div class="tp-stat">
+              <strong>
+                {view.winRate.percent}
+                <span>%</span>
+              </strong>
+              <p>
+                Reported win rate<span>across {view.winRate.games} games</span>
+              </p>
+            </div>
+          )}
+          {p.tier === 'rookie' && (
+            <div class="tp-welcome">
+              <strong>A fresh face for your next queue.</strong>
+              <p>Meet {p.name} through their games and play style.</p>
+            </div>
+          )}
+        </div>
+      </section>
+      <nav class="tp-tabs" aria-label="Profile sections">
+        <a href="#games">Games</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#more">More teammates</a>
+        <span>Member since {profileMonth(p.memberSince)}</span>
+      </nav>
+      <div class="tp-content-grid">
+        <section id="games" class="tp-section" aria-labelledby="games-title">
+          <div class="tp-section-heading">
+            <div>
+              <p class="tp-kicker">01 / The game plan</p>
+              <h2 id="games-title">Pick your queue.</h2>
+            </div>
+          </div>
+          <div class="tp-games">
+            {p.games.map((g) => {
+              const game = profileGame(g.game);
+              return (
+                <article class="tp-game" data-game={g.game}>
+                  <div class="tp-game-header">
+                    <img
+                      src={game.img}
+                      width="32"
+                      height="32"
+                      alt=""
+                      loading="lazy"
+                    />
+                    <h3>{game.name}</h3>
+                    {g.game === p.featuredGame && <span>Featured</span>}
+                  </div>
+                  <div class="tp-rank">
+                    <svg viewBox="0 0 64 72" aria-hidden="true">
+                      <path
+                        d={
+                          g.game === 'lol'
+                            ? 'M32 3 58 20 51 52 32 68 13 52 6 20Z'
+                            : 'M32 3 60 21 48 57 32 69 16 57 4 21Z'
+                        }
+                      />
+                      <path
+                        d={
+                          g.game === 'lol'
+                            ? 'M20 24h24l-4 22-8 8-8-8ZM32 13v41'
+                            : 'm15 24 17 28 17-28M22 17l10 18 10-18'
+                        }
+                      />
+                    </svg>
+                    <div>
+                      <p class="tp-eyebrow">
+                        {g.verified && g.rank ? '✓ Rank verified' : 'Teammate'}
+                      </p>
+                      <h4>
+                        {g.verified
+                          ? (g.rank ?? 'Ready to play')
+                          : 'Ready to play'}
+                      </h4>
+                      {g.verified && g.peakRank && (
+                        <p>
+                          Peak rank <strong>{g.peakRank}</strong>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <dl>
+                    <div>
+                      <dt>Roles</dt>
+                      <dd>{g.roles.join(', ') || 'Flexible'}</dd>
+                    </div>
+                    {g.picks.length > 0 && (
+                      <div>
+                        <dt>{g.game === 'val' ? 'Agents' : 'Picks'}</dt>
+                        <dd>{g.picks.join(', ')}</dd>
+                      </div>
+                    )}
+                  </dl>
+                  <div class="tp-game-footer">
+                    <span>
+                      Duo
+                      {p.coaching && g.game === p.featuredGame
+                        ? ' / Coaching'
+                        : ''}
+                    </span>
+                    <a href={view.booking(g.game)}>
+                      Book {game.name} with {p.name}{' '}
+                      <span aria-hidden="true">→</span>
+                    </a>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+        <aside class="tp-booking" aria-labelledby="booking-title">
+          <p class="tp-kicker">The lobby's better together</p>
+          <h2 id="booking-title">
+            Ready for the
+            <br />
+            next round?
+          </h2>
+          <p>
+            Queue with {p.name} in {view.game.name}.
+          </p>
+          <p class="tp-price" data-profile-price>
+            from <strong>{view.offer.display}</strong> per {view.offer.unit}
+          </p>
+          <a class="tp-button tp-primary" href={view.book}>
+            {view.primary}
+            <span aria-hidden="true">→</span>
+          </a>
+          {p.coaching && (
+            <a
+              class="tp-button tp-secondary"
+              href={view.booking(p.featuredGame, true)}
+            >
+              Coaching with {p.name}
+            </a>
+          )}
+          <p class="tp-booking-note">
+            {p.online
+              ? `${p.name} sees your order first. If ${p.name} is busy, another verified teammate takes it.`
+              : `${p.name} is offline. Book another verified teammate or save this profile for later.`}
+          </p>
+          <div class="tp-utilities">
+            <a
+              href={`/login?next=${encodeURIComponent(`/teammates/${p.slug}`)}`}
+              aria-label={`Save ${p.name}`}
+              title="Sign in to manage your favorites"
+            >
+              <span aria-hidden="true">♡</span> Save {p.name}
+            </a>
+            <a href={`#share-${p.slug}`} data-profile-share>
+              Share <span aria-hidden="true">↑</span>
+            </a>
+          </div>
+          <div id={`share-${p.slug}`} class="tp-share-link">
+            <label>
+              Profile link
+              <input
+                aria-label="Profile link"
+                readonly
+                value={new URL(`/teammates/${p.slug}`, Astro.site!).href}
+              />
+            </label>
+            <p data-share-status role="status"></p>
+          </div>
+        </aside>
       </div>
-    </section>
-    <nav class="tp-tabs" aria-label="Profile sections"><a href="#games">Games</a><a href="#reviews">Reviews</a><a href="#more">More teammates</a><span>Member since {profileMonth(p.memberSince)}</span></nav>
-    <div class="tp-content-grid"><section id="games" class="tp-section" aria-labelledby="games-title"><div class="tp-section-heading"><div><p class="tp-kicker">01 / The game plan</p><h2 id="games-title">Pick your queue.</h2></div></div><div class="tp-games">
-      {p.games.map(g=>{const game=profileGame(g.game);return <article class="tp-game" data-game={g.game}><div class="tp-game-header"><img src={game.img} width="32" height="32" alt="" loading="lazy"/><h3>{game.name}</h3>{g.game===p.featuredGame && <span>Featured</span>}</div><div class="tp-rank"><svg viewBox="0 0 64 72" aria-hidden="true"><path d={g.game==='lol'?'M32 3 58 20 51 52 32 68 13 52 6 20Z':'M32 3 60 21 48 57 32 69 16 57 4 21Z'} /><path d={g.game==='lol'?'M20 24h24l-4 22-8 8-8-8ZM32 13v41':'m15 24 17 28 17-28M22 17l10 18 10-18'} /></svg><div><p class="tp-eyebrow">{g.verified && g.rank?'✓ Rank verified':'Teammate'}</p><h4>{g.verified?g.rank??'Ready to play':'Ready to play'}</h4>{g.verified && g.peakRank && <p>Peak rank <strong>{g.peakRank}</strong></p>}</div></div><dl><div><dt>Roles</dt><dd>{g.roles.join(', ') || 'Flexible'}</dd></div>{g.picks.length>0 && <div><dt>{g.game==='val'?'Agents':'Picks'}</dt><dd>{g.picks.join(', ')}</dd></div>}</dl><div class="tp-game-footer"><span>Duo{p.coaching && g.game===p.featuredGame?' / Coaching':''}</span><a href={view.booking(g.game)}>Book {game.name} with {p.name} <span aria-hidden="true">→</span></a></div></article>})}
-    </div></section>
-    <aside class="tp-booking" aria-labelledby="booking-title"><p class="tp-kicker">The lobby's better together</p><h2 id="booking-title">Ready for the<br/>next round?</h2><p>Queue with {p.name} in {view.game.name}.</p><p class="tp-price" data-profile-price>from <strong>{view.offer.display}</strong> per {view.offer.unit}</p><a class="tp-button tp-primary" href={view.book}>{view.primary}<span aria-hidden="true">→</span></a>{p.coaching && <a class="tp-button tp-secondary" href={view.booking(p.featuredGame,true)}>Coaching with {p.name}</a>}<p class="tp-booking-note">{p.online?`${p.name} sees your order first. If ${p.name} is busy, another verified teammate takes it.`:`${p.name} is offline. Book another verified teammate or save this profile for later.`}</p><div class="tp-utilities"><a href={`/login?next=${encodeURIComponent(`/teammates/${p.slug}`)}`} aria-label={`Save ${p.name}`} title="Sign in to manage your favorites"><span aria-hidden="true">♡</span> Save {p.name}</a><a href={`#share-${p.slug}`} data-profile-share>Share <span aria-hidden="true">↑</span></a></div><div id={`share-${p.slug}`} class="tp-share-link"><label>Profile link<input aria-label="Profile link" readonly value={new URL(`/teammates/${p.slug}`,Astro.site!).href}/></label><p data-share-status role="status"></p></div></aside></div>
-    <section id="reviews" class="tp-section tp-reviews" aria-labelledby="reviews-title"><div class="tp-section-heading"><div><p class="tp-kicker">02 / The post-game</p><h2 id="reviews-title">From the other side of comms.</h2></div></div>{p.reviewTags.length>0 && <div class="tp-tags">{p.reviewTags.map(tag=><div style={`--bar:${Math.min(100,tag.count/(p.rating?.count || tag.count)*100)}%`}><span>{tag.tag}</span><strong>{tag.count}</strong></div>)}</div>}{p.reviews.length>0?<div class="tp-review-grid">{p.reviews.slice(0,6).map(review=><figure><div class="tp-stars" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(review.rating)}</div>{review.text && <blockquote>{review.text}</blockquote>}<figcaption>Verified customer, {profileGame(review.game).name}, {profileMonth(review.month)}</figcaption></figure>)}</div>:<p class="tp-empty">Reviews will appear here after completed sessions.</p>}</section>
-    <section id="more" class="tp-section" aria-labelledby="more-title"><div class="tp-section-heading"><div><p class="tp-kicker">03 / Find your people</p><h2 id="more-title">More {view.game.name} teammates.</h2></div><a href="/teammates">See all teammates →</a></div><div class="tp-cards">{related.map(card=><TeammateCard card={card}/>)}</div></section>
-    <div class="tp-mobile-booking"><a class="tp-button tp-primary" href={view.book}>{view.primary}<span aria-hidden="true">→</span></a></div>
-  </article> : <div class="tp-page tp-gone"><PageIntro eyebrow="410 / Off air" title="This player has left the spotlight." lead="This teammate profile is no longer public. There's still a lobby waiting for you." centered><a class="tp-button tp-primary" href="/teammates">Find a teammate →</a></PageIntro></div>}
+      <section
+        id="reviews"
+        class="tp-section tp-reviews"
+        aria-labelledby="reviews-title"
+      >
+        <div class="tp-section-heading">
+          <div>
+            <p class="tp-kicker">02 / The post-game</p>
+            <h2 id="reviews-title">From the other side of comms.</h2>
+          </div>
+        </div>
+        {p.reviewTags.length > 0 && (
+          <div class="tp-tags">
+            {p.reviewTags.map((tag) => (
+              <div
+                style={`--bar:${Math.min(100, (tag.count / (p.rating?.count || tag.count)) * 100)}%`}
+              >
+                <span>{tag.tag}</span>
+                <strong>{tag.count}</strong>
+              </div>
+            ))}
+          </div>
+        )}
+        {p.reviews.length > 0 ? (
+          <div class="tp-review-grid">
+            {p.reviews.slice(0, 6).map((review) => (
+              <figure>
+                <div
+                  class="tp-stars"
+                  aria-label={`${review.rating} out of 5 stars`}
+                >
+                  {'★'.repeat(review.rating)}
+                </div>
+                {review.text && <blockquote>{review.text}</blockquote>}
+                <figcaption>
+                  Verified customer, {profileGame(review.game).name},{' '}
+                  {profileMonth(review.month)}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        ) : (
+          <p class="tp-empty">
+            Reviews will appear here after completed sessions.
+          </p>
+        )}
+      </section>
+      <section id="more" class="tp-section" aria-labelledby="more-title">
+        <div class="tp-section-heading">
+          <div>
+            <p class="tp-kicker">03 / Find your people</p>
+            <h2 id="more-title">More {view.game.name} teammates.</h2>
+          </div>
+          <a href="/teammates">See all teammates →</a>
+        </div>
+        <div class="tp-cards">
+          {related.map((card) => (
+            <TeammateCard card={card} />
+          ))}
+        </div>
+      </section>
+      <div class="tp-mobile-booking">
+        <a class="tp-button tp-primary" href={view.book}>
+          {view.primary}
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </article>
+  ) : (
+    <div class="tp-page tp-gone">
+      <PageIntro
+        eyebrow="410 / Off air"
+        title="This player has left the spotlight."
+        lead="This teammate profile is no longer public. There's still a lobby waiting for you."
+        centered
+      >
+        <a class="tp-button tp-primary" href="/teammates">
+          Find a teammate →
+        </a>
+      </PageIntro>
+    </div>
+  )}
 </SiteLayout>
 <script>
-  const share = document.querySelector<HTMLAnchorElement>('[data-profile-share]');
-  const input = document.querySelector<HTMLInputElement>('.tp-share-link input');
+  const share = document.querySelector<HTMLAnchorElement>(
+    '[data-profile-share]',
+  );
+  const input = document.querySelector<HTMLInputElement>(
+    '.tp-share-link input',
+  );
   const status = document.querySelector<HTMLElement>('[data-share-status]');
-  share?.addEventListener('click',async(event)=>{
-    if(!input || !status) return;
+  share?.addEventListener('click', async (event) => {
+    if (!input || !status) return;
     event.preventDefault();
     try {
-      if(navigator.share) { await navigator.share({title:document.title,url:input.value}); return; }
-      if(navigator.clipboard) { await navigator.clipboard.writeText(input.value); status.textContent='Link copied.'; }
-      else { input.focus();input.select();status.textContent='Copy this profile link.'; }
-    } catch(error) { if(!(error instanceof DOMException && error.name==='AbortError')) {input.focus();input.select();status.textContent='Copy this profile link.';} }
+      if (navigator.share) {
+        await navigator.share({ title: document.title, url: input.value });
+        return;
+      }
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(input.value);
+        status.textContent = 'Link copied.';
+      } else {
+        input.focus();
+        input.select();
+        status.textContent = 'Copy this profile link.';
+      }
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === 'AbortError')) {
+        input.focus();
+        input.select();
+        status.textContent = 'Copy this profile link.';
+      }
+    }
   });
 </script>

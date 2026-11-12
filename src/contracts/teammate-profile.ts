@@ -20,7 +20,9 @@ export const PROFILE_ACCENTS = {
   ice: '#CFE6FF',
 } as const;
 export type ProfileAccent = keyof typeof PROFILE_ACCENTS;
-export const PROFILE_ACCENT_KEYS = Object.keys(PROFILE_ACCENTS) as ProfileAccent[];
+export const PROFILE_ACCENT_KEYS = Object.keys(
+  PROFILE_ACCENTS,
+) as ProfileAccent[];
 export const DEFAULT_ACCENT: ProfileAccent = 'lavender';
 
 /** Curated banner patterns (CSS only, drawn by the page). */
@@ -45,7 +47,13 @@ export type VibeTag = (typeof VIBE_TAGS)[number];
 export const VIBE_TAGS_MAX = 3;
 
 /** Trust tiers, same ids and thresholds as src/design-reference/lib/trust.js. */
-export const TRUST_TIERS = ['rookie', 'trusted', 'veteran', 'elite', 'legend'] as const;
+export const TRUST_TIERS = [
+  'rookie',
+  'trusted',
+  'veteran',
+  'elite',
+  'legend',
+] as const;
 export type TrustTier = (typeof TRUST_TIERS)[number];
 
 /** Sample minimums: below these the stat is null and not shown. */
@@ -96,7 +104,10 @@ export function slugFromName(name: string): string {
 }
 
 export function slugValid(slug: string): boolean {
-  return SLUG_PATTERN.test(slug) && !(RESERVED_SLUGS as readonly string[]).includes(slug);
+  return (
+    SLUG_PATTERN.test(slug) &&
+    !(RESERVED_SLUGS as readonly string[]).includes(slug)
+  );
 }
 
 /** One game on a profile. rank and peakRank are set by an admin only; verified means an admin checked them. */
@@ -159,14 +170,17 @@ export function profileIndexable(p: PublicTeammateProfile): boolean {
   const verifiedRank = p.games.some((g) => g.verified && g.rank);
   return (
     verifiedRank &&
-    (p.bio.trim().length >= INDEX_MIN_BIO_CHARS || p.sessions >= INDEX_MIN_SESSIONS)
+    (p.bio.trim().length >= INDEX_MIN_BIO_CHARS ||
+      p.sessions >= INDEX_MIN_SESSIONS)
   );
 }
 
 /** What a teammate can save from the settings block. Ranks are not here: admins set them. */
 export const publicProfileSettingsSchema = z.object({
   published: z.boolean(),
-  slug: z.string().refine(slugValid, 'Pick 3 to 24 letters, numbers or hyphens.'),
+  slug: z
+    .string()
+    .refine(slugValid, 'Pick 3 to 24 letters, numbers or hyphens.'),
   accent: z.enum(PROFILE_ACCENT_KEYS as [ProfileAccent, ...ProfileAccent[]]),
   banner: z.enum(PROFILE_BANNERS),
   featuredGame: z.string().min(2).max(8),

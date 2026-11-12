@@ -1,11 +1,35 @@
 ---
 import TeammateCard from './TeammateCard.astro';
-import { loadTeammateCards, publicProfilesEnabled } from '../../server/teammates/public-profiles';
+import {
+  loadTeammateCards,
+  publicProfilesEnabled,
+} from '../../server/teammates/public-profiles';
 import { profileGame } from '../../server/teammates/profile-page';
 import './profiles.css';
-interface Props { game: string; limit?: number }
+interface Props {
+  game: string;
+  limit?: number;
+}
 const { game, limit = 6 } = Astro.props;
-const cards = publicProfilesEnabled() ? await loadTeammateCards({game,limit:Math.min(6,limit)}) : [];
+const cards = publicProfilesEnabled()
+  ? await loadTeammateCards({ game, limit: Math.min(6, limit) })
+  : [];
 const name = profileGame(game).name;
 ---
-{cards.length > 0 && <section class="tp-row tp-section" aria-labelledby={`teammates-${game}`}><div class="tp-section-heading"><div><p class="tp-kicker">Your next lobby</p><h2 id={`teammates-${game}`}>Teammates for {name}</h2></div><a href={`/teammates?game=${game}`}>See all {name} teammates →</a></div><div class="tp-cards">{cards.map(card=><TeammateCard card={card}/>)}</div></section>}
+
+{cards.length > 0 && (
+  <section class="tp-row tp-section" aria-labelledby={`teammates-${game}`}>
+    <div class="tp-section-heading">
+      <div>
+        <p class="tp-kicker">Your next lobby</p>
+        <h2 id={`teammates-${game}`}>Teammates for {name}</h2>
+      </div>
+      <a href={`/teammates?game=${game}`}>See all {name} teammates →</a>
+    </div>
+    <div class="tp-cards">
+      {cards.map((card) => (
+        <TeammateCard card={card} />
+      ))}
+    </div>
+  </section>
+)}

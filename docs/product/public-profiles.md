@@ -4,68 +4,71 @@ Status: draft for owner review, 2026-11-12. Design direction: **B, Broadcast** (
 
 ## 1. What already exists (verified in the code)
 
-| Need | Exists today | Where |
-|---|---|---|
-| Display name, avatar (10 presets), country | Yes | `profiles` (`name`, `image`, `country`), account foundation migration |
-| Bio (max 160) and languages (max 6) | Yes, teammates only, already shown to customers in orders | `profiles.bio`, `profiles.languages`; edited on `/profile` (`src/components/account/Profile.jsx`) |
-| Games a teammate may play | Yes | `teammate_order_access.approved_games`, `enabled_games`, `gg_access`, `duo_level` |
-| **Verified rank per game** | **No.** Only the rank typed into the application (one game, free text) | `teammate_applications.rank` |
-| Roles, agents, champions per game | **No** | |
-| Sessions completed, trust tier (Rookie to Legend) | Yes, computed from completed orders | `teammate_earning_entries`, `src/design-reference/lib/trust.js` |
-| Rating and review tags | Yes | `order_reviews` (`rating`, `text`, `tags`) |
-| Win rate | Yes, from match reports | `order_match_reports`, `performance_scores` |
-| Online now | Yes | `teammate_presence` (online and last_seen_at) |
-| Favorite a teammate | Yes, but only through one of your own orders | `customer_favorites` (`20261106150000`); favorites see your order the moment it queues, no priority delay |
-| Book the same teammate again | Yes, only after a completed order (Play again, 60 second exclusive window) | `order_teammate_picks`, `order_pick_candidate` needs a completed source order |
-| **Book a specific teammate you never played with** | **No** | |
-| Sitemap | Static list only | `src/pages/sitemap.xml.ts` reads `INDEXABLE_PATHS` in `src/site/seo.ts` |
-| IndexNow | After every deploy, sitemap only | `scripts/indexnow.mjs` |
-| Off-platform contact filter | Yes | `BLOCKED` in `src/design-reference/lib/chatRules.js` |
-| Game pages | SSR, data-driven hubs | `src/pages/games/[game].astro`, `src/components/seo/GameHub.astro` |
-| Rendering | Every page server-rendered per request on Vercel | `astro.config.mjs` (`output: 'server'`) |
+| Need                                               | Exists today                                                               | Where                                                                                                     |
+| -------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Display name, avatar (10 presets), country         | Yes                                                                        | `profiles` (`name`, `image`, `country`), account foundation migration                                     |
+| Bio (max 160) and languages (max 6)                | Yes, teammates only, already shown to customers in orders                  | `profiles.bio`, `profiles.languages`; edited on `/profile` (`src/components/account/Profile.jsx`)         |
+| Games a teammate may play                          | Yes                                                                        | `teammate_order_access.approved_games`, `enabled_games`, `gg_access`, `duo_level`                         |
+| **Verified rank per game**                         | **No.** Only the rank typed into the application (one game, free text)     | `teammate_applications.rank`                                                                              |
+| Roles, agents, champions per game                  | **No**                                                                     |                                                                                                           |
+| Sessions completed, trust tier (Rookie to Legend)  | Yes, computed from completed orders                                        | `teammate_earning_entries`, `src/design-reference/lib/trust.js`                                           |
+| Rating and review tags                             | Yes                                                                        | `order_reviews` (`rating`, `text`, `tags`)                                                                |
+| Win rate                                           | Yes, from match reports                                                    | `order_match_reports`, `performance_scores`                                                               |
+| Online now                                         | Yes                                                                        | `teammate_presence` (online and last_seen_at)                                                             |
+| Favorite a teammate                                | Yes, but only through one of your own orders                               | `customer_favorites` (`20261106150000`); favorites see your order the moment it queues, no priority delay |
+| Book the same teammate again                       | Yes, only after a completed order (Play again, 60 second exclusive window) | `order_teammate_picks`, `order_pick_candidate` needs a completed source order                             |
+| **Book a specific teammate you never played with** | **No**                                                                     |                                                                                                           |
+| Sitemap                                            | Static list only                                                           | `src/pages/sitemap.xml.ts` reads `INDEXABLE_PATHS` in `src/site/seo.ts`                                   |
+| IndexNow                                           | After every deploy, sitemap only                                           | `scripts/indexnow.mjs`                                                                                    |
+| Off-platform contact filter                        | Yes                                                                        | `BLOCKED` in `src/design-reference/lib/chatRules.js`                                                      |
+| Game pages                                         | SSR, data-driven hubs                                                      | `src/pages/games/[game].astro`, `src/components/seo/GameHub.astro`                                        |
+| Rendering                                          | Every page server-rendered per request on Vercel                           | `astro.config.mjs` (`output: 'server'`)                                                                   |
 
 Rule carried over from favorites: **teammate user ids never leave the database.** Public pages address a teammate by a public slug only.
 
 ## 2. Pages and where they live
 
-| URL | What | Indexing |
-|---|---|---|
-| `/teammates/<slug>` | The profile (design B) | Indexed only when it passes the quality rule (section 5) |
-| `/teammates` | Directory: all published teammates, filter by game, online first | Indexed once at least 3 profiles qualify |
-| `/games/<game>` (existing) | New section "Teammates for <Game>": up to 6 cards, online first, link to directory | Unchanged |
-| `/profile` (existing) | New "Public profile" settings block for teammates | Not indexed |
-| Admin, Teammates screen (existing) | Verify ranks per game, unpublish a profile, see reports | Not indexed |
+| URL                                | What                                                                               | Indexing                                                 |
+| ---------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `/teammates/<slug>`                | The profile (design B)                                                             | Indexed only when it passes the quality rule (section 5) |
+| `/teammates`                       | Directory: all published teammates, filter by game, online first                   | Indexed once at least 3 profiles qualify                 |
+| `/games/<game>` (existing)         | New section "Teammates for <Game>": up to 6 cards, online first, link to directory | Unchanged                                                |
+| `/profile` (existing)              | New "Public profile" settings block for teammates                                  | Not indexed                                              |
+| Admin, Teammates screen (existing) | Verify ranks per game, unpublish a profile, see reports                            | Not indexed                                              |
 
 ## 3. Buttons and links (placement map)
 
 **On the profile**
-| Place | Element | Behaviour |
-|---|---|---|
-| Hero, next to name | Online pill | Live presence. Offline shows "Last online today" only if under 24 h, else nothing |
-| Hero, primary | **Book with Nyx** (online) | See booking flow, section 6 |
-| Hero, primary when offline | **Book a Valorant teammate** | Normal booking for the featured game; secondary "Save Nyx" |
-| Hero, secondary | Coaching with Nyx | Only if the teammate offers coaching for that game |
-| Hero, small | Save (heart) | Adds to favorites (customer must be signed in) |
-| Hero, small | Share | Copies the link. Teammates share their own page on socials: free traffic |
-| Price | "from €6.49 per game" once, beside the primary button | Live price from the pricing engine (`hubPrices`), never typed |
-| Games section | Per game: rank, roles, agents, "Book Valorant with Nyx" text link | Same flow as primary |
-| Mobile | Sticky bottom bar with the primary button only (no second price) | |
-| Bottom | "More Valorant teammates": 3 mini cards, then "See all teammates" | Internal links |
-| Breadcrumb | Duoly / Teammates / Nyx | BreadcrumbList data |
+
+| Place                      | Element                                                           | Behaviour                                                                         |
+| -------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Hero, next to name         | Online pill                                                       | Live presence. Offline shows "Last online today" only if under 24 h, else nothing |
+| Hero, primary              | **Book with Nyx** (online)                                        | See booking flow, section 6                                                       |
+| Hero, primary when offline | **Book a Valorant teammate**                                      | Normal booking for the featured game; secondary "Save Nyx"                        |
+| Hero, secondary            | Coaching with Nyx                                                 | Only if the teammate offers coaching for that game                                |
+| Hero, small                | Save (heart)                                                      | Adds to favorites (customer must be signed in)                                    |
+| Hero, small                | Share                                                             | Copies the link. Teammates share their own page on socials: free traffic          |
+| Price                      | "from €6.49 per game" once, beside the primary button             | Live price from the pricing engine (`hubPrices`), never typed                     |
+| Games section              | Per game: rank, roles, agents, "Book Valorant with Nyx" text link | Same flow as primary                                                              |
+| Mobile                     | Sticky bottom bar with the primary button only (no second price)  |                                                                                   |
+| Bottom                     | "More Valorant teammates": 3 mini cards, then "See all teammates" | Internal links                                                                    |
+| Breadcrumb                 | Duoly / Teammates / Nyx                                           | BreadcrumbList data                                                               |
 
 **Elsewhere**
-| Place | Link |
-|---|---|
-| Game page section | Teammate cards to profiles, "See all <Game> teammates" to directory |
-| Order room and review screen, teammate card | "View profile" (only if published) |
-| Dashboard "Your teammates" (favorites) | Name links to profile if published |
-| Teammate desk header | "Your public profile: On/Off" with link to settings and to the live page |
-| Main nav and footer | "Teammates". **Fabi's design area**: needs his OK and the `design-approved` label |
-| `llms.txt` | Add `/teammates` with one line |
+
+| Place                                       | Link                                                                              |
+| ------------------------------------------- | --------------------------------------------------------------------------------- |
+| Game page section                           | Teammate cards to profiles, "See all <Game> teammates" to directory               |
+| Order room and review screen, teammate card | "View profile" (only if published)                                                |
+| Dashboard "Your teammates" (favorites)      | Name links to profile if published                                                |
+| Teammate desk header                        | "Your public profile: On/Off" with link to settings and to the live page          |
+| Main nav and footer                         | "Teammates". **Fabi's design area**: needs his OK and the `design-approved` label |
+| `llms.txt`                                  | Add `/teammates` with one line                                                    |
 
 ## 4. Data model (one new migration)
 
 `teammate_public_profiles`
+
 - `user_id` primary key, references profiles
 - `slug` unique, `^[a-z0-9-]{3,24}$`, reserved list (admin, duoly, support, teammates, login and similar), chosen at first publish, defaults from the display name
 - `published` boolean default false, `published_at`, `updated_at`
@@ -79,6 +82,7 @@ Rule carried over from favorites: **teammate user ids never leave the database.*
 `teammate_public_slug_history` (old slug, user_id, retired_at) for 301 redirects after a rename.
 
 `teammate_game_ranks` (user_id, game, `rank`, `peak_rank`, `roles` text[], `picks` text[] (agents or champions), `verified_at`, `verified_by`)
+
 - Teammate edits roles and picks. **Only an admin sets rank and peak and marks them verified.** Ranks must come from `ranks.js` for that game.
 
 Read path: one security-definer function `public_teammate_profile(p_slug text)` returning only whitelisted fields (no ids, no email, no Discord, no earnings, country only if `show_country`), plus `public_teammates(p_game text, p_limit int)` for game pages and the directory. Both return nothing for unpublished, admin-hidden, suspended or non-teammate accounts. Writes go through `teammate_public_profile_save(...)` with the same validation in Postgres as on the server (pattern of the bio migration).
@@ -147,14 +151,14 @@ From the review: remove about 40% of borders (no boxes in boxes), larger and hig
 
 ## 13. Needs a decision or someone else
 
-| Item | Who |
-|---|---|
-| Design B approval, game page section placement, nav and footer link | Fabi (design area) |
-| Option 1 now, Option 2 later | Owner, Fabi for Option 2 |
-| Privacy policy section, review notice wording | Fabi (legal representative) |
-| Who verifies ranks and how (screenshot, tracker link) | Owner and Fabi |
-| Browser analytics events | Fabi (protected file) |
-| First teammates to opt in | Owner and Fabi |
+| Item                                                                | Who                         |
+| ------------------------------------------------------------------- | --------------------------- |
+| Design B approval, game page section placement, nav and footer link | Fabi (design area)          |
+| Option 1 now, Option 2 later                                        | Owner, Fabi for Option 2    |
+| Privacy policy section, review notice wording                       | Fabi (legal representative) |
+| Who verifies ranks and how (screenshot, tracker link)               | Owner and Fabi              |
+| Browser analytics events                                            | Fabi (protected file)       |
+| First teammates to opt in                                           | Owner and Fabi              |
 
 ## 14. Risks
 
