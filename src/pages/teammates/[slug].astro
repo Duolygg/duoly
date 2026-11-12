@@ -19,6 +19,7 @@ import {
   profileGame,
   profileMonth,
   profileReviewLayout,
+  rankEmblem,
 } from '../../server/teammates/profile-page';
 import { serializeJsonLd } from '../../site/seo';
 import { pageViewer } from '../../site/viewer';
@@ -51,9 +52,8 @@ const related = p
 const schemas = p ? profileSchemas(p, Astro.site!) : [];
 const fixture = fixturesEnabled();
 const reviews = p ? profileReviewLayout(p.reviews) : { lead: null, rest: [] };
-const featuredRank = p?.games.find(
-  (g) => g.game === p.featuredGame && g.verified,
-)?.rank;
+const featuredRank =
+  p?.games.find((g) => g.game === p.featuredGame && g.verified)?.rank ?? null;
 /** One sentence about how fast an order is picked up, reused by the closing band. */
 const availability = p?.online
   ? 'Online now, usually accepts within 2 minutes'
@@ -119,10 +119,22 @@ const sections = [
         </div>
         <div class="tp-hero-grid">
           <div class="tp-hero-name">
-            <h1 id="profile-name">
-              {p.name}
-              {p.games.some((g) => g.verified && g.rank) && (
-                <span class="tp-verified" aria-label="Rank verified">
+            <h1 id="profile-name">{p.name}</h1>
+            <p class="tp-rankline" data-game={p.featuredGame}>
+              <svg class="tp-crest" viewBox="0 0 64 72" aria-hidden="true">
+                <path d={rankEmblem(p.featuredGame).shape} />
+              </svg>
+              <span>
+                {featuredRank
+                  ? `${view.game.name}, ${featuredRank}`
+                  : `${view.game.name} teammate`}
+              </span>
+              {featuredRank && (
+                <span
+                  class="tp-verified"
+                  role="img"
+                  aria-label="Rank verified by Duoly"
+                >
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path
                       d="m5 12.5 4.5 4.5L19 7.5"
@@ -134,10 +146,14 @@ const sections = [
                   </svg>
                 </span>
               )}
-            </h1>
+            </p>
           </div>
           <div class="tp-aside">
-            <span class="tp-ghostname" aria-hidden="true">
+            <span
+              class="tp-ghostname"
+              style={`--ghost-chars:${p.name.length}`}
+              aria-hidden="true"
+            >
               {p.name}
             </span>
             <div class="tp-figure">
@@ -168,10 +184,6 @@ const sections = [
               </p>
               <dl class="tp-idlist">
                 <div>
-                  <dt>{view.game.name}</dt>
-                  <dd>{featuredRank ?? 'Teammate'}</dd>
-                </div>
-                <div>
                   <dt>Member since</dt>
                   <dd>{profileMonth(p.memberSince)}</dd>
                 </div>
@@ -201,18 +213,10 @@ const sections = [
                   {view.primary}
                   <Icon name="arrow" />
                 </a>
-                <div class="tp-offer">
-                  <p class="tp-price" data-profile-price>
-                    from <strong>{view.offer.display}</strong> per{' '}
-                    {view.offer.unit}
-                  </p>
-                  {availability && (
-                    <p class="tp-availability">
-                      <i aria-hidden="true"></i>
-                      {availability}
-                    </p>
-                  )}
-                </div>
+                <p class="tp-price" data-profile-price>
+                  from <strong>{view.offer.display}</strong> per{' '}
+                  {view.offer.unit}
+                </p>
               </div>
               {p.coaching && (
                 <div class="tp-buy tp-buy-quiet">
@@ -229,6 +233,12 @@ const sections = [
                     </p>
                   )}
                 </div>
+              )}
+              {availability && (
+                <p class="tp-availability">
+                  <i aria-hidden="true"></i>
+                  {availability}
+                </p>
               )}
             </div>
             <p class="tp-note">
@@ -317,22 +327,8 @@ const sections = [
                     viewBox="0 0 64 72"
                     aria-hidden="true"
                   >
-                    <path
-                      class="tp-rank-shape"
-                      d={
-                        g.game === 'lol'
-                          ? 'M32 2 59 14l-5 33L32 70 10 47 5 14Z'
-                          : 'M32 2 60 19v30L32 70 4 49V19Z'
-                      }
-                    />
-                    <path
-                      class="tp-rank-mark"
-                      d={
-                        g.game === 'lol'
-                          ? 'm17 45 15-23 15 23'
-                          : 'm17 25 15 24 15-24'
-                      }
-                    />
+                    <path class="tp-rank-shape" d={rankEmblem(g.game).shape} />
+                    <path class="tp-rank-mark" d={rankEmblem(g.game).mark} />
                   </svg>
                   <div>
                     <p class="tp-rank-label">
@@ -407,42 +403,28 @@ const sections = [
         )}
         {reviews.lead || reviews.rest.length > 0 ? (
           <div class="tp-review-wrap">
-            {reviews.lead && (
-              <div class="tp-review-row">
-                <figure class="tp-review tp-review-lead">
+            {(reviews.lead ? [reviews.lead] : [])
+              .concat(reviews.rest)
+              .map((review, i) => (
+                <figure
+                  class:list={[
+                    'tp-review',
+                    { 'tp-review-lead': i === 0 && reviews.lead },
+                  ]}
+                >
                   <div
                     class="tp-stars"
-                    aria-label={`${reviews.lead.rating} out of 5 stars`}
+                    aria-label={`${review.rating} out of 5 stars`}
                   >
-                    {'★'.repeat(reviews.lead.rating)}
+                    {'★'.repeat(review.rating)}
                   </div>
-                  <blockquote>{reviews.lead.text}</blockquote>
+                  <blockquote>{review.text}</blockquote>
                   <figcaption>
-                    Verified customer, {profileGame(reviews.lead.game).name},{' '}
-                    {profileMonth(reviews.lead.month)}
+                    Verified customer, {profileGame(review.game).name},{' '}
+                    {profileMonth(review.month)}
                   </figcaption>
                 </figure>
-              </div>
-            )}
-            {reviews.rest.length > 0 && (
-              <div class="tp-review-row tp-review-grid">
-                {reviews.rest.map((review) => (
-                  <figure class="tp-review">
-                    <div
-                      class="tp-stars"
-                      aria-label={`${review.rating} out of 5 stars`}
-                    >
-                      {'★'.repeat(review.rating)}
-                    </div>
-                    <blockquote>{review.text}</blockquote>
-                    <figcaption>
-                      Verified customer, {profileGame(review.game).name},{' '}
-                      {profileMonth(review.month)}
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-            )}
+              ))}
           </div>
         ) : (
           <p class="tp-empty">

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   accentStyle,
   profileMetadata,
+  rankEmblem,
   profilePresentation,
   profileSchemas,
   profileRoute,
@@ -140,6 +141,15 @@ describe('public profile page', () => {
       lead: null,
       rest: [],
     });
+  });
+  it('gives every game the same rank mark, so no crest repeats a game logo', () => {
+    const val = rankEmblem('val');
+    const lol = rankEmblem('lol');
+    /* The crest silhouette is per game, the mark inside it is not: a Valorant specific
+       mark was a second copy of the V in the header icon. */
+    expect(val.shape).not.toBe(lol.shape);
+    expect(val.mark).toBe(lol.mark);
+    expect(rankEmblem('unknown').shape).toBe(val.shape);
   });
   it('builds anonymous, dash-free profile copy and offline booking without preference', () => {
     expect(

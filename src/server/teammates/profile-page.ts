@@ -14,6 +14,18 @@ import { bookingHref, organizationSchema } from '../../site/seo';
 import { seoOffers } from '../seo/offers';
 import type { ProfileLookup } from './public-profiles';
 export const profileGame = (id: string) => SITE_GAMES.find((g) => g.id === id)!;
+/**
+ * The rank emblem: one solid geometric crest per game, filled with the game colour, never
+ * an official rank badge and never a second copy of the game logo. The hero lockup prints
+ * the bare crest, the game card adds the chevron mark.
+ */
+export const rankEmblem = (id: string) => ({
+  shape:
+    id === 'lol'
+      ? 'M32 2 59 14l-5 33L32 70 10 47 5 14Z'
+      : 'M32 2 60 19v30L32 70 4 49V19Z',
+  mark: 'm18 43 14-17 14 17',
+});
 /** Accent and the light strength that goes with it, as inline custom properties. */
 export const accentStyle = (accent: ProfileAccent) =>
   `--accent:${PROFILE_ACCENTS[accent]};--glow:${PROFILE_ACCENT_GLOW[accent]}`;

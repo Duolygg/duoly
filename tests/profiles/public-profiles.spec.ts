@@ -144,7 +144,9 @@ test('one booking verb, one arrow glyph and reviews without text stay quiet', as
   await expect(page.locator('.tp-card svg')).toHaveCount(0);
   /* Four written reviews minus the one with no text: a lead plus an even grid. */
   await expect(page.locator('.tp-review-lead')).toHaveCount(1);
-  await expect(page.locator('.tp-review-grid .tp-review')).toHaveCount(2);
+  await expect(
+    page.locator('.tp-review-wrap .tp-review:not(.tp-review-lead)'),
+  ).toHaveCount(2);
   await expect(page.locator('.tp-tags .tp-tag').first()).toContainText(
     '74 mentions',
   );
@@ -178,8 +180,8 @@ test('the hero carries one online signal, one booking unit and no upscaled masco
         .filter((width) => width > 160),
     ),
   ).toEqual([]);
-  /* Same height for both buttons. Side by side the primary is the wider of the two; in
-     the stacked mobile layout both run the full column. */
+  /* Both buttons share one column, so they come out the same size at every width, and
+     each price line is centred on its own button. */
   const sizes = await page.evaluate(() =>
     ['.tp-cta .tp-primary', '.tp-cta .tp-ghost'].map((selector) => {
       const box = document.querySelector(selector)!.getBoundingClientRect();
@@ -188,8 +190,39 @@ test('the hero carries one online signal, one booking unit and no upscaled masco
   );
   expect(sizes[0]!.h).toBe(56);
   expect(sizes[1]!.h).toBe(56);
-  if (isMobile) expect(sizes[0]!.w).toBe(sizes[1]!.w);
-  else expect(sizes[0]!.w).toBeGreaterThan(sizes[1]!.w);
+  expect(sizes[0]!.w).toBe(sizes[1]!.w);
+  if (!isMobile)
+    expect(
+      await page.evaluate(() => {
+        const prices = document.querySelectorAll('.tp-cta .tp-price');
+        return ['.tp-cta .tp-primary', '.tp-cta .tp-ghost'].map(
+          (selector, i) => {
+            const button = document
+              .querySelector(selector)!
+              .getBoundingClientRect();
+            const price = prices[i]!.getBoundingClientRect();
+            const off =
+              price.top + price.height / 2 - (button.top + button.height / 2);
+            return Math.abs(off) <= 1;
+          },
+        );
+      }),
+    ).toEqual([true, true]);
+  /* The availability line closes the block under the pair, on its own full width row. */
+  expect(
+    await page.evaluate(() => {
+      const line = document
+        .querySelector('.tp-cta .tp-availability')!
+        .getBoundingClientRect();
+      const ghost = document
+        .querySelector('.tp-cta .tp-ghost')!
+        .getBoundingClientRect();
+      return {
+        below: line.top >= ghost.bottom,
+        left: Math.round(line.left - ghost.left),
+      };
+    }),
+  ).toEqual({ below: true, left: 0 });
   /* The fallback promise reads at body size, never as fine print. */
   expect(
     await page
@@ -207,8 +240,8 @@ test('nothing in the profile touches the viewport edge', async ({ page }) => {
       let left = Infinity;
       let right = Infinity;
       for (const el of document.querySelectorAll('article.tp-page *')) {
-        /* The booking bar is a deliberate full width bar; decorative light and the
-           outlined name are clipped at the page edge on purpose. */
+        /* The booking bar is a deliberate full width bar; the decorative light and the
+           outlined name are measured on their own in the hero test below. */
         if (el.closest('.tp-mobile-booking, [aria-hidden="true"]')) continue;
         const style = getComputedStyle(el);
         if (style.visibility === 'hidden' || style.display === 'none') continue;
@@ -268,4 +301,147 @@ test('the sticky bar steps aside while a booking block is on screen', async ({
   await expect(bar).not.toHaveClass(/is-stowed/);
   await page.locator('[data-closing]').scrollIntoViewIfNeeded();
   await expect(bar).toHaveClass(/is-stowed/);
+});
+
+test('the hero light and the outlined name end inside the page, and no card is chamfered', async ({
+  page,
+}) => {
+  for (const width of [1440, 1280, 1024, 920, 768, 390, 360]) {
+    await page.setViewportSize({ width, height: width >= 1024 ? 900 : 844 });
+    await page.goto('/teammates/nyx');
+    const hero = await page.evaluate(() => {
+      const box = (s: string) =>
+        document.querySelector(s)!.getBoundingClientRect();
+      const article = box('article.tp-page');
+      const sky = box('.tp-sky');
+      const ghost = box('.tp-ghostname');
+      const inside = (r: DOMRect) =>
+        Math.round(r.left - article.left) >= 0 &&
+        Math.round(article.right - r.right) >= 0;
+      return {
+        /* Both decorative layers end inside the container and are transparent there, so
+           the clip on the hero never cuts a visible pixel: no panel edge at the container
+           sides, no sliced glyph. */
+        skyInside: inside(sky),
+        ghostInside: inside(ghost),
+        /* The light starts above the first hero row, so it has room to fade in. */
+        skyAboveGrid: sky.top < box('.tp-hero-grid').top,
+      };
+    });
+    expect(hero, `hero light at ${width}`).toEqual({
+      skyInside: true,
+      ghostInside: true,
+      skyAboveGrid: true,
+    });
+  }
+  /* The slash motif keeps the tab marker and the tier plaque. Cards are plain. */
+  expect(
+    await page.evaluate(() =>
+      [...document.querySelectorAll('.tp-game, .tp-card')]
+        .map((el) => getComputedStyle(el).clipPath)
+        .filter((value) => value !== 'none'),
+    ),
+  ).toEqual([]);
+  expect(
+    await page.evaluate(
+      () => getComputedStyle(document.querySelector('.tp-plate')!).clipPath,
+    ),
+  ).toContain('polygon');
+  /* The tier reads as one full width rule on the card, never as a short stub. */
+  expect(
+    await page.evaluate(() => {
+      const card = document.querySelector('.tp-card')!;
+      const style = getComputedStyle(card);
+      return {
+        width: style.borderTopWidth,
+        colour: style.borderTopColor === getComputedStyle(card).borderTopColor,
+        stub: getComputedStyle(card, '::before').content,
+      };
+    }),
+  ).toEqual({ width: '2px', colour: true, stub: 'none' });
+});
+
+test('the lockup carries the rank once and the stats row reads as one set', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/teammates/nyx');
+  /* Rank, game and the verified tick live under the name, and nowhere else. */
+  await expect(page.locator('.tp-rankline')).toHaveText(/Valorant, Immortal 3/);
+  await expect(page.locator('.tp-rankline .tp-verified')).toHaveCount(1);
+  await expect(page.locator('.tp-idlist')).not.toContainText('Immortal 3');
+  await expect(page.locator('h1 .tp-verified')).toHaveCount(0);
+  expect(
+    (await page.locator('.tp-hero').innerText()).split('Immortal 3').length,
+  ).toBe(2);
+  /* No label in the stats row is underlined, including the one that is a link. */
+  expect(
+    await page.evaluate(() =>
+      [...document.querySelectorAll('.tp-stat-name, .tp-stat-sub')].map(
+        (el) => getComputedStyle(el).textDecorationLine,
+      ),
+    ),
+  ).toEqual(Array(6).fill('none'));
+  await expect(page.locator('a.tp-stat')).toHaveAttribute('href', '#reviews');
+  /* The whole stats row, captions included, is in the first viewport at 1440x900. */
+  expect(
+    await page.evaluate(
+      () =>
+        document.querySelector('.tp-scoreboard')!.getBoundingClientRect()
+          .bottom,
+    ),
+  ).toBeLessThanOrEqual(900);
+  /* A section opens 48 px under the one before it and gives its rule 24 px of air; the
+     closing band carries no rule, so it simply keeps the same 72 px gap. */
+  expect(
+    await page.evaluate(() =>
+      [...document.querySelectorAll('.tp-section')].slice(1).map((el) => {
+        const style = getComputedStyle(el);
+        return parseFloat(style.marginTop) + parseFloat(style.paddingTop);
+      }),
+    ),
+  ).toEqual([72, 72]);
+  expect(
+    await page.evaluate(
+      () => getComputedStyle(document.querySelector('.tp-closing')!).marginTop,
+    ),
+  ).toBe('72px');
+  expect(
+    await page.evaluate(() =>
+      [...document.querySelectorAll('.tp-section-head')].map(
+        (el) => getComputedStyle(el).marginBottom,
+      ),
+    ),
+  ).toEqual(['24px', '24px', '24px']);
+  /* One grid for the reviews: the featured quote spans it, the rest sit under it in
+     equal columns that start on the same left edge as the tag bars. */
+  expect(
+    await page.evaluate(() => {
+      const left = (el: Element) => Math.round(el.getBoundingClientRect().left);
+      const reviews = [...document.querySelectorAll('.tp-review')];
+      return {
+        tags: left(document.querySelector('.tp-tag')!),
+        lead: left(reviews[0]!),
+        leadWidth: Math.round(reviews[0]!.getBoundingClientRect().width),
+        wrapWidth: Math.round(
+          document.querySelector('.tp-review-wrap')!.getBoundingClientRect()
+            .width,
+        ),
+        rest: reviews.slice(1).map(left),
+        captions: reviews.map((el) =>
+          Math.round(
+            el.querySelector('figcaption')!.getBoundingClientRect().top -
+              el.querySelector('blockquote')!.getBoundingClientRect().bottom,
+          ),
+        ),
+      };
+    }),
+  ).toEqual({
+    tags: 96,
+    lead: 96,
+    leadWidth: 1248,
+    wrapWidth: 1248,
+    rest: [96, 720],
+    captions: [16, 16, 16],
+  });
 });
