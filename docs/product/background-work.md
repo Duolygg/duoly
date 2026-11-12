@@ -734,5 +734,8 @@ deliberately do something else and say why.
   kind and mode: stale, early fire, not eligible, duplicate claim, exhausted ladder, switched-off
   subsystem, shadow silence, and every answer parsed back through `TimerDispositionSchema`. Gates:
   `pnpm check` 0 errors over 905 files, `pnpm lint` clean, `pnpm format:check` clean,
-  `pnpm test:unit` 3851 tests in 215 files, `pnpm build` green. Nothing is wired to an event yet:
-  until chunk 5 the only callers are the worker and the fixer.
+  `pnpm test:unit` 3851 tests in 215 files, `pnpm build` green. The e2e suites that could see the
+  extracted payments sweep also ran: the main config 288 passed with one load flake in
+  `booking-link.spec.ts` that passes alone, the analytics config 8 passed, the teammate config 74
+  passed. Nothing is wired to an event yet: until chunk 5 the only callers are the worker and the
+  fixer.
