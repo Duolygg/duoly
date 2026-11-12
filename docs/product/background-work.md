@@ -100,18 +100,29 @@ a timer handler itself misbehaves, because `legacy` also stops the registrations
 2. It registers `order-post` at `queued_at + 100 s` and `order-expire` at `queued_at + 5 min`, both
    with `epoch = queued_at` in milliseconds. Each of the two is gated by its own switch, so with
    `orders` in `legacy` and `payments` in `shadow` only the expiry timer is registered.
-3. At fire time the handler re-reads `order_public_queued_at(o)`:
+3. At fire time the handler re-reads the order and asks the tick's own due predicate,
+   `public.discord_order_posts_due(100)`:
    - order gone, not `queued` any more, or a different `queued_at`: `stale`.
-   - a streaming booking (the function returns `infinity`): `stale`. No date ever carries infinity.
-   - the effective post time is later than now (a priority pick holds the queue): `retry` at that
-     time. `order_public_queued_at` returns `greatest(queued_at, ...)`, so the public post time can
-     only move later than `queued_at + 100 s`, never earlier. That is why one timer at the earliest
-     possible instant is enough (review F1).
-   - an earlier team seat owns the team post, or a `posting` claim is younger than a minute:
-     `pending` at the earlier of now plus 60 s and the order's expiry. "Not eligible yet" is never
-     treated as terminal.
+   - a streaming booking: `stale`. `order_public_queued_at` returns `infinity` for those, and no
+     date in this build ever carries infinity.
+   - less than 20 s left before expiry: `stale`. The due predicate leaves that gap so nobody is
+     pinged for a link that is about to die, so past it the order can never be posted.
+   - the predicate does not list the order (a priority pick still holds the queue, an earlier team
+     seat owns the team post, a `posting` claim is younger than a minute): `pending` at the earlier
+     of now plus 60 s and the order's expiry. "Not eligible yet" is never treated as terminal.
    - otherwise it runs the existing `runOrderPosts` path for that order (same claim per queue epoch,
-     same ledger, same close of old posts) and answers `done`.
+     same ledger) and answers `done`.
+
+   One authority decides whether an order may be posted, and it is the SQL predicate, which already
+   covers the 100 s delay, priority picks through `order_public_queued_at`, team seat order, claims
+   and the 20 s guard. The handler re-derives none of it. The price is that "not eligible yet"
+   carries no deadline, so a held order is rechecked every 60 s instead of exactly when the pick
+   window closes: `order_teammate_picks` has no `service_role` read grant
+   (`20261026160000_perks.sql:91`), and a second copy of `order_public_queued_at` in TypeScript
+   could disagree with the first. An order lives 5 minutes, so that is at most four extra wake-ups,
+   and a pick can only move the post time later (`greatest(queued_at, ...)`), never earlier, which
+   is why one timer at `queued_at + 100 s` is never too late (review F1).
+
 4. Closing a post stays event driven: accept, customer cancel, admin cancel and expiry close the
    post in `waitUntil`, and after closing a team seat's post the hook registers the next eligible
    seat's `order-post` at now. Registration keeps the earliest due time, so that pulls the sibling's
@@ -298,11 +309,14 @@ broken query makes the fixer call the real handler rather than believe nothing i
 
 `public.background_fix()` calls `/api/internal/reconcile` only when something is overdue, with
 `{"reason":"overdue","kinds":["payments",...]}` as the body. Finding work means a timer was missed,
-so the call is also the alert: the endpoint raises it in the admin Discord channel with the existing
-helpers, and `background_fix()` leaves the same evidence as a Postgres warning. The database does not
-talk to Discord itself, which keeps the alert path in one place and adds no third Vault secret.
-`background_fix()` never raises: a cron job that throws writes a failed run row and nothing else, so
-it returns `{"overdue":...,"called":false,"error":"<sqlstate>"}` instead.
+so the call is also the alert, and it lands in two places: `background_fix()` raises a Postgres
+warning naming the kinds, and the endpoint logs
+`[background-fix] reconciling <kinds> (<reason>)` plus one line per kind that failed. It is not a
+Discord message: the app has no admin-channel helper today (only the support inbox has one), and
+adding a channel would mean a secret that is not on the owner's list. Both lines are in
+[What to watch](#what-to-watch). `background_fix()` never raises: a cron job that throws writes a
+failed run row and nothing else, so it returns
+`{"overdue":...,"called":false,"error":"<sqlstate>"}` instead.
 
 The fixer ships and runs before any poll is paused (review F20): `duoly-dispatch` is still scheduled
 when the migration lands, and `background_fix()` can be called by hand at any time.
@@ -448,8 +462,10 @@ keep-alive read is due and puts the alarm back if it ever went missing. That is 
 day (about 4 GB-s, no row writes on a quiet minute) plus roughly 2 requests and 4 row writes per
 order and one row write per `setAlarm`.
 
-Vercel: errors on `/api/internal/timer` and `/api/internal/reconcile`, and the shadow log lines
-`[timer-shadow] <kind> <ref> would=...` compared with what the tick actually did.
+Vercel: errors on `/api/internal/timer` and `/api/internal/reconcile`, the shadow log lines
+`[timer-shadow] <kind> <ref> would=...` compared with what the tick actually did, and
+`[background-fix] reconciling ...` every time the fixer found work. `[timers] ...` lines mean a
+registration from app code did not reach the worker.
 
 Alert thresholds worth acting on: anything `due` for more than 60 s, any `dropped`, `background_fix()`
 finding work twice in a row, or a parked analytics fact.
@@ -514,8 +530,9 @@ events, with one exact timer per deadline. Your order and payment flows keep the
 `oai-review.md`, finding by finding. "Accepted" means we do what the review asks; "answered" means we
 deliberately do something else and say why.
 
-- **F1 timer invalidation (blocker)**: accepted. The trigger is a committed wake-up; the final
-  deadline is computed at fire time. A deadline can only move later, because
+- **F1 timer invalidation (blocker)**: accepted. The trigger is a committed wake-up; eligibility is
+  decided at fire time, by the tick's own `discord_order_posts_due` predicate rather than by a
+  second copy of the rule. A deadline can only move later, because
   `order_public_queued_at` returns `greatest(queued_at, ...)`, so a timer at `queued_at + 100 s` is
   never too late. Picks and presence need no extra registration for that reason. Team progression is
   explicit: closing a seat's post registers the next eligible seat at now, and the earliest due time
@@ -690,3 +707,32 @@ deliberately do something else and say why.
   passed 38 of 38 suites with 33 skips unchanged, so the signature really does verify over the bytes
   `pg_net` sends, pgcrypto agrees with Web Crypto on the known-answer vector, and `gated_dispatch.sql`
   still passes against the replaced `duoly_dispatch`.
+- Chunk 4: the app endpoints. `src/pages/api/internal/timer.ts` and `reconcile.ts` are two-line
+  route files over `src/server/background/endpoints.ts`, which verifies the signature over the raw
+  request text, parses with the contract, reads the switch and answers a disposition (401 on a bad
+  signature or an unset secret, 400 on a body that is not a timer, 503 and never a 2xx when a read
+  fails, so the worker keeps the timer). `handlers.ts` holds the five handlers over a `TimerPorts`
+  interface: `legacy` reads nothing at all, `shadow` plans and logs
+  `[timer-shadow] <kind> <ref> would=...`, `live` plans and then runs the existing code
+  (`runOrderPosts` for one order, `sweep_expired_orders`, `settlePending`, `drainOnce`,
+  `syncDiscordRoles`). `plan.ts` holds every decision as a pure function, which is what makes
+  shadow structurally unable to claim, post, settle or drain. `switches.ts` reads
+  `public.background_switches` with no cache and fails safe to `legacy`; `config.ts` reads the two
+  secrets and the worker URL, refusing anything under 32 characters; `register.ts` is the signed
+  `POST /timers` client chunk 5 uses, which never throws and returns one of
+  `stored | kept | refused | skipped | legacy | invalid | failed`. One existing file changed:
+  `src/server/payments/webhook.ts` now exposes the tick's body as `runPaymentsSweep()` and
+  `paymentsTick` calls it, so the fixer runs the same code rather than a predicate of its own; the
+  response body and the authorization check are unchanged, and
+  `src/server/payments/checkout.ts` is untouched. Two deviations from the contract above, both
+  written into it: a held `order-post` answers `pending` every 60 s instead of `retry` at the exact
+  instant the pick window closes, because `order_teammate_picks` has no `service_role` read grant;
+  and the fixer's alert is the Postgres warning plus the `[background-fix]` log line, not a Discord
+  message, because the app has no admin-channel helper and a new one would need a secret that is
+  not on the owner's list. `tests/unit/background-handlers.test.ts` (46), `background-endpoints.test.ts`
+  (20) and `background-register.test.ts` (14) add 80 unit tests covering every handler path per
+  kind and mode: stale, early fire, not eligible, duplicate claim, exhausted ladder, switched-off
+  subsystem, shadow silence, and every answer parsed back through `TimerDispositionSchema`. Gates:
+  `pnpm check` 0 errors over 905 files, `pnpm lint` clean, `pnpm format:check` clean,
+  `pnpm test:unit` 3851 tests in 215 files, `pnpm build` green. Nothing is wired to an event yet:
+  until chunk 5 the only callers are the worker and the fixer.
