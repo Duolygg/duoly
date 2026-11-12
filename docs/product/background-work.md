@@ -184,9 +184,16 @@ the **earliest** `at`, so a dependency event can only pull a wake-up forward. A 
 later wake-up answers `retry` or `pending` instead of registering.
 
 Answers `200 {"key":"...","at":...,"stored":"stored"|"kept"|"refused"}`, `401` on a bad signature,
-`400` on a body the schema rejects. The DO keeps a version per row; the alarm's delete or re-arm only
-applies when the version still matches the one it claimed, so a registration that arrives during a
-callback is never overwritten (review F11).
+`400` on a body the schema rejects. The signature is checked in the worker itself, so an unsigned
+call never wakes the Durable Object.
+
+The DO keeps a version per row that changes whenever the row's due time changes, and the alarm's
+delete or re-arm only applies while the version still matches the one it claimed. A registration
+that pulls a wake-up forward while the callback is in flight therefore survives that callback
+(review F11). A registration for a _later_ time on a key that is firing answers `kept` and the
+disposition then applies as usual, which is correct because the same key is the same kind, ref and
+epoch, so it is the same piece of work: a handler that wants a later wake-up answers `retry` or
+`pending` instead of registering.
 
 ### Fire: `POST https://duoly.gg/api/internal/timer`
 
@@ -271,6 +278,12 @@ and +10 min with 10% jitter, then dropped with a log line and counted in `/timer
 handler catches its own errors instead of throwing, so Cloudflare's six built in retries never
 interleave with this schedule. One poison timer cannot block later deadlines: due timers are handled
 in bounded batches and a failing one only re-arms itself.
+
+The numbers the worker uses: at most 8 due timers per alarm (the alarm re-arms at once, so a backlog
+drains in waves), a 10 s timeout per fire request, and no re-arm sooner than 1 s from now, so a
+`retry` cannot spin the alarm. While `BACKGROUND_FIRE_SECRET` is missing or shorter than 32
+characters nothing is sent at all: the timers stay, the error lands in `/timers/health` and the
+object looks again in 5 minutes, so a half configured deployment cannot burn a timer's attempts.
 
 A dropped or never registered timer is not lost work. `public.background_overdue()` returns one
 boolean per kind from `duoly_dispatch_has_work`, which is read only and already covers queued orders
@@ -361,7 +374,9 @@ Secret consumer map, so nothing retired breaks a retained job (review F16):
 Supabase may pause a Free project that shows low activity over seven days. The worker's existing one
 minute cron therefore makes one cheap authenticated REST read a day,
 `POST /rest/v1/rpc/presence_public_count` with the publishable key (the same read the homepage does,
-anon executable, no writes), and records the time in `/timers/health`. This is monitoring, not a
+anon executable, no writes), and records the time in `/timers/health`. The interval is 23 hours, so
+a calendar day never passes without one, and a read that fails is retried in an hour rather than in
+a minute. This is monitoring, not a
 documented exemption: Supabase does not promise that one request a day prevents a pause (review F21).
 If the project does get paused, outstanding timers keep retrying, get dropped after 10 minutes, and
 `background_overdue()` finds the work from source state once the database is back.
@@ -402,8 +417,11 @@ null and `keepAliveAt` inside the last 24 h.
 Cloudflare dashboard, Durable Objects: requests a day (free limit 100,000), duration in GB-s (13,000),
 rows read (5 m) and rows written (100,000). The gateway alone is roughly 4,300 requests and about
 11,000 GB-s a day because its WebSocket keeps one object resident, so duration is the tight budget,
-not requests (review F17). `Timers` hibernates between alarms and only wakes on registrations and
-alarms, so it adds roughly 2 requests and 4 row writes per order plus one row write per `setAlarm`.
+not requests (review F17). `Timers` hibernates in between and wakes for three things: a
+registration, its own alarm, and the existing one minute cron, which asks it whether the daily
+keep-alive read is due and puts the alarm back if it ever went missing. That is 1,440 short wakes a
+day (about 4 GB-s, no row writes on a quiet minute) plus roughly 2 requests and 4 row writes per
+order and one row write per `setAlarm`.
 
 Vercel: errors on `/api/internal/timer` and `/api/internal/reconcile`, and the shadow log lines
 `[timer-shadow] <kind> <ref> would=...` compared with what the tick actually did.
@@ -614,3 +632,15 @@ deliberately do something else and say why.
   schemas, dispositions, retry schedule, Web Crypto HMAC sign and verify, bearer check) and
   `tests/unit/background-contract.test.ts` with 31 unit tests. No runtime behaviour yet: nothing
   imports the contract so far.
+- Chunk 2: the `Timers` Durable Object. `workers/discord-gateway/src/timers.ts` holds the whole
+  protocol as functions over a `TimerStore` port (register with earliest-wins idempotency, the
+  alarm with bounded batches and version-checked delete or re-arm, backoff and dropping, health,
+  the daily Supabase keep-alive read and the one minute cron tick).
+  `workers/discord-gateway/src/index.ts` adds the SQLite store, the `Timers` class and the two
+  routes, and checks the signature and the bearer at the edge so an unsigned call never wakes the
+  object; the one minute cron now also wakes `Timers`. `wrangler.jsonc` gains the `TIMERS` binding,
+  migration tag `v2` with `new_sqlite_classes: ["Timers"]` and the committed `APP_BASE_URL` var;
+  `v1` and `DiscordGateway` are untouched. `tests/unit/background-timers.test.ts` has 47 unit tests
+  against an in-memory store and stub namespaces. `wrangler deploy --dry-run` passes (809 KiB,
+  131 KiB gzipped). Nothing is deployed and no secret is set. The app endpoints do not exist yet,
+  so a fire would answer 404 and the timer would be retried and then dropped.
