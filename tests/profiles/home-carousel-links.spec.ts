@@ -192,7 +192,11 @@ test('a focused card shows a ring and holds the strip still', async ({
   await openCarousel(page);
   const card = strip(page);
   await card.focus();
-  const ring = await card.evaluate((node) => {
+  // The ring is drawn on the card inside the link so it moves with the card when the card lifts.
+  expect(
+    await card.evaluate((node) => getComputedStyle(node).outlineStyle),
+  ).toBe('none');
+  const ring = await card.locator('.tc-card').evaluate((node) => {
     const style = getComputedStyle(node);
     return {
       width: style.outlineWidth,

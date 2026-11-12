@@ -13,7 +13,7 @@ begin
 end;
 $duoly_test_guard$;
 
--- 20261112170000_home_teammates_profile_slug.sql: home_teammates() carries the public profile slug
+-- 20261112180000_home_teammates_profile_slug.sql: home_teammates() carries the public profile slug
 -- for the cards whose profile a visitor could open, and null for every other card. Everything the
 -- function exposed before is unchanged.
 
