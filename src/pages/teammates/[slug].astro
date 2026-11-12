@@ -164,14 +164,22 @@ const freshDetail =
         <div class="tp-hero-grid">
           <div class="tp-hero-name">
             <h1 id="profile-name">{p.name}</h1>
-            <p class="tp-rankline" data-game={p.featuredGame}>
-              <svg class="tp-crest" viewBox="0 0 64 72" aria-hidden="true">
-                <path d={rankEmblem(p.featuredGame).shape} />
-              </svg>
+            {/* The game's own icon at text size. A solid coloured crest here read as a
+                warning sign rather than as a game, and the icon is the thing a player
+                recognises without reading. */}
+            <p class="tp-rankline">
+              <img
+                class="tp-rankline-icon"
+                src={view.game.img}
+                width="22"
+                height="22"
+                alt=""
+                fetchpriority="high"
+              />
               <span>
                 {featuredRank
                   ? `${view.game.name}, ${featuredRank}`
-                  : `${view.game.name} teammate`}
+                  : view.game.name}
               </span>
               {featuredRank && (
                 <span
@@ -193,13 +201,6 @@ const freshDetail =
             </p>
           </div>
           <div class="tp-aside">
-            <span
-              class="tp-ghostname"
-              style={`--ghost-chars:${p.name.length}`}
-              aria-hidden="true"
-            >
-              {p.name}
-            </span>
             <div class="tp-figure">
               <span class="tp-ring" aria-hidden="true"></span>
               <img

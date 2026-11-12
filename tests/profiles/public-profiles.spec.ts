@@ -396,6 +396,44 @@ test('a teammate with one game gets a band that ends where its content ends', as
   }
 });
 
+test('narrow: the price comes before the button it belongs to, with no lit band', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/teammates/nyx');
+  expect(
+    await page.evaluate(() => {
+      const row = (buy: Element) => {
+        const price = buy.querySelector('.tp-price')!.getBoundingClientRect();
+        const button = buy.querySelector('.tp-button')!.getBoundingClientRect();
+        return {
+          priceFirst: price.bottom <= button.top,
+          size: Math.round(
+            parseFloat(
+              getComputedStyle(buy.querySelector('.tp-price strong')!).fontSize,
+            ),
+          ),
+        };
+      };
+      const buys = [...document.querySelectorAll('.tp-cta .tp-buy')];
+      return {
+        rows: buys.map(row),
+        /* The button is as wide as the hero, which clips its own box, so a glow here
+           came out as a band sliced flat at both gutters. */
+        shadow: getComputedStyle(document.querySelector('.tp-cta .tp-primary')!)
+          .boxShadow,
+      };
+    }),
+  ).toEqual({
+    rows: [
+      { priceFirst: true, size: 20 },
+      /* The coaching price is a step quieter than the one it is an alternative to. */
+      { priceFirst: true, size: 17 },
+    ],
+    shadow: 'none',
+  });
+});
+
 test('nothing in the profile touches the viewport edge', async ({ page }) => {
   for (const width of [1440, 1024, 768, 390, 360]) {
     await page.setViewportSize({ width, height: 900 });
@@ -467,7 +505,7 @@ test('the sticky bar steps aside while a booking block is on screen', async ({
   await expect(bar).toHaveClass(/is-stowed/);
 });
 
-test('the hero light and the outlined name end inside the page, and no card is chamfered', async ({
+test('the hero light ends inside the page, with no outlined name, and no card is chamfered', async ({
   page,
 }) => {
   for (const width of [1440, 1280, 1024, 920, 768, 390, 360]) {
@@ -478,23 +516,23 @@ test('the hero light and the outlined name end inside the page, and no card is c
         document.querySelector(s)!.getBoundingClientRect();
       const article = box('article.tp-page');
       const sky = box('.tp-sky');
-      const ghost = box('.tp-ghostname');
       const inside = (r: DOMRect) =>
         Math.round(r.left - article.left) >= 0 &&
         Math.round(article.right - r.right) >= 0;
       return {
-        /* Both decorative layers end inside the container and are transparent there, so
-           the clip on the hero never cuts a visible pixel: no panel edge at the container
-           sides, no sliced glyph. */
+        /* The light ends inside the container and is transparent there, so the clip on
+           the hero never cuts a visible pixel: no panel edge at the container sides. */
         skyInside: inside(sky),
-        ghostInside: inside(ghost),
+        /* The outlined repeat of the name is gone: it read as noise, and at 390 it was
+           still cut flat against the gutter. */
+        ghost: document.querySelectorAll('.tp-ghostname').length,
         /* The light starts above the first hero row, so it has room to fade in. */
         skyAboveGrid: sky.top < box('.tp-hero-grid').top,
       };
     });
     expect(hero, `hero light at ${width}`).toEqual({
       skyInside: true,
-      ghostInside: true,
+      ghost: 0,
       skyAboveGrid: true,
     });
   }
@@ -530,11 +568,25 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/teammates/nyx');
-  /* Rank, game and the verified tick live under the name, and nowhere else. */
+  /* Rank, game and the verified tick live under the name, and nowhere else. The game is
+     named by its own icon at text size, never by a coloured crest that read as a warning. */
   await expect(page.locator('.tp-rankline')).toHaveText(/Valorant, Immortal 3/);
   await expect(page.locator('.tp-rankline .tp-verified')).toHaveCount(1);
+  await expect(page.locator('.tp-rankline-icon')).toHaveAttribute(
+    'src',
+    /\/assets\/games\//,
+  );
+  await expect(
+    page.locator('.tp-rankline svg:not(.tp-verified svg)'),
+  ).toHaveCount(0);
   await expect(page.locator('.tp-idlist')).not.toContainText('Immortal 3');
   await expect(page.locator('h1 .tp-verified')).toHaveCount(0);
+  /* An unverified teammate gets the icon and the game, with no rank and no tick. */
+  await page.goto('/teammates/rhea');
+  await expect(page.locator('.tp-rankline')).toHaveText('League of Legends');
+  await expect(page.locator('.tp-rankline .tp-verified')).toHaveCount(0);
+  await expect(page.locator('.tp-rankline-icon')).toHaveCount(1);
+  await page.goto('/teammates/nyx');
   expect(
     (await page.locator('.tp-hero').innerText()).split('Immortal 3').length,
   ).toBe(2);

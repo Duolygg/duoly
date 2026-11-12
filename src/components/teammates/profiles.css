@@ -139,42 +139,6 @@
   );
   opacity: 0.7;
 }
-/* Broadcast player intro: the name again, outlined, sitting behind the mascot. It ends
-   inside the page gutter on both sides, so no glyph is ever cut by a container edge, and
-   it is faint enough to read as atmosphere rather than as a second wordmark. */
-.tp-ghostname {
-  position: absolute;
-  z-index: 0;
-  top: calc(var(--ring, 19px) + var(--avatar, 160px) / 2);
-  right: 0;
-  translate: 0 -50%;
-  /* The second term caps the size by the name length against the container width, so a
-     long handle shrinks instead of running past the gutter. */
-  font:
-    750
-      min(
-        clamp(104px, 22vw, 216px),
-        calc(86vw / var(--ghost-chars, 3) / 0.68)
-      ) /
-      0.78 'Bricolage Grotesque',
-    sans-serif;
-  letter-spacing: -0.06em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: transparent;
-  /* Normalised with the rest of the light, so a dark accent is not a fainter wordmark. */
-  -webkit-text-stroke: 2px
-    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.6%), transparent);
-  pointer-events: none;
-  user-select: none;
-  mask-image: linear-gradient(
-    90deg,
-    transparent,
-    #000 30%,
-    #000 72%,
-    transparent 100%
-  );
-}
 .tp-hero-top,
 .tp-hero-grid,
 .tp-scoreboard {
@@ -296,17 +260,18 @@
   font-size: 17px;
   color: #f1e9fc;
 }
-.tp-crest {
-  width: 20px;
-  height: 23px;
+/* The game icon runs at text size next to the name of the game it belongs to. */
+.tp-rankline-icon {
+  width: 22px;
+  height: 22px;
   flex: none;
-  fill: var(--game, var(--accent));
+  border-radius: 5px;
 }
 /*
- * One colour per game for the rank crest and the game card's hairline. These are tints chosen to
- * sit on this page, not brand colours and not logos: every one of them is light enough to read on
- * the near black background, and games Duoly adds later simply inherit --accent until they get a
- * line here. Only --game is set, so the crest, the rank label and the card wash all move at once.
+ * One colour per game for the game card's emblem and its wash. These are tints chosen to sit on
+ * this page, not brand colours and not logos: every one of them is light enough to read on the
+ * near black background, and games Duoly adds later simply inherit --accent until they get a line
+ * here. Only --game is set, so the emblem, the rank label and the card wash all move at once.
  */
 .tp-page [data-game='lol'] {
   --game: #e8ca8c;
@@ -662,10 +627,14 @@
   padding: 0;
   list-style: none;
 }
+/* A flat 9% white fill read as a disabled control rather than as a tag. The accent tinted
+   fill and edge give each chip its own shape without touching the text, which stays at
+   14.8:1 on the hero. */
 .tp-vibes li {
   font-size: 13px;
-  background: #ffffff16;
-  padding: 6px 13px;
+  background: color-mix(in srgb, var(--accent) 10%, #ffffff10);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  padding: 5px 12px;
   border-radius: 999px;
   color: #f1eafd;
 }
@@ -1468,13 +1437,6 @@ a.tp-stat:hover > strong {
     justify-content: flex-end;
     margin-bottom: 16px;
   }
-  /* Stacked, the outlined name sits behind the mascot in the top right, still ending
-     inside the container on both sides. */
-  .tp-ghostname {
-    top: 116px;
-    right: 0;
-    -webkit-text-stroke-width: 1.2px;
-  }
   /* Booking has to stay above the fold, so the identity rows move below the body. */
   .tp-hero-grid {
     grid-template-columns: minmax(0, 1fr) auto;
@@ -1578,6 +1540,12 @@ a.tp-stat:hover > strong {
   }
   .tp-cta {
     grid-template-columns: minmax(0, 1fr);
+  }
+  /* The button is now exactly as wide as the hero, and the hero clips its own box, so
+     the glow came out as a lit band sliced flat at both gutters. The button carries its
+     weight in the accent fill at this size; it does not need the light too. */
+  .tp-cta .tp-button {
+    box-shadow: none;
   }
   .tp-plate {
     padding: 8px 26px 8px 13px;
@@ -1829,6 +1797,38 @@ a.tp-stat:hover > strong {
   }
   .tp-gone {
     padding-top: 30px;
+  }
+}
+
+/* ---------- 600 and below: price before action ---------- */
+/*
+ * Stacked, each button sat above its own price, so a reader had to tap past the figure to
+ * find it. The pair flips: a quiet "from EUR x.xx per game" row, then the button it belongs
+ * to. The coaching price stays a step lighter than the one it is an alternative to.
+ */
+@media (max-width: 600px) {
+  .tp-buy {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  .tp-cta .tp-price {
+    font-size: 13.5px;
+    gap: 6px;
+  }
+  .tp-cta .tp-price strong {
+    font-size: 20px;
+    letter-spacing: -0.03em;
+  }
+  .tp-cta .tp-price-quiet {
+    color: #a99bc4;
+  }
+  .tp-cta .tp-price-quiet strong {
+    font-size: 17px;
+    color: var(--tp-muted);
+  }
+  .tp-cta .tp-ghost {
+    margin-top: 0;
   }
 }
 
