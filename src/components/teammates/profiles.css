@@ -754,6 +754,13 @@ a.tp-stat:hover > strong {
   border-top: 1px solid var(--tp-line);
   scroll-margin-top: calc(var(--tp-header, 58px) + 72px);
 }
+/* The nav already draws the rule that opens the first section, so it does not draw a
+   second one a few pixels below it. */
+.tp-tabs + .tp-section {
+  margin-top: 56px;
+  padding-top: 0;
+  border-top: 0;
+}
 .tp-section-head {
   display: flex;
   align-items: end;
