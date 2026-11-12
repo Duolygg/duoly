@@ -84,6 +84,10 @@ This is an inventory, not a claim that historical assertions all match the lates
 | `wallet_ledger.sql`                     | latest-schema suite             | run            | isolated session; original assertions retained (CI determines compatibility)                                                                                             |
 | `weekly_payouts.sql`                    | historical/fixture-incompatible | skipped        | after adding explicit Payouts section, unchanged minimum-reached-with-carry assertion still assumes historical 10 USD threshold instead of current 25 USD                |
 
+## Public teammate profiles
+
+`public_teammate_profiles.sql` runs against the disposable latest-schema database only. It covers opt-in publishing, privacy allowlists, rating and win-rate minimums, index quality, slug validation and reservation, rename/history, admin ranks and moderation, suspension, RLS and the review notice cutoff. It retains the canonical first-statement guard and rolls back every fixture. The suite prints its actual assertion count.
+
 ## First full latest-schema execution
 
 [Actions run 43115394134](https://github.com/Duolygg/duoly/actions/runs/43115394134) attempted 51 entries: 29 passed, 22 failed, 14 executable files excluded. Every assertion is retained. The exclusions above record observed incompatibilities, not passing coverage. Five admin fixtures are being ported by explicitly granting their intended dashboard sections; the dedicated admin-permission security suite remains unchanged. The completion group omits only its incompatible chat-count fragment. Follow-up CI must establish final counts.
