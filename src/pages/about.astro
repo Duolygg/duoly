@@ -15,6 +15,7 @@ import {
 import { DISCORD_INVITE, SUPPORT_EMAIL } from '../site/nav';
 import { SERVED_AREAS } from '../site/entity';
 import { ABOUT_STORY } from '../content/about-story';
+import { publicProfilesEnabled } from '../server/teammates/public-profiles';
 import {
   COACHABLE_GAMES,
   COACHING_PRICE,
@@ -35,6 +36,7 @@ import {
 import { LEGAL_UPDATED } from '../design-reference/lib/site.js';
 
 const { viewer, csrf } = await pageViewer(Astro);
+const profilesEnabled = publicProfilesEnabled();
 const path = '/about';
 const title = 'About Duoly: Gaming Teammate and Coach Marketplace | Duoly';
 const description = `Duoly (duoly.gg) is a marketplace for rank-verified gaming teammates and coaches in ${PLAYABLE_GAMES} games. How players are checked, what a session costs and how you pay.`;
@@ -174,12 +176,15 @@ const NOT_DUOLY: [string, string][] = [
         competitive gaming services. We bring that experience to the way we{' '}
         select teammates and help players book a session.
       </p>
-      <p>
-        Teammates have public profiles with their games, checked ranks and{' '}
-        reviews from players they have queued with.{' '}
-        <a href="/teammates">Meet the teammates</a> before you book, and save{' '}
-        the ones you like so you can book them again.
-      </p>
+      {/* Behind the profiles flag: /teammates answers 404 while it is off. */}
+      {profilesEnabled && (
+        <p>
+          Teammates have public profiles with their games, checked ranks and{' '}
+          reviews from players they have queued with.{' '}
+          <a href="/teammates">Meet the teammates</a> before you book, and save{' '}
+          the ones you like so you can book them again.
+        </p>
+      )}
       <div class="about-table-wrap">
         <table class="about-table">
           <caption class="sr-only">Duoly at a glance</caption>

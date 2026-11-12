@@ -407,5 +407,10 @@ export function mountDeskKeeper(doc = document) {
   const el = doc.querySelector('[data-desk-keeper]');
   const csrf = el?.getAttribute('data-csrf');
   if (!csrf || typeof navigator === 'undefined') return null;
+  // "You got a tip!" on every page but the desk, also while offline (the desk checks on its own
+  // stats load). Loaded here rather than from the owner-designed site layout.
+  void import('./tip-alerts.js')
+    .then((tips) => tips.startTipWatch())
+    .catch(() => {});
   return startDeskKeeper({ csrf });
 }
