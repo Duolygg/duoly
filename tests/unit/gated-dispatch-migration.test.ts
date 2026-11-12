@@ -100,7 +100,8 @@ describe('gated cron dispatcher migration', () => {
       { encoding: 'utf8' },
     ).trim();
     for (const line of changed.split('\n').filter(Boolean)) {
-      expect(line).toBe(`A\t${path}`);
+      // Later features may add new migrations; existing history must never be modified or deleted.
+      expect(line).toMatch(/^A\tsupabase\/migrations\/\d{14}_[a-z0-9_]+\.sql$/);
     }
   });
 });

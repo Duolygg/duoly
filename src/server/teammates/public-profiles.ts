@@ -13,6 +13,32 @@ import type {
   PublicTeammateProfile,
 } from '../../contracts/teammate-profile';
 
+import { createClient } from '@supabase/supabase-js';
+import { authConfig } from '../auth/config';
+import { slugValid } from '../../contracts/teammate-profile';
+import {
+  publicLookupSchema,
+  publicCardSchema,
+  indexableSchema,
+} from './public-profile-schemas';
+
+async function readRpc(
+  fn: string,
+  args?: Record<string, unknown>,
+): Promise<unknown> {
+  const config = authConfig();
+  if (!config) return null;
+  try {
+    const db = createClient(config.url, config.publishableKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data, error } = await db.rpc(fn, args);
+    return error ? null : data;
+  } catch {
+    return null;
+  }
+}
+
 /** Feature flag. Off in production until launch: profile routes answer 404. */
 export const publicProfilesEnabled = () =>
   process.env.PUBLIC_PROFILES_ENABLED === 'true';
@@ -31,7 +57,11 @@ export async function loadPublicProfile(slug: string): Promise<ProfileLookup> {
     const { fixtureLookup } = await import('./profile-fixtures');
     return fixtureLookup(slug);
   }
-  return { status: 'missing' };
+  if (!slugValid(slug)) return { status: 'missing' };
+  const result = publicLookupSchema.safeParse(
+    await readRpc('public_teammate_profile', { p_slug: slug }),
+  );
+  return result.success ? result.data : { status: 'missing' };
 }
 
 export async function loadTeammateCards(options: {
@@ -43,7 +73,13 @@ export async function loadTeammateCards(options: {
     const { fixtureCards } = await import('./profile-fixtures');
     return fixtureCards(options);
   }
-  return [];
+  const raw = await readRpc('public_teammate_cards', {
+    p_game: options.game ?? null,
+    p_limit: Math.max(1, Math.min(100, Math.trunc(options.limit) || 6)),
+    p_exclude_slug: options.excludeSlug ?? null,
+  });
+  const result = publicCardSchema.array().safeParse(raw);
+  return result.success ? result.data : [];
 }
 
 /** Published profiles that pass the quality rule, for the sitemap. */
@@ -54,5 +90,8 @@ export async function loadIndexableProfiles(): Promise<
     const { fixtureIndexable } = await import('./profile-fixtures');
     return fixtureIndexable();
   }
-  return [];
+  const result = indexableSchema.safeParse(
+    await readRpc('public_teammate_indexable'),
+  );
+  return result.success ? result.data : [];
 }
