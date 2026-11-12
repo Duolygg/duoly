@@ -61,10 +61,10 @@ export function normalizeSource(input) {
   const url = typeof raw.url === 'string' ? raw.url : '';
   const title = typeof raw.title === 'string' ? raw.title : '';
   const redirect = isRedirectUrl(url);
-  // Provider metadata first, then the URL itself, then a domain shaped title.
+  // A direct URL is authoritative. Metadata is only a fallback for redirects.
   const domain =
-    domainFromTitle(raw.domain) ||
     (redirect ? '' : hostOf(url)) ||
+    domainFromTitle(raw.domain) ||
     domainFromTitle(title);
   return {
     url,

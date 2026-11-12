@@ -14,7 +14,10 @@
       "citations": ["https://duoly.gg/"],
       "search_results": [
         { "url": "https://duoly.gg/", "title": "Duoly" },
-        { "url": "https://example.com/mcp-listing", "title": "Directory fixture" }
+        {
+          "url": "https://example.com/mcp-listing",
+          "title": "Directory fixture"
+        }
       ],
       "usage": {
         "prompt_tokens": 300,

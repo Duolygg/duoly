@@ -70,6 +70,16 @@ export function duolySentences(answer) {
 export function recommendationEvidence(answer) {
   for (const sentence of duolySentences(answer)) {
     if (negationPatterns.some((pattern) => pattern.test(sentence))) continue;
+    // Require the endorsement clause itself to name Duoly, not a competitor.
+    const clauses = sentence.split(/[,;]|\bbut\b/i);
+    if (
+      !clauses.some(
+        (clause) =>
+          /\bduoly(?:\.gg)?\b/i.test(clause) &&
+          recommendationPatterns.some((pattern) => pattern.test(clause)),
+      )
+    )
+      continue;
     if (recommendationPatterns.some((pattern) => pattern.test(sentence)))
       return sentence;
   }

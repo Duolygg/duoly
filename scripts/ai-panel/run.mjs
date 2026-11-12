@@ -46,8 +46,7 @@ const dry = args.includes('--dry-run') || fixtures;
 // Fan-out mode records the searches ChatGPT runs for five key prompts instead of
 // collecting the full panel.
 const fanOut = args.includes('--fan-out');
-// Perplexity needs a logged-in account. Logged out it answered once and then demanded a
-// sign-up, which is why it was excluded from the 2026-11-09 baseline.
+// API Perplexity is opt-in; consumer session gating lives in browser-run.mjs.
 const perplexityEnabled = args.includes('--perplexity');
 const promptFile = fanOut ? './fanout-prompts.json' : './prompts.json';
 const source = await readFile(new URL(promptFile, import.meta.url), 'utf8');
@@ -100,9 +99,9 @@ const selected = Object.entries(providers).filter(
   ([provider]) => !fanOut || provider === 'openai',
 );
 for (const [provider, config] of selected) {
-  if (config.requiresSession && !perplexityEnabled) {
+  if (config.requiresOptIn && !perplexityEnabled) {
     skips[provider] =
-      `off by default: needs a logged-in ${provider} session, pass ${config.enableFlag}`;
+      `off by default: API key and ${config.enableFlag} required (consumer browser uses separate session gating)`;
     continue;
   }
   let key = fixtures ? 'fixture-replay' : dry ? '' : process.env[config.env];
@@ -265,8 +264,9 @@ else
       duolyNamed: p.ladder.named,
       duolyRecommended: p.ladder.recommended,
       framing:
-        p.ladder.framing.map((flag) => `${flag.label}: ${flag.count}`).join(', ') ||
-        'none',
+        p.ladder.framing
+          .map((flag) => `${flag.label}: ${flag.count}`)
+          .join(', ') || 'none',
       estimatedUsd: p.estimatedUsd.toFixed(6),
       unknownCostRequests: p.unknownCostRequests,
     })),

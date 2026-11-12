@@ -11,7 +11,7 @@ export const providers = {
     search: 0.01,
     env: 'OPENAI_API_KEY',
     // The API analogue of the ChatGPT search surface, not the consumer UI.
-    engine: 'ChatGPT (OpenAI Responses API, web_search tool)',
+    engine: 'OpenAI Responses API (web_search tool)',
   },
   gemini: {
     model: 'gemini-2.5-flash-lite',
@@ -19,7 +19,7 @@ export const providers = {
     output: 0.4,
     search: 0.035,
     env: 'GEMINI_API_KEY',
-    engine: 'Google AI Mode (Gemini API, google_search grounding)',
+    engine: 'Gemini API (google_search grounding)',
   },
   anthropic: {
     model: 'claude-haiku-5-5',
@@ -38,7 +38,7 @@ export const providers = {
     engine: 'Perplexity (Sonar compatibility API)',
     // Logged-out Perplexity answered one query and then demanded a sign-up, which
     // invalidated the 2026-11-09 baseline. It now runs only when the owner opts in.
-    requiresSession: true,
+    requiresOptIn: true,
     enableFlag: '--perplexity',
   },
 };
@@ -167,6 +167,7 @@ export function parseFanOut(data) {
   );
   const queries = [];
   const opened = [];
+  const retrieved = [];
   const addQuery = (value) => {
     if (typeof value === 'string' && value.trim()) queries.push(value.trim());
   };
@@ -178,13 +179,23 @@ export function parseFanOut(data) {
     addQuery(action.query);
     for (const query of action.queries ?? []) addQuery(query);
     addUrl(action.url);
-    for (const source of action.sources ?? []) addUrl(source?.url);
-    for (const result of call.results ?? []) addUrl(result?.url);
+    for (const source of action.sources ?? [])
+      if (source?.url) retrieved.push(source.url);
+    for (const result of call.results ?? [])
+      if (result?.url) retrieved.push(result.url);
   }
   return {
     searchCalls: calls.length,
     queries: [...new Set(queries)],
     openedSources: normalizeSources(opened),
+    searchedDomains: [
+      ...new Set(
+        normalizeSources(retrieved)
+          .map((s) => s.domain)
+          .filter(Boolean),
+      ),
+    ],
+    traceAvailable: calls.length > 0,
   };
 }
 

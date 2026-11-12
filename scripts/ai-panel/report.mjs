@@ -9,12 +9,23 @@ import { providers } from './providers.mjs';
 const { console, process } = globalThis;
 
 export function engineLabel(provider) {
-  return providers[provider]?.engine ?? provider;
+  return (
+    {
+      chatgpt: 'ChatGPT',
+      'google-ai-mode': 'Google AI Mode',
+      'perplexity-browser': 'Perplexity',
+    }[provider] ??
+    providers[provider]?.engine ??
+    provider
+  );
 }
 
 // Keeps deliberate blank lines, collapses the gaps left by omitted optional lines.
 function render(lines) {
-  return `${lines.join('\n').replace(/\n{3,}/g, '\n\n').trim()}\n`;
+  return `${lines
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()}\n`;
 }
 
 function table(header, rows) {
@@ -46,6 +57,8 @@ function cohorts(rows) {
 
 export function buildReport(rows, meta = {}) {
   const summary = summarize(rows);
+  const browser = rows.some((row) => row.surface === 'consumer browser');
+  const repeats = Math.max(1, ...rows.map((row) => row.repeat ?? 1));
   const engines = summary.map((entry) => entry.provider);
   const answered = rows.filter((row) => row.status === 'answered');
   const lines = [];
@@ -59,14 +72,17 @@ export function buildReport(rows, meta = {}) {
       '',
     );
   lines.push(
-    `Portfolio: ${new Set(rows.map((row) => row.id)).size} prompts, prompt file hash \`${meta.promptSetHash ?? 'unknown'}\`, one run each.`,
-    `Surface: API search-grounded requests, stateless, no installed apps and no consumer UI session. Country and provider personalization are uncontrolled.`,
+    `Portfolio: ${new Set(rows.map((row) => row.id)).size} prompts, prompt file hash \`${meta.promptSetHash ?? 'unknown'}\`, ${repeats} runs each.`,
+    browser
+      ? 'Surface: consumer browser. Session state, locale and completion are recorded per observation. Verify fresh conversations and en-US settings against the baseline.'
+      : 'Surface: API search-grounded requests, stateless, no installed apps and no consumer UI session. Not comparable to the consumer baseline.',
     `Engines: ${engines.map((provider) => `${engineLabel(provider)} n=${summary.find((e) => e.provider === provider).answered}`).join('; ') || 'none'}.`,
     meta.outputFile ? `Raw: \`${meta.outputFile}\`.` : '',
     '',
     'The 2026-11-09 baseline was captured in logged-out browser sessions of the consumer',
-    'surfaces. These rows come from the provider APIs, so treat trend direction as the',
-    'signal and do not read a one-answer difference as movement.',
+    browser
+      ? 'surfaces. Compare only identical portfolios, repetition counts, locale and session conditions.'
+      : 'surfaces. API results are a separate measurement, not a consumer baseline rerun.',
     '',
   );
 
@@ -142,7 +158,11 @@ export function buildReport(rows, meta = {}) {
       top.length
         ? table(
             ['Domain', 'Prompts', 'Links'],
-            top.map((row) => [row.domain, String(row.prompts), String(row.hits)]),
+            top.map((row) => [
+              row.domain,
+              String(row.prompts),
+              String(row.hits),
+            ]),
           )
         : 'No source links were returned.',
       '',
@@ -163,7 +183,8 @@ export function buildReport(rows, meta = {}) {
     (row) => (row.framingEvidence ?? []).length || row.recommendationEvidence,
   );
   lines.push('## Framing and accuracy evidence', '');
-  if (!flagged.length) lines.push('No answer named Duoly with a framing flag.', '');
+  if (!flagged.length)
+    lines.push('No answer named Duoly with a framing flag.', '');
   for (const row of flagged) {
     lines.push(`### ${engineLabel(row.provider)}, prompt \`${row.id}\``, '');
     for (const flag of row.framingEvidence ?? [])
@@ -181,7 +202,9 @@ export function buildReport(rows, meta = {}) {
     lines.push(
       '## Engines not measured',
       '',
-      ...skipped.map(([provider, reason]) => `- ${engineLabel(provider)}: ${reason}`),
+      ...skipped.map(
+        ([provider, reason]) => `- ${engineLabel(provider)}: ${reason}`,
+      ),
       '',
       'A skipped engine is not evidence of Duoly absence there.',
       '',
@@ -198,8 +221,10 @@ export function buildFanOutReport(rows, meta = {}) {
     '',
     `Prompts answered: ${fanOut.promptsAnswered}. Search calls: ${fanOut.searchCalls}. Distinct queries: ${fanOut.distinctQueries}.`,
     `Surface: ${engineLabel('openai')}, up to ${meta.maxToolCalls ?? 'several'} searches per prompt.`,
-    'These are the searches the model ran for the prompt. The consumer ChatGPT fan-out is',
-    'not observable from outside, so read this as the closest available proxy.',
+    rows.some((row) => row.surface === 'consumer browser')
+      ? 'Surface: consumer ChatGPT search metadata captured while the owner submitted each prompt.'
+      : 'Surface: OpenAI API proxy, not consumer ChatGPT. Do not merge with consumer baseline results.',
+    `Observable search traces: ${fanOut.tracesAvailable}/${fanOut.promptsAnswered}. Missing metadata is unknown, not evidence of no searches.`,
     fanOut.sourceIncludeSupported
       ? ''
       : 'The API rejected the search-source include, so opened domains come from citations and search actions only.',
@@ -208,11 +233,16 @@ export function buildFanOutReport(rows, meta = {}) {
     '',
     fanOut.domains.length
       ? table(
-          ['Domain', 'Prompts searched', 'Opened links', 'Prompts cited'],
+          [
+            'Domain',
+            'Prompts retrieved',
+            'Prompts explicitly opened',
+            'Prompts cited',
+          ],
           fanOut.domains.map((row) => [
             row.domain,
             String(row.searchedInPrompts),
-            String(row.opens),
+            String(row.openedInPrompts),
             String(row.citedInPrompts),
           ]),
         )
@@ -227,7 +257,8 @@ export function buildFanOutReport(rows, meta = {}) {
     if (!entry.queries.length) lines.push('- no query text was returned');
     lines.push(
       '',
-      `Domains opened: ${entry.openedDomains.join(', ') || 'none'}.`,
+      `Domains retrieved: ${entry.searchedDomains.join(', ') || 'not observed'}.`,
+      `Domains explicitly opened: ${entry.openedDomains.join(', ') || 'not observed'}.`,
       `duoly.gg among them: ${entry.duolySearched ? 'yes' : 'no'}.`,
       '',
     );
