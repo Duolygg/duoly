@@ -154,6 +154,7 @@ export type PublicTeammateProfile = {
   slug: string;
   name: string;
   avatar: string; // site path of the preset avatar
+  header?: string | null; // constrained public profile-headers URL
   country: string | null; // only when the teammate chose to show it
   languages: string[];
   bio: string;
