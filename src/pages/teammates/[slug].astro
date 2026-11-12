@@ -12,6 +12,7 @@ import {
 } from '../../server/teammates/public-profiles';
 import {
   accentStyle,
+  bookingMode,
   profileRoute,
   profileMetadata,
   profilePresentation,
@@ -55,10 +56,21 @@ const fixture = fixturesEnabled();
 const reviews = p ? profileReviewLayout(p.reviews) : { lead: null, rest: [] };
 const featuredRank =
   p?.games.find((g) => g.game === p.featuredGame && g.verified)?.rank ?? null;
-/** One sentence about how fast an order is picked up, reused by the closing band. */
-const availability = p?.online
-  ? 'Online now, usually accepts within 2 minutes'
-  : null;
+/** One sentence about taking orders right now, reused by the closing band. */
+const availability = p?.online ? 'Online now, ready to play' : null;
+/*
+ * Booking with a named teammate (plan option 1). Pressing a booking button saves the teammate to
+ * the customer's favorites first, which is the one thing that changes the queue for them: a
+ * favorite sees the order the moment it goes public, with no priority delay
+ * (order_visible_at, 20261106150000_customer_favorites.sql). Checkout itself is untouched; the
+ * buttons still point at the existing booking link, and that link is where the browser lands
+ * whether the save worked or not.
+ *
+ * A signed-out visitor cannot save anything, so the primary buttons send them to sign-in with a
+ * resume cookie and come back to ?book=1, which saves and continues. Everything degrades to the
+ * plain booking link without JavaScript.
+ */
+const saveMode = bookingMode(viewer?.role);
 /*
  * Nothing on this page is rendered with a placeholder. Every teammate on Duoly today is new, so
  * the sections that have no data yet are simply not there, and the section nav lists what the
@@ -94,6 +106,9 @@ const freshDetail =
       data-banner={p.banner}
       data-tier={p.tier}
       data-profile={p.slug}
+      data-save-mode={saveMode}
+      data-book-href={view.book}
+      data-csrf={saveMode === 'customer' ? csrf : undefined}
     >
       <nav class="tp-crumbs" aria-label="Breadcrumb">
         <a href="/">Duoly</a>
@@ -111,16 +126,29 @@ const freshDetail =
         <span class="tp-sky" aria-hidden="true"></span>
         <div class="tp-hero-top">
           <div class="tp-utilities">
-            <a
-              href={`/login?next=${encodeURIComponent(`/teammates/${p.slug}`)}`}
-              title="Sign in to manage your favorites"
-            >
-              <Icon name="heart" /> Save {p.name}
-            </a>
+            {saveMode === 'customer' ? (
+              <button
+                class="tp-save"
+                type="button"
+                aria-pressed="false"
+                data-profile-save
+                data-saved-label={`${p.name} is in your favorites`}
+              >
+                <Icon name="heart" />
+                <span data-save-label>Save {p.name}</span>
+              </button>
+            ) : (
+              saveMode === 'signin' && (
+                <a class="tp-save" href="/login" data-profile-signin>
+                  <Icon name="heart" /> Save {p.name}
+                </a>
+              )
+            )}
             <a href={`#share-${p.slug}`} data-profile-share>
               <Icon name="share" /> Share
             </a>
           </div>
+          <p class="tp-save-status" role="status" data-save-status></p>
         </div>
         <div id={`share-${p.slug}`} class="tp-share-link">
           <label>
@@ -231,7 +259,11 @@ const freshDetail =
             )}
             <div class="tp-cta" data-hero-booking>
               <div class="tp-buy">
-                <a class="tp-button tp-primary" href={view.book}>
+                <a
+                  class="tp-button tp-primary"
+                  href={view.book}
+                  data-profile-book="primary"
+                >
                   {view.primary}
                   <Icon name="arrow" />
                 </a>
@@ -247,6 +279,7 @@ const freshDetail =
                   <a
                     class="tp-button tp-ghost"
                     href={view.booking(p.featuredGame, true)}
+                    data-profile-book="game"
                   >
                     Coaching with {p.name}
                   </a>
@@ -267,7 +300,7 @@ const freshDetail =
             </div>
             <p class="tp-note">
               {p.online
-                ? `You get ${p.name} first. If ${p.name} is already in a match, the next verified teammate takes your order, so you never wait.`
+                ? `Booking here saves ${p.name} to your favorites, so ${p.name} sees your order with no queue delay. If ${p.name} is already in a match, the next verified ${view.game.name} teammate takes it, so you never wait.`
                 : `${p.name} is offline right now. Book a verified ${view.game.name} teammate today, or save this profile and come back when ${p.name} is online.`}
             </p>
           </div>
@@ -407,7 +440,11 @@ const freshDetail =
                     </dd>
                   </div>
                 </dl>
-                <a class="tp-game-book" href={view.booking(g.game)}>
+                <a
+                  class="tp-game-book"
+                  href={view.booking(g.game)}
+                  data-profile-book="game"
+                >
                   Book {game.name} with {p.name}
                   <Icon name="arrow" />
                 </a>
@@ -501,13 +538,21 @@ const freshDetail =
             {availability ?? `${p.name} is offline right now`}
           </p>
         </div>
-        <a class="tp-button tp-primary" href={view.book}>
+        <a
+          class="tp-button tp-primary"
+          href={view.book}
+          data-profile-book="primary"
+        >
           {view.primary}
           <Icon name="arrow" />
         </a>
       </section>
       <div class="tp-mobile-booking" data-sticky-booking>
-        <a class="tp-button tp-primary" href={view.book}>
+        <a
+          class="tp-button tp-primary"
+          href={view.book}
+          data-profile-book="primary"
+        >
           <span
             class:list={['tp-dot', { 'is-online': p.online }]}
             aria-hidden="true"
@@ -633,5 +678,121 @@ const freshDetail =
       { passive: true },
     );
     spy();
+  }
+
+  /* Booking with a named teammate, and the Save heart. Both put the teammate in the
+     customer's favorites through /api/favorites/by-slug, which is the one thing that
+     changes the queue for them: a favorite sees the order the moment it goes public,
+     with no priority delay. Every booking button is a real link to the existing booking
+     page first, so a slow or failing save never costs the visitor their booking. */
+  const slug = page?.dataset.profile ?? '';
+  const mode = page?.dataset.saveMode ?? 'none';
+  const bookHref = page?.dataset.bookHref ?? '';
+  const csrf = page?.dataset.csrf ?? '';
+  const saveStatus = document.querySelector<HTMLElement>('[data-save-status]');
+  const heart = document.querySelector<HTMLButtonElement>(
+    '[data-profile-save]',
+  );
+  const heartLabel = document.querySelector<HTMLElement>('[data-save-label]');
+
+  /** Carried over the sign-in round trip and read back by afterLoginPath(). */
+  const resume = (prefix: string) => {
+    document.cookie = `duoly_resume=${prefix}${slug}; Max-Age=1800; Path=/; SameSite=Lax; Secure`;
+  };
+
+  let done = false;
+  const save = async (): Promise<{ ok: boolean; error: string }> => {
+    if (done) return { ok: true, error: '' };
+    if (!slug || !csrf)
+      return { ok: false, error: 'Reload the page and try again.' };
+    try {
+      const response = await fetch('/api/favorites/by-slug', {
+        method: 'POST',
+        credentials: 'same-origin',
+        redirect: 'error',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csrf, slug }),
+      });
+      const data = await response.json().catch(() => ({}));
+      done = response.ok;
+      return {
+        ok: response.ok,
+        error: response.ok ? '' : (data.error ?? 'Saving failed.'),
+      };
+    } catch {
+      return { ok: false, error: 'Saving failed.' };
+    }
+  };
+
+  const markSaved = () => {
+    if (!heart) return;
+    heart.setAttribute('aria-pressed', 'true');
+    if (heartLabel && heart.dataset.savedLabel)
+      heartLabel.textContent = heart.dataset.savedLabel;
+  };
+
+  heart?.addEventListener('click', async () => {
+    if (heart.getAttribute('aria-pressed') === 'true') return;
+    heart.disabled = true;
+    if (saveStatus) saveStatus.textContent = '';
+    const result = await save();
+    heart.disabled = false;
+    if (result.ok) markSaved();
+    else if (saveStatus) saveStatus.textContent = result.error;
+  });
+
+  /* The heart for a visitor who is not signed in: sign in, come back here, save. */
+  document
+    .querySelector<HTMLAnchorElement>('[data-profile-signin]')
+    ?.addEventListener('click', () => resume('profile-save:'));
+
+  const plainClick = (event: MouseEvent) =>
+    !event.defaultPrevented &&
+    event.button === 0 &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey;
+
+  for (const link of document.querySelectorAll<HTMLAnchorElement>(
+    '[data-profile-book]',
+  )) {
+    link.addEventListener('click', (event) => {
+      if (!plainClick(event)) return;
+      if (mode === 'customer') {
+        event.preventDefault();
+        const href = link.href;
+        /* Booking wins over saving: whichever finishes first, the browser moves on. */
+        let left = false;
+        const go = () => {
+          if (left) return;
+          left = true;
+          location.href = href;
+        };
+        setTimeout(go, 1200);
+        save().then(go, go);
+        return;
+      }
+      /* Only the buttons that name the teammate take a visitor through sign-in. The
+         per-game links keep booking that game straight away. */
+      if (mode === 'signin' && link.dataset.profileBook === 'primary') {
+        event.preventDefault();
+        resume('profile:');
+        location.href = '/login';
+      }
+    });
+  }
+
+  /* Back from sign-in: ?book=1 saves and continues to booking, ?save=1 just saves. */
+  const params = new URLSearchParams(location.search);
+  const resumedBooking = params.get('book') === '1';
+  if (resumedBooking || params.get('save') === '1') {
+    history.replaceState(null, '', location.pathname + location.hash);
+    if (mode === 'customer')
+      save().then((result) => {
+        if (resumedBooking && bookHref) location.replace(bookHref);
+        else if (result.ok) markSaved();
+        else if (saveStatus) saveStatus.textContent = result.error;
+      });
   }
 </script>

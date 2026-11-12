@@ -200,7 +200,8 @@
   font-size: 14px;
   color: var(--tp-text);
 }
-.tp-utilities a {
+.tp-utilities a,
+.tp-utilities .tp-save {
   display: inline-flex;
   align-items: center;
   gap: 9px;
@@ -208,6 +209,38 @@
 }
 .tp-utilities .tp-ico {
   color: var(--accent);
+}
+/* The heart is a button for a signed-in customer and a link to sign-in for everyone
+   else, so both wear the same plain utility type as Share next to them. */
+.tp-utilities button.tp-save {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.tp-utilities button.tp-save:hover:not(:disabled) {
+  color: var(--accent);
+}
+.tp-utilities button.tp-save:disabled {
+  cursor: progress;
+}
+/* Saved: the outline fills in, which is the whole state change. */
+.tp-save[aria-pressed='true'] .tp-ico path {
+  fill: var(--accent);
+}
+.tp-save-status {
+  position: relative;
+  z-index: 2;
+  margin: 0 0 12px auto;
+  max-width: 420px;
+  color: var(--tp-muted);
+  font-size: 13px;
+  text-align: right;
+}
+.tp-save-status:empty {
+  display: none;
 }
 .tp-share-link {
   display: none;

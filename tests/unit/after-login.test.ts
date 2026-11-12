@@ -27,4 +27,29 @@ describe('afterLoginPath', () => {
       '/dashboard',
     );
   });
+  it('returns to the teammate profile that sent them to sign in, once', () => {
+    const book = jar('profile:nyx');
+    expect(afterLoginPath(book.cookies)).toBe('/teammates/nyx?book=1');
+    expect(book.deleted).toEqual([RESUME_COOKIE]);
+    expect(afterLoginPath(jar('profile-save:nyx').cookies)).toBe(
+      '/teammates/nyx?save=1',
+    );
+  });
+  it('only ever builds a profile path, so no value can redirect off the site', () => {
+    for (const bad of [
+      'profile://evil.example',
+      'profile:/dashboard',
+      'profile:nyx?x=1',
+      'profile:ny',
+      'profile:Nyx',
+      'profile:admin',
+      'profile:',
+      'profile-save:../secrets',
+    ]) {
+      const { cookies, deleted } = jar(bad);
+      expect(afterLoginPath(cookies), bad).toBe('/dashboard');
+      /* The cookie is still spent, so a junk value cannot survive the next sign-in. */
+      expect(deleted).toEqual([RESUME_COOKIE]);
+    }
+  });
 });

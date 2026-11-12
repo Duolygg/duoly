@@ -59,10 +59,13 @@ for (const slug of ['nyx', 'sola', 'kairo'])
         'content',
         'noindex, follow',
       );
-      await expect(page.locator('.tp-scoreboard')).toContainText(
-        'A fresh face',
+      /* No stat has reached its sample minimum, so the row is replaced by the new
+         state instead of printing an empty scoreboard. */
+      await expect(page.locator('.tp-scoreboard')).toHaveCount(0);
+      await expect(page.locator('[data-profile-new]')).toContainText(
+        'New on Duoly',
       );
-      await expect(page.locator('.tp-scoreboard')).not.toContainText(
+      await expect(page.locator('article.tp-page')).not.toContainText(
         'Customer rating',
       );
       await expect(page.locator('.tp-cta .tp-primary')).toHaveText(
@@ -98,7 +101,7 @@ test('directory filters on the server and sitemap uses quality', async ({
   request,
 }) => {
   await page.goto('/teammates?game=lol');
-  await expect(page.locator('.tp-card')).toHaveCount(4);
+  await expect(page.locator('.tp-card')).toHaveCount(5);
   expect(await page.locator('.tp-card').first().getAttribute('href')).toBe(
     '/teammates/nyx',
   );
@@ -120,6 +123,133 @@ test('core content and booking links work without JavaScript', async ({
   );
   await expect(page.locator('.tp-mobile-booking')).toHaveCount(1);
   await context.close();
+});
+
+/*
+ * Booking with a named teammate. The e2e server has no account, so these are the signed-out
+ * paths: the buttons that name the teammate go through sign-in and leave a resume cookie that
+ * afterLoginPath() turns back into this profile, and everything else still books directly.
+ */
+test('a signed-out visitor is sent to sign in and remembered', async ({
+  page,
+}) => {
+  await page.goto('/teammates/nyx');
+  const heart = page.locator('[data-profile-signin]');
+  await expect(heart).toHaveAttribute('href', '/login');
+  await expect(heart).toContainText('Save Nyx');
+  /* No heart to toggle while signed out, so no button pretends to be one. */
+  await expect(page.locator('[data-profile-save]')).toHaveCount(0);
+  await heart.click();
+  await page.waitForURL('**/login');
+  expect(
+    (await page.context().cookies()).find((c) => c.name === 'duoly_resume')
+      ?.value,
+  ).toBe('profile-save:nyx');
+
+  await page.context().clearCookies({ name: 'duoly_resume' });
+  await page.goto('/teammates/nyx');
+  await page.locator('.tp-cta [data-profile-book="primary"]').click();
+  await page.waitForURL('**/login');
+  expect(
+    (await page.context().cookies()).find((c) => c.name === 'duoly_resume')
+      ?.value,
+  ).toBe('profile:nyx');
+});
+
+test('the per-game buttons keep booking that game straight away', async ({
+  page,
+}) => {
+  await page.goto('/teammates/nyx');
+  const link = page.locator('.tp-game-book').first();
+  await expect(link).toHaveAttribute('data-profile-book', 'game');
+  await link.click();
+  await page.waitForURL(/\/\?game=/);
+  expect(
+    (await page.context().cookies()).find((c) => c.name === 'duoly_resume'),
+  ).toBeUndefined();
+});
+
+/*
+ * The signed-in path. There is no account on the fixture server, so the page is served as it
+ * would be to a customer: the same markup with saveMode switched over and a CSRF token on it.
+ * What is under test is the page's own behaviour, that it saves first and books either way.
+ */
+const asCustomer = async (
+  page: import('@playwright/test').Page,
+  answer: { status: number; body: unknown } = {
+    status: 200,
+    body: { favorite: true, slug: 'nyx', game: 'val' },
+  },
+) => {
+  const posts: unknown[] = [];
+  await page.route('**/teammates/nyx*', async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      body: (await response.text()).replace(
+        'data-save-mode="signin"',
+        `data-save-mode="customer" data-csrf="${'t'.repeat(64)}"`,
+      ),
+    });
+  });
+  await page.route('**/api/favorites/by-slug', async (route) => {
+    posts.push(JSON.parse(route.request().postData() ?? '{}'));
+    await route.fulfill({
+      status: answer.status,
+      contentType: 'application/json',
+      body: JSON.stringify(answer.body),
+    });
+  });
+  return posts;
+};
+
+test('a customer is saved first, then booking opens', async ({ page }) => {
+  const posts = await asCustomer(page);
+  await page.goto('/teammates/nyx');
+  await page.locator('.tp-cta [data-profile-book="primary"]').click();
+  await page.waitForURL(/\/\?game=val/);
+  expect(posts).toEqual([{ csrf: 't'.repeat(64), slug: 'nyx' }]);
+  /* No sign-in detour and nothing remembered: they were already signed in. */
+  expect(
+    (await page.context().cookies()).find((c) => c.name === 'duoly_resume'),
+  ).toBeUndefined();
+});
+
+test('booking still opens when saving fails', async ({ page }) => {
+  const posts = await asCustomer(page, {
+    status: 503,
+    body: { error: 'Favorites are unavailable right now.' },
+  });
+  await page.goto('/teammates/nyx');
+  await page.locator('.tp-game-book').first().click();
+  await page.waitForURL(/\/\?game=/);
+  expect(posts).toHaveLength(1);
+});
+
+test('?book=1 saves the teammate and continues to booking', async ({
+  page,
+}) => {
+  const posts = await asCustomer(page);
+  await page.goto('/teammates/nyx?book=1');
+  await page.waitForURL(/\/\?game=val/);
+  expect(posts).toEqual([{ csrf: 't'.repeat(64), slug: 'nyx' }]);
+});
+
+test('?book=1 is cleaned off the URL and never saves for a visitor', async ({
+  page,
+}) => {
+  const failures: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('/api/favorites/')) failures.push(request.url());
+  });
+  await page.goto('/teammates/nyx?book=1');
+  await expect(page.locator('main h1')).toHaveText('Nyx');
+  await expect(page).toHaveURL(/\/teammates\/nyx$/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://duoly.gg/teammates/nyx',
+  );
+  expect(failures).toEqual([]);
 });
 
 test('one booking verb, one arrow glyph and reviews without text stay quiet', async ({

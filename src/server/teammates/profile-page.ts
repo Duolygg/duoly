@@ -105,6 +105,17 @@ export function profilePresentation(p: PublicTeammateProfile) {
   };
 }
 /**
+ * What a booking button on a profile has to do before it opens booking.
+ *
+ * `customer` saves the teammate to their favorites first, which is the only thing that changes
+ * the queue for them. `signin` has nobody to save for yet, so the buttons that name the teammate
+ * go through sign-in and come back. `none` is a teammate or an admin reading a profile: they can
+ * still book, they simply have no favorites list of their own.
+ */
+export type BookingMode = 'customer' | 'signin' | 'none';
+export const bookingMode = (role: string | undefined): BookingMode =>
+  !role ? 'signin' : role === 'customer' ? 'customer' : 'none';
+/**
  * Only reviews with text become quote cards; the rest still count in the tag bars.
  * An odd number would leave a hole in the two column grid, so the first quote is
  * promoted to a full width lead and the grid always fills every cell.
