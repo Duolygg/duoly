@@ -581,7 +581,7 @@ select count(*) filter (where sent_at is null and failed_at is null) as pending,
          and (claimed_until is null or claimed_until <= now())) as eligible,
        count(*) filter (where sent_at is null and failed_at is null and claimed_until > now()) as leased,
        count(*) filter (where failed_at is not null) as parked,
-       min(created_at) filter (where sent_at is null and failed_at is null) as oldest
+       min(occurred_at) filter (where sent_at is null and failed_at is null) as oldest
   from public.analytics_outbox;
 
 -- settlements the claim path has given up on; the overdue predicate deliberately excludes these
@@ -616,6 +616,37 @@ one is worth acting on; the fixer covers the work either way.
 
 Alert thresholds worth acting on: anything `due` for more than 60 s, any `dropped`, `background_fix()`
 finding work twice in a row, or a parked analytics fact.
+
+### The report that reads all three at once
+
+`scripts/background-shadow-report.mjs` runs every query above, parses a Vercel log export and reads
+`/timers/health`, then writes one Markdown report with a PASS or FAIL and a "ready to flip" line per
+kind. It is what step 7 asks for, done in one command instead of by hand:
+
+```sh
+vercel logs <deployment> --json > /tmp/vercel.jsonl
+PW='<database password>' HS='<BACKGROUND_HEALTH_SECRET>' \
+  node scripts/background-shadow-report.mjs --logs /tmp/vercel.jsonl \
+    --db-host db.<project>.supabase.co --out /tmp/shadow-report.md
+```
+
+Only the owner can run it, because only the owner has those two values. It reads: one connection,
+`set transaction read only` before any query, a 10 s statement timeout, no write, no schedule and no
+switch. `PW` travels in `PGPASSWORD`, so it never reaches a process list. Each part is optional:
+without `PW` the database part is skipped, without `HS` the worker part is. `--print-sql` prints the
+SQL without connecting to anything, `--db-json` and `--health-json` replay a captured answer, and
+`--hours` moves the window (24 by default, which is also all `cron.job_run_details` keeps).
+
+What it decides, and what it deliberately does not: every order queued in the window has to have
+both of its shadow lines, each fire within 2 s of the instant the timer was registered for, and
+every terminal shadow decision has to match what the dispatcher did (an `order-post` line that says
+`post` against a `discord_order_posts` row for that queue epoch, an `order-expire` line that says
+`expire` against `cancel_reason = 'queue_expired'`). A `pending` line decides nothing and a shadow
+fire answers `disabled`, so the worker forgets the timer rather than re-arming it: an order a
+priority pick was still holding therefore ends with one `pending` line and is reported as `deferred`
+rather than graded. `settle-retry`, `analytics-retry` and `presence-check` have no "what the
+dispatcher did" row to compare against, so they are judged on `background_overdue()`, the outbox and
+hold counts, their own punctuality and the absence of drops.
 
 ## Writes per day, idle
 

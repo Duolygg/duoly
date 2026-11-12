@@ -1,0 +1,29 @@
+{"timestampInMs":1794393000400,"requestId":"req_0001","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] presence-check desk would=done (nobody online)"}
+{"timestampInMs":1794452500190,"requestId":"req_0002","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-post a50b7c91-3d62-4f18-b7e4-2c8d9f0a1b63 would=post"}
+{"timestampInMs":1794452590700,"requestId":"req_0003","source":"lambda","level":"info","type":"stdout","message":"[event-shadow] orders a50b7c91-3d62-4f18-b7e4-2c8d9f0a1b63 would=close"}
+{"timestampInMs":1794452700210,"requestId":"req_0004","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-expire a50b7c91-3d62-4f18-b7e4-2c8d9f0a1b63 would=stale (order is in_progress)"}
+{"timestampInMs":1794477700214,"requestId":"req_0005","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-post b1a77e3c-0f2a-4a6e-9c21-9e4f0a1d3b55 would=post"}
+{"timestampInMs":1794477750900,"requestId":"req_0006","source":"lambda","level":"info","type":"stdout","message":"[event-shadow] orders b1a77e3c-0f2a-4a6e-9c21-9e4f0a1d3b55 would=close"}
+{"timestampInMs":1794477751100,"requestId":"req_0007","source":"lambda","level":"info","type":"stdout","message":"[event-shadow] analytics outbox would=drain"}
+{"timestampInMs":1794477900180,"requestId":"req_0008","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-expire b1a77e3c-0f2a-4a6e-9c21-9e4f0a1d3b55 would=stale (order is in_progress)"}
+{"timestampInMs":1794477912300,"requestId":"req_0009","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] presence-check desk would=sync"}
+{"timestampInMs":1794478300302,"requestId":"req_0010","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-post 2f6c1d84-77aa-4a1e-bb0e-5d2c2f0f1a90 would=post"}
+{"timestampInMs":1794478500421,"requestId":"req_0011","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-expire 2f6c1d84-77aa-4a1e-bb0e-5d2c2f0f1a90 would=expire"}
+{"timestampInMs":1794478504200,"requestId":"req_0012","source":"lambda","level":"info","type":"stdout","message":"[event-shadow] orders 2f6c1d84-77aa-4a1e-bb0e-5d2c2f0f1a90 would=close"}
+{"timestampInMs":1794478534900,"requestId":"req_0013","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] settle-retry 2f6c1d84-77aa-4a1e-bb0e-5d2c2f0f1a90 would=settle"}
+{"timestampInMs":1794478900188,"requestId":"req_0014","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-post 9d4e21b7-5c3f-4f0a-8e77-1b6a9c2d4e30 would=stale (streaming booking, no public post)"}
+{"timestampInMs":1794478980800,"requestId":"req_0015","source":"lambda","level":"info","type":"stdout","message":"[event-shadow] orders 9d4e21b7-5c3f-4f0a-8e77-1b6a9c2d4e30 would=close"}
+{"timestampInMs":1794478981400,"requestId":"req_0016","source":"lambda","level":"info","type":"stdout","message":"[event-shadow] analytics outbox would=drain"}
+{"timestampInMs":1794479100244,"requestId":"req_0017","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-expire 9d4e21b7-5c3f-4f0a-8e77-1b6a9c2d4e30 would=stale (order is in_progress)"}
+{"timestampInMs":1794479500205,"requestId":"req_0018","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-post 4a8b0c16-2e5d-4c9b-9f31-7a0e5b2c8d41 would=pending@1794479560205 (not eligible yet)"}
+{"timestampInMs":1794479610900,"requestId":"req_0019","source":"lambda","level":"info","type":"stdout","message":"[event-shadow] orders 4a8b0c16-2e5d-4c9b-9f31-7a0e5b2c8d41 would=close"}
+{"timestampInMs":1794479611050,"requestId":"req_0020","source":"lambda","level":"info","type":"stdout","message":"[event-shadow] analytics outbox would=drain"}
+{"timestampInMs":1794479700233,"requestId":"req_0021","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-expire 4a8b0c16-2e5d-4c9b-9f31-7a0e5b2c8d41 would=stale (order is in_progress)"}
+{"timestampInMs":1794480000900,"requestId":"req_0022","source":"lambda","level":"warning","type":"stdout","message":"[timers] refusing to register order-post:6e3f9a20-8b14-4d7c-a052-3c9f1e6b7a82: bad request"}
+{"timestampInMs":1794480300355,"requestId":"req_0023","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-expire 6e3f9a20-8b14-4d7c-a052-3c9f1e6b7a82 would=expire"}
+{"timestampInMs":1794480304300,"requestId":"req_0024","source":"lambda","level":"info","type":"stdout","message":"[event-shadow] orders 6e3f9a20-8b14-4d7c-a052-3c9f1e6b7a82 would=close"}
+{"timestampInMs":1794480365400,"requestId":"req_0025","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] analytics-retry outbox would=drain"}
+{"timestampInMs":1794480635200,"requestId":"req_0026","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] analytics-retry outbox would=done (outbox drained)"}
+{"timestampInMs":1794480760700,"requestId":"req_0027","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] presence-check desk would=done (nobody online)"}
+{"timestampInMs":1794481180260,"requestId":"req_0028","source":"lambda","level":"info","type":"stdout","message":"[timer-shadow] order-post c7102d35-41b6-4e8a-9d10-8f2b5a3c6e94 would=post"}
+{"timestampInMs":1794481230000,"requestId":"req_0029","source":"lambda","level":"info","type":"stdout","message":"[background-fix] reconciling roles (overdue)"}

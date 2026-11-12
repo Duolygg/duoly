@@ -1,0 +1,18 @@
+{
+  "now": 1794481260000,
+  "pending": 2,
+  "due": 0,
+  "byKind": {
+    "order-post": 1,
+    "order-expire": 1,
+    "settle-retry": 0,
+    "analytics-retry": 0,
+    "presence-check": 0
+  },
+  "oldestDueAt": null,
+  "lastFireAt": 1794481180180,
+  "lastErrorAt": null,
+  "lastError": null,
+  "dropped": 0,
+  "keepAliveAt": 1794479460000
+}

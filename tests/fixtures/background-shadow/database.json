@@ -1,0 +1,370 @@
+{
+  "errors": [],
+  "session": {
+    "now": "2026-11-12 11:01:00.000+00",
+    "now_ms": 1794481260000,
+    "window_hours": 24,
+    "database": "postgres",
+    "user": "postgres",
+    "read_only": "on",
+    "statement_timeout": "10s",
+    "server_version": "17.6"
+  },
+  "switches": [
+    {
+      "kind": "orders",
+      "mode": "shadow",
+      "updated_at": "2026-11-10 09:00:00.000+00"
+    },
+    {
+      "kind": "payments",
+      "mode": "shadow",
+      "updated_at": "2026-11-10 09:00:00.000+00"
+    },
+    {
+      "kind": "analytics",
+      "mode": "shadow",
+      "updated_at": "2026-11-10 09:00:00.000+00"
+    },
+    {
+      "kind": "roles",
+      "mode": "shadow",
+      "updated_at": "2026-11-10 09:00:00.000+00"
+    }
+  ],
+  "overdue": {
+    "orders": false,
+    "payments": false,
+    "analytics": false,
+    "roles": false
+  },
+  "cron_jobs": [
+    {
+      "jobname": "duoly-analytics-cleanup",
+      "schedule": "30 4 * * *",
+      "active": true
+    },
+    {
+      "jobname": "duoly-analytics-reconcile",
+      "schedule": "0 4 * * *",
+      "active": true
+    },
+    {
+      "jobname": "duoly-cron-prune",
+      "schedule": "7 * * * *",
+      "active": true
+    },
+    {
+      "jobname": "duoly-dispatch",
+      "schedule": "10 seconds",
+      "active": true
+    },
+    {
+      "jobname": "duoly-performance-recalc",
+      "schedule": "0 * * * *",
+      "active": true
+    },
+    {
+      "jobname": "private-proof-cleanup",
+      "schedule": "*/15 * * * *",
+      "active": true
+    }
+  ],
+  "cron_runs": [
+    {
+      "jobname": "duoly-dispatch",
+      "runs": 8637,
+      "succeeded": 8637,
+      "failed": 0,
+      "other": 0,
+      "run_log_writes_estimate": 43185,
+      "first_start": "2026-11-11 11:01:10.000+00",
+      "last_start": "2026-11-12 11:00:50.000+00"
+    },
+    {
+      "jobname": "private-proof-cleanup",
+      "runs": 96,
+      "succeeded": 96,
+      "failed": 0,
+      "other": 0,
+      "run_log_writes_estimate": 480,
+      "first_start": "2026-11-11 11:15:00.000+00",
+      "last_start": "2026-11-12 11:00:00.000+00"
+    },
+    {
+      "jobname": "duoly-cron-prune",
+      "runs": 24,
+      "succeeded": 24,
+      "failed": 0,
+      "other": 0,
+      "run_log_writes_estimate": 120,
+      "first_start": "2026-11-11 11:07:00.000+00",
+      "last_start": "2026-11-12 10:07:00.000+00"
+    },
+    {
+      "jobname": "duoly-performance-recalc",
+      "runs": 24,
+      "succeeded": 24,
+      "failed": 0,
+      "other": 0,
+      "run_log_writes_estimate": 120,
+      "first_start": "2026-11-11 12:00:00.000+00",
+      "last_start": "2026-11-12 11:00:00.000+00"
+    },
+    {
+      "jobname": "duoly-analytics-reconcile",
+      "runs": 1,
+      "succeeded": 1,
+      "failed": 0,
+      "other": 0,
+      "run_log_writes_estimate": 5,
+      "first_start": "2026-11-12 04:00:00.000+00",
+      "last_start": "2026-11-12 04:00:00.000+00"
+    },
+    {
+      "jobname": "duoly-analytics-cleanup",
+      "runs": 1,
+      "succeeded": 1,
+      "failed": 0,
+      "other": 0,
+      "run_log_writes_estimate": 5,
+      "first_start": "2026-11-12 04:30:00.000+00",
+      "last_start": "2026-11-12 04:30:00.000+00"
+    }
+  ],
+  "orders": [
+    {
+      "id": "a50b7c91-3d62-4f18-b7e4-2c8d9f0a1b63",
+      "reference": "DL-8997",
+      "status": "in_progress",
+      "game": "lol",
+      "queued_at": "2026-11-12 03:00:00.000+00",
+      "queued_at_ms": 1794452400000,
+      "public_queued_at": "2026-11-12 03:00:00.000+00",
+      "streaming": false,
+      "accepted_at": "2026-11-12 03:03:10.000+00",
+      "cancelled_at": null,
+      "cancel_reason": null,
+      "expired": false,
+      "posts": [
+        {
+          "queue_key": "2026-11-12 03:00:00.000+00",
+          "same_epoch": true,
+          "state": "open",
+          "outcome": null,
+          "created_at": "2026-11-12 03:01:43.900+00",
+          "created_at_ms": 1794452503900,
+          "opened": true,
+          "closed_at": null
+        }
+      ],
+      "payment": {
+        "state": "authorized",
+        "settle": "none",
+        "attempts": 0,
+        "updated_at": "2026-11-12 03:00:00.100+00",
+        "last_error": ""
+      }
+    },
+    {
+      "id": "b1a77e3c-0f2a-4a6e-9c21-9e4f0a1d3b55",
+      "reference": "DL-9001",
+      "status": "in_progress",
+      "game": "val",
+      "queued_at": "2026-11-12 10:00:00.000+00",
+      "queued_at_ms": 1794477600000,
+      "public_queued_at": "2026-11-12 10:00:00.000+00",
+      "streaming": false,
+      "accepted_at": "2026-11-12 10:02:30.000+00",
+      "cancelled_at": null,
+      "cancel_reason": null,
+      "expired": false,
+      "posts": [
+        {
+          "queue_key": "2026-11-12 10:00:00.000+00",
+          "same_epoch": true,
+          "state": "closed",
+          "outcome": "taken",
+          "created_at": "2026-11-12 10:01:43.120+00",
+          "created_at_ms": 1794477703120,
+          "opened": true,
+          "closed_at": "2026-11-12 10:02:31.400+00"
+        }
+      ],
+      "payment": {
+        "state": "captured",
+        "settle": "none",
+        "attempts": 1,
+        "updated_at": "2026-11-12 10:02:31.900+00",
+        "last_error": ""
+      }
+    },
+    {
+      "id": "2f6c1d84-77aa-4a1e-bb0e-5d2c2f0f1a90",
+      "reference": "DL-9002",
+      "status": "cancelled",
+      "game": "cs2",
+      "queued_at": "2026-11-12 10:10:00.000+00",
+      "queued_at_ms": 1794478200000,
+      "public_queued_at": "2026-11-12 10:10:00.000+00",
+      "streaming": false,
+      "accepted_at": null,
+      "cancelled_at": "2026-11-12 10:15:03.900+00",
+      "cancel_reason": "queue_expired",
+      "expired": true,
+      "posts": [
+        {
+          "queue_key": "2026-11-12 10:10:00.000+00",
+          "same_epoch": true,
+          "state": "closed",
+          "outcome": "expired",
+          "created_at": "2026-11-12 10:11:42.700+00",
+          "created_at_ms": 1794478302700,
+          "opened": true,
+          "closed_at": "2026-11-12 10:15:04.600+00"
+        }
+      ],
+      "payment": {
+        "state": "voided",
+        "settle": "none",
+        "attempts": 2,
+        "updated_at": "2026-11-12 10:15:36.200+00",
+        "last_error": "the first release attempt timed out"
+      }
+    },
+    {
+      "id": "9d4e21b7-5c3f-4f0a-8e77-1b6a9c2d4e30",
+      "reference": "DL-9003",
+      "status": "in_progress",
+      "game": "fn",
+      "queued_at": "2026-11-12 10:20:00.000+00",
+      "queued_at_ms": 1794478800000,
+      "public_queued_at": "infinity",
+      "streaming": true,
+      "accepted_at": "2026-11-12 10:23:00.000+00",
+      "cancelled_at": null,
+      "cancel_reason": null,
+      "expired": false,
+      "posts": [],
+      "payment": {
+        "state": "captured",
+        "settle": "none",
+        "attempts": 1,
+        "updated_at": "2026-11-12 10:23:01.100+00",
+        "last_error": ""
+      }
+    },
+    {
+      "id": "4a8b0c16-2e5d-4c9b-9f31-7a0e5b2c8d41",
+      "reference": "DL-9004",
+      "status": "in_progress",
+      "game": "mr",
+      "queued_at": "2026-11-12 10:30:00.000+00",
+      "queued_at_ms": 1794479400000,
+      "public_queued_at": "2026-11-12 10:32:00.000+00",
+      "streaming": false,
+      "accepted_at": "2026-11-12 10:33:30.000+00",
+      "cancelled_at": null,
+      "cancel_reason": null,
+      "expired": false,
+      "posts": [
+        {
+          "queue_key": "2026-11-12 10:30:00.000+00",
+          "same_epoch": true,
+          "state": "closed",
+          "outcome": "taken",
+          "created_at": "2026-11-12 10:32:41.500+00",
+          "created_at_ms": 1794479561500,
+          "opened": true,
+          "closed_at": "2026-11-12 10:33:31.200+00"
+        }
+      ],
+      "payment": {
+        "state": "captured",
+        "settle": "none",
+        "attempts": 1,
+        "updated_at": "2026-11-12 10:33:31.800+00",
+        "last_error": ""
+      }
+    },
+    {
+      "id": "6e3f9a20-8b14-4d7c-a052-3c9f1e6b7a82",
+      "reference": "DL-9005",
+      "status": "cancelled",
+      "game": "lol",
+      "queued_at": "2026-11-12 10:40:00.000+00",
+      "queued_at_ms": 1794480000000,
+      "public_queued_at": "2026-11-12 10:40:00.000+00",
+      "streaming": false,
+      "accepted_at": null,
+      "cancelled_at": "2026-11-12 10:45:04.100+00",
+      "cancel_reason": "queue_expired",
+      "expired": true,
+      "posts": [
+        {
+          "queue_key": "2026-11-12 10:40:00.000+00",
+          "same_epoch": true,
+          "state": "closed",
+          "outcome": "expired",
+          "created_at": "2026-11-12 10:41:44.300+00",
+          "created_at_ms": 1794480104300,
+          "opened": true,
+          "closed_at": "2026-11-12 10:45:04.800+00"
+        }
+      ],
+      "payment": {
+        "state": "voided",
+        "settle": "none",
+        "attempts": 1,
+        "updated_at": "2026-11-12 10:45:05.300+00",
+        "last_error": ""
+      }
+    },
+    {
+      "id": "c7102d35-41b6-4e8a-9d10-8f2b5a3c6e94",
+      "reference": "DL-9006",
+      "status": "queued",
+      "game": "rl",
+      "queued_at": "2026-11-12 10:58:00.000+00",
+      "queued_at_ms": 1794481080000,
+      "public_queued_at": "2026-11-12 10:58:00.000+00",
+      "streaming": false,
+      "accepted_at": null,
+      "cancelled_at": null,
+      "cancel_reason": null,
+      "expired": false,
+      "posts": [
+        {
+          "queue_key": "2026-11-12 10:58:00.000+00",
+          "same_epoch": true,
+          "state": "open",
+          "outcome": null,
+          "created_at": "2026-11-12 10:59:43.900+00",
+          "created_at_ms": 1794481183900,
+          "opened": true,
+          "closed_at": null
+        }
+      ],
+      "payment": {
+        "state": "authorized",
+        "settle": "none",
+        "attempts": 0,
+        "updated_at": "2026-11-12 10:58:00.200+00",
+        "last_error": ""
+      }
+    }
+  ],
+  "outbox": {
+    "pending": 3,
+    "eligible": 3,
+    "leased": 0,
+    "parked": 0,
+    "sent": 1241,
+    "oldest_pending": "2026-11-12 10:58:10.000+00"
+  },
+  "wallet_holds": [],
+  "settlements": {
+    "claimable": 0,
+    "exhausted": []
+  }
+}

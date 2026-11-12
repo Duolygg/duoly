@@ -1,0 +1,9 @@
+2026-11-12T10:01:39.980Z  POST 200 duoly.gg /api/internal/timer
+2026-11-12T10:01:40.214Z  info  [timer-shadow] order-post b1a77e3c-0f2a-4a6e-9c21-9e4f0a1d3b55 would=post
+2026-11-12T10:02:30.900Z  info  [event-shadow] orders b1a77e3c-0f2a-4a6e-9c21-9e4f0a1d3b55 would=close
+2026-11-12T10:02:31.100Z  info  [event-shadow] analytics outbox would=drain
+2026-11-12T10:05:00.180Z  info  [timer-shadow] order-expire b1a77e3c-0f2a-4a6e-9c21-9e4f0a1d3b55 would=stale (order is in_progress)
+2026-11-12T10:05:12.300Z  info  [timer-shadow] presence-check desk would=sync
+2026-11-12T10:11:40.302Z  info  [timer-shadow] order-post 2f6c1d84-77aa-4a1e-bb0e-5d2c2f0f1a90 would=post
+2026-11-12T10:15:00.500Z  POST 200 duoly.gg /api/internal/timer
+a line with no timestamp at all: [timer-shadow] presence-check desk would=sync
