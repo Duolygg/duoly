@@ -66,6 +66,19 @@ select pg_temp.ok(public.public_teammate_profile('header-fixture')='{"status":"g
 update public.teammate_public_profiles set published=true,admin_hidden=true where slug='header-fixture';
 select pg_temp.ok(public.public_teammate_profile('header-fixture')='{"status":"gone"}'::jsonb,'moderated profile never exposes header');
 update public.teammate_public_profiles set admin_hidden=false where slug='header-fixture';
+-- Other tables point at the account without cascading (support deletes accounts by hand and
+-- clears these first), so clear every such reference before deleting the fixture user.
+do $$ declare r record; begin
+  for r in
+    select c.conrelid::regclass as tbl, a.attname as col
+    from pg_catalog.pg_constraint c
+    join pg_catalog.pg_attribute a on a.attrelid = c.conrelid and a.attnum = c.conkey[1]
+    where c.contype = 'f' and c.confdeltype <> 'c' and pg_catalog.array_length(c.conkey, 1) = 1
+      and c.confrelid in ('public.profiles'::regclass, 'auth.users'::regclass)
+  loop
+    execute pg_catalog.format('delete from %s where %I = %L', r.tbl, r.col, '9e000000-0000-4000-8000-000000000001');
+  end loop;
+end $$;
 delete from auth.users where id='9e000000-0000-4000-8000-000000000001';
 select pg_temp.ok(public.public_teammate_profile('header-fixture')='{"status":"gone"}'::jsonb,'deleted profile never exposes header');
 select count(*) as profile_header_assertions from assertions;
