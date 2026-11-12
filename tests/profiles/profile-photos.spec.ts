@@ -55,7 +55,7 @@ test('the hero shows the uploaded photo, round, covered and eager', async ({
     complete: true,
   });
   /* A circle, and never printed above 160 CSS px: the file is 256 px, so 2x density holds. */
-  expect(hero.round).toBe(`${hero.width / 2}px`);
+  expect(hero.round).toBe('50%');
   expect(hero.width).toBe(hero.height);
   expect(hero.width).toBeLessThanOrEqual(160);
   /* The ring and the live dot are still centred on the photo they frame. */
@@ -132,7 +132,7 @@ test('cards and the directory carry the photo too', async ({ page }) => {
     natural: '256x256',
     complete: true,
   });
-  expect(facts.round).toBe(`${facts.width / 2}px`);
+  expect(facts.round).toBe('50%');
   expect(facts.width).toBeLessThanOrEqual(160);
   /* Mascot cards in the same grid are unchanged. */
   expect(
