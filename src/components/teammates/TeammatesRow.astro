@@ -16,6 +16,14 @@ const cards = publicProfilesEnabled()
   ? await loadTeammateCards({ game, limit: Math.min(6, limit) })
   : [];
 const name = profileGame(game).name;
+/*
+ * The line under the heading only claims what the cards in front of it carry. Ranks are set by
+ * an admin, so on a young roster there are none to point at and promising "verified ranks" over
+ * cards that show none reads as a page describing a different site.
+ */
+const subhead = cards.some((card) => card.rank)
+  ? 'Verified ranks, live availability and the play styles they bring.'
+  : `Real people you can book for ${name}. See who is online right now.`;
 ---
 
 {cards.length > 0 && (
@@ -23,7 +31,7 @@ const name = profileGame(game).name;
     <div class="tp-section-head">
       <div>
         <h2 id={`teammates-${game}`}>Teammates for {name}</h2>
-        <p>Verified ranks, live availability and the play styles they bring.</p>
+        <p>{subhead}</p>
       </div>
       <a class="tp-more-link" href={`/teammates?game=${game}`}>
         See all {name} teammates
