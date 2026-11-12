@@ -886,7 +886,16 @@ describe('the command', () => {
     expect(connectionUrl({ dbUrl: 'postgresql://host/db' })).toBe(
       'postgresql://host/db',
     );
+    expect(connectionUrl({ dbUrl: 'postgresql://postgres@host/db' })).toBe(
+      'postgresql://postgres@host/db',
+    );
     expect(connectionUrl({})).toBeNull();
+  });
+
+  it('refuses a URL that carries the password, which `ps` would show', () => {
+    expect(() =>
+      connectionUrl({ dbUrl: 'postgresql://postgres:hunter2@host:5432/db' }),
+    ).toThrow('pass it as PW instead');
   });
 
   it('judges a replayed answer as of the moment it was captured', () => {

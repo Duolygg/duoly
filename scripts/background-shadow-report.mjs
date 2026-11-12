@@ -248,7 +248,14 @@ export function parseSqlOutput(stdout, stderr = '') {
 
 /** The libpq URL, password left out: it travels in PGPASSWORD so it never reaches a process list. */
 export function connectionUrl(options) {
-  if (options.dbUrl) return options.dbUrl;
+  if (options.dbUrl) {
+    // A URL with the password in it would show up in `ps` for anyone on the machine. PW exists.
+    if (/^[a-z+]+:\/\/[^/@]+:[^/@]*@/.test(options.dbUrl))
+      throw new Error(
+        '--db-url carries a password; take it out of the URL and pass it as PW instead',
+      );
+    return options.dbUrl;
+  }
   if (!options.dbHost) return null;
   const user = encodeURIComponent(options.dbUser ?? 'postgres');
   const name = encodeURIComponent(options.dbName ?? 'postgres');
