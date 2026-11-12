@@ -35,13 +35,20 @@ update public.teammate_public_profiles set header_image=
  where slug='header-fixture';
 select pg_temp.ok(public.public_teammate_profile('header-fixture')->>'header'=
  'https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.webp','published header returned');
+do $$ begin
+  update public.teammate_public_profiles
+    set header_image='https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.jpg'
+    where slug='header-fixture';
+  update public.teammate_public_profiles set header_image=null where slug='header-fixture';
+  raise notice 'ok: a JPEG header (Safari fallback) is accepted';
+end $$;
 do $$ declare bad text; begin
  foreach bad in array array[
  'http://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.webp',
  'https://evil.invalid/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.webp',
  'https://example.supabase.co/storage/v1/object/public/avatars/9e000000-0000-4000-8000-000000000001/0123456789abcdef.webp',
  'https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000002/0123456789abcdef.webp',
- 'https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.jpg',
+ 'https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.png',
  'https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.webp?x=1',
  'https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/short.webp', ''] loop
   begin

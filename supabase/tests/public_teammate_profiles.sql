@@ -131,7 +131,7 @@ select pg_temp.ok(jsonb_array_length(public.public_teammate_profile('nyx')->'rev
 select pg_temp.ok(public.public_teammate_profile('nyx')#>>'{reviews,5,text}'='','old text remains private after cutoff');
 select pg_temp.ok(public.public_teammate_profile('nyx')->'country'='null','country opt in required');
 select pg_temp.ok(public.public_teammate_profile('nyx')->>'name'='Nyx','surname excluded');
-select pg_temp.ok(not exists(select 1 from jsonb_object_keys(public.public_teammate_profile('nyx')) k where k not in ('slug','name','avatar','country','languages','bio','accent','banner','vibeTags','featuredGame','coaching','online','memberSince','sessions','tier','rating','reviewTags','winRate','games','reviews','updatedAt')),'exact profile whitelist');
+select pg_temp.ok(not exists(select 1 from jsonb_object_keys(public.public_teammate_profile('nyx')) k where k not in ('slug','name','avatar','country','languages','bio','accent','banner','vibeTags','featuredGame','coaching','online','memberSince','sessions','tier','rating','reviewTags','winRate','games','reviews','updatedAt','header')),'exact profile whitelist');
 select pg_temp.ok(public.public_teammate_profile('nyx')::text !~* '9f000000|example.invalid|PrivateSurname|Private review text','no identifiers or private data');
 -- Every approved teammate has a page since 20261112130000, so this list is no longer
 -- empty. The exclusion is still exactly what is under test: nyx is in the League list
