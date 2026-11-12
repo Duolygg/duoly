@@ -1,3 +1,5 @@
+import { normalizeSources } from './sources.mjs';
+
 const { fetch, AbortSignal } = globalThis;
 
 // Snapshot checked against official pricing pages on 2026-11-06. USD, standard tier.
@@ -8,6 +10,8 @@ export const providers = {
     output: 0.5,
     search: 0.01,
     env: 'OPENAI_API_KEY',
+    // The API analogue of the ChatGPT search surface, not the consumer UI.
+    engine: 'ChatGPT (OpenAI Responses API, web_search tool)',
   },
   gemini: {
     model: 'gemini-2.5-flash-lite',
@@ -15,6 +19,7 @@ export const providers = {
     output: 0.4,
     search: 0.035,
     env: 'GEMINI_API_KEY',
+    engine: 'Google AI Mode (Gemini API, google_search grounding)',
   },
   anthropic: {
     model: 'claude-haiku-5-5',
@@ -22,6 +27,7 @@ export const providers = {
     output: 0.5,
     search: 0.01,
     env: 'ANTHROPIC_API_KEY',
+    engine: 'Claude (Anthropic API web search)',
   },
   perplexity: {
     model: 'sonar',
@@ -29,6 +35,11 @@ export const providers = {
     output: 1,
     search: 0.005,
     env: 'PERPLEXITY_API_KEY',
+    engine: 'Perplexity (Sonar compatibility API)',
+    // Logged-out Perplexity answered one query and then demanded a sign-up, which
+    // invalidated the 2026-11-09 baseline. It now runs only when the owner opts in.
+    requiresSession: true,
+    enableFlag: '--perplexity',
   },
 };
 
@@ -56,6 +67,7 @@ export function parseAnswer(provider, data) {
   let input;
   let output;
   let complete;
+  let queries = [];
   if (provider === 'openai') {
     const blocks = (data.output ?? []).flatMap((item) => item.content ?? []);
     answer = blocks
@@ -65,12 +77,13 @@ export function parseAnswer(provider, data) {
     urls = blocks.flatMap((block) =>
       (block.annotations ?? [])
         .filter((a) => a.type === 'url_citation')
-        .map((a) => a.url),
+        .map((a) => ({ url: a.url, title: a.title })),
     );
     searches = (data.output ?? []).filter(
       (item) => item.type === 'web_search_call',
     ).length;
     searched = searches > 0;
+    queries = parseFanOut(data).queries;
     input = data.usage?.input_tokens ?? 0;
     output = data.usage?.output_tokens ?? 0;
     complete = data.status === 'completed';
@@ -80,12 +93,19 @@ export function parseAnswer(provider, data) {
       .filter((part) => !part.thought)
       .map((part) => part.text ?? '')
       .join('\n');
+    // Grounding chunks are the Google AI Mode source links. The URL is a redirect
+    // wrapper, so title and domain metadata travel with it for domain detection.
     urls = (candidate?.groundingMetadata?.groundingChunks ?? [])
-      .map((chunk) => chunk.web?.uri)
-      .filter(Boolean);
-    searched =
-      (candidate?.groundingMetadata?.webSearchQueries?.length ?? 0) > 0 ||
-      urls.length > 0;
+      .filter((chunk) => chunk?.web)
+      .map((chunk) => ({
+        url: chunk.web.uri,
+        title: chunk.web.title,
+        domain: chunk.web.domain,
+      }));
+    queries = (candidate?.groundingMetadata?.webSearchQueries ?? []).filter(
+      (query) => typeof query === 'string' && query.trim(),
+    );
+    searched = queries.length > 0 || urls.length > 0;
     searches = searched ? 1 : 0; // Gemini 2.5 bills grounded requests, not individual search queries.
     input = data.usageMetadata?.promptTokenCount ?? 0;
     output =
@@ -99,8 +119,10 @@ export function parseAnswer(provider, data) {
       .map((block) => block.text)
       .join('\n');
     urls = blocks
-      .flatMap((block) => (block.citations ?? []).map((c) => c.url))
-      .filter(Boolean);
+      .flatMap((block) =>
+        (block.citations ?? []).map((c) => ({ url: c.url, title: c.title })),
+      )
+      .filter((source) => source.url);
     searches = data.usage?.server_tool_use?.web_search_requests ?? 0;
     searched = searches > 0;
     input = data.usage?.input_tokens ?? 0;
@@ -108,21 +130,61 @@ export function parseAnswer(provider, data) {
     complete = data.stop_reason === 'end_turn';
   } else {
     answer = data.choices?.[0]?.message?.content ?? '';
-    urls = data.citations ?? [];
+    urls = [
+      ...(data.citations ?? []),
+      ...(data.search_results ?? []).map((result) => ({
+        url: result?.url,
+        title: result?.title,
+      })),
+    ];
     searched = urls.length > 0;
     searches = 1;
     input = data.usage?.prompt_tokens ?? 0;
     output = data.usage?.completion_tokens ?? 0;
     complete = data.choices?.[0]?.finish_reason === 'stop';
   }
+  const sources = normalizeSources(urls);
   return {
     answer,
-    citedUrls: [...new Set(urls)],
+    sources,
+    citedUrls: sources.map((source) => source.url).filter(Boolean),
+    citedDomains: [...new Set(sources.map((s) => s.domain).filter(Boolean))],
+    searchQueries: [...new Set(queries)],
     searched,
     searches,
     inputTokens: input,
     outputTokens: output,
     complete,
+  };
+}
+
+// ChatGPT fan-out: the searches the model actually ran for one prompt. The Responses API
+// reports each web_search_call action, so queries and opened pages are observable even
+// though the consumer UI fan-out is not.
+export function parseFanOut(data) {
+  const calls = (data.output ?? []).filter(
+    (item) => item?.type === 'web_search_call',
+  );
+  const queries = [];
+  const opened = [];
+  const addQuery = (value) => {
+    if (typeof value === 'string' && value.trim()) queries.push(value.trim());
+  };
+  const addUrl = (value) => {
+    if (typeof value === 'string' && value.trim()) opened.push(value.trim());
+  };
+  for (const call of calls) {
+    const action = call.action ?? {};
+    addQuery(action.query);
+    for (const query of action.queries ?? []) addQuery(query);
+    addUrl(action.url);
+    for (const source of action.sources ?? []) addUrl(source?.url);
+    for (const result of call.results ?? []) addUrl(result?.url);
+  }
+  return {
+    searchCalls: calls.length,
+    queries: [...new Set(queries)],
+    openedSources: normalizeSources(opened),
   };
 }
 
@@ -184,6 +246,52 @@ export async function ask(provider, key, prompt) {
     ...parseAnswer(provider, data),
     actualModel: data.model ?? data.modelVersion ?? model,
     usage: data.usage ?? data.usageMetadata ?? null,
+  };
+}
+
+// Fan-out mode budget: each prompt may run several searches instead of one.
+export const fanOutMaxToolCalls = 6;
+const sourceInclude = 'web_search_call.action.sources';
+// Older API deployments reject the include. One capability downgrade per run, never a
+// blind retry of a failed request.
+let sourceIncludeSupported = true;
+
+export function sourceIncludeState() {
+  return sourceIncludeSupported;
+}
+
+export async function askFanOut(key, prompt) {
+  const { model } = providers.openai;
+  const body = {
+    model,
+    input: prompt,
+    store: false,
+    max_output_tokens: 1800,
+    reasoning: { effort: 'low' },
+    tools: [{ type: 'web_search', search_context_size: 'medium' }],
+    tool_choice: 'required',
+    max_tool_calls: fanOutMaxToolCalls,
+  };
+  let data;
+  if (sourceIncludeSupported) {
+    try {
+      data = await request('https://api.openai.com/v1/responses', key, {
+        ...body,
+        include: [sourceInclude],
+      });
+    } catch (error) {
+      if (error.message !== 'HTTP 400') throw error;
+      sourceIncludeSupported = false;
+    }
+  }
+  if (!data)
+    data = await request('https://api.openai.com/v1/responses', key, body);
+  return {
+    ...parseAnswer('openai', data),
+    ...parseFanOut(data),
+    sourceInclude: sourceIncludeSupported,
+    actualModel: data.model ?? model,
+    usage: data.usage ?? null,
   };
 }
 

@@ -1,0 +1,86 @@
+{
+  "_fixture": "Synthetic OpenAI Responses API payloads with several web_search_call actions, for the ChatGPT fan-out parser tests and the fixture dry run. Not a panel observation and not engine output.",
+  "responses": {
+    "default": {
+      "status": "completed",
+      "model": "gpt-6-luna",
+      "output": [
+        {
+          "type": "web_search_call",
+          "action": {
+            "type": "search",
+            "query": "fixture fan-out query",
+            "sources": [
+              { "type": "url", "url": "https://www.reddit.com/r/fixture/" },
+              { "type": "url", "url": "https://metafy.gg/fixture" }
+            ]
+          }
+        },
+        {
+          "type": "web_search_call",
+          "action": {
+            "type": "open_page",
+            "url": "https://www.reddit.com/r/fixture/comments/abc/"
+          }
+        },
+        {
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Discord servers first, then Fiverr or Metafy if you want to pay someone.",
+              "annotations": [
+                {
+                  "type": "url_citation",
+                  "url": "https://metafy.gg/fixture",
+                  "title": "Metafy fixture page"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "usage": { "input_tokens": 2400, "output_tokens": 420 }
+    },
+    "fanout-duoly-legit": {
+      "status": "completed",
+      "model": "gpt-6-luna",
+      "output": [
+        {
+          "type": "web_search_call",
+          "action": {
+            "type": "search",
+            "query": "is duoly.gg legit reviews",
+            "sources": [
+              { "type": "url", "url": "https://duoly.gg/trust-and-safety" },
+              { "type": "url", "url": "https://example.com/listings/duoly" }
+            ]
+          }
+        },
+        {
+          "type": "web_search_call",
+          "action": { "type": "search", "query": "duoly.gg scam or safe" }
+        },
+        {
+          "type": "web_search_call",
+          "action": { "type": "open_page", "url": "https://duoly.gg/" }
+        },
+        {
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Duoly.gg is a real booking site, though it has limited independent reviews so far.",
+              "annotations": [
+                {
+                  "type": "url_citation",
+                  "url": "https://duoly.gg/",
+                  "title": "Duoly"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "usage": { "input_tokens": 2600, "output_tokens": 380 }
+    }
+  }
+}
