@@ -979,3 +979,30 @@ deliberately do something else and say why.
 
   Nothing is deployed, no secret is set, no migration is applied and the production database was
   never touched: the owner does all of that, in the order under [Deploy order](#deploy-order).
+
+- Chunk 7: the merge with main. `922e291` (#227: tip alerts, the bell on the desks only, one
+  polling tab) landed in main while this branch was being built and conflicted in
+  `Teammate.jsx` and `desk-keeper.js`, because both changes answer the same question for different
+  jobs. #227 is kept exactly as it was written and this branch's presence layer sits on top of it;
+  [Two leaders, two jobs](#two-leaders-two-jobs) is the design decision and why #227's lease could
+  not simply carry the heartbeat. Only three things changed outside the conflict hunks, all of them
+  prose: the file comment in `desk-keeper.js` now says one tab posts the check-in for the browser,
+  the note above `takePollLease` draws the boundary between the two mechanisms, and the comment in
+  `tick` that said "check-ins stay per tab" says what the lease decides instead. #227's own files
+  (`tip-alerts.js`, `order-alerts.js`, `AdminApp.jsx`, `LiveDesk.jsx`, `QueueRoom.jsx`,
+  `about.astro`, `content-dates.ts`) and its three test files are untouched.
+
+  Gates, all from this worktree on the merge commit: `pnpm check` 0 errors and 0 warnings over 917
+  files, `pnpm lint` clean, `pnpm format:check` clean, `pnpm test:unit` 3930 tests in 219 files
+  (#227's `poll-lease` 6 and `tip-alerts` 6 beside this branch's `presence-leader` 25, all
+  unchanged), `pnpm build` green, `node scripts/seo-verify.mjs` 130 passed. End to end: the main
+  config 289 passed and 5 skipped, teammate 80 passed, completion 20, analytics 8, profiles 49
+  passed and 1 skipped, chat 11 passed with one load flake (`order-ai-status.spec.ts`, which
+  passes in 6 s alone against 5.8 min under load). The two desk specs that the conflict touched ran
+  with `--repeat-each=3`: 48 of 48, desktop and mobile, with `--trace off`. Tracing on, the same
+  run reports up to 5 failures, every one of them `browserContext.close: ENOENT` on a file under
+  `test-results/.playwright-artifacts-*`: Playwright's own artifact writing on a loaded laptop, no
+  assertion among them.
+
+  CI on PR #228 at this head: CodeQL and all three analyses, Browser smoke, Design guard, Quality,
+  `sql-tests` and the Vercel preview all pass.
