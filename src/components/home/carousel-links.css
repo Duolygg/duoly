@@ -1,0 +1,49 @@
+/*
+ * "Meet your teammates": the link states of the cards that open a public profile
+ * (src/components/home/TeammateCarousel.jsx, src/pages/teammates/[slug].astro).
+ *
+ * Only link states live here. The card keeps every rule it already has in globals.css (.tc-card
+ * and the lift on hover), which this file never touches, and a card without a profile is not a
+ * link and is not reached by anything below. The import belongs to the island (LiveHome.tsx)
+ * rather than to the component, because the browser tests import Home.jsx straight into Node,
+ * where a stylesheet import is a syntax error.
+ *
+ * The focus ring is the site-wide one: globals.css already gives every a:focus-visible
+ * 2px #D6BBFF at a 3px offset. The anchor carries the card's own 20px corner so the ring follows
+ * the card instead of boxing it, and .tc-row's 8px of top padding is what keeps 5px of ring and
+ * offset from being clipped by the strip's overflow.
+ */
+.tc-link {
+  display: block;
+  border-radius: 20px;
+  color: inherit;
+  text-decoration: none;
+}
+
+/*
+ * The hover state the profile cards use, in the homepage's colours: the card lifts (globals.css
+ * .tc-card:hover, unchanged) and the name turns the lavender accent. Keyboard focus gets the same
+ * state, so tabbing through the strip reads like moving the pointer along it.
+ */
+.tc-link:hover .tc-who strong,
+.tc-link:focus-visible .tc-who strong {
+  color: #d6bbff;
+}
+.tc-link:focus-visible .tc-card {
+  border-color: rgba(214, 187, 255, 0.45);
+}
+
+/*
+ * The heading keeps the look it has in globals.css (.tc-title): white, no underline, the same
+ * size. Only hover and focus say it is a link.
+ */
+.tc-title a {
+  color: inherit;
+  text-decoration: none;
+}
+.tc-title a:hover,
+.tc-title a:focus-visible {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}

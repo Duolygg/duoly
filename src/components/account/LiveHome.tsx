@@ -10,6 +10,9 @@ import '../checkout/creator-code.css';
 // images. The import belongs to the island rather than to Home.jsx itself, because the browser
 // tests import Home.jsx straight into Node, where a stylesheet import is a syntax error.
 import '../home/offscreen.css';
+// Link states for the "Meet your teammates" cards that open a public profile. Same reason as
+// above for living on the island instead of on TeammateCarousel.jsx.
+import '../home/carousel-links.css';
 import { emailAuth, signInWith } from '../../client/auth-actions';
 import type { Currency, Viewer } from '../../contracts/account';
 import type {
