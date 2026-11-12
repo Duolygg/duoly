@@ -45,7 +45,7 @@ begin
  if spend = 'returned' then
   insert into public.wallet_entries(customer_id,amount_eur_cents,kind,cashable,order_id,checkout_intent_id,reverses_id,reason) values(c,249,'checkout_release',false,o,i,s,'Wallet completion test return');
  end if;
- return pg_catalog.jsonb_build_object('order',o,'assignment',a,'proof',p);
+ return pg_catalog.jsonb_build_object('order',o,'assignment',a,'proof',p,'teammate',t);
 end $$;
 
 insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) values
@@ -53,18 +53,24 @@ insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) v
  ('5d000000-0000-4000-8000-000000000002','authenticated','authenticated','wallet-returned@example.invalid','{}','{}'),
  ('5d000000-0000-4000-8000-000000000003','authenticated','authenticated','wallet-unspent@example.invalid','{}','{}'),
  ('5d000000-0000-4000-8000-000000000004','authenticated','authenticated','wallet-teammate@example.invalid','{}','{}'),
- ('5d000000-0000-4000-8000-000000000005','authenticated','authenticated','wallet-admin@example.invalid','{}','{}');
-update public.account_roles set role='teammate' where user_id='5d000000-0000-4000-8000-000000000004';
-insert into public.teammate_order_access(user_id,approved_games,discord_id,discord_verified_at,priority_base)
-values('5d000000-0000-4000-8000-000000000004',array['lol'],'9540000000000000004',pg_catalog.clock_timestamp(),0);
+ ('5d000000-0000-4000-8000-000000000005','authenticated','authenticated','wallet-admin@example.invalid','{}','{}'),
+ ('5d000000-0000-4000-8000-000000000006','authenticated','authenticated','wallet-teammate-2@example.invalid','{}','{}'),
+ ('5d000000-0000-4000-8000-000000000007','authenticated','authenticated','wallet-teammate-3@example.invalid','{}','{}');
+-- One teammate per order: a teammate can hold only one current assignment (assignments_one_current_teammate).
+update public.account_roles set role='teammate' where user_id in
+ ('5d000000-0000-4000-8000-000000000004','5d000000-0000-4000-8000-000000000006','5d000000-0000-4000-8000-000000000007');
+insert into public.teammate_order_access(user_id,approved_games,discord_id,discord_verified_at,priority_base) values
+ ('5d000000-0000-4000-8000-000000000004',array['lol'],'9540000000000000004',pg_catalog.clock_timestamp(),0),
+ ('5d000000-0000-4000-8000-000000000006',array['lol'],'9540000000000000006',pg_catalog.clock_timestamp(),0),
+ ('5d000000-0000-4000-8000-000000000007',array['lol'],'9540000000000000007',pg_catalog.clock_timestamp(),0);
 
 do $$
-declare t uuid:='5d000000-0000-4000-8000-000000000004'; adm uuid:='5d000000-0000-4000-8000-000000000005';
+declare adm uuid:='5d000000-0000-4000-8000-000000000005';
  paid jsonb; returned jsonb; unspent jsonb; v jsonb;
 begin
- paid:=pg_temp.wallet_order('5d000000-0000-4000-8000-000000000001',t,adm,'spent');
- returned:=pg_temp.wallet_order('5d000000-0000-4000-8000-000000000002',t,adm,'returned');
- unspent:=pg_temp.wallet_order('5d000000-0000-4000-8000-000000000003',t,adm,'none');
+ paid:=pg_temp.wallet_order('5d000000-0000-4000-8000-000000000001','5d000000-0000-4000-8000-000000000004',adm,'spent');
+ returned:=pg_temp.wallet_order('5d000000-0000-4000-8000-000000000002','5d000000-0000-4000-8000-000000000006',adm,'returned');
+ unspent:=pg_temp.wallet_order('5d000000-0000-4000-8000-000000000003','5d000000-0000-4000-8000-000000000007',adm,'none');
  perform pg_temp.wallet_assert(public.order_wallet_paid((paid->>'order')::uuid),'paid in full from the wallet');
  perform pg_temp.wallet_assert(not public.order_wallet_paid((returned->>'order')::uuid),'a returned spend no longer pays the order');
  perform pg_temp.wallet_assert(not public.order_wallet_paid((unspent->>'order')::uuid),'a wallet amount without a spend pays nothing');
@@ -79,6 +85,7 @@ begin
  v:=public.complete_order((f#>>'{paid,order}')::uuid,(f#>>'{paid,assignment}')::uuid,array[(f#>>'{paid,proof}')::uuid],pg_catalog.gen_random_uuid());
  perform pg_temp.wallet_assert(v #>> '{completion,payout_usd_cents}' = '165','wallet-paid order completes with its full payout');
  foreach k in array array['returned','unspent'] loop
+  perform pg_temp.wallet_login((f#>>array[k,'teammate'])::uuid);
   v:=public.complete_order((f#>>array[k,'order'])::uuid,(f#>>array[k,'assignment'])::uuid,array[(f#>>array[k,'proof'])::uuid],pg_catalog.gen_random_uuid());
   perform pg_temp.wallet_assert(v ? 'error' and v::text like '%Captured settled payment required.%','refused without a wallet spend: ' || k);
  end loop;
