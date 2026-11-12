@@ -85,6 +85,7 @@ function Card({ t, hidden = false }) {
 
 export default function TeammateCarousel({ crew, game, onlineText }) {
   const online = Number(game.online || 0);
+  const row = React.useRef(null);
   const perLoop = crew.length
     ? Math.max(1, Math.ceil(LOOP_CARDS / crew.length))
     : 0;
@@ -116,7 +117,25 @@ export default function TeammateCarousel({ crew, game, onlineText }) {
         off.
       </p>
       {crew.length ? (
-        <div className="tc-row">
+        <div
+          className="tc-row"
+          ref={row}
+          /*
+           * A card narrower screens cannot fit on at once is scrolled into view by the browser
+           * when it takes focus, which is what makes tabbing through the strip usable. The strip
+           * hides its overflow rather than scrolling, so that scroll would then stay: the loop
+           * would sit shifted and its end could drift into view. It goes back as focus leaves.
+           */
+          onBlur={
+            directory
+              ? (event) => {
+                  const strip = row.current;
+                  if (strip && !strip.contains(event.relatedTarget))
+                    strip.scrollLeft = 0;
+                }
+              : undefined
+          }
+        >
           <div className="tc-track" style={{ animationDuration: duration }}>
             <div className="tc-set" role="list" aria-label="Our teammates">
               {crew.map((t, i) => (

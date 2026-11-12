@@ -74,6 +74,44 @@ async function openCarousel(page: Page, teammates = crew) {
   await expect(page.locator('.tc-row')).toBeVisible();
 }
 
+/*
+ * The same carousel with React actually running on it, for the one behaviour that only the
+ * browser can show. carousel-mount.jsx explains the arrangement; the preamble is what
+ * @vitejs/plugin-react expects a page serving one of its modules to have installed.
+ */
+async function openMounted(page: Page, teammates = crew) {
+  const cards = teammates.map((t) => ({
+    ...t,
+    plays: t.games.includes('lol'),
+    icons: t.games.map((id) => ({
+      id,
+      name: id.toUpperCase(),
+      img: `/assets/games/${id}.png`,
+    })),
+    stars: t.rating ? '★ ' + t.rating.toFixed(1) : '',
+    sessionsText: `${t.sessions} sessions`,
+  }));
+  await page.route('**/tc-mounted', (route) =>
+    route.fulfill({
+      contentType: 'text/html',
+      body:
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
+        '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+        `<style>${css}</style>` +
+        '<script type="module">import R from "/@react-refresh";R.injectIntoGlobalHook(window);' +
+        'window.$RefreshReg$=()=>{};window.$RefreshSig$=()=>(t)=>t;' +
+        'window.__vite_plugin_react_preamble_installed__=true;</script>' +
+        '</head><body><div id="tc-root"></div>' +
+        `<script type="application/json" id="tc-crew">${JSON.stringify(cards)}</script>` +
+        '<script type="module" src="/tests/profiles/carousel-mount.jsx"></script>' +
+        '</body></html>',
+    }),
+  );
+  await page.goto('/tc-mounted');
+  await page.waitForFunction(() => 'tcMounted' in window);
+  await expect(page.locator('a.tc-link').first()).toBeAttached();
+}
+
 const strip = (page: Page) =>
   page.locator('.tc-set[role="list"] a.tc-link').first();
 
@@ -172,6 +210,56 @@ test('a focused card shows a ring and holds the strip still', async ({
   const box = await card.boundingBox();
   expect(box!.y).toBeGreaterThanOrEqual(row!.y + 5);
   expect(box!.y + box!.height).toBeLessThanOrEqual(row!.y + row!.height);
+});
+
+test('the strip is not left shifted after tabbing through it', async ({
+  page,
+}) => {
+  /*
+   * A card too far right for the screen is scrolled into view when it takes focus, which is what
+   * makes tabbing through the strip usable. The strip hides its overflow rather than scrolling,
+   * so a scroll left behind would keep the loop shifted and let its end drift into view.
+   */
+  // Eight teammates, each with a profile: the last card then starts beyond the right edge of
+  // both screen sizes, so the browser has to scroll the strip to show it.
+  await openMounted(
+    page,
+    Array.from({ length: 8 }, (_, i) => ({
+      ...crew[0],
+      name: 'Mate' + i,
+      slug: 'mate-' + i,
+    })),
+  );
+  const scrolled = () =>
+    page.locator('.tc-row').evaluate((node) => node.scrollLeft);
+  const cards = page.locator('.tc-set[role="list"] a.tc-link');
+  expect(await scrolled()).toBe(0);
+  // Focus the first card, which holds the strip still, and then the last one, which is past the
+  // right edge of every screen size at that point and so has to be scrolled to.
+  await hold(page, cards.first());
+  await cards.last().focus();
+  expect(await scrolled()).toBeGreaterThan(0);
+  // Focus leaving the strip puts it back.
+  await page.locator('.tc-title a').focus();
+  await expect.poll(scrolled).toBe(0);
+});
+
+test('a linked card still lifts under the pointer', async ({ page }) => {
+  // The lift and the pause are the card's own behaviour (globals.css .tc-card:hover,
+  // .tc-row:hover). Wrapping the card in a link must not take either away.
+  await openCarousel(page);
+  const card = strip(page);
+  await hold(page, card);
+  const at = () =>
+    card.locator('.tc-card').evaluate((node) => getComputedStyle(node).transform);
+  const resting = await at();
+  const box = (await card.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await expect.poll(at).not.toBe(resting);
+  await expect(card.locator('.tc-who strong')).toHaveCSS(
+    'color',
+    'rgb(214, 187, 255)',
+  );
 });
 
 test('the links cost no request of their own', async ({ page }) => {
