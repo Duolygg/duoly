@@ -16,7 +16,7 @@ alter table public.teammate_public_profiles add column header_image text
   );
 
 -- Copied from the current 20261112120000 definition; only header is added.
--- Keep the avatar expression unchanged; avatar/header branches must rebase if merged second.
+-- Avatar expression as shipped in 20261112163000_public_profile_photos.sql (own uploaded photos pass).
 create or replace function public.public_teammate_profile(p_slug text) returns jsonb
 language plpgsql stable security definer set search_path = '' as $$
 declare p public.teammate_public_profiles; pr public.profiles; n bigint; rc bigint; ra numeric; wins bigint; games bigint;
@@ -48,7 +48,11 @@ begin
     'slug',p.slug,
     -- Same first-name display rule as home_teammates, never a full real name or email.
     'name',case when pr.name ~ '[@/:]' then p.slug else pg_catalog.left(pg_catalog.split_part(pg_catalog.btrim(pr.name),' ',1),16) end,
-    'avatar',case when pr.image ~ '^/assets/avatars/avatar-([1-9]|10)\.png$' then pr.image else '/assets/avatars/avatar-1.png' end,
+    'avatar',case
+      when pr.image ~ '^/assets/avatars/avatar-([1-9]|10)\.png$' then pr.image
+      when pr.image ~ ('^https://[a-z0-9]+\.supabase\.co/storage/v1/object/public/avatars/'
+                       || pr.id::text || '/[0-9a-f]{16}\.(webp|jpg)$') then pr.image
+      else '/assets/avatars/avatar-1.png' end,
     'header',p.header_image,
     'country',case when p.show_country then pr.country else null end,'languages',pr.languages,
     'bio',case when public.teammate_public_bio_valid(pr.bio) then pr.bio else '' end,
