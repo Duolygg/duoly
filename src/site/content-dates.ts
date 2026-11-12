@@ -221,6 +221,10 @@ for (const path of [
   '/compare/e-pal',
 ])
   CONTENT_UPDATED[path] = '2026-11-11';
+// 12 November 2026: /about stopped showing the operator's name, address and
+// trade register number (they stay on the imprint) and gained a "Duoly at a
+// glance" table in their place.
+CONTENT_UPDATED['/about'] = '2026-11-12';
 
 /** What git knows about the last two changes to one page's copy. */
 export type ContentHistory = {
