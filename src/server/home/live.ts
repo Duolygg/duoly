@@ -8,6 +8,8 @@ import type {
   RecentMatch,
 } from '../../contracts/home';
 import { UPLOADED_AVATAR } from '../../contracts/account';
+import { slugValid } from '../../contracts/teammate-profile';
+import { publicProfilesEnabled } from '../teammates/public-profiles';
 
 /**
  * Homepage live elements (ledger #36): the "teammates online" figure and the
@@ -104,9 +106,17 @@ export function mapRecentMatches(raw: unknown): RecentMatch[] {
   return out;
 }
 
-/** Maps public.home_teammates() into carousel cards. Malformed entries are dropped, never repaired. */
+/**
+ * Maps public.home_teammates() into carousel cards. Malformed entries are dropped, never repaired.
+ *
+ * The profile slug is the one field a visitor can act on, so it is held to the same rule as every
+ * other slug on the site (slugValid, src/contracts/teammate-profile.ts) and dropped outright while
+ * PUBLIC_PROFILES_ENABLED is off, where /teammates/<slug> answers 404. A card with no slug is a
+ * card the carousel renders exactly as it did before.
+ */
 export function mapHeroTeammates(raw: unknown): HeroTeammate[] {
   if (!Array.isArray(raw)) return [];
+  const profiles = publicProfilesEnabled();
   const count = (value: unknown) =>
     typeof value === 'number' && Number.isInteger(value) && value >= 0
       ? value
@@ -126,6 +136,10 @@ export function mapHeroTeammates(raw: unknown): HeroTeammate[] {
         ? t.image
         : '/assets/avatars/avatar-1.png';
     const rating = Number(t.rating);
+    const slug =
+      profiles && typeof t.slug === 'string' && slugValid(t.slug)
+        ? t.slug
+        : null;
     out.push({
       name,
       image,
@@ -142,6 +156,7 @@ export function mapHeroTeammates(raw: unknown): HeroTeammate[] {
           : null,
       reviews,
       sessions,
+      ...(slug ? { slug } : {}),
     });
   }
   return out;
