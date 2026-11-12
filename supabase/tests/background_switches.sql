@@ -216,7 +216,7 @@ select pg_temp.assert_true((select pg_catalog.bool_and(
 select pg_temp.assert_true((select pg_catalog.bool_and(
     (headers->>'x-duoly-timestamp') ~ '^[0-9]{13}$'
     and pg_catalog.abs((headers->>'x-duoly-timestamp')::bigint
-      - pg_catalog.floor(pg_catalog.extract(epoch from pg_catalog.clock_timestamp()) * 1000)::bigint) < 60000)
+      - pg_catalog.floor(extract(epoch from pg_catalog.clock_timestamp()) * 1000)::bigint) < 60000)
   from net.http_request_queue), 'timestamp is epoch milliseconds inside the replay window');
 
 -- Shape and timings: epoch is queued_at in milliseconds, at is the exact owner-approved deadline.
@@ -227,7 +227,7 @@ select pg_temp.assert_true((select pg_catalog.bool_and(
   '100 s post and 5 min expiry');
 select pg_temp.assert_true((select pg_catalog.bool_and(
     b->>'ref' = o.id::text
-    and (b->>'epoch')::bigint = pg_catalog.floor(pg_catalog.extract(epoch from o.queued_at) * 1000)::bigint)
+    and (b->>'epoch')::bigint = pg_catalog.floor(extract(epoch from o.queued_at) * 1000)::bigint)
   from (select pg_catalog.convert_from(body,'UTF8')::jsonb as b from net.http_request_queue) q,
     public.orders o), 'ref is the order id, epoch is queued_at in milliseconds');
 -- A uuid is a legal ref for src/contracts/background.ts, so the key keeps exactly two colons.

@@ -104,7 +104,7 @@ begin
   -- Key order in the text below is jsonb's, not this one; the signature covers the text.
   v_body := pg_catalog.jsonb_build_object('kind', p_kind, 'ref', p_ref, 'epoch', p_epoch, 'at', p_at);
   v_text := v_body::text;
-  v_ts := pg_catalog.floor(pg_catalog.extract(epoch from pg_catalog.clock_timestamp()) * 1000)::bigint;
+  v_ts := pg_catalog.floor(extract(epoch from pg_catalog.clock_timestamp()) * 1000)::bigint;
   v_sig := 'v1=' || pg_catalog.encode(
     extensions.hmac(v_ts::text || '.' || v_text, v_secret, 'sha256'), 'hex');
   -- Fixed destination, bounded body, no caller-chosen URL and no reusable credential in the queue.
@@ -133,7 +133,7 @@ language plpgsql security definer set search_path = '' as $$
 declare v_epoch bigint;
 begin
   begin
-    v_epoch := pg_catalog.floor(pg_catalog.extract(epoch from new.queued_at) * 1000)::bigint;
+    v_epoch := pg_catalog.floor(extract(epoch from new.queued_at) * 1000)::bigint;
     -- Each timer is gated by the switch of the dispatcher that owns the same work today, so no
     -- work ever has two owners: the public post is the orders tick, expiry is the payments tick.
     if public.background_mode('orders') <> 'legacy' then
