@@ -4,7 +4,6 @@ import PageIntro from '../../components/site/PageIntro.astro';
 import TeammateCard from '../../components/teammates/TeammateCard.astro';
 import Icon from '../../components/teammates/Icon.astro';
 import '../../components/teammates/profiles.css';
-import { PROFILE_ACCENTS } from '../../contracts/teammate-profile';
 import {
   loadPublicProfile,
   loadTeammateCards,
@@ -12,6 +11,7 @@ import {
   fixturesEnabled,
 } from '../../server/teammates/public-profiles';
 import {
+  accentStyle,
   profileRoute,
   profileMetadata,
   profilePresentation,
@@ -54,6 +54,15 @@ const reviews = p ? profileReviewLayout(p.reviews) : { lead: null, rest: [] };
 const featuredRank = p?.games.find(
   (g) => g.game === p.featuredGame && g.verified,
 )?.rank;
+/** One sentence about how fast an order is picked up, reused by the closing band. */
+const availability = p?.online
+  ? 'Online now, usually accepts within 2 minutes'
+  : null;
+const sections = [
+  { id: 'games', label: 'Games' },
+  { id: 'reviews', label: 'Reviews' },
+  { id: 'more', label: 'More teammates' },
+];
 ---
 
 <SiteLayout {...meta} viewer={viewer} csrf={csrf}>
@@ -65,7 +74,7 @@ const featuredRank = p?.games.find(
   {p && view ? (
     <article
       class="tp-page"
-      style={`--accent:${PROFILE_ACCENTS[p.accent]}`}
+      style={accentStyle(p.accent)}
       data-banner={p.banner}
       data-tier={p.tier}
       data-profile={p.slug}
@@ -83,11 +92,8 @@ const featuredRank = p?.games.find(
         </p>
       )}
       <section class="tp-hero" aria-labelledby="profile-name">
+        <span class="tp-sky" aria-hidden="true"></span>
         <div class="tp-hero-top">
-          <span class:list={['tp-presence', { 'is-online': p.online }]}>
-            <i aria-hidden="true"></i>
-            {p.online ? 'Online now' : 'Offline'}
-          </span>
           <div class="tp-utilities">
             <a
               href={`/login?next=${encodeURIComponent(`/teammates/${p.slug}`)}`}
@@ -112,24 +118,6 @@ const featuredRank = p?.games.find(
           <p data-share-status role="status"></p>
         </div>
         <div class="tp-hero-grid">
-          <p class="tp-plate">
-            <svg viewBox="0 0 40 48" fill="none" aria-hidden="true">
-              <path
-                d="M20 2 37 11 33 33 20 45 7 33 3 11Z"
-                stroke="currentColor"
-              />
-              <path
-                d="m10 17 10 17 10-17M13 12l7 12 7-12"
-                stroke="currentColor"
-                stroke-width="3"
-              />
-            </svg>
-            <strong>{p.tier}</strong>
-            <span>
-              {view.game.name}
-              {featuredRank ? ` ${featuredRank}` : ''}
-            </span>
-          </p>
           <div class="tp-hero-name">
             <h1 id="profile-name">
               {p.name}
@@ -148,21 +136,59 @@ const featuredRank = p?.games.find(
               )}
             </h1>
           </div>
-          <div class="tp-figure">
-            <span class="tp-halo" aria-hidden="true"></span>
-            <img
-              src={p.avatar}
-              width="420"
-              height="420"
-              alt={`${p.name}'s robot avatar`}
-              fetchpriority="high"
-            />
+          <div class="tp-aside">
+            <span class="tp-ghostname" aria-hidden="true">
+              {p.name}
+            </span>
+            <div class="tp-figure">
+              <span class="tp-ring" aria-hidden="true"></span>
+              <img
+                src={p.avatar}
+                width="160"
+                height="160"
+                alt={`${p.name}'s robot avatar`}
+                fetchpriority="high"
+              />
+              {p.online && <span class="tp-ring-dot" aria-hidden="true"></span>}
+            </div>
+            <div class="tp-identity">
+              <p class="tp-plate">
+                <svg viewBox="0 0 40 48" fill="none" aria-hidden="true">
+                  <path
+                    d="M20 2 37 11 33 33 20 45 7 33 3 11Z"
+                    stroke="currentColor"
+                  />
+                  <path
+                    d="m10 17 10 17 10-17M13 12l7 12 7-12"
+                    stroke="currentColor"
+                    stroke-width="3"
+                  />
+                </svg>
+                <strong>{p.tier}</strong>
+              </p>
+              <dl class="tp-idlist">
+                <div>
+                  <dt>{view.game.name}</dt>
+                  <dd>{featuredRank ?? 'Teammate'}</dd>
+                </div>
+                <div>
+                  <dt>Member since</dt>
+                  <dd>{profileMonth(p.memberSince)}</dd>
+                </div>
+                <div>
+                  <dt>Speaks</dt>
+                  <dd>{p.languages.join(', ')}</dd>
+                </div>
+                {p.country && (
+                  <div>
+                    <dt>Based in</dt>
+                    <dd>{p.country}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
           </div>
           <div class="tp-hero-body">
-            <p class="tp-meta">
-              {p.country && <span>{p.country}</span>}
-              <span>{p.languages.join(', ')}</span>
-            </p>
             <p class="tp-bio">{p.bio}</p>
             <ul class="tp-vibes" aria-label="Play style">
               {p.vibeTags.map((tag) => (
@@ -170,34 +196,45 @@ const featuredRank = p?.games.find(
               ))}
             </ul>
             <div class="tp-cta" data-hero-booking>
-              <a class="tp-button tp-primary" href={view.book}>
-                {view.primary}
-                <Icon name="arrow" />
-              </a>
-              <div class="tp-offer">
-                <p class="tp-price" data-profile-price>
-                  from <strong>{view.offer.display}</strong> per{' '}
-                  {view.offer.unit}
-                </p>
-                {p.online && (
-                  <p class="tp-availability">
-                    Online now, usually accepts within 2 minutes
+              <div class="tp-buy">
+                <a class="tp-button tp-primary" href={view.book}>
+                  {view.primary}
+                  <Icon name="arrow" />
+                </a>
+                <div class="tp-offer">
+                  <p class="tp-price" data-profile-price>
+                    from <strong>{view.offer.display}</strong> per{' '}
+                    {view.offer.unit}
                   </p>
-                )}
+                  {availability && (
+                    <p class="tp-availability">
+                      <i aria-hidden="true"></i>
+                      {availability}
+                    </p>
+                  )}
+                </div>
               </div>
               {p.coaching && (
-                <a
-                  class="tp-button tp-ghost"
-                  href={view.booking(p.featuredGame, true)}
-                >
-                  Coaching with {p.name}
-                </a>
+                <div class="tp-buy tp-buy-quiet">
+                  <a
+                    class="tp-button tp-ghost"
+                    href={view.booking(p.featuredGame, true)}
+                  >
+                    Coaching with {p.name}
+                  </a>
+                  {view.coachOffer && (
+                    <p class="tp-price tp-price-quiet">
+                      from <strong>{view.coachOffer.display}</strong> per{' '}
+                      {view.coachOffer.unit}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
             <p class="tp-note">
               {p.online
-                ? `${p.name} sees your order first. If ${p.name} is busy, another verified teammate takes it.`
-                : `${p.name} is offline. Book another verified teammate or save this profile for later.`}
+                ? `You get ${p.name} first. If ${p.name} is already in a match, the next verified teammate takes your order, so you never wait.`
+                : `${p.name} is offline right now. Book a verified ${view.game.name} teammate today, or save this profile and come back when ${p.name} is online.`}
             </p>
           </div>
         </div>
@@ -206,7 +243,7 @@ const featuredRank = p?.games.find(
             <a class="tp-stat" href="#reviews">
               <strong>
                 {view.rating.average.toFixed(1)}
-                <span class="tp-star" aria-hidden="true">
+                <span class="tp-unit" aria-hidden="true">
                   ★
                 </span>
               </strong>
@@ -241,19 +278,22 @@ const featuredRank = p?.games.find(
           )}
         </div>
       </section>
-      <nav class="tp-tabs" aria-label="Profile sections">
-        <a href="#games" class="is-current">
-          Games
-        </a>
-        <a href="#reviews">Reviews</a>
-        <a href="#more">More teammates</a>
-        <span>Member since {profileMonth(p.memberSince)}</span>
+      <nav class="tp-tabs" aria-label="Profile sections" data-tabs>
+        {sections.map((section, i) => (
+          <a
+            href={`#${section.id}`}
+            class:list={{ 'is-current': i === 0 }}
+            aria-current={i === 0 ? 'true' : undefined}
+          >
+            {section.label}
+          </a>
+        ))}
       </nav>
       <section id="games" class="tp-section" aria-labelledby="games-title">
         <div class="tp-section-head">
           <div>
             <h2 id="games-title">Games</h2>
-            <p>Ranks an admin checked, with the roles {p.name} plays.</p>
+            <p>Ranks verified by Duoly, with the roles {p.name} plays.</p>
           </div>
         </div>
         <div class="tp-games">
@@ -270,22 +310,27 @@ const featuredRank = p?.games.find(
                     loading="lazy"
                   />
                   <h3>{game.name}</h3>
-                  {g.game === p.featuredGame && <span>Featured</span>}
                 </div>
                 <div class="tp-rank">
-                  <svg viewBox="0 0 64 72" aria-hidden="true">
+                  <svg
+                    class="tp-rank-glyph"
+                    viewBox="0 0 64 72"
+                    aria-hidden="true"
+                  >
                     <path
+                      class="tp-rank-shape"
                       d={
                         g.game === 'lol'
-                          ? 'M32 3 58 20 51 52 32 68 13 52 6 20Z'
-                          : 'M32 3 60 21 48 57 32 69 16 57 4 21Z'
+                          ? 'M32 2 59 14l-5 33L32 70 10 47 5 14Z'
+                          : 'M32 2 60 19v30L32 70 4 49V19Z'
                       }
                     />
                     <path
+                      class="tp-rank-mark"
                       d={
                         g.game === 'lol'
-                          ? 'M20 24h24l-4 22-8 8-8-8ZM32 13v41'
-                          : 'm15 24 17 28 17-28M22 17l10 18 10-18'
+                          ? 'm17 45 15-23 15 23'
+                          : 'm17 25 15 24 15-24'
                       }
                     />
                   </svg>
@@ -363,22 +408,24 @@ const featuredRank = p?.games.find(
         {reviews.lead || reviews.rest.length > 0 ? (
           <div class="tp-review-wrap">
             {reviews.lead && (
-              <figure class="tp-review tp-review-lead">
-                <div
-                  class="tp-stars"
-                  aria-label={`${reviews.lead.rating} out of 5 stars`}
-                >
-                  {'★'.repeat(reviews.lead.rating)}
-                </div>
-                <blockquote>{reviews.lead.text}</blockquote>
-                <figcaption>
-                  Verified customer, {profileGame(reviews.lead.game).name},{' '}
-                  {profileMonth(reviews.lead.month)}
-                </figcaption>
-              </figure>
+              <div class="tp-review-row">
+                <figure class="tp-review tp-review-lead">
+                  <div
+                    class="tp-stars"
+                    aria-label={`${reviews.lead.rating} out of 5 stars`}
+                  >
+                    {'★'.repeat(reviews.lead.rating)}
+                  </div>
+                  <blockquote>{reviews.lead.text}</blockquote>
+                  <figcaption>
+                    Verified customer, {profileGame(reviews.lead.game).name},{' '}
+                    {profileMonth(reviews.lead.month)}
+                  </figcaption>
+                </figure>
+              </div>
             )}
             {reviews.rest.length > 0 && (
-              <div class="tp-review-grid">
+              <div class="tp-review-row tp-review-grid">
                 {reviews.rest.map((review) => (
                   <figure class="tp-review">
                     <div
@@ -421,7 +468,18 @@ const featuredRank = p?.games.find(
         </div>
       </section>
       <section class="tp-closing" aria-label={`Book ${p.name}`} data-closing>
-        <p class="tp-closing-title">Ready when you are.</p>
+        <div class="tp-figure tp-figure-small">
+          <span class="tp-ring" aria-hidden="true"></span>
+          <img src={p.avatar} width="160" height="160" alt="" loading="lazy" />
+          {p.online && <span class="tp-ring-dot" aria-hidden="true"></span>}
+        </div>
+        <div class="tp-closing-copy">
+          <p class="tp-closing-title">Ready when you are.</p>
+          <p class:list={['tp-availability', { 'is-off': !p.online }]}>
+            <i aria-hidden="true"></i>
+            {availability ?? `${p.name} is offline right now`}
+          </p>
+        </div>
         <a class="tp-button tp-primary" href={view.book}>
           {view.primary}
           <Icon name="arrow" />
@@ -507,5 +565,52 @@ const featuredRank = p?.games.find(
       { rootMargin: '0px 0px -72px 0px' },
     );
     for (const anchor of anchors) observer.observe(anchor);
+  }
+
+  /* The section nav sticks under the site header, so it has to know how tall that header
+     is. Without JavaScript the CSS fallback keeps it readable, it simply sticks a few
+     pixels off. The same measurement drives the scroll margin of every section. */
+  const page = document.querySelector<HTMLElement>('article.tp-page');
+  const tabs = document.querySelector<HTMLElement>('[data-tabs]');
+  if (page && tabs) {
+    const header = document.querySelector<HTMLElement>('.site-header');
+    const measure = () =>
+      page.style.setProperty(
+        '--tp-header',
+        `${Math.round(header?.getBoundingClientRect().height ?? 58)}px`,
+      );
+    measure();
+    addEventListener('resize', measure);
+
+    /* Scroll spy: the current tab is the last section that has reached the nav. Clicking a
+       tab already works on its own, this only keeps the marker honest while scrolling. */
+    const links = [...tabs.querySelectorAll<HTMLAnchorElement>('a')];
+    const targets = links.map((link) =>
+      document.querySelector<HTMLElement>(link.hash),
+    );
+    let queued = false;
+    const spy = () => {
+      queued = false;
+      const line = tabs.getBoundingClientRect().bottom + 8;
+      let index = 0;
+      targets.forEach((target, i) => {
+        if (target && target.getBoundingClientRect().top <= line) index = i;
+      });
+      links.forEach((link, i) => {
+        link.classList.toggle('is-current', i === index);
+        if (i === index) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    addEventListener(
+      'scroll',
+      () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(spy);
+      },
+      { passive: true },
+    );
+    spy();
   }
 </script>

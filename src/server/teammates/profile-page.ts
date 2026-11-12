@@ -1,8 +1,11 @@
 import {
   MIN_GAMES_FOR_WINRATE,
   MIN_REVIEWS_FOR_RATING,
+  PROFILE_ACCENTS,
+  PROFILE_ACCENT_GLOW,
   PROFILE_REVIEWS_MAX,
   profileIndexable,
+  type ProfileAccent,
   type PublicProfileReview,
   type PublicTeammateProfile,
 } from '../../contracts/teammate-profile';
@@ -11,6 +14,9 @@ import { bookingHref, organizationSchema } from '../../site/seo';
 import { seoOffers } from '../seo/offers';
 import type { ProfileLookup } from './public-profiles';
 export const profileGame = (id: string) => SITE_GAMES.find((g) => g.id === id)!;
+/** Accent and the light strength that goes with it, as inline custom properties. */
+export const accentStyle = (accent: ProfileAccent) =>
+  `--accent:${PROFILE_ACCENTS[accent]};--glow:${PROFILE_ACCENT_GLOW[accent]}`;
 export const profileMonth = (month: string) =>
   new Intl.DateTimeFormat('en', {
     month: 'long',
@@ -19,10 +25,14 @@ export const profileMonth = (month: string) =>
   }).format(new Date(`${month}-01T00:00:00Z`));
 export function profilePresentation(p: PublicTeammateProfile) {
   const game = profileGame(p.featuredGame);
-  const offer = seoOffers(game.id, 'teammate', {
-    customerCurrency: 'EUR',
-    eurToUsd: 1,
-  }).sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+  const context = { customerCurrency: 'EUR' as const, eurToUsd: 1 };
+  const cheapest = (category: 'teammate' | 'training') =>
+    seoOffers(game.id, category, context).sort(
+      (a, b) => a.amountMinor - b.amountMinor,
+    )[0] ?? null;
+  const offer = cheapest('teammate')!;
+  /** The coaching entry price, only when the catalog actually sells coaching here. */
+  const coachOffer = p.coaching ? cheapest('training') : null;
   const booking = (id: string, coaching = false) => {
     const base = bookingHref(id, coaching ? { tab: 'training' } : {});
     const url = new URL(base, 'https://duoly.gg');
@@ -32,6 +42,7 @@ export function profilePresentation(p: PublicTeammateProfile) {
   return {
     game,
     offer,
+    coachOffer,
     booking,
     book: booking(game.id),
     primary: p.online ? `Book with ${p.name}` : `Book a ${game.name} teammate`,

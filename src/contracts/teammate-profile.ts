@@ -8,18 +8,40 @@
  */
 import { z } from 'zod';
 
-/** Curated accent colours a teammate can pick. Keys are stored; hex values live here only. */
+/**
+ * Curated accent colours a teammate can pick. Keys are stored; hex values live here only.
+ * Every value keeps at least 4.5:1 against the dark ink the pages print on an accent
+ * (buttons, the verified tick), and neighbouring choices stay far enough apart to be
+ * told apart in a picker: violet is the saturated purple, lavender the pale one, ice is
+ * periwinkle rather than a second pale blue next to cyan.
+ */
 export const PROFILE_ACCENTS = {
-  violet: '#B794FF',
-  lavender: '#D6BBFF',
+  violet: '#A77BFF',
+  lavender: '#D9C4FF',
   cyan: '#7FE3FF',
   mint: '#7CF2C2',
   pink: '#FF9ED8',
-  coral: '#FF9F8A',
+  coral: '#FF9178',
   gold: '#FFD27A',
-  ice: '#CFE6FF',
+  ice: '#A9C4FF',
 } as const;
 export type ProfileAccent = keyof typeof PROFILE_ACCENTS;
+/**
+ * Glow strength per accent, as the percentage of accent mixed into the light around a
+ * mascot. A dark saturated accent needs more of itself than a near white one to read as
+ * the same amount of light, so the number tracks 1/sqrt(relative luminance) and the eight
+ * profiles end up equally lit instead of violet looking flat next to mint.
+ */
+export const PROFILE_ACCENT_GLOW: Record<ProfileAccent, number> = {
+  violet: 53,
+  lavender: 37,
+  cyan: 35,
+  mint: 34,
+  pink: 40,
+  coral: 44,
+  gold: 35,
+  ice: 39,
+};
 export const PROFILE_ACCENT_KEYS = Object.keys(
   PROFILE_ACCENTS,
 ) as ProfileAccent[];
