@@ -24,7 +24,7 @@ Sources: `~/.hermes/cache/scratch/supa-io/implementation-plan.md` (plan), `event
 | `POST /api/internal/reconcile`                           | app                                                            | Runs the existing tick handlers. Called by the fixer, never by a timer.                                                                              |
 | `public.background_switches`                             | database                                                       | One row per kind: `legacy`, `shadow` or `live`. The only thing that decides who does the work.                                                       |
 | orders trigger                                           | database                                                       | After a commit that queues an order, registers its two timers through `net.http_post`.                                                               |
-| `public.background_overdue()`                            | database                                                       | Read-only `exists()` per kind, reusing `duoly_dispatch_has_work`.                                                                                    |
+| `public.background_overdue()`                            | database                                                       | Read-only `exists()` per kind, reusing `duoly_dispatch_has_work`; returns one jsonb boolean per kind.                                                |
 | `public.background_fix()`                                | database                                                       | Posts to `/api/internal/reconcile` only when `background_overdue()` found something.                                                                 |
 | `public.background_finalize()` / `background_rollback()` | database                                                       | Pause the 10 s dispatcher and schedule the fixer, or the reverse. Called by hand.                                                                    |
 | `src/contracts/background.ts`                            | shared                                                         | Schemas, kinds, timings, the HMAC sign and verify helper. Imported by the app, the worker and the tests.                                             |
@@ -54,7 +54,11 @@ Rules that make the switch safe:
 - The migration inserts all four kinds as `shadow`. Flipping a kind is one UPDATE, never a deploy.
 - A missing row, a missing table, an unknown kind or an unreadable switch all mean `legacy`. The app
   endpoints therefore do nothing useful before the migration is applied, which is what we want
-  during the deploy window.
+  during the deploy window. The same fail-safe runs in SQL (`public.background_mode`), so an
+  unreadable switch leaves `duoly_dispatch` doing the work rather than leaving it to nobody.
+- `service_role` may only `select` the table; nothing but the table owner may write it. Flipping a
+  kind is an owner UPDATE in the SQL editor, which is deliberately not a capability any API key has.
+  RLS is on with no policy, so a browser token sees nothing even if a grant ever slips in.
 - Shadow never claims a ledger row, never increments settlement attempts, never marks an analytics
   row, never posts to Discord and never calls Stripe (review F12, plan correction phase 2.5).
 - Each timer kind is gated by the switch of the dispatcher that owns the same work today, so no work
@@ -94,7 +98,8 @@ a timer handler itself misbehaves, because `legacy` also stops the registrations
    free wrappers, play again, reroll, handover), not only through app code, and `pg_net` sends after
    commit, so a rolled back transaction never registers anything.
 2. It registers `order-post` at `queued_at + 100 s` and `order-expire` at `queued_at + 5 min`, both
-   with `epoch = queued_at` in milliseconds.
+   with `epoch = queued_at` in milliseconds. Each of the two is gated by its own switch, so with
+   `orders` in `legacy` and `payments` in `shadow` only the expiry timer is registered.
 3. At fire time the handler re-reads `order_public_queued_at(o)`:
    - order gone, not `queued` any more, or a different `queued_at`: `stale`.
    - a streaming booking (the function returns `infinity`): `stale`. No date ever carries infinity.
@@ -288,9 +293,16 @@ object looks again in 5 minutes, so a half configured deployment cannot burn a t
 A dropped or never registered timer is not lost work. `public.background_overdue()` returns one
 boolean per kind from `duoly_dispatch_has_work`, which is read only and already covers queued orders
 past their deadline, open Discord posts to close, cancelled team seats, stale wallet holds, claimable
-settlements, unsent analytics and drifted roles. `public.background_fix()` calls
-`/api/internal/reconcile` only when something is overdue, and alerts the admin Discord channel when
-it found work, because that means a timer was missed.
+settlements, unsent analytics and drifted roles. A predicate that errors reads as overdue, so a
+broken query makes the fixer call the real handler rather than believe nothing is wrong.
+
+`public.background_fix()` calls `/api/internal/reconcile` only when something is overdue, with
+`{"reason":"overdue","kinds":["payments",...]}` as the body. Finding work means a timer was missed,
+so the call is also the alert: the endpoint raises it in the admin Discord channel with the existing
+helpers, and `background_fix()` leaves the same evidence as a Postgres warning. The database does not
+talk to Discord itself, which keeps the alert path in one place and adds no third Vault secret.
+`background_fix()` never raises: a cron job that throws writes a failed run row and nothing else, so
+it returns `{"overdue":...,"called":false,"error":"<sqlstate>"}` instead.
 
 The fixer ships and runs before any poll is paused (review F20): `duoly-dispatch` is still scheduled
 when the migration lands, and `background_fix()` can be called by hand at any time.
@@ -304,11 +316,17 @@ select public.background_finalize();                  -- hourly fixer
 select public.background_finalize('*/10 * * * *');    -- every 10 minutes (recommended while roles is live)
 ```
 
-`background_finalize(p_schedule text default '0 * * * *')` pauses `duoly-dispatch` with
-`cron.alter_job(active := false)`, never `unschedule`, and schedules `duoly-background-fix` with the
-given schedule. `public.background_rollback()` does the reverse: it pauses the fixer and sets
-`duoly-dispatch` active again. Both are idempotent, service role or admin only, and both leave the
-switches alone, so the order of operations under pressure is always:
+`background_finalize(p_schedule text default '0 * * * *')` schedules `duoly-background-fix` with the
+given schedule and then pauses `duoly-dispatch` with `cron.alter_job(active := false)`, never
+`unschedule`. In that order, so a schedule the owner mistyped fails before anything is paused. It
+refuses outright while any kind is not yet `live`, because pausing the dispatcher then would leave
+that kind with nobody doing the work, and it only accepts a five field cron expression: a sub-minute
+schedule here would put back the writes this whole build exists to remove.
+
+`public.background_rollback()` does the reverse: it pauses the fixer and sets `duoly-dispatch` active
+again. Both are idempotent, both are revoked from `anon`, `authenticated` and `service_role` so they
+are owner-only in the SQL editor, and both leave the switches alone, so the order of operations under
+pressure is always:
 
 1. `update public.background_switches set mode = 'shadow'` for the kinds you distrust.
 2. `select public.background_rollback();` if the dispatcher is currently paused.
@@ -359,6 +377,13 @@ Use 48 random characters, for example `openssl rand -base64 36`.
 The app base URL (`https://duoly.gg`) is a committed worker var, not a secret. Same name means same
 value on both sides. Rotation: set the new value on both sides within 5 minutes, or accept a few
 refused registrations that the fixer covers.
+
+`background_timers_url` is the worker's base URL, lowercase, `https://` only and with no trailing
+slash, for example `https://duoly-discord-gateway.duoly.workers.dev`. The trigger appends `/timers`
+and refuses any other shape, so a typo registers nothing instead of posting a signed body somewhere
+unintended. Every one of these reads is a Vault name lookup that requires exactly one row and, for
+the secrets, at least 32 characters: a half created entry makes the trigger skip in silence, which
+is also what keeps local CI and the SQL suites quiet.
 
 Secret consumer map, so nothing retired breaks a retained job (review F16):
 
@@ -644,3 +669,20 @@ deliberately do something else and say why.
   against an in-memory store and stub namespaces. `wrangler deploy --dry-run` passes (809 KiB,
   131 KiB gzipped). Nothing is deployed and no secret is set. The app endpoints do not exist yet,
   so a fire would answer 404 and the timer would be retried and then dropped.
+- Chunk 3: the database half, in one new migration
+  `supabase/migrations/20261112140000_background_switches_timers.sql`: `background_switches` with all
+  four kinds in `shadow`, `background_mode` (fail-safe to `legacy`), `background_register_timer` (the
+  signed `pg_net` post, Vault names only, silent skip while half configured),
+  `background_order_timers` plus the two triggers on `public.orders`, a `create or replace` of
+  `duoly_dispatch` whose only change is skipping `live` kinds, `background_overdue`,
+  `background_fix`, and `background_finalize` / `background_rollback`. The migration leaves
+  `duoly-dispatch` active and the fixer unscheduled, contains no secret value and edits no existing
+  file. `supabase/tests/background_switches.sql` has 90 assertion statements across migration state, grants,
+  the pgcrypto known-answer vector, body and signature bytes, the trigger conditions, per kind switch
+  gating, a half configured Vault, the dispatcher's live skip, the overdue map, the fixer's call and
+  bearer, and finalize and rollback idempotency; it is in `ci-manifest.txt` behind the canonical
+  production guard. `tests/unit/background-migration.test.ts` adds 10 static guards for the
+  invariants a laptop can check without Docker (appended file, no secret values, no drops, the
+  dispatcher body byte-identical apart from the skip, no `cron` call outside finalize and rollback,
+  timings taken from `src/contracts/background.ts`). Nothing is applied: the owner applies the
+  migration and flips the switches.

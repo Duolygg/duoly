@@ -8,6 +8,7 @@ suite admin_orders.sql
 suite admin_parity.sql
 suite admin_permissions.sql
 suite admin_teammates.sql
+suite background_switches.sql
 # skip build_connect_payouts_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance
 # skip build_gold_priority_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance
 # skip build_loyalty_cashback_rollback.py historical migration-upgrade composer; prepends old definitions, not latest-schema acceptance

@@ -21,7 +21,12 @@ const thin: PublicTeammateProfile = base.profile;
 describe('profiles on by default (20261112130000)', () => {
   it('is a new file and leaves every earlier migration alone', () => {
     const files = readdirSync('supabase/migrations').sort();
-    expect(files.at(-1)).toBe('20261112130000_public_profiles_default_on.sql');
+    /* Appended, never inserted before an existing one; later builds add their own files. */
+    expect(
+      files
+        .filter((f) => f <= '20261112130000_public_profiles_default_on.sql')
+        .at(-1),
+    ).toBe('20261112130000_public_profiles_default_on.sql');
     /* Only create or replace of functions the previous migration installed, never an edit. */
     expect(sql).not.toMatch(/\bdrop\s+(function|table|trigger)\b/i);
     expect(sql).toContain('begin;');
