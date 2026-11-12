@@ -1,0 +1,14 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import TeammatesRow from '../../components/teammates/TeammatesRow.astro';
+import { publicProfilesEnabled } from '../../server/teammates/public-profiles';
+if (import.meta.env.PROD || !publicProfilesEnabled())
+  return Astro.rewrite('/404');
+---
+
+<SiteLayout title="Teammates row preview | Duoly" indexing="noindex, nofollow">
+  <div class="tp-page tp-dev">
+    <TeammatesRow game="val" />
+    <TeammatesRow game="lol" />
+  </div>
+</SiteLayout>

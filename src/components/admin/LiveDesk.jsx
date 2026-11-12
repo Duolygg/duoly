@@ -253,7 +253,8 @@ export default class LiveDesk extends React.Component {
           </span>
         ) : al.notif === 'granted' ? (
           <span style={{ fontSize: '12.5px', color: C.dim }}>
-            New orders ring a bell and pop up on any admin page.
+            New orders ring a bell here on the Live desk and pop up on any admin
+            page.
           </span>
         ) : null}
       </span>

@@ -1,6 +1,21 @@
+do $duoly_test_guard$
+declare production_secret boolean := false;
+begin
+  if not exists (select 1 from pg_catalog.pg_namespace where nspname = 'duoly_test_marker') then
+    raise exception 'refusing to run tests on production';
+  end if;
+  if pg_catalog.to_regclass('vault.secrets') is not null then
+    execute 'select exists (select 1 from vault.secrets where name = ''payments_tick_secret'')' into production_secret;
+  end if;
+  if production_secret then
+    raise exception 'refusing to run tests on production';
+  end if;
+end;
+$duoly_test_guard$;
+
 -- Rollback-only checks for 20261026120000_pro_subscription.sql (Duoly PRO, ledger #39, R1 to R6).
 -- Run as one transaction: begin; migration body without its begin/commit; savepoint s; this file;
--- rollback; (node_modules/.bin/supabase db query --linked -f <combined file>). Never applied live.
+-- Execute only using disposable local CI.
 create function pg_temp.pro_assert(ok boolean, message text) returns void language plpgsql as $$
 begin if ok is not true then raise exception '%', message; end if; end $$;
 

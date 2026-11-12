@@ -12,8 +12,11 @@ import { decodeOrderRpcResult } from '../../server/orders/results';
 import { orderChatEnabled } from '../../server/chat/config';
 import { loadProView } from '../../server/pro/status';
 import { paymentsConfig } from '../../server/payments/config';
+import { publicProfilesEnabled } from '../../server/teammates/public-profiles';
 const chatEnabled = orderChatEnabled();
 const reportsEnabled = process.env.REPORTS_ENABLED === 'true';
+// Public profiles are live, so the review form says where a rating and review can appear.
+const profilesEnabled = publicProfilesEnabled();
 // Play again: Stripe.js only for a 3D Secure check on a saved card (publishable key only)
 const stripeKey = paymentsConfig()?.publishableKey ?? '';
 const command = OrderCommandSchema.safeParse({ order_id: Astro.params.id });
@@ -86,6 +89,7 @@ if (operational) {
       csrf={csrf}
       chatEnabled={chatEnabled}
       reportsEnabled={reportsEnabled}
+      profilesEnabled={profilesEnabled}
       rerollLimit={rerollLimit}
       stripeKey={stripeKey}
       client:load

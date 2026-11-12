@@ -1,6 +1,6 @@
 import { trackRequest } from '../analytics/client';
 import { decodeAvatar, storeAvatar } from './avatar';
-import { afterLoginPath } from './after-login';
+import { afterLogin } from './after-login';
 import type { APIContext, APIRoute } from 'astro';
 import {
   CurrencySchema,
@@ -148,7 +148,9 @@ export const callback: APIRoute = async (context) => {
       method: data?.user?.app_metadata?.provider ?? 'other',
     });
     context.cookies.delete(account.names.csrf, account.cookieOptions);
-    return account.redirect(afterLoginPath(context.cookies));
+    return account.redirect(
+      await afterLogin(context.cookies, identity.viewer.role, account.client),
+    );
   } catch {
     account.clear();
     return account.redirect('/login?error=callback');

@@ -1,4 +1,4 @@
-import { afterLoginPath } from './after-login';
+import { afterLogin } from './after-login';
 import { trackRequest } from '../analytics/client';
 import type { APIRoute } from 'astro';
 import { PasswordCredentialsSchema } from '../../contracts/password';
@@ -107,7 +107,9 @@ export const loginPassword: APIRoute = async (context) => {
     trackRequest(context, identity.viewer.id, 'user_logged_in', {
       method: 'password',
     });
-    return done(afterLoginPath(context.cookies));
+    return done(
+      await afterLogin(context.cookies, identity.viewer.role, account.client),
+    );
   } catch {
     account.clear();
     return done('/login?error=credentials');
@@ -167,7 +169,9 @@ export const registerPassword: APIRoute = async (context) => {
       return done('/login?notice=confirmation');
     }
     context.cookies.delete(account.names.csrf, account.cookieOptions);
-    return done(afterLoginPath(context.cookies));
+    return done(
+      await afterLogin(context.cookies, identity.viewer.role, account.client),
+    );
   } catch {
     account.clear();
     return done('/login?notice=confirmation');

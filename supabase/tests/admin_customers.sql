@@ -1,3 +1,18 @@
+do $duoly_test_guard$
+declare production_secret boolean := false;
+begin
+  if not exists (select 1 from pg_catalog.pg_namespace where nspname = 'duoly_test_marker') then
+    raise exception 'refusing to run tests on production';
+  end if;
+  if pg_catalog.to_regclass('vault.secrets') is not null then
+    execute 'select exists (select 1 from vault.secrets where name = ''payments_tick_secret'')' into production_secret;
+  end if;
+  if production_secret then
+    raise exception 'refusing to run tests on production';
+  end if;
+end;
+$duoly_test_guard$;
+
 -- Rollback-only checks for 20261024127000_admin_customers.sql.
 begin;
 insert into auth.users (id, aud, role, email, raw_user_meta_data, raw_app_meta_data) values
@@ -6,6 +21,8 @@ insert into auth.users (id, aud, role, email, raw_user_meta_data, raw_app_meta_d
   ('ad400000-0000-4000-8000-000000000003','authenticated','authenticated','cu-mate@example.invalid','{}','{}');
 update public.profiles set name = 'Cust Two' where id = 'ad400000-0000-4000-8000-000000000002';
 update public.account_roles set role = 'admin' where user_id = 'ad400000-0000-4000-8000-000000000001';
+-- Current admin section model: this synthetic admin exercises all historical sections.
+insert into public.admin_permissions(user_id, sections) values ('ad400000-0000-4000-8000-000000000001', public.admin_section_ids());
 update public.account_roles set role = 'teammate' where user_id = 'ad400000-0000-4000-8000-000000000003';
 insert into public.orders (id, customer_id, game, service, title, units, unit, region, ign, customer_name, amount_eur_cents, booking_fx, payout_usd_cents, status, cancelled_at, cancel_reason)
   values ('ad4a0000-0000-4000-8000-000000000001','ad400000-0000-4000-8000-000000000002','val','duo','Duo',1,'game','EU','C#EU','Cust Two',999,1.08,700,'cancelled',pg_catalog.clock_timestamp(),'queue_expired');

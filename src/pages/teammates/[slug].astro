@@ -1,0 +1,788 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageIntro from '../../components/site/PageIntro.astro';
+import TeammateCard from '../../components/teammates/TeammateCard.astro';
+import Icon from '../../components/teammates/Icon.astro';
+import '../../components/teammates/profiles.css';
+import {
+  loadPublicProfile,
+  loadTeammateCards,
+  publicProfilesEnabled,
+  fixturesEnabled,
+} from '../../server/teammates/public-profiles';
+import {
+  accentStyle,
+  bookingLine,
+  bookingMode,
+  nameChars,
+  profileRoute,
+  profileMetadata,
+  profilePresentation,
+  profileSchemas,
+  profileGame,
+  profileMonth,
+  profileReviewLayout,
+  pickLabel,
+  rankEmblem,
+} from '../../server/teammates/profile-page';
+import { serializeJsonLd } from '../../site/seo';
+import { pageViewer } from '../../site/viewer';
+const result = publicProfilesEnabled()
+  ? await loadPublicProfile(Astro.params.slug ?? '')
+  : ({ status: 'missing' } as const);
+const route = profileRoute(publicProfilesEnabled(), result);
+if (route.status === 404) return Astro.rewrite('/404');
+if (route.status === 301) return Astro.redirect(route.location!, 301);
+Astro.response.status = route.status;
+const { viewer, csrf } = await pageViewer(Astro);
+Astro.response.headers.set('Cache-Control', 'no-store');
+const p = result.status === 'ok' ? result.profile : null;
+const view = p ? profilePresentation(p) : null;
+const meta = p
+  ? profileMetadata(p)
+  : {
+      title: 'Profile no longer available | Duoly',
+      description:
+        'This teammate profile is no longer public. Find another teammate on Duoly.',
+      indexing: 'noindex, follow' as const,
+    };
+const related = p
+  ? await loadTeammateCards({
+      game: p.featuredGame,
+      excludeSlug: p.slug,
+      limit: 3,
+    })
+  : [];
+const schemas = p ? profileSchemas(p, Astro.site!) : [];
+const fixture = fixturesEnabled();
+const reviews = p ? profileReviewLayout(p.reviews) : { lead: null, rest: [] };
+const featuredRank =
+  p?.games.find((g) => g.game === p.featuredGame && g.verified)?.rank ?? null;
+/** One sentence about taking orders right now, reused by the closing band. */
+const availability = p?.online ? 'Online now, ready to play' : null;
+/*
+ * Booking with a named teammate (plan option 1). Pressing a booking button saves the teammate to
+ * the customer's favorites first, which is the one thing that changes the queue for them: a
+ * favorite sees the order the moment it goes public, with no priority delay
+ * (order_visible_at, 20261106150000_customer_favorites.sql). Checkout itself is untouched; the
+ * buttons still point at the existing booking link, and that link is where the browser lands
+ * whether the save worked or not.
+ *
+ * Nothing puts a sign-in wall in front of booking. A signed-out visitor goes to the same booking
+ * link at the same speed and leaves a pending-favorite cookie behind; checkout asks them to sign
+ * in before paying, and the after-login path spends that cookie for them
+ * (src/server/teammates/pending-favorite.ts). Everything degrades to the plain booking link
+ * without JavaScript.
+ */
+const saveMode = bookingMode(viewer?.role);
+/*
+ * Nothing on this page is rendered with a placeholder. Every teammate on Duoly today is new, so
+ * the sections that have no data yet are simply not there, and the section nav lists what the
+ * page actually contains. An empty reviews heading reads as a broken page; leaving it out does
+ * not.
+ */
+const hasReviews = Boolean(
+  p && (p.reviewTags.length > 0 || reviews.lead || reviews.rest.length > 0),
+);
+const sections = [
+  { id: 'games', label: 'Games' },
+  ...(hasReviews ? [{ id: 'reviews', label: 'Reviews' }] : []),
+  ...(related.length > 0 ? [{ id: 'more', label: 'More teammates' }] : []),
+];
+/** One tab is not a nav, so the first section draws its own rule instead. */
+const showTabs = sections.length > 1;
+/** The booking explainer, one line under the price and the availability it belongs with. */
+const bookingNote = p ? bookingLine(p) : '';
+---
+
+<SiteLayout {...meta} viewer={viewer} csrf={csrf}>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(schemas)}
+  />
+  {p && view ? (
+    <article
+      class="tp-page"
+      style={`${accentStyle(p.accent)};--name-chars:${nameChars(p.name)}`}
+      data-banner={p.banner}
+      data-tier={p.tier}
+      data-profile={p.slug}
+      data-save-mode={saveMode}
+      data-csrf={saveMode === 'customer' ? csrf : undefined}
+    >
+      <nav class="tp-crumbs" aria-label="Breadcrumb">
+        <a href="/">Duoly</a>
+        <span aria-hidden="true">/</span>
+        <a href="/teammates">Teammates</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{p.name}</span>
+      </nav>
+      {fixture && (
+        <p class="tp-fixture">
+          Design preview. These teammates and reviews are fictional.
+        </p>
+      )}
+      <section class="tp-hero" aria-labelledby="profile-name">
+        <span class="tp-sky" aria-hidden="true"></span>
+        <div class="tp-hero-top">
+          <div class="tp-utilities">
+            {saveMode === 'customer' ? (
+              <button
+                class="tp-save"
+                type="button"
+                aria-pressed="false"
+                data-profile-save
+                data-saved-label={`${p.name} is in your favorites`}
+              >
+                <Icon name="heart" />
+                <span data-save-label>Save {p.name}</span>
+              </button>
+            ) : (
+              saveMode === 'signin' && (
+                <a class="tp-save" href="/login" data-profile-signin>
+                  <Icon name="heart" /> Save {p.name}
+                </a>
+              )
+            )}
+            <a href={`#share-${p.slug}`} data-profile-share>
+              <Icon name="share" /> Share
+            </a>
+          </div>
+          <p class="tp-save-status" role="status" data-save-status></p>
+        </div>
+        <div id={`share-${p.slug}`} class="tp-share-link">
+          <label>
+            Profile link
+            <input
+              aria-label="Profile link"
+              readonly
+              value={new URL(`/teammates/${p.slug}`, Astro.site!).href}
+            />
+          </label>
+          <p data-share-status role="status"></p>
+        </div>
+        <div class="tp-hero-grid">
+          <div class="tp-hero-name">
+            <h1 id="profile-name">{p.name}</h1>
+            {/* The game's own icon at text size. A solid coloured crest here read as a
+                warning sign rather than as a game, and the icon is the thing a player
+                recognises without reading. */}
+            <p class="tp-rankline">
+              <img
+                class="tp-rankline-icon"
+                src={view.game.img}
+                width="22"
+                height="22"
+                alt=""
+                fetchpriority="high"
+              />
+              <span>
+                {featuredRank
+                  ? `${view.game.name}, ${featuredRank}`
+                  : view.game.name}
+              </span>
+              {featuredRank && (
+                <span
+                  class="tp-verified"
+                  role="img"
+                  aria-label="Rank verified by Duoly"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                      d="m5 12.5 4.5 4.5L19 7.5"
+                      stroke="currentColor"
+                      stroke-width="3.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              )}
+            </p>
+          </div>
+          <div class="tp-aside">
+            <div class="tp-figure">
+              <span class="tp-ring" aria-hidden="true"></span>
+              <img
+                src={p.avatar}
+                width="160"
+                height="160"
+                alt={`${p.name}'s robot avatar`}
+                fetchpriority="high"
+              />
+              {p.online && <span class="tp-ring-dot" aria-hidden="true"></span>}
+            </div>
+            <div class="tp-identity">
+              {view.showTier && (
+                <p class="tp-plate">
+                  <svg viewBox="0 0 40 48" fill="none" aria-hidden="true">
+                    <path
+                      d="M20 2 37 11 33 33 20 45 7 33 3 11Z"
+                      stroke="currentColor"
+                    />
+                    <path
+                      d="m10 17 10 17 10-17M13 12l7 12 7-12"
+                      stroke="currentColor"
+                      stroke-width="3"
+                    />
+                  </svg>
+                  <strong>{p.tier}</strong>
+                </p>
+              )}
+              <dl class="tp-idlist">
+                <div>
+                  <dt>Member since</dt>
+                  <dd>{profileMonth(p.memberSince)}</dd>
+                </div>
+                {p.languages.length > 0 && (
+                  <div>
+                    <dt>Speaks</dt>
+                    <dd>{p.languages.join(', ')}</dd>
+                  </div>
+                )}
+                {p.country && (
+                  <div>
+                    <dt>Based in</dt>
+                    <dd>{p.country}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          </div>
+          <div class="tp-hero-body">
+            {p.bio && <p class="tp-bio">{p.bio}</p>}
+            {p.vibeTags.length > 0 && (
+              <ul class="tp-vibes" aria-label="Play style">
+                {p.vibeTags.map((tag) => (
+                  <li>{tag}</li>
+                ))}
+              </ul>
+            )}
+            <div class="tp-cta" data-hero-booking>
+              <div class="tp-buy">
+                <a
+                  class="tp-button tp-primary"
+                  href={view.book}
+                  data-profile-book="primary"
+                >
+                  {view.primary}
+                  <Icon name="arrow" />
+                </a>
+                {view.offer && (
+                  <p class="tp-price" data-profile-price>
+                    from <strong>{view.offer.display}</strong> per{' '}
+                    {view.offer.unit}
+                  </p>
+                )}
+              </div>
+              {p.coaching && (
+                <div class="tp-buy tp-buy-quiet">
+                  <a
+                    class="tp-button tp-ghost"
+                    href={view.booking(p.featuredGame, true)}
+                    data-profile-book="game"
+                  >
+                    Coaching with {p.name}
+                  </a>
+                  {view.coachOffer && (
+                    <p class="tp-price tp-price-quiet">
+                      from <strong>{view.coachOffer.display}</strong> per{' '}
+                      {view.coachOffer.unit}
+                    </p>
+                  )}
+                </div>
+              )}
+              {availability && (
+                <p class="tp-availability">
+                  <i aria-hidden="true"></i>
+                  {availability}
+                </p>
+              )}
+              <p class="tp-note">{bookingNote}</p>
+            </div>
+          </div>
+        </div>
+        {view.showStats ? (
+          <div class="tp-scoreboard" aria-label={`${p.name}'s track record`}>
+            {view.rating && (
+              <a class="tp-stat" href="#reviews">
+                <strong>
+                  {view.rating.average.toFixed(1)}
+                  <span class="tp-unit" aria-hidden="true">
+                    ★
+                  </span>
+                </strong>
+                <span class="tp-stat-name">Customer rating</span>
+                <span class="tp-stat-sub">
+                  from {view.rating.count} reviews
+                </span>
+              </a>
+            )}
+            {view.showSessions && (
+              <div class="tp-stat">
+                <strong>{p.sessions.toLocaleString('en-US')}</strong>
+                <span class="tp-stat-name">Sessions completed</span>
+                <span class="tp-stat-sub">on Duoly</span>
+              </div>
+            )}
+            {view.winRate && (
+              <div class="tp-stat">
+                <strong>
+                  {view.winRate.percent}
+                  <span class="tp-unit">%</span>
+                </strong>
+                <span class="tp-stat-name">Win rate</span>
+                <span class="tp-stat-sub">
+                  from {view.winRate.games} reported matches
+                </span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div class="tp-fresh" data-profile-new>
+            <p class="tp-kicker">New on Duoly</p>
+            <p>Ratings and sessions show here after {p.name}'s first games.</p>
+          </div>
+        )}
+      </section>
+      {showTabs && (
+        <nav class="tp-tabs" aria-label="Profile sections" data-tabs>
+          {sections.map((section, i) => (
+            <a
+              href={`#${section.id}`}
+              class:list={{ 'is-current': i === 0 }}
+              aria-current={i === 0 ? 'true' : undefined}
+            >
+              {section.label}
+            </a>
+          ))}
+        </nav>
+      )}
+      <section id="games" class="tp-section" aria-labelledby="games-title">
+        <div class="tp-section-head">
+          <div>
+            <h2 id="games-title">Games</h2>
+            <p>
+              {p.games.some((g) => g.verified && g.rank)
+                ? `Ranks verified by Duoly, with the roles ${p.name} plays.`
+                : `What ${p.name} is approved to play on Duoly, and how they play it.`}
+            </p>
+          </div>
+        </div>
+        <div class="tp-games">
+          {p.games.map((g) => {
+            const game = profileGame(g.game);
+            return (
+              <article class="tp-game" data-game={g.game}>
+                <div class="tp-game-header">
+                  <img
+                    src={game.img}
+                    width="30"
+                    height="30"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <h3>{game.name}</h3>
+                </div>
+                <div class="tp-rank">
+                  <svg
+                    class="tp-rank-glyph"
+                    viewBox="0 0 64 72"
+                    aria-hidden="true"
+                  >
+                    <path class="tp-rank-shape" d={rankEmblem(g.game).shape} />
+                    <path class="tp-rank-mark" d={rankEmblem(g.game).mark} />
+                  </svg>
+                  <div>
+                    <p class="tp-rank-label">
+                      {g.verified && g.rank ? 'Rank verified' : 'Teammate'}
+                    </p>
+                    <h4>
+                      {g.verified
+                        ? (g.rank ?? 'Ready to play')
+                        : 'Ready to play'}
+                    </h4>
+                  </div>
+                </div>
+                <dl>
+                  {g.verified && g.peakRank && (
+                    <div>
+                      <dt>Peak</dt>
+                      <dd>{g.peakRank}</dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt>Roles</dt>
+                    <dd>{g.roles.join(', ') || 'Flexible'}</dd>
+                  </div>
+                  {g.picks.length > 0 && (
+                    <div>
+                      <dt>{pickLabel(g.game)}</dt>
+                      <dd>{g.picks.join(', ')}</dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt>Plays</dt>
+                    <dd>
+                      Duo
+                      {p.coaching && g.game === p.featuredGame
+                        ? ', coaching'
+                        : ''}
+                    </dd>
+                  </div>
+                </dl>
+                <a
+                  class="tp-game-book"
+                  href={view.booking(g.game)}
+                  data-profile-book="game"
+                >
+                  Book {game.name} with {p.name}
+                  <Icon name="arrow" />
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+      {hasReviews && (
+        <section
+          id="reviews"
+          class="tp-section tp-reviews"
+          aria-labelledby="reviews-title"
+        >
+          <div class="tp-section-head">
+            <div>
+              <h2 id="reviews-title">Reviews</h2>
+              <p>What customers said after playing with {p.name}.</p>
+            </div>
+          </div>
+          {p.reviewTags.length > 0 && (
+            <div class="tp-tags">
+              {p.reviewTags.map((tag) => (
+                <div
+                  class="tp-tag"
+                  style={`--bar:${Math.min(100, Math.round((tag.count / (p.reviewTags[0]?.count || tag.count)) * 100))}%`}
+                >
+                  <span>{tag.tag}</span>
+                  <strong>{tag.count} mentions</strong>
+                </div>
+              ))}
+            </div>
+          )}
+          {(reviews.lead || reviews.rest.length > 0) && (
+            <div class="tp-review-wrap">
+              {(reviews.lead ? [reviews.lead] : [])
+                .concat(reviews.rest)
+                .map((review, i) => (
+                  <figure
+                    class:list={[
+                      'tp-review',
+                      { 'tp-review-lead': i === 0 && reviews.lead },
+                    ]}
+                  >
+                    <div
+                      class="tp-stars"
+                      aria-label={`${review.rating} out of 5 stars`}
+                    >
+                      {'★'.repeat(review.rating)}
+                    </div>
+                    <blockquote>{review.text}</blockquote>
+                    <figcaption>
+                      Verified customer, {profileGame(review.game).name},{' '}
+                      {profileMonth(review.month)}
+                    </figcaption>
+                  </figure>
+                ))}
+            </div>
+          )}
+        </section>
+      )}
+      {related.length > 0 && (
+        <section id="more" class="tp-section" aria-labelledby="more-title">
+          <div class="tp-section-head">
+            <div>
+              <h2 id="more-title">More teammates</h2>
+              <p>Other {view.game.name} players on Duoly.</p>
+            </div>
+            <a class="tp-more-link" href="/teammates">
+              See all teammates
+              <Icon name="arrow" />
+            </a>
+          </div>
+          <div class="tp-cards">
+            {related.map((card) => (
+              <TeammateCard card={card} />
+            ))}
+          </div>
+        </section>
+      )}
+      <section class="tp-closing" aria-label={`Book ${p.name}`} data-closing>
+        <div class="tp-figure tp-figure-small">
+          <span class="tp-ring" aria-hidden="true"></span>
+          <img src={p.avatar} width="160" height="160" alt="" loading="lazy" />
+          {p.online && <span class="tp-ring-dot" aria-hidden="true"></span>}
+        </div>
+        <div class="tp-closing-copy">
+          <p class="tp-closing-title">Ready when you are.</p>
+          <p class:list={['tp-availability', { 'is-off': !p.online }]}>
+            <i aria-hidden="true"></i>
+            {availability ?? `${p.name} is offline right now`}
+          </p>
+        </div>
+        <a
+          class="tp-button tp-primary"
+          href={view.book}
+          data-profile-book="primary"
+        >
+          {view.primary}
+          <Icon name="arrow" />
+        </a>
+      </section>
+      <div class="tp-mobile-booking" data-sticky-booking>
+        <a
+          class="tp-button tp-primary"
+          href={view.book}
+          data-profile-book="primary"
+        >
+          <span
+            class:list={['tp-dot', { 'is-online': p.online }]}
+            aria-hidden="true"
+          ></span>
+          {view.primary}
+          <Icon name="arrow" />
+        </a>
+      </div>
+    </article>
+  ) : (
+    <div class="tp-page tp-gone">
+      <PageIntro
+        eyebrow="410 / Off air"
+        title="This player has left the spotlight."
+        lead="This teammate profile is no longer public. There's still a lobby waiting for you."
+        centered
+      >
+        <a class="tp-button tp-primary" href="/teammates">
+          Find a teammate
+          <Icon name="arrow" />
+        </a>
+      </PageIntro>
+    </div>
+  )}
+</SiteLayout>
+<script>
+  const share = document.querySelector<HTMLAnchorElement>(
+    '[data-profile-share]',
+  );
+  const input = document.querySelector<HTMLInputElement>(
+    '.tp-share-link input',
+  );
+  const status = document.querySelector<HTMLElement>('[data-share-status]');
+  share?.addEventListener('click', async (event) => {
+    if (!input || !status) return;
+    event.preventDefault();
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: document.title, url: input.value });
+        return;
+      }
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(input.value);
+        status.textContent = 'Link copied.';
+      } else {
+        input.focus();
+        input.select();
+        status.textContent = 'Copy this profile link.';
+      }
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === 'AbortError')) {
+        input.focus();
+        input.select();
+        status.textContent = 'Copy this profile link.';
+      }
+    }
+  });
+
+  /* The sticky bar is a duplicate of a button that is already on screen while the
+     hero block or the closing band is visible, so it steps aside for both. Without
+     JavaScript it simply stays, which is the safe default. */
+  const bar = document.querySelector<HTMLElement>('[data-sticky-booking]');
+  const anchors = document.querySelectorAll<HTMLElement>(
+    '[data-hero-booking], [data-closing], .site-footer',
+  );
+  if (bar && anchors.length && 'IntersectionObserver' in window) {
+    const shown = new Set<Element>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) shown.add(entry.target);
+          else shown.delete(entry.target);
+        }
+        bar.classList.toggle('is-stowed', shown.size > 0);
+      },
+      { rootMargin: '0px 0px -72px 0px' },
+    );
+    for (const anchor of anchors) observer.observe(anchor);
+  }
+
+  /* The section nav sticks under the site header, so it has to know how tall that header
+     is. Without JavaScript the CSS fallback keeps it readable, it simply sticks a few
+     pixels off. The same measurement drives the scroll margin of every section. */
+  const page = document.querySelector<HTMLElement>('article.tp-page');
+  const tabs = document.querySelector<HTMLElement>('[data-tabs]');
+  if (page && tabs) {
+    const header = document.querySelector<HTMLElement>('.site-header');
+    const measure = () =>
+      page.style.setProperty(
+        '--tp-header',
+        `${Math.round(header?.getBoundingClientRect().height ?? 58)}px`,
+      );
+    measure();
+    addEventListener('resize', measure);
+
+    /* Scroll spy: the current tab is the last section that has reached the nav. Clicking a
+       tab already works on its own, this only keeps the marker honest while scrolling. */
+    const links = [...tabs.querySelectorAll<HTMLAnchorElement>('a')];
+    const targets = links.map((link) =>
+      document.querySelector<HTMLElement>(link.hash),
+    );
+    let queued = false;
+    const spy = () => {
+      queued = false;
+      const line = tabs.getBoundingClientRect().bottom + 8;
+      let index = 0;
+      targets.forEach((target, i) => {
+        if (target && target.getBoundingClientRect().top <= line) index = i;
+      });
+      links.forEach((link, i) => {
+        link.classList.toggle('is-current', i === index);
+        if (i === index) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    addEventListener(
+      'scroll',
+      () => {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(spy);
+      },
+      { passive: true },
+    );
+    spy();
+  }
+
+  /* Booking with a named teammate, and the Save heart. Both put the teammate in the
+     customer's favorites through /api/favorites/by-slug, which is the one thing that
+     changes the queue for them: a favorite sees the order the moment it goes public,
+     with no priority delay. Every booking button is a real link to the existing booking
+     page first, so a slow or failing save never costs the visitor their booking. */
+  const slug = page?.dataset.profile ?? '';
+  const mode = page?.dataset.saveMode ?? 'none';
+  const csrf = page?.dataset.csrf ?? '';
+  const saveStatus = document.querySelector<HTMLElement>('[data-save-status]');
+  const heart = document.querySelector<HTMLButtonElement>(
+    '[data-profile-save]',
+  );
+  const heartLabel = document.querySelector<HTMLElement>('[data-save-label]');
+
+  /** Carried over the sign-in round trip by the Save heart and read back by afterLoginPath(). */
+  const resume = (prefix: string) => {
+    document.cookie = `duoly_resume=${prefix}${slug}; Max-Age=1800; Path=/; SameSite=Lax; Secure`;
+  };
+
+  /* A signed-out visitor books at once; this is the note that says who they were booking.
+     The after-login path spends it the moment checkout has them sign in or sign up. */
+  const remember = () => {
+    document.cookie = `duoly_pending_favorite=${slug}; Max-Age=7200; Path=/; SameSite=Lax; Secure`;
+  };
+
+  let done = false;
+  const save = async (): Promise<{ ok: boolean; error: string }> => {
+    if (done) return { ok: true, error: '' };
+    if (!slug || !csrf)
+      return { ok: false, error: 'Reload the page and try again.' };
+    try {
+      const response = await fetch('/api/favorites/by-slug', {
+        method: 'POST',
+        credentials: 'same-origin',
+        redirect: 'error',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csrf, slug }),
+      });
+      const data = await response.json().catch(() => ({}));
+      done = response.ok;
+      return {
+        ok: response.ok,
+        error: response.ok ? '' : (data.error ?? 'Saving failed.'),
+      };
+    } catch {
+      return { ok: false, error: 'Saving failed.' };
+    }
+  };
+
+  const markSaved = () => {
+    if (!heart) return;
+    heart.setAttribute('aria-pressed', 'true');
+    if (heartLabel && heart.dataset.savedLabel)
+      heartLabel.textContent = heart.dataset.savedLabel;
+  };
+
+  heart?.addEventListener('click', async () => {
+    if (heart.getAttribute('aria-pressed') === 'true') return;
+    heart.disabled = true;
+    if (saveStatus) saveStatus.textContent = '';
+    const result = await save();
+    heart.disabled = false;
+    if (result.ok) markSaved();
+    else if (saveStatus) saveStatus.textContent = result.error;
+  });
+
+  /* The heart for a visitor who is not signed in: sign in, come back here, save. */
+  document
+    .querySelector<HTMLAnchorElement>('[data-profile-signin]')
+    ?.addEventListener('click', () => resume('profile-save:'));
+
+  const plainClick = (event: MouseEvent) =>
+    !event.defaultPrevented &&
+    event.button === 0 &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey;
+
+  for (const link of document.querySelectorAll<HTMLAnchorElement>(
+    '[data-profile-book]',
+  )) {
+    link.addEventListener('click', (event) => {
+      if (!plainClick(event)) return;
+      if (mode === 'customer') {
+        event.preventDefault();
+        const href = link.href;
+        /* Booking wins over saving: whichever finishes first, the browser moves on. */
+        let left = false;
+        const go = () => {
+          if (left) return;
+          left = true;
+          location.href = href;
+        };
+        setTimeout(go, 1200);
+        save().then(go, go);
+        return;
+      }
+      /* Signed out: no detour and no wait. The link is followed as written and the slug is
+         left in a cookie, which the sign-in that checkout asks for turns into a favorite. */
+      if (mode === 'signin') remember();
+    });
+  }
+
+  /* Back from sign-in with the Save heart: ?save=1 saves and stays put. */
+  if (new URLSearchParams(location.search).get('save') === '1') {
+    history.replaceState(null, '', location.pathname + location.hash);
+    if (mode === 'customer')
+      save().then((result) => {
+        if (result.ok) markSaved();
+        else if (saveStatus) saveStatus.textContent = result.error;
+      });
+  }
+</script>

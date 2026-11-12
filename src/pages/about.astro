@@ -13,8 +13,9 @@ import {
   serializeJsonLd,
 } from '../site/seo';
 import { DISCORD_INVITE, SUPPORT_EMAIL } from '../site/nav';
-import { BUSINESS, BUSINESS_LOCATION, SERVED_AREAS } from '../site/entity';
+import { SERVED_AREAS } from '../site/entity';
 import { ABOUT_STORY } from '../content/about-story';
+import { publicProfilesEnabled } from '../server/teammates/public-profiles';
 import {
   COACHABLE_GAMES,
   COACHING_PRICE,
@@ -35,9 +36,10 @@ import {
 import { LEGAL_UPDATED } from '../design-reference/lib/site.js';
 
 const { viewer, csrf } = await pageViewer(Astro);
+const profilesEnabled = publicProfilesEnabled();
 const path = '/about';
 const title = 'About Duoly: Gaming Teammate and Coach Marketplace | Duoly';
-const description = `Duoly (duoly.gg) is an Austrian marketplace for rank-verified gaming teammates and coaches in ${PLAYABLE_GAMES} games. Who runs it, how players are checked, how you pay.`;
+const description = `Duoly (duoly.gg) is a marketplace for rank-verified gaming teammates and coaches in ${PLAYABLE_GAMES} games. How players are checked, what a session costs and how you pay.`;
 // Additive related links, same pattern as the other SEO pages.
 const HUB_LINKS = hubChips([
   'league-of-legends',
@@ -45,13 +47,22 @@ const HUB_LINKS = hubChips([
   'marvel-rivals',
   'counter-strike-2',
 ]);
-/** The operator facts, rendered as a table so extractors read them as pairs. */
-const operator: [string, string][] = [
-  ['Business name', BUSINESS.legalName],
-  ['Legal form', BUSINESS.legalForm],
-  ['Business location', BUSINESS_LOCATION],
-  ['Trade register (GISA)', BUSINESS.gisa],
-  ['Legally represented by', BUSINESS.representedBy],
+/**
+ * Duoly at a glance, rendered as a table so extractors read the facts as
+ * pairs. Owner decision 12 November 2026: the operator's name, address and
+ * trade register number belong on the imprint only, not on this page.
+ */
+const glance: [string, string][] = [
+  ['Games', `${PLAYABLE_GAMES} games plus ${SOCIAL_MODES} voice session types`],
+  ['Coaching', `Lessons and VOD reviews in ${COACHABLE_GAMES} games`],
+  ['Matchmaking regions', SERVED_AREAS.join(', ')],
+  ['Payment', 'Card through Stripe, or your Duoly balance'],
+  [
+    'If nobody accepts',
+    `Your order cancels after ${AUTO_CANCEL_MINUTES} minutes and the full amount returns to your balance`,
+  ],
+  ['Teammate share', `${SHARE_PERCENT}% of every order`],
+  ['Voice chat', 'Discord'],
   ['Contact', SUPPORT_EMAIL],
 ];
 /**
@@ -114,9 +125,9 @@ const NOT_DUOLY: [string, string][] = [
       ]}
       chip="Rank-verified teammates"
       facts={[
-        `Based in ${BUSINESS_LOCATION}`,
-        `Trade register GISA ${BUSINESS.gisa}`,
         `${PLAYABLE_GAMES} games plus voice sessions`,
+        `Coaching in ${COACHABLE_GAMES} games`,
+        `Not accepted in ${AUTO_CANCEL_MINUTES} minutes? Full refund to balance`,
         `Teammates keep ${SHARE_PERCENT}% of every order`,
       ]}
       note={`Prices as of ${CATALOG_PRICES_UPDATED_LABEL}.`}
@@ -159,23 +170,26 @@ const NOT_DUOLY: [string, string][] = [
     )}
 
     <section aria-labelledby="who-h">
-      <h2 id="who-h">Who runs Duoly?</h2>
+      <h2 id="who-h">Who is behind Duoly?</h2>
       <p>
-        We’re a team from Austria and Switzerland with years of experience{' '}
-        running competitive gaming services. We bring that experience to the way{' '}
-        we select teammates and help players book a session.
+        We’re a small team of players with years of experience running{' '}
+        competitive gaming services. We bring that experience to the way we{' '}
+        select teammates and help players book a session.
       </p>
-      <p>
-        {BUSINESS.representedBy} is Duoly’s legal representative. The full{' '}
-        business details are on the <a href="/imprint">imprint</a>.
-      </p>
+      {/* Behind the profiles flag: /teammates answers 404 while it is off. */}
+      {profilesEnabled && (
+        <p>
+          Teammates have public profiles with their games, checked ranks and{' '}
+          reviews from players they have queued with.{' '}
+          <a href="/teammates">Meet the teammates</a> before you book, and save{' '}
+          the ones you like so you can book them again.
+        </p>
+      )}
       <div class="about-table-wrap">
         <table class="about-table">
-          <caption class="sr-only">
-            Operator of duoly.gg, as published on the imprint
-          </caption>
+          <caption class="sr-only">Duoly at a glance</caption>
           <tbody>
-            {operator.map(([label, value]) => (
+            {glance.map(([label, value]) => (
               <tr>
                 <th scope="row">{label}</th>
                 <td>

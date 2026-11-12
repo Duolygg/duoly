@@ -13,7 +13,7 @@ Original backend files in `~/.hermes/cache/scratch/orig-audit/` (`lib/orders.js`
 ## Build
 
 - New migration (version `20261024160000`; first confirm it doesn't collide: `ls supabase/migrations` in every `~/Desktop/Duoly/duoly-*` worktree and `select max(version) from supabase_migrations.schema_migrations` on linked project omnejesspybaxuacjlah). Never edit applied migrations. Table for reviews (or columns on orders, follow the existing order schema style), RLS on, security-definer RPC `order_review(...)` with the checks above, plus whatever read RPCs the screens need. Extend existing read functions with `create or replace` and minimal diffs.
-- Rollback-only SQL test in `supabase/tests/` (pattern: `supabase/tests/support_sparky_limits.sql`: fixed UUIDs, `set local role authenticated` plus `request.jwt.claims`, read tables only after `reset role`, end with `rollback`). Run it against the linked project in one transaction with the migration body, then rollback. Do NOT `db push`; the parent applies migrations after review. Order tables block deletes on purpose (see handoff doc).
+  SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
 - API route following the existing order action routes (`src/server/orders/handlers.ts`, strict zod bodies in `src/contracts/orders.ts`, CSRF).
 - Flip the review flag in the screens and map through the adapters (no business rules in adapters). Show ratings where his screens show them (teammate dashboard, admin roster `ledger #22`, admin order view).
 

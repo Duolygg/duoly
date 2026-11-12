@@ -1,14 +1,23 @@
-// Deploy: see docs/product/discord-gateway.md. Free plan: one SQLite-backed Durable Object.
+// Deploy: see docs/product/discord-gateway.md. Free plan: two SQLite-backed Durable Objects.
+// `v1` is deployed history and must stay exactly as it is; `v2` only adds the Timers class
+// (docs/product/background-work.md).
 {
   "name": "duoly-discord-gateway",
   "main": "src/index.ts",
   "compatibility_date": "2026-10-01",
   "workers_dev": true,
   "preview_urls": false,
+  "vars": { "APP_BASE_URL": "https://duoly.gg" },
   "durable_objects": {
-    "bindings": [{ "name": "BOT", "class_name": "DiscordGateway" }],
+    "bindings": [
+      { "name": "BOT", "class_name": "DiscordGateway" },
+      { "name": "TIMERS", "class_name": "Timers" },
+    ],
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DiscordGateway"] }],
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["DiscordGateway"] },
+    { "tag": "v2", "new_sqlite_classes": ["Timers"] },
+  ],
   "triggers": { "crons": ["* * * * *"] },
   "observability": { "enabled": true },
 }

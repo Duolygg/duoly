@@ -6,6 +6,18 @@ import {
   TeammatePresenceSchema,
 } from '../../contracts/presence';
 import { syncRolesInBackground } from '../discord/role-hooks';
+import { backgroundEvent } from '../background/hooks';
+
+/**
+ * Asks for the `presence-check:desk:0` singleton, behind the `roles` switch and after the
+ * response. It never fails the request: without the timer the 20 s heartbeat rule and the fixer
+ * still decide who is online, exactly as today.
+ */
+const presenceEvent = (context: Pick<APIContext, 'request'>) =>
+  backgroundEvent(
+    { presence: true },
+    new URL(context.request.url).origin,
+  ).catch(() => undefined);
 
 function rpcResponse(
   account: ReturnType<typeof accountContext>,
@@ -64,6 +76,13 @@ export const teammatePresence: APIRoute = async (context) => {
       return account.json({ error: 'Authentication required.' }, 401);
     if (identity.viewer.role !== 'teammate')
       return account.json({ error: 'Teammates only.' }, 403);
+    // The last tab going away. Nothing is written: this only asks for a presence-check timer, so
+    // the role sync runs one freshness window from now even when the browser never comes back
+    // (docs/product/background-work.md).
+    if (parsed.data.action === 'leaving') {
+      await presenceEvent(context);
+      return account.json({ queued: true });
+    }
     const result =
       parsed.data.action === 'set'
         ? await account.client.rpc('desk_set_online', {
@@ -78,8 +97,12 @@ export const teammatePresence: APIRoute = async (context) => {
     // Turning the desk on or off moves the Discord Online role right away (#40), after the
     // response so the switch doesn't wait on Discord; check-ins that went stale are picked up
     // by the sweep.
-    if (parsed.data.action === 'set' && response.status === 200)
+    if (parsed.data.action === 'set' && response.status === 200) {
       await syncRolesInBackground({ users: [identity.viewer.id] });
+      // Going online is what re-arms the singleton: with nobody online the timer answers `done`
+      // and stops, so the next online event has to ask for it again.
+      if (parsed.data.online) await presenceEvent(context);
+    }
     return response;
   } catch {
     return account.json({ error: 'Presence service unavailable.' }, 503);

@@ -8,6 +8,7 @@ import Topics from './Topics.astro';
 import Faq from './Faq.astro';
 import ClosingCta from './ClosingCta.astro';
 import StickyBook from './StickyBook.astro';
+import TeammatesRow from '../teammates/TeammatesRow.astro';
 import { rich } from './rich';
 import './seo.css';
 import './hub.css';
@@ -130,6 +131,11 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
   <Steps heading={copy.steps.heading} steps={copy.steps.items}>
     <p set:html={rich(copy.steps.note)} />
   </Steps>
+  {/* The teammates who actually play this game, after the reader knows how booking
+      works and before the service comparison. The row renders itself away when the
+      launch flag is off or no published profile features this game, so a hub page
+      never shows an empty heading and never pays for the lookup before launch. */}
+  <TeammatesRow game={game.id} />
   <HubDecide
     gameId={game.id}
     heading={copy.decide.heading}

@@ -1773,8 +1773,19 @@ export function CoveredPanel({
 }
 
 /** After the order: stars, quick tags, a few words and a tip. `rv` is the form state
- * ({rating, hover, tags, text, tip, custom, err}); `onEdit(fn)` merges fn(rv) into it. */
-export function ReviewForm({ name, sym, rv, busy, tips, onEdit, onSend }) {
+ * ({rating, hover, tags, text, tip, custom, err}); `onEdit(fn)` merges fn(rv) into it.
+ * `profiles` is the public profiles launch flag: it turns on the one line telling the
+ * customer where their words can end up. Off by default, so the homepage demo stays a demo. */
+export function ReviewForm({
+  name,
+  sym,
+  rv,
+  busy,
+  tips,
+  profiles = false,
+  onEdit,
+  onSend,
+}) {
   const stars = (n, size, interactive) => (
     <div
       role={interactive ? 'radiogroup' : undefined}
@@ -1951,6 +1962,21 @@ export function ReviewForm({ name, sym, rv, busy, tips, onEdit, onSend }) {
               outline: 'none',
             }}
           />
+          {/* Said before they send, not after: a public profile can carry the rating and
+              the words, and never the name of who wrote them. */}
+          {profiles ? (
+            <p
+              style={{
+                margin: '8px 2px 0',
+                fontSize: '13.5px',
+                lineHeight: '1.5',
+                color: MUTED,
+              }}
+            >
+              Your rating and review may appear on {name}’s public profile,
+              without your name.
+            </p>
+          ) : null}
 
           {tips ? (
             <div className="q-tip">

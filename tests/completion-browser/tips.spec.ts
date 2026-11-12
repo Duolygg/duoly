@@ -111,3 +111,37 @@ test('customer selects a tip with the rating and opens its separate payment', as
     page.getByText('100% of it goes to Mina.', { exact: false }),
   ).toBeVisible();
 });
+
+/*
+ * Public profiles can carry a rating and the words of a review, never the name of who wrote
+ * them. The customer is told that before they send, and only while profiles are live.
+ */
+const notice =
+  'Your rating and review may appear on Mina’s public profile, without your name.';
+
+for (const live of [true, false])
+  test(`the review form ${live ? 'says' : 'says nothing about'} where a review can appear`, async ({
+    page,
+  }) => {
+    await page.context().addCookies([
+      {
+        name: 'duoly-consent',
+        value: 'v2.a0.m0.r0',
+        url: 'http://127.0.0.1:4336',
+      },
+    ]);
+    await page.route(`**/api/orders/${orderId}`, async (route) =>
+      route.request().method() === 'GET'
+        ? route.fulfill({ json: { order } })
+        : route.fallback(),
+    );
+    await page.route(`**/api/orders/${orderId}/proof`, (route) =>
+      route.fulfill({ json: { proofs: [] } }),
+    );
+    await page.goto(`/?mode=queue${live ? '&profiles=1' : ''}`);
+    /* Nothing is claimed before a rating exists to publish. */
+    await expect(page.getByText(notice)).toHaveCount(0);
+    await page.getByRole('radio', { name: '5 stars' }).click();
+    await expect(page.getByText('Leave a tip for Mina')).toBeVisible();
+    await expect(page.getByText(notice)).toHaveCount(live ? 1 : 0);
+  });

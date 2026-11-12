@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 // Staying online across the site (src/components/teammate/desk-keeper.js), against fictional
 // API answers: leaving the desk doesn't set the teammate offline, other pages keep checking in,
-// and a new order rings the bell and shows a browser notification there, once.
+// and a new order shows a browser notification there, once (the bell rings on the desk only).
 
 const order = (id: string) => ({
   id,
@@ -92,7 +92,7 @@ async function mock(page: Page, state: State) {
   return log;
 }
 
-test('another page keeps an online teammate online and notifies new orders once', async ({
+test('another page keeps an online teammate online and pops up new orders once, without the bell', async ({
   page,
 }) => {
   const state = {
@@ -127,10 +127,10 @@ test('another page keeps an online teammate online and notifies new orders once'
     .toEqual([
       'New Order Available! | New Order: Duo queue · League of Legends\nPrice: $12.34',
     ]);
-  // the bell rings off the desk too
+  // off the desk: the popup only, no bell (the bell rings on the desk alone)
   expect(
     await page.evaluate(() => (window as unknown as { bells: number }).bells),
-  ).toBe(1);
+  ).toBe(0);
   // the next page of the same tab doesn't show it again
   await page.reload();
   await page.waitForTimeout(6000);

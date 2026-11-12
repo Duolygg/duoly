@@ -5,6 +5,7 @@ import { flagSrc } from '../../design-reference/lib/countries';
 import { TIERS } from '../../design-reference/lib/trust';
 import { winrateLabel } from '../../design-reference/lib/winloss';
 import Applications from './Applications';
+import PublicProfileAdmin from './PublicProfileAdmin';
 import MatchReports from './MatchReports';
 import {
   C,
@@ -369,8 +370,15 @@ export default class Teammates extends React.Component {
                             color: C.pink,
                           }}
                         >
-                          GAMER GIRL · all games
+                          Gamer Girl · all games
                         </span>
+                      ) : null}
+                      {/* the comp game icons start on their own line under the Gamer Girl badge */}
+                      {t.gg && t.games.length ? (
+                        <span
+                          aria-hidden="true"
+                          style={{ flexBasis: '100%', height: '0' }}
+                        />
                       ) : null}
                       {/* comp games: also for Gamer Girl teammates (20261102140000) */}
                       {t.games.map((g) =>
@@ -490,6 +498,15 @@ export default class Teammates extends React.Component {
                   </td>
                   <td style={{ ...td, textAlign: 'right' }}>
                     <span style={{ display: 'inline-flex', gap: '6px' }}>
+                      <button
+                        type="button"
+                        style={btn()}
+                        onClick={() =>
+                          this.setState({ publicProfileTeammate: t })
+                        }
+                      >
+                        Public profile
+                      </button>
                       {/* balance changes are money: Payouts permission (20261105130000) */}
                       {!this.props.can || this.props.can('payouts') ? (
                         <>
@@ -602,6 +619,15 @@ export default class Teammates extends React.Component {
             </tbody>
           </table>
         </div>
+        {s.publicProfileTeammate ? (
+          <PublicProfileAdmin
+            key={s.publicProfileTeammate.id}
+            teammate={s.publicProfileTeammate}
+            api={this.props.api}
+            log={this.props.log}
+            onClose={() => this.setState({ publicProfileTeammate: null })}
+          />
+        ) : null}
         <p style={{ margin: '12px 0 0', fontSize: '13px', color: C.dim }}>
           Game access and roles are edited in Users and roles. Payout balances
           include the running Vienna week and unpaid payout lines.

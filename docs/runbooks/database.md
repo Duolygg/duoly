@@ -37,15 +37,9 @@ No database password, management token, secret API key or connection URL has bee
 - Migration `20261022093000_order_foundation.sql` was applied using native `supabase db push --linked --project-ref omnejesspybaxuacjlah --skip-vault --yes`. Remote migration history matches local account and order migrations. No roles, seeds or vault secrets were pushed.
 - Actual schema readback verified RLS on orders, order_assignments, teammate_order_access and refund_credits, with raw client SELECT/INSERT denied. Both role-switched authorization and deadline rollback SQL suites passed after migration. Order, assignment and refund tables were verified empty afterward; temporary fixtures were removed and the approved Google test customer was preserved.
 - Generated TypeScript types were refreshed from the actual development schema. No development credentials or migration were applied to production. HTTP/session integration and deployment acceptance for orders are still pending.
-- The repaired concurrency runner uses unique owned resources, guarded cleanup and explicit confirmation. Real PostgreSQL races, instrumented overlapping sweeps, an old-ordering deadlock negative control and ownership/ambiguous-commit recovery checks passed. Run its offline safety tests before cloud acceptance:
+  SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
 
-```sh
-python3 -m unittest discover -s supabase/tests -p test_order_concurrency.py
-python3 -O -m unittest discover -s supabase/tests -p test_order_concurrency.py
-python3 supabase/tests/order_concurrency.py --project-ref omnejesspybaxuacjlah --confirm-development
-```
-
-This runner is development-only and writes temporary fixtures. Never point it at production. `pg_cron` 1.6.4 is available but not installed or scheduled; the bounded service-only expiry RPC is implemented.
+The legacy hosted concurrency command is disabled. Offline scope tests do not establish multi-session PostgreSQL acceptance; that coverage is explicitly excluded in the manifest.
 
 ## Local development
 

@@ -37,5 +37,6 @@ Overview, cancel/refund/handover actions on the Live desk and Orders, Teammates 
 
 ## Tests
 
-- `supabase/tests/admin_foundation.sql`: rollback-only, run with `supabase db query --linked -f`.
+SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
+
 - `tests/unit/admin.test.ts`: owners, contracts and the RPC envelope.

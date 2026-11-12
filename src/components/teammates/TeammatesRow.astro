@@ -1,0 +1,47 @@
+---
+import TeammateCard from './TeammateCard.astro';
+import Icon from './Icon.astro';
+import {
+  loadTeammateCards,
+  publicProfilesEnabled,
+} from '../../server/teammates/public-profiles';
+import { profileGame } from '../../server/teammates/profile-page';
+import './profiles.css';
+interface Props {
+  game: string;
+  limit?: number;
+}
+const { game, limit = 6 } = Astro.props;
+const cards = publicProfilesEnabled()
+  ? await loadTeammateCards({ game, limit: Math.min(6, limit) })
+  : [];
+const name = profileGame(game).name;
+/*
+ * The line under the heading only claims what the cards in front of it carry. Ranks are set by
+ * an admin, so on a young roster there are none to point at and promising "verified ranks" over
+ * cards that show none reads as a page describing a different site.
+ */
+const subhead = cards.some((card) => card.rank)
+  ? 'Verified ranks, live availability and the play styles they bring.'
+  : `Real people you can book for ${name}. See who is online right now.`;
+---
+
+{cards.length > 0 && (
+  <section class="tp-row tp-section" aria-labelledby={`teammates-${game}`}>
+    <div class="tp-section-head">
+      <div>
+        <h2 id={`teammates-${game}`}>Teammates for {name}</h2>
+        <p>{subhead}</p>
+      </div>
+      <a class="tp-more-link" href={`/teammates?game=${game}`}>
+        See all {name} teammates
+        <Icon name="arrow" />
+      </a>
+    </div>
+    <div class="tp-cards">
+      {cards.map((card) => (
+        <TeammateCard card={card} />
+      ))}
+    </div>
+  </section>
+)}

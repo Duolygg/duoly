@@ -1,0 +1,1895 @@
+/*
+ * Broadcast: the signature is typography and light, not a big picture. The mascot art
+ * only exists at 160 px, so it never renders larger than that; the scale comes from the
+ * name set large and from a pool of accent light behind it. An outlined repeat of the
+ * name used to sit behind the right column; it read as noise and is gone, so the name
+ * is printed once.
+ *
+ * Two line treatments only: hairline dividers, and the slanted cut (the "slash") on the
+ * tier plaque and the active tab marker. Cards keep plain rounded corners; a chamfer on
+ * a card only ever read as a rendering fault.
+ */
+.tp-page,
+.tp-row {
+  --accent: #d9c4ff;
+  --glow: 37;
+  /* Accent light, normalised per accent so all eight profiles are lit the same amount. */
+  --light: color-mix(
+    in srgb,
+    var(--accent) calc(var(--glow) * 1%),
+    transparent
+  );
+  --tp-muted: #c9bcdf;
+  --tp-line: rgba(214, 187, 255, 0.15);
+  --tp-text: #ece3f9;
+  --tp-star: #ffcf6e;
+  --tp-live: #4ade9a;
+  --tier: #b9b0d6;
+  color: #f3eeff;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.tp-page {
+  width: min(1248px, calc(100% - 80px));
+  margin: auto;
+  padding-bottom: 8px;
+}
+.tp-page *,
+.tp-row * {
+  box-sizing: border-box;
+}
+.tp-page a,
+.tp-row a {
+  color: inherit;
+  text-decoration: none;
+}
+.tp-page a:hover,
+.tp-row a:hover {
+  color: var(--accent);
+}
+.tp-page :is(a, button, input, select):focus-visible,
+.tp-row a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 5px;
+}
+.tp-page img,
+.tp-row img {
+  display: block;
+  max-width: 100%;
+}
+.tp-page h1,
+.tp-page h2,
+.tp-page h3,
+.tp-page h4,
+.tp-row h2 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 750;
+  letter-spacing: -0.045em;
+  color: #fff;
+  line-height: 1.1;
+  margin: 0;
+}
+.tp-page h2,
+.tp-row h2 {
+  font-size: clamp(28px, 2.4vw, 34px);
+  text-wrap: balance;
+}
+.tp-page p,
+.tp-page figure,
+.tp-row p {
+  margin: 0;
+}
+.tp-ico {
+  flex: none;
+}
+
+/* ---------- page chrome ---------- */
+.tp-crumbs {
+  display: flex;
+  gap: 12px;
+  padding: 24px 0 0;
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.tp-crumbs [aria-current] {
+  color: #fff;
+}
+.tp-fixture {
+  font-size: 13px;
+  color: var(--tp-muted);
+  padding: 8px 0 0;
+}
+.tp-kicker {
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+/* ---------- hero ---------- */
+.tp-hero {
+  position: relative;
+  padding-top: 16px;
+  /* Every decorative layer below reaches full transparency inside its own box, so this
+     only ever clips pixels that are already invisible. Painting past it is not an option:
+     ink outside the clip still counts as scrollable overflow and would add a scrollbar. */
+  overflow: clip;
+}
+/*
+ * The pool of light, centred behind the avatar column. At 62% it sat in the empty middle of
+ * the hero and read as a smudge between the two columns; the mascot is what the light is
+ * coming off, so the pool sits on it (--sky-x tracks the avatar at each width).
+ *
+ * closest-side sizes the ellipse against the nearest edge on each axis, so the gradient is
+ * already fully transparent on all four sides of its own box: no straight top edge at the
+ * disclaimer line, no vertical seam at the container sides. That also means the pool narrows
+ * as it moves right, which is why the box is lifted and shortened to keep it round.
+ */
+.tp-sky {
+  --sky-x: 79%;
+  position: absolute;
+  z-index: 0;
+  inset: -54px 0 auto;
+  height: 620px;
+  pointer-events: none;
+  /* Several stops instead of one: a single falloff ends in a visible ellipse edge. */
+  background: radial-gradient(
+    closest-side at var(--sky-x) 38%,
+    var(--light),
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.58%), transparent) 22%,
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.28%), transparent) 42%,
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.1%), transparent) 62%,
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.025%), transparent)
+      80%,
+    transparent 100%
+  );
+  opacity: 0.7;
+}
+.tp-hero-top,
+.tp-hero-grid,
+.tp-scoreboard {
+  position: relative;
+  z-index: 1;
+}
+/* Save and Share ride in the top corner of the hero rather than on a row of their own:
+   that row cost 50 px of the first viewport, which the stats row needs. */
+.tp-hero-top {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.tp-utilities {
+  display: flex;
+  gap: 22px;
+  font-size: 14px;
+  color: var(--tp-text);
+}
+.tp-utilities a,
+.tp-utilities .tp-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 34px;
+}
+.tp-utilities .tp-ico {
+  color: var(--accent);
+}
+/* The heart is a button for a signed-in customer and a link to sign-in for everyone
+   else, so both wear the same plain utility type as Share next to them. */
+.tp-utilities button.tp-save {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.tp-utilities button.tp-save:hover:not(:disabled) {
+  color: var(--accent);
+}
+.tp-utilities button.tp-save:disabled {
+  cursor: progress;
+}
+/* Saved: the outline fills in, which is the whole state change. */
+.tp-save[aria-pressed='true'] .tp-ico path {
+  fill: var(--accent);
+}
+.tp-save-status {
+  position: relative;
+  z-index: 2;
+  margin: 0 0 12px auto;
+  max-width: 420px;
+  color: var(--tp-muted);
+  font-size: 13px;
+  text-align: right;
+}
+.tp-save-status:empty {
+  display: none;
+}
+.tp-share-link {
+  display: none;
+  position: relative;
+  z-index: 1;
+  color: var(--tp-muted);
+  font-size: 13px;
+  margin: 0 0 22px auto;
+  max-width: 420px;
+}
+.tp-share-link:target,
+.tp-share-link:focus-within,
+.tp-share-link:has([data-share-status]:not(:empty)) {
+  display: block;
+}
+.tp-share-link input {
+  width: 100%;
+  background: #0a0516;
+  color: #eee5fa;
+  border: 1px solid var(--tp-line);
+  padding: 10px;
+  font: inherit;
+  font-size: 13px;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+.tp-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(276px, 340px);
+  grid-template-areas:
+    'name  aside'
+    'body  aside';
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(30px, 3.2vw, 46px);
+  align-items: start;
+}
+.tp-hero-name {
+  grid-area: name;
+}
+/* The display size lives on the page, not on the headline, because the mascot is lined up
+   against the cap of the name and has to know how big that name is. */
+.tp-page {
+  --name-size: clamp(72px, 8.2vw, 124px);
+}
+.tp-page h1 {
+  font-size: var(--name-size);
+  line-height: 0.94;
+  overflow-wrap: anywhere;
+}
+/* The rank reads directly under the name, so the headline rank is part of the lockup and
+   never repeats in the detail table. The verified tick belongs to this line, not to a
+   descender of the name. */
+.tp-rankline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px !important;
+  font-size: 17px;
+  color: #f1e9fc;
+}
+/* The game icon runs at text size next to the name of the game it belongs to. */
+.tp-rankline-icon {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 5px;
+}
+/*
+ * One colour per game for the game card's emblem and its wash. These are tints chosen to sit on
+ * this page, not brand colours and not logos: every one of them is light enough to read on the
+ * near black background, and games Duoly adds later simply inherit --accent until they get a line
+ * here. Only --game is set, so the emblem, the rank label and the card wash all move at once.
+ */
+.tp-page [data-game='lol'] {
+  --game: #e8ca8c;
+}
+.tp-page [data-game='val'] {
+  --game: #ff6b73;
+}
+.tp-page [data-game='cs2'] {
+  --game: #f3b765;
+}
+.tp-page [data-game='fn'] {
+  --game: #96bcff;
+}
+.tp-page [data-game='cod'] {
+  --game: #cfd6a4;
+}
+.tp-page [data-game='apex'] {
+  --game: #ff8d78;
+}
+.tp-page [data-game='r6'] {
+  --game: #ffc775;
+}
+.tp-page [data-game='mr'] {
+  --game: #ff9ed8;
+}
+.tp-page [data-game='ow'] {
+  --game: #ffb478;
+}
+.tp-page [data-game='dota'] {
+  --game: #e8947e;
+}
+.tp-page [data-game='rl'] {
+  --game: #84c9ff;
+}
+.tp-page [data-game='wow'] {
+  --game: #e9c771;
+}
+.tp-page [data-game='pubg'] {
+  --game: #f2d273;
+}
+.tp-page [data-game='tft'] {
+  --game: #c9a7ff;
+}
+.tp-page [data-game='fc'] {
+  --game: #90efbf;
+}
+.tp-page [data-game='arc'] {
+  --game: #ddbd92;
+}
+.tp-page [data-game='wr'] {
+  --game: #a4daff;
+}
+.tp-page [data-game='mc'] {
+  --game: #95dc8f;
+}
+.tp-page [data-game='dl'] {
+  --game: #d7a9ff;
+}
+.tp-page [data-game='pu'] {
+  --game: #ffdc93;
+}
+.tp-verified {
+  display: inline-grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  flex: none;
+  color: #130922;
+  background: var(--accent);
+  clip-path: polygon(
+    50% 0,
+    64% 8%,
+    80% 5%,
+    87% 22%,
+    100% 35%,
+    94% 50%,
+    100% 65%,
+    86% 78%,
+    80% 95%,
+    63% 92%,
+    50% 100%,
+    35% 92%,
+    20% 95%,
+    13% 79%,
+    0 65%,
+    6% 50%,
+    0 35%,
+    13% 21%,
+    20% 5%,
+    36% 8%
+  );
+}
+.tp-verified svg {
+  width: 58%;
+  height: 58%;
+}
+
+/* The right column: mascot in a tier ring, then the identity block. The mascot starts level
+   with the top of the name, which is the one line the two columns share, and the identity
+   block falls to the bottom of the hero so the column has no dead zone in the middle. */
+.tp-aside {
+  --avatar: 160px;
+  --ring: 19px;
+  position: relative;
+  grid-area: aside;
+  display: grid;
+  grid-auto-rows: max-content;
+  /* The column runs the full height of the hero: the mascot holds the top line with the
+     name and the facts close the bottom one with the last line of copy, so the air sits
+     between them in the lit part of the hero rather than under them in the dark. */
+  align-self: stretch;
+  align-content: space-between;
+  gap: 24px;
+  justify-items: stretch;
+}
+/*
+ * The mascot starts on the cap of the name, not on a box edge. Two offsets are in the way:
+ * the cap sits 0.141em under the top of the headline's own box (line-height 0.94 over a
+ * 0.66 cap height in Bricolage Grotesque), and the art sits one ring width under the top of
+ * its figure. Lifting by the difference lines the two tops up at every display size. The cap
+ * rather than the tallest glyph, so the mascot does not move when a name has an ascender.
+ */
+.tp-hero-grid .tp-figure {
+  margin-top: calc(var(--name-size) * 0.141 - var(--ring));
+}
+.tp-figure {
+  position: relative;
+  display: grid;
+  place-items: center;
+  justify-self: start;
+  width: calc(var(--avatar, 160px) + var(--ring, 19px) * 2);
+  height: calc(var(--avatar, 160px) + var(--ring, 19px) * 2);
+}
+/* The mascot only exists at 160 px, so it is never scaled up past it. */
+.tp-figure img {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 1;
+  width: var(--avatar, 160px);
+  height: var(--avatar, 160px);
+  object-fit: contain;
+  filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 28px var(--light));
+}
+.tp-figure::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  /* closest-side lands the last stop exactly on the edge of this box, so the light is
+     already transparent wherever the hero clips it. */
+  width: 200%;
+  height: 200%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side,
+    var(--light),
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.3%), transparent) 36%,
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.08%), transparent) 56%,
+    transparent 100%
+  );
+}
+/* The saved banner choice survives as the texture of the light, never as a panel. */
+.tp-figure::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 150%;
+  height: 150%;
+  pointer-events: none;
+  mask-image: radial-gradient(closest-side, #000 36%, transparent 80%);
+  opacity: 0.8;
+}
+[data-banner='grid'] .tp-figure::after {
+  background-image:
+    linear-gradient(#ffffff12 1px, transparent 1px),
+    linear-gradient(90deg, #ffffff12 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+[data-banner='slash'] .tp-figure::after {
+  background: linear-gradient(
+    118deg,
+    transparent 36%,
+    color-mix(in srgb, var(--accent) 18%, transparent) 50%,
+    transparent 64%
+  );
+}
+[data-banner='pulse'] .tp-figure::after {
+  background: repeating-conic-gradient(
+    from -25deg at 50% 50%,
+    color-mix(in srgb, var(--accent) 9%, transparent) 0deg 10deg,
+    transparent 10deg 34deg
+  );
+}
+[data-banner='orbit'] .tp-figure::after {
+  width: 138%;
+  height: 138%;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 50%;
+  rotate: -16deg;
+  scale: 1 0.84;
+  mask-image: none;
+}
+/* The tier ring: a steady hairline plus one slow arc in the tier colour. */
+.tp-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.tp-ring::before,
+.tp-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.tp-ring::before {
+  border: 1px solid color-mix(in srgb, var(--tier) 44%, transparent);
+}
+.tp-ring::after {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 44%,
+    var(--tier) 72%,
+    transparent 88%
+  );
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 2px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 2px)
+  );
+  animation: tp-spin 18s linear infinite;
+}
+@keyframes tp-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+/* The only online signal in the hero: one live dot, centred on the ring at 45 degrees.
+   A point at 45 degrees sits (1 - cos45) / 2 = 14.6447% of the diameter in from the
+   right and the bottom, so the dot is offset by half its own width from there. */
+.tp-ring-dot {
+  position: absolute;
+  z-index: 3;
+  right: calc(14.6447% - 8px);
+  bottom: calc(14.6447% - 8px);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--tp-live);
+  border: 3px solid #0b0617;
+  animation: tp-live 2.6s ease-out infinite;
+}
+@keyframes tp-live {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 154, 0.5);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 11px rgba(74, 222, 154, 0);
+  }
+}
+
+/* The lower third: one confident tier plaque with a slanted edge. */
+.tp-identity {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+/* The plaque fills to a hard slanted edge instead of trailing off: the gradient is solid
+   all the way across, and the only edge is the deliberate cut on the right. */
+.tp-plate {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 32px 9px 14px;
+  color: var(--tier);
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--tier) 30%, #150e26),
+    color-mix(in srgb, var(--tier) 16%, #150e26)
+  );
+  border-left: 3px solid var(--tier);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+}
+.tp-plate svg {
+  width: 19px;
+  height: 23px;
+  flex: none;
+  stroke-width: 1.6;
+}
+.tp-plate strong {
+  font:
+    700 17px/1 'Bricolage Grotesque',
+    sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+[data-tier='trusted'] {
+  --tier: #9ee6ff;
+}
+[data-tier='veteran'] {
+  --tier: #d6bbff;
+}
+[data-tier='elite'] {
+  --tier: #f0a6ff;
+}
+[data-tier='legend'] {
+  --tier: #ffd27a;
+}
+[data-tier='legend'] .tp-plate {
+  box-shadow: inset 0 1px rgba(255, 238, 190, 0.45);
+}
+.tp-idlist {
+  display: grid;
+  width: 100%;
+  margin: 0;
+}
+.tp-idlist > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-top: 1px solid var(--tp-line);
+  font-size: 14px;
+}
+.tp-idlist > div:last-child {
+  border-bottom: 1px solid var(--tp-line);
+}
+.tp-idlist dt {
+  color: var(--tp-muted);
+}
+.tp-idlist dd {
+  margin: 0;
+  color: #fff;
+  text-align: right;
+}
+
+/* ---------- hero body and booking ---------- */
+.tp-hero-body {
+  grid-area: body;
+  margin-top: 16px;
+}
+.tp-bio {
+  font-size: 17px;
+  line-height: 1.75;
+  max-width: 50ch;
+  color: #e4daf4;
+  text-wrap: pretty;
+}
+.tp-vibes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+/* A flat 9% white fill read as a disabled control rather than as a tag. The accent tinted
+   fill and edge give each chip its own shape without touching the text, which stays at
+   14.8:1 on the hero. */
+.tp-vibes li {
+  font-size: 13px;
+  background: color-mix(in srgb, var(--accent) 10%, #ffffff10);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  padding: 5px 12px;
+  border-radius: 999px;
+  color: #f1eafd;
+}
+/* Booking is one unit: both buttons share a column so they are exactly the same width,
+   each price sits centred beside its own button, and the one availability line closes
+   the block across the full width. */
+.tp-cta {
+  display: grid;
+  grid-template-columns: minmax(264px, max-content) minmax(0, 1fr);
+  justify-content: start;
+  align-items: center;
+  gap: 16px 32px;
+  margin-top: 24px;
+}
+.tp-buy {
+  display: contents;
+}
+.tp-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 14px 26px;
+  border-radius: 10px;
+  font:
+    650 16px/1.4 Geist,
+    sans-serif;
+  text-align: center;
+}
+.tp-primary {
+  background: var(--accent);
+  color: #10071d !important;
+  box-shadow: 0 10px 34px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.tp-primary:hover {
+  filter: brightness(1.08);
+}
+.tp-ghost {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  color: #f1e8fd !important;
+}
+.tp-ghost:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.tp-cta .tp-button {
+  width: 100%;
+}
+.tp-cta .tp-ghost {
+  font-size: 15px;
+}
+.tp-cta .tp-availability {
+  grid-column: 1 / -1;
+  margin-top: 8px !important;
+}
+/* The explainer is the last row of the booking block, not a paragraph that follows it: the
+   button, the price, the availability and this line are one unit at every width. */
+.tp-cta .tp-note {
+  grid-column: 1 / -1;
+  margin-top: 0 !important;
+}
+.tp-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--tp-muted);
+}
+.tp-price strong {
+  font:
+    650 31px/1 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.05em;
+  color: #fff;
+}
+.tp-price-quiet {
+  font-size: 14px;
+}
+.tp-price-quiet strong {
+  font-size: 21px;
+  color: var(--tp-text);
+}
+.tp-availability {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  color: #fff;
+}
+/*
+ * The live dot and its ring, both inside the element's own box. As a 9 px dot with a 3 px
+ * spread shadow the ring painted outside that box, and this line starts exactly on the
+ * container edge, so the hero's clip sliced the ring flat on the left: a one-sided crescent.
+ * Drawn as a 16 px ring with the dot centred in it, every side is the same 3 px and nothing
+ * reaches past the gutter.
+ */
+.tp-availability i {
+  --dot: var(--tp-live);
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--dot) 18%, transparent);
+}
+.tp-availability i::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dot);
+}
+.tp-availability.is-off i {
+  --dot: #8c7fa8;
+  background: none;
+}
+/* One line, in the same secondary ink as the rest of the body copy: #c9bcdf on the hero is
+   11.2:1, so it clears AA at body size with room to spare and never reads as fine print. */
+.tp-note {
+  margin-top: 24px !important;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--tp-muted);
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+/* ---------- scoreboard ---------- */
+.tp-scoreboard {
+  display: flex;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--tp-line);
+}
+.tp-stat {
+  flex: 1;
+  min-width: 0;
+  display: block !important;
+  padding: 0 30px;
+}
+.tp-stat:first-child {
+  padding-left: 0;
+}
+.tp-stat + .tp-stat {
+  border-left: 1px solid var(--tp-line);
+}
+.tp-stat > strong {
+  display: block;
+  font:
+    650 clamp(38px, 3.2vw, 46px) / 1.04 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+/* Star and percent are both unit marks: same colour, same size, same baseline. */
+.tp-unit {
+  font-size: 0.44em;
+  font-weight: 600;
+  color: var(--accent);
+  margin-left: 0.12em;
+  vertical-align: 0.46em;
+}
+.tp-star {
+  color: var(--tp-star);
+}
+.tp-stat-name {
+  display: block;
+  font-size: 15px;
+  color: #f1e9fc;
+  margin-top: 8px;
+}
+.tp-stat-sub {
+  display: block;
+  font-size: 13px;
+  color: var(--tp-muted);
+  margin-top: 4px;
+}
+/* The rating stat is a link, but the row has to stay one consistent set of three, so the
+   affordance is the hover state on the whole stat rather than an underline on one label. */
+a.tp-stat {
+  transition: color 0.18s;
+}
+a.tp-stat:hover .tp-stat-name,
+a.tp-stat:hover .tp-stat-sub,
+a.tp-stat:hover > strong {
+  color: var(--accent);
+}
+/*
+ * Every teammate on Duoly is new, so this is the row most profiles close their hero with. It
+ * takes the scoreboard's place, but it is not news: an eyebrow and one sentence at body size,
+ * on the same baseline. A 28 px headline here announced the one thing the page has nothing to
+ * say about, which made the absence of numbers the loudest part of the hero.
+ */
+.tp-fresh {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 8px 30px;
+  align-items: baseline;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--tp-line);
+}
+.tp-fresh p:last-child {
+  max-width: 62ch;
+  color: var(--tp-muted);
+  text-wrap: pretty;
+}
+/* Two quiet lines need less air under them than a row of three numbers does. */
+.tp-hero:has(.tp-fresh) + .tp-tabs,
+.tp-hero:has(.tp-fresh) + .tp-section {
+  margin-top: 30px;
+}
+
+/* ---------- section nav ---------- */
+.tp-tabs {
+  position: sticky;
+  top: var(--tp-header, 58px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-top: 48px;
+  border-bottom: 1px solid var(--tp-line);
+  background: rgba(9, 4, 20, 0.88);
+  backdrop-filter: blur(12px);
+  font-size: 15px;
+}
+.tp-tabs a {
+  position: relative;
+  padding: 18px 1px;
+  color: #efe7fb;
+}
+.tp-tabs a.is-current {
+  color: #fff;
+  font-weight: 600;
+}
+.tp-tabs a.is-current::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent);
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+/* ---------- sections ----------
+   One rhythm everywhere: 72 px between sections (48 above the rule, 24 below it) and 24 px
+   from a heading block to its content, at every width and before the closing band too. */
+.tp-section {
+  position: relative;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--tp-line);
+  scroll-margin-top: calc(var(--tp-header, 58px) + 24px);
+}
+/* The nav already draws the rule that opens the first section, so it does not draw a
+   second one a few pixels below it. */
+.tp-tabs + .tp-section {
+  margin-top: 24px;
+  padding-top: 0;
+  border-top: 0;
+}
+.tp-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.tp-section-head > div > p {
+  margin-top: 8px !important;
+  color: var(--tp-muted);
+  font-size: 15px;
+}
+.tp-more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent) !important;
+  min-height: 32px;
+}
+
+/* ---------- games ---------- */
+.tp-games {
+  display: grid;
+  gap: 18px;
+}
+.tp-games:has(.tp-game:nth-child(2)) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+/* A lone game takes the full row and splits inside, so it never leaves a dead column. */
+.tp-games:not(:has(.tp-game:nth-child(2))) {
+  grid-template-columns: minmax(0, 1fr);
+}
+/* A teammate approved for one game gets a band rather than a card with a dead column
+   next to it: the emblem opens it, the details sit beside the emblem and the booking
+   link closes it on the right, so the row ends where the content ends. */
+.tp-games:not(:has(.tp-game:nth-child(2))) .tp-game {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'head head head'
+    'rank list book';
+  column-gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.tp-games:not(:has(.tp-game:nth-child(2))) .tp-game-header {
+  grid-area: head;
+}
+.tp-games:not(:has(.tp-game:nth-child(2))) .tp-rank {
+  grid-area: rank;
+}
+/* One game, so the detail pairs run across the row as a stat line instead of a column.
+   They pack to the left at their own width: stretched to fill they left 300 px between
+   "Roles" and "Plays" on a teammate who typed neither. */
+.tp-games:not(:has(.tp-game:nth-child(2))) .tp-game dl {
+  grid-area: list;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 18px 26px;
+  margin-bottom: 0;
+  max-width: 560px;
+}
+.tp-games:not(:has(.tp-game:nth-child(2))) .tp-game dl > div {
+  display: grid;
+  gap: 5px;
+  align-content: start;
+}
+.tp-games:not(:has(.tp-game:nth-child(2))) .tp-game-book {
+  grid-area: book;
+  margin-top: 0;
+  justify-self: end;
+  white-space: nowrap;
+  /* The rule under a stacked card separates it from the detail list above it. Beside
+     the list it would be a hairline hanging over the link on its own, so it goes. */
+  padding-top: 0;
+  border-top: 0;
+}
+.tp-game {
+  --game: var(--accent);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 28px 22px;
+  border-radius: 14px;
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--game) 10%, #18102a),
+    #110a1e 72%
+  );
+}
+.tp-game-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tp-game-header h3 {
+  font-size: 24px;
+  letter-spacing: -0.03em;
+}
+.tp-rank {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 24px 0 22px;
+}
+/* A solid geometric emblem in the game colour, never an official rank badge. */
+.tp-rank-glyph {
+  width: 54px;
+  height: 61px;
+  flex: none;
+}
+.tp-rank-shape {
+  fill: var(--game);
+}
+.tp-rank-mark {
+  fill: none;
+  stroke: #150d24;
+  stroke-width: 6.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tp-rank-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--game);
+}
+.tp-rank h4 {
+  font-size: 32px;
+  margin-top: 8px !important;
+}
+.tp-game dl {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 11px 22px;
+  margin: 0 0 22px;
+}
+.tp-game dl > div {
+  display: contents;
+}
+.tp-game dt {
+  color: var(--tp-muted);
+  font-size: 13px;
+  padding-top: 2px;
+}
+.tp-game dd {
+  font-size: 15px;
+  margin: 0;
+  color: var(--tp-text);
+}
+.tp-game-book {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--tp-line);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent) !important;
+  min-height: 34px;
+}
+
+/* ---------- reviews ---------- */
+.tp-tags {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px 32px;
+  margin: 0 0 32px;
+}
+.tp-tag {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 13px;
+  font-size: 15px;
+  color: #f1e9fc;
+}
+.tp-tag::before,
+.tp-tag::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  border-radius: 2px;
+}
+.tp-tag::before {
+  right: 0;
+  background: #ffffff1c;
+}
+.tp-tag::after {
+  width: var(--bar);
+  background: var(--accent);
+}
+.tp-tag strong {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tp-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+/*
+ * One grid for every review. The featured quote spans the full width, the short ones sit
+ * under it in equal columns, and all of them start on the same left edge as the tag bars.
+ * The cells touch (the gutter is cell padding), so the rule that opens a row runs the
+ * full width instead of breaking between cards.
+ */
+.tp-review-wrap {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.tp-review {
+  padding: 32px clamp(28px, 3.4vw, 48px) 32px 0;
+  border-top: 1px solid var(--tp-line);
+}
+.tp-review-lead {
+  grid-column: 1 / -1;
+}
+.tp-stars {
+  color: var(--tp-star);
+  letter-spacing: 3px;
+  font-size: 14px;
+}
+.tp-review blockquote {
+  margin: 16px 0;
+  color: #eadff7;
+  font-size: 16px;
+  line-height: 1.8;
+  text-wrap: pretty;
+  max-width: 54ch;
+}
+/* The featured quote is the only review set as a pull quote, on the full width row. */
+.tp-review-lead blockquote {
+  font-size: clamp(21px, 2.1vw, 30px);
+  line-height: 1.45;
+  max-width: 62ch;
+  color: #f4eefc;
+}
+.tp-review figcaption {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.tp-empty {
+  color: var(--tp-muted);
+  padding: 8px 0 20px;
+}
+
+/* ---------- teammate cards ---------- */
+.tp-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.tp-card {
+  --light: color-mix(
+    in srgb,
+    var(--accent) calc(var(--glow) * 1%),
+    transparent
+  );
+  position: relative;
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 16px;
+  padding: 24px 22px 18px;
+  border-radius: 14px;
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--accent) 10%, #140d26),
+    #100919 72%
+  );
+  /* The tier reads as one full width rule across the top of the card. A short stub there
+     only ever read as a border that failed to paint. */
+  border-top: 2px solid var(--tier);
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+.tp-card:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--accent) 16%, #140d26),
+    #120a1c 72%
+  );
+}
+.tp-card-art {
+  --avatar: 72px;
+  --ring: 7px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: calc(var(--avatar) + var(--ring) * 2);
+  height: calc(var(--avatar) + var(--ring) * 2);
+  flex: none;
+}
+.tp-card-art img {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 1;
+  width: var(--avatar);
+  height: var(--avatar);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 18px var(--light));
+}
+.tp-card-id {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.tp-card-name {
+  font:
+    700 26px 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+.tp-card-game {
+  font-size: 14px;
+  color: var(--tp-muted);
+}
+.tp-card-tier {
+  align-self: start;
+  font-size: 13px;
+  text-transform: capitalize;
+  color: var(--tier);
+  background: color-mix(in srgb, var(--tier) 14%, transparent);
+  border-radius: 5px;
+  padding: 4px 9px;
+  line-height: 1.3;
+}
+.tp-card-foot {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--tp-line);
+  font-size: 14px;
+}
+.tp-card-foot strong {
+  font-weight: 550;
+  color: var(--tp-text);
+}
+.tp-card-score {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+  color: var(--tp-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tp-card-status {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.tp-card-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b4a6cb;
+  flex: none;
+}
+.is-online {
+  color: #fff;
+}
+.is-online i {
+  background: var(--tp-live);
+  box-shadow: 0 0 0 3px rgba(74, 222, 154, 0.18);
+}
+
+/* ---------- closing band and sticky bar ---------- */
+.tp-closing {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px 24px;
+  margin-top: 72px;
+  padding: 24px 30px;
+  border-radius: 16px;
+  background:
+    radial-gradient(60% 160% at 14% 50%, var(--light), transparent 70%),
+    linear-gradient(
+      110deg,
+      color-mix(in srgb, var(--accent) 17%, #1a1130),
+      #110a1f 76%
+    );
+}
+.tp-figure-small {
+  --avatar: 56px;
+  --ring: 11px;
+}
+.tp-figure-small .tp-ring-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #0b0617;
+  right: calc(14.6447% - 6px);
+  bottom: calc(14.6447% - 6px);
+}
+.tp-closing-copy {
+  display: grid;
+  gap: 8px;
+}
+.tp-closing-title {
+  font:
+    700 clamp(26px, 2.4vw, 32px) / 1.15 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+.tp-mobile-booking {
+  display: none;
+}
+.tp-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #6d5b86;
+  flex: none;
+}
+.tp-dot.is-online {
+  background: #0b6b48;
+}
+
+/* ---------- gone, directory, dev row ---------- */
+.tp-gone {
+  padding: 90px 0 100px;
+}
+.tp-gone .tp-button {
+  display: inline-flex;
+}
+.tp-directory-hero {
+  padding: 40px 0 34px;
+}
+.tp-directory-hero h1 {
+  font-size: clamp(52px, 6vw, 82px);
+  line-height: 1.02;
+  max-width: 17ch;
+  margin: 18px 0 24px;
+}
+.tp-directory-hero > p:last-child {
+  max-width: 52ch;
+  color: var(--tp-muted);
+  font-size: 17px;
+  text-wrap: pretty;
+}
+.tp-filter {
+  display: flex;
+  align-items: end;
+  gap: 14px;
+  margin: 0 0 30px;
+  padding: 24px 0;
+  border-top: 1px solid var(--tp-line);
+  border-bottom: 1px solid var(--tp-line);
+}
+.tp-filter label {
+  display: grid;
+  gap: 6px;
+  color: var(--tp-muted);
+  font-size: 13px;
+}
+.tp-filter select {
+  background: #1a1230;
+  color: #f3eeff;
+  border: 1px solid #d6bbff33;
+  border-radius: 8px;
+  padding: 12px;
+  font: inherit;
+  min-width: 240px;
+  font-size: 14px;
+}
+.tp-filter button {
+  border: 0;
+  cursor: pointer;
+  min-height: 46px;
+  padding: 10px 22px;
+  font-size: 14px;
+}
+.tp-directory {
+  padding-bottom: 24px;
+}
+.tp-directory .tp-cards {
+  row-gap: 24px;
+}
+.tp-row .tp-section-head,
+.tp-directory .tp-section-head {
+  margin-bottom: 26px;
+}
+.tp-row .tp-section,
+.tp-directory .tp-section {
+  scroll-margin-top: 92px;
+}
+.tp-dev {
+  padding-top: 50px;
+}
+
+/* ---------- 1050 and below ---------- */
+@media (max-width: 1050px) {
+  .tp-page {
+    width: calc(100% - 48px);
+  }
+  .tp-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(224px, 252px);
+    column-gap: 28px;
+  }
+  .tp-aside {
+    --avatar: 132px;
+    --ring: 20px;
+  }
+  .tp-game {
+    padding: 22px 22px 20px;
+  }
+  .tp-card {
+    padding: 20px 18px 16px;
+    column-gap: 13px;
+  }
+  .tp-card-art {
+    --avatar: 60px;
+    --ring: 6px;
+  }
+  .tp-card-name {
+    font-size: 22px;
+  }
+  .tp-card-score {
+    gap: 12px;
+  }
+}
+
+/* ---------- 920 and below: the hero stacks ---------- */
+@media (max-width: 920px) {
+  /* Stacked, the mascot is up in the top right corner, so the pool follows it there. */
+  .tp-sky {
+    --sky-x: 71%;
+    inset: -34px 0 auto;
+    height: 440px;
+  }
+  /* Stacked, the mascot owns the top right corner, so the utilities take a row again. */
+  .tp-hero-top {
+    position: static;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+  /* Booking has to stay above the fold, so the identity rows move below the body. */
+  .tp-hero-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'name  figure'
+      'rank  rank'
+      'plate plate'
+      'body  body'
+      'ident ident';
+    column-gap: 16px;
+    align-items: center;
+  }
+  /* The name column is narrow next to the mascot, so the rank line takes its own row
+     underneath rather than wrapping into three lines beside the art. */
+  .tp-hero-name {
+    display: contents;
+  }
+  /* Beside the mascot the name has roughly 100vw - 220px to itself. A name that does not
+     fit steps the display size down instead of breaking inside a word: "Crafty" came out
+     as "Craft" and a lone "y". The floor keeps a very long handle readable. */
+  .tp-page h1 {
+    grid-area: name;
+    font-size: max(
+      40px,
+      min(var(--name-size), calc((100vw - 220px) / var(--name-chars, 4) / 0.54))
+    );
+  }
+  .tp-rankline {
+    grid-area: rank;
+    margin-top: 16px !important;
+  }
+  .tp-aside {
+    --avatar: 112px;
+    --ring: 14px;
+    display: contents;
+  }
+  .tp-identity {
+    display: contents;
+  }
+  /* Stacked, the mascot is the one thing near the gutter, so it keeps its own margin
+     there: enough room for the light around it to reach zero before the container ends. */
+  /* Stacked, the name and the mascot share one row and are centred on each other, so there
+     is no cap to line the art up with. */
+  .tp-hero .tp-figure {
+    grid-area: figure;
+    justify-self: end;
+    margin-top: 0;
+    margin-right: 32px;
+  }
+  .tp-hero .tp-figure::before {
+    width: 164%;
+    height: 164%;
+  }
+  .tp-plate {
+    grid-area: plate;
+    justify-self: start;
+    margin-top: 16px;
+  }
+  .tp-idlist {
+    grid-area: ident;
+    margin-top: 26px;
+    max-width: 520px;
+  }
+  .tp-page {
+    --name-size: clamp(60px, 13vw, 104px);
+  }
+  .tp-hero-body {
+    margin-top: 22px;
+  }
+  .tp-cta {
+    grid-template-columns: minmax(0, 360px);
+    margin-top: 24px;
+    gap: 14px;
+  }
+  .tp-cta .tp-ghost {
+    width: 100%;
+    margin-top: 6px;
+  }
+}
+
+/* Three cards stop fitting their rank, rating and status in one row around here. */
+@media (max-width: 900px) {
+  .tp-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- 760 and below ---------- */
+@media (max-width: 760px) {
+  .tp-page {
+    width: calc(100% - 36px);
+    padding-bottom: 40px;
+  }
+  .tp-crumbs {
+    gap: 9px;
+  }
+  .tp-hero {
+    padding-top: 16px;
+  }
+  .tp-utilities {
+    gap: 18px;
+  }
+  .tp-share-link {
+    margin-left: 0;
+  }
+  .tp-hero-grid {
+    column-gap: 12px;
+  }
+  .tp-page {
+    --name-size: clamp(60px, 19vw, 92px);
+  }
+  .tp-cta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* The button is now exactly as wide as the hero, and the hero clips its own box, so
+     the glow came out as a lit band sliced flat at both gutters. The button carries its
+     weight in the accent fill at this size; it does not need the light too. */
+  .tp-cta .tp-button {
+    box-shadow: none;
+  }
+  .tp-plate {
+    padding: 8px 26px 8px 13px;
+    gap: 10px;
+  }
+  .tp-plate strong {
+    font-size: 15px;
+  }
+  .tp-bio {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+  .tp-vibes {
+    margin-top: 18px;
+  }
+  .tp-price strong {
+    font-size: 28px;
+  }
+  .tp-note {
+    margin-top: 20px !important;
+  }
+  .tp-scoreboard {
+    flex-direction: column;
+    margin-top: 32px;
+    padding-top: 6px;
+  }
+  .tp-stat {
+    display: grid !important;
+    grid-template-columns: 92px minmax(0, 1fr);
+    column-gap: 18px;
+    align-items: baseline;
+    padding: 16px 0;
+  }
+  .tp-stat + .tp-stat {
+    border-left: 0;
+    border-top: 1px solid var(--tp-line);
+  }
+  .tp-stat > strong {
+    grid-area: 1 / 1 / 3 / 2;
+    align-self: center;
+    font-size: 33px;
+  }
+  .tp-stat-name {
+    grid-column: 2;
+    font-size: 14px;
+    margin-top: 0;
+    line-height: 1.4;
+  }
+  .tp-stat-sub {
+    grid-column: 2;
+    font-size: 13px;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .tp-fresh {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    margin-top: 32px;
+    padding-top: 20px;
+  }
+  .tp-tabs {
+    gap: 20px;
+    font-size: 14px;
+  }
+  .tp-tabs a {
+    padding: 15px 1px;
+    white-space: nowrap;
+  }
+  .tp-section-head {
+    display: block;
+  }
+  .tp-more-link {
+    margin-top: 16px;
+  }
+  .tp-games:has(.tp-game:nth-child(2)),
+  .tp-games:not(:has(.tp-game:nth-child(2))) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tp-games:not(:has(.tp-game:nth-child(2))) .tp-game {
+    display: flex;
+  }
+  .tp-games:not(:has(.tp-game:nth-child(2))) .tp-game dl {
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 10px 18px;
+    margin-bottom: 22px;
+  }
+  .tp-games:not(:has(.tp-game:nth-child(2))) .tp-game dl > div {
+    display: contents;
+  }
+  .tp-games:not(:has(.tp-game:nth-child(2))) .tp-game-book {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--tp-line);
+  }
+  .tp-card-new {
+    display: none;
+  }
+  .tp-game {
+    padding: 21px 20px 18px;
+  }
+  .tp-rank {
+    gap: 16px;
+    margin: 22px 0 20px;
+  }
+  .tp-rank-glyph {
+    width: 46px;
+    height: 52px;
+  }
+  .tp-rank h4 {
+    font-size: 29px;
+  }
+  .tp-game dl {
+    gap: 10px 18px;
+  }
+  .tp-tags {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+  .tp-tag {
+    font-size: 14px;
+    gap: 8px;
+  }
+  .tp-review-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tp-review {
+    padding: 24px 0;
+  }
+  .tp-review blockquote {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .tp-review-lead blockquote {
+    font-size: 20px;
+    line-height: 1.55;
+  }
+  /* Related teammates become compact rows: art, identity, tier, then the numbers. */
+  .tp-cards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .tp-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: 14px;
+    padding: 14px 16px 15px;
+  }
+  .tp-card-art {
+    --avatar: 56px;
+    --ring: 6px;
+    grid-area: 1 / 1 / 3 / 2;
+  }
+  .tp-card-id {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+  .tp-card-name {
+    font-size: 20px;
+  }
+  .tp-card-game {
+    display: none;
+  }
+  .tp-card-tier {
+    grid-area: 1 / 3 / 2 / 4;
+    align-self: center;
+  }
+  .tp-card-foot {
+    grid-area: 2 / 2 / 3 / 4;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 6px 14px;
+    margin-top: 5px;
+    padding-top: 0;
+    border-top: 0;
+    font-size: 13px;
+  }
+  .tp-card-score {
+    flex-wrap: wrap;
+    gap: 6px 14px;
+  }
+  .tp-closing {
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 20px 20px 22px;
+    gap: 16px 14px;
+  }
+  .tp-figure-small {
+    --avatar: 48px;
+    --ring: 9px;
+  }
+  .tp-closing-title {
+    font-size: 23px;
+  }
+  .tp-closing .tp-button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .tp-mobile-booking {
+    display: block;
+    position: fixed;
+    inset: auto 0 0 0;
+    padding: 10px 16px max(10px, env(safe-area-inset-bottom));
+    background: #0b0618f2;
+    border-top: 1px solid var(--tp-line);
+    z-index: 25;
+    backdrop-filter: blur(14px);
+    transition:
+      transform 0.24s ease,
+      opacity 0.24s ease;
+  }
+  .tp-mobile-booking.is-stowed {
+    transform: translateY(125%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .tp-mobile-booking .tp-button {
+    min-height: 52px;
+    width: 100%;
+  }
+  .tp-directory-hero {
+    padding: 26px 0 30px;
+  }
+  .tp-directory-hero h1 {
+    font-size: 58px;
+  }
+  .tp-directory {
+    padding-bottom: 20px;
+  }
+  .tp-filter {
+    align-items: stretch;
+    gap: 10px;
+  }
+  .tp-filter label {
+    flex: 1;
+    min-width: 0;
+  }
+  .tp-filter select {
+    min-width: 0;
+    width: 100%;
+  }
+  .tp-filter button {
+    align-self: end;
+    min-height: 47px;
+    padding: 10px 15px;
+  }
+  .tp-gone {
+    padding-top: 30px;
+  }
+}
+
+/* ---------- 600 and below: price before action ---------- */
+/*
+ * Stacked, each button sat above its own price, so a reader had to tap past the figure to
+ * find it. The pair flips: a quiet "from EUR x.xx per game" row, then the button it belongs
+ * to. The coaching price stays a step lighter than the one it is an alternative to.
+ */
+@media (max-width: 600px) {
+  .tp-buy {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  .tp-cta .tp-price {
+    font-size: 13.5px;
+    gap: 6px;
+  }
+  .tp-cta .tp-price strong {
+    font-size: 20px;
+    letter-spacing: -0.03em;
+  }
+  .tp-cta .tp-price-quiet {
+    color: #a99bc4;
+  }
+  .tp-cta .tp-price-quiet strong {
+    font-size: 17px;
+    color: var(--tp-muted);
+  }
+  .tp-cta .tp-ghost {
+    margin-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tp-page *,
+  .tp-page *:before,
+  .tp-page *:after,
+  .tp-row * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -731,7 +731,7 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .tc-head{display:flex;align-items:center;gap:12px;min-width:0}
 .tc-avatar{position:relative;flex:0 0 auto}
 .tc-avatar img{display:block;width:52px;height:52px;border-radius:50%;object-fit:cover}
-.tc-dot{position:absolute;right:0;bottom:0;width:14px;height:14px;border-radius:50%;background:#5EEAA8;border:2.5px solid #160D29;animation:dlonline 1.8s ease-out infinite}
+.tc-dot{position:absolute;right:0;bottom:0;width:14px;height:14px;border-radius:50%;background:#5EEAA8;animation:dlonline 1.8s ease-out infinite}
 .tc-who{display:flex;flex-direction:column;min-width:0;line-height:1.3}
 .tc-who strong{font-family:'Bricolage Grotesque','Bricolage Fallback',sans-serif;font-size:17px;font-weight:700;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tc-who span{font-size:13px;color:#8E84AB}

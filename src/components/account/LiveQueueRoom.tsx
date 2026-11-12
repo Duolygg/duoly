@@ -10,6 +10,7 @@ function LiveQueueRoomContent({
   csrf,
   chatEnabled,
   reportsEnabled,
+  profilesEnabled = false,
   rerollLimit = 2,
   stripeKey = '',
 }: {
@@ -18,6 +19,8 @@ function LiveQueueRoomContent({
   csrf: string;
   chatEnabled: boolean;
   reportsEnabled: boolean;
+  /** Public teammate profiles are live, so the review form says where a review can appear. */
+  profilesEnabled?: boolean;
   /** re-rolls per order; null = unlimited (PRO) */
   rerollLimit?: number | null;
   /** Stripe publishable key, for Play again's 3D Secure check ('' = payments off) */
@@ -30,6 +33,7 @@ function LiveQueueRoomContent({
       csrf={csrf}
       chatEnabled={chatEnabled}
       reportsEnabled={reportsEnabled}
+      profilesEnabled={profilesEnabled}
       rerollLimit={rerollLimit}
       stripeKey={stripeKey}
     />

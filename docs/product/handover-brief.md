@@ -16,7 +16,7 @@ Files in `~/.hermes/cache/scratch/orig-audit/`: `lib/orders.js` (`createHandover
 ## Build
 
 - New migration version `20261024170000` (first confirm no collision: `ls supabase/migrations` in every `~/Desktop/Duoly/duoly-*` worktree and `select max(version) from supabase_migrations.schema_migrations` on linked project omnejesspybaxuacjlah). Never edit applied migrations; `create or replace` existing functions with minimal diffs. Admin-only RPCs via `admin_caller()` and audited with `admin_log`.
-- Rollback-only SQL test in `supabase/tests/` (pattern: `supabase/tests/support_sparky_limits.sql`). Run it against the linked project in one transaction with the migration body, then rollback. Do NOT `db push`. Order tables block deletes on purpose (see handoff doc).
+  SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project.
 - Stripe: use test-mode keys only for anything you run; unit-test the refund path with a mocked Stripe client. Never call live Stripe.
 - API routes following existing patterns (`src/server/orders/handlers.ts`, `src/server/admin/handlers.ts`, strict zod contracts, CSRF). `/claim/[token]` page with his Claim screen.
 

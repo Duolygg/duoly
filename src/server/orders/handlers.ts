@@ -6,6 +6,7 @@ import { mutation } from '../auth/handlers';
 import { decodeOrderRpcResult } from './results';
 import { settleSoon } from '../payments/webhook';
 import { withRoleSync } from '../discord/role-hooks';
+import { withBackground } from '../background/hooks';
 import {
   OrderCommandSchema,
   OrderPaginationSchema,
@@ -128,34 +129,57 @@ function withSettlement(handler: APIRoute): APIRoute {
     return response;
   };
 }
-export const cancel = withSettlement(
-  route(
-    'customerOrder',
-    (client, { p_order_id }) =>
-      client.rpc('cancel_queued_order', { p_order_id }),
-    { input: 'id', method: 'POST' },
+/**
+ * The event half of the background work (docs/product/background-work.md): accepting, cancelling
+ * and re-rolling an order all close its Discord post, enqueue analytics facts through database
+ * triggers and may leave a money action pending. Behind the switches and after the response, so
+ * `shadow` only logs and `legacy` leaves all of it to the 10 s dispatcher.
+ */
+const orderEvent = (context: Parameters<APIRoute>[0], settle: boolean) =>
+  context.params.id
+    ? {
+        order: context.params.id,
+        analytics: true,
+        ...(settle ? { settle: context.params.id } : {}),
+      }
+    : null;
+export const cancel = withBackground(
+  withSettlement(
+    route(
+      'customerOrder',
+      (client, { p_order_id }) =>
+        client.rpc('cancel_queued_order', { p_order_id }),
+      { input: 'id', method: 'POST' },
+    ),
   ),
+  (context) => orderEvent(context, true),
 );
 /** Discord roles of the order's teammates (current and re-rolled) follow right away (#40). */
 const orderRoles = (context: Parameters<APIRoute>[0]) =>
   context.params.id ? { order: context.params.id } : null;
-export const reroll = withRoleSync(
-  route(
-    'customerOrder',
-    (client, { p_order_id }) => client.rpc('reroll_order', { p_order_id }),
-    { input: 'id', method: 'POST' },
-  ),
-  orderRoles,
-);
-export const accept = withRoleSync(
-  withSettlement(
+export const reroll = withBackground(
+  withRoleSync(
     route(
-      'teammateOrder',
-      (client, { p_order_id }) => client.rpc('accept_order', { p_order_id }),
-      { input: 'id', method: 'POST', role: 'teammate' },
+      'customerOrder',
+      (client, { p_order_id }) => client.rpc('reroll_order', { p_order_id }),
+      { input: 'id', method: 'POST' },
     ),
+    orderRoles,
   ),
-  orderRoles,
+  (context) => orderEvent(context, false),
+);
+export const accept = withBackground(
+  withRoleSync(
+    withSettlement(
+      route(
+        'teammateOrder',
+        (client, { p_order_id }) => client.rpc('accept_order', { p_order_id }),
+        { input: 'id', method: 'POST', role: 'teammate' },
+      ),
+    ),
+    orderRoles,
+  ),
+  (context) => orderEvent(context, true),
 );
 export const assignment = route(
   'teammateAssignment',
