@@ -51,6 +51,7 @@ suite presence.sql
 suite presence_afk.sql
 suite priority_admin.sql
 suite pro_subscription.sql
+suite public_profile_photos.sql
 suite public_profiles_default_on.sql
 suite public_teammate_profiles.sql
 # skip profile_bio_currency.sql historical strict teammate DTO equality predates additive trust_badge field

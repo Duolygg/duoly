@@ -25,6 +25,7 @@ import {
   pickLabel,
   rankEmblem,
 } from '../../server/teammates/profile-page';
+import { publicAvatarIsPhoto } from '../../server/teammates/public-avatar';
 import { serializeJsonLd } from '../../site/seo';
 import { pageViewer } from '../../site/viewer';
 const result = publicProfilesEnabled()
@@ -60,6 +61,12 @@ const featuredRank =
   p?.games.find((g) => g.game === p.featuredGame && g.verified)?.rank ?? null;
 /** One sentence about taking orders right now, reused by the closing band. */
 const availability = p?.online ? 'Online now, ready to play' : null;
+/*
+ * A teammate who uploaded a profile picture gets their own face here, not a mascot. The file is a
+ * 256 px square crop, so it is clipped to the ring and covered rather than drawn in its own light,
+ * and it never renders above 160 CSS px (2x density at the largest it is shown).
+ */
+const photo = p ? publicAvatarIsPhoto(p.avatar) : false;
 /*
  * Booking with a named teammate (plan option 1). Pressing a booking button saves the teammate to
  * the customer's favorites first, which is the one thing that changes the queue for them: a
@@ -202,13 +209,18 @@ const bookingNote = p ? bookingLine(p) : '';
             </p>
           </div>
           <div class="tp-aside">
-            <div class="tp-figure">
+            <div class:list={['tp-figure', { 'tp-figure-photo': photo }]}>
               <span class="tp-ring" aria-hidden="true"></span>
               <img
                 src={p.avatar}
                 width="160"
                 height="160"
-                alt={`${p.name}'s robot avatar`}
+                alt={
+                  photo
+                    ? `${p.name}, teammate on Duoly`
+                    : `${p.name}'s robot avatar`
+                }
+                loading="eager"
                 fetchpriority="high"
               />
               {p.online && <span class="tp-ring-dot" aria-hidden="true"></span>}
@@ -518,7 +530,13 @@ const bookingNote = p ? bookingLine(p) : '';
         </section>
       )}
       <section class="tp-closing" aria-label={`Book ${p.name}`} data-closing>
-        <div class="tp-figure tp-figure-small">
+        <div
+          class:list={[
+            'tp-figure',
+            'tp-figure-small',
+            { 'tp-figure-photo': photo },
+          ]}
+        >
           <span class="tp-ring" aria-hidden="true"></span>
           <img src={p.avatar} width="160" height="160" alt="" loading="lazy" />
           {p.online && <span class="tp-ring-dot" aria-hidden="true"></span>}

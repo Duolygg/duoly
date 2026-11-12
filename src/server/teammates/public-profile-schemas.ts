@@ -6,6 +6,7 @@ import {
   VIBE_TAGS,
   slugValid,
 } from '../../contracts/teammate-profile';
+import { publicAvatarValid } from './public-avatar';
 const slug = z.string().refine(slugValid);
 const count = z.number().int().nonnegative();
 const rating = z
@@ -22,11 +23,7 @@ const game = z.object({
 const common = {
   slug,
   name: z.string(),
-  avatar: z
-    .string()
-    .regex(
-      /^\/assets\/avatars\/(?:avatar-(?:[1-9]|10)\.png|[a-zA-Z0-9/_-]+\.(?:webp|png|jpg))$/,
-    ),
+  avatar: z.string().refine(publicAvatarValid),
   accent: z.enum(PROFILE_ACCENT_KEYS),
   tier: z.enum(TRUST_TIERS),
   online: z.boolean(),

@@ -4,11 +4,14 @@ import {
   type PublicTeammateCard,
 } from '../../contracts/teammate-profile';
 import { accentStyle, profileGame } from '../../server/teammates/profile-page';
+import { publicAvatarIsPhoto } from '../../server/teammates/public-avatar';
 interface Props {
   card: PublicTeammateCard;
 }
 const { card } = Astro.props;
 const game = profileGame(card.game);
+/* An uploaded photo is a square crop, so it is clipped to the ring and covered. */
+const photo = publicAvatarIsPhoto(card.avatar);
 const rating =
   card.rating && card.rating.count >= MIN_REVIEWS_FOR_RATING
     ? card.rating
@@ -21,7 +24,7 @@ const rating =
   style={accentStyle(card.accent)}
   data-tier={card.tier}
 >
-  <span class="tp-card-art">
+  <span class:list={['tp-card-art', { 'tp-figure-photo': photo }]}>
     <span class="tp-ring" aria-hidden="true"></span>
     <img src={card.avatar} alt="" width="160" height="160" loading="lazy" />
   </span>
