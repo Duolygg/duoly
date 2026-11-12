@@ -60,7 +60,7 @@ export const comparisonRows: {
     epalSource: wallet,
   },
   {
-    label: 'Catalog breadth',
+    label: 'Games and services',
     duoly: 'part',
     epal: 'yes',
     duolyNote: '20 games plus Social.',
@@ -90,7 +90,7 @@ export const comparisonRows: {
     duoly: 'no',
     epal: 'yes',
     duolyNote: 'No public provider review directory in the booking flow.',
-    epalNote: 'Profiles show client reviews, for example on Serolae’s profile.',
+    epalNote: 'Profiles show client reviews, as Serolae’s profile does.',
     epalSource: profile,
   },
   {

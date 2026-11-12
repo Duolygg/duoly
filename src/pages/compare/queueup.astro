@@ -38,11 +38,11 @@ const faqItems: [string, string][] = [
   ],
   [
     'What is a QueueCoin?',
-    'QueueCoins are the QueueUp platform currency, and the documentation states that 1 QueueCoin is USD 1. For example, an Instant session costs 24 QueueCoins, which is USD 24. You can also pay at checkout by card or PayPal without buying coins first, so coins are not a prepayment requirement.',
+    'QueueCoins are the QueueUp platform currency, and the documentation states that 1 QueueCoin is USD 1. An Instant session costs 24 QueueCoins, which is USD 24. You can also pay at checkout by card or PayPal without buying coins first, so coins are not a prepayment requirement.',
   ],
   [
     'What is the Learn Or It’s Free guarantee?',
-    'According to the QueueUp documentation, a first paid session can be fully refunded up to USD 35 if you ask before your next session, once per customer. Duoly publishes no learning guarantee, because a lesson is time with a coach rather than a promised outcome.',
+    'The QueueUp documentation offers a full refund on a first paid session, up to USD 35, if you ask before your next session, once per customer. Duoly publishes no learning guarantee, because a lesson is time with a coach and not a promised outcome.',
   ],
   [
     'Can you get a refund during a session?',
@@ -54,7 +54,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'Does Duoly show coach reviews like QueueUp?',
-    'No. Duoly is new and has no public review volume yet, and this page says so rather than quoting a score. For example, the QueueUp Valorant page displays 4.9 out of 5 from 621 or more reviews and about 4,423 sessions coached, as figures for the whole site rather than for Valorant alone.',
+    'No. Duoly is new and has no public review volume yet, which is worth knowing before you compare. The QueueUp Valorant page displays 4.9 out of 5 from 621 or more reviews and about 4,423 sessions coached, though those are figures for the whole site rather than for Valorant alone.',
   ],
 ];
 const webPage = {
@@ -91,7 +91,7 @@ const webPage = {
           a coaching platform with named coaches, 4 booking modes and a platform
           currency called QueueCoins. Duoly publishes one lesson price in euro
           or dollars, charged through Stripe, and sells teammate sessions beside
-          the lessons. For example, {queueupExample.title} costs {price} per{' '}
+          the lessons. {queueupExample.title} costs {price} per{' '}
           {queueupExample.unit} on Duoly, and we found a QueueUp Instant session
           priced at 24 QueueCoins for 45 minutes on {CHECKED}.
         </p>
@@ -132,9 +132,9 @@ const webPage = {
         better fit when you want one published price and a teammate session from
         the same checkout. QueueUp documents its mechanics unusually well: the
         docs describe a 5 minute in-session refund button and a Learn Or It’s
-        Free refund of up to USD 35. Duoly sells {queueupExample.title} for{' '}
-        {price} per {queueupExample.unit}, the same price as every Duoly lesson.
-        We read every QueueUp fact here on queueup.gg on {CHECKED}.
+        Free refund of up to USD 35. Duoly sells {queueupExample.title} at one
+        published price, the same price as every other Duoly lesson. Every
+        QueueUp fact here was read on queueup.gg on {CHECKED}.
       </p>
     </section>
 
@@ -143,32 +143,29 @@ const webPage = {
       <p>
         QueueUp is good at telling a buyer what happens after payment, which is
         rare in this category. The documentation sets out all 4 booking modes,
-        the 5 minute window to pick an Instant coach and what happens when
-        nobody accepts. Risk is written down: a Request Refund button in the
-        first 5 minutes, automatic returns when a coach declines, and the Learn
-        Or It’s Free refund of up to USD 35 on a first paid session. Smart Match
-        is free and needs no account, and some coaches offer a free 15 minute
-        intro, so a first conversation costs nothing before any QueueCoins
-        change hands. For example, the QueueUp Valorant page labels coaches
-        Verified, Radiant Or Pro and Profile Fact-Checked. We found all 3
-        strengths on queueup.gg on {CHECKED}, and Duoly offers none of the 3
-        today.
+        the 5 minute window to pick an Instant coach, and what happens when
+        nobody accepts. The risk is written down too: a Request Refund button in
+        the first 5 minutes, automatic returns when a coach declines, and the
+        Learn Or It’s Free refund of up to USD 35 on a first paid session. Smart
+        Match is free and needs no account, some coaches offer a free 15 minute
+        intro, and the Valorant page labels coaches Verified, Radiant Or Pro and
+        Profile Fact-Checked. So a first conversation can cost nothing before
+        any QueueCoins change hands. Duoly offers none of that today, and all of
+        it was read on queueup.gg on {CHECKED}.
       </p>
     </section>
 
     <section aria-labelledby="table-h">
       <h2 id="table-h">How do Duoly and QueueUp compare side by side?</h2>
       <p>
-        QueueUp is the coaching specialist with named coaches, and Duoly is the
-        flat-price option that also sells teammates. For example, QueueUp prices
-        an Instant session at 24 QueueCoins and Duoly publishes {price} per{' '}
-        {queueupExample.unit} for every lesson in all {COACHABLE_GAMES} coached
-        games. A neutral dot marks a different model or a stated fact, and Not
-        stated means the pages we read do not say it. Unknown is never a No, and
-        a platform is never marked down for a model Duoly simply does not share.
-        QueueUp is marked ahead on named coaches, a free intro and in-session
-        refunds. Every QueueUp cell links the page the fact came from, and we
-        found all of them on queueup.gg on {CHECKED}.
+        QueueUp is the coaching specialist with named coaches; Duoly is the
+        flat-price option that also sells teammates. QueueUp prices an Instant
+        session at 24 QueueCoins, while Duoly publishes one lesson price for all{' '}
+        {COACHABLE_GAMES} coached games. QueueUp is marked ahead on named
+        coaches, a free intro and in-session refunds, because it is ahead on all
+        three. A neutral dot marks a model or a stated fact, and Not stated
+        means the pages we read do not say it. Every QueueUp cell links the page
+        its fact came from, all of them read on queueup.gg on {CHECKED}.
       </p>
       <CompareTable
         rival="QueueUp"
@@ -218,18 +215,16 @@ const webPage = {
         </div>
       </div>
       <p>
-        The 2 prices answer different questions, so read the unit before the
+        The two prices answer different questions, so read the unit before the
         number. A Duoly lesson is {price} for a full {queueupExample.unit}, the
-        same figure in every game Duoly coaches, charged through Stripe with
-        nothing added. A QueueUp Instant session is 24 QueueCoins for 45
-        minutes, which QueueUp states is USD 24, and buys speed rather than a
-        chosen coach. A coach-set QueueUp session can cost more or less than
-        either number. A Duoly lesson holds {price} whichever game and whichever
-        format you pick, because coaching takes one flat price in 2026. For
-        example, a bundle is usually cheaper per session than a single booking,
-        according to the QueueUp documentation, which we found on queueup.gg on{' '}
-        {CHECKED}. Currency, session length and what counts as a session all
-        differ, so these are not like-for-like prices.
+        same figure in every game it coaches and whichever format you pick,
+        charged through Stripe with nothing added. A QueueUp Instant session is
+        24 QueueCoins for 45 minutes, which QueueUp states is USD 24, and what
+        it buys is speed rather than a coach you chose. Any coach-set QueueUp
+        session can land either side of those numbers, and the QueueUp
+        documentation says a bundle usually works out cheaper per session than a
+        single booking. Currency, session length and what counts as a session
+        all differ, so these are not like-for-like prices.
       </p>
     </section>
 
@@ -237,19 +232,21 @@ const webPage = {
       <h2 id="pay-h">How do payment, guarantees and refunds work?</h2>
       <p>
         Payment on Duoly is one card payment through Stripe in EUR or USD, and
-        the published price is the amount charged. For example, a{' '}
-        {queueupExample.title} hour costs {price} and opens an order chat where
-        you send a replay and agree the time. A coach accepts from the queue, an
-        order nobody accepts within 5 minutes cancels itself, and refunds go to
-        the Duoly balance by default under the <a href="/terms">Duoly terms</a>.
-        Duoly publishes the share a teammate keeps, which is {duolyShare} of a
-        flat-priced hour. On QueueUp, prices are shown in QueueCoins at 1
-        QueueCoin per dollar, and the checkout can settle by card or PayPal
-        without buying coins first. Additionally, the docs promise automatic
-        returns when a coach declines or times out, a 5 minute in-session refund
-        request and the Learn Or It’s Free refund of up to USD 35. The docs say
-        the majority of each payment goes to the coach without naming a
-        percentage.
+        the published price is the amount charged. Booking a{' '}
+        {queueupExample.title} hour opens an order chat where you send a replay
+        and agree the time. A coach accepts from the queue, an order nobody
+        accepts within 5 minutes cancels itself, and refunds go to the Duoly
+        balance by default under the <a href="/terms">Duoly terms</a>. Duoly
+        also publishes the share a teammate or coach keeps, which is{' '}
+        {duolyShare} of a flat-priced hour.
+      </p>
+      <p>
+        On QueueUp, prices are shown in QueueCoins at 1 QueueCoin per dollar,
+        and the checkout can settle by card or PayPal without buying coins
+        first. The docs promise automatic returns when a coach declines or times
+        out, a 5 minute in-session refund request, and the Learn Or It’s Free
+        refund of up to USD 35. On the split they are vaguer: the majority of
+        each payment goes to the coach, without a percentage named.
       </p>
     </section>
 
@@ -260,11 +257,10 @@ const webPage = {
         checkout for playing and learning, and there is no single winner.
         QueueUp buys choice and a written guarantee: a named Radiant coach, a
         free 15 minute intro and a refund of up to USD 35 on a first paid
-        session. Duoly buys certainty, at {price} per {queueupExample.unit} in
-        every game Duoly coaches, with {duolyShare} of a flat-priced hour
-        published as the provider share, charged through Stripe. For example, a
-        Valorant player who wants a Radiant coach tonight should use QueueUp,
-        and a player who wants a{' '}
+        session. Duoly buys certainty: one hourly price in every game it
+        coaches, charged through Stripe, with {duolyShare} of a flat-priced hour
+        published as the provider share. So a Valorant player who wants a
+        Radiant coach tonight should use QueueUp, and a player who wants a{' '}
         <a href="/games/valorant/coaching">Valorant lesson</a> and a{' '}
         <a href="/games/valorant/lfg">Valorant teammate</a> at published prices
         in one place should use Duoly.
@@ -291,8 +287,8 @@ const webPage = {
           <div class="cmp-card-title">Choose Duoly if</div>
           <ul class="checklist">
             <li>
-              You want one published price, for example {price} per{' '}
-              {queueupExample.unit} for any lesson.
+              You want one published price, {price} per {queueupExample.unit},
+              for any lesson.
             </li>
             <li>
               You want teammate sessions and coaching in the same checkout.
@@ -316,14 +312,14 @@ const webPage = {
       <h2 id="sources-h">Where do these facts come from?</h2>
       <p>
         Every QueueUp fact here comes from {queueupSources.length} public
-        QueueUp pages, read on {CHECKED}. For example, we found the Instant
-        price, the refund windows and the age rule in the QueueUp documentation,
-        and the coach labels on its Valorant page. Duoly facts come from the{' '}
-        <a href="/terms">Duoly terms</a> and the live price list, so the {price}{' '}
-        example always matches checkout. Duoly publishes this comparison, so it
-        is not independent. QueueUp is a trademark of its owner and is named
-        here for comparison only. Prices and policies can change, so open the
-        source pages before booking anything. For the wider market, our{' '}
+        QueueUp pages, read on {CHECKED} and listed below. The Instant price,
+        the refund windows and the age rule are in the QueueUp documentation;
+        the coach labels are on its Valorant page. The Duoly facts come from the{' '}
+        <a href="/terms">Duoly terms</a> and the live price list, so the example
+        above always matches checkout. Duoly publishes this comparison, so it is
+        not independent. QueueUp is a trademark of its owner and is named here
+        for comparison only. Prices and policies can change, so open the source
+        pages before booking anything. For the wider market, our{' '}
         <a href={REPORT_PATH}>2026 gaming coaching price survey</a> reads{' '}
         {COMPETITOR_COUNT} platforms on one day and publishes{' '}
         {HOURLY_COACHING.count} hourly rates with a median of{' '}

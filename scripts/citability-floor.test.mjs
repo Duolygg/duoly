@@ -42,7 +42,9 @@ const EXCLUDED = {
  * Reference and listing pages hold a lower floor: they document tool
  * parameters or list articles, so they cannot be written as long answer
  * passages without padding. Scores on 9 November 2026: /ai 77.1,
- * /developers/mcp 71.9, /blog 73.0.
+ * /developers/mcp 71.9, /blog 73.0. After the human-voice pass, on 12 November
+ * 2026: /blog 72.2, still over this floor, and /developers/mcp 64.9, which is
+ * under it and declared in BELOW_FLOOR below.
  *
  * /blog moved from 78.0 to 73.0 when the LFG guide was added: its one scored
  * block carries every card on the index, so a second article is about 45 more
@@ -57,14 +59,68 @@ const REFERENCE_PAGES = {
 };
 
 /**
- * Pages that do not clear their floor yet, with the reason.
+ * Pages that do not clear their floor yet, with the score each one holds.
  *
- * This list is a declaration, not an exemption: the test below also fails when
- * a page listed here has reached its floor, so the only way to keep the gate
- * green is to move a URL out as it is fixed. It cannot quietly grow, and it
- * cannot quietly go stale.
+ * This list is a declaration, not an exemption. Every entry names the score the
+ * page may not fall below, measured on 12 November 2026, so a listed page
+ * cannot quietly erode further. The test below also fails when a listed page
+ * has reached the floor in the first place, so the only way to keep the gate
+ * green is to move a URL out as it is fixed. The list cannot quietly grow and
+ * it cannot quietly go stale.
+ *
+ * Why these 18 are here, and what the owner has to decide
+ * ------------------------------------------------------
+ * The human-voice pass rewrote them, and the scorer pays for the habits that
+ * pass removed. Measured on the pages this list replaced: the previous copy
+ * carried a price, the year, a Duoly self-attribution ("read from Duoly
+ * checkout on ..."), a "for example" and a "using Discord" in nearly every
+ * scored block, which is worth 10 to 12 points a block. That is why every
+ * content page on the site sat between 80.0 and 82.8, a hair above the floor:
+ * the floor was writing the copy. The 11 November review banned those habits
+ * by name, and tests/e2e/voice-pages.spec.ts now caps them: a price twice per
+ * page in running prose, no self-attribution, "for example" three times, no
+ * year welded to a price.
+ *
+ * The two gates cannot both be satisfied. Answer block quality already scores
+ * 30 of 30 on every block of every page listed here, so the honest levers left
+ * (sentence length, concrete nouns for pronouns, 134 to 167 word blocks, a
+ * real percentage, an ordinal in step prose) are worth about 3 to 8 points a
+ * block, against a 10 to 16 point gap. The audit in docs/product is the plan
+ * for spending them.
+ *
+ * So this list needs an explicit owner decision, the way /about, /press and
+ * /ai got one on 11 November: either these pages keep the voice and the score
+ * is advisory, as it is for those three, or the floor wins and the voice work
+ * is reverted. Until that decision, the scores are pinned here where they are
+ * visible, every technical SEO check still applies to all 18, and the floor
+ * stays at 80 for every other page, including all 60 game, intent and coaching
+ * pages, which still clear it.
  */
-const BELOW_FLOOR = {};
+const VOICE_PASS =
+  'Human-voice pass, 12 November 2026; score pending owner decision.';
+const BELOW_FLOOR = {
+  '/games': { holds: 68, reason: VOICE_PASS },
+  '/how-it-works': { holds: 68, reason: VOICE_PASS },
+  '/trust-and-safety': { holds: 65, reason: VOICE_PASS },
+  '/pricing': { holds: 69, reason: VOICE_PASS },
+  '/fees-and-refunds': { holds: 71, reason: VOICE_PASS },
+  '/get-paid-to-play-games': { holds: 72, reason: VOICE_PASS },
+  '/coaching': { holds: 64, reason: VOICE_PASS },
+  '/find-gaming-buddies': { holds: 65, reason: VOICE_PASS },
+  '/developers/mcp': { holds: 64, reason: VOICE_PASS },
+  '/blog/what-is-an-egirl': { holds: 70, reason: VOICE_PASS },
+  '/blog/what-does-lfg-mean': { holds: 64, reason: VOICE_PASS },
+  '/blog/how-to-find-a-valorant-duo': { holds: 70, reason: VOICE_PASS },
+  '/blog/how-to-choose-a-gaming-coach': { holds: 67, reason: VOICE_PASS },
+  '/blog/free-lfg-or-paid-teammate': { holds: 74, reason: VOICE_PASS },
+  '/compare/e-pal': { holds: 71, reason: VOICE_PASS },
+  '/compare/metafy': { holds: 73, reason: VOICE_PASS },
+  '/compare/queueup': { holds: 71, reason: VOICE_PASS },
+  '/reports/gaming-coaching-and-teammate-prices-2026': {
+    holds: 76,
+    reason: VOICE_PASS,
+  },
+};
 
 /** Score exactly what the sitemap offers Google, read from the running build. */
 async function sitemapPaths() {
@@ -96,11 +152,13 @@ test('every SEO content page holds the citability floor', async () => {
       const { average, blocks: passages } = scorePage(blocks);
       scored[path] = average;
       const floor = floorFor(path);
-      const reason = EXCLUDED[path] ?? BELOW_FLOOR[path] ?? '';
+      const declared = BELOW_FLOOR[path];
+      const required = declared ? declared.holds : floor;
+      const reason = EXCLUDED[path] ?? declared?.reason ?? '';
       report.push(
-        `${average.toFixed(1).padStart(5)} (floor ${String(floor).padStart(2)}) ${path}${reason ? `: ${reason}` : ''}`,
+        `${average.toFixed(1).padStart(5)} (floor ${String(floor).padStart(2)}${declared ? `, holds ${declared.holds}` : ''}) ${path}${reason ? `: ${reason}` : ''}`,
       );
-      if (average < floor && !(path in BELOW_FLOOR)) {
+      if (average < required) {
         const worst = [...passages]
           .sort((a, b) => a.total - b.total)
           .slice(0, 3)
@@ -110,7 +168,9 @@ test('every SEO content page holds the citability floor', async () => {
           )
           .join('\n');
         failures.push(
-          `${path}: ${average} is below the floor of ${floor}\n${worst}`,
+          declared
+            ? `${path}: ${average} is below the ${required} it is declared to hold in BELOW_FLOOR\n${worst}`
+            : `${path}: ${average} is below the floor of ${floor}\n${worst}`,
         );
       }
     }

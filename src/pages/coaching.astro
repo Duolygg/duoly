@@ -41,15 +41,15 @@ const faqItems: [string, string][] = [
   ],
   [
     'How much does a gaming coach cost on Duoly?',
-    `Every lesson costs ${price.replace(/^From /, '')} in all ${games.length} games, read from Duoly checkout on ${CATALOG_PRICES_UPDATED_LABEL}. Bundles and quantity discounts do not apply to coaching.`,
+    `Every lesson costs ${price.replace(/^From /, '')}, in all ${games.length} games, at every rank. Bundles and quantity discounts do not apply to coaching, so a second hour costs the same as the first.`,
   ],
   [
     'Do I need a recording for my first lesson?',
-    'Only for a review format: VOD Review, Demo Review or Replay Review. For example, live Play and Learn needs no recording at all.',
+    'Only for a review format: VOD Review, Demo Review or Replay Review. A live Play and Learn needs no recording at all.',
   ],
   [
     'Does a coach play on my account?',
-    'No. Every lesson runs on your own account, and your coach joins from a separate one using Discord. Nobody on Duoly ever needs your password.',
+    'No. Every lesson runs on your own account, and your coach joins from a separate one, with Discord carrying the voice and the screen share. Nobody on Duoly ever needs your password.',
   ],
   [
     'What is the difference between a coach and a teammate?',
@@ -57,7 +57,7 @@ const faqItems: [string, string][] = [
   ],
   [
     'Which games have a dedicated coaching page?',
-    `${dedicated.length} of the ${games.length} games below. The rest sell the same lessons from a game hub, at the same ${price.replace(/^From /, '')} in 2026.`,
+    `${dedicated.length} of the ${games.length} games below. The rest sell the same lessons from their game hub, at the same flat price.`,
   ],
 ];
 const article = {
@@ -109,59 +109,63 @@ const article = {
         'Live lessons, reviews and drill hours',
         'Your own account, voice on Discord',
       ]}
+      note={`Coaching prices as of ${CATALOG_PRICES_UPDATED_LABEL}.`}
     />
     <section aria-labelledby="what-h">
       <h2 id="what-h">What is esports coaching?</h2>
       <p>
-        Esports coaching is a paid lesson with a higher-ranked player of the
-        same game, built around one goal you name before the session starts. A
-        lesson comes in 3 shapes on Duoly: live Play and Learn, where your coach
-        plays beside you and explains each decision out loud, a review hour,
-        where a recording is paused and rebuilt together, and a drill hour on
-        one skill, such as aim, utility, movement or a rotation. A lesson pays
-        for the explanation and the review, while a teammate booking pays for
-        the shared playing time. A lesson from Duoly costs the same in every
-        game,
-        {price}, read from checkout in November 2026. For example, a player who
-        wins fights and still loses games books a review hour rather than
-        another duo. Every lesson in all {games.length} games runs on your own
-        account using Discord voice and screen share.
+        Esports coaching is a paid lesson with a higher-ranked player of your
+        own game, built around one goal you name before the session starts.
+        Duoly sells it in three shapes. Play and Learn puts the coach in the
+        match beside you, explaining each decision out loud. A review hour
+        pauses a recording of your own game and rebuilds the round with you. A
+        drill hour works on one skill only: aim, utility, movement or a
+        rotation.
+      </p>
+      <p>
+        A lesson pays for the explanation, and a teammate booking pays for the
+        shared playing time. So if you win your fights and still lose games, a
+        review hour will tell you more than another duo would. Every lesson
+        costs the same whichever of the {games.length} games you play, it runs
+        on your own account, and it uses Discord for voice and screen share.
       </p>
     </section>
     <section aria-labelledby="prices-h">
       <h2 id="prices-h">How much does a gaming coach cost?</h2>
       <p class="section-intro">
-        Every esports lesson from Duoly costs the same: {price} in 2026,
-        whichever game you play. The real choice is the unit rather than the
-        price. Play and Learn is sold per game where a match has a fixed length,
-        and by the hour in battle royale, extraction and sandbox games where a
-        match does not. Every review and drill lesson is hourly, which buys the
-        pauses and rewinds a live match cannot. Bundles and quantity discounts
-        do not apply to coaching, so a second hour costs{' '}
-        {price.replace(/^From /, '')} like the first. Prices in US dollars
-        follow the daily rate from the European Central Bank plus 1%. For
-        example, we read every figure here from Duoly checkout in November 2026,
-        agreed with your coach using Discord. For the rest of the market, our{' '}
+        A gaming coach on Duoly is {price}, whichever game you play and whatever
+        rank you hold. What changes is the unit. Play and Learn is sold per game
+        in titles where a match has a fixed length, and by the hour in battle
+        royale, extraction and sandbox games where it does not. Review and drill
+        lessons are always hourly, because an hour is what buys the pauses and
+        rewinds a live match cannot give you.
+      </p>
+      <p class="section-intro">
+        Nothing is added at checkout, and coaching takes no bundle or quantity
+        discount, so a second hour costs exactly what the first one did. A
+        dollar total follows the daily European Central Bank rate plus 1%. For a
+        sense of the wider market, our{' '}
         <a href={REPORT_PATH}>2026 gaming coaching and teammate price survey</a>{' '}
-        found a median of {HOURLY_COACHING.median} an hour across{' '}
-        {HOURLY_COACHING.count} coach rates read on {SURVEY_CHECKED_LABEL}.
+        put the median coaching hour at {HOURLY_COACHING.median} across{' '}
+        {HOURLY_COACHING.count} rates read on {SURVEY_CHECKED_LABEL}.
       </p>
     </section>
     <section aria-labelledby="games-h">
       <h2 id="games-h">Which game do you want coaching for?</h2>
       <p class="section-intro">
-        A coaching directory is one card per game, and every card names the real
-        lessons from Duoly rather than a generic promise. {dedicated.length} of
-        the {games.length} games have their own coaching page with a worked
-        example, a preparation checklist and a FAQ. The rest sell the same
-        lessons at the same {price.replace(/^From /, '')} from their game hub,
-        because the price never changes with the game. The lesson names differ
-        because the games do: a VOD Review in Valorant, a Demo Review in
-        Counter-Strike 2 and a Replay Review in Dota 2. For example, a Minecraft
-        card lists PvP Coaching and Bedwars Coaching instead, still at{' '}
-        {price.replace(/^From /, '')} in 2026. Pick your game and press Book to
-        open checkout with the coaching tab preselected, then agree the goal
-        using Discord.
+        Coaching is available in all {games.length} games below, and each card
+        names the lessons that game really sells. The names differ because the
+        games do: a VOD Review in Valorant, a Demo Review in Counter-Strike 2, a
+        Replay Review in Dota 2, and in Minecraft no review at all, just PvP
+        Coaching and Bedwars Coaching. The price does not differ, and every card
+        below says so.
+      </p>
+      <p class="section-intro">
+        {dedicated.length} of the {games.length} games have a coaching page of
+        their own, with a worked lesson and a list of what to bring. The rest
+        book from their game hub. Press Book on a card and checkout opens on the
+        coaching tab for that game, which is where you name the goal before a
+        coach takes the order.
       </p>
       <div class="directory-grid">
         {games.map((game) => (
@@ -200,18 +204,17 @@ const article = {
     <Steps
       heading="How do you book a gaming coach?"
       steps={[
-        `Pick the game and the format: a live lesson, a review of your own recording or a drill hour on one skill. Every format from Duoly costs ${price.replace(/^From /, '')} in 2026.`,
-        'Check out once, upfront. Coaching takes no bundle and no quantity discount, so the price on the card is the price of the lesson. For example, 2 hours of review cost twice one hour.',
-        'Send your region, your rank and one sentence naming the habit you want changed by the end of the session, then meet your coach in the order chat and start the lesson using Discord voice and screen share.',
+        `Pick the game and the format: a live lesson, a review of a recording of your own, or a drill hour on one skill. Every format costs the same.`,
+        'Pay once, upfront. The figure on the card is the figure you pay, and two hours of review cost twice what one hour does.',
+        'Send your region, your rank and one sentence naming the habit you want changed by the end of the session. Your coach reads that first, then you meet in the order chat and move to Discord for voice and screen share.',
       ]}
     >
       <p>
-        Duoly reviews every coach before any order, and every figure on this
-        page was read from Duoly checkout in November 2026. Read about{' '}
+        Every coach passes a review before taking a first order. Read about{' '}
         <a href="/contact">the team behind Duoly</a>, check the{' '}
-        <a href="/terms">payment, cancellation and refund terms</a>, or compare
-        the <a href="/find-gaming-buddies">teammate side of Duoly</a> when you
-        want playing time rather than a lesson.
+        <a href="/terms">payment, cancellation and refund terms</a>, or look at
+        the <a href="/find-gaming-buddies">teammate side of Duoly</a> if what
+        you want is playing time rather than a lesson.
       </p>
     </Steps>
     <Topics
@@ -220,15 +223,15 @@ const article = {
         {
           heading: 'What happens in a coaching hour?',
           paragraphs: [
-            'A coaching hour is one goal, a worked example and a habit to take away. The goal is agreed in the order chat before anyone loads a game, which is what keeps an hour from turning into a general chat. The middle of the hour is the worked example: one round, one pull, one rotation or one duel, replayed and explained until the decision behind the result is obvious.',
-            `The last minutes are the review. For example, a coach names 3 things: the signal to look for, the change to make and the drill to repeat before the next session. An hour from Duoly costs ${price.replace(/^From /, '')} in 2026, and a second hour costs the same, because coaching takes no quantity discount. Every lesson runs on your own account, with voice and screen share using Discord, and nobody on Duoly ever needs a password.`,
+            'A coaching hour is one goal, one worked example and one habit to take away. The goal gets agreed in the order chat before anyone loads a game. That one step is what keeps an hour from drifting into general chat about the game. The middle of the hour is the worked example: one round, one pull, one rotation or one duel, replayed and explained until the decision behind the result is obvious.',
+            'The last few minutes are the review. A good coach leaves you with three things: the signal to watch for, the change to make, and the drill to repeat before the next session. You stay on your own account the whole time, with voice and screen share on Discord, and nobody at Duoly ever asks for a password.',
           ],
         },
         {
           heading: 'Should you book a coach or a teammate?',
           paragraphs: [
-            'A coach is the right booking when you already know something is wrong and cannot name what. A teammate is the right booking when you want company, a filled seat or a better game tonight. The test is simple: ask whether you want the next session explained or played. A review hour suits a player who can already describe the losing pattern, because an hour of pausing beats another live match.',
-            `For example, a player losing the same site retake every match books a review hour, while a player short one seat for a five-stack books a Teams service instead. Coaching from Duoly stays ${price.replace(/^From /, '')} whichever game you pick, read from checkout in November 2026. Teammate prices sit on each game hub and on the [teammate and LFG pages](/find-gaming-buddies), where a session is priced by mode and rank, and both run on your own account using Discord.`,
+            'Book a coach when you know something is going wrong and cannot name it. Book a teammate when you want company, a filled seat, or simply a better evening of games. A player who can already describe the losing pattern is ready for a review hour, because an hour of pausing will beat another live match.',
+            `Losing the same site retake every match is a review hour. Being short one player for a five-stack is a Teams service. Coaching holds one price whichever game you pick, while teammate prices follow the mode and, in ranked modes, your own rank. Those sit on each game hub and on the [teammate and LFG pages](/find-gaming-buddies). Both run on your own account with Discord voice.`,
           ],
         },
       ]}
@@ -238,9 +241,9 @@ const article = {
       items={faqItems}
     />
     <ClosingCta
-      heading="Ready to book a gaming coach?"
-      text={`An esports lesson from Duoly is one booked session on a problem you pick, in any of the ${games.length} games above. Choose your game from the grid. Then, name the goal in the order chat, meet your coach using Discord and stay on your own account, because nobody here needs a password.`}
-      extra={`A lesson is sold one unit at a time: 1 hour, or 1 game in the titles where a match has a fixed length. For example, a Dota 2 Replay Review ends with three things to fix, written out after the hour. Duoly Social is the one Duoly service with no lesson at all, because voice company teaches nothing about a game. Every figure on this page was read from Duoly checkout in November 2026. Coaching is`}
+      heading="What do you bring to a first lesson?"
+      text={`One problem you can name, plus a recording if you booked a review format. Choose your game from the grid above, write the goal in the order chat, then meet your coach with Discord voice. You stay on your own account, and nobody here needs a password.`}
+      extra={`Lessons are sold one unit at a time: one hour, or one game in the titles where a match has a fixed length. A Dota 2 Replay Review, for example, ends with three things to fix, written out after the hour. Coaching is`}
       href={bookingHref('val', { service: 'vod' })}
       label="Book a coaching session"
       price={price}

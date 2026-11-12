@@ -2,13 +2,23 @@
 import { rich } from './rich';
 interface Props {
   heading: string;
+  /**
+   * One sentence answering the heading, before the list spells it out.
+   *
+   * Optional, because most callers put their answer in the slot below the
+   * list. A section whose list starts on an imperative ("Pick the game and
+   * the service") reads as an instruction with no answer at the top, so those
+   * callers pass one here instead.
+   */
+  answer?: string;
   steps: string[];
 }
-const { heading, steps } = Astro.props;
+const { heading, answer, steps } = Astro.props;
 ---
 
 <section aria-labelledby="steps-h">
   <h2 id="steps-h">{heading}</h2>
+  {answer && <p>{answer}</p>}
   <ol class="steps">
     {steps.map((step) => (
       <li>

@@ -15,7 +15,6 @@ import {
 } from '../../site/seo';
 import {
   COMPETITOR_COUNT,
-  DUOLY,
   HOURLY_COACHING,
   OBSERVATION_COUNT,
 } from '../../server/seo/price-report';
@@ -25,10 +24,7 @@ import {
   SHORT_GAME_PRICE,
   SOCIAL_PRICE,
 } from '../../server/seo/teammate-facts';
-import { CATALOG_PRICES_UPDATED } from '../../server/seo/fees';
 const { viewer, csrf } = await pageViewer(Astro);
-/** The catalog year, derived from the shared price date rather than typed. */
-const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);
 const posts = [
   {
     path: GUIDE_PATH,
@@ -116,32 +112,33 @@ const guides = [
         ))}
       </ul>
       <p>
-        The e-girl guide explains the term's online history and how to arrange a
-        respectful first session. A label does not establish skill or
-        willingness to play. Agree on game, region and mode, and ask before
-        recording or streaming.
+        The e-girl guide covers the term's online history and how to arrange a
+        respectful first session. A label tells you nothing about somebody's
+        skill or willingness to play, so agree the game, the region and the mode
+        instead, and ask before recording or streaming.
       </p>
       <p>
-        The LFG guide covers the shorthand gamers type in chat: LFG is looking
-        for group, LFM is looking for more, and LF1M names the exact number of
-        open slots. It also shows what a post has to carry to get an answer,
-        which is game, mode, region, rank or level and the hours you can play.
+        The LFG guide covers the shorthand gamers type in chat. LFG is looking
+        for group, LFM is looking for more, and LF1M names exactly how many
+        slots are open. It also sets out what a post has to carry before anybody
+        answers it: the game, the mode, the region, your rank or level, and the
+        hours you can actually play.
       </p>
       <p>
-        Free communities are useful for finding a regular group. For example, a
-        moderated Discord LFG channel lets you compare schedules and voice
-        preferences before joining a lobby. A paid session from Duoly has a
-        defined activity and length; the guide explains Duoly Social at{' '}
-        {SOCIAL_PRICE} per hour alongside game sessions. Social is for adults
-        and is friendly company only.{' '}
-        <a href="/games">Browse games and coaching</a> for service details and
-        current prices, compare <a href="/coaching">esports coaching by game</a>{' '}
-        or <a href="/find-gaming-buddies">find gaming buddies</a> for the game
-        you play.
+        Free communities are the better route to a regular group. A moderated
+        Discord LFG channel lets you compare schedules and voice preferences
+        before you join a lobby, which no queue will do for you. A paid session
+        is the one with a defined activity and length, and the guide explains
+        Duoly Social at {SOCIAL_PRICE} an hour beside the game sessions. Social
+        is adults only and friendly company only.{' '}
+        <a href="/games">Browse games and coaching</a> for the service detail
+        and current prices, compare{' '}
+        <a href="/coaching">esports coaching by game</a>, or{' '}
+        <a href="/find-gaming-buddies">find gaming buddies</a> for the game you
+        play.
       </p>
       <p>
-        Ready to book instead of read? The guides point at three popular offers:
-        a{' '}
+        The guides also point straight at three popular offers: a{' '}
         <a href={bookingHref('social', { service: 'chat' })}>
           Just Chat hour on Duoly Social
         </a>
@@ -161,33 +158,34 @@ const guides = [
         </a>{' '}
         set out every service, while the{' '}
         <a href="/developers/mcp">Duoly MCP developer guide</a> documents the
-        same catalog for an assistant. Social sessions are explained on the{' '}
+        same price list for an assistant. Social sessions are explained on the{' '}
         <a href="/games/social">Duoly Social page</a>.
       </p>
     </section>
     <section class="answers" aria-labelledby="reference-h">
       <h2 id="reference-h">Which Duoly pages explain the service itself?</h2>
       <p>
-        Six reference pages sit behind the guides, and each answers a question a
-        guide only touches. <a href="/about">About Duoly</a> states who operates
-        duoly.gg, how a teammate passes the four-step rank check, and which
-        Duoly this is, because a couples app on Google Play and a language app
-        share the name. <a href="/fees-and-refunds">Duoly fees and refunds</a>{' '}
-        sets out the price model, the automatic bundle discounts of {bundle[0]}
-        %, {bundle[1]}% and {bundle[2]}%, and the cancellation rules quoted from
-        the terms.
-        <a href="/how-it-works">How Duoly works</a> walks the booking from the
+        Six reference pages sit behind the guides, and each one answers a
+        question a guide only touches. <a href="/about">About Duoly</a> names
+        who operates duoly.gg, how a teammate passes the four-step rank check,
+        and which Duoly this is, since a couples app on Google Play and a
+        language app share the name.{' '}
+        <a href="/fees-and-refunds">Duoly fees and refunds</a> sets out the
+        price model, the automatic bundle discounts of {bundle[0]}%, {bundle[1]}
+        % and {bundle[2]}%, and the cancellation rules quoted from the terms.{' '}
+        <a href="/how-it-works">How Duoly works</a> walks a booking from the
         picker to the refund rules, and{' '}
         <a href="/trust-and-safety">trust and safety</a> covers the player
-        checks, the payment handling and how to report a session.{' '}
+        checks, the payment handling and how to report a session.
+      </p>
+      <p>
         <a href="/pricing">The pricing page</a> lists every game and service
         with its price in one table, and <a href="/press">the press kit</a>{' '}
-        carries the fact sheet and the logo files. Reading one of them before a
-        first booking beats guessing. For example, a reader wondering whether
-        anything is added at checkout finds a {SHORT_GAME_PRICE} session stays{' '}
-        {SHORT_GAME_PRICE}, and <a href="/pricing.md">pricing.md</a> lists every
-        price in {CATALOG_YEAR} as plain text for an assistant reading using
-        Claude or another model.
+        carries the fact sheet and the logo files. If the question is simply
+        whether anything gets added at checkout, the answer is on the fees page:
+        a {SHORT_GAME_PRICE} session stays {SHORT_GAME_PRICE}. And{' '}
+        <a href="/pricing.md">pricing.md</a> is every current price as plain
+        text, for an assistant reading with Claude or another model.
       </p>
     </section>
     <section class="answers" aria-labelledby="guides-h">
@@ -207,38 +205,38 @@ const guides = [
         ))}
       </ul>
       <p>
-        Each of these 3 guides opens with the answer and then explains it. First
-        pick the question: finding a teammate in one game, choosing a coach in
-        any game, or deciding whether to pay at all. For example, the free
-        versus paid guide names real Discord member counts beside a{' '}
-        {SOCIAL_PRICE} per hour Social session, so the trade-off is a number
-        rather than a feeling. Every guide puts the free routes first, because
-        for most players they are enough.
+        Pick by the question you actually have: finding a teammate in one game,
+        choosing a coach in any game, or deciding whether to pay at all. Each
+        guide opens with the answer and then explains it. The free versus paid
+        guide, for example, puts real Discord member counts next to a Social
+        hour, so you can weigh two numbers instead of two feelings. All three
+        put the free routes first, because for most players the free routes are
+        enough.
       </p>
     </section>
     <section class="answers" aria-labelledby="compare-h">
       <h2 id="compare-h">Which platform comparisons can you read?</h2>
       <p>
-        A Duoly comparison is a sourced table, where every rival fact carries
-        the page it was read from and the date. 1){' '}
+        Three, each one a sourced table where every rival fact carries the page
+        it came from and the date it was read.{' '}
         <a href="/compare/e-pal">Duoly compared with E-Pal</a> covers the Buff
-        wallet, provider-set prices and dispute windows. 2){' '}
+        wallet, provider-set prices and dispute windows.{' '}
         <a href="/compare/metafy">Duoly compared with Metafy</a> covers
         coach-set session prices, the 3.7% buyer fee added at checkout and the
-        21 day refund window. 3){' '}
+        21 day refund window.{' '}
         <a href="/compare/queueup">Duoly compared with QueueUp</a> covers
         QueueCoins, the four booking modes and a written first-session
         guarantee.
       </p>
       <p>
-        Duoly publishes all 3, so none of them is independent. For example, each
-        one names what the other platform does better before it names a
-        difference, and marks a policy unknown when the source page does not say
-        it. Duoly is new and has no public review volume yet, which the
-        comparisons state instead of quoting a score, and all 3 were read on 9
+        Duoly publishes all three, so none of them is independent. What each one
+        does instead is name what the other platform does better before it names
+        a difference, and mark a policy Not stated when the source page does not
+        say. Duoly is new and has no public review volume yet, and the
+        comparisons say so rather than quoting a score. All three were read on 9
         November 2026. The{' '}
         <a href="/blog/how-to-choose-a-gaming-coach">coach guide</a> lists the
-        checks to run on any platform, including this one.
+        checks worth running on any platform, including this one.
       </p>
     </section>
     <section class="answers" aria-labelledby="research-h">
@@ -247,18 +245,19 @@ const guides = [
         One price survey, run by Duoly and published with its data. The{' '}
         <a href={REPORT_PATH}>2026 gaming coaching and teammate price report</a>{' '}
         records every price {COMPETITOR_COUNT} platforms published on their own
-        pages on {SURVEY_CHECKED_LABEL}, which is {OBSERVATION_COUNT}{' '}
-        observations in total. The headline: the median hourly coaching price
-        was {HOURLY_COACHING.median}, against {HOURLY_COACHING.low} at the
-        bottom and {HOURLY_COACHING.high} at the top. The method section names
-        what was counted, the one European Central Bank rate used for euro
-        figures and the platforms whose pages did not answer. Every row is
-        downloadable as{' '}
+        pages on {SURVEY_CHECKED_LABEL}, which came to {OBSERVATION_COUNT}{' '}
+        observations. The median hourly coaching price was{' '}
+        {HOURLY_COACHING.median}, with {HOURLY_COACHING.low} at the bottom and{' '}
+        {HOURLY_COACHING.high} at the top.
+      </p>
+      <p>
+        The method section names what was counted, the single European Central
+        Bank rate used for the euro figures, and the platforms whose pages never
+        answered. Every row is downloadable as{' '}
         <a href={REPORT_CSV_PATH}>a CSV with the source URL on each line</a>, so
-        a reader can check a figure rather than trust it. For example, a player
-        comparing a {HOURLY_COACHING.median} market median against a{' '}
-        {DUOLY.coachingHour} Duoly lesson is reading two prices from the same
-        page.
+        you can check a figure instead of trusting it. It also puts a{' '}
+        {HOURLY_COACHING.median} market median on the same page as the Duoly
+        lesson price, so you can read both at once.
       </p>
     </section>
   </PageIntro>

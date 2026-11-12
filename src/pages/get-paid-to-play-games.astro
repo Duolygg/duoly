@@ -47,7 +47,7 @@ const faq: [string, string][] = [
   ],
   [
     'How does a coaching hour pay compared with a short game?',
-    `Both pay ${share} of the price. For example, a Valorant VOD Review from Duoly costs ${COACHING_PRICE} per hour, while Skirmish 2v2 costs ${SHORT_GAME_PRICE} per game.`,
+    `Both pay ${share} of the price. A Valorant VOD Review costs ${COACHING_PRICE} per hour, while Skirmish 2v2 costs ${SHORT_GAME_PRICE} per game, so the hour pays more and takes longer.`,
   ],
   [
     'Which voice tool do teammates use?',
@@ -102,14 +102,13 @@ const path = '/get-paid-to-play-games';
         host game sessions and, with Social access, friendly voice company.
       </p>
       <p>
-        Reward apps pay for installs, surveys or idle playtime. Duoly instead
-        pays a {share} share of real customer sessions, so earnings follow
-        completed orders rather than screen time. For example, a Valorant
-        customer booking a Skirmish 2v2 game at {SHORT_GAME_PRICE} expects the
-        booked mode and teammate tier, with timing agreed in the order chat.
-        Every order starts with reading the service, the unit and the customer
-        notes before accepting. The service list from Duoly spans{' '}
-        {PLAYABLE_GAMES} games plus Social, so a teammate can list one game or
+        Reward apps pay for installs, surveys or idle playtime. Duoly pays a{' '}
+        {share} share of real customer sessions, so a completed order is the
+        only thing that earns. A customer who books a Valorant Skirmish 2v2
+        expects the mode and the teammate tier they paid for, with the timing
+        agreed in the order chat. So every order starts the same way: read the
+        service, the unit and the customer notes before you accept it. Duoly
+        books {PLAYABLE_GAMES} games plus Social, and you can list one game or
         several.
       </p>
     </section>
@@ -121,15 +120,13 @@ const path = '/get-paid-to-play-games';
         desk always shows the exact USD amount for each order.
       </p>
       <p>
-        Coaching from Duoly is listed at {COACHING_PRICE} per hour across all{' '}
-        {COACHABLE_GAMES} coachable games, so one completed coaching hour pays a{' '}
-        {share} share of {COACHING_PRICE} at the order rate. A per-game service
-        and an hourly lesson are different units, so compare the booked activity
-        as well as the price. For example, Valorant Skirmish 2v2 is listed at{' '}
-        {SHORT_GAME_PRICE} per game, which suits a teammate queueing many short
-        games with Discord voice running all evening. Your teammate dashboard
-        shows the USD earnings for the actual order, after discounts and
-        conversion.
+        Coaching is {COACHING_PRICE} an hour across all {COACHABLE_GAMES}{' '}
+        coachable games, so one completed hour pays a {share} share of that. A
+        per-game service and an hourly lesson are different units, so weigh the
+        activity as well as the figure. Valorant Skirmish 2v2 is{' '}
+        {SHORT_GAME_PRICE} per game, which suits a teammate queueing a lot of
+        short games with Discord voice running all evening. Your dashboard shows
+        the USD earnings for the actual order, after discounts and conversion.
       </p>
       <p>
         Customer bundle discounts of {b3}%, {b5}% and {b10}% cut the session
@@ -141,8 +138,8 @@ const path = '/get-paid-to-play-games';
       <h2 id="payouts-h">When does Duoly pay out, and by which method?</h2>
       <p>
         A Duoly payout is a weekly transfer of a cleared balance. Payouts run
-        once every week as soon as a balance reaches $25, and smaller amounts
-        carry over to the following week rather than expiring. Teammates add
+        once every week as soon as a balance reaches $25, and a smaller amount
+        carries over to the following week and never expires. Teammates add
         payout details once, then the desk marks each amount pending, scheduled
         or paid.
       </p>
@@ -154,11 +151,11 @@ const path = '/get-paid-to-play-games';
         the options differ by country.
       </p>
       <p>
-        Two points follow from a weekly cycle. A session completed late in a
-        week clears in the next payout. For example, a {COACHING_PRICE} coaching
-        hour finished on Sunday pays a {share} share in the following transfer.
-        Every teammate handles personal tax reporting, because the {share} share
-        from Duoly arrives untaxed.
+        A weekly cycle has two consequences worth knowing. A session finished
+        late in the week clears in the next payout, so a coaching hour you run
+        on Sunday pays its {share} share in the following transfer. And the{' '}
+        {share} share arrives untaxed, so your own tax reporting is yours to
+        handle.
       </p>
     </section>
     <section aria-labelledby="apply-h">
@@ -171,13 +168,12 @@ const path = '/get-paid-to-play-games';
         for games, services, a region and a communication style.
       </p>
       <p>
-        Evidence beats adjectives, so attach real rank or experience proof from
-        an account the applicant owns, never a borrowed clip. For example, a
-        Valorant applicant names controller utility, entry timing or VOD
-        decisions, while a Rocket League applicant names Doubles, recoveries or
-        both. Coaching pays a {share} share of {COACHING_PRICE} per hour from
-        Duoly, and the same {share} rule covers teammate and Gamer Girl orders,
-        so coaching applicants should show teaching as well as rank.
+        Attach real rank or experience proof from an account you own, never a
+        borrowed clip, and be specific about what you are good at. A Valorant
+        applicant might name controller utility, entry timing or VOD decisions;
+        a Rocket League applicant might name Doubles and recoveries. Coaching
+        pays the same {share} share as teammate and Gamer Girl work, so a
+        coaching application has to show teaching and not only rank.
       </p>
       <p>
         Duoly reviews every application, and some services need separate access.
@@ -199,23 +195,24 @@ const path = '/get-paid-to-play-games';
         accepting.
       </p>
       <p>
-        Use the order chat to confirm the activity, start time and voice setup
-        using Discord. Play on your own account. The <a href="/terms">terms</a>{' '}
-        forbid account sharing, and nobody needs the customer's password.
+        Use the order chat to confirm the activity, the start time and how you
+        will talk, which is usually Discord. Play on your own account. The{' '}
+        <a href="/terms">terms</a> forbid account sharing, and nobody needs the
+        customer's password.
       </p>
       <p>
         A completed order adds the {share} share to your desk as pending USD
-        earnings. For example, a {COACHING_PRICE} coaching hour follows this
-        path. Keep payments on Duoly, promise no rank and report problems to{' '}
+        earnings, a coaching hour and a single short game alike. Keep payments
+        on Duoly, promise no rank, and send anything that goes wrong to{' '}
         <a href="/contact">support</a>.
       </p>
       <p>
-        To see the customer side, the checkout for a{' '}
+        The customer side is worth a look before you apply. The checkout for a{' '}
         <a href={bookingHref('val', { service: 'duo2' })}>
           Valorant Duo Pro game
         </a>{' '}
-        shows the service and unit before payment. Booking is optional when
-        applying.
+        shows the service and the unit before payment. You do not have to book
+        anything to apply.
       </p>
     </Steps>
     <Faq
@@ -223,9 +220,9 @@ const path = '/get-paid-to-play-games';
       items={faq}
     />
     <ClosingCta
-      heading="Ready to apply?"
-      text="Applying to Duoly means naming the games and services you can offer, with evidence attached. Duoly reviews every application by hand, and approval arrives before any order can reach your queue."
-      extra={`Three things speed up a review. Name the games and modes you really play, for example Valorant Unrated and Marvel Rivals Quick Match. Attach rank proof from an account you own. Say whether coaching, teammate or Gamer Girl work fits your week. Earning starts at approval, then an order accepted from the queue and a customer met using Discord voice, and it ends with the ${share} share landing in your desk, converted to USD. Payouts run weekly above $25, and every coaching hour is listed at ${COACHING_PRICE} per hour. The desk from Duoly shows each amount as pending, scheduled or paid, so a first payout is traceable from the order that earned it to the method it leaves by.`}
+      heading="What does the application actually ask for?"
+      text="The games and services you can offer, with evidence attached. Duoly reviews every application by hand, and approval arrives before any order can reach your queue."
+      extra={`A review goes faster when the application is specific. Name the games and modes you really play, for example Valorant Unrated and Marvel Rivals Quick Match, attach rank proof from an account you own, and say whether coaching, teammate or Gamer Girl work actually fits your week. After approval every order runs the same way: take it from the queue, meet the customer with Discord voice, finish the session, and the ${share} share lands in your desk in USD. Payouts run weekly above $25, and the desk marks each amount pending, scheduled or paid, so you can follow a first payout from the order that earned it to the method it leaves by.`}
       href="/apply"
       label="Apply to become a teammate"
       art={{ src: '/assets/games/valorant.png', alt: '' }}

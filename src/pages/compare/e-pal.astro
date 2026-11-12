@@ -108,32 +108,31 @@ const schema = {
 
     <section class="cmp-answer" aria-label="Short answer">
       <p>
-        <strong>Short answer:</strong> E-Pal advertises a broader catalog, and
-        Duoly uses fixed platform prices. According to E-Pal, over 1,000,000
-        users have tried E-Pal services across 100+ games and social categories.
-        Duoly covers 20 games plus Social, with one fixed price per game,
-        service and rank. For example, one ranked League of Legends game with a
-        Master+ teammate at Gold rank on EUW costs {unitPrice}. Three games cost{' '}
-        {price}, with a {discountPercent}% discount included. On E-Pal, each
-        provider sets the price. Additionally, a Buff top-up adds a 10% E-Pal
-        service fee plus a payment channel fee. We found every E-Pal fact on
-        E-Pal pages in November 2026. Pick E-Pal for range, or pick Duoly for a
-        known price paid by card through Stripe.
+        <strong>Short answer:</strong> E-Pal has the far broader range, and
+        Duoly has the fixed price. E-Pal says over 1,000,000 users have tried
+        its services across 100+ games and social categories, with each provider
+        setting their own price in Buff. Duoly covers 20 games plus Social at
+        one published price per game, service and rank: one ranked League of
+        Legends game with a Master+ teammate at Gold on EUW is {unitPrice}, and
+        three of them come to {price} with the {discountPercent}% discount
+        already inside it. On E-Pal a Buff top-up also adds a 10% service fee
+        plus a payment channel fee. Pick E-Pal for range. Pick Duoly for a
+        figure you can read before you pay. Every E-Pal fact here comes from
+        E-Pal's own pages, read on {CHECKED}.
       </p>
     </section>
 
     <section aria-labelledby="table-h">
       <h2 id="table-h">How do Duoly and E-Pal compare side by side?</h2>
       <p>
-        Duoly is the fixed-price option, and E-Pal is the wider marketplace. For
-        example, E-Pal lists 100+ games and lifestyle services combined, while
-        Duoly lists 20 games plus Social. Duoly charges a card through Stripe,
-        and 3 League of Legends games cost {price}. E-Pal sells Buff first with
-        a 10% service fee. We found these policies in first-party sources in
-        November 2026. Neutral dots describe models or destinations without
-        scoring them. Unknown means the source does not state a policy. E-Pal
-        also lets you choose a named provider and read public client reviews
-        before booking.
+        Most rows below mark a difference in how the two platforms work, with no
+        score attached. E-Pal lists 100+ games and lifestyle services combined;
+        Duoly lists 20 games plus Social. Duoly charges a card through Stripe;
+        E-Pal sells Buff first, with a 10% service fee on the top-up. E-Pal is
+        marked ahead where it is ahead: you can choose a named provider there
+        and read public client reviews before booking, neither of which Duoly
+        offers today. A neutral dot marks a model or a destination without
+        scoring it, and Not stated means the pages we read do not say.
       </p>
       <div class="cmp-legend" aria-hidden="true">
         {(['yes', 'part', 'no', 'neutral', 'unknown'] as const).map((k) => (
@@ -246,46 +245,45 @@ const schema = {
         </div>
       </div>
       <p>
-        The selected League of Legends order costs {price} on Duoly. E-Pal
-        prices depend on the provider, rank, mode and billing unit. Duo Pro is a
-        ranked Solo/Duo session with a Master+ teammate, paid through Stripe. At
-        Gold rank on EUW, one game costs {unitPrice}. Three games cost {price},
-        because Duoly takes {discountPercent}% off 3 games, 20% off 5 games and
-        25% off 10 games. Each ePal sets a price in Buff. On 8 November 2026 we
-        found sample listings from 2 to 3 Buff on the E-Pal homepage. According
-        to the E-Pal wallet page, 1 Buff equals 1 USD, a top-up adds a 10%
-        service fee, and payment channels add 3% to 30%. For example, 3 games at
-        2 to 3 Buff come to 6 to 9 Buff, or about USD 6.60 to 9.90 with the 10%
-        fee, before channel fees. Additionally, E-Pal can cost less. The sample
-        listings do not state a rank, so the two prices are not a like-for-like
-        match.
+        The two prices answer different questions, so read the unit before the
+        number. Duo Pro is a ranked Solo/Duo session with a Master+ teammate,
+        paid through Stripe: {unitPrice} for one game at Gold on EUW, and{' '}
+        {price} for three, because Duoly takes {discountPercent}% off 3 games,
+        20% off 5 and 25% off 10. On E-Pal each provider sets their own price in
+        Buff, and on 8 November 2026 the homepage showed sample listings from 2
+        to 3 Buff. The E-Pal wallet page puts 1 Buff at 1 USD, adds a 10%
+        service fee to a top-up, and notes that payment channels add 3% to 30%.
+        So 3 games at 2 to 3 Buff come to about USD 6.60 to 9.90 once the 10%
+        fee lands, before channel fees. E-Pal can genuinely come out cheaper.
+        Those sample listings name no rank, though, so this is not a
+        like-for-like comparison.
       </p>
     </section>
 
     <section aria-labelledby="pay-h">
       <h2 id="pay-h">How do payment, fees and refunds work?</h2>
       <p>
-        Duoly payment is a card payment through Stripe in EUR or USD. For
-        example, 3 <a href="/games/league-of-legends">League of Legends</a>{' '}
-        games cost {price} with no top-up fee, and{' '}
+        Payment on Duoly is one card charge through Stripe in EUR or USD, so 3{' '}
+        <a href="/games/league-of-legends">League of Legends</a> games cost what
+        the card above says, with no top-up in the way. You can cancel free of
+        charge until a teammate accepts, an order nobody accepts within 5
+        minutes cancels itself, and refunds go to the Duoly balance by default.
+        The <a href="/terms#balance">Duoly balance terms</a> add that refunded
+        money can be paid back to the original payment method on request, while
+        promotional cashback and gifts cannot be paid out as cash.{' '}
         <a href="/games/social">Duoly Social</a> sells the company-only hours
-        E-Pal is best known for. Before a teammate accepts, a Duoly order can be
-        cancelled free of charge. If nobody accepts within 5 minutes, the order
-        cancels automatically. Refunds go to the Duoly balance by default. The{' '}
-        <a href="/terms#balance">Duoly balance terms</a> say refunded money can
-        be paid back to the original payment method on request. Promotional
-        cashback and gifts cannot be paid out as cash. E-Pal payment works
-        through Buff, a platform currency worth USD 1.00 per Buff. According to
-        the E-Pal wallet page, every top-up carries a 10% service fee.
-        Additionally, Buff bought through a top-up cannot be withdrawn. An E-Pal
-        client has 72 hours after an ePal accepts an order to request a refund.
-        A decision typically takes at least 3 to 7 business days. We found these
-        refund rules on public help pages. According to the dispute page,
-        disputed funds go back to the E-Pal account, much like the default Duoly
-        balance refund. The cited E-Pal help pages do not state whether an
-        original-payment refund is available. Unknown is not a refusal, and both
-        default destinations are shown neutrally. The Duoly side of this
-        comparison is set out in full on{' '}
+        E-Pal is best known for.
+      </p>
+      <p>
+        E-Pal runs on Buff, a platform currency worth USD 1.00 per Buff, and the
+        wallet page puts a 10% service fee on every top-up. Buff bought that way
+        cannot be withdrawn again. For a refund, an E-Pal client has 72 hours
+        after an ePal accepts the order to open a dispute, and a decision
+        typically takes 3 to 7 business days. The dispute page says disputed
+        funds return to the E-Pal account, which works much like the default
+        Duoly balance refund. Whether an original-payment refund is available is
+        not stated on the help pages we read, which is why the table marks it
+        Not stated rather than No. The Duoly side sits in full on{' '}
         <a href="/fees-and-refunds">Duoly fees and refunds</a>, and{' '}
         <a href="/about">about Duoly</a> names the Austrian operator behind it.
       </p>
@@ -294,21 +292,23 @@ const schema = {
     <section aria-labelledby="games-h">
       <h2 id="games-h">Which games and services does each platform cover?</h2>
       <p>
-        E-Pal is the larger platform, with 100+ online games and lifestyle
-        services according to the E-Pal homepage. The E-Pal catalog includes
-        Valorant, League of Legends, Marvel Rivals, Minecraft and Roblox.
-        Additionally, E-Pal offers social categories such as E-Chat, karaoke,
-        watching movies together and studying together. E-Pal says over
-        1,000,000 users have tried E-Pal services, and the platform has
-        attracted 100,000+ online ePals. Duoly is a focused catalog of 20 games
-        plus a Social category. Duoly games include League of Legends, Valorant,
-        Counter-Strike 2, Fortnite, Apex Legends, Marvel Rivals, Rocket League
-        and Pokémon Unite. Every Duoly game offers teammate sessions and
-        coaching. For example, League of Legends VOD Review is a 1 hour session
-        with a Grandmaster+ coach. Duoly Social covers friendly voice sessions
-        for adults, such as Just Chat, and never dating services. For a rare
-        game or a wide range of social services, E-Pal offers more choice. We
-        found these catalogs on both sites in November 2026.
+        E-Pal is the larger platform by a long way. Its homepage counts 100+
+        online games and lifestyle services, including Valorant, League of
+        Legends, Marvel Rivals, Minecraft and Roblox, plus social categories
+        such as E-Chat, karaoke, watching movies together and studying together.
+        E-Pal says over 1,000,000 users have tried its services and that it has
+        attracted 100,000+ online ePals.
+      </p>
+      <p>
+        Duoly is the narrower list: 20 games plus Social, among them League of
+        Legends, Valorant, Counter-Strike 2, Fortnite, Apex Legends, Marvel
+        Rivals, Rocket League and Pokémon Unite. Every one of them sells both
+        teammate sessions and coaching, so a League of Legends VOD Review is an
+        hour with a Grandmaster+ coach in the same checkout as a duo game. Duoly
+        Social covers friendly voice sessions for adults, such as Just Chat, and
+        never dating services. If you want a rare game, or a wide spread of
+        social services, E-Pal is simply the better place to look. Both lists
+        were read on {CHECKED}.
       </p>
     </section>
 
@@ -317,30 +317,30 @@ const schema = {
         How are teammates checked, and who can use each service?
       </h2>
       <p>
-        Provider checks are a standard step on both platforms. According to the
-        E-Pal help page, E-Pal staff review each service application within 2 to
-        3 business days. Gaming applicants can upload a rank or level screenshot
-        and provide a voice clip of 3 to 15 seconds. Duoly reviews every
-        teammate before the first order. Each Duoly service names the teammate
-        tier. For example, Duo Pro in League of Legends comes with a Master+
-        teammate for {unitPrice} per game at Gold rank. Both platforms are for
-        adults. The E-Pal Terms of Service require users to be 18 or older, and
-        the Duoly terms set the same minimum age of 18. Additionally, Duoly runs
-        a public MCP server, so an AI assistant like Claude or ChatGPT can look
-        up Duoly prices and create a booking link. Payment always happens on
-        Duoly through Stripe, and the order chat keeps the whole session on
-        record. We found both age rules in the terms in November 2026.
+        Both platforms check their providers, in different ways. The E-Pal help
+        page says staff review each service application within 2 to 3 business
+        days, and that a gaming applicant can upload a rank or level screenshot
+        and a voice clip of 3 to 15 seconds. Duoly reviews every teammate before
+        a first order and names the tier on the service itself, so Duo Pro in
+        League of Legends always comes with a Master+ teammate.
+      </p>
+      <p>
+        Both are adults-only. The E-Pal Terms of Service require users to be 18
+        or older, and the Duoly terms set the same minimum, both read on{' '}
+        {CHECKED}. One thing Duoly has that E-Pal does not is a public MCP
+        server, so an assistant like Claude or ChatGPT can look up a price and
+        build a booking link for you. Payment still happens on Duoly through
+        Stripe, and the order chat keeps the session on record either way.
       </p>
     </section>
 
     <section aria-labelledby="fit-h">
       <h2 id="fit-h">Which one fits you?</h2>
       <p>
-        The right choice depends on range versus price certainty, and we found
-        no single winner. E-Pal is the better fit for variety, and Duoly is the
-        better fit for a fixed price. For example, a player who wants karaoke
-        one night and Roblox the next will find more on E-Pal. A player who
-        wants 3 ranked League of Legends games for {price} gets a fixed price on
+        There is no single winner here, only a trade between range and price
+        certainty. Somebody who wants karaoke one night and Roblox the next will
+        find far more on E-Pal. Somebody who wants 3 ranked League of Legends
+        games and wants to read the total before paying is better served on
         Duoly.
       </p>
       <div class="cmp-two">
@@ -367,13 +367,13 @@ const schema = {
           <div class="cmp-card-title">Choose Duoly if</div>
           <ul class="checklist">
             <li>
-              You want a fixed price before checkout, for example {price} for 3
-              League of Legends games.
+              You want a fixed price before checkout, {price} for 3 League of
+              Legends games.
             </li>
             <li>You want to pay by card through Stripe in EUR or USD.</li>
             <li>
-              You want a reviewed teammate or a coach in one of 15 supported
-              games.
+              You want a reviewed teammate or a coach in one of 20 games plus
+              Social.
             </li>
             <li>
               You want an AI assistant to find a price and create a booking
@@ -390,13 +390,14 @@ const schema = {
     <section aria-labelledby="sources-h">
       <h2 id="sources-h">Where do these facts come from?</h2>
       <p>
-        Every E-Pal fact here comes from 6 public E-Pal pages, checked on 8
-        November 2026. For example, we found the 10% top-up fee on the E-Pal
-        wallet page. Duoly facts come from the <a href="/terms">Duoly terms</a>{' '}
-        and the live Duoly price list, so the {price} example always matches
-        checkout. Duoly publishes the comparison. E-Pal is a trademark of the
-        E-Pal owner and is named here for comparison only. Prices and policies
-        can change, so check the source pages before booking.
+        Every E-Pal fact here comes from 6 public E-Pal pages, read on 8
+        November 2026 and listed below. The 10% top-up fee, for instance, is on
+        the E-Pal wallet page. The Duoly facts come from the{' '}
+        <a href="/terms">Duoly terms</a> and the live price list, which is why
+        the example above always matches checkout. Duoly publishes this
+        comparison, so it is not independent. E-Pal is a trademark of its owner
+        and is named here for comparison only. Prices and policies change, so
+        open the source pages before booking anything.
       </p>
       <ol class="cmp-sources">
         {epalSources.map((source, index) => (
