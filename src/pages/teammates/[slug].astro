@@ -13,6 +13,7 @@ import {
 import {
   accentStyle,
   bookingMode,
+  nameChars,
   profileRoute,
   profileMetadata,
   profilePresentation,
@@ -102,7 +103,7 @@ const freshDetail =
   {p && view ? (
     <article
       class="tp-page"
-      style={accentStyle(p.accent)}
+      style={`${accentStyle(p.accent)};--name-chars:${nameChars(p.name)}`}
       data-banner={p.banner}
       data-tier={p.tier}
       data-profile={p.slug}

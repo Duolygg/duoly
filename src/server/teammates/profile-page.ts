@@ -46,9 +46,10 @@ const PICK_LABELS: Record<string, string> = {
 };
 export const pickLabel = (id: string) => PICK_LABELS[id] ?? 'Mains';
 /**
- * The rank emblem: one solid geometric crest per game, filled with the game colour, never
- * an official rank badge and never a second copy of the game logo. The hero lockup prints
- * the bare crest, the game card adds the chevron mark.
+ * The rank emblem on a game card: one solid geometric crest per game, filled with the game
+ * colour, never an official rank badge and never a second copy of the game logo. The hero
+ * lockup used to print the bare crest; next to the name it read as a warning sign, so it
+ * names the game with the game's own icon instead.
  */
 export const rankEmblem = (id: string) => ({
   shape:
@@ -60,6 +61,19 @@ export const rankEmblem = (id: string) => ({
 /** Accent and the light strength that goes with it, as inline custom properties. */
 export const accentStyle = (accent: ProfileAccent) =>
   `--accent:${PROFILE_ACCENTS[accent]};--glow:${PROFILE_ACCENT_GLOW[accent]}`;
+/**
+ * The longest word in a display name, which is what the headline has to fit beside the mascot
+ * on a narrow screen. Wrapping happens at spaces, so "Mary Jane" fits at the full display size
+ * while "Crafty" is the one that has to step down.
+ */
+export const nameChars = (name: string) =>
+  Math.max(
+    1,
+    ...name
+      .trim()
+      .split(/\s+/)
+      .map((word) => word.length),
+  );
 export const profileMonth = (month: string) =>
   new Intl.DateTimeFormat('en', {
     month: 'long',

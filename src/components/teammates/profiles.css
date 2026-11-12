@@ -1,8 +1,9 @@
 /*
  * Broadcast: the signature is typography and light, not a big picture. The mascot art
  * only exists at 160 px, so it never renders larger than that; the scale comes from the
- * name, from a pool of accent light and from an outlined repeat of the name that bleeds
- * off the page edge behind the right column.
+ * name set large and from a pool of accent light behind it. An outlined repeat of the
+ * name used to sit behind the right column; it read as noise and is gone, so the name
+ * is printed once.
  *
  * Two line treatments only: hairline dividers, and the slanted cut (the "slash") on the
  * tier plaque and the active tab marker. Cards keep plain rounded corners; a chamfer on
@@ -245,7 +246,8 @@
   grid-area: name;
 }
 .tp-page h1 {
-  font-size: clamp(72px, 8.2vw, 124px);
+  --name-size: clamp(72px, 8.2vw, 124px);
+  font-size: var(--name-size);
   line-height: 0.94;
   overflow-wrap: anywhere;
 }
@@ -1454,8 +1456,15 @@ a.tp-stat:hover > strong {
   .tp-hero-name {
     display: contents;
   }
+  /* Beside the mascot the name has roughly 100vw - 220px to itself. A name that does not
+     fit steps the display size down instead of breaking inside a word: "Crafty" came out
+     as "Craft" and a lone "y". The floor keeps a very long handle readable. */
   .tp-page h1 {
     grid-area: name;
+    font-size: max(
+      40px,
+      min(var(--name-size), calc((100vw - 220px) / var(--name-chars, 4) / 0.54))
+    );
   }
   .tp-rankline {
     grid-area: rank;
@@ -1491,7 +1500,7 @@ a.tp-stat:hover > strong {
     max-width: 520px;
   }
   .tp-page h1 {
-    font-size: clamp(60px, 13vw, 104px);
+    --name-size: clamp(60px, 13vw, 104px);
   }
   .tp-hero-body {
     margin-top: 22px;
@@ -1536,7 +1545,7 @@ a.tp-stat:hover > strong {
     column-gap: 12px;
   }
   .tp-page h1 {
-    font-size: clamp(60px, 19vw, 92px);
+    --name-size: clamp(60px, 19vw, 92px);
   }
   .tp-cta {
     grid-template-columns: minmax(0, 1fr);

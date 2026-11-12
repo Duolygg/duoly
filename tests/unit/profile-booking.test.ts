@@ -1,6 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { bookingMode } from '../../src/server/teammates/profile-page';
+import {
+  bookingMode,
+  nameChars,
+} from '../../src/server/teammates/profile-page';
 import {
   RESUME_COOKIE,
   RESUME_PROFILE_BOOK,
@@ -65,5 +68,41 @@ describe('the profile page wiring', () => {
     expect(page).not.toContain('You get ${p.name} first');
     expect(page).not.toMatch(/within \d+ minutes/);
     expect(page).toContain("'Online now, ready to play'");
+  });
+});
+
+describe('the hero after the last review round', () => {
+  const css = readFileSync('src/components/teammates/profiles.css', 'utf8');
+  it('prints the name once, with no outlined repeat left behind', () => {
+    expect(css).not.toContain('tp-ghostname');
+    expect(page).not.toContain('tp-ghostname');
+    /* The pool of light stays, and still reaches zero inside its own box. */
+    expect(css).toContain('.tp-sky');
+    expect(css).toContain('transparent 100%');
+  });
+  it('names the game with its own icon, not a coloured crest', () => {
+    expect(page).toContain('class="tp-rankline-icon"');
+    expect(page).toContain('src={view.game.img}');
+    /* The crest survives only on the game cards. */
+    expect(page.match(/rankEmblem\(/g)).toHaveLength(2);
+    expect(page).toContain('aria-label="Rank verified by Duoly"');
+  });
+  it('steps the headline down rather than breaking inside a word', () => {
+    /* "Crafty" came out as "Craft" and a lone "y" beside the mascot at 390. */
+    expect(nameChars('Crafty')).toBe(6);
+    expect(nameChars('Mary Jane')).toBe(4);
+    expect(nameChars('  Nyx  ')).toBe(3);
+    expect(nameChars('')).toBe(1);
+    expect(page).toContain('--name-chars:${nameChars(p.name)}');
+    expect(css).toContain('var(--name-chars, 4)');
+  });
+  it('drops the button glow where the hero clips it, and lifts the chips', () => {
+    const narrow = css.slice(css.indexOf('@media (max-width: 760px)'));
+    expect(narrow).toMatch(/\.tp-cta \.tp-button \{\s*box-shadow: none;/);
+    expect(css).toContain('@media (max-width: 600px)');
+    expect(css).toContain('flex-direction: column-reverse');
+    expect(css).toContain(
+      'border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent)',
+    );
   });
 });
