@@ -214,16 +214,21 @@ export function buildReport(rows, meta = {}) {
 
 export function buildFanOutReport(rows, meta = {}) {
   const fanOut = aggregateFanOut(rows);
+  const browser = rows.some((row) => row.surface === 'consumer browser');
+  const searchCalls =
+    browser &&
+    rows.some((row) => row.status === 'answered' && row.searchCalls == null)
+      ? 'unknown'
+      : fanOut.searchCalls;
   const lines = [
     meta.fixtures
       ? '# ChatGPT fan-out, SYNTHETIC FIXTURE REPLAY (not an observation)'
       : `# ChatGPT fan-out, run ${meta.runId ?? 'unknown'}`,
     '',
-    `Prompts answered: ${fanOut.promptsAnswered}. Search calls: ${fanOut.searchCalls}. Distinct queries: ${fanOut.distinctQueries}.`,
-    `Surface: ${engineLabel('openai')}, up to ${meta.maxToolCalls ?? 'several'} searches per prompt.`,
-    rows.some((row) => row.surface === 'consumer browser')
+    `Prompts answered: ${fanOut.promptsAnswered}. Search calls: ${searchCalls}. Distinct queries: ${fanOut.distinctQueries}.`,
+    browser
       ? 'Surface: consumer ChatGPT search metadata captured while the owner submitted each prompt.'
-      : 'Surface: OpenAI API proxy, not consumer ChatGPT. Do not merge with consumer baseline results.',
+      : `Surface: ${engineLabel('openai')}, up to ${meta.maxToolCalls ?? 'several'} searches per prompt. OpenAI API proxy, not consumer ChatGPT. Do not merge with consumer baseline results.`,
     `Observable search traces: ${fanOut.tracesAvailable}/${fanOut.promptsAnswered}. Missing metadata is unknown, not evidence of no searches.`,
     fanOut.sourceIncludeSupported
       ? ''
@@ -259,7 +264,7 @@ export function buildFanOutReport(rows, meta = {}) {
       '',
       `Domains retrieved: ${entry.searchedDomains.join(', ') || 'not observed'}.`,
       `Domains explicitly opened: ${entry.openedDomains.join(', ') || 'not observed'}.`,
-      `duoly.gg among them: ${entry.duolySearched ? 'yes' : 'no'}.`,
+      `duoly.gg among them: ${entry.duolySearched == null ? 'unknown' : entry.duolySearched ? 'yes' : 'no'}.`,
       '',
     );
   }

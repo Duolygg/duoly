@@ -43,7 +43,10 @@ export function aggregateFanOut(rows) {
       queries: row.queries ?? [],
       searchedDomains: [...new Set(row.searchedDomains ?? [])],
       openedDomains: [...new Set(row.openedDomains ?? [])],
-      duolySearched: (row.searchedDomains ?? []).some(isDuolyDomain),
+      duolySearched:
+        row.traceAvailable === false
+          ? null
+          : (row.searchedDomains ?? []).some(isDuolyDomain),
     })),
     domains,
   };

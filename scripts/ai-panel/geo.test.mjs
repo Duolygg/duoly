@@ -5,7 +5,23 @@ import { analyze } from './analysis.mjs';
 import { normalizeSource } from './sources.mjs';
 import { recommendationEvidence } from './ladder.mjs';
 import { aggregateFanOut } from './fanout.mjs';
-import { buildReport } from './report.mjs';
+import { buildReport, buildFanOutReport } from './report.mjs';
+
+test('consumer fanout report never labels unknown search counts as zero or API evidence', () => {
+  const report = buildFanOutReport([
+    {
+      provider: 'chatgpt',
+      surface: 'consumer browser',
+      status: 'answered',
+      id: 'p',
+      prompt: 'is Duoly legit',
+      traceAvailable: false,
+    },
+  ]);
+  assert.match(report, /Search calls: unknown/);
+  assert.doesNotMatch(report, /Surface: OpenAI API/);
+  assert.match(report, /duoly.gg among them: unknown/);
+});
 
 test('saved provider fixtures retain source links and ladder evidence', async () => {
   for (const provider of ['openai', 'gemini', 'anthropic', 'perplexity']) {
