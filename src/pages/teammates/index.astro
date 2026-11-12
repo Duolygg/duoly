@@ -1,0 +1,24 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import TeammateCard from '../../components/teammates/TeammateCard.astro';
+import '../../components/teammates/profiles.css';
+import { SITE_GAMES } from '../../site/games';
+import { pageViewer } from '../../site/viewer';
+import { loadTeammateCards,loadIndexableProfiles,publicProfilesEnabled,fixturesEnabled } from '../../server/teammates/public-profiles';
+if(!publicProfilesEnabled()) return Astro.rewrite('/404');
+const requested = Astro.url.searchParams.get('game');
+const game = SITE_GAMES.find(g=>g.id===requested || g.slug===requested);
+const [cards,indexable] = await Promise.all([loadTeammateCards({game:game?.id,limit:100}),loadIndexableProfiles()]);
+const sorted = [...cards].sort((a,b)=>Number(b.online)-Number(a.online));
+const {viewer,csrf} = await pageViewer(Astro);
+Astro.response.headers.set('Cache-Control','no-store');
+---
+<SiteLayout title="Find your next teammate | Duoly" description="Meet Duoly teammates, explore their games and verified ranks, and find the play style for your next queue." indexing={indexable.length>=3 && !requested?'index, follow':'noindex, follow'} viewer={viewer} csrf={csrf}>
+  <article class="tp-page tp-directory">
+    <nav class="tp-crumbs" aria-label="Breadcrumb"><a href="/">Duoly</a><span>/</span><span aria-current="page">Teammates</span></nav>
+    {fixturesEnabled() && <p class="tp-fixture">Design preview. These teammates and reviews are fictional.</p>}
+    <header class="tp-directory-hero"><p class="tp-kicker">Find your people</p><h1>Your next<br/>great teammate.</h1><p>Good comms. A shared game plan. Meet the people behind your next queue.</p></header>
+    <form class="tp-filter" method="get"><label>Choose your game<select name="game"><option value="">All games</option>{SITE_GAMES.filter(g=>g.id!=='social').map(g=><option value={g.id} selected={game?.id===g.id}>{g.name}</option>)}</select></label><button class="tp-button tp-primary" type="submit">Find teammates</button></form>
+    <section aria-label={game?`${game.name} teammates`:'All teammates'}><div class="tp-cards">{sorted.map(card=><TeammateCard card={card}/>)}</div>{sorted.length===0 && <p class="tp-empty">No public teammates for this game yet. <a href="/games">Explore all games →</a></p>}</section>
+  </article>
+</SiteLayout>

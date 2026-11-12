@@ -1,0 +1,13 @@
+---
+import { PROFILE_ACCENTS, MIN_REVIEWS_FOR_RATING, type PublicTeammateCard } from '../../contracts/teammate-profile';
+import { profileGame } from '../../server/teammates/profile-page';
+interface Props { card: PublicTeammateCard }
+const { card } = Astro.props;
+const game = profileGame(card.game);
+---
+<a class="tp-card" href={`/teammates/${card.slug}`} style={`--accent:${PROFILE_ACCENTS[card.accent]}`} data-tier={card.tier}>
+  <div class="tp-card-top"><img src={card.avatar} alt="" width="72" height="72" loading="lazy" /><span class="tp-card-tier">{card.tier}</span><span class:list={['tp-card-status', { 'is-online': card.online }]}><i aria-hidden="true"></i>{card.online ? 'Online' : 'Offline'}</span></div>
+  <div class="tp-card-name">{card.name}<span aria-hidden="true">→</span></div>
+  <p>{game.name}</p>
+  <div class="tp-card-bottom"><strong>{card.rank ?? 'Teammate'}</strong>{card.rating && card.rating.count >= MIN_REVIEWS_FOR_RATING && <span aria-label={`${card.rating.average} out of 5 from ${card.rating.count} reviews`}>★ {card.rating.average.toFixed(1)}</span>}</div>
+</a>
