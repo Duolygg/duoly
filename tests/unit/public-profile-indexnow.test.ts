@@ -41,7 +41,7 @@ it('pings both valid old and new profile URLs after a rename without awaiting th
     }),
   );
   expect(waitUntil).toHaveBeenCalledTimes(1);
-  await vi.mocked(waitUntil).mock.calls[0][0];
+  await vi.mocked(waitUntil).mock.calls[0]?.[0];
 });
 it('does not ping ordinary saves or fixture sessions', () => {
   vi.stubEnv('NODE_ENV', 'production');
@@ -63,5 +63,7 @@ it('swallows rejected submissions', async () => {
     { slug: 'nyx', published: true },
     { slug: 'nyx', published: false },
   );
-  await expect(vi.mocked(waitUntil).mock.calls[0][0]).resolves.toBeUndefined();
+  await expect(
+    vi.mocked(waitUntil).mock.calls[0]?.[0],
+  ).resolves.toBeUndefined();
 });
