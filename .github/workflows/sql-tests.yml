@@ -44,7 +44,7 @@ jobs:
       - name: Start local Supabase and apply ordered migrations
         run: |
           test "$(node_modules/.bin/supabase --version)" = "$(node -p 'require("./package.json").devDependencies.supabase')"
-          node_modules/.bin/supabase start -x studio,imgproxy,edge-runtime,logflare,vector,inbucket,realtime
+          node_modules/.bin/supabase start -x studio,imgproxy,edge-runtime,logflare,vector,mailpit,realtime
       - name: Assert local PostgreSQL extensions and migrations
         run: |
           docker exec supabase_db_duoly psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "do \$\$ begin if (select count(*) from pg_extension where extname in ('pg_cron','pg_net','http','supabase_vault')) <> 4 then raise exception 'Required extensions missing'; end if; if to_regclass('public.duoly_dispatch_state') is null then raise exception 'Latest migration missing'; end if; end \$\$;"

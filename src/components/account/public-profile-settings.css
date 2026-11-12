@@ -1,0 +1,185 @@
+.pp-settings {
+  padding: 26px;
+  border: 1px solid rgba(196, 170, 255, 0.1);
+  border-radius: 20px;
+  background: rgba(22, 12, 42, 0.5);
+  color: #eee8ff;
+  min-width: 0;
+}
+.pp-settings-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+}
+.pp-settings h2 {
+  margin: 0;
+  font:
+    700 23px 'Bricolage Grotesque',
+    sans-serif;
+}
+.pp-settings h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+.pp-settings-heading > span {
+  color: #c4aaff;
+  font-size: 13px;
+}
+.pp-help {
+  color: #b5aacd;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.pp-settings fieldset {
+  border: 0;
+  padding: 0;
+  margin: 24px 0;
+  min-width: 0;
+}
+.pp-settings legend,
+.pp-field > label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.pp-field {
+  margin-top: 20px;
+  min-width: 0;
+}
+.pp-settings input:not([type='checkbox']),
+.pp-settings select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  background: #140c25;
+  color: #eee8ff;
+  border: 1px solid rgba(196, 170, 255, 0.25);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.pp-switch,
+.pp-options label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 14px;
+}
+.pp-settings input[type='checkbox'] {
+  accent-color: #5eeaa8;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.pp-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.pp-link-row > span {
+  font-size: 13px;
+  color: #b5aacd;
+  overflow-wrap: anywhere;
+}
+.pp-link-row input {
+  flex: 1 1 120px;
+}
+.pp-swatches,
+.pp-chips,
+.pp-actions,
+.pp-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.pp-button,
+.pp-swatches button {
+  min-height: 40px;
+  padding: 8px 13px;
+  border: 1px solid rgba(196, 170, 255, 0.22);
+  border-radius: 10px;
+  background: transparent;
+  color: #d9d1f0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transform: none;
+}
+.pp-button[aria-pressed='true'],
+.pp-swatches button[aria-pressed='true'] {
+  border-color: #c4aaff;
+  background: rgba(196, 170, 255, 0.12);
+  color: #fff;
+}
+.pp-swatches button {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+.pp-swatches span {
+  background: var(--pp-swatch);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+.pp-settings button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.pp-settings .pp-primary {
+  background: #5eeaa8;
+  color: #062a1b;
+  border-color: transparent;
+}
+.pp-explainer {
+  padding: 18px;
+  border-radius: 12px;
+  background: rgba(196, 170, 255, 0.08);
+  margin: 12px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.pp-game {
+  padding: 18px 0;
+  border-top: 1px solid rgba(196, 170, 255, 0.12);
+}
+.pp-error {
+  color: #ff9faf;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.pp-actions {
+  margin-top: 18px;
+  font-size: 13px;
+}
+.pp-actions a {
+  color: #c4aaff;
+}
+/* Sits directly under the switch, indented to the switch's label so the line reads as
+   belonging to it rather than starting a new block. */
+.pp-live {
+  margin: -4px 0 0 28px;
+  overflow-wrap: anywhere;
+}
+.pp-live a {
+  color: #c4aaff;
+}
+.pp-settings :focus-visible {
+  outline: 2px solid #c4aaff;
+  outline-offset: 3px;
+}
+@media (max-width: 500px) {
+  .pp-settings {
+    padding: 20px;
+  }
+  .pp-link-row > span {
+    flex-basis: 100%;
+  }
+}

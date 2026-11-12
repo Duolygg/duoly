@@ -63,6 +63,7 @@ const view =
       csrf="fixture-csrf"
       chatEnabled={false}
       reportsEnabled={false}
+      profilesEnabled={Astro.url.searchParams.get('profiles') === '1'}
       stripeKey="pk_test_fixture"
       client:load
     />

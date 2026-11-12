@@ -5,6 +5,7 @@
 // props from LiveProfile.tsx (save through /api/me/profile with CSRF, Discord link). Teammates write
 // a bio and pick languages (ledger #2); the rules are enforced again on the server and in Postgres.
 import React from 'react';
+import PublicProfileSettings from './PublicProfileSettings';
 import {
   COUNTRIES,
   COUNTRY_NAME,
@@ -1254,6 +1255,10 @@ export default class Profile extends React.Component {
                   </>
                 ) : null}
               </section>
+
+              {teammate && this.props.publicProfilesEnabled ? (
+                <PublicProfileSettings csrf={this.props.csrf} name={u.name} />
+              ) : null}
 
               {/* Discord: teammates connect it so the bot can show Online / In Session in the server */}
               {(

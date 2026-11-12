@@ -1,0 +1,56 @@
+---
+import {
+  MIN_REVIEWS_FOR_RATING,
+  type PublicTeammateCard,
+} from '../../contracts/teammate-profile';
+import { accentStyle, profileGame } from '../../server/teammates/profile-page';
+interface Props {
+  card: PublicTeammateCard;
+}
+const { card } = Astro.props;
+const game = profileGame(card.game);
+const rating =
+  card.rating && card.rating.count >= MIN_REVIEWS_FOR_RATING
+    ? card.rating
+    : null;
+---
+
+<a
+  class="tp-card"
+  href={`/teammates/${card.slug}`}
+  style={accentStyle(card.accent)}
+  data-tier={card.tier}
+>
+  <span class="tp-card-art">
+    <span class="tp-ring" aria-hidden="true"></span>
+    <img src={card.avatar} alt="" width="160" height="160" loading="lazy" />
+  </span>
+  <span class="tp-card-id">
+    <span class="tp-card-name">{card.name}</span>
+    <span class="tp-card-game">{game.name}</span>
+  </span>
+  {/* The tier is a track record, so a teammate without one shows nothing there and the
+      footer carries "New on Duoly" instead of two labels saying the same thing. */}
+  {card.tier !== 'rookie' && <span class="tp-card-tier">{card.tier}</span>}
+  <span class="tp-card-foot">
+    <strong>{card.rank ?? 'Teammate'}</strong>
+    <span class="tp-card-score">
+      {rating ? (
+        <span
+          aria-label={`${rating.average} out of 5 from ${rating.count} reviews`}
+        >
+          <span class="tp-star" aria-hidden="true">
+            ★
+          </span>
+          {rating.average.toFixed(1)} ({rating.count})
+        </span>
+      ) : (
+        card.tier === 'rookie' && <span class="tp-card-new">New on Duoly</span>
+      )}
+      <span class:list={['tp-card-status', { 'is-online': card.online }]}>
+        <i aria-hidden="true"></i>
+        {card.online ? 'Online' : 'Offline'}
+      </span>
+    </span>
+  </span>
+</a>

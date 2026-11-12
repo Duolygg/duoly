@@ -15,7 +15,7 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "test:unit": "vitest run",
-    "test:e2e": "playwright test && playwright test --config playwright.chat.config.ts && playwright test --config playwright.completion.config.ts && playwright test --config playwright.teammate.config.ts && playwright test --config playwright.analytics.config.ts",
+    "test:e2e": "playwright test && playwright test --config playwright.chat.config.ts && playwright test --config playwright.completion.config.ts && playwright test --config playwright.teammate.config.ts && playwright test --config playwright.analytics.config.ts && playwright test --config playwright.profiles.config.ts",
     "build": "astro build && node scripts/posthog-sourcemaps.mjs",
     "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm test:unit && pnpm build && pnpm test:e2e"
   },

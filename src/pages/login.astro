@@ -3,7 +3,7 @@ import ProductLayout from '../layouts/ProductLayout.astro';
 import LoginCard from '../components/auth/LoginCard.astro';
 import { accountContext } from '../server/auth/context';
 import { EmailSchema } from '../contracts/account';
-import { afterLoginPath } from '../server/auth/after-login';
+import { afterLogin } from '../server/auth/after-login';
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
@@ -13,7 +13,10 @@ try {
 } catch {
   /* The sign-in screen remains available for recovery. */
 }
-if (identity) return account.redirect(afterLoginPath(Astro.cookies));
+if (identity)
+  return account.redirect(
+    await afterLogin(Astro.cookies, identity.viewer.role, account.client),
+  );
 const errors: Record<string, string> = {
   callback: 'Sign-in could not be completed. Please start again.',
   provider: 'That sign-in provider is temporarily unavailable.',
