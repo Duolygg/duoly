@@ -1042,6 +1042,7 @@ export default class QueueRoom extends React.Component {
         rv={rv}
         busy={this.state.busy === 'review'}
         tips={FEATURES.tips}
+        profiles={this.props.profilesEnabled}
         onEdit={this.editRv}
         onSend={this.sendReview}
       />
