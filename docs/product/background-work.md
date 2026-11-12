@@ -685,4 +685,8 @@ deliberately do something else and say why.
   invariants a laptop can check without Docker (appended file, no secret values, no drops, the
   dispatcher body byte-identical apart from the skip, no `cron` call outside finalize and rollback,
   timings taken from `src/contracts/background.ts`). Nothing is applied: the owner applies the
-  migration and flips the switches.
+  migration and flips the switches. Evidence: the `sql-tests` workflow ran on this branch
+  (run 43199980622), started a disposable local Supabase, applied every migration in order and
+  passed 38 of 38 suites with 33 skips unchanged, so the signature really does verify over the bytes
+  `pg_net` sends, pgcrypto agrees with Web Crypto on the known-answer vector, and `gated_dispatch.sql`
+  still passes against the replaced `duoly_dispatch`.
