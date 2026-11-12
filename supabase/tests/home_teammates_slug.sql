@@ -36,12 +36,12 @@ insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) v
  ('c1100000-0000-4000-8000-000000000005','authenticated','authenticated','tc-nopage@example.invalid','{}','{}'),
  ('c1100000-0000-4000-8000-000000000006','authenticated','authenticated','tc-suspended@example.invalid','{}','{}');
 update public.account_roles set role='teammate' where user_id::text like 'c1100000%';
-update public.profiles set name='Published Pat'   where id='c1100000-0000-4000-8000-000000000001';
-update public.profiles set name='Draft Dana'      where id='c1100000-0000-4000-8000-000000000002';
-update public.profiles set name='Hidden Hana'     where id='c1100000-0000-4000-8000-000000000003';
-update public.profiles set name='Dropped Dev'     where id='c1100000-0000-4000-8000-000000000004';
-update public.profiles set name='Pageless Pim'    where id='c1100000-0000-4000-8000-000000000005';
-update public.profiles set name='Suspended Sam'   where id='c1100000-0000-4000-8000-000000000006';
+update public.profiles set name='Linkedpat'   where id='c1100000-0000-4000-8000-000000000001';
+update public.profiles set name='Draftdana'      where id='c1100000-0000-4000-8000-000000000002';
+update public.profiles set name='Hiddenhana'     where id='c1100000-0000-4000-8000-000000000003';
+update public.profiles set name='Droppeddev'     where id='c1100000-0000-4000-8000-000000000004';
+update public.profiles set name='Pagelesspim'    where id='c1100000-0000-4000-8000-000000000005';
+update public.profiles set name='Suspendedsam'   where id='c1100000-0000-4000-8000-000000000006';
 
 -- The access trigger would hand every one of these teammates a published page. Each case below
 -- states its own profile row instead, so what the slug depends on is visible in this file.
@@ -62,20 +62,20 @@ insert into public.teammate_public_profiles(user_id,slug,published,published_at,
  ('c1100000-0000-4000-8000-000000000004','dropped-dev',true,pg_catalog.clock_timestamp(),'val');
 update public.teammate_public_profiles set admin_hidden=true, admin_hidden_reason='test'
  where user_id='c1100000-0000-4000-8000-000000000003';
--- Dropped Dev keeps a page featuring a game they are no longer approved for: a visitor opening it
+-- Droppeddev keeps a page featuring a game they are no longer approved for: a visitor opening it
 -- gets 410, so the card must not link to it.
 update public.teammate_order_access set approved_games=array['lol'], enabled_games=array['lol']
  where user_id='c1100000-0000-4000-8000-000000000004';
 alter table public.teammate_order_access enable trigger teammate_public_profile_access_changed;
 
 -- ---- the slug a card carries ---------------------------------------------------------------
-select pg_temp.ok(pg_temp.card('Published Pat')->>'slug' = 'published-pat','public profile links from its card');
-select pg_temp.ok(pg_temp.card('Draft Dana')->'slug' = 'null'::jsonb,'unpublished profile sends no link');
-select pg_temp.ok(pg_temp.card('Hidden Hana')->'slug' = 'null'::jsonb,'admin-hidden profile sends no link');
-select pg_temp.ok(pg_temp.card('Dropped Dev')->'slug' = 'null'::jsonb,'profile featuring an unapproved game sends no link');
-select pg_temp.ok(pg_temp.card('Pageless Pim')->'slug' = 'null'::jsonb,'teammate without a page sends no link');
-select pg_temp.ok(pg_temp.card('Pageless Pim') is not null,'a teammate without a page is still a card');
-select pg_temp.ok(pg_temp.card('Suspended Sam') is null,'suspended teammate is not a card at all');
+select pg_temp.ok(pg_temp.card('Linkedpat')->>'slug' = 'published-pat','public profile links from its card');
+select pg_temp.ok(pg_temp.card('Draftdana')->'slug' = 'null'::jsonb,'unpublished profile sends no link');
+select pg_temp.ok(pg_temp.card('Hiddenhana')->'slug' = 'null'::jsonb,'admin-hidden profile sends no link');
+select pg_temp.ok(pg_temp.card('Droppeddev')->'slug' = 'null'::jsonb,'profile featuring an unapproved game sends no link');
+select pg_temp.ok(pg_temp.card('Pagelesspim')->'slug' = 'null'::jsonb,'teammate without a page sends no link');
+select pg_temp.ok(pg_temp.card('Pagelesspim') is not null,'a teammate without a page is still a card');
+select pg_temp.ok(pg_temp.card('Suspendedsam') is null,'suspended teammate is not a card at all');
 
 -- The same four tests public_teammate_profile() applies: a card links only where that read
 -- function would return the profile rather than a status.
@@ -92,11 +92,11 @@ select pg_temp.ok((select pg_catalog.count(distinct k) from pg_catalog.jsonb_arr
   pg_catalog.jsonb_object_keys(x) k) = 9,'all nine fields present on every card');
 select pg_temp.ok(pg_catalog.jsonb_typeof(public.home_teammates()) = 'array'
   and pg_catalog.jsonb_array_length(public.home_teammates()) <= 24,'still a bounded array');
-select pg_temp.ok(pg_temp.card('Published Pat')->>'image' = '/assets/avatars/avatar-1.png','image unchanged');
-select pg_temp.ok(pg_temp.card('Published Pat')->'games' = '["val","lol"]'::jsonb,'games unchanged and in demand order');
-select pg_temp.ok(pg_temp.card('Published Pat')->'rating' = 'null'::jsonb
-  and (pg_temp.card('Published Pat')->>'reviews')::int = 0
-  and (pg_temp.card('Published Pat')->>'sessions')::int = 0,'counts unchanged and never invented');
+select pg_temp.ok(pg_temp.card('Linkedpat')->>'image' = '/assets/avatars/avatar-1.png','image unchanged');
+select pg_temp.ok(pg_temp.card('Linkedpat')->'games' = '["val","lol"]'::jsonb,'games unchanged and in demand order');
+select pg_temp.ok(pg_temp.card('Linkedpat')->'rating' = 'null'::jsonb
+  and (pg_temp.card('Linkedpat')->>'reviews')::int = 0
+  and (pg_temp.card('Linkedpat')->>'sessions')::int = 0,'counts unchanged and never invented');
 select pg_temp.ok(public.home_teammates()::text !~* '(example\.invalid|c1100000-0000)','no identifiers or emails exposed');
 
 -- ---- anon reads it, the grant is the old one -------------------------------------------------
@@ -105,7 +105,7 @@ select pg_catalog.set_config('request.jwt.claims','{"role":"anon"}',true);
 do $$ begin
   if (select public.home_teammates()) is null then raise exception 'anon cannot read home_teammates'; end if;
   if not exists(select 1 from pg_catalog.jsonb_array_elements(public.home_teammates()) x
-    where x->>'name' = 'Published Pat' and x->>'slug' = 'published-pat') then
+    where x->>'name' = 'Linkedpat' and x->>'slug' = 'published-pat') then
     raise exception 'anon does not see the profile link';
   end if;
 end $$;
