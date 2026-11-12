@@ -253,6 +253,64 @@ timestamp over the channel (at most once every 4 s: the leader needs the timesta
 pointermove events) and the leader posts the maximum. A click while the "Still there?" warning is up
 posts from the tab it happened in, leader or not, so the warning still clears in about a second.
 
+### Two leaders, two jobs
+
+[#227](https://github.com/Duolygg/duoly/pull/227) shipped a one-tab rule of its own while this
+branch was being built, and it is live: `takePollLease` in `desk-keeper.js` is a lease in
+localStorage, one per watcher name (`admin-orders`, `admin-support`, `teammate-keeper`,
+`teammate-tips`), that the holder renews on every tick while the other tabs skip theirs. Merging
+main therefore had one design question to answer: can that lease carry the desk heartbeat too, so
+that `presence-leader.js` can go and the site has a single leader mechanism?
+
+It cannot, and the reason is that a lease answers one question ("may I?") while a heartbeat needs
+three more things:
+
+- **The answer has to reach the follower tabs.** `POST /api/presence` answers `online`,
+  `onlineSince`, `afkIn` and `forcedOffline`, and that answer is what the desk renders and what
+  tells the off-desk keeper when to stop ticking. A tab that skipped its own check-in and gets
+  nothing back would keep showing "online" after the server had already switched the teammate off.
+  A BroadcastChannel hands the answer over; a lease in localStorage carries no payload at all.
+- **The writer has to send the newest activity of any tab.** The 4 hour AFK rule counts activity on
+  every Duoly page (migration 20261105160000), so the one writer posts the maximum `lastActive`
+  across the browser. #227 kept check-ins per tab for exactly this reason, and said so in the
+  comment in `tick`. A lease cannot collect that number; the roster already has it.
+- **The leaving beacon needs to know this is the last tab.** Holding a lease says nothing about
+  whether anything else is open. Being alone in the roster is the whole question, and only the
+  roster can answer it.
+
+The timing does not work either. A TTL lease hands over only when some other tab ticks _after_ the
+TTL has run out, so the handover costs TTL plus one tick of the next tab. The heartbeat's cadence
+is 10 s and the desk's presence ticker runs at 10 s, so a 15 s TTL gives 25 s in the worst case,
+past the server's 20 s freshness window: the teammate would flicker offline. Shortening the TTL to
+10 s does not help, because that is the renewal period itself, and a holder that loses its lease
+between its own ticks means two tabs writing. The roster keeps those two numbers apart on purpose:
+a beat counts as fresh for 15 s and the watchdog looks every 4 s, so the worst case is 19 s. To get
+the same guarantee out of the lease you would have to add a 4 s ticker and a channel for the
+answer, which is `presence-leader.js` rebuilt next to it, not deleted. A renewal is also a
+localStorage write per tab per tick, and cutting writes is the point.
+
+So the two stay, with a boundary rather than an overlap:
+
+|                          | `takePollLease` (localStorage)                                                      | `createDeskPresence` (BroadcastChannel)                                                |
+| ------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Decides                  | who **reads**                                                                       | who **writes** the presence heartbeat                                                  |
+| Covers                   | teammate queue and Twitch off the desk, tips, admin new orders, admin support inbox | `desk_check_in`, plus the answer fan-out, the activity maximum and the last-tab beacon |
+| Cost of getting it wrong | a popup is one tick late                                                            | the teammate shows as offline                                                          |
+| Handover                 | TTL expiry, or `pagehide` releases it, or the Live desk forces it                   | lowest live tab id, `bye` on `pagehide`, 19 s watchdog                                 |
+| Without its browser API  | every tab polls (#227's fallback)                                                   | every tab checks in (this branch's fallback)                                           |
+
+Each tab runs one election per job, never two for the same job. Nothing reads a poll lease to work
+out who heartbeats, and nothing asks the roster who may poll. The desk itself joins the roster and
+takes no poll lease, because it needs the queue for its own screen, which is #227's behaviour and
+is unchanged. The two fallbacks are independent and both land on the behaviour that was live
+before either change, so a browser missing one API still gets the other's saving.
+
+What the merge kept from #227 exactly as it was written: tip notifications and `tip-alerts.js`, the
+new-order bell on the admin Live desk and the teammate desk only (`claimOrderBell`, with the popup
+alone off the desk and the system's own sound there), the square `/icon-192.png` on every
+notification, the polling lease and all of its callers, and `tests/unit/poll-lease.test.ts`,
+`tests/unit/tip-alerts.test.ts` and `tests/teammate-browser/desk-keeper.spec.ts` unchanged.
+
 ## Timer API
 
 Base URL is the worker (`https://duoly-discord-gateway.duoly.workers.dev`). All times are integer

@@ -10,6 +10,7 @@ import {
   AFK_OFFLINE_REASON,
   AFK_WARN_SECONDS,
   backgroundTicker,
+  claimOrderBell,
   claimOrderNotification,
   readSeenOrders,
   showAfkWarning,
@@ -17,6 +18,7 @@ import {
   showOrderNotification,
 } from './desk-keeper';
 import { createDeskPresence, sendLeavingBeacon } from './presence-leader';
+import { checkTips } from './tip-alerts';
 import PrivateProofs from '../proofs/PrivateProofs';
 import {
   readChat,
@@ -656,6 +658,8 @@ export default class Teammate extends React.Component {
         meId: d.me,
         statsAt: Date.now(),
       });
+      // "You got a tip!": the same stats carry each recent order's tip (tip-alerts.js)
+      checkTips(d.stats?.recent);
     } catch (e) {}
   }
   /**
@@ -786,8 +790,8 @@ export default class Teammate extends React.Component {
       // press showed nothing: close the previous test and give each one its own tag so it always pops up.
       if (this._testNote) this._testNote.close();
       const n = new Notification('This is how new orders reach you!', {
-        body: 'When a customer books one of your games, you’ll hear this bell and get a popup like this one.',
-        icon: '/assets/brand/logo-full.webp',
+        body: 'When a customer books one of your games, you get a popup like this one on any Duoly page, and this bell on your desk.',
+        icon: '/icon-192.png',
         tag: 'duoly-order-test-' + Date.now(),
         silent: true,
       });
@@ -874,12 +878,12 @@ export default class Teammate extends React.Component {
         : [];
       this._seen = data.queue.map((order) => order.id);
       saveSeenOrders(this._seen);
-      // Other pages ring too (desk-keeper): only the tab that sees an order first rings and pops up.
-      const mine = fresh.filter((order) => claimOrderNotification(order.id));
-      if (mine.length) {
-        this.playBell();
-        mine.forEach((order) => this.notify(order));
-      }
+      // The bell rings here on the desk only, once across open desks, even when another page
+      // already showed the popup. The popup shows once across every open Duoly page (desk-keeper).
+      if (fresh.some((order) => claimOrderBell(order.id))) this.playBell();
+      fresh
+        .filter((order) => claimOrderNotification(order.id))
+        .forEach((order) => this.notify(order));
       this.setState({
         queue: data.queue,
         loaded: true,
