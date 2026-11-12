@@ -758,7 +758,7 @@ a.tp-stat:hover > strong {
 }
 .tp-game dl {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: 92px minmax(0, 1fr);
   gap: 11px 22px;
   margin: 0 0 22px;
 }
@@ -834,7 +834,23 @@ a.tp-stat:hover > strong {
   border-bottom: 1px solid var(--tp-line);
 }
 .tp-review-lead {
+  display: grid;
+  grid-template-columns: 268px minmax(0, 1fr);
+  column-gap: 48px;
+  align-content: start;
   padding-top: 0;
+}
+.tp-review.tp-review-lead blockquote {
+  grid-area: 1 / 2 / 4 / 3;
+  margin: 0;
+  font-size: clamp(19px, 1.7vw, 24px);
+  line-height: 1.5;
+  max-width: 46ch;
+  color: #f4eefc;
+}
+.tp-review-lead figcaption {
+  grid-column: 1;
+  margin-top: 12px;
 }
 .tp-review-grid {
   display: grid;
@@ -853,12 +869,6 @@ a.tp-stat:hover > strong {
   line-height: 1.8;
   text-wrap: pretty;
   max-width: 54ch;
-}
-.tp-review-lead blockquote {
-  font-size: clamp(19px, 1.7vw, 23px);
-  line-height: 1.55;
-  max-width: 42ch;
-  color: #f4eefc;
 }
 .tp-review figcaption {
   font-size: 13px;
@@ -1318,9 +1328,16 @@ a.tp-stat:hover > strong {
   .tp-review {
     padding: 22px 0;
   }
-  .tp-review-lead blockquote {
+  .tp-review-lead {
+    display: block;
+  }
+  .tp-review.tp-review-lead blockquote {
+    margin: 15px 0 18px;
     font-size: 19px;
     line-height: 1.6;
+  }
+  .tp-review-lead figcaption {
+    margin-top: 0;
   }
   .tp-review blockquote {
     font-size: 15px;
