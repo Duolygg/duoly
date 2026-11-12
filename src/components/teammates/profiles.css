@@ -1358,3 +1358,33 @@
     scroll-behavior: auto !important;
   }
 }
+
+[data-tier='legend'] .tp-tier::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 238, 190, 0.18) 48%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+[data-tier='legend'] .tp-portrait {
+  border-color: #ffd27a;
+  box-shadow:
+    0 0 0 1px rgba(255, 210, 122, 0.25),
+    0 22px 70px rgba(255, 210, 122, 0.16);
+}
+
+.tp-tier {
+  background-color: #150e20;
+}
+.tp-tier div > span {
+  color: #e5dbf2;
+}
+.tp-tier-stripes {
+  opacity: 0.7;
+}
