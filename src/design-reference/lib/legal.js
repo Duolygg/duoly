@@ -101,7 +101,8 @@ export const TERMS = {
       { list: [
         'Teammates earn **60%** of each order’s price. Duoly keeps 40% for payments, matching, support and the platform.',
         'Earnings are paid weekly (Friday to Friday). We can hold a payout while a report about that order is reviewed.',
-        'Teammates must connect Discord and keep their verified rank honest.'
+        'Teammates must connect Discord and keep their verified rank honest.',
+        'Every teammate gets a public profile page on duoly.gg, switched on by default. You can switch it off any time in your profile settings. What it shows is described in the [Privacy Policy](/privacy#sharing).'
       ] }
     ] },
     { id: 'liability', title: 'Liability', blocks: [
@@ -142,14 +143,15 @@ export const PRIVACY = {
         ['Support', 'Support chat messages and contact form messages, with your name and email if you give them', 'To answer you'],
         ['Duoly balance', 'Refunds, cashback, gifts and what you spent from it', 'To keep your balance correct'],
         ['Teammate applications', 'Name, email, Discord, country, age confirmation, game, rank, links, availability, motivation', 'To review applications'],
-        ['Teammates', 'Online status, games switched on, accepted and missed orders, earnings and payouts', 'To route orders fairly and pay teammates']
+        ['Teammates', 'Online status, games switched on, accepted and missed orders, earnings and payouts', 'To route orders fairly and pay teammates'],
+        ['Public teammate profiles', 'For teammates: display name, profile picture, bio, languages, games, ranks verified by Duoly, roles and picks, tier, completed sessions, rating, win rate, online status, profile colour and banner, and your country only if you choose to show it', 'To show customers who they can book, on a public page at duoly.gg/teammates/your-name']
       ] },
       'We don’t ask for sensitive data and we never ask for your game account password.'
     ] },
     { id: 'legal-bases', title: 'Why we’re allowed to', blocks: [
       { list: [
         '**Contract** (Art. 6(1)(b) GDPR): your account, orders, payments, balance, the session chat and support.',
-        '**Legitimate interests** (Art. 6(1)(f) GDPR): keeping Duoly safe (reports, fraud and abuse checks, blocking accounts), fair order routing for teammates, and improving the service.',
+        '**Legitimate interests** (Art. 6(1)(f) GDPR): keeping Duoly safe (reports, fraud and abuse checks, blocking accounts), fair order routing for teammates, showing teammate profiles publicly so customers can find and book them, and improving the service.',
         '**Legal obligation** (Art. 6(1)(c) GDPR): keeping invoices and payment records for as long as tax law requires.',
         '**Consent** (Art. 6(1)(a) GDPR): optional things like browser notifications for admins. You can withdraw consent at any time.'
       ] }
@@ -160,8 +162,11 @@ export const PRIVACY = {
         '**Duoly’s teammate Discord:** if an order waits a while, our bot posts it in the teammate server so someone grabs it. That post shows the service, rank, server, your note and the teammate’s pay. It never shows your name or email.',
         '**The Duoly team** (admins) can see orders, chats, reports and support messages to help you and keep the platform safe.',
         '**Service providers** who process data for us under contract: our hosting provider, our payment provider, Google and Discord (only if you sign in with them), and Discord for the teammate bot.',
+        '**Everyone on the internet**, for teammates only: your public teammate profile at duoly.gg/teammates/your-name shows your display name, profile picture, bio, languages, games, ranks verified by Duoly, roles, tier, number of completed sessions, rating and win rate (once there are enough of them to be meaningful), whether you are online, and your country only if you switch it on. It never shows your email, Discord, real name or earnings. Search engines can index it.',
+        '**Customer reviews on teammate profiles:** the rating, review tags, game and month appear on the teammate’s public profile, never the customer’s name. Review text appears only for reviews written after the review form said so.',
         '**Authorities**, only where the law requires it.'
       ] },
+      { note: 'Teammates: your public profile is switched on by default. You can switch it off any time in your [profile settings](/profile). It then disappears from Duoly immediately and from search engines as they update. You can also object to it at any time using the contact details above.' },
       'Some of these providers can be outside the EU/EEA. In that case we rely on an adequacy decision (such as the EU–US Data Privacy Framework) or the EU’s Standard Contractual Clauses.'
     ] },
     { id: 'cookies', title: 'Cookies and local storage', blocks: [

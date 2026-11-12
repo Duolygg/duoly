@@ -49,8 +49,8 @@ export const CONTENT_SOURCES: Record<string, string[]> = {
   '/pricing': ['src/pages/pricing.astro', 'src/server/seo/price-table.ts'],
   '/press': ['src/pages/press.astro', 'src/server/seo/press.ts'],
   '/contact': ['src/pages/contact.astro'],
-  '/terms': ['src/pages/terms.astro'],
-  '/privacy': ['src/pages/privacy.astro'],
+  '/terms': ['src/pages/terms.astro', 'src/design-reference/lib/legal.js'],
+  '/privacy': ['src/pages/privacy.astro', 'src/design-reference/lib/legal.js'],
   '/get-paid-to-play-games': ['src/pages/get-paid-to-play-games.astro'],
   '/blog/what-is-an-egirl': ['src/pages/blog/[slug].astro'],
   '/blog/what-does-lfg-mean': ['src/pages/blog/what-does-lfg-mean.astro'],
@@ -118,8 +118,8 @@ for (const slug of Object.keys(coachFormats))
  */
 export const CONTENT_UPDATED: Record<string, string> = {
   '/': '2026-11-05',
-  '/terms': '2026-11-05',
-  '/privacy': '2026-11-05',
+  '/terms': '2026-11-12',
+  '/privacy': '2026-11-12',
   // The price survey was read and written on 10 November 2026, which is also
   // the date the report publishes as its own survey date.
   '/reports/gaming-coaching-and-teammate-prices-2026': '2026-11-10',
