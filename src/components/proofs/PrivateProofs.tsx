@@ -45,6 +45,9 @@ function ProofScope(props: ProofProps) {
         onUpload={() => {
           if (!completionLock.current) void session.current?.upload();
         }}
+        onRemove={(proofId) => {
+          if (!completionLock.current) void session.current?.remove(proofId);
+        }}
       />
       {props.mode === 'teammate' && props.assignmentId && props.onCompleted && (
         <CompletionControls
@@ -53,6 +56,7 @@ function ProofScope(props: ProofProps) {
           csrf={props.csrf ?? ''}
           state={state}
           disabled={props.disabled}
+          blocker={props.completionBlocker}
           onCompleted={props.onCompleted}
           onBusyChange={(locked) => {
             completionLock.current = locked;

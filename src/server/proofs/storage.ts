@@ -8,7 +8,11 @@ import {
 } from '../../contracts/proofs';
 
 export class ProofFailure extends Error {
-  constructor(public readonly status: number = 503) {
+  constructor(
+    public readonly status: number = 503,
+    /** The database's own business message (order_error), when it sent one. */
+    public readonly reason?: string,
+  ) {
     super('Proof service unavailable.');
   }
 }

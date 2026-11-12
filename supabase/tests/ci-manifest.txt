@@ -39,6 +39,7 @@ suite mcp_rate_limits.sql
 suite order_deadline.sql
 # skip order_moods.sql historical fixture payment id violates current order_payments_stripe_payment_intent_id_check
 # skip order_proofs.sql historical GG-exclusive negative assertion conflicts with 20261102140000_gg_plus_comp allowing GG teammates on approved competitive games
+suite proof_removal.sql
 suite order_reports.sql
 suite order_reviews.sql
 suite order_status_tokens.sql
@@ -71,3 +72,4 @@ group completion completion_fixture.sql completion_happy.sql completion_replay.s
 # skip completion_chat.sql historical exact two-system-message expectation fails accepted-and-completed-messages assertion on latest schema
 # skip completion_tier_integration.sql unchanged 100-prior-entries-chooses-Trusted assertion fails on latest history fixtures; standalone tier-boundary assertions still run
 # skip completion_security.sql source-incompatible GG-exclusive denial mode 6 conflicts with 20261102140000_gg_plus_comp allowing approved competitive games; full fragment retained for dedicated port
+suite completion_wallet.sql

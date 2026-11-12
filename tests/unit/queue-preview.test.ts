@@ -263,7 +263,8 @@ describe('homepage order room preview', () => {
       expect(html).toContain('/assets/demo/proof-pu-' + n + '.svg');
       expect(html).toContain('Open evidence image ' + n);
     }
-    expect(html).toContain('2026-11-02 10:01:00+00:00');
+    // shown as a short local time, the exact instant stays on the <time> element
+    expect(html).toContain('dateTime="2026-11-02T10:01:00+00:00"');
     expect(at(html, 'You’re covered')).toBeLessThan(
       at(html, 'Proof from your teammate'),
     );

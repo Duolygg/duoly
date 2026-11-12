@@ -1,6 +1,7 @@
 import type { Proof } from '../../contracts/proofs';
 import {
   readProofs,
+  removeProof,
   selectUpload,
   uploadProof,
   type ProofFetch,
@@ -132,6 +133,39 @@ export class ProofSession {
           'Upload not confirmed. The list is being refreshed. No automatic retry; use Retry selected upload to reuse the same request.',
       });
     // A newly visible image alone cannot correlate a lost acknowledgement with this request.
+    await this.read();
+    this.update({ pending: false });
+  }
+  /** Take back one of this assignment's screenshots, then read the list again either way. */
+  async remove(proofId: string) {
+    if (
+      this.disposed ||
+      this.value.pending ||
+      this.value.kind !== 'ready' ||
+      !this.assignment ||
+      !this.csrf ||
+      !this.value.proofs?.some(
+        (p) => p.id === proofId && p.assignment_id === this.assignment,
+      )
+    )
+      return;
+    this.update({ pending: true, error: '', message: 'Removing screenshot…' });
+    const result = await removeProof(
+      this.fetcher,
+      this.order,
+      this.assignment,
+      this.csrf,
+      proofId,
+    );
+    if (this.disposed) return;
+    this.update({
+      message:
+        result.kind === 'removed'
+          ? 'Screenshot removed.'
+          : result.kind === 'gone'
+            ? 'That screenshot can no longer be removed. The list is being refreshed.'
+            : 'Removal not confirmed. The list is being refreshed.',
+    });
     await this.read();
     this.update({ pending: false });
   }

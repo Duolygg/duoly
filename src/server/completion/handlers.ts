@@ -11,15 +11,29 @@ import { proofRpcData } from '../proofs/results';
 import { ProofFailure } from '../proofs/storage';
 import { withRoleSync } from '../discord/role-hooks';
 
+/** complete_order's 409 messages (20261112144155_complete_wallet_orders.sql), shown as they are. */
+const COMPLETION_CONFLICTS = new Set([
+  'Completion already recorded with another request or proof set.',
+  'Assignment unavailable.',
+  'Your team starts once every seat is taken.',
+  'Fill in the match report first: every game with both IGNs and the match link, plus your wins and losses.',
+  'Captured settled payment required.',
+]);
+
 const completeOrder: APIRoute = async (context) => {
   let account = accountContext(context.request, context.cookies);
-  const fail = (status: number) =>
+  // A 409 names what is missing ("Fill in the match report first…") when it is one of
+  // complete_order's own reasons; anything else keeps the fixed wording, so no database
+  // detail ever reaches the browser.
+  const fail = (status: number, reason?: string) =>
     account.json(
       {
         error:
           status === 503
             ? 'Completion service unavailable.'
-            : 'Order could not be completed.',
+            : status === 409 && reason && COMPLETION_CONFLICTS.has(reason)
+              ? reason
+              : 'Order could not be completed.',
       },
       status,
     );
@@ -64,7 +78,9 @@ const completeOrder: APIRoute = async (context) => {
       return fail(503);
     return account.json(result);
   } catch (error) {
-    return fail(error instanceof ProofFailure ? error.status : 503);
+    return error instanceof ProofFailure
+      ? fail(error.status, error.reason)
+      : fail(503);
   }
 };
 

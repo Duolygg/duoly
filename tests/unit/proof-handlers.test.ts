@@ -690,3 +690,63 @@ it('checks ready retries against stored bytes without attempting an overwrite', 
   expect(backend.put).not.toHaveBeenCalled();
   expect(backend.get).toHaveBeenCalledOnce();
 });
+it('lets a teammate take back their own screenshot through the guarded remove route', async () => {
+  rpc.mockResolvedValue({
+    data: { removed: true, proof_id: proofId },
+    error: null,
+  });
+  const response = await run(handlers.remove, ctx('POST', null));
+  expect(response.status).toBe(200);
+  expect(await response.json()).toEqual({ removed: true, proof_id: proofId });
+  expect(rpc).toHaveBeenCalledWith('teammate_remove_order_proof', {
+    p_order_id: id,
+    p_assignment_id: assignment,
+    p_proof_id: proofId,
+  });
+  // storage is never touched: the database only hides the screenshot
+  expect(backend.remove).not.toHaveBeenCalled();
+  const route =
+    await import('../../src/pages/api/teammate/orders/[id]/proof/[proofId]');
+  expect(route.prerender).toBe(false);
+  expect(route.ALL).toBe(handlers.remove);
+});
+it.each(['get', 'csrf', 'customer', 'assignment', 'mismatch', 'sql'])(
+  'refuses a screenshot removal: %s',
+  async (mode) => {
+    rpc.mockResolvedValue(
+      mode === 'sql'
+        ? { data: null, error: { code: 'PT409', message: 'secret' } }
+        : {
+            data: {
+              removed: true,
+              proof_id: mode === 'mismatch' ? id : proofId,
+            },
+            error: null,
+          },
+    );
+    if (mode === 'customer')
+      identity.mockResolvedValue({ viewer: { role: 'customer' } });
+    const context =
+      mode === 'get'
+        ? ctx('GET')
+        : mode === 'csrf'
+          ? ctx('POST', null, { 'x-csrf-token': 'b'.repeat(64) })
+          : mode === 'assignment'
+            ? ctx('POST', null, { 'x-assignment-id': 'nope' })
+            : ctx('POST', null);
+    const response = await run(handlers.remove, context);
+    expect(response.status).toBe(
+      {
+        get: 405,
+        csrf: 403,
+        customer: 403,
+        assignment: 400,
+        mismatch: 503,
+        sql: 409,
+      }[mode],
+    );
+    expect(await response.text()).not.toContain('secret');
+    if (['get', 'csrf', 'customer', 'assignment'].includes(mode))
+      expect(rpc).not.toHaveBeenCalled();
+  },
+);

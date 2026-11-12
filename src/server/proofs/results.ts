@@ -15,6 +15,10 @@ export function proofRpcData(result: {
     throw new ProofFailure(status);
   }
   const business = OrderRpcErrorSchema.safeParse(result.data);
-  if (business.success) throw new ProofFailure(business.data.error.code);
+  if (business.success)
+    throw new ProofFailure(
+      business.data.error.code,
+      business.data.error.message,
+    );
   return result.data;
 }
