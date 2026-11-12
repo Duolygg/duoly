@@ -6,16 +6,16 @@ import {
 } from '../../src/server/teammates/profile-page';
 import {
   RESUME_COOKIE,
-  RESUME_PROFILE_BOOK,
   RESUME_PROFILE_SAVE,
 } from '../../src/server/auth/after-login';
+import { PENDING_FAVORITE_COOKIE } from '../../src/server/teammates/pending-favorite';
 
 /*
  * Booking with a named teammate (plan option 1): the profile page saves the teammate to the
  * customer's favorites and then opens the booking page that already exists. Checkout, pricing
  * and the homepage are untouched, so the guard here is that the page keeps its side of it: every
- * booking button stays a real link, and the cookie it leaves for sign-in is the one
- * afterLoginPath() reads back.
+ * booking button stays a real link, nothing stands between a visitor and booking, and each
+ * cookie it leaves behind is one the server reads back.
  */
 const page = readFileSync('src/pages/teammates/[slug].astro', 'utf8');
 
@@ -38,12 +38,18 @@ describe('the profile page wiring', () => {
     expect(page).not.toMatch(/<button[^>]*data-profile-book/);
     expect(page).toMatch(/href=\{view\.book\}[\s\n]*data-profile-book/);
   });
-  it('uses the same resume cookie afterLoginPath reads', () => {
-    expect(page).toContain(`${RESUME_COOKIE}=`);
-    expect(page).toContain(`resume('${RESUME_PROFILE_BOOK}')`);
+  it('sends nobody to sign in before they can book', () => {
+    /* The Save heart is the only thing left that takes a visitor to sign-in: booking is a
+       plain link for everyone, and the slug rides along in the pending favorite cookie. */
     expect(page).toContain(`resume('${RESUME_PROFILE_SAVE}')`);
-    /* A session cookie with a short life, never readable cross site. */
+    expect(page).not.toContain("location.href = '/login'");
+    expect(page).not.toContain("resume('profile:')");
+    expect(page).toContain("if (mode === 'signin') remember()");
+    expect(page).toContain(`${RESUME_COOKIE}=`);
+    expect(page).toContain(`${PENDING_FAVORITE_COOKIE}=`);
+    /* Session cookies with a short life, never readable cross site. */
     expect(page).toContain('Max-Age=1800; Path=/; SameSite=Lax; Secure');
+    expect(page).toContain('Max-Age=7200; Path=/; SameSite=Lax; Secure');
   });
   it('posts the slug to the one endpoint that takes it, with the CSRF token', () => {
     expect(page).toContain("fetch('/api/favorites/by-slug'");
@@ -57,17 +63,23 @@ describe('the profile page wiring', () => {
   it('never lets a slow or failing save hold up the booking', () => {
     expect(page).toContain('setTimeout(go, 1200)');
     expect(page).toContain('save().then(go, go)');
-    expect(page).toContain(
-      'if (resumedBooking && bookHref) location.replace(bookHref)',
-    );
   });
   it('keeps the promise on the page to what the queue actually does', () => {
     /* A favorite loses the priority delay. It is not promised the order outright, and
        nothing on the page claims a wait time nobody has measured yet. */
-    expect(page).toContain('sees your order with no queue delay');
-    expect(page).not.toContain('You get ${p.name} first');
-    expect(page).not.toMatch(/within \d+ minutes/);
+    const source = readFileSync('src/server/teammates/profile-page.ts', 'utf8');
+    expect(source).toContain('sees your order with no queue delay');
+    expect(source).not.toContain('You get ${p.name} first');
+    expect(source + page).not.toMatch(/within \d+ minutes/);
     expect(page).toContain("'Online now, ready to play'");
+  });
+  it('closes the booking block with one line, inside the block', () => {
+    /* The button, the price, the availability and the explainer are one unit: the line is
+       the last row of the CTA grid rather than a paragraph that follows it. */
+    expect(page).toMatch(/<p class="tp-note">\{bookingNote\}<\/p>\s*<\/div>/);
+    expect(
+      readFileSync('src/components/teammates/profiles.css', 'utf8'),
+    ).toContain('.tp-cta .tp-note');
   });
 });
 

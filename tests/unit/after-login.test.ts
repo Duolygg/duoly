@@ -27,23 +27,25 @@ describe('afterLoginPath', () => {
       '/dashboard',
     );
   });
-  it('returns to the teammate profile that sent them to sign in, once', () => {
-    const book = jar('profile:nyx');
-    expect(afterLoginPath(book.cookies)).toBe('/teammates/nyx?book=1');
-    expect(book.deleted).toEqual([RESUME_COOKIE]);
-    expect(afterLoginPath(jar('profile-save:nyx').cookies)).toBe(
-      '/teammates/nyx?save=1',
-    );
+  it('returns to the teammate profile the Save heart sent them from, once', () => {
+    const save = jar('profile-save:nyx');
+    expect(afterLoginPath(save.cookies)).toBe('/teammates/nyx?save=1');
+    expect(save.deleted).toEqual([RESUME_COOKIE]);
+  });
+  it('no longer answers the booking detour, which booking does not take', () => {
+    /* Booking never goes through sign-in now, so the old "profile:" value and the ?book=1
+       path it came back on are gone: anything left over simply lands on the dashboard. */
+    expect(afterLoginPath(jar('profile:nyx').cookies)).toBe('/dashboard');
   });
   it('only ever builds a profile path, so no value can redirect off the site', () => {
     for (const bad of [
-      'profile://evil.example',
-      'profile:/dashboard',
-      'profile:nyx?x=1',
-      'profile:ny',
-      'profile:Nyx',
-      'profile:admin',
-      'profile:',
+      'profile-save://evil.example',
+      'profile-save:/dashboard',
+      'profile-save:nyx?x=1',
+      'profile-save:ny',
+      'profile-save:Nyx',
+      'profile-save:admin',
+      'profile-save:',
       'profile-save:../secrets',
     ]) {
       const { cookies, deleted } = jar(bad);

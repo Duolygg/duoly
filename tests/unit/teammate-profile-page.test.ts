@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   accentStyle,
+  bookingLine,
   profileMetadata,
   rankEmblem,
   profilePresentation,
@@ -49,7 +50,10 @@ describe('public profile page', () => {
       eurToUsd: 1,
     }).sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
     expect(view.offer).toEqual(cheapest);
-    expect(view.book).toContain('teammate=nyx');
+    /* The plain booking link the site already has. Naming the teammate is the favorite the
+       page saves, never a query parameter the booking page does not read. */
+    expect(view.book).toBe('/?game=val#modes-h');
+    expect(view.booking('val', true)).toBe('/?game=val&tab=training#modes-h');
     expect(
       profileMetadata({
         ...nyx,
@@ -273,5 +277,27 @@ describe('public profile page', () => {
     const view = profilePresentation({ ...nyx, online: false });
     expect(view.book).not.toContain('teammate=');
     expect(view.primary).toBe('Book a Valorant teammate');
+    /* Online or not, the booking link is the same one the rest of the site uses. */
+    expect(view.book).toBe(profilePresentation(nyx).book);
+  });
+  it('closes the booking block with one line, in readable secondary ink', () => {
+    expect(bookingLine(nyx)).toBe(
+      'Nyx sees your order with no queue delay. Busy? Another verified teammate takes it.',
+    );
+    /* An offline teammate can promise neither half of that, so the line sends them on. */
+    expect(bookingLine({ ...nyx, online: false })).toBe(
+      'Nyx is offline right now. A verified Valorant teammate can take your order today.',
+    );
+    for (const line of [
+      bookingLine(nyx),
+      bookingLine({ ...nyx, online: false }),
+    ]) {
+      /* One line: a sentence pair, no dashes and no ampersand. */
+      expect(line.length).toBeLessThanOrEqual(90);
+      expect(line).not.toMatch(/[–—]| & /);
+    }
+    /* The same secondary ink as the rest of the body copy, on the page background: this is
+       the colour .tp-note prints in (--tp-muted on #090414), and it clears AA at 4.5:1. */
+    expect(contrast('#c9bcdf', '#090414')).toBeGreaterThanOrEqual(4.5);
   });
 });

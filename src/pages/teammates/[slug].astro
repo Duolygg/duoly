@@ -12,6 +12,7 @@ import {
 } from '../../server/teammates/public-profiles';
 import {
   accentStyle,
+  bookingLine,
   bookingMode,
   nameChars,
   profileRoute,
@@ -67,9 +68,11 @@ const availability = p?.online ? 'Online now, ready to play' : null;
  * buttons still point at the existing booking link, and that link is where the browser lands
  * whether the save worked or not.
  *
- * A signed-out visitor cannot save anything, so the primary buttons send them to sign-in with a
- * resume cookie and come back to ?book=1, which saves and continues. Everything degrades to the
- * plain booking link without JavaScript.
+ * Nothing puts a sign-in wall in front of booking. A signed-out visitor goes to the same booking
+ * link at the same speed and leaves a pending-favorite cookie behind; checkout asks them to sign
+ * in before paying, and the after-login path spends that cookie for them
+ * (src/server/teammates/pending-favorite.ts). Everything degrades to the plain booking link
+ * without JavaScript.
  */
 const saveMode = bookingMode(viewer?.role);
 /*
@@ -88,10 +91,8 @@ const sections = [
 ];
 /** One tab is not a nav, so the first section draws its own rule instead. */
 const showTabs = sections.length > 1;
-const freshDetail =
-  p && p.games.some((g) => g.roles.length > 0)
-    ? 'the games and roles below'
-    : 'the games below';
+/** The booking explainer, one line under the price and the availability it belongs with. */
+const bookingNote = p ? bookingLine(p) : '';
 ---
 
 <SiteLayout {...meta} viewer={viewer} csrf={csrf}>
@@ -108,7 +109,6 @@ const freshDetail =
       data-tier={p.tier}
       data-profile={p.slug}
       data-save-mode={saveMode}
-      data-book-href={view.book}
       data-csrf={saveMode === 'customer' ? csrf : undefined}
     >
       <nav class="tp-crumbs" aria-label="Breadcrumb">
@@ -299,12 +299,8 @@ const freshDetail =
                   {availability}
                 </p>
               )}
+              <p class="tp-note">{bookingNote}</p>
             </div>
-            <p class="tp-note">
-              {p.online
-                ? `Booking here saves ${p.name} to your favorites, so ${p.name} sees your order with no queue delay. If ${p.name} is already in a match, the next verified ${view.game.name} teammate takes it, so you never wait.`
-                : `${p.name} is offline right now. Book a verified ${view.game.name} teammate today, or save this profile and come back when ${p.name} is online.`}
-            </p>
           </div>
         </div>
         {view.showStats ? (
@@ -346,13 +342,7 @@ const freshDetail =
         ) : (
           <div class="tp-fresh" data-profile-new>
             <p class="tp-kicker">New on Duoly</p>
-            <div>
-              <strong>No sessions to show yet.</strong>
-              <p>
-                Ratings and session counts appear here once {p.name} has played
-                on Duoly. Until then {freshDetail} are the whole picture.
-              </p>
-            </div>
+            <p>Ratings and sessions show here after {p.name}'s first games.</p>
           </div>
         )}
       </section>
@@ -689,7 +679,6 @@ const freshDetail =
      page first, so a slow or failing save never costs the visitor their booking. */
   const slug = page?.dataset.profile ?? '';
   const mode = page?.dataset.saveMode ?? 'none';
-  const bookHref = page?.dataset.bookHref ?? '';
   const csrf = page?.dataset.csrf ?? '';
   const saveStatus = document.querySelector<HTMLElement>('[data-save-status]');
   const heart = document.querySelector<HTMLButtonElement>(
@@ -697,9 +686,15 @@ const freshDetail =
   );
   const heartLabel = document.querySelector<HTMLElement>('[data-save-label]');
 
-  /** Carried over the sign-in round trip and read back by afterLoginPath(). */
+  /** Carried over the sign-in round trip by the Save heart and read back by afterLoginPath(). */
   const resume = (prefix: string) => {
     document.cookie = `duoly_resume=${prefix}${slug}; Max-Age=1800; Path=/; SameSite=Lax; Secure`;
+  };
+
+  /* A signed-out visitor books at once; this is the note that says who they were booking.
+     The after-login path spends it the moment checkout has them sign in or sign up. */
+  const remember = () => {
+    document.cookie = `duoly_pending_favorite=${slug}; Max-Age=7200; Path=/; SameSite=Lax; Secure`;
   };
 
   let done = false;
@@ -775,25 +770,18 @@ const freshDetail =
         save().then(go, go);
         return;
       }
-      /* Only the buttons that name the teammate take a visitor through sign-in. The
-         per-game links keep booking that game straight away. */
-      if (mode === 'signin' && link.dataset.profileBook === 'primary') {
-        event.preventDefault();
-        resume('profile:');
-        location.href = '/login';
-      }
+      /* Signed out: no detour and no wait. The link is followed as written and the slug is
+         left in a cookie, which the sign-in that checkout asks for turns into a favorite. */
+      if (mode === 'signin') remember();
     });
   }
 
-  /* Back from sign-in: ?book=1 saves and continues to booking, ?save=1 just saves. */
-  const params = new URLSearchParams(location.search);
-  const resumedBooking = params.get('book') === '1';
-  if (resumedBooking || params.get('save') === '1') {
+  /* Back from sign-in with the Save heart: ?save=1 saves and stays put. */
+  if (new URLSearchParams(location.search).get('save') === '1') {
     history.replaceState(null, '', location.pathname + location.hash);
     if (mode === 'customer')
       save().then((result) => {
-        if (resumedBooking && bookHref) location.replace(bookHref);
-        else if (result.ok) markSaved();
+        if (result.ok) markSaved();
         else if (saveStatus) saveStatus.textContent = result.error;
       });
   }

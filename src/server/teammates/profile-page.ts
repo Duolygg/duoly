@@ -91,12 +91,12 @@ export function profilePresentation(p: PublicTeammateProfile) {
   const offer = cheapest('teammate');
   /** The coaching entry price, only when the catalog actually sells coaching here. */
   const coachOffer = p.coaching ? cheapest('training') : null;
-  const booking = (id: string, coaching = false) => {
-    const base = bookingHref(id, coaching ? { tab: 'training' } : {});
-    const url = new URL(base, 'https://duoly.gg');
-    if (p.online) url.searchParams.set('teammate', p.slug);
-    return `${url.pathname}${url.search}${url.hash}`;
-  };
+  /*
+   * The existing booking page, untouched. It used to be handed a ?teammate= slug it never read;
+   * naming the teammate is the favorite, not a query parameter, so the link is the plain one.
+   */
+  const booking = (id: string, coaching = false) =>
+    bookingHref(id, coaching ? { tab: 'training' } : {});
   const rating =
     p.rating && p.rating.count >= MIN_REVIEWS_FOR_RATING ? p.rating : null;
   const winRate =
@@ -118,6 +118,16 @@ export function profilePresentation(p: PublicTeammateProfile) {
     showTier: p.tier !== 'rookie',
   };
 }
+/**
+ * The one line that closes the booking block, under the button, the price and the availability.
+ * It says only what the favorite actually buys: the order reaches this teammate the moment it
+ * goes public, with no priority delay, and a verified stand-in takes it while they are in a
+ * match. An offline teammate cannot promise either, so that line sends the reader on instead.
+ */
+export const bookingLine = (p: PublicTeammateProfile) =>
+  p.online
+    ? `${p.name} sees your order with no queue delay. Busy? Another verified teammate takes it.`
+    : `${p.name} is offline right now. A verified ${profileGame(p.featuredGame).name} teammate can take your order today.`;
 /**
  * What a booking button on a profile has to do before it opens booking.
  *

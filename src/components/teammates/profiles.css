@@ -117,19 +117,25 @@
   overflow: clip;
 }
 /*
- * The pool of light. closest-side sizes the ellipse against the nearest edge on each
- * axis, so the gradient is already fully transparent on all four sides of its own box:
- * no straight top edge at the disclaimer line, no vertical seam at the container sides.
+ * The pool of light, centred behind the avatar column. At 62% it sat in the empty middle of
+ * the hero and read as a smudge between the two columns; the mascot is what the light is
+ * coming off, so the pool sits on it (--sky-x tracks the avatar at each width).
+ *
+ * closest-side sizes the ellipse against the nearest edge on each axis, so the gradient is
+ * already fully transparent on all four sides of its own box: no straight top edge at the
+ * disclaimer line, no vertical seam at the container sides. That also means the pool narrows
+ * as it moves right, which is why the box is lifted and shortened to keep it round.
  */
 .tp-sky {
+  --sky-x: 79%;
   position: absolute;
   z-index: 0;
-  inset: -34px 0 auto;
-  height: 760px;
+  inset: -54px 0 auto;
+  height: 620px;
   pointer-events: none;
   /* Several stops instead of one: a single falloff ends in a visible ellipse edge. */
   background: radial-gradient(
-    closest-side at 62% 40%,
+    closest-side at var(--sky-x) 38%,
     var(--light),
     color-mix(in srgb, var(--accent) calc(var(--glow) * 0.58%), transparent) 22%,
     color-mix(in srgb, var(--accent) calc(var(--glow) * 0.28%), transparent) 42%,
@@ -245,8 +251,12 @@
 .tp-hero-name {
   grid-area: name;
 }
-.tp-page h1 {
+/* The display size lives on the page, not on the headline, because the mascot is lined up
+   against the cap of the name and has to know how big that name is. */
+.tp-page {
   --name-size: clamp(72px, 8.2vw, 124px);
+}
+.tp-page h1 {
   font-size: var(--name-size);
   line-height: 0.94;
   overflow-wrap: anywhere;
@@ -371,17 +381,29 @@
   height: 58%;
 }
 
-/* The right column: mascot in a tier ring, then the identity block, centred as one unit
-   against the left column so the two never leave a dead zone between them. */
+/* The right column: mascot in a tier ring, then the identity block. The mascot starts level
+   with the top of the name, which is the one line the two columns share, and the identity
+   block falls to the bottom of the hero so the column has no dead zone in the middle. */
 .tp-aside {
   --avatar: 160px;
   --ring: 19px;
   position: relative;
   grid-area: aside;
-  align-self: center;
   display: grid;
+  grid-auto-rows: max-content;
+  align-content: space-between;
   gap: 24px;
   justify-items: stretch;
+}
+/*
+ * The mascot starts on the cap of the name, not on a box edge. Two offsets are in the way:
+ * the cap sits 0.141em under the top of the headline's own box (line-height 0.94 over a
+ * 0.66 cap height in Bricolage Grotesque), and the art sits one ring width under the top of
+ * its figure. Lifting by the difference lines the two tops up at every display size. The cap
+ * rather than the tallest glyph, so the mascot does not move when a name has an ascender.
+ */
+.tp-hero-grid .tp-figure {
+  margin-top: calc(var(--name-size) * 0.141 - var(--ring));
 }
 .tp-figure {
   position: relative;
@@ -693,6 +715,12 @@
   grid-column: 1 / -1;
   margin-top: 8px !important;
 }
+/* The explainer is the last row of the booking block, not a paragraph that follows it: the
+   button, the price, the availability and this line are one unit at every width. */
+.tp-cta .tp-note {
+  grid-column: 1 / -1;
+  margin-top: 0 !important;
+}
 .tp-price {
   display: flex;
   align-items: baseline;
@@ -717,26 +745,44 @@
 .tp-availability {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 7px;
   font-size: 14px;
   color: #fff;
 }
+/*
+ * The live dot and its ring, both inside the element's own box. As a 9 px dot with a 3 px
+ * spread shadow the ring painted outside that box, and this line starts exactly on the
+ * container edge, so the hero's clip sliced the ring flat on the left: a one-sided crescent.
+ * Drawn as a 16 px ring with the dot centred in it, every side is the same 3 px and nothing
+ * reaches past the gutter.
+ */
 .tp-availability i {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
+  --dot: var(--tp-live);
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
   flex: none;
-  background: var(--tp-live);
-  box-shadow: 0 0 0 3px rgba(74, 222, 154, 0.18);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--dot) 18%, transparent);
+}
+.tp-availability i::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dot);
 }
 .tp-availability.is-off i {
-  background: #8c7fa8;
-  box-shadow: none;
+  --dot: #8c7fa8;
+  background: none;
 }
+/* One line, in the same secondary ink as the rest of the body copy: #c9bcdf on the hero is
+   11.2:1, so it clears AA at body size with room to spare and never reads as fine print. */
 .tp-note {
   margin-top: 24px !important;
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--tp-muted);
   max-width: 62ch;
   text-wrap: pretty;
@@ -805,36 +851,28 @@ a.tp-stat:hover > strong {
 }
 /*
  * Every teammate on Duoly is new, so this is the row most profiles close their hero with. It
- * takes the scoreboard's place and keeps its rhythm (48 above the rule, 24 below) instead of
- * leaving a gap where three numbers would have been: a page with nothing to average should read
- * as finished, not as a row that failed to load.
+ * takes the scoreboard's place, but it is not news: an eyebrow and one sentence at body size,
+ * on the same baseline. A 28 px headline here announced the one thing the page has nothing to
+ * say about, which made the absence of numbers the loudest part of the hero.
  */
 .tp-fresh {
   display: grid;
   grid-template-columns: 200px minmax(0, 1fr);
-  gap: 24px 30px;
-  align-items: start;
+  gap: 8px 30px;
+  align-items: baseline;
   margin-top: 48px;
   padding-top: 24px;
   border-top: 1px solid var(--tp-line);
 }
-.tp-fresh .tp-kicker {
-  padding-top: 7px;
-}
-.tp-fresh strong {
-  display: block;
-  font:
-    700 clamp(24px, 1.9vw, 28px) / 1.15 'Bricolage Grotesque',
-    sans-serif;
-  letter-spacing: -0.035em;
-  color: #fff;
-}
 .tp-fresh p:last-child {
-  margin-top: 10px !important;
   max-width: 62ch;
   color: var(--tp-muted);
-  line-height: 1.7;
   text-wrap: pretty;
+}
+/* Two quiet lines need less air under them than a row of three numbers does. */
+.tp-hero:has(.tp-fresh) + .tp-tabs,
+.tp-hero:has(.tp-fresh) + .tp-section {
+  margin-top: 30px;
 }
 
 /* ---------- section nav ---------- */
@@ -1430,8 +1468,11 @@ a.tp-stat:hover > strong {
 
 /* ---------- 920 and below: the hero stacks ---------- */
 @media (max-width: 920px) {
+  /* Stacked, the mascot is up in the top right corner, so the pool follows it there. */
   .tp-sky {
-    height: 480px;
+    --sky-x: 71%;
+    inset: -34px 0 auto;
+    height: 440px;
   }
   /* Stacked, the mascot owns the top right corner, so the utilities take a row again. */
   .tp-hero-top {
@@ -1480,9 +1521,12 @@ a.tp-stat:hover > strong {
   }
   /* Stacked, the mascot is the one thing near the gutter, so it keeps its own margin
      there: enough room for the light around it to reach zero before the container ends. */
+  /* Stacked, the name and the mascot share one row and are centred on each other, so there
+     is no cap to line the art up with. */
   .tp-hero .tp-figure {
     grid-area: figure;
     justify-self: end;
+    margin-top: 0;
     margin-right: 32px;
   }
   .tp-hero .tp-figure::before {
@@ -1499,7 +1543,7 @@ a.tp-stat:hover > strong {
     margin-top: 26px;
     max-width: 520px;
   }
-  .tp-page h1 {
+  .tp-page {
     --name-size: clamp(60px, 13vw, 104px);
   }
   .tp-hero-body {
@@ -1544,7 +1588,7 @@ a.tp-stat:hover > strong {
   .tp-hero-grid {
     column-gap: 12px;
   }
-  .tp-page h1 {
+  .tp-page {
     --name-size: clamp(60px, 19vw, 92px);
   }
   .tp-cta {
@@ -1611,15 +1655,9 @@ a.tp-stat:hover > strong {
   }
   .tp-fresh {
     grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
+    gap: 6px;
     margin-top: 32px;
     padding-top: 20px;
-  }
-  .tp-fresh .tp-kicker {
-    padding-top: 0;
-  }
-  .tp-fresh strong {
-    font-size: 23px;
   }
   .tp-tabs {
     gap: 20px;

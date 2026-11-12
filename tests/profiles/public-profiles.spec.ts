@@ -62,9 +62,19 @@ for (const slug of ['nyx', 'sola', 'kairo'])
       /* No stat has reached its sample minimum, so the row is replaced by the new
          state instead of printing an empty scoreboard. */
       await expect(page.locator('.tp-scoreboard')).toHaveCount(0);
-      await expect(page.locator('[data-profile-new]')).toContainText(
-        'New on Duoly',
+      /* Quiet: an eyebrow and one sentence at body size, with no headline announcing the
+         one thing the page has nothing to say about. */
+      await expect(page.locator('[data-profile-new]')).toHaveText(
+        "New on DuolyRatings and sessions show here after Sola's first games.",
       );
+      await expect(page.locator('[data-profile-new] strong')).toHaveCount(0);
+      expect(
+        await page.evaluate(() =>
+          [...document.querySelectorAll('[data-profile-new] p')].map((el) =>
+            Math.round(parseFloat(getComputedStyle(el).fontSize)),
+          ),
+        ),
+      ).toEqual([13, 15]);
       await expect(page.locator('article.tp-page')).not.toContainText(
         'Customer rating',
       );
@@ -117,9 +127,10 @@ test('core content and booking links work without JavaScript', async ({
   const page = await context.newPage();
   await page.goto(`http://127.0.0.1:${port}/teammates/nyx`);
   await expect(page.locator('#games')).toContainText('Immortal 3');
+  /* The plain booking link the rest of the site uses: no ?teammate= slug it never read. */
   await expect(page.locator('.tp-cta .tp-primary')).toHaveAttribute(
     'href',
-    /game=val.*teammate=nyx/,
+    '/?game=val#modes-h',
   );
   await expect(page.locator('.tp-mobile-booking')).toHaveCount(1);
   await context.close();
@@ -127,10 +138,31 @@ test('core content and booking links work without JavaScript', async ({
 
 /*
  * Booking with a named teammate. The e2e server has no account, so these are the signed-out
- * paths: the buttons that name the teammate go through sign-in and leave a resume cookie that
- * afterLoginPath() turns back into this profile, and everything else still books directly.
+ * paths: nothing stands between a visitor and the booking page, and the slug they were booking
+ * rides along in a cookie that the sign-in checkout asks for spends for them. The Save heart is
+ * the one thing left that takes a visitor to sign-in first.
  */
-test('a signed-out visitor is sent to sign in and remembered', async ({
+test('a signed-out visitor books at once and is remembered in a cookie', async ({
+  page,
+}) => {
+  await page.goto('/teammates/nyx');
+  await page.locator('.tp-cta [data-profile-book="primary"]').click();
+  /* Straight to booking: no /login in between. */
+  await page.waitForURL(/\/\?game=val/);
+  const pending = (await page.context().cookies()).find(
+    (c) => c.name === 'duoly_pending_favorite',
+  );
+  expect(pending?.value).toBe('nyx');
+  expect(pending?.sameSite).toBe('Lax');
+  /* Two hours, give or take the round trip. */
+  expect(pending!.expires - Date.now() / 1000).toBeGreaterThan(7000);
+  expect(pending!.expires - Date.now() / 1000).toBeLessThanOrEqual(7200);
+  expect(
+    (await page.context().cookies()).find((c) => c.name === 'duoly_resume'),
+  ).toBeUndefined();
+});
+
+test('the Save heart is the only thing that still asks a visitor to sign in', async ({
   page,
 }) => {
   await page.goto('/teammates/nyx');
@@ -145,15 +177,6 @@ test('a signed-out visitor is sent to sign in and remembered', async ({
     (await page.context().cookies()).find((c) => c.name === 'duoly_resume')
       ?.value,
   ).toBe('profile-save:nyx');
-
-  await page.context().clearCookies({ name: 'duoly_resume' });
-  await page.goto('/teammates/nyx');
-  await page.locator('.tp-cta [data-profile-book="primary"]').click();
-  await page.waitForURL('**/login');
-  expect(
-    (await page.context().cookies()).find((c) => c.name === 'duoly_resume')
-      ?.value,
-  ).toBe('profile:nyx');
 });
 
 test('the per-game buttons keep booking that game straight away', async ({
@@ -164,9 +187,12 @@ test('the per-game buttons keep booking that game straight away', async ({
   await expect(link).toHaveAttribute('data-profile-book', 'game');
   await link.click();
   await page.waitForURL(/\/\?game=/);
-  expect(
-    (await page.context().cookies()).find((c) => c.name === 'duoly_resume'),
-  ).toBeUndefined();
+  const jar = await page.context().cookies();
+  expect(jar.find((c) => c.name === 'duoly_resume')).toBeUndefined();
+  /* They still leave the same note behind, so checkout can save the teammate. */
+  expect(jar.find((c) => c.name === 'duoly_pending_favorite')?.value).toBe(
+    'nyx',
+  );
 });
 
 /*
@@ -226,29 +252,38 @@ test('booking still opens when saving fails', async ({ page }) => {
   expect(posts).toHaveLength(1);
 });
 
-test('?book=1 saves the teammate and continues to booking', async ({
+test('?save=1 saves the teammate and stays on the profile', async ({
   page,
 }) => {
   const posts = await asCustomer(page);
-  await page.goto('/teammates/nyx?book=1');
-  await page.waitForURL(/\/\?game=val/);
-  expect(posts).toEqual([{ csrf: 't'.repeat(64), slug: 'nyx' }]);
+  await page.goto('/teammates/nyx?save=1');
+  await expect
+    .poll(() => posts)
+    .toEqual([{ csrf: 't'.repeat(64), slug: 'nyx' }]);
+  /* Saving only: the heart path never moves the visitor on to booking, and the parameter
+     is spent off the URL so a reload does not save again. */
+  await expect(page).toHaveURL(/\/teammates\/nyx$/);
+  await expect(page.locator('main h1')).toHaveText('Nyx');
 });
 
-test('?book=1 is cleaned off the URL and never saves for a visitor', async ({
+test('a resume parameter is cleaned off the URL and never saves for a visitor', async ({
   page,
 }) => {
   const failures: string[] = [];
   page.on('request', (request) => {
     if (request.url().includes('/api/favorites/')) failures.push(request.url());
   });
-  await page.goto('/teammates/nyx?book=1');
+  await page.goto('/teammates/nyx?save=1');
   await expect(page.locator('main h1')).toHaveText('Nyx');
   await expect(page).toHaveURL(/\/teammates\/nyx$/);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
     'https://duoly.gg/teammates/nyx',
   );
+  expect(failures).toEqual([]);
+  /* The retired booking detour is simply a parameter nothing reads now. */
+  await page.goto('/teammates/nyx?book=1');
+  await expect(page.locator('main h1')).toHaveText('Nyx');
   expect(failures).toEqual([]);
 });
 
@@ -353,13 +388,89 @@ test('the hero carries one online signal, one booking unit and no upscaled masco
       };
     }),
   ).toEqual({ below: true, left: 0 });
-  /* The fallback promise reads at body size, never as fine print. */
+  /* One line, at body size, never as fine print, and inside the booking block rather than
+     a paragraph that follows it. */
+  const note = page.locator('.tp-cta .tp-note');
+  await expect(note).toHaveText(
+    'Nyx sees your order with no queue delay. Busy? Another verified teammate takes it.',
+  );
   expect(
-    await page
-      .locator('.tp-note')
-      .evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
+    await note.evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
   ).toBeGreaterThanOrEqual(15);
-  await expect(page.locator('.tp-note')).toContainText('so you never wait');
+  /* Readable contrast: the same secondary ink the rest of the body copy uses. */
+  expect(
+    await page.evaluate(() => {
+      const ink = (value: string) =>
+        value
+          .match(/\d+(\.\d+)?/g)!
+          .slice(0, 3)
+          .map(Number)
+          .map((v) => v / 255)
+          .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+          .reduce((sum, v, i) => sum + [0.2126, 0.7152, 0.0722][i]! * v, 0);
+      const text = ink(
+        getComputedStyle(document.querySelector('.tp-cta .tp-note')!).color,
+      );
+      const page = ink(getComputedStyle(document.body).backgroundColor);
+      return (
+        Math.round(
+          ((Math.max(text, page) + 0.05) / (Math.min(text, page) + 0.05)) * 10,
+        ) / 10
+      );
+    }),
+  ).toBeGreaterThanOrEqual(4.5);
+});
+
+test('the live dot wears a ring on every side, not a crescent', async ({
+  page,
+}) => {
+  /* This line starts exactly on the container edge and the hero clips there, so a ring
+     painted outside the dot's own box came out sliced flat on the left. */
+  await page.goto('/teammates/nyx');
+  expect(
+    await page.evaluate(() => {
+      const dot = document.querySelector('.tp-cta .tp-availability i')!;
+      const style = getComputedStyle(dot);
+      const inner = getComputedStyle(dot, '::before');
+      const article = document
+        .querySelector('article.tp-page')!
+        .getBoundingClientRect();
+      const box = dot.getBoundingClientRect();
+      return {
+        shadow: style.boxShadow,
+        ring:
+          (parseFloat(style.width) - parseFloat(inner.width)) / 2 ===
+          (parseFloat(style.height) - parseFloat(inner.height)) / 2,
+        inside: Math.round(box.left - article.left) >= 0,
+      };
+    }),
+  ).toEqual({ shadow: 'none', ring: true, inside: true });
+});
+
+test('the hero light sits over the avatar column, not the empty middle', async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto('/teammates/nyx');
+  expect(
+    await page.evaluate(() => {
+      const box = (s: string) =>
+        document.querySelector(s)!.getBoundingClientRect();
+      const sky = box('.tp-sky');
+      const art = box('.tp-hero .tp-figure');
+      /* The pool is a closest-side ellipse, so its centre is where the light is. */
+      const centre =
+        sky.left +
+        (sky.width *
+          parseFloat(
+            getComputedStyle(
+              document.querySelector('.tp-sky')!,
+            ).getPropertyValue('--sky-x'),
+          )) /
+          100;
+      return Math.round(Math.abs(centre - (art.left + art.width / 2)));
+    }),
+  ).toBeLessThanOrEqual(isMobile ? 40 : 30);
 });
 
 test('a teammate with one game gets a band that ends where its content ends', async ({
@@ -581,11 +692,35 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
   ).toHaveCount(0);
   await expect(page.locator('.tp-idlist')).not.toContainText('Immortal 3');
   await expect(page.locator('h1 .tp-verified')).toHaveCount(0);
+  /* The mascot starts on the cap of the name, not above it and not halfway down the hero.
+     The cap of a capital, not of this name's own tallest glyph, so a name with an ascender
+     and a name without one put the mascot in the same place. */
+  const capOffset = () =>
+    page.evaluate(() => {
+      const h1 = document.querySelector('h1')!;
+      const style = getComputedStyle(h1);
+      const pen = document.createElement('canvas').getContext('2d')!;
+      pen.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      const metrics = pen.measureText('H');
+      const line = h1.getBoundingClientRect();
+      const baseline =
+        line.top +
+        line.height / 2 +
+        (metrics.fontBoundingBoxAscent - metrics.fontBoundingBoxDescent) / 2;
+      const art = document
+        .querySelector('.tp-hero .tp-figure img')!
+        .getBoundingClientRect();
+      return Math.round(
+        Math.abs(art.top - (baseline - metrics.actualBoundingBoxAscent)),
+      );
+    });
+  expect(await capOffset()).toBeLessThanOrEqual(2);
   /* An unverified teammate gets the icon and the game, with no rank and no tick. */
   await page.goto('/teammates/rhea');
   await expect(page.locator('.tp-rankline')).toHaveText('League of Legends');
   await expect(page.locator('.tp-rankline .tp-verified')).toHaveCount(0);
   await expect(page.locator('.tp-rankline-icon')).toHaveCount(1);
+  expect(await capOffset()).toBeLessThanOrEqual(2);
   await page.goto('/teammates/nyx');
   expect(
     (await page.locator('.tp-hero').innerText()).split('Immortal 3').length,
