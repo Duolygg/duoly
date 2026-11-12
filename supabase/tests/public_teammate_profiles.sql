@@ -54,7 +54,11 @@ select pg_temp.ok(public.teammate_public_profile_save((select value from setting
 select pg_temp.login('9f000000-0000-4000-8000-000000000001');
 select pg_temp.ok(public.teammate_public_profile_save((select value from settings))#>>'{settings,slug}'='nyx','teammate saves settings');
 select pg_temp.ok(public.public_teammate_profile('nyx')->>'status'='gone','unpublished hidden');
-select pg_temp.ok(public.public_teammate_cards() = '[]','unpublished not in cards');
+-- 20261112130000 gives every approved teammate a page, so the second teammate in this
+-- fixture now has one of their own. What is under test here is still the same thing:
+-- the page this teammate switched off is in no list a visitor can read.
+select pg_temp.ok(not exists(select 1 from pg_catalog.jsonb_array_elements(public.public_teammate_cards()) v
+  where v->>'slug'='nyx'),'unpublished not in cards');
 select pg_temp.ok(public.public_teammate_indexable() = '[]','unpublished not indexable');
 do $$ declare s text; begin
  foreach s in array array['-bad','bad-','a--b','ABc','ab','too-long-slug-123456789012345','admin','api','duoly','support','help','teammates','teammate','login','signin','signup','settings','profile','staff','team','official','moderator','mod','null','undefined','new','edit'] loop
@@ -70,7 +74,11 @@ select pg_temp.ok(public.teammate_public_profile_save((select value from setting
 select pg_temp.ok(public.teammate_public_profile_save((select value from settings)||'{"games":[{"game":"lol","roles":[],"picks":["a","b","c","d","e","f"]}]}')#>>'{error,code}'='400','picks maximum');
 select pg_temp.ok(public.teammate_public_profile_save((select value from settings)||'{"games":[{"game":"lol","roles":[],"picks":[],"rank":"Challenger"}]}')#>>'{error,code}'='400','rank injection denied');
 select pg_temp.ok(public.teammate_public_profile_save((select value from settings)||'{"published":true}')#>>'{settings,published}'='true','publish');
-select pg_temp.ok(public.public_teammate_indexable()='[]','verified rank required');
+-- 20261112130000 replaced the indexing rule: a verified rank is one of three ways to
+-- qualify instead of the only one, because profiles are on by default now and an honest
+-- page should not wait for a rank check only an admin can do. This teammate has a 73
+-- character bio, so they qualify on that alone, before any rank exists.
+select pg_temp.ok(pg_catalog.jsonb_array_length(public.public_teammate_indexable())=1,'a real bio qualifies on its own');
 select pg_temp.ok(public.admin_set_game_rank('9f000000-0000-4000-8000-000000000001','lol','Challenger')#>>'{error,code}'='403','teammate cannot verify own rank');
 select pg_temp.login('9f000000-0000-4000-8000-000000000004');
 select pg_temp.ok(public.admin_set_game_rank('9f000000-0000-4000-8000-000000000001','lol','Radiant')#>>'{error,code}'='400','cross-game rank rejected');
@@ -78,7 +86,12 @@ select pg_temp.ok(public.admin_set_game_rank('9f000000-0000-4000-8000-0000000000
 select pg_temp.ok(pg_catalog.jsonb_array_length(public.public_teammate_indexable())=1,'long bio and rank qualify');
 reset role;
 update public.profiles set bio='Short bio.' where id='9f000000-0000-4000-8000-000000000001';
-select pg_temp.ok(public.public_teammate_indexable()='[]','short bio and no sessions noindex');
+select pg_temp.ok(pg_catalog.jsonb_array_length(public.public_teammate_indexable())=1,'a verified rank carries a short bio');
+-- Nothing left to point at: an unverified rank, a bio nobody wrote and no sessions. The
+-- rank stays unverified from here, so the assertions below test the track record branch
+-- of the rule instead of riding on a rank that already qualified.
+update public.teammate_game_ranks set verified_at=null where user_id='9f000000-0000-4000-8000-000000000001';
+select pg_temp.ok(public.public_teammate_indexable()='[]','short bio, unverified rank and no sessions noindex');
 
 -- Four reviews and 19 reported games: both stats must be null. Default NULL cutoff hides all text.
 do $$ declare o uuid; a uuid; begin
@@ -120,7 +133,11 @@ select pg_temp.ok(public.public_teammate_profile('nyx')->'country'='null','count
 select pg_temp.ok(public.public_teammate_profile('nyx')->>'name'='Nyx','surname excluded');
 select pg_temp.ok(not exists(select 1 from jsonb_object_keys(public.public_teammate_profile('nyx')) k where k not in ('slug','name','avatar','country','languages','bio','accent','banner','vibeTags','featuredGame','coaching','online','memberSince','sessions','tier','rating','reviewTags','winRate','games','reviews','updatedAt')),'exact profile whitelist');
 select pg_temp.ok(public.public_teammate_profile('nyx')::text !~* '9f000000|example.invalid|PrivateSurname|Private review text','no identifiers or private data');
-select pg_temp.ok(public.public_teammate_cards('lol',6,'nyx')='[]','exclude current slug');
+-- Every approved teammate has a page since 20261112130000, so this list is no longer
+-- empty. The exclusion is still exactly what is under test: nyx is in the League list
+-- and gone from the same list asked for nyx's own page.
+select pg_temp.ok(exists(select 1 from jsonb_array_elements(public.public_teammate_cards('lol',6,null)) v where v->>'slug'='nyx')
+  and not exists(select 1 from jsonb_array_elements(public.public_teammate_cards('lol',6,'nyx')) v where v->>'slug'='nyx'),'exclude current slug');
 select pg_temp.ok(public.public_teammate_cards('cs2',6,null)='[]','filter game');
 do $$ declare t text; begin
  foreach t in array array['teammate_public_profiles','teammate_public_slug_history','teammate_game_ranks','teammate_public_profile_settings'] loop
