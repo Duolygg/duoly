@@ -21,6 +21,7 @@ import { QUANTITIES } from '../../contracts/pricing';
 import { billingCustomer, existingBillingCustomer } from './customer';
 import { confirmEmail } from './confirm-email';
 import { walletSplit } from './wallet';
+import { backgroundEvent } from '../background/hooks';
 import {
   OrderCommandSchema,
   PlayAgainCheckSchema,
@@ -421,6 +422,11 @@ export const playAgain: APIRoute = async (context) => {
     return account.json({ error: 'Invalid order request.' }, 400);
   const admin = adminFor(config);
   const rpc = rpcOf(admin);
+  // Every named failure below already releases its own hold. This is the unexpected throw: without
+  // it the balance stays held until `checkout_stale_wallet_holds` finds it, 10 minutes after the
+  // session's lifetime ran out. `src/server/payments/checkout.ts` has the same gap and stays
+  // untouched: it is a protected file (docs/product/background-work.md, oai-review F7).
+  let held: string | null = null;
   try {
     const ready = await prepare(context, account, admin);
     if (ready.failure) return ready.failure;
@@ -458,6 +464,7 @@ export const playAgain: APIRoute = async (context) => {
       );
     const intent = await replayIntent(admin, ready);
     if (!intent) return unavailable(account);
+    held = intent.id;
     const release = intent.release;
     const queue = (orderId: string) =>
       account.json({ url: `/queue/${orderId}`, orderId });
@@ -545,12 +552,21 @@ export const playAgain: APIRoute = async (context) => {
         // A new intent for the payment page, so the declined one stays closed.
         const fresh = await replayIntent(admin, ready);
         if (!fresh) return unavailable(account);
+        held = fresh.id;
         return openPaymentPage(account, admin, stripe, ready, fresh, true);
       }
     }
     // No saved card: this intent goes to the payment page.
     return openPaymentPage(account, admin, stripe, ready, intent, false);
   } catch {
+    // Behind the payments switch and after the response. `checkout_release_wallet` reverses only
+    // holds that are still open and refuses a paid intent, so this is a no-op whenever the order
+    // was in fact created.
+    if (held)
+      await backgroundEvent(
+        { walletHold: held },
+        new URL(context.request.url).origin,
+      ).catch(() => undefined);
     return unavailable(account);
   }
 };

@@ -10,6 +10,14 @@ export const TeammatePresenceSchema = z.discriminatedUnion('action', [
       lastActive: z.number().int().nonnegative().optional(),
     })
     .strict(),
+  /**
+   * The last Duoly tab of this browser is going away (`pagehide`, sent with `navigator.sendBeacon`).
+   * It writes nothing: `pagehide` also fires on an ordinary navigation and on closing one of
+   * several tabs, so a persistent offline write would be a visible regression
+   * (docs/product/background-work.md, oai-review F5). It only asks for a presence-check timer, and
+   * the 20 s heartbeat staleness rule stays the only thing that decides who is online.
+   */
+  z.object({ csrf, action: z.literal('leaving') }).strict(),
 ]);
 
 export const AdminPresenceSchema = z.discriminatedUnion('action', [

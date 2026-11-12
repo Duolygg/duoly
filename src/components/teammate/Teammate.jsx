@@ -17,6 +17,7 @@ import {
   saveSeenOrders,
   showOrderNotification,
 } from './desk-keeper';
+import { createDeskPresence, sendLeavingBeacon } from './presence-leader';
 import { checkTips } from './tip-alerts';
 import PrivateProofs from '../proofs/PrivateProofs';
 import {
@@ -585,24 +586,41 @@ export default class Teammate extends React.Component {
     // worker-driven, so a background tab keeps its heartbeat inside the 20 s timeout (desk-keeper)
     this._stopPoll = backgroundTicker(POLL_MS, () => this.poll());
     this._stopPresence = backgroundTicker(PRESENCE_MS, () => this.checkIn());
+    // Not for an admin looking at the desk or for the design preview: those never check in, so a
+    // coordinator there would join the roster as a leader that never beats.
+    if (FEATURES.presence && !this.props.admin && !this.props.preview)
+      this._presence = createDeskPresence({
+        checkIn: () =>
+          this._disposed ? Promise.resolve() : this.postCheckIn(),
+        onBeat: (data) => this.applyPresence(data),
+        ticker: backgroundTicker,
+      });
     this._chatPoll = setInterval(() => this.pollChat(), CHAT_POLL_MS);
     // last activity, so admins can see who's AFK with the dashboard left open
     this._activity = () => {
       this._lastActive = Date.now();
-      // the 4-hour AFK warning is up: tell the server right away instead of at the next heartbeat
+      this._presence?.activity(this._lastActive);
+      // the 4-hour AFK warning is up: tell the server right away instead of at the next heartbeat.
+      // This posts even from a follower tab: the click happened here.
       if (this.state.afkWarning && !this._afkCheck) {
         this._afkCheck = setTimeout(() => {
           this._afkCheck = null;
-          this.checkIn();
+          this.postCheckIn();
         }, 1000);
       }
     };
     ['pointerdown', 'pointermove', 'keydown', 'wheel'].forEach((ev) =>
       window.addEventListener(ev, this._activity, { passive: true }),
     );
-    // No "offline" beacon on pagehide: it also fired when moving to another page of the site.
-    // The other pages keep the heartbeat going (desk-keeper); closing the last tab goes offline
-    // through the 20 s heartbeat timeout.
+    // Still no "offline" write on pagehide: it also fires when moving to another page of the site,
+    // and the other pages keep the heartbeat going (desk-keeper). Closing the LAST tab of the
+    // browser now sends a beacon that only asks for a presence-check timer, so the Discord roles
+    // follow within one freshness window (docs/product/background-work.md, oai-review F5). The
+    // 20 s heartbeat timeout stays the only thing that decides who is online.
+    this._leaving = () => {
+      if (this._presence?.leaving()) sendLeavingBeacon(this.props.csrf);
+    };
+    window.addEventListener('pagehide', this._leaving);
     this._bell = new Audio('/assets/sounds/order-bell.wav');
     this._bell.preload = 'auto';
     this._ping = newChatPing();
@@ -644,39 +662,58 @@ export default class Teammate extends React.Component {
       checkTips(d.stats?.recent);
     } catch (e) {}
   }
+  /**
+   * One heartbeat per browser: the leader tab posts and shares the answer, the other tabs apply
+   * it (presence-leader.js, docs/product/background-work.md). The 10 s cadence and the server's
+   * 20 s freshness rule are unchanged, and a tab that hears nothing from a leader checks in
+   * itself.
+   */
   async checkIn() {
+    if (this._presence && !this._presence.mayCheckIn()) return;
+    await this.postCheckIn();
+  }
+  async postCheckIn() {
     if (!FEATURES.presence || this.props.admin || this.state.needDiscord)
       return;
     const presenceVersion = this._presenceVersion;
     try {
       const { ok, data } = await this.post('/api/presence', {
         action: 'check-in',
-        lastActive: this._lastActive,
+        // The AFK rule counts activity on any Duoly page, so the leader sends the newest.
+        lastActive: Math.max(
+          this._lastActive ?? 0,
+          this._presence?.activeAt() ?? 0,
+        ),
       });
       if (!ok || this._disposed || presenceVersion !== this._presenceVersion)
         return;
-      if (data.online) {
-        const afkWarning = data.afkIn != null && data.afkIn <= AFK_WARN_SECONDS;
-        if (afkWarning) showAfkWarning(data.afkIn);
-        this.setState(
-          {
-            online: true,
-            onlineSince: data.onlineSince || Date.now(),
-            forced: null,
-            afkWarning,
-          },
-          () => this.poll(),
-        );
-      } else if (this.state.online || data.forcedOffline) {
-        this._seen = null;
-        this.setState({
-          online: false,
-          queue: [],
-          forced: data.forcedOffline,
-          afkWarning: false,
-        });
-      }
+      this._presence?.beat(data);
+      this.applyPresence(data);
     } catch {}
+  }
+  applyPresence(data) {
+    if (this._disposed || !data) return;
+    if (data.online) {
+      const afkWarning = data.afkIn != null && data.afkIn <= AFK_WARN_SECONDS;
+      if (afkWarning) showAfkWarning(data.afkIn);
+      this.setState(
+        {
+          online: true,
+          onlineSince: data.onlineSince || Date.now(),
+          forced: null,
+          afkWarning,
+        },
+        () => this.poll(),
+      );
+    } else if (this.state.online || data.forcedOffline) {
+      this._seen = null;
+      this.setState({
+        online: false,
+        queue: [],
+        forced: data.forcedOffline,
+        afkWarning: false,
+      });
+    }
   }
   // On load: if this teammate already owns an order (claimed through a handover link, or before
   // a reload), go online and open it.
@@ -712,6 +749,7 @@ export default class Teammate extends React.Component {
     clearInterval(this._tick);
     this._stopPoll?.();
     this._stopPresence?.();
+    this._presence?.stop();
     clearTimeout(this._afkCheck);
     clearInterval(this._chatPoll);
     clearInterval(this._stats);
@@ -719,6 +757,7 @@ export default class Teammate extends React.Component {
     ['pointerdown', 'pointermove', 'keydown', 'wheel'].forEach((ev) =>
       window.removeEventListener(ev, this._activity),
     );
+    window.removeEventListener('pagehide', this._leaving);
     this.clearChatTimers();
     if (this._bell) this._bell.pause();
   }

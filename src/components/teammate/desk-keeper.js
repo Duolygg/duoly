@@ -1,5 +1,6 @@
 /* global window, document, localStorage, sessionStorage, Notification, Worker, Blob, URL, navigator, setInterval, clearInterval, setTimeout, clearTimeout, fetch, Event, Audio */
 import { createTeammateFetch, newEligibleOrders } from './teammate-data';
+import { createDeskPresence, sendLeavingBeacon } from './presence-leader';
 import { gameOf } from '../../design-reference/lib/games';
 
 /**
@@ -7,7 +8,9 @@ import { gameOf } from '../../design-reference/lib/games';
  *
  * - The desk (/teammate) and every other page check in every 10 s while the teammate is online.
  *   Leaving the desk no longer sets them offline; closing the last tab does, through the 20 s
- *   heartbeat timeout (migration 20261024142000_presence.sql).
+ *   heartbeat timeout (migration 20261024142000_presence.sql). One tab of the browser posts that
+ *   check-in for all of them and shares the answer (presence-leader.js), so four open tabs cost
+ *   one write every 10 s instead of four.
  * - Background tabs: browsers slow page timers down to once a minute, which is past the 20 s
  *   timeout. The ticks come from a small worker, whose timers aren't slowed that way.
  * - New orders: a browser notification for orders that fit the teammate's games and voice
@@ -88,6 +91,14 @@ export function claimOrderBell(orderId, now = Date.now()) {
  * lookups on the shared Supabase project. A lease in localStorage lets one tab per watcher poll
  * for all of them: the holder renews it on every tick, the others skip their tick, and when the
  * holder closes (pagehide releases it) or stops renewing, the next tab to tick takes over.
+ *
+ * This lease is only ever about reads. The presence heartbeat has its own one-tab-per-browser
+ * rule in presence-leader.js, because a heartbeat also has to hand its answer to the follower
+ * tabs, report the newest activity of any tab and know when the last tab is leaving, none of
+ * which a bare TTL lease can do; and a missed poll costs five seconds of popup delay where a
+ * missed heartbeat shows the teammate as offline. docs/product/background-work.md ("Two leaders,
+ * two jobs") has the full reasoning. Keep them apart: no caller should use one to decide the
+ * other's job.
  */
 const LEASE_PREFIX = 'duoly-poll-lease:';
 const TAB_ID = Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -273,13 +284,56 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
 
   let afkWarning = false;
   let afkCheck = null;
+
+  function applyPresence(data) {
+    online = !!data.online;
+    afkWarning = online && data.afkIn != null && data.afkIn <= AFK_WARN_SECONDS;
+    if (afkWarning) showAfkWarning(data.afkIn);
+  }
+
+  /** The heartbeat itself. The answer goes to the other tabs of this browser too. */
+  async function postCheckIn() {
+    try {
+      const { ok, data } = await post('/api/presence', {
+        action: 'check-in',
+        // The AFK rule counts activity on any Duoly page, so the leader sends the newest.
+        lastActive: Math.max(lastActive, presence.activeAt()),
+      });
+      if (!ok) return;
+      presence.beat(data);
+      applyPresence(data);
+    } catch {
+      /* best effort */
+    }
+  }
+
+  /**
+   * One heartbeat per browser: only the leader tab posts, the others take its answer
+   * (presence-leader.js, docs/product/background-work.md). The 10 s cadence and the server's 20 s
+   * freshness rule are unchanged.
+   */
+  const presence = createDeskPresence({
+    checkIn: () => (stopped ? Promise.resolve() : postCheckIn()),
+    onBeat: (data) => {
+      if (!stopped && data && typeof data === 'object') applyPresence(data);
+    },
+    ticker: backgroundTicker,
+  });
+
+  async function checkIn() {
+    if (!presence.mayCheckIn()) return;
+    await postCheckIn();
+  }
+
   const activity = () => {
     lastActive = Date.now();
-    // warning is up: tell the server right away instead of at the next heartbeat
+    presence.activity(lastActive);
+    // warning is up: tell the server right away instead of at the next heartbeat. This posts even
+    // from a follower tab, because the click happened here and the leader would only see it later.
     if (afkWarning && !afkCheck)
       afkCheck = setTimeout(() => {
         afkCheck = null;
-        checkIn();
+        postCheckIn();
       }, 1000);
   };
   const events = ['pointerdown', 'pointermove', 'keydown', 'wheel'];
@@ -287,21 +341,15 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
     window.addEventListener(ev, activity, { passive: true }),
   );
 
-  async function checkIn() {
-    try {
-      const { ok, data } = await post('/api/presence', {
-        action: 'check-in',
-        lastActive,
-      });
-      if (!ok) return;
-      online = !!data.online;
-      afkWarning =
-        online && data.afkIn != null && data.afkIn <= AFK_WARN_SECONDS;
-      if (afkWarning) showAfkWarning(data.afkIn);
-    } catch {
-      /* best effort */
-    }
-  }
+  /**
+   * The last Duoly tab of this browser is going away. The beacon writes nothing; it asks for a
+   * presence-check timer so the Discord roles follow within one freshness window even when the
+   * browser never comes back (oai-review F5).
+   */
+  const leaving = () => {
+    if (presence.leaving()) sendLeavingBeacon(csrf);
+  };
+  window.addEventListener('pagehide', leaving);
 
   async function loadSettings(now) {
     if (settings && now - settingsAt < SETTINGS_MS) return;
@@ -373,8 +421,9 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
       // check in every PRESENCE_MS; the ticker runs at QUEUE_MS
       if (n++ % Math.round(PRESENCE_MS / QUEUE_MS) === 0) await checkIn();
       if (!online || stopped) return stop();
-      // With several pages open, one of them watches the queue and Twitch for all of them.
-      // Check-ins stay per tab: each one carries that tab's own last activity for the AFK timer.
+      // With several pages open, one of them watches the queue and Twitch for all of them. This
+      // lease decides who polls; who writes the heartbeat is the presence roster's own question
+      // (see the note above takePollLease). The two never elect the same tab for the same job.
       if (!takePollLease(KEEPER_LEASE, QUEUE_MS * 3, { now })) return;
       if (now - lastQueue >= QUEUE_MS - 500) {
         lastQueue = now;
@@ -393,7 +442,9 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
     if (stopped) return;
     stopped = true;
     stopTicker();
+    presence.stop();
     events.forEach((ev) => window.removeEventListener(ev, activity));
+    window.removeEventListener('pagehide', leaving);
     window.removeEventListener('pagehide', leave);
     leave();
     clearTimeout(afkCheck);

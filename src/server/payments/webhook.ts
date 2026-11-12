@@ -7,6 +7,7 @@ import { confirmEmail } from './confirm-email';
 import { fulfilPlayAgain } from './play-again';
 import { handleProEvent, isProCheckoutSession } from '../pro/webhook';
 import { handleTransferEvent } from '../connect/events';
+import { backgroundEvent } from '../background/hooks';
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -517,15 +518,33 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
     return json({ error: 'processing_failed' }, 500);
   }
   await admin.from('stripe_events').insert({ id: event.id, type: event.type });
+  // Every branch above commits through a function whose triggers enqueue marketplace facts
+  // (order_funded, payment_captured, order_refunded, tip_paid, payout_sent). Drain them now
+  // instead of at the 60 s poll, behind the analytics switch and after the response
+  // (docs/product/background-work.md).
+  if (outcome !== 'ignored')
+    await backgroundEvent(
+      { analytics: true },
+      new URL(request.url).origin,
+    ).catch(() => undefined);
   return json({ received: true, outcome });
 };
 
-/** Scheduled by pg_cron: expire stale queue orders, then settle money actions. */
-export const paymentsTick: APIRoute = async ({ request }) => {
+export interface PaymentsSweep {
+  expired: unknown;
+  walletHoldsReleased: number;
+  settled: number;
+}
+
+/**
+ * The tick's work, unchanged, as a function: expire stale queue orders, release wallet holds whose
+ * checkout died, then settle money actions. Extracted so the background fixer
+ * (/api/internal/reconcile, docs/product/background-work.md) can run the same code instead of a
+ * predicate of its own. Null when payments are not configured.
+ */
+export async function runPaymentsSweep(): Promise<PaymentsSweep | null> {
   const config = paymentsConfig();
-  const auth = request.headers.get('authorization') ?? '';
-  if (!config?.tickSecret || auth !== `Bearer ${config.tickSecret}`)
-    return json({ error: 'unauthorized' }, 401);
+  if (!config) return null;
   const admin = adminFor(config);
   const stripe = stripeFor(config);
   const sweep = await admin.rpc('sweep_expired_orders', { p_limit: 100 });
@@ -544,11 +563,20 @@ export const paymentsTick: APIRoute = async ({ request }) => {
     });
   }
   const settled = await settlePending(stripe, admin, 50);
-  return json({
+  return {
     expired: sweep.data ?? null,
     walletHoldsReleased: staleRows.length,
     settled: settled.processed,
-  });
+  };
+}
+
+/** Scheduled by pg_cron: expire stale queue orders, then settle money actions. */
+export const paymentsTick: APIRoute = async ({ request }) => {
+  const config = paymentsConfig();
+  const auth = request.headers.get('authorization') ?? '';
+  if (!config?.tickSecret || auth !== `Bearer ${config.tickSecret}`)
+    return json({ error: 'unauthorized' }, 401);
+  return json(await runPaymentsSweep());
 };
 
 /** Best-effort immediate settlement after accept/cancel; the tick is the backstop. */
