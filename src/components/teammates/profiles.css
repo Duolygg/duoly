@@ -391,6 +391,10 @@
   grid-area: aside;
   display: grid;
   grid-auto-rows: max-content;
+  /* The column runs the full height of the hero: the mascot holds the top line with the
+     name and the facts close the bottom one with the last line of copy, so the air sits
+     between them in the lit part of the hero rather than under them in the dark. */
+  align-self: stretch;
   align-content: space-between;
   gap: 24px;
   justify-items: stretch;
