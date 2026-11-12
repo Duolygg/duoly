@@ -207,10 +207,18 @@ a timer handler itself misbehaves, because `legacy` also stops the registrations
   `presence-check` timer. The beacon never writes `desk_set_online(false)`: a `pagehide` also fires on
   ordinary navigation and on closing one of several tabs, so a persistent offline write would be a
   visible regression (review F5). The 20 s heartbeat staleness rule stays the only thing that decides.
-- `presence-check` is a singleton (`presence-check:desk:0`). While anyone is online it answers `retry`
-  at now plus 20 s; when nobody is online it answers `done` and the next online event registers it
-  again. It reads presence and syncs roles; it never writes presence. Two events register it: going
-  online (`action: 'set', online: true`) and the leaving beacon.
+- `presence-check` is a singleton (`presence-check:desk:0`). It always syncs roles once, and the
+  presence count only decides whether it looks again: with anyone online it answers `retry` at now
+  plus 20 s, and with nobody online it answers `done`, after the sync that takes the Online role off
+  whoever just went stale. The next online event registers it again. It reads presence and syncs
+  roles; it never writes presence. Two events register it: going online
+  (`action: 'set', online: true`) and the leaving beacon.
+- "Online" there means the 20 s staleness rule, `online = true` **and** `last_seen_at` newer than
+  20 seconds, the same rule as `presenceFresh` and the `roles` branch of `duoly_dispatch_has_work`.
+  Counting the `online` column on its own was a production bug: a browser that dies leaves the column
+  set for hours, so six such rows had the singleton answer `retry` every 20 s forever and the timer
+  never ended. An unreadable count reads as nobody online for the same reason, so a broken query
+  cannot re-arm the singleton either; the one sync still runs.
 - The beacon is a third action on the existing endpoint, `POST /api/teammate/presence`
   `{"csrf":"...","action":"leaving"}`, sent with `navigator.sendBeacon` because that is the only
   thing a browser still runs while a page unloads. It takes the same CSRF token in the body and the

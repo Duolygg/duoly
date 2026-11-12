@@ -27,7 +27,11 @@ import {
   supabaseOrderPostStore,
   type OrderPostsResult,
 } from '../discord/order-post-tick';
-import { roleSyncConfig, syncDiscordRoles } from '../discord/role-sync';
+import {
+  PRESENCE_STALE_MS,
+  roleSyncConfig,
+  syncDiscordRoles,
+} from '../discord/role-sync';
 import { drainConfig, drainOnce, type DrainResult } from '../analytics/drain';
 import { adminFor, paymentsConfig, stripeFor } from '../payments/config';
 import { settlePending } from '../payments/settle';
@@ -87,6 +91,7 @@ export interface TimerPorts {
   settleNow(): Promise<boolean | null>;
   eligibleAnalytics(): Promise<number>;
   drainAnalytics(): Promise<DrainResult | 'off' | 'error'>;
+  /** Teammates who count as online: `online = true` and a heartbeat inside the 20 s window. */
   onlineTeammates(): Promise<number>;
   /** Null when the role sync is not configured. */
   syncRoles(): Promise<boolean | null>;
@@ -200,12 +205,17 @@ export function timerPorts(db: SupabaseClient, site: string): TimerPorts {
     },
 
     onlineTeammates: async () => {
+      // `online = true` on its own is not presence: a browser that dies leaves the column set with
+      // a heartbeat hours old. The 20 s window is the same rule `presenceFresh` and the `roles` SQL
+      // predicate apply, so the timer and the role sync always agree on who is online.
+      const since = new Date(Date.now() - PRESENCE_STALE_MS).toISOString();
       const { count, error } = await db
         .from('teammate_presence')
         .select('user_id', { count: 'exact', head: true })
-        .eq('online', true);
-      // Nobody online ends the timer; the next online event registers it again. An unreadable
-      // read is treated the same way on purpose, so a broken query cannot re-arm forever.
+        .eq('online', true)
+        .gt('last_seen_at', since);
+      // Nobody fresh ends the timer after one sync; the next online event registers it again. An
+      // unreadable read is treated the same way on purpose, so a broken query cannot re-arm forever.
       if (error) return 0;
       return count ?? 0;
     },
@@ -363,15 +373,16 @@ async function preparePresenceCheck(
   _fire: TimerFire,
   ports: TimerPorts,
 ): Promise<Prepared> {
-  const plan = presenceCheckPlan(await ports.onlineTeammates());
-  if (plan.action !== 'act') return { plan, act: 'sync' };
+  // The count never decides whether to sync, only whether to look again: a desk that just went
+  // stale still has the Online role on, so there is one sync to do even with nobody online.
+  const fresh = await ports.onlineTeammates();
   return {
-    plan,
+    plan: presenceCheckPlan(fresh),
     act: 'sync',
     run: async () => {
       if ((await ports.syncRoles()) === null)
         return { status: 'done', ...note('the role sync is not configured') };
-      return plannedDisposition(presenceCheckAfter(ports.now()));
+      return plannedDisposition(presenceCheckAfter(fresh, ports.now()));
     },
   };
 }

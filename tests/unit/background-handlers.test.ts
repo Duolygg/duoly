@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   ANALYTICS_RETRY_DELAYS_MS,
   ORDER_EXPIRE_DELAY_MS,
@@ -13,8 +14,10 @@ import {
 } from '../../src/contracts/background';
 import {
   handleTimerFire,
+  timerPorts,
   type TimerPorts,
 } from '../../src/server/background/handlers';
+import { PRESENCE_STALE_MS } from '../../src/server/discord/role-sync';
 import {
   DRAIN_CONTINUE_MS,
   PENDING_RECHECK_MS,
@@ -648,13 +651,14 @@ describe('presence-check', () => {
       'live',
     );
 
-  it('ends the timer when nobody is online', async () => {
+  it('syncs once and ends the timer when nobody is fresh', async () => {
     const syncRoles = vi.fn(async () => true);
     expect(await presence({ syncRoles })).toStrictEqual({
       status: 'done',
       note: 'nobody online',
     });
-    expect(syncRoles).not.toHaveBeenCalled();
+    // The desk that just went stale still wears the Online role: one sync takes it off.
+    expect(syncRoles).toHaveBeenCalledOnce();
   });
 
   it('syncs roles and looks again in 20 s while someone is online', async () => {
@@ -688,6 +692,94 @@ describe('presence-check', () => {
       status: 'done',
       note: 'the role sync is not configured',
     });
+  });
+
+  it('never syncs in shadow, whatever the presence count', async () => {
+    for (const fresh of [0, 2]) {
+      const syncRoles = vi.fn(async () => true);
+      const answer = await handleTimerFire(
+        fire({ kind: 'presence-check', ref: 'desk', epoch: 0, at: NOW }),
+        ports({ onlineTeammates: async () => fresh, syncRoles }),
+        'shadow',
+      );
+      expect(answer).toMatchObject({ status: 'disabled', mode: 'shadow' });
+      expect(logs.at(-1)).toContain('would=sync');
+      expect(syncRoles).not.toHaveBeenCalled();
+    }
+  });
+});
+
+describe('the presence port counts fresh presence only', () => {
+  const row = (user_id: string, online: boolean, seenMsAgo: number | null) => ({
+    user_id,
+    online,
+    last_seen_at: seenMsAgo === null ? null : iso(Date.now() - seenMsAgo),
+  });
+
+  /**
+   * Only what `onlineTeammates` reads: a `count` over public.teammate_presence that applies the
+   * filters it asks for. `fails` answers the way an unreadable table does.
+   */
+  function presenceDb(
+    rows: ReturnType<typeof row>[],
+    fails = false,
+  ): { db: SupabaseClient; asked: string[] } {
+    const asked: string[] = [];
+    const answer = (left: ReturnType<typeof row>[]) => ({
+      eq(column: 'online', value: boolean) {
+        asked.push(`${column}=${value}`);
+        return answer(left.filter((it) => it[column] === value));
+      },
+      gt(column: 'last_seen_at', value: string) {
+        asked.push(column);
+        return answer(left.filter((it) => (it[column] ?? '') > value));
+      },
+      then: (resolve: (result: unknown) => void) =>
+        resolve(
+          fails
+            ? { count: null, error: { message: 'presence is unreadable' } }
+            : { count: left.length, error: null },
+        ),
+    });
+    const db = {
+      from: (table: string) => ({
+        select: () => {
+          asked.push(table);
+          return answer(rows);
+        },
+      }),
+    } as unknown as SupabaseClient;
+    return { db, asked };
+  }
+
+  const count = (db: SupabaseClient) =>
+    timerPorts(db, 'https://duoly.gg').onlineTeammates();
+
+  it('ignores a dead browser that left online = true behind', async () => {
+    const { db, asked } = presenceDb([
+      row('beating', true, 5_000),
+      row('dead-browser', true, 3 * 60 * 60_000),
+      row('never-seen', true, null),
+      row('offline', false, 1_000),
+    ]);
+    expect(await count(db)).toBe(1);
+    expect(asked).toStrictEqual([
+      'teammate_presence',
+      'online=true',
+      'last_seen_at',
+    ]);
+  });
+
+  it('uses the same 20 s window as the role sync', async () => {
+    const inside = presenceDb([row('a', true, PRESENCE_STALE_MS - 5_000)]);
+    const outside = presenceDb([row('b', true, PRESENCE_STALE_MS + 5_000)]);
+    expect(await count(inside.db)).toBe(1);
+    expect(await count(outside.db)).toBe(0);
+  });
+
+  it('reads an unreadable table as nobody online', async () => {
+    const { db } = presenceDb([row('beating', true, 1_000)], true);
+    expect(await count(db)).toBe(0);
   });
 });
 
