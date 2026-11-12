@@ -19,6 +19,7 @@ export default function LiveProfile({
   discord,
   discordResult,
   discordEnabled,
+  publicProfilesEnabled = false,
 }: {
   viewer: Viewer;
   profile: ProfileData;
@@ -26,6 +27,7 @@ export default function LiveProfile({
   discord: DiscordLink | null;
   discordResult: DiscordResult | '';
   discordEnabled: boolean;
+  publicProfilesEnabled?: boolean;
 }) {
   const onSave = (body: unknown) =>
     fetch('/api/me/profile', {
@@ -47,6 +49,7 @@ export default function LiveProfile({
       discord={discord}
       discordResult={discordResult}
       discordEnabled={discordEnabled}
+      publicProfilesEnabled={publicProfilesEnabled}
       csrf={csrf}
       accountOnly
       allowUpload

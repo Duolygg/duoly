@@ -2,6 +2,7 @@
 import ProductLayout from '../layouts/ProductLayout.astro';
 import LiveProfile from '../components/account/LiveProfile';
 import { accountContext } from '../server/auth/context';
+import { publicProfilesEnabled } from '../server/teammates/public-profiles';
 import { DiscordResultSchema } from '../contracts/account';
 const account = accountContext(Astro.request, Astro.cookies);
 for (const [name, value] of account.headers)
@@ -35,6 +36,7 @@ const discordEnabled = !!account.config?.providers.discord;
       discord={identity.discord}
       discordResult={discordResult}
       discordEnabled={discordEnabled}
+      publicProfilesEnabled={publicProfilesEnabled()}
       client:load
     />
   ) : (
