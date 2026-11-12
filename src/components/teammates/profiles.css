@@ -137,7 +137,7 @@
 .tp-ghostname {
   position: absolute;
   z-index: 0;
-  top: calc(var(--ring, 26px) + var(--avatar, 160px) / 2);
+  top: calc(var(--ring, 19px) + var(--avatar, 160px) / 2);
   right: -34%;
   translate: 0 -50%;
   font:
@@ -273,7 +273,7 @@
    against the left column so the two never leave a dead zone between them. */
 .tp-aside {
   --avatar: 160px;
-  --ring: 26px;
+  --ring: 19px;
   position: relative;
   grid-area: aside;
   align-self: center;
@@ -286,8 +286,8 @@
   display: grid;
   place-items: center;
   justify-self: start;
-  width: calc(var(--avatar, 160px) + var(--ring, 26px) * 2);
-  height: calc(var(--avatar, 160px) + var(--ring, 26px) * 2);
+  width: calc(var(--avatar, 160px) + var(--ring, 19px) * 2);
+  height: calc(var(--avatar, 160px) + var(--ring, 19px) * 2);
 }
 /* The mascot only exists at 160 px, so it is never scaled up past it. */
 .tp-figure img {
@@ -380,7 +380,7 @@
   border-radius: 50%;
 }
 .tp-ring::before {
-  border: 1px solid color-mix(in srgb, var(--tier) 34%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tier) 44%, transparent);
 }
 .tp-ring::after {
   background: conic-gradient(
