@@ -211,6 +211,16 @@ begin
       from public.teammate_game_ranks r where r.user_id=u and r.game=any(a)),'[]'::jsonb),'hidden',coalesce(p.admin_hidden,false));
 end $$;
 
+create function public.teammate_public_slug_available(p_slug text) returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare u uuid:=auth.uid();
+begin
+  if not public.teammate_public_active(u) then return public.order_error(403,'Teammate role required.'); end if;
+  return pg_catalog.jsonb_build_object('available',public.teammate_public_slug_valid(p_slug)
+    and not exists(select 1 from public.teammate_public_profiles where slug=p_slug and user_id<>u)
+    and not exists(select 1 from public.teammate_public_slug_history where slug=p_slug and user_id is distinct from u and retired_at>pg_catalog.now()-interval '90 days'));
+end $$;
+
 create function public.teammate_public_profile_save(p_settings jsonb) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare u uuid:=auth.uid(); p public.teammate_public_profiles; s jsonb:=p_settings; g jsonb; target text;
@@ -342,9 +352,9 @@ DO $acl$
 declare f regprocedure;
 begin
   for f in select p.oid::regprocedure from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
-    where n.nspname='public' and p.proname in ('teammate_public_slug_valid','teammate_public_rank_valid','teammate_public_labels_valid','teammate_public_bio_valid','teammate_public_approved','teammate_public_active','public_teammate_profile','public_teammate_cards','public_teammate_indexable','teammate_public_profile_get','teammate_public_profile_save','admin_set_game_rank','admin_hide_public_profile','admin_public_profile_get','teammate_public_account_deleted','teammate_public_profile_changed')
+    where n.nspname='public' and p.proname in ('teammate_public_slug_valid','teammate_public_rank_valid','teammate_public_labels_valid','teammate_public_bio_valid','teammate_public_approved','teammate_public_active','public_teammate_profile','public_teammate_cards','public_teammate_indexable','teammate_public_profile_get','teammate_public_slug_available','teammate_public_profile_save','admin_set_game_rank','admin_hide_public_profile','admin_public_profile_get','teammate_public_account_deleted','teammate_public_profile_changed')
   loop execute pg_catalog.format('revoke all on function %s from public, anon, authenticated, service_role',f); end loop;
 end $acl$;
 grant execute on function public.public_teammate_profile(text),public.public_teammate_cards(text,int,text),public.public_teammate_indexable() to anon,authenticated;
-grant execute on function public.teammate_public_profile_get(),public.teammate_public_profile_save(jsonb),public.admin_set_game_rank(uuid,text,text,text,boolean),public.admin_hide_public_profile(text,boolean,text),public.admin_public_profile_get(uuid) to authenticated;
+grant execute on function public.teammate_public_slug_available(text),public.teammate_public_profile_get(),public.teammate_public_profile_save(jsonb),public.admin_set_game_rank(uuid,text,text,text,boolean),public.admin_hide_public_profile(text,boolean,text),public.admin_public_profile_get(uuid) to authenticated;
 commit;
