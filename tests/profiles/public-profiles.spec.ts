@@ -32,6 +32,23 @@ for (const slug of ['nyx', 'sola', 'kairo'])
     await expect(page.locator('.tp-mobile-booking')).toBeVisible({
       visible: isMobile,
     });
+    /* Nothing on a profile is allowed to render below 13px. */
+    expect(
+      await page.evaluate(() =>
+        [...document.querySelectorAll('article.tp-page *')]
+          .filter(
+            (el) =>
+              [...el.childNodes].some(
+                (n) => n.nodeType === 3 && n.textContent!.trim(),
+              ) && el.getClientRects().length,
+          )
+          .map((el) => ({
+            at: el.className || el.tagName,
+            size: parseFloat(getComputedStyle(el).fontSize),
+          }))
+          .filter((row) => row.size < 13),
+      ),
+    ).toEqual([]);
     expect((await response!.text()).includes('profile-name')).toBe(true);
     const schema = await page
       .locator('script[type="application/ld+json"]')
@@ -48,9 +65,10 @@ for (const slug of ['nyx', 'sola', 'kairo'])
       await expect(page.locator('.tp-scoreboard')).not.toContainText(
         'Customer rating',
       );
-      await expect(page.locator('.tp-booking .tp-primary')).toHaveText(
-        'Book a Valorant teammate→',
+      await expect(page.locator('.tp-cta .tp-primary')).toHaveText(
+        'Book a Valorant teammate',
       );
+      await expect(page.locator('.tp-cta .tp-ghost')).toHaveCount(0);
     }
   });
 test('301, 410 and missing status codes', async ({ request }) => {
@@ -96,9 +114,59 @@ test('core content and booking links work without JavaScript', async ({
   const page = await context.newPage();
   await page.goto(`http://127.0.0.1:${port}/teammates/nyx`);
   await expect(page.locator('#games')).toContainText('Immortal 3');
-  await expect(page.locator('.tp-booking .tp-primary')).toHaveAttribute(
+  await expect(page.locator('.tp-cta .tp-primary')).toHaveAttribute(
     'href',
     /game=val.*teammate=nyx/,
   );
+  await expect(page.locator('.tp-mobile-booking')).toHaveCount(1);
   await context.close();
+});
+
+test('one booking verb, one arrow glyph and reviews without text stay quiet', async ({
+  page,
+}) => {
+  await page.goto('/teammates/nyx');
+  const article = page.locator('article.tp-page');
+  await expect(article).not.toContainText('Queue with');
+  await expect(article).not.toContainText('Fictional review');
+  for (const label of await page
+    .locator('a:has-text("Book"), .tp-mobile-booking a')
+    .allInnerTexts())
+    expect(label.trim().startsWith('Book')).toBe(true);
+  /* Every arrow on the page is the same inline SVG, and no card carries one. */
+  expect(
+    await page.evaluate(() => {
+      const text = document.querySelector('article.tp-page')!.textContent ?? '';
+      return [...text].filter((c) => '\u2192\u2191\u2197\u279C'.includes(c))
+        .length;
+    }),
+  ).toBe(0);
+  await expect(page.locator('.tp-card svg')).toHaveCount(0);
+  /* Four written reviews minus the one with no text: a lead plus an even grid. */
+  await expect(page.locator('.tp-review-lead')).toHaveCount(1);
+  await expect(page.locator('.tp-review-grid .tp-review')).toHaveCount(2);
+  await expect(page.locator('.tp-tags .tp-tag').first()).toContainText(
+    '74 mentions',
+  );
+  /* Tabs and the headings they point at use the same names. */
+  for (const tab of await page.locator('.tp-tabs a').all()) {
+    const name = (await tab.innerText()).trim();
+    await expect(
+      page.locator(`${await tab.getAttribute('href')} h2`),
+    ).toHaveText(name);
+  }
+});
+
+test('the sticky bar steps aside while a booking block is on screen', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'the sticky bar only exists on small screens');
+  await page.goto('/teammates/nyx');
+  const bar = page.locator('.tp-mobile-booking');
+  await expect(bar).toHaveClass(/is-stowed/);
+  await page.locator('#games').scrollIntoViewIfNeeded();
+  await expect(bar).not.toHaveClass(/is-stowed/);
+  await page.locator('[data-closing]').scrollIntoViewIfNeeded();
+  await expect(bar).toHaveClass(/is-stowed/);
 });

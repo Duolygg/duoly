@@ -4,6 +4,7 @@ import {
   profilePresentation,
   profileSchemas,
   profileRoute,
+  profileReviewLayout,
 } from '../../src/server/teammates/profile-page';
 import { fixtureLookup } from '../../src/server/teammates/profile-fixtures';
 import { seoOffers } from '../../src/server/seo/offers';
@@ -60,6 +61,27 @@ describe('public profile page', () => {
     [true, 'missing', 404],
   ] as const)('routes flag %s and slug %s to %s', (enabled, slug, status) => {
     expect(profileRoute(enabled, fixtureLookup(slug)).status).toBe(status);
+  });
+  it('quotes only reviews with text and never leaves a hole in the grid', () => {
+    const base = { rating: 5, game: 'val', month: '2026-10' } as const;
+    const quiet = profileReviewLayout(nyx.reviews);
+    expect(quiet.lead?.text).toBe(nyx.reviews[0]!.text);
+    expect(quiet.rest).toHaveLength(2);
+    expect([quiet.lead, ...quiet.rest].every((r) => r && r.text)).toBe(true);
+    for (const count of [0, 1, 2, 3, 4, 5, 6, 9]) {
+      const { lead, rest } = profileReviewLayout(
+        Array.from({ length: count }, (_, i) => ({
+          ...base,
+          text: `Review ${i + 1}`,
+        })),
+      );
+      expect(rest.length % 2).toBe(0);
+      expect((lead ? 1 : 0) + rest.length).toBe(Math.min(count, 6));
+    }
+    expect(profileReviewLayout([{ ...base, text: '' }])).toEqual({
+      lead: null,
+      rest: [],
+    });
   });
   it('builds anonymous, dash-free profile copy and offline booking without preference', () => {
     expect(
