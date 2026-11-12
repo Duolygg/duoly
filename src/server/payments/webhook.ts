@@ -7,6 +7,7 @@ import { confirmEmail } from './confirm-email';
 import { fulfilPlayAgain } from './play-again';
 import { handleProEvent, isProCheckoutSession } from '../pro/webhook';
 import { handleTransferEvent } from '../connect/events';
+import { backgroundEvent } from '../background/hooks';
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -517,6 +518,15 @@ export const stripeWebhook: APIRoute = async ({ request }) => {
     return json({ error: 'processing_failed' }, 500);
   }
   await admin.from('stripe_events').insert({ id: event.id, type: event.type });
+  // Every branch above commits through a function whose triggers enqueue marketplace facts
+  // (order_funded, payment_captured, order_refunded, tip_paid, payout_sent). Drain them now
+  // instead of at the 60 s poll, behind the analytics switch and after the response
+  // (docs/product/background-work.md).
+  if (outcome !== 'ignored')
+    await backgroundEvent(
+      { analytics: true },
+      new URL(request.url).origin,
+    ).catch(() => undefined);
   return json({ received: true, outcome });
 };
 

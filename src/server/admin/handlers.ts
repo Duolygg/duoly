@@ -37,6 +37,7 @@ import { ownerEmails } from './owners';
 import { sendApplicationDecision, sendApplicationReceived } from './notify';
 import { settleSoon } from '../payments/webhook';
 import { syncRolesAfter } from '../discord/role-hooks';
+import { backgroundEvent } from '../background/hooks';
 import { connectEnabled } from '../connect/config';
 
 type Client = NonNullable<AccountContext['client']>;
@@ -77,6 +78,7 @@ type Command = {
   after?: (
     data: Record<string, unknown>,
     body: Record<string, unknown>,
+    context: APIContext,
   ) => Promise<void>;
 };
 
@@ -143,7 +145,7 @@ export function adminRoute(
         const response = rpcResponse(account, data, error);
         if (response.status === 200 && command.after)
           await command
-            .after(data as Record<string, unknown>, parsed.data)
+            .after(data as Record<string, unknown>, parsed.data, context)
             .catch(() => undefined);
         return response;
       }
@@ -346,6 +348,17 @@ export const customers = adminRoute(
   ['customers'],
 );
 
+/**
+ * An admin cancel or refund closes the order's Discord post, enqueues analytics facts through the
+ * database triggers and can leave a money action pending, exactly like the customer-facing routes
+ * (docs/product/background-work.md). Behind the switches and after the response.
+ */
+const orderEvent = (context: APIContext, orderId: string) =>
+  backgroundEvent(
+    { order: orderId, settle: orderId, analytics: true },
+    new URL(context.request.url).origin,
+  );
+
 export const orders = adminRoute(
   (client, context) => {
     const page = pageParams(context.url);
@@ -370,9 +383,10 @@ export const orders = adminRoute(
           p_order_id: body.orderId as string,
           p_reason: body.reason as string,
         }),
-      after: async (_data, body) => {
+      after: async (_data, body, context) => {
         await settleSoon().catch(() => undefined);
         await syncRolesAfter({ order: body.orderId as string });
+        await orderEvent(context, body.orderId as string);
       },
     },
     {
@@ -382,7 +396,10 @@ export const orders = adminRoute(
           p_order_id: body.orderId as string,
           p_reason: body.reason as string,
         }),
-      after: () => settleSoon(),
+      after: async (_data, body, context) => {
+        await settleSoon().catch(() => undefined);
+        await orderEvent(context, body.orderId as string);
+      },
     },
   ],
   ['live', 'orders'],

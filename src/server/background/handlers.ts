@@ -31,6 +31,7 @@ import { roleSyncConfig, syncDiscordRoles } from '../discord/role-sync';
 import { drainConfig, drainOnce, type DrainResult } from '../analytics/drain';
 import { adminFor, paymentsConfig, stripeFor } from '../payments/config';
 import { settlePending } from '../payments/settle';
+import { closeOrderPostsAfter, hookPorts } from './hooks';
 import {
   analyticsRetryAfter,
   analyticsRetryPlan,
@@ -75,6 +76,12 @@ export interface TimerPorts {
   /** Null when order posting is switched off; otherwise the result for this one order. */
   postOrder(ref: string): Promise<OrderPostsResult | null>;
   sweepExpired(): Promise<boolean>;
+  /**
+   * Edits the posts the expiry just turned into dead links. Behind the `orders` switch of its own,
+   * because `order-expire` is gated by `payments`: with `orders` still legacy the 10 s dispatcher
+   * keeps closing posts and this does nothing.
+   */
+  closePosts(ref: string): Promise<void>;
   payment(ref: string): Promise<PaymentState | null>;
   /** Null when payments are not configured. */
   settleNow(): Promise<boolean | null>;
@@ -148,6 +155,8 @@ export function timerPorts(db: SupabaseClient, site: string): TimerPorts {
       const { error } = await db.rpc('sweep_expired_orders', { p_limit: 100 });
       return !error;
     },
+
+    closePosts: (ref) => closeOrderPostsAfter(hookPorts(db, site), ref),
 
     payment: async (ref) => {
       const { data, error } = await db
@@ -280,6 +289,9 @@ async function prepareOrderExpire(
           at: ports.now() + SHORT_RETRY_MS,
           ...note('the sweep failed'),
         };
+      // The order is gone from the queue, so its public post is a dead link. Closing it is event
+      // driven, like accept and cancel; the fixer's unfiltered tick is the backstop.
+      await ports.closePosts(fire.ref);
       return plannedDisposition(
         orderExpireAfterSweep(
           await ports.order(fire.ref),

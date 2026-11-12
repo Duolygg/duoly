@@ -17,17 +17,19 @@ Sources: `~/.hermes/cache/scratch/supa-io/implementation-plan.md` (plan), `event
 
 ## The pieces
 
-| Piece                                                    | Where                                                          | What it does                                                                                                                                         |
-| -------------------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Timers` Durable Object                                  | `workers/discord-gateway` (class `Timers`, migration tag `v2`) | Stores one row per timer in SQLite, keeps one alarm at the earliest due time, fires a signed POST at the app, backs off, drops after the last retry. |
-| `POST /api/internal/timer`                               | app                                                            | Verifies the signature, re-reads the current state, acts (or logs in shadow), answers with a disposition.                                            |
-| `POST /api/internal/reconcile`                           | app                                                            | Runs the existing tick handlers. Called by the fixer, never by a timer.                                                                              |
-| `public.background_switches`                             | database                                                       | One row per kind: `legacy`, `shadow` or `live`. The only thing that decides who does the work.                                                       |
-| orders trigger                                           | database                                                       | After a commit that queues an order, registers its two timers through `net.http_post`.                                                               |
-| `public.background_overdue()`                            | database                                                       | Read-only `exists()` per kind, reusing `duoly_dispatch_has_work`; returns one jsonb boolean per kind.                                                |
-| `public.background_fix()`                                | database                                                       | Posts to `/api/internal/reconcile` only when `background_overdue()` found something.                                                                 |
-| `public.background_finalize()` / `background_rollback()` | database                                                       | Pause the 10 s dispatcher and schedule the fixer, or the reverse. Called by hand.                                                                    |
-| `src/contracts/background.ts`                            | shared                                                         | Schemas, kinds, timings, the HMAC sign and verify helper. Imported by the app, the worker and the tests.                                             |
+| Piece                                                    | Where                                                          | What it does                                                                                                                                           |
+| -------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Timers` Durable Object                                  | `workers/discord-gateway` (class `Timers`, migration tag `v2`) | Stores one row per timer in SQLite, keeps one alarm at the earliest due time, fires a signed POST at the app, backs off, drops after the last retry.   |
+| `POST /api/internal/timer`                               | app                                                            | Verifies the signature, re-reads the current state, acts (or logs in shadow), answers with a disposition.                                              |
+| `POST /api/internal/reconcile`                           | app                                                            | Runs the existing tick handlers. Called by the fixer, never by a timer.                                                                                |
+| `public.background_switches`                             | database                                                       | One row per kind: `legacy`, `shadow` or `live`. The only thing that decides who does the work.                                                         |
+| orders trigger                                           | database                                                       | After a commit that queues an order, registers its two timers through `net.http_post`.                                                                 |
+| `public.background_overdue()`                            | database                                                       | Read-only `exists()` per kind, reusing `duoly_dispatch_has_work`; returns one jsonb boolean per kind.                                                  |
+| `public.background_fix()`                                | database                                                       | Posts to `/api/internal/reconcile` only when `background_overdue()` found something.                                                                   |
+| `public.background_finalize()` / `background_rollback()` | database                                                       | Pause the 10 s dispatcher and schedule the fixer, or the reverse. Called by hand.                                                                      |
+| `src/server/background/hooks.ts`                         | app                                                            | The event hooks: close the post, drain the outbox, register a settle retry, give a wallet hold back, ask for a presence check. All after the response. |
+| `src/components/teammate/presence-leader.js`             | browser                                                        | One desk heartbeat per browser instead of one per tab, agreed over a BroadcastChannel, plus the leaving beacon.                                        |
+| `src/contracts/background.ts`                            | shared                                                         | Schemas, kinds, timings, the HMAC sign and verify helper. Imported by the app, the worker and the tests.                                               |
 
 A timer is a wake-up, never a decision. The handler re-reads the current deadline and state at fire
 time and answers `done`, `stale`, `disabled`, `retry` or `pending`. Only that answer decides whether
@@ -61,6 +63,14 @@ Rules that make the switch safe:
   RLS is on with no policy, so a browser token sees nothing even if a grant ever slips in.
 - Shadow never claims a ledger row, never increments settlement attempts, never marks an analytics
   row, never posts to Discord and never calls Stripe (review F12, plan correction phase 2.5).
+- The event hooks split the same way, and the split is what makes that true by construction:
+  - **Registration hooks** (`settle-retry`, `analytics-retry`, `presence-check`, the next team
+    seat's `order-post`) run in `shadow` as well as in `live`. A registration writes nothing anybody
+    can see, and shadow exists to prove that the registrations arrive and that their times match
+    what the dispatcher did.
+  - **Acting hooks** (closing a Discord post, draining the outbox, releasing a wallet hold) run only
+    in `live`. In `shadow` they write one `[event-shadow] <kind> <ref> would=<act>` line and touch
+    nothing.
 - Each timer kind is gated by the switch of the dispatcher that owns the same work today, so no work
   ever has two owners:
 
@@ -123,10 +133,22 @@ a timer handler itself misbehaves, because `legacy` also stops the registrations
    and a pick can only move the post time later (`greatest(queued_at, ...)`), never earlier, which
    is why one timer at `queued_at + 100 s` is never too late (review F1).
 
-4. Closing a post stays event driven: accept, customer cancel, admin cancel and expiry close the
-   post in `waitUntil`, and after closing a team seat's post the hook registers the next eligible
-   seat's `order-post` at now. Registration keeps the earliest due time, so that pulls the sibling's
-   pending timer forward instead of creating a second one.
+4. Closing a post stays event driven: accept, customer cancel, re-roll, admin cancel, admin refund
+   and the `order-expire` timer all run the closing half of the existing tick in `waitUntil`
+   (`closeOrderPostsAfter`), and after closing a team seat's post the hook registers the next
+   eligible seat's `order-post` at now. Registration keeps the earliest due time, so that pulls the
+   sibling's pending timer forward instead of creating a second one.
+
+   Three things make that safe to run on every one of those events. The list of posts to close is
+   `public.discord_order_posts_to_close()`, so the hook decides nothing: the same SQL that the 10 s
+   tick uses picks the posts and their wording. Editing a known message with PATCH is the safe
+   repeated operation, so running it twice costs one request that answers 200. And the hook never
+   posts, only closes, because posting needs the 100 s delay, the claim and the queue epoch, which
+   is the `order-post` timer's job alone.
+
+   The close is gated by `orders` while `order-expire` is gated by `payments`, which is deliberate:
+   with `payments` live and `orders` still legacy the timer expires the order and the 10 s
+   dispatcher closes its post, exactly as today.
 
 ### Payments (`order-expire`, `settle-retry`)
 
@@ -139,9 +161,23 @@ a timer handler itself misbehaves, because `legacy` also stops the registrations
   (`SETTLE_RETRY_DELAYS_MS`), with `ref` the order id and `epoch` the settle state's timestamp. The
   handler calls the existing `settlePending` claim path, which keeps provider idempotency keys and the
   attempt cap.
+
+  The event that asks for it is accept, customer cancel, admin cancel and admin refund, all of
+  which already try to settle at once (`settleSoon`). The hook then reads
+  `order_payments(settle, attempts, updated_at)` for that one order and registers only while
+  `settle <> 'none'` and `attempts < 20`. `epoch` is `updated_at`, the commit that recorded the
+  attempt, so the handler needs no counter of its own, two hooks for the same attempt are the same
+  key, and a row the claim path has given up on gets no timer at all (review F6).
+
 - Wallet holds: `src/server/payments/checkout.ts` already releases the hold when session creation or
-  persistence fails (`:621-648`), and that file is protected, so nothing in it changes. Leftovers are
-  the fixer's job through the unchanged `checkout_stale_wallet_holds` predicate.
+  persistence fails (`:621-648`), and that file is protected, so nothing in it changes. Its outer
+  `catch` does not release, and that gap stays. The same flow that is not protected,
+  `src/server/payments/play-again.ts`, reserves holds through the same
+  `checkout_reserve_wallet`, and there the unexpected throw now releases the hold through
+  `releaseWalletHoldAfter`. `checkout_release_wallet` reverses only holds that are still open and
+  refuses a paid intent, so the hook is a no-op whenever the order was in fact created. Leftovers
+  from either flow stay the fixer's job through the unchanged `checkout_stale_wallet_holds`
+  predicate.
 - Cancelled team stragglers and both `order_sweep` loops stay covered, because the fixer calls the
   real tick handler rather than a new predicate of its own.
 
@@ -151,6 +187,15 @@ a timer handler itself misbehaves, because `legacy` also stops the registrations
   signup trigger, the nightly reconcile, hourly cashback and deposit jobs). App origin facts are
   drained in `waitUntil` right after the insert; a failed or incomplete drain registers
   `analytics-retry` at +30 s, +2 min, +10 min; everything else waits for the fixer.
+- The app origin events are the order commands (accept, cancel, re-roll), the admin order commands
+  and the Stripe webhook, which is where `order_funded`, `payment_captured`, `order_matched`,
+  `order_refunded`, `tip_paid` and `payout_sent` come from. The webhook drains once at the end,
+  after its own `stripe_events` insert and for any outcome other than `ignored`, so one hook covers
+  every branch instead of one per event type.
+- `analytics-retry` is a singleton (`analytics-retry:outbox:<epoch>`) and its `epoch` is `now`
+  rounded down to 30 s. The outbox has no per-fact state that asks for the retry, so without that
+  rounding a burst of failing requests would each write their own timer; with it they share one key
+  and the ladder still measures from an instant at most 30 s old.
 - The nightly `duoly-analytics-reconcile` and `duoly-analytics-cleanup` jobs are untouched, and a
   drain that still has eligible work after its bounded batches registers a continuation timer.
 
@@ -164,10 +209,49 @@ a timer handler itself misbehaves, because `legacy` also stops the registrations
   visible regression (review F5). The 20 s heartbeat staleness rule stays the only thing that decides.
 - `presence-check` is a singleton (`presence-check:desk:0`). While anyone is online it answers `retry`
   at now plus 20 s; when nobody is online it answers `done` and the next online event registers it
-  again. It reads presence and syncs roles; it never writes presence.
+  again. It reads presence and syncs roles; it never writes presence. Two events register it: going
+  online (`action: 'set', online: true`) and the leaving beacon.
+- The beacon is a third action on the existing endpoint, `POST /api/teammate/presence`
+  `{"csrf":"...","action":"leaving"}`, sent with `navigator.sendBeacon` because that is the only
+  thing a browser still runs while a page unloads. It takes the same CSRF token in the body and the
+  same Origin check as every other presence call, calls no RPC at all, and answers
+  `{"queued":true}`.
 - External Discord drift (someone edits roles by hand, a nonmember joins) is not visible to any SQL
   predicate. That is why the fixer schedule matters for this kind: see
   [Latency changes](#latency-changes-named).
+
+### The desk heartbeat: one leader tab
+
+This is the code part of phase 4, and it is about writes, not about timers. A teammate with four
+Duoly tabs open writes `desk_check_in` four times every 10 seconds today, and all four writes say
+the same thing. `src/components/teammate/presence-leader.js` has the tabs of one browser agree over
+a BroadcastChannel (`duoly-desk-presence`, shared by the desk and every other page) so that one of
+them posts and the others take its answer over the same channel.
+
+Nothing about the rules changes. The leader still checks in every 10 seconds, the server still
+treats a heartbeat older than 20 seconds as offline, and no index or query is touched. Three things
+keep the 20 second window safe when the leader disappears:
+
+- The leader is simply the lowest live tab id, so every tab works it out on its own and no handover
+  message can be lost.
+- A tab that goes away says `bye` on `pagehide`, and whoever leads then checks in at once instead of
+  waiting for its own tick.
+- A tab that dies without saying anything is caught by a watchdog: while the last check-in is older
+  than 15 s, every other tab forgets the quiet tabs, takes the lead and posts. The watchdog looks
+  every 4 s, so the worst case is 19 s, inside the window, and 15 s leaves the 10 s cadence 5 s of
+  slack for a slow request. It runs on the same worker-driven ticker the desk uses, because a
+  background tab's `setTimeout` is throttled to about once a minute.
+- A check-in may never be posted faster than the cadence, so a leader whose requests all fail cannot
+  turn the watchdog into a write every 5 seconds.
+
+The failure direction is always "two tabs check in", which is exactly today's behaviour, never
+"nobody checked in". Without BroadcastChannel (an old browser, a test) every tab is its own leader,
+which is today's behaviour too.
+
+The 4 hour AFK rule counts activity on any Duoly page, so a follower tab shares its newest activity
+timestamp over the channel (at most once every 4 s: the leader needs the timestamp, not the
+pointermove events) and the leader posts the maximum. A click while the "Still there?" warning is up
+posts from the tab it happened in, leader or not, so the warning still clears in about a second.
 
 ## Timer API
 
@@ -467,6 +551,11 @@ Vercel: errors on `/api/internal/timer` and `/api/internal/reconcile`, the shado
 `[background-fix] reconciling ...` every time the fixer found work. `[timers] ...` lines mean a
 registration from app code did not reach the worker.
 
+The event hooks have their own two lines: `[event-shadow] <kind> <ref> would=<act>` is a hook that
+did nothing because its switch is `shadow`, and `[background] ...` is a hook that acted and failed
+(a post that would not close, a wallet hold that would not release, a hook that threw). The second
+one is worth acting on; the fixer covers the work either way.
+
 Alert thresholds worth acting on: anything `due` for more than 60 s, any `dropped`, `background_fix()`
 finding work twice in a row, or a parked analytics fact.
 
@@ -481,6 +570,12 @@ run, and about four unlogged `net` rows per HTTP call.
 | run log writes a day, idle       | ~87,000               | ~44,500                  | ~1,000                              | ~1,600                 |
 | database to app HTTP calls, idle | ~17,000               | ~0                       | ~0                                  | ~0                     |
 | per queued order                 | 10 s polling          | 10 s polling             | 2 timers, about 8 unlogged net rows | same                   |
+
+Those are the idle numbers, which is where the Free plan hurts. One busy-hours write also goes down
+and it is not in the table because it is not idle: a teammate's desk heartbeat is one
+`desk_check_in` every 10 seconds per open tab today, so a teammate with four tabs writes 1,440 times
+an hour instead of 360. The leader tab makes that 360 whatever the tab count, with no change to the
+cadence or the freshness rule.
 
 "Today" is 8,640 dispatcher runs plus the hourly prune plus the money and proof jobs. "After
 finalize" replaces the 8,640 with 24 or 144 fixer runs. The 96 `private-proof-cleanup` runs a day are
@@ -522,6 +617,11 @@ events, with one exact timer per deadline. Your order and payment flows keep the
 - The one thing that does get slower: an orphaned wallet hold (a checkout that died after the hold
   but before Stripe) is released by the hourly fixer instead of the 20 second sweep, in the rare case
   the failure path itself failed. Customer visible only as balance that comes back later.
+- The teammate desk looks and behaves the same. The only change is that several tabs of one browser
+  now share one heartbeat instead of each sending their own: same 10 second rhythm, same 20 second
+  rule for who counts as online, same online dot, same AFK warning. It is a database write we were
+  paying for several times over, and this change is not behind a switch because it changes no
+  behaviour, only the number of writes.
 - If anything looks wrong, you can roll back without a deploy and without me:
   `update public.background_switches set mode = 'shadow', updated_at = now();`
 
@@ -557,10 +657,12 @@ deliberately do something else and say why.
   nonmember refresh windows at 144 runs a day. `presence-check` only covers presence expiry. Deferred
   and failed hook work stays visible to the roles predicate, which compares derived state rather than
   heartbeats.
-- **F5 pagehide offline (high)**: accepted. The beacon never writes persistent offline state. It only
-  registers a `presence-check` timer, and the existing 20 s staleness rule decides. One leader tab per
-  browser (BroadcastChannel) means a second tab closing does not look like a departure, and
-  navigation and bfcache keep working. CSRF and Origin requirements on the presence endpoints stay.
+- **F5 pagehide offline (high)**: accepted. The beacon never writes persistent offline state. It is
+  `action: 'leaving'` on the existing presence endpoint, it calls no RPC at all, it only registers a
+  `presence-check` timer, and the existing 20 s staleness rule decides. One leader tab per browser
+  (BroadcastChannel) means a second tab closing does not look like a departure: only the last tab
+  sends the beacon, and navigation and bfcache keep working. CSRF and Origin requirements on the
+  presence endpoints stay, because the beacon posts the same token in the same body.
 - **F6 durable settlement producer (high)**: answered. Retry timers come from the failure path, and
   the durable producer is the fixer predicate
   (`order_payments.settle <> 'none' and attempts < 20`), which sees transitions the app never
@@ -568,11 +670,16 @@ deliberately do something else and say why.
   leases, attempt counts and provider keys are unchanged. Exhausted rows (`attempts >= 20`) are
   deliberately outside the predicate, exactly as the claim is, and are a monitoring query in
   [What to watch](#what-to-watch) instead of silent retries.
-- **F7 wallet holds and protected checkout (high)**: accepted. No edit to
-  `src/server/payments/checkout.ts`; its release paths are verified as already present. No new
-  PaymentIntent cancellation. `checkout_stale_wallet_holds` keeps its exact predicate and its paid
-  intent exclusion. The increased worst case for orphan holds is documented as a latency change, not
-  as "no behaviour change".
+- **F7 wallet holds and protected checkout (high)**: accepted, and reported rather than worked
+  around. No edit to `src/server/payments/checkout.ts`; its two named release paths are verified as
+  already present (`:621-648`). Its outer `catch` releases nothing, and because the file is
+  protected that gap stays as it is: an orphan hold from it is the fixer's, exactly as today. The
+  same gap in `src/server/payments/play-again.ts`, which is not protected and reserves holds through
+  the same function, is closed by `releaseWalletHoldAfter`. No new PaymentIntent cancellation.
+  `checkout_stale_wallet_holds` keeps its exact predicate and its paid intent exclusion, and
+  `checkout_release_wallet` is unchanged, so a hook on an intent that did become an order is a
+  no-op. The increased worst case for orphan holds is documented as a latency change, not as "no
+  behaviour change".
 - **F8 expiry and team stragglers (high)**: accepted. The fixer calls the existing tick handler, so
   both `order_sweep` loops run, including queued and in progress seats of cancelled teams, with
   `SKIP LOCKED` retried on the next run. `order-expire` calls the same SQL, so `order_misses` and the
@@ -739,3 +846,38 @@ deliberately do something else and say why.
   `booking-link.spec.ts` that passes alone, the analytics config 8 passed, the teammate config 74
   passed. Nothing is wired to an event yet: until chunk 5 the only callers are the worker and the
   fixer.
+- Chunk 5: the events. `src/server/background/after.ts` is the "after the response" helper (the
+  Vercel request context read through its symbol, like `role-hooks.ts` does, awaited anywhere else,
+  never throwing). `src/server/background/hooks.ts` holds the five hooks over a `HookPorts`
+  interface (`closeOrderPostsAfter`, `drainAnalyticsAfter`, `settleRetryAfter`,
+  `releaseWalletHoldAfter`, `presenceCheckAfter`), the `backgroundEvent` entry point and a
+  `withBackground` route wrapper shaped like `withRoleSync`. Registration hooks run in `shadow` and
+  in `live`, acting hooks only in `live` and otherwise log
+  `[event-shadow] <kind> <ref> would=<act>`; `legacy` reads nothing at all. The wiring, all behind
+  the switches and all after the response: `src/server/orders/handlers.ts` (accept, cancel,
+  re-roll), `src/server/admin/handlers.ts` (admin cancel and refund, through a third `context`
+  argument on the existing `after` hook), `src/server/payments/webhook.ts` (one drain at the end of
+  the Stripe webhook, for any outcome other than `ignored`), `src/server/payments/play-again.ts`
+  (the unexpected throw gives back the wallet hold it reserved),
+  `src/server/presence/handlers.ts` plus `src/contracts/presence.ts` (the new `leaving` action,
+  which calls no RPC at all, and a `presence-check` registration when a teammate goes online) and
+  `src/server/background/handlers.ts` (the `order-expire` timer closes the post after a successful
+  sweep, through a new `closePosts` port). `src/components/teammate/presence-leader.js` is the
+  desk's one leader tab per browser, used by `Teammate.jsx` and `desk-keeper.js`: a BroadcastChannel
+  roster, the lowest live id leads, `bye` on `pagehide` hands over at once, a worker-driven watchdog
+  catches a tab that died silently inside the 20 s window, a per-check-in cap keeps the cadence, and
+  activity timestamps are shared so the 4 hour AFK rule still counts every tab. One deviation worth
+  naming: `src/server/payments/checkout.ts` is protected, so its outer `catch` still releases no
+  wallet hold; the same gap in the unprotected play again flow is closed and the fixer still covers
+  both (review F7). Tests: `tests/unit/background-hooks.test.ts` (42) and
+  `tests/unit/presence-leader.test.ts` (25) add 67 unit tests, every hook in every mode plus the
+  leader's election, takeover, watchdog cap, activity sharing and beacon;
+  `tests/teammate-browser/desk-heartbeat.spec.ts` adds 3 browser tests (6 with the mobile project)
+  proving that two tabs of one browser keep one writer between them and that only the last tab
+  beacons, with no `online: false` write anywhere. Gates: `pnpm check` 0 errors over 913 files,
+  `pnpm lint` clean, `pnpm format:check` clean, `pnpm test:unit` 3918 tests in 217 files,
+  `pnpm build` green, the main e2e config 289 passed and 5 skipped (queue, accept, cancel and auto
+  cancel among them, no flake this time), the teammate config 80 passed, the analytics config 8
+  passed. Still nothing switched on: with no `background_switches` rows every hook reads `legacy`
+  and does nothing. The desk heartbeat is the one change with no switch, because it changes no
+  behaviour, only the number of writes.

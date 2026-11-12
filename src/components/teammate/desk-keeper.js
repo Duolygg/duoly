@@ -1,5 +1,6 @@
 /* global window, document, localStorage, sessionStorage, Notification, Worker, Blob, URL, navigator, setInterval, clearInterval, setTimeout, clearTimeout, fetch, Event, Audio */
 import { createTeammateFetch, newEligibleOrders } from './teammate-data';
+import { createDeskPresence, sendLeavingBeacon } from './presence-leader';
 import { gameOf } from '../../design-reference/lib/games';
 
 /**
@@ -213,13 +214,56 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
 
   let afkWarning = false;
   let afkCheck = null;
+
+  function applyPresence(data) {
+    online = !!data.online;
+    afkWarning = online && data.afkIn != null && data.afkIn <= AFK_WARN_SECONDS;
+    if (afkWarning) showAfkWarning(data.afkIn);
+  }
+
+  /** The heartbeat itself. The answer goes to the other tabs of this browser too. */
+  async function postCheckIn() {
+    try {
+      const { ok, data } = await post('/api/presence', {
+        action: 'check-in',
+        // The AFK rule counts activity on any Duoly page, so the leader sends the newest.
+        lastActive: Math.max(lastActive, presence.activeAt()),
+      });
+      if (!ok) return;
+      presence.beat(data);
+      applyPresence(data);
+    } catch {
+      /* best effort */
+    }
+  }
+
+  /**
+   * One heartbeat per browser: only the leader tab posts, the others take its answer
+   * (presence-leader.js, docs/product/background-work.md). The 10 s cadence and the server's 20 s
+   * freshness rule are unchanged.
+   */
+  const presence = createDeskPresence({
+    checkIn: () => (stopped ? Promise.resolve() : postCheckIn()),
+    onBeat: (data) => {
+      if (!stopped && data && typeof data === 'object') applyPresence(data);
+    },
+    ticker: backgroundTicker,
+  });
+
+  async function checkIn() {
+    if (!presence.mayCheckIn()) return;
+    await postCheckIn();
+  }
+
   const activity = () => {
     lastActive = Date.now();
-    // warning is up: tell the server right away instead of at the next heartbeat
+    presence.activity(lastActive);
+    // warning is up: tell the server right away instead of at the next heartbeat. This posts even
+    // from a follower tab, because the click happened here and the leader would only see it later.
     if (afkWarning && !afkCheck)
       afkCheck = setTimeout(() => {
         afkCheck = null;
-        checkIn();
+        postCheckIn();
       }, 1000);
   };
   const events = ['pointerdown', 'pointermove', 'keydown', 'wheel'];
@@ -227,21 +271,15 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
     window.addEventListener(ev, activity, { passive: true }),
   );
 
-  async function checkIn() {
-    try {
-      const { ok, data } = await post('/api/presence', {
-        action: 'check-in',
-        lastActive,
-      });
-      if (!ok) return;
-      online = !!data.online;
-      afkWarning =
-        online && data.afkIn != null && data.afkIn <= AFK_WARN_SECONDS;
-      if (afkWarning) showAfkWarning(data.afkIn);
-    } catch {
-      /* best effort */
-    }
-  }
+  /**
+   * The last Duoly tab of this browser is going away. The beacon writes nothing; it asks for a
+   * presence-check timer so the Discord roles follow within one freshness window even when the
+   * browser never comes back (oai-review F5).
+   */
+  const leaving = () => {
+    if (presence.leaving()) sendLeavingBeacon(csrf);
+  };
+  window.addEventListener('pagehide', leaving);
 
   async function loadSettings(now) {
     if (settings && now - settingsAt < SETTINGS_MS) return;
@@ -331,7 +369,9 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
     if (stopped) return;
     stopped = true;
     stopTicker();
+    presence.stop();
     events.forEach((ev) => window.removeEventListener(ev, activity));
+    window.removeEventListener('pagehide', leaving);
     clearTimeout(afkCheck);
     if (bell) bell.pause();
   }

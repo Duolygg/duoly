@@ -71,6 +71,7 @@ function ports(over: Partial<TimerPorts> = {}): TimerPorts {
     orderDue: async () => false,
     postOrder: async () => ({ posted: 0, closed: 0, skipped: 0, failed: 0 }),
     sweepExpired: async () => true,
+    closePosts: async () => undefined,
     payment: async () => null,
     settleNow: async () => true,
     eligibleAnalytics: async () => 0,

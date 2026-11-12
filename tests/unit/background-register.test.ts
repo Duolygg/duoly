@@ -111,7 +111,7 @@ describe('registerTimer', () => {
     expect(
       await registerTimer(timer(), { target, fetchImpl, now: NOW, log }),
     ).toBe('stored');
-    const sent = seen[0];
+    const sent = seen[0]!;
     const body = await sent.text();
     expect(JSON.parse(body)).toStrictEqual({
       kind: 'settle-retry',
@@ -134,7 +134,7 @@ describe('registerTimer', () => {
   it('sends no key, because the worker derives it from the three fields', async () => {
     const { fetchImpl, seen } = worker();
     await registerTimer(timer(), { target, fetchImpl, now: NOW, log });
-    expect(Object.keys(JSON.parse(await seen[0].text()))).toStrictEqual([
+    expect(Object.keys(JSON.parse(await seen[0]!.text()))).toStrictEqual([
       'kind',
       'ref',
       'epoch',
