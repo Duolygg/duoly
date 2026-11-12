@@ -123,7 +123,8 @@ select pg_temp.ok(not has_function_privilege('public','public.home_teammates()',
 select pg_temp.ok(not has_function_privilege('service_role','public.home_teammates()','execute'),'service_role may not execute');
 select pg_temp.ok((select prosecdef from pg_catalog.pg_proc where oid='public.home_teammates()'::regprocedure),'still security definer');
 select pg_temp.ok((select provolatile from pg_catalog.pg_proc where oid='public.home_teammates()'::regprocedure) = 's','still stable');
-select pg_temp.ok((select proconfig from pg_catalog.pg_proc where oid='public.home_teammates()'::regprocedure) = array['search_path='],'still an empty search_path');
+-- Postgres stores `set search_path = ''` quoted, the same spelling order_proofs.sql checks for.
+select pg_temp.ok((select proconfig from pg_catalog.pg_proc where oid='public.home_teammates()'::regprocedure) = array['search_path=""']::text[],'still an empty search_path');
 
 select 'home_teammates_slug: ' || pg_catalog.count(*) || ' checks passed' as result from pg_temp.assertions;
 rollback;
