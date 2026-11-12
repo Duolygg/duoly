@@ -281,12 +281,24 @@ export function analyticsRetryAfter(facts: {
 // ---------------------------------------------------------------- presence
 
 /**
- * While anyone is online the desk keeps being watched every 20 s; with nobody online the timer
- * ends and the next online event registers it again. It never writes presence: the 20 s staleness
- * rule stays the only thing that decides who is online (oai-review F5).
+ * `fresh` is the count of teammates whose desk is online *and* whose heartbeat is newer than the
+ * 20 s staleness window, the same rule as `presenceFresh` and the `roles` SQL predicate. A browser
+ * that dies leaves `online = true` behind forever, so counting the raw column had the singleton
+ * answer `retry` every 20 s for the rest of time (production bug: six such rows).
+ *
+ * The plan always acts, whatever the count: with nobody fresh, whoever just went stale is still
+ * wearing the Online role in Discord, and this is the only thing left that will take it off them.
+ * It still never writes presence: the staleness rule stays the only thing that decides who is
+ * online (oai-review F5).
  */
-export const presenceCheckPlan = (online: number): TimerPlan =>
-  online > 0 ? plan('act') : plan('done', 'nobody online');
+export const presenceCheckPlan = (fresh: number): TimerPlan =>
+  plan('act', fresh > 0 ? undefined : 'nobody fresh: one last sync');
 
-export const presenceCheckAfter = (now: number): TimerPlan =>
-  plan('retry', 'someone is still online', now + PRESENCE_CHECK_INTERVAL_MS);
+/**
+ * After that sync. Someone fresh means keep watching the desk; nobody fresh ends the timer, and
+ * the next online event registers it again.
+ */
+export const presenceCheckAfter = (fresh: number, now: number): TimerPlan =>
+  fresh > 0
+    ? plan('retry', 'someone is still online', now + PRESENCE_CHECK_INTERVAL_MS)
+    : plan('done', 'nobody online');
