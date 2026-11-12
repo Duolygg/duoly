@@ -19,25 +19,30 @@ const game = profileGame(card.game);
   data-tier={card.tier}
 >
   <div class="tp-card-top">
-    <img src={card.avatar} alt="" width="72" height="72" loading="lazy" />
-    <span class="tp-card-tier">{card.tier}</span>
-    <span class:list={['tp-card-status', { 'is-online': card.online }]}>
-      <i aria-hidden="true"></i>
-      {card.online ? 'Online' : 'Offline'}
+    <span class="tp-card-art">
+      <span class="tp-halo" aria-hidden="true"></span>
+      <img src={card.avatar} alt="" width="110" height="110" loading="lazy" />
+    </span>
+    <span class="tp-card-badges">
+      <span class="tp-card-tier">{card.tier}</span>
+      <span class:list={['tp-card-status', { 'is-online': card.online }]}>
+        <i aria-hidden="true"></i>
+        {card.online ? 'Online' : 'Offline'}
+      </span>
     </span>
   </div>
-  <div class="tp-card-name">
-    {card.name}
-    <span aria-hidden="true">→</span>
-  </div>
-  <p>{game.name}</p>
+  <p class="tp-card-name">{card.name}</p>
+  <p class="tp-card-game">{game.name}</p>
   <div class="tp-card-bottom">
     <strong>{card.rank ?? 'Teammate'}</strong>
     {card.rating && card.rating.count >= MIN_REVIEWS_FOR_RATING && (
       <span
         aria-label={`${card.rating.average} out of 5 from ${card.rating.count} reviews`}
       >
-        ★ {card.rating.average.toFixed(1)} ({card.rating.count})
+        <span class="tp-star" aria-hidden="true">
+          ★
+        </span>
+        {card.rating.average.toFixed(1)} ({card.rating.count})
       </span>
     )}
     {card.tier === 'rookie' && !card.rating && <span>New on Duoly</span>}

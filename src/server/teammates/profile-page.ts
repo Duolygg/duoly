@@ -1,7 +1,9 @@
 import {
   MIN_GAMES_FOR_WINRATE,
   MIN_REVIEWS_FOR_RATING,
+  PROFILE_REVIEWS_MAX,
   profileIndexable,
+  type PublicProfileReview,
   type PublicTeammateProfile,
 } from '../../contracts/teammate-profile';
 import { SITE_GAMES } from '../../site/games';
@@ -39,6 +41,18 @@ export function profilePresentation(p: PublicTeammateProfile) {
       p.winRate && p.winRate.games >= MIN_GAMES_FOR_WINRATE ? p.winRate : null,
     showSessions: p.tier !== 'rookie' && p.sessions >= 5,
   };
+}
+/**
+ * Only reviews with text become quote cards; the rest still count in the tag bars.
+ * An odd number would leave a hole in the two column grid, so the first quote is
+ * promoted to a full width lead and the grid always fills every cell.
+ */
+export function profileReviewLayout(reviews: PublicProfileReview[]) {
+  const written = reviews
+    .filter((r) => r.text.trim().length > 0)
+    .slice(0, PROFILE_REVIEWS_MAX);
+  const lead = written.length % 2 === 1 ? (written[0] ?? null) : null;
+  return { lead, rest: lead ? written.slice(1) : written };
 }
 export function profileMetadata(p: PublicTeammateProfile) {
   const game = profileGame(p.featuredGame);

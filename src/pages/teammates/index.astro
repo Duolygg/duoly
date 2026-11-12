@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import TeammateCard from '../../components/teammates/TeammateCard.astro';
+import Icon from '../../components/teammates/Icon.astro';
 import '../../components/teammates/profiles.css';
 import { SITE_GAMES } from '../../site/games';
 import { pageViewer } from '../../site/viewer';
@@ -78,7 +79,10 @@ Astro.response.headers.set('Cache-Control', 'no-store');
       {sorted.length === 0 && (
         <p class="tp-empty">
           No public teammates for this game yet.{' '}
-          <a href="/games">Explore all games →</a>
+          <a class="tp-more-link" href="/games">
+            Explore all games
+            <Icon name="arrow" />
+          </a>
         </p>
       )}
     </section>

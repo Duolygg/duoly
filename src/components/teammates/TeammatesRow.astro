@@ -1,5 +1,6 @@
 ---
 import TeammateCard from './TeammateCard.astro';
+import Icon from './Icon.astro';
 import {
   loadTeammateCards,
   publicProfilesEnabled,
@@ -19,12 +20,15 @@ const name = profileGame(game).name;
 
 {cards.length > 0 && (
   <section class="tp-row tp-section" aria-labelledby={`teammates-${game}`}>
-    <div class="tp-section-heading">
+    <div class="tp-section-head">
       <div>
-        <p class="tp-kicker">Your next lobby</p>
         <h2 id={`teammates-${game}`}>Teammates for {name}</h2>
+        <p>Verified ranks, live availability and the play styles they bring.</p>
       </div>
-      <a href={`/teammates?game=${game}`}>See all {name} teammates →</a>
+      <a class="tp-more-link" href={`/teammates?game=${game}`}>
+        See all {name} teammates
+        <Icon name="arrow" />
+      </a>
     </div>
     <div class="tp-cards">
       {cards.map((card) => (
