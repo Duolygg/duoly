@@ -36,12 +36,12 @@ insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) v
  ('c1100000-0000-4000-8000-000000000005','authenticated','authenticated','tc-nopage@example.invalid','{}','{}'),
  ('c1100000-0000-4000-8000-000000000006','authenticated','authenticated','tc-suspended@example.invalid','{}','{}');
 update public.account_roles set role='teammate' where user_id::text like 'c1100000%';
-update public.profiles set name='Linkedpat'   where id='c1100000-0000-4000-8000-000000000001';
-update public.profiles set name='Draftdana'      where id='c1100000-0000-4000-8000-000000000002';
-update public.profiles set name='Hiddenhana'     where id='c1100000-0000-4000-8000-000000000003';
-update public.profiles set name='Droppeddev'     where id='c1100000-0000-4000-8000-000000000004';
-update public.profiles set name='Pagelesspim'    where id='c1100000-0000-4000-8000-000000000005';
-update public.profiles set name='Suspendedsam'   where id='c1100000-0000-4000-8000-000000000006';
+update public.profiles set name='Linkedpat' where id='c1100000-0000-4000-8000-000000000001';
+update public.profiles set name='Draftdana' where id='c1100000-0000-4000-8000-000000000002';
+update public.profiles set name='Hiddenhana' where id='c1100000-0000-4000-8000-000000000003';
+update public.profiles set name='Droppeddev' where id='c1100000-0000-4000-8000-000000000004';
+update public.profiles set name='Pagelesspim' where id='c1100000-0000-4000-8000-000000000005';
+update public.profiles set name='Suspendedsam' where id='c1100000-0000-4000-8000-000000000006';
 
 -- The access trigger would hand every one of these teammates a published page. Each case below
 -- states its own profile row instead, so what the slug depends on is visible in this file.
@@ -88,12 +88,13 @@ select pg_temp.ok(public.public_teammate_profile('dropped-dev')->>'status' = 'go
 select pg_temp.ok(not exists(select 1 from pg_catalog.jsonb_array_elements(public.home_teammates()) x,
   pg_catalog.jsonb_object_keys(x) k
   where k not in ('name','image','games','gg','online','rating','reviews','sessions','slug')),'field allowlist plus slug only');
-select pg_temp.ok((select pg_catalog.count(distinct k) from pg_catalog.jsonb_array_elements(public.home_teammates()) x,
-  pg_catalog.jsonb_object_keys(x) k) = 9,'all nine fields present on every card');
+select pg_temp.ok(not exists(select 1 from pg_catalog.jsonb_array_elements(public.home_teammates()) x
+  where (select pg_catalog.count(*) from pg_catalog.jsonb_object_keys(x) k) <> 9),'all nine fields on every card');
 select pg_temp.ok(pg_catalog.jsonb_typeof(public.home_teammates()) = 'array'
   and pg_catalog.jsonb_array_length(public.home_teammates()) <= 24,'still a bounded array');
 select pg_temp.ok(pg_temp.card('Linkedpat')->>'image' = '/assets/avatars/avatar-1.png','image unchanged');
-select pg_temp.ok(pg_temp.card('Linkedpat')->'games' = '["val","lol"]'::jsonb,'games unchanged and in demand order');
+-- Demand order, not the order the games were approved in: lol leads val in the canonical list.
+select pg_temp.ok(pg_temp.card('Linkedpat')->'games' = '["lol","val"]'::jsonb,'games unchanged and in demand order');
 select pg_temp.ok(pg_temp.card('Linkedpat')->'rating' = 'null'::jsonb
   and (pg_temp.card('Linkedpat')->>'reviews')::int = 0
   and (pg_temp.card('Linkedpat')->>'sessions')::int = 0,'counts unchanged and never invented');

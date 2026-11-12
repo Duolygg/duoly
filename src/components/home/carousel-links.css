@@ -32,6 +32,10 @@
 .tc-link:focus-visible .tc-card {
   border-color: rgba(214, 187, 255, 0.45);
 }
+/* A Gamer Girl card keeps its own pink on focus, the same one it takes on hover. */
+.tc-link:focus-visible .tc-gg {
+  border-color: rgba(255, 79, 176, 0.6);
+}
 
 /*
  * The heading keeps the look it has in globals.css (.tc-title): white, no underline, the same
