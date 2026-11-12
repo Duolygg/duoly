@@ -1,0 +1,32 @@
+[
+  {
+    "id": "fanout-best-duo-site",
+    "locale": "en",
+    "intent": "generic",
+    "prompt": "best site to find a gaming duo"
+  },
+  {
+    "id": "fanout-paid-teammate",
+    "locale": "en",
+    "intent": "paid",
+    "prompt": "paid gaming teammate"
+  },
+  {
+    "id": "fanout-league-coaching",
+    "locale": "en",
+    "intent": "coaching",
+    "prompt": "League of Legends coaching online"
+  },
+  {
+    "id": "fanout-duoly-legit",
+    "locale": "en",
+    "intent": "brand",
+    "prompt": "is Duoly legit"
+  },
+  {
+    "id": "fanout-duoly-vs-metafy",
+    "locale": "en",
+    "intent": "brand",
+    "prompt": "Duoly vs Metafy"
+  }
+]

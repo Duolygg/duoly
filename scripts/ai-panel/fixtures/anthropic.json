@@ -1,0 +1,26 @@
+{
+  "_fixture": "Synthetic Anthropic messages payload with the server web search tool. Not a panel observation.",
+  "responses": {
+    "default": {
+      "model": "claude-haiku-5-5",
+      "stop_reason": "end_turn",
+      "content": [
+        {
+          "type": "text",
+          "text": "Game specific Discord servers are free and fastest. Paid options include Fiverr sellers and Metafy coaches.",
+          "citations": [
+            {
+              "url": "https://www.reddit.com/r/fixture/comments/def/",
+              "title": "Fixture thread"
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 800,
+        "output_tokens": 200,
+        "server_tool_use": { "web_search_requests": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "_fixture": "Synthetic Gemini generateContent payloads with google_search grounding, including the redirect-wrapped source links Google AI Mode returns. Not a panel observation.",
+  "responses": {
+    "default": {
+      "modelVersion": "gemini-2.5-flash-lite",
+      "candidates": [
+        {
+          "finishReason": "STOP",
+          "content": {
+            "parts": [
+              {
+                "text": "Discord servers for the game are the usual starting point, and Reddit keeps lists of active ones."
+              }
+            ]
+          },
+          "groundingMetadata": {
+            "webSearchQueries": ["fixture grounded query"],
+            "groundingChunks": [
+              {
+                "web": {
+                  "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/FixtureRedirectOne",
+                  "title": "reddit.com"
+                }
+              },
+              {
+                "web": {
+                  "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/FixtureRedirectTwo",
+                  "title": "discord.com"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 420,
+        "candidatesTokenCount": 180,
+        "thoughtsTokenCount": 0
+      }
+    },
+    "duo-website": {
+      "modelVersion": "gemini-2.5-flash-lite",
+      "candidates": [
+        {
+          "finishReason": "STOP",
+          "content": {
+            "parts": [
+              {
+                "text": "Duoly.gg lists teammates per game with a fixed price per hour. Metafy covers coaching instead."
+              }
+            ]
+          },
+          "groundingMetadata": {
+            "webSearchQueries": ["fixture duo website query"],
+            "groundingChunks": [
+              {
+                "web": {
+                  "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/FixtureRedirectThree",
+                  "title": "duoly.gg",
+                  "domain": "duoly.gg"
+                }
+              },
+              {
+                "web": {
+                  "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/FixtureRedirectFour",
+                  "title": "Metafy fixture page",
+                  "domain": "metafy.gg"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 430,
+        "candidatesTokenCount": 190,
+        "thoughtsTokenCount": 0
+      }
+    },
+    "egirl": {
+      "modelVersion": "gemini-2.5-flash-lite",
+      "candidates": [
+        {
+          "finishReason": "STOP",
+          "content": {
+            "parts": [
+              {
+                "text": "Duoly is a couples app for relationship check-ins, so it will not help here. Try E-Pal instead."
+              }
+            ]
+          },
+          "groundingMetadata": {
+            "webSearchQueries": ["fixture entity collision query"],
+            "groundingChunks": [
+              {
+                "web": {
+                  "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/FixtureRedirectFive",
+                  "title": "play.google.com"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 410,
+        "candidatesTokenCount": 170,
+        "thoughtsTokenCount": 0
+      }
+    }
+  }
+}

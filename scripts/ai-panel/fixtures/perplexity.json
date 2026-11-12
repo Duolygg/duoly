@@ -1,0 +1,29 @@
+{
+  "_fixture": "Synthetic Perplexity Sonar compatibility payload. Only replayed when the run explicitly enables Perplexity. Not a panel observation.",
+  "responses": {
+    "default": {
+      "model": "sonar",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "message": {
+            "content": "Duoly.gg is a booking site for paid gaming teammates. Fiverr and Metafy cover the same need from different angles."
+          }
+        }
+      ],
+      "citations": ["https://duoly.gg/"],
+      "search_results": [
+        { "url": "https://duoly.gg/", "title": "Duoly" },
+        {
+          "url": "https://example.com/mcp-listing",
+          "title": "Directory fixture"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 300,
+        "completion_tokens": 150,
+        "cost": { "total_cost": 0.006 }
+      }
+    }
+  }
+}

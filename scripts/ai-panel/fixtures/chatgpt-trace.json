@@ -1,0 +1,35 @@
+{
+  "synthetic": true,
+  "events": [
+    {
+      "message": {
+        "metadata": {
+          "search_queries": [
+            {
+              "q": "Duoly gaming reviews"
+            },
+            {
+              "q": "paid gaming teammate"
+            }
+          ],
+          "search_result_groups": [
+            {
+              "entries": [
+                {
+                  "url": "https://duoly.gg/"
+                },
+                {
+                  "url": "https://reddit.com/r/gaming"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "open_page",
+      "url": "https://duoly.gg/about"
+    }
+  ]
+}
