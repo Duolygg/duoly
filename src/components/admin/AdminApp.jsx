@@ -9,12 +9,20 @@ import { adminApi, auditEntry } from './api';
 import { supportInbox } from './support-data';
 import { alertState } from './phone-alerts';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
-import { backgroundTicker } from '../teammate/desk-keeper';
+import {
+  backgroundTicker,
+  releasePollLease,
+  takePollLease,
+} from '../teammate/desk-keeper';
 import {
   BELL_SRC,
+  ORDER_WATCH_LEASE,
   ORDER_WATCH_MS,
   ORDER_WATCH_PATH,
+  SUPPORT_WATCH_LEASE,
+  SUPPORT_WATCH_MS,
   claimAdminAlert,
+  claimAdminBell,
   freshQueued,
   playBell,
   showAdminOrderNotification,
@@ -295,8 +303,9 @@ export default class AdminApp extends React.Component {
           ? 'unsupported'
           : Notification.permission,
     });
-    // New orders: bell + browser notification on every admin page, also in a background tab
-    // (worker-driven ticks, like the teammate desk), so the Live desk needn't stay open.
+    // New orders: a browser notification from every admin page, also in a background tab
+    // (worker-driven ticks, like the teammate desk); the bell rings on the Live desk only.
+    // One open tab polls for all of them (watchOrders, watchSupport).
     if (this.can('live')) {
       this._stopOrders = backgroundTicker(ORDER_WATCH_MS, this.watchOrders);
       this.watchOrders();
@@ -305,9 +314,12 @@ export default class AdminApp extends React.Component {
     this.presenceCheckIn();
     this.revealNav();
     this._counts = setInterval(this.loadCounts, 30000);
-    this._support = setInterval(this.watchSupport, 5000);
+    this._support = setInterval(this.watchSupport, SUPPORT_WATCH_MS);
     this._presence = setInterval(this.presenceCheckIn, 10000);
     this._leave = () => {
+      // hand the polling over to another open admin tab right away
+      releasePollLease(ORDER_WATCH_LEASE);
+      releasePollLease(SUPPORT_WATCH_LEASE);
       try {
         navigator.sendBeacon(
           '/api/admin/presence',
@@ -333,6 +345,8 @@ export default class AdminApp extends React.Component {
     clearInterval(this._support);
     clearInterval(this._presence);
     this._stopOrders?.();
+    releasePollLease(ORDER_WATCH_LEASE);
+    releasePollLease(SUPPORT_WATCH_LEASE);
     if (this._bell) this._bell.pause();
     (this._toastTimers || []).forEach(clearTimeout);
   }
@@ -394,17 +408,27 @@ export default class AdminApp extends React.Component {
   // ---- new orders in the shared queue: the teammate desk's bell and "New Order Available!" popup
   watchOrders = async () => {
     if (this._watchingOrders) return;
+    const onDesk = this.state.section === 'live';
+    // One open admin tab polls for all of them; the Live desk takes the job over.
+    if (
+      !takePollLease(ORDER_WATCH_LEASE, ORDER_WATCH_MS * 3, { force: onDesk })
+    )
+      return;
     this._watchingOrders = true;
     try {
       const r = await this.api.get(ORDER_WATCH_PATH);
       if (!r.ok) return;
       const { fresh, seen } = freshQueued(this._seenOrders, r.data.orders);
       this._seenOrders = seen;
-      // one bell and one popup per order across this admin's open tabs
+      // The bell rings on the Live desk only, once across open desks.
+      if (onDesk && fresh.some((o) => claimAdminBell(o.orderId)))
+        playBell(this._bell);
+      // One popup per order across this admin's open tabs, from any admin page.
       const mine = fresh.filter((o) => claimAdminAlert(o.orderId));
       if (!mine.length) return;
-      playBell(this._bell);
-      showAdminOrderNotification(mine[0], mine.length, () => this.go('live'));
+      showAdminOrderNotification(mine[0], mine.length, () => this.go('live'), {
+        silent: onDesk,
+      });
     } catch {
       /* best effort */
     } finally {
@@ -433,8 +457,8 @@ export default class AdminApp extends React.Component {
       // a reused tag only replaces the last test quietly: give each test its own
       if (this._testNote) this._testNote.close();
       const n = new Notification('This is how new orders reach you!', {
-        body: 'When a customer books an order, you’ll hear this bell and get a popup like this one, on any admin page.',
-        icon: '/assets/brand/logo-full.webp',
+        body: 'When a customer books an order, you get a popup like this one on any admin page, and this bell on the Live desk.',
+        icon: '/icon-192.png',
         tag: 'duoly-admin-order-test-' + Date.now(),
         silent: true,
       });
@@ -447,6 +471,14 @@ export default class AdminApp extends React.Component {
   };
   watchSupport = async () => {
     if (!this.can('support')) return;
+    // One open admin tab polls the inbox for all of them (the others' sidebar badge still
+    // refreshes with loadCounts); the support page takes the job over.
+    if (
+      !takePollLease(SUPPORT_WATCH_LEASE, SUPPORT_WATCH_MS * 3, {
+        force: this.state.section === 'support',
+      })
+    )
+      return;
     let response;
     try {
       response = await this.api.get('/api/admin/support');
@@ -500,7 +532,7 @@ export default class AdminApp extends React.Component {
               ? '“' + conversation.lastUserText.slice(0, 140) + '”'
               : 'Open the support chat to reply.') +
             (count > 1 ? '  (+' + (count - 1) + ' more)' : ''),
-          icon: '/assets/brand/logo-mascots.webp',
+          icon: '/icon-192.png',
           tag: 'duoly-support-' + conversation.id,
           renotify: true,
         },

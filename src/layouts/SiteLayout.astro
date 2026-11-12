@@ -272,10 +272,15 @@ const avatar =
       import { startIdleAnimations } from '../client/idle-animations';
       startIdleAnimations();
 
-      if (document.querySelector('[data-desk-keeper]'))
+      if (document.querySelector('[data-desk-keeper]')) {
         void import('../components/teammate/desk-keeper.js').then((keeper) =>
           keeper.mountDeskKeeper(),
         );
+        // "You got a tip!" also while offline; the desk checks on its own stats load
+        void import('../components/teammate/tip-alerts.js').then((tips) =>
+          tips.startTipWatch(),
+        );
+      }
     </script>
     <CookieBanner />
     <Analytics viewer={viewer} csrf={csrf} />
