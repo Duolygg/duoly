@@ -54,6 +54,7 @@ suite pro_subscription.sql
 suite public_profile_photos.sql
 suite public_profiles_default_on.sql
 suite public_teammate_profiles.sql
+suite profile_header.sql
 # skip profile_bio_currency.sql historical strict teammate DTO equality predates additive trust_badge field
 # skip proof_http_acceptance.cjs HTTP/browser acceptance requires app/provider fixtures; legacy hosted execution disabled
 # skip proof_http_acceptance.safety.test.cjs offline HTTP runner safety tests, not SQL acceptance
