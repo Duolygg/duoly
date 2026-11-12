@@ -157,6 +157,105 @@ test('one booking verb, one arrow glyph and reviews without text stay quiet', as
   }
 });
 
+test('the hero carries one online signal, one booking unit and no upscaled mascot', async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto('/teammates/nyx');
+  const hero = page.locator('.tp-hero');
+  /* The live dot on the ring plus one availability line, and no separate status row. */
+  await expect(hero.locator('.tp-ring-dot')).toHaveCount(1);
+  await expect(hero.locator('.tp-availability')).toHaveCount(1);
+  await expect(hero.locator('.tp-availability')).toContainText('Online now');
+  expect((await hero.innerText()).toLowerCase().split('online').length).toBe(2);
+  /* The coaching price is the one other price the page is allowed to show. */
+  await expect(page.locator('.tp-price-quiet')).toHaveCount(1);
+  /* The art only exists at 160 px, so nothing may paint it larger than that. */
+  expect(
+    await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLImageElement>('article.tp-page img')]
+        .map((img) => img.getBoundingClientRect().width)
+        .filter((width) => width > 160),
+    ),
+  ).toEqual([]);
+  /* Same height for both buttons. Side by side the primary is the wider of the two; in
+     the stacked mobile layout both run the full column. */
+  const sizes = await page.evaluate(() =>
+    ['.tp-cta .tp-primary', '.tp-cta .tp-ghost'].map((selector) => {
+      const box = document.querySelector(selector)!.getBoundingClientRect();
+      return { h: Math.round(box.height), w: Math.round(box.width) };
+    }),
+  );
+  expect(sizes[0]!.h).toBe(56);
+  expect(sizes[1]!.h).toBe(56);
+  if (isMobile) expect(sizes[0]!.w).toBe(sizes[1]!.w);
+  else expect(sizes[0]!.w).toBeGreaterThan(sizes[1]!.w);
+  /* The fallback promise reads at body size, never as fine print. */
+  expect(
+    await page
+      .locator('.tp-note')
+      .evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
+  ).toBeGreaterThanOrEqual(15);
+  await expect(page.locator('.tp-note')).toContainText('so you never wait');
+});
+
+test('nothing in the profile touches the viewport edge', async ({ page }) => {
+  for (const width of [1440, 1024, 768, 390, 360]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/teammates/nyx');
+    const gutters = await page.evaluate(() => {
+      let left = Infinity;
+      let right = Infinity;
+      for (const el of document.querySelectorAll('article.tp-page *')) {
+        /* The booking bar is a deliberate full width bar; decorative light and the
+           outlined name are clipped at the page edge on purpose. */
+        if (el.closest('.tp-mobile-booking, [aria-hidden="true"]')) continue;
+        const style = getComputedStyle(el);
+        if (style.visibility === 'hidden' || style.display === 'none') continue;
+        const box = el.getBoundingClientRect();
+        if (box.width < 1 || box.height < 1) continue;
+        left = Math.min(left, box.left);
+        right = Math.min(right, innerWidth - box.right);
+      }
+      return {
+        left,
+        right,
+        overflow: document.documentElement.scrollWidth - innerWidth,
+      };
+    });
+    expect(gutters.overflow, `overflow at ${width}`).toBeLessThanOrEqual(0);
+    expect(gutters.left, `left gutter at ${width}`).toBeGreaterThanOrEqual(16);
+    expect(gutters.right, `right gutter at ${width}`).toBeGreaterThanOrEqual(
+      16,
+    );
+  }
+});
+
+test('the section nav sticks under the header and follows the scroll', async ({
+  page,
+}) => {
+  await page.goto('/teammates/nyx');
+  const tabs = page.locator('.tp-tabs');
+  const header = await page
+    .locator('.site-header')
+    .evaluate((el) => el.getBoundingClientRect().height);
+  for (const [anchor, label] of [
+    ['#games', 'Games'],
+    ['#reviews', 'Reviews'],
+    ['#more', 'More teammates'],
+  ] as const) {
+    await page.evaluate((id) => {
+      const el = document.querySelector(id)!;
+      scrollTo(0, el.getBoundingClientRect().top + scrollY - 120);
+    }, anchor);
+    await expect(page.locator('.tp-tabs a.is-current')).toHaveText(label);
+    await expect(page.locator('.tp-tabs a[aria-current]')).toHaveCount(1);
+    expect(
+      Math.round(await tabs.evaluate((el) => el.getBoundingClientRect().top)),
+    ).toBeCloseTo(Math.round(header), -1);
+  }
+});
+
 test('the sticky bar steps aside while a booking block is on screen', async ({
   page,
   isMobile,
