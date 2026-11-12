@@ -128,14 +128,16 @@
   pointer-events: none;
   /* Several stops instead of one: a single falloff ends in a visible ellipse edge. */
   background: radial-gradient(
-    closest-side at 62% 44%,
+    closest-side at 62% 40%,
     var(--light),
-    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.52%), transparent) 28%,
-    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.2%), transparent) 48%,
-    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.05%), transparent) 72%,
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.58%), transparent) 22%,
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.28%), transparent) 42%,
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.1%), transparent) 62%,
+    color-mix(in srgb, var(--accent) calc(var(--glow) * 0.025%), transparent)
+      80%,
     transparent 100%
   );
-  opacity: 0.72;
+  opacity: 0.7;
 }
 /* Broadcast player intro: the name again, outlined, sitting behind the mascot. It ends
    inside the page gutter on both sides, so no glyph is ever cut by a container edge, and
