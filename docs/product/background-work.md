@@ -801,7 +801,7 @@ deliberately do something else and say why.
   `duoly_dispatch` whose only change is skipping `live` kinds, `background_overdue`,
   `background_fix`, and `background_finalize` / `background_rollback`. The migration leaves
   `duoly-dispatch` active and the fixer unscheduled, contains no secret value and edits no existing
-  file. `supabase/tests/background_switches.sql` has 90 assertion statements across migration state, grants,
+  file. `supabase/tests/background_switches.sql` has 78 assertions across migration state, grants,
   the pgcrypto known-answer vector, body and signature bytes, the trigger conditions, per kind switch
   gating, a half configured Vault, the dispatcher's live skip, the overdue map, the fixer's call and
   bearer, and finalize and rollback idempotency; it is in `ci-manifest.txt` behind the canonical
@@ -881,3 +881,25 @@ deliberately do something else and say why.
   passed. Still nothing switched on: with no `background_switches` rows every hook reads `legacy`
   and does nothing. The desk heartbeat is the one change with no switch, because it changes no
   behaviour, only the number of writes.
+- Chunk 6: integration. The whole branch was reviewed against the master brief and every
+  `oai-review.md` finding, and the three gaps that review found are fixed: the `background_fix`
+  comment in the migration claimed the endpoint alerts an admin Discord channel, which this build
+  deliberately does not do (the two log lines are the whole alert), the leader watchdog's worst case
+  is 19 s and not the 18 s its comment said, and `backgroundModes` was an unused export whose
+  comment named consumers it never had. The suite's assertion count in chunk 3's entry above was
+  also overstated and is now the measured 78. Nothing else needed changing: all 21 findings are
+  handled in code, not only in prose, and every path this doc cites exists.
+
+  Gates, all from this worktree on this head: `pnpm check` 0 errors and 0 warnings over 914 files,
+  `pnpm lint` clean, `pnpm format:check` clean, `pnpm test:unit` 3918 tests in 217 files (235 of
+  them across the eight files this build added), `pnpm build` green,
+  `node scripts/seo-verify.mjs` 130 passed, and
+  `wrangler deploy --dry-run` green (809 KiB, 131 KiB gzipped, bindings `BOT`, `TIMERS` and
+  `APP_BASE_URL`; nothing deployed and no secret set). End to end: the main config 289 passed and
+  5 skipped, chat 12, completion 20, teammate 80, analytics 8, profiles 49 passed and 1 skipped.
+  Two flakes, both reproduced as flakes and not as regressions: the known chat "anchored on resize"
+  test failed once under load and passed alone, and `desk-keeper.spec.ts` "other pages warn too,
+  once" failed once on desktop under load and then passed 30 times out of 30 with
+  `--repeat-each=3`, plus a clean 80 of 80 for the whole teammate config afterwards. The SQL suite
+  runs in CI on this PR (`supabase/tests/background_switches.sql`, entry 38 of the manifest, 46 SQL
+  files covered); the CI result is recorded on the PR.

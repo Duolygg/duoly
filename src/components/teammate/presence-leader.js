@@ -23,7 +23,7 @@
  *   runs on the same worker-driven ticker the desk uses, because a background tab's
  *   `setTimeout` is throttled to about once a minute, which is well past the 20 seconds.
  *
- * Worst case is therefore BEAT_FRESH_MS + WATCHDOG_MS = 18 s, inside the window, and the failure
+ * Worst case is therefore BEAT_FRESH_MS + WATCHDOG_MS = 19 s, inside the window, and the failure
  * direction is "two tabs check in", which is exactly today's behaviour.
  *
  * Without BroadcastChannel (an old browser, a test environment) every tab is its own leader, which

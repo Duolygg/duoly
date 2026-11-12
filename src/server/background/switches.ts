@@ -13,17 +13,10 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
 import {
-  SWITCH_KINDS,
   SWITCH_MODES,
   type SwitchKind,
   type SwitchMode,
 } from '../../contracts/background';
-
-const legacy = (): Record<SwitchKind, SwitchMode> =>
-  Object.fromEntries(SWITCH_KINDS.map((kind) => [kind, 'legacy'])) as Record<
-    SwitchKind,
-    SwitchMode
-  >;
 
 const mode = (value: unknown): SwitchMode | null =>
   typeof value === 'string' &&
@@ -46,26 +39,5 @@ export async function backgroundMode(
     return mode((data as { mode?: unknown } | null)?.mode) ?? 'legacy';
   } catch {
     return 'legacy';
-  }
-}
-
-/** All four modes in one read, for the reconcile endpoint and the admin views. */
-export async function backgroundModes(
-  db: SupabaseClient,
-): Promise<Record<SwitchKind, SwitchMode>> {
-  const modes = legacy();
-  try {
-    const { data, error } = await db
-      .from('background_switches')
-      .select('kind, mode');
-    if (error || !Array.isArray(data)) return modes;
-    for (const row of data as { kind?: unknown; mode?: unknown }[]) {
-      const kind = SWITCH_KINDS.find((k) => k === row.kind);
-      const value = mode(row.mode);
-      if (kind && value) modes[kind] = value;
-    }
-    return modes;
-  } catch {
-    return modes;
   }
 }

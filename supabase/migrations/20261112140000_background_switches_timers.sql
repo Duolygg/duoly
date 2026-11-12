@@ -261,8 +261,10 @@ revoke all on function public.background_overdue() from public, anon, authentica
 
 -- The scheduled backstop. It posts to /api/internal/reconcile ONLY when something is actually
 -- overdue, which is also the signal that a timer was missed: the kinds it found travel in the body
--- so the endpoint can alert the admin Discord channel with the existing helpers, and the warning
--- below leaves the same evidence in the Postgres log. Nothing here talks to Discord directly.
+-- so the endpoint can name them in its '[background-fix] reconciling ...' line, and the warning
+-- below leaves the same evidence in the Postgres log. Those two lines are the whole alert: the app
+-- has no admin-channel helper today, and adding one would need a secret that is not on the owner's
+-- list (docs/product/background-work.md). Nothing here talks to Discord.
 -- /api/internal/reconcile keeps a plain bearer: that credential grants only "run the existing
 -- reconcile handlers", the same narrow capability duoly_dispatch already enqueues today.
 create function public.background_fix() returns jsonb
