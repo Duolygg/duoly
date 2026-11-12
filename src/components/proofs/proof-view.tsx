@@ -1,6 +1,6 @@
 // The proof list and upload UI, without the stylesheet so it can render outside a bundler
 // (homepage preview, Playwright). proofs.css is loaded by PrivateProofs and by pages that use this alone.
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { proofUrl } from './proof-client';
 import type { ProofState } from './proof-session';
 import type { Completion } from '../../contracts/completion';
@@ -12,9 +12,26 @@ export type ProofProps = {
   mode: 'customer' | 'teammate';
   csrf?: string;
   disabled?: boolean;
+  /** Why the order can't be finished yet (e.g. the match report isn't saved); disables Mark as done. */
+  completionBlocker?: string;
   onCompleted?: (entry: Completion) => void | Promise<void>;
   onCompletionBusyChange?: (busy: boolean) => void;
 };
+
+const MAX = 5;
+
+/** "2026-10-23T10:00:00Z" -> "23 Oct, 10:00" in the viewer's time zone (raw text if unparsable). */
+function shortTime(iso: string) {
+  const at = new Date(iso);
+  if (Number.isNaN(at.getTime())) return iso.replace('T', ' ');
+  return at.toLocaleString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export function ProofView({
   orderId,
   assignmentId,
@@ -25,6 +42,7 @@ export function ProofView({
   onRefresh,
   onSelect,
   onUpload,
+  onRemove,
   imageSrc,
 }: ProofProps & {
   state: ProofState;
@@ -33,9 +51,13 @@ export function ProofView({
   onRefresh?: () => void;
   onSelect?: (files: File[]) => void;
   onUpload?: () => void;
+  /** teammates: take back one of this assignment's screenshots */
+  onRemove?: (proofId: string) => void;
 }) {
   const inputId = useId();
   const errorRef = useRef<HTMLParagraphElement>(null);
+  const [dragging, setDragging] = useState(false);
+  const [asking, setAsking] = useState<string | null>(null);
   useEffect(() => {
     if (state.error) errorRef.current?.focus();
   }, [state.error]);
@@ -43,6 +65,9 @@ export function ProofView({
   const currentCount =
     state.proofs?.filter((p) => p.assignment_id === assignmentId).length ?? 0;
   const mayUpload = mode === 'teammate' && !!assignmentId;
+  const pickDisabled =
+    blocked || state.kind !== 'ready' || state.stale || currentCount >= MAX;
+  const status = state.pending ? 'Checking private evidence…' : state.message;
   return (
     <section
       data-private-block=""
@@ -51,14 +76,39 @@ export function ProofView({
       aria-busy={state.pending}
     >
       <div className="proof-heading">
-        <h3>Private evidence</h3>
-        <button type="button" disabled={blocked} onClick={onRefresh}>
+        <div>
+          <h3>Private evidence</h3>
+          <p className="proof-sub">
+            Private screenshots are visible only to authorized participants.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="proof-ghost"
+          disabled={blocked}
+          onClick={onRefresh}
+        >
+          <svg
+            aria-hidden="true"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+            <path d="M21 3v6h-6" />
+          </svg>
           Refresh evidence
         </button>
       </div>
-      <p>Private screenshots are visible only to authorized participants.</p>
       {state.kind === 'loading' && (
-        <p role="status">Loading private evidence…</p>
+        <p className="proof-status" role="status">
+          Loading private evidence…
+        </p>
       )}
       {state.error && (
         <p className="proof-error" role="alert" tabIndex={-1} ref={errorRef}>
@@ -71,13 +121,17 @@ export function ProofView({
           Displayed evidence may be stale. Refresh before uploading.
         </p>
       )}
-      <p role="status" aria-live="polite">
-        {state.pending ? 'Checking private evidence…' : state.message}
+      <p
+        className={status ? 'proof-status' : 'proof-status proof-status-empty'}
+        role="status"
+        aria-live="polite"
+      >
+        {status}
       </p>
-      {state.kind === 'ready' && state.proofs?.length === 0 && (
-        <p>No evidence uploaded.</p>
+      {state.kind === 'ready' && state.proofs?.length === 0 && !mayUpload && (
+        <p className="proof-empty">No evidence uploaded.</p>
       )}
-      {state.proofs && (
+      {state.proofs && state.proofs.length > 0 && (
         <ul className="proof-images">
           {state.proofs.map((proof, index) => {
             const url = imageSrc
@@ -88,7 +142,10 @@ export function ProofView({
                   mode === 'teammate' ? assignmentId : undefined,
                 );
             return (
-              <li key={proof.id}>
+              <li
+                key={proof.id}
+                className={asking === proof.id ? 'is-asking' : undefined}
+              >
                 <a
                   href={url}
                   target="_blank"
@@ -104,13 +161,53 @@ export function ProofView({
                       event.currentTarget.hidden = true;
                     }}
                   />
-                  <span>Open evidence image {index + 1}</span>
+                  <span className="proof-badge" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  <span className="proof-sr">
+                    Open evidence image {index + 1}
+                  </span>
                 </a>
-                <p>
+                <div className="proof-meta">
                   <time dateTime={proof.created_at}>
-                    {proof.created_at.replace('T', ' ')}
+                    {shortTime(proof.created_at)}
                   </time>
-                </p>
+                  {mayUpload &&
+                    onRemove &&
+                    proof.assignment_id === assignmentId &&
+                    (asking === proof.id ? (
+                      <span className="proof-ask">
+                        <button
+                          type="button"
+                          className="proof-remove is-confirm"
+                          disabled={blocked || !csrf}
+                          onClick={() => {
+                            setAsking(null);
+                            onRemove(proof.id);
+                          }}
+                        >
+                          Remove
+                        </button>
+                        <button
+                          type="button"
+                          className="proof-remove"
+                          onClick={() => setAsking(null)}
+                        >
+                          Keep
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="proof-remove"
+                        aria-label={`Remove evidence image ${index + 1}`}
+                        disabled={blocked || !csrf || state.kind !== 'ready'}
+                        onClick={() => setAsking(proof.id)}
+                      >
+                        Remove
+                      </button>
+                    ))}
+                </div>
               </li>
             );
           })}
@@ -118,33 +215,78 @@ export function ProofView({
       )}
       {mayUpload && (
         <div className="proof-upload">
-          {state.proofs !== null && (
-            <p>{currentCount} / 5 images for your current assignment.</p>
-          )}
-          <label htmlFor={inputId}>Choose one evidence image</label>
           <input
             id={inputId}
+            className="proof-file"
             type="file"
             accept="image/webp,image/jpeg,image/png"
+            aria-label="Choose one evidence image"
             aria-describedby={`${inputId}-help`}
-            disabled={
-              blocked ||
-              state.kind !== 'ready' ||
-              state.stale ||
-              currentCount >= 5
-            }
+            disabled={pickDisabled}
             onChange={(event) =>
               onSelect?.(Array.from(event.currentTarget.files ?? []))
             }
           />
-          <p id={`${inputId}-help`}>
-            PNG, JPEG or WebP; 1–1,572,864 bytes each. Up to five images per
-            assignment. Browser checks are a convenience; the server validates
-            every upload.
-          </p>
-          {state.choice && <p>One image selected for upload.</p>}
+          <label
+            htmlFor={inputId}
+            className={
+              'proof-drop' +
+              (dragging ? ' is-dragging' : '') +
+              (state.choice ? ' has-choice' : '')
+            }
+            onDragOver={(event) => {
+              if (pickDisabled) return;
+              event.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(event) => {
+              setDragging(false);
+              if (pickDisabled) return;
+              event.preventDefault();
+              onSelect?.(Array.from(event.dataTransfer.files ?? []));
+            }}
+          >
+            <span className="proof-drop-icon" aria-hidden="true">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                {state.choice ? (
+                  <path d="M20 6 9 17l-5-5" />
+                ) : (
+                  <>
+                    <path d="M12 16V4" />
+                    <path d="m6 10 6-6 6 6" />
+                    <path d="M4 20h16" />
+                  </>
+                )}
+              </svg>
+            </span>
+            <span className="proof-drop-text">
+              <strong>
+                {state.choice
+                  ? state.choice.file.name
+                  : currentCount >= MAX
+                    ? 'All five screenshots added'
+                    : 'Choose a screenshot or drop it here'}
+              </strong>
+              <span id={`${inputId}-help`}>
+                PNG, JPEG or WebP, up to 1.5 MB.
+                {state.proofs !== null &&
+                  ` ${currentCount} / ${MAX} images for your current assignment.`}
+              </span>
+            </span>
+          </label>
           <button
             type="button"
+            className="proof-primary"
             disabled={
               blocked ||
               !csrf ||

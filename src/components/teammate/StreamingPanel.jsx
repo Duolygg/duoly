@@ -168,6 +168,7 @@ export default class StreamingPanel extends React.Component {
         aria-labelledby="tm-stream-h"
         data-streaming-panel
         style={{
+          marginTop: '20px',
           borderRadius: '24px',
           background: '#120B22',
           border: '1px solid rgba(169, 112, 255, .22)',

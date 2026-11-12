@@ -102,6 +102,73 @@ function readRoute(image: boolean): APIRoute {
 export const list = readRoute(false);
 export const image = readRoute(true);
 
+/**
+ * A teammate takes back one of their own screenshots on the open assignment (uploaded by
+ * mistake). The database only hides it (teammate_remove_order_proof, 20261112153802): the file
+ * stays for admins and disputes, so this never touches storage.
+ */
+export const remove: APIRoute = async (context) => {
+  const account = accountContext(context.request, context.cookies);
+  const fail = (status: number) =>
+    account.json(
+      {
+        error:
+          status === 503
+            ? 'Proof service unavailable.'
+            : 'Screenshot could not be removed.',
+      },
+      status,
+    );
+  try {
+    if (context.request.method !== 'POST') {
+      const response = fail(405);
+      response.headers.set('Allow', 'POST');
+      return response;
+    }
+    const origin =
+      account.config?.origin ?? new URL(context.request.url).origin;
+    if (
+      !verifyCsrf(
+        context.request,
+        origin,
+        context.cookies.get(account.names.csrf)?.value,
+        context.request.headers.get('x-csrf-token'),
+      )
+    )
+      return fail(403);
+    const identity = await account.identity();
+    if (!identity || !account.client) return fail(401);
+    if (identity.viewer.role !== 'teammate') return fail(403);
+    const order = ProofUuidSchema.safeParse(context.params.id);
+    const proof = ProofUuidSchema.safeParse(context.params.proofId);
+    const assignment = ProofUuidSchema.safeParse(
+      context.request.headers.get('x-assignment-id'),
+    );
+    if (
+      !order.success ||
+      !proof.success ||
+      !assignment.success ||
+      context.url.search
+    )
+      return fail(400);
+    const result = z
+      .strictObject({ removed: z.literal(true), proof_id: ProofUuidSchema })
+      .parse(
+        proofRpcData(
+          await account.client.rpc('teammate_remove_order_proof', {
+            p_order_id: order.data,
+            p_assignment_id: assignment.data,
+            p_proof_id: proof.data,
+          }),
+        ),
+      );
+    if (result.proof_id !== proof.data) return fail(503);
+    return account.json(result);
+  } catch (error) {
+    return fail(error instanceof ProofFailure ? error.status : 503);
+  }
+};
+
 export const upload: APIRoute = async (context) => {
   const account = accountContext(context.request, context.cookies);
   const fail = (status: number) =>

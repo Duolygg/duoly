@@ -13,6 +13,16 @@ import {
   readEarnings,
 } from './completion-client';
 
+/** complete_order's reasons in the desk's words (the rest are already plain). */
+const CONFLICT_WORDING: Record<string, string> = {
+  'Captured settled payment required.':
+    'The payment for this order isn’t settled yet. Message support and keep the screenshots.',
+  'Assignment unavailable.':
+    'This order is no longer assigned to you. Refresh the desk.',
+  'Completion already recorded with another request or proof set.':
+    'This order was already marked as done. Refresh the desk.',
+};
+
 export function CompletionReceipt({ entry }: { entry: Completion }) {
   const usd = (cents: number) => `$${(cents / 100).toFixed(2)} USD`;
   return (
@@ -82,6 +92,7 @@ export function CompletionControls({
   csrf,
   state,
   disabled,
+  blocker,
   onCompleted,
   onBusyChange,
 }: {
@@ -90,6 +101,8 @@ export function CompletionControls({
   csrf: string;
   state: ProofState;
   disabled?: boolean;
+  /** What still stops this order from being finished (shown under the button, which stays off). */
+  blocker?: string;
   onCompleted: (entry: Completion) => void | Promise<void>;
   onBusyChange: (busy: boolean) => void;
 }) {
@@ -111,7 +124,15 @@ export function CompletionControls({
     };
   }, []);
   const ids = completionProofIds(state, orderId, assignmentId);
-  const allowed = !!ids && !!csrf.trim() && !disabled;
+  const allowed = !!ids && !!csrf.trim() && !disabled && !blocker;
+  const shots = ids?.length ?? 0;
+  const hint = blocker
+    ? blocker
+    : ids
+      ? `Ready to finish with ${shots} screenshot${shots === 1 ? '' : 's'}.`
+      : state.kind === 'ready' && !state.stale
+        ? 'Upload at least one screenshot first.'
+        : 'Waiting for your screenshots to load.';
   function prepare() {
     if (!allowed || inFlight.current || frozen.current) return;
     const parsed = CompletionInputSchema.safeParse({
@@ -163,7 +184,9 @@ export function CompletionControls({
           : result.kind === 'denied'
             ? 'Completion access denied. Refresh the desk to check your assignment.'
             : result.kind === 'conflict'
-              ? 'Completion conflicts with the current assignment or proof. Refresh the desk before taking further action.'
+              ? result.reason
+                ? `The order couldn't be finished. ${CONFLICT_WORDING[result.reason] ?? result.reason}`
+                : 'Completion conflicts with the current assignment or proof. Refresh the desk before taking further action.'
               : 'Completion input was rejected. Refresh the desk before taking further action.',
       );
       callbacks.current.onBusyChange(false);
@@ -194,55 +217,53 @@ export function CompletionControls({
     }
     inFlight.current = false;
   }
+  function backToIdle() {
+    frozen.current = null;
+    setCommand(null);
+    setMessage('');
+    setPhase('idle');
+    onBusyChange(false);
+  }
+  const alert = phase === 'uncertain' || phase === 'terminal';
   return (
-    <div className="td-completion" aria-busy={phase === 'sending'}>
-      <h3>Mark as done</h3>
-      <p>
-        Finish this assignment using 1 to 5 uploaded screenshots, like your
-        match history. The server records your permanent earning and held
-        deposit together.
-      </p>
-      {phase === 'idle' && (
-        <>
-          <p className="td-muted">
-            Upload your evidence first. Only fresh evidence for this assignment
-            can be used.
-          </p>
+    <div className="td-completion cc" aria-busy={phase === 'sending'}>
+      {(phase === 'idle' || phase === 'terminal') && (
+        <div className="cc-row">
+          <div>
+            <h3>Done playing?</h3>
+            <p className={'cc-hint' + (allowed ? ' is-ready' : '')}>{hint}</p>
+          </div>
           <button
-            className="td-accept"
+            className="td-accept cc-primary cc-done"
             type="button"
             disabled={!allowed}
-            onClick={prepare}
+            onClick={() => {
+              // a refused completion recorded nothing, so a new request may start
+              if (phase === 'terminal') backToIdle();
+              prepare();
+            }}
           >
             Mark as done
           </button>
-        </>
+        </div>
       )}
       {phase === 'confirm' && (
-        <div className="td-notice">
+        <div className="td-notice cc-confirm">
           <h3>Confirm order completion</h3>
           <p>
-            Complete this assignment with {command?.proof_ids.length} evidence
-            image{command?.proof_ids.length === 1 ? '' : 's'}? This records a
-            permanent earning. The server determines the deposit and net amount.
+            Finish this order with {command?.proof_ids.length} screenshot
+            {command?.proof_ids.length === 1 ? '' : 's'}? Your earning is
+            recorded right away and the order closes.
           </p>
-          <div className="td-completion-actions">
+          <div className="td-completion-actions cc-actions">
             <button
-              className="td-accept"
+              className="td-accept cc-primary cc-done"
               type="button"
               onClick={() => void send()}
             >
               Confirm completion
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                frozen.current = null;
-                setCommand(null);
-                setPhase('idle');
-                onBusyChange(false);
-              }}
-            >
+            <button type="button" className="cc-ghost" onClick={backToIdle}>
               Keep playing
             </button>
           </div>
@@ -250,31 +271,32 @@ export function CompletionControls({
       )}
       {message && (
         <p
-          role={
-            phase === 'uncertain' || phase === 'terminal' ? 'alert' : 'status'
-          }
+          className={'cc-message' + (alert ? ' is-alert' : '')}
+          role={alert ? 'alert' : 'status'}
           aria-live="polite"
         >
           {message}
         </p>
       )}
       {phase === 'uncertain' && (
-        <div className="td-completion-actions">
+        <div className="td-completion-actions cc-actions">
           <button
             type="button"
+            className="cc-primary"
             disabled={!csrf.trim() || !!disabled}
             onClick={() => void send()}
           >
             Retry same completion
           </button>
-          <button type="button" onClick={() => void readback()}>
+          <button
+            type="button"
+            className="cc-ghost"
+            onClick={() => void readback()}
+          >
             Read back completion
           </button>
         </div>
       )}
-      <p className="td-muted">
-        Withdrawals and deposit releases are not available yet.
-      </p>
     </div>
   );
 }

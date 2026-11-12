@@ -885,6 +885,58 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 /* mood pill on teammate order cards (shared/moods.jsx MoodBadge) */
 .mood-badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px 2px 6px;border-radius:7px;background:color-mix(in srgb,var(--mc) 14%,transparent);color:var(--mc);font-size:12px;font-weight:600;white-space:nowrap}
 .tm-mood{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:6px;font-size:12.5px;color:#A79DC4}
+/* "Finish with proof" on the teammate desk (Teammate.jsx): header with the steps, the match
+   report (score stepper + one row per game), then the screenshots and Mark as done (proofs.css). */
+.tm-finish *{box-sizing:border-box}
+.tm-finish-head{display:grid;grid-template-columns:38px minmax(0,1fr);align-items:center;gap:12px}
+.tm-finish-icon{flex:0 0 auto;width:38px;height:38px;border-radius:12px;background:rgba(214,187,255,.12);display:flex;align-items:center;justify-content:center}
+.tm-finish-title{display:block;font-weight:700;font-size:16px;color:#FFFFFF}
+.tm-finish-sub{display:block;font-size:13px;color:#A79DC4}
+.tm-steps{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.tm-steps li{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:999px;background:rgba(196,170,255,.06);font-size:12px;font-weight:600;color:#8E84AB}
+.tm-steps li span{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(196,170,255,.12);font-size:11px;color:#CFC4EA}
+.tm-steps li.is-now{color:#F3EEFF;background:rgba(214,187,255,.12)}
+.tm-steps li.is-now span{background:#D6BBFF;color:#17092E}
+.tm-steps li.is-done{color:#5EEAA8}
+.tm-steps li.is-done span{background:rgba(94,234,168,.18);color:#5EEAA8}
+.tm-match{margin-top:16px;padding:16px;border-radius:16px;background:#120B22;border:1px solid rgba(196,170,255,.1);transition:border-color .2s}
+.tm-match.is-saved{border-color:rgba(94,234,168,.32)}
+.tm-match h3{margin:0;font-size:15px;font-weight:700;color:#FFFFFF}
+.tm-match-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px}
+.tm-match-desc{margin:2px 0 0;max-width:46ch;font-size:12.5px;line-height:1.45;color:#8E84AB}
+.tm-score{display:flex;align-items:flex-end;gap:8px}
+.tm-score-side{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tm-score-label{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.tm-score-side.is-won .tm-score-label{color:#5EEAA8}
+.tm-score-side.is-lost .tm-score-label{color:#F0A6FF}
+.tm-score input{width:48px;height:44px;border-radius:11px;border:1px solid rgba(196,170,255,.16);background:#090414;color:#FFFFFF;font:inherit;font-size:18px;font-weight:700;text-align:center}
+.tm-score input::placeholder{color:#4A4163}
+.tm-stepper{display:inline-flex;align-items:center;gap:4px}
+.tm-stepper button{width:44px;height:44px;border-radius:9px;border:1px solid rgba(196,170,255,.18);background:transparent;color:#D6BBFF;font:inherit;font-size:16px;font-weight:700;line-height:1;cursor:pointer}
+.tm-stepper button:hover:not(:disabled){background:rgba(214,187,255,.1)}
+.tm-stepper button:disabled{opacity:.35;cursor:not-allowed}
+.tm-score-dash{padding-bottom:10px;font-size:18px;font-weight:700;color:#4A4163}
+.tm-score-of{padding-bottom:13px;font-size:12.5px;color:#8E84AB}
+.tm-games{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.tm-game{display:grid;grid-template-columns:58px minmax(0,1fr) minmax(0,1fr) minmax(0,1.5fr);gap:8px;align-items:end;padding:10px;border-radius:12px;background:#090414}
+.tm-game-n{align-self:center;font-size:12.5px;font-weight:700;color:#CFC4EA}
+.tm-game label{display:flex;flex-direction:column;gap:4px;min-width:0}
+.tm-game label>span{font-size:11px;font-weight:600;color:#8E84AB}
+.tm-game input{min-height:38px;width:100%;min-width:0;padding:0 10px;border-radius:10px;border:1px solid rgba(196,170,255,.14);background:#120B22;color:#FFFFFF;font:inherit;font-size:13.5px}
+.tm-game input:focus,.tm-score input:focus{outline:none;border-color:#D6BBFF;box-shadow:0 0 0 3px rgba(214,187,255,.15)}
+.tm-match-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.tm-match-note{margin:0;font-size:12.5px;color:#8E84AB}
+.tm-match.is-saved .tm-match-note{color:#5EEAA8}
+.tm-match-err{margin:0;font-size:13px;color:#F0A6FF}
+.tm-match-save{min-height:40px;padding:0 18px;border-radius:12px;border:none;background:#D6BBFF;color:#17092E;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.tm-match-save.is-saved{background:rgba(94,234,168,.14);color:#5EEAA8}
+.tm-match-save:disabled{opacity:.6;cursor:progress}
+.tm-readback{margin-top:12px;min-height:40px;padding:0 16px;border-radius:12px;border:1px solid rgba(196,170,255,.24);background:transparent;color:#F3EEFF;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+@media (max-width:640px){
+  .tm-game{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .tm-game-n{grid-column:1 / -1}
+  .tm-game-link{grid-column:1 / -1}
+}
 /* "… vs. Duoly" (components/home/SoloVsDuoly.jsx): one board. Rows are [them | what | us]: a chip on a
    glowing centre line, the other side muted on the left, Duoly bright on a highlighted right half.
    Rows replay their entrance on every switch; phones stack each row (chip, them, us). */
