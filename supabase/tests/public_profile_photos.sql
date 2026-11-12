@@ -106,7 +106,7 @@ end $$;
 select pg_temp.ok(pg_catalog.has_function_privilege('anon','public.public_teammate_profile(text)','execute')
   and pg_catalog.has_function_privilege('authenticated','public.public_teammate_profile(text)','execute'),
   'grants survived the replace');
-select pg_temp.ok((select p.prosecdef and p.provolatile='s' and p.proconfig @> array['search_path=']
+select pg_temp.ok((select p.prosecdef and p.provolatile='s' and p.proconfig @> array['search_path=""']
   from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public' and p.proname='public_teammate_profile'),'still a stable definer with an empty search_path');
 
