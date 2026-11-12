@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, mkdtemp, readdir, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
-import { homedir } from 'node:os';
+import { tmpdir } from 'node:os';
 import { parseTraceBody } from './browser-capture.mjs';
 import { parseBrowserCapture, parseChatGPTTrace } from './browser-capture.mjs';
 import { analyze } from './analysis.mjs';
@@ -24,12 +24,7 @@ test('SSE search metadata retains queries without saving reasoning or invalid ev
 });
 
 test('consumer fixture CLI reads back two runs and the exact five fan-out prompts', async () => {
-  const dir = await mkdtemp(
-    join(
-      process.env.TMPDIR ?? join(homedir(), '.hermes/cache/scratch'),
-      'geo-fixtures-',
-    ),
-  );
+  const dir = await mkdtemp(join(tmpdir(), 'geo-fixtures-'));
   try {
     for (const args of [[], ['--engine', 'chatgpt', '--fan-out']]) {
       execFileSync(
