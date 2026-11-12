@@ -929,6 +929,26 @@ function kindChecks(kind, state) {
       (attributeLine(entry.message).includes(kind) ||
         !attributeLine(entry.message).length),
   );
+  const fixes = logs.entries.filter(
+    (entry) =>
+      entry.marker === 'background-fix' &&
+      entry.message.includes('reconciling') &&
+      attributeLine(entry.message).includes(kind),
+  );
+  if (fixes.length)
+    checks.push(
+      // The doc's threshold is the fixer finding work twice in a row, because finding work means
+      // a timer was missed. One line is worth reading; two are worth acting on.
+      fixes.length > 1
+        ? warn(
+            'the fixer',
+            `found ${kind} work ${fixes.length} times, the last at ${stamp(fixes.at(-1).ts)}`,
+          )
+        : note(
+            'the fixer',
+            `found ${kind} work once, at ${stamp(fixes[0].ts)}`,
+          ),
+    );
   if (hooks.length)
     checks.push(
       warn(

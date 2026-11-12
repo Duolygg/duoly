@@ -657,6 +657,41 @@ describe('the verdict per kind', () => {
     });
   });
 
+  it('reads the fixer, and warns at the doc threshold of twice', () => {
+    expect(
+      graded.roles.checks.find((check) => check.name === 'the fixer'),
+    ).toStrictEqual({
+      name: 'the fixer',
+      status: 'note',
+      detail: 'found roles work once, at 2026-11-12T11:00:30.000Z',
+    });
+    expect(
+      graded.orders.checks.find((check) => check.name === 'the fixer'),
+    ).toBeUndefined();
+    const twice = parseLogs(
+      [
+        `{"timestampInMs":${NOW - 600_000},"message":"[background-fix] reconciling payments, roles (overdue)"}`,
+        `{"timestampInMs":${NOW - 60_000},"message":"[background-fix] reconciling payments (overdue)"}`,
+      ].join('\n'),
+    ) as Logs;
+    const busy = verdicts({
+      db: database,
+      logs: twice,
+      health,
+      orders,
+      rearm: [],
+      bounds,
+      now: NOW,
+    });
+    expect(
+      busy.payments.checks.find((check) => check.name === 'the fixer'),
+    ).toMatchObject({
+      status: 'warn',
+      detail: expect.stringContaining('2 times'),
+    });
+    expect(busy.payments.verdict).toBe('PASS');
+  });
+
   it('fails analytics on a parked fact, which the doc calls an alert', () => {
     const parked = verdicts({
       db: { ...database, outbox: { ...database.outbox, parked: 2 } },
