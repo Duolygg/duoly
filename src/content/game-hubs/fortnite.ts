@@ -107,7 +107,7 @@ export const fortnite: HubPageCopy = {
       heading: 'Why is Fortnite priced by the hour?',
       paragraphs: [
         'An hour is the honest unit for Fortnite, because a battle royale match from Epic Games has no fixed length. One Ranked Duos game can end in the first zone or run twenty minutes into a pro endgame, so a per-match price would charge the same for both. An hour of Duo Pro costs {{p_duo2}} at {{rank_duo2}} and usually covers 3 or 4 games. Agree a drop spot. Then agree whether the hour is for points or for practice, so neither player fights the wrong battle.',
-        'Ranked prices follow your own rank: {{rank_duo2_low}} players pay {{p_duo2_low}} per hour and {{rank_duo2_high}} players pay {{p_duo2_high}}. Casual hours keep one flat price, so Zero Build and Reload each cost {{p_zb}} and Creative box fights cost {{p_box}}. Bundles of {{main}} take {{bundles}}. Voice runs using Discord and the invite goes out with your Epic name, both agreed before the bus moves.',
+        'Ranked prices follow your own rank: {{rank_duo2_low}} players pay {{p_duo2_low}} per hour and {{rank_duo2_high}} players pay {{p_duo2_high}}. Casual hours keep one flat price, so Zero Build and Reload each cost {{p_zb}} and Creative box fights cost {{p_box}}. A {{main}} bundle saves more the bigger it is: {{savings}}. Voice runs using Discord and the invite goes out with your Epic name, both agreed before the bus moves.',
       ],
     },
     {

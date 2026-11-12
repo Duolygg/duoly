@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   accentStyle,
   bookingLine,
+  profileAnswers,
   profileMetadata,
   rankEmblem,
   profilePresentation,
@@ -18,6 +19,7 @@ import {
   PROFILE_ACCENTS,
   PROFILE_ACCENT_GLOW,
   PROFILE_ACCENT_KEYS,
+  type PublicTeammateProfile,
 } from '../../src/contracts/teammate-profile';
 
 /** WCAG relative luminance, used for the ink the pages print on an accent. */
@@ -341,5 +343,121 @@ describe('public profile page', () => {
     /* The same secondary ink as the rest of the body copy, on the page background: this is
        the colour .tp-note prints in (--tp-muted on #090414), and it clears AA at 4.5:1. */
     expect(contrast('#c9bcdf', '#090414')).toBeGreaterThanOrEqual(4.5);
+  });
+  /*
+   * The answers under the profile. The audit scored every profile 2 or 3 because the page was a
+   * name, a plate and about forty words of prose; these three questions are the copy that fixes
+   * that, and all of it has to stay facts this profile actually holds.
+   */
+  describe('the booking answers', () => {
+    const load = (slug: string) => {
+      const found = fixtureLookup(slug);
+      if (found.status !== 'ok') throw new Error(`${slug} fixture missing`);
+      return found.profile;
+    };
+    const text = (p: PublicTeammateProfile) =>
+      profileAnswers(p)
+        .flatMap((answer) => [answer.heading, ...answer.paragraphs])
+        .join(' ');
+    it('asks three questions and answers each one in the first sentence', () => {
+      const answers = profileAnswers(nyx);
+      expect(answers).toHaveLength(3);
+      for (const answer of answers) {
+        expect(answer.heading.endsWith('?')).toBe(true);
+        expect(answer.paragraphs.length).toBeGreaterThan(0);
+        for (const paragraph of answer.paragraphs)
+          expect(paragraph.split(/\s+/).length).toBeGreaterThan(20);
+      }
+      expect(answers[0]!.heading).toBe(
+        'What is a Valorant session with Nyx like?',
+      );
+      expect(answers[2]!.heading).toBe(
+        'What happens if Nyx is already in a game?',
+      );
+    });
+    it('gives a search visitor enough to read on the thinnest profile there is', () => {
+      /* Pip has no bio, no languages, no verified rank and no sessions: the page the audit
+         scored 2. The answers are shorter for it and still answer all three questions. */
+      const words = text(load('pip')).split(/\s+/).length;
+      expect(words).toBeGreaterThan(150);
+      expect(text(nyx).split(/\s+/).length).toBeGreaterThan(220);
+    });
+    it('prices the session from the same helper the page prints', () => {
+      for (const slug of ['nyx', 'crafty', 'kairo']) {
+        const p = load(slug);
+        const cheapest = seoOffers(p.featuredGame, 'teammate', {
+          customerCurrency: 'EUR',
+          eurToUsd: 1,
+        }).sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+        expect(text(p)).toContain(
+          `starts at ${cheapest.display} per ${cheapest.unit}`,
+        );
+      }
+      /* Coaching is quoted from the coaching helper, and only where the catalog sells it. */
+      const coaching = profilePresentation(nyx).coachOffer!;
+      expect(text(nyx)).toContain(
+        `from ${coaching.display} per ${coaching.unit}`,
+      );
+      expect(text(load('lumi'))).not.toContain('coaching');
+    });
+    it('states only what the profile holds, and says so when it holds nothing', () => {
+      const pip = text(load('pip'));
+      expect(pip).toContain('verified no rank for Pip yet');
+      expect(pip).toContain('no finished sessions here yet');
+      expect(pip).toContain('lists no language');
+      expect(pip).not.toMatch(/\bundefined\b|\bnull\b/);
+      const kairo = text(load('kairo'));
+      expect(kairo).toContain(
+        '2 verified ranks: Challenger in League of Legends and Immortal 2 in Valorant',
+      );
+      expect(kairo).toContain('1,240 sessions');
+      /* Sola has two finished sessions, which is under the sample the page shows a stat for.
+         The answer says the number and why no rating sits above it, because "no sessions yet"
+         would be false for a profile that has played twice. */
+      expect(text(load('sola'))).toContain(
+        'has 2 finished sessions here, which is too few for a rating',
+      );
+    });
+    it('never puts the same sentence on three profiles', () => {
+      /* The audit counts a sentence that appears on three or more pages as boilerplate, and
+         eight profiles sharing one answer template is exactly that. Every sentence carries
+         the name or the game it belongs to, which is what keeps the count under three. */
+      const carriers = new Map<string, string[]>();
+      for (const slug of ['nyx', 'rhea', 'pip', 'crafty', 'sola', 'kairo', 'lumi', 'echo']) {
+        const p = load(slug);
+        for (const sentence of profileAnswers(p)
+          .flatMap((answer) => answer.paragraphs)
+          .flatMap((paragraph) => paragraph.split(/(?<=[.!?])\s+/)))
+          carriers.set(sentence, [...(carriers.get(sentence) ?? []), slug]);
+      }
+      const shared = [...carriers.entries()].filter(
+        ([, slugs]) => slugs.length >= 3,
+      );
+      expect(
+        shared.map(([sentence, slugs]) => `${slugs.join(',')}: ${sentence}`),
+      ).toEqual([]);
+    });
+    it('obeys the copy rules and never repeats a paragraph across two profiles', () => {
+      const seen = new Map<string, string>();
+      for (const slug of [
+        'nyx',
+        'rhea',
+        'pip',
+        'crafty',
+        'sola',
+        'kairo',
+        'lumi',
+        'echo',
+      ]) {
+        const p = load(slug);
+        expect(text(p), slug).not.toMatch(/[–—]| & |\bnot .*, but /);
+        /* Eight profiles printing the same paragraph is the boilerplate the audit counted
+           across pages, so every answer carries the name and the game it belongs to. */
+        for (const paragraph of profileAnswers(p).flatMap((a) => a.paragraphs)) {
+          expect(seen.get(paragraph) ?? slug, `${slug} repeats ${seen.get(paragraph)}`).toBe(slug);
+          seen.set(paragraph, slug);
+        }
+      }
+    });
   });
 });

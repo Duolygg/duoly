@@ -103,7 +103,7 @@ export const overwatch2: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'The teammate you queue with is a reviewed Overwatch player who applied for the game and showed a rank before taking orders. Duo Plus names a Diamond+ player, Duo Pro a Master+ player and Duo Apex a Grandmaster or Champion player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Nobody from Duoly ever logs into your account.',
-        'What the rank buys is fight timing. A Master+ teammate tracks the enemy cooldowns and calls the engage instead of walking in while yours are down. Voice runs using Discord, so the regroup lands before the next fight rather than after. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut the total: {{bundles}}. You keep your hero, your aim and your account in all 3 games.',
+        'What the rank buys is fight timing. A Master+ teammate tracks the enemy cooldowns and calls the engage instead of walking in while yours are down. Voice runs using Discord, so the regroup lands before the next fight rather than after. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. A {{main}} bundle saves more the bigger it is: {{savings}}. You keep your hero, your aim and your account in all 3 games.',
       ],
     },
     {

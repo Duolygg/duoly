@@ -304,6 +304,31 @@ for (const path of [
   ...Object.keys(coachFormats).map((slug) => `/games/${slug}/coaching`),
 ])
   CONTENT_UPDATED[path] = '2026-11-12';
+/**
+ * 13 November 2026, the second half of the page quality audit pass.
+ *
+ * The audit counted the sentences a page prints twice. On the hubs that was the
+ * bundle ladder, stated beside the price grid and again where the service is
+ * explained; the second place now states the saving per bundle, from the same
+ * percentages. On the coaching pages it was the lesson price and a format
+ * description, each written once in the lead and again in an answer below it.
+ * `citable-answers.ts` stopped repeating the flat-price rule under a group
+ * grid, which reaches every hub, every teammate page and every coaching page.
+ * /press stopped printing the boilerplate's own closing sentence a second time
+ * in its own words, and /compare/metafy states the Metafy fee total once.
+ *
+ * Same facts, same figures from the same helpers, so these are copy dates.
+ */
+for (const path of [
+  '/press',
+  '/compare/metafy',
+  ...FINISHED_HUB_SLUGS.filter((slug) => slug !== 'social').map(
+    (slug) => `/games/${slug}`,
+  ),
+  ...intentPages.map((page) => intentPath(page)),
+  ...Object.keys(coachFormats).map((slug) => `/games/${slug}/coaching`),
+])
+  CONTENT_UPDATED[path] = '2026-11-13';
 
 /** What git knows about the last two changes to one page's copy. */
 export type ContentHistory = {

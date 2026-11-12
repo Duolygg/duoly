@@ -104,7 +104,7 @@ export const pokemonUnite: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'The teammate you queue with is a reviewed Pokémon Unite player who applied for the game and showed a rank before taking orders. Duo Plus names an Ultra+ player, Duo Pro a Master player and Duo Apex a Legend player from {{p_duo3_low}} per game, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Your teammate plays on a separate account, so nobody needs your login.',
-        'What the rank buys is objective timing. A Master teammate calls the Drednaw group before the timer rather than after, and leaves a lane only with a plan. Voice runs using Discord, so a rotation call lands while the fight is still winnable. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut the total: {{bundles}}. You keep your Pokémon and your account in all 3 games.',
+        'What the rank buys is objective timing. A Master teammate calls the Drednaw group before the timer rather than after, and leaves a lane only with a plan. Voice runs using Discord, so a rotation call lands while the fight is still winnable. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per game at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. A {{main}} bundle saves more the bigger it is: {{savings}}. You keep your Pokémon and your account in all 3 games.',
       ],
     },
     {

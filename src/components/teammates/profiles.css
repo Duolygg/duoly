@@ -1893,3 +1893,40 @@ a.tp-stat:hover > strong {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------- booking answers ----------
+   The reading section under the profile. Three questions a visitor arriving from a search for
+   this player's name asks, answered from the profile's own data. Measure, colour and heading
+   sizes come from the tokens the rest of the page already uses; nothing above it changes. */
+.tp-answers {
+  display: grid;
+  gap: 32px;
+}
+.tp-answer {
+  display: grid;
+  gap: 10px;
+  max-width: 72ch;
+}
+.tp-answer h3 {
+  font-size: clamp(19px, 1.7vw, 22px);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.tp-answer p {
+  color: var(--tp-muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.tp-answer-links {
+  max-width: 72ch;
+  padding-top: 20px;
+  border-top: 1px solid var(--tp-line);
+  color: var(--tp-muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.tp-answer-links a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

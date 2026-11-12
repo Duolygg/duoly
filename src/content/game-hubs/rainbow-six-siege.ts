@@ -105,7 +105,7 @@ export const rainbowSixSiege: HubPageCopy = {
       heading: 'Who is the teammate you queue with?',
       paragraphs: [
         'The teammate you queue with is a reviewed Siege player who applied for the game and showed a rank before taking orders. Duo Plus names an Emerald+ player, Duo Pro a Diamond+ player and Duo Apex a Champion-level player from {{p_duo3_low}} per match, which is the top tier Duoly sells for the game. Orders are not auto-assigned: a teammate picks yours up from the queue, so the person who accepts chose your request. Nobody from Duoly ever logs into your account.',
-        'What the rank buys is information. A Diamond+ teammate drones the site before the push and names the defender instead of guessing, so the callout lands while the timer still matters. Voice runs using Discord for exactly that reason. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. Bundles of {{main}} cut the total: {{bundles}}. You keep your operator and your account in all 3 matches.',
+        'What the rank buys is information. A Diamond+ teammate drones the site before the push and names the defender instead of guessing, so the callout lands while the timer still matters. Voice runs using Discord for exactly that reason. Rank also sets the price: Duo Pro costs {{p_duo2_low}} per match at {{rank_duo2_low}} and {{p_duo2_high}} at {{rank_duo2_high}}. A {{main}} bundle saves more the bigger it is: {{savings}}. You keep your operator and your account in all 3 matches.',
       ],
     },
     {

@@ -192,6 +192,9 @@ export function priceNote(offers: Offers, coach = false) {
   // points at the rules rather than repeating them; the ladder it used to
   // repeat belongs to the main teammate service anyway.
   if (offers[0]!.cat === 'other')
-    return `Each price above covers one ${unit} for the whole group, before account perks. ${rule} The discount rules are the ones listed with the teammate prices above, and payment finishes on duoly.gg.`;
+    // The flat-price rule reads the same under both grids on a game where
+    // nothing is ranked, which printed one sentence twice on a page. The group
+    // grid states the rule for a group instead.
+    return `Each price above covers one ${unit} for the whole group, before account perks. ${ranked ? 'A group price moves with your own rank, like the ranked services above.' : 'Every rank pays this same figure, whoever is in the group.'} The discount rules are the ones listed with the teammate prices above, and payment finishes on duoly.gg.`;
   return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)} Payment finishes on duoly.gg. You play on your own account and talk using Discord.`;
 }

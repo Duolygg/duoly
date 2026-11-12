@@ -109,7 +109,7 @@ export const apexLegends: HubPageCopy = {
       heading: 'What does a Full Trio booking include in Apex?',
       paragraphs: [
         'Full Trio is one order that hires two Master+ players at once, so a solo queue becomes a real trio from {{p_trio_low}} per hour for {{seats_trio}} seats. Apex Ranked plays in squads of 3, so two hired seats is the whole rest of your squad. Agree the legend classes, because a trio wants scan, ground control and damage rather than three of the same. For example, a Recon main books both seats and asks for a Controller and a Support legend.',
-        'The Duos playlist is the other shape at {{p_duos}} per hour, with 2-player squads, shorter games and nobody filling a third seat. Full Trio reads your own rank like the Ranked duos do, from {{p_trio_low}} per hour. Voice runs using Discord, invites go out with your EA ID, and nobody needs your login. Bundles of {{main}} still take {{bundles}}, read from Duoly checkout in 2026.',
+        'The Duos playlist is the other shape at {{p_duos}} per hour, with 2-player squads, shorter games and nobody filling a third seat. A Full Trio starts at {{p_trio_low}} per hour and climbs with your own rank, exactly like the Ranked duos. Voice runs using Discord, invites go out with your EA ID, and nobody needs your login. Bundles of {{main}} still take {{bundles}}, read from Duoly checkout in 2026.',
       ],
     },
     {

@@ -130,6 +130,17 @@ export function hubPrices(
       `${prices[`pct${units}`]} off ${units}${index === 0 ? ` ${unit}` : ''}`,
   );
   prices.bundles = `${steps.slice(0, -1).join(', ')} and ${steps.at(-1)}`;
+  // `{{savings}}` is the same ladder from the same percentages, written per
+  // bundle: "3 games save 10%, 5 save 20% and 10 save 25%". A hub has to state
+  // the discount beside the price grid and again where a service is explained,
+  // and the page quality audit found the identical sentence printed twice on
+  // seven hubs. The second place states the saving instead, so the figures are
+  // still there and the reader is not reading the same line again.
+  const saves = BUNDLES.map(
+    (units, index) =>
+      `${units}${index === 0 ? ` ${unit}` : ''} save ${prices[`pct${units}`]}`,
+  );
+  prices.savings = `${saves.slice(0, -1).join(', ')} and ${saves.at(-1)}`;
   prices.picker = `up to 5 ${unit}, where 5 take ${prices.pick5} off`;
   return prices;
 }
