@@ -421,4 +421,5 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
+    raise SystemExit('Hosted fixture transport disabled; use disposable local SQL CI')
     raise SystemExit(main())

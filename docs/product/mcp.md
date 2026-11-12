@@ -145,7 +145,7 @@ It adds an RLS-enabled counter table, service_role-only privileges and a securit
 **Not applied remotely by this PR.** Apply before merging/enabling the route, because the application depends on this RPC. Owner steps:
 
 1. Review this additive migration and confirm its version is newer than the applied remote history and does not conflict with another pending migration.
-2. Run the rollback-only SQL test against a disposable local Supabase before applying. The implementation machine has no Docker or Podman, so local PostgreSQL acceptance was unavailable.
+2. SQL tests run in the `sql-tests` GitHub Actions job against a disposable local database; never run them against the hosted project. Local Docker execution is verified by that job, not by offline unit tests.
 3. Use the project's normal approved migration procedure. `supabase db push --dry-run` first, inspect the exact pending list, then apply only after owner authorization. Do not use reset or blindly push unrelated pending migrations.
 4. Read back RLS, grants and the function definition. Verify anon and authenticated cannot call the RPC or read the table.
 5. Add `MCP_IP_HASH_SECRET` in Vercel, generated with a secure random source, at least 32 characters. The route also needs existing `SUPABASE_URL` and `SUPABASE_SECRET_KEY` service-role credentials. Never use browser-public env names for secrets.

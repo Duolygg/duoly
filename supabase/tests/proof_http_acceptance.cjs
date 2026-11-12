@@ -1082,6 +1082,11 @@ async function run(options) {
   if (!ok) process.exitCode = 1;
 }
 module.exports = {
+  // Kept for source review only, never invoked by the command entrypoint.
+  disabledHostedRunner: () => {
+    void run;
+    throw new Error('Hosted fixture execution is disabled');
+  },
   parseArgs,
   proofPath,
   isolatedEnv,
@@ -1098,9 +1103,9 @@ if (require.main === module) {
     console.error(JSON.stringify({ ok: false, error: 'GUARD_REFUSED' }));
     process.exitCode = 1;
   }
-  if (options)
-    run(options).catch(() => {
-      console.error(JSON.stringify({ ok: false, error: 'PREFLIGHT_REFUSED' }));
-      process.exitCode = 1;
-    });
+  if (options) {
+    // Hosted fixture execution is disabled; offline exports remain available.
+    console.error(JSON.stringify({ ok: false, error: 'GUARD_REFUSED' }));
+    process.exitCode = 1;
+  }
 }

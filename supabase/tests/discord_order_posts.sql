@@ -1,3 +1,18 @@
+do $duoly_test_guard$
+declare production_secret boolean := false;
+begin
+  if not exists (select 1 from pg_catalog.pg_namespace where nspname = 'duoly_test_marker') then
+    raise exception 'refusing to run tests on production';
+  end if;
+  if pg_catalog.to_regclass('vault.secrets') is not null then
+    execute 'select exists (select 1 from vault.secrets where name = ''payments_tick_secret'')' into production_secret;
+  end if;
+  if production_secret then
+    raise exception 'refusing to run tests on production';
+  end if;
+end;
+$duoly_test_guard$;
+
 -- Rollback-only checks for 20261026140000_discord_order_posts.sql (ledger #41).
 -- Run with the migration body prepended in one transaction; everything is rolled back.
 begin;
@@ -203,10 +218,24 @@ begin
      or has_table_privilege('service_role','public.discord_order_posts','insert')
      or has_table_privilege('authenticated','public.discord_order_posts','select')
   then raise exception 'permissions wrong'; end if;
-  if not exists (select 1 from cron.job where jobname = 'duoly-discord-orders-tick' and schedule = '10 seconds' and active) then
-    raise exception 'orders tick not scheduled'; end if;
-  if not exists (select 1 from cron.job where jobname = 'duoly-discord-roles-log-prune' and command like '%duoly-discord-orders-tick%') then
-    raise exception 'log prune misses the orders tick'; end if;
+  -- Interim dispatcher contract: retain old definitions for rollback, but never run both.
+  if not exists (select 1 from cron.job where jobname = 'duoly-discord-orders-tick'
+      and username = current_user and schedule = '10 seconds' and not active) then
+    raise exception 'orders tick not retained paused'; end if;
+  if not exists (select 1 from cron.job where jobname = 'duoly-discord-roles-log-prune'
+      and username = current_user and not active and command like '%duoly-discord-orders-tick%') then
+    raise exception 'old Discord log prune not retained paused'; end if;
+  if not exists (select 1 from cron.job where jobname = 'duoly-dispatch'
+      and username = current_user and active and schedule = '10 seconds'
+      and command = 'select public.duoly_dispatch();') then
+    raise exception 'shared dispatcher not active at 10 seconds'; end if;
+  if not exists (select 1 from cron.job where jobname = 'duoly-cron-log-prune'
+      and username = current_user and active and schedule = '0 * * * *'
+      and command like '%delete from cron.job_run_details%'
+      and command like '%end_time < pg_catalog.clock_timestamp() - interval ''24 hours''%'
+      and command like '%order by end_time, runid limit 50000%'
+      and command not like '%jobname%') then
+    raise exception 'bounded global cron log prune missing'; end if;
 end $$;
 
 select 'discord_order_posts: all checks passed' as result;
