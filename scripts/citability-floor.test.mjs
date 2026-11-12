@@ -68,8 +68,8 @@ const REFERENCE_PAGES = {
  * green is to move a URL out as it is fixed. The list cannot quietly grow and
  * it cannot quietly go stale.
  *
- * Why these 18 are here, and what the owner has to decide
- * ------------------------------------------------------
+ * Why the 18 voice-pass entries are here, and what the owner has to decide
+ * -----------------------------------------------------------------------
  * The human-voice pass rewrote them, and the scorer pays for the habits that
  * pass removed. Measured on the pages this list replaced: the previous copy
  * carried a price, the year, a Duoly self-attribution ("read from Duoly
@@ -93,12 +93,37 @@ const REFERENCE_PAGES = {
  * is advisory, as it is for those three, or the floor wins and the voice work
  * is reverted. Until that decision, the scores are pinned here where they are
  * visible, every technical SEO check still applies to all 18, and the floor
- * stays at 80 for every other page, including all 60 game, intent and coaching
- * pages, which still clear it.
+ * stays at 80 for every other page, including 59 of the 60 game, intent and
+ * coaching pages, which still clear it. The sixtieth,
+ * /games/pokemon-unite/teammate, is declared under AUDIT_PASS below.
  */
 const VOICE_PASS =
   'Human-voice pass, 12 November 2026; score pending owner decision.';
+/**
+ * The page quality audit's first fix pass, 12 November 2026.
+ *
+ * The audit found the bundle ladder printed two and three times on one page:
+ * the grid note under every price grid stated it, and the closing paragraph
+ * stated the same sentence again. The closing paragraph now states the saving
+ * per bundle instead, which is the same figures from the same helper in the
+ * shape a summary wants.
+ *
+ * That costs exactly 4 points on the closing block, all of them in structural
+ * readability, and the reason is an accident rather than a quality difference:
+ * the old sentence ended "25% off 10." and the scorer's numbered-item regex
+ * (`\d+[\.\)]\s`) read "10. " as a list item. Recreating that match would be
+ * the score-only insertion the scorer notes warn against, so the point stays
+ * lost and the score is declared here.
+ *
+ * One page of the 60 game, intent and coaching pages falls under 80 because of
+ * it, by 0.4. The owner decides the same question as the voice pass above: keep
+ * the de-duplicated copy and treat the score as advisory, or restore the
+ * repeated ladder on all 46 pages that carry it.
+ */
+const AUDIT_PASS =
+  'Page quality audit fix pass, 12 November 2026: de-duplicated bundle ladder; score pending owner decision.';
 const BELOW_FLOOR = {
+  '/games/pokemon-unite/teammate': { holds: 79, reason: AUDIT_PASS },
   '/games': { holds: 68, reason: VOICE_PASS },
   '/how-it-works': { holds: 68, reason: VOICE_PASS },
   '/trust-and-safety': { holds: 65, reason: VOICE_PASS },

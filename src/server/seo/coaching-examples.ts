@@ -33,7 +33,8 @@ export const withPrices = (text: string, offers: Offers) =>
       amountOf(offers, id),
     );
 
-const article = (word: string) => (/^[AEIOU]/i.test(word) ? 'an' : 'a');
+/** "an Apex Legends lesson", "a Valorant lesson". Exported so headings agree with the prose. */
+export const article = (word: string) => (/^[AEIOU]/i.test(word) ? 'an' : 'a');
 
 /** The year the catalog's prices belong to, so a quoted figure is dated. */
 const CATALOG_YEAR = CATALOG_PRICES_UPDATED.slice(0, 4);

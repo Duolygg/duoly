@@ -33,12 +33,13 @@ import {
   TEAMMATE_MIN_RANKS,
 } from '../server/seo/booking';
 import { providerTier } from '../server/seo/price-table';
+import { article } from '../server/seo/coaching-examples';
 import { LEGAL_UPDATED } from '../design-reference/lib/site.js';
 
 const { viewer, csrf } = await pageViewer(Astro);
 const path = '/trust-and-safety';
 const title = 'Duoly Trust and Safety: How Players Are Checked | Duoly';
-const description = `How Duoly checks teammates and coaches, who handles the card payment, the conduct rules both sides sign up to, how to report a session and what Duoly never does.`;
+const description = `How Duoly checks teammates and coaches, who handles the card payment, the conduct rules both sides accept, how to report a session and what Duoly never does.`;
 const HUB_LINKS = hubChips([
   'valorant',
   'league-of-legends',
@@ -166,9 +167,9 @@ const faq: [string, string][] = [
         of Legends applicant needs Diamond 4 or higher. Then one tryout game
         with the Duoly team on Discord. Only after that does the account go
         online and start seeing orders. So a {SINGLE_GAME.total} Duo Pro game
-        pairs you with a {DUO_PRO_TIER} who has been through all four steps, and{' '}
-        {SHARE_PERCENT}% of what you paid reaches them when the order is
-        complete.
+        pairs you with {article(DUO_PRO_TIER)} {DUO_PRO_TIER} who has been
+        through all four steps, and {SHARE_PERCENT}% of what you paid reaches
+        them when the order is complete.
       </p>
       {/* The same four stages as a timeline. Divs and spans, so the paragraph
           above stays the one extractable answer rather than being repeated. */}
@@ -197,10 +198,11 @@ const faq: [string, string][] = [
       </p>
       <p>
         Every service names the tier it pairs you with, so a League of Legends
-        Duo Pro game means a {DUO_PRO_TIER}, while Duo Apex means a{' '}
-        {DUO_APEX_TIER}. Coaches carry the coach rank on their game’s coaching
-        page and send a sample review before they are approved, which is why a
-        Valorant VOD Review hour names a {VALORANT_COACH_TIER}. Gamer Girl
+        Duo Pro game means {article(DUO_PRO_TIER)} {DUO_PRO_TIER}, while Duo
+        Apex means {article(DUO_APEX_TIER)} {DUO_APEX_TIER}. Coaches carry the
+        coach rank on their game’s coaching page and send a sample review before
+        they are approved, which is why a Valorant VOD Review hour names{' '}
+        {article(VALORANT_COACH_TIER)} {VALORANT_COACH_TIER}. Gamer Girl
         sessions take any rank, because rank is not what is being booked. A
         teammate who stops keeping a verified rank honest loses the account,
         under the <a href="/terms#teammates">teammate terms</a>.
@@ -310,9 +312,10 @@ const faq: [string, string][] = [
       </p>
       <p>
         What the price buys is playing time. A League of Legends Duo Pro game
-        buys one game beside a {DUO_PRO_TIER}, with Discord voice if you want
-        it, and a {BUNDLE_PERCENTS[2]}% bundle discount buys ten of those games
-        more cheaply. Neither one buys a result.
+        buys one game beside {article(DUO_PRO_TIER)} {DUO_PRO_TIER}, with
+        Discord voice if you want it, and a {BUNDLE_PERCENTS[2]}% bundle
+        discount buys ten of those games more cheaply. Neither one buys a
+        result.
       </p>
       <div class="official-grid">
         {NOT_DUOLY.map(([label, detail]) => (

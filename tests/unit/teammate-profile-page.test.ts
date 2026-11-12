@@ -198,13 +198,15 @@ describe('public profile page', () => {
       expect(profileMetadata(pip).indexing).toBe('noindex, follow');
     });
     it('writes a description out of the facts that exist and nothing else', () => {
+      /* A bio too long to fit the search result contributes its first sentence,
+         so the description ends on a full stop instead of trailing off. */
       expect(profileMetadata(rhea).description).toBe(
-        'Meet Rhea, a League of Legends teammate on Duoly. Speaks German and English. ' +
-          rhea.bio,
+        'Meet Rhea, a League of Legends teammate on Duoly. Speaks German and English. Jungle and support main.',
       );
-      /* No languages and no bio, so neither sentence is there at all. */
+      /* No languages and no bio, so neither sentence is there at all, and the
+         page ends on what it still answers rather than stopping at 48. */
       expect(profileMetadata(pip).description).toBe(
-        'Meet Pip, a Teamfight Tactics teammate on Duoly.',
+        'Meet Pip, a Teamfight Tactics teammate on Duoly. See the games Pip plays and what a session costs before you book.',
       );
       expect(profileMetadata(pip).description).not.toContain('Speaks');
       expect(profileMetadata(pip).title).toBe(
@@ -212,6 +214,46 @@ describe('public profile page', () => {
       );
       for (const p of [rhea, pip, crafty])
         expect(JSON.stringify(profileMetadata(p))).not.toMatch(/[–—&]/);
+    });
+    it('keeps every profile description inside what a search result prints', () => {
+      /* 214 to 253 characters on five profiles and 48 on another is what the
+         page quality audit found; both ends lose the reader. */
+      for (const slug of [
+        'nyx',
+        'rhea',
+        'pip',
+        'crafty',
+        'sola',
+        'kairo',
+        'lumi',
+        'echo',
+      ]) {
+        const found = fixtureLookup(slug);
+        expect(found.status).toBe('ok');
+        if (found.status !== 'ok') continue;
+        const { description } = profileMetadata(found.profile);
+        expect(
+          description.length,
+          `${slug}: ${description.length} characters`,
+        ).toBeGreaterThanOrEqual(70);
+        expect(
+          description.length,
+          `${slug}: ${description.length} characters`,
+        ).toBeLessThanOrEqual(160);
+      }
+    });
+    it('writes "an" before a rank that starts with a vowel', () => {
+      const found = fixtureLookup('nyx');
+      expect(found.status).toBe('ok');
+      if (found.status !== 'ok') return;
+      /* "Meet Nyx, a Immortal 3 ..." is what the fixed article template used to
+         produce on every Immortal, Ascendant and Emerald profile. */
+      expect(profileMetadata(found.profile).description).toContain(
+        'an Immortal 3',
+      );
+      expect(profileMetadata(found.profile).description).not.toContain(
+        'a Immortal',
+      );
     });
     it('keeps the empty Person fields out of the structured data', () => {
       const person = profileSchemas(pip, new URL('https://duoly.gg'))[0]!

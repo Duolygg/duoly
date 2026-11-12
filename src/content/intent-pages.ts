@@ -209,38 +209,38 @@ export const intentPages: IntentPage[] = [
   {
     slug: 'teammate',
     gameSlug: 'pokemon-unite',
-    formatHeading: 'What is a Pokemon Unite teammate booking?',
-    stepsHeading: 'How do you book a Pokemon Unite teammate?',
-    prepareHeading: 'How should you prepare for a Pokemon Unite session?',
+    formatHeading: 'What is a Pokémon Unite teammate booking?',
+    stepsHeading: 'How do you book a Pokémon Unite teammate?',
+    prepareHeading: 'How should you prepare for a Pokémon Unite session?',
     faqHeading: 'Questions before you queue?',
     closing:
-      'A Pokemon Unite booking from Duoly is one partner for the games you choose. Pick your mode, your lane and a Pokemon you enjoy. Ask for a Defender beside your Attacker. Then agree on voice using Discord and your first objective call in the order chat.',
+      'A Pokémon Unite booking from Duoly is one partner for the games you choose. Pick your mode, your lane and a Pokémon you enjoy. Ask for a Defender beside your Attacker. Then agree on voice using Discord and your first objective call in the order chat.',
     title: 'Pokemon Unite Teammate: Ranked and Casual Duo | Duoly',
-    h1: 'Book a Pokemon Unite teammate for ranked or casual games',
-    lead: 'Find a Pokemon Unite teammate for Ranked, Standard or Quick Battle. Plan lanes, pick complementary roles and coordinate the next objective together.',
+    h1: 'Book a Pokémon Unite teammate for ranked or casual games',
+    lead: 'Find a Pokémon Unite teammate for Ranked, Standard or Quick Battle. Plan lanes, pick complementary roles and coordinate the next objective together.',
     description: (price) =>
-      `Book a Pokemon Unite teammate ${price}. Play ranked, Standard or Quick Battle with a duo partner. Plan lanes, roles and team compositions together.`,
+      `Book a Pokémon Unite teammate ${price}. Play ranked, Standard or Quick Battle with a duo partner. Plan lanes, roles and team compositions together.`,
     service: 'quick',
     services: {
       duo1: 'Ranked games with an Ultra+ teammate. Agree on lanes, share objective calls and coordinate with the rest of the team.',
       duo2: 'Ranked games with a Master teammate. Plan lane pressure, rotations and team fights around the map.',
       quick:
-        'Standard or Quick Battle with a teammate while trying Pokemon, moves and different roles.',
+        'Standard or Quick Battle with a teammate while trying Pokémon, moves and different roles.',
     },
     facts: [
-      'Pokemon Unite only',
+      'Pokémon Unite only',
       'Ranked, Standard or Quick Battle',
       'Ultra+ or Master ranked partners',
     ],
     format:
-      'A Pokemon Unite teammate booking is a paid partner for your chosen games. You both play on your own accounts. Duo Plus pairs you with an Ultra+ teammate. Duo Pro brings a Master teammate from Duoly. Choose Standard and Quick Battle to try Pokemon, moves and roles without ranked pressure. Pick your mode and game count. A Unite team holds 5. Your partner fills 1 seat, so three teammates still arrive from the normal queue. Use the order chat to agree on lanes, voice using Discord and a start time. For example, an Attacker can ask for a Defender who holds space while the lane farms toward the next move upgrade. Check the other picks before locking in, so the duo leaves room for the central area and a workable front line. The booking covers Unite only, and prices start at {{puPlus}} per game in 2026.',
+      'A Pokémon Unite teammate booking is a paid partner for your chosen games. You both play on your own accounts. Duo Plus pairs you with an Ultra+ teammate. Duo Pro brings a Master teammate from Duoly. Choose Standard and Quick Battle to try Pokémon, moves and roles without ranked pressure. Pick your mode and game count. A Unite team holds 5. Your partner fills 1 seat, so three teammates still arrive from the normal queue. Use the order chat to agree on lanes, voice using Discord and a start time. For example, an Attacker can ask for a Defender who holds space while the lane farms toward the next move upgrade. Check the other picks before locking in, so the duo leaves room for the central area and a workable front line. The booking covers Unite only, and prices start at {{puPlus}} per game in 2026.',
     pricesIntro:
-      'Pokemon Unite teammate prices from Duoly start at {{puPlus}} per game. Ranked prices follow your current rank; Standard and Quick Battle stays {{puQuick}} at every rank. Duo Pro includes a Master teammate. For example, an Expert player in Europe pays {{puPro}} for one Duo Pro game or {{puPro3}} for a 3-game bundle. Select your rank to see the exact total before paying. Agree lanes, voice using Discord and a start time in the order chat.',
+      'Pokémon Unite teammate prices from Duoly start at {{puPlus}} per game. Ranked prices follow your current rank; Standard and Quick Battle stays {{puQuick}} at every rank. Duo Pro includes a Master teammate. For example, an Expert player in Europe pays {{puPro}} for one Duo Pro game or {{puPro3}} for a 3-game bundle. Select your rank to see the exact total before paying. Agree lanes, voice using Discord and a start time in the order chat.',
     sections: [
       {
         heading: 'Which roles work well together in lane?',
         paragraphs: [
-          'A Defender and Attacker is a useful Unite lane pairing. For example, the Defender can interrupt an engage while the Attacker deals damage from a safe position. Pokemon Unite groups every Pokemon into 5 roles in 2026: Attacker, Defender, Speedster, All-Rounder and Supporter. A Supporter can do a similar job to a Defender, depending on the moves you choose. Start with picks you know well enough to use under pressure. Say early whether you need farm to evolve before the first Drednaw.',
+          'A Defender and Attacker is a useful Unite lane pairing. For example, the Defender can interrupt an engage while the Attacker deals damage from a safe position. Pokémon Unite groups every Pokémon into 5 roles in 2026: Attacker, Defender, Speedster, All-Rounder and Supporter. A Supporter can do a similar job to a Defender, depending on the moves you choose. Start with picks you know well enough to use under pressure. Say early whether you need farm to evolve before the first Drednaw.',
           'Agree on top path, bottom path or central area before locking in, then look at the other three picks. A Unite team holds 5. Taking central-area resources from the player who needs the farm breaks the whole composition. Call a retreat before leaving a lane partner alone at a goal zone, and keep calls short enough to act on using Discord. A teammate from Duoly can coordinate lanes; nobody can promise the result of a five-player match.',
         ],
       },
@@ -254,8 +254,8 @@ export const intentPages: IntentPage[] = [
       {
         heading: 'Should we play Ranked or a casual mode first?',
         paragraphs: [
-          'Standard and Quick Battle is the better starting point when you want to try a role or get used to making calls with a new partner, at {{puQuick}} per game for every rank. Ranked makes more sense once you know your Pokemon and have held items ready. Share your rank and region at checkout, because Ranked prices follow your own rank while the casual modes do not.',
-          'For example, a player ranked Expert in Europe pays {{puPro}} per game for Duo Pro, and 3 games cost {{puPro3}} after the {{pct3}} bundle discount. Duo Plus brings an Ultra+ teammate for less, and Duo Apex brings a Legend player for more, so the tier is the choice rather than the mode. Choose the game count around the time you actually have, and leave room to talk between queues. A Ranked match runs 10:00. A teammate from Duoly coordinates lanes and objectives with you using Discord voice, and the [Pokemon Unite hub](/games/pokemon-unite) lists every service for the game.',
+          'Standard and Quick Battle is the better starting point when you want to try a role or get used to making calls with a new partner, at {{puQuick}} per game for every rank. Ranked makes more sense once you know your Pokémon and have held items ready. Share your rank and region at checkout, because Ranked prices follow your own rank while the casual modes do not.',
+          'For example, a player ranked Expert in Europe pays {{puPro}} per game for Duo Pro, and 3 games cost {{puPro3}} after the {{pct3}} bundle discount. Duo Plus brings an Ultra+ teammate for less, and Duo Apex brings a Legend player for more, so the tier is the choice rather than the mode. Choose the game count around the time you actually have, and leave room to talk between queues. A Ranked match runs 10:00. A teammate from Duoly coordinates lanes and objectives with you using Discord voice, and the [Pokémon Unite hub](/games/pokemon-unite) lists every service for the game.',
         ],
       },
     ],
@@ -265,10 +265,10 @@ export const intentPages: IntentPage[] = [
       'Meet in the order chat, exchange Trainer details and agree on voice using Discord. A teammate from Duoly joins on a separate account, so keep passwords private and send the game invite yourself.',
     ],
     prepare: [
-      'Preparation for a Pokemon Unite session is a short checklist: an updated client, Trainer details and one lane preference.',
-      'Update Pokemon Unite and have your Trainer details ready, because a lobby invite needs the exact name.',
-      'Bring a familiar Pokemon and a backup in case another player locks the same one, for example an Attacker you trust and a Defender for the lane.',
-      'Check held items and battle items before the first lobby. Each Pokemon carries 3. Swapping items late in a series only wastes queue time.',
+      'Preparation for a Pokémon Unite session is a short checklist: an updated client, Trainer details and one lane preference.',
+      'Update Pokémon Unite and have your Trainer details ready, because a lobby invite needs the exact name.',
+      'Bring a familiar Pokémon and a backup in case another player locks the same one, for example an Attacker you trust and a Defender for the lane.',
+      'Check held items and battle items before the first lobby. Each Pokémon carries 3. Swapping items late in a series only wastes queue time.',
       'Tell your partner which lane you prefer and whether you want relaxed chat or short objective calls using Discord.',
       'Agree on a retreat call and an objective call, then check which arena the mode is using in 2026.',
       'A teammate from Duoly joins on a separate account, so nobody ever needs your login or your password.',
@@ -276,8 +276,8 @@ export const intentPages: IntentPage[] = [
     ],
     faq: [
       [
-        'Is this only for Pokemon Unite?',
-        'A booking from Duoly covers Pokemon Unite Ranked, Standard and Quick Battle only. Other Pokemon games, trading and card battles sit outside the service.',
+        'Is this only for Pokémon Unite?',
+        'A booking from Duoly covers Pokémon Unite Ranked, Standard and Quick Battle only. Other Pokémon games, trading and card battles sit outside the service.',
       ],
       [
         'How much does it cost?',
@@ -285,11 +285,11 @@ export const intentPages: IntentPage[] = [
       ],
       [
         'Can I ask for a particular lane partner?',
-        'Share your preferred lane and Pokemon before queueing, then ask for a complementary role such as a Defender to make space for your Attacker. Agree on the lane plan using Discord before the first queue.',
+        'Share your preferred lane and Pokémon before queueing, then ask for a complementary role such as a Defender to make space for your Attacker. Agree on the lane plan using Discord before the first queue.',
       ],
       [
         'Where can I find free teammates?',
-        'Try friends, in-game invites or a Pokemon Unite Discord LFG group. Include your rank, region and preferred lane so people can tell whether the lobby will work.',
+        'Try friends, in-game invites or a Pokémon Unite Discord LFG group. Include your rank, region and preferred lane so people can tell whether the lobby will work.',
       ],
       [
         'Does my partner need my login?',

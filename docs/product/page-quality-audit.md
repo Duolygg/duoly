@@ -151,6 +151,80 @@ description columns show the character count, marked short or long against 30 to
 | [`/terms`](https://duoly.gg/terms)                                                                                       | index   | no        | 13 short | 71          | 1   | yes       | none          | 1595  | 7.7   | 0                 | 72                 | 16        | 3     | Plain language for a terms page, with six ampersand headings and no schema.                                                                 | title short (13); duplicate description; no JSON-LD; copy rules: ampersand                                                                                            |
 | [`/trust-and-safety`](https://duoly.gg/trust-and-safety)                                                                 | index   | #220      | 55       | 161 long    | 1   | yes       | 6             | 2043  | 8.5   | 9                 | 8                  | 31        | 4     | The four step review is specific and checkable; one sentence says “a Immortal” and the description runs 161 characters.                     | description long (161); wrong article: a Immortal                                                                                                                     |
 
+## What the first fix pass changed, 12 November 2026
+
+The technical failures below are fixed, and the first half of the copy work is
+done. Rerun figures from the same script against a fresh build:
+
+| Measure                                    | Audit | After |
+| ------------------------------------------ | ----: | ----: |
+| Findings                                   |   116 |    93 |
+| Pages with a finding                       |    70 |    69 |
+| Duplicate meta descriptions                |     3 |     0 |
+| Descriptions outside 70 to 160 characters  |     9 |     0 |
+| Indexable pages with no JSON-LD            |     4 |     0 |
+| Wrong articles ("a Immortal", "a Apex")    |     6 |     0 |
+| Pages repeating a sentence inside the page |    55 |    32 |
+| Repeated sentences, all pages              |   115 |    39 |
+| Copy-rule violations                       |     4 |     2 |
+| Missing alt text, duplicate titles         |     0 |     0 |
+
+What moved, by fix list item:
+
+1. `/teammates` went from 145 words to 346, with three question headings that
+   say what saving a teammate changes and what it does not, and it now carries
+   CollectionPage and ItemList data built from the profiles that qualify for
+   indexing. `profileMetadata` writes the article from the rank, so no profile
+   says "a Immortal 3", and every description lands inside 70 to 160: the five
+   that ran 214 to 253 now stop at a sentence boundary, and `/teammates/pip`
+   ends on what the page still answers instead of stopping at 48.
+2. No coaching page mentions the Duoly pricing engine. The closing paragraph
+   says where the price is fixed and when it was last checked.
+3. `/terms` and `/privacy` render "and" for every ampersand and a hyphen for
+   the en dash in "EU-US Data Privacy Framework", through
+   `src/site/legal-copy.ts`, because the source text is in the protected design
+   reference. Section ids are untouched, so every link into the documents still
+   lands.
+4. Wrong articles are gone: the coaching session heading reads "an Apex
+   Legends", `/trust-and-safety` says "an Immortal+ coach", and the three
+   profile descriptions are fixed by the template above.
+5. `/contact`, `/privacy` and `/terms` each describe themselves and carry a
+   ContactPage or WebPage node. `/contact` also answers four questions it used
+   to leave to the form: how to reach Duoly, which topic to pick, what to put
+   in a message about an order, and which questions already have a page. It
+   went from 314 words to 465.
+6. The within-page repetition is largely gone. The discount ladder was printed
+   by the note under every price grid and again by the closing paragraph, which
+   is why a hub carried it three times; the team grid now states what is
+   different about booking a group, and the closing paragraph states the saving
+   per bundle. `/games/league-of-legends` has no repeated sentence left.
+9. `/games/pokemon-unite` and the Pokémon Unite teammate page spell the game
+   the way the catalog does, accent included, in every heading and paragraph.
+   The two page titles keep their current spelling, because the brief freezes
+   the titles of indexed pages.
+
+Still open, and why:
+
+- **Item 10, the two `#cookie-settings` anchors.** Both come from protected
+  files (`src/site/nav.ts` for the footer link, the design reference for the
+  privacy policy's), so neither can be fixed from here.
+- **Item 3, the homepage and `/contact` ampersands.** "Prices & payments" is in
+  the protected homepage markup, and the good-to-know sidebar labels are in
+  `Contact.jsx`, which is component markup. Worth knowing:
+  `src/contracts/support.ts` already writes "Privacy and data" while
+  `Contact.jsx` writes "Privacy & data", so the contract and the form disagree
+  today.
+- **Items 7 and 8 and the rest of item 6**, which is the cross-page boilerplate
+  and the price repeated across paragraphs on 46 pages. That is the second half
+  of the work.
+- **One citability score.** De-duplicating the ladder costs
+  `/games/pokemon-unite/teammate` 0.4 points and puts it at 79.6 against a
+  floor of 80. The 4 points lost are an accident of the scorer rather than a
+  quality difference: the old sentence ended "25% off 10." and the numbered-item
+  regex read "10. " as a list item. It is declared in
+  `scripts/citability-floor.test.mjs` under `AUDIT_PASS`, and it needs the same
+  owner decision as the voice pass entries beside it.
+
 ## Ranked fix list
 
 Ordered by what a first time reader loses. Counts come from the report.

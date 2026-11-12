@@ -33,10 +33,10 @@ export const socialContent: HubCopy = {
   ],
   sections: [
     {
-      heading: 'Choose the activity you want',
+      heading: 'Which Social activity should you pick?',
       paragraphs: [
-        '**Just Chat** is for talking about games, music or your day. Bring a topic or keep it casual. **Watch Together** adds a shared movie, show or stream with voice conversation. Pick something you can both stream.',
-        '**Sleep Call** is calm background chat while you wind down. Agree the volume, conversation and ending before the call begins. **Karaoke** lets you pick songs and sing together. Agree requests with your host. A playlist helps, and it is fine to pick a different song.',
+        'Pick the one that matches the evening you actually want. **Just Chat** is an hour of conversation about games, music or your day, and it works whether you bring a topic or none. **Watch Together** puts a film, a show or a stream on while you talk, so pick something you can both start at the same time. Both are the usual first booking.',
+        '**Sleep Call** is quieter company while you wind down, so agree the volume and how the call should end before it starts. **Karaoke** is for picking songs and singing them badly together, and a rough playlist helps more than a perfect one. Nobody has to be good at it. Every activity is the same hourly voice call underneath, so the choice is about mood rather than money.',
       ],
     },
     {
@@ -46,17 +46,17 @@ export const socialContent: HubCopy = {
       ],
     },
     {
-      heading: 'A comfortable first hour',
+      heading: 'What happens in the first hour?',
       paragraphs: [
-        'A Just Chat hour can start with introductions and a topic you both enjoy. Check audio and agree how you will end the call. Spend most of the hour on the conversation, then leave a few minutes to wrap up. For Watch Together, set up the content and playback at the start.',
-        'Have Discord, headphones and a quiet room ready if you can. Use a screen name and keep addresses, payment details and personal notifications private. Ask before recording anything. Either of you can decline a topic, and a good session leaves both people free to state their limits.',
+        'It starts the way any voice call starts. You say hi in the order chat, agree a start time, then join Discord. A Just Chat hour usually opens with introductions and whatever you both feel like talking about, and it helps to settle how the call ends before you need to end it. For Watch Together, get the playback lined up first, because ten minutes of fixing a stream is ten minutes of the hour.',
+        'Headphones and a room where you can talk make the difference. Use a screen name, keep your address and payment details to yourself, and mute the notifications you would not want read out. Ask before recording anything. Either of you can say no to a topic at any point, and the good hours are the ones where both people say what they are up for early.',
       ],
     },
     {
-      heading: 'Verification and boundaries',
+      heading: 'How is a Gamer Girl verified?',
       paragraphs: [
-        'Duoly reviews every Gamer Girl application before she can take Social orders. When you choose an e-girl website, look for clear session rules, real prices and a way to report problems; Duoly has all three.',
-        'If a request or behavior crosses a boundary, use the order tools and contact support. Keep payment and messages on Duoly so the booking stays on record, and never send private payments or account credentials. Read the terms for cancellation, refunds and disputes.',
+        'Duoly reviews every Gamer Girl application before she can accept a single Social order, and only verified accounts ever see them. That is the whole gate, and it is worth knowing what it is: no rank is checked here, because rank is not what you are booking. If you are comparing e-girl websites, the three things to look for are clear session rules, real prices on the page and a way to report a problem.',
+        'Social is friendly company and nothing else. Nobody under 18 is on either side of a booking, and dating, romantic or sexual services are outside the service. If a request or a behaviour crosses a line, use the order tools and write to support. Keep payment and messages on Duoly so the booking stays on record, and never send a private payment or your account details to anyone. The [terms](/terms) carry the cancellation, refund and dispute rules.',
       ],
     },
   ],

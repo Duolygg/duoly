@@ -156,17 +156,51 @@ export function profileList(items: string[]) {
   if (items.length < 2) return items[0] ?? '';
   return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
 }
+/** "an Immortal 3", "a Valorant": the rank and the game both follow the same rule. */
+const profileArticle = (phrase: string) =>
+  /^[aeiou]/i.test(phrase) ? 'an' : 'a';
+/** A search result shows roughly 160 characters and reads as broken under about 70. */
+const META_MAX = 160;
+const META_MIN = 70;
+/** "Calm comms. Clean utility." -> ["Calm comms.", "Clean utility."] */
+const firstSentence = (text: string) => text.split(/(?<=[.!?])\s+/)[0] ?? text;
+/**
+ * Joins as many whole sentences as fit the search result. A sentence too long to fit is
+ * retried as its own first sentence, which is how a 140 character bio still contributes
+ * its opening line instead of being dropped whole.
+ */
+function fitDescription(sentences: string[], tail: string) {
+  let text = '';
+  for (const sentence of sentences) {
+    for (const candidate of [sentence, firstSentence(sentence)]) {
+      const next = text ? `${text} ${candidate}` : candidate;
+      if (next.length <= META_MAX) {
+        text = next;
+        break;
+      }
+    }
+  }
+  if (!text) text = sentences[0] ?? '';
+  if (text.length >= META_MIN) return text;
+  const padded = `${text} ${tail}`;
+  return padded.length <= META_MAX ? padded : text;
+}
 /**
  * Title and description are built only from facts that are on the page. A teammate without a
  * verified rank, without languages or without a bio simply gets a shorter description instead of
  * an empty "Speaks ." or a sentence that trails off.
+ *
+ * The description has to land inside the window a search result actually prints. A profile with
+ * a bio used to run past 250 characters and lose its tail, and a profile with no bio, no
+ * languages and no sessions stopped at 48, so the shortest ones end on what the page still
+ * answers: the games and the price of a session.
  */
 export function profileMetadata(p: PublicTeammateProfile) {
   const game = profileGame(p.featuredGame);
   const rank = p.games.find((g) => g.game === game.id && g.verified)?.rank;
   const { showSessions } = profilePresentation(p);
   const sentences = [
-    `Meet ${p.name}, a ${rank ? `${rank} ` : ''}${game.name} teammate on Duoly.`,
+    `Meet ${p.name}, ${profileArticle(rank ?? game.name)} ${rank ? `${rank} ` : ''}${game.name} teammate on Duoly.`,
   ];
   if (p.languages.length) sentences.push(`Speaks ${profileList(p.languages)}.`);
   if (showSessions)
@@ -174,7 +208,10 @@ export function profileMetadata(p: PublicTeammateProfile) {
   if (p.bio.trim()) sentences.push(p.bio.trim());
   return {
     title: `${p.name}, ${game.name}${rank ? ` ${rank}` : ''} teammate | Duoly`,
-    description: sentences.join(' '),
+    description: fitDescription(
+      sentences,
+      `See the games ${p.name} plays and what a session costs before you book.`,
+    ),
     indexing: profileIndexable(p)
       ? ('index, follow' as const)
       : ('noindex, follow' as const),

@@ -1,7 +1,11 @@
 ---
 import type { SessionExample } from '../../content/coaching-examples';
 import type { seoOffers } from '../../server/seo/offers';
-import { compareOthers, sessionLead } from '../../server/seo/coaching-examples';
+import {
+  article,
+  compareOthers,
+  sessionLead,
+} from '../../server/seo/coaching-examples';
 import { bookingHref } from '../../site/seo';
 interface Props {
   gameId: string;
@@ -21,7 +25,7 @@ const offers = services.map((item) => item.offer);
 {services.length > 0 && (
   <section aria-labelledby="session-examples">
     <h2 id="session-examples">
-      What happens in a {gameName} coaching session?
+      What happens in {article(gameName)} {gameName} coaching session?
     </h2>
     <p class="section-intro">
       One example session per service. Your coach adapts the timing and focus to
