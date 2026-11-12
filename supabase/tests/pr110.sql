@@ -94,7 +94,7 @@ do $$ declare card jsonb; begin
  select x into card from jsonb_array_elements(public.home_teammates()) x where x->>'name'='Review';
  perform pg_temp.check110(card is not null and card->>'sessions'='3' and card->>'rating'='5.0','hero uses real aggregates');
  perform pg_temp.check110(not exists(select 1 from jsonb_array_elements(public.home_teammates()) x,jsonb_object_keys(x) k
- where k not in ('name','image','games','gg','online','rating','reviews','sessions')),'hero privacy allowlist');
+ where k not in ('name','image','games','gg','online','rating','reviews','sessions','slug')),'hero privacy allowlist');
 end $$;
 reset role;
 set local role authenticated;
