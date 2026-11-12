@@ -81,7 +81,9 @@ test('carousel shots', async ({ page }, testInfo) => {
     'animation-play-state',
     'paused',
   );
-  await page.evaluate(() => document.activeElement?.blur?.());
+  await page.evaluate(() =>
+    (document.activeElement as HTMLElement | null)?.blur(),
+  );
   await page.waitForTimeout(150);
   await section.screenshot({ path: `${out}/carousel-${width}.png` });
   // Focus ring on the first card.

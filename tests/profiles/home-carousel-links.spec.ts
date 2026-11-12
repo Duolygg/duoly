@@ -13,46 +13,46 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import Home from '../../src/components/home/Home.jsx';
+import type { HeroTeammate } from '../../src/contracts/home';
 
 const css =
   readFileSync('src/design-reference/globals.css', 'utf8') +
   readFileSync('src/components/home/carousel-links.css', 'utf8');
 
 /** Nyx and Rhea are fixture profiles (profile-fixtures.ts); Kite has none. */
-const crew = [
-  {
-    name: 'Nyx',
-    image: '/assets/avatars/avatar-3.png',
-    games: ['val', 'lol'],
-    gg: false,
-    online: true,
-    rating: 4.9,
-    reviews: 128,
-    sessions: 312,
-    slug: 'nyx',
-  },
-  {
-    name: 'Rhea',
-    image: '/assets/avatars/avatar-5.png',
-    games: ['lol'],
-    gg: true,
-    online: false,
-    rating: 4.8,
-    reviews: 41,
-    sessions: 96,
-    slug: 'rhea',
-  },
-  {
-    name: 'Kite',
-    image: '/assets/avatars/avatar-2.png',
-    games: ['cs2'],
-    gg: false,
-    online: false,
-    rating: null,
-    reviews: 0,
-    sessions: 7,
-  },
-];
+const nyx: HeroTeammate = {
+  name: 'Nyx',
+  image: '/assets/avatars/avatar-3.png',
+  games: ['val', 'lol'],
+  gg: false,
+  online: true,
+  rating: 4.9,
+  reviews: 128,
+  sessions: 312,
+  slug: 'nyx',
+};
+const rhea: HeroTeammate = {
+  name: 'Rhea',
+  image: '/assets/avatars/avatar-5.png',
+  games: ['lol'],
+  gg: true,
+  online: false,
+  rating: 4.8,
+  reviews: 41,
+  sessions: 96,
+  slug: 'rhea',
+};
+const kite: HeroTeammate = {
+  name: 'Kite',
+  image: '/assets/avatars/avatar-2.png',
+  games: ['cs2'],
+  gg: false,
+  online: false,
+  rating: null,
+  reviews: 0,
+  sessions: 7,
+};
+const crew = [nyx, rhea, kite];
 
 const FIXTURE = '/tc-carousel-fixture';
 
@@ -137,7 +137,9 @@ test('a card opens that teammate’s profile', async ({ page }) => {
   await hold(page, card);
   await card.click();
   await expect(page).toHaveURL(/\/teammates\/nyx$/);
-  await expect(page.getByRole('heading', { level: 1, name: 'Nyx' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Nyx' }),
+  ).toBeVisible();
 });
 
 test('Enter on a focused card opens the same profile', async ({ page }) => {
@@ -161,7 +163,7 @@ test('the heading opens the directory', async ({ page }) => {
 test('the heading stays plain text while no card has a profile', async ({
   page,
 }) => {
-  await openCarousel(page, [crew[2]]);
+  await openCarousel(page, [kite]);
   await expect(page.locator('.tc-title')).toHaveText('Meet your teammates');
   await expect(page.locator('.tc-title a')).toHaveCount(0);
   await expect(page.locator('a.tc-link')).toHaveCount(0);
@@ -179,7 +181,9 @@ test('only the cards screen readers see are tab stops', async ({ page }) => {
   await strip(page).focus();
   await expect(strip(page)).toBeFocused();
   await page.keyboard.press('Tab');
-  await expect(page.locator('.tc-set[role="list"] a.tc-link').nth(1)).toBeFocused();
+  await expect(
+    page.locator('.tc-set[role="list"] a.tc-link').nth(1),
+  ).toBeFocused();
 });
 
 test('a focused card shows a ring and holds the strip still', async ({
@@ -225,7 +229,7 @@ test('the strip is not left shifted after tabbing through it', async ({
   await openMounted(
     page,
     Array.from({ length: 8 }, (_, i) => ({
-      ...crew[0],
+      ...nyx,
       name: 'Mate' + i,
       slug: 'mate-' + i,
     })),
@@ -251,7 +255,9 @@ test('a linked card still lifts under the pointer', async ({ page }) => {
   const card = strip(page);
   await hold(page, card);
   const at = () =>
-    card.locator('.tc-card').evaluate((node) => getComputedStyle(node).transform);
+    card
+      .locator('.tc-card')
+      .evaluate((node) => getComputedStyle(node).transform);
   const resting = await at();
   const box = (await card.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);

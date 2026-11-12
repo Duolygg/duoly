@@ -152,9 +152,9 @@ describe('teammate carousel: profile links', () => {
 
   it('drops the slug while public profiles are off', () => {
     vi.stubEnv('PUBLIC_PROFILES_ENABLED', 'false');
-    expect(mapHeroTeammates([{ ...mate, slug: 'mira-7' }])[0]).not.toHaveProperty(
-      'slug',
-    );
+    expect(
+      mapHeroTeammates([{ ...mate, slug: 'mira-7' }])[0],
+    ).not.toHaveProperty('slug');
     expect(mapHeroTeammates([{ ...mate, slug: 'mira-7' }])[0]).toMatchObject({
       name: 'Mira',
     });
@@ -169,10 +169,13 @@ describe('teammate carousel: profile links', () => {
       '<a class="tc-link" href="/teammates/mira-7" aria-label="Mira, view profile">',
     );
     // the one real card is the one tab stop: every copy below is taken out of the tab order
-    expect(html.match(/class="tc-link" href="\/teammates\/mira-7"/g)!.length)
-      .toBeGreaterThan(1);
     expect(
-      html.match(/<a class="tc-link" href="\/teammates\/mira-7"[^>]*tabindex="-1"/g),
+      html.match(/class="tc-link" href="\/teammates\/mira-7"/g)!.length,
+    ).toBeGreaterThan(1);
+    expect(
+      html.match(
+        /<a class="tc-link" href="\/teammates\/mira-7"[^>]*tabindex="-1"/g,
+      ),
     ).toHaveLength(html.match(/class="tc-link"/g)!.length - 1);
     // nothing about the card itself moved
     expect(list).toContain('class="tc-card');
