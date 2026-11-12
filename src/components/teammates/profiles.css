@@ -952,13 +952,15 @@ a.tp-stat:hover > strong {
 .tp-games:not(:has(.tp-game:nth-child(2))) {
   grid-template-columns: minmax(0, 1fr);
 }
+/* A teammate approved for one game gets a band rather than a card with a dead column
+   next to it: the emblem opens it, the details sit beside the emblem and the booking
+   link closes it on the right, so the row ends where the content ends. */
 .tp-games:not(:has(.tp-game:nth-child(2))) .tp-game {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas:
-    'head head'
-    'rank list'
-    'book book';
+    'head head head'
+    'rank list book';
   column-gap: clamp(32px, 5vw, 72px);
   align-items: center;
 }
@@ -968,12 +970,15 @@ a.tp-stat:hover > strong {
 .tp-games:not(:has(.tp-game:nth-child(2))) .tp-rank {
   grid-area: rank;
 }
-/* One game, so the detail pairs run across the row as a stat line instead of a column. */
+/* One game, so the detail pairs run across the row as a stat line instead of a column.
+   They pack to the left at their own width: stretched to fill they left 300 px between
+   "Roles" and "Plays" on a teammate who typed neither. */
 .tp-games:not(:has(.tp-game:nth-child(2))) .tp-game dl {
   grid-area: list;
   grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
   gap: 18px 26px;
   margin-bottom: 0;
+  max-width: 560px;
 }
 .tp-games:not(:has(.tp-game:nth-child(2))) .tp-game dl > div {
   display: grid;
@@ -982,7 +987,13 @@ a.tp-stat:hover > strong {
 }
 .tp-games:not(:has(.tp-game:nth-child(2))) .tp-game-book {
   grid-area: book;
-  margin-top: 22px;
+  margin-top: 0;
+  justify-self: end;
+  white-space: nowrap;
+  /* The rule under a stacked card separates it from the detail list above it. Beside
+     the list it would be a hairline hanging over the link on its own, so it goes. */
+  padding-top: 0;
+  border-top: 0;
 }
 .tp-game {
   --game: var(--accent);
@@ -1664,6 +1675,8 @@ a.tp-stat:hover > strong {
   }
   .tp-games:not(:has(.tp-game:nth-child(2))) .tp-game-book {
     margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--tp-line);
   }
   .tp-card-new {
     display: none;

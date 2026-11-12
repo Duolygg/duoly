@@ -362,6 +362,40 @@ test('the hero carries one online signal, one booking unit and no upscaled masco
   await expect(page.locator('.tp-note')).toContainText('so you never wait');
 });
 
+test('a teammate with one game gets a band that ends where its content ends', async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto('/teammates/pip');
+  await expect(page.locator('.tp-game')).toHaveCount(1);
+  const geometry = await page.evaluate(() => {
+    const card = document.querySelector('.tp-game')!.getBoundingClientRect();
+    const list = document.querySelector('.tp-game dl')!.getBoundingClientRect();
+    const book = document
+      .querySelector('.tp-game-book')!
+      .getBoundingClientRect();
+    return {
+      stacked: book.top > list.bottom,
+      /* The booking link closes the row instead of leaving a dead right third. */
+      rightGap: Math.round(card.right - book.right),
+      /* The detail pairs stay a stat line, never stretched across the whole band. */
+      listWidth: Math.round(list.width),
+      rule: getComputedStyle(document.querySelector('.tp-game-book')!)
+        .borderTopWidth,
+    };
+  });
+  if (isMobile) {
+    /* Narrow: back to a stacked card, with the rule above its booking link. */
+    expect(geometry.stacked).toBe(true);
+    expect(geometry.rule).toBe('1px');
+  } else {
+    expect(geometry.stacked).toBe(false);
+    expect(geometry.rightGap).toBeLessThanOrEqual(30);
+    expect(geometry.listWidth).toBeLessThanOrEqual(560);
+    expect(geometry.rule).toBe('0px');
+  }
+});
+
 test('nothing in the profile touches the viewport edge', async ({ page }) => {
   for (const width of [1440, 1024, 768, 390, 360]) {
     await page.setViewportSize({ width, height: 900 });
