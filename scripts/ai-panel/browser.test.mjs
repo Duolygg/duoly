@@ -11,30 +11,86 @@ import { analyze } from './analysis.mjs';
 const { URL } = globalThis;
 
 test('SSE search metadata retains queries without saving reasoning or invalid events', () => {
-  const events = parseTraceBody('data: {"search_queries":[{"q":"real observable query"}],"text":"private reasoning"}\n\ndata: [DONE]\n');
+  const events = parseTraceBody(
+    'data: {"search_queries":[{"q":"real observable query"}],"text":"private reasoning"}\n\ndata: [DONE]\n',
+  );
   const trace = parseChatGPTTrace(events);
   assert.deepEqual(trace.queries, ['real observable query']);
   assert.equal(JSON.stringify(trace).includes('private reasoning'), false);
-  assert.equal(parseChatGPTTrace({text:'invented search for Duoly'}).traceAvailable, false);
+  assert.equal(
+    parseChatGPTTrace({ text: 'invented search for Duoly' }).traceAvailable,
+    false,
+  );
 });
 
 test('consumer fixture CLI reads back two runs and the exact five fan-out prompts', async () => {
-  const dir = await mkdtemp(join(process.env.TMPDIR ?? join(homedir(), '.hermes/cache/scratch'), 'geo-fixtures-'));
+  const dir = await mkdtemp(
+    join(
+      process.env.TMPDIR ?? join(homedir(), '.hermes/cache/scratch'),
+      'geo-fixtures-',
+    ),
+  );
   try {
     for (const args of [[], ['--engine', 'chatgpt', '--fan-out']]) {
-      execFileSync(process.execPath, ['scripts/ai-panel/browser-run.mjs', '--fixtures', '--output', dir, ...args], {encoding:'utf8'});
+      execFileSync(
+        process.execPath,
+        [
+          'scripts/ai-panel/browser-run.mjs',
+          '--fixtures',
+          '--output',
+          dir,
+          ...args,
+        ],
+        { encoding: 'utf8' },
+      );
     }
     const files = await readdir(dir);
-    const panel = files.find((f) => f.endsWith('.jsonl') && f.includes('google-ai-mode'));
-    const fanout = files.find((f) => f.endsWith('.jsonl') && f.includes('chatgpt'));
-    const readRows = async (file) => (await readFile(join(dir,file),'utf8')).trim().split('\n').map(JSON.parse);
+    const panel = files.find(
+      (f) => f.endsWith('.jsonl') && f.includes('google-ai-mode'),
+    );
+    const fanout = files.find(
+      (f) => f.endsWith('.jsonl') && f.includes('chatgpt'),
+    );
+    const readRows = async (file) =>
+      (await readFile(join(dir, file), 'utf8'))
+        .trim()
+        .split('\n')
+        .map(JSON.parse);
     assert.equal((await readRows(panel)).length, 2);
     const rows = await readRows(fanout);
-    assert.deepEqual(rows.map((r) => r.prompt), ['best site to find a gaming duo', 'paid gaming teammate', 'League of Legends coaching online', 'is Duoly legit', 'Duoly vs Metafy']);
-    assert.ok(rows.every((r) => r.surface === 'fixture replay' && r.traceAvailable));
+    assert.deepEqual(
+      rows.map((r) => r.prompt),
+      [
+        'best site to find a gaming duo',
+        'paid gaming teammate',
+        'League of Legends coaching online',
+        'is Duoly legit',
+        'Duoly vs Metafy',
+      ],
+    );
+    assert.ok(
+      rows.every((r) => r.surface === 'fixture replay' && r.traceAvailable),
+    );
     assert.equal(files.filter((f) => f.endsWith('-report.md')).length, 2);
-    assert.throws(() => execFileSync(process.execPath, ['scripts/ai-panel/browser-run.mjs','--fixtures','--engine','perplexity-browser','--output',dir], {stdio:'pipe'}), /Command failed/);
-  } finally { await rm(dir,{recursive:true,force:true}); }
+    assert.throws(
+      () =>
+        execFileSync(
+          process.execPath,
+          [
+            'scripts/ai-panel/browser-run.mjs',
+            '--fixtures',
+            '--engine',
+            'perplexity-browser',
+            '--output',
+            dir,
+          ],
+          { stdio: 'pipe' },
+        ),
+      /Command failed/,
+    );
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
 });
 
 test('Google AI Mode saved capture retains only answer-scoped source links', async () => {
