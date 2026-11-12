@@ -22,14 +22,20 @@ const data = {
   ],
   hidden: false,
 };
-it('shows opt-in controls, public data explanation, and read-only verified ranks', () => {
-  const html = renderToStaticMarkup(
+const render = (initialData: typeof data) =>
+  renderToStaticMarkup(
     createElement(PublicProfileSettings, {
       csrf: 'test',
       name: 'Nyx',
-      initialData: data,
+      initialData,
     }),
   );
+const published = {
+  ...data,
+  settings: { ...data.settings, published: true },
+};
+it('shows the controls, the public data explanation, and read-only verified ranks', () => {
+  const html = render(data);
   for (const text of [
     'Show my public profile',
     'Profile link',
@@ -55,12 +61,25 @@ it('parses comma separated labels without inventing picks', () => {
   expect(splitProfileLabels('')).toEqual([]);
 });
 it('does not render a public preview link for an unpublished draft', () => {
-  const html = renderToStaticMarkup(
-    createElement(PublicProfileSettings, {
-      csrf: 'test',
-      name: 'Nyx',
-      initialData: data,
-    }),
-  );
-  expect(html).not.toContain('href="/teammates/nyx"');
+  expect(render(data)).not.toContain('href="/teammates/nyx"');
+});
+
+/* Profiles are on by default now (owner decision 2026-11-12), so the block opens by saying
+   the page is live and where, with the switch that takes it down right under it. */
+it('tells a published teammate the page is live, and where', () => {
+  const html = render(published);
+  expect(html).toContain('Your profile is on');
+  expect(html).toContain('Your page is live at');
+  expect(html).toContain('href="/teammates/nyx"');
+  expect(html).toContain('duoly.gg/teammates/nyx');
+  expect(html).toContain('Switch it off above and save to take it down');
+  expect(html).toContain('>On<');
+  expect(html).not.toContain('Off by default');
+});
+it('says the page is down when the teammate switched it off, or support hid it', () => {
+  expect(render(data)).toContain('Your profile is off');
+  expect(render(data)).not.toContain('Your page is live at');
+  const hidden = render({ ...published, hidden: true });
+  expect(hidden).not.toContain('Your page is live at');
+  expect(hidden).toContain('Support has hidden this profile');
 });

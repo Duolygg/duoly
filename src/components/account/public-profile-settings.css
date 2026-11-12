@@ -162,6 +162,15 @@
 .pp-actions a {
   color: #c4aaff;
 }
+/* Sits directly under the switch, indented to the switch's label so the line reads as
+   belonging to it rather than starting a new block. */
+.pp-live {
+  margin: -4px 0 0 28px;
+  overflow-wrap: anywhere;
+}
+.pp-live a {
+  color: #c4aaff;
+}
 .pp-settings :focus-visible {
   outline: 2px solid #c4aaff;
   outline-offset: 3px;

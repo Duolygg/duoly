@@ -123,15 +123,24 @@ export default class PublicProfileSettings extends React.Component {
   }
   render() {
     const { settings: s, data: d } = this.state;
+    /** A page a visitor can actually open right now: published, not hidden, real link. */
+    const live = Boolean(
+      d?.settings.published && !d.hidden && slugValid(d.settings.slug || ''),
+    );
     return (
       <section className="pp-settings" aria-labelledby="pp-heading">
         <div className="pp-settings-heading">
           <h2 id="pp-heading">Public profile</h2>
-          <span>{d?.settings.published ? 'On' : 'Off by default'}</span>
+          <span>{d?.settings.published ? 'On' : 'Off'}</span>
         </div>
+        {/* On by default since the owner decision of 2026-11-12: every teammate approved for a
+            game already has a page, so the block opens by telling them it is live, and the
+            first control under it is the one that turns it off. */}
         <p className="pp-help">
-          Let players find your games, verified ranks and play style. Bio and
-          languages use the fields above.
+          {d?.settings.published === false
+            ? 'Your profile is off, so nobody can open it. Switch it back on below to let players find your games, your ranks and your play style.'
+            : 'Your profile is on, so players can find your games, your ranks and your play style, and book you by name.'}{' '}
+          Bio and languages use the fields above.
         </p>
         <p className="pp-help">
           Email, Discord, full real name and earnings are never shown. Your
@@ -167,6 +176,16 @@ export default class PublicProfileSettings extends React.Component {
               />
               Show my public profile
             </label>
+            {/* The page as it is saved right now, not as the unsaved form would make it. */}
+            {live ? (
+              <p className="pp-help pp-live">
+                Your page is live at{' '}
+                <a href={'/teammates/' + d.settings.slug}>
+                  duoly.gg/teammates/{d.settings.slug}
+                </a>
+                . Switch it off above and save to take it down straight away.
+              </p>
+            ) : null}
             {this.state.explain ? (
               <div
                 className="pp-explainer"
@@ -396,9 +415,7 @@ export default class PublicProfileSettings extends React.Component {
               >
                 {this.state.saving ? 'Saving…' : 'Save public profile'}
               </button>
-              {d.settings.published &&
-              !d.hidden &&
-              slugValid(d.settings.slug) ? (
+              {live ? (
                 <a href={'/teammates/' + d.settings.slug}>
                   View public profile
                 </a>
