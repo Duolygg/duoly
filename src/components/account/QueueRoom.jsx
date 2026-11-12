@@ -236,7 +236,7 @@ export default class QueueRoom extends React.Component {
           ? 'unsupported'
           : Notification.permission,
     });
-    this._bell = new Audio('/assets/sounds/order-bell.wav');
+    this._bell = new Audio('/assets/sounds/match-found.mp3');
     this._bell.preload = 'auto';
     this._ping = newChatPing();
     this.poll();
