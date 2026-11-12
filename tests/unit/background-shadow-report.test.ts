@@ -152,6 +152,8 @@ const graded = verdicts({
 });
 const order = (reference: string) =>
   orders.find((row) => row.reference === reference) as OrderRow;
+const failing = (kind: KindVerdict) =>
+  kind.checks.filter((check) => check.status === 'fail').map((c) => c.name);
 
 describe('the contract mirror', () => {
   it('matches src/contracts/background.ts', () => {
@@ -612,6 +614,47 @@ describe('the verdict per kind', () => {
     });
     expect(legacy.roles.verdict).toBe('FAIL');
     expect(legacy.roles.checks[0]?.detail).toContain('legacy');
+  });
+
+  it('fails the two kinds with no order of their own when nothing shows them firing', () => {
+    const quiet = parseLogs(
+      `{"timestampInMs":${NOW - 60_000},"message":"[timer-shadow] order-post ${ORDER_A} would=post"}`,
+    ) as Logs;
+    const blind = verdicts({
+      db: database,
+      logs: quiet,
+      health,
+      orders,
+      rearm: [],
+      bounds,
+      now: NOW,
+    });
+    expect(failing(blind.roles)).toStrictEqual(['evidence']);
+    expect(failing(blind.analytics)).toStrictEqual(['evidence']);
+    // An order kind's evidence is its orders, which this export still has none of.
+    expect(failing(blind.orders)).toContain('order-post coverage');
+  });
+
+  it('accepts an event hook line as evidence when no retry timer was needed', () => {
+    const hooksOnly = parseLogs(
+      `{"timestampInMs":${NOW - 60_000},"message":"[event-shadow] analytics outbox would=drain"}`,
+    ) as Logs;
+    const seen = verdicts({
+      db: database,
+      logs: hooksOnly,
+      health,
+      orders,
+      rearm: [],
+      bounds,
+      now: NOW,
+    });
+    expect(failing(seen.analytics)).toStrictEqual([]);
+    expect(
+      seen.analytics.checks.find((check) => check.name === 'evidence'),
+    ).toMatchObject({
+      status: 'pass',
+      detail: '0 timer lines and 1 event line in the export',
+    });
   });
 
   it('fails analytics on a parked fact, which the doc calls an alert', () => {

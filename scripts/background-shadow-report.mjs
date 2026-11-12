@@ -797,18 +797,19 @@ function kindChecks(kind, state) {
           `${mine.length} ${plural(mine.length, 'line')} asked for a later recheck; a shadow fire answers disabled, so the worker forgets the timer instead of re-arming it`,
         ),
       );
-    if (timer === 'presence-check' || timer === 'analytics-retry') {
+    if (timer !== 'order-post' && timer !== 'order-expire') {
+      // These three have no row anywhere that says what the dispatcher did with them, so the
+      // lines themselves are the evidence. None at all is judged once per kind, below.
       const lines = logs.entries.filter(
         (entry) => entry.marker === 'timer-shadow' && entry.kind === timer,
       );
-      checks.push(
-        lines.length
-          ? note(`${timer} lines`, `${lines.length} in the export`)
-          : fail(
-              `${timer} lines`,
-              'none in the export: no evidence that this kind fires at all',
-            ),
-      );
+      if (lines.length)
+        checks.push(
+          note(
+            `${timer} lines`,
+            `${lines.length} in the export (${[...new Set(lines.map((entry) => entry.action))].join(', ')})`,
+          ),
+        );
     }
     if (timer === 'settle-retry') {
       const exhausted = new Set(
@@ -830,6 +831,29 @@ function kindChecks(kind, state) {
     }
   }
 
+  const events = logs.entries.filter(
+    (entry) => entry.marker === 'event-shadow' && entry.kind === kind,
+  );
+  if (kind === 'analytics' || kind === 'roles') {
+    // Neither kind is tied to an order, so "it fires at all" is the question, and either a timer
+    // line or an event hook line answers it. A clean week can legitimately have no retry timer.
+    const fires = logs.entries.filter(
+      (entry) =>
+        entry.marker === 'timer-shadow' &&
+        TIMER_KIND_SWITCH[entry.kind] === kind,
+    ).length;
+    checks.push(
+      fires + events.length > 0
+        ? pass(
+            'evidence',
+            `${fires} timer ${plural(fires, 'line')} and ${events.length} event ${plural(events.length, 'line')} in the export`,
+          )
+        : fail(
+            'evidence',
+            'no timer line and no [event-shadow] line: nothing in the export shows this kind firing',
+          ),
+    );
+  }
   if (kind === 'analytics' && db?.outbox) {
     const { parked, pending, eligible, oldest_pending: oldest } = db.outbox;
     checks.push(
@@ -872,9 +896,6 @@ function kindChecks(kind, state) {
       );
   }
 
-  const events = logs.entries.filter(
-    (entry) => entry.marker === 'event-shadow' && entry.kind === kind,
-  );
   if (events.length)
     checks.push(
       note(
