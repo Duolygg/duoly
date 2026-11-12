@@ -2444,6 +2444,14 @@ export type Database = {
         Args: { p_order_id: string };
         Returns: Json;
       };
+      teammate_remove_order_proof: {
+        Args: {
+          p_assignment_id: string;
+          p_order_id: string;
+          p_proof_id: string;
+        };
+        Returns: Json;
+      };
       teammate_queue_personal_eligible: {
         Args: {
           p_order: Database['public']['Tables']['orders']['Row'];

@@ -67,7 +67,8 @@ export function matchesCompletion(entry: Completion, input: CompletionInput) {
 }
 export type CompletionResult =
   | { kind: 'completed'; completion: Completion }
-  | { kind: 'bad' | 'denied' | 'signed-out' | 'conflict' | 'uncertain' };
+  | { kind: 'conflict'; reason?: string }
+  | { kind: 'bad' | 'denied' | 'signed-out' | 'uncertain' };
 export async function completeOrder(
   fetcher: DeskFetch,
   command: CompletionInput,
@@ -96,7 +97,17 @@ export async function completeOrder(
     if (response.status === 401) return { kind: 'signed-out' };
     if (response.status === 403 || response.status === 404)
       return { kind: 'denied' };
-    if (response.status === 409) return { kind: 'conflict' };
+    if (response.status === 409) {
+      // the server's reason, e.g. the match report is still missing
+      const body: unknown = await response.json().catch(() => null);
+      const reason =
+        body &&
+        typeof body === 'object' &&
+        typeof (body as { error?: unknown }).error === 'string'
+          ? (body as { error: string }).error.slice(0, 200)
+          : undefined;
+      return { kind: 'conflict', reason };
+    }
     if (!response.ok) return { kind: 'uncertain' };
     const { completion } = CompletionResponseSchema.parse(
       await response.json(),

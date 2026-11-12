@@ -212,7 +212,8 @@ it('revokes private context on signed-out completion readback without releasing 
   expect(c.state.notice).not.toContain('Completion recorded');
   await c.accept({ id });
   expect(c._fetch).toHaveBeenCalledTimes(1);
-  expect(renderToStaticMarkup(c.render())).toContain('Refresh desk');
+  // the desk-level button reads the completion back (it calls completed(), never a mutation)
+  expect(renderToStaticMarkup(c.render())).toContain('Read back desk');
 });
 it('offers a manual read-only desk refresh while acceptance is unresolved', async () => {
   const c = desk();

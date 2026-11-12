@@ -68,6 +68,45 @@ export async function uploadProof(
     return { kind: 'uncertain' };
   }
 }
+export type RemoveResult =
+  | { kind: 'removed' }
+  | { kind: 'denied' | 'signed-out' | 'gone' | 'unavailable' };
+/** Hide one of the teammate's own screenshots on the open assignment (the server keeps the file). */
+export async function removeProof(
+  fetcher: ProofFetch,
+  order: string,
+  assignment: string,
+  csrf: string,
+  proofId: string,
+): Promise<RemoveResult> {
+  try {
+    binding(order, assignment);
+    uuid.parse(proofId);
+    if (!csrf) return { kind: 'unavailable' };
+    const response = await fetcher(
+      `/api/teammate/orders/${order}/proof/${proofId}`,
+      {
+        method: 'POST',
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { 'X-CSRF-Token': csrf, 'X-Assignment-Id': assignment },
+      },
+    );
+    if (response.status === 401) return { kind: 'signed-out' };
+    if (response.status === 403) return { kind: 'denied' };
+    if (response.status === 404 || response.status === 409)
+      return { kind: 'gone' };
+    if (!response.ok) return { kind: 'unavailable' };
+    const body = z
+      .strictObject({ removed: z.literal(true), proof_id: uuid })
+      .parse(await response.json());
+    return body.proof_id === proofId
+      ? { kind: 'removed' }
+      : { kind: 'unavailable' };
+  } catch {
+    return { kind: 'unavailable' };
+  }
+}
 const uuid = z.uuid();
 function binding(order: string, assignment?: string) {
   uuid.parse(order);

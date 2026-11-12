@@ -154,6 +154,18 @@ it.each([400, 401, 403, 404, 409, 410])(
   },
 );
 it.each([
+  'Captured settled payment required.',
+  'Fill in the match report first: every game with both IGNs and the match link, plus your wins and losses.',
+])('names complete_order’s own conflict: %s', async (message) => {
+  rpc.mockResolvedValue({
+    data: { error: { code: 409, message } },
+    error: null,
+  });
+  const response = (await complete(context())) as Response;
+  expect(response.status).toBe(409);
+  expect(await response.json()).toEqual({ error: message });
+});
+it.each([
   { ...completion, order_id: proof },
   { ...completion, assignment_id: proof },
   { ...completion, request_id: proof },

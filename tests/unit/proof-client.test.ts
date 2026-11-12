@@ -12,6 +12,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   readProofs,
   proofUrl,
+  removeProof,
   selectUpload,
   uploadProof,
 } from '../../src/components/proofs/proof-client';
@@ -404,4 +405,88 @@ describe('private proof reads', () => {
     });
     expect(fetcher).not.toHaveBeenCalled();
   });
+});
+
+it('removes only through the guarded teammate route and maps refusals', async () => {
+  const fetcher = vi.fn(async () =>
+    Response.json({ removed: true, proof_id: id }),
+  );
+  expect(await removeProof(fetcher, order, assignment, 'csrf', id)).toEqual({
+    kind: 'removed',
+  });
+  expect(fetcher).toHaveBeenCalledWith(
+    `/api/teammate/orders/${order}/proof/${id}`,
+    expect.objectContaining({
+      method: 'POST',
+      headers: { 'X-CSRF-Token': 'csrf', 'X-Assignment-Id': assignment },
+    }),
+  );
+  for (const [status, kind] of [
+    [401, 'signed-out'],
+    [403, 'denied'],
+    [404, 'gone'],
+    [409, 'gone'],
+    [503, 'unavailable'],
+  ] as const)
+    expect(
+      await removeProof(
+        async () => Response.json({}, { status }),
+        order,
+        assignment,
+        'csrf',
+        id,
+      ),
+    ).toEqual({ kind });
+  expect(await removeProof(fetcher, order, assignment, '', id)).toEqual({
+    kind: 'unavailable',
+  });
+});
+it('a session removes its own screenshot and reads the list again', async () => {
+  let listed = [proof];
+  const fetcher = vi.fn(async (_url: string, init?: RequestInit) => {
+    if (init?.method === 'POST') {
+      listed = [];
+      return Response.json({ removed: true, proof_id: id });
+    }
+    return Response.json({ proofs: listed });
+  });
+  const session = new ProofSession(order, assignment, 'csrf', fetcher);
+  await session.refresh();
+  expect(session.value.proofs).toHaveLength(1);
+  await session.remove(id);
+  expect(session.value.proofs).toEqual([]);
+  expect(session.value.message).toBe('Screenshot removed.');
+  expect(session.value.pending).toBe(false);
+  // nothing to remove: no request
+  await session.remove(id);
+  expect(
+    fetcher.mock.calls.filter(([, i]) => i?.method === 'POST'),
+  ).toHaveLength(1);
+});
+it('shows Remove on the teammate’s own screenshots only', () => {
+  const state = {
+    ...initialProofState,
+    kind: 'ready' as const,
+    proofs: [proof],
+  };
+  const teammate = renderToStaticMarkup(
+    createElement(ProofView, {
+      orderId: order,
+      assignmentId: assignment,
+      mode: 'teammate',
+      csrf: 'csrf',
+      state,
+      onRemove: () => {},
+    }),
+  );
+  expect(teammate).toContain('aria-label="Remove evidence image 1"');
+  const customer = renderToStaticMarkup(
+    createElement(ProofView, {
+      orderId: order,
+      mode: 'customer',
+      state,
+      onRemove: () => {},
+    }),
+  );
+  expect(customer).not.toContain('Remove evidence image');
 });

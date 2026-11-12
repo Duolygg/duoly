@@ -278,6 +278,8 @@ export default class Teammate extends React.Component {
       onlineSince: (start?.online && start.onlineSince) || 0,
       loaded: false,
       readError: false,
+      // the order whose Accept is waiting on the server (its button reads "Accepting…")
+      acceptingId: null,
       // teammates without a connected Discord are locked behind the connect popup (admins never are)
       needDiscord: !admin && props.discordLinked === false,
       // shared queue from the server (orders auto-cancel after autoCancelMs without a teammate)
@@ -1120,34 +1122,30 @@ export default class Teammate extends React.Component {
     // read can release this lock; retries here are reads, never mutations.
     this._acceptReadback = true;
     this._generation = (this._generation || 0) + 1;
-    this.setState({
-      accepting: true,
-      loaded: false,
-      readError: true,
-      queue: [],
-    });
+    // The desk stays on screen while the server answers: the instance locks above already stop
+    // polls and a second accept, and every Accept button is disabled (v.busy). Only an accept
+    // that failed or wasn't confirmed clears the queue and locks the desk behind Refresh desk.
+    const lockDesk = (notice) =>
+      this.setState({ loaded: false, readError: true, queue: [], notice });
+    this.setState({ accepting: true, acceptingId: o.id });
     try {
       const { ok, data } = await this.post(
         '/api/orders/' + encodeURIComponent(o.id),
         { action: 'accept' },
       );
       if (!ok) {
-        this.setState({
-          notice:
-            data.error ||
+        lockDesk(
+          data.error ||
             'Acceptance was not confirmed. Refresh before trying again.',
-        });
+        );
         return;
       }
       // Never open the command result optimistically. Re-read both authoritative resources.
       const result = await this.post('/api/desk');
       if (!result.ok) {
-        this.setState({
-          loaded: false,
-          readError: true,
-          notice:
-            'Acceptance was confirmed, but the desk could not be refreshed. Retrying…',
-        });
+        lockDesk(
+          'Acceptance was confirmed, but the desk could not be refreshed. Retrying…',
+        );
         return;
       }
       this._acceptReadback = false;
@@ -1159,20 +1157,46 @@ export default class Teammate extends React.Component {
       });
       if (result.data.mine) this.startActive(result.data.mine, false);
     } catch {
-      this.setState({
-        notice: 'Acceptance was not confirmed. Refresh before trying again.',
-      });
+      lockDesk('Acceptance was not confirmed. Refresh before trying again.');
     } finally {
       this._accepting = false;
-      this.setState({ accepting: false });
+      this.setState({ accepting: false, acceptingId: null });
     }
   }
-  async completed() {
+  /**
+   * `confirmed`: the server returned this assignment's completion record, so the session is over.
+   * The In session card closes right away; the desk read below only refreshes the queue (and a
+   * poll reopens the order if the server still lists it). Without it (Read back desk), the card
+   * stays until the read says the assignment is clear.
+   */
+  async completed(confirmed = false) {
     if (this._completionReading) return;
     this._completionReadback = true;
     this._completionBusy = true;
     this._completionReading = true;
-    this.setState({ completionReadback: true, completionReading: true });
+    if (confirmed) {
+      this.clearChatTimers();
+      this._pendingChat = null;
+      clearTimeout(this._toastT);
+      this._toastT = setTimeout(() => {
+        if (!this._disposed) this.setState({ toast: '' });
+      }, 6000);
+    }
+    this.setState({
+      completionReadback: true,
+      completionReading: true,
+      ...(confirmed
+        ? {
+            active: null,
+            chat: [],
+            chatTyping: false,
+            proof: [],
+            proofErr: '',
+            matchReport: null,
+            toast: 'Order completed. Your earnings are updated.',
+          }
+        : null),
+    });
     try {
       const { ok, status, data } = await this.post('/api/desk');
       if (!ok && [401, 403, 404].includes(status)) {
@@ -1190,6 +1214,8 @@ export default class Teammate extends React.Component {
       }
       if (!ok || data.mine !== null) {
         this.setState({
+          // the card is already closed after a confirmed completion: Refresh desk reads it again
+          ...(confirmed ? { readError: true, toast: '' } : null),
           notice:
             'Completion recorded, but the current assignment is not confirmed clear. Read back the desk before taking another order.',
         });
@@ -1206,7 +1232,7 @@ export default class Teammate extends React.Component {
         queue: data.queue,
         loaded: true,
         readError: false,
-        notice: 'Completion recorded.',
+        notice: confirmed ? '' : 'Completion recorded.',
         proof: [],
         proofErr: '',
         completing: false,
@@ -1215,6 +1241,7 @@ export default class Teammate extends React.Component {
     } catch {
       if (!this._disposed)
         this.setState({
+          ...(confirmed ? { readError: true, toast: '' } : null),
           notice:
             'Completion recorded. Desk readback is unavailable. Try reading it again.',
         });
@@ -1499,6 +1526,7 @@ export default class Teammate extends React.Component {
           makeHandover: () => this.handover(o),
           copyHandover: () => this.copyHandover(o.id),
           accept: () => this.accept(o),
+          accepting: s.acceptingId === o.id,
           pass: () => this.pass(o),
         };
       })
@@ -1608,6 +1636,20 @@ export default class Teammate extends React.Component {
                 this.editMatch(() => ({ wins: value.replace(/\D/g, '') })),
               setLosses: (value) =>
                 this.editMatch(() => ({ losses: value.replace(/\D/g, '') })),
+              // the score stepper: wins between 0 and every game, losses are the rest
+              setScore: (wins) => {
+                const w = Math.max(0, Math.min(a.games, wins));
+                this.editMatch(() => ({
+                  wins: String(w),
+                  losses: String(a.games - w),
+                }));
+              },
+              winsN:
+                s.matchReport.wins === '' ? null : Number(s.matchReport.wins),
+              filled: s.matchReport.games.every(
+                (g) =>
+                  g.teammateIgn.trim() && g.customerIgn.trim() && g.link.trim(),
+              ),
               save: () => this.saveMatchReport(),
             }
           : null,
@@ -2027,8 +2069,15 @@ export default class Teammate extends React.Component {
             >
               {admin ? 'Covering all games' : 'Your games'}
               {admin ? null : (
-                <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  {shown.map((g, i) => (
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  {/* side by side with a small gap, no dark ring around each icon */}
+                  {shown.map((g) => (
                     <img
                       key={g.id}
                       src={g.img}
@@ -2039,15 +2088,13 @@ export default class Teammate extends React.Component {
                         width: '20px',
                         height: '20px',
                         borderRadius: '6px',
-                        marginLeft: i ? '-5px' : '0',
-                        boxShadow: '0 0 0 2px #110A20',
                       }}
                     />
                   ))}
                   {on.length > shown.length ? (
                     <span
                       style={{
-                        marginLeft: '6px',
+                        marginLeft: '2px',
                         fontSize: '12px',
                         color: '#8E84AB',
                       }}
@@ -2442,12 +2489,10 @@ export default class Teammate extends React.Component {
       >
         {this.renderDiscordGate()}
         <style>{`
-          .tm-live-proof button { min-height: 44px; padding: 10px 14px; border: 1px solid rgba(214,187,255,.2); border-radius: 12px; background: #D6BBFF; color: #17092E; font: inherit; font-weight: 600; }
-          .tm-live-proof button:disabled { opacity: .5; cursor: not-allowed; }
-          .tm-live-proof p { color: #A79DC4; font-size: 13px; line-height: 1.5; }
+          .tm-live-proof button:not([class]) { min-height: 44px; padding: 10px 14px; border: 1px solid rgba(214,187,255,.2); border-radius: 12px; background: #D6BBFF; color: #17092E; font: inherit; font-weight: 600; }
+          .tm-live-proof button:not([class]):disabled { opacity: .5; cursor: not-allowed; }
+          .tm-live-proof p:not([class]) { color: #A79DC4; font-size: 13px; line-height: 1.5; }
           .tm-live-proof h3 { font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif; color: #FFFFFF; }
-          .tm-live-proof input[type=file] { min-height: 44px; font: inherit; }
-          .tm-live-proof input::file-selector-button { min-height: 44px; border: 1px solid rgba(214,187,255,.2); border-radius: 12px; background: #120B22; color: #D6BBFF; font: inherit; }
         `}</style>
         {/* support chat with teammate answers (Sparky knows their payouts, deposit and games) */}
         {FEATURES.support && !v.admin ? (
@@ -3585,291 +3630,23 @@ export default class Teammate extends React.Component {
                       “{v.active.note}”
                     </p>
                   ) : null}
-                  {/* win/loss orders: the match report, required before finishing (20261102160000) */}
-                  {v.active.matchReport ? (
-                    <div
-                      data-match-report
-                      style={{
-                        marginTop: '16px',
-                        padding: '16px',
-                        borderRadius: '18px',
-                        background: '#090414',
-                        border:
-                          '1px solid ' +
-                          (v.active.matchReport.saved
-                            ? 'rgba(94, 234, 168, .35)'
-                            : 'rgba(196, 170, 255, .1)'),
-                      }}
-                    >
-                      <div style={{ fontWeight: '700', color: '#FFFFFF' }}>
-                        Match report
-                      </div>
-                      <p
-                        style={{
-                          margin: '2px 0 12px',
-                          fontSize: '13px',
-                          color: '#A79DC4',
-                        }}
-                      >
-                        Every game: your IGN, the customer’s IGN and the match
-                        link. Then how many you won and lost. Needed to finish
-                        this order, and it builds your winrate.
-                      </p>
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '8px',
-                        }}
-                      >
-                        {v.active.matchReport.games.map((g, i) => (
-                          <div
-                            key={i}
-                            style={{
-                              display: 'grid',
-                              gridTemplateColumns:
-                                'auto minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.6fr)',
-                              gap: '6px',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <span
-                              style={{
-                                fontSize: '12.5px',
-                                fontWeight: '700',
-                                color: '#8E84AB',
-                                minWidth: '52px',
-                              }}
-                            >
-                              Game {i + 1}
-                            </span>
-                            <input
-                              aria-label={'Your IGN, game ' + (i + 1)}
-                              placeholder="Your IGN"
-                              value={g.teammateIgn}
-                              maxLength={64}
-                              onChange={(e) =>
-                                v.active.matchReport.setGame(
-                                  i,
-                                  'teammateIgn',
-                                  e.target.value,
-                                )
-                              }
-                              style={{
-                                minHeight: '38px',
-                                padding: '0 10px',
-                                borderRadius: '10px',
-                                border: '1px solid rgba(196, 170, 255, .16)',
-                                background: '#120B22',
-                                color: '#FFFFFF',
-                                font: 'inherit',
-                                fontSize: '13.5px',
-                                minWidth: '0',
-                              }}
-                            />
-                            <input
-                              aria-label={'Customer IGN, game ' + (i + 1)}
-                              placeholder="Customer IGN"
-                              value={g.customerIgn}
-                              maxLength={64}
-                              onChange={(e) =>
-                                v.active.matchReport.setGame(
-                                  i,
-                                  'customerIgn',
-                                  e.target.value,
-                                )
-                              }
-                              style={{
-                                minHeight: '38px',
-                                padding: '0 10px',
-                                borderRadius: '10px',
-                                border: '1px solid rgba(196, 170, 255, .16)',
-                                background: '#120B22',
-                                color: '#FFFFFF',
-                                font: 'inherit',
-                                fontSize: '13.5px',
-                                minWidth: '0',
-                              }}
-                            />
-                            <input
-                              aria-label={'Match link, game ' + (i + 1)}
-                              placeholder="https://… match link"
-                              inputMode="url"
-                              value={g.link}
-                              maxLength={300}
-                              onChange={(e) =>
-                                v.active.matchReport.setGame(
-                                  i,
-                                  'link',
-                                  e.target.value,
-                                )
-                              }
-                              style={{
-                                minHeight: '38px',
-                                padding: '0 10px',
-                                borderRadius: '10px',
-                                border: '1px solid rgba(196, 170, 255, .16)',
-                                background: '#120B22',
-                                color: '#FFFFFF',
-                                font: 'inherit',
-                                fontSize: '13.5px',
-                                minWidth: '0',
-                              }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                      <div
-                        style={{
-                          marginTop: '12px',
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          alignItems: 'center',
-                          gap: '8px',
-                        }}
-                      >
-                        <label
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            fontSize: '13px',
-                            fontWeight: '700',
-                            color: '#5EEAA8',
-                          }}
-                        >
-                          Won
-                          <input
-                            inputMode="numeric"
-                            value={v.active.matchReport.wins}
-                            onChange={(e) =>
-                              v.active.matchReport.setWins(e.target.value)
-                            }
-                            style={{
-                              minHeight: '38px',
-                              padding: '0 10px',
-                              borderRadius: '10px',
-                              border: '1px solid rgba(196, 170, 255, .16)',
-                              background: '#120B22',
-                              color: '#FFFFFF',
-                              font: 'inherit',
-                              fontSize: '13.5px',
-                              minWidth: '0',
-                              width: '56px',
-                              textAlign: 'center',
-                            }}
-                          />
-                        </label>
-                        <label
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            fontSize: '13px',
-                            fontWeight: '700',
-                            color: '#F0A6FF',
-                          }}
-                        >
-                          Lost
-                          <input
-                            inputMode="numeric"
-                            value={v.active.matchReport.losses}
-                            onChange={(e) =>
-                              v.active.matchReport.setLosses(e.target.value)
-                            }
-                            style={{
-                              minHeight: '38px',
-                              padding: '0 10px',
-                              borderRadius: '10px',
-                              border: '1px solid rgba(196, 170, 255, .16)',
-                              background: '#120B22',
-                              color: '#FFFFFF',
-                              font: 'inherit',
-                              fontSize: '13.5px',
-                              minWidth: '0',
-                              width: '56px',
-                              textAlign: 'center',
-                            }}
-                          />
-                        </label>
-                        <span style={{ fontSize: '12.5px', color: '#8E84AB' }}>
-                          of {v.active.games}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={v.active.matchReport.save}
-                          disabled={v.active.matchReport.busy}
-                          style={{
-                            marginLeft: 'auto',
-                            minHeight: '38px',
-                            padding: '0 16px',
-                            borderRadius: '12px',
-                            border: 'none',
-                            background: v.active.matchReport.saved
-                              ? 'rgba(94, 234, 168, .14)'
-                              : '#D6BBFF',
-                            color: v.active.matchReport.saved
-                              ? '#5EEAA8'
-                              : '#17092E',
-                            fontWeight: '700',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          {v.active.matchReport.busy
-                            ? 'Saving…'
-                            : v.active.matchReport.saved
-                              ? 'Saved ✓'
-                              : 'Save report'}
-                        </button>
-                      </div>
-                      {v.active.matchReport.err ? (
-                        <p
-                          role="alert"
-                          style={{
-                            margin: '8px 0 0',
-                            fontSize: '13px',
-                            color: '#F0A6FF',
-                          }}
-                        >
-                          {v.active.matchReport.err}
-                        </p>
-                      ) : null}
-                    </div>
-                  ) : null}
-                  {/* finish with proof: screenshots of the match history / session, then mark as done */}
+                  {/* finish the order: the match result (win/loss orders, 20261102160000), the
+                      screenshots, then Mark as done, in one panel */}
                   <div
-                    className="tm-live-proof"
+                    className="tm-live-proof tm-finish"
                     style={{
                       marginTop: '16px',
-                      padding: '16px',
-                      borderRadius: '18px',
+                      padding: '18px',
+                      borderRadius: '20px',
                       background: '#090414',
                       border: '1px solid rgba(196, 170, 255, .1)',
                     }}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                      }}
-                    >
-                      <span
-                        style={{
-                          flex: '0 0 auto',
-                          width: '34px',
-                          height: '34px',
-                          borderRadius: '11px',
-                          background: 'rgba(214, 187, 255, .12)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
+                    <div className="tm-finish-head">
+                      <span className="tm-finish-icon" aria-hidden="true">
                         <svg
-                          aria-hidden="true"
-                          width="17"
-                          height="17"
+                          width="18"
+                          height="18"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="#D6BBFF"
@@ -3877,39 +3654,233 @@ export default class Teammate extends React.Component {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <rect x="3" y="3" width="18" height="18" rx="3" />
-                          <circle cx="8.5" cy="8.5" r="1.5" />
-                          <path d="M21 15l-5-5L5 21" />
+                          <path d="M8 21h8" />
+                          <path d="M12 17v4" />
+                          <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" />
+                          <path d="M17 6h3a3 3 0 0 1-3 4" />
+                          <path d="M7 6H4a3 3 0 0 0 3 4" />
                         </svg>
                       </span>
                       <span style={{ minWidth: '0', lineHeight: '1.35' }}>
-                        <span
-                          style={{
-                            display: 'block',
-                            fontWeight: '700',
-                            color: '#FFFFFF',
-                          }}
-                        >
+                        <span className="tm-finish-title">
                           Finish with proof
                         </span>
-                        <span
-                          style={{
-                            display: 'block',
-                            fontSize: '13px',
-                            color: '#A79DC4',
-                          }}
-                        >
+                        <span className="tm-finish-sub">
                           {v.active.proofHint}
                         </span>
                       </span>
+                      {v.active.matchReport ? (
+                        <ol className="tm-steps" aria-label="Steps to finish">
+                          <li
+                            className={
+                              v.active.matchReport.saved ? 'is-done' : 'is-now'
+                            }
+                          >
+                            <span>1</span>Result
+                          </li>
+                          <li
+                            className={
+                              v.active.matchReport.saved ? 'is-now' : ''
+                            }
+                          >
+                            <span>2</span>Screenshots
+                          </li>
+                          <li>
+                            <span>3</span>Done
+                          </li>
+                        </ol>
+                      ) : null}
                     </div>
+
+                    {v.active.matchReport ? (
+                      <section
+                        data-match-report
+                        className={
+                          'tm-match' +
+                          (v.active.matchReport.saved ? ' is-saved' : '')
+                        }
+                        aria-labelledby="tm-match-h"
+                      >
+                        <div className="tm-match-top">
+                          <div style={{ minWidth: '0' }}>
+                            <h3 id="tm-match-h">Match report</h3>
+                            <p className="tm-match-desc">
+                              How it went, and every game with both IGNs and the
+                              match link. Needed to finish, and it builds your
+                              winrate.
+                            </p>
+                          </div>
+                          <div
+                            className="tm-score"
+                            role="group"
+                            aria-label="Final score"
+                          >
+                            <div className="tm-score-side is-won">
+                              <span className="tm-score-label">Won</span>
+                              <span className="tm-stepper">
+                                <button
+                                  type="button"
+                                  className="tm-step-btn"
+                                  aria-label="One win less"
+                                  disabled={!v.active.matchReport.winsN}
+                                  onClick={() =>
+                                    v.active.matchReport.setScore(
+                                      (v.active.matchReport.winsN || 0) - 1,
+                                    )
+                                  }
+                                >
+                                  −
+                                </button>
+                                <input
+                                  aria-label="Games won"
+                                  inputMode="numeric"
+                                  placeholder="0"
+                                  value={v.active.matchReport.wins}
+                                  onChange={(e) =>
+                                    v.active.matchReport.setWins(e.target.value)
+                                  }
+                                />
+                                <button
+                                  type="button"
+                                  className="tm-step-btn"
+                                  aria-label="One win more"
+                                  disabled={
+                                    v.active.matchReport.winsN >= v.active.games
+                                  }
+                                  onClick={() =>
+                                    v.active.matchReport.setScore(
+                                      v.active.matchReport.winsN == null
+                                        ? 1
+                                        : v.active.matchReport.winsN + 1,
+                                    )
+                                  }
+                                >
+                                  +
+                                </button>
+                              </span>
+                            </div>
+                            <span className="tm-score-dash" aria-hidden="true">
+                              :
+                            </span>
+                            <div className="tm-score-side is-lost">
+                              <span className="tm-score-label">Lost</span>
+                              <input
+                                aria-label="Games lost"
+                                inputMode="numeric"
+                                placeholder="0"
+                                value={v.active.matchReport.losses}
+                                onChange={(e) =>
+                                  v.active.matchReport.setLosses(e.target.value)
+                                }
+                              />
+                            </div>
+                            <span className="tm-score-of">
+                              of {v.active.games}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="tm-games">
+                          {v.active.matchReport.games.map((g, i) => (
+                            <div key={i} className="tm-game">
+                              <span className="tm-game-n">Game {i + 1}</span>
+                              <label>
+                                <span>Your IGN</span>
+                                <input
+                                  aria-label={'Your IGN, game ' + (i + 1)}
+                                  placeholder="Your IGN"
+                                  value={g.teammateIgn}
+                                  maxLength={64}
+                                  onChange={(e) =>
+                                    v.active.matchReport.setGame(
+                                      i,
+                                      'teammateIgn',
+                                      e.target.value,
+                                    )
+                                  }
+                                />
+                              </label>
+                              <label>
+                                <span>Customer IGN</span>
+                                <input
+                                  aria-label={'Customer IGN, game ' + (i + 1)}
+                                  placeholder="Customer IGN"
+                                  value={g.customerIgn}
+                                  maxLength={64}
+                                  onChange={(e) =>
+                                    v.active.matchReport.setGame(
+                                      i,
+                                      'customerIgn',
+                                      e.target.value,
+                                    )
+                                  }
+                                />
+                              </label>
+                              <label className="tm-game-link">
+                                <span>Match link</span>
+                                <input
+                                  aria-label={'Match link, game ' + (i + 1)}
+                                  placeholder="https://… match link"
+                                  inputMode="url"
+                                  value={g.link}
+                                  maxLength={300}
+                                  onChange={(e) =>
+                                    v.active.matchReport.setGame(
+                                      i,
+                                      'link',
+                                      e.target.value,
+                                    )
+                                  }
+                                />
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="tm-match-foot">
+                          {v.active.matchReport.err ? (
+                            <p role="alert" className="tm-match-err">
+                              {v.active.matchReport.err}
+                            </p>
+                          ) : (
+                            <p className="tm-match-note">
+                              {v.active.matchReport.saved
+                                ? 'Saved. You can still change it until you finish.'
+                                : v.active.matchReport.filled
+                                  ? 'All set. Save it to continue.'
+                                  : 'Fill in every game, then save.'}
+                            </p>
+                          )}
+                          <button
+                            type="button"
+                            className={
+                              'tm-match-save' +
+                              (v.active.matchReport.saved ? ' is-saved' : '')
+                            }
+                            onClick={v.active.matchReport.save}
+                            disabled={v.active.matchReport.busy}
+                          >
+                            {v.active.matchReport.busy
+                              ? 'Saving…'
+                              : v.active.matchReport.saved
+                                ? 'Saved ✓'
+                                : 'Save report'}
+                          </button>
+                        </div>
+                      </section>
+                    ) : null}
                     <PrivateProofs
                       key={v.active.assignmentId}
                       orderId={v.active.id}
                       assignmentId={v.active.assignmentId}
                       mode="teammate"
                       csrf={this.props.csrf}
-                      onCompleted={() => this.completed()}
+                      completionBlocker={
+                        v.active.matchReport && !v.active.matchReport.saved
+                          ? 'Save the match report first.'
+                          : undefined
+                      }
+                      onCompleted={() => this.completed(true)}
                       onCompletionBusyChange={(busy) => {
                         this._completionBusy =
                           busy || !!this._completionReadback;
@@ -3919,6 +3890,7 @@ export default class Teammate extends React.Component {
                     {this.state.completionReadback ? (
                       <button
                         type="button"
+                        className="tm-readback"
                         disabled={this.state.completionReading}
                         onClick={() => this.completed()}
                       >
@@ -4654,9 +4626,23 @@ export default class Teammate extends React.Component {
                     onClick={() =>
                       this._completionReadback ? this.completed() : this.poll()
                     }
-                    style={{ minHeight: '44px', marginBottom: '12px' }}
+                    style={{
+                      minHeight: '40px',
+                      marginBottom: '12px',
+                      padding: '0 16px',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(196, 170, 255, .24)',
+                      background: 'rgba(214, 187, 255, .08)',
+                      color: '#F3EEFF',
+                      font: 'inherit',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
                   >
-                    Refresh desk
+                    {this.state.completionReadback
+                      ? 'Read back desk'
+                      : 'Refresh desk'}
                   </button>
                 ) : null}
                 {v.toast ? (
@@ -4921,6 +4907,18 @@ export default class Teammate extends React.Component {
                               >
                                 {o.publicReference}
                               </span>
+                            </div>
+                            {/* every chip on one row under the title, so the mood, voice and
+                                role tags sit together instead of splitting across two lines */}
+                            <div
+                              style={{
+                                marginTop: '6px',
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                alignItems: 'center',
+                                gap: '6px',
+                              }}
+                            >
                               <span
                                 style={{
                                   fontSize: '12px',
@@ -5178,8 +5176,9 @@ export default class Teammate extends React.Component {
                                   type="button"
                                   onClick={o.accept}
                                   disabled={v.busy}
+                                  aria-busy={o.accepting || undefined}
                                   title={
-                                    v.busy
+                                    v.busy && !o.accepting
                                       ? 'Finish your current order first'
                                       : undefined
                                   }
@@ -5192,10 +5191,14 @@ export default class Teammate extends React.Component {
                                     color: '#17092E',
                                     fontSize: '14.5px',
                                     fontWeight: '700',
-                                    opacity: v.busy ? '.4' : '1',
+                                    opacity:
+                                      v.busy && !o.accepting ? '.4' : '1',
+                                    cursor: o.accepting
+                                      ? 'progress'
+                                      : undefined,
                                   }}
                                 >
-                                  Accept
+                                  {o.accepting ? 'Accepting…' : 'Accept'}
                                 </button>
                               </>
                             )}
