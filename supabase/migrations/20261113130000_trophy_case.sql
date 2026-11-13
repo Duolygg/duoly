@@ -150,7 +150,7 @@ begin
     left join public.teammate_public_profiles pp on pp.user_id = t.user_id
     where t.status = p_status
     order by case when p_status = 'pending' then t.created_at end, t.reviewed_at desc nulls last, t.id
-    limit pg_catalog.greatest(1, pg_catalog.least(coalesce(p_limit, 50), 200))) q), '[]'::jsonb));
+    limit greatest(1, least(coalesce(p_limit, 50), 200))) q), '[]'::jsonb));
 end $$;
 
 create function public.admin_trophy_review(p_id uuid, p_decision text, p_rarity text, p_note text default null) returns jsonb
