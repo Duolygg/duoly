@@ -416,7 +416,8 @@ export const fixtureIndexable = () =>
 
 /**
  * Trophy case fixtures. Nyx has a full case across every rarity; Rhea has only mid-ladder
- * trophies, so the layout is checked where nothing is legendary.
+ * trophies, so the layout is checked where nothing is legendary; Lumi has exactly one, the
+ * case with no shelf and no tour.
  */
 const trophy = (
   t: Partial<PublicTrophy> &
@@ -605,6 +606,22 @@ const TROPHIES: Record<string, PublicTrophy[]> = {
       season: '2018',
       region: 'EUW',
       verifiedAt: '2026-11-06T10:00:00.000Z',
+    }),
+  ],
+  /* One trophy: the case has no shelf and nothing to tour, only the stage. */
+  lumi: [
+    trophy({
+      id: 'f0000000-0000-4000-8000-000000000031',
+      game: 'val',
+      kind: 'rank',
+      rarity: 'epic',
+      ladder: 'rank',
+      tier: 'ascendant',
+      division: '2',
+      moment: 'peak',
+      season: 'Episode 10 Act 2',
+      region: 'EU',
+      value: 118,
     }),
   ],
   rhea: [
