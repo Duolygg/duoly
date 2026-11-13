@@ -76,6 +76,7 @@ export async function loadPublicProfile(slug: string): Promise<ProfileLookup> {
   const result = publicLookupSchema.safeParse(
     await readRpc('public_teammate_profile', { p_slug: slug }),
   );
+  // Preserve the schema-validated optional header URL in the public DTO.
   return result.success ? result.data : { status: 'missing' };
 }
 

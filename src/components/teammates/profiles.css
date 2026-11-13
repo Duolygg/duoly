@@ -1955,3 +1955,112 @@ a.tp-stat:hover > strong {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* ---------- header image (only present when the teammate uploaded one) ---------- */
+/*
+ * The teammate's own picture, behind the whole hero lockup. Every rule here needs
+ * .tp-hero-art, which the page only prints when `header` is set, so a profile without a
+ * header renders exactly the pixels it did before this block existed.
+ *
+ * Out of flow and sized from its own aspect ratio: the hero's height is the same with or
+ * without a picture, and nothing moves while the file loads.
+ *
+ * The scrims are the reason white type can sit on a picture nobody reviewed. The lightest
+ * point of the overlay still covers 74% of a pure white upload, which leaves the name above
+ * 9:1 and the quietest 13 px line in the hero above 5:1; the left wash is heavier because
+ * that is where the name is set.
+ */
+.tp-hero-art {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 0;
+  aspect-ratio: 3 / 1;
+  pointer-events: none;
+  /* Reaches both sides of the hero box, so it fades out there the way the pool of light
+     does rather than ending on a vertical seam. */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 9%,
+    #000 91%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 9%,
+    #000 91%,
+    transparent
+  );
+}
+.tp-hero-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The file is already a 3:1 strip, so this only decides what the narrower boxes below
+     keep: the middle of the picture the teammate positioned. */
+  object-position: center;
+}
+.tp-hero-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Heavy only where the type sits (the left column and the bottom fade into the page), light
+     over the right half, so the teammate actually sees the picture they uploaded. */
+  background:
+    linear-gradient(
+      100deg,
+      rgba(9, 4, 20, 0.9) 0%,
+      rgba(9, 4, 20, 0.88) 52%,
+      rgba(9, 4, 20, 0.5) 72%,
+      rgba(9, 4, 20, 0.22) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(9, 4, 20, 0.1) 0%,
+      rgba(9, 4, 20, 0.1) 45%,
+      rgba(9, 4, 20, 0.7) 82%,
+      #090414 100%
+    );
+}
+/* Stacked, the type runs across the full width, so the whole picture keeps the heavier wash. */
+@media (max-width: 920px) {
+  .tp-hero-art::after {
+    background: linear-gradient(
+      180deg,
+      rgba(9, 4, 20, 0.35) 0%,
+      rgba(9, 4, 20, 0.55) 40%,
+      rgba(9, 4, 20, 0.86) 75%,
+      #090414 100%
+    );
+  }
+}
+/* Stacked, the hero is much taller than a 3:1 strip across it, so the box keeps more height
+   and the picture gives up its sides instead of thinning out to a sliver above the name. */
+@media (max-width: 920px) {
+  .tp-hero-art {
+    aspect-ratio: 2.4 / 1;
+  }
+}
+@media (max-width: 760px) {
+  .tp-hero-art {
+    aspect-ratio: 1.7 / 1;
+  }
+}
+/* Over a header the top corner can be the brightest part of the picture, so Save and Share
+   get a dark pill of their own. Without a header they stay plain utility type. */
+.tp-hero-art ~ .tp-hero-top .tp-utilities a,
+.tp-hero-art ~ .tp-hero-top .tp-utilities .tp-save {
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(9, 4, 20, 0.78);
+}
+.tp-hero-art ~ .tp-hero-top .tp-utilities {
+  gap: 10px;
+}
+/* Stacked, the utilities row goes static, which drops its z-index, and the header art would
+   paint over it. Relative keeps it in the flow and above the picture. */
+@media (max-width: 920px) {
+  .tp-hero-top {
+    position: relative;
+  }
+}

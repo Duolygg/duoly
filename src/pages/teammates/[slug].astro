@@ -141,6 +141,26 @@ const bookingNote = p ? bookingLine(p) : '';
         </p>
       )}
       <section class="tp-hero" aria-labelledby="profile-name">
+        {/*
+          The teammate's own header picture, when they uploaded one. It comes before the pool of
+          light in the markup on purpose: both layers sit at z-index 0, so the light and every
+          word paint over the picture. The file is already the 1500x500 strip the cropper wrote,
+          so one file serves every width, and the box takes its height from the aspect ratio
+          rather than from the picture, which means the hero never moves while it loads.
+        */}
+        {p.header && (
+          <span class="tp-hero-art" aria-hidden="true">
+            <img
+              src={p.header}
+              width="1500"
+              height="500"
+              alt=""
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </span>
+        )}
         <span class="tp-sky" aria-hidden="true"></span>
         <div class="tp-hero-top">
           <div class="tp-utilities">

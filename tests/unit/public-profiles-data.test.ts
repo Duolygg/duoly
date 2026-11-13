@@ -38,6 +38,34 @@ it('reads a whitelisted profile from the public RPC', async () => {
   });
 });
 it.each([
+  null,
+  'https://example.supabase.co/storage/v1/object/public/profile-headers/9f000000-0000-4000-8000-000000000001/0123456789abcdef.webp',
+])(
+  'preserves the nullable header through the public read side: %s',
+  async (header) => {
+    const fixture = fixtureLookup('nyx');
+    if (fixture.status !== 'ok') throw new Error('missing fixture');
+    rpc.mockResolvedValue({
+      data: { ...fixture.profile, header },
+      error: null,
+    });
+    expect(await loadPublicProfile('nyx')).toEqual({
+      status: 'ok',
+      profile: { ...fixture.profile, header },
+    });
+  },
+);
+it.each([
+  'https://evil.invalid/header.webp',
+  'http://example.supabase.co/storage/v1/object/public/profile-headers/9f000000-0000-4000-8000-000000000001/0123456789abcdef.webp',
+  'https://example.supabase.co/storage/v1/object/public/profile-headers/9f000000-0000-4000-8000-000000000001/0123456789abcdef.png',
+])('fails closed on a malformed header: %s', async (header) => {
+  const fixture = fixtureLookup('nyx');
+  if (fixture.status !== 'ok') throw new Error('missing fixture');
+  rpc.mockResolvedValue({ data: { ...fixture.profile, header }, error: null });
+  expect(await loadPublicProfile('nyx')).toEqual({ status: 'missing' });
+});
+it.each([
   { status: 'moved', slug: 'nyx' },
   { status: 'gone' },
   { status: 'missing' },

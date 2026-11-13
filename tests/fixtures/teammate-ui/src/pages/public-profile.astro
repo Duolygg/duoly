@@ -1,0 +1,36 @@
+---
+// Isolated fictional browser fixture, never a production route: the public profile settings
+// block on its own, so the header uploader can be driven without an account. `?header=` decides
+// what the settings read carried: nothing (the state Postgres returns today), `none`, or a URL.
+import SiteLayout from '../../../../../src/layouts/SiteLayout.astro';
+import PublicProfileSettings from '../../../../../src/components/account/PublicProfileSettings';
+const header = Astro.url.searchParams.get('header');
+const initialData = {
+  settings: {
+    published: true,
+    slug: 'nyx',
+    accent: 'lavender',
+    banner: 'slash',
+    featuredGame: 'val',
+    vibeTags: [],
+    showCountry: false,
+    coaching: false,
+    games: [{ game: 'val', roles: ['Controller'], picks: ['Omen'] }],
+  },
+  approvedGames: ['val'],
+  ranks: [
+    { game: 'val', rank: 'Immortal 3', peakRank: 'Radiant', verified: true },
+  ],
+  hidden: false,
+  ...(header ? { header: header === 'none' ? null : header } : {}),
+};
+---
+
+<SiteLayout title="Local public profile fixture | Duoly" bare>
+  <PublicProfileSettings
+    csrf="fixture-csrf"
+    name="Nyx"
+    initialData={initialData}
+    client:load
+  />
+</SiteLayout>

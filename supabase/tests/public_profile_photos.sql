@@ -97,9 +97,9 @@ begin
   update public.profiles set image='https://abcdefghij.supabase.co/storage/v1/object/public/avatars/9f100000-0000-4000-8000-000000000001/a1b2c3d4e5f60718.webp'
     where id='9f100000-0000-4000-8000-000000000001';
   d := public.public_teammate_profile('photoone');
-  perform pg_temp.ok((select pg_catalog.count(*) from pg_catalog.jsonb_object_keys(d))=21
+  perform pg_temp.ok((select pg_catalog.count(*) from pg_catalog.jsonb_object_keys(d))=22
     and d ?& array['slug','name','avatar','country','languages','bio','accent','banner','vibeTags','featuredGame',
-      'coaching','online','memberSince','sessions','tier','rating','reviewTags','winRate','games','reviews','updatedAt'],
+      'coaching','online','memberSince','sessions','tier','rating','reviewTags','winRate','games','reviews','updatedAt','header'],
     'every whitelisted field is still there and nothing else');
   perform pg_temp.ok(not (d ?| array['user_id','userId','id','email','country_code','earnings']),'still no identifiers');
 end $$;

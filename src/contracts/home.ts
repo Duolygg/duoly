@@ -40,7 +40,7 @@ export interface HeroTeammate {
   sessions: number;
   /**
    * The teammate's public profile link, /teammates/<slug>, present only when that profile is one
-   * a visitor could open: migration 20261112170000 applies the same four tests as
+   * a visitor could open: migration 20261112180000 applies the same four tests as
    * public_teammate_profile(), and src/server/home/live.ts drops it again while
    * PUBLIC_PROFILES_ENABLED is off. Absent rather than null, so the cards that have no profile
    * add nothing to the payload the homepage ships.

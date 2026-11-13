@@ -7,6 +7,16 @@ import {
   slugValid,
   publicProfileSettingsSchema,
 } from '../../contracts/teammate-profile';
+import {
+  HEADER_HEIGHT,
+  HEADER_WIDTH,
+  dragOffset,
+  drawHeader,
+  encodeHeader,
+  headerCrop,
+  headerFileError,
+  loadHeaderImage,
+} from './header-image';
 import { GAME } from '../../design-reference/lib/games';
 import './public-profile-settings.css';
 
@@ -15,6 +25,18 @@ export const splitProfileLabels = (value) =>
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
+/**
+ * The saved header, as far as the settings read tells us. teammate_public_profile_get() does not
+ * return it yet (see the note in the header block below), so this is undefined until that one
+ * line lands in Postgres, null when there is no header, and the URL when there is one. The
+ * endpoint answers with the URL it saved, so an upload in this session is always known.
+ */
+export const headerFromData = (data) =>
+  data && 'header' in data
+    ? data.header
+    : data?.settings && 'header' in data.settings
+      ? data.settings.header
+      : undefined;
 const request = async (url, options) => {
   const res = await fetch(url, {
     credentials: 'same-origin',
@@ -38,9 +60,18 @@ export default class PublicProfileSettings extends React.Component {
       explain: false,
       consented: false,
       availability: '',
+      /** undefined while the settings read does not carry it, null when there is none. */
+      header: headerFromData(props.initialData),
+      pick: null,
+      headerError: '',
+      headerNote: '',
+      headerBusy: false,
     };
+    this.headerFile = React.createRef();
+    this.headerCanvas = React.createRef();
   }
   componentDidMount() {
+    this.unmounted = false;
     if (!this.state.data) this.load();
   }
   componentWillUnmount() {
@@ -57,10 +88,16 @@ export default class PublicProfileSettings extends React.Component {
             slug: data.settings.slug || slugFromName(this.props.name),
           },
           error: '',
+          ...this.headerPatch(data),
         });
     } catch (e) {
       if (!this.unmounted) this.setState({ error: e.message });
     }
+  }
+  /** Keeps a header we already know about when the payload says nothing about one. */
+  headerPatch(data) {
+    const header = headerFromData(data);
+    return header === undefined ? {} : { header };
   }
   change(key, value) {
     this.setState((s) => ({
@@ -116,10 +153,268 @@ export default class PublicProfileSettings extends React.Component {
         message: data.settings.published
           ? 'Public profile saved.'
           : 'Public profile is off.',
+        ...this.headerPatch(data),
       });
     } catch (e) {
       this.setState({ saving: false, error: e.message });
     }
+  }
+  /* ---------- header image ---------- */
+  /** Decodes the picked file and opens the crop on the centre of it. */
+  async pickHeader(file) {
+    const problem = headerFileError(file);
+    if (problem) return this.setState({ headerError: problem, headerNote: '' });
+    this.setState({ headerError: '', headerNote: '' });
+    try {
+      const image = await loadHeaderImage(file);
+      if (this.unmounted) return;
+      this.setState({ pick: { image, offsetX: 0.5, offsetY: 0.5 } }, () =>
+        this.paintHeader(),
+      );
+    } catch (e) {
+      if (!this.unmounted) this.setState({ headerError: e.message });
+    }
+  }
+  paintHeader() {
+    const canvas = this.headerCanvas.current;
+    const pick = this.state.pick;
+    if (canvas && pick)
+      drawHeader(canvas, pick.image, pick.offsetX, pick.offsetY);
+  }
+  /** How much of the picture lies outside the 3:1 window, and the preview's own scale. */
+  headerRoom() {
+    const pick = this.state.pick;
+    const canvas = this.headerCanvas.current;
+    if (!pick) return null;
+    const crop = headerCrop(pick.image.naturalWidth, pick.image.naturalHeight);
+    const box = canvas?.getBoundingClientRect().width || HEADER_WIDTH;
+    return {
+      scale: crop.sw / box,
+      x: pick.image.naturalWidth - crop.sw,
+      y: pick.image.naturalHeight - crop.sh,
+    };
+  }
+  /** Moves the crop by a pointer or key movement measured in preview pixels. */
+  moveHeader(dx, dy) {
+    const pick = this.state.pick;
+    const room = this.headerRoom();
+    if (!pick || !room) return;
+    this.setState(
+      {
+        pick: {
+          ...pick,
+          offsetX: dragOffset(pick.offsetX, dx, room.scale, room.x),
+          offsetY: dragOffset(pick.offsetY, dy, room.scale, room.y),
+        },
+      },
+      () => this.paintHeader(),
+    );
+  }
+  async uploadHeader() {
+    const canvas = this.headerCanvas.current;
+    if (!canvas || !this.state.pick) return;
+    this.setState({ headerBusy: true, headerError: '', headerNote: '' });
+    // Safari cannot encode WebP from a canvas and hands back a PNG; JPEG works everywhere.
+    const encoded = encodeHeader((quality) => {
+      const webp = canvas.toDataURL('image/webp', quality);
+      return webp.startsWith('data:image/webp;')
+        ? webp
+        : canvas.toDataURL('image/jpeg', quality);
+    });
+    if (!encoded.ok)
+      return this.setState({
+        headerBusy: false,
+        headerError:
+          encoded.reason === 'format'
+            ? 'This browser could not save the picture. Try another browser.'
+            : 'That picture stays over 300 KB even at low quality. Try one with less fine detail.',
+      });
+    try {
+      const data = await request('/api/teammate/profile-header', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csrf: this.props.csrf, image: encoded.url }),
+      });
+      if (!this.unmounted)
+        this.setState({
+          header: data.url,
+          pick: null,
+          headerBusy: false,
+          headerNote: 'Header saved.',
+        });
+    } catch (e) {
+      if (!this.unmounted)
+        this.setState({ headerBusy: false, headerError: e.message });
+    }
+  }
+  async removeHeader() {
+    this.setState({ headerBusy: true, headerError: '', headerNote: '' });
+    try {
+      await request('/api/teammate/profile-header', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csrf: this.props.csrf }),
+      });
+      if (!this.unmounted)
+        this.setState({
+          header: null,
+          pick: null,
+          headerBusy: false,
+          headerNote: 'Header removed.',
+        });
+    } catch (e) {
+      if (!this.unmounted)
+        this.setState({ headerBusy: false, headerError: e.message });
+    }
+  }
+  /**
+   * Pick, crop, upload, replace, remove. The picture never leaves the browser uncropped: the
+   * canvas below is the 1500 by 500 strip that gets encoded, so what the teammate positions here
+   * is exactly what the endpoint stores.
+   */
+  renderHeader() {
+    const { header, pick, headerBusy } = this.state;
+    const crop = pick
+      ? headerCrop(pick.image.naturalWidth, pick.image.naturalHeight)
+      : null;
+    /** A picture that is already 3:1 has nothing to slide, so it says so instead of inviting a drag. */
+    const movable = Boolean(
+      crop &&
+      (pick.image.naturalWidth - crop.sw > 1 ||
+        pick.image.naturalHeight - crop.sh > 1),
+    );
+    return (
+      <fieldset className="pp-header">
+        <legend>Header image</legend>
+        <p className="pp-help">Your header is shown on your public profile.</p>
+        {this.state.headerError ? (
+          <p role="alert" className="pp-error">
+            {this.state.headerError}
+          </p>
+        ) : null}
+        {pick ? (
+          <>
+            <canvas
+              className="pp-header-art pp-header-crop"
+              ref={this.headerCanvas}
+              width={HEADER_WIDTH}
+              height={HEADER_HEIGHT}
+              role="img"
+              aria-label="Header crop"
+              aria-describedby="pp-header-hint"
+              tabIndex={movable ? 0 : -1}
+              onPointerDown={(e) => {
+                if (!movable) return;
+                e.currentTarget.setPointerCapture(e.pointerId);
+                this.drag = { x: e.clientX, y: e.clientY };
+              }}
+              onPointerMove={(e) => {
+                if (!this.drag) return;
+                const dx = e.clientX - this.drag.x;
+                const dy = e.clientY - this.drag.y;
+                this.drag = { x: e.clientX, y: e.clientY };
+                this.moveHeader(dx, dy);
+              }}
+              onPointerUp={() => {
+                this.drag = null;
+              }}
+              onPointerCancel={() => {
+                this.drag = null;
+              }}
+              onKeyDown={(e) => {
+                const step = 16;
+                const by = {
+                  ArrowLeft: [-step, 0],
+                  ArrowRight: [step, 0],
+                  ArrowUp: [0, -step],
+                  ArrowDown: [0, step],
+                }[e.key];
+                if (!by || !movable) return;
+                e.preventDefault();
+                this.moveHeader(by[0], by[1]);
+              }}
+            />
+            <p className="pp-help" id="pp-header-hint">
+              {movable
+                ? 'Drag the picture to position it, or use the arrow keys. Duoly saves the strip you see, 1500 by 500 pixels.'
+                : 'This picture already fits the strip. Duoly saves it at 1500 by 500 pixels.'}
+            </p>
+            <div className="pp-actions">
+              <button
+                type="button"
+                className="pp-button pp-primary"
+                disabled={headerBusy}
+                onClick={() => this.uploadHeader()}
+              >
+                {headerBusy ? 'Uploading…' : 'Upload header'}
+              </button>
+              <button
+                type="button"
+                className="pp-button"
+                disabled={headerBusy}
+                onClick={() => this.setState({ pick: null, headerError: '' })}
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            {header ? (
+              <img
+                className="pp-header-art"
+                src={header}
+                width={HEADER_WIDTH}
+                height={HEADER_HEIGHT}
+                alt="Your header image"
+              />
+            ) : (
+              <p className="pp-help">
+                {header === null
+                  ? 'You have no header yet. A header is optional.'
+                  : 'Pick a picture to set your header. Your public profile shows the header you have now.'}
+              </p>
+            )}
+            <div className="pp-actions">
+              <button
+                type="button"
+                className="pp-button"
+                disabled={headerBusy}
+                onClick={() => this.headerFile.current.click()}
+              >
+                {header ? 'Replace header' : 'Choose a picture'}
+              </button>
+              {/* Removing stays available while the settings read cannot tell us whether there
+                  is a header, so nobody is stuck with one they cannot see from here. */}
+              {header === null ? null : (
+                <button
+                  type="button"
+                  className="pp-button"
+                  disabled={headerBusy}
+                  onClick={() => this.removeHeader()}
+                >
+                  {headerBusy ? 'Working…' : 'Remove header'}
+                </button>
+              )}
+            </div>
+          </>
+        )}
+        <input
+          ref={this.headerFile}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif"
+          style={{ display: 'none' }}
+          data-header-file
+          onChange={(e) => {
+            this.pickHeader(e.target.files[0]);
+            e.target.value = '';
+          }}
+        />
+        <p className="pp-help" role="status">
+          {this.state.headerNote}
+        </p>
+      </fieldset>
+    );
   }
   render() {
     const { settings: s, data: d } = this.state;
@@ -294,6 +589,7 @@ export default class PublicProfileSettings extends React.Component {
                 ))}
               </div>
             </fieldset>
+            {this.renderHeader()}
             <fieldset>
               <legend>
                 Vibe tags <span className="pp-help">up to 3</span>
