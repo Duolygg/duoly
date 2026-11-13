@@ -13,7 +13,7 @@ export type StorageCleanupResult = { deleted: number; failed: number };
 
 type Claimed = { bucket: string; path: string };
 
-const BUCKETS = new Set(['avatars', 'profile-headers']);
+const BUCKETS = new Set(['avatars', 'profile-headers', 'trophy-proofs']);
 const PATH =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{16}\.(webp|jpg)$/;
 

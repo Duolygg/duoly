@@ -6,6 +6,7 @@
 // a bio and pick languages (ledger #2); the rules are enforced again on the server and in Postgres.
 import React from 'react';
 import PublicProfileSettings from './PublicProfileSettings';
+import TrophySettings from './TrophySettings';
 import {
   COUNTRIES,
   COUNTRY_NAME,
@@ -1257,7 +1258,10 @@ export default class Profile extends React.Component {
               </section>
 
               {teammate && this.props.publicProfilesEnabled ? (
-                <PublicProfileSettings csrf={this.props.csrf} name={u.name} />
+                <>
+                  <PublicProfileSettings csrf={this.props.csrf} name={u.name} />
+                  <TrophySettings csrf={this.props.csrf} />
+                </>
               ) : null}
 
               {/* Discord: teammates connect it so the bot can show Online / In Session in the server */}

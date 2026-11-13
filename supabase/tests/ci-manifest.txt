@@ -63,6 +63,7 @@ suite queue_settings.sql
 suite referral_first_order_discount.sql
 suite sparky_presence_read.sql
 suite storage_cleanup.sql
+suite trophy_case.sql
 suite stripe_payments.sql
 suite support_sparky.sql
 suite support_sparky_limits.sql

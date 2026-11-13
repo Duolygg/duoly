@@ -1,0 +1,666 @@
+---
+/*
+ * The trophy case: approved trophies on a lit stage. The rarest stands in front in its own light;
+ * the rest wait on a shallow arc either side and any of them can be brought forward. Rarity is
+ * told by light, size and shine, never by a label on the trophy, so a Gold rank still looks earned.
+ *
+ * Everything renders on the server in its first position, so the case is complete without
+ * JavaScript; the script below only moves trophies and adds the tilt.
+ */
+import type { TrophyView } from '../../server/teammates/trophy-view';
+import {
+  trophyHighlights,
+  trophyOffset,
+  trophyShelves,
+} from '../../server/teammates/trophy-view';
+import './trophy-case.css';
+
+interface Props {
+  trophies: TrophyView[];
+  name: string;
+}
+const { trophies: all, name } = Astro.props;
+/* The stage holds one of each tier or result; the list underneath holds everything. */
+const trophies = trophyHighlights(all);
+const n = trophies.length;
+const shelves = trophyShelves(all);
+const lineOf = (t: TrophyView) =>
+  [t.eyebrow.replace(`${t.gameName} · `, ''), t.meta]
+    .filter(Boolean)
+    .join(' · ');
+const pad = (i: number) => String(i).padStart(2, '0');
+---
+
+<section
+  id="trophies"
+  class="tp-section tc"
+  aria-labelledby="trophies-title"
+  data-trophy-case
+  data-count={n}
+>
+  <div class="tp-section-head">
+    <div>
+      <h2 id="trophies-title">Trophies</h2>
+      <p>{name}'s verified ranks and results, rarest first.</p>
+    </div>
+  </div>
+  <div class="tc-layout">
+    <div class="tc-stage" data-tc-stage>
+      <canvas class="tc-dust" aria-hidden="true" data-tc-dust></canvas>
+      <div class="tc-floor-rings" aria-hidden="true">
+        <i></i>
+        <i></i>
+      </div>
+      <div class="tc-arc" role="tablist" aria-label="Trophies" data-tc-arc>
+        {trophies.map((t, i) => {
+          const d = trophyOffset(i, 0, n);
+          return (
+            <button
+              type="button"
+              class="tc-item"
+              id={`tc-tab-${t.id}`}
+              role="tab"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              aria-controls={`tc-panel-${t.id}`}
+              aria-label={`${t.name}, ${t.eyebrow}`}
+              tabindex={i === 0 ? 0 : -1}
+              data-rarity={t.rarity}
+              data-crest={t.crest ? '' : undefined}
+              data-a={Math.min(Math.abs(d), 4)}
+              style={`--art:url("${t.art}");--side:${Math.sign(d)};--i:${i}`}
+            >
+              <span class="tc-glow" aria-hidden="true" />
+              <span class="tc-shadow" aria-hidden="true" />
+              {(t.rarity === 'mythic' || t.rarity === 'legendary') && (
+                <span class="tc-halo" aria-hidden="true" />
+              )}
+              {(t.rarity === 'mythic' || t.rarity === 'legendary') && (
+                <span class="tc-sparkles" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              )}
+              <span class="tc-float">
+                <span class="tc-body">
+                  <img
+                    src={t.art}
+                    alt={t.alt}
+                    draggable="false"
+                    width="256"
+                    height="256"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                  />
+                  <span class="tc-foil" aria-hidden="true" />
+                  <span class="tc-glint" aria-hidden="true" />
+                  <span class="tc-glitter" aria-hidden="true" />
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+    <div class="tc-details">
+      {trophies.map((t, i) => (
+        <div
+          class="tc-detail"
+          id={`tc-panel-${t.id}`}
+          role="tabpanel"
+          aria-labelledby={`tc-tab-${t.id}`}
+          data-rarity={t.rarity}
+          hidden={i !== 0}
+        >
+          <p class="tc-eyebrow">{t.eyebrow}</p>
+          <h3 class="tc-name" style={`--len:${Math.max(t.name.length, 8)}`}>
+            {t.name}
+          </h3>
+          {t.meta && <p class="tc-meta">{t.meta}</p>}
+          <p class="tc-verified">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+              <path
+                d="M8 1.5 13.5 4v4c0 3.2-2.3 5.6-5.5 6.5C4.8 13.6 2.5 11.2 2.5 8V4z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.4"
+              />
+              <path
+                d="m5.6 8.1 1.7 1.7 3.2-3.4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>Verified by Duoly{t.verified && ` · ${t.verified}`}</span>
+            {t.proofUrl && (
+              <a
+                class="tc-proof"
+                href={t.proofUrl}
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+              >
+                See proof
+                <svg
+                  viewBox="0 0 12 12"
+                  width="12"
+                  height="12"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 2h6v6M10 2 2.5 9.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+              </a>
+            )}
+          </p>
+        </div>
+      ))}
+      {n > 1 && (
+        <div class="tc-controls">
+          <p class="tc-count" aria-live="polite">
+            <b data-tc-index>01</b>
+            <span> / {pad(n)}</span>
+          </p>
+          <button
+            type="button"
+            class="tc-play"
+            data-tc-play
+            aria-pressed="false"
+            aria-label="Pause the trophy carousel"
+            hidden
+          >
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path class="tc-play-pause" d="M5 3v10M11 3v10" />
+              <path class="tc-play-go" d="M5 3l8 5-8 5z" />
+            </svg>
+          </button>
+          <span class="tc-progress" aria-hidden="true">
+            <i data-tc-progress style={`--p:${1 / n}`} />
+          </span>
+          <button
+            type="button"
+            class="tc-step"
+            data-tc-step="-1"
+            aria-label="Previous trophy"
+          >
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+              <path
+                d="M10 3 5 8l5 5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="tc-step"
+            data-tc-step="1"
+            aria-label="Next trophy"
+          >
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+              <path
+                d="m6 3 5 5-5 5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+  <div class="tc-list" aria-labelledby="trophies-list-title">
+    <div class="tc-list-head">
+      <h3 id="trophies-list-title">Every trophy</h3>
+      <span>{all.length}</span>
+    </div>
+    {shelves.map((shelf) => (
+      <section class="tc-shelf" aria-label={shelf.gameName}>
+        <header class="tc-shelf-head">
+          <h4>{shelf.gameName}</h4>
+          <span>
+            {shelf.items.length}{' '}
+            {shelf.items.length === 1 ? 'trophy' : 'trophies'}
+          </span>
+        </header>
+        {shelf.tally.length > 0 && (
+          <ul class="tc-tally" aria-label={`${shelf.gameName} ranks`}>
+            {shelf.tally.map((x) => (
+              <li data-rarity={x.rarity}>
+                <img
+                  src={x.art}
+                  alt=""
+                  width="30"
+                  height="30"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="tc-tally-name">{x.name}</span>
+                {x.count > 1 && (
+                  <b class="tc-tally-count" aria-label={`${x.count} seasons`}>
+                    ×{x.count}
+                  </b>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+        <details class="tc-more" open={shelf.tally.length === 0 || undefined}>
+          <summary>
+            <span class="tc-more-show">See the full list</span>
+            <span class="tc-more-hide">Hide list</span>
+          </summary>
+          <ol class="tl-rows">
+            {shelf.items.map((t) => (
+              <li class="tl-row" data-rarity={t.rarity}>
+                <img
+                  src={t.art}
+                  alt=""
+                  width="32"
+                  height="32"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="tl-row-text">
+                  <b>{t.name}</b>
+                  <span>{lineOf(t)}</span>
+                </span>
+                {t.proofUrl ? (
+                  <a
+                    class="tl-row-proof"
+                    href={t.proofUrl}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                  >
+                    See proof
+                  </a>
+                ) : (
+                  <span class="tl-row-ok">Verified</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </details>
+      </section>
+    ))}
+  </div>
+  <p class="tc-note">
+    Every trophy here was checked by Duoly before it went up. Rank emblems
+    belong to their publishers, and Duoly is not affiliated with them.
+  </p>
+</section>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>(
+    '[data-trophy-case]',
+  )) {
+    const items = [...root.querySelectorAll<HTMLButtonElement>('.tc-item')];
+    const panels = [...root.querySelectorAll<HTMLElement>('.tc-detail')];
+    const stage = root.querySelector<HTMLElement>('[data-tc-stage]')!;
+    const index = root.querySelector<HTMLElement>('[data-tc-index]');
+    const progress = root.querySelector<HTMLElement>('[data-tc-progress]');
+    const n = items.length;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let active = 0;
+
+    const offset = (i: number) => {
+      let d = i - active;
+      if (n >= 3) {
+        const half = Math.floor(n / 2);
+        d = ((((d + half) % n) + n) % n) - half;
+      }
+      return d;
+    };
+    const show = (next: number, focus = false) => {
+      const prev = items[active];
+      active = ((next % n) + n) % n;
+      /* The trophy leaving the front stays on top and fades as it steps back, so the
+         incoming one rises underneath it instead of sliding over it. */
+      if (prev && prev !== items[active] && !still) {
+        prev.classList.add('is-leaving');
+        window.setTimeout(() => prev.classList.remove('is-leaving'), 240);
+      }
+      items.forEach((item, i) => {
+        const d = offset(i);
+        item.dataset.a = String(Math.min(Math.abs(d), 4));
+        item.style.setProperty('--side', String(Math.sign(d)));
+        item.setAttribute('aria-selected', String(d === 0));
+        item.tabIndex = d === 0 ? 0 : -1;
+        if (d !== 0)
+          for (const p of ['--rx', '--ry', '--mx', '--my'])
+            item.style.removeProperty(p);
+        const img = item.querySelector('img');
+        if (img && Math.abs(d) <= 2) img.loading = 'eager';
+      });
+      panels.forEach((panel, i) => (panel.hidden = i !== active));
+      if (index) index.textContent = String(active + 1).padStart(2, '0');
+      progress?.style.setProperty('--p', String((active + 1) / n));
+      if (focus) items[active]?.focus({ preventScroll: true });
+    };
+
+    /* Slow auto-advance that loops. It waits while the visitor is pointing at, focused in
+       or has just used the case, stops while the page or the case is out of view, and never
+       runs with reduced motion. The pause button keeps it stopped. */
+    const playBtn = root.querySelector<HTMLButtonElement>('[data-tc-play]');
+    const AUTO = 4200;
+    let timer = 0;
+    let hovering = false;
+    let inView = false;
+    let paused = false;
+    let quietUntil = 0;
+    const tick = () => {
+      timer = 0;
+      if (
+        paused ||
+        hovering ||
+        !inView ||
+        document.hidden ||
+        root.contains(document.activeElement)
+      )
+        return schedule();
+      if (Date.now() < quietUntil) return schedule(quietUntil - Date.now());
+      show(active + 1);
+      schedule();
+    };
+    const schedule = (ms = AUTO) => {
+      if (still || n < 2) return;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(tick, Math.max(ms, 400));
+    };
+    const touched = () => {
+      quietUntil = Date.now() + 9000;
+    };
+    if (!still && n > 1 && playBtn) {
+      playBtn.hidden = false;
+      playBtn.addEventListener('click', () => {
+        paused = !paused;
+        playBtn.setAttribute('aria-pressed', String(paused));
+        playBtn.setAttribute(
+          'aria-label',
+          paused ? 'Play the trophy carousel' : 'Pause the trophy carousel',
+        );
+        if (!paused) schedule();
+      });
+      root.addEventListener(
+        'pointerenter',
+        (e) => (hovering = e.pointerType === 'mouse'),
+      );
+      root.addEventListener('pointerleave', () => (hovering = false));
+      new IntersectionObserver(([e]) => {
+        inView = !!e?.isIntersecting;
+        if (inView) schedule();
+      }).observe(stage);
+    }
+
+    const go = (next: number) => {
+      touched();
+      show(next);
+    };
+    items.forEach((item, i) =>
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (i !== active) go(i);
+      }),
+    );
+    /* The whole stage is a target: anywhere left of the front trophy steps back, anywhere
+       right of it steps on, so the small trophies on the arc need no precise aim. */
+    stage.addEventListener('click', (e) => {
+      if (n < 2) return;
+      const r = stage.getBoundingClientRect();
+      const front = items[active]?.getBoundingClientRect();
+      const x = (e as MouseEvent).clientX;
+      if (front && x >= front.left && x <= front.right) return;
+      go(active + (x < r.left + r.width / 2 ? -1 : 1));
+    });
+    root
+      .querySelectorAll<HTMLButtonElement>('[data-tc-step]')
+      .forEach((b) =>
+        b.addEventListener('click', () =>
+          go(active + Number(b.dataset.tcStep)),
+        ),
+      );
+    root.querySelector('[data-tc-arc]')?.addEventListener('keydown', (e) => {
+      const key = (e as KeyboardEvent).key;
+      const step = key === 'ArrowRight' ? 1 : key === 'ArrowLeft' ? -1 : 0;
+      if (key === 'Home') show(0, true);
+      else if (key === 'End') show(n - 1, true);
+      else if (step) show(active + step, true);
+      else return;
+      touched();
+      e.preventDefault();
+    });
+
+    /* Swipe and drag: the arc follows the finger (or a mouse drag) and lets go into the
+       next trophy once the drag is clear. Works on phones, tablets and desktop. */
+    const arc = root.querySelector<HTMLElement>('[data-tc-arc]');
+    let startX = 0;
+    let startY = 0;
+    let dragging = false;
+    let moved = false;
+    let pid = -1;
+    const endDrag = () => {
+      pid = -1;
+      dragging = false;
+      root.classList.remove('is-dragging');
+      arc?.style.removeProperty('--drag');
+    };
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.button > 0 || n < 2) return;
+      startX = e.clientX;
+      startY = e.clientY;
+      moved = false;
+      dragging = false;
+      pid = e.pointerId;
+      touched();
+    });
+    stage.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== pid) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (!dragging) {
+        if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy)) return;
+        dragging = true;
+        stage.setPointerCapture?.(e.pointerId);
+        root.classList.add('is-dragging');
+        items[active]?.classList.remove('is-pressed');
+      }
+      arc?.style.setProperty('--drag', `${(dx * 0.6).toFixed(1)}px`);
+    });
+    const release = (e: PointerEvent) => {
+      if (e.pointerId !== pid) return;
+      const dx = e.clientX - startX;
+      const was = dragging;
+      endDrag();
+      if (was && Math.abs(dx) > 40) {
+        moved = true;
+        go(active + (dx < 0 ? 1 : -1));
+      } else if (was) moved = true;
+    };
+    stage.addEventListener('pointerup', release);
+    stage.addEventListener('pointercancel', (e) => {
+      if (e.pointerId === pid) endDrag();
+    });
+    /* A finished drag is not also a click on whatever was under the finger. */
+    stage.addEventListener(
+      'click',
+      (e) => {
+        if (moved) {
+          e.stopPropagation();
+          e.preventDefault();
+          moved = false;
+        }
+      },
+      true,
+    );
+
+    /* Tapping or clicking the front trophy gives it a quick press toward the touch point
+       and a springy release with a flash of light, on phones and with a mouse alike. */
+    if (!still) {
+      const press = (item: HTMLElement, e: PointerEvent) => {
+        const r = item.getBoundingClientRect();
+        const x = Math.max(
+          -1,
+          Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)),
+        );
+        const y = Math.max(
+          -1,
+          Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)),
+        );
+        item.style.setProperty('--px', `${(-y * 14).toFixed(1)}deg`);
+        item.style.setProperty('--py', `${(x * 18).toFixed(1)}deg`);
+        item.style.setProperty('--mx', `${(50 + x * 45).toFixed(1)}%`);
+        item.style.setProperty('--my', `${(50 + y * 45).toFixed(1)}%`);
+        item.classList.remove('is-popped');
+        item.classList.add('is-pressed');
+      };
+      const release = () => {
+        const item = items[active];
+        if (!item?.classList.contains('is-pressed')) return;
+        item.classList.remove('is-pressed');
+        void item.offsetWidth;
+        item.classList.add('is-popped');
+        window.setTimeout(() => item.classList.remove('is-popped'), 520);
+      };
+      items.forEach((item, i) =>
+        item.addEventListener('pointerdown', (e) => {
+          if (i === active) press(item, e);
+        }),
+      );
+      window.addEventListener('pointerup', release);
+      window.addEventListener('pointercancel', release);
+    }
+
+    /* The front trophy turns toward the pointer and its foil follows it. */
+    if (!still && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      let frame = 0;
+      stage.addEventListener('pointermove', (e) => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          const item = items[active];
+          if (!item) return;
+          const r = item.getBoundingClientRect();
+          const x = Math.max(
+            -1,
+            Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width * 0.9)),
+          );
+          const y = Math.max(
+            -1,
+            Math.min(
+              1,
+              (e.clientY - (r.top + r.height / 2)) / (r.height * 0.9),
+            ),
+          );
+          item.style.setProperty('--rx', `${(-y * 12).toFixed(2)}deg`);
+          item.style.setProperty('--ry', `${(x * 16).toFixed(2)}deg`);
+          item.style.setProperty('--mx', `${(50 + x * 45).toFixed(1)}%`);
+          item.style.setProperty('--my', `${(50 + y * 45).toFixed(1)}%`);
+          root.classList.add('is-tilting');
+        });
+      });
+      stage.addEventListener('pointerleave', () => {
+        cancelAnimationFrame(frame);
+        root.classList.remove('is-tilting');
+        for (const p of ['--rx', '--ry', '--mx', '--my'])
+          items[active]?.style.removeProperty(p);
+      });
+    }
+
+    /* The trophies rise in when the case first scrolls into view. */
+    if (!still && 'IntersectionObserver' in window) {
+      root.classList.add('tc-armed');
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((x) => x.isIntersecting)) {
+            root.classList.add('is-in');
+            io.disconnect();
+          }
+        },
+        { threshold: 0.25 },
+      );
+      io.observe(stage);
+    }
+    show(0);
+
+    /* Stardust: a few motes of light drifting round the front trophy at different depths. */
+    const canvas = root.querySelector<HTMLCanvasElement>('[data-tc-dust]');
+    const ctx = canvas?.getContext('2d');
+    if (canvas && ctx && !still) {
+      const motes = Array.from({ length: 30 }, (_, k) => ({
+        a: Math.random() * Math.PI * 2,
+        r: 0.42 + Math.random() * 0.5,
+        y: (Math.random() - 0.5) * 0.9,
+        z: Math.random(),
+        v: (0.04 + Math.random() * 0.08) * (k % 2 ? 1 : -1),
+        t: Math.random() * Math.PI * 2,
+        gold: Math.random() < 0.6,
+      }));
+      let w = 0,
+        h = 0,
+        raf = 0,
+        last = 0,
+        visible = false;
+      const size = () => {
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        w = canvas.clientWidth;
+        h = canvas.clientHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      };
+      const draw = (now: number) => {
+        const dt = Math.min(0.05, (now - last) / 1000 || 0);
+        last = now;
+        ctx.clearRect(0, 0, w, h);
+        const rare = items[active]?.dataset.rarity;
+        const strength =
+          rare === 'mythic'
+            ? 1
+            : rare === 'legendary'
+              ? 0.85
+              : rare === 'epic'
+                ? 0.55
+                : 0.35;
+        const cx = w / 2,
+          cy = h * 0.48,
+          R = Math.min(w, h) * 0.5;
+        ctx.globalCompositeOperation = 'lighter';
+        for (const m of motes) {
+          m.a += m.v * dt;
+          m.t += dt * (0.8 + m.z);
+          const x = cx + Math.cos(m.a) * R * m.r;
+          const y = cy + m.y * R * 0.9 + Math.sin(m.a) * R * 0.12;
+          const tw = 0.5 + 0.5 * Math.sin(m.t * 1.7);
+          const rad = 1.3 + m.z * 2.6;
+          const alpha = strength * (0.3 + 0.7 * m.z) * tw * tw;
+          const c = m.gold ? '255, 224, 168' : '222, 204, 255';
+          const g = ctx.createRadialGradient(x, y, 0, x, y, rad * 5);
+          g.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+          g.addColorStop(0.18, `rgba(${c}, ${alpha * 0.8})`);
+          g.addColorStop(0.4, `rgba(${c}, ${alpha * 0.18})`);
+          g.addColorStop(1, `rgba(${c}, 0)`);
+          ctx.fillStyle = g;
+          ctx.fillRect(x - rad * 5, y - rad * 5, rad * 10, rad * 10);
+        }
+        raf = visible ? requestAnimationFrame(draw) : 0;
+      };
+      new ResizeObserver(size).observe(canvas);
+      new IntersectionObserver(([e]) => {
+        visible = !!e?.isIntersecting;
+        if (visible && !raf) {
+          last = performance.now();
+          raf = requestAnimationFrame(draw);
+        }
+      }).observe(stage);
+    }
+  }
+</script>

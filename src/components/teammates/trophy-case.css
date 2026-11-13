@@ -1,0 +1,1135 @@
+/*
+ * Trophy case (TrophyCase.astro). The page's own language: no boxes, colour as light, the name
+ * set large. Each trophy is lit by a blurred copy of its own emblem, so Gold glows gold and
+ * Platinum glows teal without a colour table; rarity sets how much light, how large, and how
+ * strong the shine.
+ */
+.tc {
+  --tc-size: 208px;
+  --tc-step: 108px;
+  --tc-stage: 296px;
+  --tc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --tc-move: 0.42s;
+}
+.tc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+  align-items: center;
+  gap: 40px;
+}
+
+/* ---------- stage ---------- */
+.tc-stage {
+  position: relative;
+  height: var(--tc-stage);
+  perspective: 1400px;
+  touch-action: pan-y;
+  /* the avatar's light, a little lower, so the front trophy stands in it */
+  background: radial-gradient(
+    46% 52% at 50% 46%,
+    color-mix(in srgb, var(--accent) 13%, transparent),
+    color-mix(in srgb, var(--accent) 4%, transparent) 55%,
+    transparent 75%
+  );
+}
+.tc[data-count='1'] .tc-stage {
+  --tc-stage: 380px;
+}
+/* The floor: one soft pool of light under the front trophy, nothing drawn. */
+.tc-floor-rings {
+  position: absolute;
+  left: 50%;
+  top: calc(48% + var(--tc-size) * 0.47);
+  width: calc(var(--tc-size) * 1.9);
+  height: calc(var(--tc-size) * 0.34);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent) 16%, transparent),
+    color-mix(in srgb, var(--accent) 5%, transparent) 60%,
+    transparent
+  );
+  pointer-events: none;
+}
+.tc-floor-rings i {
+  display: none;
+}
+.tc-arc {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  translate: var(--drag, 0px) 0;
+  transition: translate 0.32s var(--tc-ease);
+}
+.tc.is-dragging .tc-arc {
+  transition: none;
+}
+.tc.is-dragging .tc-stage {
+  cursor: grabbing;
+}
+.tc-stage {
+  user-select: none;
+  -webkit-user-select: none;
+}
+.tc-stage img {
+  -webkit-user-drag: none;
+}
+
+/* ---------- one trophy ---------- */
+.tc-item {
+  --side: 0;
+  --xm: 0;
+  --s: 1;
+  --o: 1;
+  --z: 0px;
+  --light: 0.95;
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: var(--tc-size);
+  height: var(--tc-size);
+  margin: calc(var(--tc-size) / -2) 0 0 calc(var(--tc-size) / -2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: var(--o);
+  transform: translateX(calc(var(--side) * var(--xm) * var(--tc-step)))
+    translateY(calc(var(--xm) * 10px)) rotateY(calc(var(--side) * -22deg))
+    scale(var(--s));
+  transform-style: preserve-3d;
+  transition:
+    transform var(--tc-move) var(--tc-ease),
+    opacity var(--tc-move) var(--tc-ease),
+    filter var(--tc-move) var(--tc-ease),
+    translate 0.5s var(--tc-ease),
+    visibility var(--tc-move);
+  -webkit-tap-highlight-color: transparent;
+}
+.tc-item[data-a='0'] {
+  z-index: 5;
+  cursor: default;
+  transform: none;
+}
+/* Leaving the front: stays above the incoming trophy and fades out of the way. */
+.tc-item.is-leaving {
+  z-index: 6;
+  --o: 0;
+  transition:
+    transform var(--tc-move) var(--tc-ease),
+    opacity 0.16s linear,
+    filter var(--tc-move) var(--tc-ease);
+}
+/* A bigger target than the shrunken trophy itself. */
+.tc-item:not([data-a='0'])::before {
+  content: '';
+  position: absolute;
+  inset: -22%;
+}
+.tc-stage {
+  cursor: pointer;
+}
+.tc-stage .tc-item[data-a='0'] {
+  cursor: default;
+}
+.tc-item[data-a='1'] {
+  --xm: 1.22;
+  --s: 0.48;
+  --z: -80px;
+  --o: 0.92;
+  z-index: 4;
+}
+.tc-item[data-a='2'] {
+  --xm: 2.1;
+  --s: 0.35;
+  --z: -160px;
+  --o: 0.62;
+  z-index: 3;
+  filter: saturate(0.8);
+}
+.tc-item[data-a='3'] {
+  --xm: 2.82;
+  --s: 0.26;
+  --z: -230px;
+  --o: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 2;
+  filter: saturate(0.6);
+}
+.tc-item[data-a='4'] {
+  --xm: 3.2;
+  --s: 0.2;
+  --z: -280px;
+  --o: 0;
+  visibility: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+.tc-item:not([data-a='0']):hover {
+  --o: 1;
+  filter: none;
+}
+.tc-item:focus-visible {
+  outline: none;
+}
+.tc-item:focus-visible .tc-body {
+  outline: 2px solid var(--accent);
+  outline-offset: 10px;
+  border-radius: 24px;
+}
+
+/* How much light each rarity carries. */
+.tc-item[data-rarity='mythic'] {
+  --light: 1;
+}
+.tc-item[data-rarity='legendary'] {
+  --light: 0.9;
+}
+.tc-item[data-rarity='epic'] {
+  --light: 0.78;
+}
+.tc-item[data-rarity='rare'] {
+  --light: 0.72;
+}
+.tc-item[data-rarity='uncommon'] {
+  --light: 0.68;
+}
+.tc-item[data-rarity='common'] {
+  --light: 0.5;
+}
+
+/* The trophy's own colours, blurred into a pool of light behind it... */
+.tc-glow {
+  position: absolute;
+  inset: -12%;
+  background: var(--art) center / 62% no-repeat;
+  filter: blur(42px) saturate(1.8);
+  opacity: calc(var(--light) * 0.55);
+  transition: opacity 0.35s var(--tc-ease);
+  pointer-events: none;
+}
+.tc-item[data-a='0'] .tc-glow {
+  opacity: calc(var(--light) * 0.95);
+}
+/* ...and a soft contact shadow under it that breathes with the float. */
+.tc-shadow {
+  position: absolute;
+  left: 24%;
+  right: 24%;
+  top: 95%;
+  height: 9%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(3, 1, 10, 0.7), transparent);
+  pointer-events: none;
+  animation: tc-shadow 6s ease-in-out infinite;
+  animation-play-state: paused;
+}
+.tc-item[data-a='0'] .tc-shadow {
+  animation-play-state: running;
+}
+
+/* Legendary and above: a soft bloom that breathes, never a shape that spins. */
+.tc-halo {
+  position: absolute;
+  inset: -8%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 232, 180, 0.32),
+    rgba(255, 210, 122, 0.1) 45%,
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity 0.4s var(--tc-ease);
+  animation: tc-breathe 5s ease-in-out infinite;
+  pointer-events: none;
+}
+.tc-item[data-rarity='mythic'] .tc-halo {
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 240, 214, 0.36),
+    rgba(214, 187, 255, 0.14) 48%,
+    transparent 74%
+  );
+}
+.tc-item[data-a='0'] .tc-halo {
+  opacity: 1;
+}
+
+/* Bling: tapered star glints that flash on the emblem's edges, one at a time. */
+.tc-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  filter: drop-shadow(0 0 6px rgba(255, 236, 190, 0.9));
+}
+.tc-item[data-a='0'] .tc-sparkles {
+  opacity: 1;
+}
+.tc-sparkles i {
+  position: absolute;
+  --g: 48px;
+  width: calc(var(--g) * 1.6);
+  height: var(--g);
+  margin: calc(var(--g) / -2) 0 0 calc(var(--g) * -0.8);
+  background:
+    radial-gradient(
+      circle,
+      #fff 0 7%,
+      rgba(255, 255, 255, 0.55) 12%,
+      transparent 26%
+    ),
+    linear-gradient(transparent 47%, #fff 50%, transparent 53%),
+    linear-gradient(90deg, transparent 47%, #fff 50%, transparent 53%);
+  -webkit-mask: radial-gradient(farthest-side, #000 12%, transparent 100%);
+  mask: radial-gradient(farthest-side, #000 12%, transparent 100%);
+  mix-blend-mode: plus-lighter;
+  transform: scale(0);
+  animation: tc-twinkle 4.6s ease-in-out infinite;
+}
+.tc-sparkles i:nth-child(1) {
+  --g: 64px;
+  left: 50%;
+  top: 9%;
+  animation-delay: 0.4s;
+}
+.tc-sparkles i:nth-child(2) {
+  --g: 46px;
+  left: 79%;
+  top: 41%;
+  animation-delay: 1.5s;
+}
+.tc-sparkles i:nth-child(3) {
+  --g: 54px;
+  left: 50%;
+  top: 47%;
+  animation-delay: 2.5s;
+}
+.tc-sparkles i:nth-child(4) {
+  --g: 42px;
+  left: 22%;
+  top: 41%;
+  animation-delay: 3.3s;
+}
+.tc-sparkles i:nth-child(5) {
+  --g: 38px;
+  left: 57%;
+  top: 83%;
+  animation-delay: 4s;
+}
+
+/* The emblem: floats, turns toward the pointer, and carries foil and a glint cut to its shape. */
+.tc-float {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.tc-item[data-a='0'] .tc-float {
+  animation: tc-float 6s ease-in-out infinite;
+}
+.tc-body {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.35s var(--tc-ease);
+}
+.tc.is-tilting .tc-item[data-a='0'] .tc-body {
+  transition-duration: 0.12s;
+}
+.tc-body img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 30px rgba(3, 1, 10, 0.55));
+  -webkit-user-drag: none;
+  user-select: none;
+}
+.tc-item[data-crest] .tc-body img {
+  padding: 4%;
+}
+.tc-foil,
+.tc-glint {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: var(--art) center / contain no-repeat;
+  mask: var(--art) center / contain no-repeat;
+  pointer-events: none;
+}
+.tc-item[data-crest] :is(.tc-foil, .tc-glint) {
+  -webkit-mask-size: 92%;
+  mask-size: 92%;
+}
+/* Holographic foil: a rainbow band that drifts on its own and follows the pointer. */
+.tc-foil {
+  background: linear-gradient(
+    115deg,
+    transparent 22%,
+    rgba(255, 170, 214, 0.45) 34%,
+    rgba(255, 226, 140, 0.5) 42%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(120, 190, 255, 0.55) 58%,
+    rgba(214, 160, 255, 0.5) 66%,
+    transparent 78%
+  );
+  background-size: 260% 260%;
+  background-position: var(--mx, 30%) var(--my, 40%);
+  mix-blend-mode: overlay;
+  opacity: 0;
+  transition:
+    opacity 0.35s var(--tc-ease),
+    background-position 0.5s var(--tc-ease);
+}
+.tc-item[data-a='0'] .tc-foil {
+  opacity: calc(var(--light) * 0.3);
+  animation: tc-foil 9s ease-in-out infinite;
+}
+.tc-item[data-rarity='mythic'][data-a='0'] .tc-foil {
+  opacity: 0.45;
+}
+.tc.is-tilting .tc-item[data-a='0'] .tc-foil {
+  animation: none;
+  opacity: calc(var(--light) * 0.9);
+}
+/* The shine: a bright band that sweeps across the emblem every few seconds. */
+.tc-glint {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 60%
+  );
+  background-size: 300% 100%;
+  background-position: 120% 0;
+  mix-blend-mode: plus-lighter;
+  opacity: 0;
+}
+.tc-item[data-a='0'] .tc-glint {
+  opacity: calc(0.35 + var(--light) * 0.45);
+  animation: tc-sweep 5.5s 1.2s ease-in-out infinite;
+}
+.tc-item:not([data-a='0']):hover .tc-glint {
+  opacity: 0.6;
+  animation: tc-sweep 1.4s ease-out 1;
+}
+
+/* ---------- the words beside it ---------- */
+.tc-details {
+  display: grid;
+  align-content: center;
+  min-height: 240px;
+}
+.tc-detail {
+  animation: tc-in 0.32s var(--tc-ease);
+}
+.tc-detail[hidden] {
+  display: none;
+}
+.tc-eyebrow {
+  margin: 0 !important;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #b9b0d6;
+}
+.tc-detail[data-rarity='mythic'] .tc-eyebrow {
+  background: linear-gradient(90deg, #ffd27a, #f3c6ff 55%, #d6bbff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.tc-detail[data-rarity='legendary'] .tc-eyebrow {
+  color: #ffd27a;
+}
+.tc-detail[data-rarity='epic'] .tc-eyebrow {
+  color: #c9a6ff;
+}
+.tc-detail[data-rarity='rare'] .tc-eyebrow {
+  color: #8fb8ff;
+}
+.tc-detail[data-rarity='uncommon'] .tc-eyebrow {
+  color: #f0b48a;
+}
+.tc-name {
+  margin: 10px 0 0 !important;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(40px, 4.6vw, 64px);
+  font-weight: 750;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  color: #fff;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.tc-name:where(:not(:empty)) {
+  /* titles can be long sentences; they step down rather than wrap into five lines */
+  font-size: min(clamp(52px, 6.2vw, 92px), calc(690px / var(--len, 10)));
+}
+.tc-meta {
+  margin: 16px 0 0 !important;
+  color: var(--tp-muted);
+  font-size: 16px;
+}
+.tc-verified {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 22px 0 0 !important;
+  color: #7cf0c1;
+  font-size: 14px;
+  font-weight: 500;
+}
+.tc-verified svg {
+  flex: none;
+}
+.tc-proof {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  color: var(--tp-text) !important;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(236, 227, 249, 0.3);
+}
+.tc-proof:hover {
+  color: var(--accent) !important;
+  border-color: currentColor;
+}
+.tc-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+.tc-count {
+  margin: 0 !important;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--tp-muted);
+}
+.tc-count b {
+  color: #fff;
+  font-weight: 600;
+}
+.tc-progress {
+  position: relative;
+  flex: 1;
+  max-width: 160px;
+  height: 1px;
+  background: var(--tp-line);
+}
+.tc-progress i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--p) * 100%);
+  background: var(--accent);
+  transition: width 0.4s var(--tc-ease);
+}
+.tc-step {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(214, 187, 255, 0.22);
+  background: rgba(255, 255, 255, 0.02);
+  color: #efe7fb;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s;
+}
+.tc-step:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.tc-note {
+  margin: 14px 0 0 !important;
+  max-width: 70ch;
+  color: #8f84aa;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ---------- entrance ---------- */
+.tc-armed:not(.is-in) .tc-item {
+  translate: 0 40px;
+  opacity: 0;
+}
+.tc-armed .tc-item {
+  transition-delay: calc(var(--i) * 70ms);
+}
+.tc-armed.is-in .tc-item {
+  transition-delay: 0s;
+}
+
+@keyframes tc-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes tc-shadow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(0.88);
+    opacity: 0.4;
+  }
+}
+@keyframes tc-breathe {
+  0%,
+  100% {
+    transform: scale(0.94);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+@keyframes tc-twinkle {
+  0%,
+  100% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  6% {
+    transform: scale(1.1) rotate(22deg);
+    opacity: 1;
+  }
+  14% {
+    transform: scale(0) rotate(45deg);
+    opacity: 0;
+  }
+}
+@keyframes tc-sweep {
+  0% {
+    background-position: 120% 0;
+  }
+  32%,
+  100% {
+    background-position: -20% 0;
+  }
+}
+@keyframes tc-foil {
+  0%,
+  100% {
+    background-position: 20% 30%;
+  }
+  50% {
+    background-position: 80% 70%;
+  }
+}
+@keyframes tc-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---------- bling ---------- */
+/* Stardust canvas sits behind the trophies. */
+.tc-dust {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+/* Glitter foil: fine specks cut to the emblem that flash as a light passes or the pointer moves. */
+.tc-glitter {
+  display: none;
+}
+.tc-item[data-a='0'] .tc-glitter {
+  display: block;
+  position: absolute;
+  inset: 0;
+  -webkit-mask: var(--art) center / contain no-repeat;
+  mask: var(--art) center / contain no-repeat;
+  background:
+    radial-gradient(
+      farthest-corner circle at var(--mx, 50%) var(--my, 30%),
+      rgba(255, 255, 255, 0.9) 0,
+      rgba(255, 240, 210, 0.4) 18%,
+      transparent 42%
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='1' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 9 -7.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
+      0 0 / 110px;
+  background-blend-mode: multiply;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.9;
+  animation: tc-glitter 6s 0.8s ease-in-out infinite;
+  pointer-events: none;
+}
+.tc.is-tilting .tc-item[data-a='0'] .tc-glitter {
+  animation: none;
+}
+@property --mx {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 50%;
+}
+@property --my {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 30%;
+}
+@keyframes tc-glitter {
+  0% {
+    --mx: -20%;
+    --my: 10%;
+  }
+  50% {
+    --mx: 120%;
+    --my: 90%;
+  }
+  100% {
+    --mx: -20%;
+    --my: 10%;
+  }
+}
+
+/* The extra section link keeps the existing nav on one line on narrow profiles. */
+.tp-page:has(.tc) .tp-tabs {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tp-page:has(.tc) .tp-tabs a {
+  flex: none;
+  white-space: nowrap;
+}
+
+/* ---------- smaller screens ---------- */
+@media (max-width: 1050px) {
+  .tc {
+    --tc-size: 230px;
+    --tc-step: 128px;
+    --tc-stage: 380px;
+  }
+  .tc-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+    gap: 24px;
+  }
+}
+@media (max-width: 900px) {
+  .tc {
+    --tc-size: 150px;
+    --tc-step: 62px;
+    --tc-stage: 200px;
+  }
+  .tc-layout {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .tc-stage {
+    overflow: hidden;
+  }
+  .tp-page:has(.tc) .tp-tabs {
+    gap: 16px;
+  }
+  .tc-item[data-a='2'],
+  .tc-item[data-a='3'] {
+    --o: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .tc-details {
+    min-height: 0;
+  }
+  .tc-name,
+  .tc-name:where(:not(:empty)) {
+    font-size: clamp(44px, 13vw, 60px);
+  }
+  .tc-controls {
+    margin-top: 28px;
+  }
+  .tc-progress {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-item,
+  .tc-body,
+  .tc-progress i {
+    transition: none;
+  }
+  .tc-float,
+  .tc-shadow,
+  .tc-halo,
+  .tc-foil,
+  .tc-glint,
+  .tc-sparkles i,
+  .tc-detail,
+  .tc-item[data-a='0'] :is(.tc-float, .tc-foil, .tc-glint) {
+    animation: none !important;
+  }
+  .tc-sparkles,
+  .tc-glitter,
+  .tc-dust {
+    display: none !important;
+  }
+}
+
+/* ---------- the full list ---------- */
+.tc-play {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-left: auto;
+  border-radius: 50%;
+  border: 1px solid rgba(214, 187, 255, 0.14);
+  background: none;
+  color: #b9b0d6;
+  cursor: pointer;
+}
+.tc-play[hidden] {
+  display: none;
+}
+.tc-play:hover {
+  color: #fff;
+  border-color: rgba(214, 187, 255, 0.4);
+}
+.tc-play path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tc-play .tc-play-go,
+.tc-play[aria-pressed='true'] .tc-play-pause {
+  display: none;
+}
+.tc-play[aria-pressed='true'] .tc-play-go {
+  display: inline;
+}
+.tc-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  align-items: start;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(214, 187, 255, 0.1);
+}
+.tc-list-head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.tc-list-head h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #b9b0d6;
+}
+.tc-list-head span {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.tc-shelf {
+  margin: 0;
+  padding: 14px 16px 8px;
+  border: 1px solid rgba(214, 187, 255, 0.1);
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      120% 140% at 0% 0%,
+      rgba(214, 187, 255, 0.06),
+      transparent 55%
+    ),
+    #120b22;
+}
+.tc-shelf-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.tc-shelf-head h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+.tc-shelf-head span {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.tc-tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 2px;
+  padding: 0;
+  list-style: none;
+}
+.tc-tally li {
+  --glow: rgba(214, 187, 255, 0.16);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 11px 3px 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 187, 255, 0.12);
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow: inset 0 0 18px var(--glow);
+}
+.tc-tally li[data-rarity='mythic'] {
+  --glow: rgba(214, 187, 255, 0.34);
+  border-color: rgba(214, 187, 255, 0.4);
+}
+.tc-tally li[data-rarity='legendary'] {
+  --glow: rgba(255, 210, 122, 0.26);
+  border-color: rgba(255, 210, 122, 0.34);
+}
+.tc-tally li[data-rarity='epic'] {
+  --glow: rgba(155, 107, 255, 0.24);
+}
+.tc-tally img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+.tc-tally-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #efe7fb;
+}
+.tc-tally-count {
+  font-variant-numeric: tabular-nums;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 750;
+  color: #fff;
+}
+.tl-rows {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.tl-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid rgba(214, 187, 255, 0.07);
+}
+.tl-rows > .tl-row:first-child {
+  border-top: 0;
+}
+.tl-row img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.tl-row-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.tl-row-text b {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+.tl-row[data-rarity='mythic'] .tl-row-text b {
+  background: linear-gradient(90deg, #ffd27a, #f3c6ff 55%, #d6bbff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  justify-self: start;
+}
+.tl-row[data-rarity='legendary'] .tl-row-text b {
+  color: #ffd27a;
+}
+.tl-row-text span {
+  font-size: 13px;
+  color: var(--tp-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tl-row-ok,
+.tl-row-proof {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7cf0c1;
+  white-space: nowrap;
+}
+.tl-row-proof {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 187, 255, 0.28);
+  color: #d6bbff;
+  text-decoration: none;
+}
+.tl-row-proof:hover {
+  border-color: #d6bbff;
+  background: rgba(214, 187, 255, 0.08);
+}
+.tc-more summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #d6bbff;
+  cursor: pointer;
+}
+@media (max-width: 900px) {
+  .tc-shelf {
+    padding: 18px 16px 14px;
+  }
+  .tl-row {
+    gap: 12px;
+  }
+  .tl-row-text span {
+    white-space: normal;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tc-item.is-leaving {
+    transition: none;
+  }
+}
+
+/* ---------- tap and click on the front trophy ---------- */
+.tc-item[data-a='0'] .tc-float {
+  transition: scale 0.18s var(--tc-ease);
+}
+.tc-item.is-pressed .tc-float {
+  scale: 0.94;
+}
+.tc-item.is-pressed .tc-body {
+  transform: rotateX(var(--px, 0deg)) rotateY(var(--py, 0deg));
+  transition-duration: 0.12s;
+}
+.tc-item.is-pressed .tc-foil {
+  opacity: 0.9;
+}
+.tc-item.is-popped .tc-float {
+  animation:
+    tc-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    tc-float 6s 0.5s ease-in-out infinite;
+}
+.tc-item.is-popped .tc-body::after {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 240, 210, 0.18) 30%,
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: tc-flash 0.5s ease-out forwards;
+}
+@keyframes tc-pop {
+  0% {
+    scale: 0.94;
+  }
+  55% {
+    scale: 1.05;
+  }
+  100% {
+    scale: 1;
+  }
+}
+@keyframes tc-flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tc-item.is-pressed .tc-float,
+  .tc-item.is-popped .tc-float {
+    scale: none;
+    animation: none;
+  }
+}
+
+.tc-progress {
+  min-width: 0;
+}
+@media (max-width: 900px) {
+  .tc-controls {
+    gap: 8px;
+  }
+  .tc-step,
+  .tc-play {
+    width: 44px;
+    height: 44px;
+    flex: none;
+  }
+}
+
+/* Profile list styles indent list items; the trophy list sets its own. */
+.tc .tl-row,
+.tc .tc-tally li {
+  margin: 0;
+}
+
+/* Each game's list starts folded; the tally above already tells the story. */
+.tc-more > summary {
+  list-style: none;
+  gap: 6px;
+}
+.tc-more > summary::-webkit-details-marker {
+  display: none;
+}
+.tc-more > summary::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-left: 4px;
+  border-right: 1.6px solid currentColor;
+  border-bottom: 1.6px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.2s var(--tc-ease);
+}
+.tc-more[open] > summary::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+.tc-more-hide,
+.tc-more[open] .tc-more-show {
+  display: none;
+}
+.tc-more[open] .tc-more-hide {
+  display: inline;
+}
