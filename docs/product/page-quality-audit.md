@@ -254,7 +254,7 @@ prose, which is why every one of them scored 2 or 3. Each now answers the three
 questions a visitor who searched for a player's name arrives with, written from
 that profile's own data: what a session with this player is, what Duoly has
 actually checked, and what happens when the player named at the top is already
-in a match. The pages run 566 to 758 words with three question headings each,
+in a match. The pages run 568 to 764 words with three question headings each,
 against 122 to 307 before.
 
 Nothing in those answers is a fact the profile does not hold. A teammate with no
