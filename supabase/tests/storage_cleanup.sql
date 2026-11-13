@@ -68,14 +68,11 @@ select pg_temp.ok(pg_temp.queued() = array[
   'avatars:9c000000-0000-4000-8000-000000000001/aaaaaaaaaaaaaaaa.webp:replaced'], 'the replaced photo is queued');
 update public.profiles set name = 'Renamed' where id = '9c000000-0000-4000-8000-000000000001';
 select pg_temp.ok(pg_catalog.cardinality(pg_temp.queued()) = 1, 'other profile edits queue nothing');
--- Somebody else's file, a Discord picture or a stock avatar is never ours to delete.
-update public.profiles set image = 'https://cdn.discordapp.com/avatars/1/2.png'
-  where id = '9c000000-0000-4000-8000-000000000002';
-update public.profiles set image =
-  'https://x.supabase.co/storage/v1/object/public/avatars/9c000000-0000-4000-8000-000000000001/cccccccccccccccc.webp'
-  where id = '9c000000-0000-4000-8000-000000000002';
+-- A stock avatar is never queued (profiles_image_check already allows only stock avatars or the
+-- owner's own upload, so somebody else's file cannot get here).
 update public.profiles set image = '/assets/avatars/avatar-1.png' where id = '9c000000-0000-4000-8000-000000000002';
-select pg_temp.ok(pg_catalog.cardinality(pg_temp.queued()) = 1, 'only the owner''s own uploads are queued');
+update public.profiles set image = '/assets/avatars/avatar-2.png' where id = '9c000000-0000-4000-8000-000000000002';
+select pg_temp.ok(pg_catalog.cardinality(pg_temp.queued()) = 1, 'a replaced stock avatar queues nothing');
 
 update public.teammate_public_profiles set header_image =
   'https://x.supabase.co/storage/v1/object/public/profile-headers/9c000000-0000-4000-8000-000000000001/dddddddddddddddd.webp'
