@@ -169,7 +169,7 @@ const TOOLS = {
       game: {
         type: 'string',
         description:
-          'Game id, for example lol, val, cs2, fn, apex, ow, mr, r6, rl, dota, wow, tft, fc, arc, wr, mc, pubg, dl, pu, cod.',
+          'The game they named. Never guess one: if they have not said which game, ask before calling. Game id, for example lol, val, cs2, fn, apex, ow, mr, r6, rl, dota, wow, tft, fc, arc, wr, mc, pubg, dl, pu, cod.',
       },
       goal: {
         type: ['string', 'null'],
@@ -185,7 +185,7 @@ const TOOLS = {
       rank: {
         type: ['string', 'null'],
         description:
-          'Their current rank as the game names it, for example Platinum or Gold. Null if not said.',
+          'The rank they are now, as the game names it, for example Platinum or Gold. A rank they want to reach is a goal, not their rank: leave this null and ask what they are now. Null if not said.',
       },
       region: {
         type: ['string', 'null'],

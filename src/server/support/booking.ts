@@ -87,6 +87,27 @@ export function gameToken(value: string): string {
   return hit?.id ?? value.trim().toLowerCase();
 }
 
+/**
+ * Whether the person named this game themselves, by name, short name or id
+ * ("valorant", "league", "lol", "cs2"). The model must not pick a game for them.
+ */
+export function gameNamed(gameId: string, texts: string[]): boolean {
+  const game = (GAMES as { id: string; name: string; alias?: string }[]).find(
+    (g) => g.id === gameId,
+  );
+  if (!game) return false;
+  const text = texts.join(' ').toLowerCase();
+  const squashed = squash(text);
+  const words = new Set(text.normalize('NFD').split(/[^a-z0-9]+/));
+  const long = [game.name, game.alias ?? '']
+    .map(squash)
+    .filter((n) => n.length >= 4);
+  const short = [game.id, game.alias ?? ''].map(squash).filter(Boolean);
+  return (
+    long.some((n) => squashed.includes(n)) || short.some((n) => words.has(n))
+  );
+}
+
 /** Tiles: 1, 3 and 5, with an asked-for 2 or 4 taking the middle place. */
 export function tilesFor(quantity: number | null): number[] {
   if (quantity === 2 || quantity === 4) return [1, quantity, 5];

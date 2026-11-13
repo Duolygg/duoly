@@ -7,6 +7,7 @@ vi.mock('../../src/server/home/live', () => ({
 }));
 
 import {
+  gameNamed,
   gameToken,
   offerBooking,
   tilesFor,
@@ -273,5 +274,40 @@ describe('Sparky shows the ticket under its reply', () => {
     });
     const first = JSON.parse(String(fetcher.mock.calls[0]![1].body));
     expect(first.instructions).not.toContain('offer_booking');
+  });
+});
+
+describe('the game comes from the person, never from the model', () => {
+  it('recognises names, short names and ids, without false hits', () => {
+    expect(gameNamed('val', ['need a valorant duo'])).toBe(true);
+    expect(gameNamed('lol', ['league duo pls'])).toBe(true);
+    expect(gameNamed('lol', ['lol coach'])).toBe(true);
+    expect(gameNamed('cs2', ['who plays CS2 now'])).toBe(true);
+    expect(gameNamed('lol', ['how do I book a coach?'])).toBe(false);
+    expect(gameNamed('ow', ['how do I book a coach?'])).toBe(false);
+  });
+
+  it('drops a ticket for a game they never named and asks instead', async () => {
+    const fetcher = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        ok({
+          output: [
+            fnCall('offer_booking', { ...base, game: 'lol', goal: 'coaching' }),
+          ],
+        }),
+      )
+      .mockImplementationOnce(() =>
+        ok(final('Which game would you like coaching for?')),
+      );
+    const answer = await answerWithAi({
+      person: guest,
+      question: 'how do I book a coach?',
+      apiKey: 'test',
+      fetcher,
+    });
+    expect(answer.booking).toBeUndefined();
+    const second = JSON.parse(String(fetcher.mock.calls[1]![1].body));
+    expect(JSON.stringify(second.input)).toContain('needs');
   });
 });
