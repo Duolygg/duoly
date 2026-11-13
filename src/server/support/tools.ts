@@ -19,6 +19,12 @@ import type { SparkyLookup } from './lookup';
 import type { SparkyAdminLookup } from './admin-lookup';
 import { catalogFor, gameNames } from './offer';
 import { CURRENT_FACTS, type SupportPerson } from './sparky';
+import {
+  BOOKING_GOALS,
+  offerBooking,
+  type BookingArgs,
+  type BookingTicket,
+} from './booking';
 
 export const MAX_TOOL_ROUNDS = 3;
 /** Tool calls the model may make in one round; extra calls are refused. */
@@ -37,9 +43,12 @@ export type ToolResult = {
   status: ToolStatus;
   args: Record<string, unknown> | null;
   output: unknown;
+  /** offer_booking only: the ticket the chat shows under the reply. */
+  ticket?: BookingTicket;
 };
 
-type Audience = 'everyone' | 'signed_in' | 'teammate' | 'admin';
+/** shopper: guests and customers (admins chat as customers); never teammates. */
+type Audience = 'everyone' | 'shopper' | 'signed_in' | 'teammate' | 'admin';
 
 const reference = z
   .string()
@@ -141,6 +150,58 @@ const TOOLS = {
       },
     },
   },
+  offer_booking: {
+    audience: 'shopper' as Audience,
+    description:
+      'Show a booking ticket in the chat: the best matching session for a game with real prices for 1, 3 and 5 units, teammates online and a Book button that opens the prefilled booking. Call it when the asker shows interest in buying (asks a price for a game or service, wants a duo, coach or team, names a rank goal, asks who can play now, asks how to book). Returns needs when one detail is missing; ask for it in one short question.',
+    schema: z
+      .object({
+        game: z.string().trim().min(1).max(40),
+        goal: z.enum(BOOKING_GOALS).nullable(),
+        service: z.string().trim().min(1).max(64).nullable(),
+        rank: z.string().trim().min(1).max(40).nullable(),
+        region: z.string().trim().min(2).max(60).nullable(),
+        quantity: z.number().int().min(1).max(5).nullable(),
+        voice: z.boolean().nullable(),
+      })
+      .strict(),
+    parameters: {
+      game: {
+        type: 'string',
+        description:
+          'Game id, for example lol, val, cs2, fn, apex, ow, mr, r6, rl, dota, wow, tft, fc, arc, wr, mc, pubg, dl, pu, cod.',
+      },
+      goal: {
+        type: ['string', 'null'],
+        enum: [...BOOKING_GOALS, null],
+        description:
+          'What they want: duo (play together), ranked (climb), casual, coaching or teams. Null if unclear.',
+      },
+      service: {
+        type: ['string', 'null'],
+        description:
+          'Exact service id from catalog_prices when they picked one. Null to let the goal choose.',
+      },
+      rank: {
+        type: ['string', 'null'],
+        description:
+          'Their current rank as the game names it, for example Platinum or Gold. Null if not said.',
+      },
+      region: {
+        type: ['string', 'null'],
+        description:
+          'Server region token, for example EUW or EU. Null if not said.',
+      },
+      quantity: {
+        type: ['integer', 'null'],
+        description: 'Games or hours they asked for, 1 to 5. Null if not said.',
+      },
+      voice: {
+        type: ['boolean', 'null'],
+        description: 'True if they asked for voice chat. Null if not said.',
+      },
+    },
+  },
   faq_search: {
     audience: 'everyone' as Audience,
     description:
@@ -161,12 +222,14 @@ const ORDER: ToolName[] = [
   'order_by_reference',
   'person_summary',
   'catalog_prices',
+  'offer_booking',
   'faq_search',
 ];
 const ADMIN_TOOLS: ToolName[] = ['order_by_reference', 'person_summary'];
 
 function allowed(person: SupportPerson, audience: Audience) {
   if (audience === 'everyone') return true;
+  if (audience === 'shopper') return person.role !== 'teammate';
   if (!person.userId) return false;
   if (audience === 'teammate') return person.role === 'teammate';
   // accountRole comes from the server session (person.ts), never from the model.
@@ -254,7 +317,16 @@ async function execute(
   name: ToolName,
   args: Record<string, unknown>,
   ctx: ToolContext,
-): Promise<{ status: ToolStatus; output: unknown }> {
+): Promise<{ status: ToolStatus; output: unknown; ticket?: BookingTicket }> {
+  if (name === 'offer_booking') {
+    const result = await offerBooking(args as BookingArgs);
+    if (result.kind === 'ticket')
+      return { status: 'ok', output: result.forModel, ticket: result.ticket };
+    return {
+      status: result.kind === 'needs' ? 'ok' : 'invalid',
+      output: result.forModel,
+    };
+  }
   if (name === 'catalog_prices') {
     if (args.game === null)
       return { status: 'ok', output: { games: gameNames() } };

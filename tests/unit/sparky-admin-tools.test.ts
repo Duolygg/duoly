@@ -238,7 +238,11 @@ const SECRETS =
 
 describe('Sparky admin tools: who sees them', () => {
   it('offers the admin tools only when the session role is admin', () => {
-    expect(toolNamesFor(guest)).toEqual(['catalog_prices', 'faq_search']);
+    expect(toolNamesFor(guest)).toEqual([
+      'catalog_prices',
+      'offer_booking',
+      'faq_search',
+    ]);
     for (const person of [mina, kai]) {
       expect(toolNamesFor(person)).not.toContain('order_by_reference');
       expect(toolNamesFor(person)).not.toContain('person_summary');
@@ -253,6 +257,7 @@ describe('Sparky admin tools: who sees them', () => {
       'order_by_reference',
       'person_summary',
       'catalog_prices',
+      'offer_booking',
       'faq_search',
     ]);
     // A teammate session never gains admin tools from its chat role alone.

@@ -5,6 +5,7 @@ import React from 'react';
 import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
 import { createSupportFetch } from './support-data';
 import BundledImage from '../shared/BundledImage';
+import BookingTicket from './BookingTicket';
 
 // The support chat (Sparky + the real admins). Talks to /api/support, which knows who's asking:
 // guests, customers (their order and wallet) and teammates (payouts, deposit, games). When someone asks
@@ -571,7 +572,7 @@ export default class SupportChat extends React.Component {
                     </div>
                   );
                 const mine = m.from === 'user' || m.from === 'me-pending';
-                return (
+                const bubble = (
                   <div
                     key={m.id}
                     style={{
@@ -635,6 +636,15 @@ export default class SupportChat extends React.Component {
                       </div>
                     </div>
                   </div>
+                );
+                if (!(m.from === 'bot' && m.booking)) return bubble;
+                return (
+                  <React.Fragment key={m.id}>
+                    {bubble}
+                    <div style={{ paddingLeft: '36px' }}>
+                      <BookingTicket ticket={m.booking} />
+                    </div>
+                  </React.Fragment>
                 );
               })}
               {s.sending && (!c || c.status === 'bot') ? (
