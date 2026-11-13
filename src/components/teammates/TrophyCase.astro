@@ -169,6 +169,9 @@ const pad = (i: number) => String(i).padStart(2, '0');
             <b data-tc-index>01</b>
             <span> / {pad(n)}</span>
           </p>
+          <span class="tc-progress" aria-hidden="true">
+            <i data-tc-progress style={`--p:${1 / n}`} />
+          </span>
           <button
             type="button"
             class="tc-play"
@@ -182,9 +185,6 @@ const pad = (i: number) => String(i).padStart(2, '0');
               <path class="tc-play-go" d="M5 3l8 5-8 5z" />
             </svg>
           </button>
-          <span class="tc-progress" aria-hidden="true">
-            <i data-tc-progress style={`--p:${1 / n}`} />
-          </span>
           <button
             type="button"
             class="tc-step"

@@ -5,17 +5,19 @@
  * strong the shine.
  */
 .tc {
-  --tc-size: 208px;
-  --tc-step: 108px;
-  --tc-stage: 296px;
+  /* The trophy is as large as the stage can hold: the arc is 3.06 trophies wide, so the
+     size follows the room the stage has rather than a figure picked per breakpoint. */
+  --tc-size: clamp(168px, 15.4vw, 208px);
+  --tc-step: calc(var(--tc-size) * 0.645);
+  --tc-stage: calc(var(--tc-size) * 1.44);
   --tc-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --tc-move: 0.42s;
 }
 .tc-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+  grid-template-columns: minmax(0, 1fr) clamp(304px, 38%, 468px);
   align-items: center;
-  gap: 40px;
+  gap: 44px;
 }
 
 /* ---------- stage ---------- */
@@ -33,7 +35,7 @@
   );
 }
 .tc[data-count='1'] .tc-stage {
-  --tc-stage: 380px;
+  --tc-stage: calc(var(--tc-size) * 1.8);
 }
 /* The floor: one soft pool of light under the front trophy, nothing drawn. */
 .tc-floor-rings {
@@ -459,7 +461,7 @@
   color: #f0b48a;
 }
 .tc-name {
-  margin: 10px 0 0 !important;
+  margin: 10px 0 0 -0.022em !important;
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: clamp(40px, 4.6vw, 64px);
   font-weight: 750;
@@ -507,8 +509,8 @@
 .tc-controls {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-top: 24px;
+  gap: 12px;
+  margin-top: 28px;
 }
 .tc-count {
   margin: 0 !important;
@@ -523,16 +525,20 @@
 }
 .tc-progress {
   position: relative;
-  flex: 1;
+  flex: 1 1 96px;
   max-width: 160px;
-  height: 1px;
-  background: var(--tp-line);
+  margin-right: auto;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(214, 187, 255, 0.16);
 }
 .tc-progress i {
   position: absolute;
   inset: 0 auto 0 0;
   width: calc(var(--p) * 100%);
+  border-radius: inherit;
   background: var(--accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
   transition: width 0.4s var(--tc-ease);
 }
 .tc-step {
@@ -556,7 +562,7 @@
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 .tc-note {
-  margin: 14px 0 0 !important;
+  margin: 24px 0 0 !important;
   max-width: 70ch;
   color: #8f84aa;
   font-size: 13px;
@@ -719,24 +725,23 @@
 /* ---------- smaller screens ---------- */
 @media (max-width: 1050px) {
   .tc {
-    --tc-size: 230px;
-    --tc-step: 128px;
-    --tc-stage: 380px;
+    --tc-size: clamp(156px, 17vw, 200px);
   }
   .tc-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
-    gap: 24px;
+    grid-template-columns: minmax(0, 1fr) clamp(288px, 36%, 360px);
+    gap: 32px;
   }
 }
+/* Stacked: the stage takes the full width and only three trophies show, so the trophy
+   can be much larger than the two column arc allows. */
 @media (max-width: 900px) {
   .tc {
-    --tc-size: 150px;
-    --tc-step: 62px;
-    --tc-stage: 200px;
+    --tc-size: clamp(140px, 47vw - 24px, 224px);
+    --tc-stage: calc(var(--tc-size) * 1.46);
   }
   .tc-layout {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 12px;
   }
   .tc-stage {
     overflow: hidden;
@@ -757,11 +762,12 @@
   .tc-name:where(:not(:empty)) {
     font-size: clamp(44px, 13vw, 60px);
   }
+  /* Flush with the gutter once the text runs the full width. */
+  .tc-name {
+    margin-left: 0 !important;
+  }
   .tc-controls {
     margin-top: 28px;
-  }
-  .tc-progress {
-    max-width: none;
   }
 }
 
@@ -792,11 +798,12 @@
 .tc-play {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  margin-left: auto;
+  width: 44px;
+  height: 44px;
+  /* A little clear of the arrows: pausing is a different job from stepping. */
+  margin-right: 6px;
   border-radius: 50%;
-  border: 1px solid rgba(214, 187, 255, 0.14);
+  border: 1px solid rgba(214, 187, 255, 0.1);
   background: none;
   color: #b9b0d6;
   cursor: pointer;
@@ -826,33 +833,40 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
   align-items: start;
-  gap: 12px;
-  margin-top: 20px;
-  padding-top: 20px;
+  gap: 16px;
+  margin-top: 36px;
+  padding-top: 28px;
   border-top: 1px solid rgba(214, 187, 255, 0.1);
 }
 .tc-list-head {
   grid-column: 1 / -1;
   display: flex;
-  align-items: baseline;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 .tc-list-head h3 {
   margin: 0;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #b9b0d6;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
 }
 .tc-list-head span {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(214, 187, 255, 0.08);
   font-variant-numeric: tabular-nums;
   font-size: 13px;
-  color: var(--tp-muted);
+  font-weight: 600;
+  color: #c9bcdf;
 }
 .tc-shelf {
+  display: flex;
+  flex-direction: column;
   margin: 0;
-  padding: 14px 16px 8px;
+  padding: 16px 18px 14px;
   border: 1px solid rgba(214, 187, 255, 0.1);
   border-radius: 18px;
   background:
@@ -871,7 +885,7 @@
 }
 .tc-shelf-head h4 {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: #fff;
 }
@@ -882,36 +896,40 @@
 .tc-tally {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: 12px 0 2px;
+  gap: 8px;
+  margin: 14px 0 0;
   padding: 0;
   list-style: none;
 }
 .tc-tally li {
-  --glow: rgba(214, 187, 255, 0.16);
+  --glow: rgba(214, 187, 255, 0.1);
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 11px 3px 4px;
+  gap: 8px;
+  padding: 4px 12px 4px 5px;
   border-radius: 999px;
-  border: 1px solid rgba(214, 187, 255, 0.12);
-  background: rgba(255, 255, 255, 0.025);
-  box-shadow: inset 0 0 18px var(--glow);
+  border: 1px solid rgba(214, 187, 255, 0.13);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.012)
+  );
+  box-shadow: inset 0 0 16px var(--glow);
 }
 .tc-tally li[data-rarity='mythic'] {
-  --glow: rgba(214, 187, 255, 0.34);
-  border-color: rgba(214, 187, 255, 0.4);
+  --glow: rgba(214, 187, 255, 0.22);
+  border-color: rgba(214, 187, 255, 0.32);
 }
 .tc-tally li[data-rarity='legendary'] {
-  --glow: rgba(255, 210, 122, 0.26);
-  border-color: rgba(255, 210, 122, 0.34);
+  --glow: rgba(255, 210, 122, 0.17);
+  border-color: rgba(255, 210, 122, 0.27);
 }
 .tc-tally li[data-rarity='epic'] {
-  --glow: rgba(155, 107, 255, 0.24);
+  --glow: rgba(155, 107, 255, 0.17);
 }
 .tc-tally img {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
 }
@@ -922,10 +940,9 @@
 }
 .tc-tally-count {
   font-variant-numeric: tabular-nums;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 15px;
-  font-weight: 750;
-  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  color: #cbbce8;
 }
 .tl-rows {
   margin: 10px 0 0;
@@ -1000,7 +1017,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 36px;
-  margin-top: 2px;
+  margin-top: 10px;
   font-size: 13px;
   font-weight: 600;
   color: #d6bbff;
@@ -1008,7 +1025,7 @@
 }
 @media (max-width: 900px) {
   .tc-shelf {
-    padding: 18px 16px 14px;
+    padding: 16px 16px 14px;
   }
   .tl-row {
     gap: 12px;
