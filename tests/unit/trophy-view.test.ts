@@ -3,8 +3,10 @@ import {
   trophyCase,
   trophyView,
   trophyOffset,
-  trophyHighlights,
+  trophySeasonLine,
   trophyShelves,
+  trophyStands,
+  trophyTour,
 } from '../../src/server/teammates/trophy-view';
 import type { PublicTrophy } from '../../src/contracts/trophies';
 const base: PublicTrophy = {
@@ -97,7 +99,7 @@ describe('trophy presentation', () => {
   });
 });
 
-describe('trophy list', () => {
+describe('the shelf', () => {
   const rank = (
     id: string,
     tier: string,
@@ -130,21 +132,74 @@ describe('trophy list', () => {
     rank('d', 'gold', 'common', '2020'),
     rank('e', 'platinum', 'uncommon', '2021'),
   ]);
-  it('tallies one tier across seasons, rarest first', () => {
-    const [shelf] = trophyShelves(views);
-    expect(shelf?.gameName).toBe('League of Legends');
-    expect(shelf?.tally.map((x) => [x.name, x.count])).toEqual([
+  const stands = trophyStands(views);
+  it('collapses the seasons of one tier into a single stand', () => {
+    expect(stands.map((s) => [s.short, s.count])).toEqual([
       ['Challenger', 1],
       ['Platinum', 1],
       ['Gold', 3],
     ]);
-    expect(shelf?.items).toHaveLength(5);
+    expect(stands.at(-1)?.seasons).toEqual(['2020', '2019', '2018']);
+    expect(stands[0]?.seasons).toEqual(['2025']);
   });
-  it('puts each tier on the stage once', () => {
-    expect(trophyHighlights(views).map((v) => v.name)).toEqual([
-      'Challenger',
-      'Platinum',
-      'Gold',
+  it('writes the seasons a repeated tier was also reached in', () => {
+    expect(trophySeasonLine(stands[0]!)).toBe('');
+    expect(trophySeasonLine(stands.at(-1)!)).toBe('Also held in 2019 and 2018');
+    expect(
+      trophySeasonLine({ ...stands.at(-1)!, seasons: ['2020', '2019'] }),
+    ).toBe('Also held in 2019');
+    /* Nothing carries a season: the count still has to be said. */
+    expect(
+      trophySeasonLine({ ...stands.at(-1)!, season: '', seasons: [] }),
+    ).toBe('Held in 3 seasons');
+  });
+  it('puts the higher tier first when two share a rarity', () => {
+    const tied = trophyStands(
+      trophyCase([
+        rank('d', 'diamond', 'epic', '2026'),
+        rank('m', 'master', 'epic', '2024'),
+        rank('g', 'grandmaster', 'legendary', '2025'),
+      ]),
+    );
+    expect(tied.map((s) => s.short)).toEqual([
+      'Grandmaster',
+      'Master',
+      'Diamond',
     ]);
+  });
+  it('groups the shelf by game, rarest game first, counting repeats', () => {
+    const [shelf] = trophyShelves(stands);
+    expect(shelf?.gameName).toBe('League of Legends');
+    expect(shelf?.count).toBe(5);
+    expect(shelf?.items).toHaveLength(3);
+  });
+  it('gives every shelf item a place on the stage', () => {
+    const many = trophyStands(
+      trophyCase(
+        Array.from({ length: 12 }, (_, i) =>
+          rank(`t${i}`, `tier${i}`, 'common', String(2000 + i)),
+        ),
+      ),
+    );
+    expect(many).toHaveLength(12);
+    /* The tour walks the rarest few only; everything else is still pickable. */
+    expect(trophyTour(many)).toHaveLength(9);
+    expect(trophyTour(stands)).toHaveLength(3);
+  });
+  it('shortens a long title for the shelf and keeps it whole on the stage', () => {
+    const [stand] = trophyStands(
+      trophyCase([
+        {
+          ...rank('x', 'gold', 'rare', '2024'),
+          kind: 'title',
+          ladder: null,
+          tier: null,
+          season: null,
+          title: 'Ace on Ascent, 5 for 5',
+        } as PublicTrophy,
+      ]),
+    );
+    expect(stand?.name).toBe('Ace on Ascent, 5 for 5');
+    expect(stand?.short).toBe('Ace on Ascent');
   });
 });

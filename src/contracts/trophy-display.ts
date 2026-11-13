@@ -38,6 +38,8 @@ export interface TrophyView {
   group: string;
   /** Tier without division, e.g. "Gold". Empty for non-rank trophies. */
   tierName: string;
+  /** Where the tier sits on its ladder, lowest first. -1 when the trophy has no tier. */
+  tierOrder: number;
   season: string;
 }
 
@@ -133,7 +135,7 @@ export function trophyCrest(
  */
 type Body = Omit<
   TrophyView,
-  'game' | 'gameName' | 'kind' | 'group' | 'tierName' | 'season'
+  'game' | 'gameName' | 'kind' | 'group' | 'tierName' | 'tierOrder' | 'season'
 >;
 type AnyTrophy = Omit<PublicTrophy, 'verifiedAt'> & {
   verifiedAt: string | null;
@@ -151,6 +153,12 @@ export function trophyView(t: AnyTrophy, game: string): TrophyView {
     kind: t.kind,
     group: t.kind === 'rank' ? `${t.ladder}:${t.tier}` : `${t.kind}:${t.id}`,
     tierName,
+    tierOrder:
+      t.kind === 'rank' && t.ladder && t.tier
+        ? (trophyLadder(t.game, t.ladder)?.tiers.findIndex(
+            (x) => x.key === t.tier,
+          ) ?? -1)
+        : -1,
     season: t.season ?? '',
   };
 }
@@ -228,77 +236,101 @@ function trophyBody(t: AnyTrophy, game: string): Body {
   };
 }
 
-/** One tier held across seasons, for the tally row: "Gold ×5". */
-export interface TrophyTally {
-  group: string;
-  name: string;
-  art: string;
-  crest: boolean;
-  rarity: Rarity;
+/**
+ * One shelf item: a tier or a result, with every season it was held. Several seasons of the same
+ * tier collapse into one stand, so Gold stands on the shelf once and carries its own count.
+ */
+export interface TrophyStand extends TrophyView {
+  /** Trophies behind this stand; 1 when the tier was reached once. */
   count: number;
+  /** Every season in the group, newest first. Blank seasons are dropped. */
+  seasons: string[];
+  /** The shelf's own label: the tier without its division, or a title up to its first comma. */
+  short: string;
 }
 export interface TrophyShelf {
   game: string;
   gameName: string;
-  tally: TrophyTally[];
-  items: TrophyView[];
+  /** Trophies on this shelf, repeats counted. */
+  count: number;
+  items: TrophyStand[];
 }
 
 /**
- * The full list under the case: one shelf per game, rarest game first. Ranks held in several
- * seasons are tallied by tier, so a long League history reads as "Gold ×5, Platinum ×3".
+ * Rarest first; when two share a rarity the higher tier of the same ladder comes first, so
+ * League reads Master before Diamond. Anything else keeps the order it arrived in.
  */
-export function trophyShelves(views: TrophyView[]): TrophyShelf[] {
-  const shelves = new Map<string, TrophyShelf>();
+const byStand = (a: TrophyView, b: TrophyView) =>
+  rarityRank(b.rarity) - rarityRank(a.rarity) ||
+  (a.kind === 'rank' && b.kind === 'rank' ? b.tierOrder - a.tierOrder : 0);
+
+/** "Immortal 3" stands on the shelf as "Immortal"; a long title stops at its first comma. */
+const shelfLabel = (v: TrophyView) =>
+  v.tierName || v.name.split(',')[0]!.trim();
+
+/**
+ * Every stand the stage can show: one per tier or result, in the order the arc holds them.
+ * Nothing is capped, so every shelf item has a place on the stage to be brought forward to.
+ */
+export function trophyStands(views: TrophyView[]): TrophyStand[] {
+  const groups = new Map<string, TrophyView[]>();
   for (const v of views) {
-    let shelf = shelves.get(v.game);
-    if (!shelf) {
-      shelf = { game: v.game, gameName: v.gameName, tally: [], items: [] };
-      shelves.set(v.game, shelf);
-    }
-    shelf.items.push(v);
-    if (v.kind !== 'rank') continue;
-    const hit = shelf.tally.find((x) => x.group === v.group);
-    if (hit) {
-      hit.count += 1;
-      if (rarityRank(v.rarity) > rarityRank(hit.rarity)) hit.rarity = v.rarity;
-    } else
-      shelf.tally.push({
-        group: v.group,
-        name: v.tierName,
-        art: v.art,
-        crest: v.crest,
-        rarity: v.rarity,
-        count: 1,
-      });
+    const key = `${v.game}|${v.group}`;
+    const hit = groups.get(key);
+    if (hit) hit.push(v);
+    else groups.set(key, [v]);
   }
-  for (const s of shelves.values()) {
-    s.tally.sort((a, b) => rarityRank(b.rarity) - rarityRank(a.rarity));
-    /* Rarest first, then the newest season, so a tier's history reads 2022, 2021, 2020. */
-    s.items.sort(
-      (a, b) =>
-        rarityRank(b.rarity) - rarityRank(a.rarity) ||
-        b.season.localeCompare(a.season, 'en', { numeric: true }),
-    );
+  const newest = (a: string, b: string) =>
+    b.localeCompare(a, 'en', { numeric: true });
+  return [...groups.values()]
+    .map((members) => {
+      /* The latest season stands for the group, so the stage opens on the most recent
+         run of the tier and the older ones read as the history behind it. */
+      const face = members.reduce((a, b) =>
+        newest(a.season, b.season) > 0 ? b : a,
+      );
+      return {
+        ...face,
+        count: members.length,
+        seasons: members
+          .map((m) => m.season)
+          .filter(Boolean)
+          .sort(newest),
+        short: shelfLabel(face),
+      };
+    })
+    .sort(byStand);
+}
+
+/** The shelf: one group per game, rarest game first, in the stage's own order. */
+export function trophyShelves(stands: TrophyStand[]): TrophyShelf[] {
+  const shelves = new Map<string, TrophyShelf>();
+  for (const s of stands) {
+    let shelf = shelves.get(s.game);
+    if (!shelf) {
+      shelf = { game: s.game, gameName: s.gameName, count: 0, items: [] };
+      shelves.set(s.game, shelf);
+    }
+    shelf.count += s.count;
+    shelf.items.push(s);
   }
   return [...shelves.values()];
 }
 
 /**
- * The stage shows highlights: the best trophy of each tier or result, so ten seasons of Gold
- * stand there once and the full history lives in the list underneath.
+ * The tour visits the rarest handful and then starts again, however long the shelf is. Every
+ * other stand is still one tap away on the shelf.
  */
-export function trophyHighlights(views: TrophyView[], max = 9): TrophyView[] {
-  const seen = new Set<string>();
-  const out: TrophyView[] = [];
-  for (const v of views) {
-    const key = `${v.game}|${v.group}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(v);
-    if (out.length === max) break;
-  }
-  return out;
+export const TOUR_MAX = 9;
+export const trophyTour = (stands: TrophyStand[]) => stands.slice(0, TOUR_MAX);
+
+/** "Also held in 2022 and 2021", or an empty line when the tier was reached once. */
+export function trophySeasonLine(stand: TrophyStand): string {
+  const rest = stand.seasons.filter((s) => s !== stand.season);
+  if (rest.length === 0)
+    return stand.count > 1 ? `Held in ${stand.count} seasons` : '';
+  const last = rest[rest.length - 1]!;
+  return `Also held in ${rest.length > 1 ? `${rest.slice(0, -1).join(', ')} and ${last}` : last}`;
 }
 
 /** Display order: rarest first, then the most recently verified. */
