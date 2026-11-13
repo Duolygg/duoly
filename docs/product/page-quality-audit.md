@@ -1,0 +1,493 @@
+# Page quality audit, 12 November 2026
+
+Every public page read as a first time visitor would read it: a gamer or a parent
+who arrived from Google or an AI assistant and has never heard of Duoly.
+
+## How this was produced
+
+```sh
+corepack pnpm build
+SEO_PORT=4391 PUBLIC_PROFILES_ENABLED=true PUBLIC_PROFILE_FIXTURES=true \
+  NODE_ENV=development node scripts/seo-preview.mjs &
+PQ_BASE=http://127.0.0.1:4391 node scripts/audit/page-quality.mjs
+```
+
+The script is `scripts/audit/page-quality.mjs`. It reads the built production
+bundle with JavaScript off, which is what a crawler receives, and writes
+`.vercel/page-quality/report.json` plus a plain table in
+`.vercel/page-quality/summary.md`. It never fails a build: it reports.
+
+Page set: 86 pages. Every URL in the built sitemap (84), plus `/teammates` and every teammate profile route the directory links to,
+rendered from the fixture teammates so the routes can be read before the
+database has real ones. Two fixture profiles (`/teammates/pip`,
+`/teammates/sola`) are live routes that miss the index quality rule, so they
+are measured and marked noindex.
+
+Not in this audit: `/imprint`, which is noindex and nofollow, and the other
+noindex utility routes (`/login`, `/apply`, `/dashboard` and friends). They sit
+outside the sitemap and outside the copy brief.
+
+## What the script measures
+
+Per page: title length and uniqueness, meta description length and uniqueness,
+number of `h1` elements, canonical, robots, JSON-LD types and structural
+validity, word count, reading grade (Flesch-Kincaid, over paragraphs only),
+question headings, editorial links in and out, broken internal links including
+fragments, images without alt text, copy-rule violations (en and em dashes,
+ampersands, "not X, but Y"), owner or internal talk (worker, pipeline, engine,
+contract, ledger, RPC, flag, our database, "we built", TODO, backend, webhook,
+cron, endpoint, Supabase, Postgres), wrong articles ("a Immortal"), sentences
+repeated inside a page, the same price repeated across paragraphs, and sentences
+shared by three or more pages.
+
+Everything is measured inside `<main>`, so the shared header, footer and site
+nav are never counted against the page that renders them.
+
+## How voice was scored
+
+Each page was then read by hand, start to finish, as the audience above. The
+score is about the copy only, and the one line beside it says why.
+
+- 5: reads like a player who knows the game wrote it, answers the question in the first line, and every fact is checkable.
+- 4: strong copy with a visible template seam: a repeated sentence, a dense block, or a line about Duoly's machinery.
+- 3: correct and useful, but a reader notices the scaffolding before the content.
+- 2: thin. There is markup, labels and a price, and almost nothing to read.
+- 1: unusable.
+
+Distribution: 5: 12 pages, 4: 58 pages, 3: 11 pages, 2: 5 pages, 1: 0 pages. Average 3.90 across 86 pages, 4.58 on the 19 pages the #220 copy pass rewrote, and 3.70 on the 67 it did not reach.
+
+## Every page
+
+"Copy pass" says whether the #220 voice pass rewrote the page. Title and
+description columns show the character count, marked short or long against 30 to
+60 and 70 to 160.
+
+| Page                                                                                                                     | Robots  | Copy pass | Title    | Description | H1  | Canonical | JSON-LD nodes | Words | Grade | Question headings | Editorial links in | Links out | Voice | Why                                                                                                                                         | Script findings                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------ | ------- | --------- | -------- | ----------- | --- | --------- | ------------- | ----- | ----- | ----------------- | ------------------ | --------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`/`](https://duoly.gg)                                                                                                  | index   | no        | 57       | 126         | 1   | yes       | 6             | 1167  | 5.8   | 6                 | 83                 | 9         | 5     | Short, concrete and in a player’s voice; the two snags, a loading placeholder and a “Prices & payments” chip, are both in protected markup. | broken link /#cookie-settings; copy rules: ampersand                                                                                                                  |
+| [`/about`](https://duoly.gg/about)                                                                                       | index   | no        | 58       | 156         | 1   | yes       | 8             | 1169  | 6.3   | 10                | 10                 | 36        | 4     | Answers who runs Duoly in plain sentences; the hero intro says what the first question answers again.                                       | none                                                                                                                                                                  |
+| [`/ai`](https://duoly.gg/ai)                                                                                             | index   | no        | 41       | 154         | 1   | yes       | 6             | 1442  | 6     | 10                | 26                 | 29        | 4     | Clear about what an assistant can and cannot do; the five client cards read as a feature list rather than as sentences.                     | none                                                                                                                                                                  |
+| [`/blog`](https://duoly.gg/blog)                                                                                         | index   | #220      | 49       | 144         | 1   | yes       | 7             | 1057  | 8.6   | 5                 | 38                 | 38        | 4     | Sounds like an editor pointing at a shelf; the second half turns into one long paragraph of links.                                          | none                                                                                                                                                                  |
+| [`/blog/free-lfg-or-paid-teammate`](https://duoly.gg/blog/free-lfg-or-paid-teammate)                                     | index   | #220      | 36       | 159         | 1   | yes       | 11            | 2075  | 6.6   | 8                 | 21                 | 27        | 5     | Honest about what free gets you, and the choice is framed around tonight.                                                                   | 1 repeated sentence; one price in 3 paragraphs                                                                                                                        |
+| [`/blog/how-to-choose-a-gaming-coach`](https://duoly.gg/blog/how-to-choose-a-gaming-coach)                               | index   | #220      | 36       | 156         | 1   | yes       | 11            | 2328  | 7.7   | 8                 | 22                 | 25        | 5     | The five checks are concrete and the red flags read like experience.                                                                        | internal words: flag; 1 repeated sentence; one price in 3 paragraphs                                                                                                  |
+| [`/blog/how-to-find-a-valorant-duo`](https://duoly.gg/blog/how-to-find-a-valorant-duo)                                   | index   | #220      | 34       | 159         | 1   | yes       | 11            | 2168  | 7.3   | 9                 | 6                  | 24        | 5     | Real servers, real member counts, and a reason to pay only once a free post has failed.                                                     | 1 repeated sentence; one price in 3 paragraphs                                                                                                                        |
+| [`/blog/what-does-lfg-mean`](https://duoly.gg/blog/what-does-lfg-mean)                                                   | index   | #220      | 49       | 146         | 1   | yes       | 11            | 1516  | 6.4   | 8                 | 21                 | 37        | 5     | Answers the question in the first line and sounds like somebody who has posted in those channels.                                           | 1 repeated sentence                                                                                                                                                   |
+| [`/blog/what-is-an-egirl`](https://duoly.gg/blog/what-is-an-egirl)                                                       | index   | #220      | 54       | 150         | 1   | yes       | 8             | 1598  | 7.8   | 8                 | 38                 | 22        | 4     | Careful, sourced and respectful; the history section is the slowest copy on the site.                                                       | 1 repeated sentence                                                                                                                                                   |
+| [`/coaching`](https://duoly.gg/coaching)                                                                                 | index   | #220      | 45       | 152         | 1   | yes       | 11            | 1614  | 6.3   | 8                 | 25                 | 44        | 5     | Explains the three lesson shapes and the unit each one is sold in, in one pass.                                                             | one price in 3 paragraphs                                                                                                                                             |
+| [`/compare/e-pal`](https://duoly.gg/compare/e-pal)                                                                       | index   | #220      | 48       | 147         | 1   | yes       | 3             | 1857  | 7.8   | 7                 | 47                 | 29        | 5     | Names where the rival is ahead, with the date its pages were read.                                                                          | none                                                                                                                                                                  |
+| [`/compare/metafy`](https://duoly.gg/compare/metafy)                                                                     | index   | #220      | 49       | 156         | 1   | yes       | 6             | 2177  | 8.2   | 6                 | 8                  | 28        | 5     | Opens with what Metafy does well, then the one thing Duoly settles.                                                                         | 1 repeated sentence                                                                                                                                                   |
+| [`/compare/queueup`](https://duoly.gg/compare/queueup)                                                                   | index   | #220      | 53       | 158         | 1   | yes       | 6             | 2303  | 9     | 6                 | 24                 | 28        | 5     | Reads like somebody who actually opened the documentation.                                                                                  | one price in 4 paragraphs                                                                                                                                             |
+| [`/contact`](https://duoly.gg/contact)                                                                                   | index   | no        | 15 short | 71          | 1   | yes       | none          | 314   | 7.2   | 0                 | 68                 | 23        | 3     | Only 314 words, a sidebar of ampersand labels, and a line saying the form is still being connected.                                         | title short (15); duplicate description; no JSON-LD; copy rules: ampersand                                                                                            |
+| [`/developers/mcp`](https://duoly.gg/developers/mcp)                                                                     | index   | #220      | 53       | 158         | 1   | yes       | 8             | 2659  | 8.4   | 14                | 29                 | 18        | 4     | The right register for developers, and the one page where machinery words belong.                                                           | internal words: endpoint, rpc                                                                                                                                         |
+| [`/fees-and-refunds`](https://duoly.gg/fees-and-refunds)                                                                 | index   | #220      | 52       | 143         | 1   | yes       | 6             | 1921  | 7.6   | 9                 | 11                 | 32        | 5     | Starts with “None.” and keeps that directness the whole way down.                                                                           | one price in 3 paragraphs                                                                                                                                             |
+| [`/find-gaming-buddies`](https://duoly.gg/find-gaming-buddies)                                                           | index   | #220      | 46       | 155         | 1   | yes       | 11            | 1717  | 7     | 8                 | 23                 | 43        | 5     | Separates the three asks hiding behind “buddy” and says which free route to try first.                                                      | one price in 3 paragraphs                                                                                                                                             |
+| [`/games`](https://duoly.gg/games)                                                                                       | index   | #220      | 45       | 158         | 1   | yes       | 4             | 1228  | 7.8   | 6                 | 66                 | 75        | 4     | Useful directory copy; the fourth paragraph is a run of links rather than a sentence a reader keeps.                                        | one price in 3 paragraphs                                                                                                                                             |
+| [`/games/apex-legends`](https://duoly.gg/games/apex-legends)                                                             | index   | no        | 45       | 144         | 1   | yes       | 13            | 2807  | 5.3   | 11                | 10                 | 29        | 4     | Game specific tiers, modes and prices in a player’s voice; €7.99 appears in 6 paragraphs and 5 sentences repeat.                            | 5 repeated sentences; one price in 6 paragraphs                                                                                                                       |
+| [`/games/apex-legends/coaching`](https://duoly.gg/games/apex-legends/coaching)                                           | index   | no        | 51       | 150         | 1   | yes       | 13            | 2220  | 6.8   | 12                | 8                  | 27        | 3     | A heading says “a Apex” and the price footnote mentions the Duoly pricing engine, so the lesson copy is let down by its frame.              | internal words: engine; wrong article: a Apex; 1 repeated sentence                                                                                                    |
+| [`/games/apex-legends/lfg`](https://duoly.gg/games/apex-legends/lfg)                                                     | index   | no        | 49       | 150         | 1   | yes       | 13            | 3099  | 6.6   | 12                | 19                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 3 paragraphs                                                                                                                       |
+| [`/games/arc-raiders`](https://duoly.gg/games/arc-raiders)                                                               | index   | no        | 52       | 146         | 1   | yes       | 13            | 2729  | 6     | 11                | 9                  | 30        | 4     | Game specific tiers, modes and prices in a player’s voice; €14.49 appears in 8 paragraphs and 5 sentences repeat.                           | 5 repeated sentences; one price in 8 paragraphs                                                                                                                       |
+| [`/games/arc-raiders/lfg`](https://duoly.gg/games/arc-raiders/lfg)                                                       | index   | no        | 45       | 149         | 1   | yes       | 13            | 2025  | 6.2   | 9                 | 18                 | 35        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 8 paragraphs                                                                                                                       |
+| [`/games/call-of-duty`](https://duoly.gg/games/call-of-duty)                                                             | index   | no        | 54       | 144         | 1   | yes       | 13            | 2966  | 5.7   | 11                | 9                  | 29        | 4     | Game specific tiers, modes and prices in a player’s voice; €7.99 appears in 6 paragraphs and 4 sentences repeat.                            | internal words: contract; 4 repeated sentences; one price in 6 paragraphs                                                                                             |
+| [`/games/call-of-duty/coaching`](https://duoly.gg/games/call-of-duty/coaching)                                           | index   | no        | 51       | 147         | 1   | yes       | 13            | 1785  | 6.7   | 9                 | 8                  | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: contracts, contract, engine                                                                                                                           |
+| [`/games/call-of-duty/lfg`](https://duoly.gg/games/call-of-duty/lfg)                                                     | index   | no        | 48       | 153         | 1   | yes       | 13            | 3178  | 6.7   | 12                | 19                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | internal words: contract; 2 repeated sentences; one price in 3 paragraphs                                                                                             |
+| [`/games/counter-strike-2`](https://duoly.gg/games/counter-strike-2)                                                     | index   | no        | 53       | 157         | 1   | yes       | 13            | 3197  | 5.6   | 11                | 13                 | 29        | 4     | Game specific tiers, modes and prices in a player’s voice; €2.99 appears in 7 paragraphs and 5 sentences repeat.                            | 5 repeated sentences; one price in 7 paragraphs                                                                                                                       |
+| [`/games/counter-strike-2/coaching`](https://duoly.gg/games/counter-strike-2/coaching)                                   | index   | no        | 45       | 143         | 1   | yes       | 13            | 2517  | 6.7   | 13                | 8                  | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine                                                                                                                                                |
+| [`/games/counter-strike-2/lfg`](https://duoly.gg/games/counter-strike-2/lfg)                                             | index   | no        | 46       | 147         | 1   | yes       | 13            | 2460  | 6     | 9                 | 19                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 6 paragraphs                                                                                                                       |
+| [`/games/deadlock`](https://duoly.gg/games/deadlock)                                                                     | index   | no        | 52       | 151         | 1   | yes       | 13            | 2801  | 5.8   | 11                | 9                  | 29        | 4     | Game specific tiers, modes and prices in a player’s voice; €3.99 appears in 6 paragraphs and 4 sentences repeat.                            | 4 repeated sentences; one price in 6 paragraphs                                                                                                                       |
+| [`/games/deadlock/coaching`](https://duoly.gg/games/deadlock/coaching)                                                   | index   | no        | 49       | 156         | 1   | yes       | 13            | 1734  | 6.4   | 9                 | 8                  | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine; 2 repeated sentences                                                                                                                          |
+| [`/games/deadlock/lfg`](https://duoly.gg/games/deadlock/lfg)                                                             | index   | no        | 47       | 152         | 1   | yes       | 13            | 2070  | 6.5   | 9                 | 19                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 8 paragraphs                                                                                                                       |
+| [`/games/dota-2`](https://duoly.gg/games/dota-2)                                                                         | index   | no        | 50       | 154         | 1   | yes       | 13            | 2862  | 6.1   | 11                | 10                 | 28        | 4     | Game specific tiers, modes and prices in a player’s voice; €3.49 appears in 6 paragraphs and 4 sentences repeat.                            | 4 repeated sentences; one price in 6 paragraphs                                                                                                                       |
+| [`/games/dota-2/coaching`](https://duoly.gg/games/dota-2/coaching)                                                       | index   | no        | 55       | 151         | 1   | yes       | 13            | 1821  | 6.5   | 9                 | 7                  | 26        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine; 1 repeated sentence                                                                                                                           |
+| [`/games/ea-sports-fc-27`](https://duoly.gg/games/ea-sports-fc-27)                                                       | index   | no        | 45       | 157         | 1   | yes       | 13            | 2750  | 6.1   | 11                | 9                  | 27        | 4     | Game specific tiers, modes and prices in a player’s voice; €2.49 appears in 7 paragraphs and 6 sentences repeat.                            | 6 repeated sentences; one price in 7 paragraphs                                                                                                                       |
+| [`/games/fortnite`](https://duoly.gg/games/fortnite)                                                                     | index   | no        | 47       | 142         | 1   | yes       | 13            | 2877  | 5.4   | 11                | 12                 | 29        | 4     | Game specific tiers, modes and prices in a player’s voice; €12.99 appears in 8 paragraphs and 5 sentences repeat.                           | 5 repeated sentences; one price in 8 paragraphs                                                                                                                       |
+| [`/games/fortnite/coaching`](https://duoly.gg/games/fortnite/coaching)                                                   | index   | no        | 57       | 149         | 1   | yes       | 13            | 2204  | 6.4   | 12                | 8                  | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine; 3 repeated sentences                                                                                                                          |
+| [`/games/fortnite/duos`](https://duoly.gg/games/fortnite/duos)                                                           | index   | no        | 41       | 157         | 1   | yes       | 13            | 3151  | 6.3   | 12                | 19                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 5 paragraphs                                                                                                                       |
+| [`/games/league-of-legends`](https://duoly.gg/games/league-of-legends)                                                   | index   | no        | 53       | 155         | 1   | yes       | 13            | 3213  | 5.7   | 11                | 18                 | 35        | 4     | Game specific tiers, modes and prices in a player’s voice; €3.49 appears in 9 paragraphs and 4 sentences repeat.                            | 4 repeated sentences; one price in 9 paragraphs                                                                                                                       |
+| [`/games/league-of-legends/coaching`](https://duoly.gg/games/league-of-legends/coaching)                                 | index   | no        | 49       | 158         | 1   | yes       | 13            | 2559  | 6.6   | 13                | 11                 | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine; 1 repeated sentence                                                                                                                           |
+| [`/games/league-of-legends/play-with-someone`](https://duoly.gg/games/league-of-legends/play-with-someone)               | index   | no        | 56       | 159         | 1   | yes       | 13            | 2684  | 5.4   | 7                 | 21                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 3 other sentences repeat within the page.                      | 3 repeated sentences; one price in 7 paragraphs                                                                                                                       |
+| [`/games/marvel-rivals`](https://duoly.gg/games/marvel-rivals)                                                           | index   | no        | 57       | 159         | 1   | yes       | 13            | 2897  | 6.2   | 11                | 15                 | 29        | 4     | Game specific tiers, modes and prices in a player’s voice; €2.49 appears in 6 paragraphs and 5 sentences repeat.                            | 5 repeated sentences; one price in 6 paragraphs                                                                                                                       |
+| [`/games/marvel-rivals/coaching`](https://duoly.gg/games/marvel-rivals/coaching)                                         | index   | no        | 48       | 159         | 1   | yes       | 13            | 2208  | 7.3   | 12                | 8                  | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine; 1 repeated sentence                                                                                                                           |
+| [`/games/marvel-rivals/duo-partner`](https://duoly.gg/games/marvel-rivals/duo-partner)                                   | index   | no        | 54       | 159         | 1   | yes       | 13            | 2710  | 6.2   | 8                 | 20                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 7 paragraphs                                                                                                                       |
+| [`/games/minecraft`](https://duoly.gg/games/minecraft)                                                                   | index   | no        | 58       | 152         | 1   | yes       | 13            | 2815  | 6.3   | 11                | 11                 | 31        | 4     | Game specific tiers, modes and prices in a player’s voice; €15.99 appears in 8 paragraphs and 6 sentences repeat.                           | 6 repeated sentences; one price in 8 paragraphs                                                                                                                       |
+| [`/games/minecraft/coaching`](https://duoly.gg/games/minecraft/coaching)                                                 | index   | no        | 51       | 146         | 1   | yes       | 13            | 1690  | 6.6   | 9                 | 8                  | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine                                                                                                                                                |
+| [`/games/minecraft/player-finder`](https://duoly.gg/games/minecraft/player-finder)                                       | index   | no        | 55       | 159         | 1   | yes       | 13            | 1978  | 6.6   | 9                 | 19                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 6 paragraphs                                                                                                                       |
+| [`/games/overwatch-2`](https://duoly.gg/games/overwatch-2)                                                               | index   | no        | 52       | 151         | 1   | yes       | 13            | 2861  | 5.8   | 11                | 13                 | 29        | 4     | Game specific tiers, modes and prices in a player’s voice; €4.99 appears in 7 paragraphs and 5 sentences repeat.                            | 5 repeated sentences; one price in 7 paragraphs                                                                                                                       |
+| [`/games/overwatch-2/coaching`](https://duoly.gg/games/overwatch-2/coaching)                                             | index   | no        | 46       | 153         | 1   | yes       | 13            | 2212  | 6.8   | 12                | 9                  | 27        | 3     | A heading says “a Overwatch” and the price footnote mentions the Duoly pricing engine, so the lesson copy is let down by its frame.         | internal words: engine; wrong article: a Overwatch; 2 repeated sentences                                                                                              |
+| [`/games/overwatch-2/lfg`](https://duoly.gg/games/overwatch-2/lfg)                                                       | index   | no        | 47       | 159         | 1   | yes       | 13            | 3076  | 6.6   | 12                | 20                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 3 paragraphs                                                                                                                       |
+| [`/games/pokemon-unite`](https://duoly.gg/games/pokemon-unite)                                                           | index   | no        | 46       | 150         | 1   | yes       | 13            | 2780  | 5.9   | 11                | 9                  | 30        | 3     | Good on lanes, objectives and tiers, but the page writes both “Pokemon Unite” and “Pokémon Unite”, which reads as unproofed.                | 5 repeated sentences; one price in 6 paragraphs                                                                                                                       |
+| [`/games/pokemon-unite/teammate`](https://duoly.gg/games/pokemon-unite/teammate)                                         | index   | no        | 53       | 158         | 1   | yes       | 13            | 1864  | 6.4   | 9                 | 18                 | 35        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 5 paragraphs                                                                                                                       |
+| [`/games/pubg`](https://duoly.gg/games/pubg)                                                                             | index   | no        | 50       | 142         | 1   | yes       | 13            | 2707  | 5.7   | 11                | 10                 | 27        | 4     | Game specific tiers, modes and prices in a player’s voice; €12.99 appears in 8 paragraphs and 4 sentences repeat.                           | 4 repeated sentences; one price in 8 paragraphs                                                                                                                       |
+| [`/games/rainbow-six-siege`](https://duoly.gg/games/rainbow-six-siege)                                                   | index   | no        | 51       | 153         | 1   | yes       | 13            | 2859  | 5.6   | 11                | 10                 | 29        | 4     | Game specific tiers, modes and prices in a player’s voice; €2.49 appears in 6 paragraphs and 5 sentences repeat.                            | 5 repeated sentences; one price in 6 paragraphs                                                                                                                       |
+| [`/games/rainbow-six-siege/coaching`](https://duoly.gg/games/rainbow-six-siege/coaching)                                 | index   | no        | 51       | 155         | 1   | yes       | 13            | 2486  | 6.5   | 13                | 8                  | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine; 1 repeated sentence                                                                                                                           |
+| [`/games/rainbow-six-siege/lfg`](https://duoly.gg/games/rainbow-six-siege/lfg)                                           | index   | no        | 45       | 153         | 1   | yes       | 13            | 3124  | 6.5   | 12                | 19                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 4 paragraphs                                                                                                                       |
+| [`/games/rocket-league`](https://duoly.gg/games/rocket-league)                                                           | index   | no        | 49       | 156         | 1   | yes       | 13            | 2780  | 5.5   | 11                | 11                 | 29        | 4     | Game specific tiers, modes and prices in a player’s voice; €6.49 appears in 8 paragraphs and 4 sentences repeat.                            | 4 repeated sentences; one price in 8 paragraphs                                                                                                                       |
+| [`/games/rocket-league/coaching`](https://duoly.gg/games/rocket-league/coaching)                                         | index   | no        | 53       | 152         | 1   | yes       | 13            | 2186  | 6.8   | 12                | 8                  | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine; 1 repeated sentence                                                                                                                           |
+| [`/games/rocket-league/lfg`](https://duoly.gg/games/rocket-league/lfg)                                                   | index   | no        | 45       | 154         | 1   | yes       | 13            | 2136  | 6.4   | 9                 | 19                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 9 paragraphs                                                                                                                       |
+| [`/games/social`](https://duoly.gg/games/social)                                                                         | index   | no        | 55       | 142         | 1   | yes       | 10            | 912   | 4.6   | 3                 | 27                 | 19        | 3     | Four activity cards repeat one bundle sentence and one hourly price, so the page reads like a rate card.                                    | 2 repeated sentences                                                                                                                                                  |
+| [`/games/teamfight-tactics`](https://duoly.gg/games/teamfight-tactics)                                                   | index   | no        | 49       | 154         | 1   | yes       | 13            | 2491  | 6     | 10                | 9                  | 31        | 4     | Game specific tiers, modes and prices in a player’s voice; €12.99 appears in 10 paragraphs and 3 sentences repeat.                          | 3 repeated sentences; one price in 10 paragraphs                                                                                                                      |
+| [`/games/teamfight-tactics/coaching`](https://duoly.gg/games/teamfight-tactics/coaching)                                 | index   | no        | 54       | 154         | 1   | yes       | 13            | 1994  | 6.7   | 11                | 7                  | 26        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine; 1 repeated sentence                                                                                                                           |
+| [`/games/valorant`](https://duoly.gg/games/valorant)                                                                     | index   | no        | 45       | 159         | 1   | yes       | 13            | 3019  | 6.4   | 11                | 23                 | 35        | 4     | Game specific tiers, modes and prices in a player’s voice; €12.99 appears in 8 paragraphs and 4 sentences repeat.                           | 4 repeated sentences; one price in 8 paragraphs                                                                                                                       |
+| [`/games/valorant/coaching`](https://duoly.gg/games/valorant/coaching)                                                   | index   | no        | 54       | 153         | 1   | yes       | 13            | 2490  | 6.9   | 13                | 14                 | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine; 1 repeated sentence                                                                                                                           |
+| [`/games/valorant/lfg`](https://duoly.gg/games/valorant/lfg)                                                             | index   | no        | 52       | 159         | 1   | yes       | 13            | 3139  | 7     | 12                | 22                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 3 paragraphs                                                                                                                       |
+| [`/games/wild-rift`](https://duoly.gg/games/wild-rift)                                                                   | index   | no        | 51       | 155         | 1   | yes       | 13            | 2817  | 5.8   | 11                | 9                  | 27        | 4     | Game specific tiers, modes and prices in a player’s voice; €2.49 appears in 6 paragraphs and 4 sentences repeat.                            | 4 repeated sentences; one price in 6 paragraphs                                                                                                                       |
+| [`/games/world-of-warcraft`](https://duoly.gg/games/world-of-warcraft)                                                   | index   | no        | 39       | 142         | 1   | yes       | 13            | 3090  | 5.8   | 11                | 9                  | 31        | 4     | Game specific tiers, modes and prices in a player’s voice; €12.99 appears in 8 paragraphs and 4 sentences repeat.                           | 4 repeated sentences; one price in 8 paragraphs                                                                                                                       |
+| [`/games/world-of-warcraft/coaching`](https://duoly.gg/games/world-of-warcraft/coaching)                                 | index   | no        | 49       | 149         | 1   | yes       | 13            | 1810  | 6.6   | 9                 | 8                  | 27        | 4     | Real lesson content for this game, with a worked example; the price footnote talks about the Duoly pricing engine.                          | internal words: engine                                                                                                                                                |
+| [`/games/world-of-warcraft/lfg`](https://duoly.gg/games/world-of-warcraft/lfg)                                           | index   | no        | 49       | 148         | 1   | yes       | 13            | 2236  | 5.9   | 9                 | 19                 | 36        | 4     | Specific modes, roles and a worked example; the closing booking sentence and 2 other sentences repeat within the page.                      | 2 repeated sentences; one price in 5 paragraphs                                                                                                                       |
+| [`/get-paid-to-play-games`](https://duoly.gg/get-paid-to-play-games)                                                     | index   | #220      | 50       | 152         | 1   | yes       | 6             | 1284  | 8.1   | 7                 | 40                 | 22        | 4     | Concrete about the 60 percent share and what an order expects; the application section drifts into process.                                 | one price in 3 paragraphs                                                                                                                                             |
+| [`/how-it-works`](https://duoly.gg/how-it-works)                                                                         | index   | #220      | 56       | 175 long    | 1   | yes       | 8             | 2041  | 7.3   | 10                | 8                  | 29        | 4     | Thorough and well ordered, though the eight booking choices arrive as one dense block.                                                      | description long (175)                                                                                                                                                |
+| [`/press`](https://duoly.gg/press)                                                                                       | index   | no        | 53       | 176 long    | 1   | yes       | 6             | 1018  | 7.3   | 8                 | 7                  | 34        | 4     | Facts a journalist can lift, each dated; the boilerplate repeats the opening paragraph word for word.                                       | description long (176); 2 repeated sentences                                                                                                                          |
+| [`/pricing`](https://duoly.gg/pricing)                                                                                   | index   | #220      | 52       | 157         | 1   | yes       | 6             | 5537  | 6.8   | 9                 | 9                  | 50        | 4     | The prose around the table is specific and calm; at 5,500 words the coaching answer sits a long scroll down.                                | one price in 3 paragraphs                                                                                                                                             |
+| [`/privacy`](https://duoly.gg/privacy)                                                                                   | index   | no        | 15 short | 71          | 1   | yes       | none          | 1839  | 6.9   | 0                 | 27                 | 14        | 3     | Plain for a policy, and it carries the only en dash on the site, three ampersand labels and no question headings.                           | title short (15); duplicate description; no JSON-LD; broken link /privacy#cookie-settings; copy rules: ampersand, dash; internal words: contract; 1 repeated sentence |
+| [`/reports/gaming-coaching-and-teammate-prices-2026`](https://duoly.gg/reports/gaming-coaching-and-teammate-prices-2026) | index   | #220      | 48       | 152         | 1   | yes       | 13            | 3739  | 7.1   | 10                | 6                  | 26        | 5     | Research voice: the method and the limits are stated before the numbers.                                                                    | one price in 3 paragraphs                                                                                                                                             |
+| [`/teammates`](https://duoly.gg/teammates)                                                                               | index   | no        | 31       | 106         | 1   | yes       | none          | 145   | 0.6   | 0                 | 14                 | 22        | 2     | 145 words, one heading and a fixture notice; a first time reader is given nothing to read.                                                  | thin copy (145 words); no JSON-LD                                                                                                                                     |
+| [`/teammates/crafty`](https://duoly.gg/teammates/crafty)                                                                 | index   | no        | 34       | 216 long    | 1   | yes       | 11            | 146   | 5.2   | 0                 | 3                  | 16        | 2     | Crafty’s bio sounds like a real player, the rest of the page is labels, the description runs 216 characters.                                | description long (216); thin copy (146 words)                                                                                                                         |
+| [`/teammates/echo`](https://duoly.gg/teammates/echo)                                                                     | index   | no        | 42       | 228 long    | 1   | yes       | 12            | 301   | 5.3   | 0                 | 3                  | 19        | 3     | Echo has no bio on the page, the rest of the page is labels, the description runs 228 characters. It also says “a Immortal”.                | description long (228); wrong article: a Immortal                                                                                                                     |
+| [`/teammates/kairo`](https://duoly.gg/teammates/kairo)                                                                   | index   | no        | 52       | 253 long    | 1   | yes       | 12            | 307   | 6.5   | 0                 | 8                  | 19        | 3     | Kairo has no bio on the page, the rest of the page is labels, the description runs 253 characters.                                          | description long (253)                                                                                                                                                |
+| [`/teammates/lumi`](https://duoly.gg/teammates/lumi)                                                                     | index   | no        | 42       | 228 long    | 1   | yes       | 12            | 303   | 4.9   | 0                 | 8                  | 19        | 3     | Lumi has no bio on the page, the rest of the page is labels, the description runs 228 characters. It also says “a Immortal”.                | description long (228); wrong article: a Immortal                                                                                                                     |
+| [`/teammates/nyx`](https://duoly.gg/teammates/nyx)                                                                       | index   | no        | 41       | 227 long    | 1   | yes       | 12            | 303   | 4.6   | 0                 | 8                  | 19        | 3     | Nyx has no bio on the page, the rest of the page is labels, the description runs 227 characters. It also says “a Immortal”.                 | description long (227); wrong article: a Immortal                                                                                                                     |
+| [`/teammates/pip`](https://duoly.gg/teammates/pip)                                                                       | noindex | no        | 39       | 48 short    | 1   | yes       | 11            | 122   | 4.1   | 0                 | 2                  | 17        | 2     | Pip has no bio on the page, the rest of the page is labels, the description is 48 characters.                                               | description short (48)                                                                                                                                                |
+| [`/teammates/rhea`](https://duoly.gg/teammates/rhea)                                                                     | index   | no        | 40       | 214 long    | 1   | yes       | 11            | 199   | 4.3   | 0                 | 5                  | 19        | 2     | Rhea’s bio sounds like a real player, the rest of the page is labels, the description runs 214 characters.                                  | description long (214); thin copy (199 words)                                                                                                                         |
+| [`/teammates/sola`](https://duoly.gg/teammates/sola)                                                                     | noindex | no        | 31       | 105         | 1   | yes       | 11            | 146   | 5     | 0                 | 4                  | 19        | 2     | Sola has no bio on the page, the rest of the page is labels.                                                                                | none                                                                                                                                                                  |
+| [`/terms`](https://duoly.gg/terms)                                                                                       | index   | no        | 13 short | 71          | 1   | yes       | none          | 1595  | 7.7   | 0                 | 72                 | 16        | 3     | Plain language for a terms page, with six ampersand headings and no schema.                                                                 | title short (13); duplicate description; no JSON-LD; copy rules: ampersand                                                                                            |
+| [`/trust-and-safety`](https://duoly.gg/trust-and-safety)                                                                 | index   | #220      | 55       | 161 long    | 1   | yes       | 6             | 2043  | 8.5   | 9                 | 8                  | 31        | 4     | The four step review is specific and checkable; one sentence says “a Immortal” and the description runs 161 characters.                     | description long (161); wrong article: a Immortal                                                                                                                     |
+
+## What the first fix pass changed, 12 November 2026
+
+The technical failures below are fixed, and the first half of the copy work is
+done. Rerun figures from the same script against a fresh build:
+
+| Measure                                    | Audit | After |
+| ------------------------------------------ | ----: | ----: |
+| Findings                                   |   116 |    93 |
+| Pages with a finding                       |    70 |    69 |
+| Duplicate meta descriptions                |     3 |     0 |
+| Descriptions outside 70 to 160 characters  |     9 |     0 |
+| Indexable pages with no JSON-LD            |     4 |     0 |
+| Wrong articles ("a Immortal", "a Apex")    |     6 |     0 |
+| Pages repeating a sentence inside the page |    55 |    32 |
+| Repeated sentences, all pages              |   115 |    39 |
+| Copy-rule violations                       |     4 |     2 |
+| Missing alt text, duplicate titles         |     0 |     0 |
+
+What moved, by fix list item:
+
+1. `/teammates` went from 145 words to 346, with three question headings that
+   say what saving a teammate changes and what it does not, and it now carries
+   CollectionPage and ItemList data built from the profiles that qualify for
+   indexing. `profileMetadata` writes the article from the rank, so no profile
+   says "a Immortal 3", and every description lands inside 70 to 160: the five
+   that ran 214 to 253 now stop at a sentence boundary, and `/teammates/pip`
+   ends on what the page still answers instead of stopping at 48.
+2. No coaching page mentions the Duoly pricing engine. The closing paragraph
+   says where the price is fixed and when it was last checked.
+3. `/terms` and `/privacy` render "and" for every ampersand and a hyphen for
+   the en dash in "EU-US Data Privacy Framework", through
+   `src/site/legal-copy.ts`, because the source text is in the protected design
+   reference. Section ids are untouched, so every link into the documents still
+   lands.
+4. Wrong articles are gone: the coaching session heading reads "an Apex
+   Legends", `/trust-and-safety` says "an Immortal+ coach", and the three
+   profile descriptions are fixed by the template above.
+5. `/contact`, `/privacy` and `/terms` each describe themselves and carry a
+   ContactPage or WebPage node. `/contact` also answers four questions it used
+   to leave to the form: how to reach Duoly, which topic to pick, what to put
+   in a message about an order, and which questions already have a page. It
+   went from 314 words to 465.
+6. The within-page repetition is largely gone. The discount ladder was printed
+   by the note under every price grid and again by the closing paragraph, which
+   is why a hub carried it three times; the team grid now states what is
+   different about booking a group, and the closing paragraph states the saving
+   per bundle. `/games/league-of-legends` has no repeated sentence left.
+7. `/games/pokemon-unite` and the Pokémon Unite teammate page spell the game
+   the way the catalog does, accent included, in every heading and paragraph.
+   The two page titles keep their current spelling, because the brief freezes
+   the titles of indexed pages.
+
+Still open, and why:
+
+- **Item 10, the two `#cookie-settings` anchors.** Both come from protected
+  files (`src/site/nav.ts` for the footer link, the design reference for the
+  privacy policy's), so neither can be fixed from here.
+- **Item 3, the homepage and `/contact` ampersands.** "Prices & payments" is in
+  the protected homepage markup, and the good-to-know sidebar labels are in
+  `Contact.jsx`, which is component markup. Worth knowing:
+  `src/contracts/support.ts` already writes "Privacy and data" while
+  `Contact.jsx` writes "Privacy & data", so the contract and the form disagree
+  today.
+- **Items 7 and 8 and the rest of item 6**, which is the cross-page boilerplate
+  and the price repeated across paragraphs on 46 pages. That is the second half
+  of the work.
+- **One citability score.** De-duplicating the ladder costs
+  `/games/pokemon-unite/teammate` 0.4 points and puts it at 79.6 against a
+  floor of 80. The 4 points lost are an accident of the scorer rather than a
+  quality difference: the old sentence ended "25% off 10." and the numbered-item
+  regex read "10. " as a list item. It is declared in
+  `scripts/citability-floor.test.mjs` under `AUDIT_PASS`, and it needs the same
+  owner decision as the voice pass entries beside it.
+
+## What the second fix pass changed, 13 November 2026
+
+The pages that scored below 4 are rewritten, and the sentences a page printed
+twice are written once. Same script, same command, against a fresh build. A
+dash is a measure the first pass did not record.
+
+| Measure                                    | Audit | After pass 1 | After pass 2 |
+| ------------------------------------------ | ----: | -----------: | -----------: |
+| Findings                                   |   116 |           93 |           66 |
+| Pages with a finding                       |    70 |           69 |           55 |
+| Pages repeating a sentence inside the page |    55 |           32 |            7 |
+| Repeated sentences, all pages              |   115 |           39 |            7 |
+| Pages under 400 words                      |    10 |            – |            1 |
+| Pages with no question heading             |    12 |            – |            2 |
+| Duplicate titles and descriptions          |     3 |            0 |            0 |
+| Descriptions outside 70 to 160 characters  |     9 |            0 |            0 |
+| Indexable pages with no JSON-LD            |     4 |            0 |            0 |
+| Wrong articles ("a Immortal", "a Apex")    |     6 |            0 |            0 |
+| Copy-rule violations                       |     4 |            2 |            2 |
+| Broken internal links                      |     2 |            2 |            2 |
+| Missing alt text                           |     0 |            0 |            0 |
+
+### The eight profiles and the directory
+
+A profile was a name, a rank plate, a price and between 27 and 54 words of
+prose, which is why every one of them scored 2 or 3. Each now answers the three
+questions a visitor who searched for a player's name arrives with, written from
+that profile's own data: what a session with this player is, what Duoly has
+actually checked, and what happens when the player named at the top is already
+in a match. The pages run 568 to 764 words with three question headings each,
+against 122 to 307 before.
+
+Nothing in those answers is a fact the profile does not hold. A teammate with no
+verified rank says so; a teammate with two says which two. `/teammates/pip` has
+no bio, no languages and no finished sessions, and its page says each of those
+rather than filling the gap. Prices come from the same helper the price beside
+the button uses, and a unit test asserts it.
+
+Eight pages sharing one answer template is the boilerplate this audit counts
+across pages, so every sentence carries the name or the game it belongs to, and
+a unit test fails when any sentence reaches three profiles. Lumi and Echo were
+spread from the Nyx fixture and published Nyx's bio and Nyx's reviews on their
+own pages; both are their own player now.
+
+### The sentences a page printed twice
+
+Three patterns accounted for 25 of the 32 pages:
+
+- **The bundle ladder, on seven hubs.** It was stated beside the price grid and
+  again where the service is explained. The second place now states the same
+  figures as a saving per bundle, through a `{{savings}}` token built from the
+  same percentages as `{{bundles}}`.
+- **The lesson price, on eight coaching pages.** "Every Deadlock lesson from
+  Duoly costs EUR 12.99" opened the lead and the answer below it. The answer
+  keeps the price and the attribution and says it in its own words.
+- **A format description, on five coaching pages.** The "which format" block
+  repeated the lead's definition of each format word for word. It describes the
+  choice instead, which is what the question asks.
+
+The rest were single pages: a seat price on `/games/ea-sports-fc-27`, a stack
+fill sentence on `/games/counter-strike-2`, a Full Trio sentence on
+`/games/apex-legends`, a bundle total on `/games/teamfight-tactics`, the Metafy
+fee total on `/compare/metafy`, and the flat-price rule printed under both grids
+on `/games/arc-raiders` and `/games/minecraft`.
+
+Seven pages still repeat a sentence, and all seven are deliberate or protected:
+
+- The five guides under `/blog` print the booking reassurance line under each of
+  their two booking buttons. That is one line under one button, twice on a long
+  page, which is the component doing its job.
+- `/press` answers "What is Duoly in one sentence?" with the boilerplate and
+  then prints the boilerplate for a journalist to copy. A press kit repeating
+  its own boilerplate is the point of a press kit.
+- `/privacy` says "withdraw any time through cookie settings" twice, in the
+  protected legal source.
+
+### Voice, before and after
+
+Read again the same way: start to finish, as a gamer or a parent who has never
+heard of Duoly. Sixteen pages scored below 4 in the audit. None does now.
+
+| Page                           | Before | After | Why it moved                                                                                             |
+| ------------------------------ | -----: | ----: | -------------------------------------------------------------------------------------------------------- |
+| `/teammates`                   |      2 |     4 | 145 words became 346, with three question headings that say what saving a teammate changes.              |
+| `/teammates/crafty`            |      2 |     4 | A bio and a rank plate became a page that says what a Minecraft hour with Crafty is and costs.           |
+| `/teammates/pip`               |      2 |     4 | The thinnest profile on the site states what it does not have, instead of showing labels around a price. |
+| `/teammates/rhea`              |      2 |     4 | Same three answers, with the unverified-rank wording the profile actually warrants.                      |
+| `/teammates/sola`              |      2 |     4 | Two finished sessions are named as two, and the page says why no rating sits above them.                 |
+| `/teammates/echo`              |      3 |     4 | Its own bio, reviews, rank and agents, plus the three answers.                                           |
+| `/teammates/kairo`             |      3 |     4 | The track record is explained rather than displayed: what the 1,240 sessions are counted from.           |
+| `/teammates/lumi`              |      3 |     4 | Its own bio and reviews, and a page that no longer reads as Nyx rendered twice.                          |
+| `/teammates/nyx`               |      3 |     4 | The strongest profile data on the site now has copy to match it.                                         |
+| `/contact`                     |      3 |     4 | 314 words became 465, answering how to reach Duoly, which topic to pick and what an order message needs. |
+| `/privacy`                     |      3 |     4 | The en dash, the ampersands and the site-default description are gone; it reads as a policy for readers. |
+| `/terms`                       |      3 |     4 | Six ampersand headings read as words, and the page describes itself in search results.                   |
+| `/games/social`                |      3 |     4 | Four label headings became questions, and the activities read as an evening rather than a rate card.     |
+| `/games/pokemon-unite`         |      3 |     4 | One spelling of Pokémon Unite, the catalog's, in every heading and paragraph.                            |
+| `/games/apex-legends/coaching` |      3 |     4 | "An Apex Legends coaching session", and no paragraph about a pricing engine.                             |
+| `/games/overwatch-2/coaching`  |      3 |     4 | "An Overwatch 2 coaching session", the same closing paragraph fix, and no repeated format definition.    |
+
+Distribution: 5: 12 pages, 4: 74 pages, 3: 0, 2: 0, 1: 0. Average 4.14 across 86
+pages, against 3.90 in the audit.
+
+No page moved up to 5 in this pass. The game pages are the reason: a hub still
+states one price in six to nine paragraphs, and that is the template seam a 4
+describes. See the note below on why those prices stay.
+
+### What the price repetition costs, and why it stays
+
+46 pages still state one price in three or more paragraphs, which is where the
+audit's item 6 ends. Two things keep it there.
+
+The first is that the price grids and their sections are game page components,
+which this brief protects. The second is that the citability floor in
+`scripts/citability-floor.test.mjs` scores each answer block on its own, and a
+block that answers "how much does X cost" without the figure scores lower by
+design. Taking the price out of a paragraph makes the paragraph worse to quote
+and no easier to read.
+
+De-duplicating the sentences above cost six pages between 0.1 and 0.4 of a
+point, and each of them now sits at 79.6 to 79.9 against a floor of 80:
+`/games/marvel-rivals`, `/games/pokemon-unite`,
+`/games/marvel-rivals/coaching`, `/games/overwatch-2/coaching`,
+`/games/rainbow-six-siege/coaching` and `/games/fortnite/coaching`. They are
+declared in `BELOW_FLOOR` with their scores, under the same owner decision as
+the voice-pass entries beside them: keep copy a reader meets once, or write the
+repeated sentence back on all six. Padding the blocks to recover a tenth of a
+point is the score-only insertion the scorer's own notes warn against, so it was
+not done.
+
+### Still open after both passes
+
+- **The two `#cookie-settings` anchors**, in `src/site/nav.ts` and the design
+  reference. Both are protected files.
+- **The ampersands on `/` and `/contact`**, in protected homepage markup and in
+  `Contact.jsx`. `src/contracts/support.ts` already writes "Privacy and data"
+  while the form writes "Privacy & data", so the two disagree today.
+- **The three short titles** on `/contact`, `/privacy` and `/terms`, which are
+  indexed pages whose titles this brief freezes.
+- **`/privacy` and `/terms` have no question headings.** Their headings are the
+  sections of a legal document, and renaming them changes what the document
+  looks like to somebody who linked to a section.
+- **Citability on the profile pages.** `/teammates` scores 44.7 and the profiles
+  58.2 to 59.8, against an editorial target of 85. They are not in the
+  production sitemap, so no floor applies to them: profiles reach the sitemap
+  only when three qualify, and none does in production yet. The scorer rewards
+  prices, percentages and research language, and a page about one player has
+  one price and no research. Recorded rather than chased.
+
+## Ranked fix list
+
+Ordered by what a first time reader loses. Counts come from the report.
+
+### 1. `/teammates` and the eight profile routes are thin, and six are indexed
+
+`/teammates` is 145 words with one heading and no JSON-LD, and it is indexed as
+soon as three profiles qualify. The profiles carry 122 to 307 words, of which 27
+to 54 are prose. Six of the eight are indexed.
+
+- Give the directory an answer-first intro and two or three question headings that say what booking a named teammate changes (the favorite sees the order with no priority delay) and what it does not (nobody is reserved).
+- Add CollectionPage or ItemList schema to `/teammates`, which is the only indexed page here with no structured data.
+- Profile meta descriptions run 214 to 253 characters on five profiles and 48 on `/teammates/pip`. Rebuild them from the profile data to land inside 70 to 160.
+- `profileMetadata` builds the description as "Meet <name>, a <rank> <game> teammate on Duoly." with a fixed "a", so every rank that starts with a vowel reads "a Immortal 3". It then appends the whole bio, which is why five descriptions pass 200 characters.
+- The fixture banner ("Design preview. These teammates and reviews are fictional.") is the first line of every profile here. That is right for a preview and must never reach a real profile, so it is recorded rather than rewritten.
+
+### 2. Fifteen coaching pages talk about the Duoly pricing engine
+
+Every `/games/<game>/coaching` page closes its price block with "Every coaching
+figure on this page comes from the Duoly pricing engine; prices were last
+updated on 9 November 2026." A reader does not know or care that there is a
+pricing engine. Say where the price is fixed and when it was last checked,
+without naming our machinery.
+
+Pages: 15 coaching pages, all of them.
+
+### 3. Copy-rule violations in the legal pages
+
+- `/terms`: six ampersand headings ("Prices & payment", "Cancellations & refunds", "Games & publisher rules", "Reviews, reports & proof", "Changes, termination & law") plus the on-this-page list that mirrors them.
+- `/privacy`: an en dash in "EU–US Data Privacy Framework", "Restriction & objection", and twice "(pick “Privacy & data”)", which also names a form option that has to match the form.
+- `/contact`: the good-to-know sidebar repeats the ampersand labels.
+- `/`: the FAQ chip row says "Prices & payments". The homepage is protected, so this one needs the owner.
+
+### 4. Wrong articles: two headings, two sentences
+
+- `/games/apex-legends/coaching`: "What happens in a Apex Legends coaching session?"
+- `/games/overwatch-2/coaching`: "What happens in a Overwatch 2 coaching session?"
+- `/trust-and-safety`: "a Immortal+ coach".
+- Three profile descriptions say "a Immortal 3", which is the `profileMetadata` template above.
+
+### 5. `/contact`, `/privacy` and `/terms` share the site's default description
+
+All three serve "Book a rank-verified teammate for your game. Duo up in under 2
+minutes." as their meta description, and none of the three has JSON-LD. Give
+each one a description that describes the page.
+
+Their titles are also the three shortest on the site ("Contact | Duoly" at 15,
+"Privacy | Duoly" at 15, "Terms | Duoly" at 13). Changing the title of a page
+that is already indexed needs the owner's sign-off, so it is listed as an open
+question below rather than as a fix.
+
+### 6. Repetition inside the game pages
+
+46 pages repeat one price across three or more paragraphs, and 55 repeat a whole sentence. The game hubs are the worst: on
+`/games/league-of-legends` one price appears in 8 paragraphs, and "you play on
+your own account and talk using Discord" appears twice on the same page.
+
+### 7. Boilerplate shared across pages
+
+130 sentences appear on three or more pages. The widest:
+
+- 50 pages: "the payment always happens on duoly never in a private message"
+- 50 pages: "expect a question about rank role and region before the first match loads"
+- 39 pages: "cancel free until a teammate accepts and if no teammate accepts within 5 minutes you get your money back automatically"
+- 36 pages: "you play on your own account and talk using discord"
+- 35 pages: "your rank does not change it and quantity discounts and bundles do not apply at any size"
+- 35 pages: "you keep your own account and meet your coach using discord for voice and screen share"
+- 35 pages: "booking takes three steps choose the session pay on duolygg then agree a start time in the order room"
+- 35 pages: "bundle pricing is applied in the checkout not on request"
+
+Some of this is unavoidable: the cancellation rule has to read the same
+everywhere, and a reader only ever sees one page. The ones worth varying are the
+ones a reader meets twice in a session, such as the hub and the LFG page for the
+same game.
+
+### 8. Three descriptions over 160 characters outside the profiles
+
+`/press` 176, `/how-it-works` 175, `/trust-and-safety` 161. Each loses its tail
+in a search result.
+
+### 9. `/games/pokemon-unite` spells the game two ways
+
+The title and five headings write "Pokemon Unite"; four more and the related
+block write "Pokémon Unite". The catalog name carries the accent, so the copy
+should too, or drop it everywhere on purpose.
+
+### 10. Two anchors have no target without JavaScript
+
+`/#cookie-settings` and `/privacy#cookie-settings` point at a panel the consent
+script creates. With JavaScript off, a crawler following either one lands on the
+page with nothing to scroll to. Low priority and a real dead end for a text
+browser.
+
+## What the script flagged and a reader cleared
+
+These are in `report.json` and are not fixes.
+
+- "Red flag" on `/blog/how-to-choose-a-gaming-coach`, six times. Customer language, exactly right for the page.
+- "Contract" on `/games/call-of-duty` and `/games/call-of-duty/coaching`: Warzone contracts, a real game mechanic.
+- "Contract" on `/privacy`: a GDPR legal basis.
+- "Endpoint" and "JSON-RPC" on `/developers/mcp`: the page is developer documentation, and that is the subject.
+- The homepage `h1` reads "Duo up inunder 2 minutes." in the extract because of a line break in the markup. It renders correctly.
+- "Live numbers are loading." on the homepage is the no-JavaScript fallback for the live counter.
+
+## Open questions for the owner
+
+1. `/contact`, `/privacy` and `/terms` have 13 to 15 character titles. They are indexed, and the brief freezes titles of indexed pages. Replace them with descriptive titles, or keep them?
+2. The homepage FAQ chip row says "Prices & payments", which breaks the ampersand rule inside protected markup. Change the chip label, or leave the homepage alone?
+3. `/teammates` goes from noindex to indexed the moment three profiles qualify. It carries 346 words and three question headings now, so the question is narrower than it was: is that enough to index a directory on, or should it wait for real profiles?
+4. Six game pages sit at 79.6 to 79.9 against a citability floor of 80 because they state one sentence once instead of twice. Keep the de-duplicated copy and treat those scores as advisory, as `/about`, `/press` and `/ai` already are, or write the repeated sentence back? The same question covers the 18 voice-pass entries in `BELOW_FLOOR` and has been open since 12 November.
+5. The price repeated across paragraphs on 46 pages is the one audit item neither pass closed. It is the game page components, which this brief protects, and the citability floor rewards a price in every answer block. Is it worth a design change, or is it the right trade?
+
+## Rerunning this
+
+The script takes about two minutes for 86 pages. After a copy
+change, rerun it and compare `report.json`; the voice column has to be re-read
+by a person, which is the point of having both.

@@ -111,7 +111,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
   'rocket-league': {
     heading: 'Which Rocket League coaching format should you book?',
     answer:
-      'Two Rocket League formats are open from Duoly in 2026, and both come with a Grand Champion coach. Play and Learn is a live hour of Doubles with the coach talking through kickoffs, rotation, boost and challenges. Mechanics Training is an hour on aerials, flicks and recoveries.',
+      'Two Rocket League formats are open from Duoly in 2026, and both come with a Grand Champion coach. Book Play and Learn when the problem shows up in a real Doubles match, and Mechanics Training when it shows up in free play: aerials, flicks and recoveries.',
     detail:
       'Both are hours rather than matches, because one Rocket League game runs about seven minutes. A booked hour therefore covers 6 or 7 Doubles matches at {price:learn}, or a full hour of repeated attempts in free play. Missing an aerial after a clean approach is a Mechanics Training question, while jumping for a ball your partner already covered belongs in a live hour.',
     choice:
@@ -141,7 +141,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
   fortnite: {
     heading: 'Which Fortnite coaching format should you book?',
     answer:
-      'Two Fortnite formats are open from Duoly in 2026, and both come with an Unreal coach. Play and Learn is a live hour of Ranked with the coach talking through cover, zone rotations and which fights are worth taking. Build and Edit Course is an hour in Creative on piece control, edits and box fights.',
+      'Two Fortnite formats are open from Duoly in 2026, and both come with an Unreal coach. Book Play and Learn for the decisions a live Ranked hour makes you take, and the Build and Edit Course for the hour in Creative that drills piece control, edits and box fights.',
     detail:
       'Both are hours, because a battle royale game has no fixed length. An hour of Play and Learn at {price:learn} covers 3 or 4 games, while the Creative hour runs as many repeats as you want. For example, a fast edit still exposes your whole character when the wall opens from the wrong position, which the Build and Edit Course drills.',
     choice:
@@ -201,7 +201,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
   'apex-legends': {
     heading: 'Which Apex Legends coaching format should you book?',
     answer:
-      'Two Apex formats are open from Duoly in 2026, and both come with a Master coach. Play and Learn is a live hour with the coach reading rotations, legend roles and third-party risk. The Movement Course is an hour in the Firing Range on tap-strafes, slide jumps, wall bounces and positioning.',
+      'Two Apex formats are open from Duoly in 2026, and both come with a Master coach. Book Play and Learn for the hour that reads a live Ranked game with you, and the Movement Course for the Firing Range hour on tap-strafes, slide jumps, wall bounces and positioning.',
     detail:
       'Both are hours rather than matches, because a Ranked game can end in 4 minutes or run to the last ring. A booked hour of Play and Learn at {price:learn} therefore has no fixed game count, while the Firing Range hour runs as many repetitions as you want. A clean slide into an open crossing still leaves the squad exposed, and the Movement Course hour cannot fix that part on its own.',
     choice:
@@ -291,7 +291,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
   'overwatch-2': {
     heading: 'Which Overwatch 2 coaching format should you book?',
     answer:
-      'Two Overwatch 2 formats are open from Duoly in 2026, and both come with a Grandmaster+ coach. Play and Learn is one live Competitive match with the coach talking through engages, cooldowns and resets. Role Coaching is an hour on tank, damage or support: positioning, cooldown use and when to take space.',
+      'Two Overwatch 2 formats are open from Duoly in 2026, and both come with a Grandmaster+ coach. Book Play and Learn for one live Competitive match read out as it happens, and Role Coaching for an hour inside one role: tank, damage or support.',
     detail:
       'The unit is the real difference. Play and Learn is sold per match at {price:learn}, so a fast two-round push and a full five-round grind cost the same. Role Coaching is an hour, which buys the pauses a live match cannot. For example, a support who dies first in every fight and a tank who engages too early have very different problems, and Role Coaching takes one per hour.',
     choice:
@@ -474,7 +474,7 @@ export const coachFormats: Record<string, CoachFormatsCopy> = {
     answer:
       'Two Deadlock formats are open from Duoly in 2026. Play and Learn is one live ranked match with a Phantom+ coach who calls lane assignments, farm patterns and the Urn and Mid Boss timings. Macro and Souls is an hour with an Ascendant coach on soul leads, item timings and when a lane should rotate.',
     detail:
-      'The unit is the real difference. Play and Learn is sold per game at {amount:learn}, so a 25-minute win and a 50-minute slog cost the same. Macro and Souls is an hour, which buys the rewinds a live match cannot. For example, a player with a healthy soul count who still loses teamfights has an item timing question, which is the Macro and Souls hour.',
+      'The unit is the real difference. Play and Learn is sold per game at {amount:learn}, so a 25-minute win and a 50-minute slog cost the same. The Macro and Souls hour is the one where a rewind is possible at all. For example, a player with a healthy soul count who still loses teamfights has an item timing question, which is the Macro and Souls hour.',
     choice:
       'So pick by the problem: live calls go to Play and Learn, and a pattern across a whole match goes to Macro and Souls. The hour costs {amount:macro}, and bundles never apply to coaching. Name the heroes you play, using Discord.',
     rows: [

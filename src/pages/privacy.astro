@@ -4,17 +4,40 @@ import LegalPage from '../components/site/LegalPage.jsx';
 import { LIVE_PRIVACY } from '../site/privacy';
 import { pageViewer } from '../site/viewer';
 import { accountContext } from '../server/auth/context';
+import { CONTENT_DATES, serializeJsonLd } from '../site/seo';
+import { officialPageSchema } from '../server/seo/official';
+import { plainLegal } from '../site/legal-copy';
 const { viewer, csrf } = await pageViewer(Astro);
 // The support widget works for signed-out visitors too, so they get a CSRF token.
 const account = accountContext(Astro.request, Astro.cookies);
 const widgetCsrf = account.config ? csrf || account.csrf() : '';
+const doc = plainLegal(LIVE_PRIVACY);
+const path = '/privacy';
+// The page used to serve the site-wide default description, which said nothing
+// about a privacy policy and was identical on /contact and /terms.
+const description =
+  'What Duoly stores when you book, who it is shared with, how long it is kept and the rights you can use at any time under the GDPR.';
 ---
 
 <SiteLayout
   indexing="index, follow"
   title="Privacy | Duoly"
+  description={description}
   viewer={viewer}
   csrf={csrf}
 >
-  <LegalPage doc={LIVE_PRIVACY} chrome={false} csrf={widgetCsrf} client:load />
+  <LegalPage doc={doc} chrome={false} csrf={widgetCsrf} client:load />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(
+      officialPageSchema(
+        path,
+        doc.title,
+        description,
+        CONTENT_DATES[path]!,
+        Astro.site!,
+      ),
+    )}
+  />
 </SiteLayout>

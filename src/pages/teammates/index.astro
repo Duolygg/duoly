@@ -11,6 +11,8 @@ import {
   publicProfilesEnabled,
   fixturesEnabled,
 } from '../../server/teammates/public-profiles';
+import { AUTO_CANCEL_MINUTES } from '../../server/seo/fees';
+import { serializeJsonLd } from '../../site/seo';
 if (!publicProfilesEnabled()) return Astro.rewrite('/404');
 const requested = Astro.url.searchParams.get('game');
 const game = SITE_GAMES.find((g) => g.id === requested || g.slug === requested);
@@ -21,6 +23,40 @@ const [cards, indexable] = await Promise.all([
 const sorted = [...cards].sort((a, b) => Number(b.online) - Number(a.online));
 const { viewer, csrf } = await pageViewer(Astro);
 Astro.response.headers.set('Cache-Control', 'no-store');
+/**
+ * The directory was the only indexable page on the site with no structured data, and an
+ * ItemList is what it actually is. Only the profiles that qualify for indexing are listed,
+ * so the list never points a crawler at a page marked noindex. The filtered view
+ * (`?game=`) is noindex, so it publishes no list of its own.
+ */
+const itemList =
+  indexable.length >= 3 && !requested
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        url: new URL('/teammates', Astro.site!).href,
+        name: 'Duoly teammates',
+        description:
+          'Duoly teammates with a public profile, their games and their verified ranks.',
+        isPartOf: { '@id': new URL('/#website', Astro.site!).href },
+        publisher: { '@id': new URL('/#organization', Astro.site!).href },
+        // The newest profile change the directory shows, which is the only
+        // date this page can claim honestly: its content is the profiles.
+        dateModified: indexable
+          .map((profile) => profile.updatedAt)
+          .sort()
+          .at(-1),
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: indexable.length,
+          itemListElement: indexable.map((profile, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: new URL(`/teammates/${profile.slug}`, Astro.site!).href,
+          })),
+        },
+      }
+    : null;
 ---
 
 <SiteLayout
@@ -86,5 +122,72 @@ Astro.response.headers.set('Cache-Control', 'no-store');
         </p>
       )}
     </section>
+    {/* The directory used to be a heading, a filter and a grid of cards, which
+        left a first time reader nothing to read and no answer to the question
+        the page raises: what picking a name actually does. */}
+    <section class="tp-directory-copy" aria-labelledby="tp-copy-h">
+      <h2 id="tp-copy-h">What does booking a named teammate change?</h2>
+      <p>
+        Your order reaches them with no queue delay. Saving a teammate from
+        their profile is the one thing that changes the queue: the next order
+        you place for that game appears for them the moment it goes public,
+        rather than after the wait every other teammate sees. Saving somebody
+        needs a Duoly account. Browsing this page does not.
+      </p>
+      <h2 id="tp-copy-reserved-h">What does it not change?</h2>
+      <p>
+        Nobody is reserved for you. A teammate is booked when they accept the
+        order, so while your pick is in a match another verified teammate can
+        take it. If nobody accepts within {AUTO_CANCEL_MINUTES} minutes the
+        order cancels itself and the full amount goes back to your balance. The
+        price is the same whoever accepts, because it comes from the game, the
+        service and the rank you selected.
+      </p>
+      <h2 id="tp-copy-who-h">Which teammates appear here?</h2>
+      <p>
+        Everyone who switched their public profile on and plays a game an
+        administrator approved. A profile reaches search results once it also
+        carries one of three things: a rank an administrator verified, a bio the
+        teammate wrote, or finished sessions. Pick a game above to narrow the
+        list, or read <a href="/how-it-works">how a Duoly booking works</a>{' '}
+        before you choose a name.
+      </p>
+    </section>
   </article>
+  {itemList && (
+    <script
+      slot="head"
+      type="application/ld+json"
+      set:html={serializeJsonLd(itemList)}
+    />
+  )}
 </SiteLayout>
+
+<style>
+  /* The reading column under the card grid. Matches the directory's own
+     measure and muted body colour from profiles.css; no new tokens. */
+  .tp-directory-copy {
+    max-width: 70ch;
+    margin: 8px auto 64px;
+    padding: 0 24px;
+  }
+  .tp-directory-copy h2 {
+    margin: 28px 0 10px;
+    font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+    font-size: clamp(20px, 2.2vw, 24px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #f3eeff;
+  }
+  .tp-directory-copy h2:first-child {
+    margin-top: 0;
+  }
+  .tp-directory-copy p {
+    margin: 0;
+    line-height: 1.7;
+    color: #cfc4ea;
+  }
+  .tp-directory-copy a {
+    color: #d6bbff;
+  }
+</style>

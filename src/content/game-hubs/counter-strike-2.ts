@@ -114,7 +114,7 @@ export const counterStrike2: HubPageCopy = {
     {
       heading: 'What does a CS2 stack fill include?',
       paragraphs: [
-        'A CS2 stack fill is one order that hires several players at once, so a part-full party becomes a full five. Premier 5-Stack queues the Valve ladder from {{p_five_low}} per match for {{seats_five}} seats, with Premier 20,000+ players on each one. FACEIT Stack queues FACEIT instead from {{p_faceit5_low}}, with Level 8 and above on every seat. For example, a trio short two players books 2 seats rather than 4, because each seat is priced on its own.',
+        'A stack fill hires several players on one order, so the part-full party you already have leaves for the server as a five. Premier 5-Stack queues the Valve ladder from {{p_five_low}} per match for {{seats_five}} seats, with Premier 20,000+ players on each one. FACEIT Stack queues FACEIT instead from {{p_faceit5_low}}, with Level 8 and above on every seat. For example, a trio short two players books 2 seats rather than 4, because each seat is priced on its own.',
         'Both fills start the same way. Pick the service, pick the seat count, pay once, then meet the roster in the order chat. Name your region, the maps you actually practise and the roles you already cover, so nobody turns up expecting to entry when you already do. Voice runs using Discord, friend requests go out on Steam, and nobody needs your login. Bundles of {{main}} still take {{bundles}}, read from Duoly checkout in 2026.',
       ],
     },

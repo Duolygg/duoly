@@ -108,7 +108,7 @@ export const eaSportsFc27: HubPageCopy = {
     {
       heading: 'What does a Clubs Lineup booking include?',
       paragraphs: [
-        'A Clubs Lineup is one order that hires several Division 1+ players at once, so a half-full club gets a real eleven. The card covers up to {{seats_clubs}} seats at {{p_clubs}} per game, and 5 games cost {{p_clubs_x5}} with {{pick5}} off. Count the seats, because every seat is priced on its own, so a club short 2 players books 2 rather than 5. Ask for a centre back and a holding midfielder rather than 2 more wingers.',
+        'A Clubs Lineup is one order that hires several Division 1+ players at once, so a half-full club gets a real eleven. One order pays for up to {{seats_clubs}} seats at {{p_clubs}} per game, and a 5-game booking comes to {{p_clubs_x5}} after the {{pick5}} discount. Count the seats, because every seat is priced on its own, so a club short 2 players books 2 rather than 5. Ask for a centre back and a holding midfielder rather than 2 more wingers.',
         'Co-op Rivals is the two-player shape instead, at {{p_duo2}} per game at {{rank_duo2}}, with Co-op Elite bringing an Elite-level partner from {{p_duo3_low}}. Kick-Off and Friendlies carries no division at all and costs {{p_kickoff}} per game, which makes it the calm first session with somebody new. The order chat is where you name your platform, your formation and who takes set pieces, with voice using Discord before kick-off.',
       ],
     },
@@ -122,7 +122,7 @@ export const eaSportsFc27: HubPageCopy = {
     {
       heading: 'When is FC 27 coaching the better booking?',
       paragraphs: [
-        'FC 27 coaching is the better booking when the goal is a repeatable fix rather than a partner for the next game. Tactics and Squad Builder and Champions Prep each cost {{p_tactics}} per hour, one on formations and custom tactics, the other on weekend-league defending and the current meta. Coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to partner games only.',
+        'FC 27 coaching is the better booking when the goal is a repeatable fix rather than a partner for the next game. Both lessons are {{p_tactics}} an hour: Tactics and Squad Builder on formations and custom tactics, Champions Prep on weekend-league defending and the current meta. Coaching carries no quantity or bundle discount, so the {{pct3}} to {{pct10}} bundle savings apply to partner games only.',
         'Name the goal you keep conceding. For example, a player who concedes the same counter attack gains more from one tactics hour at {{p_tactics}} than from a fourth Rivals game, because the fix lives in the shape. A player who only wants a relaxed evening gains more from Kick-Off and Friendlies at {{p_kickoff}} per game in 2026. EA SPORTS FC 27 has no separate coaching page on Duoly yet, so lessons are booked from the prices above, with screen share using Discord. The nearest neighbours here are [Rocket League teammates](/games/rocket-league), football with rocket cars, and [Minecraft teammates](/games/minecraft) for an evening with nothing on the line.',
       ],
     },

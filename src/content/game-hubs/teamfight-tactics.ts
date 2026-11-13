@@ -100,7 +100,7 @@ export const teamfightTactics: HubPageCopy = {
     {
       heading: 'Double Up or Board Coach: which TFT booking helps more?',
       paragraphs: [
-        'Double Up is the two-player mode where both players run a board and can send units, gold or items across. A Master+ partner takes the aggressive line while you play the safer one, and the pair places together, so the help arrives inside the game rather than after. Five games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off, and 5 games take {{pick5}} off. For example, one partner commits to the contested comp while the other scouts the lobby using Discord.',
+        'Double Up is the two-player mode where both players run a board and can send units, gold or items across. A Master+ partner takes the aggressive line while you play the safer one, and the pair places together, so the help arrives inside the game rather than after. Five games at {{rank_duo1}} cost {{p_duo1_x5}}, which is the {{pick5}} quantity discount applied. For example, one partner commits to the contested comp while the other scouts the lobby using Discord.',
         'Board Coach is the other shape of help, and the one to pick when the goal is learning rather than placement. You play a personal ranked game while a Master+ player watches your screen and says what to buy, roll and position in real time, at a flat {{p_duo2}} per game in 2026. A player who always rolls at the wrong level hears the call in the moment instead of reading a replay 3 days later. Pick the goal first and the mode second, then agree whether the evening is for LP or for learning, because the two lines diverge at stage four.',
       ],
     },
@@ -150,6 +150,6 @@ export const teamfightTactics: HubPageCopy = {
   },
   closing: {
     heading: 'Ready for your next TFT lobby?',
-    text: 'Double Up is the two-player session with a Master+ partner from Duoly. Five games at {{rank_duo1}} cost {{p_duo1_x5}} with {{pick5}} off, and 5 games take {{pick5}} off. Normals and Hyper Roll stays {{p_norm}} per game with no LP on the line, and Board Coach costs {{p_duo2}}. Comp and Econ Review is the hour for comps, roll timing and gold from stage two, at {{p_econ}} in 2026. Pick your server, then agree the plan using Discord.',
+    text: 'Double Up is the two-player session with a Master+ partner from Duoly. At {{rank_duo1}}, a 5-game booking comes to {{p_duo1_x5}} after the {{pick5}} discount. Normals and Hyper Roll stays {{p_norm}} per game with no LP on the line, and Board Coach costs {{p_duo2}}. Comp and Econ Review is the hour for comps, roll timing and gold from stage two, at {{p_econ}} in 2026. Pick your server, then agree the plan using Discord.',
   },
 };

@@ -55,7 +55,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Every Valorant lesson from Duoly costs {amount:learn}. Play and Learn is billed per game, while VOD Review and Aim and Crosshair are billed per hour, so a second hour of review costs {amount:vod} like the first.',
+        'A Valorant lesson from Duoly costs {amount:learn}, whichever format you book. Play and Learn is billed per game, while VOD Review and Aim and Crosshair are billed per hour, so a second hour of review costs {amount:vod} like the first.',
       ],
       [
         'Do I need a recording?',
@@ -107,7 +107,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Every League of Legends lesson from Duoly costs {amount:learn}. Play and Learn is billed per game, while VOD Review and Champion Mastery are billed per hour with a Grandmaster+ coach, so a second hour costs {amount:vod} like the first.',
+        'A League of Legends lesson from Duoly costs {amount:learn}, whichever format you book. Play and Learn is billed per game, while VOD Review and Champion Mastery are billed per hour with a Grandmaster+ coach, so a second hour costs {amount:vod} like the first.',
       ],
       [
         'What replay should I bring?',
@@ -159,7 +159,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Both Rocket League lessons from Duoly cost {amount:learn}. Both are hourly, and talking a play through is part of the hour, so a live session has no fixed match count. For example, a second hour costs {amount:mech} like the first.',
+        'Either Rocket League format from Duoly costs {amount:learn}. Both are hourly, and talking a play through is part of the hour, so a live session has no fixed match count. For example, a second hour costs {amount:mech} like the first.',
       ],
       [
         'Should I change my settings first?',
@@ -211,7 +211,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Both Fortnite lessons from Duoly cost {amount:learn}. Both are hourly, so pick the mode and the input you actually play before booking. A second hour costs {amount:build} like the first.',
+        'Either Fortnite format from Duoly costs {amount:learn}. Both are hourly, so pick the mode and the input you actually play before booking. There is no discount for a second hour: it is {amount:build} again.',
       ],
       [
         'Can I take a lesson on controller?',
@@ -250,7 +250,7 @@ export const lessons: Record<string, Lesson> = {
         heading: 'How do you review a decision to roll or level?',
         paragraphs: [
           'A roll or level review is a comparison of available upgrades and the health cost of waiting. Pause at a stage transition before gold is spent, then record your health, level and bench pairs. For example, a weak front line holding pairs may need upgrades before the next fight, while a stable board may benefit more from saving for another unit slot. Compare the upgrades available at level 7 with the plan for level 8.',
-          'Review the options using Discord screen share, with the next opponents and unassigned items visible. Watch the fight before deciding whether the board needed damage, a front line or another level. Name the 2026 set, because the units and traits in the shop change with every set. Ask your Master+ coach from Duoly to explain a spending rule you can apply before seeing the next shop. Comp and Econ Review costs {amount:econ} per hour. For live help instead, [Teamfight Tactics partners](/games/teamfight-tactics) includes the separate Board Coach service sold per game.',
+          'Review the options using Discord screen share, with the next opponents and unassigned items visible. Watch the fight before deciding whether the board needed damage, a front line or another level. Name the 2026 set, because the units and traits in the shop change with every set. Ask your Master+ coach from Duoly to explain a spending rule you can apply before seeing the next shop. The review hour is {amount:econ}. For live help instead, [Teamfight Tactics partners](/games/teamfight-tactics) includes the separate Board Coach service sold per game.',
         ],
       },
     ],
@@ -315,7 +315,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Both Apex Legends lessons from Duoly cost {amount:learn}. Both are hourly, and a live hour has no fixed match count because game length and review time vary. For example, a second hour costs {amount:move} like the first.',
+        'Either Apex Legends format from Duoly costs {amount:learn}. Both are hourly, and a live hour has no fixed match count because game length and review time vary. For example, a second hour costs {amount:move} like the first.',
       ],
       [
         'What kind of clip should I bring?',
@@ -368,7 +368,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Every Marvel Rivals lesson from Duoly costs {amount:learn}. Play and Learn is billed per match, while Hero Coaching is billed per hour with a Grandmaster+ coach, so a second hour costs {amount:hero} like the first.',
+        'A Marvel Rivals lesson from Duoly costs {amount:learn}, whichever format you book. Play and Learn is billed per match, while Hero Coaching is billed per hour with a Grandmaster+ coach, so a second hour costs {amount:hero} like the first.',
       ],
       [
         'What should I bring to Hero Coaching?',
@@ -420,7 +420,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Every Counter-Strike 2 lesson from Duoly costs {amount:learn}. Play and Learn is billed per game, while Demo Review and Utility and Lineups are billed per hour with a FACEIT 10 coach, so a second hour of review costs {amount:demo} like the first.',
+        'A Counter-Strike 2 lesson from Duoly costs {amount:learn}, whichever format you book. Play and Learn is billed per game, while Demo Review and Utility and Lineups are billed per hour with a FACEIT 10 coach, so a second hour of review costs {amount:demo} like the first.',
       ],
       [
         'Do I need a demo?',
@@ -472,7 +472,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Every Overwatch 2 lesson from Duoly costs {amount:learn}. Play and Learn is billed per match, while Role Coaching is billed per hour with a Grandmaster+ coach, so a second hour costs {amount:role} like the first.',
+        'An Overwatch 2 lesson from Duoly costs {amount:learn}, whichever format you book. Play and Learn is billed per match, while Role Coaching is billed per hour with a Grandmaster+ coach, so a second hour costs {amount:role} like the first.',
       ],
       [
         'Which coach tier comes with an Overwatch 2 lesson?',
@@ -524,7 +524,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does it cost?',
-        'Every Rainbow Six Siege lesson from Duoly costs {amount:learn}. Play and Learn is billed per game, while Operator Lab and Map and Callouts are billed per hour with a Champion coach, so a second hour costs {amount:ops} like the first.',
+        'A Rainbow Six Siege lesson from Duoly costs {amount:learn}, whichever format you book. Play and Learn is billed per game, while Operator Lab and Map and Callouts are billed per hour with a Champion coach, so a second hour costs {amount:ops} like the first.',
       ],
       [
         'Which coach tier comes with a Siege lesson?',
@@ -576,7 +576,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does Call of Duty coaching cost?',
-        'Every Call of Duty lesson from Duoly costs {amount:learn}, sold by the hour. Bundles and quantity discounts do not apply, so a second hour costs {amount:loadout} like the first.',
+        'A Call of Duty lesson from Duoly is {amount:learn}, sold by the hour. Bundles and quantity discounts do not apply, so a second hour costs {amount:loadout} like the first.',
       ],
       [
         'Can we work on Warzone and multiplayer in one hour?',
@@ -632,7 +632,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does Dota 2 coaching cost?',
-        'Every Dota 2 lesson from Duoly costs {amount:learn}. Play and Learn is billed per game, while the 2 hourly lessons are billed by the hour, so a second hour costs {amount:hero}.',
+        'A Dota 2 lesson from Duoly costs {amount:learn}, whichever format you book. Play and Learn is billed per game, while the 2 hourly lessons are billed by the hour, so a second hour costs {amount:hero}.',
       ],
       [
         'What replay should I bring?',
@@ -688,7 +688,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does Minecraft coaching cost?',
-        'Every Minecraft lesson from Duoly costs {amount:pvp}, sold by the hour. Bundles and quantity discounts do not apply, so a second hour costs {amount:bw} like the first.',
+        'A Minecraft lesson from Duoly is {amount:pvp}, sold by the hour. Bundles and quantity discounts do not apply, so a second hour costs {amount:bw} like the first.',
       ],
       [
         'Does coaching work on Bedrock?',
@@ -744,7 +744,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does WoW coaching cost?',
-        'Every World of Warcraft lesson from Duoly costs {amount:learn}, sold by the hour. Bundles and quantity discounts do not apply, so a second hour costs {amount:class} like the first.',
+        'A World of Warcraft lesson from Duoly is {amount:learn}, sold by the hour. Bundles and quantity discounts do not apply, so a second hour costs {amount:class} like the first.',
       ],
       [
         'Can we work on rated arena instead of keys?',
@@ -800,7 +800,7 @@ export const lessons: Record<string, Lesson> = {
       ],
       [
         'How much does Deadlock coaching cost?',
-        'Every Deadlock lesson from Duoly costs {amount:learn}. Play and Learn is billed per match, while Macro and Souls is billed by the hour, so a second hour costs {amount:macro}.',
+        'A Deadlock lesson from Duoly costs {amount:learn}, whichever format you book. Play and Learn is billed per match, while Macro and Souls is billed by the hour, so a second hour costs {amount:macro}.',
       ],
       [
         'How long is a live Deadlock lesson?',

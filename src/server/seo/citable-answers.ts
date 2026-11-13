@@ -68,6 +68,20 @@ export function quantityAnswer(offers: Offers) {
     : `Book 1 to 5 ${unit}, where 5 ${unit} take ${quantityDiscountPercent(5)}% off. Bundles take ${ladder}.`;
 }
 
+/**
+ * The bundle ladder written per bundle rather than per discount: "3 games save
+ * 10%, 5 save 20% and 10 save 25%". Same figures as `quantityAnswer`, from the
+ * same helper, in the shape a closing summary wants.
+ */
+export function savingLadder(offers: Offers) {
+  const unit = offers[0]!.unit === 'hour' ? 'hours' : 'games';
+  const saves = BUNDLE_UNITS.map(
+    (units, index) =>
+      `${units}${index === 0 ? ` ${unit}` : ''} save ${quantityDiscountPercent(units, { bundle: true })}%`,
+  );
+  return `${saves.slice(0, -1).join(', ')} and ${saves.at(-1)}`;
+}
+
 export function pricesAnswer(gameId: string, offers: Offers, coach: boolean) {
   const name = SITE_GAMES.find((game) => game.id === gameId)?.name ?? gameId;
   if (coach && !offers.some((offer) => offer.id === 'learn'))
@@ -76,9 +90,12 @@ export function pricesAnswer(gameId: string, offers: Offers, coach: boolean) {
     return offers.every((offer) => offer.unit === 'hour')
       ? `Your ${name} lesson is booked by the hour, including time spent reviewing decisions and answering questions. For live play, the number of matches depends on game length and how much you stop to discuss.`
       : `Choose the ${name} lesson for the problem you want to work on. Play and Learn is priced per game; the focused lessons are hourly, with time to pause, ask questions and practice.`;
+  // The note directly under the same grid states the discount ladder in full,
+  // so an intro that also stated it printed the sentence twice inside one
+  // section. The intro says what to choose; the note says what it costs.
   return offers.some((offer) => offer.rank)
-    ? `Choose your mode, then check the ranked price for your rank. ${quantityAnswer(offers)} The quantity discount applies to casual games too.`
-    : `Choose the session and how much time you want to book. ${quantityAnswer(offers)} Agree on voice and a start time in the order chat.`;
+    ? `Choose your mode, then check the ranked price for your rank. The quantity discount applies to casual games too.`
+    : `Choose the session and how much time you want to book. Agree on voice and a start time in the order chat.`;
 }
 
 export function closingAnswer(gameName: string) {
@@ -128,8 +145,16 @@ export function closingDetail(offers: Offers) {
   const bundles = coach
     ? // The price line under this paragraph is appended by ClosingCta, so
       // naming the figure again here only repeated it a sentence earlier.
-      `Coaching has no quantity or bundle discount, so booking a second ${offers[0]!.unit} never lowers what a ${offers[0]!.title} costs. Every coaching figure on this page comes from the Duoly pricing engine; prices were last updated on ${CATALOG_PRICES_UPDATED_LABEL}.`
-    : `${quantityAnswer(offers)} Bundle pricing is applied in the checkout, not on request.`;
+      // A reader does not know or care that there is a pricing engine. What they
+      // need is that the figure on the page is the figure at checkout, and when
+      // it was last checked.
+      `Coaching has no quantity or bundle discount, so booking a second ${offers[0]!.unit} never lowers what a ${offers[0]!.title} costs. The price here is the price at checkout, and these figures were last checked on ${CATALOG_PRICES_UPDATED_LABEL}.`
+    : // The grid above states the same ladder as "10% off 3 games, 20% off 5
+      // and 25% off 10", and this paragraph used to repeat that sentence word
+      // for word. A closing summary is read after the grid, so it states the
+      // saving per bundle and the one category that never discounts, which the
+      // grid note does not carry. Still self-contained: every figure is here.
+      `Quantity and bundle discounts come off in the checkout rather than on request, where ${savingLadder(offers)}. Coaching is the exception and takes no discount at any size.`;
   return `Booking takes three steps: choose the ${coach ? 'lesson' : 'session'}, pay on duoly.gg, then agree a start time in the order room. The payment always happens on Duoly, never in a private message. ${bundles} A Duoly ${coach ? 'coach' : 'teammate'} accepts the order from the queue rather than receiving an assignment, and the Duoly terms carry the cancellation and refund rules. Expect a question about rank, role and region before the first match loads.`;
 }
 
@@ -159,7 +184,17 @@ export function priceNote(offers: Offers, coach = false) {
   const rule = ranked
     ? 'Your own rank moves a ranked price.'
     : 'These services are flat priced, so every rank pays the same.';
-  if (!coach)
-    return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)} Payment finishes on duoly.gg. You play on your own account and talk using Discord.`;
-  return `Each coaching price above covers one ${unit}, before account perks. Your rank does not change it, and quantity discounts and bundles do not apply at any size. Payment finishes on duoly.gg. You keep your own account and meet your coach using Discord for voice and screen share.`;
+  if (coach)
+    return `Each coaching price above covers one ${unit}, before account perks. Your rank does not change it, and quantity discounts and bundles do not apply at any size. Payment finishes on duoly.gg. You keep your own account and meet your coach using Discord for voice and screen share.`;
+  // A hub renders this note under the teammate grid and again under the team
+  // grid, which printed the discount ladder and the account sentence twice on
+  // one page. The team grid states what is different about booking a group and
+  // points at the rules rather than repeating them; the ladder it used to
+  // repeat belongs to the main teammate service anyway.
+  if (offers[0]!.cat === 'other')
+    // The flat-price rule reads the same under both grids on a game where
+    // nothing is ranked, which printed one sentence twice on a page. The group
+    // grid states the rule for a group instead.
+    return `Each price above covers one ${unit} for the whole group, before account perks. ${ranked ? 'A group price moves with your own rank, like the ranked services above.' : 'Every rank pays this same figure, whoever is in the group.'} The discount rules are the ones listed with the teammate prices above, and payment finishes on duoly.gg.`;
+  return `Every figure above is the base price from Duoly for one ${unit}, before account perks. ${rule} ${quantityAnswer(offers)} Payment finishes on duoly.gg. You play on your own account and talk using Discord.`;
 }

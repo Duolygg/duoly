@@ -6,19 +6,42 @@ import { pageViewer } from '../site/viewer';
 import { accountContext } from '../server/auth/context';
 import { proEnabled } from '../server/pro/config';
 import { termsWithPro } from '../server/pro/terms';
+import { CONTENT_DATES, serializeJsonLd } from '../site/seo';
+import { officialPageSchema } from '../server/seo/official';
+import { plainLegal } from '../site/legal-copy';
 const { viewer, csrf } = await pageViewer(Astro);
 // The support widget works for signed-out visitors too, so they get a CSRF token.
 const account = accountContext(Astro.request, Astro.cookies);
 const widgetCsrf = account.config ? csrf || account.csrf() : '';
 // Duoly PRO terms only while PRO is switched on (ledger #39).
-const doc = proEnabled() ? termsWithPro(TERMS) : TERMS;
+// plainLegal last, so the PRO sections are covered by the same copy rules.
+const doc = plainLegal(proEnabled() ? termsWithPro(TERMS) : TERMS);
+const path = '/terms';
+// The page used to serve the site-wide default description, which said nothing
+// about the terms and was identical on /contact and /privacy.
+const description =
+  'The rules for booking on Duoly: prices and payment, cancellations and refunds, conduct, publisher rules, reviews and proof, and how the terms change.';
 ---
 
 <SiteLayout
   indexing="index, follow"
   title="Terms | Duoly"
+  description={description}
   viewer={viewer}
   csrf={csrf}
 >
   <LegalPage doc={doc} chrome={false} csrf={widgetCsrf} client:load />
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(
+      officialPageSchema(
+        path,
+        doc.title,
+        description,
+        CONTENT_DATES[path]!,
+        Astro.site!,
+      ),
+    )}
+  />
 </SiteLayout>

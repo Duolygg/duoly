@@ -11,6 +11,7 @@ import {
 } from '../../contracts/teammate-profile';
 import { SITE_GAMES, type SiteGame } from '../../site/games';
 import { bookingHref, organizationSchema } from '../../site/seo';
+import { AUTO_CANCEL_MINUTES } from '../seo/fees';
 import { seoOffers } from '../seo/offers';
 import type { ProfileLookup } from './public-profiles';
 /**
@@ -129,6 +130,137 @@ export const bookingLine = (p: PublicTeammateProfile) =>
     ? `${p.name} sees your order with no queue delay. Busy? Another verified teammate takes it.`
     : `${p.name} is offline right now. A verified ${profileGame(p.featuredGame).name} teammate can take your order today.`;
 /**
+ * The three answers a profile owes a first time reader, written from the profile's own data.
+ *
+ * The page quality audit scored every profile 2 or 3: the markup carried a name, a rank plate,
+ * labels and a price, and between 27 and 54 words of prose, so a visitor arriving from a search
+ * for a player's name was given nothing to read and no answer to the obvious questions. What a
+ * session is, what Duoly actually checked, and what happens when the player named at the top is
+ * already in a match.
+ *
+ * Every sentence here is a fact the profile or the catalog holds. A teammate with no verified
+ * rank, no languages, no second game and no finished sessions gets the honest version of each
+ * answer rather than a filled-in template: the branches are the data, which is also what keeps
+ * eight profiles from publishing the same paragraph.
+ */
+export function profileAnswers(p: PublicTeammateProfile) {
+  const view = profilePresentation(p);
+  const game = view.game;
+  const featured = p.games.find((g) => g.game === p.featuredGame);
+  const rank = featured?.verified ? featured.rank : null;
+  const verified = p.games.filter((g) => g.verified && g.rank);
+  const others = p.games
+    .filter((g) => g.game !== p.featuredGame)
+    .map((g) => {
+      const name = profileGame(g.game).name;
+      return g.verified && g.rank ? `${name} at ${g.rank}` : name;
+    });
+  const unit = view.offer?.unit ?? 'session';
+  /** Minecraft and the Social hours are sold by the hour and have no match to win. */
+  const hourly = unit === 'hour';
+  /** Whether any teammate service for this game is priced off the customer's own rank. */
+  const rankedPricing = seoOffers(game.id, 'teammate', {
+    customerCurrency: 'EUR',
+    eurToUsd: 1,
+  }).some((offer) => offer.rank);
+  const units = hourly ? 'hours' : `${unit}s`;
+  const session: string[] = [];
+  session.push(
+    featured?.roles.length
+      ? `${p.name} plays ${profileList(featured.roles)} in ${game.name}${
+          featured.picks.length
+            ? `, usually on ${profileList(featured.picks)}`
+            : ''
+        }.`
+      : `${game.name} is the game ${p.name} is approved to play on Duoly.`,
+  );
+  if (rank)
+    session.push(
+      `That ${rank} is a rank Duoly checked${
+        featured?.peakRank && featured.peakRank !== rank
+          ? `, and the peak beside it is ${featured.peakRank}`
+          : ''
+      }.`,
+    );
+  else
+    session.push(
+      `No rank on ${p.name}'s profile is verified yet, so nothing here claims one: the games list says what an administrator approved ${p.name} to play.`,
+    );
+  if (p.languages.length)
+    session.push(`Sessions with ${p.name} run in ${profileList(p.languages)}.`);
+  else
+    session.push(
+      `The profile lists no language, so settle on one in the order chat before you queue.`,
+    );
+  if (others.length)
+    session.push(
+      `${profileList(others)} ${others.length > 1 ? 'are' : 'is'} on the profile too.`,
+    );
+  const how = [
+    `You and ${p.name} each play on your own account and meet on Discord for voice, so a handle and a microphone are the whole kit.`,
+    `A booking is the number of ${units} you choose at checkout, and you and ${p.name} agree a start time in the order chat before the first one.`,
+  ];
+  if (p.coaching && view.coachOffer)
+    how.push(
+      // No figure here: the page prints each price once, beside the button it
+      // belongs to, and tests/profiles/public-profiles.spec.ts holds that rule.
+      `${p.name} coaches ${game.name} as well, which is the same ${view.coachOffer.unit === 'hour' ? 'play' : 'games'} with the decisions explained as they happen, at the price beside the coaching button above.`,
+    );
+  how.push(
+    hourly
+      ? `There is no scoreline to promise here. What the booking buys is ${p.name} playing with you for those hours.`
+      : `Nobody can promise how a ${game.name} match ends, ${p.name} included. What the booking buys is ${p.name} on your side for those ${units}.`,
+  );
+  const checked = [
+    verified.length
+      ? `An administrator approved every game on ${p.name}'s profile before it went public, and a rank reads verified only once Duoly has seen it. ${p.name} carries ${verified.length === 1 ? 'one verified rank' : `${verified.length} verified ranks`}: ${profileList(verified.map((g) => `${g.rank} in ${profileGame(g.game).name}`))}.`
+      : `An administrator approved ${game.name} on ${p.name}'s profile before it went public. Duoly has verified no rank for ${p.name} yet, so no tier on this page is labelled that way.`,
+    view.showSessions && view.rating
+      ? `The ${p.sessions.toLocaleString('en-US')} sessions and the ${view.rating.average.toFixed(1)} rating from ${view.rating.count} reviews above are counted from finished orders, and the reviews were written by the customers who played them. ${p.name} has been on Duoly since ${profileMonth(p.memberSince)}.`
+      : view.showSessions
+        ? `The ${p.sessions.toLocaleString('en-US')} sessions above are counted from finished orders on Duoly, where ${p.name} has played since ${profileMonth(p.memberSince)}. Too few customers have rated those sessions for a rating to mean anything yet, so the page shows none.`
+        : p.sessions > 0
+          ? `${p.name} joined Duoly in ${profileMonth(p.memberSince)} and has ${p.sessions === 1 ? 'one finished session' : `${p.sessions} finished sessions`} here, which is too few for a rating or a win rate to say anything, so the page shows neither.`
+          : `${p.name} joined Duoly in ${profileMonth(p.memberSince)} and has no finished sessions here yet, so there is no rating to read. The page shows what ${p.name} is approved to play and nothing it cannot back up.`,
+    `Payment finishes on duoly.gg and never in a private message to ${p.name}, and nobody needs your login, because ${p.name} queues on a separate account. If a session with ${p.name} goes wrong, the order tools are where it belongs, and the Duoly terms carry the cancellation and refund rules.`,
+  ];
+  const busy = [
+    `Nothing on this page reserves ${p.name} for you. The order goes out to every verified ${game.name} teammate on Duoly, so whoever accepts it first plays the session, and while ${p.name} is ${hourly ? 'in another session' : 'mid match'} that can be somebody else. ${
+      p.online
+        ? `If no ${game.name} teammate accepts within ${AUTO_CANCEL_MINUTES} minutes, the order cancels itself and your money comes straight back.`
+        : `If no ${game.name} teammate accepts within ${AUTO_CANCEL_MINUTES} minutes, the order cancels itself and the full amount returns to your balance.`
+    }`,
+  ];
+  busy.push(
+    `${
+      p.online
+        ? `Booking from this page saves ${p.name} to your favorites first, which is the one thing that changes the queue: your next ${game.name} order appears for ${p.name} the moment it goes public, instead of after the delay every other teammate waits out.`
+        : `${p.name} is offline right now, so an order placed today may sit until they are back. Booking from this page still saves ${p.name} to your favorites, and the next ${game.name} order you place appears for them the moment it goes public, ahead of the queue everyone else waits out.`
+    }${
+      view.offer
+        ? ` The figure beside the booking button is where a ${game.name} session with ${p.name} starts, and checkout works out the exact total from the service you choose, the number of ${units}${rankedPricing ? ' and, on the ranked services, your own rank' : ' and nothing else'}.`
+        : ''
+    }`,
+  );
+  return [
+    {
+      id: 'session',
+      heading: `What is a ${game.name} session with ${p.name} like?`,
+      paragraphs: [session.join(' '), how.join(' ')],
+    },
+    {
+      id: 'checks',
+      heading: `What has Duoly checked about ${p.name}?`,
+      paragraphs: checked,
+    },
+    {
+      id: 'busy',
+      heading: `What happens if ${p.name} is already in a game?`,
+      paragraphs: busy,
+    },
+  ];
+}
+/**
  * What a booking button on a profile has to do before it opens booking.
  *
  * `customer` saves the teammate to their favorites first, which is the only thing that changes
@@ -156,17 +288,51 @@ export function profileList(items: string[]) {
   if (items.length < 2) return items[0] ?? '';
   return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
 }
+/** "an Immortal 3", "a Valorant": the rank and the game both follow the same rule. */
+const profileArticle = (phrase: string) =>
+  /^[aeiou]/i.test(phrase) ? 'an' : 'a';
+/** A search result shows roughly 160 characters and reads as broken under about 70. */
+const META_MAX = 160;
+const META_MIN = 70;
+/** "Calm comms. Clean utility." -> ["Calm comms.", "Clean utility."] */
+const firstSentence = (text: string) => text.split(/(?<=[.!?])\s+/)[0] ?? text;
+/**
+ * Joins as many whole sentences as fit the search result. A sentence too long to fit is
+ * retried as its own first sentence, which is how a 140 character bio still contributes
+ * its opening line instead of being dropped whole.
+ */
+function fitDescription(sentences: string[], tail: string) {
+  let text = '';
+  for (const sentence of sentences) {
+    for (const candidate of [sentence, firstSentence(sentence)]) {
+      const next = text ? `${text} ${candidate}` : candidate;
+      if (next.length <= META_MAX) {
+        text = next;
+        break;
+      }
+    }
+  }
+  if (!text) text = sentences[0] ?? '';
+  if (text.length >= META_MIN) return text;
+  const padded = `${text} ${tail}`;
+  return padded.length <= META_MAX ? padded : text;
+}
 /**
  * Title and description are built only from facts that are on the page. A teammate without a
  * verified rank, without languages or without a bio simply gets a shorter description instead of
  * an empty "Speaks ." or a sentence that trails off.
+ *
+ * The description has to land inside the window a search result actually prints. A profile with
+ * a bio used to run past 250 characters and lose its tail, and a profile with no bio, no
+ * languages and no sessions stopped at 48, so the shortest ones end on what the page still
+ * answers: the games and the price of a session.
  */
 export function profileMetadata(p: PublicTeammateProfile) {
   const game = profileGame(p.featuredGame);
   const rank = p.games.find((g) => g.game === game.id && g.verified)?.rank;
   const { showSessions } = profilePresentation(p);
   const sentences = [
-    `Meet ${p.name}, a ${rank ? `${rank} ` : ''}${game.name} teammate on Duoly.`,
+    `Meet ${p.name}, ${profileArticle(rank ?? game.name)} ${rank ? `${rank} ` : ''}${game.name} teammate on Duoly.`,
   ];
   if (p.languages.length) sentences.push(`Speaks ${profileList(p.languages)}.`);
   if (showSessions)
@@ -174,7 +340,10 @@ export function profileMetadata(p: PublicTeammateProfile) {
   if (p.bio.trim()) sentences.push(p.bio.trim());
   return {
     title: `${p.name}, ${game.name}${rank ? ` ${rank}` : ''} teammate | Duoly`,
-    description: sentences.join(' '),
+    description: fitDescription(
+      sentences,
+      `See the games ${p.name} plays and what a session costs before you book.`,
+    ),
     indexing: profileIndexable(p)
       ? ('index, follow' as const)
       : ('noindex, follow' as const),

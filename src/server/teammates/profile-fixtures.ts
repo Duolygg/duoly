@@ -261,6 +261,8 @@ const profiles: PublicTeammateProfile[] = [
       },
     ],
   },
+  /* Spread from Nyx for the shape, then given their own words: three fixture profiles that
+     published the same bio and the same reviews read as one teammate rendered three times. */
   {
     ...nyx,
     slug: 'lumi',
@@ -273,21 +275,92 @@ const profiles: PublicTeammateProfile[] = [
      */
     avatar:
       'https://duolyfixture.supabase.co/storage/v1/object/public/avatars/3f9b7c21-5d64-4ab8-9f0e-2c7d81a4e6b5/7c1a4e9b20d53f68.webp',
+    country: 'Sweden',
+    languages: ['English', 'Swedish'],
+    bio: 'Sentinel main. I hold a site, call what I hear and would rather win a slow round than a loud one.',
     accent: 'cyan',
     banner: 'grid',
+    vibeTags: ['Quiet focus', 'Shotcaller'],
+    coaching: false,
     tier: 'trusted',
+    memberSince: '2026-05',
     sessions: 140,
     rating: { average: 4.8, count: 62 },
+    winRate: { percent: 54, games: 118 },
+    reviewTags: [
+      { tag: 'Great comms', count: 38 },
+      { tag: 'Clutch', count: 24 },
+      { tag: 'Chill vibes', count: 19 },
+    ],
+    games: [
+      {
+        game: 'val',
+        rank: 'Ascendant 3',
+        peakRank: 'Immortal 1',
+        verified: true,
+        roles: ['Sentinel', 'Controller'],
+        picks: ['Killjoy', 'Cypher', 'Astra'],
+      },
+    ],
+    reviews: [
+      {
+        rating: 5,
+        text: 'Held B alone for most of the match and told me exactly when to rotate.',
+        game: 'val',
+        month: '2026-10',
+      },
+      {
+        rating: 5,
+        text: 'Quiet between rounds, useful during them. Good calls on the retakes.',
+        game: 'val',
+        month: '2026-09',
+      },
+    ],
   },
   {
     ...nyx,
     slug: 'echo',
     name: 'Echo',
     avatar: '/assets/avatars/avatar-10.png',
+    country: 'Spain',
+    languages: ['Spanish', 'English'],
+    bio: 'Duelist. I take the first fight so you do not have to, and I will tell you what I saw before the next round starts.',
     accent: 'pink',
+    vibeTags: ['Tryhard', 'Mechanics first'],
     tier: 'elite',
+    memberSince: '2026-01',
     sessions: 620,
     rating: { average: 4.9, count: 230 },
+    winRate: { percent: 61, games: 430 },
+    reviewTags: [
+      { tag: 'Carried hard', count: 96 },
+      { tag: 'Great comms', count: 71 },
+      { tag: 'Taught me a lot', count: 29 },
+    ],
+    games: [
+      {
+        game: 'val',
+        rank: 'Immortal 1',
+        peakRank: 'Immortal 3',
+        verified: true,
+        roles: ['Duelist', 'Initiator'],
+        picks: ['Jett', 'Raze', 'Fade'],
+      },
+    ],
+    reviews: [
+      {
+        rating: 5,
+        text: 'Opened nearly every round and still had the patience to explain the entry after it worked.',
+        game: 'val',
+        month: '2026-10',
+      },
+      {
+        rating: 4,
+        text: 'Very fast player. I had to ask for slower calls, and they adjusted straight away.',
+        game: 'val',
+        month: '2026-08',
+      },
+    ],
     online: false,
   },
   ...newcomers,

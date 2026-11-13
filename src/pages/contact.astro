@@ -4,6 +4,10 @@ import Contact from '../components/site/Contact.jsx';
 import { pageViewer } from '../site/viewer';
 import { accountContext } from '../server/auth/context';
 import { supportService, supportTeam } from '../server/support/store';
+import { CONTACT_TOPICS } from '../contracts/support';
+import { SUPPORT_EMAIL } from '../site/nav';
+import { CONTENT_DATES, serializeJsonLd } from '../site/seo';
+import { officialPageSchema } from '../server/seo/official';
 
 const { viewer, csrf } = await pageViewer(Astro);
 // The form needs no account, so signed-out visitors get a CSRF token too.
@@ -16,11 +20,17 @@ const me = viewer ? { name: viewer.name, email: viewer.email ?? '' } : {};
 const params = Astro.url.searchParams;
 const topic = params.get('topic') ?? undefined;
 const order = (params.get('order') ?? '').slice(0, 20);
+const path = '/contact';
+// The page used to serve the site-wide default description, which said nothing
+// about reaching support and was identical on /privacy and /terms.
+const description = `How to reach Duoly support: the ${Object.keys(CONTACT_TOPICS).length} topics the form offers, what to put in a message about an order, and the pages that answer the most common questions.`;
+const TOPIC_LABELS = Object.values(CONTACT_TOPICS);
 ---
 
 <SiteLayout
   indexing="index, follow"
   title="Contact | Duoly"
+  description={description}
   viewer={viewer}
   csrf={csrf}
 >
@@ -38,7 +48,36 @@ const order = (params.get('order') ?? '').slice(0, 20);
       and stays untouched. Most of what reaches support before a first booking
       is "what is this" and "what does it cost", and both have a page now. */}
   <section class="contact-reference" aria-labelledby="contact-reference-h">
-    <h2 id="contact-reference-h">Answers before you write to us</h2>
+    <h2 id="contact-reference-h">How do you reach Duoly?</h2>
+    <p>
+      Use the form above, or email{' '}
+      <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>. The form takes
+      your name, your email, a topic and your message, and it has a field for an
+      order number. You do not need an account to write.
+    </p>
+
+    <h2 id="contact-topic-h">Which topic should you pick?</h2>
+    <p>
+      The topic becomes the subject line support sees, so the closest one is
+      worth a second of thought. The form offers {TOPIC_LABELS.length}:
+    </p>
+    <ul class="contact-topics">
+      {TOPIC_LABELS.map((label) => (
+        <li>{label}</li>
+      ))}
+    </ul>
+
+    <h2 id="contact-order-h">What should a message about an order include?</h2>
+    <p>
+      The order number, the game and what happened, in that order. A booking
+      that nobody accepted cancels itself and refunds on its own, so a message
+      about a session that never started is usually about something else. The
+      refund rules are on <a href="/fees-and-refunds">fees and refunds</a>, and{' '}
+      <a href="/trust-and-safety">trust and safety</a> covers how to report a
+      player.
+    </p>
+
+    <h2 id="contact-reference-pages-h">Which questions already have a page?</h2>
     <p>
       Six pages answer the questions support hears most. For who runs duoly.gg,
       how a teammate is rank-checked and why this is not the Duoly couples app,
@@ -54,6 +93,20 @@ const order = (params.get('order') ?? '').slice(0, 20);
       on the <a href="/imprint">imprint</a>.
     </p>
   </section>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={serializeJsonLd(
+      officialPageSchema(
+        path,
+        'Contact Duoly',
+        description,
+        CONTENT_DATES[path]!,
+        Astro.site!,
+        'ContactPage',
+      ),
+    )}
+  />
 </SiteLayout>
 
 <style>
@@ -65,12 +118,17 @@ const order = (params.get('order') ?? '').slice(0, 20);
     padding: 0 24px;
   }
   .contact-reference h2 {
-    margin: 0 0 10px;
+    margin: 28px 0 10px;
     font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
     font-size: clamp(20px, 2.2vw, 24px);
     font-weight: 800;
     letter-spacing: -0.02em;
     color: #f3eeff;
+  }
+  /* The first question sits directly under the support form, which brings its
+     own bottom spacing. */
+  .contact-reference h2:first-child {
+    margin-top: 0;
   }
   .contact-reference p {
     margin: 0;
@@ -80,5 +138,14 @@ const order = (params.get('order') ?? '').slice(0, 20);
   }
   .contact-reference a {
     color: #d6bbff;
+  }
+  /* The seven topics the form offers, as a list rather than a sentence of
+     commas, since a reader is scanning for the one that matches. */
+  .contact-topics {
+    margin: 10px 0 0;
+    padding-left: 20px;
+    max-width: 70ch;
+    line-height: 1.7;
+    color: #cfc4ea;
   }
 </style>

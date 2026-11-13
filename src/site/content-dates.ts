@@ -49,8 +49,20 @@ export const CONTENT_SOURCES: Record<string, string[]> = {
   '/pricing': ['src/pages/pricing.astro', 'src/server/seo/price-table.ts'],
   '/press': ['src/pages/press.astro', 'src/server/seo/press.ts'],
   '/contact': ['src/pages/contact.astro'],
-  '/terms': ['src/pages/terms.astro', 'src/design-reference/lib/legal.js'],
-  '/privacy': ['src/pages/privacy.astro', 'src/design-reference/lib/legal.js'],
+  // src/site/legal-copy.ts rewrites the punctuation both documents render, and
+  // src/site/privacy.ts overrides the statements that went out of date, so both
+  // are copy these pages own.
+  '/terms': [
+    'src/pages/terms.astro',
+    'src/design-reference/lib/legal.js',
+    'src/site/legal-copy.ts',
+  ],
+  '/privacy': [
+    'src/pages/privacy.astro',
+    'src/design-reference/lib/legal.js',
+    'src/site/legal-copy.ts',
+    'src/site/privacy.ts',
+  ],
   '/get-paid-to-play-games': ['src/pages/get-paid-to-play-games.astro'],
   '/blog/what-is-an-egirl': ['src/pages/blog/[slug].astro'],
   '/blog/what-does-lfg-mean': ['src/pages/blog/what-does-lfg-mean.astro'],
@@ -87,16 +99,22 @@ export const CONTENT_SOURCES: Record<string, string[]> = {
     'src/server/seo/price-report.ts',
   ],
 };
+// src/server/seo/citable-answers.ts writes the price note under every grid and
+// the closing paragraph on all three page shapes, so it is a copy source for
+// each of them rather than a component they render through.
+const CITABLE = 'src/server/seo/citable-answers.ts';
 for (const slug of FINISHED_HUB_SLUGS)
   if (slug !== 'social')
     CONTENT_SOURCES[`/games/${slug}`] = [
       `src/content/game-hubs/${slug}.ts`,
       'src/content/hub-pages.ts',
+      CITABLE,
     ];
 for (const page of intentPages)
   CONTENT_SOURCES[intentPath(page)] = [
     'src/content/intent-pages.ts',
     'src/content/guide-pages.ts',
+    CITABLE,
   ];
 // Keyed off coachFormats rather than a second hand-written slug list: that list
 // drifted once already when a coaching page was added, and the sitemap then
@@ -106,7 +124,9 @@ for (const slug of Object.keys(coachFormats))
     'src/content/coaching.ts',
     'src/content/coaching-examples.ts',
     'src/content/coaching-formats.ts',
+    CITABLE,
   ];
+CONTENT_SOURCES['/games/social'] = ['src/content/hubs.ts', CITABLE];
 
 /**
  * The day each page's copy last changed, as `YYYY-MM-DD`.
@@ -252,6 +272,67 @@ for (const path of [
 // trade register number (they stay on the imprint) and gained a "Duoly at a
 // glance" table in their place.
 CONTENT_UPDATED['/about'] = '2026-11-12';
+/**
+ * The 12 November 2026 pass on what the page quality audit found
+ * (docs/product/page-quality-audit.md).
+ *
+ * Copy: the price note under a team grid stopped repeating the discount ladder
+ * and the account sentence the teammate grid above it already carries, which
+ * reaches every hub; the coaching closing paragraph stopped naming the Duoly
+ * pricing engine, which reaches all 15 coaching pages; /games/social asks its
+ * four section headings as questions and answers them; /games/pokemon-unite and
+ * the Pokémon Unite teammate page spell the game the way the catalog does.
+ *
+ * Technical: /contact, /privacy and /terms stopped serving the site's default
+ * meta description and gained structured data, /press, /how-it-works and
+ * /trust-and-safety shortened a description that lost its tail in a search
+ * result, and /terms and /privacy render "and" where the protected source
+ * writes an ampersand.
+ */
+for (const path of [
+  '/contact',
+  '/privacy',
+  '/terms',
+  '/press',
+  '/how-it-works',
+  '/trust-and-safety',
+  '/games/social',
+  ...FINISHED_HUB_SLUGS.filter((slug) => slug !== 'social').map(
+    (slug) => `/games/${slug}`,
+  ),
+  ...intentPages.map((page) => intentPath(page)),
+  ...Object.keys(coachFormats).map((slug) => `/games/${slug}/coaching`),
+])
+  CONTENT_UPDATED[path] = '2026-11-12';
+/**
+ * 13 November 2026, the second half of the page quality audit pass.
+ *
+ * The audit counted the sentences a page prints twice. On the hubs that was the
+ * bundle ladder, stated beside the price grid and again where the service is
+ * explained; the second place now states the saving per bundle, from the same
+ * percentages. On the coaching pages it was the lesson price and a format
+ * description, each written once in the lead and again in an answer below it.
+ * `citable-answers.ts` stopped repeating the flat-price rule under a group
+ * grid, which reaches every hub, every teammate page and every coaching page.
+ * /press stopped printing the boilerplate's own closing sentence a second time
+ * in its own words, and /compare/metafy states the Metafy fee total once.
+ *
+ * Same facts, same figures from the same helpers, so these are copy dates.
+ */
+for (const path of [
+  '/press',
+  '/compare/metafy',
+  // /games/social is here because the same two days reached it: its four
+  // section headings became questions, and the price note under its group
+  // grid stopped repeating the teammate grid's flat-price rule.
+  '/games/social',
+  ...FINISHED_HUB_SLUGS.filter((slug) => slug !== 'social').map(
+    (slug) => `/games/${slug}`,
+  ),
+  ...intentPages.map((page) => intentPath(page)),
+  ...Object.keys(coachFormats).map((slug) => `/games/${slug}/coaching`),
+])
+  CONTENT_UPDATED[path] = '2026-11-13';
 
 /** What git knows about the last two changes to one page's copy. */
 export type ContentHistory = {

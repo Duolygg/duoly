@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   accentStyle,
   bookingLine,
+  profileAnswers,
   profileMetadata,
   rankEmblem,
   profilePresentation,
@@ -18,6 +19,7 @@ import {
   PROFILE_ACCENTS,
   PROFILE_ACCENT_GLOW,
   PROFILE_ACCENT_KEYS,
+  type PublicTeammateProfile,
 } from '../../src/contracts/teammate-profile';
 
 /** WCAG relative luminance, used for the ink the pages print on an accent. */
@@ -198,13 +200,15 @@ describe('public profile page', () => {
       expect(profileMetadata(pip).indexing).toBe('noindex, follow');
     });
     it('writes a description out of the facts that exist and nothing else', () => {
+      /* A bio too long to fit the search result contributes its first sentence,
+         so the description ends on a full stop instead of trailing off. */
       expect(profileMetadata(rhea).description).toBe(
-        'Meet Rhea, a League of Legends teammate on Duoly. Speaks German and English. ' +
-          rhea.bio,
+        'Meet Rhea, a League of Legends teammate on Duoly. Speaks German and English. Jungle and support main.',
       );
-      /* No languages and no bio, so neither sentence is there at all. */
+      /* No languages and no bio, so neither sentence is there at all, and the
+         page ends on what it still answers rather than stopping at 48. */
       expect(profileMetadata(pip).description).toBe(
-        'Meet Pip, a Teamfight Tactics teammate on Duoly.',
+        'Meet Pip, a Teamfight Tactics teammate on Duoly. See the games Pip plays and what a session costs before you book.',
       );
       expect(profileMetadata(pip).description).not.toContain('Speaks');
       expect(profileMetadata(pip).title).toBe(
@@ -212,6 +216,46 @@ describe('public profile page', () => {
       );
       for (const p of [rhea, pip, crafty])
         expect(JSON.stringify(profileMetadata(p))).not.toMatch(/[–—&]/);
+    });
+    it('keeps every profile description inside what a search result prints', () => {
+      /* 214 to 253 characters on five profiles and 48 on another is what the
+         page quality audit found; both ends lose the reader. */
+      for (const slug of [
+        'nyx',
+        'rhea',
+        'pip',
+        'crafty',
+        'sola',
+        'kairo',
+        'lumi',
+        'echo',
+      ]) {
+        const found = fixtureLookup(slug);
+        expect(found.status).toBe('ok');
+        if (found.status !== 'ok') continue;
+        const { description } = profileMetadata(found.profile);
+        expect(
+          description.length,
+          `${slug}: ${description.length} characters`,
+        ).toBeGreaterThanOrEqual(70);
+        expect(
+          description.length,
+          `${slug}: ${description.length} characters`,
+        ).toBeLessThanOrEqual(160);
+      }
+    });
+    it('writes "an" before a rank that starts with a vowel', () => {
+      const found = fixtureLookup('nyx');
+      expect(found.status).toBe('ok');
+      if (found.status !== 'ok') return;
+      /* "Meet Nyx, a Immortal 3 ..." is what the fixed article template used to
+         produce on every Immortal, Ascendant and Emerald profile. */
+      expect(profileMetadata(found.profile).description).toContain(
+        'an Immortal 3',
+      );
+      expect(profileMetadata(found.profile).description).not.toContain(
+        'a Immortal',
+      );
     });
     it('keeps the empty Person fields out of the structured data', () => {
       const person = profileSchemas(pip, new URL('https://duoly.gg'))[0]!
@@ -299,5 +343,144 @@ describe('public profile page', () => {
     /* The same secondary ink as the rest of the body copy, on the page background: this is
        the colour .tp-note prints in (--tp-muted on #090414), and it clears AA at 4.5:1. */
     expect(contrast('#c9bcdf', '#090414')).toBeGreaterThanOrEqual(4.5);
+  });
+  /*
+   * The answers under the profile. The audit scored every profile 2 or 3 because the page was a
+   * name, a plate and about forty words of prose; these three questions are the copy that fixes
+   * that, and all of it has to stay facts this profile actually holds.
+   */
+  describe('the booking answers', () => {
+    const load = (slug: string) => {
+      const found = fixtureLookup(slug);
+      if (found.status !== 'ok') throw new Error(`${slug} fixture missing`);
+      return found.profile;
+    };
+    const text = (p: PublicTeammateProfile) =>
+      profileAnswers(p)
+        .flatMap((answer) => [answer.heading, ...answer.paragraphs])
+        .join(' ');
+    it('asks three questions and answers each one in the first sentence', () => {
+      const answers = profileAnswers(nyx);
+      expect(answers).toHaveLength(3);
+      for (const answer of answers) {
+        expect(answer.heading.endsWith('?')).toBe(true);
+        expect(answer.paragraphs.length).toBeGreaterThan(0);
+        for (const paragraph of answer.paragraphs)
+          expect(paragraph.split(/\s+/).length).toBeGreaterThan(20);
+      }
+      expect(answers[0]!.heading).toBe(
+        'What is a Valorant session with Nyx like?',
+      );
+      expect(answers[2]!.heading).toBe(
+        'What happens if Nyx is already in a game?',
+      );
+    });
+    it('gives a search visitor enough to read on the thinnest profile there is', () => {
+      /* Pip has no bio, no languages, no verified rank and no sessions: the page the audit
+         scored 2. The answers are shorter for it and still answer all three questions. */
+      const words = text(load('pip')).split(/\s+/).length;
+      expect(words).toBeGreaterThan(150);
+      expect(text(nyx).split(/\s+/).length).toBeGreaterThan(220);
+    });
+    it('prints no second price and describes the one the page shows', () => {
+      /* A profile states each price once, beside the button it belongs to
+         (tests/profiles/public-profiles.spec.ts). So the answers point at that figure and
+         say what moves it, and carry no amount of their own. */
+      for (const slug of ['nyx', 'crafty', 'kairo', 'pip']) {
+        const p = load(slug);
+        const answers = text(p);
+        expect(answers, slug).not.toMatch(/[€$£]\s?\d|EUR \d|USD \d/);
+        const view = profilePresentation(p);
+        const cheapest = seoOffers(p.featuredGame, 'teammate', {
+          customerCurrency: 'EUR',
+          eurToUsd: 1,
+        }).sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+        expect(view.offer).toEqual(cheapest);
+        expect(answers, slug).toContain(
+          `The figure beside the booking button is where a ${view.game.name} session with ${p.name} starts`,
+        );
+        /* The unit the price is quoted in comes from the same offer, so an hourly game
+           never says "games" and a per-game one never says "hours". */
+        expect(answers, slug).toContain(
+          `the number of ${cheapest.unit === 'hour' ? 'hours' : `${cheapest.unit}s`}`,
+        );
+      }
+      /* Coaching is named only where the catalog sells it and the teammate takes it. */
+      expect(text(nyx)).toContain('at the price beside the coaching button');
+      expect(text(load('lumi'))).not.toContain('coaching');
+    });
+    it('states only what the profile holds, and says so when it holds nothing', () => {
+      const pip = text(load('pip'));
+      expect(pip).toContain('verified no rank for Pip yet');
+      expect(pip).toContain('no finished sessions here yet');
+      expect(pip).toContain('lists no language');
+      expect(pip).not.toMatch(/\bundefined\b|\bnull\b/);
+      const kairo = text(load('kairo'));
+      expect(kairo).toContain(
+        '2 verified ranks: Challenger in League of Legends and Immortal 2 in Valorant',
+      );
+      expect(kairo).toContain('1,240 sessions');
+      /* Sola has two finished sessions, which is under the sample the page shows a stat for.
+         The answer says the number and why no rating sits above it, because "no sessions yet"
+         would be false for a profile that has played twice. */
+      expect(text(load('sola'))).toContain(
+        'has 2 finished sessions here, which is too few for a rating',
+      );
+    });
+    it('never puts the same sentence on three profiles', () => {
+      /* The audit counts a sentence that appears on three or more pages as boilerplate, and
+         eight profiles sharing one answer template is exactly that. Every sentence carries
+         the name or the game it belongs to, which is what keeps the count under three. */
+      const carriers = new Map<string, string[]>();
+      for (const slug of [
+        'nyx',
+        'rhea',
+        'pip',
+        'crafty',
+        'sola',
+        'kairo',
+        'lumi',
+        'echo',
+      ]) {
+        const p = load(slug);
+        for (const sentence of profileAnswers(p)
+          .flatMap((answer) => answer.paragraphs)
+          .flatMap((paragraph) => paragraph.split(/(?<=[.!?])\s+/)))
+          carriers.set(sentence, [...(carriers.get(sentence) ?? []), slug]);
+      }
+      const shared = [...carriers.entries()].filter(
+        ([, slugs]) => slugs.length >= 3,
+      );
+      expect(
+        shared.map(([sentence, slugs]) => `${slugs.join(',')}: ${sentence}`),
+      ).toEqual([]);
+    });
+    it('obeys the copy rules and never repeats a paragraph across two profiles', () => {
+      const seen = new Map<string, string>();
+      for (const slug of [
+        'nyx',
+        'rhea',
+        'pip',
+        'crafty',
+        'sola',
+        'kairo',
+        'lumi',
+        'echo',
+      ]) {
+        const p = load(slug);
+        expect(text(p), slug).not.toMatch(/[–—]| & |\bnot .*, but /);
+        /* Eight profiles printing the same paragraph is the boilerplate the audit counted
+           across pages, so every answer carries the name and the game it belongs to. */
+        for (const paragraph of profileAnswers(p).flatMap(
+          (a) => a.paragraphs,
+        )) {
+          expect(
+            seen.get(paragraph) ?? slug,
+            `${slug} repeats ${seen.get(paragraph)}`,
+          ).toBe(slug);
+          seen.set(paragraph, slug);
+        }
+      }
+    });
   });
 });

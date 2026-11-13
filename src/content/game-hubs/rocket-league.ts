@@ -105,7 +105,7 @@ export const rocketLeague: HubPageCopy = {
       heading: 'Why is Rocket League Doubles priced by the hour?',
       paragraphs: [
         'An hour is the honest unit for Doubles, because one match runs about seven minutes. Charging per match would price a kickoff and a session the same way, so Doubles sells hourly and only the 3v3 Standard fill stays per match from {{p_three_low}}. An hour of Duo Pro costs {{p_duo2}} at {{rank_duo2}} and realistically covers 6 or 7 matches once queue time is counted. Settle one rotation habit rather than chasing a single result.',
-        'Ranked prices follow your own rank: a {{rank_duo2_low}} player pays {{p_duo2_low}} per hour and a {{rank_duo2_high}} player pays {{p_duo2_high}}. Casual hours ignore rank entirely, so Casual 3v3 and Extra Modes each cost {{p_casual}} in 2026. Agree who takes the diagonal kickoff before the first match, then agree a boost rule. Bundles of {{main}} take {{bundles}}. For example, two players starving for boost at once loses the counter, so name one caller using Discord.',
+        'Ranked prices follow your own rank: a {{rank_duo2_low}} player pays {{p_duo2_low}} per hour and a {{rank_duo2_high}} player pays {{p_duo2_high}}. Casual hours ignore rank entirely, so Casual 3v3 and Extra Modes each cost {{p_casual}} in 2026. Agree who takes the diagonal kickoff before the first match, then agree a boost rule. A {{main}} bundle saves more the bigger it is: {{savings}}. For example, two players starving for boost at once loses the counter, so name one caller using Discord.',
       ],
     },
     {
