@@ -31,3 +31,44 @@ it('installs only allowlisted definer RPCs with RLS and no direct table access',
   expect(sql).toContain('public.completion_trust');
   expect(sql).toContain('public_profile_notice_at');
 });
+
+const photos = () =>
+  readFileSync(
+    'supabase/migrations/20261112163000_public_profile_photos.sql',
+    'utf8',
+  );
+
+it('adds the photo rule by replacing the read function, nothing else', () => {
+  const sql = photos();
+  expect(sql).toContain(
+    'create or replace function public.public_teammate_profile(p_slug text)',
+  );
+  /* One function, and no table, trigger or privilege change rides along with it. */
+  expect(sql.match(/create or replace function/g)).toHaveLength(1);
+  expect(sql).not.toMatch(
+    /drop function|revoke |grant |create table|alter table|create trigger/,
+  );
+  /* Everything that is not a mascot and not their own file is still a mascot. */
+  expect(sql).toContain("else '/assets/avatars/avatar-1.png' end");
+});
+
+/*
+ * The photo may only come out of the folder the uploader writes into, so the read function and
+ * the constraint that guards the column have to describe the same URL. Both build it from the
+ * row's own account id: a teammate cannot point their page at somebody else's upload.
+ */
+it('matches the storage pattern the uploader writes', () => {
+  const uploads = readFileSync(
+    'supabase/migrations/20261023150000_avatar_uploads.sql',
+    'utf8',
+  );
+  const prefix =
+    "'^https://[a-z0-9]+\\.supabase\\.co/storage/v1/object/public/avatars/'";
+  const suffix = "'/[0-9a-f]{16}\\.(webp|jpg)$'";
+  for (const sql of [uploads, photos()]) {
+    expect(sql).toContain(prefix);
+    expect(sql).toContain(suffix);
+  }
+  expect(uploads).toContain('|| id::text ||');
+  expect(photos()).toContain('|| pr.id::text ||');
+});

@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { seoOffers } from '../../src/server/seo/offers';
+import { servePhotos } from './photo-fixture';
 const port = Number(process.env.DUOLY_PROFILE_TEST_PORT ?? 4389);
+/* One fixture teammate has an uploaded photo, which is answered from disk, never from Supabase. */
+test.beforeEach(async ({ page }) => {
+  await servePhotos(page);
+});
 for (const slug of ['nyx', 'sola', 'kairo'])
   test(`${slug}: SSR, one name, one live price and no overflow`, async ({
     page,

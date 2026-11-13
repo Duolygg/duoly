@@ -1438,6 +1438,31 @@ a.tp-stat:hover > strong {
   padding-top: 50px;
 }
 
+/* ---------- a teammate's own photo ----------
+ *
+ * The mascots are transparent PNGs: they stand in the accent light and throw a drop shadow off
+ * their own silhouette. An uploaded photo is an opaque 256 px square, so the same treatment would
+ * print a lit rectangle inside a round ring. It is clipped to the circle the ring already draws,
+ * covered so the crop is never stretched, and lit by a box shadow in the same accent instead, which
+ * follows the circle at every tier colour. Sizes are untouched: the photo uses the same --avatar
+ * as the mascot it replaces, so it is never shown above 160 CSS px.
+ */
+.tp-figure-photo img {
+  border-radius: 50%;
+  object-fit: cover;
+  /* Visible for the moment before the photo arrives, and if it never does. */
+  background: #1b1130;
+  filter: none;
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.5),
+    0 0 26px var(--light);
+}
+.tp-card-art.tp-figure-photo img {
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.45),
+    0 0 16px var(--light);
+}
+
 /* ---------- 1050 and below ---------- */
 @media (max-width: 1050px) {
   .tp-page {

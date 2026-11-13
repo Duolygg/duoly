@@ -29,6 +29,7 @@ suite gated_dispatch.sql
 suite gold_priority_badges.sql
 # skip handover_admin_actions.sql historical cancellation refund assertion conflicts with latest charge-at-queue/team payment semantics: queued order refunded
 suite home_live.sql
+suite home_teammates_slug.sql
 # skip home_public_stats.sql historical catalog assertion requires exactly 15 game keys; latest catalog returns 21
 # skip leaderboard.sql historical DTO allowlist rejects country field added by later migrations
 suite loyalty_cashback.sql
@@ -51,6 +52,7 @@ suite presence.sql
 suite presence_afk.sql
 suite priority_admin.sql
 suite pro_subscription.sql
+suite public_profile_photos.sql
 suite public_profiles_default_on.sql
 suite public_teammate_profiles.sql
 # skip profile_bio_currency.sql historical strict teammate DTO equality predates additive trust_badge field

@@ -1,0 +1,96 @@
+{
+  "_fixture": "Synthetic OpenAI Responses API payloads for parser tests and the fixture dry run. Not a panel observation and not engine output.",
+  "responses": {
+    "default": {
+      "status": "completed",
+      "model": "gpt-6-luna",
+      "output": [
+        {
+          "type": "web_search_call",
+          "action": {
+            "type": "search",
+            "query": "fixture query for the default answer"
+          }
+        },
+        {
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Most people start on Discord servers for the game, then look at Fiverr or Metafy if they want to pay someone. Reddit threads collect the current server invites.",
+              "annotations": [
+                {
+                  "type": "url_citation",
+                  "url": "https://www.reddit.com/r/fixture/comments/abc/",
+                  "title": "Fixture thread"
+                },
+                {
+                  "type": "url_citation",
+                  "url": "https://metafy.gg/fixture",
+                  "title": "Metafy fixture page"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "usage": { "input_tokens": 900, "output_tokens": 240 }
+    },
+    "coach-site": {
+      "status": "completed",
+      "model": "gpt-6-luna",
+      "output": [
+        {
+          "type": "web_search_call",
+          "action": { "type": "search", "query": "fixture coaching query" }
+        },
+        {
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Metafy has the largest coach roster. For a cheaper booking I would recommend Duoly.gg, which lists the price per session before you book. Fiverr also works if you vet the seller yourself.",
+              "annotations": [
+                {
+                  "type": "url_citation",
+                  "url": "https://duoly.gg/coaching",
+                  "title": "Duoly coaching"
+                },
+                {
+                  "type": "url_citation",
+                  "url": "https://metafy.gg/fixture",
+                  "title": "Metafy fixture page"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "usage": { "input_tokens": 1100, "output_tokens": 300 }
+    },
+    "valorant-paid": {
+      "status": "completed",
+      "model": "gpt-6-luna",
+      "output": [
+        {
+          "type": "web_search_call",
+          "action": { "type": "search", "query": "fixture paid teammate query" }
+        },
+        {
+          "content": [
+            {
+              "type": "output_text",
+              "text": "E-Pal and Fiverr are the usual options. Duoly is a smaller platform and I could not verify its fee structure, so I cannot rule out scam risk there; it also has limited independent reviews.",
+              "annotations": [
+                {
+                  "type": "url_citation",
+                  "url": "https://example.com/listings/duoly",
+                  "title": "Directory fixture listing"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "usage": { "input_tokens": 1000, "output_tokens": 260 }
+    }
+  }
+}

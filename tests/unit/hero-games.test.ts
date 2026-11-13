@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import Home from '../../src/components/home/Home.jsx';
 import { mapHeroTeammates } from '../../src/server/home/live';
 
@@ -96,5 +96,110 @@ describe('teammate carousel', () => {
       games: ['lol'],
       rating: 4.9,
     });
+  });
+});
+
+/*
+ * Owner approval 12 November 2026: the cards open the public profiles we built. The slug is the
+ * only field a visitor can act on, so the mapping is tested the way the other slugs on the site
+ * are, and the markup is tested for the three things a link in a drifting strip has to get right:
+ * one tab stop per teammate, a name that says where it goes, and no link while the feature is off.
+ */
+describe('teammate carousel: profile links', () => {
+  const mate = {
+    name: 'Mira',
+    image: '/assets/avatars/avatar-2.png',
+    games: ['lol'],
+    gg: false,
+    online: true,
+    rating: 4.9,
+    reviews: 128,
+    sessions: 412,
+  };
+  afterEach(() => vi.unstubAllEnvs());
+  const render = (teammates: unknown[]) =>
+    renderToStaticMarkup(
+      React.createElement(Home, { teammates, recentMatches: [] }),
+    );
+
+  it('keeps a valid slug while public profiles are on', () => {
+    vi.stubEnv('PUBLIC_PROFILES_ENABLED', 'true');
+    expect(mapHeroTeammates([{ ...mate, slug: 'mira-7' }])[0]).toMatchObject({
+      name: 'Mira',
+      slug: 'mira-7',
+    });
+  });
+
+  it('leaves the slug out when the database sends none or sends a bad one', () => {
+    vi.stubEnv('PUBLIC_PROFILES_ENABLED', 'true');
+    for (const slug of [
+      undefined,
+      null,
+      '',
+      'no',
+      'Mira',
+      'mira--7',
+      '-mira',
+      'teammates',
+      'a'.repeat(25),
+      '../queue',
+      42,
+    ])
+      expect(mapHeroTeammates([{ ...mate, slug }])[0]).not.toHaveProperty(
+        'slug',
+      );
+  });
+
+  it('drops the slug while public profiles are off', () => {
+    vi.stubEnv('PUBLIC_PROFILES_ENABLED', 'false');
+    expect(
+      mapHeroTeammates([{ ...mate, slug: 'mira-7' }])[0],
+    ).not.toHaveProperty('slug');
+    expect(mapHeroTeammates([{ ...mate, slug: 'mira-7' }])[0]).toMatchObject({
+      name: 'Mira',
+    });
+  });
+
+  it('wraps a card with a slug in a link to its profile', () => {
+    const html = render([{ ...mate, slug: 'mira-7' }]);
+    const list = /role="list"[\s\S]*?(?=<div class="tc-set" aria-hidden)/.exec(
+      html,
+    )?.[0];
+    expect(list).toContain(
+      '<a class="tc-link" href="/teammates/mira-7" aria-label="Mira, view profile">',
+    );
+    // the one real card is the one tab stop: every copy below is taken out of the tab order
+    expect(
+      html.match(/class="tc-link" href="\/teammates\/mira-7"/g)!.length,
+    ).toBeGreaterThan(1);
+    expect(
+      html.match(
+        /<a class="tc-link" href="\/teammates\/mira-7"[^>]*tabindex="-1"/g,
+      ),
+    ).toHaveLength(html.match(/class="tc-link"/g)!.length - 1);
+    // nothing about the card itself moved
+    expect(list).toContain('class="tc-card');
+    expect(html).toContain('loading="lazy"');
+    expect(html).toContain('★ 4.9');
+  });
+
+  it('leaves a card without a slug exactly as it was', () => {
+    const html = render([mate]);
+    expect(html).not.toContain('tc-link');
+    expect(html).not.toContain('/teammates');
+    expect(html).toContain('class="tc-card');
+  });
+
+  it('links the heading to the directory only once a card has a profile', () => {
+    expect(render([{ ...mate, slug: 'mira-7' }])).toContain(
+      '<h2 id="tc-h" class="tc-title"><a href="/teammates">Meet your teammates</a></h2>',
+    );
+    const plain = render([mate]);
+    expect(plain).toContain(
+      '<h2 id="tc-h" class="tc-title">Meet your teammates</h2>',
+    );
+    expect(render([])).toContain(
+      '<h2 id="tc-h" class="tc-title">Meet your teammates</h2>',
+    );
   });
 });

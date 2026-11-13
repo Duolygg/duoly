@@ -264,7 +264,14 @@ const profiles: PublicTeammateProfile[] = [
     ...nyx,
     slug: 'lumi',
     name: 'Lumi',
-    avatar: '/assets/avatars/avatar-1.png',
+    /*
+     * The teammate who uploaded a photo. Shaped exactly like a real one: the public avatars
+     * bucket, the folder named after the account, a 16 character content hash and a WebP
+     * (20261023150000_avatar_uploads.sql). The e2e run answers this URL from a local fixture
+     * file, so the photo path is covered without reaching the network.
+     */
+    avatar:
+      'https://duolyfixture.supabase.co/storage/v1/object/public/avatars/3f9b7c21-5d64-4ab8-9f0e-2c7d81a4e6b5/7c1a4e9b20d53f68.webp',
     country: 'Sweden',
     languages: ['English', 'Swedish'],
     bio: 'Sentinel main. I hold a site, call what I hear and would rather win a slow round than a loud one.',

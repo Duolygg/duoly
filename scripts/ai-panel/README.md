@@ -1,4 +1,60 @@
-# Monthly AI answer panel
+# GEO consumer measurement and monthly API panel
+
+## Consumer baseline rerun (23 November)
+
+Use `browser-run.mjs` for actual Google AI Mode and ChatGPT observations. **Gemini API is not Google AI Mode, and OpenAI API search is not ChatGPT.** The API panel below remains a separate cohort, never a replacement for the 9 November browser baseline.
+
+This is an owner-operated capture workflow: it never submits a prompt, navigates an engine, reads credentials or logs in. It attaches to a local Chrome debugging endpoint, shows each exact prompt, and waits for the owner to submit it in a fresh conversation. After the answer finishes, expand all citation/source cards and type `capture`. It records the answer plus only the source-link anchors selected for that answer. A changed UI fails visibly rather than guessing selectors and counting unrelated page links. `skip` preserves a skipped observation rather than counting an absent brand.
+
+Prepare a dedicated local Chrome profile with remote debugging enabled on localhost (do not expose CDP to the network). Keep exactly one target engine tab open. For example, on macOS:
+
+```sh
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --remote-debugging-port=9222 \
+  --user-data-dir="$HOME/.hermes/cache/scratch/geo-panel-browser"
+```
+
+Do not use your normal browsing profile. For baseline comparability, use logged-out fresh browser sessions, en-US, and no installed connectors. Close prior conversations, clear engine site data between prompts, and retain only one target tab. The runner records the owner's explicit session-state declaration; it cannot prove session freshness or disable personalization. Do not change accounts or log in as part of an automated run.
+
+The original `prompts-v1.json` (29 prompts) and raw `baseline-2026-11-09.jsonl` referenced by the research note are **not present in this worktree or the available research directory**. Supply the original prompt file; do not reconstruct it from topic names or substitute this repo's 20-prompt `prompts.json`. Required fields are `id`, `prompt`, `locale`, `intent` (use the baseline topic names). Two repetitions are recorded per prompt, producing 58 observations per engine when none are skipped. The exact prompt-file SHA-256 travels with every row.
+
+Inspect the current engine DOM and choose CSS selectors for exactly the latest answer text and its expanded source-link anchors. These are deliberately required arguments, not undocumented brittle selectors:
+
+```sh
+export PATH="$HOME/.hermes/tools/node-v24.21.0-darwin-arm64/bin:$PATH"
+node scripts/ai-panel/browser-run.mjs --engine google-ai-mode \
+  --prompts /absolute/path/to/prompts-v1.json \
+  --answer-selector 'CURRENT_ANSWER_SELECTOR' \
+  --sources-selector 'CURRENT_EXPANDED_SOURCES_SELECTOR a[href]'
+# Repeat with --engine chatgpt for the same 29-prompt portfolio.
+
+node scripts/ai-panel/browser-run.mjs --engine chatgpt --fan-out \
+  --answer-selector 'CURRENT_ANSWER_SELECTOR' \
+  --sources-selector 'CURRENT_EXPANDED_SOURCES_SELECTOR a[href]'
+```
+
+Fan-out uses exactly these five prompts, once each: `best site to find a gaming duo`, `paid gaming teammate`, `League of Legends coaching online`, `is Duoly legit`, `Duoly vs Metafy`. Start the runner **before** submitting each prompt. It observes ChatGPT conversation response metadata (JSON or SSE), retaining only search queries, retrieved source domains, explicit page opens, and citation links. Raw conversation payloads and private reasoning are never written. Consumer metadata is undocumented and may not be exposed: `traceAvailable: false` means unknown, not zero searches. The report shows trace coverage and ranks retrieved, explicitly opened, and cited domains separately. A retrieved search result is not evidence of an explicit open. No synthetic search is substituted for missing metadata.
+
+**Sessions:** Google AI Mode and ChatGPT can be captured logged out when their UI permits it. ChatGPT may require an already logged-in session to expose search metadata; record that condition and keep it separate from the logged-out baseline. Perplexity is excluded by default and refuses to run unless both `--engine perplexity-browser --perplexity --logged-in-session` are supplied and the owner confirms `logged-in` at capture time. It requires an already configured logged-in browser; this tool never handles login. The separate API adapter uses an API key plus `--perplexity`, not a consumer login.
+
+Each consumer run appends private JSONL outside the repository and reads it back to create a baseline-shaped Markdown report: ladder per engine (cited, named, recommended, framing), named/runs by topic, brands named, citation domains and framing evidence. Recommendation and framing are conservative lexical heuristics requiring human review, not endorsed facts. Google source URLs are stored verbatim, including redirect wrappers; transparent Google `/url` destinations are parsed without fetching. Missing or unexpanded sources must not be interpreted as a measured citation absence.
+
+### Offline verification (no accounts, no API calls)
+
+```sh
+node --test scripts/ai-panel/*.test.mjs
+node scripts/ai-panel/browser-run.mjs --fixtures
+node scripts/ai-panel/browser-run.mjs --fixtures --engine chatgpt --fan-out
+node scripts/ai-panel/run.mjs --fixtures
+node scripts/ai-panel/run.mjs --fixtures --fan-out
+# Explicit opt-in here replays Perplexity fixtures, never uses a session:
+node scripts/ai-panel/run.mjs --fixtures --perplexity
+node scripts/ai-panel/report.mjs /absolute/path/to/run.jsonl
+```
+
+All saved fixtures are **synthetic parser examples**, not captured engine observations. Fixture outputs are labeled accordingly. `pnpm test:unit` includes the Node parser suite through `tests/unit/ai-panel.test.ts`. Offline tests cover answer-scoped citations, redirect domains, misleading domain metadata, blocked/empty answers, actual query fields versus reasoning text, separate retrieved/opened/cited domain ranks, repeated denominators and both consumer fixture CLIs. Live extraction is deliberately untested against engine accounts: the owner must confirm current selectors and exposed metadata before the next measurement.
+
+## Monthly API answer panel (separate cohort)
 
 Dependency-free Node 24 scripts for a fixed set of 20 English and German prompts. These are API search-grounded answers, not observations of ChatGPT, Claude, Gemini or Perplexity consumer interfaces. No Duoly MCP connector is installed or exposed to these requests.
 
