@@ -47,7 +47,7 @@ jobs:
           node_modules/.bin/supabase start -x studio,imgproxy,edge-runtime,logflare,vector,mailpit,realtime
       - name: Assert local PostgreSQL extensions and migrations
         run: |
-          docker exec supabase_db_duoly psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "do \$\$ begin if (select count(*) from pg_extension where extname in ('pg_cron','pg_net','http','supabase_vault')) <> 4 then raise exception 'Required extensions missing'; end if; if to_regclass('public.duoly_dispatch_state') is null then raise exception 'Latest migration missing'; end if; end \$\$;"
+          docker exec supabase_db_duoly psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "do \$\$ begin if (select count(*) from pg_extension where extname in ('pg_cron','pg_net','http','supabase_vault')) <> 4 then raise exception 'Required extensions missing'; end if; if to_regclass('public.storage_cleanup') is null then raise exception 'Latest migration missing'; end if; end \$\$;"
       - name: Run guarded manifest suites
         run: node scripts/sql-tests/run.mjs
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
