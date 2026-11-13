@@ -36,6 +36,13 @@ export const publicCardSchema = z.object({
 });
 export const publicProfileSchema = z.object({
   ...common,
+  header: z
+    .string()
+    .regex(
+      /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/profile-headers\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{16}\.(webp|jpg)$/,
+    )
+    .nullable()
+    .optional(),
   country: z.string().nullable(),
   languages: z.array(z.string()),
   bio: z.string().max(160),

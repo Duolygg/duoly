@@ -195,6 +195,9 @@ const profiles: PublicTeammateProfile[] = [
   nyx,
   {
     ...nyx,
+    // The one fixture teammate with an uploaded header (served from a local file in e2e).
+    header:
+      'https://duolyfixture.supabase.co/storage/v1/object/public/profile-headers/3f9b7c21-5d64-4ab8-9f0e-2c7d81a4e6b5/91d4c7f0ab2e5368.webp',
     slug: 'sola',
     name: 'Sola',
     avatar: '/assets/avatars/avatar-8.png',

@@ -171,6 +171,31 @@
 .pp-live a {
   color: #c4aaff;
 }
+/* ---------- header image ---------- */
+/* The picked crop and the saved header are the same strip at the same size, so switching
+   between them moves nothing on the page. */
+.pp-header-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(196, 170, 255, 0.18);
+  background: #140c25;
+  margin-bottom: 10px;
+}
+/* Dragging the crop must not scroll the page under the finger. */
+.pp-header-crop {
+  touch-action: none;
+  cursor: grab;
+}
+.pp-header-crop:active {
+  cursor: grabbing;
+}
+.pp-header .pp-help[role='status']:empty {
+  display: none;
+}
 .pp-settings :focus-visible {
   outline: 2px solid #c4aaff;
   outline-offset: 3px;
