@@ -417,4 +417,46 @@ describe('POST /api/internal/reconcile', () => {
       ran: { payments: 'off' },
     });
   });
+  it('drains the file queue alone when the fixer only found files', async () => {
+    const removed: string[][] = [];
+    db = {
+      rpc: async (name: string) =>
+        name === 'storage_cleanup_claim'
+          ? {
+              data: [
+                { bucket: 'avatars', path: `${ORDER}/0123456789abcdef.webp` },
+              ],
+              error: null,
+            }
+          : { data: 1, error: null },
+      storage: {
+        from: () => ({
+          remove: async (paths: string[]) => (
+            removed.push(paths),
+            { data: [], error: null }
+          ),
+        }),
+      },
+    } as unknown as SupabaseClient;
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const response = await call({ reason: 'files', kinds: [], files: true });
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toStrictEqual({
+      reason: 'files',
+      ran: { files: 'deleted 1, failed 0' },
+    });
+    expect(removed).toStrictEqual([[`${ORDER}/0123456789abcdef.webp`]]);
+    // Routine work, not a missed timer: no alert line.
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('answers 503 when the only thing asked for, the file queue, fails', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    db = null;
+    const response = await call({ reason: 'files', kinds: [], files: true });
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toMatchObject({
+      ran: { files: 'failed: database unavailable' },
+    });
+  });
 });

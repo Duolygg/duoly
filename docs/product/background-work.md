@@ -1,5 +1,14 @@
 # Background work: events, timers and one fixer
 
+> **Current state (13 Nov 2026).** All four kinds are `live` since 12 Nov 15:44 CET.
+> `20261113100000_retire_dispatcher.sql` unscheduled `duoly-dispatch` and the six paused per-kind
+> ticks and dropped `duoly_dispatch()`, `duoly_dispatch_state`, `background_finalize()` and
+> `background_rollback()`. What runs: the timers, the event hooks, and `duoly-background-fix` every
+> 10 minutes, which also drains the photo file queue
+> ([Old photo and header files](#old-photo-and-header-files)). Sections below that describe the
+> dispatcher, shadow rollout or finalize are the build record, not instructions. The only switch
+> left that matters is in [Turning one kind's timers off](#turning-one-kinds-timers-off).
+
 Why this exists: production runs on Supabase Free (nano). Four pg_cron HTTP polls (orders 10 s,
 payments 20 s, roles 30 s, analytics 60 s) wrote `cron.job_run_details` about 17,400 times a day plus
 updates, which is the top write source on an idle database and the reason REST went down for an hour
@@ -17,19 +26,18 @@ Sources: `~/.hermes/cache/scratch/supa-io/implementation-plan.md` (plan), `event
 
 ## The pieces
 
-| Piece                                                    | Where                                                          | What it does                                                                                                                                           |
-| -------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Timers` Durable Object                                  | `workers/discord-gateway` (class `Timers`, migration tag `v2`) | Stores one row per timer in SQLite, keeps one alarm at the earliest due time, fires a signed POST at the app, backs off, drops after the last retry.   |
-| `POST /api/internal/timer`                               | app                                                            | Verifies the signature, re-reads the current state, acts (or logs in shadow), answers with a disposition.                                              |
-| `POST /api/internal/reconcile`                           | app                                                            | Runs the existing tick handlers. Called by the fixer, never by a timer.                                                                                |
-| `public.background_switches`                             | database                                                       | One row per kind: `legacy`, `shadow` or `live`. The only thing that decides who does the work.                                                         |
-| orders trigger                                           | database                                                       | After a commit that queues an order, registers its two timers through `net.http_post`.                                                                 |
-| `public.background_overdue()`                            | database                                                       | Read-only `exists()` per kind, reusing `duoly_dispatch_has_work`; returns one jsonb boolean per kind.                                                  |
-| `public.background_fix()`                                | database                                                       | Posts to `/api/internal/reconcile` only when `background_overdue()` found something.                                                                   |
-| `public.background_finalize()` / `background_rollback()` | database                                                       | Pause the 10 s dispatcher and schedule the fixer, or the reverse. Called by hand.                                                                      |
-| `src/server/background/hooks.ts`                         | app                                                            | The event hooks: close the post, drain the outbox, register a settle retry, give a wallet hold back, ask for a presence check. All after the response. |
-| `src/components/teammate/presence-leader.js`             | browser                                                        | One desk heartbeat per browser instead of one per tab, agreed over a BroadcastChannel, plus the leaving beacon.                                        |
-| `src/contracts/background.ts`                            | shared                                                         | Schemas, kinds, timings, the HMAC sign and verify helper. Imported by the app, the worker and the tests.                                               |
+| Piece                                        | Where                                                          | What it does                                                                                                                                           |
+| -------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Timers` Durable Object                      | `workers/discord-gateway` (class `Timers`, migration tag `v2`) | Stores one row per timer in SQLite, keeps one alarm at the earliest due time, fires a signed POST at the app, backs off, drops after the last retry.   |
+| `POST /api/internal/timer`                   | app                                                            | Verifies the signature, re-reads the current state, acts (or logs in shadow), answers with a disposition.                                              |
+| `POST /api/internal/reconcile`               | app                                                            | Runs the existing tick handlers. Called by the fixer, never by a timer.                                                                                |
+| `public.background_switches`                 | database                                                       | One row per kind: `legacy`, `shadow` or `live`. The only thing that decides who does the work.                                                         |
+| orders trigger                               | database                                                       | After a commit that queues an order, registers its two timers through `net.http_post`.                                                                 |
+| `public.background_overdue()`                | database                                                       | Read-only `exists()` per kind, reusing `duoly_dispatch_has_work`; returns one jsonb boolean per kind.                                                  |
+| `public.background_fix()`                    | database                                                       | Posts to `/api/internal/reconcile` only when `background_overdue()` found something.                                                                   |
+| `src/server/background/hooks.ts`             | app                                                            | The event hooks: close the post, drain the outbox, register a settle retry, give a wallet hold back, ask for a presence check. All after the response. |
+| `src/components/teammate/presence-leader.js` | browser                                                        | One desk heartbeat per browser instead of one per tab, agreed over a BroadcastChannel, plus the leaving beacon.                                        |
+| `src/contracts/background.ts`                | shared                                                         | Schemas, kinds, timings, the HMAC sign and verify helper. Imported by the app, the worker and the tests.                                               |
 
 A timer is a wake-up, never a decision. The handler re-reads the current deadline and state at fire
 time and answers `done`, `stale`, `disabled`, `retry` or `pending`. Only that answer decides whether
@@ -471,32 +479,40 @@ failed run row and nothing else, so it returns
 The fixer ships and runs before any poll is paused (review F20): `duoly-dispatch` is still scheduled
 when the migration lands, and `background_fix()` can be called by hand at any time.
 
-## Finalize and rollback
+## Turning one kind's timers off
 
-When all four kinds are `live` and a day of watching is clean:
+There is no dispatcher to roll back to (retired in `20261113100000`). If one kind's timers misbehave:
 
 ```sql
-select public.background_finalize();                  -- hourly fixer
-select public.background_finalize('*/10 * * * *');    -- every 10 minutes (recommended while roles is live)
+update public.background_switches set mode = 'legacy', updated_at = now() where kind = 'orders';
 ```
 
-`background_finalize(p_schedule text default '0 * * * *')` schedules `duoly-background-fix` with the
-given schedule and then pauses `duoly-dispatch` with `cron.alter_job(active := false)`, never
-`unschedule`. In that order, so a schedule the owner mistyped fails before anything is paused. It
-refuses outright while any kind is not yet `live`, because pausing the dispatcher then would leave
-that kind with nobody doing the work, and it only accepts a five field cron expression: a sub-minute
-schedule here would put back the writes this whole build exists to remove.
+No new timers are registered for that kind and fires answer `disabled`; `duoly-background-fix` still
+finds its overdue work within 10 minutes and runs the same handler through `/api/internal/reconcile`.
+So the cost of the off switch is latency (up to 10 minutes), never work left undone. Set it back to
+`live` the same way. `shadow` only logs and is no longer useful in production.
 
-`public.background_rollback()` does the reverse: it pauses the fixer and sets `duoly-dispatch` active
-again. Both are idempotent, both are revoked from `anon`, `authenticated` and `service_role` so they
-are owner-only in the SQL editor, and both leave the switches alone, so the order of operations under
-pressure is always:
+## Old photo and header files
 
-1. `update public.background_switches set mode = 'shadow'` for the kinds you distrust.
-2. `select public.background_rollback();` if the dispatcher is currently paused.
+`20261113100100_storage_cleanup.sql`. Profile photos (`avatars`) and headers (`profile-headers`) are
+stored as `<user id>/<16 hex>.(webp|jpg)`. Triggers queue a file in `public.storage_cleanup` when:
 
-Doing it in that order means the dispatcher is back before the timers stop acting, so no window has
-nobody doing the work. The migration itself does not pause `duoly-dispatch`.
+- a photo or header is replaced or removed (`replaced`; only the owner's own upload URL, never a
+  Discord picture or a stock avatar),
+- the account is deleted (`account`; every file in that user's two folders),
+- it was already orphaned when the migration ran (`orphan`, one-off backfill of files over an hour old).
+
+Postgres cannot delete storage files, so `background_fix()` calls `/api/internal/reconcile` with
+`{"reason":"files","kinds":[],"files":true}` whenever the queue has rows, and the app
+(`src/server/storage-cleanup.ts`) deletes up to 100 per run through the Storage API, then marks them
+done. `storage_cleanup_claim` first drops `replaced` and `orphan` rows for files a profile, a header
+or a chat message still shows (names are content hashes, so picking the same picture again reuses the
+name). `account` rows are deleted regardless. A failed delete counts an attempt; at 20 the row stays
+for inspection and stops waking the fixer:
+
+```sql
+select bucket, path, reason, attempts from public.storage_cleanup order by queued_at;
+```
 
 ## Deploy order
 
@@ -520,9 +536,10 @@ nobody doing the work. The migration itself does not pause `duoly-dispatch`.
    actions, `/timers/health` shows no backlog and no drops, shadow log lines say what the tick did.
 8. **Flip one kind a day**, in this order, with 24 h of watching each: `analytics`, `roles`,
    `payments`, `orders`. Lowest customer impact first, money and the Discord post last.
-9. **Finalize** when all four are live and clean: `select public.background_finalize('*/10 * * * *');`
-10. **Later**, after seven clean days, a separate PR drops the paused jobs and the retired endpoints.
-    Never delete `discord_roles_tick_secret`: `duoly-performance-recalc` still uses it (review F16).
+9. **Finalize** when all four are live and clean (done 12 Nov via the fixer at 10 minutes).
+10. **Retire** (done 13 Nov, `20261113100000`): the paused jobs and the dispatcher are gone. The tick
+    endpoints stay because `/api/internal/reconcile` runs the same handlers. Never delete
+    `discord_roles_tick_secret`: `duoly-performance-recalc` still uses it (review F16).
 
 ## Secrets and Vault entries
 

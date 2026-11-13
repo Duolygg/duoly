@@ -25,7 +25,7 @@ suite chat_flag_audit.sql
 suite discord_links.sql
 suite discord_order_posts.sql
 suite discord_role_sync.sql
-suite gated_dispatch.sql
+# skip gated_dispatch.sql historical; 20261113100000 retired the dispatcher it tests (background_switches.sql asserts it is gone)
 suite gold_priority_badges.sql
 # skip handover_admin_actions.sql historical cancellation refund assertion conflicts with latest charge-at-queue/team payment semantics: queued order refunded
 suite home_live.sql
@@ -62,6 +62,7 @@ suite profile_header.sql
 suite queue_settings.sql
 suite referral_first_order_discount.sql
 suite sparky_presence_read.sql
+suite storage_cleanup.sql
 suite stripe_payments.sql
 suite support_sparky.sql
 suite support_sparky_limits.sql

@@ -15,8 +15,9 @@ $duoly_test_guard$;
 
 begin;
 
--- 20261112140000_background_switches_timers.sql: the switch table, the orders registration trigger,
--- the dispatcher's live skip, and the fixer plus finalize and rollback. Everything is rolled back,
+-- 20261112140000_background_switches_timers.sql, 20261113100000_retire_dispatcher.sql and the fixer's
+-- file queue (20261113100100): the switch table, the orders registration trigger and the fixer.
+-- Everything is rolled back,
 -- and pg_net cannot deliver a queued fixture request before commit, so nothing leaves this
 -- transaction. The fixture worker host is .invalid for the same reason.
 
@@ -82,37 +83,9 @@ begin
     p_label || ': got ' || pg_temp.registered()::text);
 end;
 $$;
--- The ten-minute fallback forces every kind, which is the strongest shape for a skip assertion.
-create function pg_temp.expect_dispatch(p_kinds text[], p_label text) returns void language plpgsql as $$
-declare v_before jsonb; v_actual text[];
-begin
-  update public.duoly_dispatch_state set last_called_at = pg_catalog.clock_timestamp() - interval '11 minutes';
-  truncate net.http_request_queue;
-  select pg_catalog.jsonb_object_agg(kind, last_called_at) into v_before from public.duoly_dispatch_state;
-  perform public.duoly_dispatch();
-  select coalesce(pg_catalog.array_agg(case url
-    when 'https://duoly.gg/api/discord/orders/tick' then 'orders'
-    when 'https://duoly.gg/api/payments/tick' then 'payments'
-    when 'https://duoly.gg/api/internal/analytics/drain' then 'analytics'
-    when 'https://duoly.gg/api/discord/roles/tick' then 'roles'
-    else url end order by url), '{}'::text[]) into v_actual
-    from net.http_request_queue where url like 'https://duoly.gg/%';
-  perform pg_temp.assert_true(
-    (select coalesce(pg_catalog.array_agg(x order by x), '{}'::text[]) from pg_catalog.unnest(v_actual) x) =
-    (select coalesce(pg_catalog.array_agg(x order by x), '{}'::text[]) from pg_catalog.unnest(p_kinds) x),
-    p_label || ': unexpected calls ' || v_actual::text);
-  perform pg_temp.assert_true(not exists (select 1 from public.duoly_dispatch_state s
-    where not (s.kind = any(p_kinds))
-      and pg_catalog.to_jsonb(s.last_called_at) is distinct from v_before->s.kind),
-    p_label || ': a skipped kind was written');
-end;
-$$;
-
 -- Start from idle even if the disposable stack has seed data.
 truncate public.orders, public.checkout_intents, public.analytics_outbox, public.discord_accounts,
-  public.discord_role_sync, public.duoly_dispatch_state cascade;
-insert into public.duoly_dispatch_state(kind, last_called_at)
-  select k, pg_catalog.clock_timestamp() from pg_catalog.unnest(array['orders','payments','analytics','roles']) k;
+  public.discord_role_sync, public.storage_cleanup cascade;
 delete from vault.secrets where name in ('payments_tick_secret','discord_roles_tick_secret',
   'analytics_drain_secret','background_timers_url','background_register_secret','background_reconcile_secret');
 select vault.create_secret(pg_catalog.repeat('test-only-',5), 'payments_tick_secret');
@@ -120,15 +93,27 @@ select vault.create_secret(pg_catalog.repeat('test-only-',5), 'discord_roles_tic
 select vault.create_secret(pg_catalog.repeat('test-only-',5), 'analytics_drain_secret');
 
 -- ---------------------------------------------------------------- what the migration left behind
-select pg_temp.assert_true((select pg_catalog.count(*) = 4 and pg_catalog.bool_and(mode = 'shadow')
-  from public.background_switches), 'all four kinds default to shadow');
+-- 20261113100000 retired the dispatcher: every kind live, the fixer every 10 minutes, nothing else.
+select pg_temp.assert_true((select pg_catalog.count(*) = 4 and pg_catalog.bool_and(mode = 'live')
+  from public.background_switches), 'all four kinds are live');
 select pg_temp.assert_true((select pg_catalog.array_agg(kind order by kind) = array['analytics','orders','payments','roles']
   from public.background_switches), 'exactly the four dispatcher kinds');
-select pg_temp.assert_true(exists (select 1 from cron.job where jobname = 'duoly-dispatch'
-  and active and schedule = '10 seconds' and command = 'select public.duoly_dispatch();'),
-  'the migration did NOT pause duoly-dispatch');
-select pg_temp.assert_true(not exists (select 1 from cron.job where jobname = 'duoly-background-fix'),
-  'the migration did not schedule the fixer');
+select pg_temp.assert_true((select pg_catalog.count(*) = 1 from cron.job where jobname = 'duoly-background-fix'
+  and active and schedule = '*/10 * * * *' and command = 'select public.background_fix();'),
+  'one fixer, every 10 minutes');
+select pg_temp.assert_true(not exists (select 1 from cron.job where jobname in ('duoly-dispatch',
+  'duoly-payments-tick', 'duoly-discord-orders-tick', 'duoly-discord-roles-tick',
+  'duoly-discord-roles-log-prune', 'duoly-analytics-drain', 'duoly-analytics-log-prune')),
+  'every retired cron job is unscheduled');
+select pg_temp.assert_true(pg_catalog.to_regclass('public.duoly_dispatch_state') is null
+  and pg_catalog.to_regprocedure('public.duoly_dispatch()') is null
+  and pg_catalog.to_regprocedure('public.background_rollback()') is null
+  and pg_catalog.to_regprocedure('public.background_finalize(text)') is null,
+  'the dispatcher, its state and finalize/rollback are gone');
+select pg_temp.assert_true(pg_catalog.to_regprocedure('public.duoly_dispatch_has_work(text)') is not null,
+  'the work predicates stay: the fixer uses them');
+-- The rest of this suite was written from shadow; start every kind there.
+update public.background_switches set mode = 'shadow', updated_at = pg_catalog.now();
 select pg_temp.assert_true((select relrowsecurity from pg_catalog.pg_class
   where oid = 'public.background_switches'::pg_catalog.regclass), 'switches have RLS enabled');
 select pg_temp.assert_true(not exists (select 1 from pg_catalog.pg_policy
@@ -146,9 +131,8 @@ select pg_temp.assert_true(not pg_catalog.has_table_privilege(r,'public.backgrou
 select pg_temp.assert_true(not pg_catalog.has_function_privilege(r,f,'EXECUTE'), 'execute denied ' || r || ' ' || f)
   from pg_catalog.unnest(array['anon','authenticated','service_role']) r,
     pg_catalog.unnest(array['public.background_mode(text)','public.background_overdue()',
-      'public.background_fix()','public.background_finalize(text)','public.background_rollback()',
-      'public.background_order_timers()','public.background_register_timer(text,text,bigint,bigint)',
-      'public.duoly_dispatch()']) f;
+      'public.background_fix()',
+      'public.background_order_timers()','public.background_register_timer(text,text,bigint,bigint)']) f;
 
 -- A missing row or an unknown kind reads as legacy, so nothing new happens by accident.
 select pg_temp.assert_true(public.background_mode('orders') = 'shadow', 'mode reads the row');
@@ -321,24 +305,6 @@ select pg_temp.assert_true(not public.background_register_timer('order-post','ok
 select pg_temp.assert_true(public.background_register_timer('presence-check','desk',0,1800000000000),
   'a singleton presence timer is accepted');
 
--- ---------------------------------------------------------------- the dispatcher skips live kinds
-savepoint dispatch;
-select pg_temp.expect_dispatch(array['orders','payments','analytics','roles'], 'shadow dispatches every kind');
-update public.background_switches set mode = 'legacy', updated_at = pg_catalog.now() where kind = 'roles';
-select pg_temp.expect_dispatch(array['orders','payments','analytics','roles'], 'legacy still dispatches');
-update public.background_switches set mode = 'live', updated_at = pg_catalog.now() where kind = 'analytics';
-select pg_temp.expect_dispatch(array['orders','payments','roles'], 'a live kind is skipped');
-update public.background_switches set mode = 'live', updated_at = pg_catalog.now();
-select pg_temp.expect_dispatch('{}'::text[], 'all live means no dispatcher HTTP at all');
--- Flipping back hands the work straight to the dispatcher, with no backfill needed.
-update public.background_switches set mode = 'shadow', updated_at = pg_catalog.now();
-select pg_temp.expect_dispatch(array['orders','payments','analytics','roles'], 'shadow takes the work back');
--- A deleted switch row must fail safe towards the dispatcher, never towards nobody.
-delete from public.background_switches;
-select pg_temp.expect_dispatch(array['orders','payments','analytics','roles'],
-  'a missing switch keeps the legacy owner');
-rollback to dispatch;
-
 -- ---------------------------------------------------------------- background_overdue
 -- Re-pin the fixture first: its deadlines are then 100 s and 5 min out, so "idle" is a fact about
 -- the predicates rather than a race against however long this suite has been running.
@@ -380,7 +346,7 @@ truncate net.http_request_queue;
 select pg_temp.assert_true(public.background_fix() = pg_catalog.jsonb_build_object(
   'overdue', pg_catalog.jsonb_build_object('orders', false, 'payments', false,
     'analytics', false, 'roles', false),
-  'called', false), 'an idle fixer calls nothing');
+  'files', false, 'called', false), 'an idle fixer calls nothing');
 select pg_temp.assert_true(pg_temp.app_calls() = '{}'::text[], 'an idle fixer enqueues nothing');
 
 savepoint fix_overdue;
@@ -413,53 +379,23 @@ select pg_temp.assert_true((select pg_catalog.bool_and(
   from net.http_request_queue), 'the body names only the kinds that were overdue');
 rollback to fix_overdue;
 
--- ---------------------------------------------------------------- finalize and rollback
-savepoint finalize;
-select pg_temp.assert_raises('select public.background_finalize()', 'every kind must be live first',
-  'finalize refuses while a kind is in shadow');
-select pg_temp.assert_true(exists (select 1 from cron.job where jobname = 'duoly-dispatch' and active),
-  'a refused finalize left the dispatcher alone');
-update public.background_switches set mode = 'live', updated_at = pg_catalog.now();
-select pg_temp.assert_raises('select public.background_finalize(''10 seconds'')',
-  'unsupported schedule', 'finalize refuses a sub-minute schedule');
-select pg_temp.assert_raises('select public.background_finalize(''0 * * *'')',
-  'five fields', 'finalize refuses a four-field schedule');
-select pg_temp.assert_raises('select public.background_finalize(''0 * * * *; drop table t'')',
-  'unsupported schedule', 'finalize refuses anything but a cron expression');
-
-select pg_temp.assert_true(public.background_finalize() = pg_catalog.jsonb_build_object(
-  'fixer', '0 * * * *', 'dispatcher', 'paused'), 'finalize reports what it did');
-select pg_temp.assert_true(exists (select 1 from cron.job where jobname = 'duoly-background-fix'
-  and active and schedule = '0 * * * *' and command = 'select public.background_fix();'),
-  'the fixer is scheduled hourly');
-select pg_temp.assert_true(exists (select 1 from cron.job where jobname = 'duoly-dispatch'
-  and not active and schedule = '10 seconds' and command = 'select public.duoly_dispatch();'),
-  'the dispatcher is paused, never unscheduled');
--- Idempotent, and the recommended ten-minute schedule replaces the hourly one in place.
-select pg_temp.assert_true((public.background_finalize('*/10 * * * *')->>'fixer') = '*/10 * * * *',
-  'finalize is idempotent and reschedules in place');
-select pg_temp.assert_true((select pg_catalog.count(*) = 1 from cron.job
-  where jobname = 'duoly-background-fix' and active and schedule = '*/10 * * * *'),
-  'one fixer job, rescheduled rather than duplicated');
-select pg_temp.assert_true((select pg_catalog.count(*) = 1 from cron.job where jobname = 'duoly-dispatch'),
-  'finalize never duplicates or drops the dispatcher');
-select pg_temp.assert_true((select pg_catalog.count(*) = 4 and pg_catalog.bool_and(mode = 'live')
-  from public.background_switches), 'finalize leaves the switches alone');
-
-select pg_temp.assert_true(public.background_rollback() = pg_catalog.jsonb_build_object(
-  'fixer', 'paused', 'dispatcher', 'active'), 'rollback reports what it did');
-select pg_temp.assert_true(exists (select 1 from cron.job where jobname = 'duoly-background-fix'
-  and not active and schedule = '*/10 * * * *'), 'rollback pauses the fixer, never unschedules it');
-select pg_temp.assert_true(exists (select 1 from cron.job where jobname = 'duoly-dispatch' and active),
-  'rollback puts the dispatcher back');
-select pg_temp.assert_true(public.background_rollback() = pg_catalog.jsonb_build_object(
-  'fixer', 'paused', 'dispatcher', 'active'), 'rollback is idempotent');
-select pg_temp.assert_true((select pg_catalog.count(*) = 4 and pg_catalog.bool_and(mode = 'live')
-  from public.background_switches), 'rollback leaves the switches alone');
--- The documented order under pressure: switches back to shadow first, then rollback.
-update public.background_switches set mode = 'shadow', updated_at = pg_catalog.now();
-select pg_temp.assert_true((public.background_rollback()->>'dispatcher') = 'active',
-  'rollback works with the switches already back in shadow');
-rollback to finalize;
+-- ---------------------------------------------------------------- the file queue
+-- Queued files call the app on their own, as routine work: no kinds, files true.
+savepoint fix_files;
+select vault.create_secret(pg_catalog.repeat('bg-reconcile-',4), 'background_reconcile_secret');
+insert into public.storage_cleanup(bucket, path, reason)
+  values ('avatars', '9f4703b0-7758-4270-8391-8da62db44ba4/0123456789abcdef.webp', 'replaced');
+truncate net.http_request_queue;
+select pg_temp.assert_true((public.background_fix()->>'called')::boolean, 'queued files call the app');
+select pg_temp.assert_true((select pg_catalog.bool_and(
+    (pg_catalog.convert_from(body,'UTF8')::jsonb) = '{"reason":"files","kinds":[],"files":true}'::jsonb)
+  from net.http_request_queue where url = 'https://duoly.gg/api/internal/reconcile'),
+  'a files-only call names no kinds');
+-- A row that failed 20 times stays for inspection and no longer wakes the app.
+update public.storage_cleanup set attempts = 20;
+truncate net.http_request_queue;
+select pg_temp.assert_true(not (public.background_fix()->>'called')::boolean,
+  'a given-up row does not call the app');
+rollback to fix_files;
 
 rollback;

@@ -1,5 +1,9 @@
 # Gated cron dispatch (Step A)
 
+> **Retired 13 Nov 2026** (`20261113100000_retire_dispatcher.sql`). `duoly-dispatch` no longer exists;
+> background work runs on timers plus `duoly-background-fix`. See
+> [Background work](../product/background-work.md). Kept as the record of the 11 Nov incident fix.
+
 This migration preserves the existing endpoints and state machines. It is not the proposed timer service. Only `20261112090000_gated_cron_dispatch.sql` is new; historical migrations and application handlers are unchanged.
 
 ## Gates and fallback
