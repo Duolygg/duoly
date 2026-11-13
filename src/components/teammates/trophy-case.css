@@ -26,6 +26,9 @@
     ),
     linear-gradient(180deg, #150d28, #0d0620 78%);
   box-shadow: inset 0 1px 0 rgba(214, 187, 255, 0.14);
+  /* The case is a lit panel, so its words and shelf keep off its glass edge. */
+  padding: 0 clamp(16px, 2.6vw, 30px);
+  border-radius: 22px;
 }
 /* The words take the narrow column so the arc has the room its spread needs. */
 .tc-inner {
@@ -544,7 +547,7 @@
   justify-content: flex-end;
 }
 .tc-hold {
-  padding: 9px 0;
+  padding: 12px 0 6px;
   border: 0;
   background: none;
   cursor: pointer;
@@ -609,7 +612,9 @@
   position: relative;
   display: flex;
   align-items: flex-start;
-  padding-top: 18px;
+  /* Room for the lit trophy's lift below the group label, and for its glow at the ends. */
+  padding: 34px 10px 0;
+  margin: 0 -10px;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
