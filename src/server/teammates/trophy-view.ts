@@ -8,6 +8,9 @@ import { profileGame } from './profile-page';
 
 export {
   trophyCrest,
+  trophyHighlights,
+  trophyShelves,
+  type TrophyShelf,
   trophyOffset,
   type TrophyView,
 } from '../../contracts/trophy-display';

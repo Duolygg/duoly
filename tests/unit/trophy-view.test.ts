@@ -3,6 +3,8 @@ import {
   trophyCase,
   trophyView,
   trophyOffset,
+  trophyHighlights,
+  trophyShelves,
 } from '../../src/server/teammates/trophy-view';
 import type { PublicTrophy } from '../../src/contracts/trophies';
 const base: PublicTrophy = {
@@ -92,5 +94,57 @@ describe('trophy presentation', () => {
         expect(Math.max(...d)).toBeLessThanOrEqual(Math.floor(n / 2));
       }
     expect(trophyOffset(1, 0, 2)).toBe(1);
+  });
+});
+
+describe('trophy list', () => {
+  const rank = (
+    id: string,
+    tier: string,
+    rarity: PublicTrophy['rarity'],
+    season: string,
+  ) =>
+    ({
+      id,
+      game: 'lol',
+      kind: 'rank',
+      ladder: 'rank',
+      tier,
+      division: null,
+      value: null,
+      moment: 'season_end',
+      season,
+      region: 'EUW',
+      position: null,
+      event: null,
+      title: null,
+      achievedOn: null,
+      proofUrl: null,
+      rarity,
+      verifiedAt: '2026-11-11T10:00:00.000Z',
+    }) as PublicTrophy;
+  const views = trophyCase([
+    rank('a', 'gold', 'common', '2018'),
+    rank('b', 'gold', 'common', '2019'),
+    rank('c', 'challenger', 'mythic', '2025'),
+    rank('d', 'gold', 'common', '2020'),
+    rank('e', 'platinum', 'uncommon', '2021'),
+  ]);
+  it('tallies one tier across seasons, rarest first', () => {
+    const [shelf] = trophyShelves(views);
+    expect(shelf?.gameName).toBe('League of Legends');
+    expect(shelf?.tally.map((x) => [x.name, x.count])).toEqual([
+      ['Challenger', 1],
+      ['Platinum', 1],
+      ['Gold', 3],
+    ]);
+    expect(shelf?.items).toHaveLength(5);
+  });
+  it('puts each tier on the stage once', () => {
+    expect(trophyHighlights(views).map((v) => v.name)).toEqual([
+      'Challenger',
+      'Platinum',
+      'Gold',
+    ]);
   });
 });

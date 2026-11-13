@@ -348,12 +348,17 @@ test('the hero carries one online signal, one booking unit and no upscaled masco
   expect((await hero.innerText()).toLowerCase().split('online').length).toBe(2);
   /* The coaching price is the one other price the page is allowed to show. */
   await expect(page.locator('.tp-price-quiet')).toHaveCount(1);
-  /* The art only exists at 160 px, so nothing may paint it larger than that. */
+  /* The art only exists at 160 px, so nothing may paint it larger than that. Trophy
+     emblems are their own 256 px files and stay within that. */
   expect(
     await page.evaluate(() =>
       [...document.querySelectorAll<HTMLImageElement>('article.tp-page img')]
-        .map((img) => img.getBoundingClientRect().width)
-        .filter((width) => width > 160),
+        .map((img) => ({
+          width: img.getBoundingClientRect().width,
+          max: img.closest('.tc-item') ? 256 : 160,
+        }))
+        .filter(({ width, max }) => width > max + 0.5)
+        .map(({ width }) => width),
     ),
   ).toEqual([]);
   /* Both buttons share one column, so they come out the same size at every width, and
@@ -754,8 +759,9 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
     ),
   ).toBeLessThanOrEqual(900);
   /* A section opens 48 px under the one before it and gives its rule 24 px of air; the
-     closing band carries no rule, so it simply keeps the same 72 px gap. Three sections
-     follow the first on this profile: reviews, more teammates and the booking answers. */
+     closing band carries no rule, so it simply keeps the same 72 px gap. Four sections
+     follow the first on this profile: games, reviews, more teammates and the booking
+     answers (the trophy case comes first on Nyx). */
   expect(
     await page.evaluate(() =>
       [...document.querySelectorAll('.tp-section')].slice(1).map((el) => {
@@ -763,7 +769,7 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
         return parseFloat(style.marginTop) + parseFloat(style.paddingTop);
       }),
     ),
-  ).toEqual([72, 72, 72]);
+  ).toEqual([72, 72, 72, 72]);
   expect(
     await page.evaluate(
       () => getComputedStyle(document.querySelector('.tp-closing')!).marginTop,
@@ -775,7 +781,7 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
         (el) => getComputedStyle(el).marginBottom,
       ),
     ),
-  ).toEqual(['24px', '24px', '24px', '24px']);
+  ).toEqual(['24px', '24px', '24px', '24px', '24px']);
   /* One grid for the reviews: the featured quote spans it, the rest sit under it in
      equal columns that start on the same left edge as the tag bars. */
   expect(

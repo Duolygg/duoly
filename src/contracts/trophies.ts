@@ -634,7 +634,7 @@ export function defaultRarity(t: TrophySubmission): Rarity {
 }
 
 export const TROPHY_STATUSES = ['pending', 'approved', 'rejected'] as const;
-export const MAX_TROPHIES = 24;
+export const MAX_TROPHIES = 60;
 
 /** One approved trophy as the public profile receives it. */
 export const PublicTrophySchema = z.strictObject({

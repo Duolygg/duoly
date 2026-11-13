@@ -8,15 +8,26 @@
  * JavaScript; the script below only moves trophies and adds the tilt.
  */
 import type { TrophyView } from '../../server/teammates/trophy-view';
-import { trophyOffset } from '../../server/teammates/trophy-view';
+import {
+  trophyHighlights,
+  trophyOffset,
+  trophyShelves,
+} from '../../server/teammates/trophy-view';
 import './trophy-case.css';
 
 interface Props {
   trophies: TrophyView[];
   name: string;
 }
-const { trophies, name } = Astro.props;
+const { trophies: all, name } = Astro.props;
+/* The stage holds one of each tier or result; the list underneath holds everything. */
+const trophies = trophyHighlights(all);
 const n = trophies.length;
+const shelves = trophyShelves(all);
+const lineOf = (t: TrophyView) =>
+  [t.eyebrow.replace(`${t.gameName} · `, ''), t.meta]
+    .filter(Boolean)
+    .join(' · ');
 const pad = (i: number) => String(i).padStart(2, '0');
 ---
 
@@ -29,7 +40,7 @@ const pad = (i: number) => String(i).padStart(2, '0');
 >
   <div class="tp-section-head">
     <div>
-      <h2 id="trophies-title">Trophy case</h2>
+      <h2 id="trophies-title">Trophies</h2>
       <p>{name}'s verified ranks and results, rarest first.</p>
     </div>
   </div>
@@ -77,6 +88,7 @@ const pad = (i: number) => String(i).padStart(2, '0');
                   <img
                     src={t.art}
                     alt={t.alt}
+                    draggable="false"
                     width="256"
                     height="256"
                     loading={i === 0 ? 'eager' : 'lazy'}
@@ -157,6 +169,19 @@ const pad = (i: number) => String(i).padStart(2, '0');
             <b data-tc-index>01</b>
             <span> / {pad(n)}</span>
           </p>
+          <button
+            type="button"
+            class="tc-play"
+            data-tc-play
+            aria-pressed="false"
+            aria-label="Pause the trophy carousel"
+            hidden
+          >
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path class="tc-play-pause" d="M5 3v10M11 3v10" />
+              <path class="tc-play-go" d="M5 3l8 5-8 5z" />
+            </svg>
+          </button>
           <span class="tc-progress" aria-hidden="true">
             <i data-tc-progress style={`--p:${1 / n}`} />
           </span>
@@ -194,6 +219,81 @@ const pad = (i: number) => String(i).padStart(2, '0');
       )}
     </div>
   </div>
+  <div class="tc-list" aria-labelledby="trophies-list-title">
+    <div class="tc-list-head">
+      <h3 id="trophies-list-title">Every trophy</h3>
+      <span>{all.length}</span>
+    </div>
+    {shelves.map((shelf) => (
+      <section class="tc-shelf" aria-label={shelf.gameName}>
+        <header class="tc-shelf-head">
+          <h4>{shelf.gameName}</h4>
+          <span>
+            {shelf.items.length}{' '}
+            {shelf.items.length === 1 ? 'trophy' : 'trophies'}
+          </span>
+        </header>
+        {shelf.tally.length > 0 && (
+          <ul class="tc-tally" aria-label={`${shelf.gameName} ranks`}>
+            {shelf.tally.map((x) => (
+              <li data-rarity={x.rarity}>
+                <img
+                  src={x.art}
+                  alt=""
+                  width="30"
+                  height="30"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="tc-tally-name">{x.name}</span>
+                {x.count > 1 && (
+                  <b class="tc-tally-count" aria-label={`${x.count} seasons`}>
+                    ×{x.count}
+                  </b>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+        <details class="tc-more" open={shelf.tally.length === 0 || undefined}>
+          <summary>
+            <span class="tc-more-show">See the full list</span>
+            <span class="tc-more-hide">Hide list</span>
+          </summary>
+          <ol class="tl-rows">
+            {shelf.items.map((t) => (
+              <li class="tl-row" data-rarity={t.rarity}>
+                <img
+                  src={t.art}
+                  alt=""
+                  width="32"
+                  height="32"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="tl-row-text">
+                  <b>{t.name}</b>
+                  <span>{lineOf(t)}</span>
+                </span>
+                {t.proofUrl ? (
+                  <a
+                    class="tl-row-proof"
+                    href={t.proofUrl}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                  >
+                    See proof
+                  </a>
+                ) : (
+                  <span class="tl-row-ok">Verified</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </details>
+      </section>
+    ))}
+  </div>
   <p class="tc-note">
     Every trophy here was checked by Duoly before it went up. Rank emblems
     belong to their publishers, and Duoly is not affiliated with them.
@@ -222,7 +322,14 @@ const pad = (i: number) => String(i).padStart(2, '0');
       return d;
     };
     const show = (next: number, focus = false) => {
+      const prev = items[active];
       active = ((next % n) + n) % n;
+      /* The trophy leaving the front stays on top and fades as it steps back, so the
+         incoming one rises underneath it instead of sliding over it. */
+      if (prev && prev !== items[active] && !still) {
+        prev.classList.add('is-leaving');
+        window.setTimeout(() => prev.classList.remove('is-leaving'), 240);
+      }
       items.forEach((item, i) => {
         const d = offset(i);
         item.dataset.a = String(Math.min(Math.abs(d), 4));
@@ -241,14 +348,85 @@ const pad = (i: number) => String(i).padStart(2, '0');
       if (focus) items[active]?.focus({ preventScroll: true });
     };
 
+    /* Slow auto-advance that loops. It waits while the visitor is pointing at, focused in
+       or has just used the case, stops while the page or the case is out of view, and never
+       runs with reduced motion. The pause button keeps it stopped. */
+    const playBtn = root.querySelector<HTMLButtonElement>('[data-tc-play]');
+    const AUTO = 4200;
+    let timer = 0;
+    let hovering = false;
+    let inView = false;
+    let paused = false;
+    let quietUntil = 0;
+    const tick = () => {
+      timer = 0;
+      if (
+        paused ||
+        hovering ||
+        !inView ||
+        document.hidden ||
+        root.contains(document.activeElement)
+      )
+        return schedule();
+      if (Date.now() < quietUntil) return schedule(quietUntil - Date.now());
+      show(active + 1);
+      schedule();
+    };
+    const schedule = (ms = AUTO) => {
+      if (still || n < 2) return;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(tick, Math.max(ms, 400));
+    };
+    const touched = () => {
+      quietUntil = Date.now() + 9000;
+    };
+    if (!still && n > 1 && playBtn) {
+      playBtn.hidden = false;
+      playBtn.addEventListener('click', () => {
+        paused = !paused;
+        playBtn.setAttribute('aria-pressed', String(paused));
+        playBtn.setAttribute(
+          'aria-label',
+          paused ? 'Play the trophy carousel' : 'Pause the trophy carousel',
+        );
+        if (!paused) schedule();
+      });
+      root.addEventListener(
+        'pointerenter',
+        (e) => (hovering = e.pointerType === 'mouse'),
+      );
+      root.addEventListener('pointerleave', () => (hovering = false));
+      new IntersectionObserver(([e]) => {
+        inView = !!e?.isIntersecting;
+        if (inView) schedule();
+      }).observe(stage);
+    }
+
+    const go = (next: number) => {
+      touched();
+      show(next);
+    };
     items.forEach((item, i) =>
-      item.addEventListener('click', () => i !== active && show(i)),
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (i !== active) go(i);
+      }),
     );
+    /* The whole stage is a target: anywhere left of the front trophy steps back, anywhere
+       right of it steps on, so the small trophies on the arc need no precise aim. */
+    stage.addEventListener('click', (e) => {
+      if (n < 2) return;
+      const r = stage.getBoundingClientRect();
+      const front = items[active]?.getBoundingClientRect();
+      const x = (e as MouseEvent).clientX;
+      if (front && x >= front.left && x <= front.right) return;
+      go(active + (x < r.left + r.width / 2 ? -1 : 1));
+    });
     root
       .querySelectorAll<HTMLButtonElement>('[data-tc-step]')
       .forEach((b) =>
         b.addEventListener('click', () =>
-          show(active + Number(b.dataset.tcStep)),
+          go(active + Number(b.dataset.tcStep)),
         ),
       );
     root.querySelector('[data-tc-arc]')?.addEventListener('keydown', (e) => {
@@ -258,25 +436,109 @@ const pad = (i: number) => String(i).padStart(2, '0');
       else if (key === 'End') show(n - 1, true);
       else if (step) show(active + step, true);
       else return;
+      touched();
       e.preventDefault();
     });
 
-    /* Swipe on touch screens: a clear sideways drag moves one trophy. */
+    /* Swipe and drag: the arc follows the finger (or a mouse drag) and lets go into the
+       next trophy once the drag is clear. Works on phones, tablets and desktop. */
+    const arc = root.querySelector<HTMLElement>('[data-tc-arc]');
     let startX = 0;
     let startY = 0;
+    let dragging = false;
+    let moved = false;
+    let pid = -1;
+    const endDrag = () => {
+      pid = -1;
+      dragging = false;
+      root.classList.remove('is-dragging');
+      arc?.style.removeProperty('--drag');
+    };
     stage.addEventListener('pointerdown', (e) => {
+      if (e.button > 0 || n < 2) return;
       startX = e.clientX;
       startY = e.clientY;
+      moved = false;
+      dragging = false;
+      pid = e.pointerId;
+      touched();
     });
-    stage.addEventListener('pointerup', (e) => {
+    stage.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== pid) return;
       const dx = e.clientX - startX;
-      if (
-        e.pointerType !== 'mouse' &&
-        Math.abs(dx) > 40 &&
-        Math.abs(dx) > Math.abs(e.clientY - startY)
-      )
-        show(active + (dx < 0 ? 1 : -1));
+      const dy = e.clientY - startY;
+      if (!dragging) {
+        if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy)) return;
+        dragging = true;
+        stage.setPointerCapture?.(e.pointerId);
+        root.classList.add('is-dragging');
+        items[active]?.classList.remove('is-pressed');
+      }
+      arc?.style.setProperty('--drag', `${(dx * 0.6).toFixed(1)}px`);
     });
+    const release = (e: PointerEvent) => {
+      if (e.pointerId !== pid) return;
+      const dx = e.clientX - startX;
+      const was = dragging;
+      endDrag();
+      if (was && Math.abs(dx) > 40) {
+        moved = true;
+        go(active + (dx < 0 ? 1 : -1));
+      } else if (was) moved = true;
+    };
+    stage.addEventListener('pointerup', release);
+    stage.addEventListener('pointercancel', (e) => {
+      if (e.pointerId === pid) endDrag();
+    });
+    /* A finished drag is not also a click on whatever was under the finger. */
+    stage.addEventListener(
+      'click',
+      (e) => {
+        if (moved) {
+          e.stopPropagation();
+          e.preventDefault();
+          moved = false;
+        }
+      },
+      true,
+    );
+
+    /* Tapping or clicking the front trophy gives it a quick press toward the touch point
+       and a springy release with a flash of light, on phones and with a mouse alike. */
+    if (!still) {
+      const press = (item: HTMLElement, e: PointerEvent) => {
+        const r = item.getBoundingClientRect();
+        const x = Math.max(
+          -1,
+          Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)),
+        );
+        const y = Math.max(
+          -1,
+          Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)),
+        );
+        item.style.setProperty('--px', `${(-y * 14).toFixed(1)}deg`);
+        item.style.setProperty('--py', `${(x * 18).toFixed(1)}deg`);
+        item.style.setProperty('--mx', `${(50 + x * 45).toFixed(1)}%`);
+        item.style.setProperty('--my', `${(50 + y * 45).toFixed(1)}%`);
+        item.classList.remove('is-popped');
+        item.classList.add('is-pressed');
+      };
+      const release = () => {
+        const item = items[active];
+        if (!item?.classList.contains('is-pressed')) return;
+        item.classList.remove('is-pressed');
+        void item.offsetWidth;
+        item.classList.add('is-popped');
+        window.setTimeout(() => item.classList.remove('is-popped'), 520);
+      };
+      items.forEach((item, i) =>
+        item.addEventListener('pointerdown', (e) => {
+          if (i === active) press(item, e);
+        }),
+      );
+      window.addEventListener('pointerup', release);
+      window.addEventListener('pointercancel', release);
+    }
 
     /* The front trophy turns toward the pointer and its foil follows it. */
     if (!still && matchMedia('(hover: hover) and (pointer: fine)').matches) {

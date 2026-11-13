@@ -100,7 +100,7 @@ begin
   if not public.teammate_public_approved(actor, p_trophy->>'game') then
     return public.order_error(400, 'Add trophies for games you are approved for.');
   end if;
-  if (select pg_catalog.count(*) from public.teammate_trophies where user_id = actor and status <> 'rejected') >= 24 then
+  if (select pg_catalog.count(*) from public.teammate_trophies where user_id = actor and status <> 'rejected') >= 60 then
     return public.order_error(409, 'Your trophy case is full. Remove one first.');
   end if;
   if (select pg_catalog.count(*) from public.teammate_trophies where user_id = actor and status = 'pending') >= 6 then
@@ -191,7 +191,7 @@ begin
   return coalesce((select pg_catalog.jsonb_agg(public.teammate_trophy_json(t, false)
       order by public.teammate_trophy_order(t.rarity) desc, t.reviewed_at desc, t.id)
     from (select * from public.teammate_trophies t where t.user_id = p.user_id and t.status = 'approved'
-      order by public.teammate_trophy_order(t.rarity) desc, t.reviewed_at desc, t.id limit 24) t), '[]'::jsonb);
+      order by public.teammate_trophy_order(t.rarity) desc, t.reviewed_at desc, t.id limit 60) t), '[]'::jsonb);
 end $$;
 
 -- Storage cleanup: proof files join the queue when their trophy row goes (withdrawn, account

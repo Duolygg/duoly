@@ -5,10 +5,11 @@
  * strong the shine.
  */
 .tc {
-  --tc-size: 268px;
-  --tc-step: 132px;
-  --tc-stage: 370px;
-  --tc-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --tc-size: 208px;
+  --tc-step: 108px;
+  --tc-stage: 296px;
+  --tc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --tc-move: 0.42s;
 }
 .tc-layout {
   display: grid;
@@ -58,6 +59,21 @@
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
+  translate: var(--drag, 0px) 0;
+  transition: translate 0.32s var(--tc-ease);
+}
+.tc.is-dragging .tc-arc {
+  transition: none;
+}
+.tc.is-dragging .tc-stage {
+  cursor: grabbing;
+}
+.tc-stage {
+  user-select: none;
+  -webkit-user-select: none;
+}
+.tc-stage img {
+  -webkit-user-drag: none;
 }
 
 /* ---------- one trophy ---------- */
@@ -85,16 +101,38 @@
     scale(var(--s));
   transform-style: preserve-3d;
   transition:
-    transform 0.7s var(--tc-ease),
-    opacity 0.7s var(--tc-ease),
-    filter 0.7s var(--tc-ease),
-    translate 0.9s var(--tc-ease);
+    transform var(--tc-move) var(--tc-ease),
+    opacity var(--tc-move) var(--tc-ease),
+    filter var(--tc-move) var(--tc-ease),
+    translate 0.5s var(--tc-ease),
+    visibility var(--tc-move);
   -webkit-tap-highlight-color: transparent;
 }
 .tc-item[data-a='0'] {
   z-index: 5;
   cursor: default;
   transform: none;
+}
+/* Leaving the front: stays above the incoming trophy and fades out of the way. */
+.tc-item.is-leaving {
+  z-index: 6;
+  --o: 0;
+  transition:
+    transform var(--tc-move) var(--tc-ease),
+    opacity 0.16s linear,
+    filter var(--tc-move) var(--tc-ease);
+}
+/* A bigger target than the shrunken trophy itself. */
+.tc-item:not([data-a='0'])::before {
+  content: '';
+  position: absolute;
+  inset: -22%;
+}
+.tc-stage {
+  cursor: pointer;
+}
+.tc-stage .tc-item[data-a='0'] {
+  cursor: default;
 }
 .tc-item[data-a='1'] {
   --xm: 1.22;
@@ -116,6 +154,7 @@
   --s: 0.26;
   --z: -230px;
   --o: 0;
+  visibility: hidden;
   pointer-events: none;
   z-index: 2;
   filter: saturate(0.6);
@@ -125,6 +164,7 @@
   --s: 0.2;
   --z: -280px;
   --o: 0;
+  visibility: hidden;
   z-index: 1;
   pointer-events: none;
 }
@@ -168,7 +208,7 @@
   background: var(--art) center / 62% no-repeat;
   filter: blur(42px) saturate(1.8);
   opacity: calc(var(--light) * 0.55);
-  transition: opacity 0.7s var(--tc-ease);
+  transition: opacity 0.35s var(--tc-ease);
   pointer-events: none;
 }
 .tc-item[data-a='0'] .tc-glow {
@@ -203,7 +243,7 @@
     transparent 72%
   );
   opacity: 0;
-  transition: opacity 0.9s var(--tc-ease);
+  transition: opacity 0.4s var(--tc-ease);
   animation: tc-breathe 5s ease-in-out infinite;
   pointer-events: none;
 }
@@ -225,7 +265,7 @@
   inset: 0;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.6s;
+  transition: opacity 0.3s;
   filter: drop-shadow(0 0 6px rgba(255, 236, 190, 0.9));
 }
 .tc-item[data-a='0'] .tc-sparkles {
@@ -297,7 +337,7 @@
   inset: 0;
   display: block;
   transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transition: transform 0.6s var(--tc-ease);
+  transition: transform 0.35s var(--tc-ease);
 }
 .tc.is-tilting .tc-item[data-a='0'] .tc-body {
   transition-duration: 0.12s;
@@ -342,7 +382,7 @@
   mix-blend-mode: overlay;
   opacity: 0;
   transition:
-    opacity 0.7s var(--tc-ease),
+    opacity 0.35s var(--tc-ease),
     background-position 0.5s var(--tc-ease);
 }
 .tc-item[data-a='0'] .tc-foil {
@@ -384,17 +424,17 @@
 .tc-details {
   display: grid;
   align-content: center;
-  min-height: 300px;
+  min-height: 240px;
 }
 .tc-detail {
-  animation: tc-in 0.6s var(--tc-ease);
+  animation: tc-in 0.32s var(--tc-ease);
 }
 .tc-detail[hidden] {
   display: none;
 }
 .tc-eyebrow {
   margin: 0 !important;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -421,7 +461,7 @@
 .tc-name {
   margin: 10px 0 0 !important;
   font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: clamp(52px, 6.2vw, 92px);
+  font-size: clamp(40px, 4.6vw, 64px);
   font-weight: 750;
   line-height: 0.95;
   letter-spacing: -0.045em;
@@ -468,7 +508,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-top: 40px;
+  margin-top: 24px;
 }
 .tc-count {
   margin: 0 !important;
@@ -493,13 +533,13 @@
   inset: 0 auto 0 0;
   width: calc(var(--p) * 100%);
   background: var(--accent);
-  transition: width 0.6s var(--tc-ease);
+  transition: width 0.4s var(--tc-ease);
 }
 .tc-step {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 1px solid rgba(214, 187, 255, 0.22);
   background: rgba(255, 255, 255, 0.02);
@@ -516,10 +556,10 @@
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 .tc-note {
-  margin: 20px 0 0 !important;
+  margin: 14px 0 0 !important;
   max-width: 70ch;
   color: #8f84aa;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -688,23 +728,26 @@
     gap: 24px;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .tc {
-    --tc-size: 184px;
-    --tc-step: 74px;
-    --tc-stage: 248px;
+    --tc-size: 150px;
+    --tc-step: 62px;
+    --tc-stage: 200px;
   }
   .tc-layout {
     grid-template-columns: 1fr;
     gap: 8px;
   }
   .tc-stage {
-    margin-inline: -20px;
     overflow: hidden;
+  }
+  .tp-page:has(.tc) .tp-tabs {
+    gap: 16px;
   }
   .tc-item[data-a='2'],
   .tc-item[data-a='3'] {
     --o: 0;
+    visibility: hidden;
     pointer-events: none;
   }
   .tc-details {
@@ -743,4 +786,350 @@
   .tc-dust {
     display: none !important;
   }
+}
+
+/* ---------- the full list ---------- */
+.tc-play {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-left: auto;
+  border-radius: 50%;
+  border: 1px solid rgba(214, 187, 255, 0.14);
+  background: none;
+  color: #b9b0d6;
+  cursor: pointer;
+}
+.tc-play[hidden] {
+  display: none;
+}
+.tc-play:hover {
+  color: #fff;
+  border-color: rgba(214, 187, 255, 0.4);
+}
+.tc-play path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tc-play .tc-play-go,
+.tc-play[aria-pressed='true'] .tc-play-pause {
+  display: none;
+}
+.tc-play[aria-pressed='true'] .tc-play-go {
+  display: inline;
+}
+.tc-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  align-items: start;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(214, 187, 255, 0.1);
+}
+.tc-list-head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.tc-list-head h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #b9b0d6;
+}
+.tc-list-head span {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.tc-shelf {
+  margin: 0;
+  padding: 14px 16px 8px;
+  border: 1px solid rgba(214, 187, 255, 0.1);
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      120% 140% at 0% 0%,
+      rgba(214, 187, 255, 0.06),
+      transparent 55%
+    ),
+    #120b22;
+}
+.tc-shelf-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.tc-shelf-head h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+.tc-shelf-head span {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.tc-tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 2px;
+  padding: 0;
+  list-style: none;
+}
+.tc-tally li {
+  --glow: rgba(214, 187, 255, 0.16);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 11px 3px 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 187, 255, 0.12);
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow: inset 0 0 18px var(--glow);
+}
+.tc-tally li[data-rarity='mythic'] {
+  --glow: rgba(214, 187, 255, 0.34);
+  border-color: rgba(214, 187, 255, 0.4);
+}
+.tc-tally li[data-rarity='legendary'] {
+  --glow: rgba(255, 210, 122, 0.26);
+  border-color: rgba(255, 210, 122, 0.34);
+}
+.tc-tally li[data-rarity='epic'] {
+  --glow: rgba(155, 107, 255, 0.24);
+}
+.tc-tally img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+.tc-tally-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #efe7fb;
+}
+.tc-tally-count {
+  font-variant-numeric: tabular-nums;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 750;
+  color: #fff;
+}
+.tl-rows {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.tl-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid rgba(214, 187, 255, 0.07);
+}
+.tl-rows > .tl-row:first-child {
+  border-top: 0;
+}
+.tl-row img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.tl-row-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.tl-row-text b {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+.tl-row[data-rarity='mythic'] .tl-row-text b {
+  background: linear-gradient(90deg, #ffd27a, #f3c6ff 55%, #d6bbff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  justify-self: start;
+}
+.tl-row[data-rarity='legendary'] .tl-row-text b {
+  color: #ffd27a;
+}
+.tl-row-text span {
+  font-size: 13px;
+  color: var(--tp-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tl-row-ok,
+.tl-row-proof {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7cf0c1;
+  white-space: nowrap;
+}
+.tl-row-proof {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 187, 255, 0.28);
+  color: #d6bbff;
+  text-decoration: none;
+}
+.tl-row-proof:hover {
+  border-color: #d6bbff;
+  background: rgba(214, 187, 255, 0.08);
+}
+.tc-more summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #d6bbff;
+  cursor: pointer;
+}
+@media (max-width: 900px) {
+  .tc-shelf {
+    padding: 18px 16px 14px;
+  }
+  .tl-row {
+    gap: 12px;
+  }
+  .tl-row-text span {
+    white-space: normal;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tc-item.is-leaving {
+    transition: none;
+  }
+}
+
+/* ---------- tap and click on the front trophy ---------- */
+.tc-item[data-a='0'] .tc-float {
+  transition: scale 0.18s var(--tc-ease);
+}
+.tc-item.is-pressed .tc-float {
+  scale: 0.94;
+}
+.tc-item.is-pressed .tc-body {
+  transform: rotateX(var(--px, 0deg)) rotateY(var(--py, 0deg));
+  transition-duration: 0.12s;
+}
+.tc-item.is-pressed .tc-foil {
+  opacity: 0.9;
+}
+.tc-item.is-popped .tc-float {
+  animation:
+    tc-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    tc-float 6s 0.5s ease-in-out infinite;
+}
+.tc-item.is-popped .tc-body::after {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 240, 210, 0.18) 30%,
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: tc-flash 0.5s ease-out forwards;
+}
+@keyframes tc-pop {
+  0% {
+    scale: 0.94;
+  }
+  55% {
+    scale: 1.05;
+  }
+  100% {
+    scale: 1;
+  }
+}
+@keyframes tc-flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tc-item.is-pressed .tc-float,
+  .tc-item.is-popped .tc-float {
+    scale: none;
+    animation: none;
+  }
+}
+
+.tc-progress {
+  min-width: 0;
+}
+@media (max-width: 900px) {
+  .tc-controls {
+    gap: 8px;
+  }
+  .tc-step,
+  .tc-play {
+    width: 44px;
+    height: 44px;
+    flex: none;
+  }
+}
+
+/* Profile list styles indent list items; the trophy list sets its own. */
+.tc .tl-row,
+.tc .tc-tally li {
+  margin: 0;
+}
+
+/* Each game's list starts folded; the tally above already tells the story. */
+.tc-more > summary {
+  list-style: none;
+  gap: 6px;
+}
+.tc-more > summary::-webkit-details-marker {
+  display: none;
+}
+.tc-more > summary::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-left: 4px;
+  border-right: 1.6px solid currentColor;
+  border-bottom: 1.6px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.2s var(--tc-ease);
+}
+.tc-more[open] > summary::after {
+  transform: translateY(2px) rotate(-135deg);
+}
+.tc-more-hide,
+.tc-more[open] .tc-more-show {
+  display: none;
+}
+.tc-more[open] .tc-more-hide {
+  display: inline;
 }

@@ -30,6 +30,15 @@ export interface TrophyView {
   /** "Nov 2026" */
   verified: string;
   proofUrl: string | null;
+  /** Grouping for the full list under the case. */
+  game: string;
+  gameName: string;
+  kind: PublicTrophy['kind'];
+  /** Same key for every season of one tier, e.g. "rank:gold". */
+  group: string;
+  /** Tier without division, e.g. "Gold". Empty for non-rank trophies. */
+  tierName: string;
+  season: string;
 }
 
 const MONTHS = [
@@ -122,10 +131,31 @@ export function trophyCrest(
  * One trophy as the case shows it. Browser safe: the settings preview and the staff queue draw the
  * same card the public page does. `game` is the game's display name.
  */
-export function trophyView(
-  t: Omit<PublicTrophy, 'verifiedAt'> & { verifiedAt: string | null },
-  game: string,
-): TrophyView {
+type Body = Omit<
+  TrophyView,
+  'game' | 'gameName' | 'kind' | 'group' | 'tierName' | 'season'
+>;
+type AnyTrophy = Omit<PublicTrophy, 'verifiedAt'> & {
+  verifiedAt: string | null;
+};
+
+export function trophyView(t: AnyTrophy, game: string): TrophyView {
+  const tierName =
+    t.kind === 'rank' && t.ladder && t.tier
+      ? (trophyTier(t.game, t.ladder, t.tier)?.name ?? t.tier)
+      : '';
+  return {
+    ...trophyBody(t, game),
+    game: t.game,
+    gameName: game,
+    kind: t.kind,
+    group: t.kind === 'rank' ? `${t.ladder}:${t.tier}` : `${t.kind}:${t.id}`,
+    tierName,
+    season: t.season ?? '',
+  };
+}
+
+function trophyBody(t: AnyTrophy, game: string): Body {
   const info = trophyGame(t.game);
   const base = {
     id: t.id,
@@ -196,6 +226,79 @@ export function trophyView(
     name: t.title ?? 'Title',
     meta: join([t.achievedOn ? month(t.achievedOn) : null]),
   };
+}
+
+/** One tier held across seasons, for the tally row: "Gold ×5". */
+export interface TrophyTally {
+  group: string;
+  name: string;
+  art: string;
+  crest: boolean;
+  rarity: Rarity;
+  count: number;
+}
+export interface TrophyShelf {
+  game: string;
+  gameName: string;
+  tally: TrophyTally[];
+  items: TrophyView[];
+}
+
+/**
+ * The full list under the case: one shelf per game, rarest game first. Ranks held in several
+ * seasons are tallied by tier, so a long League history reads as "Gold ×5, Platinum ×3".
+ */
+export function trophyShelves(views: TrophyView[]): TrophyShelf[] {
+  const shelves = new Map<string, TrophyShelf>();
+  for (const v of views) {
+    let shelf = shelves.get(v.game);
+    if (!shelf) {
+      shelf = { game: v.game, gameName: v.gameName, tally: [], items: [] };
+      shelves.set(v.game, shelf);
+    }
+    shelf.items.push(v);
+    if (v.kind !== 'rank') continue;
+    const hit = shelf.tally.find((x) => x.group === v.group);
+    if (hit) {
+      hit.count += 1;
+      if (rarityRank(v.rarity) > rarityRank(hit.rarity)) hit.rarity = v.rarity;
+    } else
+      shelf.tally.push({
+        group: v.group,
+        name: v.tierName,
+        art: v.art,
+        crest: v.crest,
+        rarity: v.rarity,
+        count: 1,
+      });
+  }
+  for (const s of shelves.values()) {
+    s.tally.sort((a, b) => rarityRank(b.rarity) - rarityRank(a.rarity));
+    /* Rarest first, then the newest season, so a tier's history reads 2022, 2021, 2020. */
+    s.items.sort(
+      (a, b) =>
+        rarityRank(b.rarity) - rarityRank(a.rarity) ||
+        b.season.localeCompare(a.season, 'en', { numeric: true }),
+    );
+  }
+  return [...shelves.values()];
+}
+
+/**
+ * The stage shows highlights: the best trophy of each tier or result, so ten seasons of Gold
+ * stand there once and the full history lives in the list underneath.
+ */
+export function trophyHighlights(views: TrophyView[], max = 9): TrophyView[] {
+  const seen = new Set<string>();
+  const out: TrophyView[] = [];
+  for (const v of views) {
+    const key = `${v.game}|${v.group}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(v);
+    if (out.length === max) break;
+  }
+  return out;
 }
 
 /** Display order: rarest first, then the most recently verified. */

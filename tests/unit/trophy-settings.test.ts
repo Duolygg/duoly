@@ -39,7 +39,7 @@ describe('trophy settings helpers', () => {
     expect(game?.ladders[0]).toBeDefined();
     expect(emptyDraft('val')).toMatchObject({
       kind: 'rank',
-      ladder: game?.ladders[0].id,
+      ladder: game?.ladders[0]?.id,
       moment: 'peak',
     });
   });
@@ -49,7 +49,7 @@ describe('trophy settings helpers', () => {
   });
 
   it('converts a Valorant rank draft into a valid numeric submission', () => {
-    const submission = toSubmission({
+    const submission: Record<string, unknown> = toSubmission({
       ...emptyDraft('val'),
       tier: 'radiant',
       season: 'Episode 10 Act 3',
@@ -62,7 +62,7 @@ describe('trophy settings helpers', () => {
   });
 
   it('converts a tournament draft without leaking rank fields', () => {
-    const submission = toSubmission({
+    const submission: Record<string, unknown> = toSubmission({
       ...emptyDraft('lol'),
       kind: 'tournament',
       tier: 'challenger',
