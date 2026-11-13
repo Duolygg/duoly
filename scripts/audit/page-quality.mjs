@@ -28,6 +28,9 @@ import { mkdir, writeFile } from 'node:fs/promises';
 
 const base = process.env.PQ_BASE || 'http://127.0.0.1:4391';
 const out = process.env.PQ_OUT || '.vercel/page-quality';
+/** The live site, so a link to it counts as internal wherever the preview runs. */
+const SITE_ORIGIN = 'https://duoly.gg';
+const SITE_HOST = new URL(SITE_ORIGIN).host;
 
 /** Google truncates around these widths; the bounds are the usual advice. */
 const TITLE_MIN = 30;
@@ -387,7 +390,7 @@ for (const path of paths) {
   const internalTarget = (link) => {
     if (/^(mailto|tel|https?):/.test(link.href)) {
       const url = URL.parse(link.href, base + path);
-      if (!url || !['https://duoly.gg', base].includes(url.origin)) return [];
+      if (!url || ![SITE_ORIGIN, base].includes(url.origin)) return [];
       return [normalizePath(url.pathname) + url.hash];
     }
     if (link.href.startsWith('#')) return [normalizePath(path) + link.href];
@@ -408,8 +411,11 @@ for (const path of paths) {
     ...new Set(
       data.links
         .filter((link) => /^https?:/.test(link.href))
-        .map((link) => new URL(link.href).origin + new URL(link.href).pathname)
-        .filter((href) => !href.startsWith('https://duoly.gg')),
+        .map((link) => new URL(link.href))
+        // The site's own host, compared as a host rather than as a prefix:
+        // "https://duoly.gg.example.com" starts with the same characters.
+        .filter((url) => url.host !== SITE_HOST)
+        .map((url) => url.origin + url.pathname),
     ),
   ];
   pages[path] = data;
@@ -566,7 +572,12 @@ await writeFile(
   ),
 );
 
-const cell = (value) => String(value ?? '').replace(/\|/g, '\\|');
+// A table cell: backslashes first, so an escaped pipe stays escaped rather than
+// turning its own backslash into a second escape.
+const cell = (value) =>
+  String(value ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\|/g, '\\|');
 const table = [
   '| Page | Status | Title | Desc | H1 | Canon | Robots | JSON-LD | Words | Grade | In | Out | Q? | Findings |',
   '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
