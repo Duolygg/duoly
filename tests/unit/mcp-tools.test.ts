@@ -310,7 +310,16 @@ describe('MCP tools', () => {
         const link = new URL(String(result.structuredContent.bookUrl));
         expect(
           [...link.searchParams.keys()].every((key) =>
-            ['game', 'service', 'agent', 'rank', 'region', 'qty'].includes(key),
+            [
+              'game',
+              'service',
+              'agent',
+              'utm_source',
+              'utm_medium',
+              'rank',
+              'region',
+              'qty',
+            ].includes(key),
           ),
         ).toBe(true);
         expect(link.hash).toBe('#modes-h');
@@ -506,7 +515,7 @@ describe('MCP tools', () => {
       { platform: 'claude' },
     );
     expect(result.structuredContent.bookUrl).toBe(
-      'https://duoly.gg/?game=val&service=vod&agent=claude#modes-h',
+      'https://duoly.gg/?game=val&service=vod&agent=claude&utm_source=claude&utm_medium=ai_agent#modes-h',
     );
     expect(result.structuredContent.url).toBe(
       'https://duoly.gg/games/valorant/coaching',

@@ -167,6 +167,16 @@ describe('homepage booking links', () => {
     expect(url.hash).toBe('#modes-h');
   });
 
+  it('keeps the UTM attribution of agent and Sparky links after prefilling', () => {
+    const { home, url } = open(
+      '?game=val&service=duo1&agent=sparky&utm_source=sparky&utm_medium=support_chat&rank=Platinum&region=EU&qty=5#modes-h',
+    );
+    expect(home.state).toMatchObject({ game: 'val', mode: 'duo1', qty: 5 });
+    expect(url.search).toBe(
+      '?agent=sparky&utm_source=sparky&utm_medium=support_chat',
+    );
+  });
+
   it.each(['', '0', '-1', '1.5', '3oops', '1e2', 'NaN', 'Infinity'])(
     'ignores invalid quantity %j and invalid catalog tokens',
     (qty) => {

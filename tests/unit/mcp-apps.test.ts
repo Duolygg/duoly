@@ -200,6 +200,8 @@ it('preserves chosen selections in booking links', async () => {
     game: 'val',
     service: 'duo2',
     agent: 'claude',
+    utm_source: 'claude',
+    utm_medium: 'ai_agent',
     rank: 'Gold',
     region: 'EU',
     qty: '3',

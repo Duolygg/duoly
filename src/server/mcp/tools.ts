@@ -351,6 +351,13 @@ export function bookingLink(
   url.searchParams.set('game', gameId);
   if (serviceId) url.searchParams.set('service', serviceId);
   url.searchParams.set('agent', platform);
+  // Attribution: analytics already keeps UTM parameters (with consent), so bookings that start
+  // in an AI assistant or in Sparky show up by source next to checkout and payment events.
+  url.searchParams.set('utm_source', platform);
+  url.searchParams.set(
+    'utm_medium',
+    platform === 'sparky' ? 'support_chat' : 'ai_agent',
+  );
   if (selection.rank) url.searchParams.set('rank', selection.rank);
   if (selection.region ?? selection.server)
     url.searchParams.set(
