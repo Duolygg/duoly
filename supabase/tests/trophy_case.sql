@@ -140,6 +140,17 @@ select pg_temp.ok(not public.storage_cleanup_in_use('trophy-proofs', '9d000000-0
   'a withdrawn proof is unused');
 select pg_temp.ok(public.storage_cleanup_in_use('trophy-proofs', '9d000000-0000-4000-8000-000000000001/0123456789abcdef.webp'),
   'a live proof is in use');
+-- Same cleanup an operator runs before deleting an account: rows that do not cascade.
+do $$ declare c record; begin
+  for c in select conrelid::regclass t, a.attname col from pg_catalog.pg_constraint k
+    join pg_catalog.pg_attribute a on a.attrelid = k.conrelid and a.attnum = k.conkey[1]
+    where k.contype = 'f' and k.confdeltype <> 'c'
+      and k.confrelid in ('public.profiles'::regclass, 'auth.users'::regclass)
+      and pg_catalog.cardinality(k.conkey) = 1
+  loop
+    execute pg_catalog.format('delete from %s where %I = %L', c.t, c.col, '9d000000-0000-4000-8000-000000000001');
+  end loop;
+end $$;
 delete from auth.users where id = '9d000000-0000-4000-8000-000000000001';
 select pg_temp.ok(exists (select 1 from public.storage_cleanup where bucket = 'trophy-proofs'
   and path = '9d000000-0000-4000-8000-000000000001/0123456789abcdef.webp'), 'a deleted account queues its proofs');
