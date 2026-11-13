@@ -33,7 +33,14 @@ export const TOOL_NAMES = [
 ] as const;
 export type ToolName = (typeof TOOL_NAMES)[number];
 export type Platform =
-  'claude' | 'chatgpt' | 'gemini' | 'perplexity' | 'mistral' | 'other';
+  | 'claude'
+  | 'chatgpt'
+  | 'gemini'
+  | 'perplexity'
+  | 'mistral'
+  | 'other'
+  /** Duoly's own support chat (offer_booking); never derived from a client name. */
+  | 'sparky';
 export function platformOf(value: string): Platform {
   const name = value.toLowerCase().slice(0, 256);
   if (/claude|anthropic/.test(name)) return 'claude';

@@ -31,6 +31,7 @@ import {
   type ConversationRow,
 } from './store';
 import { dailyAiLimit, perUserDailyAiLimit } from './limits';
+import { readTicket } from './booking-ticket';
 
 const validGuestToken = (value: string | undefined) =>
   value && /^[A-Za-z0-9_-]{32}$/.test(value) ? value : null;
@@ -65,6 +66,24 @@ export async function identify(
     ? ''
     : guestTokenHash(guestCookie(context, secure));
   return { account, service, person, guestHash };
+}
+
+/** Tells the model a ticket was already shown, so it does not offer the same one twice. */
+function withTicketNote(m: {
+  body: string;
+  metadata?: Record<string, unknown> | null;
+}) {
+  const ticket = readTicket(m.metadata?.booking);
+  if (!ticket) return m.body;
+  const what = [
+    ticket.game.name,
+    ticket.service.name,
+    ticket.rank,
+    ticket.region,
+  ]
+    .filter(Boolean)
+    .join(', ');
+  return `${m.body} [Booking ticket shown: ${what}]`;
 }
 
 async function payload(
@@ -283,7 +302,8 @@ export const postSupport: APIRoute = async (context) => {
             // The new message is already stored; send only the turns before it.
             history: (await messages(service, conversation.id))
               .slice(0, -1)
-              .filter((m) => m.sender !== 'system'),
+              .filter((m) => m.sender !== 'system')
+              .map((m) => ({ sender: m.sender, body: withTicketNote(m) })),
             apiKey:
               process.env.OPENAI_API_KEY ?? import.meta.env?.OPENAI_API_KEY,
             // Bound to the session user id, never to anything the model sends.
@@ -303,7 +323,7 @@ export const postSupport: APIRoute = async (context) => {
           })();
       // On a handoff, handoff() posts the one confirmation; the bot's own
       // "I'll get someone" reply would only repeat it.
-      if (answer.reply && !answer.handoff)
+      if (answer.reply && !answer.handoff) {
         await addMessage(
           service,
           conversation.id,
@@ -311,6 +331,21 @@ export const postSupport: APIRoute = async (context) => {
           answer.reply,
           answerMetadata(answer),
         );
+        if (
+          'booking' in answer &&
+          answer.booking &&
+          person.accountRole !== 'admin'
+        )
+          trackRequest(
+            context,
+            person.userId ?? null,
+            'support_booking_offered',
+            {
+              game: answer.booking.game.id,
+              service: answer.booking.service.id,
+            },
+          );
+      }
       if (answer.handoff)
         conversation = await handoff(service, person, conversation, text);
       else

@@ -94,6 +94,7 @@ export const EVENT_CATALOGUE = {
   // 7.7 support
   support_opened: { surface: SURFACE },
   support_message_sent: { turn_n: 'int' },
+  support_booking_clicked: { game: 'slug', service: 'slug', quantity: 'int' },
 } as const satisfies Record<string, Record<string, Kind>>;
 
 const CENTS = 'int' as const;
@@ -190,6 +191,7 @@ export const SERVER_EVENT_CATALOGUE = {
   streaming_availability_saved: {},
   payout_setup_completed: {},
   support_handoff_requested: {},
+  support_booking_offered: { game: 'slug', service: 'slug' },
   // 7.3 marketplace facts, enqueued by database triggers (analytics_outbox) and sent by the
   // drain. Strings are slugs or enums only; amounts are integer minor units.
   ...OUTBOX_EVENT_CATALOGUE,

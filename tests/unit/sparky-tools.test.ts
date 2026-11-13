@@ -253,10 +253,15 @@ const ctxFor = (
 const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
 
 describe('Sparky tool scope', () => {
-  it('gives guests only catalog_prices and faq_search', () => {
-    expect(toolNamesFor(guest)).toEqual(['catalog_prices', 'faq_search']);
+  it('gives guests catalog_prices, offer_booking and faq_search', () => {
+    expect(toolNamesFor(guest)).toEqual([
+      'catalog_prices',
+      'offer_booking',
+      'faq_search',
+    ]);
     expect(toolDefinitions(guest).map((t) => t.name)).toEqual([
       'catalog_prices',
+      'offer_booking',
       'faq_search',
     ]);
     expect(toolNamesFor(mina)).toEqual([
@@ -264,9 +269,12 @@ describe('Sparky tool scope', () => {
       'order_detail',
       'payment_status',
       'catalog_prices',
+      'offer_booking',
       'faq_search',
     ]);
     expect(toolNamesFor(kai)).toContain('teammate_desk_status');
+    // Teammates are not shoppers: no booking ticket for them.
+    expect(toolNamesFor(kai)).not.toContain('offer_booking');
     expect(toolNamesFor(mina)).not.toContain('teammate_desk_status');
   });
 

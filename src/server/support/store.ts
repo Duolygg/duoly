@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { createHash, randomBytes } from 'node:crypto';
 import type { SupportPerson, SupportRole } from './sparky';
+import { readTicket } from './booking-ticket';
 
 let cached: { key: string; client: SupabaseClient } | null = null;
 const env = (name: string) => {
@@ -49,6 +50,7 @@ type MessageRow = {
   admin_name: string;
   admin_image: string;
   created_at: string;
+  metadata?: Record<string, unknown> | null;
 };
 
 export async function currentConversation(
@@ -163,7 +165,7 @@ export async function messages(
 ): Promise<MessageRow[]> {
   const { data, error } = await service
     .from('support_messages')
-    .select('id,sender,body,admin_name,admin_image,created_at')
+    .select('id,sender,body,admin_name,admin_image,created_at,metadata')
     .eq('conversation_id', conversationId)
     .order('created_at', { ascending: true });
   if (error) throw error;
@@ -221,6 +223,9 @@ export async function conversationView(
         message.sender === 'admin'
           ? { name: message.admin_name, image: message.admin_image }
           : null,
+      // Only a re-validated ticket leaves the server; tool logs and other metadata stay here.
+      booking:
+        message.sender === 'bot' ? readTicket(message.metadata?.booking) : null,
     })),
   };
 }
