@@ -122,8 +122,35 @@ const VOICE_PASS =
  */
 const AUDIT_PASS =
   'Page quality audit fix pass, 12 November 2026: de-duplicated bundle ladder; score pending owner decision.';
+/**
+ * The audit's second fix pass, 13 November 2026.
+ *
+ * The audit counted the sentences a page prints twice: the lesson price stated
+ * in a coaching lead and again in the answer below it, a format description
+ * written out twice, and the bundle ladder printed beside the price grid and
+ * again where the service is explained. Each one is now written once, with the
+ * same figures from the same helpers in the second place.
+ *
+ * Six pages pay between 0.1 and 0.4 of a point for it and land at 79.6 to 79.9
+ * against a floor of 80. They were at or barely over 80 before, and what the
+ * scorer is paying for is the repetition itself: a second block carrying the
+ * same price sentence scores the price twice. Writing it back would restore the
+ * audit finding on exactly the pages the audit named, and padding the blocks to
+ * recover a tenth of a point is the score-only insertion the scorer's own notes
+ * warn against. So the scores are pinned here where they are visible, and the
+ * owner decides the same question as the entries above: keep the copy a reader
+ * meets once, or restore the repeated sentence on all six.
+ */
+const AUDIT_PASS_2 =
+  'Page quality audit fix pass, 13 November 2026: one sentence stated once; score pending owner decision.';
 const BELOW_FLOOR = {
   '/games/pokemon-unite/teammate': { holds: 79, reason: AUDIT_PASS },
+  '/games/marvel-rivals': { holds: 79, reason: AUDIT_PASS_2 },
+  '/games/pokemon-unite': { holds: 79, reason: AUDIT_PASS_2 },
+  '/games/marvel-rivals/coaching': { holds: 79, reason: AUDIT_PASS_2 },
+  '/games/overwatch-2/coaching': { holds: 79, reason: AUDIT_PASS_2 },
+  '/games/rainbow-six-siege/coaching': { holds: 79, reason: AUDIT_PASS_2 },
+  '/games/fortnite/coaching': { holds: 79, reason: AUDIT_PASS_2 },
   '/games': { holds: 68, reason: VOICE_PASS },
   '/how-it-works': { holds: 68, reason: VOICE_PASS },
   '/trust-and-safety': { holds: 65, reason: VOICE_PASS },

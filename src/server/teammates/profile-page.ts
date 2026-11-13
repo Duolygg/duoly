@@ -187,22 +187,24 @@ export function profileAnswers(p: PublicTeammateProfile) {
       `No rank on ${p.name}'s profile is verified yet, so nothing here claims one: the games list says what an administrator approved ${p.name} to play.`,
     );
   if (p.languages.length)
-    session.push(
-      `Sessions with ${p.name} run in ${profileList(p.languages)}.`,
-    );
+    session.push(`Sessions with ${p.name} run in ${profileList(p.languages)}.`);
   else
     session.push(
       `The profile lists no language, so settle on one in the order chat before you queue.`,
     );
   if (others.length)
-    session.push(`${profileList(others)} ${others.length > 1 ? 'are' : 'is'} on the profile too.`);
+    session.push(
+      `${profileList(others)} ${others.length > 1 ? 'are' : 'is'} on the profile too.`,
+    );
   const how = [
     `You and ${p.name} each play on your own account and meet on Discord for voice, so a handle and a microphone are the whole kit.`,
     `A booking is the number of ${units} you choose at checkout, and you and ${p.name} agree a start time in the order chat before the first one.`,
   ];
   if (p.coaching && view.coachOffer)
     how.push(
-      `${p.name} coaches ${game.name} as well, which is the same ${view.coachOffer.unit === 'hour' ? 'play with the decisions explained as they happen' : 'games with the decisions explained as they happen'}, from ${view.coachOffer.display} per ${view.coachOffer.unit}.`,
+      // No figure here: the page prints each price once, beside the button it
+      // belongs to, and tests/profiles/public-profiles.spec.ts holds that rule.
+      `${p.name} coaches ${game.name} as well, which is the same ${view.coachOffer.unit === 'hour' ? 'play' : 'games'} with the decisions explained as they happen, at the price beside the coaching button above.`,
     );
   how.push(
     hourly
@@ -223,7 +225,7 @@ export function profileAnswers(p: PublicTeammateProfile) {
     `Payment finishes on duoly.gg and never in a private message to ${p.name}, and nobody needs your login, because ${p.name} queues on a separate account. If a session with ${p.name} goes wrong, the order tools are where it belongs, and the Duoly terms carry the cancellation and refund rules.`,
   ];
   const busy = [
-    `Nothing on this page reserves ${p.name} for you. The order goes out to every verified ${game.name} teammate on Duoly, so whoever accepts it first plays the session, and while ${p.name} is ${hourly ? 'in a session' : 'mid match'} that can be somebody else. ${
+    `Nothing on this page reserves ${p.name} for you. The order goes out to every verified ${game.name} teammate on Duoly, so whoever accepts it first plays the session, and while ${p.name} is ${hourly ? 'in another session' : 'mid match'} that can be somebody else. ${
       p.online
         ? `If no ${game.name} teammate accepts within ${AUTO_CANCEL_MINUTES} minutes, the order cancels itself and your money comes straight back.`
         : `If no ${game.name} teammate accepts within ${AUTO_CANCEL_MINUTES} minutes, the order cancels itself and the full amount returns to your balance.`
@@ -236,7 +238,7 @@ export function profileAnswers(p: PublicTeammateProfile) {
         : `${p.name} is offline right now, so an order placed today may sit until they are back. Booking from this page still saves ${p.name} to your favorites, and the next ${game.name} order you place appears for them the moment it goes public, ahead of the queue everyone else waits out.`
     }${
       view.offer
-        ? ` A ${game.name} session with ${p.name} starts at ${view.offer.display} per ${view.offer.unit}, and checkout works out the exact total from the service you choose, the number of ${units}${rankedPricing ? ' and, on the ranked services, your own rank' : ' and nothing else'}.`
+        ? ` The figure beside the booking button is where a ${game.name} session with ${p.name} starts, and checkout works out the exact total from the service you choose, the number of ${units}${rankedPricing ? ' and, on the ranked services, your own rank' : ' and nothing else'}.`
         : ''
     }`,
   );

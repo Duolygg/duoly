@@ -113,7 +113,7 @@ export const minecraft: HubPageCopy = {
       heading: 'PvP, survival or Manhunt: which night do you want?',
       paragraphs: [
         'A PvP session belongs on servers with real competition: Bedwars, SkyWars, Duels, UHC and box PvP. PvP Duo Pro at {{p_duo2}} per hour brings a top player from servers like Hypixel or Minemen who takes the hard fights and explains the clutch afterwards. Survival sessions are the opposite shape, slower and built around progress: Survival Partner at {{p_smp}} per hour gets you geared, builds farms and defends the base, while Survival Together at {{p_surv}} sets no target beyond your own.',
-        'Manhunt is its own thing, and the one Minecraft service priced per run at {{p_manhunt}}. You speedrun with a single life and have to kill the Ender Dragon while a teammate hunts you with a compass pointing straight at you. The hunter respawns and you do not, most runs last 30 to 90 minutes, and your teammate brings the setup. Agree who runs and who hunts in the order chat, because the roles can swap. A {{main}} bundle saves more the bigger it is: {{savings}}, agreed using Discord.',
+        'Manhunt is its own thing, and the one Minecraft service priced per run at {{p_manhunt}}. You speedrun with a single life and have to kill the Ender Dragon while a teammate hunts you with a compass pointing straight at you. The hunter respawns and you do not, most runs last 30 to 90 minutes, and your teammate brings the setup. Agree who runs and who hunts in the order chat, because the roles can swap. A {{main}} bundle saves more the bigger it is: {{savings}}. Agree the rules using Discord before the first run starts.',
       ],
     },
     {

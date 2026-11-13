@@ -322,6 +322,10 @@ for (const path of [
 for (const path of [
   '/press',
   '/compare/metafy',
+  // /games/social is here because the same two days reached it: its four
+  // section headings became questions, and the price note under its group
+  // grid stopped repeating the teammate grid's flat-price rule.
+  '/games/social',
   ...FINISHED_HUB_SLUGS.filter((slug) => slug !== 'social').map(
     (slug) => `/games/${slug}`,
   ),

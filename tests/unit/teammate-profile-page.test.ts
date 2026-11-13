@@ -382,22 +382,31 @@ describe('public profile page', () => {
       expect(words).toBeGreaterThan(150);
       expect(text(nyx).split(/\s+/).length).toBeGreaterThan(220);
     });
-    it('prices the session from the same helper the page prints', () => {
-      for (const slug of ['nyx', 'crafty', 'kairo']) {
+    it('prints no second price and describes the one the page shows', () => {
+      /* A profile states each price once, beside the button it belongs to
+         (tests/profiles/public-profiles.spec.ts). So the answers point at that figure and
+         say what moves it, and carry no amount of their own. */
+      for (const slug of ['nyx', 'crafty', 'kairo', 'pip']) {
         const p = load(slug);
+        const answers = text(p);
+        expect(answers, slug).not.toMatch(/[€$£]\s?\d|EUR \d|USD \d/);
+        const view = profilePresentation(p);
         const cheapest = seoOffers(p.featuredGame, 'teammate', {
           customerCurrency: 'EUR',
           eurToUsd: 1,
         }).sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
-        expect(text(p)).toContain(
-          `starts at ${cheapest.display} per ${cheapest.unit}`,
+        expect(view.offer).toEqual(cheapest);
+        expect(answers, slug).toContain(
+          `The figure beside the booking button is where a ${view.game.name} session with ${p.name} starts`,
+        );
+        /* The unit the price is quoted in comes from the same offer, so an hourly game
+           never says "games" and a per-game one never says "hours". */
+        expect(answers, slug).toContain(
+          `the number of ${cheapest.unit === 'hour' ? 'hours' : `${cheapest.unit}s`}`,
         );
       }
-      /* Coaching is quoted from the coaching helper, and only where the catalog sells it. */
-      const coaching = profilePresentation(nyx).coachOffer!;
-      expect(text(nyx)).toContain(
-        `from ${coaching.display} per ${coaching.unit}`,
-      );
+      /* Coaching is named only where the catalog sells it and the teammate takes it. */
+      expect(text(nyx)).toContain('at the price beside the coaching button');
       expect(text(load('lumi'))).not.toContain('coaching');
     });
     it('states only what the profile holds, and says so when it holds nothing', () => {
@@ -423,7 +432,16 @@ describe('public profile page', () => {
          eight profiles sharing one answer template is exactly that. Every sentence carries
          the name or the game it belongs to, which is what keeps the count under three. */
       const carriers = new Map<string, string[]>();
-      for (const slug of ['nyx', 'rhea', 'pip', 'crafty', 'sola', 'kairo', 'lumi', 'echo']) {
+      for (const slug of [
+        'nyx',
+        'rhea',
+        'pip',
+        'crafty',
+        'sola',
+        'kairo',
+        'lumi',
+        'echo',
+      ]) {
         const p = load(slug);
         for (const sentence of profileAnswers(p)
           .flatMap((answer) => answer.paragraphs)
@@ -453,8 +471,13 @@ describe('public profile page', () => {
         expect(text(p), slug).not.toMatch(/[–—]| & |\bnot .*, but /);
         /* Eight profiles printing the same paragraph is the boilerplate the audit counted
            across pages, so every answer carries the name and the game it belongs to. */
-        for (const paragraph of profileAnswers(p).flatMap((a) => a.paragraphs)) {
-          expect(seen.get(paragraph) ?? slug, `${slug} repeats ${seen.get(paragraph)}`).toBe(slug);
+        for (const paragraph of profileAnswers(p).flatMap(
+          (a) => a.paragraphs,
+        )) {
+          expect(
+            seen.get(paragraph) ?? slug,
+            `${slug} repeats ${seen.get(paragraph)}`,
+          ).toBe(slug);
           seen.set(paragraph, slug);
         }
       }

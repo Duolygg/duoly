@@ -111,7 +111,10 @@ test('directory filters on the server and sitemap uses quality', async ({
   request,
 }) => {
   await page.goto('/teammates?game=lol');
-  await expect(page.locator('.tp-card')).toHaveCount(5);
+  /* Nyx, Kairo and Rhea. Lumi and Echo used to carry Nyx's second game because both were
+     spread from the Nyx fixture; they are their own Valorant players now, so the League
+     filter returns three. */
+  await expect(page.locator('.tp-card')).toHaveCount(3);
   expect(await page.locator('.tp-card').first().getAttribute('href')).toBe(
     '/teammates/nyx',
   );
@@ -743,7 +746,8 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
     ),
   ).toBeLessThanOrEqual(900);
   /* A section opens 48 px under the one before it and gives its rule 24 px of air; the
-     closing band carries no rule, so it simply keeps the same 72 px gap. */
+     closing band carries no rule, so it simply keeps the same 72 px gap. Three sections
+     follow the first on this profile: reviews, more teammates and the booking answers. */
   expect(
     await page.evaluate(() =>
       [...document.querySelectorAll('.tp-section')].slice(1).map((el) => {
@@ -751,7 +755,7 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
         return parseFloat(style.marginTop) + parseFloat(style.paddingTop);
       }),
     ),
-  ).toEqual([72, 72]);
+  ).toEqual([72, 72, 72]);
   expect(
     await page.evaluate(
       () => getComputedStyle(document.querySelector('.tp-closing')!).marginTop,
@@ -763,7 +767,7 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
         (el) => getComputedStyle(el).marginBottom,
       ),
     ),
-  ).toEqual(['24px', '24px', '24px']);
+  ).toEqual(['24px', '24px', '24px', '24px']);
   /* One grid for the reviews: the featured quote spans it, the rest sit under it in
      equal columns that start on the same left edge as the tag bars. */
   expect(

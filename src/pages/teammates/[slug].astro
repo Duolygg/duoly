@@ -95,8 +95,10 @@ const sections = [
   { id: 'games', label: 'Games' },
   ...(hasReviews ? [{ id: 'reviews', label: 'Reviews' }] : []),
   ...(related.length > 0 ? [{ id: 'more', label: 'More teammates' }] : []),
-  { id: 'booking', label: 'Booking' },
 ];
+/* The answers are not a tab. A fourth entry pushes the nav row to within 13 px of a 360 px
+   viewport, and the row is the shared design; the section sits where the reader arrives
+   anyway, between the last section and the closing band. */
 /** One tab is not a nav, so the first section draws its own rule instead. */
 const showTabs = sections.length > 1;
 /** The booking explainer, one line under the price and the availability it belongs with. */
@@ -533,7 +535,9 @@ const bookingNote = p ? bookingLine(p) : '';
         <div class="tp-section-head">
           <div>
             <h2 id="booking-title">Booking {p.name}</h2>
-            <p>What a session is, what Duoly checked and what the queue does.</p>
+            <p>
+              What a session is, what Duoly checked and what the queue does.
+            </p>
           </div>
         </div>
         {answers.map((answer) => (
@@ -546,7 +550,7 @@ const bookingNote = p ? bookingLine(p) : '';
         ))}
         <p class="tp-answer-links">
           More on the rules behind {p.name}'s page:{' '}
-          <a href="/how-it-works">how a booking works</a>,{' '}
+          <a href="/how-it-works">how Duoly works</a>,{' '}
           <a href="/trust-and-safety">how teammates are reviewed</a> and the{' '}
           <a href="/fees-and-refunds">fees and refunds</a>.
         </p>

@@ -198,7 +198,7 @@ What moved, by fix list item:
    is why a hub carried it three times; the team grid now states what is
    different about booking a group, and the closing paragraph states the saving
    per bundle. `/games/league-of-legends` has no repeated sentence left.
-9. `/games/pokemon-unite` and the Pokémon Unite teammate page spell the game
+7. `/games/pokemon-unite` and the Pokémon Unite teammate page spell the game
    the way the catalog does, accent included, in every heading and paragraph.
    The two page titles keep their current spelling, because the brief freezes
    the titles of indexed pages.
@@ -224,6 +224,155 @@ Still open, and why:
   regex read "10. " as a list item. It is declared in
   `scripts/citability-floor.test.mjs` under `AUDIT_PASS`, and it needs the same
   owner decision as the voice pass entries beside it.
+
+## What the second fix pass changed, 13 November 2026
+
+The pages that scored below 4 are rewritten, and the sentences a page printed
+twice are written once. Same script, same command, against a fresh build. A
+dash is a measure the first pass did not record.
+
+| Measure                                    | Audit | After pass 1 | After pass 2 |
+| ------------------------------------------ | ----: | -----------: | -----------: |
+| Findings                                   |   116 |           93 |           66 |
+| Pages with a finding                       |    70 |           69 |           55 |
+| Pages repeating a sentence inside the page |    55 |           32 |            7 |
+| Repeated sentences, all pages              |   115 |           39 |            7 |
+| Pages under 400 words                      |    10 |            – |            1 |
+| Pages with no question heading             |    12 |            – |            2 |
+| Duplicate titles and descriptions          |     3 |            0 |            0 |
+| Descriptions outside 70 to 160 characters  |     9 |            0 |            0 |
+| Indexable pages with no JSON-LD            |     4 |            0 |            0 |
+| Wrong articles ("a Immortal", "a Apex")    |     6 |            0 |            0 |
+| Copy-rule violations                       |     4 |            2 |            2 |
+| Broken internal links                      |     2 |            2 |            2 |
+| Missing alt text                           |     0 |            0 |            0 |
+
+### The eight profiles and the directory
+
+A profile was a name, a rank plate, a price and between 27 and 54 words of
+prose, which is why every one of them scored 2 or 3. Each now answers the three
+questions a visitor who searched for a player's name arrives with, written from
+that profile's own data: what a session with this player is, what Duoly has
+actually checked, and what happens when the player named at the top is already
+in a match. The pages run 566 to 758 words with three question headings each,
+against 122 to 307 before.
+
+Nothing in those answers is a fact the profile does not hold. A teammate with no
+verified rank says so; a teammate with two says which two. `/teammates/pip` has
+no bio, no languages and no finished sessions, and its page says each of those
+rather than filling the gap. Prices come from the same helper the price beside
+the button uses, and a unit test asserts it.
+
+Eight pages sharing one answer template is the boilerplate this audit counts
+across pages, so every sentence carries the name or the game it belongs to, and
+a unit test fails when any sentence reaches three profiles. Lumi and Echo were
+spread from the Nyx fixture and published Nyx's bio and Nyx's reviews on their
+own pages; both are their own player now.
+
+### The sentences a page printed twice
+
+Three patterns accounted for 25 of the 32 pages:
+
+- **The bundle ladder, on seven hubs.** It was stated beside the price grid and
+  again where the service is explained. The second place now states the same
+  figures as a saving per bundle, through a `{{savings}}` token built from the
+  same percentages as `{{bundles}}`.
+- **The lesson price, on eight coaching pages.** "Every Deadlock lesson from
+  Duoly costs EUR 12.99" opened the lead and the answer below it. The answer
+  keeps the price and the attribution and says it in its own words.
+- **A format description, on five coaching pages.** The "which format" block
+  repeated the lead's definition of each format word for word. It describes the
+  choice instead, which is what the question asks.
+
+The rest were single pages: a seat price on `/games/ea-sports-fc-27`, a stack
+fill sentence on `/games/counter-strike-2`, a Full Trio sentence on
+`/games/apex-legends`, a bundle total on `/games/teamfight-tactics`, the Metafy
+fee total on `/compare/metafy`, and the flat-price rule printed under both grids
+on `/games/arc-raiders` and `/games/minecraft`.
+
+Seven pages still repeat a sentence, and all seven are deliberate or protected:
+
+- The five guides under `/blog` print the booking reassurance line under each of
+  their two booking buttons. That is one line under one button, twice on a long
+  page, which is the component doing its job.
+- `/press` answers "What is Duoly in one sentence?" with the boilerplate and
+  then prints the boilerplate for a journalist to copy. A press kit repeating
+  its own boilerplate is the point of a press kit.
+- `/privacy` says "withdraw any time through cookie settings" twice, in the
+  protected legal source.
+
+### Voice, before and after
+
+Read again the same way: start to finish, as a gamer or a parent who has never
+heard of Duoly. Sixteen pages scored below 4 in the audit. None does now.
+
+| Page                           | Before | After | Why it moved                                                                                             |
+| ------------------------------ | -----: | ----: | -------------------------------------------------------------------------------------------------------- |
+| `/teammates`                   |      2 |     4 | 145 words became 346, with three question headings that say what saving a teammate changes.              |
+| `/teammates/crafty`            |      2 |     4 | A bio and a rank plate became a page that says what a Minecraft hour with Crafty is and costs.           |
+| `/teammates/pip`               |      2 |     4 | The thinnest profile on the site states what it does not have, instead of showing labels around a price. |
+| `/teammates/rhea`              |      2 |     4 | Same three answers, with the unverified-rank wording the profile actually warrants.                      |
+| `/teammates/sola`              |      2 |     4 | Two finished sessions are named as two, and the page says why no rating sits above them.                 |
+| `/teammates/echo`              |      3 |     4 | Its own bio, reviews, rank and agents, plus the three answers.                                           |
+| `/teammates/kairo`             |      3 |     4 | The track record is explained rather than displayed: what the 1,240 sessions are counted from.           |
+| `/teammates/lumi`              |      3 |     4 | Its own bio and reviews, and a page that no longer reads as Nyx rendered twice.                          |
+| `/teammates/nyx`               |      3 |     4 | The strongest profile data on the site now has copy to match it.                                         |
+| `/contact`                     |      3 |     4 | 314 words became 465, answering how to reach Duoly, which topic to pick and what an order message needs. |
+| `/privacy`                     |      3 |     4 | The en dash, the ampersands and the site-default description are gone; it reads as a policy for readers. |
+| `/terms`                       |      3 |     4 | Six ampersand headings read as words, and the page describes itself in search results.                   |
+| `/games/social`                |      3 |     4 | Four label headings became questions, and the activities read as an evening rather than a rate card.     |
+| `/games/pokemon-unite`         |      3 |     4 | One spelling of Pokémon Unite, the catalog's, in every heading and paragraph.                            |
+| `/games/apex-legends/coaching` |      3 |     4 | "An Apex Legends coaching session", and no paragraph about a pricing engine.                             |
+| `/games/overwatch-2/coaching`  |      3 |     4 | "An Overwatch 2 coaching session", the same closing paragraph fix, and no repeated format definition.    |
+
+Distribution: 5: 12 pages, 4: 74 pages, 3: 0, 2: 0, 1: 0. Average 4.14 across 86
+pages, against 3.90 in the audit.
+
+No page moved up to 5 in this pass. The game pages are the reason: a hub still
+states one price in six to nine paragraphs, and that is the template seam a 4
+describes. See the note below on why those prices stay.
+
+### What the price repetition costs, and why it stays
+
+46 pages still state one price in three or more paragraphs, which is where the
+audit's item 6 ends. Two things keep it there.
+
+The first is that the price grids and their sections are game page components,
+which this brief protects. The second is that the citability floor in
+`scripts/citability-floor.test.mjs` scores each answer block on its own, and a
+block that answers "how much does X cost" without the figure scores lower by
+design. Taking the price out of a paragraph makes the paragraph worse to quote
+and no easier to read.
+
+De-duplicating the sentences above cost six pages between 0.1 and 0.4 of a
+point, and each of them now sits at 79.6 to 79.9 against a floor of 80:
+`/games/marvel-rivals`, `/games/pokemon-unite`,
+`/games/marvel-rivals/coaching`, `/games/overwatch-2/coaching`,
+`/games/rainbow-six-siege/coaching` and `/games/fortnite/coaching`. They are
+declared in `BELOW_FLOOR` with their scores, under the same owner decision as
+the voice-pass entries beside them: keep copy a reader meets once, or write the
+repeated sentence back on all six. Padding the blocks to recover a tenth of a
+point is the score-only insertion the scorer's own notes warn against, so it was
+not done.
+
+### Still open after both passes
+
+- **The two `#cookie-settings` anchors**, in `src/site/nav.ts` and the design
+  reference. Both are protected files.
+- **The ampersands on `/` and `/contact`**, in protected homepage markup and in
+  `Contact.jsx`. `src/contracts/support.ts` already writes "Privacy and data"
+  while the form writes "Privacy & data", so the two disagree today.
+- **The three short titles** on `/contact`, `/privacy` and `/terms`, which are
+  indexed pages whose titles this brief freezes.
+- **`/privacy` and `/terms` have no question headings.** Their headings are the
+  sections of a legal document, and renaming them changes what the document
+  looks like to somebody who linked to a section.
+- **Citability on the profile pages.** `/teammates` scores 44.7 and the profiles
+  58.2 to 59.8, against an editorial target of 85. They are not in the
+  production sitemap, so no floor applies to them: profiles reach the sitemap
+  only when three qualify, and none does in production yet. The scorer rewards
+  prices, percentages and research language, and a page about one player has
+  one price and no research. Recorded rather than chased.
 
 ## Ranked fix list
 
@@ -333,7 +482,9 @@ These are in `report.json` and are not fixes.
 
 1. `/contact`, `/privacy` and `/terms` have 13 to 15 character titles. They are indexed, and the brief freezes titles of indexed pages. Replace them with descriptive titles, or keep them?
 2. The homepage FAQ chip row says "Prices & payments", which breaks the ampersand rule inside protected markup. Change the chip label, or leave the homepage alone?
-3. `/teammates` goes from noindex to indexed the moment three profiles qualify, and the copy there is 145 words. Should the directory stay noindex until it has real copy?
+3. `/teammates` goes from noindex to indexed the moment three profiles qualify. It carries 346 words and three question headings now, so the question is narrower than it was: is that enough to index a directory on, or should it wait for real profiles?
+4. Six game pages sit at 79.6 to 79.9 against a citability floor of 80 because they state one sentence once instead of twice. Keep the de-duplicated copy and treat those scores as advisory, as `/about`, `/press` and `/ai` already are, or write the repeated sentence back? The same question covers the 18 voice-pass entries in `BELOW_FLOOR` and has been open since 12 November.
+5. The price repeated across paragraphs on 46 pages is the one audit item neither pass closed. It is the game page components, which this brief protects, and the citability floor rewards a price in every answer block. Is it worth a design change, or is it the right trade?
 
 ## Rerunning this
 
