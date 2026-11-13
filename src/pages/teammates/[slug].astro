@@ -3,6 +3,9 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageIntro from '../../components/site/PageIntro.astro';
 import TeammateCard from '../../components/teammates/TeammateCard.astro';
 import Icon from '../../components/teammates/Icon.astro';
+import TrophyCase from '../../components/teammates/TrophyCase.astro';
+import { loadPublicTrophies } from '../../server/teammates/trophies';
+import { trophyCase } from '../../server/teammates/trophy-view';
 import '../../components/teammates/profiles.css';
 import {
   loadPublicProfile,
@@ -56,6 +59,8 @@ const related = p
     })
   : [];
 const schemas = p ? profileSchemas(p, Astro.site!) : [];
+/* Approved trophies only; the case is simply absent when there are none. */
+const trophies = p ? trophyCase(await loadPublicTrophies(p.slug)) : [];
 const fixture = fixturesEnabled();
 const reviews = p ? profileReviewLayout(p.reviews) : { lead: null, rest: [] };
 const featuredRank =
@@ -99,6 +104,7 @@ const hasReviews = Boolean(
  */
 const answers = p ? profileAnswers(p) : [];
 const sections = [
+  ...(trophies.length > 0 ? [{ id: 'trophies', label: 'Trophies' }] : []),
   { id: 'games', label: 'Games' },
   ...(hasReviews ? [{ id: 'reviews', label: 'Reviews' }] : []),
   ...(related.length > 0 ? [{ id: 'more', label: 'More teammates' }] : []),
@@ -401,6 +407,7 @@ const bookingNote = p ? bookingLine(p) : '';
           ))}
         </nav>
       )}
+      {trophies.length > 0 && <TrophyCase trophies={trophies} name={p.name} />}
       <section id="games" class="tp-section" aria-labelledby="games-title">
         <div class="tp-section-head">
           <div>

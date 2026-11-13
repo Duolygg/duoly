@@ -8,7 +8,12 @@ import { TROPHY_ART } from './trophy-art';
  * tier is. Rarity decides the material on the page, so a Gold or Platinum trophy still gets a
  * polished card and the top tiers get the loud treatment.
  */
-export const TROPHY_KINDS = ['rank', 'leaderboard', 'tournament', 'title'] as const;
+export const TROPHY_KINDS = [
+  'rank',
+  'leaderboard',
+  'tournament',
+  'title',
+] as const;
 export type TrophyKind = (typeof TROPHY_KINDS)[number];
 
 /** When a rank was held. Peak and season end are history; current is re-checked each season. */
@@ -558,7 +563,11 @@ const text = (max: number) =>
     .trim()
     .min(1)
     .max(max)
-    .refine((s) => !/[\u0000-\u001f\u007f<>]/.test(s), 'Plain text only.');
+    .refine(
+      // eslint-disable-next-line no-control-regex -- control characters are what this rejects
+      (s) => !/[\u0000-\u001f\u007f<>]/.test(s),
+      'Plain text only.',
+    );
 const optionalText = (max: number) =>
   z
     .union([text(max), z.literal('').transform(() => null), z.null()])

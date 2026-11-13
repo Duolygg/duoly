@@ -7,6 +7,7 @@ import { winrateLabel } from '../../design-reference/lib/winloss';
 import Applications from './Applications';
 import PublicProfileAdmin from './PublicProfileAdmin';
 import MatchReports from './MatchReports';
+import TrophyQueue from './TrophyQueue';
 import {
   C,
   card,
@@ -641,7 +642,8 @@ export default class Teammates extends React.Component {
     const pick = (id) => {
       this.setState({ tab: id });
       // Teammates and Applications have their own address; Match reports stays on the current one
-      if (this.props.onTab && id !== 'reports') this.props.onTab(id);
+      if (this.props.onTab && id !== 'reports' && id !== 'trophies')
+        this.props.onTab(id);
     };
     const tab = (id, label, n, hot) => (
       <button
@@ -696,11 +698,14 @@ export default class Teammates extends React.Component {
           {tab('roster', 'Teammates', s.list.length)}
           {tab('apps', 'Applications', pending, pending > 0)}
           {tab('reports', 'Match reports', null)}
+          {tab('trophies', 'Trophies', null)}
         </div>
         {s.tab === 'roster' ? (
           this.renderRoster()
         ) : s.tab === 'reports' ? (
           <MatchReports {...this.props} />
+        ) : s.tab === 'trophies' ? (
+          <TrophyQueue {...this.props} />
         ) : (
           <Applications {...this.props} embedded />
         )}

@@ -36,7 +36,9 @@ describe('trophy catalog', () => {
     for (const [game, info] of Object.entries(TROPHY_GAMES))
       for (const ladder of info.ladders.filter((l) => l.tiers.length >= 6)) {
         const mid = ladder.tiers[Math.floor(ladder.tiers.length / 2)]!;
-        expect(mid.rarity, `${game}/${ladder.id}/${mid.key}`).not.toBe('common');
+        expect(mid.rarity, `${game}/${ladder.id}/${mid.key}`).not.toBe(
+          'common',
+        );
       }
   });
 
@@ -52,14 +54,18 @@ describe('trophy catalog', () => {
         for (const size of [128, 256] as const) {
           const file = `public${trophyArt(game, key, size)}`;
           expect(existsSync(file), file).toBe(true);
-          expect(statSync(file).size, file).toBeLessThan(size === 128 ? 24_000 : 64_000);
+          expect(statSync(file).size, file).toBeLessThan(
+            size === 128 ? 24_000 : 64_000,
+          );
         }
       }
   });
 
   it('returns null art for a tier without an emblem', () => {
     expect(trophyArt('fc', 'elite')).toBeNull();
-    expect(trophyArt('lol', 'challenger')).toBe('/trophies/lol/challenger-256.webp');
+    expect(trophyArt('lol', 'challenger')).toBe(
+      '/trophies/lol/challenger-256.webp',
+    );
   });
 });
 
@@ -76,7 +82,9 @@ describe('trophy submissions', () => {
   };
   it('accepts a complete rank and defaults its rarity from the ladder', () => {
     const parsed = TrophySubmissionSchema.parse(rank);
-    expect(defaultRarity(parsed)).toBe(trophyTier('lol', 'rank', 'diamond')!.rarity);
+    expect(defaultRarity(parsed)).toBe(
+      trophyTier('lol', 'rank', 'diamond')!.rarity,
+    );
   });
   it('refuses a division the tier does not have', () => {
     expect(
@@ -84,10 +92,15 @@ describe('trophy submissions', () => {
     ).toBe(false);
   });
   it('refuses unknown tiers, games and non-https links', () => {
-    expect(TrophySubmissionSchema.safeParse({ ...rank, tier: 'wood' }).success).toBe(false);
-    expect(TrophySubmissionSchema.safeParse({ ...rank, game: 'xx' }).success).toBe(false);
     expect(
-      TrophySubmissionSchema.safeParse({ ...rank, proofUrl: 'http://op.gg/x' }).success,
+      TrophySubmissionSchema.safeParse({ ...rank, tier: 'wood' }).success,
+    ).toBe(false);
+    expect(
+      TrophySubmissionSchema.safeParse({ ...rank, game: 'xx' }).success,
+    ).toBe(false);
+    expect(
+      TrophySubmissionSchema.safeParse({ ...rank, proofUrl: 'http://op.gg/x' })
+        .success,
     ).toBe(false);
   });
   it('refuses markup in free text', () => {
@@ -101,7 +114,11 @@ describe('trophy submissions', () => {
   });
   it('needs the event and placement for a tournament', () => {
     expect(
-      TrophySubmissionSchema.safeParse({ game: 'val', kind: 'tournament', event: 'Cup' }).success,
+      TrophySubmissionSchema.safeParse({
+        game: 'val',
+        kind: 'tournament',
+        event: 'Cup',
+      }).success,
     ).toBe(false);
     const ok = TrophySubmissionSchema.parse({
       game: 'val',
@@ -112,7 +129,17 @@ describe('trophy submissions', () => {
     expect(defaultRarity(ok)).toBe('legendary');
   });
   it('scales placings and leaderboard spots', () => {
-    expect([1, 2, 5, 20].map(tournamentRarity)).toEqual(['legendary', 'epic', 'rare', 'uncommon']);
-    expect([3, 50, 500, 5000].map(leaderboardRarity)).toEqual(['mythic', 'legendary', 'epic', 'rare']);
+    expect([1, 2, 5, 20].map(tournamentRarity)).toEqual([
+      'legendary',
+      'epic',
+      'rare',
+      'uncommon',
+    ]);
+    expect([3, 50, 500, 5000].map(leaderboardRarity)).toEqual([
+      'mythic',
+      'legendary',
+      'epic',
+      'rare',
+    ]);
   });
 });

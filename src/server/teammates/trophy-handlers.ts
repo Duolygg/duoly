@@ -44,8 +44,7 @@ const MESSAGES: Record<number, string> = {
 };
 function rpcError(data: unknown): { code: number; message: string } | null {
   if (!data || typeof data !== 'object' || !('error' in data)) return null;
-  const err = (data as { error?: { code?: unknown; message?: unknown } })
-    .error;
+  const err = (data as { error?: { code?: unknown; message?: unknown } }).error;
   const code = Number(err?.code);
   const message =
     typeof err?.message === 'string' && [400, 409].includes(code)
@@ -122,7 +121,10 @@ export const teammateTrophies: APIRoute = async (context) => {
         );
       const path = image ? await storeProof(identity.viewer.id, image) : null;
       if (image && !path)
-        return account.json({ error: 'The screenshot could not be saved.' }, 503);
+        return account.json(
+          { error: 'The screenshot could not be saved.' },
+          503,
+        );
       const { data, error } = await rpc('teammate_trophy_submit', {
         p_trophy: { ...trophy.data, rarity: defaultRarity(trophy.data) },
         p_proof_path: path,
@@ -169,21 +171,26 @@ export const adminTrophies = adminRoute(
         data: { error: { code: 400, message: 'Pick a status.' } },
         error: null,
       };
-    const { data, error } = await (
-      client.rpc.bind(client) as unknown as Rpc
-    )('admin_trophy_queue', { p_status: status.data, p_limit: 100 });
+    const { data, error } = await (client.rpc.bind(client) as unknown as Rpc)(
+      'admin_trophy_queue',
+      { p_status: status.data, p_limit: 100 },
+    );
     if (error || !data || typeof data !== 'object' || !('trophies' in data))
       return { data, error };
     const rows = (data as { trophies: Record<string, unknown>[] }).trophies;
     const signed = await signProofs(
-      rows.map((r) => r.proofPath).filter((p): p is string => typeof p === 'string'),
+      rows
+        .map((r) => r.proofPath)
+        .filter((p): p is string => typeof p === 'string'),
     );
     return {
       data: {
         trophies: rows.map(({ proofPath, ...row }) => ({
           ...row,
           proofImage:
-            typeof proofPath === 'string' ? (signed.get(proofPath) ?? null) : null,
+            typeof proofPath === 'string'
+              ? (signed.get(proofPath) ?? null)
+              : null,
         })),
       },
       error: null,
