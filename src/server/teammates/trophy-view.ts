@@ -8,10 +8,14 @@ import { profileGame } from './profile-page';
 
 export {
   trophyCrest,
-  trophyHighlights,
-  trophyShelves,
-  type TrophyShelf,
   trophyOffset,
+  trophySeasonLine,
+  trophyShelves,
+  trophyStands,
+  trophyTour,
+  TOUR_MAX,
+  type TrophyShelf,
+  type TrophyStand,
   type TrophyView,
 } from '../../contracts/trophy-display';
 

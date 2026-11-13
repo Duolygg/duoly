@@ -572,6 +572,11 @@ test('nothing in the profile touches the viewport edge', async ({ page }) => {
         /* The booking bar is a deliberate full width bar; the decorative light and the
            outlined name are measured on their own in the hero test below. */
         if (el.closest('.tp-mobile-booking, [aria-hidden="true"]')) continue;
+        /* The trophy shelf is its own horizontal scroller, so the trophies past its right
+           edge are reached by scrolling the shelf and never by scrolling the page. The box
+           that has to keep the gutter is the rail itself, measured below like everything
+           else; the run of trophies inside it is not. */
+        if (el.parentElement?.closest('.tc-rail')) continue;
         const style = getComputedStyle(el);
         if (style.visibility === 'hidden' || style.display === 'none') continue;
         const box = el.getBoundingClientRect();

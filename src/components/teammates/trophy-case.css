@@ -1,23 +1,48 @@
 /*
- * Trophy case (TrophyCase.astro). The page's own language: no boxes, colour as light, the name
- * set large. Each trophy is lit by a blurred copy of its own emblem, so Gold glows gold and
- * Platinum glows teal without a colour table; rarity sets how much light, how large, and how
- * strong the shine.
+ * Trophy case (TrophyCase.astro). One lit case built into the page: the stage inside it, the
+ * shelf along its bottom edge. Each trophy is lit by a blurred copy of its own emblem, so Gold
+ * glows gold and Platinum glows teal without a colour table; rarity sets how much light, how
+ * large, and how strong the shine.
  */
 .tc {
-  /* The trophy is as large as the stage can hold: the arc is 3.06 trophies wide, so the
-     size follows the room the stage has rather than a figure picked per breakpoint. */
-  --tc-size: clamp(168px, 15.4vw, 208px);
+  /* The case sets the stage scale, so the arc's spread follows its own emblem size. */
+  --tc-size: clamp(156px, 12.6vw, 184px);
   --tc-step: calc(var(--tc-size) * 0.645);
-  --tc-stage: calc(var(--tc-size) * 1.44);
+  --tc-stage: calc(var(--tc-size) * 1.32);
   --tc-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --tc-move: 0.42s;
 }
-.tc-layout {
+
+/* ---------- the case ---------- */
+.tc-case {
+  position: relative;
+  /* The arc's outer trophies reach past the column; the case keeps them off the page. */
+  overflow-x: clip;
+  background:
+    radial-gradient(
+      70% 90% at 72% 10%,
+      rgba(214, 187, 255, 0.09),
+      transparent 62%
+    ),
+    linear-gradient(180deg, #150d28, #0d0620 78%);
+  box-shadow: inset 0 1px 0 rgba(214, 187, 255, 0.14);
+}
+/* The words take the narrow column so the arc has the room its spread needs. */
+.tc-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(304px, 38%, 468px);
+  grid-template-columns: minmax(0, 0.74fr) minmax(0, 1fr);
   align-items: center;
-  gap: 44px;
+  gap: 28px;
+  /* No inset: the eyebrow, the shelf and the heading above the case share one left edge. */
+  padding: 2px 0 14px;
+}
+.tc-words {
+  order: 0;
+}
+/* Nothing is touring a case of one, so the case opens on its own air instead. */
+.tc[data-count='1'] .tc-inner {
+  padding-top: 22px;
+  padding-bottom: 22px;
 }
 
 /* ---------- stage ---------- */
@@ -26,6 +51,9 @@
   height: var(--tc-stage);
   perspective: 1400px;
   touch-action: pan-y;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
   /* the avatar's light, a little lower, so the front trophy stands in it */
   background: radial-gradient(
     46% 52% at 50% 46%,
@@ -35,7 +63,7 @@
   );
 }
 .tc[data-count='1'] .tc-stage {
-  --tc-stage: calc(var(--tc-size) * 1.8);
+  --tc-stage: calc(var(--tc-size) * 1.6);
 }
 /* The floor: one soft pool of light under the front trophy, nothing drawn. */
 .tc-floor-rings {
@@ -54,9 +82,6 @@
   );
   pointer-events: none;
 }
-.tc-floor-rings i {
-  display: none;
-}
 .tc-arc {
   position: absolute;
   inset: 0;
@@ -69,10 +94,6 @@
 }
 .tc.is-dragging .tc-stage {
   cursor: grabbing;
-}
-.tc-stage {
-  user-select: none;
-  -webkit-user-select: none;
 }
 .tc-stage img {
   -webkit-user-drag: none;
@@ -129,12 +150,6 @@
   content: '';
   position: absolute;
   inset: -22%;
-}
-.tc-stage {
-  cursor: pointer;
-}
-.tc-stage .tc-item[data-a='0'] {
-  cursor: default;
 }
 .tc-item[data-a='1'] {
   --xm: 1.22;
@@ -426,7 +441,6 @@
 .tc-details {
   display: grid;
   align-content: center;
-  min-height: 240px;
 }
 .tc-detail {
   animation: tc-in 0.32s var(--tc-ease);
@@ -461,7 +475,7 @@
   color: #f0b48a;
 }
 .tc-name {
-  margin: 10px 0 0 -0.022em !important;
+  margin: 8px 0 0 -0.022em !important;
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: clamp(40px, 4.6vw, 64px);
   font-weight: 750;
@@ -476,16 +490,22 @@
   font-size: min(clamp(52px, 6.2vw, 92px), calc(690px / var(--len, 10)));
 }
 .tc-meta {
-  margin: 16px 0 0 !important;
+  margin: 12px 0 0 !important;
   color: var(--tp-muted);
   font-size: 16px;
+}
+/* The other seasons this tier was reached, shown only when there are any. */
+.tc-seasons {
+  margin: 8px 0 0 !important;
+  color: #cbbce8;
+  font-size: 13px;
 }
 .tc-verified {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 10px;
-  margin: 22px 0 0 !important;
+  margin: 18px 0 0 !important;
   color: #7cf0c1;
   font-size: 14px;
   font-weight: 500;
@@ -506,67 +526,291 @@
   color: var(--accent) !important;
   border-color: currentColor;
 }
-.tc-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 28px;
-}
-.tc-count {
-  margin: 0 !important;
-  font-variant-numeric: tabular-nums;
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  color: var(--tp-muted);
-}
-.tc-count b {
-  color: #fff;
-  font-weight: 600;
-}
-.tc-progress {
-  position: relative;
-  flex: 1 1 96px;
-  max-width: 160px;
-  margin-right: auto;
-  height: 2px;
-  border-radius: 2px;
-  background: rgba(214, 187, 255, 0.16);
-}
-.tc-progress i {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: calc(var(--p) * 100%);
-  border-radius: inherit;
-  background: var(--accent);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
-  transition: width 0.4s var(--tc-ease);
-}
-.tc-step {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid rgba(214, 187, 255, 0.22);
-  background: rgba(255, 255, 255, 0.02);
-  color: #efe7fb;
-  cursor: pointer;
-  transition:
-    border-color 0.2s,
-    background 0.2s,
-    color 0.2s;
-}
-.tc-step:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-}
 .tc-note {
   margin: 24px 0 0 !important;
   max-width: 70ch;
   color: #8f84aa;
   font-size: 13px;
   line-height: 1.5;
+}
+
+/* ---------- the one control that is left ----------
+   WCAG 2.2.2: the tour moves on its own, so it always has a way to stop and start again. It
+   sits quietly in the corner of the glass, costing the stage as little height as it can. */
+.tc-hold-row {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  justify-content: flex-end;
+}
+.tc-hold {
+  padding: 9px 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--tp-muted);
+  text-decoration: underline;
+  text-decoration-color: rgba(214, 187, 255, 0.3);
+  text-underline-offset: 5px;
+  transition: color 0.2s;
+}
+.tc-hold[hidden] {
+  display: none;
+}
+.tc-hold:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+.tc-hold:focus-visible,
+.tc-pick:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* ---------- the shelf along the bottom edge ----------
+   One run of every trophy, grouped by game. It is the index and the position marker: the lit
+   item is the one on the stage, and picking one brings it forward. */
+.tc-shelf {
+  position: relative;
+  padding-bottom: 20px;
+}
+/* The shelf edge catching the light from the case. */
+.tc-shelf::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(214, 187, 255, 0.45) 14%,
+    rgba(214, 187, 255, 0.45) 86%,
+    transparent
+  );
+}
+.tc-shelf::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 1px;
+  height: 52px;
+  background: linear-gradient(180deg, rgba(214, 187, 255, 0.1), transparent);
+  pointer-events: none;
+}
+.tc-rail {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.tc-rail::-webkit-scrollbar {
+  display: none;
+}
+.tc-group {
+  display: flex;
+  flex-direction: column;
+  padding-right: 22px;
+}
+.tc-group + .tc-group {
+  padding-left: 22px;
+  border-left: 1px solid rgba(214, 187, 255, 0.12);
+}
+.tc-group-row {
+  display: flex;
+  align-items: flex-start;
+}
+/* Clear of the lit trophy's halo, so the heading is never crowded by it. */
+.tc-group-name {
+  margin: 0 0 14px !important;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #cbbce8;
+  white-space: nowrap;
+}
+.tc-group-name span {
+  font-weight: 500;
+  color: var(--tp-muted);
+}
+.tc-pick {
+  position: relative;
+  flex: none;
+  width: 92px;
+  min-height: 44px;
+  padding: 2px 2px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.tc-stand {
+  position: relative;
+  display: block;
+  width: 46px;
+  margin: 0 auto;
+}
+/* The pool of light the lit trophy stands in on the shelf. */
+.tc-pick.is-on .tc-stand::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -12px;
+  width: 78px;
+  height: 78px;
+  margin-left: -39px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(214, 187, 255, 0.22),
+    transparent 72%
+  );
+  pointer-events: none;
+}
+.tc-stack {
+  position: relative;
+  display: block;
+  width: 46px;
+  height: 46px;
+  transform-origin: 50% 100%;
+  transition: transform 0.24s var(--tc-ease);
+}
+.tc-art {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 14px rgba(3, 1, 10, 0.6));
+  transition: filter 0.24s;
+}
+/* Reached in several seasons: the same emblem stands beside itself, a cabinet row of two or
+   three sharing one patch of shelf. They keep their own light, only turned down, because a
+   copy faded to a shadow reads as a smudge at this size rather than as another trophy. */
+.tc-ghost {
+  position: absolute;
+  inset: 0;
+  background: var(--art) center / contain no-repeat;
+  filter: brightness(0.8) saturate(0.95);
+  transform-origin: 50% 100%;
+  transition: transform 0.24s var(--tc-ease);
+}
+.tc-ghost:nth-of-type(1) {
+  transform: translateX(-21px) scale(0.64);
+}
+.tc-ghost:nth-of-type(2),
+.tc-ghost:only-of-type {
+  transform: translateX(21px) scale(0.64);
+}
+/* The ledge is polished: the emblem lies in it, close enough to touch. Emblems carry
+   different amounts of clear space under them, so the mirror is pulled up to meet the ink
+   and opens softly rather than on a hard line. */
+.tc-cast {
+  display: block;
+  width: 46px;
+  height: 30px;
+  margin-top: -12px;
+  overflow: hidden;
+  -webkit-mask: linear-gradient(
+    rgba(0, 0, 0, 0.45),
+    rgba(0, 0, 0, 0.95) 24%,
+    transparent 78%
+  );
+  mask: linear-gradient(
+    rgba(0, 0, 0, 0.45),
+    rgba(0, 0, 0, 0.95) 24%,
+    transparent 78%
+  );
+  pointer-events: none;
+}
+.tc-cast::before {
+  content: '';
+  display: block;
+  width: 46px;
+  height: 46px;
+  background: var(--art) center / contain no-repeat;
+  transform: scaleY(-1);
+  opacity: 0.18;
+  transition: opacity 0.24s;
+}
+/* The count reads as a figure and a word, clear of the emblem's wings: the fan says
+   "more than one" at a glance and this says exactly how many. */
+.tc-held {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #8f85ab;
+  transition: color 0.2s;
+}
+.tc-held b {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  color: #cbbce8;
+  transition: color 0.2s;
+}
+.tc-pick-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #8f85ab;
+  transition: color 0.2s;
+}
+.tc-pick:hover .tc-stack {
+  transform: translateY(-4px) scale(1.08);
+}
+.tc-pick:hover .tc-pick-name {
+  color: #efe7fb;
+}
+.tc-pick:hover .tc-cast::before {
+  opacity: 0.22;
+}
+/* The trophy under the spotlight stands forward on the shelf. */
+.tc-pick.is-on .tc-stack {
+  transform: translateY(-6px) scale(1.16);
+}
+.tc-pick.is-on .tc-ghost {
+  filter: brightness(0.92) saturate(1);
+}
+.tc-pick.is-on .tc-art {
+  filter: drop-shadow(0 10px 18px rgba(3, 1, 10, 0.7))
+    drop-shadow(0 0 18px rgba(214, 187, 255, 0.5));
+}
+.tc-pick.is-on .tc-cast::before {
+  opacity: 0.3;
+}
+.tc-pick.is-on .tc-pick-name {
+  color: #fff;
+  font-weight: 600;
+}
+.tc-pick.is-on .tc-held {
+  color: #cbbce8;
+}
+.tc-pick.is-on .tc-held b {
+  color: #fff;
 }
 
 /* ---------- entrance ---------- */
@@ -725,11 +969,22 @@
 /* ---------- smaller screens ---------- */
 @media (max-width: 1050px) {
   .tc {
-    --tc-size: clamp(156px, 17vw, 200px);
+    --tc-size: clamp(148px, 15vw, 184px);
   }
-  .tc-layout {
-    grid-template-columns: minmax(0, 1fr) clamp(288px, 36%, 360px);
-    gap: 32px;
+  .tc-inner {
+    gap: 20px;
+  }
+  /* The column is too narrow to hold the far pair without cutting them on the edge. */
+  .tc-item[data-a='2'] {
+    --o: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .tc-group {
+    padding-right: 18px;
+  }
+  .tc-group + .tc-group {
+    padding-left: 18px;
   }
 }
 /* Stacked: the stage takes the full width and only three trophies show, so the trophy
@@ -737,11 +992,16 @@
 @media (max-width: 900px) {
   .tc {
     --tc-size: clamp(140px, 47vw - 24px, 224px);
-    --tc-stage: calc(var(--tc-size) * 1.46);
+    --tc-stage: calc(var(--tc-size) * 1.36);
   }
-  .tc-layout {
+  .tc-inner {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 4px;
+    padding-bottom: 14px;
+  }
+  /* The trophy leads on a phone; its name reads under it. */
+  .tc-words {
+    order: 1;
   }
   .tc-stage {
     overflow: hidden;
@@ -755,9 +1015,6 @@
     visibility: hidden;
     pointer-events: none;
   }
-  .tc-details {
-    min-height: 0;
-  }
   .tc-name,
   .tc-name:where(:not(:empty)) {
     font-size: clamp(44px, 13vw, 60px);
@@ -766,15 +1023,34 @@
   .tc-name {
     margin-left: 0 !important;
   }
-  .tc-controls {
-    margin-top: 28px;
+  /* A thumb needs the whole 44 px even when the words are small. */
+  .tc-hold {
+    padding: 13px 0;
+  }
+}
+@media (max-width: 760px) {
+  .tc-pick {
+    width: 84px;
+  }
+  .tc-ghost:nth-of-type(1) {
+    transform: translateX(-9px) rotate(-11deg) scale(0.84);
+  }
+  .tc-ghost:nth-of-type(2) {
+    transform: translateX(9px) rotate(11deg) scale(0.9);
+  }
+  .tc-ghost:nth-of-type(1) {
+    transform: translateX(-19px) scale(0.64);
+  }
+  .tc-ghost:nth-of-type(2),
+  .tc-ghost:only-of-type {
+    transform: translateX(19px) scale(0.64);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .tc-item,
   .tc-body,
-  .tc-progress i {
+  .tc-stack {
     transition: none;
   }
   .tc-float,
@@ -792,251 +1068,13 @@
   .tc-dust {
     display: none !important;
   }
-}
-
-/* ---------- the full list ---------- */
-.tc-play {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  /* A little clear of the arrows: pausing is a different job from stepping. */
-  margin-right: 6px;
-  border-radius: 50%;
-  border: 1px solid rgba(214, 187, 255, 0.1);
-  background: none;
-  color: #b9b0d6;
-  cursor: pointer;
-}
-.tc-play[hidden] {
-  display: none;
-}
-.tc-play:hover {
-  color: #fff;
-  border-color: rgba(214, 187, 255, 0.4);
-}
-.tc-play path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.tc-play .tc-play-go,
-.tc-play[aria-pressed='true'] .tc-play-pause {
-  display: none;
-}
-.tc-play[aria-pressed='true'] .tc-play-go {
-  display: inline;
-}
-.tc-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-  align-items: start;
-  gap: 16px;
-  margin-top: 36px;
-  padding-top: 28px;
-  border-top: 1px solid rgba(214, 187, 255, 0.1);
-}
-.tc-list-head {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-.tc-list-head h3 {
-  margin: 0;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #fff;
-}
-.tc-list-head span {
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: rgba(214, 187, 255, 0.08);
-  font-variant-numeric: tabular-nums;
-  font-size: 13px;
-  font-weight: 600;
-  color: #c9bcdf;
-}
-.tc-shelf {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 16px 18px 14px;
-  border: 1px solid rgba(214, 187, 255, 0.1);
-  border-radius: 18px;
-  background:
-    radial-gradient(
-      120% 140% at 0% 0%,
-      rgba(214, 187, 255, 0.06),
-      transparent 55%
-    ),
-    #120b22;
-}
-.tc-shelf-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-}
-.tc-shelf-head h4 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-}
-.tc-shelf-head span {
-  font-size: 13px;
-  color: var(--tp-muted);
-}
-.tc-tally {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 14px 0 0;
-  padding: 0;
-  list-style: none;
-}
-.tc-tally li {
-  --glow: rgba(214, 187, 255, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px 4px 5px;
-  border-radius: 999px;
-  border: 1px solid rgba(214, 187, 255, 0.13);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.04),
-    rgba(255, 255, 255, 0.012)
-  );
-  box-shadow: inset 0 0 16px var(--glow);
-}
-.tc-tally li[data-rarity='mythic'] {
-  --glow: rgba(214, 187, 255, 0.22);
-  border-color: rgba(214, 187, 255, 0.32);
-}
-.tc-tally li[data-rarity='legendary'] {
-  --glow: rgba(255, 210, 122, 0.17);
-  border-color: rgba(255, 210, 122, 0.27);
-}
-.tc-tally li[data-rarity='epic'] {
-  --glow: rgba(155, 107, 255, 0.17);
-}
-.tc-tally img {
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
-}
-.tc-tally-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: #efe7fb;
-}
-.tc-tally-count {
-  font-variant-numeric: tabular-nums;
-  font-size: 13px;
-  font-weight: 700;
-  color: #cbbce8;
-}
-.tl-rows {
-  margin: 10px 0 0;
-  padding: 0;
-  list-style: none;
-}
-.tl-row {
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding: 7px 0;
-  border-top: 1px solid rgba(214, 187, 255, 0.07);
-}
-.tl-rows > .tl-row:first-child {
-  border-top: 0;
-}
-.tl-row img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-}
-.tl-row-text {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-.tl-row-text b {
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-}
-.tl-row[data-rarity='mythic'] .tl-row-text b {
-  background: linear-gradient(90deg, #ffd27a, #f3c6ff 55%, #d6bbff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  justify-self: start;
-}
-.tl-row[data-rarity='legendary'] .tl-row-text b {
-  color: #ffd27a;
-}
-.tl-row-text span {
-  font-size: 13px;
-  color: var(--tp-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.tl-row-ok,
-.tl-row-proof {
-  font-size: 13px;
-  font-weight: 600;
-  color: #7cf0c1;
-  white-space: nowrap;
-}
-.tl-row-proof {
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(214, 187, 255, 0.28);
-  color: #d6bbff;
-  text-decoration: none;
-}
-.tl-row-proof:hover {
-  border-color: #d6bbff;
-  background: rgba(214, 187, 255, 0.08);
-}
-.tc-more summary {
-  display: inline-flex;
-  align-items: center;
-  min-height: 36px;
-  margin-top: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #d6bbff;
-  cursor: pointer;
-}
-@media (max-width: 900px) {
-  .tc-shelf {
-    padding: 16px 16px 14px;
-  }
-  .tl-row {
-    gap: 12px;
-  }
-  .tl-row-text span {
-    white-space: normal;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
   .tc-item.is-leaving {
     transition: none;
+  }
+  .tc-item.is-pressed .tc-float,
+  .tc-item.is-popped .tc-float {
+    scale: none;
+    animation: none;
   }
 }
 
@@ -1092,61 +1130,4 @@
   to {
     opacity: 0;
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tc-item.is-pressed .tc-float,
-  .tc-item.is-popped .tc-float {
-    scale: none;
-    animation: none;
-  }
-}
-
-.tc-progress {
-  min-width: 0;
-}
-@media (max-width: 900px) {
-  .tc-controls {
-    gap: 8px;
-  }
-  .tc-step,
-  .tc-play {
-    width: 44px;
-    height: 44px;
-    flex: none;
-  }
-}
-
-/* Profile list styles indent list items; the trophy list sets its own. */
-.tc .tl-row,
-.tc .tc-tally li {
-  margin: 0;
-}
-
-/* Each game's list starts folded; the tally above already tells the story. */
-.tc-more > summary {
-  list-style: none;
-  gap: 6px;
-}
-.tc-more > summary::-webkit-details-marker {
-  display: none;
-}
-.tc-more > summary::after {
-  content: '';
-  width: 7px;
-  height: 7px;
-  margin-left: 4px;
-  border-right: 1.6px solid currentColor;
-  border-bottom: 1.6px solid currentColor;
-  transform: translateY(-2px) rotate(45deg);
-  transition: transform 0.2s var(--tc-ease);
-}
-.tc-more[open] > summary::after {
-  transform: translateY(2px) rotate(-135deg);
-}
-.tc-more-hide,
-.tc-more[open] .tc-more-show {
-  display: none;
-}
-.tc-more[open] .tc-more-hide {
-  display: inline;
 }

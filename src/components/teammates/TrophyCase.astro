@@ -1,17 +1,21 @@
 ---
 /*
- * The trophy case: approved trophies on a lit stage. The rarest stands in front in its own light;
- * the rest wait on a shallow arc either side and any of them can be brought forward. Rarity is
- * told by light, size and shine, never by a label on the trophy, so a Gold rank still looks earned.
+ * The trophy case: one lit glass case. Inside it the rarest trophy stands on the stage in its
+ * own light with its name beside it; along the bottom edge runs the shelf, every trophy in one
+ * run, grouped by game and reflected in the ledge. The shelf is the index: tap an item and it
+ * steps forward onto the stage. Rarity is told by light, size and shine, never by a label on
+ * the trophy, so a Gold rank still looks earned.
  *
  * Everything renders on the server in its first position, so the case is complete without
  * JavaScript; the script below only moves trophies and adds the tilt.
  */
 import type { TrophyView } from '../../server/teammates/trophy-view';
 import {
-  trophyHighlights,
+  TOUR_MAX,
   trophyOffset,
+  trophySeasonLine,
   trophyShelves,
+  trophyStands,
 } from '../../server/teammates/trophy-view';
 import './trophy-case.css';
 
@@ -20,15 +24,13 @@ interface Props {
   name: string;
 }
 const { trophies: all, name } = Astro.props;
-/* The stage holds one of each tier or result; the list underneath holds everything. */
-const trophies = trophyHighlights(all);
-const n = trophies.length;
-const shelves = trophyShelves(all);
-const lineOf = (t: TrophyView) =>
-  [t.eyebrow.replace(`${t.gameName} · `, ''), t.meta]
-    .filter(Boolean)
-    .join(' · ');
-const pad = (i: number) => String(i).padStart(2, '0');
+/* One stand per tier or result, every one of them reachable on the stage. */
+const stands = trophyStands(all);
+const n = stands.length;
+/* The tour walks the rarest handful and loops; the shelf still reaches everything. */
+const tour = Math.min(n, TOUR_MAX);
+const shelves = trophyShelves(stands);
+const at = new Map(stands.map((s, i) => [s.id, i]));
 ---
 
 <section
@@ -37,6 +39,7 @@ const pad = (i: number) => String(i).padStart(2, '0');
   aria-labelledby="trophies-title"
   data-trophy-case
   data-count={n}
+  data-tour={tour}
 >
   <div class="tp-section-head">
     <div>
@@ -44,255 +47,207 @@ const pad = (i: number) => String(i).padStart(2, '0');
       <p>{name}'s verified ranks and results, rarest first.</p>
     </div>
   </div>
-  <div class="tc-layout">
-    <div class="tc-stage" data-tc-stage>
-      <canvas class="tc-dust" aria-hidden="true" data-tc-dust></canvas>
-      <div class="tc-floor-rings" aria-hidden="true">
-        <i></i>
-        <i></i>
-      </div>
-      <div class="tc-arc" role="tablist" aria-label="Trophies" data-tc-arc>
-        {trophies.map((t, i) => {
-          const d = trophyOffset(i, 0, n);
-          return (
-            <button
-              type="button"
-              class="tc-item"
-              id={`tc-tab-${t.id}`}
-              role="tab"
-              aria-selected={i === 0 ? 'true' : 'false'}
-              aria-controls={`tc-panel-${t.id}`}
-              aria-label={`${t.name}, ${t.eyebrow}`}
-              tabindex={i === 0 ? 0 : -1}
-              data-rarity={t.rarity}
-              data-crest={t.crest ? '' : undefined}
-              data-a={Math.min(Math.abs(d), 4)}
-              style={`--art:url("${t.art}");--side:${Math.sign(d)};--i:${i}`}
-            >
-              <span class="tc-glow" aria-hidden="true" />
-              <span class="tc-shadow" aria-hidden="true" />
-              {(t.rarity === 'mythic' || t.rarity === 'legendary') && (
-                <span class="tc-halo" aria-hidden="true" />
-              )}
-              {(t.rarity === 'mythic' || t.rarity === 'legendary') && (
-                <span class="tc-sparkles" aria-hidden="true">
-                  <i />
-                  <i />
-                  <i />
-                  <i />
-                  <i />
-                </span>
-              )}
-              <span class="tc-float">
-                <span class="tc-body">
-                  <img
-                    src={t.art}
-                    alt={t.alt}
-                    draggable="false"
-                    width="256"
-                    height="256"
-                    loading={i === 0 ? 'eager' : 'lazy'}
-                    decoding="async"
-                  />
-                  <span class="tc-foil" aria-hidden="true" />
-                  <span class="tc-glint" aria-hidden="true" />
-                  <span class="tc-glitter" aria-hidden="true" />
-                </span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-    <div class="tc-details">
-      {trophies.map((t, i) => (
-        <div
-          class="tc-detail"
-          id={`tc-panel-${t.id}`}
-          role="tabpanel"
-          aria-labelledby={`tc-tab-${t.id}`}
-          data-rarity={t.rarity}
-          hidden={i !== 0}
+  <div class="tc-case">
+    {n > 1 && (
+      <div class="tc-hold-row">
+        <button
+          type="button"
+          class="tc-hold"
+          data-tc-play
+          data-on="Stop the tour"
+          data-off="Resume the tour"
+          hidden
         >
-          <p class="tc-eyebrow">{t.eyebrow}</p>
-          <h3 class="tc-name" style={`--len:${Math.max(t.name.length, 8)}`}>
-            {t.name}
-          </h3>
-          {t.meta && <p class="tc-meta">{t.meta}</p>}
-          <p class="tc-verified">
-            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-              <path
-                d="M8 1.5 13.5 4v4c0 3.2-2.3 5.6-5.5 6.5C4.8 13.6 2.5 11.2 2.5 8V4z"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.4"
-              />
-              <path
-                d="m5.6 8.1 1.7 1.7 3.2-3.4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <span>Verified by Duoly{t.verified && ` · ${t.verified}`}</span>
-            {t.proofUrl && (
-              <a
-                class="tc-proof"
-                href={t.proofUrl}
-                target="_blank"
-                rel="nofollow noopener noreferrer"
-              >
-                See proof
+          Stop the tour
+        </button>
+      </div>
+    )}
+    <div class="tc-inner">
+      <div class="tc-words tc-details">
+        {stands.map((t, i) => {
+          const seasons = trophySeasonLine(t);
+          return (
+            <div
+              class="tc-detail"
+              id={`tc-panel-${t.id}`}
+              role="tabpanel"
+              aria-labelledby={`tc-tab-${t.id}`}
+              data-rarity={t.rarity}
+              hidden={i !== 0}
+            >
+              <p class="tc-eyebrow">{t.eyebrow}</p>
+              <h3 class="tc-name" style={`--len:${Math.max(t.name.length, 8)}`}>
+                {t.name}
+              </h3>
+              {t.meta && <p class="tc-meta">{t.meta}</p>}
+              {seasons && <p class="tc-seasons">{seasons}</p>}
+              <p class="tc-verified">
                 <svg
-                  viewBox="0 0 12 12"
-                  width="12"
-                  height="12"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  height="16"
                   aria-hidden="true"
                 >
                   <path
-                    d="M4 2h6v6M10 2 2.5 9.5"
+                    d="M8 1.5 13.5 4v4c0 3.2-2.3 5.6-5.5 6.5C4.8 13.6 2.5 11.2 2.5 8V4z"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="1.5"
+                    stroke-width="1.4"
+                  />
+                  <path
+                    d="m5.6 8.1 1.7 1.7 3.2-3.4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
                   />
                 </svg>
-              </a>
-            )}
-          </p>
-        </div>
-      ))}
-      {n > 1 && (
-        <div class="tc-controls">
-          <p class="tc-count" aria-live="polite">
-            <b data-tc-index>01</b>
-            <span> / {pad(n)}</span>
-          </p>
-          <span class="tc-progress" aria-hidden="true">
-            <i data-tc-progress style={`--p:${1 / n}`} />
-          </span>
-          <button
-            type="button"
-            class="tc-play"
-            data-tc-play
-            aria-pressed="false"
-            aria-label="Pause the trophy carousel"
-            hidden
-          >
-            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-              <path class="tc-play-pause" d="M5 3v10M11 3v10" />
-              <path class="tc-play-go" d="M5 3l8 5-8 5z" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            class="tc-step"
-            data-tc-step="-1"
-            aria-label="Previous trophy"
-          >
-            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-              <path
-                d="M10 3 5 8l5 5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            class="tc-step"
-            data-tc-step="1"
-            aria-label="Next trophy"
-          >
-            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-              <path
-                d="m6 3 5 5-5 5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-              />
-            </svg>
-          </button>
-        </div>
-      )}
-    </div>
-  </div>
-  <div class="tc-list" aria-labelledby="trophies-list-title">
-    <div class="tc-list-head">
-      <h3 id="trophies-list-title">Every trophy</h3>
-      <span>{all.length}</span>
-    </div>
-    {shelves.map((shelf) => (
-      <section class="tc-shelf" aria-label={shelf.gameName}>
-        <header class="tc-shelf-head">
-          <h4>{shelf.gameName}</h4>
-          <span>
-            {shelf.items.length}{' '}
-            {shelf.items.length === 1 ? 'trophy' : 'trophies'}
-          </span>
-        </header>
-        {shelf.tally.length > 0 && (
-          <ul class="tc-tally" aria-label={`${shelf.gameName} ranks`}>
-            {shelf.tally.map((x) => (
-              <li data-rarity={x.rarity}>
-                <img
-                  src={x.art}
-                  alt=""
-                  width="30"
-                  height="30"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <span class="tc-tally-name">{x.name}</span>
-                {x.count > 1 && (
-                  <b class="tc-tally-count" aria-label={`${x.count} seasons`}>
-                    ×{x.count}
-                  </b>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-        <details class="tc-more" open={shelf.tally.length === 0 || undefined}>
-          <summary>
-            <span class="tc-more-show">See the full list</span>
-            <span class="tc-more-hide">Hide list</span>
-          </summary>
-          <ol class="tl-rows">
-            {shelf.items.map((t) => (
-              <li class="tl-row" data-rarity={t.rarity}>
-                <img
-                  src={t.art}
-                  alt=""
-                  width="32"
-                  height="32"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <span class="tl-row-text">
-                  <b>{t.name}</b>
-                  <span>{lineOf(t)}</span>
-                </span>
-                {t.proofUrl ? (
+                <span>Verified by Duoly{t.verified && ` · ${t.verified}`}</span>
+                {t.proofUrl && (
                   <a
-                    class="tl-row-proof"
+                    class="tc-proof"
                     href={t.proofUrl}
                     target="_blank"
                     rel="nofollow noopener noreferrer"
                   >
                     See proof
+                    <svg
+                      viewBox="0 0 12 12"
+                      width="12"
+                      height="12"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M4 2h6v6M10 2 2.5 9.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      />
+                    </svg>
                   </a>
-                ) : (
-                  <span class="tl-row-ok">Verified</span>
                 )}
-              </li>
-            ))}
-          </ol>
-        </details>
-      </section>
-    ))}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+      <div class="tc-stage" data-tc-stage>
+        <canvas class="tc-dust" aria-hidden="true" data-tc-dust></canvas>
+        <div class="tc-floor-rings" aria-hidden="true"></div>
+        <div class="tc-arc" role="tablist" aria-label="Trophies" data-tc-arc>
+          {stands.map((t, i) => {
+            const d = trophyOffset(i, 0, n);
+            return (
+              <button
+                type="button"
+                class="tc-item"
+                id={`tc-tab-${t.id}`}
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls={`tc-panel-${t.id}`}
+                aria-label={`${t.name}, ${t.eyebrow}`}
+                tabindex={i === 0 ? 0 : -1}
+                data-rarity={t.rarity}
+                data-crest={t.crest ? '' : undefined}
+                data-a={Math.min(Math.abs(d), 4)}
+                style={`--art:url("${t.art}");--side:${Math.sign(d)};--i:${i}`}
+              >
+                <span class="tc-glow" aria-hidden="true" />
+                <span class="tc-shadow" aria-hidden="true" />
+                {(t.rarity === 'mythic' || t.rarity === 'legendary') && (
+                  <span class="tc-halo" aria-hidden="true" />
+                )}
+                {(t.rarity === 'mythic' || t.rarity === 'legendary') && (
+                  <span class="tc-sparkles" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                )}
+                <span class="tc-float">
+                  <span class="tc-body">
+                    <img
+                      src={t.art}
+                      alt={t.alt}
+                      draggable="false"
+                      width="256"
+                      height="256"
+                      loading={i === 0 ? 'eager' : 'lazy'}
+                      decoding="async"
+                    />
+                    <span class="tc-foil" aria-hidden="true" />
+                    <span class="tc-glint" aria-hidden="true" />
+                    <span class="tc-glitter" aria-hidden="true" />
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+    {n > 1 && (
+      <div class="tc-shelf">
+        <div class="tc-rail" data-tc-track>
+          {shelves.map((shelf) => (
+            <div class="tc-group">
+              <p class="tc-group-name">
+                {shelf.gameName}{' '}
+                <span>
+                  {shelf.count} {shelf.count === 1 ? 'trophy' : 'trophies'}
+                </span>
+              </p>
+              <div class="tc-group-row">
+                {shelf.items.map((t) => (
+                  <button
+                    type="button"
+                    class:list={['tc-pick', { 'is-on': at.get(t.id) === 0 }]}
+                    aria-current={at.get(t.id) === 0 ? 'true' : undefined}
+                    data-tc-pick={at.get(t.id)}
+                    data-rarity={t.rarity}
+                    aria-label={
+                      t.count > 1
+                        ? `Show ${t.short} on the stage, ${t.count} seasons`
+                        : `Show ${t.short} on the stage`
+                    }
+                  >
+                    <span class="tc-stand">
+                      <span class="tc-stack" style={`--art:url("${t.art}")`}>
+                        {t.count > 2 && <i class="tc-ghost" />}
+                        {t.count > 1 && <i class="tc-ghost" />}
+                        <img
+                          class="tc-art"
+                          src={t.art}
+                          alt=""
+                          width="46"
+                          height="46"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </span>
+                      <span
+                        class="tc-cast"
+                        aria-hidden="true"
+                        style={`--art:url("${t.art}")`}
+                      />
+                    </span>
+                    <span class="tc-pick-name">{t.short}</span>
+                    {t.count > 1 && (
+                      <span class="tc-held">
+                        <b>{t.count}</b> seasons
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
   </div>
   <p class="tc-note">
     Every trophy here was checked by Duoly before it went up. Rank emblems
@@ -306,10 +261,11 @@ const pad = (i: number) => String(i).padStart(2, '0');
   )) {
     const items = [...root.querySelectorAll<HTMLButtonElement>('.tc-item')];
     const panels = [...root.querySelectorAll<HTMLElement>('.tc-detail')];
+    const picks = [...root.querySelectorAll<HTMLElement>('[data-tc-pick]')];
     const stage = root.querySelector<HTMLElement>('[data-tc-stage]')!;
-    const index = root.querySelector<HTMLElement>('[data-tc-index]');
-    const progress = root.querySelector<HTMLElement>('[data-tc-progress]');
     const n = items.length;
+    /* The tour walks the rarest few and starts again; the shelf reaches the rest. */
+    const tour = Math.min(Number(root.dataset.tour) || n, n);
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let active = 0;
 
@@ -343,15 +299,36 @@ const pad = (i: number) => String(i).padStart(2, '0');
         if (img && Math.abs(d) <= 2) img.loading = 'eager';
       });
       panels.forEach((panel, i) => (panel.hidden = i !== active));
-      if (index) index.textContent = String(active + 1).padStart(2, '0');
-      progress?.style.setProperty('--p', String((active + 1) / n));
+      /* The shelf is the position marker, so there is no counter and no progress bar. */
+      let lit: HTMLElement | undefined;
+      for (const el of picks) {
+        const on = Number(el.dataset.tcPick) === active;
+        el.classList.toggle('is-on', on);
+        if (on) {
+          el.setAttribute('aria-current', 'true');
+          lit = el;
+        } else el.removeAttribute('aria-current');
+      }
+      /* A long shelf scrolls itself to keep the lit trophy in view, and never the page. */
+      const track = lit?.closest<HTMLElement>('[data-tc-track]');
+      if (lit && track && track.scrollWidth > track.clientWidth + 4) {
+        const a = lit.getBoundingClientRect();
+        const b = track.getBoundingClientRect();
+        track.scrollTo({
+          left:
+            track.scrollLeft +
+            (a.left - b.left) -
+            (track.clientWidth - a.width) / 2,
+          behavior: still ? 'auto' : 'smooth',
+        });
+      }
       if (focus) items[active]?.focus({ preventScroll: true });
     };
 
     /* Slow auto-advance that loops. It waits while the visitor is pointing at, focused in
        or has just used the case, stops while the page or the case is out of view, and never
-       runs with reduced motion. The pause button keeps it stopped. */
-    const playBtn = root.querySelector<HTMLButtonElement>('[data-tc-play]');
+       runs with reduced motion. The one text control keeps it stopped. */
+    const holdBtn = root.querySelector<HTMLButtonElement>('[data-tc-play]');
     const AUTO = 4200;
     let timer = 0;
     let hovering = false;
@@ -369,7 +346,7 @@ const pad = (i: number) => String(i).padStart(2, '0');
       )
         return schedule();
       if (Date.now() < quietUntil) return schedule(quietUntil - Date.now());
-      show(active + 1);
+      show(active + 1 >= tour ? 0 : active + 1);
       schedule();
     };
     const schedule = (ms = AUTO) => {
@@ -380,15 +357,13 @@ const pad = (i: number) => String(i).padStart(2, '0');
     const touched = () => {
       quietUntil = Date.now() + 9000;
     };
-    if (!still && n > 1 && playBtn) {
-      playBtn.hidden = false;
-      playBtn.addEventListener('click', () => {
+    if (!still && n > 1 && holdBtn) {
+      holdBtn.hidden = false;
+      holdBtn.addEventListener('click', () => {
         paused = !paused;
-        playBtn.setAttribute('aria-pressed', String(paused));
-        playBtn.setAttribute(
-          'aria-label',
-          paused ? 'Play the trophy carousel' : 'Pause the trophy carousel',
-        );
+        holdBtn.textContent = paused
+          ? (holdBtn.dataset.off ?? '')
+          : (holdBtn.dataset.on ?? '');
         if (!paused) schedule();
       });
       root.addEventListener(
@@ -412,6 +387,13 @@ const pad = (i: number) => String(i).padStart(2, '0');
         if (i !== active) go(i);
       }),
     );
+    /* Every shelf item is another way into the same step. */
+    picks.forEach((el) =>
+      el.addEventListener('click', () => {
+        const i = Number(el.dataset.tcPick);
+        if (i !== active) go(i);
+      }),
+    );
     /* The whole stage is a target: anywhere left of the front trophy steps back, anywhere
        right of it steps on, so the small trophies on the arc need no precise aim. */
     stage.addEventListener('click', (e) => {
@@ -422,13 +404,6 @@ const pad = (i: number) => String(i).padStart(2, '0');
       if (front && x >= front.left && x <= front.right) return;
       go(active + (x < r.left + r.width / 2 ? -1 : 1));
     });
-    root
-      .querySelectorAll<HTMLButtonElement>('[data-tc-step]')
-      .forEach((b) =>
-        b.addEventListener('click', () =>
-          go(active + Number(b.dataset.tcStep)),
-        ),
-      );
     root.querySelector('[data-tc-arc]')?.addEventListener('keydown', (e) => {
       const key = (e as KeyboardEvent).key;
       const step = key === 'ArrowRight' ? 1 : key === 'ArrowLeft' ? -1 : 0;
