@@ -218,17 +218,13 @@ begin
      or has_table_privilege('service_role','public.discord_order_posts','insert')
      or has_table_privilege('authenticated','public.discord_order_posts','select')
   then raise exception 'permissions wrong'; end if;
-  -- Interim dispatcher contract: retain old definitions for rollback, but never run both.
-  if not exists (select 1 from cron.job where jobname = 'duoly-discord-orders-tick'
-      and username = current_user and schedule = '10 seconds' and not active) then
-    raise exception 'orders tick not retained paused'; end if;
-  if not exists (select 1 from cron.job where jobname = 'duoly-discord-roles-log-prune'
-      and username = current_user and not active and command like '%duoly-discord-orders-tick%') then
-    raise exception 'old Discord log prune not retained paused'; end if;
-  if not exists (select 1 from cron.job where jobname = 'duoly-dispatch'
-      and username = current_user and active and schedule = '10 seconds'
-      and command = 'select public.duoly_dispatch();') then
-    raise exception 'shared dispatcher not active at 10 seconds'; end if;
+  -- The orders tick and the shared dispatcher are retired (20261113100000): timers plus the fixer.
+  if exists (select 1 from cron.job where username = current_user and jobname in
+      ('duoly-discord-orders-tick', 'duoly-discord-roles-log-prune', 'duoly-dispatch')) then
+    raise exception 'a retired orders cron job is still scheduled'; end if;
+  if not exists (select 1 from cron.job where jobname = 'duoly-background-fix'
+      and username = current_user and active and schedule = '*/10 * * * *') then
+    raise exception 'fixer not active every 10 minutes'; end if;
   if not exists (select 1 from cron.job where jobname = 'duoly-cron-log-prune'
       and username = current_user and active and schedule = '0 * * * *'
       and command like '%delete from cron.job_run_details%'

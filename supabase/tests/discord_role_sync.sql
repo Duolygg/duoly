@@ -113,18 +113,14 @@ do $$ declare r jsonb; ids text[]; p jsonb; begin
 end $$;
 reset role;
 
--- Retain the paused sweep and Vault-only command for rollback; dispatch centrally.
+-- The per-kind sweep and the shared dispatcher are retired (20261113100000): timers plus the fixer.
 do $$ declare j record; begin
- select * into j from cron.job where jobname='duoly-discord-roles-tick' and username=current_user;
- if j.jobid is null or j.active or j.schedule <> '30 seconds' then raise exception 'sweep job not retained paused: %',j; end if;
- if j.command not like '%https://duoly.gg/api/discord/roles/tick%' or j.command not like '%discord_roles_tick_secret%' or j.command ~ 'Bearer [A-Za-z0-9]' then
-  raise exception 'sweep command wrong'; end if;
- if not exists (select 1 from cron.job where jobname='duoly-discord-roles-log-prune'
-     and username=current_user and not active) then raise exception 'old log prune not retained paused'; end if;
- if not exists (select 1 from cron.job where jobname='duoly-dispatch'
-     and username=current_user and active and schedule='10 seconds'
-     and command='select public.duoly_dispatch();') then
-  raise exception 'shared dispatcher not active at 10 seconds'; end if;
+ if exists (select 1 from cron.job where username=current_user and jobname in
+     ('duoly-discord-roles-tick','duoly-discord-roles-log-prune','duoly-dispatch')) then
+  raise exception 'a retired roles cron job is still scheduled'; end if;
+ if not exists (select 1 from cron.job where jobname='duoly-background-fix'
+     and username=current_user and active and schedule='*/10 * * * *') then
+  raise exception 'fixer not active every 10 minutes'; end if;
  if not exists (select 1 from cron.job where jobname='duoly-cron-log-prune'
      and username=current_user and active and schedule='0 * * * *'
      and command like '%delete from cron.job_run_details%'

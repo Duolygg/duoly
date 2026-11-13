@@ -31,6 +31,7 @@ import { runPaymentsSweep } from '../payments/webhook';
 import { fireSecret, reconcileSecret } from './config';
 import { handleTimerFire, timerPorts } from './handlers';
 import { backgroundMode } from './switches';
+import { drainStorageCleanup } from '../storage-cleanup';
 
 const json = (
   body: unknown,
@@ -98,14 +99,14 @@ const ReconcileRequestSchema = z
   .object({
     reason: z.string().max(40).optional(),
     kinds: z.array(SwitchKindSchema).max(SWITCH_KINDS.length).optional(),
+    files: z.boolean().optional(),
   })
   .strict();
 
 /**
- * Runs one kind of legacy tick work, exactly the code the 10 s dispatcher calls. Deliberately not
- * gated by the switch: the fixer is the backstop for every mode, and every one of these handlers
- * is idempotent, so running it while the dispatcher also runs it costs a round trip and nothing
- * else.
+ * Runs one kind of tick work. Deliberately not gated by the switch: the fixer is the backstop for
+ * every mode, and every one of these handlers is idempotent, so running it while a timer also runs
+ * it costs a round trip and nothing else.
  */
 async function reconcileKind(kind: SwitchKind, site: string): Promise<string> {
   if (kind === 'orders') {
@@ -134,9 +135,11 @@ async function reconcileKind(kind: SwitchKind, site: string): Promise<string> {
 }
 
 /**
- * The hourly fixer found work, which means a timer was missed. The call is the alert: this line
- * and the `background_fix` warning in the Postgres log are the two places the evidence lands
- * ([What to watch](../../../docs/product/background-work.md)).
+ * The 10-minute fixer found work. Overdue kinds mean a timer was missed: this line and the
+ * `background_fix` warning in the Postgres log are the two places the evidence lands
+ * ([What to watch](../../../docs/product/background-work.md)). `files: true` means old photos or a
+ * deleted account's files are queued for deletion (src/server/storage-cleanup.ts); that is routine.
+ * No body runs every kind, for a manual call.
  */
 export const reconcileTick: APIRoute = async ({ request }) => {
   if (request.method !== 'POST') return methodNotAllowed();
@@ -155,9 +158,15 @@ export const reconcileTick: APIRoute = async ({ request }) => {
   }
   const parsed = ReconcileRequestSchema.safeParse(body);
   if (!parsed.success) return json({ error: 'not a reconcile request' }, 400);
-  const kinds = parsed.data.kinds?.length ? parsed.data.kinds : SWITCH_KINDS;
+  const files = parsed.data.files === true;
+  // Kinds named run; none named runs all, unless the call is only about files.
+  const named = parsed.data.kinds ?? [];
+  const kinds = named.length ? named : files ? [] : SWITCH_KINDS;
   const reason = parsed.data.reason ?? 'manual';
-  console.warn(`[background-fix] reconciling ${kinds.join(', ')} (${reason})`);
+  if (kinds.length)
+    console.warn(
+      `[background-fix] reconciling ${kinds.join(', ')} (${reason})`,
+    );
   const site = new URL(request.url).origin;
   const ran: Record<string, string> = {};
   let failures = 0;
@@ -170,6 +179,21 @@ export const reconcileTick: APIRoute = async ({ request }) => {
       console.warn(`[background-fix] ${kind} failed: ${why(error)}`);
     }
   }
-  // All of it failing is worth a Vercel error; one kind failing is in the body and the log.
-  return json({ reason, ran }, failures === kinds.length ? 503 : 200);
+  if (files) {
+    try {
+      const db = supportService();
+      if (!db) throw new Error('database unavailable');
+      const result = await drainStorageCleanup(db);
+      ran.files = `deleted ${result.deleted}, failed ${result.failed}`;
+      if (result.failed)
+        console.warn(`[background-fix] files: ${result.failed} not deleted`);
+    } catch (error) {
+      failures += 1;
+      ran.files = `failed: ${why(error)}`;
+      console.warn(`[background-fix] files failed: ${why(error)}`);
+    }
+  }
+  // All of it failing is worth a Vercel error; one part failing is in the body and the log.
+  const parts = kinds.length + (files ? 1 : 0);
+  return json({ reason, ran }, parts > 0 && failures === parts ? 503 : 200);
 };
