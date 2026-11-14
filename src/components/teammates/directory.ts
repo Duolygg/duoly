@@ -40,6 +40,21 @@ function quietOnError(img: HTMLImageElement) {
 }
 /** Uploaded photos are square crops; the preset mascots are drawn as they are. */
 const isPhoto = (src: string) => !src.startsWith('/assets/avatars/');
+/**
+ * An image address read from the page's embedded data, only if it is one of ours: a file under
+ * /assets/, or an uploaded photo in Supabase storage. Anything else becomes '' and is not shown.
+ */
+function safeImage(src: string): string {
+  if (/^\/assets\/[\w/-]+(\.[\w-]+)*\.(png|webp|jpg|jpeg|svg)$/.test(src))
+    return src;
+  if (
+    /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/avatars\/[0-9a-f-]+\/[0-9a-f]{16}\.(webp|jpg)$/.test(
+      src,
+    )
+  )
+    return src;
+  return '';
+}
 
 /** Build an element with a class and optional text, safely. */
 function el<K extends keyof HTMLElementTagNameMap>(
@@ -498,9 +513,10 @@ function init(root: HTMLElement, signal: AbortSignal) {
   ) => {
     const b = el('button', 'md-quiz-choice');
     b.type = 'button';
-    if (img) {
+    const safe = img ? safeImage(img) : '';
+    if (safe) {
       const i = el('img');
-      i.src = img;
+      i.src = safe;
       i.alt = '';
       b.append(i);
     }
@@ -620,12 +636,11 @@ function init(root: HTMLElement, signal: AbortSignal) {
     }
     for (const [i, r] of ranked.entries()) {
       const a = el('a', 'md-quiz-result');
-      a.href = `/teammates/${r.card.slug}`;
+      a.href = `/teammates/${encodeURIComponent(r.card.slug)}`;
       a.style.setProperty('--i', String(i));
-      const face = quietOnError(
-        el('img', isPhoto(r.card.avatar) ? 'is-photo' : ''),
-      );
-      face.src = r.card.avatar;
+      const avatar = safeImage(r.card.avatar) || '/assets/avatars/avatar-1.png';
+      const face = quietOnError(el('img', isPhoto(avatar) ? 'is-photo' : ''));
+      face.src = avatar;
       face.alt = '';
       const text = el('span', 'md-quiz-result-text');
       text.append(el('strong', '', r.card.name));
