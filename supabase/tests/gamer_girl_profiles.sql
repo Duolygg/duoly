@@ -90,6 +90,7 @@ select pg_temp.ok(public.teammate_public_approved('e1300000-0000-4000-8000-00000
 select pg_temp.ok(not public.teammate_public_approved('e1300000-0000-4000-8000-000000000003','social'),'and not for anyone else');
 select pg_temp.ok(not public.teammate_public_approved('e1300000-0000-4000-8000-000000000001','val'),'Gamer Girl access does not approve a competitive game');
 
+grant insert on assertions to authenticated;
 set local role authenticated;
 select pg_catalog.set_config('request.jwt.claims','{"sub":"e1300000-0000-4000-8000-000000000002","role":"authenticated"}',true);
 select pg_temp.ok(public.teammate_public_profile_get()->'approvedGames' = '["val","social"]'::jsonb,'settings offer Social to a Gamer Girl');
