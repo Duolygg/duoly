@@ -57,6 +57,26 @@ do $$ declare bad text; begin
   exception when check_violation then perform pg_temp.ok(true,'invalid header rejected'); end;
  end loop;
 end $$;
+-- The endpoint uses the service role: it must be able to read and swap the header, and only that.
+grant insert on assertions to service_role;
+set local role service_role;
+select pg_temp.ok((select header_image is null from public.teammate_public_profiles
+  where user_id='9e000000-0000-4000-8000-000000000001'),'service role reads the header');
+update public.teammate_public_profiles
+  set header_image='https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.jpg',
+      updated_at=pg_catalog.now()
+  where user_id='9e000000-0000-4000-8000-000000000001' and header_image is null;
+select pg_temp.ok(found,'service role swaps the header');
+do $$ begin
+  update public.teammate_public_profiles set published=false where user_id='9e000000-0000-4000-8000-000000000001';
+  raise exception 'service role changed another column';
+exception when insufficient_privilege then perform pg_temp.ok(true,'service role cannot touch other columns'); end $$;
+reset role;
+select set_config('request.jwt.claim.sub','9e000000-0000-4000-8000-000000000001',true);
+select pg_temp.ok(public.teammate_public_profile_get()->>'header' like '%/0123456789abcdef.jpg','settings return the saved header');
+update public.teammate_public_profiles set header_image=null where user_id='9e000000-0000-4000-8000-000000000001';
+select pg_temp.ok(public.teammate_public_profile_get()->'header'='null'::jsonb,'settings say when there is no header');
+select set_config('request.jwt.claim.sub','',true);
 grant insert on assertions to anon;
 set local role anon;
 select pg_temp.ok(public.public_teammate_profile('header-fixture') ? 'header','anon can read published header');

@@ -43,6 +43,19 @@ function objectPath(url: string, userId: string): string | null {
     : null;
 }
 
+/** Failures used to vanish into a bare 503; say which step failed (no user data, no image). */
+const fail = (
+  step: string,
+  error?: { message?: string; code?: string } | null,
+) => {
+  console.error(
+    `[profile-header] ${step} failed`,
+    error?.code ?? '',
+    error?.message ?? '',
+  );
+  return null;
+};
+
 async function changeHeader(
   userId: string,
   header: DecodedHeader | null,
@@ -54,13 +67,13 @@ async function changeHeader(
   )
     return null;
   const db = supportService();
-  if (!db) return null;
+  if (!db) return fail('config');
   const current = await db
     .from('teammate_public_profiles')
     .select('header_image')
     .eq('user_id', userId)
     .single();
-  if (current.error || !current.data) return null;
+  if (current.error || !current.data) return fail('read', current.error);
   const old = current.data.header_image as string | null;
   const bucket = db.storage.from('profile-headers');
   let url: string | null = null;
@@ -75,7 +88,7 @@ async function changeHeader(
       cacheControl: '31536000',
       upsert: true,
     });
-    if (error) return null;
+    if (error) return fail('upload', error as { message?: string });
     url = bucket.getPublicUrl(path).data.publicUrl;
   }
   // Compare-and-swap prevents a concurrent request from deleting another request's current image.
@@ -88,7 +101,7 @@ async function changeHeader(
       ? query.is('header_image', null)
       : query.eq('header_image', old);
   const saved = await query.select('user_id').single();
-  if (saved.error || !saved.data) return null;
+  if (saved.error || !saved.data) return fail('save', saved.error);
   if (old && old !== url) {
     const path = objectPath(old, userId);
     // The durable cleanup queue retries API failures, including account deletions.
