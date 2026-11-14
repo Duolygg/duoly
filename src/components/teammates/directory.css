@@ -1,0 +1,1870 @@
+/*
+ * The teammate directory (/teammates), as a marketplace: a calm headline with one trust line,
+ * a single search bar (game, availability, sort), a row of game tiles, one grid of results and
+ * the three answers as plain columns. Restraint over effects: the motion is a soft fade-in of
+ * the page on load and lift on hover, nothing that competes with the teammates themselves.
+ */
+
+/* ---------- hero ---------- */
+.md-hero {
+  position: relative;
+  padding: 44px 0 30px;
+  text-align: center;
+}
+/* One soft wash of light behind the headline, faded out on every side. */
+.md-hero::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -60px 10% auto;
+  height: 360px;
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent) 16%, transparent),
+    transparent
+  );
+}
+.md-hero h1 {
+  margin: 0 auto;
+  max-width: 18ch;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  color: #fff;
+  animation: md-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.md-hero .md-lead {
+  /* The shared page rule resets paragraph margins; centring needs the auto sides back. */
+  margin: 18px auto 0 !important;
+  max-width: 54ch;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--tp-muted);
+  text-wrap: pretty;
+  animation: md-in 0.6s 0.06s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.md-trust {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 26px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--tp-muted);
+  animation: md-in 0.6s 0.12s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.md-trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.md-trust li + li::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  margin-right: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+}
+.md-trust strong {
+  color: #fff;
+}
+.md-star {
+  color: var(--tp-star);
+}
+.md-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tp-live);
+  animation: md-live 1.8s ease-out infinite;
+}
+@keyframes md-live {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 154, 0.5);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 6px rgba(74, 222, 154, 0);
+  }
+}
+@keyframes md-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+
+/* ---------- the search bar ---------- */
+.md-search {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: stretch;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: #140c25;
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.4),
+    inset 0 1px rgba(255, 255, 255, 0.05);
+  animation: md-in 0.6s 0.18s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.md-divider {
+  width: 1px;
+  margin: 12px 0;
+  background: rgba(255, 255, 255, 0.1);
+}
+.md-menu {
+  position: relative;
+  display: flex;
+}
+.md-menu-game {
+  flex: 1.3;
+}
+.md-menu-sort,
+.md-menu-filters {
+  flex: 1;
+}
+.md-menu summary,
+.md-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 8px 20px 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.18s;
+}
+.md-menu-sort summary {
+  padding-left: 22px;
+}
+.md-menu summary::-webkit-details-marker {
+  display: none;
+}
+.md-menu summary:hover,
+.md-menu[open] summary,
+.md-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.md-menu summary:focus-visible,
+.md-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.md-field-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--accent);
+}
+.md-field-icon img {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+.md-field {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+  text-align: left;
+}
+.md-field small {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-field strong {
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.md-chevron {
+  flex: none;
+  color: var(--tp-muted);
+  transition: rotate 0.2s;
+}
+.md-menu[open] .md-chevron {
+  rotate: 180deg;
+}
+
+/* Online now: a real switch, so the state reads at a glance. */
+.md-toggle {
+  flex: 1.1;
+  padding-left: 22px;
+  color: inherit;
+}
+.md-switch {
+  position: relative;
+  width: 40px;
+  height: 24px;
+  flex: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: background 0.2s;
+}
+.md-switch i {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: translate 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.md-toggle.is-on .md-switch {
+  background: var(--tp-live);
+}
+.md-toggle.is-on .md-switch i {
+  translate: 16px 0;
+}
+
+/* Popovers under the bar. */
+.md-popover {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 12px);
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background: #170e2b;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  animation: md-pop 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes md-pop {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+.md-popover-games {
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  width: min(660px, calc(100vw - 48px));
+  max-height: min(430px, 65vh);
+  overflow: auto;
+}
+.md-popover-sort {
+  right: 0;
+  display: grid;
+  gap: 2px;
+  min-width: 220px;
+}
+.md-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px 9px 9px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #eadff7;
+  transition: background 0.15s;
+}
+.md-popover-sort .md-option {
+  justify-content: space-between;
+  padding: 12px 14px;
+}
+.md-option:hover,
+.md-option:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  outline: none;
+}
+.md-option.is-current {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: #fff;
+}
+.md-option-icon {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 8px;
+}
+.md-option-all {
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--accent);
+}
+.md-check {
+  color: var(--accent);
+}
+
+/* ---------- game tiles ---------- */
+.md-games {
+  position: relative;
+  margin: 30px 0 0;
+  animation: md-in 0.6s 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+/* The edges fade only on a side where there is more strip to scroll to. */
+.md-games-track {
+  --fade-l: 0px;
+  --fade-r: 0px;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 var(--fade-l),
+    #000 calc(100% - var(--fade-r)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 var(--fade-l),
+    #000 calc(100% - var(--fade-r)),
+    transparent
+  );
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 6px 14px 10px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.md-games-track::-webkit-scrollbar {
+  display: none;
+}
+.md-tile {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 8px;
+  width: 104px;
+  flex: none;
+  padding: 14px 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 13px;
+  line-height: 1.25;
+  text-align: center;
+  color: var(--tp-muted);
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.md-tile:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+.md-tile.is-current {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  color: #fff;
+}
+.md-tile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+.md-tile-all {
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--accent);
+}
+
+/* ---------- results ---------- */
+.md-results {
+  margin-top: 34px;
+}
+.md-results-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--tp-line);
+}
+.md-results-head h2 {
+  margin: 0;
+  font:
+    700 26px/1.2 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.025em;
+  color: #fff;
+}
+.md-results-head p {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--tp-muted);
+}
+.md-clear {
+  color: var(--accent);
+  font-weight: 600;
+}
+.md-clear:hover {
+  text-decoration: underline;
+}
+.md-grid {
+  row-gap: 18px !important;
+}
+.md-cell {
+  display: grid;
+  animation: md-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(0.28s + min(var(--i), 12) * 0.04s);
+}
+.md-cell .tp-card {
+  height: 100%;
+}
+.md-empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 64px 24px;
+  border: 1px solid var(--tp-line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.02);
+  text-align: center;
+  color: var(--tp-muted);
+}
+.md-empty-title {
+  margin: 0;
+  font:
+    700 22px/1.3 'Bricolage Grotesque',
+    sans-serif;
+  color: #fff;
+}
+.md-empty p {
+  max-width: 52ch;
+}
+.md-empty .tp-button {
+  margin-top: 12px;
+}
+
+/* ---------- the three answers ---------- */
+.md-faq {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+  margin: 96px 0 72px;
+  padding-top: 40px;
+  border-top: 1px solid var(--tp-line);
+}
+.md-faq h2 {
+  margin: 0 0 12px;
+  font:
+    700 19px/1.3 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.015em;
+  color: #fff;
+}
+.md-faq p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--tp-muted);
+}
+.md-faq a {
+  color: var(--accent);
+}
+
+/* ---------- smaller screens ---------- */
+@media (max-width: 1050px) {
+  .md-faq {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+@media (max-width: 760px) {
+  .md-hero {
+    padding-top: 28px;
+  }
+  .md-lead {
+    font-size: 16px;
+  }
+  .md-trust li + li::before {
+    display: none;
+  }
+  .md-trust {
+    gap: 6px 16px;
+  }
+  /* The bar becomes a stacked card: game on top, then availability and sort side by side. */
+  .md-search {
+    flex-wrap: wrap;
+    border-radius: 22px;
+  }
+  .md-search > .md-divider:first-of-type {
+    display: none;
+  }
+  .md-menu-game {
+    flex: 1 1 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .md-menu summary,
+  .md-toggle {
+    border-radius: 16px;
+    min-height: 54px;
+  }
+  /* Stacked on a phone: game, availability and sort each get a full row, so no label is cut. */
+  .md-search > .md-divider {
+    display: none;
+  }
+  .md-toggle,
+  .md-menu-sort {
+    flex: 1 1 100%;
+  }
+  .md-menu-sort {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .md-toggle,
+  .md-menu-sort summary {
+    padding-left: 14px;
+  }
+  .md-popover-sort {
+    left: 0;
+    right: 0;
+  }
+  .md-popover-games {
+    width: calc(100vw - 48px);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .md-tile {
+    width: 92px;
+  }
+  .md-results-head h2 {
+    font-size: 22px;
+  }
+}
+@media (max-width: 420px) {
+  .md-popover-games {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ======================================================================================
+   Marketplace additions: search, filters, live strip, curated rows, cards with actions,
+   trust strip, quick view and "Help me choose".
+   ====================================================================================== */
+.md-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.md-eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.md-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+.md-text-link:hover {
+  text-decoration: underline;
+}
+
+/* ---------- "Just played": a slow strip of real recent matches ---------- */
+.md-ticker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 820px;
+  margin: 26px auto 0;
+  padding: 6px 6px 6px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.025);
+  animation: md-in 0.6s 0.16s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.md-ticker-label {
+  flex: none;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--tp-live);
+}
+.md-ticker-window {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+/* Spaced with a margin on each entry rather than a flex gap: the track is two identical sets
+   and slides left by exactly half its width, which only equals one set when every entry carries
+   its own spacing. With a gap the loop came up half a gap short and snapped back each cycle. */
+.md-ticker-track {
+  display: flex;
+  width: max-content;
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  animation: md-ticker calc(var(--n) * 5s) linear infinite;
+}
+.md-ticker:hover .md-ticker-track {
+  animation-play-state: paused;
+}
+@keyframes md-ticker {
+  to {
+    translate: -50% 0;
+  }
+}
+.md-ticker-track li {
+  margin-right: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--tp-muted);
+  white-space: nowrap;
+}
+.md-ticker-track img {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+}
+.md-ticker-track strong {
+  color: #fff;
+}
+.md-ticker-star {
+  color: var(--tp-star);
+}
+.md-ticker-track time {
+  opacity: 0.7;
+}
+
+/* ---------- the sticky bar ---------- */
+.md-sticky {
+  position: sticky;
+  z-index: 15;
+  top: 72px;
+  margin: 26px 0 0;
+  padding: 8px 0;
+}
+/* The backing runs edge to edge as a clipped shadow: a shadow never counts as scrollable
+   overflow, where a box 100vw wider than the bar made the page wider than the screen. */
+.md-sticky.is-stuck::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -4px 0;
+  background: rgba(9, 4, 20, 0.94);
+  box-shadow: 0 0 0 100vmax rgba(9, 4, 20, 0.94);
+  clip-path: inset(0 -100vmax);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.md-query {
+  display: flex;
+  flex: 1.4;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 0 14px 0 18px;
+  border-radius: 999px;
+  color: var(--tp-muted);
+}
+.md-query:focus-within {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+/* The pill itself shows focus; the site-wide input outline would draw a second box inside it. */
+.md-query input:focus,
+.md-query input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.md-query input {
+  flex: 1;
+  min-width: 0;
+  height: 58px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+}
+.md-query input::placeholder {
+  color: var(--tp-muted);
+}
+.md-query input::-webkit-search-cancel-button {
+  filter: invert(1) opacity(0.5);
+}
+
+/* Filters popover */
+.md-popover-filters {
+  right: 0;
+  display: grid;
+  gap: 18px;
+  width: min(460px, calc(100vw - 48px));
+  padding: 18px;
+}
+.md-filter-title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 650;
+  color: #fff;
+}
+.md-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.md-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font-size: 13px;
+  color: #eadff7;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.md-chip span {
+  color: var(--tp-muted);
+}
+.md-chip:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.md-chip.is-on {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: #fff;
+}
+.md-filter-switches {
+  display: grid;
+  gap: 4px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.md-filter-switch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 12px;
+  color: inherit;
+}
+.md-filter-switch:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.md-filter-switch > span:last-child {
+  display: grid;
+  line-height: 1.3;
+}
+.md-filter-switch strong {
+  font-size: 14px;
+  color: #fff;
+}
+.md-filter-switch small {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-filter-switch.is-on .md-switch {
+  background: var(--tp-live);
+}
+.md-filter-switch.is-on .md-switch i {
+  translate: 16px 0;
+}
+.md-filter-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--tp-muted);
+}
+.md-option-name {
+  flex: 1;
+}
+.md-option-count {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+
+/* Active filter chips under the bar */
+.md-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  max-width: 1180px;
+  margin: 12px auto 0;
+}
+.md-active-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 6px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+.md-active-chip:hover {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+.md-chips .md-clear {
+  margin-left: 4px;
+  font-size: 13px;
+}
+
+/* Game tiles: name and a live count */
+.md-tile {
+  width: 118px;
+}
+.md-tile-name {
+  font-size: 13px;
+  color: inherit;
+}
+.md-tile-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-tile-meta .md-dot {
+  width: 6px;
+  height: 6px;
+}
+.md-tile.is-empty {
+  opacity: 0.6;
+}
+
+/* "Help me choose" banner */
+.md-choose {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin: 30px 0 0;
+  padding: 22px 26px;
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      80% 160% at 0% 50%,
+      color-mix(in srgb, var(--accent) 16%, transparent),
+      transparent 70%
+    ),
+    #120a22;
+}
+.md-choose p {
+  margin: 0;
+  color: var(--tp-muted);
+}
+.md-choose .md-choose-title {
+  margin-bottom: 4px;
+  font:
+    700 20px/1.3 'Bricolage Grotesque',
+    sans-serif;
+  color: #fff;
+}
+
+/* Curated rows */
+.md-row {
+  margin-top: 44px;
+}
+.md-row-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 20px;
+  margin-bottom: 14px;
+}
+.md-row-head h2 {
+  margin: 0;
+  font:
+    700 22px/1.2 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.md-row-head p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--tp-muted);
+}
+.md-row-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 6px 2px 14px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+.md-row-track > .dc {
+  width: min(360px, 82vw);
+  flex: none;
+  scroll-snap-align: start;
+}
+
+/* ---------- a directory card: the shared card plus an action bar ---------- */
+.dc {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  border-radius: 14px;
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.2s;
+  animation: md-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(0.2s + var(--i, 0) * 0.04s);
+}
+.dc[hidden],
+.dc.is-extra {
+  display: none;
+}
+.dc:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+.dc .tp-card {
+  border-radius: 14px 14px 0 0;
+}
+.dc .tp-card:hover {
+  transform: none;
+}
+.dc-extra {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+.dc-extra:empty {
+  display: none;
+}
+.dc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.dc-tag {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+  color: #eadff7;
+}
+.dc-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 2px;
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.dc-quote {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 13px;
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--tp-muted);
+}
+.dc-quote span {
+  margin-right: 2px;
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 700;
+}
+.dc-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px 10px 22px;
+  border-radius: 0 0 14px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: #0e0818;
+}
+.dc-price {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.dc-price strong {
+  font:
+    650 18px/1 'Bricolage Grotesque',
+    sans-serif;
+  color: #fff;
+}
+.dc-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.dc-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #eadff7;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+.dc-icon:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #fff;
+}
+.dc-icon:focus-visible,
+.dc-book:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.dc-save[aria-pressed='true'] {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.dc-save[aria-pressed='true'] .tp-ico path {
+  fill: currentColor;
+}
+.dc-book {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: var(--accent);
+  font-size: 14px;
+  font-weight: 650;
+  color: #10071d !important;
+  transition: filter 0.15s;
+}
+.dc-book:hover {
+  filter: brightness(1.08);
+}
+.md-search-empty {
+  margin: 24px 0 0;
+  text-align: center;
+  color: var(--tp-muted);
+}
+.md-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 26px;
+}
+
+/* ---------- trust strip ---------- */
+.md-trust-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr);
+  gap: 28px 48px;
+  margin-top: 88px;
+  padding: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  background: linear-gradient(160deg, #150d27, #0d0817 85%);
+}
+.md-trust-intro h2 {
+  margin: 0 0 16px;
+  font:
+    700 clamp(24px, 2.4vw, 30px) / 1.2 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.025em;
+  color: #fff;
+}
+.md-verify {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.md-verify li {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+.md-verify-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--tp-live) 14%, transparent);
+  color: var(--tp-live);
+}
+.md-verify strong {
+  margin-top: 4px;
+  font-size: 15px;
+  color: #fff;
+}
+.md-verify span:last-child {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--tp-muted);
+}
+.md-guarantees {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 22px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  list-style: none;
+}
+.md-guarantees li {
+  display: grid;
+  gap: 4px;
+  padding: 0 22px;
+}
+.md-guarantees li:first-child {
+  padding-left: 0;
+}
+.md-guarantees li + li {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+.md-guarantees strong {
+  font-size: 14px;
+  color: #fff;
+}
+.md-guarantees span {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--tp-muted);
+}
+
+/* ---------- become a teammate ---------- */
+.md-join {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px 32px;
+  margin: 0 0 72px;
+  padding: 34px 36px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  background:
+    radial-gradient(
+      70% 140% at 100% 0%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 65%
+    ),
+    linear-gradient(120deg, #1b1032, #100a1d);
+}
+.md-join h2 {
+  margin: 0 0 8px;
+  font:
+    700 clamp(24px, 2.6vw, 32px) / 1.2 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.025em;
+  color: #fff;
+}
+.md-join p:not(.md-eyebrow) {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--tp-muted);
+}
+.md-join-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+.md-faq {
+  margin-bottom: 64px;
+}
+
+/* ---------- panels: quick view (a drawer) and "Help me choose" ---------- */
+.md-panel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(520px, 100vw);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  /* The panel itself never scrolls: its one scroll area does (.md-panel-scroll). */
+  overflow: hidden;
+  border: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  background: #110a20;
+  color: #f1e9fc;
+  box-shadow: -30px 0 80px rgba(0, 0, 0, 0.5);
+}
+.md-panel[open] {
+  display: flex;
+  flex-direction: column;
+  animation: md-drawer 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* The one scroll area: thin, quiet scrollbar, and scrolling to its end never moves the page. */
+.md-panel-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+.md-panel-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.md-panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.md-panel-scroll::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.18) padding-box;
+}
+.md-panel-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+/* The page under an open panel stands still, so the panel's scrollbar is the only one. */
+html.md-locked {
+  overflow: hidden;
+}
+@keyframes md-drawer {
+  from {
+    translate: 40px 0;
+    opacity: 0;
+  }
+}
+.md-panel::backdrop {
+  background: rgba(5, 2, 12, 0.6);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.md-panel-close {
+  position: absolute;
+  z-index: 2;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(9, 4, 20, 0.7);
+  color: #fff;
+  cursor: pointer;
+}
+.md-panel-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.md-skeleton {
+  display: grid;
+  gap: 14px;
+  padding: 90px 28px 28px;
+}
+.md-skeleton i {
+  height: 18px;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.11),
+    rgba(255, 255, 255, 0.05)
+  );
+  background-size: 200% 100%;
+  animation: md-shimmer 1.2s linear infinite;
+}
+.md-skeleton i:first-child {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+.md-skeleton i:nth-child(2) {
+  width: 60%;
+}
+.md-skeleton i:nth-child(4) {
+  width: 80%;
+}
+@keyframes md-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+.md-peek-inner {
+  display: grid;
+  gap: 18px;
+  padding: 0 28px 28px;
+}
+.md-peek-head {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin: 0 -28px;
+  padding: 90px 28px 0;
+  background: radial-gradient(
+    100% 100% at 0% 0%,
+    color-mix(in srgb, var(--accent) 24%, transparent),
+    transparent 70%
+  );
+}
+.md-peek-art {
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 auto;
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent);
+  mask-image: linear-gradient(180deg, #000 30%, transparent);
+  opacity: 0.7;
+}
+.md-peek-face {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+}
+.md-peek-face.is-photo {
+  border-radius: 50%;
+  object-fit: cover;
+}
+.md-peek-id {
+  position: relative;
+}
+.md-peek-id h2 {
+  margin: 0;
+  font:
+    700 30px/1.1 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+.md-peek-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-peek-tier {
+  padding: 2px 9px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  text-transform: capitalize;
+  color: #fff;
+}
+.md-peek-status::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #8c7fa8;
+}
+.md-peek-status.is-online {
+  color: #fff;
+}
+.md-peek-status.is-online::before {
+  background: var(--tp-live);
+}
+.md-peek-rating {
+  color: var(--tp-star);
+}
+.md-peek-bio {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #e4daf4;
+}
+.md-peek-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.md-peek-games {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.md-peek-games li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+.md-peek-games img {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+}
+.md-peek-games strong {
+  font-size: 14px;
+  color: #fff;
+}
+.md-peek-games span {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-peek-games span.is-verified {
+  color: var(--tp-live);
+}
+.md-peek-games small {
+  grid-column: 2 / -1;
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-peek-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+.md-peek-facts div {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+}
+.md-peek-facts dt {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-peek-facts dd {
+  margin: 2px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+.md-peek-reviews {
+  display: grid;
+  gap: 10px;
+}
+.md-peek-reviews figure {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.md-peek-stars {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--tp-star);
+}
+.md-peek-reviews blockquote {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #eadff7;
+}
+.md-peek-reviews figcaption {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-peek-foot {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #110a20;
+  box-shadow: 0 -18px 30px rgba(17, 10, 32, 0.9);
+}
+.md-peek-foot[hidden] {
+  display: none;
+}
+.md-peek-actions {
+  display: flex;
+  gap: 10px;
+}
+.md-peek-actions .tp-button {
+  min-height: 46px;
+  padding: 10px 18px;
+  font-size: 14px;
+}
+.md-peek-fail {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  padding: 90px 28px 28px;
+  color: var(--tp-muted);
+}
+
+/* Help me choose */
+.md-quiz-scroll {
+  padding: 70px 28px 28px;
+}
+.md-quiz h2 {
+  margin: 0;
+  font:
+    700 26px/1.2 'Bricolage Grotesque',
+    sans-serif;
+  letter-spacing: -0.025em;
+  color: #fff;
+}
+.md-quiz-steps {
+  display: flex;
+  gap: 6px;
+  margin: 18px 0 22px;
+  padding: 0;
+  list-style: none;
+}
+.md-quiz-steps li {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background 0.3s;
+}
+.md-quiz-steps li.is-on {
+  background: var(--accent);
+}
+.md-quiz-choices {
+  display: grid;
+  gap: 10px;
+}
+.md-quiz-games,
+.md-quiz-langs {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.md-quiz-choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.15s;
+  animation: md-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.md-quiz-choice:hover,
+.md-quiz-choice:focus-visible {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  outline: none;
+  transform: translateY(-1px);
+}
+.md-quiz-choice img {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+}
+.md-quiz-choice > span {
+  display: grid;
+  gap: 2px;
+}
+.md-quiz-choice strong {
+  font-size: 15px;
+  color: #fff;
+}
+.md-quiz-choice small {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-quiz-results {
+  display: grid;
+  gap: 12px;
+}
+.md-quiz-result {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  background: linear-gradient(160deg, #1a1030, #110a20);
+  animation: md-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i) * 0.08s);
+  transition: border-color 0.2s;
+}
+.md-quiz-result:first-child {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.md-quiz-result:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.md-quiz-result img {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  object-fit: contain;
+}
+.md-quiz-result-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.md-quiz-result-text strong {
+  font:
+    700 18px/1.2 'Bricolage Grotesque',
+    sans-serif;
+  color: #fff;
+}
+.md-quiz-result-text small {
+  font-size: 13px;
+  color: var(--tp-muted);
+}
+.md-quiz-why {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+.md-quiz-best {
+  position: absolute;
+  top: -10px;
+  right: 14px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  color: #10071d;
+}
+.md-quiz-none {
+  margin: 0;
+  color: var(--tp-muted);
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1180px) {
+  .md-search {
+    flex-wrap: wrap;
+    border-radius: 24px;
+  }
+  .md-query {
+    flex: 1 1 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+  }
+  .md-search > .md-divider:first-of-type {
+    display: none;
+  }
+}
+@media (max-width: 1050px) {
+  .md-trust-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .md-sticky {
+    position: static;
+  }
+  .md-sticky.is-stuck::before {
+    display: none;
+  }
+  .md-ticker {
+    border-radius: 16px;
+  }
+  .md-search > .md-divider {
+    display: none;
+  }
+  .md-menu-filters,
+  .md-menu-sort,
+  .md-toggle {
+    flex: 1 1 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .md-popover-filters,
+  .md-popover-sort {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+  .md-verify,
+  .md-guarantees {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .md-guarantees {
+    gap: 16px;
+  }
+  .md-guarantees li,
+  .md-guarantees li:first-child {
+    padding: 0;
+  }
+  .md-guarantees li + li {
+    border-left: 0;
+  }
+  .md-trust-strip,
+  .md-join,
+  .md-choose {
+    padding: 24px 20px;
+  }
+  .md-panel {
+    inset: auto 0 0;
+    width: 100%;
+    /* A real height, so the scroll area has room to fill and the footer stays in view. */
+    height: min(88dvh, 760px);
+    max-height: none;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 22px 22px 0 0;
+  }
+  .md-panel[open] {
+    animation-name: md-sheet;
+  }
+  @keyframes md-sheet {
+    from {
+      translate: 0 40px;
+      opacity: 0;
+    }
+  }
+  .md-quiz-games,
+  .md-quiz-langs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* Uploaded photos in the panels: round and covered, on a dark backing that also stands in for a
+   picture that fails to load. */
+.md-quiz-result img.is-photo,
+.md-peek-face.is-photo {
+  border-radius: 50%;
+  object-fit: cover;
+  background: #1b1130;
+}
+/* The results count is one phrase: no gap between the number and the word. */
+.md-results-head p {
+  display: block;
+}
+
+/* While another view loads in place, the current one dims a little instead of the page going
+   blank for a full reload. */
+.md-page .md-results,
+.md-page .md-row,
+.md-page .md-games {
+  transition: opacity 0.18s ease;
+}
+.md-page.is-switching .md-results,
+.md-page.is-switching .md-row,
+.md-page.is-switching .md-games {
+  opacity: 0.55;
+}
+.md-page.is-switching {
+  cursor: progress;
+}
+
+.md-games.has-before .md-games-track {
+  --fade-l: 72px;
+}
+.md-games.has-after .md-games-track {
+  --fade-r: 72px;
+}
+.md-games-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-top: -21px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  background: rgba(24, 16, 40, 0.92);
+  color: #fff;
+  box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+.md-games-arrow[hidden] {
+  display: none;
+}
+.md-games-arrow:hover {
+  background: rgba(46, 32, 74, 0.96);
+  transform: scale(1.06);
+}
+.md-games-prev {
+  left: 4px;
+}
+.md-games-next {
+  right: 4px;
+}
+/* Touch screens swipe the strip; the arrows are for mice. */
+@media (hover: none) {
+  .md-games-arrow {
+    display: none;
+  }
+}

@@ -113,6 +113,36 @@ export default class Home extends React.Component {
       perks: null,
       freePerk: false,
     };
+    // A booking link's game and service are part of the first render (the server passes the
+    // query string in), so a visitor from a profile or a game page never sees the default game
+    // and service flash before theirs.
+    if (props.initialLink) {
+      try {
+        const params = new URLSearchParams(props.initialLink);
+        const next = params.has('game')
+          ? this.linkState(params, this.state)
+          : null;
+        if (next) this.state = { ...this.state, ...next };
+        // A favorite's Rebook (/?rebook=lol) picks that game, as openRebookFromLink does.
+        const rebook = params.get('rebook') || '';
+        if (this.data().some((x) => x.id === rebook))
+          this.state = { ...this.state, game: rebook, rank: '', queued: false };
+        // The Rewards card's "Book coaching" (?coaching=1) opens the Coaching tab, as
+        // openCoachingFromLink does.
+        if (params.get('coaching') === '1') {
+          const { g } = this.selection();
+          const m = g.modes.find((x) => x.cat === 'training');
+          if (m)
+            this.state = {
+              ...this.state,
+              tab: 'training',
+              mode: m.id,
+              bundle: null,
+              qty: 1,
+            };
+        }
+      } catch (e) {}
+    }
   }
   detectCurrency() {
     let saved = this.state.curManual ? this.state.cur : null;
@@ -255,6 +285,54 @@ export default class Home extends React.Component {
     if (!this.data().some((x) => x.id === game)) return;
     this.setState({ game, rank: '', queued: false });
   }
+  // The state a booking link (/?game=val&service=duo2…) asks for, or null when it names no game
+  // this page sells. No side effects: the constructor uses it so the server already renders the
+  // linked game and service (no flash of the default game on arrival), and openGameFromLink uses
+  // it again after load, when it lands on the same values.
+  linkState(params, current) {
+    const game = bookingParam(params, 'game');
+    const g = this.data().find((x) => x.id === game);
+    if (!g) return null;
+    const service = bookingParam(params, 'service');
+    const tab = bookingParam(params, 'tab');
+    const m =
+      (service && g.modes.find((x) => x.id === service)) ||
+      (tab && g.modes.find((x) => x.cat === tab)) ||
+      null;
+    const top = g.modes.find((x) => x.id === g.main) || g.modes[0];
+    const selected = m || g.modes.find((x) => x.id === current.mode) || top;
+    const { values } = parseBookingPreferences(params, game, selected.id);
+    const qty = values.qty;
+    // A requested role must not disappear behind the legacy main-service bundle. A count the
+    // Bundles tab sells cheaper than the picker (3 or 10) opens that bundle; 5 stays in the picker,
+    // where it saves more.
+    const bundle =
+      selected.id === top.id &&
+      qty !== undefined &&
+      quantityDiscountPercent(qty, { bundle: true }) >
+        quantityDiscountPercent(qty) &&
+      values.role === undefined &&
+      values.character === undefined &&
+      values.seats === undefined
+        ? (g.bundles || [])[BUNDLE_UNITS.indexOf(qty)] || null
+        : null;
+    return {
+      game,
+      rank: '',
+      role: '',
+      character: '',
+      seats: seatRule(game, selected.id).default,
+      mood: '',
+      voice: true,
+      mcServer: '',
+      mcEdition: 'Java',
+      queued: false,
+      bundle: null,
+      ...(m ? { tab: m.cat, mode: m.id, qty: 1 } : {}),
+      ...values,
+      ...(qty !== undefined ? { bundle } : {}),
+    };
+  }
   // From a game or coaching page CTA (/?game=val&tab=training#modes-h or &service=vod): that game,
   // and that service (or that tab with its first service) picked.
   openGameFromLink() {
@@ -272,56 +350,14 @@ export default class Home extends React.Component {
     } catch (e) {
       return;
     }
-    const game = bookingParam(params, 'game');
-    const g = this.data().find((x) => x.id === game);
-    if (!g) return;
-    const service = bookingParam(params, 'service');
-    const tab = bookingParam(params, 'tab');
-    const m =
-      (service && g.modes.find((x) => x.id === service)) ||
-      (tab && g.modes.find((x) => x.cat === tab)) ||
-      null;
-    const top = g.modes.find((x) => x.id === g.main) || g.modes[0];
-    const selected = m || g.modes.find((x) => x.id === this.state.mode) || top;
-    const { values } = parseBookingPreferences(params, game, selected.id);
-    const qty = values.qty;
-    // A requested role must not disappear behind the legacy main-service bundle. A count the
-    // Bundles tab sells cheaper than the picker (3 or 10) opens that bundle; 5 stays in the picker,
-    // where it saves more.
-    const bundle =
-      selected.id === top.id &&
-      qty !== undefined &&
-      quantityDiscountPercent(qty, { bundle: true }) >
-        quantityDiscountPercent(qty) &&
-      values.role === undefined &&
-      values.character === undefined &&
-      values.seats === undefined
-        ? (g.bundles || [])[BUNDLE_UNITS.indexOf(qty)] || null
-        : null;
-    this.setState(
-      {
-        game,
-        rank: '',
-        role: '',
-        character: '',
-        seats: seatRule(game, selected.id).default,
-        mood: '',
-        voice: true,
-        mcServer: '',
-        mcEdition: 'Java',
-        queued: false,
-        bundle: null,
-        ...(m ? { tab: m.cat, mode: m.id, qty: 1 } : {}),
-        ...values,
-        ...(qty !== undefined ? { bundle } : {}),
-      },
-      () => {
-        // the picked game's services can change the page height: land on them again
-        const h = document.getElementById('modes-h');
-        if (window.location.hash === '#modes-h' && h && h.scrollIntoView)
-          h.scrollIntoView({ block: 'start' });
-      },
-    );
+    const next = this.linkState(params, this.state);
+    if (!next) return;
+    this.setState(next, () => {
+      // the picked game's services can change the page height: land on them again
+      const h = document.getElementById('modes-h');
+      if (window.location.hash === '#modes-h' && h && h.scrollIntoView)
+        h.scrollIntoView({ block: 'start' });
+    });
   }
   // Signed-in customers on live checkout: which perks their level unlocks (null = not live).
   async loadPerks() {

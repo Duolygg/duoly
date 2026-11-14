@@ -156,7 +156,7 @@ test('the heading opens the directory', async ({ page }) => {
   await heading.click();
   await expect(page).toHaveURL(/\/teammates$/);
   await expect(
-    page.getByRole('heading', { level: 1, name: /great teammate/ }),
+    page.getByRole('heading', { level: 1, name: /Find your next teammate/ }),
   ).toBeVisible();
 });
 

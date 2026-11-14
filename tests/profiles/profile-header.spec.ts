@@ -113,7 +113,9 @@ test('a teammate without a header keeps the hero that shipped', async ({
 test('the header never moves the hero while it loads', async ({ page }) => {
   /* The picture arrives late on purpose: the hero has to be laid out the same before and
      after it lands, which is what the aspect ratio on the box is for. */
-  await serveHeaders(page, { delay: 1500 });
+  /* Long enough that a cold dev server compiling the page's styles and scripts on the first
+     request still reaches DOMContentLoaded before the picture does. */
+  await serveHeaders(page, { delay: 4000 });
   await page.goto(`/teammates/${HEADER_SLUG}`, {
     waitUntil: 'domcontentloaded',
   });
@@ -136,12 +138,14 @@ test('the header never moves the hero while it loads', async ({ page }) => {
     ),
   ).toBe(false);
   await expect
-    .poll(async () =>
-      page.evaluate(
-        () =>
-          (document.querySelector('.tp-hero-art img') as HTMLImageElement)
-            .complete,
-      ),
+    .poll(
+      async () =>
+        page.evaluate(
+          () =>
+            (document.querySelector('.tp-hero-art img') as HTMLImageElement)
+              .complete,
+        ),
+      { timeout: 10_000 },
     )
     .toBe(true);
   expect(await box()).toEqual(before);
@@ -173,7 +177,7 @@ const worstContrast = async (page: Page, selectors: string[]) => {
   /* Visibility keeps every box where it is, so the rectangles measured above still hold. */
   await page.addStyleTag({
     content:
-      '.tp-hero-grid,.tp-hero-top,.tp-crumbs,.tp-scoreboard,.tp-fresh,.tp-fixture{visibility:hidden}',
+      '.tp-hero-grid,.tp-hero-top,.tp-scoreboard,.tp-fresh,.tp-fixture{visibility:hidden}',
   });
   const results: number[] = [];
   for (const target of targets) {

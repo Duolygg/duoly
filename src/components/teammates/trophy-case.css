@@ -1052,37 +1052,7 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tc-item,
-  .tc-body,
-  .tc-stack {
-    transition: none;
-  }
-  .tc-float,
-  .tc-shadow,
-  .tc-halo,
-  .tc-foil,
-  .tc-glint,
-  .tc-sparkles i,
-  .tc-detail,
-  .tc-item[data-a='0'] :is(.tc-float, .tc-foil, .tc-glint) {
-    animation: none !important;
-  }
-  .tc-sparkles,
-  .tc-glitter,
-  .tc-dust {
-    display: none !important;
-  }
-  .tc-item.is-leaving {
-    transition: none;
-  }
-  .tc-item.is-pressed .tc-float,
-  .tc-item.is-popped .tc-float {
-    scale: none;
-    animation: none;
-  }
-}
-
+/* Motion plays for every visitor, whatever their OS animation setting, as on the homepage. */
 /* ---------- tap and click on the front trophy ---------- */
 .tc-item[data-a='0'] .tc-float {
   transition: scale 0.18s var(--tc-ease);

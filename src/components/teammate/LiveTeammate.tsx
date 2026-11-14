@@ -2,6 +2,7 @@ import AnalyticsErrorBoundary from '../shared/AnalyticsErrorBoundary';
 import type { ComponentProps } from 'react';
 import Teammate from './Teammate.jsx';
 import type { Viewer } from '../../contracts/account';
+import type { TeammateStatsResponse } from '../../contracts/reviews';
 
 /** Fabian's original teammate screen on the real session and command APIs. */
 function LiveTeammateContent({
@@ -13,6 +14,7 @@ function LiveTeammateContent({
   chatEnabled,
   connectPayouts = false,
   presence = null,
+  initialStats = null,
 }: {
   viewer: Viewer;
   csrf: string;
@@ -24,6 +26,8 @@ function LiveTeammateContent({
   connectPayouts?: boolean;
   /** Presence read while rendering the page, so the desk doesn't start out "Offline". */
   presence?: { online: boolean; onlineSince: number | null } | null;
+  /** Earnings and reviews read while rendering, so money never starts at $0.00. */
+  initialStats?: TeammateStatsResponse | null;
 }) {
   const onSignOut = async () => {
     const response = await fetch('/auth/logout', {
@@ -44,6 +48,7 @@ function LiveTeammateContent({
       chatEnabled={chatEnabled}
       connectPayouts={connectPayouts}
       presence={presence}
+      initialStats={initialStats}
       onSignOut={onSignOut}
     />
   );

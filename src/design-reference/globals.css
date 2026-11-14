@@ -428,7 +428,7 @@ html:has(.rl-page){scroll-behavior:smooth;scroll-padding-top:90px}
 .ct-av{position:relative;width:40px;height:40px;margin-left:-10px}
 .ct-av:first-child{margin-left:0}
 .ct-av img{width:40px;height:40px;border-radius:50%;object-fit:cover;display:block}
-.ct-av-dot{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;background:#5EEAA8;box-shadow:0 0 0 3px #120B22;animation:dlonline 2s infinite}
+.ct-av-dot{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;background:#5EEAA8;animation:dlonline 2s infinite}
 .ct-team-text{display:flex;flex-direction:column;line-height:1.35}
 .ct-team-text strong{font-size:14.5px;color:#FFFFFF}
 .ct-team-text span{font-size:13px;color:#A79DC4}

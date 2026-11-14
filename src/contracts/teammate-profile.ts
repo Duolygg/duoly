@@ -163,6 +163,8 @@ export type PublicTeammateProfile = {
   vibeTags: VibeTag[];
   featuredGame: string;
   coaching: boolean;
+  /** Verified Gamer Girl: takes Gamer Girl orders in every game and Social sessions (20261114130000). */
+  gamerGirl?: boolean;
   online: boolean;
   memberSince: string; // YYYY-MM
   sessions: number;
@@ -186,6 +188,18 @@ export type PublicTeammateCard = {
   game: string;
   rank: string | null;
   rating: { average: number; count: number } | null;
+  /*
+   * Directory fields (20261114120000_directory_cards.sql), all already public on the profile.
+   * Optional so a card from a database without that migration still renders, just without them.
+   */
+  /** Every game the profile lists, in profile order. */
+  games?: string[];
+  languages?: string[];
+  vibeTags?: VibeTag[];
+  coaching?: boolean;
+  gamerGirl?: boolean;
+  /** The newest written review, or null when there is none. */
+  quote?: string | null;
 };
 
 /**

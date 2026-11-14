@@ -6,6 +6,8 @@ import Icon from '../../components/teammates/Icon.astro';
 import TrophyCase from '../../components/teammates/TrophyCase.astro';
 import { loadPublicTrophies } from '../../server/teammates/trophies';
 import { trophyCase } from '../../server/teammates/trophy-view';
+import { recommendFor } from '../../server/teammates/recommend';
+import { seoOffers } from '../../server/seo/offers';
 import '../../components/teammates/profiles.css';
 import {
   loadPublicProfile,
@@ -55,7 +57,9 @@ const related = p
   ? await loadTeammateCards({
       game: p.featuredGame,
       excludeSlug: p.slug,
-      limit: 3,
+      /* The related row is a moving strip now, so it can show everyone who fits rather
+         than the first three. */
+      limit: 12,
     })
   : [];
 const schemas = p ? profileSchemas(p, Astro.site!) : [];
@@ -114,8 +118,151 @@ const sections = [
    anyway, between the last section and the closing band. */
 /** One tab is not a nav, so the first section draws its own rule instead. */
 const showTabs = sections.length > 1;
+/*
+ * The moving strips (reviews and related teammates). A strip is one set of cards followed by an
+ * identical copy, and the track slides left by exactly half its width, so the loop never shows a
+ * seam. A short list is repeated inside the set until it is wide enough to fill the row. Only
+ * the first copy of each item is real to assistive tech and the keyboard; every repeat is
+ * aria-hidden and inert, so a review is read once and a card is one tab stop.
+ */
+const reel = <T,>(items: T[], min: number) =>
+  Array.from(
+    { length: Math.max(1, Math.ceil(min / Math.max(1, items.length))) },
+    (_, copy) => items.map((item) => ({ item, repeat: copy > 0 })),
+  ).flat();
+const allReviews = p
+  ? (reviews.lead ? [reviews.lead] : []).concat(reviews.rest)
+  : [];
+const reviewRows =
+  allReviews.length === 0
+    ? []
+    : allReviews.length >= 3
+      ? [reel(allReviews, 5), reel([...allReviews].reverse(), 5)]
+      : [reel(allReviews, 5)];
+const relatedReel = reel(related, 6);
+/*
+ * The "reading the room" sequence over the booking answers. Every step is something the answers
+ * are actually built from (profileAnswers): the reviews, the themes customers mention most, the
+ * verified ranks and how this teammate plays. A step only appears when there is data behind it.
+ */
+const thinkSteps = p
+  ? [
+      ...(view?.rating
+        ? [
+            {
+              label: `Reading ${view.rating.count} customer reviews`,
+              count: view.rating.count,
+              chips: [] as string[],
+            },
+          ]
+        : []),
+      ...(p.reviewTags.length
+        ? [
+            {
+              label: 'Weighing what players mention most',
+              count: 0,
+              chips: p.reviewTags
+                .slice(0, 4)
+                .map((t) => `${t.tag} · ${t.count}`),
+            },
+          ]
+        : []),
+      ...(p.games.some((g) => g.verified && g.rank)
+        ? [
+            {
+              label: 'Checking the ranks Duoly verified',
+              count: 0,
+              chips: p.games
+                .filter((g) => g.verified && g.rank)
+                .map((g) => `${profileGame(g.game).name} · ${g.rank}`),
+            },
+          ]
+        : []),
+      {
+        label: `Matching how ${p.name} plays`,
+        count: 0,
+        chips: [
+          ...(p.games.find((g) => g.game === p.featuredGame)?.roles ?? []),
+          ...p.languages,
+        ].slice(0, 5),
+      },
+      { label: 'Writing it up for you', count: 0, chips: [] as string[] },
+    ]
+  : [];
+/** What a Social session can be, named on the Social game card (the catalog's own titles). */
+const socialSessions = [
+  ...new Set(
+    seoOffers('social', 'gg', { customerCurrency: 'EUR', eurToUsd: 1 }).map(
+      (o) => o.title,
+    ),
+  ),
+];
+/** Our pick: the product that fits a session with this teammate, and the facts behind it. */
+const pick = p ? recommendFor(p) : null;
 /** The booking explainer, one line under the price and the availability it belongs with. */
 const bookingNote = p ? bookingLine(p) : '';
+/*
+ * The share sheet. Every target is a plain link built here, so the sheet works the moment it
+ * opens and costs no script per app. The OS share sheet is still offered, but only as "More",
+ * behind our own sheet, never as the first thing a click opens.
+ */
+const shareUrl = p ? new URL(`/teammates/${p.slug}`, Astro.site!).href : '';
+const shareLine =
+  p && view
+    ? featuredRank
+      ? `${p.name}, ${view.game.name} ${featuredRank} teammate on Duoly`
+      : `${p.name}, ${view.game.name} teammate on Duoly`
+    : '';
+const enc = encodeURIComponent;
+/*
+ * Where players actually send a teammate: Discord first (friend groups and clan servers), then
+ * WhatsApp, Instagram and Snapchat DMs, then X and Reddit for the gaming crowd. Six, so the row
+ * fits a phone; "Copy link" covers everything else. Discord, Instagram and Snapchat have no web
+ * address that prefills a message, so those buttons copy the link and open the app's messages,
+ * where pasting is the one step left (copyFirst, handled by the share script).
+ */
+const shareApps: {
+  id: string;
+  label: string;
+  href: string;
+  copyFirst?: string;
+}[] = p
+  ? [
+      {
+        id: 'discord',
+        label: 'Discord',
+        href: 'https://discord.com/channels/@me',
+        copyFirst: 'Paste it in any Discord chat or server.',
+      },
+      {
+        id: 'whatsapp',
+        label: 'WhatsApp',
+        href: `https://wa.me/?text=${enc(`${shareLine} ${shareUrl}`)}`,
+      },
+      {
+        id: 'instagram',
+        label: 'Instagram',
+        href: 'https://www.instagram.com/direct/inbox/',
+        copyFirst: 'Paste it in an Instagram DM.',
+      },
+      {
+        id: 'snapchat',
+        label: 'Snapchat',
+        href: 'https://web.snapchat.com/',
+        copyFirst: 'Paste it in a Snapchat chat.',
+      },
+      {
+        id: 'x',
+        label: 'X',
+        href: `https://x.com/intent/tweet?text=${enc(shareLine)}&url=${enc(shareUrl)}`,
+      },
+      {
+        id: 'reddit',
+        label: 'Reddit',
+        href: `https://www.reddit.com/submit?url=${enc(shareUrl)}&title=${enc(shareLine)}`,
+      },
+    ]
+  : [];
 ---
 
 <SiteLayout {...meta} viewer={viewer} csrf={csrf}>
@@ -134,13 +281,6 @@ const bookingNote = p ? bookingLine(p) : '';
       data-save-mode={saveMode}
       data-csrf={saveMode === 'customer' ? csrf : undefined}
     >
-      <nav class="tp-crumbs" aria-label="Breadcrumb">
-        <a href="/">Duoly</a>
-        <span aria-hidden="true">/</span>
-        <a href="/teammates">Teammates</a>
-        <span aria-hidden="true">/</span>
-        <span aria-current="page">{p.name}</span>
-      </nav>
       {fixture && (
         <p class="tp-fixture">
           Design preview. These teammates and reviews are fictional.
@@ -168,43 +308,255 @@ const bookingNote = p ? bookingLine(p) : '';
           </span>
         )}
         <span class="tp-sky" aria-hidden="true"></span>
+        {/* Motion layers: two slow drifting lights, and a soft spotlight that follows the
+            pointer. Decorative only, and still when the visitor asks for reduced motion. */}
+        <span class="tp-aurora" aria-hidden="true"></span>
+        <span class="tp-spot" aria-hidden="true"></span>
         <div class="tp-hero-top">
+          {/* Two round glass buttons. The words live in a tooltip that is also the
+              accessible name, so the pair stays small enough to clear the avatar ring. */}
           <div class="tp-utilities">
             {saveMode === 'customer' ? (
               <button
-                class="tp-save"
+                class="tp-util tp-save"
                 type="button"
                 aria-pressed="false"
                 data-profile-save
                 data-saved-label={`${p.name} is in your favorites`}
               >
                 <Icon name="heart" />
-                <span data-save-label>Save {p.name}</span>
+                <span class="tp-tip" data-save-label>
+                  Save {p.name}
+                </span>
               </button>
             ) : (
               saveMode === 'signin' && (
-                <a class="tp-save" href="/login" data-profile-signin>
-                  <Icon name="heart" /> Save {p.name}
+                <a class="tp-util tp-save" href="/login" data-profile-signin>
+                  <Icon name="heart" />
+                  <span class="tp-tip">Save {p.name}</span>
                 </a>
               )
             )}
-            <a href={`#share-${p.slug}`} data-profile-share>
-              <Icon name="share" /> Share
+            <a
+              class="tp-util"
+              href={`#share-${p.slug}`}
+              aria-haspopup="dialog"
+              data-profile-share
+            >
+              <Icon name="share" />
+              <span class="tp-tip">Share</span>
             </a>
           </div>
           <p class="tp-save-status" role="status" data-save-status></p>
         </div>
-        <div id={`share-${p.slug}`} class="tp-share-link">
-          <label>
-            Profile link
-            <input
-              aria-label="Profile link"
-              readonly
-              value={new URL(`/teammates/${p.slug}`, Astro.site!).href}
+        <dialog
+          id={`share-${p.slug}`}
+          class="tp-sharebox"
+          aria-labelledby="share-title"
+          data-share-dialog
+        >
+          <div class="tp-sharebox-head">
+            <p id="share-title" class="tp-sharebox-title">
+              Share {p.name}
+            </p>
+            <button
+              class="tp-sharebox-close"
+              type="button"
+              aria-label="Close"
+              data-share-close
+            >
+              <svg
+                viewBox="0 0 16 16"
+                width="16"
+                height="16"
+                aria-hidden="true"
+              >
+                <path
+                  d="M4 4l8 8M12 4l-8 8"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <div class="tp-sharebox-card">
+            <img
+              class:list={{ 'is-photo': photo }}
+              src={p.avatar}
+              width="56"
+              height="56"
+              alt=""
+              loading="lazy"
             />
-          </label>
-          <p data-share-status role="status"></p>
-        </div>
+            <div>
+              <strong>{p.name}</strong>
+              <span>
+                {featuredRank
+                  ? `${view.game.name}, ${featuredRank}`
+                  : view.game.name}
+              </span>
+            </div>
+          </div>
+          <div class="tp-sharebox-copy">
+            <input aria-label="Profile link" readonly value={shareUrl} />
+            <button type="button" data-share-copy>
+              <svg
+                viewBox="0 0 16 16"
+                width="15"
+                height="15"
+                aria-hidden="true"
+              >
+                <rect
+                  x="5.25"
+                  y="5.25"
+                  width="8"
+                  height="8"
+                  rx="2"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                ></rect>
+                <path
+                  d="M10.75 3.5V3.25a1.5 1.5 0 0 0-1.5-1.5h-4.5a2 2 0 0 0-2 2v4.5a1.5 1.5 0 0 0 1.5 1.5h.25"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                ></path>
+              </svg>
+              <span data-share-copy-label>Copy link</span>
+            </button>
+          </div>
+          <ul class="tp-sharebox-apps" aria-label="Share to">
+            {shareApps.map((app) => (
+              <li>
+                <a
+                  href={app.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-share-app={app.id}
+                  data-share-copy-first={app.copyFirst}
+                >
+                  <span class="tp-sharebox-icon" aria-hidden="true">
+                    {app.id === 'whatsapp' && (
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M12 3.2a8.7 8.7 0 0 0-7.5 13.2L3.3 20.8l4.5-1.2A8.7 8.7 0 1 0 12 3.2Z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linejoin="round"
+                        ></path>
+                        <path
+                          d="M9 8.3c.3-.6.6-.6.9-.6h.5c.2 0 .4 0 .6.5l.7 1.6c.1.2.1.4 0 .6l-.5.6c-.1.2-.1.4 0 .6.6 1 1.3 1.6 2.3 2.1.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.4.5 0 .7-.4 1.4-1.1 1.7-.8.3-1.9.2-3.4-.6a9.3 9.3 0 0 1-3.6-3.6C8.6 10.2 8.6 9 9 8.3Z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                    )}
+                    {app.id === 'discord' && (
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M19.3 5.4A16.6 16.6 0 0 0 15.2 4l-.5 1a15.4 15.4 0 0 0-5.4 0l-.5-1a16.6 16.6 0 0 0-4.1 1.4C2.1 9.4 1.4 13.2 1.8 17a16.7 16.7 0 0 0 5 2.6l1.1-1.7a10.8 10.8 0 0 1-1.7-.8l.4-.3a11.9 11.9 0 0 0 10.8 0l.4.3c-.5.3-1.1.6-1.7.8l1.1 1.7a16.6 16.6 0 0 0 5-2.6c.5-4.4-.8-8.2-2.9-11.6ZM8.6 14.7c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm6.8 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                    )}
+                    {app.id === 'instagram' && (
+                      <svg viewBox="0 0 24 24">
+                        <rect
+                          x="3.5"
+                          y="3.5"
+                          width="17"
+                          height="17"
+                          rx="5"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                        ></rect>
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="3.9"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                        ></circle>
+                        <circle
+                          cx="17.1"
+                          cy="6.9"
+                          r="1.1"
+                          fill="currentColor"
+                        ></circle>
+                      </svg>
+                    )}
+                    {app.id === 'snapchat' && (
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M12 3.3c2.9 0 4.9 2.2 4.9 5v2.1l1.6-.6c.6-.2 1.1.5.6.9l-1.9 1.3c.6 1.8 1.9 3.1 3.6 3.6.5.2.5.8 0 1-.8.3-1.7.4-2.4.6-.3.1-.4.9-.7 1.1-.3.2-1.2-.1-2 0-1.1.1-1.9 1.5-3.7 1.5s-2.6-1.4-3.7-1.5c-.8-.1-1.7.2-2 0-.3-.2-.4-1-.7-1.1-.7-.2-1.6-.3-2.4-.6-.5-.2-.5-.8 0-1 1.7-.5 3-1.8 3.6-3.6L4.9 10.6c-.5-.4 0-1.1.6-.9l1.6.6V8.3c0-2.8 2-5 4.9-5Z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.6"
+                          stroke-linejoin="round"
+                        ></path>
+                      </svg>
+                    )}
+                    {app.id === 'x' && (
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M17.6 3.5h3l-6.6 7.6 7.8 9.4h-6.1l-4.8-5.9-5.5 5.9h-3l7-7.9-7.4-9.1h6.2l4.3 5.4 5.1-5.4Zm-1 15.3h1.7L7.5 5.1H5.7l10.9 13.7Z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                    )}
+                    {app.id === 'reddit' && (
+                      <svg viewBox="0 0 24 24">
+                        <ellipse
+                          cx="12"
+                          cy="14.2"
+                          rx="7.6"
+                          ry="5.4"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.6"
+                        ></ellipse>
+                        <circle
+                          cx="9.2"
+                          cy="13.6"
+                          r="1.2"
+                          fill="currentColor"
+                        ></circle>
+                        <circle
+                          cx="14.8"
+                          cy="13.6"
+                          r="1.2"
+                          fill="currentColor"
+                        ></circle>
+                        <path
+                          d="M9.3 16.6c1.6 1 3.8 1 5.4 0M12 8.8l1.2-4.6 3.6.9"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></path>
+                        <circle
+                          cx="18"
+                          cy="5.4"
+                          r="1.5"
+                          fill="currentColor"
+                        ></circle>
+                      </svg>
+                    )}
+                  </span>
+                  <span class="tp-sharebox-label">{app.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p class="tp-sharebox-hint" data-share-hint hidden></p>
+          <p class="tp-sharebox-status" role="status" data-share-status></p>
+        </dialog>
         <div class="tp-hero-grid">
           <div class="tp-hero-name">
             <h1 id="profile-name">{p.name}</h1>
@@ -242,6 +594,25 @@ const bookingNote = p ? bookingLine(p) : '';
                   </svg>
                 </span>
               )}
+              {p.gamerGirl && (
+                <span
+                  class="tp-gg-badge"
+                  title="Verified by Duoly as a Gamer Girl"
+                >
+                  <svg
+                    viewBox="0 0 16 16"
+                    width="12"
+                    height="12"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M8 1.5 9.6 6.4l4.9 1.6-4.9 1.6L8 14.5 6.4 9.6 1.5 8l4.9-1.6Z"
+                      fill="currentColor"
+                    ></path>
+                  </svg>
+                  Verified Gamer Girl
+                </span>
+              )}
             </p>
           </div>
           <div class="tp-aside">
@@ -259,7 +630,6 @@ const bookingNote = p ? bookingLine(p) : '';
                 loading="eager"
                 fetchpriority="high"
               />
-              {p.online && <span class="tp-ring-dot" aria-hidden="true"></span>}
             </div>
             <div class="tp-identity">
               {view.showTier && (
@@ -445,48 +815,70 @@ const bookingNote = p ? bookingLine(p) : '';
                   </svg>
                   <div>
                     <p class="tp-rank-label">
-                      {g.verified && g.rank ? 'Rank verified' : 'Teammate'}
+                      {g.game === 'social'
+                        ? 'Gamer Girl'
+                        : g.verified && g.rank
+                          ? 'Rank verified'
+                          : 'Teammate'}
                     </p>
                     <h4>
-                      {g.verified
-                        ? (g.rank ?? 'Ready to play')
-                        : 'Ready to play'}
+                      {g.game === 'social'
+                        ? 'Social sessions'
+                        : g.verified
+                          ? (g.rank ?? 'Ready to play')
+                          : 'Ready to play'}
                     </h4>
                   </div>
                 </div>
-                <dl>
-                  {g.verified && g.peakRank && (
+                {g.game === 'social' ? (
+                  <dl>
                     <div>
-                      <dt>Peak</dt>
-                      <dd>{g.peakRank}</dd>
+                      <dt>Sessions</dt>
+                      <dd>{socialSessions.join(', ')}</dd>
                     </div>
-                  )}
-                  <div>
-                    <dt>Roles</dt>
-                    <dd>{g.roles.join(', ') || 'Flexible'}</dd>
-                  </div>
-                  {g.picks.length > 0 && (
                     <div>
-                      <dt>{pickLabel(g.game)}</dt>
-                      <dd>{g.picks.join(', ')}</dd>
+                      <dt>With</dt>
+                      <dd>A verified Gamer Girl, on Discord voice</dd>
                     </div>
-                  )}
-                  <div>
-                    <dt>Plays</dt>
-                    <dd>
-                      Duo
-                      {p.coaching && g.game === p.featuredGame
-                        ? ', coaching'
-                        : ''}
-                    </dd>
-                  </div>
-                </dl>
+                  </dl>
+                ) : (
+                  <dl>
+                    {g.verified && g.peakRank && (
+                      <div>
+                        <dt>Peak</dt>
+                        <dd>{g.peakRank}</dd>
+                      </div>
+                    )}
+                    <div>
+                      <dt>Roles</dt>
+                      <dd>{g.roles.join(', ') || 'Flexible'}</dd>
+                    </div>
+                    {g.picks.length > 0 && (
+                      <div>
+                        <dt>{pickLabel(g.game)}</dt>
+                        <dd>{g.picks.join(', ')}</dd>
+                      </div>
+                    )}
+                    <div>
+                      <dt>Plays</dt>
+                      <dd>
+                        Duo
+                        {p.gamerGirl ? ', Gamer Girl sessions' : ''}
+                        {p.coaching && g.game === p.featuredGame
+                          ? ', coaching'
+                          : ''}
+                      </dd>
+                    </div>
+                  </dl>
+                )}
                 <a
                   class="tp-game-book"
                   href={view.booking(g.game)}
                   data-profile-book="game"
                 >
-                  Book {game.name} with {p.name}
+                  {g.game === 'social'
+                    ? `Book a Social session with ${p.name}`
+                    : `Book ${game.name} with ${p.name}`}
                   <Icon name="arrow" />
                 </a>
               </article>
@@ -519,30 +911,70 @@ const bookingNote = p ? bookingLine(p) : '';
               ))}
             </div>
           )}
-          {(reviews.lead || reviews.rest.length > 0) && (
-            <div class="tp-review-wrap">
-              {(reviews.lead ? [reviews.lead] : [])
-                .concat(reviews.rest)
-                .map((review, i) => (
-                  <figure
-                    class:list={[
-                      'tp-review',
-                      { 'tp-review-lead': i === 0 && reviews.lead },
-                    ]}
-                  >
+          {reviewRows.length > 0 && (
+            <div class="tp-reel tp-review-reel">
+              {reviewRows.map((row, r) => (
+                <div
+                  class:list={['tp-reel-track', { 'is-reverse': r === 1 }]}
+                  style={`--dur:${row.length * 9}s`}
+                  aria-hidden={r > 0 ? 'true' : undefined}
+                  inert={r > 0}
+                >
+                  {[false, true].map((copy) => (
                     <div
-                      class="tp-stars"
-                      aria-label={`${review.rating} out of 5 stars`}
+                      class="tp-reel-set"
+                      aria-hidden={copy && r === 0 ? 'true' : undefined}
+                      inert={copy && r === 0}
                     >
-                      {'★'.repeat(review.rating)}
+                      {row.map(({ item: review, repeat }, i) => (
+                        <figure
+                          class="tp-review"
+                          style={`--n:${i + r * 2}`}
+                          aria-hidden={
+                            !copy && r === 0 && repeat ? 'true' : undefined
+                          }
+                          inert={!copy && r === 0 && repeat}
+                          data-review
+                        >
+                          <div class="tp-review-top">
+                            <div
+                              class="tp-stars"
+                              role="img"
+                              aria-label={`${review.rating} out of 5 stars`}
+                            >
+                              {Array.from({ length: review.rating }, (_, s) => (
+                                <span aria-hidden="true" style={`--s:${s}`}>
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                            <span class="tp-quote-mark" aria-hidden="true">
+                              &ldquo;
+                            </span>
+                          </div>
+                          <blockquote>{review.text}</blockquote>
+                          <figcaption>
+                            <span class="tp-verified-chip" aria-hidden="true">
+                              <svg viewBox="0 0 16 16" width="12" height="12">
+                                <path
+                                  d="m3.5 8.5 3 3 6-7"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                ></path>
+                              </svg>
+                            </span>
+                            Verified customer, {profileGame(review.game).name},{' '}
+                            {profileMonth(review.month)}
+                          </figcaption>
+                        </figure>
+                      ))}
                     </div>
-                    <blockquote>{review.text}</blockquote>
-                    <figcaption>
-                      Verified customer, {profileGame(review.game).name},{' '}
-                      {profileMonth(review.month)}
-                    </figcaption>
-                  </figure>
-                ))}
+                  ))}
+                </div>
+              ))}
             </div>
           )}
         </section>
@@ -552,17 +984,40 @@ const bookingNote = p ? bookingLine(p) : '';
           <div class="tp-section-head">
             <div>
               <h2 id="more-title">More teammates</h2>
-              <p>Other {view.game.name} players on Duoly.</p>
+              <p>
+                {view.game.id === 'social'
+                  ? 'Other verified Gamer Girls on Duoly.'
+                  : `Other ${view.game.name} players on Duoly.`}
+              </p>
             </div>
             <a class="tp-more-link" href="/teammates">
               See all teammates
               <Icon name="arrow" />
             </a>
           </div>
-          <div class="tp-cards">
-            {related.map((card) => (
-              <TeammateCard card={card} />
-            ))}
+          <div class="tp-reel tp-card-reel">
+            <div
+              class="tp-reel-track"
+              style={`--dur:${relatedReel.length * 6}s`}
+            >
+              {[false, true].map((copy) => (
+                <div
+                  class="tp-reel-set"
+                  aria-hidden={copy ? 'true' : undefined}
+                  inert={copy}
+                >
+                  {relatedReel.map(({ item: card, repeat }) => (
+                    <div
+                      class="tp-reel-item"
+                      aria-hidden={!copy && repeat ? 'true' : undefined}
+                      inert={!copy && repeat}
+                    >
+                      <TeammateCard card={card} />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}
@@ -579,6 +1034,133 @@ const bookingNote = p ? bookingLine(p) : '';
             </p>
           </div>
         </div>
+        {/* The answers below are built from this profile's data. The panel shows that work
+            as it happens, step by step, then the answers stream in. Without JavaScript it is
+            a finished checklist and the answers are simply there. */}
+        <div class="tp-think" data-think>
+          <div class="tp-think-head">
+            <span class="tp-orb" aria-hidden="true">
+              <i></i>
+            </span>
+            <div>
+              <p class="tp-think-title">Reading the room on {p.name}</p>
+              <p class="tp-think-status" data-think-status aria-live="polite">
+                Everything below comes from {p.name}'s verified profile and
+                reviews.
+              </p>
+            </div>
+          </div>
+          <ol class="tp-think-steps">
+            {thinkSteps.map((step, i) => (
+              <li class="tp-think-step" style={`--i:${i}`} data-think-step>
+                <span class="tp-think-icon" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" width="12" height="12">
+                    <path
+                      d="m3.5 8.5 3 3 6-7"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></path>
+                  </svg>
+                </span>
+                <span class="tp-think-label">{step.label}</span>
+                {step.chips.length > 0 && (
+                  <span class="tp-think-chips">
+                    {step.chips.map((chip, c) => (
+                      <span class="tp-think-chip" style={`--c:${c}`}>
+                        {chip}
+                      </span>
+                    ))}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+          <span class="tp-think-scan" aria-hidden="true"></span>
+        </div>
+        {/* The pick: which product fits a session with this teammate, with the facts that
+            decided it (src/server/teammates/recommend.ts). The reasoning runs down the left
+            as a chain; the product it lands on is the lit card on the right. */}
+        {pick && (
+          <div class="tp-pick" data-pick>
+            <div class="tp-pick-why">
+              <p class="tp-pick-eyebrow">
+                <span class="tp-pick-spark" aria-hidden="true"></span>
+                Our pick for a session with {p.name}
+              </p>
+              <p class="tp-pick-intro">
+                We weighed {pick.signals} signals from {p.name}'s verified
+                profile and reviews. These are the ones that decided it.
+              </p>
+              <ol class="tp-pick-chain">
+                {pick.pick.reasons.map((reason, i) => (
+                  <li style={`--i:${i}`} data-pick-reason>
+                    <span class="tp-pick-node" aria-hidden="true"></span>
+                    <span class="tp-pick-fact">{reason.fact}</span>
+                    <span class="tp-pick-because">{reason.because}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div class="tp-pick-card" data-pick-card>
+              <span class="tp-pick-shine" aria-hidden="true"></span>
+              <div class="tp-pick-top">
+                <span class="tp-pick-badge">
+                  <svg
+                    viewBox="0 0 16 16"
+                    width="12"
+                    height="12"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M8 1.5 9.6 6.4l4.9 1.6-4.9 1.6L8 14.5 6.4 9.6 1.5 8l4.9-1.6Z"
+                      fill="currentColor"
+                    ></path>
+                  </svg>
+                  Best fit
+                </span>
+                <span class="tp-pick-who">
+                  <img
+                    class:list={{ 'is-photo': photo }}
+                    src={p.avatar}
+                    width="40"
+                    height="40"
+                    alt=""
+                    loading="lazy"
+                  />
+                  with {p.name}
+                </span>
+              </div>
+              <p class="tp-pick-title">{pick.pick.title}</p>
+              <p class="tp-pick-tier">{pick.pick.tier}</p>
+              <p class="tp-pick-desc">{pick.pick.desc}</p>
+              <p class="tp-pick-price">
+                from <strong>{pick.pick.price}</strong> per {pick.pick.unit}
+              </p>
+              <a
+                class="tp-button tp-primary"
+                href={pick.pick.href}
+                data-profile-book="pick"
+              >
+                Book {pick.pick.title} with {p.name}
+                <Icon name="arrow" />
+              </a>
+              {pick.alternatives.length > 0 && (
+                <p class="tp-pick-alts">
+                  <span>Also a good fit</span>
+                  {pick.alternatives.map((alt) => (
+                    <a href={alt.href} data-profile-book="pick-alt">
+                      {alt.title}
+                      <small>from {alt.price}</small>
+                    </a>
+                  ))}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
         {answers.map((answer) => (
           <div class="tp-answer">
             <h3 id={`answer-${answer.id}`}>{answer.heading}</h3>
@@ -604,7 +1186,6 @@ const bookingNote = p ? bookingLine(p) : '';
         >
           <span class="tp-ring" aria-hidden="true"></span>
           <img src={p.avatar} width="160" height="160" alt="" loading="lazy" />
-          {p.online && <span class="tp-ring-dot" aria-hidden="true"></span>}
         </div>
         <div class="tp-closing-copy">
           <p class="tp-closing-title">Ready when you are.</p>
@@ -654,37 +1235,243 @@ const bookingNote = p ? bookingLine(p) : '';
   )}
 </SiteLayout>
 <script>
+  /* Motion: the pointer-driven parts of the hero. Like the
+     homepage, it plays for every visitor, whatever their OS animation setting. */
+  const hero = document.querySelector<HTMLElement>('.tp-hero');
+  const figure = hero?.querySelector<HTMLElement>('.tp-figure');
+
+  /* Spotlight and avatar tilt follow a mouse or pen, never a finger. */
+  if (hero && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    let frame = 0;
+    hero.addEventListener('pointermove', (event) => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const box = hero.getBoundingClientRect();
+        hero.style.setProperty('--mx', `${event.clientX - box.left}px`);
+        hero.style.setProperty('--my', `${event.clientY - box.top}px`);
+        hero.classList.add('is-lit');
+        if (!figure) return;
+        const art = figure.getBoundingClientRect();
+        const dx = (event.clientX - (art.left + art.width / 2)) / box.width;
+        const dy = (event.clientY - (art.top + art.height / 2)) / box.height;
+        const clamp = (v: number) => Math.max(-1, Math.min(1, v));
+        figure.style.setProperty('--ry', `${clamp(dx * 2) * 14}deg`);
+        figure.style.setProperty('--rx', `${clamp(dy * 2) * -14}deg`);
+      });
+    });
+    hero.addEventListener('pointerleave', () => {
+      cancelAnimationFrame(frame);
+      hero.classList.remove('is-lit');
+      figure?.style.setProperty('--rx', '0deg');
+      figure?.style.setProperty('--ry', '0deg');
+    });
+  }
+
+  /* Review cards tilt toward the pointer and carry a glare where it sits. */
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    for (const card of document.querySelectorAll<HTMLElement>(
+      '[data-review]',
+    )) {
+      let raf = 0;
+      card.addEventListener('pointermove', (event) => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const box = card.getBoundingClientRect();
+          const x = (event.clientX - box.left) / box.width;
+          const y = (event.clientY - box.top) / box.height;
+          /* Wide cards tilt less, so the featured quote never swings. */
+          const range = box.width > 800 ? 2.5 : 5;
+          card.style.setProperty('--ry', `${(x - 0.5) * range * 2}deg`);
+          card.style.setProperty('--rx', `${(0.5 - y) * range * 2}deg`);
+          card.style.setProperty('--gx', `${x * 100}%`);
+          card.style.setProperty('--gy', `${y * 100}%`);
+        });
+      });
+      card.addEventListener('pointerleave', () => {
+        cancelAnimationFrame(raf);
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+      });
+    }
+  }
+
+  /* Booking: the panel plays out the steps the answers are built from, then the answers
+     stream in. It starts when the section comes into view and runs once. */
+  const think = document.querySelector<HTMLElement>('[data-think]');
+  const answersSection = think?.closest<HTMLElement>('.tp-answers');
+  if (think && answersSection && 'IntersectionObserver' in window) {
+    const status = think.querySelector<HTMLElement>('[data-think-status]');
+    const steps = [...think.querySelectorAll<HTMLElement>('[data-think-step]')];
+    const finalStatus = status?.textContent?.trim() ?? '';
+    const name = think
+      .querySelector('.tp-think-title')
+      ?.textContent?.replace('Reading the room on ', '')
+      .trim();
+    /* Every word of the answers becomes its own span so it can arrive on its own beat. Only
+       text nodes are split, so links and headings keep their markup and their text. */
+    const words: HTMLElement[] = [];
+    for (const block of answersSection.querySelectorAll<HTMLElement>(
+      '.tp-answer, .tp-answer-links',
+    )) {
+      const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+      const nodes: Text[] = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+      for (const node of nodes) {
+        const parts = (node.textContent ?? '').split(/(\s+)/);
+        const fragment = document.createDocumentFragment();
+        for (const part of parts) {
+          if (!part) continue;
+          if (/^\s+$/.test(part)) {
+            fragment.append(part);
+            continue;
+          }
+          const word = document.createElement('span');
+          word.className = 'tp-w';
+          word.textContent = part;
+          words.push(word);
+          fragment.append(word);
+        }
+        node.replaceWith(fragment);
+      }
+    }
+    think.classList.add('is-armed');
+    answersSection.classList.add('is-armed');
+    const pickBox = answersSection.querySelector<HTMLElement>('[data-pick]');
+    const pickChain = pickBox?.querySelector<HTMLElement>('.tp-pick-chain');
+    const pickReasons = [
+      ...(pickBox?.querySelectorAll<HTMLElement>('[data-pick-reason]') ?? []),
+    ];
+    pickBox?.classList.add('is-armed');
+
+    const wait = (ms: number) =>
+      new Promise((resolve) => window.setTimeout(resolve, ms));
+    const run = async () => {
+      think.classList.add('is-running');
+      for (const step of steps) {
+        const label = step.querySelector<HTMLElement>('.tp-think-label');
+        const chips = step.querySelectorAll('.tp-think-chip').length;
+        if (status && label) status.textContent = `${label.textContent}…`;
+        step.classList.add('is-active');
+        const time = 850 + chips * 140;
+        await wait(time);
+        step.classList.remove('is-active');
+        step.classList.add('is-done');
+        await wait(120);
+      }
+      think.classList.remove('is-running');
+      /* The pick: the chain draws down fact by fact, then the product card lands. */
+      if (pickBox && pickChain) {
+        if (status) status.textContent = 'Picking the best fit for you…';
+        await wait(350);
+        for (const [i, reason] of pickReasons.entries()) {
+          pickChain.style.setProperty(
+            '--drawn',
+            String((i + 1) / pickReasons.length),
+          );
+          reason.classList.add('is-in');
+          await wait(520);
+        }
+        pickBox.classList.add('is-landed');
+        await wait(650);
+      }
+      if (status)
+        status.textContent = name
+          ? `Done. Here's how booking ${name} works.`
+          : finalStatus;
+      /* Stream the answers: a steady beat per word, capped so long answers still land in
+         about three seconds. */
+      const beat = Math.min(0.022, 3 / Math.max(1, words.length));
+      words.forEach((word, i) =>
+        word.style.setProperty('--d', `${(i * beat).toFixed(3)}s`),
+      );
+      answersSection.classList.add('is-streaming');
+      await wait(words.length * beat * 1000 + 700);
+      answersSection.classList.remove('is-armed', 'is-streaming');
+      if (status) status.textContent = finalStatus;
+    };
+
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        watcher.disconnect();
+        run();
+      },
+      { threshold: 0.35 },
+    );
+    watcher.observe(think);
+  }
+
+  /* Share opens Duoly's own sheet. Without JavaScript the link still jumps to the sheet,
+     which CSS shows when it is the target. */
   const share = document.querySelector<HTMLAnchorElement>(
     '[data-profile-share]',
   );
-  const input = document.querySelector<HTMLInputElement>(
-    '.tp-share-link input',
+  const sheet = document.querySelector<HTMLDialogElement>(
+    '[data-share-dialog]',
   );
-  const status = document.querySelector<HTMLElement>('[data-share-status]');
-  share?.addEventListener('click', async (event) => {
-    if (!input || !status) return;
-    event.preventDefault();
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: document.title, url: input.value });
-        return;
-      }
-      if (navigator.clipboard) {
+  const input = sheet?.querySelector<HTMLInputElement>('input');
+  const status = sheet?.querySelector<HTMLElement>('[data-share-status]');
+  const copy = sheet?.querySelector<HTMLButtonElement>('[data-share-copy]');
+  const copyLabel = sheet?.querySelector<HTMLElement>(
+    '[data-share-copy-label]',
+  );
+  const hint = sheet?.querySelector<HTMLElement>('[data-share-hint]');
+  if (sheet && typeof sheet.showModal === 'function') {
+    share?.setAttribute('aria-controls', sheet.id);
+    share?.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (status) status.textContent = '';
+      sheet.showModal();
+      copy?.focus();
+    });
+    sheet
+      .querySelector('[data-share-close]')
+      ?.addEventListener('click', () => sheet.close());
+    /* A click on the dimmed page around the sheet lands on the dialog element itself. */
+    sheet.addEventListener('click', (event) => {
+      if (event.target === sheet) sheet.close();
+    });
+    let reset = 0;
+    copy?.addEventListener('click', async () => {
+      if (!input) return;
+      try {
         await navigator.clipboard.writeText(input.value);
-        status.textContent = 'Link copied.';
-      } else {
+        copy.classList.add('is-copied');
+        if (copyLabel) copyLabel.textContent = 'Copied';
+        if (status) status.textContent = 'Link copied.';
+        window.clearTimeout(reset);
+        reset = window.setTimeout(() => {
+          copy.classList.remove('is-copied');
+          if (copyLabel) copyLabel.textContent = 'Copy link';
+        }, 2200);
+      } catch {
         input.focus();
         input.select();
-        status.textContent = 'Copy this profile link.';
+        if (status) status.textContent = 'Press Ctrl+C to copy the link.';
       }
-    } catch (error) {
-      if (!(error instanceof DOMException && error.name === 'AbortError')) {
-        input.focus();
-        input.select();
-        status.textContent = 'Copy this profile link.';
-      }
+    });
+    /* Discord, Instagram and Snapchat cannot prefill a message from the web, so their buttons
+       copy the link first; the app opens in a new tab and the hint says what is left: paste. */
+    for (const app of sheet.querySelectorAll<HTMLAnchorElement>(
+      '[data-share-copy-first]',
+    )) {
+      app.addEventListener('click', () => {
+        if (!input) return;
+        navigator.clipboard?.writeText(input.value).then(
+          () => {
+            if (hint) {
+              hint.textContent = `Link copied. ${app.dataset.shareCopyFirst ?? ''}`;
+              hint.hidden = false;
+            }
+          },
+          () => {
+            input.focus();
+            input.select();
+          },
+        );
+      });
     }
-  });
+  }
 
   /* The sticky bar is a duplicate of a button that is already on screen while the
      hero block or the closing band is visible, so it steps aside for both. Without

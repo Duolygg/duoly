@@ -35,6 +35,9 @@ const rating =
   {/* The tier is a track record, so a teammate without one shows nothing there and the
       footer carries "New on Duoly" instead of two labels saying the same thing. */}
   {card.tier !== 'rookie' && <span class="tp-card-tier">{card.tier}</span>}
+  {/* Extra rows the directory adds (play style, languages, a review quote). Other pages pass
+      nothing here, so their cards are unchanged. */}
+  <slot name="extra" />
   <span class="tp-card-foot">
     <strong>{card.rank ?? 'Teammate'}</strong>
     <span class="tp-card-score">

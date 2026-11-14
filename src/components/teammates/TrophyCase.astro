@@ -266,7 +266,8 @@ const at = new Map(stands.map((s, i) => [s.id, i]));
     const n = items.length;
     /* The tour walks the rarest few and starts again; the shelf reaches the rest. */
     const tour = Math.min(Number(root.dataset.tour) || n, n);
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    /* Plays for every visitor, whatever their OS animation setting, as on the homepage. */
+    const still = false;
     let active = 0;
 
     const offset = (i: number) => {

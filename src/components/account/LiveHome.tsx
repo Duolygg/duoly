@@ -56,6 +56,7 @@ function LiveHomeContent({
   pro = null,
   askLogin = false,
   initialCreatorCode = '',
+  initialLink = '',
 }: {
   viewer: Viewer | null;
   csrf: string;
@@ -73,6 +74,8 @@ function LiveHomeContent({
   /** open the sign-in dialog on load (a signed-out visit to a page that needs an account) */
   askLogin?: boolean;
   initialCreatorCode?: string;
+  /** The request's query string, so a booking link's game and service are in the first render. */
+  initialLink?: string;
 }) {
   const [walletEur, setWalletEur] = useState<number | undefined>(undefined);
   // /?signin=1 opened the sign-in dialog; drop it from the address so a reload doesn't reopen it
@@ -277,6 +280,7 @@ function LiveHomeContent({
     <Home
       csrf={csrf}
       initialCreatorCode={initialCreatorCode}
+      initialLink={initialLink}
       session={viewer ? { user: viewer } : null}
       initialCurrency={accountCurrency ?? cookieCurrency}
       initialAutoCurrency={autoCurrency}

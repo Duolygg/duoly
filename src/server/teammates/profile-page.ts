@@ -84,14 +84,17 @@ export const profileMonth = (month: string) =>
 export function profilePresentation(p: PublicTeammateProfile) {
   const game = profileGame(p.featuredGame);
   const context = { customerCurrency: 'EUR' as const, eurToUsd: 1 };
-  const cheapest = (category: 'teammate' | 'training') =>
+  const cheapest = (category: 'teammate' | 'training' | 'gg') =>
     seoOffers(game.id, category, context).sort(
       (a, b) => a.amountMinor - b.amountMinor,
     )[0] ?? null;
   /** Null when the catalog sells nothing for this game: the page then shows no price at all. */
-  const offer = cheapest('teammate');
+  /* Social sells Gamer Girl sessions only (Just Chat, Watch Together and the rest), so a page
+     featuring Social prices and books those. */
+  const social = game.id === 'social';
+  const offer = cheapest(social ? 'gg' : 'teammate');
   /** The coaching entry price, only when the catalog actually sells coaching here. */
-  const coachOffer = p.coaching ? cheapest('training') : null;
+  const coachOffer = p.coaching && !social ? cheapest('training') : null;
   /*
    * The existing booking page, untouched. It used to be handed a ?teammate= slug it never read;
    * naming the teammate is the favorite, not a query parameter, so the link is the plain one.
@@ -109,7 +112,11 @@ export function profilePresentation(p: PublicTeammateProfile) {
     coachOffer,
     booking,
     book: booking(game.id),
-    primary: p.online ? `Book with ${p.name}` : `Book a ${game.name} teammate`,
+    primary: p.online
+      ? `Book with ${p.name}`
+      : social
+        ? 'Book a Social session'
+        : `Book a ${game.name} teammate`,
     rating,
     winRate,
     showSessions,
@@ -127,8 +134,10 @@ export function profilePresentation(p: PublicTeammateProfile) {
  */
 export const bookingLine = (p: PublicTeammateProfile) =>
   p.online
-    ? `${p.name} sees your order with no queue delay. Busy? Another verified teammate takes it.`
-    : `${p.name} is offline right now. A verified ${profileGame(p.featuredGame).name} teammate can take your order today.`;
+    ? `${p.name} sees your order with no queue delay. Busy? Another verified ${p.featuredGame === 'social' ? 'Gamer Girl' : 'teammate'} takes it.`
+    : p.featuredGame === 'social'
+      ? `${p.name} is offline right now. Another verified Gamer Girl can take your Social session today.`
+      : `${p.name} is offline right now. A verified ${profileGame(p.featuredGame).name} teammate can take your order today.`;
 /**
  * The three answers a profile owes a first time reader, written from the profile's own data.
  *
@@ -165,16 +174,21 @@ export function profileAnswers(p: PublicTeammateProfile) {
   }).some((offer) => offer.rank);
   const units = hourly ? 'hours' : `${unit}s`;
   const session: string[] = [];
+  const social = game.id === 'social';
   session.push(
-    featured?.roles.length
-      ? `${p.name} plays ${profileList(featured.roles)} in ${game.name}${
-          featured.picks.length
-            ? `, usually on ${profileList(featured.picks)}`
-            : ''
-        }.`
-      : `${game.name} is the game ${p.name} is approved to play on Duoly.`,
+    social
+      ? `Social is time with ${p.name} without a match: just chatting, watching something together on a Discord stream, a late call or karaoke. ${p.name} is a verified Gamer Girl, which is who Social sessions are with.`
+      : featured?.roles.length
+        ? `${p.name} plays ${profileList(featured.roles)} in ${game.name}${
+            featured.picks.length
+              ? `, usually on ${profileList(featured.picks)}`
+              : ''
+          }.`
+        : `${game.name} is the game ${p.name} is approved to play on Duoly.`,
   );
-  if (rank)
+  if (social) {
+    /* Social has no ranks, so no sentence about one. */
+  } else if (rank)
     session.push(
       `That ${rank} is a rank Duoly checked${
         featured?.peakRank && featured.peakRank !== rank
@@ -197,7 +211,9 @@ export function profileAnswers(p: PublicTeammateProfile) {
       `${profileList(others)} ${others.length > 1 ? 'are' : 'is'} on the profile too.`,
     );
   const how = [
-    `You and ${p.name} each play on your own account and meet on Discord for voice, so a handle and a microphone are the whole kit.`,
+    social
+      ? `You and ${p.name} meet on Discord for voice, so a Discord name and a microphone are the whole kit.`
+      : `You and ${p.name} each play on your own account and meet on Discord for voice, so a handle and a microphone are the whole kit.`,
     `A booking is the number of ${units} you choose at checkout, and you and ${p.name} agree a start time in the order chat before the first one.`,
   ];
   if (p.coaching && view.coachOffer)
@@ -212,6 +228,11 @@ export function profileAnswers(p: PublicTeammateProfile) {
       : `Nobody can promise how a ${game.name} match ends, ${p.name} included. What the booking buys is ${p.name} on your side for those ${units}.`,
   );
   const checked = [
+    ...(p.gamerGirl
+      ? [
+          `An administrator verified ${p.name} as a Gamer Girl, which opens Social sessions and the Gamer Girl services in every game Duoly sells.`,
+        ]
+      : []),
     verified.length
       ? `An administrator approved every game on ${p.name}'s profile before it went public, and a rank reads verified only once Duoly has seen it. ${p.name} carries ${verified.length === 1 ? 'one verified rank' : `${verified.length} verified ranks`}: ${profileList(verified.map((g) => `${g.rank} in ${profileGame(g.game).name}`))}.`
       : `An administrator approved ${game.name} on ${p.name}'s profile before it went public. Duoly has verified no rank for ${p.name} yet, so no tier on this page is labelled that way.`,
@@ -224,11 +245,13 @@ export function profileAnswers(p: PublicTeammateProfile) {
           : `${p.name} joined Duoly in ${profileMonth(p.memberSince)} and has no finished sessions here yet, so there is no rating to read. The page shows what ${p.name} is approved to play and nothing it cannot back up.`,
     `Payment finishes on duoly.gg and never in a private message to ${p.name}, and nobody needs your login, because ${p.name} queues on a separate account. If a session with ${p.name} goes wrong, the order tools are where it belongs, and the Duoly terms carry the cancellation and refund rules.`,
   ];
+  /* Who takes the order if this teammate cannot: for Social that is any verified Gamer Girl. */
+  const stand = social ? 'Gamer Girl' : `${game.name} teammate`;
   const busy = [
-    `Nothing on this page reserves ${p.name} for you. The order goes out to every verified ${game.name} teammate on Duoly, so whoever accepts it first plays the session, and while ${p.name} is ${hourly ? 'in another session' : 'mid match'} that can be somebody else. ${
+    `Nothing on this page reserves ${p.name} for you. The order goes out to every verified ${stand} on Duoly, so whoever accepts it first plays the session, and while ${p.name} is ${hourly ? 'in another session' : 'mid match'} that can be somebody else. ${
       p.online
-        ? `If no ${game.name} teammate accepts within ${AUTO_CANCEL_MINUTES} minutes, the order cancels itself and your money comes straight back.`
-        : `If no ${game.name} teammate accepts within ${AUTO_CANCEL_MINUTES} minutes, the order cancels itself and the full amount returns to your balance.`
+        ? `If no ${stand} accepts within ${AUTO_CANCEL_MINUTES} minutes, the order cancels itself and your money comes straight back.`
+        : `If no ${stand} accepts within ${AUTO_CANCEL_MINUTES} minutes, the order cancels itself and the full amount returns to your balance.`
     }`,
   ];
   busy.push(

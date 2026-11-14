@@ -1070,7 +1070,6 @@ export function ChatPanel({
               height: '11px',
               borderRadius: '50%',
               background: open ? GREEN : DIM,
-              boxShadow: '0 0 0 2.5px #1B1033',
             }}
           />
         </span>

@@ -137,7 +137,7 @@ CONTENT_SOURCES['/games/social'] = ['src/content/hubs.ts', CITABLE];
  * and the date to write when the two disagree.
  */
 export const CONTENT_UPDATED: Record<string, string> = {
-  '/': '2026-11-05',
+  '/': '2026-11-14',
   '/terms': '2026-11-12',
   '/privacy': '2026-11-12',
   // The price survey was read and written on 10 November 2026, which is also
