@@ -66,7 +66,11 @@ export const ALL: APIRoute = async (context) => {
     return url
       ? account.json({ url })
       : account.json({ error: 'Header could not be saved.' }, 503);
-  } catch {
+  } catch (error) {
+    console.error(
+      '[profile-header] unexpected',
+      (error as Error)?.message ?? '',
+    );
     return account.json(
       { error: 'Header images are unavailable right now.' },
       503,
