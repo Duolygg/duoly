@@ -62,11 +62,13 @@ grant insert on assertions to service_role;
 set local role service_role;
 select pg_temp.ok((select header_image is null from public.teammate_public_profiles
   where user_id='9e000000-0000-4000-8000-000000000001'),'service role reads the header');
-update public.teammate_public_profiles
-  set header_image='https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.jpg',
-      updated_at=pg_catalog.now()
-  where user_id='9e000000-0000-4000-8000-000000000001' and header_image is null;
-select pg_temp.ok(found,'service role swaps the header');
+do $$ begin
+  update public.teammate_public_profiles
+    set header_image='https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.jpg',
+        updated_at=pg_catalog.now()
+    where user_id='9e000000-0000-4000-8000-000000000001' and header_image is null;
+  perform pg_temp.ok(found,'service role swaps the header');
+end $$;
 do $$ begin
   update public.teammate_public_profiles set published=false where user_id='9e000000-0000-4000-8000-000000000001';
   raise exception 'service role changed another column';
