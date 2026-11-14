@@ -159,9 +159,10 @@ test('the game hub row and the related row show the photo', async ({
     page.locator(`.tp-row .tp-card[href="/teammates/${PHOTO_SLUG}"] img`),
   ).toHaveAttribute('src', PHOTO_URL);
   await page.goto('/teammates/nyx');
-  const related = page.locator(
-    `#more .tp-card[href="/teammates/${PHOTO_SLUG}"] img`,
-  );
+  /* The related row is a moving strip with repeated cards, so take the first. */
+  const related = page
+    .locator(`#more .tp-card[href="/teammates/${PHOTO_SLUG}"] img`)
+    .first();
   await expect(related).toHaveAttribute('src', PHOTO_URL);
   expect(
     await page.evaluate(

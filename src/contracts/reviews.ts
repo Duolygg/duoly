@@ -155,3 +155,6 @@ export const TeammateStatsResponseSchema = z.strictObject({
   stats: ReviewStatsSchema,
   leaderboard: LeaderboardSchema,
 });
+
+/** What /api/teammate/stats returns, and what the teammate desk is rendered with. */
+export type TeammateStatsResponse = z.infer<typeof TeammateStatsResponseSchema>;

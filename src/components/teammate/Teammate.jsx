@@ -298,8 +298,11 @@ export default class Teammate extends React.Component {
       proofErr: '',
       proofDrag: false,
       completing: false,
-      stats: null,
-      board: null,
+      // earnings and reviews the page was rendered with (teammate.astro), so money never starts
+      // at $0.00 and jumps once /api/teammate/stats answers
+      stats: (!admin && props.initialStats?.stats) || null,
+      board: (!admin && props.initialStats?.leaderboard) || null,
+      meId: (!admin && props.initialStats?.me) || undefined,
       statsAt: 0,
       // games a teammate gets orders for (admins see every game)
       // every game starts switched on; which ones can actually bring orders is decided by `access` below
@@ -1424,6 +1427,9 @@ export default class Teammate extends React.Component {
     const now = s.now ? s.now + (this._offset || 0) : 0; // server time
     // ---- real earnings (USD, after deposit, plus tips) from the ledger, bucketed into the viewer's own days
     const st = s.stats;
+    // Until a teammate's figures are known, money reads "—", never a $0.00 that is not true.
+    // Admins never load stats here, so their desk keeps the plain figures.
+    const cash = (v) => (st || this.props.admin ? money(v) : '—');
     const recent = st ? st.recent : [];
     const dayStart = (t) => {
       const d = new Date(t);
@@ -1703,7 +1709,7 @@ export default class Teammate extends React.Component {
     const todayIdx = now ? new Date(now).getDay() : 6;
     const week = vals.map((val, i) => ({
       day: i === 6 ? 'Today' : dayNames[(todayIdx - 6 + i + 7) % 7],
-      amount: money(val),
+      amount: cash(val),
       bar:
         'width: 100%; border-radius: 8px 8px 4px 4px; transition: height .4s ease; height: ' +
         (val ? Math.max(6, (val / maxV) * 100) : 3).toFixed(1) +
@@ -1842,10 +1848,10 @@ export default class Teammate extends React.Component {
       active,
       hasActive: !!active,
       queueCount: String(s.queue.length),
-      today: money(today),
-      weekTotal: money(weekTotal),
+      today: cash(today),
+      weekTotal: cash(weekTotal),
       week,
-      payoutDue: money(st && st.payout ? st.payout.due : payoutDue),
+      payoutDue: cash(st && st.payout ? st.payout.due : payoutDue),
       payout: st && st.payout ? st.payout : null,
       todayOrders:
         todayList.filter((e) => !e.adjustment).length === 1
@@ -1880,7 +1886,7 @@ export default class Teammate extends React.Component {
             st.winLoss.losses +
             'L from your match reports'
           : 'From your match reports',
-      tipsLabel: money(st ? st.tipsTotal : 0),
+      tipsLabel: cash(st ? st.tipsTotal : 0),
       completedLabel: (st ? st.completed : 0) + ' completed · ' + tier.name,
       latestReviews: st ? st.latestReviews : [],
       trust: {
@@ -5042,7 +5048,6 @@ export default class Teammate extends React.Component {
                                       width: '10px',
                                       height: '10px',
                                       borderRadius: '50%',
-                                      boxShadow: '0 0 0 1.5px #090414',
                                     }}
                                   />
                                 ) : null}
@@ -6020,7 +6025,9 @@ export default class Teammate extends React.Component {
           {v.admin || this.state.needDiscord ? null : <PerformanceCard />}
           {v.admin || !(FEATURES.trust || FEATURES.leaderboard) ? null : (
             <>
-              {FEATURES.trust ? (
+              {/* Like the leaderboard, only once the real figures are in: an order count of 0
+                  and $0.00 held would tell a teammate something untrue while loading. */}
+              {FEATURES.trust && v.statsLoaded ? (
                 <TrustScore
                   completed={v.trust.completed}
                   held={v.trust.held}

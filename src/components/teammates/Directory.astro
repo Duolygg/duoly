@@ -1,0 +1,1016 @@
+---
+/*
+ * The teammate directory, shared by /teammates and the per-game pages /games/<game>/teammates.
+ * Server rendered from directoryData(): every filter, sort and game is a link carrying its state
+ * in the URL, so each view can be shared and the page works without JavaScript. The script at
+ * the bottom only adds conveniences: instant name search, menus that behave like menus, the
+ * quick view panel, "Help me choose", saving and the load-more button.
+ */
+import type { SiteGame } from '../../site/games';
+import type { RecentMatch } from '../../contracts/home';
+import type { DirectoryData, SortId } from '../../server/teammates/directory';
+import { SORTS, PAGE_SIZE, filtered } from '../../server/teammates/directory';
+import { AUTO_CANCEL_MINUTES } from '../../server/seo/fees';
+import { profileGame } from '../../server/teammates/profile-page';
+import DirectoryCard from './DirectoryCard.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  data: DirectoryData;
+  game?: SiteGame;
+  saved: string[];
+  saveMode: 'customer' | 'signin' | 'none';
+  csrf: string;
+  recent: RecentMatch[];
+  fixture: boolean;
+}
+const { data, game, saved, saveMode, csrf, recent, fixture } = Astro.props;
+const f = data.filters;
+const isFiltered = filtered(f);
+
+type Next = Partial<{
+  game: string | null;
+  q: string;
+  online: boolean;
+  lang: string | null;
+  style: string | null;
+  coaching: boolean;
+  verified: boolean;
+  gg: boolean;
+  sort: SortId;
+}>;
+/** A link to the directory with some of the current state changed. */
+const href = (next: Next = {}) => {
+  const gameId = next.game === undefined ? game?.id : next.game;
+  const target = gameId ? data.tiles.find((t) => t.id === gameId) : undefined;
+  const path = target ? `/games/${target.slug}/teammates` : '/teammates';
+  const query = new URLSearchParams();
+  const pick = <K extends keyof Next>(key: K, current: Next[K]) =>
+    next[key] === undefined ? current : next[key];
+  const q = pick('q', f.q);
+  if (q) query.set('q', q);
+  if (pick('online', f.online)) query.set('online', '1');
+  const lang = pick('lang', f.lang);
+  if (lang) query.set('lang', lang);
+  const style = pick('style', f.style);
+  if (style) query.set('style', style);
+  if (pick('coaching', f.coaching)) query.set('coaching', '1');
+  if (pick('verified', f.verified)) query.set('verified', '1');
+  if (pick('gg', f.gg)) query.set('gg', '1');
+  const sort = pick('sort', f.sort);
+  if (sort && sort !== 'recommended') query.set('sort', sort);
+  const qs = query.toString();
+  return `${path}${qs ? `?${qs}` : ''}`;
+};
+const base = href({
+  q: '',
+  online: false,
+  lang: null,
+  style: null,
+  coaching: false,
+  verified: false,
+  gg: false,
+  sort: 'recommended',
+});
+
+const sortLabel = SORTS.find((s) => s.id === f.sort)!.label;
+const extraFilters =
+  Number(Boolean(f.lang)) +
+  Number(Boolean(f.style)) +
+  Number(f.coaching) +
+  Number(f.verified) +
+  Number(f.gg);
+const chips = [
+  ...(f.q ? [{ label: `"${f.q}"`, href: href({ q: '' }) }] : []),
+  ...(f.online ? [{ label: 'Online now', href: href({ online: false }) }] : []),
+  ...(f.lang
+    ? [{ label: `Speaks ${f.lang}`, href: href({ lang: null }) }]
+    : []),
+  ...(f.style ? [{ label: f.style, href: href({ style: null }) }] : []),
+  ...(f.coaching
+    ? [{ label: 'Also coaches', href: href({ coaching: false }) }]
+    : []),
+  ...(f.verified
+    ? [{ label: 'Verified rank', href: href({ verified: false }) }]
+    : []),
+  ...(f.gg ? [{ label: 'Gamer Girls', href: href({ gg: false }) }] : []),
+  ...(f.sort !== 'recommended'
+    ? [{ label: sortLabel, href: href({ sort: 'recommended' }) }]
+    : []),
+];
+const heading = f.online
+  ? `Online now${game ? ` for ${game.name}` : ''}`
+  : f.q
+    ? `Results for "${f.q}"`
+    : game?.id === 'social'
+      ? 'Gamer Girls for Social'
+      : game
+        ? `${game.name} teammates`
+        : f.gg
+          ? 'Gamer Girls'
+          : 'All teammates';
+const savedSet = new Set(saved);
+const showRows = !game && !isFiltered;
+const savedCards = showRows
+  ? saved
+      .map((slug) => data.everyone.find((c) => c.slug === slug))
+      .filter((c): c is NonNullable<typeof c> => Boolean(c))
+  : [];
+const visible = f.all ? data.results : data.results.slice(0, PAGE_SIZE);
+const hidden = data.results.length - visible.length;
+
+/* What "Help me choose" matches against, and the quick view needs nothing more than a slug. */
+const quizData = {
+  games: data.tiles
+    .filter((t) => t.total > 0)
+    .map((t) => ({ id: t.id, name: t.name, img: t.img })),
+  languages: [
+    ...new Set(data.everyone.flatMap((c) => c.languages ?? [])),
+  ].sort(),
+  cards: data.everyone.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    avatar: c.avatar,
+    game: c.game,
+    games: c.games ?? [c.game],
+    languages: c.languages ?? [],
+    vibes: c.vibeTags ?? [],
+    coaching: c.coaching === true,
+    gamerGirl: c.gamerGirl === true,
+    online: c.online,
+    rank: c.rank,
+    rating: c.rating,
+    tier: c.tier,
+  })),
+};
+const recentShown = recent.slice(0, 8);
+/* The strip loops by sliding exactly one set to the left, so a set must be wider than the
+   strip: a short list repeats until it has at least eight entries. Only the first copy of each
+   match is read out; the repeats are aria-hidden. */
+const tickerSet = recentShown.length
+  ? Array.from(
+      { length: Math.ceil(8 / recentShown.length) },
+      () => recentShown,
+    ).flat()
+  : [];
+---
+
+<article
+  class="tp-page tp-directory md-page"
+  data-directory
+  data-save-mode={saveMode}
+  data-csrf={saveMode === 'customer' ? csrf : undefined}
+>
+  {fixture && (
+    <p class="tp-fixture">
+      Design preview. These teammates and reviews are fictional.
+    </p>
+  )}
+
+  <header class="md-hero">
+    <h1>
+      {game?.id === 'social'
+        ? 'Social with a Gamer Girl'
+        : game
+          ? `Find your next ${game.name} teammate`
+          : 'Find your next teammate'}
+    </h1>
+    <p class="md-lead">
+      {game?.id === 'social'
+        ? 'Just chatting, watching something together, a late call or karaoke with a verified Gamer Girl. Read their profiles, then book the session you feel like.'
+        : game
+          ? `Rank-verified ${game.name} players. Read their profiles and reviews, then queue with the one who fits how you play.`
+          : 'Rank-verified players for every game Duoly sells. Read their profiles and reviews, then queue with the one who fits how you play.'}
+    </p>
+    <ul class="md-trust">
+      {data.stats.average && (
+        <li>
+          <span class="md-star" aria-hidden="true">
+            ★
+          </span>
+          <strong>{data.stats.average.toFixed(1)}</strong> average from{' '}
+          {data.stats.reviews.toLocaleString('en-US')} reviews
+        </li>
+      )}
+      <li>
+        <strong>{data.stats.total}</strong> rank-verified{' '}
+        {data.stats.total === 1 ? 'teammate' : 'teammates'}
+      </li>
+      {data.stats.online > 0 && (
+        <li>
+          <span class="md-dot" aria-hidden="true"></span>
+          <strong>{data.stats.online}</strong> online now
+        </li>
+      )}
+    </ul>
+    {recentShown.length > 0 && (
+      <div class="md-ticker" aria-label="Recently played on Duoly">
+        <span class="md-ticker-label">Just played</span>
+        <div class="md-ticker-window">
+          <ul class="md-ticker-track" style={`--n:${tickerSet.length}`}>
+            {[...tickerSet, ...tickerSet].map((m, i) => (
+              <li aria-hidden={i >= recentShown.length ? 'true' : undefined}>
+                <img
+                  src={profileGame(m.game).img}
+                  alt=""
+                  width="18"
+                  height="18"
+                  loading="lazy"
+                />
+                <strong>{m.who}</strong>
+                <span>{m.what}</span>
+                {m.rating && <span class="md-ticker-star">★ {m.rating}</span>}
+                <time>{m.time}</time>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )}
+  </header>
+
+  <!-- The search bar sticks under the site header while the list scrolls. -->
+  <div class="md-sticky" data-sticky>
+    <div class="md-search" role="search" aria-label="Find teammates">
+      <form
+        class="md-query"
+        method="get"
+        action={base.split('?')[0]}
+        data-query
+      >
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <circle
+            cx="7"
+            cy="7"
+            r="4.6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+          ></circle>
+          <path
+            d="m10.5 10.5 3.5 3.5"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+          ></path>
+        </svg>
+        <label class="md-visually-hidden" for="md-q">
+          Search teammates by name
+        </label>
+        <input
+          id="md-q"
+          name="q"
+          type="search"
+          placeholder="Search by name"
+          value={f.q}
+          autocomplete="off"
+          maxlength="40"
+          data-q
+        />
+        {f.online && <input type="hidden" name="online" value="1" />}
+        {f.lang && <input type="hidden" name="lang" value={f.lang} />}
+        {f.style && <input type="hidden" name="style" value={f.style} />}
+        {f.coaching && <input type="hidden" name="coaching" value="1" />}
+        {f.verified && <input type="hidden" name="verified" value="1" />}
+        {f.gg && <input type="hidden" name="gg" value="1" />}
+        {f.sort !== 'recommended' && (
+          <input type="hidden" name="sort" value={f.sort} />
+        )}
+      </form>
+
+      <span class="md-divider" aria-hidden="true"></span>
+
+      <details class="md-menu md-menu-game" data-menu>
+        <summary>
+          <span class="md-field-icon">
+            {game ? (
+              <img src={game.img} alt="" width="22" height="22" />
+            ) : (
+              <svg
+                viewBox="0 0 16 16"
+                width="16"
+                height="16"
+                aria-hidden="true"
+              >
+                <path
+                  d="M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            )}
+          </span>
+          <span class="md-field">
+            <small>Game</small>
+            <strong>{game ? game.name : 'All games'}</strong>
+          </span>
+          <svg
+            class="md-chevron"
+            viewBox="0 0 16 16"
+            width="14"
+            height="14"
+            aria-hidden="true"
+          >
+            <path
+              d="m4 6 4 4 4-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </summary>
+        <div class="md-popover md-popover-games">
+          <a
+            class:list={['md-option', { 'is-current': !game }]}
+            href={href({ game: null })}
+            aria-current={!game ? 'true' : undefined}
+          >
+            <span class="md-option-icon md-option-all" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="15" height="15">
+                <path
+                  d="M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </span>
+            All games
+          </a>
+          {data.tiles.map((t) => (
+            <a
+              class:list={['md-option', { 'is-current': game?.id === t.id }]}
+              href={href({ game: t.id })}
+              aria-current={game?.id === t.id ? 'true' : undefined}
+            >
+              <img
+                class="md-option-icon"
+                src={t.img}
+                alt=""
+                width="24"
+                height="24"
+                loading="lazy"
+              />
+              <span class="md-option-name">{t.name}</span>
+              {t.total > 0 && <span class="md-option-count">{t.total}</span>}
+            </a>
+          ))}
+        </div>
+      </details>
+
+      <span class="md-divider" aria-hidden="true"></span>
+
+      <a
+        class:list={['md-toggle', { 'is-on': f.online }]}
+        href={href({ online: !f.online })}
+        role="switch"
+        aria-checked={f.online ? 'true' : 'false'}
+      >
+        <span class="md-switch" aria-hidden="true">
+          <i></i>
+        </span>
+        <span class="md-field">
+          <small>Availability</small>
+          <strong>Online now</strong>
+        </span>
+      </a>
+
+      <span class="md-divider" aria-hidden="true"></span>
+
+      <details class="md-menu md-menu-filters" data-menu>
+        <summary>
+          <span class="md-field">
+            <small>Filters</small>
+            <strong>
+              {extraFilters ? `${extraFilters} active` : 'All teammates'}
+            </strong>
+          </span>
+          <svg
+            class="md-chevron"
+            viewBox="0 0 16 16"
+            width="14"
+            height="14"
+            aria-hidden="true"
+          >
+            <path
+              d="m4 6 4 4 4-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </summary>
+        <div class="md-popover md-popover-filters">
+          {data.languages.length > 0 && (
+            <div class="md-filter-group">
+              <p class="md-filter-title">Language</p>
+              <div class="md-filter-chips">
+                {data.languages.map((l) => (
+                  <a
+                    class:list={['md-chip', { 'is-on': f.lang === l.value }]}
+                    href={href({ lang: f.lang === l.value ? null : l.value })}
+                    aria-current={f.lang === l.value ? 'true' : undefined}
+                  >
+                    {l.value}
+                    <span>{l.count}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+          {data.styles.length > 0 && (
+            <div class="md-filter-group">
+              <p class="md-filter-title">Play style</p>
+              <div class="md-filter-chips">
+                {data.styles.map((s) => (
+                  <a
+                    class:list={['md-chip', { 'is-on': f.style === s.value }]}
+                    href={href({ style: f.style === s.value ? null : s.value })}
+                    aria-current={f.style === s.value ? 'true' : undefined}
+                  >
+                    {s.value}
+                    <span>{s.count}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+          <div class="md-filter-group md-filter-switches">
+            <a
+              class:list={['md-filter-switch', { 'is-on': f.coaching }]}
+              href={href({ coaching: !f.coaching })}
+              role="switch"
+              aria-checked={f.coaching ? 'true' : 'false'}
+            >
+              <span class="md-switch" aria-hidden="true">
+                <i></i>
+              </span>
+              <span>
+                <strong>Also coaches</strong>
+                <small>
+                  {data.coaches} {data.coaches === 1 ? 'teammate' : 'teammates'}{' '}
+                  offer coaching
+                </small>
+              </span>
+            </a>
+            <a
+              class:list={['md-filter-switch', { 'is-on': f.verified }]}
+              href={href({ verified: !f.verified })}
+              role="switch"
+              aria-checked={f.verified ? 'true' : 'false'}
+            >
+              <span class="md-switch" aria-hidden="true">
+                <i></i>
+              </span>
+              <span>
+                <strong>Verified rank</strong>
+                <small>
+                  A rank Duoly checked for {game ? game.name : 'their game'}
+                </small>
+              </span>
+            </a>
+            <a
+              class:list={['md-filter-switch', { 'is-on': f.gg }]}
+              href={href({ gg: !f.gg })}
+              role="switch"
+              aria-checked={f.gg ? 'true' : 'false'}
+            >
+              <span class="md-switch" aria-hidden="true">
+                <i></i>
+              </span>
+              <span>
+                <strong>Gamer Girls</strong>
+                <small>
+                  {data.gamerGirls} verified{' '}
+                  {data.gamerGirls === 1 ? 'Gamer Girl' : 'Gamer Girls'}
+                </small>
+              </span>
+            </a>
+          </div>
+          <p class="md-filter-note">
+            Prices come from the game, the service and your rank, never from the
+            teammate, so there is no price filter: every teammate for a game
+            costs the same.
+          </p>
+        </div>
+      </details>
+
+      <span class="md-divider" aria-hidden="true"></span>
+
+      <details class="md-menu md-menu-sort" data-menu>
+        <summary>
+          <span class="md-field">
+            <small>Sort by</small>
+            <strong>{sortLabel}</strong>
+          </span>
+          <svg
+            class="md-chevron"
+            viewBox="0 0 16 16"
+            width="14"
+            height="14"
+            aria-hidden="true"
+          >
+            <path
+              d="m4 6 4 4 4-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </summary>
+        <div class="md-popover md-popover-sort">
+          {SORTS.map((s) => (
+            <a
+              class:list={['md-option', { 'is-current': f.sort === s.id }]}
+              href={href({ sort: s.id })}
+              aria-current={f.sort === s.id ? 'true' : undefined}
+            >
+              {s.label}
+              {f.sort === s.id && (
+                <svg
+                  class="md-check"
+                  viewBox="0 0 16 16"
+                  width="14"
+                  height="14"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="m3.5 8.5 3 3 6-7"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </svg>
+              )}
+            </a>
+          ))}
+        </div>
+      </details>
+    </div>
+    {chips.length > 0 && (
+      <div class="md-chips" aria-label="Active filters">
+        {chips.map((c) => (
+          <a
+            class="md-active-chip"
+            href={c.href}
+            aria-label={`Remove ${c.label}`}
+          >
+            {c.label}
+            <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+              <path
+                d="M4 4l8 8M12 4l-8 8"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              ></path>
+            </svg>
+          </a>
+        ))}
+        <a
+          class="md-clear"
+          href={
+            game
+              ? href({
+                  q: '',
+                  online: false,
+                  lang: null,
+                  style: null,
+                  coaching: false,
+                  verified: false,
+                  gg: false,
+                  sort: 'recommended',
+                })
+              : '/teammates'
+          }
+        >
+          Clear all
+        </a>
+      </div>
+    )}
+  </div>
+
+  <nav class="md-games" aria-label="Games" data-games>
+    <button
+      type="button"
+      class="md-games-arrow md-games-prev"
+      aria-label="Earlier games"
+      data-games-prev
+      hidden
+    >
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <path
+          d="M10 3.5 5.5 8l4.5 4.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="md-games-arrow md-games-next"
+      aria-label="More games"
+      data-games-next
+      hidden
+    >
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <path
+          d="M6 3.5 10.5 8 6 12.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+      </svg>
+    </button>
+    <div class="md-games-track">
+      <a
+        class:list={['md-tile', { 'is-current': !game }]}
+        href={href({ game: null })}
+        aria-current={!game ? 'true' : undefined}
+      >
+        <span class="md-tile-icon md-tile-all" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="18" height="18">
+            <path
+              d="M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </span>
+        <span class="md-tile-name">All</span>
+        <span class="md-tile-meta">{data.everyone.length} teammates</span>
+      </a>
+      {data.tiles.map((t) => (
+        <a
+          class:list={[
+            'md-tile',
+            { 'is-current': game?.id === t.id, 'is-empty': t.total === 0 },
+          ]}
+          href={href({ game: t.id })}
+          aria-current={game?.id === t.id ? 'true' : undefined}
+        >
+          <img
+            class="md-tile-icon"
+            src={t.img}
+            alt=""
+            width="36"
+            height="36"
+            loading="lazy"
+          />
+          <span class="md-tile-name">{t.name}</span>
+          <span class="md-tile-meta">
+            {t.online > 0 ? (
+              <>
+                <span class="md-dot" aria-hidden="true"></span>
+                {t.online} online
+              </>
+            ) : t.total > 0 ? (
+              `${t.total} ${t.total === 1 ? 'teammate' : 'teammates'}`
+            ) : (
+              'Queue only'
+            )}
+          </span>
+        </a>
+      ))}
+    </div>
+  </nav>
+
+  <section class="md-choose" aria-labelledby="md-choose-h">
+    <div>
+      <p id="md-choose-h" class="md-choose-title">
+        Not sure who to pick?
+      </p>
+      <p>
+        Answer three quick questions and we match you with the teammates who
+        fit.
+      </p>
+    </div>
+    <button class="tp-button tp-primary" type="button" data-quiz-open>
+      Help me choose
+      <Icon name="arrow" />
+    </button>
+  </section>
+
+  {savedCards.length > 0 && (
+    <section class="md-row" aria-labelledby="md-row-saved">
+      <div class="md-row-head">
+        <h2 id="md-row-saved">Your saved teammates</h2>
+        <p>Orders you place for their game reach them first.</p>
+      </div>
+      <div class="md-row-track">
+        {savedCards.map((card, i) => (
+          <DirectoryCard card={card} saved saveMode={saveMode} index={i} />
+        ))}
+      </div>
+    </section>
+  )}
+  {showRows &&
+    data.rows.map((row) => (
+      <section class="md-row" aria-labelledby={`md-row-${row.id}`}>
+        <div class="md-row-head">
+          <h2 id={`md-row-${row.id}`}>{row.title}</h2>
+          <p>{row.note}</p>
+        </div>
+        <div class="md-row-track">
+          {row.cards.map((card, i) => (
+            <DirectoryCard
+              card={card}
+              saved={savedSet.has(card.slug)}
+              saveMode={saveMode}
+              index={i}
+            />
+          ))}
+        </div>
+      </section>
+    ))}
+
+  <section class="md-results" id="results" aria-label={heading}>
+    <div class="md-results-head">
+      <h2>{heading}</h2>
+      <p>
+        <span data-result-count>{data.results.length}</span>{' '}
+        {data.results.length === 1 ? 'teammate' : 'teammates'}
+      </p>
+    </div>
+    {data.results.length > 0 ? (
+      <>
+        <div class="tp-cards md-grid" data-grid>
+          {data.results.map((card, i) => (
+            <DirectoryCard
+              card={card}
+              saved={savedSet.has(card.slug)}
+              saveMode={saveMode}
+              index={i}
+              extra={i >= visible.length}
+            />
+          ))}
+        </div>
+        <p class="md-search-empty" data-search-empty hidden>
+          No teammate by that name in this list.
+        </p>
+        {hidden > 0 && (
+          <div class="md-more">
+            <a
+              class="tp-button tp-ghost"
+              href={`${href()}${href().includes('?') ? '&' : '?'}show=all#results`}
+              data-more
+            >
+              Show {hidden} more
+            </a>
+          </div>
+        )}
+      </>
+    ) : (
+      <div class="md-empty">
+        <p class="md-empty-title">
+          {f.online && data.scope.length > 0
+            ? 'Nobody is online for this right now'
+            : isFiltered
+              ? 'No teammate matches these filters'
+              : `No public teammates${game ? ` for ${game.name}` : ''} yet`}
+        </p>
+        <p>
+          {isFiltered
+            ? 'Remove a filter to see more teammates. When you order, a verified teammate takes it from the queue.'
+            : 'The queue still finds you a verified teammate for every game Duoly sells.'}
+        </p>
+        <a class="tp-button tp-ghost" href={isFiltered ? base : '/games'}>
+          {isFiltered ? 'Clear filters' : 'Explore all games'}
+        </a>
+      </div>
+    )}
+  </section>
+
+  <section class="md-trust-strip" aria-labelledby="md-verify-h">
+    <div class="md-trust-intro">
+      <p class="md-eyebrow">Why teammates here are safe to book</p>
+      <h2 id="md-verify-h">How Duoly verifies every teammate</h2>
+      <a class="md-text-link" href="/trust-and-safety">
+        Read trust and safety <Icon name="arrow" />
+      </a>
+    </div>
+    <ul class="md-verify">
+      <li>
+        <span class="md-verify-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path
+              d="M12 3.5 4.5 6.5v5c0 4.5 3.2 7.7 7.5 9 4.3-1.3 7.5-4.5 7.5-9v-5Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linejoin="round"
+            ></path>
+            <path
+              d="m8.8 12 2.2 2.2 4.3-4.4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </span>
+        <strong>Approved game by game</strong>
+        <span>
+          An administrator approves every game a teammate plays before they can
+          take an order for it.
+        </span>
+      </li>
+      <li>
+        <span class="md-verify-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path
+              d="M12 3 4 7l8 4 8-4Zm-8 9 8 4 8-4M4 16.5l8 4 8-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </span>
+        <strong>Ranks checked by Duoly</strong>
+        <span>
+          A rank shown with a tick was checked by an administrator. Anything
+          unchecked shows no rank at all.
+        </span>
+      </li>
+      <li>
+        <span class="md-verify-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path
+              d="M12 3.5 14.6 9l6 .7-4.5 4.1 1.2 5.9L12 16.8l-5.3 2.9 1.2-5.9-4.5-4.1 6-.7Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linejoin="round"
+            ></path>
+          </svg>
+        </span>
+        <strong>Reviews from real orders</strong>
+        <span>
+          Only customers who finished a session can leave a review, and ratings
+          appear once there are enough of them.
+        </span>
+      </li>
+    </ul>
+    <ul class="md-guarantees">
+      <li>
+        <strong>{AUTO_CANCEL_MINUTES}-minute guarantee</strong>
+        <span>
+          Nobody accepts in {AUTO_CANCEL_MINUTES} minutes? The order cancels and
+          the full amount goes back to your balance.
+        </span>
+      </li>
+      <li>
+        <strong>One price, whoever plays</strong>
+        <span>
+          The price comes from the game, the service and your rank, so it is the
+          same for every teammate.
+        </span>
+      </li>
+      <li>
+        <strong>Secure checkout</strong>
+        <span>
+          Card payments are handled by Stripe, so your card number never reaches
+          Duoly.
+        </span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="md-faq" aria-labelledby="tp-copy-h">
+    <div>
+      <h2 id="tp-copy-h">What does booking a named teammate change?</h2>
+      <p>
+        Your order reaches them with no queue delay. Saving a teammate from
+        their profile is the one thing that changes the queue: the next order
+        you place for that game appears for them the moment it goes public,
+        rather than after the wait every other teammate sees. Saving somebody
+        needs a Duoly account. Browsing this page does not.
+      </p>
+    </div>
+    <div>
+      <h2 id="tp-copy-reserved-h">What does it not change?</h2>
+      <p>
+        Nobody is reserved for you. A teammate is booked when they accept the
+        order, so while your pick is in a match another verified teammate can
+        take it. If nobody accepts within {AUTO_CANCEL_MINUTES} minutes the
+        order cancels itself and the full amount goes back to your balance. The
+        price is the same whoever accepts, because it comes from the game, the
+        service and the rank you selected.
+      </p>
+    </div>
+    <div>
+      <h2 id="tp-copy-who-h">Which teammates appear here?</h2>
+      <p>
+        Everyone who switched their public profile on and plays a game an
+        administrator approved. A profile reaches search results once it also
+        carries one of three things: a rank an administrator verified, a bio the
+        teammate wrote, or finished sessions. Pick a game above to narrow the
+        list, or read <a href="/how-it-works">how a Duoly booking works</a>{' '}
+        before you choose a name.
+      </p>
+    </div>
+  </section>
+
+  <section class="md-join" aria-labelledby="md-join-h">
+    <div>
+      <p class="md-eyebrow">For players</p>
+      <h2 id="md-join-h">Good at your game? Get paid to play it.</h2>
+      <p>
+        Apply once, get approved for the games you play, and take orders
+        whenever you are online.
+      </p>
+    </div>
+    <div class="md-join-actions">
+      <a class="tp-button tp-primary" href="/apply">
+        Become a teammate <Icon name="arrow" />
+      </a>
+      <a class="md-text-link" href="/get-paid-to-play-games">
+        How teammates earn <Icon name="arrow" />
+      </a>
+    </div>
+  </section>
+
+  <!-- Quick view: filled from /api/teammates/preview when a card's eye button is pressed. -->
+  <dialog class="md-panel" aria-labelledby="md-peek-name" data-peek>
+    <button
+      class="md-panel-close"
+      type="button"
+      aria-label="Close"
+      data-panel-close
+    >
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <path
+          d="M4 4l8 8M12 4l-8 8"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+        ></path>
+      </svg>
+    </button>
+    <!-- One scroll area; the footer with the price and Book stays fixed below it. -->
+    <div class="md-panel-scroll md-peek" data-peek-body>
+      <div class="md-skeleton" aria-hidden="true">
+        <i></i>
+        <i></i>
+        <i></i>
+        <i></i>
+      </div>
+    </div>
+    <div class="md-peek-foot" data-peek-foot hidden></div>
+  </dialog>
+
+  <!-- Help me choose: three questions, matched in the browser against the cards above. -->
+  <dialog class="md-panel md-quiz" aria-labelledby="md-quiz-h" data-quiz>
+    <button
+      class="md-panel-close"
+      type="button"
+      aria-label="Close"
+      data-panel-close
+    >
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <path
+          d="M4 4l8 8M12 4l-8 8"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+        ></path>
+      </svg>
+    </button>
+    <div class="md-panel-scroll md-quiz-scroll">
+      <p class="md-eyebrow">Help me choose</p>
+      <h2 id="md-quiz-h" data-quiz-title>
+        What do you want from the session?
+      </h2>
+      <ol class="md-quiz-steps" aria-hidden="true">
+        <li class="is-on"></li>
+        <li></li>
+        <li></li>
+      </ol>
+      <div class="md-quiz-body" data-quiz-body></div>
+    </div>
+  </dialog>
+  <script
+    type="application/json"
+    data-directory-json
+    set:html={JSON.stringify(quizData).replace(/</g, '\\u003c')}
+  />
+</article>

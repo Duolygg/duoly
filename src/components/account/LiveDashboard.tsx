@@ -12,6 +12,8 @@ function LiveDashboardContent({
   proWelcome = false,
   cur = 'EUR',
   usdRate,
+  initialHistory = null,
+  initialLive,
 }: {
   viewer: Viewer;
   csrf: string;
@@ -20,6 +22,10 @@ function LiveDashboardContent({
   /** the customer's currency: the account's, else the one picked on this browser */
   cur?: 'EUR' | 'USD';
   usdRate?: number;
+  /** What the first history poll would return, read while rendering (dashboard-preload.ts). */
+  initialHistory?: unknown;
+  /** The open order read while rendering; undefined when it could not be read. */
+  initialLive?: unknown;
 }) {
   const onSignOut = async () => {
     const response = await fetch('/auth/logout', {
@@ -39,6 +45,8 @@ function LiveDashboardContent({
       proWelcome={proWelcome}
       cur={cur}
       usdRate={usdRate}
+      initialHistory={initialHistory}
+      initialLive={initialLive}
     />
   );
 }

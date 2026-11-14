@@ -110,7 +110,6 @@ export default function Favorites({ favs, busy, err, onToggle, card, h2 }) {
                         height: '16px',
                         borderRadius: '50%',
                         objectFit: 'cover',
-                        boxShadow: '0 0 0 2px #090414',
                       }}
                     />
                   ) : null}
@@ -123,7 +122,6 @@ export default function Favorites({ favs, busy, err, onToggle, card, h2 }) {
                       width: '12px',
                       height: '12px',
                       borderRadius: '50%',
-                      boxShadow: '0 0 0 3px #090414',
                       background: st.dot,
                     }}
                   />
@@ -166,7 +164,7 @@ export default function Favorites({ favs, busy, err, onToggle, card, h2 }) {
                     {st.label}
                   </span>
                   <span style={{ fontSize: '12px', color: '#8E84AB' }}>
-                    {f.orders} {f.orders === 1 ? 'game' : 'games'} together
+                    {f.orders} {f.orders === 1 ? 'order' : 'orders'}
                   </span>
                 </span>
                 <span

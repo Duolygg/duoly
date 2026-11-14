@@ -5,6 +5,10 @@ import { accountContext } from '../server/auth/context';
 import { orderChatEnabled } from '../server/chat/config';
 import { connectEnabled } from '../server/connect/config';
 import { toOriginalPresence } from '../components/teammate/teammate-data.js';
+import {
+  TeammateStatsResponseSchema,
+  type TeammateStatsResponse,
+} from '../contracts/reviews';
 const chatEnabled = orderChatEnabled();
 const connectPayouts = connectEnabled();
 const account = accountContext(Astro.request, Astro.cookies);
@@ -40,6 +44,19 @@ if (identity.discord && account.client) {
     presence = null;
   }
 }
+// Earnings, payout and reviews, read the same way: the desk used to start at $0.00 and jump to the
+// real figures once /api/teammate/stats answered. Same RPC and schema as that endpoint; on any
+// failure the desk shows a placeholder until its own request answers.
+let initialStats: TeammateStatsResponse | null = null;
+if (identity.discord && account.client) {
+  try {
+    const { data, error } = await account.client.rpc('teammate_stats');
+    const parsed = error ? null : TeammateStatsResponseSchema.safeParse(data);
+    if (parsed?.success) initialStats = parsed.data;
+  } catch {
+    initialStats = null;
+  }
+}
 ---
 
 <SiteLayout
@@ -53,6 +70,7 @@ if (identity.discord && account.client) {
     csrf={csrf}
     discordLinked={!!identity.discord}
     presence={presence}
+    initialStats={initialStats}
     discordEnabled={!!account.config?.providers.discord}
     discordResult={Astro.url.searchParams.get('discord') ?? ''}
     chatEnabled={chatEnabled}

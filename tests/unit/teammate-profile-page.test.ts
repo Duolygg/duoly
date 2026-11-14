@@ -275,15 +275,23 @@ describe('public profile page', () => {
         expect(profileSchemas(p, new URL('https://duoly.gg'))).toHaveLength(3);
       }
     });
-    it('drops the Service schema when the catalog sells nothing for the game', () => {
-      /* Social is the one catalog entry with no teammate sessions, and a profile can never
-         feature it, but the page still has to answer rather than throw. */
-      const schemas = profileSchemas(
-        { ...pip, featuredGame: 'social', games: [] },
-        new URL('https://duoly.gg'),
-      );
-      expect(schemas).toHaveLength(2);
-      expect(JSON.stringify(schemas)).not.toContain('"Service"');
+    it('prices a Social page from Gamer Girl sessions', () => {
+      /* Social has no teammate sessions; a Gamer Girl's Social page sells her Social sessions,
+         so its Service schema carries the cheapest of those. */
+      const profile = {
+        ...pip,
+        featuredGame: 'social',
+        games: [],
+        gamerGirl: true,
+      };
+      const cheapest = seoOffers('social', 'gg', {
+        customerCurrency: 'EUR',
+        eurToUsd: 1,
+      }).sort((a, b) => a.amountMinor - b.amountMinor)[0]!;
+      expect(profilePresentation(profile).offer).toEqual(cheapest);
+      const schemas = profileSchemas(profile, new URL('https://duoly.gg'));
+      expect(schemas).toHaveLength(3);
+      expect(JSON.stringify(schemas)).toContain('"Service"');
     });
     it('names picks the way players name them in each game', () => {
       expect(pickLabel('lol')).toBe('Champions');

@@ -30,7 +30,16 @@ for (const slug of ['nyx', 'sola', 'kairo'])
       offer.display,
     );
     const text = await page.locator('article.tp-page').innerText();
-    expect(text.split(offer.display)).toHaveLength(2);
+    /* The hero's "from" price is shown once. The pick card under the booking answers prices
+       its own products, which can land on the same amount, so it is left out of this count. */
+    const outsidePick = await page
+      .locator('article.tp-page')
+      .evaluate((article) => {
+        const copy = article.cloneNode(true) as HTMLElement;
+        copy.querySelector('[data-pick]')?.remove();
+        return copy.textContent ?? '';
+      });
+    expect(outsidePick.split(offer.display)).toHaveLength(2);
     expect(text).not.toMatch(/[–—&]/);
     expect(
       await page.evaluate(
@@ -318,11 +327,15 @@ test('one booking verb, one arrow glyph and reviews without text stay quiet', as
     }),
   ).toBe(0);
   await expect(page.locator('.tp-card svg')).toHaveCount(0);
-  /* Four written reviews minus the one with no text: a lead plus an even grid. */
-  await expect(page.locator('.tp-review-lead')).toHaveCount(1);
-  await expect(
-    page.locator('.tp-review-wrap .tp-review:not(.tp-review-lead)'),
-  ).toHaveCount(2);
+  /* Four written reviews minus the one with no text: three, each read out once. */
+  expect(
+    await page.evaluate(
+      () =>
+        [...document.querySelectorAll('.tp-review')].filter(
+          (el) => !el.closest('[aria-hidden="true"]'),
+        ).length,
+    ),
+  ).toBe(3);
   await expect(page.locator('.tp-tags .tp-tag').first()).toContainText(
     '74 mentions',
   );
@@ -341,8 +354,9 @@ test('the hero carries one online signal, one booking unit and no upscaled masco
 }) => {
   await page.goto('/teammates/nyx');
   const hero = page.locator('.tp-hero');
-  /* The live dot on the ring plus one availability line, and no separate status row. */
-  await expect(hero.locator('.tp-ring-dot')).toHaveCount(1);
+  /* One availability line with its own blinking dot: no dot on the avatar ring and no
+     separate status row. */
+  await expect(hero.locator('.tp-ring-dot')).toHaveCount(0);
   await expect(hero.locator('.tp-availability')).toHaveCount(1);
   await expect(hero.locator('.tp-availability')).toContainText('Online now');
   expect((await hero.innerText()).toLowerCase().split('online').length).toBe(2);
@@ -576,7 +590,7 @@ test('nothing in the profile touches the viewport edge', async ({ page }) => {
            edge are reached by scrolling the shelf and never by scrolling the page. The box
            that has to keep the gutter is the rail itself, measured below like everything
            else; the run of trophies inside it is not. */
-        if (el.parentElement?.closest('.tc-rail')) continue;
+        if (el.parentElement?.closest('.tc-rail, .tp-reel')) continue;
         const style = getComputedStyle(el);
         if (style.visibility === 'hidden' || style.display === 'none') continue;
         const box = el.getBoundingClientRect();
@@ -718,6 +732,13 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
      and a name without one put the mascot in the same place. */
   const capOffset = () =>
     page.evaluate(() => {
+      /* Layout, not motion: land the entrance animations and stop the avatar's float
+         before measuring, so the rest positions are what gets compared. */
+      for (const animation of document.getAnimations()) {
+        if (animation.effect?.getComputedTiming().iterations === Infinity)
+          animation.cancel();
+        else animation.finish();
+      }
       const h1 = document.querySelector('h1')!;
       const style = getComputedStyle(h1);
       const pen = document.createElement('canvas').getContext('2d')!;
@@ -787,22 +808,22 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
       ),
     ),
   ).toEqual(['24px', '24px', '24px', '24px', '24px']);
-  /* One grid for the reviews: the featured quote spans it, the rest sit under it in
-     equal columns that start on the same left edge as the tag bars. */
+  /* The reviews are a moving strip that spans the content width and starts on the same left
+     edge as the tag bars. Each review is real to assistive tech once; the repeats that fill
+     the loop are hidden from it. */
   expect(
     await page.evaluate(() => {
       const left = (el: Element) => Math.round(el.getBoundingClientRect().left);
-      const reviews = [...document.querySelectorAll('.tp-review')];
+      const reel = document.querySelector('.tp-review-reel')!;
+      const real = [
+        ...document.querySelectorAll('.tp-review-reel .tp-review'),
+      ].filter((el) => !el.closest('[aria-hidden="true"]'));
       return {
         tags: left(document.querySelector('.tp-tag')!),
-        lead: left(reviews[0]!),
-        leadWidth: Math.round(reviews[0]!.getBoundingClientRect().width),
-        wrapWidth: Math.round(
-          document.querySelector('.tp-review-wrap')!.getBoundingClientRect()
-            .width,
-        ),
-        rest: reviews.slice(1).map(left),
-        captions: reviews.map((el) =>
+        reel: left(reel),
+        reelWidth: Math.round(reel.getBoundingClientRect().width),
+        real: real.length,
+        captions: real.map((el) =>
           Math.round(
             el.querySelector('figcaption')!.getBoundingClientRect().top -
               el.querySelector('blockquote')!.getBoundingClientRect().bottom,
@@ -812,10 +833,9 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
     }),
   ).toEqual({
     tags: 96,
-    lead: 96,
-    leadWidth: 1248,
-    wrapWidth: 1248,
-    rest: [96, 720],
+    reel: 96,
+    reelWidth: 1248,
+    real: 3,
     captions: [16, 16, 16],
   });
 });

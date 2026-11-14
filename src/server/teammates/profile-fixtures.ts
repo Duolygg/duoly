@@ -78,6 +78,41 @@ const nyx: PublicTeammateProfile = {
  * and screenshots instead of being discovered in production.
  */
 const newcomers: PublicTeammateProfile[] = [
+  /* Gamer Girl access only, so her page features Social: the case that had no page at all
+     before 20261114130000_gamer_girl_profiles.sql. */
+  {
+    slug: 'mira',
+    name: 'Mira',
+    avatar: '/assets/avatars/avatar-9.png',
+    country: 'Germany',
+    languages: ['German', 'English'],
+    bio: 'Night owl with a cozy voice. Happy to chat, watch your stream with you or keep you company on a late call while you wind down.',
+    accent: 'coral',
+    banner: 'pulse',
+    vibeTags: ['Chill', 'Funny', 'Night owl'],
+    featuredGame: 'social',
+    coaching: false,
+    gamerGirl: true,
+    online: true,
+    memberSince: '2026-11',
+    sessions: 0,
+    tier: 'rookie',
+    rating: null,
+    reviewTags: [],
+    winRate: null,
+    games: [
+      {
+        game: 'social',
+        rank: null,
+        peakRank: null,
+        verified: false,
+        roles: [],
+        picks: [],
+      },
+    ],
+    reviews: [],
+    updatedAt: '2026-11-14T12:00:00.000Z',
+  },
   {
     slug: 'rhea',
     name: 'Rhea',
@@ -328,6 +363,8 @@ const profiles: PublicTeammateProfile[] = [
     bio: 'Duelist. I take the first fight so you do not have to, and I will tell you what I saw before the next round starts.',
     accent: 'pink',
     vibeTags: ['Tryhard', 'Mechanics first'],
+    /* A Gamer Girl who is also approved for competitive Valorant: Social sits after it. */
+    gamerGirl: true,
     tier: 'elite',
     memberSince: '2026-01',
     sessions: 620,
@@ -346,6 +383,14 @@ const profiles: PublicTeammateProfile[] = [
         verified: true,
         roles: ['Duelist', 'Initiator'],
         picks: ['Jett', 'Raze', 'Fade'],
+      },
+      {
+        game: 'social',
+        rank: null,
+        peakRank: null,
+        verified: false,
+        roles: [],
+        picks: [],
       },
     ],
     reviews: [
@@ -406,6 +451,12 @@ export function fixtureCards(options: {
         game: game.game,
         rank: game.verified ? game.rank : null,
         rating: p.rating,
+        games: p.games.map((g) => g.game),
+        languages: p.languages,
+        vibeTags: p.vibeTags,
+        coaching: p.coaching,
+        gamerGirl: p.gamerGirl ?? false,
+        quote: p.reviews.find((r) => r.text.trim())?.text ?? null,
       };
     });
 }

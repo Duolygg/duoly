@@ -1,0 +1,100 @@
+---
+/*
+ * One game's teammate directory, e.g. /games/valorant/teammates. The same directory as
+ * /teammates, scoped to the game, with its own title, description and structured data, so a
+ * search for "valorant teammate" lands on a page about exactly that. Indexed once at least three
+ * of its teammates have profiles that qualify for search; filtered views never are.
+ */
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import Directory from '../../../components/teammates/Directory.astro';
+import '../../../components/teammates/profiles.css';
+import '../../../components/teammates/directory.css';
+import { gameBySlug } from '../../../site/games';
+import { pageViewer } from '../../../site/viewer';
+import {
+  publicProfilesEnabled,
+  fixturesEnabled,
+} from '../../../server/teammates/public-profiles';
+import { directoryData, filtered } from '../../../server/teammates/directory';
+import { loadSavedSlugs } from '../../../server/teammates/saved';
+import { bookingMode } from '../../../server/teammates/profile-page';
+import { homeLive } from '../../../server/home/live';
+import { serializeJsonLd } from '../../../site/seo';
+
+const game = gameBySlug(Astro.params.game);
+if (!publicProfilesEnabled() || !game) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+const [data, { viewer, csrf }, saved, live] = await Promise.all([
+  directoryData(Astro.url.searchParams, game),
+  pageViewer(Astro),
+  loadSavedSlugs(Astro),
+  homeLive(),
+]);
+Astro.response.headers.set('Cache-Control', 'no-store');
+
+const inGame = new Set(data.scope.map((c) => c.slug));
+const indexable = data.indexable.filter((p) => inGame.has(p.slug));
+const indexed = indexable.length >= 3 && !filtered(data.filters);
+const path = `/games/${game.slug}/teammates`;
+const itemList = indexed
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      url: new URL(path, Astro.site!).href,
+      name: `${game.name} teammates on Duoly`,
+      description: `Rank-verified ${game.name} teammates with a public profile on Duoly.`,
+      isPartOf: { '@id': new URL('/#website', Astro.site!).href },
+      publisher: { '@id': new URL('/#organization', Astro.site!).href },
+      dateModified: indexable
+        .map((profile) => profile.updatedAt)
+        .sort()
+        .at(-1),
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: indexable.length,
+        itemListElement: indexable.map((profile, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          url: new URL(`/teammates/${profile.slug}`, Astro.site!).href,
+        })),
+      },
+    }
+  : null;
+---
+
+<SiteLayout
+  title={
+    game.id === 'social'
+      ? 'Social with a Gamer Girl: chat, watch together, calls | Duoly'
+      : `${game.name} teammates: rank-verified players | Duoly`
+  }
+  description={
+    game.id === 'social'
+      ? 'Book a Social session with a verified Gamer Girl on Duoly: just chat, watch together, a sleep call or karaoke. Compare profiles and reviews first.'
+      : `Find a rank-verified ${game.name} teammate on Duoly. Compare profiles, verified ranks and customer reviews, then queue together.`
+  }
+  indexing={indexed ? 'index, follow' : 'noindex, follow'}
+  viewer={viewer}
+  csrf={csrf}
+>
+  <Directory
+    data={data}
+    game={game}
+    saved={saved}
+    saveMode={bookingMode(viewer?.role)}
+    csrf={csrf}
+    recent={live.recentMatches.filter((m) => m.game === game.id)}
+    fixture={fixturesEnabled()}
+  />
+  {itemList && (
+    <script
+      slot="head"
+      type="application/ld+json"
+      set:html={serializeJsonLd(itemList)}
+    />
+  )}
+</SiteLayout>
+
+<script src="../../../components/teammates/directory.ts"></script>

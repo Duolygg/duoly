@@ -33,6 +33,14 @@ export const publicCardSchema = z.object({
   ...common,
   game: z.string(),
   rank: z.string().nullable(),
+  /* Directory fields from 20261114120000_directory_cards.sql. Optional so the parser accepts a
+     card from a database where that migration has not run yet. */
+  games: z.array(z.string()).optional(),
+  languages: z.array(z.string()).optional(),
+  vibeTags: z.array(z.enum(VIBE_TAGS)).max(3).optional(),
+  coaching: z.boolean().optional(),
+  gamerGirl: z.boolean().optional(),
+  quote: z.string().max(500).nullable().optional(),
 });
 export const publicProfileSchema = z.object({
   ...common,
@@ -50,6 +58,8 @@ export const publicProfileSchema = z.object({
   vibeTags: z.array(z.enum(VIBE_TAGS)).max(3),
   featuredGame: z.string(),
   coaching: z.boolean(),
+  /* 20261114130000_gamer_girl_profiles.sql; optional until that migration has run. */
+  gamerGirl: z.boolean().optional(),
   memberSince: z.string().regex(/^\d{4}-\d{2}$/),
   sessions: count,
   reviewTags: z.array(z.object({ tag: z.string(), count })),

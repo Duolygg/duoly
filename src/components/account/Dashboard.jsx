@@ -53,8 +53,10 @@ export default class Dashboard extends React.Component {
       menu: false,
       filter: 'all',
       showAll: false,
-      live: null,
-      history: null,
+      // the open order and the history the page was rendered with (dashboard-preload.ts), so the
+      // balance and counts never start at $0.00 / 0 and jump once the first poll answers
+      live: props.initialLive ?? null,
+      history: props.initialHistory ?? null,
       proBusy: false,
       proError: '',
       // favorite teammates (20261106150000): null until loaded
@@ -268,7 +270,6 @@ export default class Dashboard extends React.Component {
                 height: '26px',
                 borderRadius: '50%',
                 objectFit: 'cover',
-                boxShadow: '0 0 0 3px #1B1033',
               }}
             />
           ) : null}
@@ -568,7 +569,7 @@ export default class Dashboard extends React.Component {
       ratingLabel: m.rating ? '★ ' + m.rating.toFixed(1) : '',
       status: m.online ? 'Online now' : m.online === false ? 'Offline' : '',
       dot:
-        'position: absolute; left: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 3px #120B22; background: ' +
+        'position: absolute; left: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: ' +
         (m.online ? '#5EEAA8' : '#6A6086') +
         ';',
       statusColor: m.online ? '#5EEAA8' : '#8E84AB',
@@ -597,13 +598,14 @@ export default class Dashboard extends React.Component {
       isAdmin: !!u.isAdmin,
       avatar: u.image || '/assets/avatars/avatar-1.png',
       loaded: !!h,
-      wallet: money(h ? h.wallet : 0),
+      // until the figures are known: a dash, never a $0.00 that is not true
+      wallet: h ? money(h.wallet) : '—',
       money,
       sym,
       stats: [
         [
           'Orders with Duoly',
-          String(h ? h.lifetimeOrders : 0),
+          h ? String(h.lifetimeOrders) : '—',
           h
             ? h.weekOrders
               ? '+' + h.weekOrders + ' this week'
@@ -614,12 +616,12 @@ export default class Dashboard extends React.Component {
         ],
         [
           'Games played',
-          String(h ? h.gamesPlayed : 0),
+          h ? String(h.gamesPlayed) : '—',
           h ? (fav ? 'mostly ' + gameOf(fav[0]).name : 'with a teammate') : '',
         ],
         [
           'Teammates',
-          String(mates.length),
+          h ? String(mates.length) : '—',
           h
             ? mates.length
               ? onlineMates + ' online now'
@@ -1276,7 +1278,9 @@ export default class Dashboard extends React.Component {
             ))}
           </section>
 
-          {FEATURES.rewards ? (
+          {/* Only with the real figures: a level, cashback and order count made up while loading
+              would tell the customer something untrue. */}
+          {FEATURES.rewards && v.loaded ? (
             <Rewards
               name={v.name}
               orders={v.rewards.orders}
@@ -1574,7 +1578,6 @@ export default class Dashboard extends React.Component {
                                   height: '13px',
                                   borderRadius: '50%',
                                   objectFit: 'cover',
-                                  boxShadow: '0 0 0 2px #120B22',
                                 }}
                               />
                             ) : null}
@@ -1809,7 +1812,6 @@ export default class Dashboard extends React.Component {
                                 height: '16px',
                                 borderRadius: '50%',
                                 objectFit: 'cover',
-                                boxShadow: '0 0 0 2px #090414',
                               }}
                             />
                           ) : null}
@@ -1870,12 +1872,13 @@ export default class Dashboard extends React.Component {
                           >
                             {m.rank}
                           </span>
-                          <span
-                            style={{ fontSize: '12px', color: m.statusColor }}
-                          >
-                            {m.status} · {m.games}{' '}
-                            {m.games === 1 ? 'game' : 'games'} together
-                          </span>
+                          {m.status ? (
+                            <span
+                              style={{ fontSize: '12px', color: m.statusColor }}
+                            >
+                              {m.status}
+                            </span>
+                          ) : null}
                         </span>
                         {m.handle && this.state.favs ? (
                           <FavoriteHeart
