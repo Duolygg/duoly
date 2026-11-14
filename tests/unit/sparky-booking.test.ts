@@ -60,6 +60,9 @@ describe('offer_booking ticket', () => {
       const url = new URL(option.href, 'https://duoly.gg');
       expect(url.origin).toBe('https://duoly.gg');
       expect(url.searchParams.get('agent')).toBe('sparky');
+      // Attribution rides on the UTM parameters analytics already keeps.
+      expect(url.searchParams.get('utm_source')).toBe('sparky');
+      expect(url.searchParams.get('utm_medium')).toBe('support_chat');
       const { values, invalid } = parseBookingPreferences(
         url.searchParams,
         'val',
