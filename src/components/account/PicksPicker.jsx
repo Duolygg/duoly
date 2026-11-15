@@ -306,7 +306,7 @@ export default class PicksPicker extends React.Component {
             disabled={!changed}
             onClick={this.apply}
           >
-            Apply{chosen.length ? ` \u00b7 ${chosen.length}` : ''}
+            Apply{changed && chosen.length ? ` \u00b7 ${chosen.length}` : ''}
           </button>
         }
       >

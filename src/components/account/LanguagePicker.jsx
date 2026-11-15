@@ -223,7 +223,7 @@ export default class LanguagePicker extends React.Component {
             disabled={!changed}
             onClick={this.apply}
           >
-            Apply{draft.length ? ` \u00b7 ${draft.length}` : ''}
+            Apply{changed && draft.length ? ` \u00b7 ${draft.length}` : ''}
           </button>
         }
       >

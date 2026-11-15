@@ -158,16 +158,9 @@
 .pk-card[data-open='true'] {
   border-color: var(--pk-line-lit);
 }
-/* The featured card carries the gold the star is drawn in, so the two say one thing together. */
+/* The featured card carries a gold edge; the star and the badge say the rest. */
 .pk-card[data-featured='true'] {
-  border-color: color-mix(in srgb, var(--pk-gold) 34%, transparent);
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--pk-gold) 9%, transparent),
-      transparent 130px
-    ),
-    var(--pk-panel);
+  border-color: color-mix(in srgb, var(--pk-gold) 40%, transparent);
 }
 /* The whole row opens the card: the open button's own box is art and words, and the stretched
    layer under everything is what makes the rest of the row press it too. The star sits above
@@ -1066,6 +1059,14 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
+/* A disabled accent button is an empty outline, so it never reads as a dim but live one. */
+.pk-button-accent:disabled,
+.pk-button-primary:disabled {
+  opacity: 1;
+  border-color: var(--pk-line);
+  background: transparent;
+  color: var(--pk-ink-2);
+}
 
 /* A phone: the sheet comes up from the bottom, nearly full height, and keeps search at the top
    and Apply at the bottom whatever the grid is doing. */
@@ -1091,11 +1092,11 @@
   }
   .pk-grab {
     display: block;
-    width: 38px;
-    height: 4px;
+    width: 40px;
+    height: 5px;
     margin: 8px auto 0;
     border-radius: 999px;
-    background: rgba(214, 187, 255, 0.3);
+    background: rgba(214, 187, 255, 0.5);
   }
   .pk-sheet-head {
     padding-top: 12px;
