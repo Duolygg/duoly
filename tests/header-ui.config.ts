@@ -4,7 +4,11 @@ import base from '../playwright.teammate.config';
 export default defineConfig({
   ...base,
   testDir: './teammate-browser',
-  testMatch: ['header-upload-regressions.spec.ts', 'header-heic.spec.ts'],
+  testMatch: [
+    'header-upload-regressions.spec.ts',
+    'header-heic.spec.ts',
+    'profile-avatar-crop.spec.ts',
+  ],
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     { name: 'webkit', use: { ...devices['iPhone 13'] } },

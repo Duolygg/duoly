@@ -10,13 +10,12 @@ import {
 import {
   HEADER_HEIGHT,
   HEADER_WIDTH,
-  dragOffset,
-  drawHeader,
-  encodeHeader,
-  headerCrop,
+  encodeHeaderCrop,
   headerFileError,
   loadHeaderImage,
 } from './header-image';
+import { canvasReady, releasePicked } from './crop-image';
+import ImageCropper from './ImageCropper';
 import { GAME } from '../../design-reference/lib/games';
 import './public-profile-settings.css';
 
@@ -79,7 +78,6 @@ export default class PublicProfileSettings extends React.Component {
     };
     this.headerRevision = 0;
     this.headerFile = React.createRef();
-    this.headerCanvas = React.createRef();
     this.headerPreview = React.createRef();
   }
   componentDidMount() {
@@ -90,6 +88,12 @@ export default class PublicProfileSettings extends React.Component {
   }
   componentWillUnmount() {
     this.unmounted = true;
+    releasePicked(this.state.pick);
+  }
+  /** Ends the crop and lets go of the picked file. */
+  clearPick(patch) {
+    releasePicked(this.state.pick);
+    this.setState({ pick: null, ...patch });
   }
   async load() {
     const headerRevision = this.headerRevision;
@@ -183,78 +187,34 @@ export default class PublicProfileSettings extends React.Component {
         'Your header is saved, but the picture could not load. Reload or try another picture.',
     });
   }
-  /** Decodes the picked file and opens the crop on the centre of it. */
+  /** Decodes the picked file and opens the crop on it. */
   async pickHeader(file) {
     const problem = headerFileError(file);
     if (problem) return this.setState({ headerError: problem, headerNote: '' });
     this.setState({ headerError: '', headerNote: '' });
+    /* A browser that hands back no canvas context would upload an empty strip, so the pick is
+       turned away before the crop opens rather than at the end of it. */
+    if (!canvasReady())
+      return this.setState({
+        headerError:
+          'This browser could not prepare the picture. Try a smaller JPG or PNG.',
+      });
     try {
-      const image = await loadHeaderImage(file);
-      if (this.unmounted) return;
-      this.setState({ pick: { image, offsetX: 0.5, offsetY: 0.5 } }, () =>
-        this.paintHeader(),
-      );
+      const pick = await loadHeaderImage(file);
+      if (this.unmounted) return releasePicked(pick);
+      this.clearPick({ pick });
     } catch (e) {
       if (!this.unmounted) this.setState({ headerError: e.message });
     }
   }
-  paintHeader() {
-    const canvas = this.headerCanvas.current;
+  async uploadHeader(area) {
     const pick = this.state.pick;
-    if (canvas && pick) {
-      try {
-        drawHeader(canvas, pick.image, pick.offsetX, pick.offsetY);
-      } catch {
-        this.setState({
-          pick: null,
-          headerError:
-            'This browser could not prepare the picture. Try a smaller JPG or PNG.',
-        });
-      }
-    }
-  }
-  /** How much of the picture lies outside the 3:1 window, and the preview's own scale. */
-  headerRoom() {
-    const pick = this.state.pick;
-    const canvas = this.headerCanvas.current;
-    if (!pick) return null;
-    const crop = headerCrop(pick.image.naturalWidth, pick.image.naturalHeight);
-    const box = canvas?.getBoundingClientRect().width || HEADER_WIDTH;
-    return {
-      scale: crop.sw / box,
-      x: pick.image.naturalWidth - crop.sw,
-      y: pick.image.naturalHeight - crop.sh,
-    };
-  }
-  /** Moves the crop by a pointer or key movement measured in preview pixels. */
-  moveHeader(dx, dy) {
-    const pick = this.state.pick;
-    const room = this.headerRoom();
-    if (!pick || !room) return;
-    this.setState(
-      {
-        pick: {
-          ...pick,
-          offsetX: dragOffset(pick.offsetX, dx, room.scale, room.x),
-          offsetY: dragOffset(pick.offsetY, dy, room.scale, room.y),
-        },
-      },
-      () => this.paintHeader(),
-    );
-  }
-  async uploadHeader() {
-    const canvas = this.headerCanvas.current;
-    if (!canvas || !this.state.pick) return;
+    if (!pick || !area) return;
     this.setState({ headerBusy: true, headerError: '', headerNote: '' });
     // Safari cannot encode WebP from a canvas and hands back a PNG; JPEG works everywhere.
     let encoded;
     try {
-      encoded = encodeHeader((quality) => {
-        const webp = canvas.toDataURL('image/webp', quality);
-        return webp.startsWith('data:image/webp;')
-          ? webp
-          : canvas.toDataURL('image/jpeg', quality);
-      });
+      encoded = encodeHeaderCrop(pick.image, area);
     } catch {
       return this.setState({
         headerBusy: false,
@@ -278,10 +238,9 @@ export default class PublicProfileSettings extends React.Component {
       });
       this.headerRevision++;
       if (!this.unmounted)
-        this.setState({
+        this.clearPick({
           header: data.url,
           headerPreviewError: '',
-          pick: null,
           headerBusy: false,
           headerNote: 'Header saved.',
         });
@@ -300,10 +259,9 @@ export default class PublicProfileSettings extends React.Component {
       });
       this.headerRevision++;
       if (!this.unmounted)
-        this.setState({
+        this.clearPick({
           header: null,
           headerPreviewError: '',
-          pick: null,
           headerBusy: false,
           headerNote: 'Header removed.',
         });
@@ -314,20 +272,11 @@ export default class PublicProfileSettings extends React.Component {
   }
   /**
    * Pick, crop, upload, replace, remove. The picture never leaves the browser uncropped: the
-   * canvas below is the 1500 by 500 strip that gets encoded, so what the teammate positions here
+   * frame below is the 1500 by 500 strip that gets encoded, so what the teammate positions here
    * is exactly what the endpoint stores.
    */
   renderHeader() {
     const { header, pick, headerBusy } = this.state;
-    const crop = pick
-      ? headerCrop(pick.image.naturalWidth, pick.image.naturalHeight)
-      : null;
-    /** A picture that is already 3:1 has nothing to slide, so it says so instead of inviting a drag. */
-    const movable = Boolean(
-      crop &&
-      (pick.image.naturalWidth - crop.sw > 1 ||
-        pick.image.naturalHeight - crop.sh > 1),
-    );
     // Without a saved profile there is nothing to attach a header to; a saved profile always has a slug.
     if (!this.state.data?.settings?.slug)
       return (
@@ -348,71 +297,25 @@ export default class PublicProfileSettings extends React.Component {
           </p>
         ) : null}
         {pick ? (
-          <>
-            <canvas
-              className="pp-header-art pp-header-crop"
-              ref={this.headerCanvas}
-              width={HEADER_WIDTH}
-              height={HEADER_HEIGHT}
-              role="img"
-              aria-label="Header crop"
-              aria-describedby="pp-header-hint"
-              tabIndex={movable ? 0 : -1}
-              onPointerDown={(e) => {
-                if (!movable) return;
-                e.currentTarget.setPointerCapture(e.pointerId);
-                this.drag = { x: e.clientX, y: e.clientY };
-              }}
-              onPointerMove={(e) => {
-                if (!this.drag) return;
-                const dx = e.clientX - this.drag.x;
-                const dy = e.clientY - this.drag.y;
-                this.drag = { x: e.clientX, y: e.clientY };
-                this.moveHeader(dx, dy);
-              }}
-              onPointerUp={() => {
-                this.drag = null;
-              }}
-              onPointerCancel={() => {
-                this.drag = null;
-              }}
-              onKeyDown={(e) => {
-                const step = 16;
-                const by = {
-                  ArrowLeft: [-step, 0],
-                  ArrowRight: [step, 0],
-                  ArrowUp: [0, -step],
-                  ArrowDown: [0, step],
-                }[e.key];
-                if (!by || !movable) return;
-                e.preventDefault();
-                this.moveHeader(by[0], by[1]);
-              }}
-            />
-            <p className="pp-help" id="pp-header-hint">
-              {movable
-                ? 'Drag the picture to position it, or use the arrow keys. Duoly saves the strip you see, 1500 by 500 pixels.'
-                : 'This picture already fits the strip. Duoly saves it at 1500 by 500 pixels.'}
-            </p>
-            <div className="pp-actions">
-              <button
-                type="button"
-                className="pp-button pp-primary"
-                disabled={headerBusy}
-                onClick={() => this.uploadHeader()}
-              >
-                {headerBusy ? 'Uploading…' : 'Upload header'}
-              </button>
-              <button
-                type="button"
-                className="pp-button"
-                disabled={headerBusy}
-                onClick={() => this.setState({ pick: null, headerError: '' })}
-              >
-                Cancel
-              </button>
-            </div>
-          </>
+          <ImageCropper
+            src={pick.url}
+            shape="rect"
+            aspect={HEADER_WIDTH / HEADER_HEIGHT}
+            ratio={pick.image.naturalWidth / pick.image.naturalHeight}
+            stageMin={1}
+            stageMax={2.4}
+            stageHeight={380}
+            grid
+            accent="mint"
+            label="Header crop"
+            hint={`Drag to move it, pinch or scroll to zoom, or nudge it with the arrow keys. Duoly saves the strip you see, ${HEADER_WIDTH} by ${HEADER_HEIGHT} pixels.`}
+            saveLabel="Upload header"
+            busyLabel="Uploading…"
+            cancelLabel="Cancel"
+            busy={headerBusy}
+            onSave={(area) => this.uploadHeader(area)}
+            onCancel={() => this.clearPick({ headerError: '' })}
+          />
         ) : (
           <>
             {header ? (

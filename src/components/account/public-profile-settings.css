@@ -172,8 +172,8 @@
   color: #c4aaff;
 }
 /* ---------- header image ---------- */
-/* The picked crop and the saved header are the same strip at the same size, so switching
-   between them moves nothing on the page. */
+/* The saved header is shown at the same 3:1 shape the cropper frames, so swapping one for the
+   other keeps the block the same height. */
 .pp-header-art {
   display: block;
   width: 100%;
@@ -184,14 +184,6 @@
   border: 1px solid rgba(196, 170, 255, 0.18);
   background: #140c25;
   margin-bottom: 10px;
-}
-/* Dragging the crop must not scroll the page under the finger. */
-.pp-header-crop {
-  touch-action: none;
-  cursor: grab;
-}
-.pp-header-crop:active {
-  cursor: grabbing;
 }
 .pp-header .pp-help[role='status']:empty {
   display: none;
