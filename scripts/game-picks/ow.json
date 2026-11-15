@@ -1,0 +1,318 @@
+{
+  "game": "ow",
+  "name": "Overwatch 2",
+  "collectedAt": "2026-11-15",
+  "roles": {
+    "applies": true,
+    "label": "Role",
+    "options": [
+      {
+        "id": "tank",
+        "name": "Tank"
+      },
+      {
+        "id": "damage",
+        "name": "Damage"
+      },
+      {
+        "id": "support",
+        "name": "Support"
+      },
+      {
+        "id": "flex",
+        "name": "Flex"
+      }
+    ]
+  },
+  "picks": {
+    "applies": true,
+    "label": "Heroes",
+    "max": 5,
+    "options": [
+      {
+        "id": "ana",
+        "name": "Ana",
+        "role": "support"
+      },
+      {
+        "id": "anran",
+        "name": "Anran",
+        "role": "damage"
+      },
+      {
+        "id": "ashe",
+        "name": "Ashe",
+        "role": "damage"
+      },
+      {
+        "id": "baptiste",
+        "name": "Baptiste",
+        "role": "support",
+        "aliases": ["bap"]
+      },
+      {
+        "id": "bastion",
+        "name": "Bastion",
+        "role": "damage"
+      },
+      {
+        "id": "brigitte",
+        "name": "Brigitte",
+        "role": "support",
+        "aliases": ["brig"]
+      },
+      {
+        "id": "cassidy",
+        "name": "Cassidy",
+        "role": "damage",
+        "aliases": ["cass", "mccree", "cole cassidy"]
+      },
+      {
+        "id": "dmon",
+        "name": "D.Mon",
+        "role": "tank",
+        "aliases": ["d.mon", "d mon"]
+      },
+      {
+        "id": "dva",
+        "name": "D.Va",
+        "role": "tank",
+        "aliases": ["d.va", "d va", "hana song"]
+      },
+      {
+        "id": "doctrine",
+        "name": "Doctrine",
+        "role": "support"
+      },
+      {
+        "id": "domina",
+        "name": "Domina",
+        "role": "tank"
+      },
+      {
+        "id": "doomfist",
+        "name": "Doomfist",
+        "role": "tank"
+      },
+      {
+        "id": "echo",
+        "name": "Echo",
+        "role": "damage"
+      },
+      {
+        "id": "emre",
+        "name": "Emre",
+        "role": "damage"
+      },
+      {
+        "id": "freja",
+        "name": "Freja",
+        "role": "damage"
+      },
+      {
+        "id": "genji",
+        "name": "Genji",
+        "role": "damage"
+      },
+      {
+        "id": "hanzo",
+        "name": "Hanzo",
+        "role": "damage"
+      },
+      {
+        "id": "hazard",
+        "name": "Hazard",
+        "role": "tank"
+      },
+      {
+        "id": "illari",
+        "name": "Illari",
+        "role": "support"
+      },
+      {
+        "id": "jetpack-cat",
+        "name": "Jetpack Cat",
+        "role": "support",
+        "aliases": ["jpc", "cat"]
+      },
+      {
+        "id": "junker-queen",
+        "name": "Junker Queen",
+        "role": "tank",
+        "aliases": ["jq", "junkerqueen"]
+      },
+      {
+        "id": "junkrat",
+        "name": "Junkrat",
+        "role": "damage"
+      },
+      {
+        "id": "juno",
+        "name": "Juno",
+        "role": "support"
+      },
+      {
+        "id": "kiriko",
+        "name": "Kiriko",
+        "role": "support"
+      },
+      {
+        "id": "lifeweaver",
+        "name": "Lifeweaver",
+        "role": "support"
+      },
+      {
+        "id": "lucio",
+        "name": "Lúcio",
+        "role": "support",
+        "aliases": ["lucio"]
+      },
+      {
+        "id": "mauga",
+        "name": "Mauga",
+        "role": "tank"
+      },
+      {
+        "id": "mei",
+        "name": "Mei",
+        "role": "damage"
+      },
+      {
+        "id": "mercy",
+        "name": "Mercy",
+        "role": "support"
+      },
+      {
+        "id": "mizuki",
+        "name": "Mizuki",
+        "role": "support"
+      },
+      {
+        "id": "moira",
+        "name": "Moira",
+        "role": "support"
+      },
+      {
+        "id": "orisa",
+        "name": "Orisa",
+        "role": "tank"
+      },
+      {
+        "id": "pharah",
+        "name": "Pharah",
+        "role": "damage"
+      },
+      {
+        "id": "ramattra",
+        "name": "Ramattra",
+        "role": "tank"
+      },
+      {
+        "id": "reaper",
+        "name": "Reaper",
+        "role": "damage"
+      },
+      {
+        "id": "reinhardt",
+        "name": "Reinhardt",
+        "role": "tank",
+        "aliases": ["rein"]
+      },
+      {
+        "id": "roadhog",
+        "name": "Roadhog",
+        "role": "tank",
+        "aliases": ["hog"]
+      },
+      {
+        "id": "shion",
+        "name": "Shion",
+        "role": "damage"
+      },
+      {
+        "id": "sierra",
+        "name": "Sierra",
+        "role": "damage"
+      },
+      {
+        "id": "sigma",
+        "name": "Sigma",
+        "role": "tank"
+      },
+      {
+        "id": "sojourn",
+        "name": "Sojourn",
+        "role": "damage"
+      },
+      {
+        "id": "soldier-76",
+        "name": "Soldier: 76",
+        "role": "damage",
+        "aliases": ["soldier", "76", "soldier76"]
+      },
+      {
+        "id": "sombra",
+        "name": "Sombra",
+        "role": "support"
+      },
+      {
+        "id": "symmetra",
+        "name": "Symmetra",
+        "role": "damage"
+      },
+      {
+        "id": "torbjorn",
+        "name": "Torbjörn",
+        "role": "damage",
+        "aliases": ["torb", "torbjorn"]
+      },
+      {
+        "id": "tracer",
+        "name": "Tracer",
+        "role": "damage"
+      },
+      {
+        "id": "vendetta",
+        "name": "Vendetta",
+        "role": "damage"
+      },
+      {
+        "id": "venture",
+        "name": "Venture",
+        "role": "damage"
+      },
+      {
+        "id": "widowmaker",
+        "name": "Widowmaker",
+        "role": "damage",
+        "aliases": ["widow"]
+      },
+      {
+        "id": "winston",
+        "name": "Winston",
+        "role": "tank"
+      },
+      {
+        "id": "wrecking-ball",
+        "name": "Wrecking Ball",
+        "role": "tank",
+        "aliases": ["ball", "hammond"]
+      },
+      {
+        "id": "wuyang",
+        "name": "Wuyang",
+        "role": "support"
+      },
+      {
+        "id": "zarya",
+        "name": "Zarya",
+        "role": "tank"
+      },
+      {
+        "id": "zenyatta",
+        "name": "Zenyatta",
+        "role": "support"
+      }
+    ]
+  }
+}

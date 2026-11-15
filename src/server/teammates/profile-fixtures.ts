@@ -278,6 +278,10 @@ const profiles: PublicTeammateProfile[] = [
     tier: 'legend',
     rating: { average: 4.9, count: 420 },
     winRate: { percent: 61, games: 680 },
+    /* The teammate who saved since the character catalog shipped, so the picks are stored as
+       catalog ids. The page shows names either way: loadPublicProfile() routes both through
+       withDisplayLabels() (src/server/teammates/profile-labels.ts). Nyx above keeps the older
+       shape, so the two together cover both. */
     games: [
       {
         game: 'lol',
@@ -285,7 +289,7 @@ const profiles: PublicTeammateProfile[] = [
         peakRank: 'Challenger',
         verified: true,
         roles: ['Jungle', 'Mid'],
-        picks: ['Lee Sin', 'Ahri', 'Viego'],
+        picks: ['lee-sin', 'ahri', 'viego'],
       },
       {
         game: 'val',
@@ -293,7 +297,7 @@ const profiles: PublicTeammateProfile[] = [
         peakRank: 'Immortal 3',
         verified: true,
         roles: ['Initiator', 'Duelist'],
-        picks: ['Sova', 'Fade', 'Jett'],
+        picks: ['sova', 'fade', 'jett'],
       },
     ],
   },

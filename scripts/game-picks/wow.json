@@ -1,0 +1,274 @@
+{
+  "game": "wow",
+  "name": "World of Warcraft",
+  "collectedAt": "2026-11-15",
+  "roles": {
+    "applies": true,
+    "label": "Role",
+    "options": [
+      {
+        "id": "tank",
+        "name": "Tank"
+      },
+      {
+        "id": "healer",
+        "name": "Healer"
+      },
+      {
+        "id": "dps",
+        "name": "DPS"
+      },
+      {
+        "id": "any",
+        "name": "Any"
+      }
+    ]
+  },
+  "picks": {
+    "applies": true,
+    "label": "Classes and specs",
+    "max": 5,
+    "options": [
+      {
+        "id": "affliction-warlock",
+        "name": "Affliction Warlock",
+        "role": "dps",
+        "aliases": ["aff lock", "lock aff"]
+      },
+      {
+        "id": "arcane-mage",
+        "name": "Arcane Mage",
+        "role": "dps",
+        "aliases": ["arcane mage", "mage arcane"]
+      },
+      {
+        "id": "arms-warrior",
+        "name": "Arms Warrior",
+        "role": "dps",
+        "aliases": ["arms war", "war arms"]
+      },
+      {
+        "id": "assassination-rogue",
+        "name": "Assassination Rogue",
+        "role": "dps",
+        "aliases": ["assa rog", "rog assa"]
+      },
+      {
+        "id": "augmentation-evoker",
+        "name": "Augmentation Evoker",
+        "role": "dps",
+        "aliases": ["aug evoker", "evoker aug"]
+      },
+      {
+        "id": "balance-druid",
+        "name": "Balance Druid",
+        "role": "dps",
+        "aliases": ["balance druid", "druid balance"]
+      },
+      {
+        "id": "beast-mastery-hunter",
+        "name": "Beast Mastery Hunter",
+        "role": "dps",
+        "aliases": ["bm hunt", "hunt bm"]
+      },
+      {
+        "id": "blood-death-knight",
+        "name": "Blood Death Knight",
+        "role": "tank",
+        "aliases": ["blood dk", "dk blood"]
+      },
+      {
+        "id": "brewmaster-monk",
+        "name": "Brewmaster Monk",
+        "role": "tank",
+        "aliases": ["brew monk", "monk brew"]
+      },
+      {
+        "id": "demonology-warlock",
+        "name": "Demonology Warlock",
+        "role": "dps",
+        "aliases": ["demo lock", "lock demo"]
+      },
+      {
+        "id": "destruction-warlock",
+        "name": "Destruction Warlock",
+        "role": "dps",
+        "aliases": ["destro lock", "lock destro"]
+      },
+      {
+        "id": "devastation-evoker",
+        "name": "Devastation Evoker",
+        "role": "dps",
+        "aliases": ["dev evoker", "evoker dev"]
+      },
+      {
+        "id": "devourer-demon-hunter",
+        "name": "Devourer Demon Hunter",
+        "role": "dps",
+        "aliases": ["devourer dh", "dh devourer"]
+      },
+      {
+        "id": "discipline-priest",
+        "name": "Discipline Priest",
+        "role": "healer",
+        "aliases": ["disc priest", "priest disc"]
+      },
+      {
+        "id": "elemental-shaman",
+        "name": "Elemental Shaman",
+        "role": "dps",
+        "aliases": ["ele sham", "sham ele"]
+      },
+      {
+        "id": "enhancement-shaman",
+        "name": "Enhancement Shaman",
+        "role": "dps",
+        "aliases": ["enh sham", "sham enh"]
+      },
+      {
+        "id": "feral-druid",
+        "name": "Feral Druid",
+        "role": "dps",
+        "aliases": ["feral druid", "druid feral"]
+      },
+      {
+        "id": "fire-mage",
+        "name": "Fire Mage",
+        "role": "dps",
+        "aliases": ["fire mage", "mage fire"]
+      },
+      {
+        "id": "frost-death-knight",
+        "name": "Frost Death Knight",
+        "role": "dps",
+        "aliases": ["frost dk", "dk frost"]
+      },
+      {
+        "id": "frost-mage",
+        "name": "Frost Mage",
+        "role": "dps",
+        "aliases": ["frost mage", "mage frost"]
+      },
+      {
+        "id": "fury-warrior",
+        "name": "Fury Warrior",
+        "role": "dps",
+        "aliases": ["fury war", "war fury"]
+      },
+      {
+        "id": "guardian-druid",
+        "name": "Guardian Druid",
+        "role": "tank",
+        "aliases": ["guardian druid", "druid guardian"]
+      },
+      {
+        "id": "havoc-demon-hunter",
+        "name": "Havoc Demon Hunter",
+        "role": "dps",
+        "aliases": ["havoc dh", "dh havoc"]
+      },
+      {
+        "id": "holy-paladin",
+        "name": "Holy Paladin",
+        "role": "healer",
+        "aliases": ["holy pala", "pala holy"]
+      },
+      {
+        "id": "holy-priest",
+        "name": "Holy Priest",
+        "role": "healer",
+        "aliases": ["holy priest", "priest holy"]
+      },
+      {
+        "id": "marksmanship-hunter",
+        "name": "Marksmanship Hunter",
+        "role": "dps",
+        "aliases": ["mm hunt", "hunt mm"]
+      },
+      {
+        "id": "mistweaver-monk",
+        "name": "Mistweaver Monk",
+        "role": "healer",
+        "aliases": ["mw monk", "monk mw"]
+      },
+      {
+        "id": "outlaw-rogue",
+        "name": "Outlaw Rogue",
+        "role": "dps",
+        "aliases": ["outlaw rog", "rog outlaw"]
+      },
+      {
+        "id": "preservation-evoker",
+        "name": "Preservation Evoker",
+        "role": "healer",
+        "aliases": ["pres evoker", "evoker pres"]
+      },
+      {
+        "id": "protection-paladin",
+        "name": "Protection Paladin",
+        "role": "tank",
+        "aliases": ["prot pala", "pala prot"]
+      },
+      {
+        "id": "protection-warrior",
+        "name": "Protection Warrior",
+        "role": "tank",
+        "aliases": ["prot war", "war prot"]
+      },
+      {
+        "id": "restoration-druid",
+        "name": "Restoration Druid",
+        "role": "healer",
+        "aliases": ["resto druid", "druid resto"]
+      },
+      {
+        "id": "restoration-shaman",
+        "name": "Restoration Shaman",
+        "role": "healer",
+        "aliases": ["resto sham", "sham resto"]
+      },
+      {
+        "id": "retribution-paladin",
+        "name": "Retribution Paladin",
+        "role": "dps",
+        "aliases": ["ret pala", "pala ret"]
+      },
+      {
+        "id": "shadow-priest",
+        "name": "Shadow Priest",
+        "role": "dps",
+        "aliases": ["shadow priest", "priest shadow"]
+      },
+      {
+        "id": "subtlety-rogue",
+        "name": "Subtlety Rogue",
+        "role": "dps",
+        "aliases": ["sub rog", "rog sub"]
+      },
+      {
+        "id": "survival-hunter",
+        "name": "Survival Hunter",
+        "role": "dps",
+        "aliases": ["survival hunt", "hunt survival"]
+      },
+      {
+        "id": "unholy-death-knight",
+        "name": "Unholy Death Knight",
+        "role": "dps",
+        "aliases": ["unholy dk", "dk unholy"]
+      },
+      {
+        "id": "vengeance-demon-hunter",
+        "name": "Vengeance Demon Hunter",
+        "role": "tank",
+        "aliases": ["vengeance dh", "dh vengeance"]
+      },
+      {
+        "id": "windwalker-monk",
+        "name": "Windwalker Monk",
+        "role": "dps",
+        "aliases": ["ww monk", "monk ww"]
+      }
+    ]
+  }
+}

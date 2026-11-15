@@ -1,0 +1,1321 @@
+/*
+ * The teammate profile pickers: game cards, role chips, the character picker, the languages
+ * picker, the vibe chips and the unsaved bar. Written to the rationale in
+ * settings-work/DESIGN-RATIONALE.md.
+ *
+ * Four things are reused everywhere, which is what keeps twenty games from looking like twenty
+ * screens: .pk-chip (roles, vibes, languages, free text), .pk-tile (one character), .pk-sheet
+ * (the picker, as a bottom sheet on a phone and a docked panel on a desktop) and .pk-count
+ * ("2 of 5", tabular so the digits never move the layout).
+ *
+ * Tokens live on .pk-scope, which the settings card, the languages field and the sheet all carry,
+ * so nothing leaks into the rest of the page. The control radius and the line colour are the crop
+ * panel's own (image-cropper.css), because these blocks sit directly above and below it.
+ */
+.pk-scope {
+  --pk-night: #090414;
+  --pk-panel: #120b22;
+  --pk-raise: #1b1033;
+  --pk-ink: #f3eeff;
+  --pk-ink-2: #b5aacd;
+  --pk-ink-3: #8e84ab;
+  --pk-accent: #d6bbff;
+  --pk-done: #7cf0c1;
+  --pk-primary: #5eeaa8;
+  --pk-primary-ink: #062a1b;
+  --pk-line: rgba(214, 187, 255, 0.16);
+  --pk-line-lit: rgba(214, 187, 255, 0.4);
+  /* One radius scale: controls, then tiles and cards, then the sheet. */
+  --pk-r-control: 12px;
+  --pk-r-tile: 14px;
+  --pk-r-card: 18px;
+  --pk-fast: 120ms;
+  --pk-mid: 160ms;
+  --pk-slow: 220ms;
+  /* Settles like a spring without bouncing past the value. */
+  --pk-ease: cubic-bezier(0.2, 0.9, 0.25, 1);
+  /* Overwritten per role by role-accents.jsx; lavender is the no-role fallback. */
+  --pk-role: var(--pk-accent);
+}
+
+/* ---------- the pieces every block reuses ---------- */
+
+/* A count, and the only place a number changes under the reader: tabular digits keep "2 of 5"
+   and "10 of 5" the same width, so nothing beside it shifts. */
+.pk-count {
+  color: var(--pk-ink-3);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition: color var(--pk-mid) var(--pk-ease);
+}
+.pk-count[data-full='true'] {
+  color: var(--pk-done);
+}
+
+/* One chip: roles, vibes, languages, free text labels. A button with aria-pressed, never a
+   checkbox dressed as one. */
+.pk-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  box-sizing: border-box;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--pk-line);
+  border-radius: var(--pk-r-control);
+  background: rgba(214, 187, 255, 0.04);
+  color: var(--pk-ink-2);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+  transform: none;
+  transition:
+    background var(--pk-fast) var(--pk-ease),
+    border-color var(--pk-fast) var(--pk-ease),
+    color var(--pk-fast) var(--pk-ease),
+    transform var(--pk-fast) var(--pk-ease);
+}
+.pk-chip:hover:not(:disabled) {
+  border-color: var(--pk-line-lit);
+  color: var(--pk-ink);
+}
+.pk-chip:active:not(:disabled) {
+  transform: scale(0.97);
+}
+/*
+ * On: the role's own colour on a wash of itself, so a row of chips reads as a row of roles. The
+ * wash and the ring are strong enough to spot across the block, which the first round's 12% and
+ * 46% were not: two vibe tags were on and read as off.
+ */
+.pk-chip[aria-pressed='true'] {
+  border-color: color-mix(in srgb, var(--pk-role) 70%, transparent);
+  background: color-mix(in srgb, var(--pk-role) 20%, transparent);
+  color: color-mix(in srgb, var(--pk-role) 70%, #ffffff);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--pk-role) 26%, transparent);
+}
+.pk-chip:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+.pk-glyph {
+  flex: 0 0 auto;
+  display: block;
+}
+
+/* ---------- Your games ---------- */
+.pk-games {
+  display: grid;
+  gap: 10px;
+}
+.pk-card {
+  border: 1px solid var(--pk-line);
+  border-radius: var(--pk-r-card);
+  background:
+    linear-gradient(180deg, rgba(214, 187, 255, 0.045), transparent 120px),
+    var(--pk-panel);
+  overflow: hidden;
+  transition: border-color var(--pk-mid) var(--pk-ease);
+}
+.pk-card[data-open='true'] {
+  border-color: var(--pk-line-lit);
+}
+/* The whole row opens the card. The star is its own button beside it, never inside it. */
+.pk-card-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+}
+.pk-card-open {
+  display: grid;
+  grid-template-columns: 18px 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transform: none;
+}
+.pk-art {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--pk-r-tile);
+  border: 1px solid var(--pk-line);
+  background: var(--pk-night);
+  object-fit: cover;
+}
+.pk-card-name {
+  display: block;
+  margin: 0;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--pk-ink);
+}
+/* One line, whatever the rank is called: a wrapped rank pushed the summary off the card. */
+.pk-card-rank {
+  display: block;
+  margin: 2px 0 0;
+  overflow: hidden;
+  color: var(--pk-ink-3);
+  font-size: 12.5px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The peak is the first thing to go when the line will not fit, because the rank is the claim. */
+@media (max-width: 560px) {
+  .pk-card-peak {
+    display: none;
+  }
+}
+.pk-verified {
+  color: var(--pk-done);
+}
+/* The one line that says what this game's card holds, so a closed card still answers the
+   question it was opened to answer. */
+/* Two lines on a phone, where a game with three roles and five mains does not fit on one. */
+.pk-card-summary {
+  display: -webkit-box;
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: var(--pk-ink-2);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+@media (min-width: 561px) {
+  .pk-card-summary {
+    -webkit-line-clamp: 1;
+  }
+}
+.pk-card-summary[data-empty='true'] {
+  color: var(--pk-ink-3);
+}
+.pk-chevron {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: var(--pk-ink-3);
+}
+.pk-chevron svg {
+  width: 14px;
+  height: 14px;
+}
+.pk-card-open:hover .pk-chevron {
+  color: var(--pk-ink);
+}
+.pk-chevron svg {
+  transition: transform var(--pk-mid) var(--pk-ease);
+}
+.pk-card[data-open='true'] .pk-chevron svg {
+  transform: rotate(180deg);
+}
+/* Featured: one star across every card, filled on the one that is. */
+.pk-star {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pk-r-control);
+  background: transparent;
+  color: var(--pk-ink-3);
+  cursor: pointer;
+  transform: none;
+  transition:
+    color var(--pk-fast) var(--pk-ease),
+    background var(--pk-fast) var(--pk-ease);
+}
+.pk-star:hover:not(:disabled) {
+  background: rgba(214, 187, 255, 0.08);
+  color: var(--pk-accent);
+}
+.pk-star[aria-pressed='true'] {
+  color: #ffd27a;
+}
+.pk-star[aria-pressed='true'] svg {
+  animation: pk-pop var(--pk-mid) var(--pk-ease);
+}
+@keyframes pk-pop {
+  0% {
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* The editor inside a card: a raised surface, so the card reads as a lid over it. */
+.pk-card-body {
+  display: grid;
+  gap: 18px;
+  padding: 16px 14px 18px;
+  border-top: 1px solid var(--pk-line);
+  background: var(--pk-raise);
+  animation: pk-rise var(--pk-mid) var(--pk-ease);
+}
+@keyframes pk-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.pk-block > header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.pk-label {
+  color: var(--pk-ink);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.pk-label > span {
+  margin-left: 6px;
+  color: var(--pk-ink-3);
+  font-weight: 500;
+}
+.pk-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pk-hint {
+  margin: 8px 0 0;
+  color: var(--pk-ink-3);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.pk-hint:empty {
+  display: none;
+}
+
+/* The characters a teammate features, in their own order, each with the controls that move it. */
+/* Wide enough for a name and the role under it beside three controls: at 190px "Controller"
+   was cut to "Controll". */
+.pk-picked {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+}
+.pk-picked-item {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 8px;
+  border: 1px solid color-mix(in srgb, var(--pk-role) 28%, transparent);
+  border-radius: var(--pk-r-tile);
+  background: color-mix(in srgb, var(--pk-role) 7%, var(--pk-night));
+}
+.pk-picked-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--pk-ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pk-picked-note {
+  display: block;
+  color: var(--pk-ink-3);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.pk-mini {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--pk-ink-3);
+  cursor: pointer;
+  transform: none;
+  transition:
+    color var(--pk-fast) var(--pk-ease),
+    background var(--pk-fast) var(--pk-ease),
+    transform var(--pk-fast) var(--pk-ease);
+}
+.pk-mini:hover:not(:disabled) {
+  background: rgba(214, 187, 255, 0.1);
+  color: var(--pk-ink);
+}
+.pk-mini:active:not(:disabled) {
+  transform: scale(0.92);
+}
+.pk-mini:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.pk-mini-group {
+  display: flex;
+  align-items: center;
+}
+/* The order number, so "first" is a fact on the tile rather than something to count. */
+.pk-order {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--pk-role) 16%, transparent);
+  color: var(--pk-role);
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Add, and the empty state, are the same control: a dashed slot the width of the row. */
+.pk-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px dashed var(--pk-line-lit);
+  border-radius: var(--pk-r-tile);
+  background: transparent;
+  color: var(--pk-accent);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transform: none;
+  transition:
+    background var(--pk-fast) var(--pk-ease),
+    border-color var(--pk-fast) var(--pk-ease);
+}
+.pk-add:hover {
+  border-color: var(--pk-accent);
+  background: rgba(214, 187, 255, 0.07);
+}
+.pk-picked + .pk-add {
+  margin-top: 8px;
+}
+
+/* Add a game: the last card, and the only one that is an invitation rather than a thing. */
+.pk-ask {
+  display: grid;
+  gap: 10px;
+  padding: 16px 14px;
+  border: 1px dashed var(--pk-line-lit);
+  border-radius: var(--pk-r-card);
+  background: transparent;
+}
+.pk-ask h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--pk-ink);
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+.pk-ask p {
+  margin: 0;
+  color: var(--pk-ink-2);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.pk-ask-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.pk-ask-row select {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+/* ---------- the picker, as a sheet on a phone and a panel on a desktop ---------- */
+.pk-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(9, 4, 20, 0.66);
+  animation: pk-fade var(--pk-mid) var(--pk-ease);
+}
+@keyframes pk-fade {
+  from {
+    opacity: 0;
+  }
+}
+.pk-sheet {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 640px;
+  max-height: min(78vh, 680px);
+  overflow: hidden;
+  border: 1px solid var(--pk-line-lit);
+  border-radius: var(--pk-r-card);
+  /* One soft light from the top edge, which is where the depth comes from; the borders stay
+     quiet so nine nested blocks do not turn into a wireframe. */
+  background:
+    radial-gradient(
+      120% 70% at 50% 0%,
+      rgba(214, 187, 255, 0.1),
+      transparent 70%
+    ),
+    var(--pk-panel);
+  box-shadow: 0 30px 80px rgba(9, 4, 20, 0.7);
+  color: var(--pk-ink);
+  font-family: Geist, system-ui, sans-serif;
+  animation: pk-panel var(--pk-mid) var(--pk-ease);
+}
+@keyframes pk-panel {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
+}
+.pk-sheet-head {
+  display: grid;
+  gap: 12px;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--pk-line);
+}
+.pk-sheet-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pk-sheet-title h3 {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.pk-sheet-title .pk-count {
+  font-size: 13px;
+}
+.pk-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  margin: -6px -8px -6px 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pk-r-control);
+  background: transparent;
+  color: var(--pk-ink-2);
+  cursor: pointer;
+  transform: none;
+  transition:
+    background var(--pk-fast) var(--pk-ease),
+    color var(--pk-fast) var(--pk-ease);
+}
+.pk-close:hover {
+  background: rgba(214, 187, 255, 0.1);
+  color: var(--pk-ink);
+}
+/* Search, with the glass inside the field rather than beside it. */
+.pk-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--pk-line);
+  border-radius: var(--pk-r-control);
+  background: rgba(9, 4, 20, 0.55);
+  color: var(--pk-ink-3);
+  transition: border-color var(--pk-fast) var(--pk-ease);
+}
+/* One ring, not two: the border is the ring, and it brightens rather than gaining an outline. */
+.pk-search:focus-within {
+  border-color: var(--pk-accent);
+}
+.pk-sheet input.pk-search-input {
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  width: auto;
+  min-width: 0;
+  min-height: 42px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--pk-ink);
+  font-family: inherit;
+  font-size: 15px;
+}
+.pk-sheet input.pk-search-input::placeholder {
+  color: var(--pk-ink-3);
+}
+.pk-sheet input.pk-search-input:focus {
+  outline: none;
+}
+/*
+ * Filter tabs: a tablist. They wrap rather than scroll sideways, because a game has at most six
+ * of them and two short rows are reachable where a scrolling row hid All, the way back to the
+ * whole list, off the left edge.
+ */
+.pk-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pk-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--pk-ink-3);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transform: none;
+  white-space: nowrap;
+  transition:
+    background var(--pk-fast) var(--pk-ease),
+    color var(--pk-fast) var(--pk-ease),
+    border-color var(--pk-fast) var(--pk-ease);
+}
+.pk-tab:hover {
+  color: var(--pk-ink);
+}
+.pk-tab[aria-pressed='true'] {
+  border-color: color-mix(in srgb, var(--pk-role) 40%, transparent);
+  background: color-mix(in srgb, var(--pk-role) 14%, transparent);
+  color: var(--pk-role);
+}
+/* The strip of what is already picked, so the cap and the order stay visible while choosing. */
+.pk-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pk-strip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 0 6px;
+  border: 1px solid color-mix(in srgb, var(--pk-role) 32%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pk-role) 10%, transparent);
+  color: var(--pk-ink);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.pk-strip-item .pk-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+}
+/* The place in the order, which is what the public profile shows them in. */
+.pk-strip-order {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--pk-role) 18%, transparent);
+  color: var(--pk-role);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The only scrolling area in the sheet, so search, tabs, the count and Apply all stay put. The
+   mask fades the last row into the footer, which is what says there is more under it. */
+.pk-results {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px 16px;
+  overscroll-behavior: contain;
+  mask-image: linear-gradient(
+    180deg,
+    #000 0,
+    #000 calc(100% - 28px),
+    transparent 100%
+  );
+}
+.pk-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+/* One character. A monogram set in Bricolage on a wash of the role's colour, the name beside it,
+   the role under the name. No artwork, and nothing that pretends to be artwork. */
+.pk-tile {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  min-height: 58px;
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--pk-line);
+  border-radius: var(--pk-r-tile);
+  background: color-mix(in srgb, var(--pk-role) 5%, var(--pk-night));
+  color: var(--pk-ink);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transform: none;
+  transition:
+    border-color var(--pk-fast) var(--pk-ease),
+    background var(--pk-fast) var(--pk-ease),
+    transform var(--pk-fast) var(--pk-ease),
+    opacity var(--pk-fast) var(--pk-ease);
+}
+.pk-tile:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--pk-role) 40%, transparent);
+  background: color-mix(in srgb, var(--pk-role) 10%, var(--pk-night));
+}
+.pk-tile:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.pk-tile[aria-pressed='true'] {
+  border-color: var(--pk-accent);
+  background: color-mix(in srgb, var(--pk-accent) 11%, var(--pk-night));
+}
+/* At the cap the rest goes quiet rather than disappearing: the list a teammate is reading does
+   not reshuffle because they picked a fifth character. */
+.pk-tile:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pk-mono {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--pk-role) 20%, transparent);
+  color: var(--pk-role);
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.pk-tile-text {
+  min-width: 0;
+}
+.pk-tile-name {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+}
+.pk-tile-role {
+  display: block;
+  margin-top: 2px;
+  color: var(--pk-role);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.pk-check {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  color: var(--pk-accent);
+  animation: pk-check var(--pk-fast) var(--pk-ease);
+}
+.pk-tile {
+  position: relative;
+}
+@keyframes pk-check {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+.pk-tile[aria-pressed='true'] .pk-tile-name {
+  padding-right: 16px;
+}
+/* Nothing matched: one line that says so, and the one thing left to do about it. */
+.pk-empty {
+  padding: 28px 8px;
+  color: var(--pk-ink-2);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+}
+.pk-empty strong {
+  color: var(--pk-ink);
+  font-weight: 600;
+}
+.pk-link {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--pk-accent);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transform: none;
+}
+.pk-sheet-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--pk-line);
+  background: var(--pk-panel);
+}
+.pk-sheet-foot .pk-count {
+  flex: 1 1 auto;
+}
+.pk-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--pk-line);
+  border-radius: var(--pk-r-control);
+  background: transparent;
+  color: var(--pk-ink-2);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transform: none;
+  transition:
+    background var(--pk-fast) var(--pk-ease),
+    border-color var(--pk-fast) var(--pk-ease),
+    color var(--pk-fast) var(--pk-ease),
+    transform var(--pk-fast) var(--pk-ease);
+}
+.pk-button:hover:not(:disabled) {
+  border-color: var(--pk-line-lit);
+  color: var(--pk-ink);
+}
+.pk-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.pk-button-primary {
+  border-color: transparent;
+  background: var(--pk-primary);
+  color: var(--pk-primary-ink);
+  font-weight: 700;
+}
+.pk-button-primary:hover:not(:disabled) {
+  border-color: transparent;
+  background: #70f0b5;
+  color: var(--pk-primary-ink);
+}
+.pk-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* A phone: the sheet comes up from the bottom, nearly full height, and keeps search at the top
+   and Apply at the bottom whatever the grid is doing. */
+@media (max-width: 560px) {
+  .pk-scrim {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .pk-sheet {
+    max-width: none;
+    height: 92vh;
+    max-height: 92vh;
+    border-width: 1px 0 0;
+    border-radius: var(--pk-r-card) var(--pk-r-card) 0 0;
+    animation-name: pk-slide;
+    animation-duration: var(--pk-slow);
+  }
+  @supports (height: 92dvh) {
+    .pk-sheet {
+      height: 92dvh;
+      max-height: 92dvh;
+    }
+  }
+  .pk-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pk-sheet-foot {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+}
+@keyframes pk-slide {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+}
+
+/* ---------- languages ---------- */
+.pk-langs {
+  display: grid;
+  gap: 10px;
+}
+.pk-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pk-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px 0 12px;
+  border: 1px solid var(--pk-line);
+  border-radius: 999px;
+  background: rgba(214, 187, 255, 0.06);
+  color: var(--pk-ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1;
+  min-height: 40px;
+}
+.pk-pill[data-first='true'] {
+  border-color: color-mix(in srgb, var(--pk-done) 40%, transparent);
+  background: color-mix(in srgb, var(--pk-done) 10%, transparent);
+}
+.pk-pill-note {
+  color: var(--pk-done);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.pk-pill .pk-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+}
+.pk-pill-first {
+  min-height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--pk-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--pk-ink-3);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transform: none;
+  transition:
+    color var(--pk-fast) var(--pk-ease),
+    border-color var(--pk-fast) var(--pk-ease);
+}
+.pk-pill-first:hover {
+  border-color: var(--pk-line-lit);
+  color: var(--pk-ink);
+}
+/* A language row: its English name, its own name for itself, its code. Never a flag, because a
+   flag names a country and a language is not one. */
+.pk-lang-group {
+  margin: 0 0 6px;
+  padding-top: 6px;
+  color: var(--pk-ink-3);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.pk-lang-list {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 10px;
+}
+.pk-lang {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  min-height: 48px;
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--pk-r-control);
+  background: transparent;
+  color: var(--pk-ink);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transform: none;
+  transition:
+    background var(--pk-fast) var(--pk-ease),
+    border-color var(--pk-fast) var(--pk-ease),
+    opacity var(--pk-fast) var(--pk-ease);
+}
+.pk-lang:hover:not(:disabled) {
+  background: rgba(214, 187, 255, 0.06);
+}
+.pk-lang[aria-pressed='true'] {
+  border-color: var(--pk-line-lit);
+  background: rgba(214, 187, 255, 0.09);
+}
+.pk-lang:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pk-lang-name {
+  min-width: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.pk-lang-endonym {
+  display: block;
+  margin-top: 1px;
+  color: var(--pk-ink-3);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+/* One width for every badge, so the column lines up instead of tracking how wide IT and NO are. */
+.pk-code {
+  box-sizing: border-box;
+  min-width: 34px;
+  text-align: center;
+  padding: 3px 7px;
+  border: 1px solid var(--pk-line);
+  border-radius: 7px;
+  color: var(--pk-ink-3);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+.pk-lang .pk-check {
+  position: static;
+  animation: none;
+}
+.pk-lang[aria-pressed='false'] .pk-check {
+  visibility: hidden;
+}
+
+/* ---------- the sticky unsaved bar ---------- */
+.pk-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px -26px -26px;
+  padding: 14px 26px;
+  border-top: 1px solid var(--pk-line-lit);
+  border-radius: 0 0 20px 20px;
+  background: rgba(27, 16, 51, 0.94);
+  backdrop-filter: blur(10px);
+  animation: pk-rise var(--pk-mid) var(--pk-ease);
+}
+.pk-bar-text {
+  flex: 1 1 180px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--pk-ink);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+/* The two buttons stay together, Save last. On a phone they take their own full width row
+   rather than leaving Discard beside the text and Save alone underneath it. */
+.pk-bar-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+@media (max-width: 560px) {
+  .pk-bar-actions {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+  .pk-bar-actions .pk-button {
+    flex: 1 1 0;
+    /* Half of a 390px screen, less the gaps: enough for "Save public profile" on one line. */
+    padding: 0 10px;
+  }
+}
+.pk-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #ffd27a;
+}
+.pk-bar[data-state='saved'] .pk-dot {
+  background: var(--pk-done);
+}
+@media (max-width: 500px) {
+  .pk-bar {
+    margin: 20px -20px -20px;
+    padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ---------- free text, for a game we ship no list for ---------- */
+.pk-tags {
+  display: grid;
+  gap: 8px;
+}
+.pk-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pk-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 36px;
+  padding: 0 4px 0 12px;
+  border: 1px solid var(--pk-line);
+  border-radius: 999px;
+  background: rgba(214, 187, 255, 0.06);
+  color: var(--pk-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.pk-tag .pk-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+/* One focus ring everywhere in these blocks, matching the crop panel's. */
+.pk-scope :focus-visible,
+.pk-sheet :focus-visible {
+  outline: 2px solid var(--pk-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pk-scope *,
+  .pk-scope *::before,
+  .pk-scope *::after,
+  .pk-sheet,
+  .pk-sheet *,
+  .pk-scrim {
+    transition: none !important;
+    animation: none !important;
+  }
+  .pk-scope button:active,
+  .pk-sheet button:active {
+    transform: none;
+  }
+}
+
+/* A label a screen reader reads and the eye does not need, next to a glyph that already says it. */
+.pk-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Nothing to save: the same bar, saying so. */
+.pk-bar[data-state='clean'] .pk-dot {
+  background: var(--pk-ink-3);
+}
+
+/* Nothing to save: the same bar, saying so. */
+.pk-bar[data-state='clean'] .pk-dot {
+  background: var(--pk-ink-3);
+}
+
+/*
+ * ROUND 1 PROTOTYPE, one of two character tile options (see settings-work/DESIGN-RATIONALE.md
+ * section 3). The screenshot round decides which stays, and the other goes.
+ * Option B, the typographic list: one row per character, a role dot instead of a monogram, the
+ * role name right aligned. Four times the density of the mini cards, no colour blocks.
+ */
+[data-tiles='list'] .pk-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+[data-tiles='list'] .pk-grid .pk-tile {
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  min-height: 46px;
+  padding: 6px 8px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: transparent;
+}
+[data-tiles='list'] .pk-grid .pk-tile:hover:not(:disabled) {
+  background: rgba(214, 187, 255, 0.05);
+}
+[data-tiles='list'] .pk-grid .pk-tile[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--pk-accent) 9%, transparent);
+}
+[data-tiles='list'] .pk-grid .pk-mono {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--pk-role);
+  color: transparent;
+  font-size: 0;
+}
+[data-tiles='list'] .pk-grid .pk-tile-text {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+[data-tiles='list'] .pk-grid .pk-tile-name {
+  font-size: 15px;
+}
+[data-tiles='list'] .pk-grid .pk-tile-role {
+  margin: 0;
+  color: var(--pk-ink-3);
+}
+[data-tiles='list'] .pk-grid .pk-check {
+  position: static;
+}
+[data-tiles='list'] .pk-grid .pk-tile[aria-pressed='true'] .pk-tile-name {
+  padding-right: 0;
+}
+
+/* ---------- the controls this block shared with the old screen ---------- */
+/*
+ * Accent swatches, the two option checkboxes and the header image buttons were the last things
+ * on the old 40px and 10px scale, sitting between chips on the new one. They are the same
+ * control as .pk-chip now, without becoming a second chip component.
+ */
+.pk-scope .pp-swatches button {
+  min-height: 44px;
+  border-radius: var(--pk-r-control);
+  border-color: var(--pk-line);
+  background: rgba(214, 187, 255, 0.04);
+  color: var(--pk-ink-2);
+  transition:
+    background var(--pk-fast) var(--pk-ease),
+    border-color var(--pk-fast) var(--pk-ease),
+    color var(--pk-fast) var(--pk-ease);
+}
+.pk-scope .pp-swatches button[aria-pressed='true'] {
+  border-color: color-mix(in srgb, var(--pp-swatch) 70%, transparent);
+  background: color-mix(in srgb, var(--pp-swatch) 18%, transparent);
+  color: var(--pk-ink);
+}
+.pk-scope .pp-swatches span {
+  width: 14px;
+  height: 14px;
+  box-shadow: 0 0 0 1px rgba(9, 4, 20, 0.5);
+}
+.pk-scope .pp-header .pp-button {
+  min-height: 44px;
+  border-radius: var(--pk-r-control);
+  border-color: var(--pk-line);
+  background: rgba(214, 187, 255, 0.04);
+  color: var(--pk-ink-2);
+  font-size: 14px;
+}
+.pk-scope .pp-header .pp-button:hover:not(:disabled) {
+  border-color: var(--pk-line-lit);
+  color: var(--pk-ink);
+}
+/* The two switches read as controls rather than as two stray checkboxes under the vibe tags. */
+.pk-scope .pp-options {
+  gap: 8px;
+}
+.pk-scope .pp-options label {
+  box-sizing: border-box;
+  padding: 0 14px;
+  border: 1px solid var(--pk-line);
+  border-radius: var(--pk-r-control);
+  background: rgba(214, 187, 255, 0.04);
+  color: var(--pk-ink-2);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color var(--pk-fast) var(--pk-ease),
+    color var(--pk-fast) var(--pk-ease);
+}
+.pk-scope .pp-options label:hover {
+  border-color: var(--pk-line-lit);
+  color: var(--pk-ink);
+}
+.pk-scope .pp-options input[type='checkbox'] {
+  accent-color: var(--pk-primary);
+}
+/* One group heading for the three blocks that only change how the page looks, so the games are
+   not one of five equal sections. */
+.pk-group {
+  margin: 26px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--pk-line);
+}
+.pk-group > h3 {
+  margin: 0;
+  font-family: 'Bricolage Grotesque', 'Bricolage Fallback', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--pk-ink);
+}
+.pk-group > p {
+  margin: 4px 0 0;
+  color: var(--pk-ink-3);
+  font-size: 13px;
+  line-height: 1.55;
+}

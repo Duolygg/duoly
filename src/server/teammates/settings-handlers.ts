@@ -2,16 +2,58 @@ import type { APIRoute } from 'astro';
 import {
   publicProfileSettingsSchema,
   slugValid,
+  type PublicProfileSettings,
 } from '../../contracts/teammate-profile';
 import { accountContext } from '../auth/context';
 import { mutation } from '../auth/handlers';
 import { publicProfilesEnabled } from './public-profiles';
 import { pingProfileChanges } from './indexnow';
+import { checkProfileGames, type StoredGame } from './settings-games';
 
 type Rpc = (
   fn: string,
   args?: Record<string, unknown>,
 ) => PromiseLike<{ data: unknown; error: unknown }>;
+/**
+ * The roles and picks this teammate already has stored, as the read hands them back, or null when
+ * the read could not say. checkProfileGames() needs them to tell a value saved before the catalog
+ * existed from a value somebody just invented; with null it keeps both, as saving did before.
+ */
+function storedGames(
+  answer: {
+    data: unknown;
+    error: unknown;
+  } | null,
+): StoredGame[] | null {
+  if (
+    !answer ||
+    answer.error ||
+    !answer.data ||
+    typeof answer.data !== 'object'
+  )
+    return null;
+  const data = answer.data as {
+    error?: unknown;
+    settings?: { games?: unknown };
+  };
+  if (data.error || !Array.isArray(data.settings?.games)) return null;
+  const rows: StoredGame[] = [];
+  for (const row of data.settings.games) {
+    if (!row || typeof row !== 'object') continue;
+    const entry = row as { game?: unknown; roles?: unknown; picks?: unknown };
+    if (typeof entry.game !== 'string') continue;
+    const labels = (value: unknown) =>
+      Array.isArray(value)
+        ? value.filter((v): v is string => typeof v === 'string')
+        : [];
+    rows.push({
+      game: entry.game,
+      roles: labels(entry.roles),
+      picks: labels(entry.picks),
+    });
+  }
+  return rows;
+}
 export const publicProfileSettings: APIRoute = async (context) => {
   let account = accountContext(context.request, context.cookies);
   try {
@@ -32,7 +74,7 @@ export const publicProfileSettings: APIRoute = async (context) => {
         [...context.url.searchParams.keys()].some((k) => k !== 'slug'))
     )
       return account.json({ error: 'Invalid profile request.' }, 400);
-    let settings = null;
+    let settings: PublicProfileSettings | null = null;
     if (method === 'POST') {
       const prepared = await mutation(context, 16384);
       account = prepared.account;
@@ -70,6 +112,13 @@ export const publicProfileSettings: APIRoute = async (context) => {
       return account.json({ available: result.data.available === true });
     }
     const old = settings ? await rpc('teammate_public_profile_get') : null;
+    /* The pickers offer the shipped catalog; this is the same rule where it counts, so a save
+       that did not come from our form faces it too. See ./settings-games.ts. */
+    if (settings) {
+      const checked = checkProfileGames(settings.games, storedGames(old));
+      if (!checked.ok) return account.json({ error: checked.error }, 400);
+      settings = { ...settings, games: checked.games };
+    }
     const answer = settings
       ? await rpc('teammate_public_profile_save', { p_settings: settings })
       : await rpc('teammate_public_profile_get');

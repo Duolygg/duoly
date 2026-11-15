@@ -1,0 +1,200 @@
+{
+  "game": "val",
+  "name": "Valorant",
+  "collectedAt": "2026-11-15",
+  "roles": {
+    "applies": true,
+    "label": "Role",
+    "options": [
+      {
+        "id": "duelist",
+        "name": "Duelist"
+      },
+      {
+        "id": "initiator",
+        "name": "Initiator"
+      },
+      {
+        "id": "controller",
+        "name": "Controller"
+      },
+      {
+        "id": "sentinel",
+        "name": "Sentinel"
+      },
+      {
+        "id": "fill",
+        "name": "Fill"
+      }
+    ]
+  },
+  "picks": {
+    "applies": true,
+    "label": "Agents",
+    "max": 5,
+    "options": [
+      {
+        "id": "astra",
+        "name": "Astra",
+        "role": "controller"
+      },
+      {
+        "id": "breach",
+        "name": "Breach",
+        "role": "initiator"
+      },
+      {
+        "id": "brimstone",
+        "name": "Brimstone",
+        "role": "controller",
+        "aliases": ["brim"]
+      },
+      {
+        "id": "chamber",
+        "name": "Chamber",
+        "role": "sentinel",
+        "aliases": ["champ"]
+      },
+      {
+        "id": "clove",
+        "name": "Clove",
+        "role": "controller"
+      },
+      {
+        "id": "cypher",
+        "name": "Cypher",
+        "role": "sentinel",
+        "aliases": ["cipher", "cyph"]
+      },
+      {
+        "id": "deadlock",
+        "name": "Deadlock",
+        "role": "sentinel",
+        "aliases": ["dl"]
+      },
+      {
+        "id": "fade",
+        "name": "Fade",
+        "role": "initiator"
+      },
+      {
+        "id": "gekko",
+        "name": "Gekko",
+        "role": "initiator",
+        "aliases": ["gecko"]
+      },
+      {
+        "id": "harbor",
+        "name": "Harbor",
+        "role": "controller",
+        "aliases": ["harbour"]
+      },
+      {
+        "id": "hush",
+        "name": "Hush",
+        "role": "duelist"
+      },
+      {
+        "id": "iso",
+        "name": "Iso",
+        "role": "duelist"
+      },
+      {
+        "id": "jett",
+        "name": "Jett",
+        "role": "duelist",
+        "aliases": ["jet"]
+      },
+      {
+        "id": "kayo",
+        "name": "KAY/O",
+        "role": "initiator",
+        "aliases": ["kay o", "kayo"]
+      },
+      {
+        "id": "killjoy",
+        "name": "Killjoy",
+        "role": "sentinel",
+        "aliases": ["kj"]
+      },
+      {
+        "id": "miks",
+        "name": "Miks",
+        "role": "controller"
+      },
+      {
+        "id": "neon",
+        "name": "Neon",
+        "role": "duelist"
+      },
+      {
+        "id": "omen",
+        "name": "Omen",
+        "role": "controller"
+      },
+      {
+        "id": "phoenix",
+        "name": "Phoenix",
+        "role": "duelist",
+        "aliases": ["phx"]
+      },
+      {
+        "id": "raze",
+        "name": "Raze",
+        "role": "duelist"
+      },
+      {
+        "id": "reyna",
+        "name": "Reyna",
+        "role": "duelist",
+        "aliases": ["rey"]
+      },
+      {
+        "id": "sage",
+        "name": "Sage",
+        "role": "sentinel"
+      },
+      {
+        "id": "skye",
+        "name": "Skye",
+        "role": "initiator"
+      },
+      {
+        "id": "sova",
+        "name": "Sova",
+        "role": "initiator"
+      },
+      {
+        "id": "tejo",
+        "name": "Tejo",
+        "role": "initiator"
+      },
+      {
+        "id": "veto",
+        "name": "Veto",
+        "role": "sentinel"
+      },
+      {
+        "id": "viper",
+        "name": "Viper",
+        "role": "controller"
+      },
+      {
+        "id": "vyse",
+        "name": "Vyse",
+        "role": "sentinel"
+      },
+      {
+        "id": "waylay",
+        "name": "Waylay",
+        "role": "duelist",
+        "aliases": ["way"]
+      },
+      {
+        "id": "yoru",
+        "name": "Yoru",
+        "role": "duelist"
+      }
+    ]
+  }
+}

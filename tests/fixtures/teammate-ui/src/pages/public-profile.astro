@@ -1,38 +1,65 @@
 ---
 // Isolated fictional browser fixture, never a production route: the public profile settings
-// block on its own, so the header uploader can be driven without an account. `?header=` decides
-// what the settings read carried: nothing (the state Postgres returns today), `none`, or a URL.
+// block on its own, so the header uploader and the roles, picks and featured pickers can be
+// driven without an account. `?header=` decides what the settings read carried: nothing (the
+// state Postgres returns today), `none`, or a URL. `?games=` sets the approved games, so a card
+// per game, the Featured star and Add a game can all be exercised. `?load` makes the block fetch
+// its settings instead of taking them inline, which is what a save and a reload need.
 import SiteLayout from '../../../../../src/layouts/SiteLayout.astro';
 import PublicProfileSettings from '../../../../../src/components/account/PublicProfileSettings';
+import SupportChat from '../../../../../src/components/support/SupportChat';
 const header = Astro.url.searchParams.get('header');
 // `?fresh` is a teammate who has never saved a public profile: Postgres returns defaults only.
 const fresh = Astro.url.searchParams.has('fresh');
+const games = (Astro.url.searchParams.get('games') || 'val')
+  .split(',')
+  .map((g) => g.trim())
+  .filter(Boolean);
+const SAVED: Record<string, { roles: string[]; picks: string[] }> = {
+  val: { roles: ['Controller'], picks: ['omen'] },
+  // A legacy row: display names from before the catalog, plus one it cannot place.
+  lol: { roles: ['Jungle'], picks: ['Hecarim', 'Some Old Pick'] },
+};
+const RANKS: Record<string, { rank: string; peakRank: string | null }> = {
+  val: { rank: 'Immortal 3', peakRank: 'Radiant' },
+  lol: { rank: 'Master', peakRank: 'Grandmaster' },
+  wow: { rank: 'Mythic+ 3,500+', peakRank: null },
+};
 const initialData = {
   settings: {
     published: !fresh,
     slug: fresh ? '' : 'nyx',
     accent: 'lavender',
     banner: 'slash',
-    featuredGame: 'val',
+    featuredGame: games[0],
     vibeTags: [],
     showCountry: false,
     coaching: false,
-    games: [{ game: 'val', roles: ['Controller'], picks: ['Omen'] }],
+    games: games.map((game) => ({
+      game,
+      roles: SAVED[game]?.roles ?? [],
+      picks: SAVED[game]?.picks ?? [],
+    })),
   },
-  approvedGames: ['val'],
-  ranks: [
-    { game: 'val', rank: 'Immortal 3', peakRank: 'Radiant', verified: true },
-  ],
+  approvedGames: games,
+  ranks: games
+    .filter((game) => RANKS[game])
+    .map((game) => ({ game, ...RANKS[game]!, verified: true })),
   hidden: false,
   ...(header ? { header: header === 'none' ? null : header } : {}),
 };
 ---
 
 <SiteLayout title="Local public profile fixture | Duoly" bare>
-  <PublicProfileSettings
-    csrf="fixture-csrf"
-    name="Nyx"
-    initialData={Astro.url.searchParams.has('load') ? undefined : initialData}
-    client:load
-  />
+  <!-- The width the block really gets: /profile is a 1040px page with a 300px preview column
+       beside it, so the card is about 720px on a laptop and full width on a phone. -->
+  <div style="max-width:720px;margin:0 auto;padding:24px 16px">
+    <PublicProfileSettings
+      csrf="fixture-csrf"
+      name="Nyx"
+      initialData={Astro.url.searchParams.has('load') ? undefined : initialData}
+      client:load
+    />
+  </div>
+  <SupportChat csrf="fixture-csrf" dockAbove=".pk-bar" client:load />
 </SiteLayout>

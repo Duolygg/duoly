@@ -8,6 +8,10 @@ export default defineConfig({
     'header-upload-regressions.spec.ts',
     'header-heic.spec.ts',
     'profile-avatar-crop.spec.ts',
+    /* The pickers, which is where a bottom sheet, a sticky footer and dvh have to be right in
+       Safari as well as in Chrome. */
+    'profile-pickers.spec.ts',
+    'profile-languages.spec.ts',
   ],
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

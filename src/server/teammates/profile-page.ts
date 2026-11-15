@@ -14,6 +14,7 @@ import { bookingHref, organizationSchema } from '../../site/seo';
 import { AUTO_CANCEL_MINUTES } from '../seo/fees';
 import { seoOffers } from '../seo/offers';
 import type { ProfileLookup } from './public-profiles';
+import { picksLabel } from '../../contracts/game-picks-resolve';
 /**
  * The catalog entry for a game id. A profile only ever features a game an admin approved, so a
  * miss means the catalog and the database disagree; the page then prints the raw id rather than
@@ -27,25 +28,13 @@ export const profileGame = (id: string): SiteGame =>
     slug: id,
   };
 /**
- * What a teammate's picks are called in each game. Roles and picks are typed by the teammate, so
- * the label has to be right for twenty games, not just the two the design started with. Anything
- * without an established word for it gets "Mains", which is what a player would say.
+ * What a teammate's picks are called in each game. A game with a character catalog carries its
+ * own word for them (src/contracts/game-picks.ts), which is the same word the settings picker
+ * uses, so the editor and the public page never disagree. The two below are games we ship no
+ * catalog for and still have a better word than "Mains" for what a teammate types.
  */
-const PICK_LABELS: Record<string, string> = {
-  lol: 'Champions',
-  wr: 'Champions',
-  dota: 'Heroes',
-  val: 'Agents',
-  mr: 'Heroes',
-  ow: 'Heroes',
-  apex: 'Legends',
-  r6: 'Operators',
-  dl: 'Heroes',
-  pu: 'Pokémon',
-  rl: 'Cars',
-  fc: 'Clubs',
-};
-export const pickLabel = (id: string) => PICK_LABELS[id] ?? 'Mains';
+const PICK_LABELS: Record<string, string> = { rl: 'Cars', fc: 'Clubs' };
+export const pickLabel = (id: string) => PICK_LABELS[id] ?? picksLabel(id);
 /**
  * The rank emblem on a game card: one solid geometric crest per game, filled with the game
  * colour, never an official rank badge and never a second copy of the game logo. The hero

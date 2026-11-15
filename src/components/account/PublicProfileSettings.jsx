@@ -3,6 +3,7 @@ import {
   PROFILE_ACCENTS,
   PROFILE_BANNERS,
   VIBE_TAGS,
+  VIBE_TAGS_MAX,
   slugFromName,
   slugValid,
   publicProfileSettingsSchema,
@@ -16,14 +17,29 @@ import {
 } from './header-image';
 import { canvasReady, releasePicked } from './crop-image';
 import ImageCropper from './ImageCropper';
-import { GAME } from '../../design-reference/lib/games';
+import GameCards from './GameCards';
 import './public-profile-settings.css';
+import './profile-pickers.css';
 
-export const splitProfileLabels = (value) =>
-  value
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
+/**
+ * Everything a teammate can change in this block, in one comparable string, so the bar at the
+ * bottom knows whether there is anything to save. Compared against what the last read or save
+ * handed back, which is the only thing that is actually published.
+ */
+export const settingsFingerprint = (s) =>
+  s
+    ? JSON.stringify([
+        s.published,
+        s.slug,
+        s.accent,
+        s.banner,
+        s.featuredGame,
+        s.vibeTags,
+        s.showCountry,
+        s.coaching,
+        (s.games ?? []).map((g) => [g.game, g.roles, g.picks]),
+      ])
+    : '';
 /** The settings read carries a top-level header. Missing fields in older responses leave it unknown. */
 export const headerFromData = (data) =>
   data && 'header' in data
@@ -75,6 +91,8 @@ export default class PublicProfileSettings extends React.Component {
       headerPreviewError: '',
       headerNote: '',
       headerBusy: false,
+      /** True for a moment after a save, so the bar can confirm it before it goes quiet. */
+      justSaved: false,
     };
     this.headerRevision = 0;
     this.headerFile = React.createRef();
@@ -115,6 +133,25 @@ export default class PublicProfileSettings extends React.Component {
   componentWillUnmount() {
     this.unmounted = true;
     releasePicked(this.state.pick);
+    clearTimeout(this.savedTimer);
+  }
+  /** True when the form holds something the published page does not. */
+  dirty() {
+    return (
+      settingsFingerprint(this.state.settings) !==
+      settingsFingerprint(this.state.data?.settings)
+    );
+  }
+  /** Puts the form back to what is published right now. */
+  discard() {
+    const saved = this.state.data?.settings;
+    if (!saved) return;
+    this.setState({
+      settings: { ...saved, slug: saved.slug || slugFromName(this.props.name) },
+      error: '',
+      message: '',
+      justSaved: false,
+    });
   }
   /** Ends the crop and lets go of the picked file. */
   clearPick(patch) {
@@ -197,11 +234,16 @@ export default class PublicProfileSettings extends React.Component {
         data,
         settings: data.settings,
         saving: false,
+        justSaved: true,
         message: data.settings.published
           ? 'Public profile saved.'
           : 'Public profile is off.',
         ...this.headerPatch(data, headerRevision),
       });
+      clearTimeout(this.savedTimer);
+      this.savedTimer = setTimeout(() => {
+        if (!this.unmounted) this.setState({ justSaved: false });
+      }, 2600);
     } catch (e) {
       this.setState({ saving: false, error: e.message });
     }
@@ -415,8 +457,16 @@ export default class PublicProfileSettings extends React.Component {
     const live = Boolean(
       d?.settings.published && !d.hidden && slugValid(d.settings.slug || ''),
     );
+    const dirty = this.dirty();
+    const barState = this.state.saving
+      ? 'saving'
+      : dirty
+        ? 'dirty'
+        : this.state.justSaved
+          ? 'saved'
+          : 'clean';
     return (
-      <section className="pp-settings" aria-labelledby="pp-heading">
+      <section className="pp-settings pk-scope" aria-labelledby="pp-heading">
         <div className="pp-settings-heading">
           <h2 id="pp-heading">Public profile</h2>
           <span>{d?.settings.published ? 'On' : 'Off'}</span>
@@ -534,80 +584,106 @@ export default class PublicProfileSettings extends React.Component {
                   '3 to 24 lowercase letters, numbers or single hyphens. Old links redirect after a rename.'}
               </p>
             </div>
-            <div className="pp-field">
-              <label htmlFor="pp-featured">Featured game</label>
-              <select
-                id="pp-featured"
-                value={s.featuredGame}
-                onChange={(e) => this.change('featuredGame', e.target.value)}
-              >
-                {d.approvedGames.map((g) => (
-                  <option key={g} value={g}>
-                    {GAME[g]?.name || g}
-                  </option>
-                ))}
-              </select>
+            {/* The work a teammate came here to do, above the blocks that only change how the
+                page looks. See GameCards.jsx. */}
+            <fieldset>
+              <legend>Your games</legend>
+              <p className="pp-help">
+                The star picks your featured game. That is the one your profile
+                leads with, and the one your booking link opens on.
+              </p>
+              <GameCards
+                games={s.games}
+                ranks={d.ranks}
+                featuredGame={s.featuredGame}
+                onChange={(games) => this.change('games', games)}
+                onFeature={(game) => this.change('featuredGame', game)}
+              />
+            </fieldset>
+            {/* Everything that only changes how the page looks, under one heading, so the
+                games above it are the section rather than one of five equal blocks. */}
+            <div className="pk-group">
+              <h3>Look</h3>
+              <p>
+                Colour, pattern and the picture across the top of your page.
+              </p>
+              <fieldset>
+                <legend>Accent</legend>
+                <div className="pp-swatches">
+                  {Object.entries(PROFILE_ACCENTS).map(([key, color]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      aria-label={key}
+                      aria-pressed={s.accent === key}
+                      style={{ '--pp-swatch': color }}
+                      onClick={() => this.change('accent', key)}
+                    >
+                      <span />
+                      {key}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Banner</legend>
+                <div className="pk-row">
+                  {PROFILE_BANNERS.map((b) => (
+                    <button
+                      key={b}
+                      type="button"
+                      className="pk-chip"
+                      aria-pressed={s.banner === b}
+                      onClick={() => this.change('banner', b)}
+                    >
+                      {b}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+              {this.renderHeader()}
             </div>
             <fieldset>
-              <legend>Accent</legend>
-              <div className="pp-swatches">
-                {Object.entries(PROFILE_ACCENTS).map(([key, color]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    aria-label={key}
-                    aria-pressed={s.accent === key}
-                    style={{ '--pp-swatch': color }}
-                    onClick={() => this.change('accent', key)}
-                  >
-                    <span />
-                    {key}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            <fieldset>
-              <legend>Banner</legend>
-              <div className="pp-chips">
-                {PROFILE_BANNERS.map((b) => (
-                  <button
-                    key={b}
-                    type="button"
-                    className="pp-button"
-                    aria-pressed={s.banner === b}
-                    onClick={() => this.change('banner', b)}
-                  >
-                    {b}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-            {this.renderHeader()}
-            <fieldset>
               <legend>
-                Vibe tags <span className="pp-help">up to 3</span>
+                Vibe tags <span className="pp-help">up to {VIBE_TAGS_MAX}</span>
               </legend>
-              <div className="pp-chips">
-                {VIBE_TAGS.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    className="pp-button"
-                    aria-pressed={s.vibeTags.includes(t)}
-                    disabled={!s.vibeTags.includes(t) && s.vibeTags.length >= 3}
-                    onClick={() =>
-                      this.change(
-                        'vibeTags',
-                        s.vibeTags.includes(t)
-                          ? s.vibeTags.filter((x) => x !== t)
-                          : [...s.vibeTags, t],
-                      )
-                    }
-                  >
-                    {t}
-                  </button>
-                ))}
+              <div className="pk-row">
+                {VIBE_TAGS.map((t) => {
+                  const on = s.vibeTags.includes(t);
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      className="pk-chip"
+                      aria-pressed={on}
+                      disabled={!on && s.vibeTags.length >= VIBE_TAGS_MAX}
+                      onClick={() =>
+                        this.change(
+                          'vibeTags',
+                          on
+                            ? s.vibeTags.filter((x) => x !== t)
+                            : [...s.vibeTags, t],
+                        )
+                      }
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
               </div>
+              <p className="pk-hint">
+                <span
+                  className="pk-count"
+                  data-full={String(s.vibeTags.length >= VIBE_TAGS_MAX)}
+                  aria-live="polite"
+                >
+                  {s.vibeTags.length} of {VIBE_TAGS_MAX}
+                </span>
+                {' · '}
+                {s.vibeTags.length >= VIBE_TAGS_MAX
+                  ? 'Remove one to add another.'
+                  : 'How a session with you feels.'}
+              </p>
             </fieldset>
             <div className="pp-options">
               <label>
@@ -627,89 +703,54 @@ export default class PublicProfileSettings extends React.Component {
                 Offer coaching
               </label>
             </div>
-            <fieldset>
-              <legend>Your games</legend>
-              {s.games.map((g, i) => {
-                const rank = d.ranks.find((r) => r.game === g.game);
-                return (
-                  <div key={g.game} className="pp-game">
-                    <h3>{GAME[g.game]?.name || g.game}</h3>
-                    <p className="pp-help">
-                      {rank?.rank
-                        ? `${rank.rank}${rank.verified ? ' · Verified' : ''}${rank.peakRank ? ` · Peak ${rank.peakRank}` : ''}`
-                        : 'Rank not verified yet'}
-                      . Ask support to update.
-                    </p>
-                    <div className="pp-field">
-                      <label htmlFor={'pp-roles-' + g.game}>
-                        Roles{' '}
-                        <span className="pp-help">
-                          up to 3, comma separated
-                        </span>
-                      </label>
-                      <input
-                        id={'pp-roles-' + g.game}
-                        defaultValue={g.roles.join(', ')}
-                        key={'roles-' + g.game}
-                        onChange={(e) =>
-                          this.change(
-                            'games',
-                            s.games.map((x, n) =>
-                              n === i
-                                ? {
-                                    ...x,
-                                    roles: splitProfileLabels(e.target.value),
-                                  }
-                                : x,
-                            ),
-                          )
-                        }
-                      />
-                    </div>
-                    <div className="pp-field">
-                      <label htmlFor={'pp-picks-' + g.game}>
-                        Agents, champions or heroes{' '}
-                        <span className="pp-help">
-                          up to 5, comma separated
-                        </span>
-                      </label>
-                      <input
-                        id={'pp-picks-' + g.game}
-                        defaultValue={g.picks.join(', ')}
-                        key={'picks-' + g.game}
-                        onChange={(e) =>
-                          this.change(
-                            'games',
-                            s.games.map((x, n) =>
-                              n === i
-                                ? {
-                                    ...x,
-                                    picks: splitProfileLabels(e.target.value),
-                                  }
-                                : x,
-                            ),
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </fieldset>
-            <div className="pp-actions">
-              <button
-                type="submit"
-                className="pp-button pp-primary"
-                disabled={this.state.saving || !d.approvedGames.length}
-              >
-                {this.state.saving ? 'Saving…' : 'Save public profile'}
-              </button>
-              {live ? (
+            {live ? (
+              <div className="pp-actions">
                 <a href={'/teammates/' + d.settings.slug}>
                   View public profile
                 </a>
-              ) : null}
-              <span role="status">{this.state.message}</span>
+              </div>
+            ) : null}
+            {/* One bar, always under the block, so the state of the page is never a guess: it
+                says whether anything is unsaved, and it is the only thing that publishes. */}
+            <div
+              className="pk-bar"
+              data-state={barState}
+              role="group"
+              aria-label="Save your public profile"
+            >
+              <span className="pk-bar-text">
+                <span className="pk-dot" />
+                <span role="status">
+                  {barState === 'saving'
+                    ? 'Saving your profile'
+                    : barState === 'dirty'
+                      ? 'Unsaved changes'
+                      : barState === 'saved'
+                        ? this.state.message
+                        : 'Everything here is saved.'}
+                </span>
+              </span>
+              <span className="pk-bar-actions">
+                {dirty ? (
+                  <button
+                    type="button"
+                    className="pk-button"
+                    disabled={this.state.saving}
+                    onClick={() => this.discard()}
+                  >
+                    Discard
+                  </button>
+                ) : null}
+                <button
+                  type="submit"
+                  className="pk-button pk-button-primary"
+                  disabled={
+                    this.state.saving || !dirty || !d.approvedGames.length
+                  }
+                >
+                  {this.state.saving ? 'Saving…' : 'Save public profile'}
+                </button>
+              </span>
             </div>
           </form>
         )}

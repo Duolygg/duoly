@@ -1,0 +1,37 @@
+{
+  "game": "fc",
+  "name": "EA SPORTS FC 27",
+  "collectedAt": "2026-11-15",
+  "roles": {
+    "applies": true,
+    "label": "Position",
+    "options": [
+      {
+        "id": "goalkeeper",
+        "name": "Goalkeeper"
+      },
+      {
+        "id": "defender",
+        "name": "Defender"
+      },
+      {
+        "id": "midfielder",
+        "name": "Midfielder"
+      },
+      {
+        "id": "forward",
+        "name": "Forward"
+      },
+      {
+        "id": "any",
+        "name": "Any"
+      }
+    ]
+  },
+  "picks": {
+    "applies": false,
+    "label": "Picks",
+    "max": 5,
+    "options": []
+  }
+}

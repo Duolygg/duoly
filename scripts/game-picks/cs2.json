@@ -1,0 +1,41 @@
+{
+  "game": "cs2",
+  "name": "Counter-Strike 2",
+  "collectedAt": "2026-11-15",
+  "roles": {
+    "applies": true,
+    "label": "Role",
+    "options": [
+      {
+        "id": "entry",
+        "name": "Entry"
+      },
+      {
+        "id": "awper",
+        "name": "AWPer"
+      },
+      {
+        "id": "support",
+        "name": "Support"
+      },
+      {
+        "id": "lurker",
+        "name": "Lurker"
+      },
+      {
+        "id": "igl",
+        "name": "IGL"
+      },
+      {
+        "id": "fill",
+        "name": "Fill"
+      }
+    ]
+  },
+  "picks": {
+    "applies": false,
+    "label": "Characters",
+    "max": 5,
+    "options": []
+  }
+}

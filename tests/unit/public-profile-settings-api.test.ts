@@ -51,8 +51,68 @@ it('loads own settings only', async () => {
 });
 it('validates and saves the exact settings, with CSRF', async () => {
   expect((await run(ctx({ ...settings, csrf: token }))).status).toBe(200);
+  /* Roles save as the game's own spelling and picks save as catalog ids, because the official
+     names carry punctuation teammate_public_labels_valid() rejects. See settings-games.ts. */
   expect(rpc).toHaveBeenCalledWith('teammate_public_profile_save', {
-    p_settings: settings,
+    p_settings: {
+      ...settings,
+      games: [{ game: 'val', roles: ['Controller'], picks: ['omen'] }],
+    },
+  });
+});
+it('normalizes an alias, a loose spelling and a duplicate before saving', async () => {
+  const games = [
+    {
+      game: 'val',
+      roles: ['sentinel', 'SENTINEL'],
+      picks: ['KAY/O', 'brim', 'omen', 'Omen'],
+    },
+  ];
+  expect((await run(ctx({ ...settings, games, csrf: token }))).status).toBe(
+    200,
+  );
+  expect(rpc).toHaveBeenCalledWith('teammate_public_profile_save', {
+    p_settings: {
+      ...settings,
+      games: [
+        {
+          game: 'val',
+          roles: ['Sentinel'],
+          picks: ['kayo', 'brimstone', 'omen'],
+        },
+      ],
+    },
+  });
+});
+it('refuses a value the game does not have, and says which one', async () => {
+  const games = [{ game: 'val', roles: [], picks: ['Brand New Agent'] }];
+  const response = await run(ctx({ ...settings, games, csrf: token }));
+  expect(response.status).toBe(400);
+  expect((await response.json()).error).toContain('"Brand New Agent"');
+  /* The read that looks for a legacy value is allowed; the save never happens. */
+  expect(rpc).toHaveBeenCalledTimes(1);
+  expect(rpc).toHaveBeenCalledWith('teammate_public_profile_get');
+});
+it('keeps a value the teammate already has stored for that game', async () => {
+  rpc.mockResolvedValueOnce({
+    data: {
+      settings: {
+        ...settings,
+        games: [
+          { game: 'val', roles: ['Shotcaller'], picks: ['Some Old Pick'] },
+        ],
+      },
+    },
+    error: null,
+  });
+  const games = [
+    { game: 'val', roles: ['Shotcaller'], picks: ['Some Old Pick', 'omen'] },
+  ];
+  expect((await run(ctx({ ...settings, games, csrf: token }))).status).toBe(
+    200,
+  );
+  expect(rpc).toHaveBeenCalledWith('teammate_public_profile_save', {
+    p_settings: { ...settings, games },
   });
 });
 it.each([

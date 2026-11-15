@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, it } from 'vitest';
 import PublicProfileSettings, {
   headerFromData,
-  splitProfileLabels,
+  settingsFingerprint,
 } from '../../src/components/account/PublicProfileSettings';
 const data = {
   settings: {
@@ -40,14 +40,15 @@ it('shows the controls, the public data explanation, and read-only verified rank
   for (const text of [
     'Show my public profile',
     'Profile link',
-    'Featured game',
+    'Your games',
+    'featured game',
     'Accent',
     'Banner',
     'Vibe',
     'Show my country',
     'Offer coaching',
     'Roles',
-    'Agents, champions or heroes',
+    'Agents',
     'Immortal',
     'Ask support to update',
     'Email, Discord',
@@ -57,9 +58,69 @@ it('shows the controls, the public data explanation, and read-only verified rank
   expect(html).not.toContain('name="rank"');
   expect(html).not.toContain('<textarea');
 });
-it('parses comma separated labels without inventing picks', () => {
-  expect(splitProfileLabels(' Omen, Sova, ')).toEqual(['Omen', 'Sova']);
-  expect(splitProfileLabels('')).toEqual([]);
+
+/*
+ * The games section. One approved game opens its own card, because that card is the whole reason
+ * the teammate came to this block; the roles are the game's own list and the picks are the
+ * characters, read from the shipped catalog rather than typed into a comma separated field.
+ */
+it('opens the only game and offers its roles and its characters by name', () => {
+  const html = render(data);
+  expect(html).toContain('aria-expanded="true"');
+  for (const role of ['Duelist', 'Initiator', 'Controller', 'Sentinel', 'Fill'])
+    expect(html).toContain('>' + role + '<');
+  /* The one already saved is on, and the counts say where the caps are. */
+  expect(html).toMatch(
+    /aria-pressed="true"[^>]*>(<svg[\s\S]*?<\/svg>)?Controller/,
+  );
+  expect(html).toContain('1 of 3');
+  expect(html).toContain('1 of 5');
+  expect(html).toContain('Omen');
+  expect(html).toContain('Edit Agents');
+  expect(html).not.toContain('comma separated');
+});
+it('replaces the featured select with a star on the card it describes', () => {
+  const html = render(data);
+  expect(html).not.toContain('id="pp-featured"');
+  expect(html).toContain('data-pk-feature="val"');
+  expect(html).toContain('Valorant is featured');
+});
+it('offers Add a game without pretending the teammate can grant one', () => {
+  const html = render(data);
+  expect(html).toContain('Add a game');
+  expect(html).toContain('The team approves the games on your profile');
+  expect(html).toContain('data-pk-ask-game');
+  /* Social comes with Gamer Girl access, so it is never something to ask for here. */
+  expect(html).not.toContain('value="social"');
+});
+it('says what is saved and what is not, in one bar', () => {
+  /* The form opens on what the read handed back, so there is nothing to save until something
+     changes; the fingerprint is what the bar asks. */
+  expect(render(data)).toContain('Everything here is saved.');
+  expect(settingsFingerprint(data.settings)).toBe(
+    settingsFingerprint({ ...data.settings }),
+  );
+  for (const change of [
+    { published: true },
+    { slug: 'other' },
+    { accent: 'cyan' },
+    { banner: 'grid' },
+    { featuredGame: 'lol' },
+    { vibeTags: ['Chill'] },
+    { showCountry: true },
+    { coaching: true },
+    {
+      games: [{ game: 'val', roles: ['Controller'], picks: ['Omen', 'Sova'] }],
+    },
+    {
+      games: [{ game: 'val', roles: ['Controller'], picks: ['Sova', 'Omen'] }],
+    },
+  ])
+    expect(
+      settingsFingerprint({ ...data.settings, ...change }),
+      JSON.stringify(change),
+    ).not.toBe(settingsFingerprint(data.settings));
+  expect(settingsFingerprint(null)).toBe('');
 });
 it('does not render a public preview link for an unpublished draft', () => {
   expect(render(data)).not.toContain('href="/teammates/nyx"');
@@ -111,7 +172,8 @@ it('says there is no header when the read says so, and offers nothing to remove'
   const html = render({ ...data, header: null });
   expect(html).toContain('You have no header yet');
   expect(html).not.toContain('Remove header');
-  expect(html).not.toContain('<img');
+  /* The game cards carry game art, so this asks about the header's own picture. */
+  expect(html).not.toContain('pp-header-art');
 });
 it('claims nothing about the current header while the read cannot say, and still removes', () => {
   const html = render(data);
@@ -127,7 +189,14 @@ it('reads the header from either place the settings payload could carry it', () 
   expect(headerFromData(data)).toBe(undefined);
   expect(headerFromData(null)).toBe(undefined);
 });
-it('keeps the header copy free of em dashes, en dashes and ampersands', () => {
-  for (const html of [render(data), render({ ...data, header: headerUrl })])
-    expect(html.replace(/&#x27;|&quot;|&amp;/g, '')).not.toMatch(/[–—&]/);
+it('keeps the whole block free of em dashes, en dashes and ampersands', () => {
+  for (const html of [
+    render(data),
+    render(published),
+    render({ ...data, header: headerUrl }),
+    render({ ...data, header: null }),
+  ])
+    expect(html.replace(/&#x27;|&quot;|&amp;|&#x2F;/g, '')).not.toMatch(
+      /[–—&]/,
+    );
 });

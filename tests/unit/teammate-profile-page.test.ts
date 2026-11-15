@@ -298,9 +298,15 @@ describe('public profile page', () => {
       expect(pickLabel('val')).toBe('Agents');
       expect(pickLabel('apex')).toBe('Legends');
       expect(pickLabel('r6')).toBe('Operators');
+      /* Taken from the character catalog, so the picker and the page agree word for word. */
+      expect(pickLabel('pu')).toBe('Pokémon');
+      expect(pickLabel('wow')).toBe('Classes and specs');
       /* Games without an established word get the one a player would use anyway. */
       expect(pickLabel('mc')).toBe('Mains');
       expect(pickLabel('cs2')).toBe('Mains');
+      /* Two the catalog has no character list for, and a better word than Mains all the same. */
+      expect(pickLabel('rl')).toBe('Cars');
+      expect(pickLabel('fc')).toBe('Clubs');
     });
     it('falls back to the raw id when the catalog does not know a game', () => {
       expect(profileGame('lol').name).toBe('League of Legends');
