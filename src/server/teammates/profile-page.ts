@@ -435,7 +435,8 @@ export function profileMetadata(p: PublicTeammateProfile) {
   const game = featured[0]?.game ?? profileGame(p.featuredGame);
   /* The rank is part of the headline only while one game is featured. Two games and a rank do
      not fit a search result, and naming the second game is worth more than the number. */
-  const rank = featured.length > 1 ? undefined : (featured[0]?.rank ?? undefined);
+  const rank =
+    featured.length > 1 ? undefined : (featured[0]?.rank ?? undefined);
   const { showSessions } = profilePresentation(p);
   /* Up to two featured games, and only while the pair still fits the 60 characters a result
      prints: "PUBG: Battlegrounds and Rainbow Six Siege" alone is past it. */
