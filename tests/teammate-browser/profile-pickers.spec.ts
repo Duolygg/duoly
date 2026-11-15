@@ -390,9 +390,24 @@ test('Add a game opens the support chat with the message already written', async
   );
   /* Never prefilled: Ask support is dead until a game is chosen, so nobody asks for the game
      that happened to be first in the list. */
-  await expect(ask.locator('select')).toHaveValue('');
+  const choose = ask.locator('#pk-ask-game');
+  await expect(choose).toHaveText('Choose a game');
   await expect(ask.locator('[data-pk-ask-game]')).toBeDisabled();
-  await ask.locator('select').selectOption('dota');
+  await choose.click();
+  const list = ask.getByRole('listbox');
+  // only games they do not have yet, each with its icon
+  await expect(list.getByRole('option', { name: 'Valorant' })).toHaveCount(0);
+  await expect(list.locator('img').first()).toBeVisible();
+  await list.getByRole('option', { name: 'Dota 2' }).click();
+  await expect(list).toHaveCount(0);
+  await expect(choose).toHaveText('Dota 2');
+  // the keyboard works too: Escape closes without changing the choice
+  await choose.press('ArrowDown');
+  await expect(ask.getByRole('listbox')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(ask.getByRole('listbox')).toHaveCount(0);
+  await expect(choose).toBeFocused();
+  await expect(choose).toHaveText('Dota 2');
   await ask.locator('[data-pk-ask-game]').click();
   const input = page.locator('#dl-support-input');
   await expect(input).toBeVisible();

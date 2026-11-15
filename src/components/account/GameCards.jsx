@@ -109,6 +109,159 @@ const Tick = () => (
   </svg>
 );
 
+/*
+ * A game dropdown in the screen's own look: icon and name on the button and in every row. The
+ * native select opened an OS-grey list that matched nothing else here. Keyboard: arrows and
+ * Home/End move, Enter or Space picks, Escape closes, typing a letter jumps to the next game
+ * starting with it.
+ */
+function GameSelect({ id, options, value, placeholder, onChange }) {
+  const [open, setOpen] = React.useState(false);
+  const [active, setActive] = React.useState(0);
+  const root = React.useRef(null);
+  const button = React.useRef(null);
+  const list = React.useRef(null);
+  const chosen = options.find((g) => g.id === value) || null;
+  const listId = id + '-list';
+
+  React.useEffect(() => {
+    if (!open) return undefined;
+    const away = (event) => {
+      if (root.current && !root.current.contains(event.target)) setOpen(false);
+    };
+    document.addEventListener('pointerdown', away);
+    return () => document.removeEventListener('pointerdown', away);
+  }, [open]);
+  React.useEffect(() => {
+    if (!open || !list.current) return;
+    list.current.focus({ preventScroll: true });
+    list.current
+      .querySelector(`[data-index="${active}"]`)
+      ?.scrollIntoView({ block: 'nearest' });
+  }, [open, active]);
+
+  const show = () => {
+    const at = options.findIndex((g) => g.id === value);
+    setActive(at < 0 ? 0 : at);
+    setOpen(true);
+  };
+  const close = () => {
+    setOpen(false);
+    button.current?.focus();
+  };
+  const pick = (index) => {
+    const game = options[index];
+    if (game) onChange(game.id);
+    close();
+  };
+  const onKey = (event) => {
+    const last = options.length - 1;
+    const keys = {
+      ArrowDown: () => setActive((i) => Math.min(last, i + 1)),
+      ArrowUp: () => setActive((i) => Math.max(0, i - 1)),
+      Home: () => setActive(0),
+      End: () => setActive(last),
+      Enter: () => pick(active),
+      ' ': () => pick(active),
+      Escape: close,
+      Tab: () => setOpen(false),
+    };
+    if (keys[event.key]) {
+      if (event.key !== 'Tab') event.preventDefault();
+      keys[event.key]();
+      return;
+    }
+    if (event.key.length === 1 && /\S/.test(event.key)) {
+      const letter = event.key.toLowerCase();
+      const order = options
+        .map((g, i) => ({ g, i }))
+        .filter(({ g }) => g.name.toLowerCase().startsWith(letter));
+      if (!order.length) return;
+      const next = order.find(({ i }) => i > active) || order[0];
+      setActive(next.i);
+    }
+  };
+
+  return (
+    <div className="pk-select" ref={root} data-open={String(open)}>
+      <button
+        type="button"
+        id={id}
+        ref={button}
+        className="pk-select-button"
+        data-empty={String(!chosen)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={open ? listId : undefined}
+        onClick={() => (open ? close() : show())}
+        onKeyDown={(event) => {
+          if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {
+            event.preventDefault();
+            show();
+          }
+        }}
+      >
+        {chosen ? (
+          <img
+            className="pk-select-art"
+            src={chosen.img}
+            width={26}
+            height={26}
+            alt=""
+            decoding="async"
+          />
+        ) : (
+          <span className="pk-select-art" data-blank="true" aria-hidden="true">
+            <Plus />
+          </span>
+        )}
+        <span className="pk-select-text">
+          {chosen ? chosen.name : placeholder}
+        </span>
+        <span className="pk-select-caret" aria-hidden="true">
+          <Caret dir="down" />
+        </span>
+      </button>
+      {open ? (
+        <ul
+          id={listId}
+          ref={list}
+          className="pk-select-list"
+          role="listbox"
+          tabIndex={-1}
+          aria-label={placeholder}
+          aria-activedescendant={`${id}-opt-${active}`}
+          onKeyDown={onKey}
+        >
+          {options.map((g, index) => (
+            <li
+              key={g.id}
+              id={`${id}-opt-${index}`}
+              data-index={index}
+              role="option"
+              aria-selected={g.id === value}
+              data-active={String(index === active)}
+              onPointerMove={() => index !== active && setActive(index)}
+              onClick={() => pick(index)}
+            >
+              <img
+                src={g.img}
+                width={26}
+                height={26}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+              <span>{g.name}</span>
+              {g.id === value ? <Tick /> : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
 export default class GameCards extends React.Component {
   constructor(props) {
     super(props);
@@ -383,26 +536,15 @@ export default class GameCards extends React.Component {
           </label>
           {/* Never opens on a game nobody chose: the first in the list was one press away from
               a request for a game the teammate had not read. */}
-          {/* Styled through data-empty rather than :invalid and required: this select sits
-              inside the settings form, and a required control with nothing in it blocks the
-              Save button at the bottom of the page. */}
-          <select
+          {/* Buttons, not a required form control: this sits inside the settings form, and a
+              required control with nothing in it would block the Save button at the bottom. */}
+          <GameSelect
             id="pk-ask-game"
-            data-empty={String(!chosen)}
+            options={open}
             value={chosen}
-            onChange={(event) =>
-              this.setState({ ask: event.target.value, asked: false })
-            }
-          >
-            <option value="" disabled>
-              Choose a game
-            </option>
-            {open.map((g) => (
-              <option key={g.id} value={g.id}>
-                {g.name}
-              </option>
-            ))}
-          </select>
+            placeholder="Choose a game"
+            onChange={(id) => this.setState({ ask: id, asked: false })}
+          />
           <button
             type="button"
             className="pk-button"
