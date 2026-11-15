@@ -137,7 +137,7 @@ CONTENT_SOURCES['/games/social'] = ['src/content/hubs.ts', CITABLE];
  * and the date to write when the two disagree.
  */
 export const CONTENT_UPDATED: Record<string, string> = {
-  '/': '2026-11-14',
+  '/': '2026-11-15',
   '/terms': '2026-11-12',
   '/privacy': '2026-11-12',
   // The price survey was read and written on 10 November 2026, which is also
@@ -333,6 +333,14 @@ for (const path of [
   ...Object.keys(coachFormats).map((slug) => `/games/${slug}/coaching`),
 ])
   CONTENT_UPDATED[path] = '2026-11-13';
+/**
+ * 15 November 2026: the "not affiliated with" disclaimers on /terms and
+ * /trust-and-safety name every game owner, built from the game list, so the
+ * newer games' owners (KRAFTON, Embark Studios, Marvel) are no longer missing.
+ * /privacy shares the legal source file and so shares the date.
+ */
+for (const path of ['/terms', '/privacy', '/trust-and-safety'])
+  CONTENT_UPDATED[path] = '2026-11-15';
 
 /** What git knows about the last two changes to one page's copy. */
 export type ContentHistory = {

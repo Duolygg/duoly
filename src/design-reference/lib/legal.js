@@ -1,4 +1,5 @@
 import { SITE, LEGAL_UPDATED } from './site';
+import { GAME_OWNERS } from './games';
 
 // The text of the Terms and Privacy pages (components/LegalPage.jsx renders it).
 // Everything here describes how Duoly really works: upfront payment, the 5-minute auto-cancel, the Duoly
@@ -27,7 +28,7 @@ export const TERMS = {
     { id: 'about', title: 'What Duoly is', blocks: [
       'Duoly (“we”, “us”) runs duoly.gg, a platform where players (“customers”) book sessions with vetted, rank-verified players (“teammates”): ranked duos, team fills, social games, Gamer Girl sessions and coaching, across the games listed on the site.',
       'Every session is played **together**: the teammate joins your lobby and plays alongside you, on their own account. Duoly is not an account-sharing or “boosting” service, and we never play on your account.',
-      'Duoly is not affiliated with, endorsed or sponsored by Riot Games, Valve, Epic Games, Activision, Electronic Arts, Ubisoft, Blizzard, NetEase, Psyonix, Mojang, Embark Studios, The Pokémon Company or any other game publisher. All game names and logos belong to their owners.'
+      `Duoly is not affiliated with, endorsed or sponsored by ${GAME_OWNERS.join(', ')} or any other game publisher. All game names and logos belong to their owners.`
     ] },
     { id: 'accounts', title: 'Your account', blocks: [
       'You need a free account to book. You can sign up with email and password, Google or Discord.',

@@ -12,6 +12,7 @@ import { faqSchema } from '../server/seo/offers';
 import { officialPageSchema } from '../server/seo/official';
 import { BUSINESS, BUSINESS_LOCATION } from '../site/entity';
 import { SUPPORT_EMAIL } from '../site/nav';
+import { GAME_OWNERS } from '../design-reference/lib/games';
 import {
   PLAYABLE_GAMES,
   SHARE_PERCENT,
@@ -102,7 +103,7 @@ const faq: [string, string][] = [
   ],
   [
     'Is Duoly allowed by the game publishers?',
-    `Playing together in a party is allowed in all ${PLAYABLE_GAMES} games Duoly sells, and Duoly never signs into a customer account. Duoly is not affiliated with, endorsed or sponsored by Riot Games, Valve, Epic Games, Blizzard, NetEase or any other publisher, and every player stays responsible for the rules of the game being played.`,
+    `Playing together in a party is allowed in all ${PLAYABLE_GAMES} games Duoly sells, and Duoly never signs into a customer account. Duoly is not affiliated with, endorsed or sponsored by ${GAME_OWNERS.join(', ')} or any other publisher, and every player stays responsible for the rules of the game being played.`,
   ],
   [
     'How do I get my data deleted?',

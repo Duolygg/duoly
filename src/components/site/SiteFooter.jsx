@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { FOOTER_COLUMNS } from '../../site/nav';
+import { GAME_OWNERS_TEXT } from '../../design-reference/lib/games';
 import BundledImage from '../shared/BundledImage';
 
 // The one footer for every page (Fabian 2026-10-30): the homepage design with "Made in Vienna",
@@ -257,9 +258,7 @@ export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
           <span
             style={{ fontSize: '13px', color: '#7C7199', maxWidth: '360px' }}
           >
-            © 2026 Duoly. Not affiliated with Riot Games, Valve, Epic Games,
-            Activision Blizzard, EA, Ubisoft, NetEase, Mojang or The Pokémon
-            Company.
+            © 2026 Duoly. Not affiliated with {GAME_OWNERS_TEXT}.
           </span>
         </div>
         <div
