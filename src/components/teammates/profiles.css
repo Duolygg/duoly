@@ -540,8 +540,9 @@
    descender of the name. */
 .tp-rankline {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 8px 10px;
   margin-top: 16px !important;
   font-size: 17px;
   color: #f1e9fc;
@@ -552,6 +553,52 @@
   height: 22px;
   flex: none;
   border-radius: 5px;
+}
+/* The other games: overlapping icons and a count, jumping to the Games section. */
+.tp-rankline-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 3px 10px 3px 4px;
+  border: 1px solid rgba(214, 187, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(214, 187, 255, 0.06);
+  color: #d6bbff;
+  font-size: 14px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  transition:
+    border-color 0.16s ease,
+    background-color 0.16s ease;
+}
+.tp-rankline-more:focus-visible {
+  outline: 2px solid #d6bbff;
+  outline-offset: 2px;
+}
+@media (hover: hover) {
+  .tp-rankline-more:hover {
+    border-color: rgba(214, 187, 255, 0.4);
+    background: rgba(214, 187, 255, 0.12);
+  }
+}
+.tp-rankline-stack {
+  display: inline-flex;
+}
+.tp-rankline-stack img {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 0 2px #120b22;
+}
+.tp-rankline-stack img + img {
+  margin-left: -6px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-rankline-more {
+    transition: none;
+  }
 }
 /*
  * One colour per game for the game card's emblem and its wash. These are tints chosen to sit on
@@ -2020,6 +2067,7 @@ a.tp-stat:hover > strong {
   .tp-rankline {
     grid-area: rank;
     margin-top: 16px !important;
+    margin-bottom: 8px !important;
   }
   .tp-aside {
     --avatar: 112px;

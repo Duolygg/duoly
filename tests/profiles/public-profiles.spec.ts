@@ -793,8 +793,18 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
   expect(await capOffset()).toBeLessThanOrEqual(2);
   /* An unverified teammate gets the icon and the game, with no rank and no tick. */
   await page.goto('/teammates/rhea');
-  await expect(page.locator('.tp-rankline')).toHaveText('League of Legends');
+  await expect(page.locator('.tp-rankline > span').first()).toHaveText(
+    'League of Legends',
+  );
   await expect(page.locator('.tp-rankline .tp-verified')).toHaveCount(0);
+  /* Every other game rides along as a pill that names them all and opens the games. */
+  const more = page.locator('.tp-rankline-more');
+  await expect(more).toHaveText('1 more game');
+  await expect(more).toHaveAttribute(
+    'aria-label',
+    'Also plays Teamfight Tactics',
+  );
+  await expect(more).toHaveAttribute('href', '#games');
   await expect(page.locator('.tp-rankline-icon')).toHaveCount(1);
   expect(await capOffset()).toBeLessThanOrEqual(2);
   await page.goto('/teammates/nyx');

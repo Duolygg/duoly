@@ -69,6 +69,15 @@ const fixture = fixturesEnabled();
 const reviews = p ? profileReviewLayout(p.reviews) : { lead: null, rest: [] };
 const featuredRank =
   p?.games.find((g) => g.game === p.featuredGame && g.verified)?.rank ?? null;
+/** Every other game this teammate plays, shown as small icons after the featured one. */
+const otherGames = p
+  ? p.games
+      .filter((g) => g.game !== p.featuredGame)
+      .map((g) => profileGame(g.game))
+  : [];
+const otherGamesLabel = otherGames.length
+  ? `Also plays ${new Intl.ListFormat('en', { type: 'conjunction' }).format(otherGames.map((g) => g.name))}`
+  : '';
 /** One sentence about taking orders right now, reused by the closing band. */
 const availability = p?.online ? 'Online now, ready to play' : null;
 /*
@@ -593,6 +602,25 @@ const shareApps: {
                     />
                   </svg>
                 </span>
+              )}
+              {otherGames.length > 0 && (
+                <a
+                  class="tp-rankline-more"
+                  href="#games"
+                  aria-label={otherGamesLabel}
+                  title={otherGamesLabel}
+                >
+                  <span class="tp-rankline-stack" aria-hidden="true">
+                    {otherGames.slice(0, 3).map((game) => (
+                      <img src={game.img} width="20" height="20" alt="" />
+                    ))}
+                  </span>
+                  <span aria-hidden="true">
+                    {otherGames.length === 1
+                      ? '1 more game'
+                      : `${otherGames.length} more games`}
+                  </span>
+                </a>
               )}
               {p.gamerGirl && (
                 <span
