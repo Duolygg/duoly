@@ -1,61 +1,51 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   HEADER_HEIGHT,
   HEADER_MAX_BYTES,
+  HEADER_MIN_PICK_WIDTH,
   HEADER_QUALITY_STEPS,
   HEADER_WIDTH,
-  dataUrlBytes,
-  dragOffset,
   encodeHeader,
-  headerCrop,
+  encodeHeaderCrop,
   headerFileError,
 } from '../../src/components/account/header-image';
+import { dataUrlBytes } from '../../src/components/account/crop-image';
 
 /*
- * The browser side of the header upload: the 3:1 crop the teammate positions, and the WebP the
- * endpoint will accept. The canvas calls themselves need a browser (tests/teammate-browser
- * drives those); everything that decides what gets drawn and sent is here.
+ * The header's own contract: the 1500 by 500 strip the teammate frames with react-easy-crop, and
+ * the WebP the endpoint will accept. The generic crop and encode helpers are covered in
+ * tests/unit/image-crop.test.ts; a real canvas and a real file picker are driven by
+ * tests/teammate-browser/public-profile-header.spec.ts.
  */
 
 const base64 = (bytes: number) =>
   'data:image/webp;base64,' + 'A'.repeat(Math.ceil(bytes / 3) * 4);
 
-describe('headerCrop', () => {
-  it('keeps the full height of a picture that is wider than the strip', () => {
-    const crop = headerCrop(4000, 1000);
-    expect(crop).toEqual({ sx: 500, sy: 0, sw: 3000, sh: 1000 });
-  });
-  it('keeps the full width of a picture that is taller than the strip', () => {
-    const crop = headerCrop(1200, 900);
-    expect(crop).toEqual({ sx: 0, sy: 250, sw: 1200, sh: 400 });
-  });
-  it('has nothing to position when the picture is already 3:1', () => {
-    const crop = headerCrop(HEADER_WIDTH, HEADER_HEIGHT);
-    expect(crop).toEqual({ sx: 0, sy: 0, sw: 1500, sh: 500 });
-  });
-  it('slides the window to the edges and no further', () => {
-    expect(headerCrop(1200, 900, 0.5, 0).sy).toBe(0);
-    expect(headerCrop(1200, 900, 0.5, 1).sy).toBe(500);
-    expect(headerCrop(1200, 900, 0.5, 9).sy).toBe(500);
-    expect(headerCrop(1200, 900, 0.5, -4).sy).toBe(0);
-    expect(headerCrop(4000, 1000, 0, 0.5).sx).toBe(0);
-    expect(headerCrop(4000, 1000, 1, 0.5).sx).toBe(1000);
-  });
-  it('centres by default and treats a broken offset as centred', () => {
-    expect(headerCrop(1200, 900).sy).toBe(250);
-    expect(headerCrop(1200, 900, Number.NaN, Number.NaN).sy).toBe(250);
-  });
-});
+const image = (naturalWidth: number, naturalHeight: number) =>
+  ({ naturalWidth, naturalHeight }) as unknown as HTMLImageElement;
 
-describe('dataUrlBytes', () => {
-  it('counts the bytes a base64 payload carries, padding included', () => {
-    expect(dataUrlBytes('data:image/webp;base64,AAAA')).toBe(3);
-    expect(dataUrlBytes('data:image/webp;base64,AAA=')).toBe(2);
-    expect(dataUrlBytes('data:image/webp;base64,AA==')).toBe(1);
-    expect(dataUrlBytes('')).toBe(0);
-    expect(dataUrlBytes('not a data url')).toBe(0);
-  });
-});
+/** A canvas that answers `reply` and keeps every drawImage call. */
+function stubCanvas(
+  reply: (type: string, quality: number) => string = () => base64(90 * 1024),
+) {
+  const drawn: number[][] = [];
+  const canvas = {
+    width: 0,
+    height: 0,
+    getContext: () => ({
+      imageSmoothingEnabled: false,
+      imageSmoothingQuality: 'low',
+      clearRect: () => {},
+      drawImage: (_image: unknown, ...numbers: number[]) =>
+        void drawn.push(numbers),
+    }),
+    toDataURL: (type: string, quality: number) => reply(type, quality),
+  };
+  vi.stubGlobal('document', { createElement: () => canvas });
+  return { canvas, drawn };
+}
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe('encodeHeader', () => {
   it('keeps the first quality whose file fits, starting at the 0.8 the contract asks for', () => {
@@ -92,6 +82,55 @@ describe('encodeHeader', () => {
   });
 });
 
+describe('encodeHeaderCrop', () => {
+  it('paints the framed rectangle as the 1500 by 500 strip the endpoint stores', () => {
+    const { canvas, drawn } = stubCanvas(() => base64(90 * 1024));
+    const result = encodeHeaderCrop(image(4000, 3000), {
+      x: 240.3,
+      y: 900.7,
+      width: 3000,
+      height: 1000,
+    });
+    expect([canvas.width, canvas.height]).toEqual([
+      HEADER_WIDTH,
+      HEADER_HEIGHT,
+    ]);
+    expect(drawn).toEqual([[240, 901, 3000, 1000, 0, 0, 1500, 500]]);
+    expect(result).toMatchObject({ ok: true, quality: 0.8 });
+    if (result.ok) {
+      expect(result.url.startsWith('data:image/webp;base64,')).toBe(true);
+      expect(dataUrlBytes(result.url)).toBeLessThanOrEqual(HEADER_MAX_BYTES);
+    }
+  });
+  it('falls back to JPEG where a canvas cannot write WebP', () => {
+    stubCanvas((type) =>
+      type === 'image/webp'
+        ? 'data:image/png;base64,AAAA'
+        : 'data:image/jpeg;base64,' + 'A'.repeat(4000),
+    );
+    const result = encodeHeaderCrop(image(1500, 500), {
+      x: 0,
+      y: 0,
+      width: 1500,
+      height: 500,
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok)
+      expect(result.url.startsWith('data:image/jpeg;base64,')).toBe(true);
+  });
+  it('reports a picture that will not come down to 300 KB', () => {
+    stubCanvas(() => base64(HEADER_MAX_BYTES + 8192));
+    expect(
+      encodeHeaderCrop(image(4000, 3000), {
+        x: 0,
+        y: 0,
+        width: 3000,
+        height: 1000,
+      }),
+    ).toEqual({ ok: false, reason: 'size' });
+  });
+});
+
 describe('headerFileError', () => {
   it('says what is wrong in plain words, and nothing when the file is usable', () => {
     expect(headerFileError({ type: 'image/jpeg', size: 2_000_000 })).toBe('');
@@ -109,17 +148,9 @@ describe('headerFileError', () => {
   });
 });
 
-describe('dragOffset', () => {
-  it('moves the window against the drag, so the picture follows the pointer', () => {
-    /* 600 picture pixels outside the window, 2 picture pixels per preview pixel: dragging
-       60 preview pixels right moves the window 120 pixels left, a fifth of the room. */
-    expect(dragOffset(0.5, 60, 2, 600)).toBeCloseTo(0.3, 5);
-    expect(dragOffset(0.5, -60, 2, 600)).toBeCloseTo(0.7, 5);
-  });
-  it('stops at the edges of the picture and ignores a strip with no room', () => {
-    expect(dragOffset(0.5, 9000, 2, 600)).toBe(0);
-    expect(dragOffset(0.5, -9000, 2, 600)).toBe(1);
-    expect(dragOffset(0.4, 500, 2, 0)).toBe(0.4);
-    expect(dragOffset(0.4, 500, 0, 600)).toBe(0.4);
+describe('the strip itself', () => {
+  it('stays the 3:1 shape the public profile draws, with a floor on the picked file', () => {
+    expect(HEADER_WIDTH / HEADER_HEIGHT).toBe(3);
+    expect(HEADER_MIN_PICK_WIDTH).toBe(300);
   });
 });

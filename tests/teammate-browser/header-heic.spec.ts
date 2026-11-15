@@ -34,7 +34,7 @@ test('a real HEIC is either decoded or rejected before upload', async ({
   });
   if (browserName === 'webkit') {
     await expect(page.getByRole('img', { name: 'Header crop' })).toBeVisible();
-    await page.getByRole('button', { name: 'Upload header' }).click();
+    await page.getByRole('button', { name: 'Save header' }).click();
     await expect(page.getByText('Header saved.')).toBeVisible();
     expect(calls).toBe(1);
   } else {

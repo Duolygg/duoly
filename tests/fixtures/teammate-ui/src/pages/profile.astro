@@ -1,0 +1,39 @@
+---
+// Isolated fictional browser fixture, never a production route: the profile screen on its own,
+// so the picture cropper can be driven without an account. `?avatar=` sets the picture the
+// teammate has now, and `?public` adds the public profile block, so the header crop can be
+// driven on the screen it really sits on, beside the preview card.
+import SiteLayout from '../../../../../src/layouts/SiteLayout.astro';
+import LiveProfile from '../../../../../src/components/account/LiveProfile';
+const avatar =
+  Astro.url.searchParams.get('avatar') || '/assets/avatars/avatar-2.png';
+const viewer = {
+  id: '44444444-4444-4444-8444-444444444444',
+  name: 'Fabian',
+  email: 'fabian@example.invalid',
+  image: avatar,
+  provider: 'email' as const,
+  role: 'teammate' as const,
+};
+---
+
+<SiteLayout title="Local profile fixture | Duoly" bare>
+  <LiveProfile
+    viewer={viewer}
+    profile={{
+      id: viewer.id,
+      name: viewer.name,
+      country: 'at',
+      image: avatar,
+      bio: 'Calm comms, I explain my calls.',
+      languages: ['English'],
+      currency: null,
+    }}
+    csrf="fixture-csrf"
+    discord={null}
+    discordResult=""
+    discordEnabled={false}
+    publicProfilesEnabled={Astro.url.searchParams.has('public')}
+    client:load
+  />
+</SiteLayout>

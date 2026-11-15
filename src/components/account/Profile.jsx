@@ -5,7 +5,18 @@
 // props from LiveProfile.tsx (save through /api/me/profile with CSRF, Discord link). Teammates write
 // a bio and pick languages (ledger #2); the rules are enforced again on the server and in Postgres.
 import React from 'react';
+import ImageCropper from './ImageCropper';
 import PublicProfileSettings from './PublicProfileSettings';
+import {
+  AVATAR_MAX_BYTES,
+  AVATAR_MAX_PICK_BYTES,
+  canvasReady,
+  encodeAvatar,
+  framedImageStyle,
+  loadPickedImage,
+  pickFileError,
+  releasePicked,
+} from './crop-image';
 import TrophySettings from './TrophySettings';
 import {
   COUNTRIES,
@@ -23,51 +34,18 @@ const ROLE = {
   teammate: { label: 'Teammate', back: 'Back to orders' },
   admin: { label: 'Admin', back: 'Back to admin' },
 };
+/* The two places an uploaded picture is printed, at the sizes they print it: the account menu
+   in the site header (32px) and the teammate cards (.tp-card-art, 72px). */
+const AVATAR_PREVIEWS = [
+  { size: 32, label: 'Menu' },
+  { size: 72, label: 'Cards' },
+];
 const PROVIDER = {
   email: 'email code',
   discord: 'Discord',
   google: 'Google',
   password: 'email and password',
 };
-
-// Crops a picked image to a centred square and shrinks it to 256×256, so uploads stay small (~20 KB).
-async function toAvatar(file) {
-  if (!file || !/^image\//.test(file.type))
-    throw new Error('Pick a picture (JPG, PNG or WebP).');
-  if (file.size > 15 * 1024 * 1024)
-    throw new Error('That picture is over 15 MB. Try a smaller one.');
-  const url = URL.createObjectURL(file);
-  try {
-    const img = await new Promise((resolve, reject) => {
-      const i = new Image();
-      i.onload = () => resolve(i);
-      i.onerror = () =>
-        reject(new Error('That picture couldn’t be opened. Try a JPG or PNG.'));
-      i.src = url;
-    });
-    const side = Math.min(img.naturalWidth, img.naturalHeight);
-    const c = document.createElement('canvas');
-    c.width = 256;
-    c.height = 256;
-    c.getContext('2d').drawImage(
-      img,
-      (img.naturalWidth - side) / 2,
-      (img.naturalHeight - side) / 2,
-      side,
-      side,
-      0,
-      0,
-      256,
-      256,
-    );
-    let out = c.toDataURL('image/webp', 0.86);
-    if (out.indexOf('data:image/webp') !== 0)
-      out = c.toDataURL('image/jpeg', 0.88);
-    return out;
-  } finally {
-    URL.revokeObjectURL(url);
-  }
-}
 
 // Profile settings for every role: picture, name, country; teammates also write a bio and pick languages.
 export default class Profile extends React.Component {
@@ -93,17 +71,26 @@ export default class Profile extends React.Component {
       open: false,
       hi: 0,
       drag: false,
+      /** The picked file while the cropper is open: the decoded image and its object URL. */
+      crop: null,
+      /** The frame the cropper is showing right now, so the preview card can follow it. */
+      cropArea: null,
+      /** What the header block wants the preview card's banner to show, if anything. */
+      headerArt: null,
     };
     this.fileRef = React.createRef();
     this.searchRef = React.createRef();
   }
 
   componentDidMount() {
+    this.unmounted = false;
     // the ?discord=… result from connecting is shown once; don't keep it in the address bar
     if (this.props.discordResult)
       window.history.replaceState(null, '', '/profile');
   }
   componentWillUnmount() {
+    this.unmounted = true;
+    releasePicked(this.state.crop);
     clearTimeout(this._doneT);
   }
 
@@ -120,18 +107,56 @@ export default class Profile extends React.Component {
     );
   }
 
+  /** Opens the cropper on a picked file. Nothing is encoded until the crop is saved. */
   async pickFile(file) {
     if (this.props.accountOnly && !this.props.allowUpload)
       return this.setState({
         error: 'Uploads are not available yet. Choose an avatar below.',
       });
+    const problem = pickFileError(file, AVATAR_MAX_PICK_BYTES);
+    if (problem) return this.setState({ error: problem });
+    /* A browser that hands back no canvas context would save an empty picture, so the pick is
+       turned away before the cropper opens rather than at the end of it. */
+    if (!canvasReady())
+      return this.setState({
+        error:
+          'This browser could not prepare the picture. Try a smaller JPG or PNG.',
+      });
     this.setState({ error: '' });
     try {
-      const upload = await toAvatar(file);
-      this.setState({ upload });
+      const picked = await loadPickedImage(file);
+      if (this.unmounted) return releasePicked(picked);
+      this.closeCrop({ crop: picked });
     } catch (e) {
-      this.setState({ error: e.message });
+      if (!this.unmounted) this.setState({ error: e.message });
     }
+  }
+
+  /** Leaves the cropper and lets go of the picked file. */
+  closeCrop(patch) {
+    releasePicked(this.state.crop);
+    this.setState({ crop: null, cropArea: null, ...patch });
+  }
+
+  /** Turns the chosen frame into the 256 by 256 picture the save sends. */
+  saveCrop(area) {
+    let encoded;
+    try {
+      encoded = encodeAvatar(this.state.crop.image, area);
+    } catch {
+      return this.setState({
+        error:
+          'This browser could not prepare the picture. Try a smaller JPG or PNG.',
+      });
+    }
+    if (!encoded.ok)
+      return this.setState({
+        error:
+          encoded.reason === 'format'
+            ? 'This browser could not save the picture. Try another browser.'
+            : `That picture stays over ${Math.round(AVATAR_MAX_BYTES / 1024)} KB even at low quality. Try one with less fine detail.`,
+      });
+    this.closeCrop({ upload: encoded.url, error: '' });
   }
 
   async save() {
@@ -180,7 +205,7 @@ export default class Profile extends React.Component {
   }
 
   discard() {
-    this.setState({ ...this.state.saved, upload: '', error: '' });
+    this.closeCrop({ ...this.state.saved, upload: '', error: '' });
   }
 
   async unlinkDiscord() {
@@ -403,6 +428,40 @@ export default class Profile extends React.Component {
     }
   }
 
+  /**
+   * The strip across the top of the preview card. It carries the teammate's own header once
+   * there is one, and follows the frame while a new one is being positioned, so the card on
+   * the left answers the question the crop below it is asking.
+   */
+  renderPreviewBanner() {
+    const art = this.state.headerArt;
+    const framed = art && framedImageStyle(art.box, art);
+    return (
+      <div
+        className="dc-live-frame"
+        style={{
+          height: '74px',
+          background:
+            'linear-gradient(120deg, rgba(214, 187, 255, .28), rgba(240, 166, 255, .14) 55%, rgba(158, 230, 255, .12))',
+        }}
+      >
+        {art && !framed ? (
+          <img
+            src={art.src}
+            alt=""
+            style={{
+              display: 'block',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        ) : null}
+        {framed ? <img src={art.src} alt="" style={framed} /> : null}
+      </div>
+    );
+  }
+
   render() {
     const s = this.state;
     const u = this.props.user;
@@ -413,6 +472,8 @@ export default class Profile extends React.Component {
     const dirty = this.dirty();
     const list = s.open ? this.matches() : [];
     const shownName = s.name.trim() || u.name;
+    /* Where the picked picture sits inside a round box, while the circle is being framed. */
+    const cropping = s.crop && framedImageStyle(s.cropArea, s.crop.image);
 
     const card = {
       padding: '22px',
@@ -516,29 +577,48 @@ export default class Profile extends React.Component {
               className="pf-preview"
               style={{ ...card, padding: '0', overflow: 'hidden' }}
             >
+              {this.renderPreviewBanner()}
+              {/* Above the strip, because the picture laps over it. */}
               <div
                 style={{
-                  height: '74px',
-                  background:
-                    'linear-gradient(120deg, rgba(214, 187, 255, .28), rgba(240, 166, 255, .14) 55%, rgba(158, 230, 255, .12))',
+                  position: 'relative',
+                  padding: '0 22px 22px',
+                  marginTop: '-40px',
                 }}
-              />
-              <div style={{ padding: '0 22px 22px', marginTop: '-40px' }}>
+              >
                 <img
                   src={avatar}
                   alt=""
                   width="80"
                   height="80"
                   referrerPolicy="no-referrer"
+                  hidden={!!cropping}
                   style={{
                     width: '80px',
                     height: '80px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    display: 'block',
+                    display: cropping ? 'none' : 'block',
                     boxShadow: '0 0 0 4px #120B22',
                   }}
                 />
+                {/* While the circle is being framed the card shows the frame itself, so the
+                    choice is judged where the picture is actually printed. */}
+                {cropping ? (
+                  <span
+                    className="dc-live-frame"
+                    aria-hidden="true"
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '50%',
+                      background: '#090414',
+                      boxShadow: '0 0 0 4px #120B22',
+                    }}
+                  >
+                    <img src={s.crop.url} alt="" style={cropping} />
+                  </span>
+                ) : null}
                 <div
                   style={{
                     marginTop: '12px',
@@ -658,229 +738,263 @@ export default class Profile extends React.Component {
                 <h2 id="pf-pic" style={h2}>
                   Profile picture
                 </h2>
-                <p style={help}>
-                  {this.props.accountOnly
-                    ? 'Choose one of the avatars below. Uploads are not available yet.'
-                    : 'JPG, PNG or WebP. We crop it to a square for you.'}
-                </p>
-                <div
-                  style={{
-                    marginTop: '18px',
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'center',
-                    gap: '18px',
-                  }}
-                >
-                  <button
-                    type="button"
-                    disabled={
-                      !!this.props.accountOnly && !this.props.allowUpload
-                    }
-                    aria-label="Upload a new profile picture"
-                    onClick={() =>
-                      this.fileRef.current && this.fileRef.current.click()
-                    }
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      if (!s.drag) this.setState({ drag: true });
-                    }}
-                    onDragLeave={() => this.setState({ drag: false })}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      this.setState({ drag: false });
-                      this.pickFile(e.dataTransfer.files[0]);
-                    }}
-                    className="pf-avatar"
-                    style={{
-                      position: 'relative',
-                      flex: '0 0 auto',
-                      width: '96px',
-                      height: '96px',
-                      padding: '0',
-                      borderRadius: '50%',
-                      border: s.drag
-                        ? '2px dashed #D6BBFF'
-                        : '2px solid transparent',
-                      background: 'transparent',
-                      transform: 'none',
-                    }}
-                  >
-                    <img
-                      src={avatar}
-                      alt=""
-                      width="92"
-                      height="92"
-                      referrerPolicy="no-referrer"
-                      style={{
-                        width: '92px',
-                        height: '92px',
-                        borderRadius: '50%',
-                        objectFit: 'cover',
-                        display: 'block',
-                      }}
+                {/* While the circle is open the cropper carries the only line of instructions,
+                    so this one steps aside rather than saying the same thing twice. */}
+                {s.crop ? null : (
+                  <p style={help}>
+                    {this.props.accountOnly && !this.props.allowUpload
+                      ? 'Choose one of the avatars below. Uploads are not available yet.'
+                      : 'JPG, PNG or WebP. You choose the part that shows.'}
+                  </p>
+                )}
+                {s.crop ? (
+                  <div style={{ marginTop: '14px' }}>
+                    <ImageCropper
+                      src={s.crop.url}
+                      shape="round"
+                      aspect={1}
+                      naturalWidth={s.crop.image.naturalWidth}
+                      naturalHeight={s.crop.image.naturalHeight}
+                      minRatio={0.85}
+                      maxRatio={1.35}
+                      maxStageWidth={420}
+                      maxStageHeight={420}
+                      label="Profile picture crop"
+                      previews={AVATAR_PREVIEWS}
+                      saveLabel="Use this picture"
+                      cancelLabel="Cancel"
+                      onPreview={(area) => this.setState({ cropArea: area })}
+                      onSave={(area) => this.saveCrop(area)}
+                      onCancel={() => this.closeCrop({})}
                     />
-                    <span
-                      aria-hidden="true"
-                      className="pf-avatar-cam"
-                      style={{
-                        position: 'absolute',
-                        right: '0',
-                        bottom: '0',
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '50%',
-                        background: '#D6BBFF',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#17092E"
-                        strokeWidth="2.4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                        <circle cx="12" cy="13" r="4" />
-                      </svg>
-                    </span>
-                  </button>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '8px',
-                      minWidth: '0',
-                    }}
-                  >
+                  </div>
+                ) : (
+                  <>
                     <div
-                      style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}
+                      style={{
+                        marginTop: '18px',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
+                        gap: '18px',
+                      }}
                     >
                       <button
                         type="button"
+                        disabled={
+                          !!this.props.accountOnly && !this.props.allowUpload
+                        }
+                        aria-label="Upload a new profile picture"
                         onClick={() =>
                           this.fileRef.current && this.fileRef.current.click()
                         }
-                        style={{
-                          ...ghost,
-                          border: 'none',
-                          background: '#D6BBFF',
-                          color: '#17092E',
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          if (!s.drag) this.setState({ drag: true });
                         }}
-                      >
-                        <svg
-                          aria-hidden="true"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                          <path d="M17 8l-5-5-5 5" />
-                          <path d="M12 3v12" />
-                        </svg>
-                        Upload photo
-                      </button>
-                      {custom ? (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            this.setState({ image: '', upload: '' })
-                          }
-                          style={ghost}
-                        >
-                          {u.providerImage
-                            ? 'Use my ' +
-                              (PROVIDER[u.provider] || 'account') +
-                              ' picture'
-                            : 'Remove'}
-                        </button>
-                      ) : null}
-                    </div>
-                    <span style={{ fontSize: '12.5px', color: '#6A6086' }}>
-                      Or drag a picture onto your avatar.
-                    </span>
-                  </div>
-                  <input
-                    disabled={
-                      !!this.props.accountOnly && !this.props.allowUpload
-                    }
-                    ref={this.fileRef}
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp,image/gif"
-                    onChange={(e) => {
-                      this.pickFile(e.target.files[0]);
-                      e.target.value = '';
-                    }}
-                    style={{ display: 'none' }}
-                  />
-                </div>
-
-                <div
-                  style={{
-                    marginTop: '20px',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    color: '#A79DC4',
-                  }}
-                >
-                  Or pick one of ours
-                </div>
-                <div
-                  role="radiogroup"
-                  aria-label="Duoly avatars"
-                  className="pf-presets"
-                  style={{ marginTop: '10px' }}
-                >
-                  {PRESETS.map((src, i) => {
-                    const on = !s.upload && s.image === src;
-                    return (
-                      <button
-                        key={src}
-                        type="button"
-                        role="radio"
-                        aria-checked={on ? 'true' : 'false'}
-                        aria-label={'Avatar ' + (i + 1)}
-                        onClick={() =>
-                          this.setState({ image: src, upload: '' })
-                        }
+                        onDragLeave={() => this.setState({ drag: false })}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          this.setState({ drag: false });
+                          this.pickFile(e.dataTransfer.files[0]);
+                        }}
+                        className="pf-avatar"
                         style={{
-                          padding: '3px',
+                          position: 'relative',
+                          flex: '0 0 auto',
+                          width: '96px',
+                          height: '96px',
+                          padding: '0',
                           borderRadius: '50%',
-                          border: on
-                            ? '2px solid #D6BBFF'
+                          border: s.drag
+                            ? '2px dashed #D6BBFF'
                             : '2px solid transparent',
                           background: 'transparent',
                           transform: 'none',
-                          opacity: on || !custom ? '1' : '.7',
                         }}
                       >
                         <img
-                          src={src}
+                          src={avatar}
                           alt=""
-                          width="44"
-                          height="44"
+                          width="92"
+                          height="92"
+                          referrerPolicy="no-referrer"
                           style={{
-                            width: '44px',
-                            height: '44px',
+                            width: '92px',
+                            height: '92px',
                             borderRadius: '50%',
+                            objectFit: 'cover',
                             display: 'block',
                           }}
                         />
+                        <span
+                          aria-hidden="true"
+                          className="pf-avatar-cam"
+                          style={{
+                            position: 'absolute',
+                            right: '0',
+                            bottom: '0',
+                            width: '30px',
+                            height: '30px',
+                            borderRadius: '50%',
+                            background: '#D6BBFF',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <svg
+                            width="15"
+                            height="15"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#17092E"
+                            strokeWidth="2.4"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                            <circle cx="12" cy="13" r="4" />
+                          </svg>
+                        </span>
                       </button>
-                    );
-                  })}
-                </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          minWidth: '0',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '8px',
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={() =>
+                              this.fileRef.current &&
+                              this.fileRef.current.click()
+                            }
+                            style={{
+                              ...ghost,
+                              border: 'none',
+                              background: '#D6BBFF',
+                              color: '#17092E',
+                            }}
+                          >
+                            <svg
+                              aria-hidden="true"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                              <path d="M17 8l-5-5-5 5" />
+                              <path d="M12 3v12" />
+                            </svg>
+                            Upload photo
+                          </button>
+                          {custom ? (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                this.setState({ image: '', upload: '' })
+                              }
+                              style={ghost}
+                            >
+                              {u.providerImage
+                                ? 'Use my ' +
+                                  (PROVIDER[u.provider] || 'account') +
+                                  ' picture'
+                                : 'Remove'}
+                            </button>
+                          ) : null}
+                        </div>
+                        <span style={{ fontSize: '12.5px', color: '#6A6086' }}>
+                          Or drag a picture onto your avatar.
+                        </span>
+                      </div>
+                      <input
+                        disabled={
+                          !!this.props.accountOnly && !this.props.allowUpload
+                        }
+                        ref={this.fileRef}
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        onChange={(e) => {
+                          this.pickFile(e.target.files[0]);
+                          e.target.value = '';
+                        }}
+                        style={{ display: 'none' }}
+                      />
+                    </div>
+
+                    <div
+                      style={{
+                        marginTop: '20px',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        color: '#A79DC4',
+                      }}
+                    >
+                      Or pick one of ours
+                    </div>
+                    <div
+                      role="radiogroup"
+                      aria-label="Duoly avatars"
+                      className="pf-presets"
+                      style={{ marginTop: '10px' }}
+                    >
+                      {PRESETS.map((src, i) => {
+                        const on = !s.upload && s.image === src;
+                        return (
+                          <button
+                            key={src}
+                            type="button"
+                            role="radio"
+                            aria-checked={on ? 'true' : 'false'}
+                            aria-label={'Avatar ' + (i + 1)}
+                            onClick={() =>
+                              this.setState({ image: src, upload: '' })
+                            }
+                            style={{
+                              padding: '3px',
+                              borderRadius: '50%',
+                              border: on
+                                ? '2px solid #D6BBFF'
+                                : '2px solid transparent',
+                              background: 'transparent',
+                              transform: 'none',
+                              opacity: on || !custom ? '1' : '.7',
+                            }}
+                          >
+                            <img
+                              src={src}
+                              alt=""
+                              width="44"
+                              height="44"
+                              style={{
+                                width: '44px',
+                                height: '44px',
+                                borderRadius: '50%',
+                                display: 'block',
+                              }}
+                            />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
               </section>
 
               {/* about */}
@@ -1259,7 +1373,11 @@ export default class Profile extends React.Component {
 
               {teammate && this.props.publicProfilesEnabled ? (
                 <>
-                  <PublicProfileSettings csrf={this.props.csrf} name={u.name} />
+                  <PublicProfileSettings
+                    csrf={this.props.csrf}
+                    name={u.name}
+                    onHeaderArt={(art) => this.setState({ headerArt: art })}
+                  />
                   <TrophySettings csrf={this.props.csrf} />
                 </>
               ) : null}

@@ -22,6 +22,7 @@ export default defineConfig({
         'react/jsx-dev-runtime',
         'zod',
         '@supabase/supabase-js',
+        'react-easy-crop',
       ],
     },
     server: {
