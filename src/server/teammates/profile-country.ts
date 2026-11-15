@@ -8,9 +8,8 @@ export function profileCountry(value: string | null | undefined): {
   const key = value?.trim().toLowerCase();
   if (!key) return null;
   const country = COUNTRIES.find(
-    ([code, name]) => code === key || name.toLowerCase() === key,
+    ([code, name]) => code === key || name?.toLowerCase() === key,
   );
-  return country
-    ? { code: country[0], name: country[1].replaceAll('&', 'and') }
-    : null;
+  const [code, name] = country ?? [];
+  return code && name ? { code, name: name.replaceAll('&', 'and') } : null;
 }

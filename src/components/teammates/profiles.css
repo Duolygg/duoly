@@ -932,28 +932,82 @@
 }
 .tp-idlist {
   display: grid;
+  gap: 18px;
   width: 100%;
+  min-width: 0;
   margin: 0;
+  padding: 16px 0 2px;
+  border-top: 1px solid var(--tp-line);
 }
 .tp-idlist > div {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 10px 0;
-  border-top: 1px solid var(--tp-line);
-  font-size: 14px;
-}
-.tp-idlist > div:last-child {
-  border-bottom: 1px solid var(--tp-line);
+  display: grid;
+  gap: 7px;
+  min-width: 0;
 }
 .tp-idlist dt {
-  color: var(--tp-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e3d7f0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+}
+.tp-idlist dt svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: #d6bbff;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .tp-idlist dd {
+  min-width: 0;
+  margin: 0 0 0 24px;
+  color: #f8f4ff;
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.tp-idlanguages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   margin: 0;
-  color: #fff;
-  text-align: right;
+  padding: 0;
+  list-style: none;
+}
+.tp-idlanguages li {
+  max-width: 100%;
+  padding: 3px 10px;
+  border: 1px solid #d6bbff1a;
+  border-radius: 6px;
+  background: #d6bbff0a;
+  color: #eee5fa;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.tp-idcountry {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.tp-idcountry img {
+  width: 18px;
+  height: 13px;
+  flex: none;
+  align-self: flex-start;
+  margin-top: 5px;
+  border-radius: 3px;
+  object-fit: cover;
+  outline: 1px solid #ffffff30;
+  outline-offset: -1px;
+}
+.tp-idcountry span {
+  min-width: 0;
 }
 
 /* ---------- hero body and booking ---------- */
