@@ -183,6 +183,33 @@ update public.teammate_order_access set gg_access=false where user_id='fe150000-
 select pg_temp.ok((pg_temp.profile('fe150000-0000-4000-8000-000000000002')).featured_games = array['val','lol'],
   'losing Gamer Girl access drops Social and leaves the rest featured');
 
+-- ---- every supported approved game's details can be saved together ------------------------------
+update public.teammate_order_access
+  set approved_games=array['lol','val','cs2','fn','cod','apex','r6','mr','ow','dota','rl','wow','pubg','tft','fc','arc','wr','mc','dl','pu'],
+      enabled_games=array['lol','val','cs2','fn','cod','apex','r6','mr','ow','dota','rl','wow','pubg','tft','fc','arc','wr','mc','dl','pu']
+  where user_id='fe150000-0000-4000-8000-000000000003';
+create temp table all_game_settings as
+  select pg_temp.settings('juno',pg_catalog.jsonb_build_object(
+    'featuredGame',approved_games[1], 'featuredGames',pg_catalog.to_jsonb(approved_games),
+    'games',(select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object('game',g,'roles',array['Main'],'picks','[]'::jsonb))
+      from pg_catalog.unnest(approved_games) g))) payload
+  from public.teammate_order_access where user_id='fe150000-0000-4000-8000-000000000003';
+grant select on all_game_settings to authenticated;
+set local role authenticated;
+select pg_temp.as_user('fe150000-0000-4000-8000-000000000003');
+select pg_temp.ok(pg_catalog.jsonb_array_length(public.teammate_public_profile_save(payload)#>'{settings,games}') = 20,
+  'twenty unique approved supported game details save without a numeric cap') from all_game_settings;
+select pg_temp.ok(public.teammate_public_profile_save(pg_catalog.jsonb_set(payload,'{games}',
+  (payload->'games') || pg_catalog.jsonb_build_array(payload#>'{games,0}')))#>>'{error,code}' = '400',
+  'removing the cap does not permit duplicate game details') from all_game_settings;
+select pg_temp.ok(public.teammate_public_profile_save(pg_catalog.jsonb_set(payload,'{games}',
+  (payload->'games') || '[{"game":"social","roles":[],"picks":[]}]'::jsonb))#>>'{error,code}' = '400',
+  'removing the cap does not permit unapproved game details') from all_game_settings;
+reset role;
+select pg_temp.ok((select pg_catalog.count(*) = 20 from public.teammate_game_ranks
+  where user_id='fe150000-0000-4000-8000-000000000003' and roles=array['Main']),
+  'all twenty game detail rows were actually persisted');
+
 -- ---- grants and security ------------------------------------------------------------------------
 select pg_temp.ok(not has_function_privilege('anon','public.teammate_public_featured_valid(text[])','execute')
   and not has_function_privilege('authenticated','public.teammate_public_featured_valid(text[])','execute'),
@@ -223,6 +250,24 @@ select pg_temp.ok((select pg_catalog.count(*) from pg_catalog.pg_proc p
   'and both new functions run on an empty search path too');
 select pg_temp.ok(public.public_teammate_profile('maelle')::text !~* '(example\.invalid|fe150000-0000)',
   'no identifiers or emails exposed');
+
+-- Exercise the endpoint's real column-only write, including an unpublished stale profile.
+-- The role has no SELECT on featured_games; trigger NEW/OLD and the CHECK must still work.
+set local role service_role;
+update public.teammate_public_profiles
+  set header_image='https://example.supabase.co/storage/v1/object/public/profile-headers/fe150000-0000-4000-8000-000000000001/0123456789abcdef.jpg',
+      updated_at=pg_catalog.clock_timestamp()
+  where user_id='fe150000-0000-4000-8000-000000000001';
+reset role;
+select pg_temp.ok((pg_temp.profile('fe150000-0000-4000-8000-000000000001')).header_image =
+  'https://example.supabase.co/storage/v1/object/public/profile-headers/fe150000-0000-4000-8000-000000000001/0123456789abcdef.jpg',
+  'service-role header writes work even when an unpublished profile has lost approval');
+select pg_temp.ok((select pg_catalog.array_agg(t.tgname::text order by t.tgname) =
+  array['teammate_public_featured_guard','teammate_public_featured_sync']
+  from pg_catalog.pg_trigger t where t.tgrelid='public.teammate_public_profiles'::regclass
+    and t.tgname in ('teammate_public_featured_guard','teammate_public_featured_sync')
+    and t.tgtype & 2 = 2),
+  'the approval guard is a BEFORE trigger ordered before the sync trigger');
 
 select 'featured_games: ' || pg_catalog.count(*) || ' checks passed' as result from pg_temp.assertions;
 rollback;

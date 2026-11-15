@@ -1,6 +1,7 @@
 import type { APIContext } from 'astro';
 import { beforeEach, expect, it, vi } from 'vitest';
 import { accountContext } from '../../src/server/auth/context';
+import { ACCESS_GAMES } from '../../src/design-reference/lib/games.js';
 import { publicProfileSettings } from '../../src/server/teammates/settings-handlers';
 vi.mock('../../src/server/auth/context', () => ({ accountContext: vi.fn() }));
 const rpc = vi.fn();
@@ -100,6 +101,31 @@ it('forwards every approved featured game without a numeric list cap', async () 
       featuredGame: 'g0',
       featuredGames,
       games: [{ game: 'val', roles: ['Controller'], picks: ['omen'] }],
+    },
+  });
+});
+it('saves details for every unique approved supported game without a numeric cap', async () => {
+  const approvedGames = ACCESS_GAMES.map((game) => game.id);
+  expect(approvedGames.length).toBeGreaterThan(16);
+  expect(new Set(approvedGames).size).toBe(approvedGames.length);
+  const games = approvedGames.map((game) => ({ game, roles: [], picks: [] }));
+  rpc.mockResolvedValueOnce({
+    data: { settings, approvedGames },
+    error: null,
+  });
+  expect(
+    (
+      await run(
+        ctx({ ...settings, games, featuredGames: approvedGames, csrf: token }),
+      )
+    ).status,
+  ).toBe(200);
+  expect(rpc).toHaveBeenCalledWith('teammate_public_profile_save', {
+    p_settings: {
+      ...settings,
+      games,
+      featuredGame: approvedGames[0],
+      featuredGames: approvedGames,
     },
   });
 });

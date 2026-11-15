@@ -274,14 +274,12 @@ export const publicProfileSettingsSchema = z.object({
   vibeTags: z.array(z.enum(VIBE_TAGS)).max(VIBE_TAGS_MAX),
   showCountry: z.boolean(),
   coaching: z.boolean(),
-  games: z
-    .array(
-      z.object({
-        game: z.string().min(2).max(8),
-        roles: z.array(z.string().min(1).max(24)).max(PROFILE_ROLES_MAX),
-        picks: z.array(z.string().min(1).max(24)).max(PROFILE_PICKS_MAX),
-      }),
-    )
-    .max(16),
+  games: z.array(
+    z.object({
+      game: z.string().min(2).max(8),
+      roles: z.array(z.string().min(1).max(24)).max(PROFILE_ROLES_MAX),
+      picks: z.array(z.string().min(1).max(24)).max(PROFILE_PICKS_MAX),
+    }),
+  ),
 });
 export type PublicProfileSettings = z.infer<typeof publicProfileSettingsSchema>;

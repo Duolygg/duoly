@@ -161,7 +161,7 @@ begin
     or pg_catalog.jsonb_typeof(s->'published')<>'boolean' or pg_catalog.jsonb_typeof(s->'showCountry')<>'boolean' or pg_catalog.jsonb_typeof(s->'coaching')<>'boolean'
     or pg_catalog.jsonb_typeof(s->'slug')<>'string' or not public.teammate_public_slug_valid(s->>'slug')
     or pg_catalog.jsonb_typeof(s->'vibeTags')<>'array' or pg_catalog.jsonb_array_length(s->'vibeTags')>3
-    or pg_catalog.jsonb_typeof(s->'games')<>'array' or pg_catalog.jsonb_array_length(s->'games')>16
+    or pg_catalog.jsonb_typeof(s->'games')<>'array'
     or s->>'accent' is null or s->>'accent' not in ('violet','lavender','cyan','mint','pink','coral','gold','ice')
     or s->>'banner' is null or s->>'banner' not in ('grid','slash','pulse','orbit')
     or not public.teammate_public_approved(u,s->>'featuredGame') then
