@@ -88,6 +88,17 @@ export const MIN_GAMES_FOR_WINRATE = 20;
 export const INDEX_MIN_BIO_CHARS = 60;
 export const INDEX_MIN_SESSIONS = 5;
 export const PROFILE_REVIEWS_MAX = 6;
+/**
+ * Sanity bound on the stored featured list, and the same number the column check in
+ * 20261115120000_featured_games.sql holds. It is not a product limit: a teammate features as many
+ * of their approved games as they like, and the catalog ships fewer games than this.
+ */
+export const FEATURED_GAMES_MAX = 32;
+/** Featured games drawn in the rank line before the rest fold into the pill: phone, then desktop. */
+export const RANKLINE_INLINE_PHONE = 2;
+export const RANKLINE_INLINE_DESKTOP = 3;
+/** Featured games named in the title and the search description. */
+export const META_GAMES_MAX = 2;
 export const RELATED_MAX = 3;
 export const GAME_SECTION_MAX = 6;
 
@@ -164,7 +175,14 @@ export type PublicTeammateProfile = {
   accent: ProfileAccent;
   banner: ProfileBanner;
   vibeTags: VibeTag[];
+  /** The lead featured game, always featuredGames[0]. Kept for every reader written before the list. */
   featuredGame: string;
+  /**
+   * Every game this teammate features, in the order they chose. Optional only so a profile read
+   * from a database without 20261115120000_featured_games.sql still parses; featuredGamesOf()
+   * is the one place that falls back to the single field.
+   */
+  featuredGames?: string[];
   coaching: boolean;
   /** Verified Gamer Girl: takes Gamer Girl orders in every game and Social sessions (20261114130000). */
   gamerGirl?: boolean;
@@ -222,6 +240,22 @@ export function profileIndexable(p: PublicTeammateProfile): boolean {
   );
 }
 
+/**
+ * The featured games of a profile or of a settings payload, in order, with no duplicates and
+ * never empty while the profile has a game at all. Every reader goes through here, so a payload
+ * from before the list existed and one from after it look the same to the pages.
+ */
+export function featuredGamesOf(p: {
+  featuredGame?: string;
+  featuredGames?: string[];
+}): string[] {
+  const list = (p.featuredGames ?? []).filter(
+    (game, i, all) => game && all.indexOf(game) === i,
+  );
+  if (list.length) return list;
+  return p.featuredGame ? [p.featuredGame] : [];
+}
+
 /** What a teammate can save from the settings block. Ranks are not here: admins set them. */
 export const publicProfileSettingsSchema = z.object({
   published: z.boolean(),
@@ -231,6 +265,13 @@ export const publicProfileSettingsSchema = z.object({
   accent: z.enum(PROFILE_ACCENT_KEYS as [ProfileAccent, ...ProfileAccent[]]),
   banner: z.enum(PROFILE_BANNERS),
   featuredGame: z.string().min(2).max(8),
+  /* Optional on the wire, exactly as teammate_public_profile_save() takes it: a client that only
+     knows the single field still saves, and one value means a one element list. */
+  featuredGames: z
+    .array(z.string().min(2).max(8))
+    .min(1)
+    .max(FEATURED_GAMES_MAX)
+    .optional(),
   vibeTags: z.array(z.enum(VIBE_TAGS)).max(VIBE_TAGS_MAX),
   showCountry: z.boolean(),
   coaching: z.boolean(),

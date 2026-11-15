@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import {
+  FEATURED_GAMES_MAX,
   PROFILE_ACCENT_KEYS,
   PROFILE_BANNERS,
   TRUST_TIERS,
@@ -57,6 +58,9 @@ export const publicProfileSchema = z.object({
   banner: z.enum(PROFILE_BANNERS),
   vibeTags: z.array(z.enum(VIBE_TAGS)).max(3),
   featuredGame: z.string(),
+  /* 20261115120000_featured_games.sql; optional until that migration has run, and
+     featuredGamesOf() falls back to the single field when it is not there. */
+  featuredGames: z.array(z.string()).min(1).max(FEATURED_GAMES_MAX).optional(),
   coaching: z.boolean(),
   /* 20261114130000_gamer_girl_profiles.sql; optional until that migration has run. */
   gamerGirl: z.boolean().optional(),
