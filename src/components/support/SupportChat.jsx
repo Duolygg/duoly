@@ -6,6 +6,7 @@ import { newChatPing, playChatPing } from '../../design-reference/lib/sounds';
 import { createSupportFetch } from './support-data';
 import BundledImage from '../shared/BundledImage';
 import BookingTicket from './BookingTicket';
+import { CHAT_DRAFT_MAX } from './open-chat';
 
 // The support chat (Sparky + the real admins). Talks to /api/support, which knows who's asking:
 // guests, customers (their order and wallet) and teammates (payouts, deposit, games). When someone asks
@@ -54,7 +55,7 @@ export default class SupportChat extends React.Component {
     // Only visitors with a live chat poll in the background (for the unread
     // badge). Everyone else makes no request until they open the widget.
     if (hasActiveChat()) this.load().then(() => this.schedule());
-    // other parts of the page can open the chat: window.dispatchEvent(new Event('duoly:chat')) (e.g. /contact)
+    // other parts of the page can open the chat: see components/support/open-chat.ts
     window.addEventListener('duoly:chat', this.openFromPage);
     // On a phone the "Need a hand?" bubble sits over the page itself, so it steps aside once
     // the visitor scrolls on: they are browsing, and the chat button stays right there.
@@ -112,7 +113,18 @@ export default class SupportChat extends React.Component {
     }
     if (lift !== this.state.lift) this.setState({ lift });
   };
-  openFromPage = async () => {
+  // A page can hand over a drafted first message (openSupportChat('I'd like to add ...')). It
+  // only ever lands in the input: nothing is sent, so the visitor reads it and presses send
+  // themselves. Something they typed is left alone; a second drafted message replaces the first.
+  openFromPage = async (event) => {
+    const draft = event && event.detail && event.detail.draft;
+    if (typeof draft === 'string' && draft.trim()) {
+      const text = draft.trim().slice(0, CHAT_DRAFT_MAX);
+      if (!this.state.draft || this.state.draft === this.drafted) {
+        this.drafted = text;
+        this.setState({ draft: text });
+      }
+    }
     await this.load();
     if (!this.state.open) this.toggle();
   };

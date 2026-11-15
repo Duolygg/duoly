@@ -1,0 +1,330 @@
+{
+  "game": "mr",
+  "name": "Marvel Rivals",
+  "collectedAt": "2026-11-15",
+  "roles": {
+    "applies": true,
+    "label": "Role",
+    "options": [
+      {
+        "id": "vanguard",
+        "name": "Vanguard"
+      },
+      {
+        "id": "duelist",
+        "name": "Duelist"
+      },
+      {
+        "id": "strategist",
+        "name": "Strategist"
+      },
+      {
+        "id": "flex",
+        "name": "Flex"
+      }
+    ]
+  },
+  "picks": {
+    "applies": true,
+    "label": "Heroes",
+    "max": 5,
+    "options": [
+      {
+        "id": "adam-warlock",
+        "name": "Adam Warlock",
+        "role": "strategist",
+        "aliases": ["adam", "warlock"]
+      },
+      {
+        "id": "angela",
+        "name": "Angela",
+        "role": "vanguard"
+      },
+      {
+        "id": "black-cat",
+        "name": "Black Cat",
+        "role": "duelist",
+        "aliases": ["felicia hardy"]
+      },
+      {
+        "id": "black-panther",
+        "name": "Black Panther",
+        "role": "duelist"
+      },
+      {
+        "id": "black-widow",
+        "name": "Black Widow",
+        "role": "duelist"
+      },
+      {
+        "id": "blade",
+        "name": "Blade",
+        "role": "duelist"
+      },
+      {
+        "id": "captain-america",
+        "name": "Captain America",
+        "role": "vanguard",
+        "aliases": ["cap", "steve rogers"]
+      },
+      {
+        "id": "cloak-dagger",
+        "name": "Cloak & Dagger",
+        "role": "strategist",
+        "aliases": ["c&d", "cloak and dagger", "cloak", "dagger", "cnd"]
+      },
+      {
+        "id": "cyclops",
+        "name": "Cyclops",
+        "role": "duelist"
+      },
+      {
+        "id": "daredevil",
+        "name": "Daredevil",
+        "role": "duelist"
+      },
+      {
+        "id": "deadpool",
+        "name": "Deadpool",
+        "role": "vanguard",
+        "aliases": ["dp", "wade wilson"]
+      },
+      {
+        "id": "devil-dinosaur",
+        "name": "Devil Dinosaur",
+        "role": "vanguard",
+        "aliases": ["devil dino", "dino"]
+      },
+      {
+        "id": "doctor-strange",
+        "name": "Doctor Strange",
+        "role": "vanguard",
+        "aliases": ["dr strange", "strange"]
+      },
+      {
+        "id": "elsa-bloodstone",
+        "name": "Elsa Bloodstone",
+        "role": "duelist"
+      },
+      {
+        "id": "emma-frost",
+        "name": "Emma Frost",
+        "role": "vanguard"
+      },
+      {
+        "id": "gambit",
+        "name": "Gambit",
+        "role": "strategist"
+      },
+      {
+        "id": "gorr-the-god-butcher",
+        "name": "Gorr the God Butcher",
+        "role": "duelist",
+        "aliases": ["gorr"]
+      },
+      {
+        "id": "groot",
+        "name": "Groot",
+        "role": "vanguard"
+      },
+      {
+        "id": "hawkeye",
+        "name": "Hawkeye",
+        "role": "duelist"
+      },
+      {
+        "id": "hela",
+        "name": "Hela",
+        "role": "duelist"
+      },
+      {
+        "id": "hulk",
+        "name": "Hulk",
+        "role": "vanguard"
+      },
+      {
+        "id": "human-torch",
+        "name": "Human Torch",
+        "role": "duelist"
+      },
+      {
+        "id": "invisible-woman",
+        "name": "Invisible Woman",
+        "role": "strategist",
+        "aliases": ["sue storm", "sue"]
+      },
+      {
+        "id": "iron-fist",
+        "name": "Iron Fist",
+        "role": "duelist"
+      },
+      {
+        "id": "iron-man",
+        "name": "Iron Man",
+        "role": "duelist"
+      },
+      {
+        "id": "jeff-the-land-shark",
+        "name": "Jeff the Land Shark",
+        "role": "strategist",
+        "aliases": ["jeff"]
+      },
+      {
+        "id": "jubilee",
+        "name": "Jubilee",
+        "role": "strategist"
+      },
+      {
+        "id": "loki",
+        "name": "Loki",
+        "role": "strategist"
+      },
+      {
+        "id": "luna-snow",
+        "name": "Luna Snow",
+        "role": "strategist"
+      },
+      {
+        "id": "magik",
+        "name": "Magik",
+        "role": "duelist"
+      },
+      {
+        "id": "magneto",
+        "name": "Magneto",
+        "role": "vanguard"
+      },
+      {
+        "id": "mantis",
+        "name": "Mantis",
+        "role": "strategist"
+      },
+      {
+        "id": "mister-fantastic",
+        "name": "Mister Fantastic",
+        "role": "duelist",
+        "aliases": ["mr fantastic", "reed richards"]
+      },
+      {
+        "id": "moon-knight",
+        "name": "Moon Knight",
+        "role": "duelist"
+      },
+      {
+        "id": "namor",
+        "name": "Namor",
+        "role": "duelist"
+      },
+      {
+        "id": "nightcrawler",
+        "name": "Nightcrawler",
+        "role": "strategist",
+        "aliases": ["kurt", "kurt wagner"]
+      },
+      {
+        "id": "peni-parker",
+        "name": "Peni Parker",
+        "role": "vanguard"
+      },
+      {
+        "id": "phoenix",
+        "name": "Phoenix",
+        "role": "duelist"
+      },
+      {
+        "id": "psylocke",
+        "name": "Psylocke",
+        "role": "duelist"
+      },
+      {
+        "id": "rocket-raccoon",
+        "name": "Rocket Raccoon",
+        "role": "strategist",
+        "aliases": ["rocket"]
+      },
+      {
+        "id": "rogue",
+        "name": "Rogue",
+        "role": "vanguard"
+      },
+      {
+        "id": "scarlet-witch",
+        "name": "Scarlet Witch",
+        "role": "duelist",
+        "aliases": ["wanda", "wanda maximoff"]
+      },
+      {
+        "id": "spider-man",
+        "name": "Spider-Man",
+        "role": "duelist",
+        "aliases": ["spiderman", "spidey", "peter parker"]
+      },
+      {
+        "id": "squirrel-girl",
+        "name": "Squirrel Girl",
+        "role": "duelist"
+      },
+      {
+        "id": "star-lord",
+        "name": "Star-Lord",
+        "role": "duelist",
+        "aliases": ["starlord", "peter quill"]
+      },
+      {
+        "id": "storm",
+        "name": "Storm",
+        "role": "duelist"
+      },
+      {
+        "id": "the-hood",
+        "name": "The Hood",
+        "role": "vanguard",
+        "aliases": ["hood"]
+      },
+      {
+        "id": "the-punisher",
+        "name": "The Punisher",
+        "role": "duelist",
+        "aliases": ["punisher", "frank castle"]
+      },
+      {
+        "id": "the-thing",
+        "name": "The Thing",
+        "role": "vanguard",
+        "aliases": ["thing", "ben grimm"]
+      },
+      {
+        "id": "thor",
+        "name": "Thor",
+        "role": "vanguard"
+      },
+      {
+        "id": "ultron",
+        "name": "Ultron",
+        "role": "strategist"
+      },
+      {
+        "id": "venom",
+        "name": "Venom",
+        "role": "vanguard"
+      },
+      {
+        "id": "white-fox",
+        "name": "White Fox",
+        "role": "strategist",
+        "aliases": ["whitefox"]
+      },
+      {
+        "id": "winter-soldier",
+        "name": "Winter Soldier",
+        "role": "duelist",
+        "aliases": ["bucky", "bucky barnes"]
+      },
+      {
+        "id": "wolverine",
+        "name": "Wolverine",
+        "role": "duelist"
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "game": "arc",
+  "name": "ARC Raiders",
+  "collectedAt": "2026-11-15",
+  "roles": {
+    "applies": false,
+    "label": "Role",
+    "options": []
+  },
+  "picks": {
+    "applies": false,
+    "label": "Picks",
+    "max": 5,
+    "options": []
+  }
+}

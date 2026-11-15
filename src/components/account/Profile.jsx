@@ -18,6 +18,8 @@ import {
   releasePicked,
 } from './crop-image';
 import TrophySettings from './TrophySettings';
+import LanguagePicker from './LanguagePicker';
+import { LANGUAGES_MAX } from '../../contracts/account';
 import {
   COUNTRIES,
   COUNTRY_NAME,
@@ -1317,55 +1319,14 @@ export default class Profile extends React.Component {
                       <legend style={{ ...label, padding: '0' }}>
                         Languages you play in{' '}
                         <span style={{ fontWeight: '500', color: '#8E84AB' }}>
-                          · up to 6
+                          · up to {LANGUAGES_MAX}
                         </span>
                       </legend>
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '8px',
-                        }}
-                      >
-                        {this.props.languages.map((l) => {
-                          const on = s.languages.includes(l);
-                          const full = !on && s.languages.length >= 6;
-                          return (
-                            <button
-                              key={l}
-                              type="button"
-                              aria-pressed={on ? 'true' : 'false'}
-                              disabled={full}
-                              onClick={() =>
-                                this.setState({
-                                  languages: on
-                                    ? s.languages.filter((x) => x !== l)
-                                    : s.languages.concat(l),
-                                })
-                              }
-                              style={{
-                                minHeight: '36px',
-                                padding: '0 13px',
-                                borderRadius: '999px',
-                                fontSize: '13.5px',
-                                fontWeight: '600',
-                                transform: 'none',
-                                cursor: full ? 'not-allowed' : 'pointer',
-                                opacity: full ? '.4' : '1',
-                                border: on
-                                  ? '1px solid rgba(94, 234, 168, .45)'
-                                  : '1px solid rgba(196, 170, 255, .16)',
-                                background: on
-                                  ? 'rgba(94, 234, 168, .1)'
-                                  : 'transparent',
-                                color: on ? GREEN : '#D9D1F0',
-                              }}
-                            >
-                              {l}
-                            </button>
-                          );
-                        })}
-                      </div>
+                      <LanguagePicker
+                        value={s.languages}
+                        allowed={this.props.languages}
+                        onChange={(languages) => this.setState({ languages })}
+                      />
                     </fieldset>
                   </>
                 ) : null}

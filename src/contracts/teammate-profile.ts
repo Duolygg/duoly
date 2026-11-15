@@ -67,6 +67,9 @@ export const VIBE_TAGS = [
 ] as const;
 export type VibeTag = (typeof VIBE_TAGS)[number];
 export const VIBE_TAGS_MAX = 3;
+/** Caps a teammate can feature per game. The database checks the same two numbers. */
+export const PROFILE_ROLES_MAX = 3;
+export const PROFILE_PICKS_MAX = 5;
 
 /** Trust tiers, same ids and thresholds as src/design-reference/lib/trust.js. */
 export const TRUST_TIERS = [
@@ -235,8 +238,8 @@ export const publicProfileSettingsSchema = z.object({
     .array(
       z.object({
         game: z.string().min(2).max(8),
-        roles: z.array(z.string().min(1).max(24)).max(3),
-        picks: z.array(z.string().min(1).max(24)).max(5),
+        roles: z.array(z.string().min(1).max(24)).max(PROFILE_ROLES_MAX),
+        picks: z.array(z.string().min(1).max(24)).max(PROFILE_PICKS_MAX),
       }),
     )
     .max(16),

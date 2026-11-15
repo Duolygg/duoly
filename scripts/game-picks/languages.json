@@ -1,0 +1,222 @@
+{
+  "collectedAt": "2026-11-15",
+  "max": 6,
+  "languages": [
+    {
+      "id": "English",
+      "endonym": "English",
+      "iso6391": "en",
+      "suggestedOrder": 1
+    },
+    {
+      "id": "German",
+      "endonym": "Deutsch",
+      "iso6391": "de",
+      "suggestedOrder": 2
+    },
+    {
+      "id": "French",
+      "endonym": "français",
+      "iso6391": "fr",
+      "suggestedOrder": 3
+    },
+    {
+      "id": "Dutch",
+      "endonym": "Nederlands",
+      "iso6391": "nl",
+      "suggestedOrder": 4
+    },
+    {
+      "id": "Polish",
+      "endonym": "polski",
+      "iso6391": "pl",
+      "suggestedOrder": 5
+    },
+    {
+      "id": "Spanish",
+      "endonym": "español",
+      "iso6391": "es",
+      "suggestedOrder": 6
+    },
+    {
+      "id": "Italian",
+      "endonym": "italiano",
+      "iso6391": "it",
+      "suggestedOrder": 7
+    },
+    {
+      "id": "Swedish",
+      "endonym": "svenska",
+      "iso6391": "sv",
+      "suggestedOrder": 8
+    },
+    {
+      "id": "Danish",
+      "endonym": "dansk",
+      "iso6391": "da",
+      "suggestedOrder": 9
+    },
+    {
+      "id": "Norwegian",
+      "endonym": "norsk",
+      "iso6391": "no",
+      "suggestedOrder": 10
+    },
+    {
+      "id": "Finnish",
+      "endonym": "suomi",
+      "iso6391": "fi",
+      "suggestedOrder": 11
+    },
+    {
+      "id": "Portuguese",
+      "endonym": "português",
+      "iso6391": "pt",
+      "suggestedOrder": 12
+    },
+    {
+      "id": "Turkish",
+      "endonym": "Türkçe",
+      "iso6391": "tr",
+      "suggestedOrder": 13
+    },
+    {
+      "id": "Romanian",
+      "endonym": "română",
+      "iso6391": "ro",
+      "suggestedOrder": 14
+    },
+    {
+      "id": "Czech",
+      "endonym": "čeština",
+      "iso6391": "cs",
+      "suggestedOrder": 15
+    },
+    {
+      "id": "Ukrainian",
+      "endonym": "українська",
+      "iso6391": "uk",
+      "suggestedOrder": 16
+    },
+    {
+      "id": "Russian",
+      "endonym": "русский",
+      "iso6391": "ru",
+      "suggestedOrder": 17
+    },
+    {
+      "id": "Hungarian",
+      "endonym": "magyar",
+      "iso6391": "hu",
+      "suggestedOrder": 18
+    },
+    {
+      "id": "Greek",
+      "endonym": "Ελληνικά",
+      "iso6391": "el",
+      "suggestedOrder": 19
+    },
+    {
+      "id": "Bulgarian",
+      "endonym": "български",
+      "iso6391": "bg",
+      "suggestedOrder": 20
+    },
+    {
+      "id": "Slovak",
+      "endonym": "slovenčina",
+      "iso6391": "sk",
+      "suggestedOrder": 21
+    },
+    {
+      "id": "Serbian",
+      "endonym": "српски",
+      "iso6391": "sr",
+      "suggestedOrder": 22
+    },
+    {
+      "id": "Croatian",
+      "endonym": "hrvatski",
+      "iso6391": "hr",
+      "suggestedOrder": 23
+    },
+    {
+      "id": "Lithuanian",
+      "endonym": "lietuvių",
+      "iso6391": "lt",
+      "suggestedOrder": 24
+    },
+    {
+      "id": "Latvian",
+      "endonym": "latviešu",
+      "iso6391": "lv",
+      "suggestedOrder": 25
+    },
+    {
+      "id": "Estonian",
+      "endonym": "eesti",
+      "iso6391": "et",
+      "suggestedOrder": 26
+    },
+    {
+      "id": "Slovenian",
+      "endonym": "slovenščina",
+      "iso6391": "sl",
+      "suggestedOrder": 27
+    },
+    {
+      "id": "Bosnian",
+      "endonym": "bosanski",
+      "iso6391": "bs",
+      "suggestedOrder": 28
+    },
+    {
+      "id": "Albanian",
+      "endonym": "shqip",
+      "iso6391": "sq",
+      "suggestedOrder": 29
+    },
+    {
+      "id": "Macedonian",
+      "endonym": "македонски",
+      "iso6391": "mk",
+      "suggestedOrder": 30
+    },
+    {
+      "id": "Catalan",
+      "endonym": "català",
+      "iso6391": "ca",
+      "suggestedOrder": 31
+    },
+    {
+      "id": "Icelandic",
+      "endonym": "íslenska",
+      "iso6391": "is",
+      "suggestedOrder": 32
+    },
+    {
+      "id": "Arabic",
+      "endonym": "العربية",
+      "iso6391": "ar",
+      "suggestedOrder": 33
+    },
+    {
+      "id": "Chinese",
+      "endonym": "中文",
+      "iso6391": "zh",
+      "suggestedOrder": 34
+    },
+    {
+      "id": "Japanese",
+      "endonym": "日本語",
+      "iso6391": "ja",
+      "suggestedOrder": 35
+    },
+    {
+      "id": "Korean",
+      "endonym": "한국어",
+      "iso6391": "ko",
+      "suggestedOrder": 36
+    }
+  ]
+}

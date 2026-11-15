@@ -1,6 +1,7 @@
 ---
 import ProductLayout from '../layouts/ProductLayout.astro';
 import LiveProfile from '../components/account/LiveProfile';
+import SupportChat from '../components/support/SupportChat';
 import { accountContext } from '../server/auth/context';
 import { publicProfilesEnabled } from '../server/teammates/public-profiles';
 import { DiscordResultSchema } from '../contracts/account';
@@ -45,4 +46,11 @@ const discordEnabled = !!account.config?.providers.discord;
       <p>We could not load your profile. Please try again shortly.</p>
     </section>
   )}
+  {/* The public profile block asks support for a game it cannot grant itself, and the character
+      picker asks about a character we do not list yet. Both open this chat with the message
+      already drafted (components/support/open-chat.ts), so the widget has to be on the page the
+      block lives on. Teammates only: they are the only role that sees those controls. */}
+  {identity?.viewer.role === 'teammate' ? (
+    <SupportChat csrf={csrf} dockAbove=".pk-bar" client:load />
+  ) : null}
 </ProductLayout>

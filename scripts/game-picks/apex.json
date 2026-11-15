@@ -1,0 +1,193 @@
+{
+  "game": "apex",
+  "name": "Apex Legends",
+  "collectedAt": "2026-11-15",
+  "roles": {
+    "applies": true,
+    "label": "Role",
+    "options": [
+      {
+        "id": "assault",
+        "name": "Assault"
+      },
+      {
+        "id": "skirmisher",
+        "name": "Skirmisher"
+      },
+      {
+        "id": "recon",
+        "name": "Recon"
+      },
+      {
+        "id": "support",
+        "name": "Support"
+      },
+      {
+        "id": "controller",
+        "name": "Controller"
+      },
+      {
+        "id": "flex",
+        "name": "Flex"
+      }
+    ]
+  },
+  "picks": {
+    "applies": true,
+    "label": "Legends",
+    "max": 5,
+    "options": [
+      {
+        "id": "alter",
+        "name": "Alter",
+        "role": "skirmisher"
+      },
+      {
+        "id": "ash",
+        "name": "Ash",
+        "role": "skirmisher"
+      },
+      {
+        "id": "axle",
+        "name": "Axle",
+        "role": "skirmisher"
+      },
+      {
+        "id": "ballistic",
+        "name": "Ballistic",
+        "role": "assault",
+        "aliases": ["balli"]
+      },
+      {
+        "id": "bangalore",
+        "name": "Bangalore",
+        "role": "assault"
+      },
+      {
+        "id": "bloodhound",
+        "name": "Bloodhound",
+        "role": "recon",
+        "aliases": ["bh", "blood hound"]
+      },
+      {
+        "id": "catalyst",
+        "name": "Catalyst",
+        "role": "controller",
+        "aliases": ["cat"]
+      },
+      {
+        "id": "caustic",
+        "name": "Caustic",
+        "role": "controller"
+      },
+      {
+        "id": "conduit",
+        "name": "Conduit",
+        "role": "support"
+      },
+      {
+        "id": "cryptolegend",
+        "name": "Crypto",
+        "role": "recon",
+        "aliases": ["crypto"]
+      },
+      {
+        "id": "fuse",
+        "name": "Fuse",
+        "role": "assault"
+      },
+      {
+        "id": "gibraltar",
+        "name": "Gibraltar",
+        "role": "support",
+        "aliases": ["gibby", "gib"]
+      },
+      {
+        "id": "horizon",
+        "name": "Horizon",
+        "role": "skirmisher"
+      },
+      {
+        "id": "lifeline",
+        "name": "Lifeline",
+        "role": "support",
+        "aliases": ["ll"]
+      },
+      {
+        "id": "loba",
+        "name": "Loba",
+        "role": "support"
+      },
+      {
+        "id": "mad-maggie",
+        "name": "Mad Maggie",
+        "role": "assault",
+        "aliases": ["maggie"]
+      },
+      {
+        "id": "mirage",
+        "name": "Mirage",
+        "role": "support"
+      },
+      {
+        "id": "newcastle",
+        "name": "Newcastle",
+        "role": "support",
+        "aliases": ["new castle"]
+      },
+      {
+        "id": "octane",
+        "name": "Octane",
+        "role": "skirmisher"
+      },
+      {
+        "id": "pathfinder",
+        "name": "Pathfinder",
+        "role": "skirmisher",
+        "aliases": ["path", "pathy"]
+      },
+      {
+        "id": "rampart",
+        "name": "Rampart",
+        "role": "controller"
+      },
+      {
+        "id": "revenant",
+        "name": "Revenant",
+        "role": "assault",
+        "aliases": ["rev"]
+      },
+      {
+        "id": "seer",
+        "name": "Seer",
+        "role": "recon"
+      },
+      {
+        "id": "sparrow",
+        "name": "Sparrow",
+        "role": "recon"
+      },
+      {
+        "id": "valkyrie",
+        "name": "Valkyrie",
+        "role": "recon",
+        "aliases": ["valk"]
+      },
+      {
+        "id": "vantage",
+        "name": "Vantage",
+        "role": "recon"
+      },
+      {
+        "id": "wattson",
+        "name": "Wattson",
+        "role": "controller"
+      },
+      {
+        "id": "wraith",
+        "name": "Wraith",
+        "role": "skirmisher"
+      }
+    ]
+  }
+}

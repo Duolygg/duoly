@@ -21,6 +21,7 @@ import {
   publicCardSchema,
   indexableSchema,
 } from './public-profile-schemas';
+import { withDisplayLabels } from './profile-labels';
 
 async function readRpc(
   fn: string,
@@ -67,17 +68,27 @@ export type ProfileLookup =
   | { status: 'gone' } // unpublished, hidden, suspended or deleted: 410
   | { status: 'missing' }; // never existed: 404
 
+/**
+ * The one place stored pick ids become names. Every public reader of a profile (the page, the
+ * generated prose, the quick view endpoint) comes through here, so none of them has to know that
+ * picks are stored as ids. See ./profile-labels.ts.
+ */
+const named = (lookup: ProfileLookup): ProfileLookup =>
+  lookup.status === 'ok'
+    ? { status: 'ok', profile: withDisplayLabels(lookup.profile) }
+    : lookup;
+
 export async function loadPublicProfile(slug: string): Promise<ProfileLookup> {
   if (fixturesEnabled()) {
     const { fixtureLookup } = await import('./profile-fixtures');
-    return fixtureLookup(slug);
+    return named(fixtureLookup(slug));
   }
   if (!slugValid(slug)) return { status: 'missing' };
   const result = publicLookupSchema.safeParse(
     await readRpc('public_teammate_profile', { p_slug: slug }),
   );
   // Preserve the schema-validated optional header URL in the public DTO.
-  return result.success ? result.data : { status: 'missing' };
+  return result.success ? named(result.data) : { status: 'missing' };
 }
 
 export async function loadTeammateCards(options: {

@@ -1,0 +1,202 @@
+{
+  "game": "dl",
+  "name": "Deadlock",
+  "collectedAt": "2026-11-15",
+  "roles": {
+    "applies": false,
+    "label": "Role",
+    "options": []
+  },
+  "picks": {
+    "applies": true,
+    "label": "Heroes",
+    "max": 5,
+    "options": [
+      {
+        "id": "abrams",
+        "name": "Abrams"
+      },
+      {
+        "id": "apollo",
+        "name": "Apollo"
+      },
+      {
+        "id": "baba",
+        "name": "Baba"
+      },
+      {
+        "id": "bebop",
+        "name": "Bebop"
+      },
+      {
+        "id": "billy",
+        "name": "Billy"
+      },
+      {
+        "id": "calico",
+        "name": "Calico"
+      },
+      {
+        "id": "celeste",
+        "name": "Celeste"
+      },
+      {
+        "id": "deadman-danny",
+        "name": "Deadman Danny",
+        "aliases": ["danny"]
+      },
+      {
+        "id": "drifter",
+        "name": "Drifter"
+      },
+      {
+        "id": "dynamo",
+        "name": "Dynamo"
+      },
+      {
+        "id": "graves",
+        "name": "Graves"
+      },
+      {
+        "id": "grey-talon",
+        "name": "Grey Talon",
+        "aliases": ["gray talon", "talon"]
+      },
+      {
+        "id": "haze",
+        "name": "Haze"
+      },
+      {
+        "id": "holliday",
+        "name": "Holliday"
+      },
+      {
+        "id": "infernus",
+        "name": "Infernus"
+      },
+      {
+        "id": "ivy",
+        "name": "Ivy"
+      },
+      {
+        "id": "kelvin",
+        "name": "Kelvin"
+      },
+      {
+        "id": "lady-geist",
+        "name": "Lady Geist",
+        "aliases": ["geist"]
+      },
+      {
+        "id": "lash",
+        "name": "Lash"
+      },
+      {
+        "id": "mcginnis",
+        "name": "McGinnis",
+        "aliases": ["mc ginnis"]
+      },
+      {
+        "id": "mina",
+        "name": "Mina"
+      },
+      {
+        "id": "mirage",
+        "name": "Mirage"
+      },
+      {
+        "id": "mo-krill",
+        "name": "Mo & Krill",
+        "aliases": ["mo", "krill", "mo and krill"]
+      },
+      {
+        "id": "nurse-harrow",
+        "name": "Nurse Harrow",
+        "aliases": ["harrow"]
+      },
+      {
+        "id": "paige",
+        "name": "Paige"
+      },
+      {
+        "id": "paradox",
+        "name": "Paradox"
+      },
+      {
+        "id": "pocket",
+        "name": "Pocket"
+      },
+      {
+        "id": "rat-king",
+        "name": "Rat King"
+      },
+      {
+        "id": "rem",
+        "name": "Rem"
+      },
+      {
+        "id": "seven",
+        "name": "Seven",
+        "aliases": ["7"]
+      },
+      {
+        "id": "shiv",
+        "name": "Shiv"
+      },
+      {
+        "id": "silver",
+        "name": "Silver"
+      },
+      {
+        "id": "sinclair",
+        "name": "Sinclair"
+      },
+      {
+        "id": "solomon",
+        "name": "Solomon"
+      },
+      {
+        "id": "the-doorman",
+        "name": "The Doorman",
+        "aliases": ["doorman"]
+      },
+      {
+        "id": "venator",
+        "name": "Venator"
+      },
+      {
+        "id": "victor",
+        "name": "Victor"
+      },
+      {
+        "id": "vindicta",
+        "name": "Vindicta"
+      },
+      {
+        "id": "violet",
+        "name": "Violet"
+      },
+      {
+        "id": "viscous",
+        "name": "Viscous",
+        "aliases": ["goo"]
+      },
+      {
+        "id": "vyper",
+        "name": "Vyper"
+      },
+      {
+        "id": "warden",
+        "name": "Warden"
+      },
+      {
+        "id": "wraith",
+        "name": "Wraith"
+      },
+      {
+        "id": "yamato",
+        "name": "Yamato"
+      }
+    ]
+  }
+}

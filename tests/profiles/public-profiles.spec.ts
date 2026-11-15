@@ -503,6 +503,40 @@ test('the hero light sits over the avatar column, not the empty middle', async (
   ).toBeLessThanOrEqual(isMobile ? 40 : 30);
 });
 
+/*
+ * Picks are stored as catalog ids (DESIGN decision 2), so the page has to print names. Kairo is
+ * the fixture saved since the catalog shipped and Nyx is the one from before it, and both read
+ * the same to a visitor: loadPublicProfile() routes either through the display adapter.
+ */
+test('a profile stored as ids reads as names, everywhere a pick shows', async ({
+  page,
+}) => {
+  await page.goto('/teammates/kairo');
+  const article = page.locator('article.tp-page');
+  const text = await article.innerText();
+  for (const name of ['Lee Sin', 'Ahri', 'Viego', 'Sova', 'Fade', 'Jett'])
+    expect(text).toContain(name);
+  /* Not one id anywhere on the page, in the cards or in the prose under them. */
+  for (const id of ['lee-sin', 'viego', 'ahri', 'sova'])
+    expect(text).not.toContain(id);
+  /* The game's own word for a character comes from the same catalog the picker uses. */
+  await expect(
+    article.locator('dt', { hasText: 'Champions' }).first(),
+  ).toBeVisible();
+  await expect(
+    article.locator('dt', { hasText: 'Agents' }).first(),
+  ).toBeVisible();
+  /* The quick view in the directory is the same read, so it agrees. */
+  const preview = await page.request.get('/api/teammates/preview?slug=kairo');
+  expect(preview.ok()).toBe(true);
+  const body = await preview.text();
+  expect(body).toContain('Jungle');
+  expect(body).not.toContain('lee-sin');
+  /* A profile written before the catalog existed is unchanged. */
+  await page.goto('/teammates/nyx');
+  expect(await page.locator('article.tp-page').innerText()).toContain('Omen');
+});
+
 test('a teammate with one game gets a band that ends where its content ends', async ({
   page,
   isMobile,

@@ -36,6 +36,16 @@ async function pick(page: Page) {
   await page.locator('[data-header-file]').setInputFiles(source.pathname);
   await expect(page.getByRole('img', { name: 'Header crop' })).toBeVisible();
 }
+/*
+ * The settings block saves only what has changed, so a teammate who did nothing but upload a
+ * header has nothing to save and the button is off. These two tests are about a settings save
+ * landing beside a header upload, so they make a real change first: one vibe tag, which is the
+ * smallest thing on the block.
+ */
+async function change(page: Page) {
+  await page.getByRole('button', { name: 'Chill', exact: true }).click();
+  await expect(page.locator('.pk-bar')).toHaveAttribute('data-state', 'dirty');
+}
 
 test('a saved header that cannot load is not silently shown as a broken picture', async ({
   page,
@@ -260,6 +270,7 @@ test('a saved header survives other settings saves and a fresh settings read', a
   await pick(page);
   await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByText('Header saved.')).toBeVisible();
+  await change(page);
   await page
     .getByRole('button', { name: 'Save public profile', exact: true })
     .click();
@@ -288,6 +299,7 @@ test('a delayed settings save cannot erase a newer header upload', async ({
     route.fulfill({ json: { url: saved } }),
   );
   await open(page);
+  await change(page);
   await page
     .getByRole('button', { name: 'Save public profile', exact: true })
     .click();

@@ -2,7 +2,6 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, it } from 'vitest';
 import LiveProfile from '../../src/components/account/LiveProfile';
-import { PROFILE_LANGUAGES } from '../../src/contracts/account';
 
 const render = (role: 'customer' | 'teammate' | 'admin') =>
   renderToStaticMarkup(
@@ -36,9 +35,13 @@ it('lets teammates edit the bio and languages from the original profile', () => 
   expect(html).toContain('id="pf-bio"');
   expect(html).toContain('Calm comms, I explain my calls.');
   expect(html).toContain('Languages you play in');
-  for (const language of PROFILE_LANGUAGES) expect(html).toContain(language);
-  expect(html).toMatch(/aria-pressed="true"[^>]*>German</);
-  expect(html).toMatch(/aria-pressed="false"[^>]*>French</);
+  /* The chosen ones are chips in their own order, the other thirty four live behind the picker
+     rather than as a wall of pills on the page. See LanguagePicker.jsx. */
+  expect(html).toContain('>English<');
+  expect(html).toContain('>German<');
+  expect(html).toContain('Shown first');
+  expect(html).toContain('Add a language');
+  expect(html).not.toContain('French');
   expect(html).toContain('href="/teammate"');
 });
 
