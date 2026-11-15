@@ -6,9 +6,7 @@
 -- that state.
 --
 -- Owner decision 2026-11-15: a teammate features any number of the games they are approved for.
--- There is no product cap; the approved list is the limit. The 32 element bound below is a sanity
--- bound on the column so a broken client cannot write an unbounded array, never a product rule
--- (the catalog ships 21 games, Social included).
+-- There is no artificial cap; the approved list is the natural limit.
 --
 -- 1. featured_games text[] holds the ordered list. featured_game stays and is always
 --    featured_games[1], kept there by teammate_public_featured_sync(), so every reader written
@@ -42,11 +40,11 @@ update public.teammate_public_profiles set featured_games = array[featured_game]
 
 /* Shape only, and immutable, because a row check is re-evaluated on every write: no duplicates,
    every element one of the safe short labels teammate_public_labels_valid() already defines, and
-   at most 32 of them. Which games are allowed is approval, which is the guard's job below. */
+   no artificial length cap. Which games are allowed is approval, the guard's job below. */
 create function public.teammate_public_featured_valid(p_games text[]) returns boolean
 language sql immutable set search_path = '' as $$
   select coalesce(pg_catalog.array_ndims(p_games) <= 1
-    and public.teammate_public_labels_valid(p_games, 32)
+    and public.teammate_public_labels_valid(p_games, pg_catalog.cardinality(p_games))
     and not exists(select 1 from pg_catalog.unnest(p_games) x group by x having pg_catalog.count(*) > 1),
     pg_catalog.cardinality(p_games) = 0 or p_games is null);
 $$;
@@ -173,7 +171,7 @@ begin
      Duplicates are dropped rather than refused, keeping the first place each game appears. */
   if s ? 'featuredGames' then
     if pg_catalog.jsonb_typeof(s->'featuredGames')<>'array'
-      or pg_catalog.jsonb_array_length(s->'featuredGames') not between 1 and 32
+      or pg_catalog.jsonb_array_length(s->'featuredGames') < 1
       or exists(select 1 from pg_catalog.jsonb_array_elements(s->'featuredGames') v where pg_catalog.jsonb_typeof(v)<>'string') then
       return public.order_error(400,'Feature at least one game you are approved for.');
     end if;

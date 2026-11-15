@@ -85,12 +85,13 @@ do $$ begin
   update public.teammate_public_profiles set featured_games = array['val','fn'] where user_id='fe150000-0000-4000-8000-000000000001';
   raise exception 'unapproved featured game accepted';
 exception when check_violation then perform pg_temp.ok(true,'every featured game must be approved'); end $$;
-do $$ begin
-  update public.teammate_public_profiles
-    set featured_games = (select pg_catalog.array_agg('g' || i::text) from pg_catalog.generate_series(1,33) i)
-    where user_id='fe150000-0000-4000-8000-000000000001';
-  raise exception '33 featured games accepted';
-exception when check_violation then perform pg_temp.ok(true,'the list stops at the 32 element sanity bound'); end $$;
+select pg_temp.ok(public.teammate_public_featured_valid(
+  (select pg_catalog.array_agg('g' || i::text) from pg_catalog.generate_series(1,40) i)),
+  'the shape validator has no artificial featured game cap');
+select pg_temp.ok(not public.teammate_public_featured_valid(array['val', null]),
+  'null elements are refused');
+select pg_temp.ok(not public.teammate_public_featured_valid(array['val','../etc']),
+  'unsafe elements are refused by the shape validator itself');
 do $$ begin
   update public.teammate_public_profiles set featured_games = array['val','../etc'] where user_id='fe150000-0000-4000-8000-000000000001';
   raise exception 'unsafe featured element accepted';
@@ -110,6 +111,12 @@ select pg_temp.ok(public.teammate_public_profile_get()#>>'{settings,featuredGame
 select pg_temp.ok(public.teammate_public_profile_save(pg_temp.settings('maelle',
   pg_catalog.jsonb_build_object('featuredGame','val','featuredGames','["val","lol","val","cs2","lol"]'::jsonb)))
   #>'{settings,featuredGames}' = '["val","lol","cs2"]'::jsonb,'a game sent twice keeps its first place and is stored once');
+select pg_temp.ok(public.teammate_public_profile_save(pg_temp.settings('maelle',
+  pg_catalog.jsonb_build_object('featuredGame','val','featuredGames',
+    (select pg_catalog.jsonb_agg(case when i % 2 = 0 then 'lol' else 'val' end order by i)
+      from pg_catalog.generate_series(1,40) i))))
+  #>'{settings,featuredGames}' = '["val","lol"]'::jsonb,
+  'a long approved payload is deduped without an artificial cap');
 select pg_temp.ok(public.teammate_public_profile_save(pg_temp.settings('maelle',
   pg_catalog.jsonb_build_object('featuredGame','val','featuredGames','["val","fn"]'::jsonb)))
   #>>'{error,code}' = '400','a game nobody approved cannot be featured');

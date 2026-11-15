@@ -300,7 +300,31 @@
 .pk-card[data-open='true'] .pk-chevron svg {
   transform: rotate(180deg);
 }
-/* Featured: one star across every card, filled and lit on the one that is. */
+/* A compact order row keeps game names readable even on narrow phones. */
+.pk-feature-order {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px 10px;
+  color: var(--pk-ink-3);
+  font-size: 12px;
+}
+.pk-feature-order .pk-mini {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: auto;
+  min-width: 60px;
+  min-height: 44px;
+  padding: 0 8px;
+  color: var(--pk-ink-2);
+  font-size: 12px;
+}
+/* Each game's star toggles membership in the featured list. */
 .pk-star {
   position: relative;
   z-index: 1;

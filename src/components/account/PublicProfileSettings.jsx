@@ -4,6 +4,7 @@ import {
   PROFILE_BANNERS,
   VIBE_TAGS,
   VIBE_TAGS_MAX,
+  featuredGamesOf,
   slugFromName,
   slugValid,
   publicProfileSettingsSchema,
@@ -34,6 +35,7 @@ export const settingsFingerprint = (s) =>
         s.accent,
         s.banner,
         s.featuredGame,
+        s.featuredGames,
         s.vibeTags,
         s.showCountry,
         s.coaching,
@@ -189,6 +191,13 @@ export default class PublicProfileSettings extends React.Component {
       availability: key === 'slug' ? '' : s.availability,
     }));
   }
+  feature(games) {
+    if (!games.length) return;
+    this.setState((s) => ({
+      settings: { ...s.settings, featuredGames: games, featuredGame: games[0] },
+      message: '',
+    }));
+  }
   togglePublish() {
     if (!this.state.settings.published && !this.state.consented)
       return this.setState({ explain: true });
@@ -217,7 +226,12 @@ export default class PublicProfileSettings extends React.Component {
   }
   async save(e) {
     e.preventDefault();
-    const parsed = publicProfileSettingsSchema.safeParse(this.state.settings);
+    const featuredGames = featuredGamesOf(this.state.settings || {});
+    const parsed = publicProfileSettingsSchema.safeParse({
+      ...this.state.settings,
+      featuredGames,
+      featuredGame: featuredGames[0],
+    });
     if (!parsed.success)
       return this.setState({
         error: 'Check your link, tags, roles and picks before saving.',
@@ -589,15 +603,15 @@ export default class PublicProfileSettings extends React.Component {
             <div className="pk-group">
               <h3>Your games</h3>
               <p>
-                Star your featured game. Your profile and booking link lead with
-                it.
+                Featured games lead your profile. Put the one you want shown
+                first at the top.
               </p>
               <GameCards
                 games={s.games}
                 ranks={d.ranks}
-                featuredGame={s.featuredGame}
+                featuredGames={featuredGamesOf(s)}
                 onChange={(games) => this.change('games', games)}
-                onFeature={(game) => this.change('featuredGame', game)}
+                onFeature={(games) => this.feature(games)}
               />
             </div>
             {/* Everything that only changes how the page looks, under one heading, so the

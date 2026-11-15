@@ -41,7 +41,7 @@ it('shows the controls, the public data explanation, and read-only verified rank
     'Show my public profile',
     'Profile link',
     'Your games',
-    'featured game',
+    'Featured games lead your profile',
     'Accent',
     'Banner',
     'Vibe',
@@ -122,6 +122,16 @@ it('says what is saved and what is not, in one bar', () => {
     ).not.toBe(settingsFingerprint(data.settings));
   expect(settingsFingerprint(null)).toBe('');
 });
+it('tracks featured membership and order independently of the legacy lead', () => {
+  const settings = { ...data.settings, featuredGames: ['val', 'lol', 'wow'] };
+  expect(settingsFingerprint(settings)).not.toBe(
+    settingsFingerprint({ ...settings, featuredGames: ['val', 'wow', 'lol'] }),
+  );
+  expect(settingsFingerprint(settings)).not.toBe(
+    settingsFingerprint({ ...settings, featuredGames: ['val', 'lol'] }),
+  );
+});
+
 it('does not render a public preview link for an unpublished draft', () => {
   expect(render(data)).not.toContain('href="/teammates/nyx"');
 });
