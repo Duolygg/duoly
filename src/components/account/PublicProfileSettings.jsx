@@ -25,12 +25,7 @@ export const splitProfileLabels = (value) =>
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
-/**
- * The saved header, as far as the settings read tells us. teammate_public_profile_get() does not
- * return it yet (see the note in the header block below), so this is undefined until that one
- * line lands in Postgres, null when there is no header, and the URL when there is one. The
- * endpoint answers with the URL it saved, so an upload in this session is always known.
- */
+/** The settings read carries a top-level header. Missing fields in older responses leave it unknown. */
 export const headerFromData = (data) =>
   data && 'header' in data
     ? data.header
@@ -38,12 +33,26 @@ export const headerFromData = (data) =>
       ? data.settings.header
       : undefined;
 const request = async (url, options) => {
-  const res = await fetch(url, {
-    credentials: 'same-origin',
-    redirect: 'error',
-    ...options,
-  });
-  const data = await res.json();
+  let res;
+  try {
+    res = await fetch(url, {
+      credentials: 'same-origin',
+      redirect: 'error',
+      ...options,
+    });
+  } catch {
+    throw new Error(
+      'The request could not reach Duoly. Check your connection and try again.',
+    );
+  }
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(
+      'The server returned an unreadable response. Reload and try again.',
+    );
+  }
   if (!res.ok)
     throw new Error(data.error || 'Public profiles are unavailable right now.');
   return data;
@@ -64,20 +73,26 @@ export default class PublicProfileSettings extends React.Component {
       header: headerFromData(props.initialData),
       pick: null,
       headerError: '',
+      headerPreviewError: '',
       headerNote: '',
       headerBusy: false,
     };
+    this.headerRevision = 0;
     this.headerFile = React.createRef();
     this.headerCanvas = React.createRef();
+    this.headerPreview = React.createRef();
   }
   componentDidMount() {
     this.unmounted = false;
     if (!this.state.data) this.load();
+    const image = this.headerPreview.current;
+    if (image?.complete && !image.naturalWidth) this.headerPreviewFailed();
   }
   componentWillUnmount() {
     this.unmounted = true;
   }
   async load() {
+    const headerRevision = this.headerRevision;
     try {
       const data = await request('/api/teammate/public-profile');
       if (!this.unmounted)
@@ -88,14 +103,15 @@ export default class PublicProfileSettings extends React.Component {
             slug: data.settings.slug || slugFromName(this.props.name),
           },
           error: '',
-          ...this.headerPatch(data),
+          ...this.headerPatch(data, headerRevision),
         });
     } catch (e) {
       if (!this.unmounted) this.setState({ error: e.message });
     }
   }
   /** Keeps a header we already know about when the payload says nothing about one. */
-  headerPatch(data) {
+  headerPatch(data, revision) {
+    if (revision !== this.headerRevision) return {};
     const header = headerFromData(data);
     return header === undefined ? {} : { header };
   }
@@ -139,6 +155,7 @@ export default class PublicProfileSettings extends React.Component {
       return this.setState({
         error: 'Check your link, tags, roles and picks before saving.',
       });
+    const headerRevision = this.headerRevision;
     this.setState({ saving: true, error: '', message: '' });
     try {
       const data = await request('/api/teammate/public-profile', {
@@ -153,13 +170,19 @@ export default class PublicProfileSettings extends React.Component {
         message: data.settings.published
           ? 'Public profile saved.'
           : 'Public profile is off.',
-        ...this.headerPatch(data),
+        ...this.headerPatch(data, headerRevision),
       });
     } catch (e) {
       this.setState({ saving: false, error: e.message });
     }
   }
   /* ---------- header image ---------- */
+  headerPreviewFailed() {
+    this.setState({
+      headerPreviewError:
+        'Your header is saved, but the picture could not load. Reload or try another picture.',
+    });
+  }
   /** Decodes the picked file and opens the crop on the centre of it. */
   async pickHeader(file) {
     const problem = headerFileError(file);
@@ -178,8 +201,17 @@ export default class PublicProfileSettings extends React.Component {
   paintHeader() {
     const canvas = this.headerCanvas.current;
     const pick = this.state.pick;
-    if (canvas && pick)
-      drawHeader(canvas, pick.image, pick.offsetX, pick.offsetY);
+    if (canvas && pick) {
+      try {
+        drawHeader(canvas, pick.image, pick.offsetX, pick.offsetY);
+      } catch {
+        this.setState({
+          pick: null,
+          headerError:
+            'This browser could not prepare the picture. Try a smaller JPG or PNG.',
+        });
+      }
+    }
   }
   /** How much of the picture lies outside the 3:1 window, and the preview's own scale. */
   headerRoom() {
@@ -215,12 +247,21 @@ export default class PublicProfileSettings extends React.Component {
     if (!canvas || !this.state.pick) return;
     this.setState({ headerBusy: true, headerError: '', headerNote: '' });
     // Safari cannot encode WebP from a canvas and hands back a PNG; JPEG works everywhere.
-    const encoded = encodeHeader((quality) => {
-      const webp = canvas.toDataURL('image/webp', quality);
-      return webp.startsWith('data:image/webp;')
-        ? webp
-        : canvas.toDataURL('image/jpeg', quality);
-    });
+    let encoded;
+    try {
+      encoded = encodeHeader((quality) => {
+        const webp = canvas.toDataURL('image/webp', quality);
+        return webp.startsWith('data:image/webp;')
+          ? webp
+          : canvas.toDataURL('image/jpeg', quality);
+      });
+    } catch {
+      return this.setState({
+        headerBusy: false,
+        headerError:
+          'This browser could not prepare the picture. Try a smaller JPG or PNG.',
+      });
+    }
     if (!encoded.ok)
       return this.setState({
         headerBusy: false,
@@ -235,9 +276,11 @@ export default class PublicProfileSettings extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ csrf: this.props.csrf, image: encoded.url }),
       });
+      this.headerRevision++;
       if (!this.unmounted)
         this.setState({
           header: data.url,
+          headerPreviewError: '',
           pick: null,
           headerBusy: false,
           headerNote: 'Header saved.',
@@ -255,9 +298,11 @@ export default class PublicProfileSettings extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ csrf: this.props.csrf }),
       });
+      this.headerRevision++;
       if (!this.unmounted)
         this.setState({
           header: null,
+          headerPreviewError: '',
           pick: null,
           headerBusy: false,
           headerNote: 'Header removed.',
@@ -283,13 +328,23 @@ export default class PublicProfileSettings extends React.Component {
       (pick.image.naturalWidth - crop.sw > 1 ||
         pick.image.naturalHeight - crop.sh > 1),
     );
+    // Without a saved profile there is nothing to attach a header to; a saved profile always has a slug.
+    if (!this.state.data?.settings?.slug)
+      return (
+        <fieldset className="pp-header">
+          <legend>Header image</legend>
+          <p className="pp-help" data-header-locked>
+            Save your public profile once, then you can add a header image.
+          </p>
+        </fieldset>
+      );
     return (
       <fieldset className="pp-header">
         <legend>Header image</legend>
         <p className="pp-help">Your header is shown on your public profile.</p>
-        {this.state.headerError ? (
+        {this.state.headerError || this.state.headerPreviewError ? (
           <p role="alert" className="pp-error">
-            {this.state.headerError}
+            {this.state.headerError || this.state.headerPreviewError}
           </p>
         ) : null}
         {pick ? (
@@ -367,6 +422,9 @@ export default class PublicProfileSettings extends React.Component {
                 width={HEADER_WIDTH}
                 height={HEADER_HEIGHT}
                 alt="Your header image"
+                ref={this.headerPreview}
+                onError={() => this.headerPreviewFailed()}
+                onLoad={() => this.setState({ headerPreviewError: '' })}
               />
             ) : (
               <p className="pp-help">

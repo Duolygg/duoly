@@ -131,7 +131,7 @@ export function drawHeader(
   canvas.width = HEADER_WIDTH;
   canvas.height = HEADER_HEIGHT;
   const context = canvas.getContext('2d');
-  if (!context) return;
+  if (!context) throw new Error('Canvas context unavailable.');
   context.clearRect(0, 0, HEADER_WIDTH, HEADER_HEIGHT);
   context.drawImage(
     image,

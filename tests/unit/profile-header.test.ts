@@ -3,6 +3,7 @@ import {
   decodeHeader,
   MAX_HEADER_BYTES,
   storeHeader,
+  NO_PROFILE,
   removeHeader,
 } from '../../src/server/teammates/profile-header';
 import { supportService } from '../../src/server/support/store';
@@ -72,12 +73,12 @@ beforeEach(() => {
     eq: () => query,
     is: () => query,
     select: () => query,
-    single: updateSingle,
+    maybeSingle: updateSingle,
   };
   vi.mocked(supportService).mockReturnValue({
     storage: { from: () => bucket },
     from: () => ({
-      select: () => ({ eq: () => ({ single }) }),
+      select: () => ({ eq: () => ({ maybeSingle: single }) }),
       update: () => query,
     }),
   } as unknown as NonNullable<ReturnType<typeof supportService>>);
@@ -103,7 +104,43 @@ it('does not remove the previous image when upload or persistence fails', async 
   expect(await storeHeader(id, decodeHeader(webp())!)).toBeNull();
   expect(remove).not.toHaveBeenCalled();
 });
+it('keeps a successful save when best effort cleanup rejects', async () => {
+  remove.mockRejectedValueOnce(new Error('storage network unavailable'));
+  await expect(storeHeader(id, decodeHeader(webp())!)).resolves.toMatch(
+    /\.webp$/,
+  );
+});
+it('keeps a successful removal when best effort cleanup rejects', async () => {
+  remove.mockRejectedValueOnce(new Error('storage network unavailable'));
+  await expect(removeHeader(id)).resolves.toBe(true);
+});
 it('clears the header and deletes its storage object', async () => {
   expect(await removeHeader(id)).toBe(true);
   expect(remove).toHaveBeenCalledWith([id + '/0123456789abcdef.webp']);
+});
+it('says so when the teammate has never saved a public profile, before uploading', async () => {
+  single.mockResolvedValueOnce({ data: null, error: null });
+  expect(await storeHeader(id, decodeHeader(webp())!)).toBe(NO_PROFILE);
+  expect(upload).not.toHaveBeenCalled();
+});
+it('retries once when another request changed the header in between', async () => {
+  const other = previous.replace('0123456789abcdef', 'fedcba9876543210');
+  updateSingle.mockResolvedValueOnce({ data: null, error: null });
+  single
+    .mockResolvedValueOnce({ data: { header_image: previous }, error: null })
+    .mockResolvedValueOnce({ data: { header_image: other }, error: null });
+  const result = await storeHeader(id, decodeHeader(webp())!);
+  expect(result).toMatch(/\.webp$/);
+  expect(updateSingle).toHaveBeenCalledTimes(2);
+  expect(remove).toHaveBeenCalledWith([id + '/fedcba9876543210.webp']);
+});
+it('treats a double tap of the same picture as saved', async () => {
+  const first = await storeHeader(id, decodeHeader(webp())!);
+  updateSingle.mockResolvedValueOnce({ data: null, error: null });
+  single
+    .mockResolvedValueOnce({ data: { header_image: previous }, error: null })
+    .mockResolvedValueOnce({ data: { header_image: first }, error: null });
+  remove.mockClear();
+  expect(await storeHeader(id, decodeHeader(webp())!)).toBe(first);
+  expect(remove).not.toHaveBeenCalled();
 });
