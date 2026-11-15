@@ -932,28 +932,110 @@
 }
 .tp-idlist {
   display: grid;
+  gap: 18px;
   width: 100%;
+  min-width: 0;
   margin: 0;
+  padding: 16px 18px;
+  border: 1px solid
+    color-mix(in srgb, var(--tier, #d6bbff) 14%, rgba(255, 255, 255, 0.06));
+  border-radius: 16px;
+  background:
+    radial-gradient(
+      120% 90% at 0% 0%,
+      color-mix(in srgb, var(--tier, #d6bbff) 9%, transparent),
+      transparent 60%
+    ),
+    linear-gradient(180deg, rgba(27, 16, 51, 0.9), rgba(18, 11, 34, 0.9));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
 }
 .tp-idlist > div {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 10px 0;
-  border-top: 1px solid var(--tp-line);
-  font-size: 14px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
 }
-.tp-idlist > div:last-child {
-  border-bottom: 1px solid var(--tp-line);
+/* Two short facts side by side, the languages across the full width below them. */
+.tp-idlist {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+}
+.tp-idlist > div:has(.tp-idlanguages) {
+  grid-column: 1 / -1;
+  order: 3;
+  padding-top: 18px;
+  border-top: 1px solid rgba(214, 187, 255, 0.14);
 }
 .tp-idlist dt {
-  color: var(--tp-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Bright enough to clear 4.5:1 even where a white header shows through. */
+  color: #efe8fa;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tp-idlist dt svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: #d6bbff;
+  opacity: 0.85;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .tp-idlist dd {
-  margin: 0;
+  min-width: 0;
+  margin: 0 0 0 24px;
   color: #fff;
-  text-align: right;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.tp-idlanguages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px !important;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tp-idlanguages li {
+  max-width: 100%;
+  padding: 3px 10px;
+  border: 1px solid rgba(214, 187, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(214, 187, 255, 0.12);
+  color: #f4ecff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.tp-idcountry {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.tp-idcountry img {
+  width: 18px;
+  height: 13px;
+  flex: none;
+  align-self: flex-start;
+  margin-top: 5px;
+  border-radius: 3px;
+  object-fit: cover;
+  outline: 1px solid #ffffff30;
+  outline-offset: -1px;
+}
+.tp-idcountry span {
+  min-width: 0;
 }
 
 /* ---------- hero body and booking ---------- */

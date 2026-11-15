@@ -33,6 +33,7 @@ import {
   pickLabel,
   rankEmblem,
 } from '../../server/teammates/profile-page';
+import { profileCountry } from '../../server/teammates/profile-country';
 import { publicAvatarIsPhoto } from '../../server/teammates/public-avatar';
 import { serializeJsonLd } from '../../site/seo';
 import { pageViewer } from '../../site/viewer';
@@ -46,6 +47,7 @@ Astro.response.status = route.status;
 const { viewer, csrf } = await pageViewer(Astro);
 Astro.response.headers.set('Cache-Control', 'no-store');
 const p = result.status === 'ok' ? result.profile : null;
+const country = profileCountry(p?.country);
 const view = p ? profilePresentation(p) : null;
 const rankLine = p ? profileRankLine(p) : null;
 const bookings =
@@ -697,19 +699,51 @@ const shareApps: {
               )}
               <dl class="tp-idlist">
                 <div>
-                  <dt>Member since</dt>
+                  <dt>
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <rect x="2.5" y="3.5" width="11" height="10" rx="2" />
+                      <path d="M5 2v3m6-3v3M3 7h10M5 10h2" />
+                    </svg>
+                    Member since
+                  </dt>
                   <dd>{profileMonth(p.memberSince)}</dd>
                 </div>
                 {p.languages.length > 0 && (
                   <div>
-                    <dt>Speaks</dt>
-                    <dd>{p.languages.join(', ')}</dd>
+                    <dt>
+                      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M5 12.5 2.5 14V4A2 2 0 0 1 4.5 2h7A2 2 0 0 1 13.5 4v6.5a2 2 0 0 1-2 2H5Z" />
+                        <path d="M5.5 6h5m-5 3h3" />
+                      </svg>
+                      Speaks
+                    </dt>
+                    <dd>
+                      <ul class="tp-idlanguages" role="list">
+                        {p.languages.map((language) => (
+                          <li>{language}</li>
+                        ))}
+                      </ul>
+                    </dd>
                   </div>
                 )}
-                {p.country && (
+                {country && (
                   <div>
-                    <dt>Based in</dt>
-                    <dd>{p.country}</dd>
+                    <dt>
+                      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M12.5 6.5c0 3-4.5 7.5-4.5 7.5S3.5 9.5 3.5 6.5a4.5 4.5 0 0 1 9 0Z" />
+                        <circle cx="8" cy="6.5" r="1.5" />
+                      </svg>
+                      Based in
+                    </dt>
+                    <dd class="tp-idcountry">
+                      <img
+                        src={`/assets/flags/svg/${country.code}.svg`}
+                        width="18"
+                        height="13"
+                        alt=""
+                      />
+                      <span>{country.name}</span>
+                    </dd>
                   </div>
                 )}
               </dl>
