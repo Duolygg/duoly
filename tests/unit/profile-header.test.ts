@@ -103,6 +103,16 @@ it('does not remove the previous image when upload or persistence fails', async 
   expect(await storeHeader(id, decodeHeader(webp())!)).toBeNull();
   expect(remove).not.toHaveBeenCalled();
 });
+it('keeps a successful save when best effort cleanup rejects', async () => {
+  remove.mockRejectedValueOnce(new Error('storage network unavailable'));
+  await expect(storeHeader(id, decodeHeader(webp())!)).resolves.toMatch(
+    /\.webp$/,
+  );
+});
+it('keeps a successful removal when best effort cleanup rejects', async () => {
+  remove.mockRejectedValueOnce(new Error('storage network unavailable'));
+  await expect(removeHeader(id)).resolves.toBe(true);
+});
 it('clears the header and deletes its storage object', async () => {
   expect(await removeHeader(id)).toBe(true);
   expect(remove).toHaveBeenCalledWith([id + '/0123456789abcdef.webp']);

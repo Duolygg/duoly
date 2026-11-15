@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import type { APIContext } from 'astro';
 import { beforeEach, expect, it, vi } from 'vitest';
 import { accountContext } from '../../src/server/auth/context';
@@ -92,6 +93,76 @@ it('rejects wrong type, oversized payloads and caller-selected users', async () 
     expect((await run('POST', body)).status).toBe(400);
   expect(storeHeader).not.toHaveBeenCalled();
 });
+// Preserve real decodable image data, padding with legal JPEG comments or a WebP JUNK chunk.
+function realImage(type: 'jpeg' | 'webp', size: number) {
+  const source = readFileSync(
+    new URL(
+      `../fixtures/profiles/${type === 'jpeg' ? 'header-source.jpg' : 'teammate-header.webp'}`,
+      import.meta.url,
+    ),
+  );
+  const extra = size - source.length;
+  let bytes: Buffer;
+  if (type === 'webp') {
+    const junk = Buffer.alloc(extra);
+    junk.write('JUNK');
+    junk.writeUInt32LE(extra - 8, 4);
+    bytes = Buffer.concat([source, junk]);
+    bytes.writeUInt32LE(size - 8, 4);
+  } else {
+    const comments: Buffer[] = [];
+    let remaining = extra;
+    while (remaining > 0) {
+      const length = Math.min(60000, remaining);
+      const comment = Buffer.alloc(length);
+      comment[0] = 0xff;
+      comment[1] = 0xfe;
+      comment.writeUInt16BE(length - 2, 2);
+      comments.push(comment);
+      remaining -= length;
+    }
+    bytes = Buffer.concat([
+      source.subarray(0, 2),
+      ...comments,
+      source.subarray(2),
+    ]);
+  }
+  return `data:image/${type};base64,${bytes.toString('base64')}`;
+}
+it.each(['jpeg', 'webp'] as const)(
+  'accepts a real %s at 300 KB including full JSON and a real CSRF token',
+  async (type) => {
+    const image = realImage(type, 307200);
+    expect(
+      Buffer.byteLength(JSON.stringify({ csrf: token, image })),
+    ).toBeLessThan(410000);
+    const response = await run('POST', { csrf: token, image });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ url });
+    expect(storeHeader).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        type: `image/${type}`,
+        bytes: expect.any(Buffer),
+      }),
+    );
+    expect(vi.mocked(storeHeader).mock.calls[0]![1].bytes.length).toBe(307200);
+  },
+);
+it.each(['jpeg', 'webp'] as const)(
+  'rejects %s just above the binary limit, not as a storage 503',
+  async (type) => {
+    const response = await run('POST', {
+      csrf: token,
+      image: realImage(type, 307202),
+    });
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      error: 'Choose a JPG or WebP image up to 300 KB.',
+    });
+    expect(storeHeader).not.toHaveBeenCalled();
+  },
+);
 it('fails closed on unavailable storage and unsupported methods', async () => {
   vi.mocked(storeHeader).mockResolvedValueOnce(null);
   expect((await run()).status).toBe(503);

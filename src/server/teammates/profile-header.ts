@@ -105,7 +105,15 @@ async function changeHeader(
   if (old && old !== url) {
     const path = objectPath(old, userId);
     // The durable cleanup queue retries API failures, including account deletions.
-    if (path) await bucket.remove([path]);
+    if (path) {
+      try {
+        const { error } = await bucket.remove([path]);
+        if (error) fail('cleanup', error);
+      } catch {
+        // The database change is already durable. A cleanup outage must not report a failed save.
+        fail('cleanup');
+      }
+    }
   }
   return url ?? true;
 }

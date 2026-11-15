@@ -61,7 +61,10 @@ export const ALL: APIRoute = async (context) => {
     }
     const decoded = decodeHeader(body.image);
     if (!decoded)
-      return account.json({ error: 'Choose a WebP image up to 300 KB.' }, 400);
+      return account.json(
+        { error: 'Choose a JPG or WebP image up to 300 KB.' },
+        400,
+      );
     const url = await storeHeader(identity.viewer.id, decoded);
     return url
       ? account.json({ url })

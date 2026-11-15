@@ -30,7 +30,7 @@ const initialData = {
   <PublicProfileSettings
     csrf="fixture-csrf"
     name="Nyx"
-    initialData={initialData}
+    initialData={Astro.url.searchParams.has('load') ? undefined : initialData}
     client:load
   />
 </SiteLayout>
