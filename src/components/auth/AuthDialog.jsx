@@ -1,9 +1,9 @@
 import { track } from '../../client/analytics/track';
 // The sign-in popup: Discord, Google and email (log in or create an account). The homepage opens
 // it (pay, Sign in), and so does every other page for a signed-out visitor (SiteAuthDialog.jsx,
-// any link to /login). Moved from home/Home.jsx unchanged, so they are the same popup.
+// any sign-in link). Moved from home/Home.jsx unchanged, so they are the same popup.
 // Props: open, why (a line under the title), mode ('login' | 'register'), stat ({rating,
-// reviews}), authError (a failed provider sign-in), onClose, onSignIn(provider),
+// reviews}), authError (a failed sign-in: true, or the line to show), onClose, onSignIn(provider),
 // onEmailAuth(form) -> error message or null, onDone (signed in by email).
 import React from 'react';
 
@@ -94,7 +94,11 @@ export default class AuthDialog extends React.Component {
       stat: P.stat || {},
       authNote:
         s.authNote ||
-        (P.authError ? 'That login didn’t work. Please try again.' : ''),
+        (typeof P.authError === 'string'
+          ? P.authError
+          : P.authError
+            ? 'That login didn’t work. Please try again.'
+            : ''),
       discordLabel: busy === 'discord' ? 'Connecting…' : 'Discord',
       googleLabel: busy === 'google' ? 'Connecting…' : 'Google',
       closeAuth: this.close,

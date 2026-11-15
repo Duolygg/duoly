@@ -1,3 +1,4 @@
+import { signInMessage, signInPath } from '../../site/sign-in';
 import { afterLogin } from './after-login';
 import { trackRequest } from '../analytics/client';
 import type { APIRoute } from 'astro';
@@ -28,22 +29,22 @@ function parseCredentials(
   return { credentials: credentials.data, failure: null };
 }
 
-// The homepage sign-in popup (original Home.jsx) asks for a JSON answer so it can show the
-// message in place; the /login form keeps the redirects. Same outcomes, same messages.
+// The sign-in popup asks for a JSON answer so it can show the message in place; a plain
+// form post (no JavaScript) is redirected to the homepage popup with the same outcome.
 const POPUP_MESSAGES: Record<string, { error?: string; notice?: string }> = {
-  '/login?error=credentials': {
-    error:
-      'That email and password don’t match. Try again or reset your password.',
+  [signInPath({ error: 'credentials' })]: signInMessage(
+    new URLSearchParams('error=credentials'),
+  ),
+  [signInPath({ error: 'eligibility' })]: signInMessage(
+    new URLSearchParams('error=eligibility'),
+  ),
+  // Registering an address that already exists is an error in the popup.
+  [signInPath({ notice: 'registered' })]: {
+    error: signInMessage(new URLSearchParams('notice=registered')).notice,
   },
-  '/login?error=eligibility': {
-    error: 'This environment is restricted to its approved test account.',
-  },
-  '/login?notice=registered': {
-    error: 'This email already has an account. Log in instead.',
-  },
-  '/login?notice=confirmation': {
-    notice: 'Check your inbox and confirm your email, then log in.',
-  },
+  [signInPath({ notice: 'confirmation' })]: signInMessage(
+    new URLSearchParams('notice=confirmation'),
+  ),
 };
 function responder(
   context: Parameters<APIRoute>[0],
@@ -80,8 +81,8 @@ export const loginPassword: APIRoute = async (context) => {
     if (error)
       return done(
         error.code === 'user_banned'
-          ? '/login?error=suspended'
-          : '/login?error=credentials',
+          ? signInPath({ error: 'suspended' })
+          : signInPath({ error: 'credentials' }),
       );
     const identity = await account.identity();
     const testEmail = account.config.testEmail;
@@ -92,7 +93,7 @@ export const loginPassword: APIRoute = async (context) => {
         /* Local session cookies are cleared below regardless. */
       }
       account.clear();
-      return done('/login?error=credentials');
+      return done(signInPath({ error: 'credentials' }));
     }
     if (testEmail && identity.viewer.email?.toLowerCase() !== testEmail) {
       try {
@@ -101,7 +102,7 @@ export const loginPassword: APIRoute = async (context) => {
         /* Local session cookies are cleared below regardless. */
       }
       account.clear();
-      return done('/login?error=eligibility');
+      return done(signInPath({ error: 'eligibility' }));
     }
     context.cookies.delete(account.names.csrf, account.cookieOptions);
     trackRequest(context, identity.viewer.id, 'user_logged_in', {
@@ -112,7 +113,7 @@ export const loginPassword: APIRoute = async (context) => {
     );
   } catch {
     account.clear();
-    return done('/login?error=credentials');
+    return done(signInPath({ error: 'credentials' }));
   }
 };
 
@@ -147,14 +148,10 @@ export const registerPassword: APIRoute = async (context) => {
       ? /already registered|already exists/i.test(error.message ?? '')
       : !!data?.user && (data.user.identities?.length ?? 1) === 0;
     if (alreadyRegistered) {
-      // Short-lived, httpOnly: lets /login prefill the address once.
-      context.cookies.set(account.names.pending, parsed.credentials.email, {
-        ...account.cookieOptions,
-        maxAge: 300,
-      });
-      return done('/login?notice=registered');
+      return done(signInPath({ notice: 'registered' }));
     }
-    if (error || !data?.session) return done('/login?notice=confirmation');
+    if (error || !data?.session)
+      return done(signInPath({ notice: 'confirmation' }));
     const identity = await account.identity();
     if (
       !identity ||
@@ -166,7 +163,7 @@ export const registerPassword: APIRoute = async (context) => {
         /* Local session cookies are cleared below regardless. */
       }
       account.clear();
-      return done('/login?notice=confirmation');
+      return done(signInPath({ notice: 'confirmation' }));
     }
     context.cookies.delete(account.names.csrf, account.cookieOptions);
     return done(
@@ -174,6 +171,6 @@ export const registerPassword: APIRoute = async (context) => {
     );
   } catch {
     account.clear();
-    return done('/login?notice=confirmation');
+    return done(signInPath({ notice: 'confirmation' }));
   }
 };

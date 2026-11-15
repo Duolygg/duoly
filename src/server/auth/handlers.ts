@@ -10,6 +10,7 @@ import {
   normalizeLanguages,
 } from '../../contracts/account';
 import { accountContext } from './context';
+import { signInPath } from '../../site/sign-in';
 import { readBoundedBody, verifyCsrf } from './security';
 import { linkErrorResult } from '../discord/oauth';
 import { syncRolesAfter } from '../discord/role-hooks';
@@ -73,16 +74,17 @@ export const oauth: APIRoute = async (context) => {
             : 'openid email profile',
       },
     });
-    if (error || !data.url) return account.redirect('/login?error=provider');
+    if (error || !data.url)
+      return account.redirect(signInPath({ error: 'provider' }));
     const url = new URL(data.url);
     if (
       url.origin !== account.config.url ||
       url.pathname !== '/auth/v1/authorize'
     )
-      return account.redirect('/login?error=provider');
+      return account.redirect(signInPath({ error: 'provider' }));
     return account.redirect(url.href);
   } catch {
-    return account.redirect('/login?error=provider');
+    return account.redirect(signInPath({ error: 'provider' }));
   }
 };
 export const callback: APIRoute = async (context) => {
@@ -96,14 +98,16 @@ export const callback: APIRoute = async (context) => {
   const recovery = next === 'reset';
   if (linking && (params.has('error') || params.has('error_code')))
     return account.redirect(`/${linking}?discord=${linkErrorResult(params)}`);
-  const fail = linking ? `/${linking}?discord=failed` : '/login?error=callback';
+  const fail = linking
+    ? `/${linking}?discord=failed`
+    : signInPath({ error: 'callback' });
   // Google or Discord sign-in of a suspended teammate: Auth sends them back with the ban.
   if (
     !linking &&
     (params.get('error_code') === 'user_banned' ||
       /banned/i.test(params.get('error_description') ?? ''))
   )
-    return account.redirect('/login?error=suspended');
+    return account.redirect(signInPath({ error: 'suspended' }));
   if (
     !account.config ||
     !account.client ||
@@ -118,7 +122,7 @@ export const callback: APIRoute = async (context) => {
     if (error)
       return account.redirect(
         error.code === 'user_banned' && !linking
-          ? '/login?error=suspended'
+          ? signInPath({ error: 'suspended' })
           : fail,
       );
     const identity = await account.identity();
@@ -128,13 +132,13 @@ export const callback: APIRoute = async (context) => {
       } finally {
         account.clear();
       }
-      return account.redirect('/login?error=callback');
+      return account.redirect(signInPath({ error: 'callback' }));
     }
     const testEmail = account.config.testEmail;
     if (testEmail && identity.viewer.email?.toLowerCase() !== testEmail) {
       await account.client.auth.signOut({ scope: 'local' });
       account.clear();
-      return account.redirect('/login?error=eligibility');
+      return account.redirect(signInPath({ error: 'eligibility' }));
     }
     // A Discord link or sign-in can change the server roles of teammates and admins (#40).
     if (identity.viewer.role !== 'customer')
@@ -153,7 +157,7 @@ export const callback: APIRoute = async (context) => {
     );
   } catch {
     account.clear();
-    return account.redirect('/login?error=callback');
+    return account.redirect(signInPath({ error: 'callback' }));
   }
 };
 export const logout: APIRoute = async (context) => {
@@ -165,7 +169,8 @@ export const logout: APIRoute = async (context) => {
     /* Clearing this browser remains necessary if the provider is unavailable. */
   }
   account.clear();
-  return account.redirect('/login');
+  // Signed out: back to the homepage with the sign-in popup open.
+  return account.redirect(signInPath());
 };
 export const getProfile: APIRoute = async (context) => {
   const account = accountContext(context.request, context.cookies);

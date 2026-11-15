@@ -1,65 +1,12 @@
 ---
-import ProductLayout from '../layouts/ProductLayout.astro';
-import LoginCard from '../components/auth/LoginCard.astro';
-import { accountContext } from '../server/auth/context';
-import { EmailSchema } from '../contracts/account';
-import { afterLogin } from '../server/auth/after-login';
-const account = accountContext(Astro.request, Astro.cookies);
-for (const [name, value] of account.headers)
-  Astro.response.headers.set(name, value);
-let identity = null;
-try {
-  identity = await account.identity();
-} catch {
-  /* The sign-in screen remains available for recovery. */
+// There is no sign-in page: sign-in is a popup. Old links and bookmarks to /login open it on
+// the homepage, keeping a sign-in error, notice or register mode they carried.
+import { signInPath } from '../site/sign-in';
+const params = Astro.url.searchParams;
+const target = new URL(signInPath(), Astro.url);
+for (const key of ['error', 'notice', 'mode']) {
+  const value = params.get(key);
+  if (value && /^[a-z]{1,20}$/.test(value)) target.searchParams.set(key, value);
 }
-if (identity)
-  return account.redirect(
-    await afterLogin(Astro.cookies, identity.viewer.role, account.client),
-  );
-const errors: Record<string, string> = {
-  callback: 'Sign-in could not be completed. Please start again.',
-  provider: 'That sign-in provider is temporarily unavailable.',
-  credentials:
-    'Sign-in failed. Check your email and password and confirm your email.',
-  email: 'Email sign-in is temporarily unavailable. Please try later.',
-  account: 'Your account could not be loaded. Please try again.',
-  eligibility: 'This environment is restricted to its approved test account.',
-  suspended:
-    'Your account is suspended, so you can’t sign in right now. Contact us at hello@duoly.gg.',
-};
-const registered = Astro.url.searchParams.get('notice') === 'registered';
-const register =
-  !registered && Astro.url.searchParams.get('mode') === 'register';
-// One-time prefill after "already registered"; the cookie is consumed here.
-const pendingEmail = Astro.cookies.get(account.names.pending)?.value;
-const prefill =
-  registered && pendingEmail
-    ? EmailSchema.safeParse(pendingEmail).data
-    : undefined;
-if (pendingEmail && registered)
-  Astro.cookies.delete(account.names.pending, account.cookieOptions);
-const error = errors[Astro.url.searchParams.get('error') ?? ''];
-const notice =
-  Astro.url.searchParams.get('notice') === 'confirmation'
-    ? 'If this address is eligible, a confirmation email will be sent. Check your inbox before signing in.'
-    : undefined;
-const providers = account.config?.providers ?? {
-  google: false,
-  discord: false,
-  email: false,
-};
+return Astro.redirect(target.pathname + target.search, 302);
 ---
-
-<ProductLayout title={register ? 'Create account | Duoly' : 'Sign in | Duoly'}>
-  <LoginCard
-    csrf={account.csrf()}
-    providers={providers}
-    register={register}
-    signup={account.config?.signup ?? false}
-    error={error}
-    notice={notice}
-    registered={registered}
-    prefill={prefill}
-  />
-</ProductLayout>

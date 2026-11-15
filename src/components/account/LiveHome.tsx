@@ -53,6 +53,7 @@ function LiveHomeContent({
   stats: initialStats = null,
   teammates: initialTeammates = [],
   authError = null,
+  authMode,
   pro = null,
   askLogin = false,
   initialCreatorCode = '',
@@ -69,7 +70,9 @@ function LiveHomeContent({
   recentMatches?: RecentMatch[];
   stats?: HomeStats | null;
   teammates?: HeroTeammate[];
+  /** the line the sign-in popup opens with (?error= / ?notice= after a redirect) */
   authError?: string | null;
+  authMode?: 'login' | 'register';
   pro?: ProView | null;
   /** open the sign-in dialog on load (a signed-out visit to a page that needs an account) */
   askLogin?: boolean;
@@ -82,7 +85,8 @@ function LiveHomeContent({
   useEffect(() => {
     if (!askLogin) return;
     const url = new URL(window.location.href);
-    url.searchParams.delete('signin');
+    for (const key of ['signin', 'error', 'notice', 'mode'])
+      url.searchParams.delete(key);
     window.history.replaceState(null, '', url.pathname + url.search + url.hash);
   }, [askLogin]);
   const [live, setLive] = useState({
@@ -287,6 +291,7 @@ function LiveHomeContent({
       onCurrency={saveCurrency}
       onAutoCurrency={saveAutoCurrency}
       authError={authError}
+      authMode={authMode}
       askLogin={askLogin}
       onSignIn={onSignIn}
       onSignOut={signOut}

@@ -1,5 +1,6 @@
 // The homepage's sign-in popup (AuthDialog.jsx) on every other page, for signed-out visitors:
-// any link to /login opens it in place. The link keeps working without JavaScript.
+// any sign-in link (/?signin=1) opens it in place. Without JavaScript the link opens it on
+// the homepage. There is no sign-in page.
 import React from 'react';
 import AuthDialog, { authStat } from './AuthDialog';
 import { emailAuth, signInWith } from '../../client/auth-actions';
@@ -10,7 +11,7 @@ export default function SiteAuthDialog({ csrf }) {
   React.useEffect(() => {
     const onClick = (event) => {
       const link =
-        event.target.closest && event.target.closest('a[href="/login"]');
+        event.target.closest && event.target.closest('a[href="/?signin=1"]');
       if (
         !link ||
         event.button !== 0 ||

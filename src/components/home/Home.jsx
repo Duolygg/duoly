@@ -5627,9 +5627,9 @@ export default class Home extends React.Component {
           surface="home"
           open={v.showAuth}
           why={this.state.authWhy}
-          mode={this.state.emailMode}
+          mode={this.state.emailMode || this.props.authMode}
           stat={v.stat}
-          authError={!!this.props.authError && !this.state.authErrDismissed}
+          authError={!this.state.authErrDismissed && this.props.authError}
           onClose={v.closeAuth}
           onSignIn={this.props.onSignIn}
           onEmailAuth={this.props.onEmailAuth}

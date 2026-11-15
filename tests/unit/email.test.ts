@@ -44,7 +44,9 @@ describe('email html builder', () => {
   it('allows only http(s), mailto and Supabase placeholders as links', () => {
     expect(safeUrl('https://duoly.gg/x')).toBe('https://duoly.gg/x');
     expect(safeUrl('{{ .ConfirmationURL }}')).toBe('{{ .ConfirmationURL }}');
-    expect(safeUrl('{{ .SiteURL }}/login')).toBe('{{ .SiteURL }}/login');
+    expect(safeUrl('{{ .SiteURL }}/reset-password')).toBe(
+      '{{ .SiteURL }}/reset-password',
+    );
     expect(() => safeUrl('javascript:alert(1)')).toThrow();
     expect(() => safeUrl('{{ .SiteURL }}"><script>')).toThrow();
   });

@@ -31,7 +31,6 @@ const shellPages = [
   ['/games/valorant', 'Valorant Teammates, Duos and Coaching | Duoly'],
   ['/blog', 'Gaming Guides and Playing Together Safely | Duoly'],
   ['/reset-password', 'Reset password | Duoly'],
-  ['/login', ''],
 ] as const;
 
 for (const [path, title] of shellPages) {
@@ -115,7 +114,7 @@ test('signed-out header offers sign in and the main sections', async ({
   const header = page.locator('header.site-header');
   await expect(header.getByRole('link', { name: 'Sign in' })).toHaveAttribute(
     'href',
-    '/login',
+    '/?signin=1',
   );
   if (isMobile) {
     await header.getByLabel('Menu').click();
@@ -196,20 +195,14 @@ test('removed preview routes and unknown pages are branded 404s', async ({
   expect(box?.height ?? 0).toBeGreaterThan(300);
 });
 
-test('login page has no duplicate header sign in and spaced links', async ({
-  page,
+test('there is no sign-in page: /login opens the sign-in popup on the homepage', async ({
+  request,
 }) => {
-  await page.goto('/login');
-  await expect(
-    page.locator('header.site-header').getByRole('link', { name: 'Sign in' }),
-  ).toHaveCount(0);
-  const links = page.locator('.login-links');
-  await expect(
-    links.getByRole('link', { name: 'Create an account', exact: true }),
-  ).toBeVisible();
-  expect(await links.evaluate((el) => getComputedStyle(el).columnGap)).not.toBe(
-    'normal',
-  );
+  const response = await request.get('/login?error=suspended&x=1', {
+    maxRedirects: 0,
+  });
+  expect(response.status()).toBe(302);
+  expect(response.headers().location).toBe('/?signin=1&error=suspended');
 });
 
 test('teammate rules are for teammates: signed-out visitors are asked to sign in', async ({

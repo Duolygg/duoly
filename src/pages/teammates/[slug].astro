@@ -343,7 +343,11 @@ const shareApps: {
               </button>
             ) : (
               saveMode === 'signin' && (
-                <a class="tp-util tp-save" href="/login" data-profile-signin>
+                <a
+                  class="tp-util tp-save"
+                  href="/?signin=1"
+                  data-profile-signin
+                >
                   <Icon name="heart" />
                   <span class="tp-tip">Save {p.name}</span>
                 </a>

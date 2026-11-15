@@ -41,8 +41,8 @@ describe('migration', () => {
     );
     expect(sql).toContain("'Teammate role removed on Discord'");
   });
-  it('the login page explains a suspension', () => {
-    expect(readFileSync('src/pages/login.astro', 'utf8')).toContain(
+  it('the sign-in popup explains a suspension', () => {
+    expect(readFileSync('src/site/sign-in.ts', 'utf8')).toContain(
       'Your account is suspended',
     );
   });

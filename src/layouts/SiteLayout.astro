@@ -32,9 +32,9 @@ const {
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const home = viewer ? ROLE_HOME[viewer.role] : null;
 const initial = (viewer?.name || 'P').trim().charAt(0).toUpperCase();
-// Signed out: "Sign in" (and any other link to /login) opens the homepage's sign-in popup in
-// place. Without JavaScript, or without a token, the link still goes to /login.
-const signInPopup = !viewer && !bare && !!csrf && path !== '/login';
+// Signed out: "Sign in" (and any other sign-in link) opens the sign-in popup in place.
+// Without JavaScript, or without a token, the link opens it on the homepage instead.
+const signInPopup = !viewer && !bare && !!csrf;
 // Link previews (Discord, X, WhatsApp, iMessage, …). Crawlers need absolute URLs; like the
 // canonical URL, never take the origin from the request (SITE_URL, else the live domain).
 const origin = Astro.site ?? new URL('https://duoly.gg');
@@ -202,11 +202,11 @@ const avatar =
                   </form>
                 </div>
               </details>
-            ) : path !== '/login' ? (
-              <a class="signin" href="/login">
+            ) : (
+              <a class="signin" href="/?signin=1">
                 Sign in
               </a>
-            ) : null}
+            )}
             <details class="mobile-nav">
               <summary aria-label="Menu">
                 <svg

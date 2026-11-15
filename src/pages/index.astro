@@ -11,6 +11,7 @@ import { customerUsdRate, eurToUsd } from '../server/fx';
 import { CurrencySchema } from '../contracts/account';
 import { homeLive } from '../server/home/live';
 import { loadProView } from '../server/pro/status';
+import { signInMessage } from '../site/sign-in';
 const account = accountContext(Astro.request, Astro.cookies);
 let viewer = null;
 let accountCurrency = null;
@@ -41,6 +42,13 @@ const autoCurrency = CurrencySchema.safeParse(
 const { onlineNow, recentMatches, stats, teammates } = await homeLive();
 // Duoly PRO strip and member discount in the order summary (null while PRO_ENABLED is off).
 const pro = await loadProView(account.client, viewer?.role);
+// /?signin=1 opens the sign-in popup (there is no sign-in page), with the line a redirect sent.
+const askLogin = !viewer && Astro.url.searchParams.get('signin') === '1';
+const signIn = askLogin ? signInMessage(Astro.url.searchParams) : {};
+const authMode =
+  askLogin && Astro.url.searchParams.get('mode') === 'register'
+    ? 'register'
+    : undefined;
 ---
 
 <SiteLayout
@@ -73,7 +81,9 @@ const pro = await loadProView(account.client, viewer?.role);
     stats={stats}
     teammates={teammates}
     pro={pro}
-    askLogin={!viewer && Astro.url.searchParams.get('signin') === '1'}
+    askLogin={askLogin}
+    authError={signIn.error ?? signIn.notice ?? null}
+    authMode={authMode}
     initialLink={Astro.url.search}
     client:load
   />

@@ -144,7 +144,7 @@ it.each([
     const state = setup(options);
     const response = await state.run();
     expect(response.status).toBe(303);
-    expect(response.headers.get('location')).toBe('/login?error=callback');
+    expect(response.headers.get('location')).toBe('/?signin=1&error=callback');
     expect(response.headers.get('cache-control')).toContain('no-store');
     expect(state.exchange).toHaveBeenCalledWith('valid-pkce-code');
     expect(state.getUser).toHaveBeenCalledOnce();
@@ -195,7 +195,7 @@ it.each([
     const state = setup();
     const response = await state.run(path);
     expect(response.status).toBe(303);
-    expect(response.headers.get('location')).toBe('/login?error=callback');
+    expect(response.headers.get('location')).toBe('/?signin=1&error=callback');
     expect(response.headers.get('cache-control')).toContain('no-store');
     expect(state.exchange).not.toHaveBeenCalled();
     expect(state.getUser).not.toHaveBeenCalled();
@@ -206,7 +206,7 @@ it.each([
 it('does not load or create an identity after an invalid PKCE exchange', async () => {
   const state = setup({ exchangeError: true });
   const response = await state.run('/auth/callback?code=invalid-code');
-  expect(response.headers.get('location')).toBe('/login?error=callback');
+  expect(response.headers.get('location')).toBe('/?signin=1&error=callback');
   expect(response.headers.get('cache-control')).toContain('no-store');
   expect(state.exchange).toHaveBeenCalledWith('invalid-code');
   expect(state.getUser).not.toHaveBeenCalled();
@@ -219,7 +219,7 @@ it('rejects a callback on a different origin before exchanging the code', async 
     '/auth/callback?code=valid-pkce-code',
     'https://attacker.invalid',
   );
-  expect(response.headers.get('location')).toBe('/login?error=callback');
+  expect(response.headers.get('location')).toBe('/?signin=1&error=callback');
   expect(response.headers.get('cache-control')).toContain('no-store');
   expect(state.exchange).not.toHaveBeenCalled();
   expect(state.getUser).not.toHaveBeenCalled();

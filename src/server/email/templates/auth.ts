@@ -152,7 +152,11 @@ export function passwordChanged(): EmailContent {
         title: 'Wasn’t you?',
         text: 'Reset your password right away and contact support so we can lock your account down.',
       },
-      { type: 'button', label: 'Reset password', url: '{{ .SiteURL }}/login' },
+      {
+        type: 'button',
+        label: 'Reset password',
+        url: '{{ .SiteURL }}/reset-password',
+      },
     ],
     reason: 'You’re getting this security notice for your Duoly account.',
   };

@@ -30,7 +30,7 @@ it('still applies the default referrer policy to public responses', async () => 
 });
 
 it('never serves pages with no-referrer, so their form posts keep a real Origin', async () => {
-  for (const path of ['/login', '/admin', '/dashboard', '/teammate']) {
+  for (const path of ['/', '/admin', '/dashboard', '/teammate']) {
     const result = await onRequest(
       { url: new URL('https://duoly.gg' + path) } as Parameters<
         typeof onRequest

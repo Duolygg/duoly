@@ -167,7 +167,7 @@ test('a signed-out visitor books at once and is remembered in a cookie', async (
 }) => {
   await page.goto('/teammates/nyx');
   await page.locator('.tp-cta [data-profile-book="primary"]').click();
-  /* Straight to booking: no /login in between. */
+  /* Straight to booking: no sign-in in between. */
   await page.waitForURL(/\/\?game=val/);
   const pending = (await page.context().cookies()).find(
     (c) => c.name === 'duoly_pending_favorite',
@@ -187,12 +187,13 @@ test('the Save heart is the only thing that still asks a visitor to sign in', as
 }) => {
   await page.goto('/teammates/nyx');
   const heart = page.locator('[data-profile-signin]');
-  await expect(heart).toHaveAttribute('href', '/login');
+  await expect(heart).toHaveAttribute('href', '/?signin=1');
   await expect(heart).toContainText('Save Nyx');
   /* No heart to toggle while signed out, so no button pretends to be one. */
   await expect(page.locator('[data-profile-save]')).toHaveCount(0);
   await heart.click();
-  await page.waitForURL('**/login');
+  /* No sign-in page: the homepage opens the sign-in popup. */
+  await page.waitForURL((url) => url.pathname === '/');
   expect(
     (await page.context().cookies()).find((c) => c.name === 'duoly_resume')
       ?.value,

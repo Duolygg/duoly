@@ -295,7 +295,9 @@ describe('loginPassword', () => {
       locations.push(response.headers.get('location'));
       expect(await response.text()).not.toContain(message);
     }
-    expect(new Set(locations)).toEqual(new Set(['/login?error=credentials']));
+    expect(new Set(locations)).toEqual(
+      new Set(['/?signin=1&error=credentials']),
+    );
   });
   it('tells a suspended teammate (banned in Auth) why they cannot sign in', async () => {
     const account = fakeAccount();
@@ -308,7 +310,7 @@ describe('loginPassword', () => {
       account,
       post(validCredentials),
     );
-    expect(response.headers.get('location')).toBe('/login?error=suspended');
+    expect(response.headers.get('location')).toBe('/?signin=1&error=suspended');
   });
   it('redirects verified logins to /dashboard and deletes the CSRF cookie', async () => {
     const account = fakeAccount();
@@ -345,7 +347,9 @@ describe('loginPassword', () => {
       scope: 'local',
     });
     expect(account.clear).toHaveBeenCalled();
-    expect(response.headers.get('location')).toBe('/login?error=credentials');
+    expect(response.headers.get('location')).toBe(
+      '/?signin=1&error=credentials',
+    );
     expect(response.headers.get('location')).not.toContain('dashboard');
   });
   it('honors AUTH_TEST_EMAIL against the verified identity and rejects mismatches', async () => {
@@ -365,7 +369,9 @@ describe('loginPassword', () => {
       scope: 'local',
     });
     expect(account.clear).toHaveBeenCalled();
-    expect(response.headers.get('location')).toBe('/login?error=eligibility');
+    expect(response.headers.get('location')).toBe(
+      '/?signin=1&error=eligibility',
+    );
   });
   it('accepts the approved test email when configured', async () => {
     const account = fakeAccount();
@@ -394,7 +400,7 @@ describe('loginPassword', () => {
     );
     expect(first.response.status).toBe(303);
     expect(first.response.headers.get('location')).toBe(
-      '/login?error=credentials',
+      '/?signin=1&error=credentials',
     );
     expect(throwingProvider.clear).toHaveBeenCalled();
 
@@ -412,7 +418,7 @@ describe('loginPassword', () => {
       post(validCredentials),
     );
     expect(second.response.headers.get('location')).toBe(
-      '/login?error=credentials',
+      '/?signin=1&error=credentials',
     );
     expect(second.response.headers.get('location')).not.toContain('hunter2');
     expect(throwingIdentity.clear).toHaveBeenCalled();
@@ -482,7 +488,7 @@ describe('registerPassword', () => {
       options: { emailRedirectTo: ORIGIN + '/auth/callback' },
     });
   });
-  it('tells people an address is already registered and prefills it once', async () => {
+  it('tells people an address is already registered', async () => {
     for (const result of [
       // Confirmations on: Supabase returns a user without identities.
       {
@@ -502,10 +508,11 @@ describe('registerPassword', () => {
         account,
         post(validCredentials),
       );
-      expect(response.headers.get('location')).toBe('/login?notice=registered');
-      expect(cookies.store.get('duoly-pending-email')).toBe(
-        'player@example.com',
+      expect(response.headers.get('location')).toBe(
+        '/?signin=1&notice=registered',
       );
+      // No sign-in page to prefill any more: the popup keeps what was typed.
+      expect(cookies.store.get('duoly-pending-email')).toBeUndefined();
       expect(account.identity).not.toHaveBeenCalled();
     }
   });
@@ -533,7 +540,9 @@ describe('registerPassword', () => {
     locations.push(second.response.headers.get('location'));
     expect(pending.identity).not.toHaveBeenCalled();
 
-    expect(new Set(locations)).toEqual(new Set(['/login?notice=confirmation']));
+    expect(new Set(locations)).toEqual(
+      new Set(['/?signin=1&notice=confirmation']),
+    );
   });
   it('verifies identity and enters /dashboard when signup returns a session', async () => {
     const account = fakeAccount();
@@ -570,7 +579,9 @@ describe('registerPassword', () => {
     });
     expect(account.clear).toHaveBeenCalled();
     expect(response.headers.get('location')).not.toContain('dashboard');
-    expect(response.headers.get('location')).toBe('/login?notice=confirmation');
+    expect(response.headers.get('location')).toBe(
+      '/?signin=1&notice=confirmation',
+    );
   });
   it('honors AUTH_TEST_EMAIL against the post-signup identity', async () => {
     const account = fakeAccount();
@@ -598,7 +609,9 @@ describe('registerPassword', () => {
       post(validCredentials),
     );
     expect(response.status).toBe(303);
-    expect(response.headers.get('location')).toBe('/login?notice=confirmation');
+    expect(response.headers.get('location')).toBe(
+      '/?signin=1&notice=confirmation',
+    );
     expect(response.headers.get('location')).not.toContain('hunter2');
     expect(account.clear).toHaveBeenCalled();
   });

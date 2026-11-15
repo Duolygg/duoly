@@ -1,5 +1,5 @@
 // Sign-in from the popup (components/auth/AuthDialog.jsx), shared by the homepage and the dialog
-// every other page opens: the same server routes the /login page posts to.
+// every other page opens: the same server routes the homepage popup posts to.
 
 /** Google and Discord: posts the provider form, the browser follows the provider redirect. */
 export function signInWith(provider: string, csrf: string) {

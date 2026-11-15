@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('disabled Google provider is rejected on the server with a valid same-origin CSRF request', async ({
   page,
 }) => {
-  await page.goto('/login');
+  await page.goto('/reset-password');
   const csrf = await page.locator('input[name="csrf"]').first().inputValue();
   const origin = new URL(page.url()).origin;
   const response = await page.request.post('/auth/oauth', {

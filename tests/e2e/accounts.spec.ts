@@ -18,47 +18,14 @@ test('retired email OTP endpoints have no routes, regardless of provider flags',
   }
 });
 
-test('account login is a real route, explicitly unavailable until providers are configured', async ({
+test('there is no sign-in page: /login sends visitors to the sign-in popup', async ({
   page,
 }) => {
-  const response = await page.goto('/login');
-  expect(response?.status()).toBe(200);
+  await page.goto('/login?mode=register');
+  expect(new URL(page.url()).pathname).toBe('/');
   await expect(
     page.getByRole('heading', { name: 'Sign in to Duoly' }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('navigation', { name: 'Preview pages' }),
   ).toHaveCount(0);
-  await expect(
-    page.getByText('Account sign-in is not configured yet.', { exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'Continue with Google', exact: true }),
-  ).toBeDisabled();
-  await expect(
-    page.getByRole('button', { name: 'Continue with Discord', exact: true }),
-  ).toBeDisabled();
-  await expect(
-    page.getByRole('button', { name: 'Sign in with email', exact: true }),
-  ).toBeDisabled();
-  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute(
-    'minlength',
-    '8',
-  );
-  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute(
-    'autocomplete',
-    'current-password',
-  );
-  await page
-    .getByRole('link', { name: 'Create an account', exact: true })
-    .click();
-  await expect(
-    page.getByRole('heading', { name: 'Create your Duoly account' }),
-  ).toBeVisible();
-  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute(
-    'autocomplete',
-    'new-password',
-  );
 });
 
 test('untrusted POSTs cannot mutate account state', async ({ request }) => {
