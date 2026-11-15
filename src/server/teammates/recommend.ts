@@ -79,9 +79,11 @@ export function recommendFor(
   p: PublicTeammateProfile,
   forGame: string = p.featuredGame,
 ): Recommendation | null {
+  const featured = p.games.find((g) => g.game === forGame);
+  if (!featured) return null;
   const gameId = profileGame(forGame).id;
-  const featured = p.games.find((g) => g.game === gameId);
-  const verifiedRank = featured?.verified ? featured.rank : null;
+  if (gameId !== forGame) return null;
+  const verifiedRank = featured.verified ? featured.rank : null;
   const duoOffers = seoOffers(gameId, 'teammate', context);
   /* Gamer Girl services are a separate line with their own providers. */
   const own = duoOffers.filter((o) => !/gamer girl/i.test(o.tier));

@@ -88,12 +88,6 @@ export const MIN_GAMES_FOR_WINRATE = 20;
 export const INDEX_MIN_BIO_CHARS = 60;
 export const INDEX_MIN_SESSIONS = 5;
 export const PROFILE_REVIEWS_MAX = 6;
-/**
- * Sanity bound on the stored featured list, and the same number the column check in
- * 20261115120000_featured_games.sql holds. It is not a product limit: a teammate features as many
- * of their approved games as they like, and the catalog ships fewer games than this.
- */
-export const FEATURED_GAMES_MAX = 32;
 /** Featured games drawn in the rank line before the rest fold into the pill: phone, then desktop. */
 export const RANKLINE_INLINE_PHONE = 2;
 export const RANKLINE_INLINE_DESKTOP = 3;
@@ -268,9 +262,14 @@ export const publicProfileSettingsSchema = z.object({
   /* Optional on the wire, exactly as teammate_public_profile_save() takes it: a client that only
      knows the single field still saves, and one value means a one element list. */
   featuredGames: z
-    .array(z.string().min(2).max(8))
+    .array(
+      z
+        .string()
+        .min(2)
+        .max(8)
+        .regex(/^[a-z0-9]+$/),
+    )
     .min(1)
-    .max(FEATURED_GAMES_MAX)
     .optional(),
   vibeTags: z.array(z.enum(VIBE_TAGS)).max(VIBE_TAGS_MAX),
   showCountry: z.boolean(),

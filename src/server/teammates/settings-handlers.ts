@@ -118,6 +118,38 @@ export const publicProfileSettings: APIRoute = async (context) => {
       const checked = checkProfileGames(settings.games, storedGames(old));
       if (!checked.ok) return account.json({ error: checked.error }, 400);
       settings = { ...settings, games: checked.games };
+      if (settings.featuredGames) {
+        // The RPC rechecks approval under its access-row lock; this read gives early feedback.
+        const approval =
+          old && !old.error && old.data && typeof old.data === 'object'
+            ? (old.data as { error?: unknown; approvedGames?: unknown })
+            : null;
+        if (
+          approval?.error ||
+          !Array.isArray(approval?.approvedGames) ||
+          !approval.approvedGames.every((game) => typeof game === 'string')
+        )
+          return account.json(
+            { error: 'Public profiles are unavailable right now.' },
+            503,
+          );
+        const approvedGames = approval.approvedGames;
+        const featuredGames = [...new Set(settings.featuredGames)];
+        const lead = featuredGames[0];
+        if (
+          !lead ||
+          featuredGames.some((game) => !approvedGames.includes(game))
+        )
+          return account.json(
+            { error: 'Feature games you are approved for.' },
+            400,
+          );
+        settings = {
+          ...settings,
+          featuredGame: lead,
+          featuredGames,
+        };
+      }
     }
     const answer = settings
       ? await rpc('teammate_public_profile_save', { p_settings: settings })

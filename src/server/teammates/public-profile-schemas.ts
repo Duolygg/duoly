@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import {
-  FEATURED_GAMES_MAX,
   PROFILE_ACCENT_KEYS,
   PROFILE_BANNERS,
   TRUST_TIERS,
@@ -43,52 +42,69 @@ export const publicCardSchema = z.object({
   gamerGirl: z.boolean().optional(),
   quote: z.string().max(500).nullable().optional(),
 });
-export const publicProfileSchema = z.object({
-  ...common,
-  header: z
-    .string()
-    .regex(
-      /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/profile-headers\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{16}\.(webp|jpg)$/,
-    )
-    .nullable()
-    .optional(),
-  country: z.string().nullable(),
-  languages: z.array(z.string()),
-  bio: z.string().max(160),
-  banner: z.enum(PROFILE_BANNERS),
-  vibeTags: z.array(z.enum(VIBE_TAGS)).max(3),
-  featuredGame: z.string(),
-  /* 20261115120000_featured_games.sql; optional until that migration has run, and
+export const publicProfileSchema = z
+  .object({
+    ...common,
+    header: z
+      .string()
+      .regex(
+        /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/profile-headers\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{16}\.(webp|jpg)$/,
+      )
+      .nullable()
+      .optional(),
+    country: z.string().nullable(),
+    languages: z.array(z.string()),
+    bio: z.string().max(160),
+    banner: z.enum(PROFILE_BANNERS),
+    vibeTags: z.array(z.enum(VIBE_TAGS)).max(3),
+    featuredGame: z.string(),
+    /* 20261115120000_featured_games.sql; optional until that migration has run, and
      featuredGamesOf() falls back to the single field when it is not there. */
-  featuredGames: z.array(z.string()).min(1).max(FEATURED_GAMES_MAX).optional(),
-  coaching: z.boolean(),
-  /* 20261114130000_gamer_girl_profiles.sql; optional until that migration has run. */
-  gamerGirl: z.boolean().optional(),
-  memberSince: z.string().regex(/^\d{4}-\d{2}$/),
-  sessions: count,
-  reviewTags: z.array(z.object({ tag: z.string(), count })),
-  winRate: z
-    .object({ percent: z.number().min(0).max(100), games: count.min(20) })
-    .nullable(),
-  games: z.array(game),
-  reviews: z
-    .array(
-      z.object({
-        rating: z.union([
-          z.literal(1),
-          z.literal(2),
-          z.literal(3),
-          z.literal(4),
-          z.literal(5),
-        ]),
-        text: z.string(),
-        game: z.string(),
-        month: z.string().regex(/^\d{4}-\d{2}$/),
-      }),
-    )
-    .max(6),
-  updatedAt: z.iso.datetime({ offset: true }),
-});
+    featuredGames: z.array(z.string()).min(1).optional(),
+    coaching: z.boolean(),
+    /* 20261114130000_gamer_girl_profiles.sql; optional until that migration has run. */
+    gamerGirl: z.boolean().optional(),
+    memberSince: z.string().regex(/^\d{4}-\d{2}$/),
+    sessions: count,
+    reviewTags: z.array(z.object({ tag: z.string(), count })),
+    winRate: z
+      .object({ percent: z.number().min(0).max(100), games: count.min(20) })
+      .nullable(),
+    games: z.array(game),
+    reviews: z
+      .array(
+        z.object({
+          rating: z.union([
+            z.literal(1),
+            z.literal(2),
+            z.literal(3),
+            z.literal(4),
+            z.literal(5),
+          ]),
+          text: z.string(),
+          game: z.string(),
+          month: z.string().regex(/^\d{4}-\d{2}$/),
+        }),
+      )
+      .max(6),
+    updatedAt: z.iso.datetime({ offset: true }),
+  })
+  .refine(
+    (profile) => {
+      const featured = profile.featuredGames;
+      if (!featured) return true; // Older RPCs expose only featuredGame.
+      const approved = new Set(profile.games.map((entry) => entry.game));
+      return (
+        featured[0] === profile.featuredGame &&
+        new Set(featured).size === featured.length &&
+        featured.every((id) => approved.has(id))
+      );
+    },
+    {
+      path: ['featuredGames'],
+      message: 'Featured games must be unique approved games in lead order.',
+    },
+  );
 export const publicLookupSchema = z.union([
   publicProfileSchema.transform((profile) => ({
     status: 'ok' as const,
