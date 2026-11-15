@@ -1,4 +1,4 @@
-import { SetDuoLevelSchema } from '../../contracts/admin';
+import { SetPlusOnlyGamesSchema } from '../../contracts/admin';
 import { adminRoute } from './handlers';
 
 type Rpc = (
@@ -10,19 +10,20 @@ const rpc = (client: unknown) =>
   (client as { rpc: Rpc }).rpc.bind(client) as Rpc;
 
 /**
- * /api/admin/duo-levels (migration 20261030140000). GET: every teammate's level as { levels: {
- * userId: 'standard' | 'plus_only' } }. POST: set one teammate's level. The database re-checks the
- * admin role and that the account is a teammate.
+ * /api/admin/duo-levels (migration 20261115140000). GET: the games each teammate is Plus only in,
+ * as { plusOnly: { userId: string[] } }. POST { userId, plusOnly }: set one teammate's Plus only
+ * games. The database re-checks the admin role, that the account is a teammate, and keeps only
+ * games they are approved for.
  */
 export const duoLevels = adminRoute(
   (client) => rpc(client)('admin_duo_levels'),
   [
     {
-      schema: SetDuoLevelSchema,
+      schema: SetPlusOnlyGamesSchema,
       call: (client, body) =>
-        rpc(client)('admin_set_duo_level', {
+        rpc(client)('admin_set_plus_only_games', {
           p_user: body.userId,
-          p_level: body.level,
+          p_games: body.plusOnly,
         }),
     },
   ],

@@ -242,9 +242,14 @@ export const AdminRefundOrderSchema = z
   .object({ ...orderAction, action: z.literal('refund'), reason })
   .strict();
 
-/** Duo tier level per teammate (migration 20261030140000, docs/product/duo-tiers.md). */
-export const DUO_LEVELS = ['standard', 'plus_only'] as const;
-export type DuoLevel = (typeof DUO_LEVELS)[number];
-export const SetDuoLevelSchema = z
-  .object({ csrf, userId: z.uuid(), level: z.enum(DUO_LEVELS) })
+/**
+ * Games where a teammate is Plus only (migration 20261115140000, docs/product/duo-tiers.md): Duo
+ * Plus only there, Standard in their other approved games. The database keeps approved games only.
+ */
+export const SetPlusOnlyGamesSchema = z
+  .object({
+    csrf,
+    userId: z.uuid(),
+    plusOnly: z.array(z.string().regex(/^[a-z0-9]{2,8}$/)).max(20),
+  })
   .strict();

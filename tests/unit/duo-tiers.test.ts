@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CATALOG } from '../../src/design-reference/lib/catalog.js';
-import { SetDuoLevelSchema } from '../../src/contracts/admin';
+import { SetPlusOnlyGamesSchema } from '../../src/contracts/admin';
 import { knowledgeMatch } from '../../src/server/support/knowledge';
 
 const read = (name: string) =>
@@ -135,17 +135,21 @@ describe('tiers in the catalog', () => {
 });
 
 describe('admin and Sparky', () => {
-  it('accepts only the two levels', () => {
+  it('takes a list of game ids for Plus only', () => {
     const base = {
       csrf: 't',
       userId: '11111111-1111-4111-8111-111111111111',
     };
+    const ok = (plusOnly: unknown) =>
+      SetPlusOnlyGamesSchema.safeParse({ ...base, plusOnly }).success;
+    expect(ok(['lol', 'val'])).toBe(true);
+    expect(ok([])).toBe(true);
+    // the old one-level-for-every-game shape is gone
     expect(
-      SetDuoLevelSchema.safeParse({ ...base, level: 'plus_only' }).success,
-    ).toBe(true);
-    expect(
-      SetDuoLevelSchema.safeParse({ ...base, level: 'apex' }).success,
+      SetPlusOnlyGamesSchema.safeParse({ ...base, level: 'plus_only' }).success,
     ).toBe(false);
+    expect(ok('lol')).toBe(false);
+    expect(ok(['LoL; drop'])).toBe(false);
   });
 
   it('explains tiers to teammates without catching Apex Legends questions', () => {
@@ -154,6 +158,51 @@ describe('admin and Sparky', () => {
     );
     expect(knowledgeMatch('teammate', 'no apex legends orders')?.id).not.toBe(
       'duo-tiers',
+    );
+  });
+});
+
+describe('Plus only per game (20261115140000)', () => {
+  const sql = read('20261115140000_plus_only_per_game.sql');
+  const tier = fn(
+    sql,
+    'create or replace function public.order_tier_open_at(',
+    /\nend \$\$;/,
+  );
+  it("checks Plus only for the order's game, after streamers and Gamer Girl orders", () => {
+    expect(tier).toMatch(
+      /if p_order\.game = any\(p_access\.plus_only_games\) then\s+return case when v_tier = 'plus' then p_order\.queued_at end;/,
+    );
+    expect(tier).not.toContain('duo_level');
+    expect(tier.indexOf('if p_order.gg then')).toBeLessThan(
+      tier.indexOf('plus_only_games'),
+    );
+    // the Apex wait and the favorite shortcut stay as they were
+    expect(tier).toContain('s.bracket in (1, 5)');
+    expect(tier).toContain(
+      'customer_favorite_of(p_order.customer_id, p_access.user_id)',
+    );
+  });
+  it('keeps every Plus only teammate Plus only in their games, then drops the old level', () => {
+    const backfill = sql.indexOf(
+      "update public.teammate_order_access set plus_only_games = approved_games where duo_level = 'plus_only';",
+    );
+    const drop = sql.indexOf(
+      'alter table public.teammate_order_access drop column duo_level;',
+    );
+    expect(backfill).toBeGreaterThan(0);
+    expect(drop).toBeGreaterThan(backfill);
+  });
+  it('keeps only approved games and checks the Users section', () => {
+    const set = fn(
+      sql,
+      'create function public.admin_set_plus_only_games(',
+      /\n\$\$;/,
+    );
+    expect(set).toContain("public.admin_caller_for('users')");
+    expect(set).toContain('x.g = any(a.approved_games)');
+    expect(sql).toContain(
+      'grant execute on function public.admin_duo_levels(), public.admin_set_plus_only_games(uuid, text[]) to authenticated;',
     );
   });
 });

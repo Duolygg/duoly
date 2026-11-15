@@ -16,21 +16,23 @@ Apex Legends has no Apex tier. Gamer Girl and Social orders are not tiered.
 
 ## Teammate levels
 
-Set per teammate by an admin in Admin → Users → Edit access → Teammate level.
+Set per teammate **and per game** by an admin in Admin → Users → Edit access → Duo Plus only in
+(migration `20261115140000_plus_only_per_game.sql`). A teammate hired with a lower rank in one game
+can be Plus only there and Standard in their other games.
 
-| Level              | Can claim                                                                |
-| ------------------ | ------------------------------------------------------------------------ |
-| Standard (default) | Plus and Pro right away, Apex once it opens (below), every other service |
-| Plus only          | The Plus tier only. Never Pro, Apex or any other non Gamer Girl service  |
+| Level              | Can claim                                                                             |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| Standard (default) | Plus and Pro right away, Apex once it opens (below), every other service              |
+| Plus only (a game) | In that game, the Plus tier only. Never Pro, Apex or any other non Gamer Girl service |
 
 ## Apex orders
 
 - First, only teammates ranked **TOP 1%** or **TOP 5%** in the latest performance run can claim them.
 - **100 seconds** after the order goes public (the same moment it is posted in Discord), every
   Standard teammate approved for the game can claim it, on the site and through the Discord link.
-- Plus only teammates never can.
+- Teammates who are Plus only in the order's game never can.
 - A Diamond customer's pick wins: the picked teammate gets the Apex order right away, unless they
-  are Plus only (then there is no pick window and the order goes to the normal queue).
+  are Plus only in that game (then there is no pick window and the order goes to the normal queue).
 - Admin handover links give any order to anyone, as before.
 - Until enough teammates are ranked (TOP 5% needs 20), nobody is TOP 1/5%, so Apex orders open
   to Standard teammates after 100 seconds.
@@ -49,5 +51,7 @@ The usual priority delay still applies on top.
 
 ## Deploy order
 
-Apply `20261030120000_performance_ranking.sql` first, then `20261030140000_duo_tiers.sql`. Until the
-level column exists, the level picker in Admin → Users stays hidden.
+Apply `20261030120000_performance_ranking.sql` first, then `20261030140000_duo_tiers.sql`, then
+`20261115140000_plus_only_per_game.sql` (which keeps every Plus only teammate Plus only in all their
+approved games and drops `duo_level`). Until it is applied, the Plus only picker in Admin → Users
+stays hidden.

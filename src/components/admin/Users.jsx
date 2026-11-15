@@ -82,8 +82,8 @@ export default class Users extends React.Component {
       busy: '',
       editing: '',
       draft: null,
-      // Duo tier level per teammate (migration 20261030140000); null until it can be read
-      levels: null,
+      // games each teammate is Plus only in (migration 20261115140000); null until it can be read
+      plusOnly: null,
     };
   }
   // ---- order access: Gamer Girl orders (every game) and/or comp orders in approved games
@@ -97,7 +97,11 @@ export default class Users extends React.Component {
         gg: !!acc.gg,
         // Twitch streaming games (migration 20261105100000); always a subset of games
         stream: (acc.stream || []).slice(),
-        level: (this.state.levels && this.state.levels[a.id]) || 'standard',
+        // Plus only (Duo Plus only) in these games, Standard in their other games
+        plusOnly: (
+          (this.state.plusOnly && this.state.plusOnly[a.id]) ||
+          []
+        ).slice(),
       },
     });
   }
@@ -145,26 +149,34 @@ export default class Users extends React.Component {
           );
         }
       }
-      const before =
-        (this.state.levels && this.state.levels[a.id]) || 'standard';
-      if (this.state.levels && d.games.length && d.level !== before) {
+      // Plus only: only games they can take, saved after the games themselves
+      const plus = d.plusOnly.filter((g) => d.games.includes(g));
+      const was = (this.state.plusOnly && this.state.plusOnly[a.id]) || [];
+      if (
+        this.state.plusOnly &&
+        (plus.length !== was.length || plus.some((g) => !was.includes(g)))
+      ) {
         const lv = await this.props.api.post('/api/admin/duo-levels', {
           userId: a.id,
-          level: d.level,
+          plusOnly: plus,
         });
         if (!lv.ok)
           this.props.toast(
-            lv.error || 'Access saved, but not their teammate level.',
+            lv.error || 'Access saved, but not their Plus only games.',
             'warn',
           );
         else {
+          const saved = lv.data.plusOnly || plus;
           this.setState({
-            levels: { ...this.state.levels, [a.id]: d.level },
+            plusOnly: { ...this.state.plusOnly, [a.id]: saved },
           });
+          const names = GAMES.filter((g) => saved.includes(g.id))
+            .map((g) => g.short)
+            .join(', ');
           this.props.log(
             'Changed teammate level',
             a.name || a.email,
-            d.level === 'plus_only' ? 'Plus only' : 'Standard',
+            names ? 'Plus only in ' + names : 'Standard in every game',
           );
         }
       }
@@ -394,6 +406,11 @@ export default class Users extends React.Component {
     const acc = a.access || { games: [], gg: false };
     const open = s.editing === a.id;
     const d = open ? s.draft : null;
+    const plusGames = GAMES.filter(
+      (g) =>
+        acc.games.includes(g.id) &&
+        ((s.plusOnly && s.plusOnly[a.id]) || []).includes(g.id),
+    );
     const label = {
       fontSize: '12px',
       fontWeight: '700',
@@ -415,9 +432,12 @@ export default class Users extends React.Component {
           }}
         >
           <span style={label}>Order access</span>
-          {acc.games.length && s.levels && s.levels[a.id] === 'plus_only' ? (
+          {plusGames.length ? (
             <span
-              title="Duo Plus only: no Duo Pro, Duo Apex or other services"
+              title={
+                'Duo Plus only (no Duo Pro, Duo Apex or other services) in ' +
+                plusGames.map((g) => g.name).join(', ')
+              }
               style={{
                 fontSize: '12.5px',
                 fontWeight: '700',
@@ -427,7 +447,10 @@ export default class Users extends React.Component {
                 color: C.gold,
               }}
             >
-              Plus only
+              Plus only ·{' '}
+              {plusGames.length > 3
+                ? plusGames.length + ' games'
+                : plusGames.map((g) => g.short).join(', ')}
             </span>
           ) : null}
           {acc.gg ? (
@@ -516,10 +539,19 @@ export default class Users extends React.Component {
         games: x.games.includes(id)
           ? x.games.filter((g) => g !== id)
           : x.games.concat(id),
-        // a game they can't take can't be streamed either
+        // a game they can't take can't be streamed or be Plus only either
         stream: x.games.includes(id)
           ? x.stream.filter((g) => g !== id)
           : x.stream,
+        plusOnly: x.games.includes(id)
+          ? x.plusOnly.filter((g) => g !== id)
+          : x.plusOnly,
+      }));
+    const togglePlus = (id) =>
+      edit((x) => ({
+        plusOnly: x.plusOnly.includes(id)
+          ? x.plusOnly.filter((g) => g !== id)
+          : x.plusOnly.concat(id),
       }));
     const toggleStream = (id) =>
       edit((x) => ({
@@ -630,7 +662,9 @@ export default class Users extends React.Component {
             </button>
             <button
               type="button"
-              onClick={() => edit(() => ({ games: [] }))}
+              onClick={() =>
+                edit(() => ({ games: [], stream: [], plusOnly: [] }))
+              }
               style={{
                 ...btn(),
                 minHeight: '28px',
@@ -704,69 +738,73 @@ export default class Users extends React.Component {
               );
             })}
           </div>
-          {s.levels ? (
+          {s.plusOnly && streamable.length ? (
             <>
-              <div style={{ marginTop: '14px', ...label }}>Teammate level</div>
               <div
-                role="radiogroup"
-                aria-label={'Teammate level for ' + (a.name || a.email)}
+                style={{
+                  marginTop: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <span style={label}>Duo Plus only in</span>
+                <span style={{ fontSize: '12.5px', color: C.dim }}>
+                  {d.plusOnly.filter((g) => d.games.includes(g)).length
+                    ? 'Hired with a lower rank here: Duo Plus only, never Pro, Apex or other services. Standard in their other games.'
+                    : 'None · Standard in every game: Duo Plus and Pro, Apex after 100 seconds'}
+                </span>
+              </div>
+              <div
+                role="group"
+                aria-label={'Plus only games for ' + (a.name || a.email)}
                 style={{
                   marginTop: '8px',
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  display: 'flex',
+                  flexWrap: 'wrap',
                   gap: '6px',
                 }}
               >
-                {[
-                  [
-                    'standard',
-                    'Standard',
-                    'Duo Plus and Duo Pro. Duo Apex after 100 seconds (right away for TOP 1% and TOP 5%).',
-                  ],
-                  [
-                    'plus_only',
-                    'Plus only',
-                    'Hired with a lower rank: Duo Plus only, never Pro, Apex or other services.',
-                  ],
-                ].map(([id, name, hint]) => {
-                  const on = d.level === id;
+                {streamable.map((g) => {
+                  const on = d.plusOnly.includes(g.id);
                   return (
                     <button
-                      key={id}
+                      key={g.id}
                       type="button"
-                      role="radio"
-                      aria-checked={on ? 'true' : 'false'}
-                      onClick={() => edit(() => ({ level: id }))}
+                      aria-pressed={on ? 'true' : 'false'}
+                      aria-label={'Plus only in ' + g.name}
+                      onClick={() => togglePlus(g.id)}
                       style={{
-                        display: 'block',
-                        padding: '10px 12px',
-                        borderRadius: '12px',
-                        textAlign: 'left',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        minHeight: '32px',
+                        padding: '0 12px 0 4px',
+                        borderRadius: '10px',
+                        fontSize: '12.5px',
+                        fontWeight: '600',
                         transform: 'none',
-                        background: on ? C.raised : 'transparent',
-                        border: '1px solid ' + (on ? C.accent : C.line2),
+                        background: on
+                          ? 'rgba(255, 210, 122, .12)'
+                          : 'transparent',
+                        border: '1px solid ' + (on ? C.gold : C.line2),
+                        color: on ? C.white : C.dim,
                       }}
                     >
-                      <span
+                      <img
+                        src={g.img}
+                        alt=""
+                        width="24"
+                        height="24"
                         style={{
-                          display: 'block',
-                          fontSize: '14px',
-                          fontWeight: '700',
-                          color: on ? C.white : C.text,
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '7px',
+                          filter: on ? 'none' : 'grayscale(1) brightness(.6)',
                         }}
-                      >
-                        {name}
-                      </span>
-                      <span
-                        style={{
-                          display: 'block',
-                          marginTop: '2px',
-                          fontSize: '12.5px',
-                          color: C.dim,
-                        }}
-                      >
-                        {hint}
-                      </span>
+                      />
+                      {g.short}
                     </button>
                   );
                 })}
@@ -905,10 +943,10 @@ export default class Users extends React.Component {
       error: '',
       loaded: true,
     });
-    // Before migration 20261030140000 this fails and the level picker stays hidden.
+    // Before migration 20261115140000 this has another shape and the Plus only picker stays hidden.
     const lv = await this.props.api.get('/api/admin/duo-levels');
-    if (lv.ok && lv.data && lv.data.levels)
-      this.setState({ levels: lv.data.levels });
+    if (lv.ok && lv.data && lv.data.plusOnly)
+      this.setState({ plusOnly: lv.data.plusOnly });
   }
   change(a, role) {
     if (a.role === role) return;
