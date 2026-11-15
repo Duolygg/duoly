@@ -223,9 +223,8 @@ const at = new Map(stands.map((s, i) => [s.id, i]));
                       stroke-linejoin="round"
                     />
                   </svg>
-                  {shelf.count}
-                  <span class="tc-group-sr-only">
-                    {' '}
+                  {shelf.count}{' '}
+                  <span class="tc-group-unit">
                     {shelf.count === 1 ? 'trophy' : 'trophies'}
                   </span>
                 </span>
