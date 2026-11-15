@@ -1,7 +1,10 @@
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { GAME_PICKS } from '../../src/contracts/game-picks';
-import {
+import RoleGlyph, {
   ROLE_COLOR,
+  ROLE_SHAPES,
   roleColor,
   roleShape,
 } from '../../src/components/account/role-accents';
@@ -16,6 +19,8 @@ import { PROFILE_ACCENTS } from '../../src/contracts/teammate-profile';
 const NIGHT = '#090414';
 const PANEL = '#120b22';
 const RAISE = '#1b1033';
+/** The muted ink, and the tile a character sits on. */
+const INK_3 = '#9a90b8';
 /** The strongest wash any of those rules puts behind a label in its own colour. */
 const WASH = 0.2;
 
@@ -38,7 +43,24 @@ const contrast = (a: string, b: string) => {
   return (Math.max(x!, y!) + 0.05) / (Math.min(x!, y!) + 0.05);
 };
 
+/** The lit top of the sheet, where the filter tabs and the counter are printed. */
+const SHEET = mix('#d6bbff', PANEL, 0.1);
+
 describe('the role palette', () => {
+  /* The muted greys, which is what round 4 asked to be measured rather than trusted. */
+  it('prints muted text at AA on every surface it sits on', () => {
+    for (const surface of [NIGHT, PANEL, RAISE, SHEET])
+      expect(contrast(INK_3, surface), surface).toBeGreaterThanOrEqual(4.5);
+  });
+  /* The role label under a character's name is the role's colour pulled towards the muted ink,
+     so the tile's own tint carries the role and the words stay quiet. */
+  it('keeps the quiet role label on a tile at AA', () => {
+    for (const [role, hex] of Object.entries(ROLE_COLOR))
+      expect(
+        contrast(mix(hex, INK_3, 0.6), mix(hex, NIGHT, 0.05)),
+        role,
+      ).toBeGreaterThanOrEqual(4.5);
+  });
   /* Printed in its own colour: a role tag, a monogram, an order badge, a selected filter tab.
      Those all sit on the night behind the sheet or on the panel, washed with the same colour. */
   it('reads as normal text where it is printed in its own colour', () => {
@@ -47,6 +69,7 @@ describe('the role palette', () => {
         NIGHT,
         PANEL,
         RAISE,
+        SHEET,
         mix(hex, NIGHT, WASH),
         mix(hex, PANEL, WASH),
       ])
@@ -60,7 +83,7 @@ describe('the role palette', () => {
   it('reads as normal text on a selected chip, on every surface a chip sits on', () => {
     for (const [role, hex] of Object.entries(ROLE_COLOR)) {
       const label = mix(hex, '#ffffff', 0.7);
-      for (const surface of [NIGHT, PANEL, RAISE])
+      for (const surface of [NIGHT, PANEL, RAISE, SHEET])
         expect(
           contrast(label, mix(hex, surface, WASH)),
           `${role} chip on ${surface}`,
@@ -93,12 +116,25 @@ describe('the role palette', () => {
     }
   });
   /* Colour and shape say the same thing twice, so the grid reads without colour as well. */
-  it('gives every role one of the five marks we drew', () => {
+  it('draws a mark it has a path for, and falls back to the neutral one', () => {
     for (const role of Object.keys(ROLE_COLOR))
-      expect(['shield', 'crosshair', 'plus', 'eye', 'diamond']).toContain(
-        roleShape(role),
-      );
+      expect(ROLE_SHAPES, role).toContain(roleShape(role));
     expect(roleShape('not-a-role')).toBe('diamond');
     expect(roleColor('not-a-role')).toBe(PROFILE_ACCENTS.lavender);
+  });
+  /*
+   * The round 4 rule: no two roles a teammate sees side by side may share a mark. Valorant drew
+   * the same eye on Initiator, Controller and Sentinel, so the filter row said nothing. Compared
+   * as drawn rather than by name, which is also what catches a mark with no path behind it.
+   */
+  it('gives the roles and the filters of one game a different mark each', () => {
+    const drawn = (role: string) =>
+      renderToStaticMarkup(createElement(RoleGlyph, { role }));
+    for (const [game, catalog] of Object.entries(GAME_PICKS))
+      for (const group of [catalog.roles, catalog.filters]) {
+        const marks = group.map((r) => drawn(r.id));
+        for (const mark of marks) expect(mark, game).toContain('<svg');
+        expect(new Set(marks).size, game).toBe(marks.length);
+      }
   });
 });

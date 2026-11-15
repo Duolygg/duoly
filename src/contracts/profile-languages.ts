@@ -55,5 +55,9 @@ export const PROFILE_LANGUAGE_DETAIL: ProfileLanguage[] = [
   { id: 'Japanese', endonym: '日本語', code: 'JA', suggested: 35 },
   { id: 'Korean', endonym: '한국어', code: 'KO', suggested: 36 },
 ];
-/** How many of them lead the picker as "Suggested". */
-export const LANGUAGES_SUGGESTED = 10;
+/**
+ * How many of them lead the picker as "Suggested". Six, because the group is a shortcut past
+ * the A to Z list and not a second list: ten of them filled a phone sheet on their own and left
+ * "All languages" under the fold, where nothing said the list went on.
+ */
+export const LANGUAGES_SUGGESTED = 6;

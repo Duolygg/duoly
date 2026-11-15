@@ -82,15 +82,30 @@ const Plus = () => (
 const Star = ({ on }) => (
   <svg
     viewBox="0 0 20 20"
-    width="19"
-    height="19"
+    width="20"
+    height="20"
     fill={on ? 'currentColor' : 'none'}
     stroke="currentColor"
-    strokeWidth="1.5"
+    strokeWidth="1.6"
     strokeLinejoin="round"
     aria-hidden="true"
   >
     <path d="M10 2.4l2.35 4.76 5.25.77-3.8 3.7.9 5.23L10 14.4l-4.7 2.46.9-5.23-3.8-3.7 5.25-.77Z" />
+  </svg>
+);
+const Tick = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="11"
+    height="11"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.4"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="m3 8.6 3.2 3.2L13 4.8" />
   </svg>
 );
 
@@ -105,6 +120,9 @@ export default class GameCards extends React.Component {
       /** The button the picker was opened from, so closing it hands focus back. */
       pickingFrom: null,
       ask: '',
+      /** Set once the draft is in the chat, so the button is not a thing that appears to do
+          nothing on a screen where the chat opens over the corner. */
+      asked: false,
     };
   }
   entry(game) {
@@ -122,15 +140,17 @@ export default class GameCards extends React.Component {
     if (!rank?.rank) return <>Rank not verified yet</>;
     return (
       <>
-        {rank.rank}
+        {/* The rank is what gets cut when the line will not fit, never the badge that says
+            somebody checked it. */}
+        <span className="pk-rank-text">{rank.rank}</span>
         {rank.verified ? (
-          <>
-            {' · '}
-            <span className="pk-verified">Verified</span>
-          </>
+          <span className="pk-badge">
+            <Tick />
+            Verified
+          </span>
         ) : null}
         {rank.peakRank ? (
-          <span className="pk-card-peak"> · Peak {rank.peakRank}</span>
+          <span className="pk-card-peak">Peak {rank.peakRank}</span>
         ) : null}
       </>
     );
@@ -145,7 +165,7 @@ export default class GameCards extends React.Component {
     if (parts.length) return { text: parts.join(' · '), empty: false };
     /* "Add your roles and classes and specs" is what naming the field gave World of Warcraft.
        Mains is the word a player uses, and it is true in every game. */
-    return { text: 'Add your roles and mains', empty: true };
+    return { text: 'Add roles and mains', empty: true };
   }
   renderRoles(entry) {
     const { game, roles } = entry;
@@ -154,15 +174,13 @@ export default class GameCards extends React.Component {
     return (
       <div className="pk-block">
         <header>
-          <span className="pk-label">
-            Roles <span>up to {PROFILE_ROLES_MAX}</span>
-          </span>
+          <span className="pk-label">Roles</span>
           <span
             className="pk-count"
             data-full={String(full)}
             aria-live="polite"
           >
-            {roles.length} of {PROFILE_ROLES_MAX}
+            {roles.length} / {PROFILE_ROLES_MAX}
           </span>
         </header>
         {hasRoleCatalog(game) ? (
@@ -219,15 +237,13 @@ export default class GameCards extends React.Component {
     return (
       <div className="pk-block">
         <header>
-          <span className="pk-label">
-            {label} <span>up to {max}</span>
-          </span>
+          <span className="pk-label">{label}</span>
           <span
             className="pk-count"
             data-full={String(full)}
             aria-live="polite"
           >
-            {picks.length} of {max}
+            {picks.length} / {max}
           </span>
         </header>
         {hasPickCatalog(game) ? (
@@ -343,7 +359,7 @@ export default class GameCards extends React.Component {
     const mine = new Set(this.props.games.map((g) => g.game));
     const open = GAMES.filter((g) => g.id !== SOCIAL && !mine.has(g.id));
     if (!open.length) return null;
-    const chosen = this.state.ask || open[0].id;
+    const chosen = this.state.ask;
     return (
       <div className="pk-ask">
         <h4>
@@ -351,18 +367,29 @@ export default class GameCards extends React.Component {
           Add a game
         </h4>
         <p>
-          The team approves the games on your profile. Tell support which one
-          you want and they take it from there.
+          The team approves the games on your profile. Pick the one you play and
+          we take it from there.
         </p>
         <div className="pk-ask-row">
           <label className="pk-sr" htmlFor="pk-ask-game">
             Which game
           </label>
+          {/* Never opens on a game nobody chose: the first in the list was one press away from
+              a request for a game the teammate had not read. */}
+          {/* Styled through data-empty rather than :invalid and required: this select sits
+              inside the settings form, and a required control with nothing in it blocks the
+              Save button at the bottom of the page. */}
           <select
             id="pk-ask-game"
+            data-empty={String(!chosen)}
             value={chosen}
-            onChange={(event) => this.setState({ ask: event.target.value })}
+            onChange={(event) =>
+              this.setState({ ask: event.target.value, asked: false })
+            }
           >
+            <option value="" disabled>
+              Choose a game
+            </option>
             {open.map((g) => (
               <option key={g.id} value={g.id}>
                 {g.name}
@@ -373,15 +400,23 @@ export default class GameCards extends React.Component {
             type="button"
             className="pk-button"
             data-pk-ask-game
-            onClick={() =>
+            disabled={!chosen}
+            onClick={() => {
+              this.setState({ asked: true });
               openSupportChat(
                 `I'd like to add ${gameName(chosen)} to my profile.`,
-              )
-            }
+              );
+            }}
           >
             Ask support
           </button>
         </div>
+        {this.state.asked ? (
+          <p className="pk-sent" role="status">
+            <Tick />
+            Sent. They will reply in the chat.
+          </p>
+        ) : null}
       </div>
     );
   }
@@ -399,16 +434,18 @@ export default class GameCards extends React.Component {
     const picking = this.state.picking ? this.entry(this.state.picking) : null;
     return (
       <div className="pk-games">
-        <p className="pk-hint">
-          Ranks are checked by the team. Ask support to update one.
-        </p>
         {games.map((entry) => {
           const game = entry.game;
           const open = this.state.open === game;
           const featured = featuredGame === game;
           const summary = this.summary(entry);
           return (
-            <div key={game} className="pk-card" data-open={String(open)}>
+            <div
+              key={game}
+              className="pk-card"
+              data-open={String(open)}
+              data-featured={String(featured)}
+            >
               <div className="pk-card-row">
                 <button
                   type="button"
@@ -420,11 +457,6 @@ export default class GameCards extends React.Component {
                   {/* The name is right beside it, so the art is decoration and says nothing
                       a screen reader needs. Lazy because a teammate with four games has four of
                       these and none of them is the reason the page is open. */}
-                  {/* A disclosure mark reads first, which also leaves the right edge to the
-                      star: the one control on this row that is not about opening it. */}
-                  <span className="pk-chevron" aria-hidden="true">
-                    <Caret dir="down" />
-                  </span>
                   <img
                     className="pk-art"
                     src={GAME[game]?.img}
@@ -435,13 +467,24 @@ export default class GameCards extends React.Component {
                     decoding="async"
                   />
                   <span>
-                    <span className="pk-card-name">{gameName(game)}</span>
+                    <span className="pk-card-name">
+                      {gameName(game)}
+                      {featured ? (
+                        <span className="pk-badge" data-kind="featured">
+                          Featured
+                        </span>
+                      ) : null}
+                    </span>
                     <span className="pk-card-rank">{this.rankLine(game)}</span>
-                    <span
-                      className="pk-card-summary"
-                      data-empty={String(summary.empty)}
-                    >
-                      {summary.text}
+                    <span className="pk-card-summary">
+                      {summary.empty ? (
+                        <span className="pk-card-cta">
+                          <Plus />
+                          {summary.text}
+                        </span>
+                      ) : (
+                        summary.text
+                      )}
                     </span>
                   </span>
                 </button>
@@ -450,6 +493,11 @@ export default class GameCards extends React.Component {
                   className="pk-star"
                   aria-pressed={featured}
                   disabled={featured}
+                  title={
+                    featured
+                      ? `${gameName(game)} is your featured game`
+                      : 'Make featured'
+                  }
                   data-pk-feature={game}
                   onClick={() => this.props.onFeature(game)}
                 >
@@ -460,6 +508,11 @@ export default class GameCards extends React.Component {
                       : `Feature ${gameName(game)}`}
                   </span>
                 </button>
+                {/* The whole row opens the card, so the mark that says so sits at the end of
+                    it rather than beside the art, and the star keeps its own target. */}
+                <span className="pk-chevron" aria-hidden="true">
+                  <Caret dir="down" />
+                </span>
               </div>
               {open ? (
                 <div className="pk-card-body">
@@ -479,6 +532,7 @@ export default class GameCards extends React.Component {
             </div>
           );
         })}
+        <p className="pk-fine">Ranks are checked by the team.</p>
         {this.renderAsk()}
         {picking ? (
           <PicksPicker

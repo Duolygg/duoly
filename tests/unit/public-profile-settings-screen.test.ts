@@ -50,7 +50,7 @@ it('shows the controls, the public data explanation, and read-only verified rank
     'Roles',
     'Agents',
     'Immortal',
-    'Ask support to update',
+    'Ranks are checked by the team',
     'Email, Discord',
     'switched off any time',
   ])
@@ -73,8 +73,8 @@ it('opens the only game and offers its roles and its characters by name', () => 
   expect(html).toMatch(
     /aria-pressed="true"[^>]*>(<svg[\s\S]*?<\/svg>)?Controller/,
   );
-  expect(html).toContain('1 of 3');
-  expect(html).toContain('1 of 5');
+  expect(html).toContain('1 / 3');
+  expect(html).toContain('1 / 5');
   expect(html).toContain('Omen');
   expect(html).toContain('Edit Agents');
   expect(html).not.toContain('comma separated');

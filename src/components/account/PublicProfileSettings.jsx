@@ -585,12 +585,12 @@ export default class PublicProfileSettings extends React.Component {
               </p>
             </div>
             {/* The work a teammate came here to do, above the blocks that only change how the
-                page looks. See GameCards.jsx. */}
-            <fieldset>
-              <legend>Your games</legend>
-              <p className="pp-help">
-                The star picks your featured game. That is the one your profile
-                leads with, and the one your booking link opens on.
+                page looks, and under the same section heading as all of them. See GameCards. */}
+            <div className="pk-group">
+              <h3>Your games</h3>
+              <p>
+                Star your featured game. Your profile and booking link lead with
+                it.
               </p>
               <GameCards
                 games={s.games}
@@ -599,7 +599,7 @@ export default class PublicProfileSettings extends React.Component {
                 onChange={(games) => this.change('games', games)}
                 onFeature={(game) => this.change('featuredGame', game)}
               />
-            </fieldset>
+            </div>
             {/* Everything that only changes how the page looks, under one heading, so the
                 games above it are the section rather than one of five equal blocks. */}
             <div className="pk-group">
@@ -643,10 +643,11 @@ export default class PublicProfileSettings extends React.Component {
               </fieldset>
               {this.renderHeader()}
             </div>
-            <fieldset>
-              <legend>
-                Vibe tags <span className="pp-help">up to {VIBE_TAGS_MAX}</span>
-              </legend>
+            <div className="pk-group">
+              <h3>Vibe tags</h3>
+              <p>
+                How a session with you feels. Up to {VIBE_TAGS_MAX} of them.
+              </p>
               <div className="pk-row">
                 {VIBE_TAGS.map((t) => {
                   const on = s.vibeTags.includes(t);
@@ -677,14 +678,13 @@ export default class PublicProfileSettings extends React.Component {
                   data-full={String(s.vibeTags.length >= VIBE_TAGS_MAX)}
                   aria-live="polite"
                 >
-                  {s.vibeTags.length} of {VIBE_TAGS_MAX}
+                  {s.vibeTags.length} / {VIBE_TAGS_MAX}
                 </span>
-                {' · '}
                 {s.vibeTags.length >= VIBE_TAGS_MAX
-                  ? 'Remove one to add another.'
-                  : 'How a session with you feels.'}
+                  ? ' · Remove one to add another.'
+                  : ''}
               </p>
-            </fieldset>
+            </div>
             <div className="pp-options">
               <label>
                 <input

@@ -63,21 +63,23 @@ const rank = (language, query) => {
   return -1;
 };
 
-const Check = () => (
-  <svg
-    className="pk-check"
-    viewBox="0 0 16 16"
-    width="15"
-    height="15"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.1"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="m3 8.6 3.2 3.2L13 4.8" />
-  </svg>
+/* Empty on every row that is not chosen, filled with a check on the ones that are, which is
+   what says a teammate may take several of these rather than one. */
+const Box = () => (
+  <span className="pk-box" aria-hidden="true">
+    <svg
+      viewBox="0 0 16 16"
+      width="11"
+      height="11"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m3 8.6 3.2 3.2L13 4.8" />
+    </svg>
+  </span>
 );
 const Cross = () => (
   <svg
@@ -94,8 +96,13 @@ const Cross = () => (
   </svg>
 );
 
-/** One row in the sheet. */
-function Row({ language, on, full, onToggle }) {
+/**
+ * One row in the sheet. Every row is two lines high, whether or not the language has a name of
+ * its own to show: English calling itself English left one row shorter than all the others, and
+ * the line it does have to say is that it is the one the directory card leads with.
+ */
+function Row({ language, on, first, full, onToggle }) {
+  const own = language.endonym !== language.id ? language.endonym : '';
   return (
     <button
       type="button"
@@ -104,16 +111,20 @@ function Row({ language, on, full, onToggle }) {
       disabled={!on && full}
       onClick={onToggle}
     >
+      <Box />
       <span className="pk-lang-name">
         {language.id}
-        {language.endonym !== language.id ? (
-          <bdi className="pk-lang-endonym" lang={language.code.toLowerCase()}>
-            {language.endonym}
+        {own ? (
+          <bdi className="pk-lang-sub" lang={language.code.toLowerCase()}>
+            {own}
           </bdi>
-        ) : null}
+        ) : (
+          <span className="pk-lang-sub" data-first={String(first)}>
+            {first ? 'Shown first' : ''}
+          </span>
+        )}
       </span>
       <span className="pk-code">{language.code}</span>
-      <Check />
     </button>
   );
 }
@@ -124,13 +135,17 @@ export default class LanguagePicker extends React.Component {
     /** `from` is the button the sheet was opened with, so closing it hands focus back. */
     this.state = { open: false, query: '', draft: [], from: null };
   }
-  openSheet = (event) =>
+  openSheet = (event) => {
+    /* What the field holds as the sheet opens, so Apply can say whether there is anything to
+       apply rather than offering a button that would change nothing. */
+    this.opened = this.props.value.join('\u0000');
     this.setState({
       open: true,
       query: '',
       draft: [...this.props.value],
       from: event?.currentTarget ?? null,
     });
+  };
   closeSheet = () => this.setState({ open: false, query: '' });
   toggle(id) {
     this.setState((s) => {
@@ -157,6 +172,7 @@ export default class LanguagePicker extends React.Component {
         key={language.id}
         language={language}
         on={draft.includes(language.id)}
+        first={draft[0] === language.id}
         full={full}
         onToggle={() => this.toggle(language.id)}
       />
@@ -167,6 +183,7 @@ export default class LanguagePicker extends React.Component {
     const { suggested, all } = offered(this.props.allowed);
     const folded = fold(query);
     const full = draft.length >= LANGUAGES_MAX;
+    const changed = draft.join('\u0000') !== this.opened;
     const found = all
       .map((l) => ({ l, at: rank(l, folded) }))
       .filter((row) => row.at >= 0)
@@ -176,42 +193,38 @@ export default class LanguagePicker extends React.Component {
       <PickerSheet
         returnTo={this.state.from}
         title="Languages"
-        count={
-          <span
-            className="pk-count"
-            data-full={String(full)}
-            aria-live="polite"
-          >
-            {draft.length} of {LANGUAGES_MAX}
-          </span>
-        }
         query={query}
         onQuery={(value) => this.setState({ query: value })}
         placeholder="Search languages"
         searchLabel="Search languages"
         onCancel={this.closeSheet}
-        foot={
-          <>
-            <span className="pk-count" data-full={String(full)}>
-              {full
-                ? 'Remove one to add another.'
-                : `${draft.length} of ${LANGUAGES_MAX} chosen`}
+        beneathSearch={
+          /* One counter, on the list it counts. It was in the title and in the footer, and the
+             two of them disagreed about what to call the same number. */
+          <div className="pk-meter">
+            <span className="pk-meter-end">
+              {full ? (
+                <span className="pk-cap">Remove one to add another.</span>
+              ) : null}
+              <span
+                className="pk-count"
+                data-full={String(full)}
+                aria-live="polite"
+              >
+                {draft.length} / {LANGUAGES_MAX} chosen
+              </span>
             </span>
-            <button
-              type="button"
-              className="pk-button"
-              onClick={this.closeSheet}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="pk-button pk-button-primary"
-              onClick={this.apply}
-            >
-              Apply
-            </button>
-          </>
+          </div>
+        }
+        foot={
+          <button
+            type="button"
+            className="pk-button pk-button-accent"
+            disabled={!changed}
+            onClick={this.apply}
+          >
+            Apply{draft.length ? ` \u00b7 ${draft.length}` : ''}
+          </button>
         }
       >
         {!found.length ? (

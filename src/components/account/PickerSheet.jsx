@@ -129,8 +129,7 @@ export default class PickerSheet extends React.Component {
     }
   };
   render() {
-    const { title, count, placeholder, searchLabel, beneathSearch, foot } =
-      this.props;
+    const { title, placeholder, searchLabel, beneathSearch, foot } = this.props;
     return (
       <div
         className="pk-scrim pk-scope"
@@ -145,13 +144,17 @@ export default class PickerSheet extends React.Component {
           aria-labelledby={this.id + '-title'}
           ref={this.sheetRef}
         >
+          {/* What a thumb reaches for on a sheet that came up from the bottom edge. */}
+          <div className="pk-grab" aria-hidden="true" />
           <div className="pk-sheet-head">
             <div className="pk-sheet-title">
               <h3 id={this.id + '-title'}>{title}</h3>
-              {count}
+              {/* The way out, named for what it does: there is no Cancel in the footer, and
+                  Escape does the same thing from anywhere in the sheet. */}
               <button
                 type="button"
                 className="pk-close"
+                aria-keyshortcuts="Escape"
                 onClick={() => this.props.onCancel()}
               >
                 <svg
@@ -166,7 +169,7 @@ export default class PickerSheet extends React.Component {
                 >
                   <path d="M5 5l10 10M15 5L5 15" />
                 </svg>
-                <span className="pk-sr">Close</span>
+                <span className="pk-sr">Close without applying</span>
               </button>
             </div>
             <label className="pk-search">
@@ -199,7 +202,13 @@ export default class PickerSheet extends React.Component {
             {beneathSearch}
           </div>
           <div className="pk-results">{this.props.children}</div>
-          <div className="pk-sheet-foot">{foot}</div>
+          <div className="pk-sheet-foot">
+            <p className="pk-sr">
+              Nothing is applied until you press Apply. Press Escape or Close to
+              leave it as it was.
+            </p>
+            {foot}
+          </div>
         </div>
       </div>
     );

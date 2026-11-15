@@ -31,18 +31,7 @@ describe('the languages catalog', () => {
     expect(PROFILE_LANGUAGE_DETAIL[0]!.id).toBe('English');
     expect(
       PROFILE_LANGUAGE_DETAIL.slice(0, LANGUAGES_SUGGESTED).map((l) => l.id),
-    ).toEqual([
-      'English',
-      'German',
-      'French',
-      'Dutch',
-      'Polish',
-      'Spanish',
-      'Italian',
-      'Swedish',
-      'Danish',
-      'Norwegian',
-    ]);
+    ).toEqual(['English', 'German', 'French', 'Dutch', 'Polish', 'Spanish']);
   });
   it('carries an endonym and a two letter code for each, and no flag', () => {
     for (const language of PROFILE_LANGUAGE_DETAIL) {

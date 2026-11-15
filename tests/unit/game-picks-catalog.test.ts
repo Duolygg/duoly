@@ -246,32 +246,50 @@ describe('the display adapter', () => {
   });
 });
 
-describe('the initials on a tile', () => {
+describe('the mark on a tile', () => {
   it('reads two letters, so ten champions beginning with A are ten different tiles', () => {
-    expect(pickMonogram('Nami')).toBe('Na');
-    expect(pickMonogram('Aatrox')).toBe('Aa');
-    expect(pickMonogram('Ahri')).toBe('Ah');
-    expect(pickMonogram('Akali')).toBe('Ak');
-    expect(pickMonogram('Dr. Mundo')).toBe('DM');
-    expect(pickMonogram('Soldier: 76')).toBe('S7');
-    expect(pickMonogram('KAY/O')).toBe('KO');
-    expect(pickMonogram('Affliction Warlock')).toBe('AW');
-    expect(pickMonogram('Vi')).toBe('Vi');
+    expect(pickMonogram('lol', 'Aatrox')).toBe('Aa');
+    /* Naafiri is earlier in the roster and took Na, so Nami reads Nam. */
+    expect(pickMonogram('lol', 'Naafiri')).toBe('Na');
+    expect(pickMonogram('lol', 'Nami')).toBe('Nam');
+    expect(pickMonogram('lol', 'Ahri')).toBe('Ah');
+    expect(pickMonogram('lol', 'Akali')).toBe('Ak');
+    expect(pickMonogram('lol', 'Dr. Mundo')).toBe('DM');
+    expect(pickMonogram('ow', 'Soldier: 76')).toBe('S7');
+    expect(pickMonogram('val', 'KAY/O')).toBe('KO');
+    expect(pickMonogram('wow', 'Affliction Warlock')).toBe('AW');
+    expect(pickMonogram('lol', 'Vi')).toBe('Vi');
   });
-  it('tells most characters in a game apart', () => {
+  /* Two tiles reading Br said nothing about either of them, so the second one grows a letter. */
+  it('grows a letter rather than repeating one, by id or by name', () => {
+    expect(pickMonogram('val', 'breach')).toBe('Br');
+    expect(pickMonogram('val', 'Brimstone')).toBe('Bri');
+  });
+  /* Ashe as As and Aurelion Sol as AS are one mark in a grid, so case does not make two. */
+  it('tells every character in a game apart, whatever the case', () => {
     for (const [game, catalog] of games) {
-      if (catalog.options.length < 20) continue;
-      const marks = new Set(catalog.options.map((o) => pickMonogram(o.name)));
-      /* Not every pair can differ in two letters, but a third of the roster sharing a mark
-         would mean the mark says nothing. */
-      expect(marks.size, game).toBeGreaterThan(catalog.options.length / 2);
+      const marks = catalog.options.map((o) =>
+        pickMonogram(game, o.id).toLowerCase(),
+      );
+      expect(new Set(marks).size, game).toBe(marks.length);
     }
   });
-  it('never comes back empty, whatever the name is made of', () => {
-    for (const [, catalog] of games)
-      for (const option of catalog.options)
-        expect(pickMonogram(option.name).length, option.name).toBeGreaterThan(
-          0,
-        );
+  it('stays two or three letters, whatever the name is made of', () => {
+    for (const [game, catalog] of games)
+      for (const option of catalog.options) {
+        const mark = pickMonogram(game, option.id);
+        expect(mark.length, `${game} ${option.name}`).toBeGreaterThan(1);
+        expect(mark.length, `${game} ${option.name}`).toBeLessThan(4);
+      }
+  });
+  /* A name whose first word is one letter still gets a mark of two: K alone said nothing. */
+  it('reads a one letter first word with the word after it', () => {
+    expect(pickMonogram('lol', "K'Sante")).toBe('KSa');
+    expect(pickMonogram('lol', 'Aurelion Sol')).toBe('ASo');
+  });
+  /* A value stored before the catalog existed is still a tile somebody has to recognise. */
+  it('marks a value the catalog has never heard of from its own text', () => {
+    expect(pickMonogram('lol', 'Some Old Pick')).toBe('SP');
+    expect(pickMonogram('lol', 'Zephyr')).toBe('Ze');
   });
 });

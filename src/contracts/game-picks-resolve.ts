@@ -151,21 +151,82 @@ export function searchPicks(
 }
 
 /**
- * The two letters on a character tile: the initials of a name made of several words, so
- * "Dr. Mundo" reads DM and "Soldier: 76" reads S7, and the first two letters of a single word, so
- * "Aatrox" reads Aa and "Ahri" reads Ah. One letter would leave ten League champions sharing an
- * "A" and identifying none of them. A one-letter name, or a name in a script this cannot split,
- * falls back to its first character rather than to an empty tile.
+ * The mark on a character tile, and no two in one game alike.
+ *
+ * Two letters, because one would leave ten League champions sharing an "A" and identifying none
+ * of them: the initials of a name made of several words, so "Dr. Mundo" reads DM and "KAY/O"
+ * reads KO, and the first two letters of a single word, so "Aatrox" reads Aa. Where that would
+ * repeat a mark already taken in the same game the name grows a third letter, which is how
+ * Valorant gets Br and Bri rather than two tiles reading Br. Taken is case insensitive, because
+ * Ashe as As and Aurelion Sol as AS are one mark in a grid and not two.
+ *
+ * Every spelling comes out of the character's own name, so the mark is deterministic: the same
+ * catalog always produces the same marks, in catalog order, and tests/unit/game-picks-catalog
+ * holds every game to the uniqueness.
  */
-export function pickMonogram(name: string): string {
+const upper = (letters: string[]): string => letters.join('').toUpperCase();
+const titled = (letters: string[]): string =>
+  (letters[0] ?? '').toUpperCase() + letters.slice(1).join('').toLowerCase();
+
+/** The marks this name would take, best first. */
+function monogramCandidates(name: string): string[] {
   const words = name.split(/[^\p{L}\p{N}]+/u).filter(Boolean);
-  const first = words[0];
-  const last = words[words.length - 1];
-  if (!first || !last) return ([...name][0] ?? '').toUpperCase();
-  if (words.length > 1)
-    return (([...first][0] ?? '') + ([...last][0] ?? '')).toUpperCase();
-  const [one, two] = [...first];
-  return two
-    ? (one ?? '').toUpperCase() + two.toLowerCase()
-    : (one ?? '').toUpperCase();
+  const out: string[] = [];
+  const add = (mark: string) => {
+    /* One letter identifies nothing, and K'Sante would otherwise get it. */
+    if (mark.length > 1 && !out.includes(mark)) out.push(mark);
+  };
+  const first = [...(words[0] ?? name)];
+  const last = [...(words[words.length - 1] ?? '')];
+  /* The whole name without its punctuation, for a first word of one letter. */
+  const joined = [...(words.join('') || name)];
+  if (words.length > 1) {
+    /* Several words: their initials, which is the spelling a player would write themselves. */
+    add(upper([first[0] ?? '', last[0] ?? '']));
+    add(upper([first[0] ?? '', last[0] ?? '']) + (last[1] ?? '').toLowerCase());
+  }
+  add(titled(first.slice(0, 2)));
+  add(titled(first.slice(0, 3)));
+  add(titled(joined.slice(0, 2)));
+  add(titled(joined.slice(0, 3)));
+  /* Still taken: the first letter with each later one, which is where Karma and Karthus end up
+     once the prefixes are spoken for. */
+  for (let at = 2; at < first.length; at++)
+    add(titled([first[0] ?? '', first[at] ?? '']));
+  if (words.length > 1) add(upper(last.slice(0, 2)));
+  add(titled(joined.slice(0, 4)));
+  return out.length ? out : [([...name][0] ?? '').toUpperCase()];
+}
+
+const marks = new Map<string, Map<string, string>>();
+/** Every mark in one game, by option id, assigned in catalog order. */
+function gameMonograms(game: string): Map<string, string> {
+  let byId = marks.get(game);
+  if (byId) return byId;
+  byId = new Map();
+  /* Compared without case: As and AS side by side in a grid of 173 is one mark, not two. */
+  const taken = new Set<string>();
+  for (const option of GAME_PICKS[game]?.options ?? []) {
+    const candidates = monogramCandidates(option.name);
+    const mark =
+      candidates.find((candidate) => !taken.has(candidate.toLowerCase())) ??
+      candidates[0]!;
+    taken.add(mark.toLowerCase());
+    byId.set(option.id, mark);
+  }
+  marks.set(game, byId);
+  return byId;
+}
+
+/**
+ * The mark for one stored or catalog value. A value the catalog has never heard of is marked
+ * from its own text, because it is still a tile a teammate has to recognise.
+ */
+export function pickMonogram(game: string, value: string): string {
+  const option = resolvePick(game, value);
+  if (option) {
+    const mark = gameMonograms(game).get(option.id);
+    if (mark) return mark;
+  }
+  return monogramCandidates(String(value ?? ''))[0] ?? '';
 }

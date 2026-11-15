@@ -23,21 +23,23 @@ import {
 } from '../../contracts/game-picks-resolve';
 import { PROFILE_PICKS_MAX } from '../../contracts/teammate-profile';
 
+/* The badge in the corner of a picked tile: the ring around the tile says it, and this says it
+   again in a shape, because a ring alone is a shade of a border. */
 const Check = () => (
-  <svg
-    className="pk-check"
-    viewBox="0 0 16 16"
-    width="14"
-    height="14"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.1"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="m3 8.6 3.2 3.2L13 4.8" />
-  </svg>
+  <span className="pk-check" aria-hidden="true">
+    <svg
+      viewBox="0 0 16 16"
+      width="11"
+      height="11"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m3 8.6 3.2 3.2L13 4.8" />
+    </svg>
+  </span>
 );
 const Cross = () => (
   <svg
@@ -74,7 +76,33 @@ export default class PicksPicker extends React.Component {
     this.catalog = catalog;
     this.max = catalog?.max ?? PROFILE_PICKS_MAX;
     this.gridRef = React.createRef();
+    this.tabsRef = React.createRef();
+    /* What the card holds right now, so Apply can say whether there is anything to apply. */
+    this.opened = this.state.chosen.join('\u0000');
+    this.state.fade = 'none';
   }
+  componentDidMount() {
+    this.updateFade();
+    window.addEventListener('resize', this.updateFade);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateFade);
+  }
+  /* Which edge the filter row runs past, so the mask fades that edge and only that edge. */
+  updateFade = () => {
+    const row = this.tabsRef.current;
+    if (!row) return;
+    const over = row.scrollWidth - row.clientWidth;
+    const fade =
+      over <= 2
+        ? 'none'
+        : row.scrollLeft <= 2
+          ? 'end'
+          : row.scrollLeft >= over - 2
+            ? 'start'
+            : 'both';
+    if (fade !== this.state.fade) this.setState({ fade });
+  };
   /** The catalog entry for a chosen value, or null when nothing in the catalog matches it. */
   option(value) {
     return resolvePick(this.props.game, value);
@@ -156,12 +184,8 @@ export default class PicksPicker extends React.Component {
     const catalog = this.catalog;
     const results = searchPicks(this.props.game, query, filter);
     const full = chosen.length >= this.max;
+    const changed = chosen.join('\u0000') !== this.opened;
     const noun = (catalog?.label ?? 'picks').toLowerCase();
-    const count = (
-      <span className="pk-count" data-full={String(full)} aria-live="polite">
-        {chosen.length} of {this.max}
-      </span>
-    );
     return (
       <PickerSheet
         ref={(sheet) => {
@@ -169,7 +193,6 @@ export default class PicksPicker extends React.Component {
         }}
         returnTo={this.props.returnTo}
         title={catalog?.label ?? 'Picks'}
-        count={count}
         query={query}
         onQuery={(value) => this.setState({ query: value })}
         placeholder={`Search ${noun}`}
@@ -184,10 +207,15 @@ export default class PicksPicker extends React.Component {
                 one that is on clears the filter, and a group of pressed buttons is what a
                 screen reader should hear. */}
             {catalog?.filters.length ? (
+              /* One row that scrolls, rather than two rows that wrap: at 390px six filters left
+                 the last one alone on a line of its own. */
               <div
                 className="pk-tabs"
                 role="group"
                 aria-label={`Filter by ${catalog.filterLabel.toLowerCase()}`}
+                data-fade={this.state.fade}
+                ref={this.tabsRef}
+                onScroll={this.updateFade}
               >
                 <button
                   type="button"
@@ -216,6 +244,25 @@ export default class PicksPicker extends React.Component {
                 ))}
               </div>
             ) : null}
+            {/* The count belongs to the thing it counts, and so does the one line about a
+                full list: both sit on the tray rather than in the title and the footer. */}
+            <div className="pk-meter">
+              {chosen.length ? (
+                <span className="pk-meter-label">Your order</span>
+              ) : null}
+              <span className="pk-meter-end">
+                {full ? (
+                  <span className="pk-cap">Remove one to add another.</span>
+                ) : null}
+                <span
+                  className="pk-count"
+                  data-full={String(full)}
+                  aria-live="polite"
+                >
+                  {chosen.length} / {this.max} picked
+                </span>
+              </span>
+            </div>
             {chosen.length ? (
               /* What is picked, in order, so the cap and the order are both visible while
                  choosing. Moving one earlier or later happens on the card, which numbers them:
@@ -251,27 +298,16 @@ export default class PicksPicker extends React.Component {
           </>
         }
         foot={
-          <>
-            {/* The title carries the count; this speaks only when the cap has something to
-                say about it. */}
-            <span className="pk-count" data-full={String(full)}>
-              {full ? 'Remove one to add another.' : ''}
-            </span>
-            <button
-              type="button"
-              className="pk-button"
-              onClick={this.props.onCancel}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="pk-button pk-button-primary"
-              onClick={this.apply}
-            >
-              Apply
-            </button>
-          </>
+          /* One button. Cancel said what the close mark, Escape and a tap on the scrim already
+             do, and it sat where a thumb reaches first. */
+          <button
+            type="button"
+            className="pk-button pk-button-accent"
+            disabled={!changed}
+            onClick={this.apply}
+          >
+            Apply{chosen.length ? ` \u00b7 ${chosen.length}` : ''}
+          </button>
         }
       >
         {results.length ? (
@@ -294,8 +330,14 @@ export default class PicksPicker extends React.Component {
                     style={{ '--pk-role': roleColor(option.filter) }}
                     onClick={() => this.toggle(option.id)}
                   >
-                    <span className="pk-mono" aria-hidden="true">
-                      {pickMonogram(option.name)}
+                    <span
+                      className="pk-mono"
+                      data-long={String(
+                        pickMonogram(this.props.game, option.id).length > 2,
+                      )}
+                      aria-hidden="true"
+                    >
+                      {pickMonogram(this.props.game, option.id)}
                     </span>
                     <span className="pk-tile-text">
                       <span className="pk-tile-name">{option.name}</span>

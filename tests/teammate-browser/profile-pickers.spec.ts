@@ -69,6 +69,10 @@ const card = (page: Page, game: string) =>
     .filter({ has: page.locator(`[data-pk-card="${game}"]`) });
 /* The filter row, so "Sentinel" means the filter rather than the seven agents that are one. */
 const filters = (page: Page) => page.locator('.pk-sheet .pk-tabs');
+/* The one button in the footer. By name it would also find Close without applying, which is
+   the other half of the same sentence. */
+const applyButton = (page: Page) =>
+  page.locator('.pk-sheet .pk-sheet-foot .pk-button');
 const expand = async (page: Page, game: string) => {
   const open = await card(page, game).getAttribute('data-open');
   if (open !== 'true') await page.locator(`[data-pk-card="${game}"]`).click();
@@ -80,10 +84,10 @@ test('a game card opens, takes roles and keeps the cap', async ({ page }) => {
   /* One approved game opens itself: that card is the reason the teammate is here. */
   await expect(card(page, 'val')).toHaveAttribute('data-open', 'true');
   const roles = card(page, 'val').locator('.pk-block').first();
-  await expect(roles.locator('.pk-count')).toHaveText('1 of 3');
+  await expect(roles.locator('.pk-count')).toHaveText('1 / 3');
   await roles.getByRole('button', { name: 'Duelist' }).click();
   await roles.getByRole('button', { name: 'Sentinel' }).click();
-  await expect(roles.locator('.pk-count')).toHaveText('3 of 3');
+  await expect(roles.locator('.pk-count')).toHaveText('3 / 3');
   /* At the cap the unchosen roles stay on screen and stop taking a fourth. */
   await expect(roles.getByRole('button', { name: 'Initiator' })).toBeDisabled();
   await expect(roles.locator('.pk-hint')).toHaveText(
@@ -107,7 +111,10 @@ test('the picker searches, filters, fills to the cap, reorders and applies', asy
   const search = sheet.locator('.pk-search-input');
   /* Search takes focus on open, so the first keystroke is already a search. */
   await expect(search).toBeFocused();
-  await expect(sheet.locator('.pk-sheet-title .pk-count')).toHaveText('1 of 5');
+  /* One counter, on the tray it counts, and Apply with nothing to apply yet. */
+  await expect(sheet.locator('.pk-meter .pk-count')).toHaveText('1 / 5 picked');
+  await expect(applyButton(page)).toBeDisabled();
+  await expect(sheet.getByRole('button', { name: 'Cancel' })).toHaveCount(0);
 
   /* Punctuation and case are ignored: "kayo" is KAY/O and "brim" is Brimstone. */
   await search.fill('kayo');
@@ -116,7 +123,7 @@ test('the picker searches, filters, fills to the cap, reorders and applies', asy
   await sheet.locator('.pk-tile').click();
   await search.fill('brim');
   await sheet.locator('.pk-tile').click();
-  await expect(sheet.locator('.pk-sheet-title .pk-count')).toHaveText('3 of 5');
+  await expect(sheet.locator('.pk-meter .pk-count')).toHaveText('3 / 5 picked');
 
   /* A filter is a view of the list and never changes what is picked. */
   await search.fill('');
@@ -125,27 +132,29 @@ test('the picker searches, filters, fills to the cap, reorders and applies', asy
   await expect(tiles.first()).toBeVisible();
   for (const name of await sheet.locator('.pk-tile-role').allInnerTexts())
     expect(name).toBe('Sentinel');
-  await expect(sheet.locator('.pk-sheet-title .pk-count')).toHaveText('3 of 5');
+  await expect(sheet.locator('.pk-meter .pk-count')).toHaveText('3 / 5 picked');
   await sheet.locator('.pk-strip-item', { hasText: 'KAY/O' }).waitFor();
 
   /* To the cap, and then the rest of the list goes quiet instead of vanishing. */
   await filters(page).getByRole('button', { name: 'All' }).click();
   while (
-    (await sheet.locator('.pk-sheet-title .pk-count').innerText()) !== '5 of 5'
+    (await sheet.locator('.pk-meter .pk-count').innerText()) !== '5 / 5 picked'
   )
     await sheet
       .locator('.pk-tile:not([aria-pressed="true"]):not([disabled])')
       .first()
       .click();
-  await expect(sheet.locator('.pk-sheet-foot .pk-count')).toHaveText(
+  await expect(sheet.locator('.pk-meter .pk-cap')).toHaveText(
     'Remove one to add another.',
   );
   await expect(
     sheet.locator('.pk-tile:not([aria-pressed="true"])').first(),
   ).toBeDisabled();
 
-  /* Apply is reachable without scrolling the sheet, on a phone too. */
-  const apply = sheet.getByRole('button', { name: 'Apply' });
+  /* Apply is reachable without scrolling the sheet, on a phone too, and it counts what it
+     would apply. */
+  const apply = applyButton(page);
+  await expect(apply).toHaveText('Apply · 5');
   await expect(apply).toBeInViewport();
   if (isMobile)
     expect((await sheet.boundingBox())!.height).toBeGreaterThan(600);
@@ -167,7 +176,7 @@ test('the picker searches, filters, fills to the cap, reorders and applies', asy
   await expect(picked).toHaveCount(5);
   await expect(
     card(page, 'val').locator('.pk-block').nth(1).locator('.pk-count'),
-  ).toHaveText('5 of 5');
+  ).toHaveText('5 / 5');
 
   /* Reorder on the card, which numbers the picks and is what the profile shows them in. */
   const second = await picked.nth(1).locator('.pk-picked-name').innerText();
@@ -315,7 +324,7 @@ test('a closed card still says what is on it, and the bar says what is unsaved',
     'Controller · Omen',
   );
   await expect(card(page, 'lol').locator('.pk-card-summary')).toHaveText(
-    'Add your roles and mains',
+    'Add roles and mains',
   );
   await expect(page.locator('.pk-bar')).toHaveAttribute('data-state', 'clean');
   await expect(
@@ -329,7 +338,7 @@ test('a closed card still says what is on it, and the bar says what is unsaved',
   await page.getByRole('button', { name: 'Discard' }).click();
   await expect(page.locator('.pk-bar')).toHaveAttribute('data-state', 'clean');
   await expect(card(page, 'lol').locator('.pk-card-summary')).toHaveText(
-    'Add your roles and mains',
+    'Add roles and mains',
   );
 });
 
@@ -341,9 +350,14 @@ test('Add a game opens the support chat with the message already written', async
   await expect(ask).toContainText(
     'The team approves the games on your profile',
   );
+  /* Never prefilled: Ask support is dead until a game is chosen, so nobody asks for the game
+     that happened to be first in the list. */
+  await expect(ask.locator('select')).toHaveValue('');
+  await expect(ask.locator('[data-pk-ask-game]')).toBeDisabled();
   await ask.locator('select').selectOption('dota');
   await ask.locator('[data-pk-ask-game]').click();
   const input = page.locator('#dl-support-input');
   await expect(input).toBeVisible();
   await expect(input).toHaveValue("I'd like to add Dota 2 to my profile.");
+  await expect(ask).toContainText('Sent. They will reply in the chat.');
 });

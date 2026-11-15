@@ -6,6 +6,9 @@ import { test, expect, type Page } from '@playwright/test';
  * own Save in the form around it, so these are the picker's own rules.
  */
 const field = (page: Page) => page.locator('.pk-langs');
+/* The one button in the footer. By name it would also find Close without applying. */
+const applyButton = (page: Page) =>
+  page.locator('.pk-sheet .pk-sheet-foot .pk-button');
 const openSheet = async (page: Page) => {
   await field(page).locator('[data-pk-add-language]').click();
   const sheet = page.locator('.pk-sheet');
@@ -30,7 +33,7 @@ test('searches by English name, by the language itself and by code', async ({
   );
   await expect(
     sheet.locator('.pk-lang-list').first().locator('.pk-lang'),
-  ).toHaveCount(10);
+  ).toHaveCount(6);
   for (const query of ['german', 'Deutsch', 'de']) {
     await sheet.locator('.pk-search-input').fill(query);
     await expect(sheet.locator('.pk-lang-name').first()).toContainText(
@@ -57,8 +60,8 @@ test('adds a language, moves one to the front and removes one', async ({
   const sheet = await openSheet(page);
   await sheet.locator('.pk-search-input').fill('polish');
   await sheet.locator('.pk-lang').first().click();
-  await expect(sheet.locator('.pk-sheet-title .pk-count')).toHaveText('2 of 6');
-  await sheet.getByRole('button', { name: 'Apply' }).click();
+  await expect(sheet.locator('.pk-meter .pk-count')).toHaveText('2 / 6 chosen');
+  await applyButton(page).click();
   await expect(sheet).toBeHidden();
   const pills = field(page).locator('.pk-pill');
   await expect(pills).toHaveCount(2);
@@ -85,25 +88,28 @@ test('cancels without changing the field, and stops at six', async ({
   page,
 }) => {
   let sheet = await openSheet(page);
+  /* There is no Cancel: the close mark and Escape are the way out, and Apply is dead until
+     something has changed. */
+  await expect(applyButton(page)).toBeDisabled();
   await sheet.locator('.pk-search-input').fill('french');
   await sheet.locator('.pk-lang').first().click();
-  await sheet.getByRole('button', { name: 'Cancel' }).click();
+  await sheet.getByRole('button', { name: 'Close without applying' }).click();
   await expect(field(page).locator('.pk-pill')).toHaveCount(1);
 
   sheet = await openSheet(page);
-  await sheet.getByRole('button', { name: 'Apply' }).waitFor();
+  await applyButton(page).waitFor();
   for (const language of ['German', 'French', 'Dutch', 'Polish', 'Spanish']) {
     await sheet.locator('.pk-search-input').fill(language);
     await sheet.locator('.pk-lang').first().click();
   }
-  await expect(sheet.locator('.pk-sheet-title .pk-count')).toHaveText('6 of 6');
-  await expect(sheet.locator('.pk-sheet-foot .pk-count')).toHaveText(
+  await expect(sheet.locator('.pk-meter .pk-count')).toHaveText('6 / 6 chosen');
+  await expect(sheet.locator('.pk-meter .pk-cap')).toHaveText(
     'Remove one to add another.',
   );
   /* At the cap the rest of the list stays readable and stops taking a seventh. */
   await sheet.locator('.pk-search-input').fill('italian');
   await expect(sheet.locator('.pk-lang').first()).toBeDisabled();
-  await sheet.getByRole('button', { name: 'Apply' }).click();
+  await applyButton(page).click();
   await expect(field(page).locator('.pk-pill')).toHaveCount(6);
   await expect(field(page).locator('.pk-hint')).toHaveText(
     'That is all six. Remove one to add another.',

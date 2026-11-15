@@ -325,8 +325,12 @@ ${sorted
   )
   .join('\n')}
 ];
-/** How many of them lead the picker as "Suggested". */
-export const LANGUAGES_SUGGESTED = 10;
+/**
+ * How many of them lead the picker as "Suggested". Six, because the group is a shortcut past
+ * the A to Z list and not a second list: ten of them filled a phone sheet on their own and left
+ * "All languages" under the fold, where nothing said the list went on.
+ */
+export const LANGUAGES_SUGGESTED = 6;
 `;
 
 /* Written through Prettier with the repository's own configuration, so a rebuild never leaves
