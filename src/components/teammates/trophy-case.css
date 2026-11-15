@@ -638,16 +638,62 @@
 }
 /* Clear of the lit trophy's halo, so the heading is never crowded by it. */
 .tc-group-name {
-  margin: 0 0 14px !important;
-  font-size: 13px;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 18px !important;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
   line-height: 1.3;
-  color: #cbbce8;
+  color: #f4ecff;
   white-space: nowrap;
 }
-.tc-group-name span {
-  font-weight: 500;
-  color: var(--tp-muted);
+.tc-group-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 1px solid color-mix(in srgb, var(--game, #d6bbff) 45%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--game, #d6bbff) 9%, #161020);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--game, #d6bbff) 12%, transparent);
+}
+.tc-group-icon img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.tc-group-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  padding: 3px 7px;
+  border: 1px solid color-mix(in srgb, var(--game, #d6bbff) 24%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--game, #d6bbff) 9%, transparent);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #f4ecff;
+}
+.tc-group-count svg {
+  flex: none;
+  color: var(--game, #d6bbff);
+}
+.tc-group-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 .tc-pick {
   position: relative;
