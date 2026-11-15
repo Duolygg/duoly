@@ -45,6 +45,11 @@
   font-weight: 600;
   margin-bottom: 10px;
 }
+/* A legend carries 2px of padding from the browser, which left every section title a hair
+   right of the words under it. Every block in this card starts on the same line now. */
+.pp-settings legend {
+  padding: 0;
+}
 .pp-field {
   margin-top: 20px;
   min-width: 0;
@@ -180,7 +185,8 @@
   height: auto;
   aspect-ratio: 3 / 1;
   object-fit: cover;
-  border-radius: 12px;
+  /* The same corner the crop frame draws, so the saved strip lands where it was framed. */
+  border-radius: 10px;
   border: 1px solid rgba(196, 170, 255, 0.18);
   background: #140c25;
   margin-bottom: 10px;

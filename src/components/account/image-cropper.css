@@ -3,45 +3,64 @@
  * at mount, so every override here is written one class deeper than the library's own
  * (.dc-crop .dc-crop-frame beats .reactEasyCrop_CropArea) and wins whatever order the two
  * sheets end up in.
+ *
+ * Two radii and one line colour across the whole panel: the stage, the zoom bar and the buttons
+ * are all controls, so they share one 12px corner, and the crop panel itself has no card of its
+ * own because it already sits in one.
  */
+.dc-crop-shell {
+  /* The panel lays itself out from the room it was given rather than from the window, so the
+     settings card decides when the picture and the previews sit side by side. ImageCropper
+     measures this box and writes data-row and data-side; see the note there on why. */
+  width: 100%;
+  min-width: 0;
+}
 .dc-crop {
   --dc-accent: #d6bbff;
-  --dc-accent-ink: #17092e;
+  --dc-primary: #5eeaa8;
+  --dc-primary-ink: #062a1b;
   --dc-line: rgba(214, 187, 255, 0.16);
+  --dc-radius: 12px;
   display: grid;
   gap: 14px;
+  grid-template-areas: 'hint' 'stage' 'zoom' 'side';
   box-sizing: border-box;
   width: 100%;
-  max-width: 620px;
+  max-width: var(--dc-stage, 100%);
   min-width: 0;
-  padding: 14px;
-  border: 1px solid var(--dc-line);
-  border-radius: 20px;
-  background:
-    radial-gradient(
-      120% 90% at 50% -30%,
-      rgba(214, 187, 255, 0.09),
-      transparent 70%
-    ),
-    linear-gradient(180deg, #1b1033, #120b22);
   color: #f3eeff;
   font-family: Geist, system-ui, sans-serif;
 }
-.dc-crop[data-shape='round'] {
-  max-width: 420px;
+
+/* ---------- the words above the picture ---------- */
+.dc-crop-hint {
+  grid-area: hint;
+  margin: 0;
+  color: #b5aacd;
+  font-size: 13.5px;
+  line-height: 1.6;
 }
-.dc-crop[data-accent='mint'] {
-  --dc-accent: #7cf0c1;
-  --dc-accent-ink: #062a1b;
+.dc-crop-hint-coarse {
+  display: none;
+}
+/* A finger cannot scroll a wheel and a mouse cannot pinch, so each input is told its own way. */
+@media (pointer: coarse) {
+  .dc-crop-hint-fine {
+    display: none;
+  }
+  .dc-crop-hint-coarse {
+    display: inline;
+  }
 }
 
 /* ---------- the frame ---------- */
 .dc-crop-stage {
+  grid-area: stage;
   position: relative;
   width: 100%;
-  margin-inline: auto;
   overflow: hidden;
-  border-radius: 14px;
+  border: 1px solid var(--dc-line);
+  border-radius: var(--dc-radius);
   background: #090414;
   /* A finger on the picture pans the crop, so it must not scroll the page as well. */
   touch-action: none;
@@ -55,20 +74,29 @@
 /* Everything outside the frame is dimmed by the frame's own box-shadow. The library spreads it
    by 9999em, which WebKit drops on the floor, so the spread is restated in viewport units. */
 .dc-crop .dc-crop-frame {
-  color: rgba(9, 4, 20, 0.68);
-  border: 1.5px solid rgba(214, 187, 255, 0.72);
-  border-radius: 12px;
+  color: rgba(9, 4, 20, 0.62);
+  border: 1.5px solid rgba(214, 187, 255, 0.8);
+  /* The header is saved as a sharp strip and shown with the small corner the profile card
+     gives it, so the frame rounds by the same amount and never promises more. */
+  border-radius: 10px;
   box-shadow:
-    0 0 0 100vmax rgba(9, 4, 20, 0.68),
-    0 0 18px rgba(214, 187, 255, 0.12);
+    0 0 0 100vmax rgba(9, 4, 20, 0.62),
+    0 0 20px rgba(9, 4, 20, 0.45);
 }
 .dc-crop[data-shape='round'] .dc-crop-frame {
   border-radius: 50%;
 }
-/* Thirds, as hairlines that help line a picture up without drawing attention. */
+/* Thirds, up only while the picture is being moved: they help line a shot up and then get out
+   of the way of the result. */
 .dc-crop .dc-crop-frame::before,
 .dc-crop .dc-crop-frame::after {
-  border-color: rgba(214, 187, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.3);
+  opacity: 0;
+  transition: opacity 0.16s ease-out;
+}
+.dc-crop[data-framing='true'] .dc-crop-frame::before,
+.dc-crop[data-framing='true'] .dc-crop-frame::after {
+  opacity: 1;
 }
 /* One focus ring for the whole panel: the frame, the slider and the buttons. */
 .dc-crop :focus-visible {
@@ -78,13 +106,26 @@
 .dc-crop .dc-crop-frame:focus-visible {
   outline-offset: 2px;
 }
+/* The slider fills the zoom bar, so its ring is drawn inside it rather than across the two
+   buttons at the ends. */
+.dc-crop .dc-crop-range:focus-visible {
+  outline-offset: -5px;
+  border-radius: var(--dc-radius);
+}
 
-/* ---------- zoom ---------- */
+/* ---------- zoom, as one control ---------- */
 .dc-crop-zoom {
+  grid-area: zoom;
   display: flex;
   align-items: center;
-  gap: 10px;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 1px solid var(--dc-line);
+  border-radius: var(--dc-radius);
+  background: rgba(214, 187, 255, 0.05);
 }
+/* 44px of reach, 32px of button: the hit area is the padding, so the glyph stays small. */
 .dc-crop-step {
   flex: 0 0 auto;
   display: grid;
@@ -92,17 +133,27 @@
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid var(--dc-line);
-  border-radius: 12px;
-  background: rgba(214, 187, 255, 0.06);
-  color: #d6bbff;
+  border: 0;
+  border-radius: var(--dc-radius);
+  background: transparent;
+  color: var(--dc-accent);
   transform: none;
 }
-.dc-crop-step:hover:not(:disabled) {
+.dc-crop-step svg {
+  display: block;
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  border-radius: 9px;
+  box-sizing: border-box;
+}
+.dc-crop-step:hover:not(:disabled) svg {
   background: rgba(214, 187, 255, 0.14);
 }
+/* At either limit the same button simply fades, so the control never changes shape. */
 .dc-crop-step:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
+  cursor: default;
 }
 /* Written past .pp-settings input:not([type='checkbox']), which would otherwise box the slider. */
 .dc-crop input[type='range'].dc-crop-range {
@@ -115,130 +166,168 @@
   margin: 0;
   padding: 0;
   border: 0;
+  border-radius: 0;
   background: transparent;
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
 }
 .dc-crop-range::-webkit-slider-runnable-track {
-  height: 6px;
+  height: 5px;
   border-radius: 999px;
   background: linear-gradient(
     90deg,
     var(--dc-accent) 0 var(--dc-fill),
-    rgba(214, 187, 255, 0.16) var(--dc-fill) 100%
+    rgba(214, 187, 255, 0.18) var(--dc-fill) 100%
   );
 }
 .dc-crop-range::-webkit-slider-thumb {
-  width: 20px;
-  height: 20px;
-  margin-top: -7px;
-  border: 2px solid var(--dc-accent);
+  width: 22px;
+  height: 22px;
+  margin-top: -8.5px;
+  border: 0;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(9, 4, 20, 0.6);
+  background: #f6f1ff;
+  box-shadow:
+    0 2px 8px rgba(9, 4, 20, 0.7),
+    0 0 0 1px rgba(214, 187, 255, 0.5);
   appearance: none;
   -webkit-appearance: none;
 }
 .dc-crop-range::-moz-range-track {
-  height: 6px;
+  height: 5px;
   border-radius: 999px;
   background: linear-gradient(
     90deg,
     var(--dc-accent) 0 var(--dc-fill),
-    rgba(214, 187, 255, 0.16) var(--dc-fill) 100%
+    rgba(214, 187, 255, 0.18) var(--dc-fill) 100%
   );
 }
 .dc-crop-range::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--dc-accent);
+  width: 22px;
+  height: 22px;
+  border: 0;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(9, 4, 20, 0.6);
+  background: #f6f1ff;
+  box-shadow:
+    0 2px 8px rgba(9, 4, 20, 0.7),
+    0 0 0 1px rgba(214, 187, 255, 0.5);
 }
 
-/* ---------- the result, at the sizes it is printed ---------- */
+/* ---------- previews and buttons ---------- */
+.dc-crop-side {
+  grid-area: side;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  min-width: 0;
+}
 .dc-crop-previews {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-.dc-crop-preview-row {
-  display: flex;
   align-items: flex-end;
-  justify-content: center;
-  gap: 14px;
+  gap: 18px;
+}
+.dc-crop-preview {
+  display: grid;
+  justify-items: start;
+  gap: 7px;
 }
 .dc-crop-preview-frame {
   display: block;
+  position: relative;
   flex: 0 0 auto;
   overflow: hidden;
   border-radius: 50%;
   background: #090414;
-  box-shadow: 0 0 0 1px rgba(214, 187, 255, 0.28);
+  box-shadow: 0 0 0 1px rgba(214, 187, 255, 0.24);
 }
 .dc-crop-preview-frame img {
   display: block;
-  max-width: none;
 }
 .dc-crop-preview-label {
   color: #8e84ab;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
-  text-align: center;
-}
-
-/* ---------- words and buttons ---------- */
-.dc-crop-hint {
-  margin: 0;
-  color: #b5aacd;
-  font-size: 13px;
-  line-height: 1.6;
+  letter-spacing: 0.02em;
 }
 .dc-crop-actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 10px;
 }
 .dc-crop-button {
-  flex: 1 1 auto;
   min-height: 44px;
-  padding: 0 18px;
-  border: 1px solid rgba(214, 187, 255, 0.22);
-  border-radius: 12px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--dc-radius);
   background: transparent;
   color: #f3eeff;
   font-family: inherit;
   font-size: 14px;
-  font-weight: 600;
   transform: none;
 }
-.dc-crop-save {
-  border-color: transparent;
-  background: var(--dc-accent);
-  color: var(--dc-accent-ink);
+.dc-crop-primary {
+  background: var(--dc-primary);
+  color: var(--dc-primary-ink);
+  font-weight: 700;
+}
+.dc-crop-ghost {
+  color: #b5aacd;
+  font-weight: 500;
+}
+.dc-crop-ghost:hover:not(:disabled) {
+  color: #f3eeff;
 }
 .dc-crop-button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
-@media (min-width: 560px) {
-  .dc-crop-actions {
-    justify-content: flex-start;
-  }
-  .dc-crop-button {
-    flex: 0 0 auto;
-  }
+
+/* The picture is full width on a phone, so the buttons are too: the one that finishes the job
+   first, the quiet way out under it. */
+.dc-crop[data-row='true'] .dc-crop-actions {
+  grid-auto-flow: column;
+  justify-content: start;
+  gap: 6px;
 }
+/* With room beside the picture, the previews and the buttons move there instead of pushing
+   the panel further down the screen. */
+.dc-crop[data-shape='round'][data-side='true'] {
+  max-width: none;
+  grid-template-columns: var(--dc-stage, 420px) minmax(190px, 1fr);
+  grid-template-areas: 'hint hint' 'stage side' 'zoom side';
+  column-gap: 26px;
+}
+.dc-crop[data-shape='round'][data-side='true'] .dc-crop-side {
+  align-content: center;
+  gap: 22px;
+}
+.dc-crop[data-shape='round'][data-side='true'] .dc-crop-actions {
+  grid-auto-flow: row;
+  gap: 10px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dc-crop,
-  .dc-crop * {
+  .dc-crop *,
+  .dc-crop *::before,
+  .dc-crop *::after {
     transition: none;
     animation: none;
   }
   .dc-crop button:active {
     transform: none;
   }
+}
+
+/* ---------- the same frame, outside the panel ---------- */
+/* The profile preview card follows the crop while it is being dragged. One box, overflow
+   hidden, with framedImageStyle placing the picture inside it. */
+.dc-live-frame {
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.dc-live-frame img {
+  display: block;
+  max-width: none;
 }

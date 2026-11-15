@@ -71,13 +71,11 @@ test('a thrown canvas encoder recovers instead of leaving Uploading forever', as
       throw new Error('Out of memory');
     };
   });
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByRole('alert')).toHaveText(
     'This browser could not prepare the picture. Try a smaller JPG or PNG.',
   );
-  await expect(
-    page.getByRole('button', { name: 'Upload header' }),
-  ).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Save header' })).toBeEnabled();
   expect(calls).toBe(0);
 });
 
@@ -93,7 +91,7 @@ test('a missing canvas context cannot upload an empty header', async ({
   await expect(page.getByRole('alert')).toHaveText(
     'This browser could not prepare the picture. Try a smaller JPG or PNG.',
   );
-  await expect(page.getByRole('button', { name: 'Upload header' })).toHaveCount(
+  await expect(page.getByRole('button', { name: 'Save header' })).toHaveCount(
     0,
   );
 });
@@ -111,7 +109,7 @@ test('a server error stays without new requests, but retry clears it and saves',
   );
   await open(page);
   await pick(page);
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByRole('alert')).toHaveText(
     'Header could not be saved.',
   );
@@ -120,7 +118,7 @@ test('a server error stays without new requests, but retry clears it and saves',
     'Header could not be saved.',
   );
   expect(calls).toBe(1);
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByText('Header saved.')).toBeVisible();
   await expect(page.getByRole('alert')).toHaveCount(0);
   await expect(page.getByAltText('Your header image')).toHaveJSProperty(
@@ -145,10 +143,10 @@ for (const [status, error] of [
     );
     await open(page);
     await pick(page);
-    await page.getByRole('button', { name: 'Upload header' }).click();
+    await page.getByRole('button', { name: 'Save header' }).click();
     await expect(page.getByRole('alert')).toHaveText(error);
     await expect(
-      page.getByRole('button', { name: 'Upload header' }),
+      page.getByRole('button', { name: 'Save header' }),
     ).toBeEnabled();
   });
 }
@@ -166,14 +164,14 @@ for (const failure of ['offline', 'html'] as const) {
     );
     await open(page);
     await pick(page);
-    await page.getByRole('button', { name: 'Upload header' }).click();
+    await page.getByRole('button', { name: 'Save header' }).click();
     await expect(page.getByRole('alert')).toHaveText(
       failure === 'offline'
         ? 'The request could not reach Duoly. Check your connection and try again.'
         : 'The server returned an unreadable response. Reload and try again.',
     );
     await expect(
-      page.getByRole('button', { name: 'Upload header' }),
+      page.getByRole('button', { name: 'Save header' }),
     ).toBeEnabled();
   });
 }
@@ -232,7 +230,7 @@ for (const encoding of ['png', 'oversized'] as const) {
           ? 'data:image/png;base64,YQ=='
           : 'data:image/jpeg;base64,' + 'A'.repeat(420000);
     }, encoding);
-    await page.getByRole('button', { name: 'Upload header' }).click();
+    await page.getByRole('button', { name: 'Save header' }).click();
     await expect(page.getByRole('alert')).toHaveText(
       encoding === 'png'
         ? 'This browser could not save the picture. Try another browser.'
@@ -260,7 +258,7 @@ test('a saved header survives other settings saves and a fresh settings read', a
   await page.goto('/public-profile?load');
   await expect(page.getByText('You have no header yet')).toBeVisible();
   await pick(page);
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByText('Header saved.')).toBeVisible();
   await page
     .getByRole('button', { name: 'Save public profile', exact: true })
@@ -295,7 +293,7 @@ test('a delayed settings save cannot erase a newer header upload', async ({
     .click();
   await expect.poll(() => Boolean(reply)).toBe(true);
   await pick(page);
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByText('Header saved.')).toBeVisible();
   await reply!();
   await expect(
@@ -322,7 +320,7 @@ test('a fresh settings read cannot resurrect an old upload error', async ({
   await open(page);
   await page.goto('/public-profile?load');
   await pick(page);
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByRole('alert')).toHaveText(
     'Header could not be saved.',
   );
@@ -344,7 +342,7 @@ test('records whether browser history restores the old error without another POS
   });
   await open(page);
   await pick(page);
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByRole('alert')).toHaveText(
     'Header could not be saved.',
   );
@@ -400,7 +398,7 @@ test('large noisy camera photo encodes within both binary and JSON limits', asyn
     buffer: Buffer.from(photo, 'base64'),
   });
   await expect(page.getByRole('img', { name: 'Header crop' })).toBeVisible();
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByText('Header saved.')).toBeVisible();
   expect(
     Buffer.from(image.split(',')[1]!, 'base64').length,

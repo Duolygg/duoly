@@ -85,6 +85,32 @@ export default class PublicProfileSettings extends React.Component {
     if (!this.state.data) this.load();
     const image = this.headerPreview.current;
     if (image?.complete && !image.naturalWidth) this.headerPreviewFailed();
+    this.showArt();
+  }
+  componentDidUpdate(_, previous) {
+    if (
+      previous.header !== this.state.header ||
+      previous.pick !== this.state.pick
+    )
+      this.showArt();
+  }
+  /**
+   * Keeps the page's profile preview card in step: the saved header once there is one, the
+   * frame itself while a new one is being positioned, and nothing when there is no header.
+   * The card lives on the profile screen, so a page without one simply does not ask.
+   */
+  showArt(live) {
+    const report = this.props.onHeaderArt;
+    if (!report) return;
+    const pick = this.state.pick;
+    if (live?.box && pick)
+      return report({
+        src: pick.url,
+        box: live.box,
+        naturalWidth: pick.image.naturalWidth,
+        naturalHeight: pick.image.naturalHeight,
+      });
+    report(this.state.header ? { src: this.state.header } : null);
   }
   componentWillUnmount() {
     this.unmounted = true;
@@ -290,7 +316,13 @@ export default class PublicProfileSettings extends React.Component {
     return (
       <fieldset className="pp-header">
         <legend>Header image</legend>
-        <p className="pp-help">Your header is shown on your public profile.</p>
+        {/* While the strip is being framed the cropper carries the only line of instructions,
+            so this one steps aside rather than saying the same thing twice. */}
+        {pick ? null : (
+          <p className="pp-help">
+            Your header is shown on your public profile.
+          </p>
+        )}
         {this.state.headerError || this.state.headerPreviewError ? (
           <p role="alert" className="pp-error">
             {this.state.headerError || this.state.headerPreviewError}
@@ -301,18 +333,18 @@ export default class PublicProfileSettings extends React.Component {
             src={pick.url}
             shape="rect"
             aspect={HEADER_WIDTH / HEADER_HEIGHT}
-            ratio={pick.image.naturalWidth / pick.image.naturalHeight}
-            stageMin={1}
-            stageMax={2.4}
-            stageHeight={380}
-            grid
-            accent="mint"
+            naturalWidth={pick.image.naturalWidth}
+            naturalHeight={pick.image.naturalHeight}
+            minRatio={1.2}
+            maxRatio={2.8}
+            maxStageWidth={560}
+            maxStageHeight={420}
             label="Header crop"
-            hint={`Drag to move it, pinch or scroll to zoom, or nudge it with the arrow keys. Duoly saves the strip you see, ${HEADER_WIDTH} by ${HEADER_HEIGHT} pixels.`}
-            saveLabel="Upload header"
-            busyLabel="Uploading…"
+            saveLabel="Save header"
+            busyLabel="Saving…"
             cancelLabel="Cancel"
             busy={headerBusy}
+            onPreview={(area) => this.showArt({ box: area })}
             onSave={(area) => this.uploadHeader(area)}
             onCancel={() => this.clearPick({ headerError: '' })}
           />

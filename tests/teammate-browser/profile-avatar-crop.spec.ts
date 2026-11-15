@@ -165,3 +165,36 @@ test('a file that is not a picture is turned away in plain words', async ({
   await expect(page.getByText('Pick a picture file')).toBeVisible();
   await expect(cropper(page)).toHaveCount(0);
 });
+
+/** How solid the thirds are drawn right now: they are the frame's own two hairlines. */
+const thirds = (page: Page) =>
+  page
+    .locator('.dc-crop-frame')
+    .evaluate((el) => getComputedStyle(el, '::before').opacity);
+
+test('the circle sits inside the picture, with the thirds up only while it moves', async ({
+  page,
+}) => {
+  await open(page);
+  await pick(page);
+  const stage = (await page.locator('.dc-crop-stage').boundingBox())!;
+  const frame = (await cropper(page).boundingBox())!;
+  /* Dimmed picture all around the frame, so the part being left out is visible. */
+  expect(frame.x - stage.x).toBeGreaterThanOrEqual(16);
+  expect(
+    stage.x + stage.width - (frame.x + frame.width),
+  ).toBeGreaterThanOrEqual(16);
+  expect(frame.y - stage.y).toBeGreaterThanOrEqual(16);
+  expect(
+    stage.y + stage.height - (frame.y + frame.height),
+  ).toBeGreaterThanOrEqual(16);
+
+  /* Out of the way until the picture is being moved, and then back out of the way. The keys
+     are the one way to hold a move open on every engine this suite runs. */
+  expect(await thirds(page)).toBe('0');
+  await cropper(page).focus();
+  await page.keyboard.down('ArrowDown');
+  await expect.poll(() => thirds(page)).toBe('1');
+  await page.keyboard.up('ArrowDown');
+  await expect.poll(() => thirds(page)).toBe('0');
+});

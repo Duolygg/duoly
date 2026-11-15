@@ -1,7 +1,8 @@
 ---
 // Isolated fictional browser fixture, never a production route: the profile screen on its own,
 // so the picture cropper can be driven without an account. `?avatar=` sets the picture the
-// teammate has now.
+// teammate has now, and `?public` adds the public profile block, so the header crop can be
+// driven on the screen it really sits on, beside the preview card.
 import SiteLayout from '../../../../../src/layouts/SiteLayout.astro';
 import LiveProfile from '../../../../../src/components/account/LiveProfile';
 const avatar =
@@ -32,6 +33,7 @@ const viewer = {
     discord={null}
     discordResult=""
     discordEnabled={false}
+    publicProfilesEnabled={Astro.url.searchParams.has('public')}
     client:load
   />
 </SiteLayout>

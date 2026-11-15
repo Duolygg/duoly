@@ -10,6 +10,7 @@ import {
   dataUrlBytes,
   encodeAvatar,
   encodeWithinLimit,
+  framedImageStyle,
   pickFileError,
 } from '../../src/components/account/crop-image';
 import { MAX_AVATAR_BYTES } from '../../src/server/auth/avatar';
@@ -228,5 +229,58 @@ describe('pickFileError', () => {
   it('writes errors without em dashes, en dashes or ampersands', () => {
     for (const file of [null, { type: 'x' }, { type: 'image/png', size: 1e9 }])
       expect(pickFileError(file, AVATAR_MAX_PICK_BYTES)).not.toMatch(/[–—&]/);
+  });
+});
+
+describe('the preview of a frame that has not been encoded yet', () => {
+  const media = { naturalWidth: 2000, naturalHeight: 1500 };
+  /** Where a percentage style puts an edge, in pixels of a box this wide and this tall. */
+  const place = (
+    style: NonNullable<ReturnType<typeof framedImageStyle>>,
+    boxWidth: number,
+    boxHeight: number,
+  ) => {
+    const cut = (value: string) => Number(value.replace('%', '')) / 100;
+    const width = cut(style.width) * boxWidth;
+    const height = (width * media.naturalHeight) / media.naturalWidth;
+    const shift = cut(style.transform.slice('translateY('.length, -1));
+    return {
+      left: cut(style.left) * boxWidth,
+      top: boxHeight / 2 + shift * height,
+      width,
+      height,
+    };
+  };
+
+  it('puts the chosen rectangle across the box and centred down it', () => {
+    const box = { x: 500, y: 300, width: 800, height: 800 };
+    const style = framedImageStyle(box, media)!;
+    const placed = place(style, 72, 72);
+    /* The rectangle is square and the box is square, so it lands on the box exactly. */
+    const scale = placed.width / media.naturalWidth;
+    expect(placed.left + box.x * scale).toBeCloseTo(0, 2);
+    expect(placed.top + box.y * scale).toBeCloseTo(0, 2);
+    expect(box.width * scale).toBeCloseTo(72, 2);
+  });
+
+  it('keeps a wide rectangle centred in a banner that is shorter than it', () => {
+    const box = { x: 100, y: 200, width: 1500, height: 500 };
+    const style = framedImageStyle(box, media)!;
+    const placed = place(style, 300, 74);
+    const scale = placed.width / media.naturalWidth;
+    /* Full width, and the middle of the strip on the middle of the banner. */
+    expect(box.width * scale).toBeCloseTo(300, 2);
+    expect(placed.left + box.x * scale).toBeCloseTo(0, 2);
+    expect(placed.top + (box.y + box.height / 2) * scale).toBeCloseTo(37, 2);
+  });
+
+  it('has nothing to say before a frame or a picture is known', () => {
+    expect(framedImageStyle(null, media)).toBeNull();
+    expect(
+      framedImageStyle({ x: 0, y: 0, width: 10, height: 10 }, null),
+    ).toBeNull();
+    expect(
+      framedImageStyle({ x: 0, y: 0, width: 0, height: 0 }, media),
+    ).toBeNull();
   });
 });

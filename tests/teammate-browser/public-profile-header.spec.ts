@@ -88,7 +88,7 @@ test('a teammate picks a picture, frames the strip and uploads a WebP', async ({
     page.getByText('Your header is shown on your public profile.'),
   ).toBeVisible();
   await pick(page);
-  await expect(page.getByText('Drag to move it')).toBeVisible();
+  await expect(page.locator('.dc-crop-hint')).toContainText('Drag to move');
 
   /* Dragging moves the picture under the frame, so other pixels end up in the strip. */
   const before = await framed(page);
@@ -103,7 +103,7 @@ test('a teammate picks a picture, frames the strip and uploads a WebP', async ({
   /* The library moves the picture on the next frame, so give it one. */
   await expect.poll(() => framed(page)).not.toBe(before);
 
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByText('Header saved.')).toBeVisible();
   expect(calls).toHaveLength(1);
   expect(calls[0]!.method).toBe('POST');
@@ -135,7 +135,7 @@ test('a teammate picks a picture, frames the strip and uploads a WebP', async ({
 test('zooming changes the strip that gets uploaded', async ({ page }) => {
   const calls = await settings(page);
   await pick(page);
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByText('Header saved.')).toBeVisible();
 
   await page.getByRole('button', { name: 'Replace header' }).click();
@@ -155,7 +155,7 @@ test('zooming changes the strip that gets uploaded', async ({ page }) => {
     );
   });
   await expect(page.getByRole('slider', { name: 'Zoom' })).not.toHaveValue('1');
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   await expect(page.getByText('Header saved.')).toHaveCount(1);
 
   expect(calls).toHaveLength(2);
@@ -217,7 +217,7 @@ test('the endpoint speaks for itself when it says no', async ({ page }) => {
       }),
   });
   await pick(page);
-  await page.getByRole('button', { name: 'Upload header' }).click();
+  await page.getByRole('button', { name: 'Save header' }).click();
   const alert = page.getByRole('alert');
   await expect(alert).toHaveText('Choose a WebP image up to 300 KB.');
   /* The crop stays on screen, so the next try does not start from the file picker. */

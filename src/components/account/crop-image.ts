@@ -202,3 +202,49 @@ export function canvasReady(): boolean {
     return false;
   }
 }
+
+/** What a preview needs to know about the picked picture: its own pixel size. */
+export type MediaSize = { naturalWidth: number; naturalHeight: number };
+/** Inline styles for the picture inside a preview box. */
+export type FramedStyle = {
+  position: 'absolute';
+  left: string;
+  top: string;
+  width: string;
+  height: string;
+  maxWidth: string;
+  transform: string;
+};
+
+const percent = (value: number): string =>
+  `${Math.round(value * 1000) / 1000}%`;
+
+/**
+ * Places a picture inside a box that hides its overflow so the chosen rectangle fills the box
+ * across and sits centred down it. Every number is a percentage of the box, so one set of
+ * styles serves a 32 pixel circle, a 72 pixel circle and a banner that grows with its card:
+ * the preview follows the frame while it is being dragged, without encoding anything.
+ */
+export function framedImageStyle(
+  box: CropBox | null | undefined,
+  media: MediaSize | null | undefined,
+): FramedStyle | null {
+  if (
+    !box?.width ||
+    !box.height ||
+    !media?.naturalWidth ||
+    !media.naturalHeight
+  )
+    return null;
+  return {
+    position: 'absolute',
+    left: percent((-100 * box.x) / box.width),
+    top: '50%',
+    width: percent((100 * media.naturalWidth) / box.width),
+    height: 'auto',
+    maxWidth: 'none',
+    transform: `translateY(${percent(
+      (-100 * (box.y + box.height / 2)) / media.naturalHeight,
+    )})`,
+  };
+}

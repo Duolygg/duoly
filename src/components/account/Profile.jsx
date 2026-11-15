@@ -10,9 +10,9 @@ import PublicProfileSettings from './PublicProfileSettings';
 import {
   AVATAR_MAX_BYTES,
   AVATAR_MAX_PICK_BYTES,
-  AVATAR_SIZE,
   canvasReady,
   encodeAvatar,
+  framedImageStyle,
   loadPickedImage,
   pickFileError,
   releasePicked,
@@ -34,6 +34,12 @@ const ROLE = {
   teammate: { label: 'Teammate', back: 'Back to orders' },
   admin: { label: 'Admin', back: 'Back to admin' },
 };
+/* The two places an uploaded picture is printed, at the sizes they print it: the account menu
+   in the site header (32px) and the teammate cards (.tp-card-art, 72px). */
+const AVATAR_PREVIEWS = [
+  { size: 32, label: 'Menu' },
+  { size: 72, label: 'Cards' },
+];
 const PROVIDER = {
   email: 'email code',
   discord: 'Discord',
@@ -67,6 +73,10 @@ export default class Profile extends React.Component {
       drag: false,
       /** The picked file while the cropper is open: the decoded image and its object URL. */
       crop: null,
+      /** The frame the cropper is showing right now, so the preview card can follow it. */
+      cropArea: null,
+      /** What the header block wants the preview card's banner to show, if anything. */
+      headerArt: null,
     };
     this.fileRef = React.createRef();
     this.searchRef = React.createRef();
@@ -125,7 +135,7 @@ export default class Profile extends React.Component {
   /** Leaves the cropper and lets go of the picked file. */
   closeCrop(patch) {
     releasePicked(this.state.crop);
-    this.setState({ crop: null, ...patch });
+    this.setState({ crop: null, cropArea: null, ...patch });
   }
 
   /** Turns the chosen frame into the 256 by 256 picture the save sends. */
@@ -418,6 +428,40 @@ export default class Profile extends React.Component {
     }
   }
 
+  /**
+   * The strip across the top of the preview card. It carries the teammate's own header once
+   * there is one, and follows the frame while a new one is being positioned, so the card on
+   * the left answers the question the crop below it is asking.
+   */
+  renderPreviewBanner() {
+    const art = this.state.headerArt;
+    const framed = art && framedImageStyle(art.box, art);
+    return (
+      <div
+        className="dc-live-frame"
+        style={{
+          height: '74px',
+          background:
+            'linear-gradient(120deg, rgba(214, 187, 255, .28), rgba(240, 166, 255, .14) 55%, rgba(158, 230, 255, .12))',
+        }}
+      >
+        {art && !framed ? (
+          <img
+            src={art.src}
+            alt=""
+            style={{
+              display: 'block',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        ) : null}
+        {framed ? <img src={art.src} alt="" style={framed} /> : null}
+      </div>
+    );
+  }
+
   render() {
     const s = this.state;
     const u = this.props.user;
@@ -428,6 +472,8 @@ export default class Profile extends React.Component {
     const dirty = this.dirty();
     const list = s.open ? this.matches() : [];
     const shownName = s.name.trim() || u.name;
+    /* Where the picked picture sits inside a round box, while the circle is being framed. */
+    const cropping = s.crop && framedImageStyle(s.cropArea, s.crop.image);
 
     const card = {
       padding: '22px',
@@ -531,29 +577,48 @@ export default class Profile extends React.Component {
               className="pf-preview"
               style={{ ...card, padding: '0', overflow: 'hidden' }}
             >
+              {this.renderPreviewBanner()}
+              {/* Above the strip, because the picture laps over it. */}
               <div
                 style={{
-                  height: '74px',
-                  background:
-                    'linear-gradient(120deg, rgba(214, 187, 255, .28), rgba(240, 166, 255, .14) 55%, rgba(158, 230, 255, .12))',
+                  position: 'relative',
+                  padding: '0 22px 22px',
+                  marginTop: '-40px',
                 }}
-              />
-              <div style={{ padding: '0 22px 22px', marginTop: '-40px' }}>
+              >
                 <img
                   src={avatar}
                   alt=""
                   width="80"
                   height="80"
                   referrerPolicy="no-referrer"
+                  hidden={!!cropping}
                   style={{
                     width: '80px',
                     height: '80px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    display: 'block',
+                    display: cropping ? 'none' : 'block',
                     boxShadow: '0 0 0 4px #120B22',
                   }}
                 />
+                {/* While the circle is being framed the card shows the frame itself, so the
+                    choice is judged where the picture is actually printed. */}
+                {cropping ? (
+                  <span
+                    className="dc-live-frame"
+                    aria-hidden="true"
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '50%',
+                      background: '#090414',
+                      boxShadow: '0 0 0 4px #120B22',
+                    }}
+                  >
+                    <img src={s.crop.url} alt="" style={cropping} />
+                  </span>
+                ) : null}
                 <div
                   style={{
                     marginTop: '12px',
@@ -673,29 +738,32 @@ export default class Profile extends React.Component {
                 <h2 id="pf-pic" style={h2}>
                   Profile picture
                 </h2>
-                <p style={help}>
-                  {this.props.accountOnly && !this.props.allowUpload
-                    ? 'Choose one of the avatars below. Uploads are not available yet.'
-                    : s.crop
-                      ? 'Move and zoom your picture until the circle shows the part you want.'
+                {/* While the circle is open the cropper carries the only line of instructions,
+                    so this one steps aside rather than saying the same thing twice. */}
+                {s.crop ? null : (
+                  <p style={help}>
+                    {this.props.accountOnly && !this.props.allowUpload
+                      ? 'Choose one of the avatars below. Uploads are not available yet.'
                       : 'JPG, PNG or WebP. You choose the part that shows.'}
-                </p>
+                  </p>
+                )}
                 {s.crop ? (
-                  <div style={{ marginTop: '18px' }}>
+                  <div style={{ marginTop: '14px' }}>
                     <ImageCropper
                       src={s.crop.url}
                       shape="round"
                       aspect={1}
-                      ratio={
-                        s.crop.image.naturalWidth / s.crop.image.naturalHeight
-                      }
-                      stageMin={0.8}
-                      stageMax={1.4}
+                      naturalWidth={s.crop.image.naturalWidth}
+                      naturalHeight={s.crop.image.naturalHeight}
+                      minRatio={0.85}
+                      maxRatio={1.35}
+                      maxStageWidth={420}
+                      maxStageHeight={420}
                       label="Profile picture crop"
-                      preview
-                      hint={`Drag to move it, pinch or scroll to zoom, or nudge it with the arrow keys. Duoly saves it at ${AVATAR_SIZE} by ${AVATAR_SIZE} pixels.`}
+                      previews={AVATAR_PREVIEWS}
                       saveLabel="Use this picture"
                       cancelLabel="Cancel"
+                      onPreview={(area) => this.setState({ cropArea: area })}
                       onSave={(area) => this.saveCrop(area)}
                       onCancel={() => this.closeCrop({})}
                     />
@@ -1305,7 +1373,11 @@ export default class Profile extends React.Component {
 
               {teammate && this.props.publicProfilesEnabled ? (
                 <>
-                  <PublicProfileSettings csrf={this.props.csrf} name={u.name} />
+                  <PublicProfileSettings
+                    csrf={this.props.csrf}
+                    name={u.name}
+                    onHeaderArt={(art) => this.setState({ headerArt: art })}
+                  />
                   <TrophySettings csrf={this.props.csrf} />
                 </>
               ) : null}
