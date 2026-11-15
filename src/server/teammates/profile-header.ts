@@ -56,10 +56,13 @@ const fail = (
   return null;
 };
 
+/** The teammate has never saved a public profile, so there is no row to hang a header on. */
+export const NO_PROFILE = 'no-profile' as const;
+
 async function changeHeader(
   userId: string,
   header: DecodedHeader | null,
-): Promise<string | true | null> {
+): Promise<string | true | typeof NO_PROFILE | null> {
   if (
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
       userId,
@@ -68,13 +71,16 @@ async function changeHeader(
     return null;
   const db = supportService();
   if (!db) return fail('config');
-  const current = await db
-    .from('teammate_public_profiles')
-    .select('header_image')
-    .eq('user_id', userId)
-    .single();
-  if (current.error || !current.data) return fail('read', current.error);
-  const old = current.data.header_image as string | null;
+  const readHeader = () =>
+    db
+      .from('teammate_public_profiles')
+      .select('header_image')
+      .eq('user_id', userId)
+      .maybeSingle();
+  const current = await readHeader();
+  if (current.error) return fail('read', current.error);
+  if (!current.data) return NO_PROFILE;
+  let old = current.data.header_image as string | null;
   const bucket = db.storage.from('profile-headers');
   let url: string | null = null;
   if (header) {
@@ -92,15 +98,32 @@ async function changeHeader(
     url = bucket.getPublicUrl(path).data.publicUrl;
   }
   // Compare-and-swap prevents a concurrent request from deleting another request's current image.
-  let query = db
-    .from('teammate_public_profiles')
-    .update({ header_image: url, updated_at: new Date().toISOString() })
-    .eq('user_id', userId);
-  query =
-    old === null
-      ? query.is('header_image', null)
-      : query.eq('header_image', old);
-  const saved = await query.select('user_id').single();
+  const swap = (from: string | null) => {
+    const query = db
+      .from('teammate_public_profiles')
+      .update({ header_image: url, updated_at: new Date().toISOString() })
+      .eq('user_id', userId);
+    return (
+      from === null
+        ? query.is('header_image', null)
+        : query.eq('header_image', from)
+    )
+      .select('user_id')
+      .maybeSingle();
+  };
+  let saved = await swap(old);
+  if (!saved.error && !saved.data) {
+    // Another request (a double tap, a second tab) changed the header in between. The newest
+    // choice wins: read the header again and swap once more instead of failing the save.
+    const again = await readHeader();
+    if (again.error) return fail('reread', again.error);
+    if (!again.data) return NO_PROFILE;
+    old = again.data.header_image as string | null;
+    saved =
+      old === url
+        ? ({ data: { user_id: userId }, error: null } as typeof saved)
+        : await swap(old);
+  }
   if (saved.error || !saved.data) return fail('save', saved.error);
   if (old && old !== url) {
     const path = objectPath(old, userId);
@@ -121,10 +144,11 @@ async function changeHeader(
 export async function storeHeader(
   userId: string,
   decoded: DecodedHeader,
-): Promise<string | null> {
+): Promise<string | typeof NO_PROFILE | null> {
   const result = await changeHeader(userId, decoded);
   return typeof result === 'string' ? result : null;
 }
 export async function removeHeader(userId: string): Promise<boolean> {
-  return (await changeHeader(userId, null)) === true;
+  const result = await changeHeader(userId, null);
+  return result === true || result === NO_PROFILE;
 }

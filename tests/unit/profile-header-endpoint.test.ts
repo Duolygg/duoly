@@ -172,3 +172,11 @@ it('fails closed on unavailable storage and unsupported methods', async () => {
   vi.stubEnv('PUBLIC_PROFILES_ENABLED', 'false');
   expect((await run()).status).toBe(404);
 });
+it('tells a teammate without a saved public profile what to do first', async () => {
+  vi.mocked(storeHeader).mockResolvedValueOnce('no-profile');
+  const res = await run();
+  expect(res.status).toBe(409);
+  expect((await res.json()).error).toBe(
+    'Save your public profile once first, then add your header.',
+  );
+});

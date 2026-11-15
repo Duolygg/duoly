@@ -328,6 +328,16 @@ export default class PublicProfileSettings extends React.Component {
       (pick.image.naturalWidth - crop.sw > 1 ||
         pick.image.naturalHeight - crop.sh > 1),
     );
+    // Without a saved profile there is nothing to attach a header to; a saved profile always has a slug.
+    if (!this.state.data?.settings?.slug)
+      return (
+        <fieldset className="pp-header">
+          <legend>Header image</legend>
+          <p className="pp-help" data-header-locked>
+            Save your public profile once, then you can add a header image.
+          </p>
+        </fieldset>
+      );
     return (
       <fieldset className="pp-header">
         <legend>Header image</legend>

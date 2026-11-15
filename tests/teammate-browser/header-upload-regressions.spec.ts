@@ -418,3 +418,19 @@ test('large noisy camera photo encodes within both binary and JSON limits', asyn
     contentType: 'application/json',
   });
 });
+
+test('a teammate without a saved public profile is told to save it before adding a header', async ({
+  page,
+}) => {
+  let posts = 0;
+  await page.route('**/api/teammate/profile-header', (route) => {
+    posts++;
+    return route.fulfill({ status: 500, body: '{}' });
+  });
+  await page.goto('/public-profile?fresh&header=none');
+  await expect(page.locator('[data-header-locked]')).toHaveText(
+    'Save your public profile once, then you can add a header image.',
+  );
+  await expect(page.locator('.pp-header input[type=file]')).toHaveCount(0);
+  expect(posts).toBe(0);
+});

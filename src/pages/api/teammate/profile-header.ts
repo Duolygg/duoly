@@ -5,6 +5,7 @@ import { publicProfilesEnabled } from '../../../server/teammates/public-profiles
 import {
   decodeHeader,
   storeHeader,
+  NO_PROFILE,
   removeHeader,
 } from '../../../server/teammates/profile-header';
 
@@ -66,6 +67,13 @@ export const ALL: APIRoute = async (context) => {
         400,
       );
     const url = await storeHeader(identity.viewer.id, decoded);
+    if (url === NO_PROFILE)
+      return account.json(
+        {
+          error: 'Save your public profile once first, then add your header.',
+        },
+        409,
+      );
     return url
       ? account.json({ url })
       : account.json({ error: 'Header could not be saved.' }, 503);

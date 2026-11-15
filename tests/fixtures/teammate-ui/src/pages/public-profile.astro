@@ -5,10 +5,12 @@
 import SiteLayout from '../../../../../src/layouts/SiteLayout.astro';
 import PublicProfileSettings from '../../../../../src/components/account/PublicProfileSettings';
 const header = Astro.url.searchParams.get('header');
+// `?fresh` is a teammate who has never saved a public profile: Postgres returns defaults only.
+const fresh = Astro.url.searchParams.has('fresh');
 const initialData = {
   settings: {
-    published: true,
-    slug: 'nyx',
+    published: !fresh,
+    slug: fresh ? '' : 'nyx',
     accent: 'lavender',
     banner: 'slash',
     featuredGame: 'val',
