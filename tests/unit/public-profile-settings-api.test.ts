@@ -1,6 +1,7 @@
 import type { APIContext } from 'astro';
 import { beforeEach, expect, it, vi } from 'vitest';
 import { accountContext } from '../../src/server/auth/context';
+import { ACCESS_GAMES } from '../../src/design-reference/lib/games.js';
 import { publicProfileSettings } from '../../src/server/teammates/settings-handlers';
 vi.mock('../../src/server/auth/context', () => ({ accountContext: vi.fn() }));
 const rpc = vi.fn();
@@ -60,6 +61,105 @@ it('validates and saves the exact settings, with CSRF', async () => {
     },
   });
 });
+it('saves an ordered featured list once and derives its legacy lead', async () => {
+  rpc.mockResolvedValueOnce({
+    data: { settings, approvedGames: ['val', 'lol', 'cs2'] },
+    error: null,
+  });
+  expect(
+    (
+      await run(
+        ctx({
+          ...settings,
+          featuredGames: ['lol', 'cs2', 'lol', 'val'],
+          csrf: token,
+        }),
+      )
+    ).status,
+  ).toBe(200);
+  expect(rpc).toHaveBeenCalledWith('teammate_public_profile_save', {
+    p_settings: {
+      ...settings,
+      featuredGame: 'lol',
+      featuredGames: ['lol', 'cs2', 'val'],
+      games: [{ game: 'val', roles: ['Controller'], picks: ['omen'] }],
+    },
+  });
+});
+it('forwards every approved featured game without a numeric list cap', async () => {
+  const featuredGames = Array.from({ length: 40 }, (_, i) => `g${i}`);
+  rpc.mockResolvedValueOnce({
+    data: { settings, approvedGames: featuredGames },
+    error: null,
+  });
+  expect(
+    (await run(ctx({ ...settings, featuredGames, csrf: token }))).status,
+  ).toBe(200);
+  expect(rpc).toHaveBeenCalledWith('teammate_public_profile_save', {
+    p_settings: {
+      ...settings,
+      featuredGame: 'g0',
+      featuredGames,
+      games: [{ game: 'val', roles: ['Controller'], picks: ['omen'] }],
+    },
+  });
+});
+it('saves details for every unique approved supported game without a numeric cap', async () => {
+  const approvedGames = ACCESS_GAMES.map((game) => game.id);
+  expect(approvedGames.length).toBeGreaterThan(16);
+  expect(new Set(approvedGames).size).toBe(approvedGames.length);
+  const games = approvedGames.map((game) => ({ game, roles: [], picks: [] }));
+  rpc.mockResolvedValueOnce({
+    data: { settings, approvedGames },
+    error: null,
+  });
+  expect(
+    (
+      await run(
+        ctx({ ...settings, games, featuredGames: approvedGames, csrf: token }),
+      )
+    ).status,
+  ).toBe(200);
+  expect(rpc).toHaveBeenCalledWith('teammate_public_profile_save', {
+    p_settings: {
+      ...settings,
+      games,
+      featuredGame: approvedGames[0],
+      featuredGames: approvedGames,
+    },
+  });
+});
+it('rejects an unapproved featured game before saving', async () => {
+  rpc.mockResolvedValueOnce({
+    data: { settings, approvedGames: ['val'] },
+    error: null,
+  });
+  expect(
+    (
+      await run(
+        ctx({ ...settings, featuredGames: ['val', 'lol'], csrf: token }),
+      )
+    ).status,
+  ).toBe(400);
+  expect(rpc).toHaveBeenCalledTimes(1);
+});
+it('does not save a featured list when approval lookup is unavailable', async () => {
+  rpc.mockResolvedValueOnce({ data: null, error: { code: 'unavailable' } });
+  expect(
+    (await run(ctx({ ...settings, featuredGames: ['val'], csrf: token })))
+      .status,
+  ).toBe(503);
+  expect(rpc).toHaveBeenCalledTimes(1);
+});
+it.each([[], null, ['val', 7], ['../etc']])(
+  'rejects malformed featured lists: %j',
+  async (featuredGames) => {
+    expect(
+      (await run(ctx({ ...settings, featuredGames, csrf: token }))).status,
+    ).toBe(400);
+    expect(rpc).not.toHaveBeenCalled();
+  },
+);
 it('normalizes an alias, a loose spelling and a duplicate before saving', async () => {
   const games = [
     {

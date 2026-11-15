@@ -32,6 +32,7 @@ suite home_live.sql
 suite home_teammates_slug.sql
 suite directory_cards.sql
 suite gamer_girl_profiles.sql
+suite featured_games.sql
 # skip home_public_stats.sql historical catalog assertion requires exactly 15 game keys; latest catalog returns 21
 # skip leaderboard.sql historical DTO allowlist rejects country field added by later migrations
 suite loyalty_cashback.sql

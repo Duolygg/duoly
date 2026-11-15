@@ -39,6 +39,31 @@ const profile = (
 });
 
 describe('recommendFor', () => {
+  it('does not recommend an unoffered or unknown selected game', () => {
+    const p = profile({ vibeTags: ['Chill'] });
+    expect(recommendFor(p, 'lol')).toBeNull();
+    expect(recommendFor(p, 'unknown')).toBeNull();
+  });
+  it('uses the selected game rank and booking link instead of the lead game', () => {
+    const p = profile({
+      featuredGames: ['val', 'lol'],
+      games: [
+        ...profile().games,
+        {
+          game: 'lol',
+          rank: 'Challenger',
+          peakRank: null,
+          verified: true,
+          roles: [],
+          picks: [],
+        },
+      ],
+    });
+    const r = recommendFor(p, 'lol')!;
+    expect(r.pick.href).toContain('game=lol');
+    expect(r.pick.reasons[0]?.fact).toBe('Verified Challenger');
+    expect(recommendFor(p)).toEqual(recommendFor(p, 'val'));
+  });
   it('picks the highest duo tier the verified rank qualifies for, never above it', () => {
     const r = recommendFor(
       profile({

@@ -422,6 +422,33 @@ export function fixtureLookup(slug: string): ProfileLookup {
   if (!fixtureSafe()) return { status: 'missing' };
   if (slug === 'nyxie') return { status: 'moved', slug: 'nyx' };
   if (slug === 'ghost') return { status: 'gone' };
+  /* Detail-only variants keep directory fixtures and their ordering stable. */
+  if (slug === 'nyx-two' || slug === 'nyx-six') {
+    const ids =
+      slug === 'nyx-two'
+        ? ['val', 'lol']
+        : ['val', 'lol', 'tft', 'mc', 'rl', 'social'];
+    return {
+      status: 'ok',
+      profile: {
+        ...structuredClone(nyx),
+        slug,
+        gamerGirl: true,
+        featuredGames: ids,
+        games: ids.map(
+          (game) =>
+            nyx.games.find((g) => g.game === game) ?? {
+              game,
+              rank: null,
+              peakRank: null,
+              verified: false,
+              roles: [],
+              picks: [],
+            },
+        ),
+      },
+    };
+  }
   const profile = profiles.find((p) => p.slug === slug);
   return profile
     ? { status: 'ok', profile: structuredClone(profile) }

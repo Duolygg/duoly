@@ -354,6 +354,13 @@ export default class GameCards extends React.Component {
     [picks[index], picks[to]] = [picks[to], picks[index]];
     this.patch(game, { picks });
   }
+  moveFeatured(index, by) {
+    const games = [...this.props.featuredGames];
+    const to = index + by;
+    if (to < 0 || to >= games.length) return;
+    [games[index], games[to]] = [games[to], games[index]];
+    this.props.onFeature(games);
+  }
   renderAsk() {
     /* Only games nobody approved yet, and never Social: that one comes with Gamer Girl access. */
     const mine = new Set(this.props.games.map((g) => g.game));
@@ -421,7 +428,13 @@ export default class GameCards extends React.Component {
     );
   }
   render() {
-    const { games, featuredGame } = this.props;
+    const { games, featuredGames } = this.props;
+    const ordered = [
+      ...featuredGames
+        .map((game) => games.find((entry) => entry.game === game))
+        .filter(Boolean),
+      ...games.filter((entry) => !featuredGames.includes(entry.game)),
+    ];
     if (!games.length)
       return (
         <div className="pk-games">
@@ -434,10 +447,11 @@ export default class GameCards extends React.Component {
     const picking = this.state.picking ? this.entry(this.state.picking) : null;
     return (
       <div className="pk-games">
-        {games.map((entry) => {
+        {ordered.map((entry) => {
           const game = entry.game;
           const open = this.state.open === game;
-          const featured = featuredGame === game;
+          const featuredIndex = featuredGames.indexOf(game);
+          const featured = featuredIndex !== -1;
           const summary = this.summary(entry);
           return (
             <div
@@ -492,14 +506,22 @@ export default class GameCards extends React.Component {
                   type="button"
                   className="pk-star"
                   aria-pressed={featured}
-                  disabled={featured}
+                  disabled={featured && featuredGames.length === 1}
                   title={
                     featured
-                      ? `${gameName(game)} is your featured game`
+                      ? featuredGames.length === 1
+                        ? 'Keep at least one game featured'
+                        : `Stop featuring ${gameName(game)}`
                       : 'Make featured'
                   }
                   data-pk-feature={game}
-                  onClick={() => this.props.onFeature(game)}
+                  onClick={() =>
+                    this.props.onFeature(
+                      featured
+                        ? featuredGames.filter((id) => id !== game)
+                        : [...featuredGames, game],
+                    )
+                  }
                 >
                   <Star on={featured} />
                   <span className="pk-sr">
@@ -514,6 +536,33 @@ export default class GameCards extends React.Component {
                   <Caret dir="down" />
                 </span>
               </div>
+              {featured && featuredGames.length > 1 ? (
+                <div className="pk-feature-order">
+                  <span>Position {featuredIndex + 1}</span>
+                  <span className="pk-mini-group">
+                    <button
+                      type="button"
+                      className="pk-mini"
+                      disabled={featuredIndex === 0}
+                      onClick={() => this.moveFeatured(featuredIndex, -1)}
+                      aria-label={`Move ${gameName(game)} up`}
+                    >
+                      <Caret dir="up" />
+                      Up
+                    </button>
+                    <button
+                      type="button"
+                      className="pk-mini"
+                      disabled={featuredIndex === featuredGames.length - 1}
+                      onClick={() => this.moveFeatured(featuredIndex, 1)}
+                      aria-label={`Move ${gameName(game)} down`}
+                    >
+                      <Caret dir="down" />
+                      Down
+                    </button>
+                  </span>
+                </div>
+              ) : null}
               {open ? (
                 <div className="pk-card-body">
                   {game === SOCIAL ? (

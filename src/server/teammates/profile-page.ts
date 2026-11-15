@@ -1,9 +1,13 @@
 import {
+  META_GAMES_MAX,
   MIN_GAMES_FOR_WINRATE,
   MIN_REVIEWS_FOR_RATING,
   PROFILE_ACCENTS,
   PROFILE_ACCENT_GLOW,
   PROFILE_REVIEWS_MAX,
+  RANKLINE_INLINE_DESKTOP,
+  RANKLINE_INLINE_PHONE,
+  featuredGamesOf,
   profileIndexable,
   type ProfileAccent,
   type PublicProfileReview,
@@ -70,8 +74,18 @@ export const profileMonth = (month: string) =>
     year: 'numeric',
     timeZone: 'UTC',
   }).format(new Date(`${month}-01T00:00:00Z`));
-export function profilePresentation(p: PublicTeammateProfile) {
-  const game = profileGame(p.featuredGame);
+/**
+ * The booking facts for one game on this profile: its entry price, its coaching price, its
+ * booking link and the words on the button. The profile features any number of games, and the
+ * switcher above the Book button needs all of them precomputed, so this takes the game rather
+ * than reading the lead one off the profile. Left out, it is the lead game, which is what every
+ * caller written before the list already meant.
+ */
+export function profilePresentation(
+  p: PublicTeammateProfile,
+  gameId: string = p.featuredGame,
+) {
+  const game = profileGame(gameId);
   const context = { customerCurrency: 'EUR' as const, eurToUsd: 1 };
   const cheapest = (category: 'teammate' | 'training' | 'gg') =>
     seoOffers(game.id, category, context).sort(
@@ -106,6 +120,10 @@ export function profilePresentation(p: PublicTeammateProfile) {
       : social
         ? 'Book a Social session'
         : `Book a ${game.name} teammate`,
+    /** The same button where several games are on offer, so it says which one it books. */
+    primaryGame: social
+      ? `Book a Social session with ${p.name}`
+      : `Book ${game.name} with ${p.name}`,
     rating,
     winRate,
     showSessions,
@@ -121,12 +139,85 @@ export function profilePresentation(p: PublicTeammateProfile) {
  * goes public, with no priority delay, and a verified stand-in takes it while they are in a
  * match. An offline teammate cannot promise either, so that line sends the reader on instead.
  */
-export const bookingLine = (p: PublicTeammateProfile) =>
+export const bookingLine = (
+  p: PublicTeammateProfile,
+  gameId: string = p.featuredGame,
+) =>
   p.online
-    ? `${p.name} sees your order with no queue delay. Busy? Another verified ${p.featuredGame === 'social' ? 'Gamer Girl' : 'teammate'} takes it.`
-    : p.featuredGame === 'social'
+    ? `${p.name} sees your order with no queue delay. Busy? Another verified ${gameId === 'social' ? 'Gamer Girl' : 'teammate'} takes it.`
+    : gameId === 'social'
       ? `${p.name} is offline right now. Another verified Gamer Girl can take your Social session today.`
-      : `${p.name} is offline right now. A verified ${profileGame(p.featuredGame).name} teammate can take your order today.`;
+      : `${p.name} is offline right now. A verified ${profileGame(gameId).name} teammate can take your order today.`;
+/** One featured game, as the rank line and the booking switcher need it. */
+export type FeaturedGame = {
+  id: string;
+  game: SiteGame;
+  /** The rank an administrator checked for this game, or null when none is verified. */
+  rank: string | null;
+};
+/**
+ * Every game this profile features, in the teammate's own order, with the verified rank beside
+ * each one. A profile saved before 20261115120000_featured_games.sql has one, and this is the
+ * same shape for both.
+ */
+export const profileFeatured = (p: PublicTeammateProfile): FeaturedGame[] =>
+  featuredGamesOf(p).map((id) => {
+    const entry = p.games.find((g) => g.game === id);
+    return {
+      id,
+      game: profileGame(id),
+      rank: entry?.verified ? (entry.rank ?? null) : null,
+    };
+  });
+/**
+ * The rank line under the name. It draws the featured games inline until the line stops reading
+ * as one lockup (two on a phone, three on a wider screen) and folds everything it did not draw
+ * into the pill that already carried the non featured games, which keeps the whole line to one
+ * row of text whether a teammate features one game or eight.
+ *
+ * Both counts are rendered and CSS picks one, because the number depends on the width and the
+ * page is server rendered once. The pill's accessible name counts every game on the profile, so
+ * it says the same thing at either width.
+ */
+export function profileRankLine(p: PublicTeammateProfile) {
+  const featured = profileFeatured(p);
+  const inlinePhone = Math.min(featured.length, RANKLINE_INLINE_PHONE);
+  const inlineDesktop = Math.min(featured.length, RANKLINE_INLINE_DESKTOP);
+  const others = p.games
+    .map((g) => g.game)
+    .filter((id) => !featured.some((f) => f.id === id));
+  /* The rest of the featured games first, in the order the teammate chose, then the games they
+     did not feature in profile order: the pill reads as "and here is everything else". */
+  const foldedIds = (inline: number) => [
+    ...featured.slice(inline).map((f) => f.id),
+    ...others,
+  ];
+  const morePhone = foldedIds(inlinePhone).length;
+  const moreDesktop = foldedIds(inlineDesktop).length;
+  /* The one game a phone folds and a wider screen still draws inline. */
+  const phoneOnly = featured.slice(inlinePhone, inlineDesktop).map((f) => f.id);
+  const stack = [
+    ...phoneOnly.map((id) => ({ game: profileGame(id), phoneOnly: true })),
+    ...foldedIds(inlineDesktop)
+      .slice(0, 3 - phoneOnly.length)
+      .map((id) => ({ game: profileGame(id), phoneOnly: false })),
+  ];
+  const label = (n: number) => (n === 1 ? '1 more game' : `${n} more games`);
+  return {
+    featured,
+    inlinePhone,
+    inlineDesktop,
+    morePhone,
+    moreDesktop,
+    phoneLabel: label(morePhone),
+    desktopLabel: label(moreDesktop),
+    stack,
+    /** Shown at all only when at least one width has something to fold. */
+    show: morePhone > 0,
+    /* Stable at either width, because an accessible name cannot depend on a media query. */
+    allLabel: `See all ${p.games.length} games ${p.name} plays`,
+  };
+}
 /**
  * The three answers a profile owes a first time reader, written from the profile's own data.
  *
@@ -340,18 +431,30 @@ function fitDescription(sentences: string[], tail: string) {
  * answers: the games and the price of a session.
  */
 export function profileMetadata(p: PublicTeammateProfile) {
-  const game = profileGame(p.featuredGame);
-  const rank = p.games.find((g) => g.game === game.id && g.verified)?.rank;
+  const featured = profileFeatured(p);
+  const game = featured[0]?.game ?? profileGame(p.featuredGame);
+  /* The rank is part of the headline only while one game is featured. Two games and a rank do
+     not fit a search result, and naming the second game is worth more than the number. */
+  const rank =
+    featured.length > 1 ? undefined : (featured[0]?.rank ?? undefined);
   const { showSessions } = profilePresentation(p);
+  /* Up to two featured games, and only while the pair still fits the 60 characters a result
+     prints: "PUBG: Battlegrounds and Rainbow Six Siege" alone is past it. */
+  const titleFor = (names: string[]) =>
+    `${p.name}, ${profileList(names)}${rank ? ` ${rank}` : ''} teammate | Duoly`;
+  const names = featured.slice(0, META_GAMES_MAX).map((f) => f.game.name);
+  const headline =
+    names.length > 1 && titleFor(names).length > 60 ? [game.name] : names;
+  const games = profileList(headline.length ? headline : [game.name]);
   const sentences = [
-    `Meet ${p.name}, ${profileArticle(rank ?? game.name)} ${rank ? `${rank} ` : ''}${game.name} teammate on Duoly.`,
+    `Meet ${p.name}, ${profileArticle(rank ?? games)} ${rank ? `${rank} ` : ''}${games} teammate on Duoly.`,
   ];
   if (p.languages.length) sentences.push(`Speaks ${profileList(p.languages)}.`);
   if (showSessions)
     sentences.push(`${p.sessions} sessions completed on Duoly.`);
   if (p.bio.trim()) sentences.push(p.bio.trim());
   return {
-    title: `${p.name}, ${game.name}${rank ? ` ${rank}` : ''} teammate | Duoly`,
+    title: titleFor(headline.length ? headline : [game.name]),
     description: fitDescription(
       sentences,
       `See the games ${p.name} plays and what a session costs before you book.`,

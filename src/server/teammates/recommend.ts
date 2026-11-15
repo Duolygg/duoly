@@ -70,10 +70,20 @@ const byProduct = (offers: Offer[]) => {
   return [...products.values()];
 };
 
-export function recommendFor(p: PublicTeammateProfile): Recommendation | null {
-  const gameId = profileGame(p.featuredGame).id;
-  const featured = p.games.find((g) => g.game === p.featuredGame);
-  const verifiedRank = featured?.verified ? featured.rank : null;
+/**
+ * The pick for one game on the profile. A teammate features any number of games and the booking
+ * switcher shows the pick for whichever one is selected, so the game is a parameter; left out it
+ * is the lead featured game, which is what this function always meant before the list existed.
+ */
+export function recommendFor(
+  p: PublicTeammateProfile,
+  forGame: string = p.featuredGame,
+): Recommendation | null {
+  const featured = p.games.find((g) => g.game === forGame);
+  if (!featured) return null;
+  const gameId = profileGame(forGame).id;
+  if (gameId !== forGame) return null;
+  const verifiedRank = featured.verified ? featured.rank : null;
   const duoOffers = seoOffers(gameId, 'teammate', context);
   /* Gamer Girl services are a separate line with their own providers. */
   const own = duoOffers.filter((o) => !/gamer girl/i.test(o.tier));

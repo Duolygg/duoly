@@ -11,6 +11,7 @@ type Settings = {
   published: boolean;
   slug: string;
   featuredGame: string;
+  featuredGames?: string[];
   vibeTags: string[];
   games: { game: string; roles: string[]; picks: string[] }[];
 };
@@ -98,6 +99,8 @@ test('a game card opens, takes roles and keeps the cap', async ({ page }) => {
   await page.getByRole('button', { name: 'Save public profile' }).click();
   await expect(page.locator('.pk-bar')).toHaveAttribute('data-state', 'saved');
   expect(store.settings.games[0]!.roles).toEqual(['Controller', 'Sentinel']);
+  expect(store.settings.featuredGame).toBe('val');
+  expect(store.settings.featuredGames).toEqual(['val']);
 });
 
 test('the picker searches, filters, fills to the cap, reorders and applies', async ({
@@ -288,30 +291,65 @@ test('a value the catalog cannot place keeps its place and can be removed', asyn
   await expect(page.locator('.pk-tabs')).toHaveCount(0);
 });
 
-test('the Featured star moves between cards, one at a time', async ({
+test('featured games toggle, reorder, persist and always keep one', async ({
   page,
 }) => {
-  const store = await open(page, ['val', 'lol', 'wow']);
-  await expect(page.locator('.pk-card')).toHaveCount(3);
-  await expect(page.locator('[data-pk-feature="val"]')).toHaveAttribute(
-    'aria-pressed',
-    'true',
+  const games = ['val', 'lol', 'wow', 'cs2', 'tft', 'mc', 'ow', 'fn'];
+  const store = await open(page, games);
+  await expect(page.locator('[data-pk-feature="val"]')).toBeDisabled();
+  for (const game of games.slice(1)) {
+    await page.locator(`[data-pk-feature="${game}"]`).click();
+  }
+  await expect(page.locator('[aria-pressed="true"].pk-star')).toHaveCount(8);
+  await expect(
+    page.getByRole('button', { name: 'Move Valorant up', exact: true }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole('button', { name: 'Move Fortnite down', exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByRole('button', { name: 'Move League of Legends up', exact: true })
+    .focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('[data-pk-card]').first()).toHaveAttribute(
+    'data-pk-card',
+    'lol',
   );
-  await page.locator('[data-pk-feature="lol"]').click();
-  await expect(page.locator('[data-pk-feature="lol"]')).toHaveAttribute(
-    'aria-pressed',
-    'true',
+  await page
+    .getByRole('button', { name: 'Move League of Legends down', exact: true })
+    .click();
+  await expect(page.locator('[data-pk-card]').first()).toHaveAttribute(
+    'data-pk-card',
+    'val',
   );
-  await expect(page.locator('[data-pk-feature="val"]')).toHaveAttribute(
-    'aria-pressed',
-    'false',
-  );
-  expect(await page.locator('[aria-pressed="true"].pk-star').count()).toBe(1);
-  /* The featured one is already featured, so its star is not a thing to press. */
-  await expect(page.locator('[data-pk-feature="lol"]')).toBeDisabled();
+  await page
+    .getByRole('button', { name: 'Move League of Legends up', exact: true })
+    .click();
   await page.getByRole('button', { name: 'Save public profile' }).click();
   await expect(page.locator('.pk-bar')).toHaveAttribute('data-state', 'saved');
   expect(store.settings.featuredGame).toBe('lol');
+  expect(store.settings.featuredGames).toEqual([
+    'lol',
+    'val',
+    ...games.slice(2),
+  ]);
+  await page.reload();
+  await expect(page.locator('[aria-pressed="true"].pk-star')).toHaveCount(8);
+  await expect(page.locator('[data-pk-card]').first()).toHaveAttribute(
+    'data-pk-card',
+    'lol',
+  );
+  for (const game of games.filter((game) => game !== 'lol')) {
+    await page.locator(`[data-pk-feature="${game}"]`).click();
+  }
+  await expect(page.locator('[data-pk-feature="lol"]')).toBeDisabled();
+  await expect(page.locator('[aria-pressed="true"].pk-star')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
+  await expect(page.locator('[aria-pressed="true"].pk-star')).toHaveCount(8);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > window.innerWidth,
+  );
+  expect(overflow).toBe(false);
 });
 
 test('a closed card still says what is on it, and the bar says what is unsaved', async ({

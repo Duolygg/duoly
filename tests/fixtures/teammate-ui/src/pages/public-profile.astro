@@ -25,13 +25,18 @@ const RANKS: Record<string, { rank: string; peakRank: string | null }> = {
   lol: { rank: 'Master', peakRank: 'Grandmaster' },
   wow: { rank: 'Mythic+ 3,500+', peakRank: null },
 };
+// Ordered featured fixtures support one, several or every approved game.
+const featured = (Astro.url.searchParams.get('featured') || games[0] || '')
+  .split(',')
+  .filter((game) => games.includes(game));
 const initialData = {
   settings: {
     published: !fresh,
     slug: fresh ? '' : 'nyx',
     accent: 'lavender',
     banner: 'slash',
-    featuredGame: games[0],
+    featuredGame: featured[0],
+    featuredGames: featured,
     vibeTags: [],
     showCountry: false,
     coaching: false,

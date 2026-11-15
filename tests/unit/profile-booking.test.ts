@@ -31,7 +31,7 @@ describe('who a booking button saves for', () => {
 describe('the profile page wiring', () => {
   it('marks every booking button, and names the two that carry the sign-in detour', () => {
     /* Three primaries: the hero, the closing band and the sticky mobile bar. */
-    expect(page.match(/data-profile-book="primary"/g)).toHaveLength(3);
+    expect(page.match(/data-profile-book="primary"(?=\s*>)/g)).toHaveLength(3);
     /* Coaching and each game card book that game directly. */
     expect(page.match(/data-profile-book="game"/g)).toHaveLength(2);
     /* Every button is still an anchor with a real href, so no JavaScript is required. */
@@ -76,7 +76,7 @@ describe('the profile page wiring', () => {
   it('closes the booking block with one line, inside the block', () => {
     /* The button, the price, the availability and the explainer are one unit: the line is
        the last row of the CTA grid rather than a paragraph that follows it. */
-    expect(page).toMatch(/<p class="tp-note">\{bookingNote\}<\/p>\s*<\/div>/);
+    expect(page).toMatch(/<p class="tp-note">\{v\.note\}<\/p>\s*<\/div>/);
     expect(
       readFileSync('src/components/teammates/profiles.css', 'utf8'),
     ).toContain('.tp-cta .tp-note');
@@ -94,10 +94,12 @@ describe('the hero after the last review round', () => {
   });
   it('names the game with its own icon, not a coloured crest', () => {
     expect(page).toContain('class="tp-rankline-icon"');
-    expect(page).toContain('src={view.game.img}');
+    expect(page).toContain('src={f.game.img}');
     /* The crest survives only on the game cards. */
     expect(page.match(/rankEmblem\(/g)).toHaveLength(2);
-    expect(page).toContain('aria-label="Rank verified by Duoly"');
+    expect(page).toContain(
+      'aria-label={`${f.game.name} rank verified by Duoly`}',
+    );
   });
   it('steps the headline down rather than breaking inside a word', () => {
     /* "Crafty" came out as "Craft" and a lone "y" beside the mascot at 390. */

@@ -1,0 +1,113 @@
+.tp-featured-rank {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+}
+.tp-more-phone,
+.tp-phone-stack,
+.tp-phone-more {
+  display: none;
+}
+.tp-game-pick-label {
+  margin: 26px 0 8px !important;
+  color: #b5aacd;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* A segmented control on its own track, so it reads as one choice and never as more tags. */
+.tp-game-switcher {
+  display: flex;
+  gap: 4px;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: 14px;
+  padding: 4px;
+  border: 1px solid rgba(214, 187, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(9, 4, 20, 0.55);
+  scrollbar-width: none;
+}
+.tp-game-switcher::-webkit-scrollbar {
+  display: none;
+}
+.tp-game-switcher button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  min-height: 44px;
+  border: 0;
+  border-radius: 12px;
+  padding: 8px 14px 8px 10px;
+  background: transparent;
+  color: #cfc3e3;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.16s ease,
+    color 0.16s ease;
+}
+.tp-game-switcher button img {
+  border-radius: 5px;
+}
+.tp-game-switcher button[aria-checked='true'] {
+  background: rgba(214, 187, 255, 0.16);
+  color: #fff;
+  font-weight: 650;
+  box-shadow: inset 0 0 0 1.5px #d6bbff;
+}
+@media (hover: hover) {
+  .tp-game-switcher button[aria-checked='false']:hover {
+    background: rgba(214, 187, 255, 0.1);
+    color: #fff;
+  }
+}
+.tp-game-switcher button:focus-visible {
+  outline: 2px solid #d6bbff;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tp-game-switcher button {
+    transition: none;
+  }
+}
+.tp-hero-body {
+  min-width: 0;
+}
+.tp-page [data-booking-panel][hidden],
+.tp-page [data-game-pick][hidden],
+.tp-page [data-game-switcher][hidden],
+.tp-page [data-game-switcher-label][hidden] {
+  display: none;
+}
+@media (max-width: 600px) {
+  .tp-desktop-rank,
+  .tp-more-desktop {
+    display: none;
+  }
+  .tp-phone-more {
+    display: inline-flex;
+  }
+  .tp-more-phone,
+  .tp-phone-stack {
+    display: inline;
+  }
+  .tp-featured-rank {
+    font-size: 14px;
+  }
+  /* On a phone the track runs to the screen edge and fades there, so a cut chip reads as more. */
+  .tp-game-switcher {
+    width: auto;
+    margin-right: -20px;
+    border-right: 0;
+    border-radius: 16px 0 0 16px;
+    -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent);
+    mask-image: linear-gradient(90deg, #000 82%, transparent);
+  }
+}

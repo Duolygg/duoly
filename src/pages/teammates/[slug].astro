@@ -9,6 +9,7 @@ import { trophyCase } from '../../server/teammates/trophy-view';
 import { recommendFor } from '../../server/teammates/recommend';
 import { seoOffers } from '../../server/seo/offers';
 import '../../components/teammates/profiles.css';
+import '../../components/teammates/featured-games.css';
 import {
   loadPublicProfile,
   loadTeammateCards,
@@ -24,6 +25,7 @@ import {
   profileRoute,
   profileMetadata,
   profilePresentation,
+  profileRankLine,
   profileSchemas,
   profileGame,
   profileMonth,
@@ -45,6 +47,16 @@ const { viewer, csrf } = await pageViewer(Astro);
 Astro.response.headers.set('Cache-Control', 'no-store');
 const p = result.status === 'ok' ? result.profile : null;
 const view = p ? profilePresentation(p) : null;
+const rankLine = p ? profileRankLine(p) : null;
+const bookings =
+  p && rankLine
+    ? rankLine.featured.map((f) => ({
+        ...profilePresentation(p, f.id),
+        note: bookingLine(p, f.id),
+        pick: recommendFor(p, f.id),
+      }))
+    : [];
+const multipleGames = bookings.length > 1;
 const meta = p
   ? profileMetadata(p)
   : {
@@ -198,9 +210,7 @@ const socialSessions = [
   ),
 ];
 /** Our pick: the product that fits a session with this teammate, and the facts behind it. */
-const pick = p ? recommendFor(p) : null;
-/** The booking explainer, one line under the price and the availability it belongs with. */
-const bookingNote = p ? bookingLine(p) : '';
+
 /*
  * The share sheet. Every target is a plain link built here, so the sheet works the moment it
  * opens and costs no script per app. The OS share sheet is still offered, but only as "More",
@@ -564,35 +574,72 @@ const shareApps: {
                 warning sign rather than as a game, and the icon is the thing a player
                 recognises without reading. */}
             <p class="tp-rankline">
-              <img
-                class="tp-rankline-icon"
-                src={view.game.img}
-                width="22"
-                height="22"
-                alt=""
-                fetchpriority="high"
-              />
-              <span>
-                {featuredRank
-                  ? `${view.game.name}, ${featuredRank}`
-                  : view.game.name}
-              </span>
-              {featuredRank && (
-                <span
-                  class="tp-verified"
-                  role="img"
-                  aria-label="Rank verified by Duoly"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path
-                      d="m5 12.5 4.5 4.5L19 7.5"
-                      stroke="currentColor"
-                      stroke-width="3.2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+              {rankLine?.featured
+                .slice(0, rankLine.inlineDesktop)
+                .map((f, i) => (
+                  <span
+                    class:list={[
+                      'tp-featured-rank',
+                      { 'tp-desktop-rank': i >= rankLine.inlinePhone },
+                    ]}
+                    data-featured-rank={f.id}
+                  >
+                    <img
+                      class="tp-rankline-icon"
+                      src={f.game.img}
+                      width="22"
+                      height="22"
+                      alt=""
                     />
-                  </svg>
-                </span>
+                    <span>
+                      {f.rank ? `${f.game.name}, ${f.rank}` : f.game.name}
+                    </span>
+                    {f.rank && (
+                      <span
+                        class="tp-verified"
+                        role="img"
+                        aria-label={`${f.game.name} rank verified by Duoly`}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path
+                            d="m5 12.5 4.5 4.5L19 7.5"
+                            stroke="currentColor"
+                            stroke-width="3.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    )}
+                  </span>
+                ))}
+              {rankLine?.show && (
+                <a
+                  class:list={[
+                    'tp-rankline-more',
+                    { 'tp-phone-more': !rankLine.moreDesktop },
+                  ]}
+                  href="#games"
+                  aria-label={rankLine.allLabel}
+                >
+                  <span class="tp-rankline-stack" aria-hidden="true">
+                    {rankLine.stack.map(({ game, phoneOnly }) => (
+                      <img
+                        class:list={{ 'tp-phone-stack': phoneOnly }}
+                        src={game.img}
+                        width="20"
+                        height="20"
+                        alt=""
+                      />
+                    ))}
+                  </span>
+                  <span class="tp-more-phone" aria-hidden="true">
+                    {rankLine.phoneLabel}
+                  </span>
+                  <span class="tp-more-desktop" aria-hidden="true">
+                    {rankLine.desktopLabel}
+                  </span>
+                </a>
               )}
               {p.gamerGirl && (
                 <span
@@ -677,48 +724,88 @@ const shareApps: {
                 ))}
               </ul>
             )}
-            <div class="tp-cta" data-hero-booking>
-              <div class="tp-buy">
-                <a
-                  class="tp-button tp-primary"
-                  href={view.book}
-                  data-profile-book="primary"
-                >
-                  {view.primary}
-                  <Icon name="arrow" />
-                </a>
-                {view.offer && (
-                  <p class="tp-price" data-profile-price>
-                    from <strong>{view.offer.display}</strong> per{' '}
-                    {view.offer.unit}
-                  </p>
-                )}
-              </div>
-              {p.coaching && (
-                <div class="tp-buy tp-buy-quiet">
-                  <a
-                    class="tp-button tp-ghost"
-                    href={view.booking(p.featuredGame, true)}
-                    data-profile-book="game"
+            {multipleGames && (
+              <p
+                class="tp-game-pick-label"
+                id="booking-game-label"
+                hidden
+                data-game-switcher-label
+              >
+                Book a session in
+              </p>
+            )}
+            {multipleGames && (
+              <div
+                class="tp-game-switcher"
+                role="radiogroup"
+                aria-labelledby="booking-game-label"
+                data-game-switcher
+                hidden
+              >
+                {bookings.map((v, i) => (
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={i === 0 ? 'true' : 'false'}
+                    tabindex={i === 0 ? 0 : -1}
+                    data-booking-game={v.game.id}
+                    aria-controls={`booking-${v.game.id}`}
                   >
-                    Coaching with {p.name}
+                    <img src={v.game.img} width="20" height="20" alt="" />
+                    {v.game.name}
+                  </button>
+                ))}
+              </div>
+            )}
+            {bookings.map((v, i) => (
+              <div
+                class="tp-cta"
+                data-hero-booking
+                data-booking-panel={v.game.id}
+                id={`booking-${v.game.id}`}
+                hidden={i > 0}
+              >
+                <div class="tp-buy">
+                  <a
+                    class="tp-button tp-primary"
+                    href={v.book}
+                    data-profile-book="primary"
+                  >
+                    {multipleGames ? v.primaryGame : v.primary}
+                    <Icon name="arrow" />
                   </a>
-                  {view.coachOffer && (
-                    <p class="tp-price tp-price-quiet">
-                      from <strong>{view.coachOffer.display}</strong> per{' '}
-                      {view.coachOffer.unit}
+                  {v.offer && (
+                    <p class="tp-price" data-profile-price>
+                      from <strong>{v.offer.display}</strong> per {v.offer.unit}
                     </p>
                   )}
                 </div>
-              )}
-              {availability && (
-                <p class="tp-availability">
-                  <i aria-hidden="true"></i>
-                  {availability}
-                </p>
-              )}
-              <p class="tp-note">{bookingNote}</p>
-            </div>
+                {v.coachOffer && (
+                  <div class="tp-buy tp-buy-quiet">
+                    <a
+                      class="tp-button tp-ghost"
+                      href={v.booking(v.game.id, true)}
+                      data-profile-book="game"
+                    >
+                      {multipleGames
+                        ? `${v.game.name} coaching`
+                        : `Coaching with ${p.name}`}
+                    </a>
+                    <p class="tp-price tp-price-quiet">
+                      from <strong>{v.coachOffer.display}</strong> per{' '}
+                      {v.coachOffer.unit}
+                    </p>
+                  </div>
+                )}
+                {availability && (
+                  <p class="tp-availability">
+                    <i aria-hidden="true"></i>
+                    {availability}
+                  </p>
+                )}
+                <p class="tp-note">{v.note}</p>
+              </div>
+            ))}
           </div>
         </div>
         {view.showStats ? (
@@ -1083,83 +1170,92 @@ const shareApps: {
         {/* The pick: which product fits a session with this teammate, with the facts that
             decided it (src/server/teammates/recommend.ts). The reasoning runs down the left
             as a chain; the product it lands on is the lit card on the right. */}
-        {pick && (
-          <div class="tp-pick" data-pick>
-            <div class="tp-pick-why">
-              <p class="tp-pick-eyebrow">
-                <span class="tp-pick-spark" aria-hidden="true"></span>
-                Our pick for a session with {p.name}
-              </p>
-              <p class="tp-pick-intro">
-                We weighed {pick.signals} signals from {p.name}'s verified
-                profile and reviews. These are the ones that decided it.
-              </p>
-              <ol class="tp-pick-chain">
-                {pick.pick.reasons.map((reason, i) => (
-                  <li style={`--i:${i}`} data-pick-reason>
-                    <span class="tp-pick-node" aria-hidden="true"></span>
-                    <span class="tp-pick-fact">{reason.fact}</span>
-                    <span class="tp-pick-because">{reason.because}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div class="tp-pick-card" data-pick-card>
-              <span class="tp-pick-shine" aria-hidden="true"></span>
-              <div class="tp-pick-top">
-                <span class="tp-pick-badge">
-                  <svg
-                    viewBox="0 0 16 16"
-                    width="12"
-                    height="12"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M8 1.5 9.6 6.4l4.9 1.6-4.9 1.6L8 14.5 6.4 9.6 1.5 8l4.9-1.6Z"
-                      fill="currentColor"
-                    ></path>
-                  </svg>
-                  Best fit
-                </span>
-                <span class="tp-pick-who">
-                  <img
-                    class:list={{ 'is-photo': photo }}
-                    src={p.avatar}
-                    width="40"
-                    height="40"
-                    alt=""
-                    loading="lazy"
-                  />
-                  with {p.name}
-                </span>
-              </div>
-              <p class="tp-pick-title">{pick.pick.title}</p>
-              <p class="tp-pick-tier">{pick.pick.tier}</p>
-              <p class="tp-pick-desc">{pick.pick.desc}</p>
-              <p class="tp-pick-price">
-                from <strong>{pick.pick.price}</strong> per {pick.pick.unit}
-              </p>
-              <a
-                class="tp-button tp-primary"
-                href={pick.pick.href}
-                data-profile-book="pick"
+        {bookings.map(
+          (v, i) =>
+            v.pick &&
+            ((pick) => (
+              <div
+                class="tp-pick"
+                data-pick
+                data-game-pick={v.game.id}
+                hidden={i > 0}
               >
-                Book {pick.pick.title} with {p.name}
-                <Icon name="arrow" />
-              </a>
-              {pick.alternatives.length > 0 && (
-                <p class="tp-pick-alts">
-                  <span>Also a good fit</span>
-                  {pick.alternatives.map((alt) => (
-                    <a href={alt.href} data-profile-book="pick-alt">
-                      {alt.title}
-                      <small>from {alt.price}</small>
-                    </a>
-                  ))}
-                </p>
-              )}
-            </div>
-          </div>
+                <div class="tp-pick-why">
+                  <p class="tp-pick-eyebrow">
+                    <span class="tp-pick-spark" aria-hidden="true"></span>
+                    Our pick for a session with {p.name}
+                  </p>
+                  <p class="tp-pick-intro">
+                    We weighed {pick.signals} signals from {p.name}'s verified
+                    profile and reviews. These are the ones that decided it.
+                  </p>
+                  <ol class="tp-pick-chain">
+                    {pick.pick.reasons.map((reason, i) => (
+                      <li style={`--i:${i}`} data-pick-reason>
+                        <span class="tp-pick-node" aria-hidden="true"></span>
+                        <span class="tp-pick-fact">{reason.fact}</span>
+                        <span class="tp-pick-because">{reason.because}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+                <div class="tp-pick-card" data-pick-card>
+                  <span class="tp-pick-shine" aria-hidden="true"></span>
+                  <div class="tp-pick-top">
+                    <span class="tp-pick-badge">
+                      <svg
+                        viewBox="0 0 16 16"
+                        width="12"
+                        height="12"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M8 1.5 9.6 6.4l4.9 1.6-4.9 1.6L8 14.5 6.4 9.6 1.5 8l4.9-1.6Z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                      Best fit
+                    </span>
+                    <span class="tp-pick-who">
+                      <img
+                        class:list={{ 'is-photo': photo }}
+                        src={p.avatar}
+                        width="40"
+                        height="40"
+                        alt=""
+                        loading="lazy"
+                      />
+                      with {p.name}
+                    </span>
+                  </div>
+                  <p class="tp-pick-title">{pick.pick.title}</p>
+                  <p class="tp-pick-tier">{pick.pick.tier}</p>
+                  <p class="tp-pick-desc">{pick.pick.desc}</p>
+                  <p class="tp-pick-price">
+                    from <strong>{pick.pick.price}</strong> per {pick.pick.unit}
+                  </p>
+                  <a
+                    class="tp-button tp-primary"
+                    href={pick.pick.href}
+                    data-profile-book="pick"
+                  >
+                    Book {pick.pick.title} with {p.name}
+                    <Icon name="arrow" />
+                  </a>
+                  {pick.alternatives.length > 0 && (
+                    <p class="tp-pick-alts">
+                      <span>Also a good fit</span>
+                      {pick.alternatives.map((alt) => (
+                        <a href={alt.href} data-profile-book="pick-alt">
+                          {alt.title}
+                          <small>from {alt.price}</small>
+                        </a>
+                      ))}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))(v.pick),
         )}
         {answers.map((answer) => (
           <div class="tp-answer">
@@ -1199,7 +1295,9 @@ const shareApps: {
           href={view.book}
           data-profile-book="primary"
         >
-          {view.primary}
+          <span data-booking-label>
+            {multipleGames ? bookings[0]?.primaryGame : view.primary}
+          </span>
           <Icon name="arrow" />
         </a>
       </section>
@@ -1213,7 +1311,9 @@ const shareApps: {
             class:list={['tp-dot', { 'is-online': p.online }]}
             aria-hidden="true"
           ></span>
-          {view.primary}
+          <span data-booking-label>
+            {multipleGames ? bookings[0]?.primaryGame : view.primary}
+          </span>
           <Icon name="arrow" />
         </a>
       </div>
@@ -1235,6 +1335,71 @@ const shareApps: {
   )}
 </SiteLayout>
 <script>
+  /* Server-rendered booking panels keep catalog prices and product links together. */
+  const switcher = document.querySelector<HTMLElement>('[data-game-switcher]');
+  if (switcher) {
+    const controls = [
+      ...switcher.querySelectorAll<HTMLButtonElement>('[data-booking-game]'),
+    ];
+    const panels = [
+      ...document.querySelectorAll<HTMLElement>('[data-booking-panel]'),
+    ];
+    const picks = [
+      ...document.querySelectorAll<HTMLElement>('[data-game-pick]'),
+    ];
+    const select = (button: HTMLButtonElement) => {
+      const id = button.dataset.bookingGame;
+      for (const control of controls) {
+        const selected = control === button;
+        control.setAttribute('aria-checked', String(selected));
+        control.tabIndex = selected ? 0 : -1;
+      }
+      for (const panel of panels)
+        panel.hidden = panel.dataset.bookingPanel !== id;
+      for (const pick of picks) {
+        pick.hidden = pick.dataset.gamePick !== id;
+        /* The default pick keeps its reading-room sequence. Other games are ready to read. */
+        if (!pick.hidden && id !== controls[0]?.dataset.bookingGame) {
+          pick.classList.remove('is-armed');
+          pick.classList.add('is-landed');
+        }
+      }
+      const active = panels.find((panel) => !panel.hidden);
+      const source = active?.querySelector<HTMLAnchorElement>(
+        '[data-profile-book="primary"]',
+      );
+      if (source)
+        for (const label of document.querySelectorAll<HTMLElement>(
+          '[data-booking-label]',
+        )) {
+          label.textContent = source.textContent?.trim() ?? '';
+          label
+            .closest('a')
+            ?.setAttribute('href', source.getAttribute('href')!);
+        }
+    };
+    for (const [i, button] of controls.entries()) {
+      button.addEventListener('click', () => select(button));
+      button.addEventListener('keydown', (event) => {
+        let next: number;
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown')
+          next = (i + 1) % controls.length;
+        else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp')
+          next = (i + controls.length - 1) % controls.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = controls.length - 1;
+        else return;
+        event.preventDefault();
+        controls[next]!.focus();
+        select(controls[next]!);
+      });
+    }
+    switcher.hidden = false;
+    const pickLabel = document.querySelector<HTMLElement>(
+      '[data-game-switcher-label]',
+    );
+    if (pickLabel) pickLabel.hidden = false;
+  }
   /* Motion: the pointer-driven parts of the hero. Like the
      homepage, it plays for every visitor, whatever their OS animation setting. */
   const hero = document.querySelector<HTMLElement>('.tp-hero');
@@ -1336,7 +1501,9 @@ const shareApps: {
     }
     think.classList.add('is-armed');
     answersSection.classList.add('is-armed');
-    const pickBox = answersSection.querySelector<HTMLElement>('[data-pick]');
+    const pickBox = answersSection.querySelector<HTMLElement>(
+      '[data-pick]:not([hidden])',
+    );
     const pickChain = pickBox?.querySelector<HTMLElement>('.tp-pick-chain');
     const pickReasons = [
       ...(pickBox?.querySelectorAll<HTMLElement>('[data-pick-reason]') ?? []),
