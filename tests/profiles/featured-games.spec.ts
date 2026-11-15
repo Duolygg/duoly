@@ -19,7 +19,7 @@ for (const [slug, count] of [
     await expect(page.locator('[data-featured-rank]').first()).toContainText(
       'Valorant, Immortal 3',
     );
-    const group = page.getByRole('radiogroup', { name: 'Booking game' });
+    const group = page.getByRole('radiogroup', { name: 'Book a session in' });
     if (count === 1) {
       await expect(group).toHaveCount(0);
       return;
@@ -107,7 +107,7 @@ test('multiple games without JavaScript show default booking and no dead switche
   const page = await context.newPage();
   await page.goto(`${baseURL}/teammates/nyx-six`);
   await expect(
-    page.getByRole('radiogroup', { name: 'Booking game' }),
+    page.getByRole('radiogroup', { name: 'Book a session in' }),
   ).not.toBeVisible();
   await expect(page.locator('[data-booking-panel]:visible')).toHaveCount(1);
   await expect(

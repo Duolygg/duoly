@@ -725,10 +725,20 @@ const shareApps: {
               </ul>
             )}
             {multipleGames && (
+              <p
+                class="tp-game-pick-label"
+                id="booking-game-label"
+                hidden
+                data-game-switcher-label
+              >
+                Book a session in
+              </p>
+            )}
+            {multipleGames && (
               <div
                 class="tp-game-switcher"
                 role="radiogroup"
-                aria-label="Booking game"
+                aria-labelledby="booking-game-label"
                 data-game-switcher
                 hidden
               >
@@ -777,7 +787,9 @@ const shareApps: {
                       href={v.booking(v.game.id, true)}
                       data-profile-book="game"
                     >
-                      Coaching with {p.name}
+                      {multipleGames
+                        ? `${v.game.name} coaching`
+                        : `Coaching with ${p.name}`}
                     </a>
                     <p class="tp-price tp-price-quiet">
                       from <strong>{v.coachOffer.display}</strong> per{' '}
@@ -1383,6 +1395,10 @@ const shareApps: {
       });
     }
     switcher.hidden = false;
+    const pickLabel = document.querySelector<HTMLElement>(
+      '[data-game-switcher-label]',
+    );
+    if (pickLabel) pickLabel.hidden = false;
   }
   /* Motion: the pointer-driven parts of the hero. Like the
      homepage, it plays for every visitor, whatever their OS animation setting. */
