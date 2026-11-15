@@ -799,10 +799,10 @@ test('the lockup carries the rank once and the stats row reads as one set', asyn
   await expect(page.locator('.tp-rankline .tp-verified')).toHaveCount(0);
   /* Every other game rides along as a pill that names them all and opens the games. */
   const more = page.locator('.tp-rankline-more');
-  await expect(more).toHaveText('1 more game');
+  expect(await more.innerText()).toBe('1 more game');
   await expect(more).toHaveAttribute(
     'aria-label',
-    'Also plays Teamfight Tactics',
+    'See all 2 games Rhea plays',
   );
   await expect(more).toHaveAttribute('href', '#games');
   await expect(page.locator('.tp-rankline-icon')).toHaveCount(1);
