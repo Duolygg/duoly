@@ -9,6 +9,8 @@ import {
   profilePresentation,
 } from '../../../server/teammates/profile-page';
 import { publicAvatarIsPhoto } from '../../../server/teammates/public-avatar';
+import { loadPublicTrophies } from '../../../server/teammates/trophies';
+import { trophyCase } from '../../../server/teammates/trophy-view';
 
 export const prerender = false;
 
@@ -35,6 +37,20 @@ export const GET: APIRoute = async ({ url }) => {
   if (result.status !== 'ok') return json({ error: 'Not found.' }, 404);
   const p = result.profile;
   const view = profilePresentation(p);
+  /* Approved trophies count as verification too, so a teammate whose ranks were checked through
+     the trophy case never reads "Rank not verified" here. Rarest first, then most recent. */
+  const trophies = trophyCase(await loadPublicTrophies(p.slug));
+  const trophyRank = (game: string) => {
+    const mine = trophies.filter((t) => t.game === game);
+    const best =
+      mine
+        .filter((t) => t.kind === 'rank')
+        .reduce<(typeof mine)[number] | undefined>(
+          (a, b) => (!a || b.tierOrder > a.tierOrder ? b : a),
+          undefined,
+        ) ?? mine[0];
+    return best ? { rank: best.name, peak: null } : null;
+  };
   return json({
     slug: p.slug,
     name: p.name,
@@ -49,13 +65,18 @@ export const GET: APIRoute = async ({ url }) => {
     languages: p.languages,
     country: p.country,
     memberSince: profileMonth(p.memberSince),
-    games: p.games.map((g) => ({
-      name: profileGame(g.game).name,
-      img: profileGame(g.game).img,
-      rank: g.verified ? g.rank : null,
-      peak: g.verified ? g.peakRank : null,
-      roles: g.roles,
-    })),
+    games: p.games.map((g) => {
+      const fromProfile =
+        g.verified && g.rank ? { rank: g.rank, peak: g.peakRank } : null;
+      const verified = fromProfile ?? trophyRank(g.game);
+      return {
+        name: profileGame(g.game).name,
+        img: profileGame(g.game).img,
+        rank: verified?.rank ?? null,
+        peak: verified?.peak ?? null,
+        roles: g.roles,
+      };
+    }),
     rating: view.rating,
     sessions: view.showSessions ? p.sessions : null,
     winRate: view.winRate,
