@@ -129,6 +129,19 @@ describe('the creator portal migration', () => {
     expect(creatorCodeIssue(' Blog ')).toMatch(/Duoly page/);
     expect(creatorCodeIssue('ALEX-10')).toMatch(/3 to 20/);
   });
+  it('excludes the application being decided from code reservations', () => {
+    expect(migration).toContain(
+      'creator_code_state(p_code text, p_exclude_application uuid default null)',
+    );
+    expect(migration).toContain('a.id is distinct from p_exclude_application');
+    expect(migration).toContain('v_app.requested_code), v_app.id)');
+  });
+  it('requires the currently published terms even through a direct RPC', () => {
+    expect(migration).toContain("coalesce(p_terms, '') <> '2026-11-17'");
+  });
+  it('releases the hold exactly at 30 days', () => {
+    expect(migration).toContain("c.completed_at <= p_now - interval '30 days'");
+  });
   it('never writes to orders, payments or payouts', () => {
     expect(migration).not.toMatch(
       /insert into public\.(orders|order_payments|creator_payouts)/i,

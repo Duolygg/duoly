@@ -149,6 +149,14 @@ select pg_temp.ok((public.creator_apply('SECOND2','Second Applicant','second@exa
   'youtube.com/second','Under 1K','val','Germany','', true, '2026-11-17')->'error'->>'code')::int = 409,
   'reapplying inside the cooldown is refused');
 
+-- The default code stays valid while its own application reserves it.
+select pg_temp.login('7e000000-0000-4000-8000-000000000001');
+savepoint unchanged_creator_code;
+select pg_temp.ok((public.admin_decide_creator_application(
+  (select id from public.creator_applications where requested_code = 'ALEX10' and status = 'applied'),
+  true, null, null)->'creator'->>'code') = 'ALEX10', 'approval accepts the requested code unchanged');
+rollback to savepoint unchanged_creator_code;
+
 -- The first applicant is approved with an edited code.
 select pg_temp.login('7e000000-0000-4000-8000-000000000001');
 do $$ declare v_id uuid; r jsonb; begin

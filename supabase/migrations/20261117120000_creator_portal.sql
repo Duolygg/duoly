@@ -112,7 +112,7 @@ create policy creator_payout_details_read on public.creator_payout_details for s
 
 -- Paths the site itself answers can never be a short link (duoly.gg/CODE only redirects on a 404),
 -- so a code that matches one would be a dead link. src/contracts/creator-portal.ts holds the same
--- list and tests/unit/creator-portal.test.ts keeps the two in step.
+-- list and tests/unit/creator-portal-migration.test.ts keeps the two in step.
 create function public.creator_reserved_code(p_code text) returns boolean
 language sql immutable security invoker set search_path = '' as $$
   select pg_catalog.lower(p_code) = any (array[
@@ -123,7 +123,7 @@ language sql immutable security invoker set search_path = '' as $$
 $$;
 revoke all on function public.creator_reserved_code(text) from public, anon, authenticated, service_role;
 
-create function public.creator_code_state(p_code text) returns jsonb
+create function public.creator_code_state(p_code text, p_exclude_application uuid default null) returns jsonb
 language plpgsql stable security definer set search_path = '' as $$
 declare v_code text := pg_catalog.upper(pg_catalog.btrim(coalesce(p_code, '')));
 begin
@@ -137,13 +137,14 @@ begin
   end if;
   if exists (select 1 from public.creators as c where c.code = v_code)
      or exists (select 1 from public.creator_applications as a
-                 where a.requested_code = v_code and a.status = 'applied') then
+                 where a.requested_code = v_code and a.status = 'applied'
+                   and a.id is distinct from p_exclude_application) then
     return pg_catalog.jsonb_build_object('code', v_code, 'available', false,
       'reason', 'That code is taken. Try another one.');
   end if;
   return pg_catalog.jsonb_build_object('code', v_code, 'available', true, 'reason', '');
 end $$;
-revoke all on function public.creator_code_state(text) from public, anon, authenticated, service_role;
+revoke all on function public.creator_code_state(text,uuid) from public, anon, authenticated, service_role;
 
 -- The live check next to the code field. Signed in only, so the code list is not an open directory.
 create function public.creator_code_available(p_code text) returns jsonb
@@ -253,7 +254,7 @@ language sql stable security definer set search_path = '' as $$
          c.lost,
          coalesce(t.rate, (public.creator_tier(0)->>'commission')::integer),
          c.counts,
-         (c.counts and c.completed_at < p_now - interval '30 days'
+         (c.counts and c.completed_at <= p_now - interval '30 days'
             and not public.payout_order_blocked(c.oid)),
          exists (select 1 from public.creator_payouts as cp
                   where cp.creator_id = p_creator and cp.month = c.month)
@@ -462,7 +463,7 @@ begin
   if p_adult is not true then
     return public.order_error(400, 'Confirm that you are 18 or older.');
   end if;
-  if coalesce(p_terms, '') !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' then
+  if coalesce(p_terms, '') <> '2026-11-17' then
     return public.order_error(400, 'Accept the creator terms to apply.');
   end if;
   v_state := public.creator_code_state(p_code);
@@ -585,7 +586,7 @@ begin
   if exists (select 1 from public.creators as c where c.user_id = v_app.user_id) then
     return public.order_error(409, 'That account already has a creator code.');
   end if;
-  v_state := public.creator_code_state(coalesce(nullif(pg_catalog.btrim(coalesce(p_code, '')), ''), v_app.requested_code));
+  v_state := public.creator_code_state(coalesce(nullif(pg_catalog.btrim(coalesce(p_code, '')), ''), v_app.requested_code), v_app.id);
   if not (v_state->>'available')::boolean then
     return public.order_error(409, v_state->>'reason');
   end if;
