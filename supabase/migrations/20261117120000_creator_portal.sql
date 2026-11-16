@@ -16,6 +16,11 @@
 -- month tier is public.creator_tier(), and the month commission is the same expression
 -- admin_creator_dto() and creator_month_commission() use, so admin and creator always agree.
 -- supabase/tests/creator_portal.sql proves that equality.
+--
+-- Earned against estimated: everything that reconciles with the admin screen counts completed
+-- orders only. An order still being played has earned nothing, so it is reported separately as an
+-- estimate at this month's tier (openCents, estimatedCents) and never added to earned. The spec's
+-- "pending" is the two together, because a creator wants one number for money not paid yet.
 begin;
 
 -- ---- the account behind a creator ------------------------------------------------------------
@@ -54,6 +59,9 @@ create table public.creator_applications (
 );
 -- One open application per account; decided ones stay for the history and the reapply cooldown.
 create unique index creator_applications_open on public.creator_applications(user_id) where status = 'applied';
+-- One open application per requested code: two accounts that ask for the same code at the same
+-- moment cannot both reserve it, whatever the availability check saw.
+create unique index creator_applications_code_open on public.creator_applications(requested_code) where status = 'applied';
 create index creator_applications_queue on public.creator_applications(status, created_at desc);
 alter table public.creator_applications enable row level security;
 revoke all on table public.creator_applications from public, anon, authenticated, service_role;
@@ -123,9 +131,17 @@ language sql immutable security invoker set search_path = '' as $$
 $$;
 revoke all on function public.creator_reserved_code(text) from public, anon, authenticated, service_role;
 
+-- One spelling of a code, used by the availability check, the application and the lock key both
+-- sides take before they reserve it.
+create function public.creator_code_normal(p_code text) returns text
+language sql immutable security invoker set search_path = '' as $$
+  select pg_catalog.upper(pg_catalog.btrim(coalesce(p_code, '')));
+$$;
+revoke all on function public.creator_code_normal(text) from public, anon, authenticated, service_role;
+
 create function public.creator_code_state(p_code text, p_exclude_application uuid default null) returns jsonb
 language plpgsql stable security definer set search_path = '' as $$
-declare v_code text := pg_catalog.upper(pg_catalog.btrim(coalesce(p_code, '')));
+declare v_code text := public.creator_code_normal(p_code);
 begin
   if v_code !~ '^[A-Z0-9]{3,20}$' then
     return pg_catalog.jsonb_build_object('code', '', 'available', false,
@@ -199,7 +215,7 @@ revoke all on function public.checkout_intent_attribute() from public, anon, aut
 -- the response, so a visitor never waits for it and a failure never reaches the page.
 create function public.creator_link_click(p_code text) returns boolean
 language plpgsql security definer set search_path = '' as $$
-declare v_code text := pg_catalog.upper(pg_catalog.btrim(coalesce(p_code, ''))); v_id uuid;
+declare v_code text := public.creator_code_normal(p_code); v_id uuid;
 begin
   if v_code !~ '^[A-Z0-9]{3,20}$' then return false; end if;
   select c.id into v_id from public.creators as c where c.code = v_code and c.active;
@@ -218,14 +234,19 @@ grant execute on function public.creator_link_click(text) to service_role;
 -- order, the same completed/refunded/voided rule as admin_creator_dto, plus the 30 day hold and the
 -- block rule from payout_order_blocked (open report or Stripe dispute).
 --
--- base: what commission is calculated on (the order amount minus refund credits).
--- rate: the month's tier percentage, from the month's count of counted orders.
--- lost: the base that will never earn commission (a refunded or voided order, or the refunded part).
+-- amount:   what the customer paid, always, so the orders table never shows a zero next to a real
+--           order. refunds is what went back on it.
+-- base:     what commission is calculated on once the order counts (amount minus refund credits).
+-- estimate: the same figure for an order still being played, which has earned nothing yet.
+-- rate:     the month's tier percentage, from the month's count of counted orders. An order with no
+--           commission month yet carries this month's tier, as an estimate.
+-- lost:     the base that will never earn commission (a refunded or voided order, or the refunded
+--           part), whether or not the order ever reached completed.
 create function public.creator_portal_orders(p_creator uuid, p_now timestamptz)
 returns table (
   order_id uuid, month date, attributed_at timestamptz, completed_at timestamptz, game text,
-  title text, status text, base bigint, lost bigint, rate integer, counts boolean, ready boolean,
-  paid boolean)
+  title text, status text, amount bigint, refunds bigint, base bigint, estimate bigint, lost bigint,
+  rate integer, counts boolean, is_open boolean, ready boolean, paid boolean)
 language sql stable security definer set search_path = '' as $$
   with attributed as (
     select r.order_id, r.attributed_at, o.id as oid, o.completed_at, o.game, o.title, o.status,
@@ -241,33 +262,53 @@ language sql stable security definer set search_path = '' as $$
   ), classified as (
     select a.*,
            (a.status = 'completed' and a.pay_state not in ('refunded', 'voided')) as counts,
-           case when a.status <> 'completed' then 0::bigint
-                when a.pay_state in ('refunded', 'voided') then a.amount
+           (a.status in ('queued', 'in_progress') and a.pay_state not in ('refunded', 'voided')) as is_open,
+           -- Money that went back to the customer is a reversal whatever the order still says, so
+           -- an order refunded or voided before it completed never sits in pending either.
+           case when a.pay_state in ('refunded', 'voided') then a.amount
+                when a.status <> 'completed' then 0::bigint
                 else least(a.amount, a.refunds) end as lost
       from attributed as a
   ), rates as (
     select c.month, (public.creator_tier(pg_catalog.count(*)::integer)->>'commission')::integer as rate
       from classified as c where c.counts and c.month is not null group by c.month
+  ), estimated_rate as (
+    -- The tier an order that has no commission month yet would earn at today: this month's counted
+    -- orders. Always exactly one row, 8% when the month is still empty.
+    select (public.creator_tier(pg_catalog.count(*) filter (where c.counts
+              and c.month = pg_catalog.date_trunc('month', p_now at time zone 'UTC')::date)::integer
+            )->>'commission')::integer as rate
+      from classified as c
   )
   select c.order_id, c.month, c.attributed_at, c.completed_at, c.game, c.title, c.status,
+         c.amount, c.refunds,
          case when c.counts then greatest(0, c.amount - c.refunds) else 0::bigint end,
+         case when c.is_open then greatest(0, c.amount - c.refunds) else 0::bigint end,
          c.lost,
-         coalesce(t.rate, (public.creator_tier(0)->>'commission')::integer),
-         c.counts,
+         case when c.month is null then e.rate
+              else coalesce(t.rate, (public.creator_tier(0)->>'commission')::integer) end,
+         c.counts, c.is_open,
          (c.counts and c.completed_at <= p_now - interval '30 days'
             and not public.payout_order_blocked(c.oid)),
          exists (select 1 from public.creator_payouts as cp
                   where cp.creator_id = p_creator and cp.month = c.month)
-    from classified as c left join rates as t on t.month = c.month;
+    from classified as c
+         left join rates as t on t.month = c.month
+         cross join estimated_rate as e;
 $$;
 revoke all on function public.creator_portal_orders(uuid, timestamptz) from public, anon, authenticated, service_role;
 
 -- Money, by commission month, exactly as the admin screen counts it:
---   earned    = the month total admin_creator_dto() shows,
+--   earned    = the month total admin_creator_dto() shows. Completed orders only, so earned and
+--               the admin screen's owed can never drift, whatever an open order looks like.
 --   paid      = what creator_payouts recorded for that month,
 --   available = the part past the 30 day hold and not blocked, in months not paid yet,
---   pending   = the rest of an unpaid month,
---   reversed  = commission lost to refunds, voids and chargebacks.
+--   held      = the rest of an unpaid month (inside the hold, or blocked),
+--   open      = an estimate, not earned: orders still being played, at this month's tier,
+--   pending   = held plus open, which is what the spec calls pending ("orders not completed yet or
+--               inside the 30 day hold"). Only held is ever paid out as it stands.
+--   reversed  = commission lost to refunds, voids and chargebacks, including orders whose money
+--               went back before they ever completed and so never had a commission month.
 create function public.creator_portal_money(p_creator uuid, p_now timestamptz) returns jsonb
 language sql stable security definer set search_path = '' as $$
   with o as (select * from public.creator_portal_orders(p_creator, p_now)),
@@ -285,13 +326,33 @@ language sql stable security definer set search_path = '' as $$
       (m.ready_base * m.rate + 50) / 100 as available,
       (m.lost_base * m.rate + 50) / 100 as reversed
       from months as m
+  ), loose as (
+    -- Orders with no commission month: still being played, or sent back before they completed.
+    -- One row always, because every aggregate here is over the whole set.
+    select coalesce(pg_catalog.sum(x.estimate), 0)::bigint as open_base,
+           coalesce(pg_catalog.sum(x.lost), 0)::bigint as lost_base,
+           pg_catalog.count(*) filter (where x.is_open)::integer as open_orders,
+           coalesce(pg_catalog.max(x.rate), (public.creator_tier(0)->>'commission')::integer) as rate
+      from o as x where x.month is null
+  ), loose_figures as (
+    select l.open_orders,
+           (l.open_base * l.rate + 50) / 100 as open_cents,
+           (l.lost_base * l.rate + 50) / 100 as reversed_cents
+      from loose as l
+  ), held as (
+    select coalesce(pg_catalog.sum(f.earned - f.available), 0)::bigint as cents
+      from figures as f where not f.paid
   )
   select pg_catalog.jsonb_build_object(
-    'pendingCents', coalesce((select pg_catalog.sum(f.earned - f.available) from figures as f where not f.paid), 0),
+    'pendingCents', (select h.cents from held as h) + (select lf.open_cents from loose_figures as lf),
+    'heldCents', (select h.cents from held as h),
+    'openCents', (select lf.open_cents from loose_figures as lf),
+    'openOrders', (select lf.open_orders from loose_figures as lf),
     'availableCents', coalesce((select pg_catalog.sum(f.available) from figures as f where not f.paid), 0),
     'paidCents', coalesce((select pg_catalog.sum(cp.amount_eur_cents) from public.creator_payouts as cp
                             where cp.creator_id = p_creator), 0),
-    'reversedCents', coalesce((select pg_catalog.sum(f.reversed) from figures as f), 0),
+    'reversedCents', coalesce((select pg_catalog.sum(f.reversed) from figures as f), 0)
+                     + (select lf.reversed_cents from loose_figures as lf),
     'earnedCents', coalesce((select pg_catalog.sum(f.earned) from figures as f), 0),
     'thresholdCents', 5000,
     'months', coalesce((select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
@@ -414,8 +475,12 @@ begin
     'orders', coalesce((select pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
         'at', public.payout_ms(coalesce(o.completed_at, o.attributed_at)),
         'game', o.game, 'title', o.title,
-        'amountCents', case when o.counts then o.base else 0 end,
+        -- What the customer paid, always: a row with no commission on it is still a real order.
+        'amountCents', o.amount,
+        'refundedCents', o.refunds,
+        -- Earned, and separately the estimate for an order nobody has finished playing yet.
         'commissionCents', case when o.counts then (o.base * o.rate + 50) / 100 else 0 end,
+        'estimatedCents', case when o.is_open then (o.estimate * o.rate + 50) / 100 else 0 end,
         'commission', o.rate,
         'state', case
           when o.lost > 0 and not o.counts then 'reversed'
@@ -437,6 +502,10 @@ end $$;
 
 -- ---- applying -------------------------------------------------------------------------------
 
+-- The accepted terms version is checked against the published one ('2026-11-17',
+-- src/content/creator-terms.ts), so a direct RPC call cannot record an acceptance of something
+-- that was never published. A new terms version therefore needs a follow-up migration that
+-- replaces this function with the new version string, next to the content change.
 create function public.creator_apply(
   p_code text, p_name text, p_email text, p_platform text, p_channel text, p_audience text,
   p_game text, p_country text, p_message text, p_adult boolean, p_terms text) returns jsonb
@@ -445,7 +514,7 @@ declare
   v_actor uuid := (select auth.uid());
   v_now timestamptz := pg_catalog.clock_timestamp();
   v_state jsonb; v_last public.creator_applications; v_row public.creator_applications;
-  v_clean text;
+  v_clean text; v_code text := public.creator_code_normal(p_code);
 begin
   if v_actor is null then return public.order_error(401, 'Authentication required.'); end if;
   if exists (select 1 from public.creators as c where c.user_id = v_actor) then
@@ -466,7 +535,10 @@ begin
   if coalesce(p_terms, '') <> '2026-11-17' then
     return public.order_error(400, 'Accept the creator terms to apply.');
   end if;
-  v_state := public.creator_code_state(p_code);
+  -- Hold the code itself, not just this account, so two accounts cannot both read it as free and
+  -- both insert. The unique index below is the second line of defence.
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('duoly.creator.code.' || v_code, 0));
+  v_state := public.creator_code_state(v_code);
   if not (v_state->>'available')::boolean then
     return public.order_error(409, v_state->>'reason');
   end if;
@@ -487,7 +559,14 @@ begin
       true, p_terms)
     returning * into v_row;
   exception
-    when unique_violation then return public.order_error(409, 'Your application is already with us.');
+    when unique_violation then
+      -- Either this account already has an open application, or another account won the race for
+      -- the code. Say which.
+      if exists (select 1 from public.creator_applications as a
+                  where a.user_id = v_actor and a.status = 'applied') then
+        return public.order_error(409, 'Your application is already with us.');
+      end if;
+      return public.order_error(409, 'That code is taken. Try another one.');
     when check_violation then return public.order_error(400, 'Check your application and try again.');
   end;
   return pg_catalog.jsonb_build_object('application', public.creator_application_dto(v_row));
@@ -563,7 +642,8 @@ create function public.admin_decide_creator_application(
 language plpgsql security definer set search_path = '' as $$
 declare
   v_actor uuid; v_actor_name text; v_app public.creator_applications; v_creator public.creators;
-  v_state jsonb; v_reason text := pg_catalog.btrim(pg_catalog.regexp_replace(coalesce(p_reason, ''), '[[:cntrl:]]', ' ', 'g'));
+  v_state jsonb; v_code text;
+  v_reason text := pg_catalog.btrim(pg_catalog.regexp_replace(coalesce(p_reason, ''), '[[:cntrl:]]', ' ', 'g'));
 begin
   select id, name into v_actor, v_actor_name from public.admin_caller_for('creators');
   if v_actor is null then return public.order_error(403, 'Admins only.'); end if;
@@ -586,7 +666,12 @@ begin
   if exists (select 1 from public.creators as c where c.user_id = v_app.user_id) then
     return public.order_error(409, 'That account already has a creator code.');
   end if;
-  v_state := public.creator_code_state(coalesce(nullif(pg_catalog.btrim(coalesce(p_code, '')), ''), v_app.requested_code), v_app.id);
+  -- The same lock creator_apply() takes, so an approval and an application can never hand the
+  -- same code out twice. The application's own reservation is excluded from the check.
+  v_code := public.creator_code_normal(
+    coalesce(nullif(pg_catalog.btrim(coalesce(p_code, '')), ''), v_app.requested_code));
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('duoly.creator.code.' || v_code, 0));
+  v_state := public.creator_code_state(v_code, v_app.id);
   if not (v_state->>'available')::boolean then
     return public.order_error(409, v_state->>'reason');
   end if;

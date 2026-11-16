@@ -15,6 +15,20 @@ import { CREATOR_RULES } from '../../src/contracts/creators';
  */
 const NAME = '20261117120000_creator_portal.sql';
 const migration = readFileSync(`supabase/migrations/${NAME}`, 'utf8');
+const section = (from: string, to: string) =>
+  migration.slice(migration.indexOf(from), migration.indexOf(to));
+const ordersHelper = () =>
+  section(
+    'create function public.creator_portal_orders',
+    'create function public.creator_portal_money',
+  );
+const moneyHelper = () =>
+  section(
+    'create function public.creator_portal_money',
+    'create function public.creator_portal_stats',
+  );
+const portalFunction = () =>
+  section('create function public.creator_portal()', '-- ---- applying');
 
 describe('the creator portal migration', () => {
   it('is the newest migration in the folder', () => {
@@ -134,7 +148,63 @@ describe('the creator portal migration', () => {
       'creator_code_state(p_code text, p_exclude_application uuid default null)',
     );
     expect(migration).toContain('a.id is distinct from p_exclude_application');
-    expect(migration).toContain('v_app.requested_code), v_app.id)');
+    expect(migration).toContain('public.creator_code_state(v_code, v_app.id)');
+  });
+  it('reserves a requested code against every other account', () => {
+    // Two accounts asking for the same code at the same moment: the index makes a second open
+    // reservation impossible, and the lock serialises the check with the insert.
+    expect(migration).toContain(
+      "create unique index creator_applications_code_open on public.creator_applications(requested_code) where status = 'applied'",
+    );
+    const locks = [
+      ...migration.matchAll(/'duoly\.creator\.code\.' \|\| v_code/g),
+    ];
+    expect(locks).toHaveLength(2); // applying and approving take the same lock
+    // A duplicate code must not be reported as a duplicate application.
+    expect(migration).toContain("'That code is taken. Try another one.'");
+  });
+  it('counts an order still being played as pending, never as earned', () => {
+    const money = moneyHelper();
+    // Spec: pending is "orders not completed yet or inside the 30-day hold".
+    expect(money).toContain(
+      "'pendingCents', (select h.cents from held as h) + (select lf.open_cents from loose_figures as lf)",
+    );
+    // The two halves stay separate so the dashboard can say which is only an estimate.
+    expect(money).toContain("'heldCents', (select h.cents from held as h)");
+    expect(money).toContain(
+      "'openCents', (select lf.open_cents from loose_figures as lf)",
+    );
+    // Earned is still the completed-only figure admin_creator_dto() shows.
+    const earned = money.slice(
+      money.indexOf("'earnedCents'"),
+      money.indexOf("'thresholdCents'"),
+    );
+    expect(earned).toContain('f.earned');
+    expect(earned).not.toMatch(/open|estimate|loose/);
+    expect(ordersHelper()).toContain(
+      'case when c.is_open then greatest(0, c.amount - c.refunds) else 0::bigint end',
+    );
+  });
+  it('reverses a refunded or voided order before it completes', () => {
+    expect(ordersHelper()).toMatch(
+      /case when a\.pay_state in \('refunded', 'voided'\) then a\.amount\s+when a\.status <> 'completed' then 0::bigint/,
+    );
+    // Reversals outside any commission month still reach the dashboard total.
+    const reversed = moneyHelper().slice(
+      moneyHelper().indexOf("'reversedCents'"),
+      moneyHelper().indexOf("'earnedCents'"),
+    );
+    expect(reversed).toContain('loose_figures');
+  });
+  it('shows an order its own amount even when nothing is earned on it', () => {
+    const portal = portalFunction();
+    expect(portal).toContain("'amountCents', o.amount");
+    expect(portal).toContain("'refundedCents', o.refunds");
+    expect(portal).toContain("'estimatedCents'");
+    // The estimate is never presented as earned commission.
+    expect(portal).toContain(
+      "'commissionCents', case when o.counts then (o.base * o.rate + 50) / 100 else 0 end",
+    );
   });
   it('requires the currently published terms even through a direct RPC', () => {
     expect(migration).toContain("coalesce(p_terms, '') <> '2026-11-17'");

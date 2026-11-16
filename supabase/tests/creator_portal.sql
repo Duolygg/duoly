@@ -61,6 +61,8 @@ select pg_temp.ok(exists (select 1 from information_schema.columns
   'creators.user_id is nullable');
 select pg_temp.ok(exists (select 1 from pg_catalog.pg_indexes
   where schemaname='public' and indexname='creator_applications_open'), 'one open application index');
+select pg_temp.ok(exists (select 1 from pg_catalog.pg_indexes
+  where schemaname='public' and indexname='creator_applications_code_open'), 'one open reservation per code');
 select pg_temp.ok(not pg_catalog.has_function_privilege('anon','public.creator_portal()','execute')
   and not pg_catalog.has_function_privilege('anon','public.creator_apply(text,text,text,text,text,text,text,text,text,boolean,text)','execute')
   and not pg_catalog.has_function_privilege('anon','public.admin_creator_applications()','execute'), 'anon has nothing');
@@ -113,6 +115,27 @@ select pg_temp.ok((public.creator_apply('OTHER','Alex Creator','alex@example.inv
   '1K to 10K','lol','Austria','', true, '2026-11-17')->'error'->>'code')::int = 409, 'one open application per account');
 select pg_temp.ok(not (public.creator_code_available('ALEX10')->>'available')::boolean,
   'a requested code is reserved while the application is open');
+
+-- A second account cannot reserve the same code, through the RPC or around it.
+select pg_temp.login('7e000000-0000-4000-8000-000000000006');
+select pg_temp.ok(not (public.creator_code_available('alex10')->>'available')::boolean,
+  'another account sees the code as taken');
+select pg_temp.ok((public.creator_apply('ALEX10','Second Applicant','second@example.invalid','YouTube',
+  'youtube.com/second','Under 1K','val','Germany','', true, '2026-11-17')->'error'->>'code')::int = 409,
+  'a code another open application asked for is refused');
+select pg_temp.logout();
+do $$ declare v_constraint text; begin
+  insert into public.creator_applications(user_id,requested_code,name,email,platform,channel,audience,
+    game,country,adult,terms_version)
+  values ('7e000000-0000-4000-8000-000000000006','ALEX10','Second Applicant','second@example.invalid',
+    'YouTube','youtube.com/second','Under 1K','val','Germany',true,'2026-11-17');
+  perform pg_temp.ok(false, 'two open applications must never hold one code');
+exception when unique_violation then
+  get stacked diagnostics v_constraint = constraint_name;
+  perform pg_temp.ok(v_constraint = 'creator_applications_code_open',
+    'the open code index refused the duplicate, not another index: ' || v_constraint);
+end $$;
+select pg_temp.login('7e000000-0000-4000-8000-000000000002');
 select pg_temp.ok(public.creator_portal()->>'status' = 'applied'
   and public.creator_portal()->'application'->>'channel' = 'twitch.tv/alex'
   and not (public.creator_portal()->>'canApply')::boolean, 'the status page shows the open application');
@@ -265,8 +288,18 @@ do $$ declare p jsonb; m jsonb; s jsonb; begin
   -- pending (80 cents) and the rest is available (271 cents).
   -- This month: 2020 + 2020 at 8% = 323 cents, all inside the 30 day hold.
   perform pg_temp.ok((m->>'availableCents')::bigint = 271, 'available is the part past the hold: ' || (m->>'availableCents'));
-  perform pg_temp.ok((m->>'pendingCents')::bigint = 403, 'pending is the hold plus the blocked order: ' || (m->>'pendingCents'));
+  perform pg_temp.ok((m->>'heldCents')::bigint = 403, 'held is the hold plus the blocked order: ' || (m->>'heldCents'));
+  -- The 1500 order is still being played: 120 cents at this month's 8%, an estimate, and part of
+  -- pending because the spec counts orders that have not completed yet.
+  perform pg_temp.ok((m->>'openCents')::bigint = 120, 'open orders are estimated at this month tier: ' || (m->>'openCents'));
+  perform pg_temp.ok((m->>'openOrders')::int = 1, 'one order is still being played');
+  perform pg_temp.ok((m->>'pendingCents')::bigint = 523, 'pending is the hold plus the open order: ' || (m->>'pendingCents'));
+  perform pg_temp.ok((m->>'pendingCents')::bigint = (m->>'heldCents')::bigint + (m->>'openCents')::bigint,
+    'pending is exactly held plus open');
+  -- Earned stays completed only, so the estimate can never be claimed as a payout.
   perform pg_temp.ok((m->>'earnedCents')::bigint = 674, 'earned is both months: ' || (m->>'earnedCents'));
+  perform pg_temp.ok((m->>'earnedCents')::bigint = (m->>'availableCents')::bigint + (m->>'heldCents')::bigint,
+    'earned is available plus held, and never includes an estimate');
   perform pg_temp.ok((m->>'reversedCents')::bigint = 120, 'reversed is the refunded order and the refunded part: ' || (m->>'reversedCents'));
   perform pg_temp.ok((m->>'paidCents')::bigint = 0, 'nothing paid yet');
   perform pg_temp.ok((m->>'thresholdCents')::bigint = 5000, 'the threshold is EUR 50');
@@ -295,6 +328,20 @@ do $$ declare p jsonb; m jsonb; s jsonb; begin
     where x->>'state' = 'open') = 1, 'one open order');
   perform pg_temp.ok((select (x->>'commissionCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
     where (x->>'amountCents')::bigint = 2020 limit 1) = 162, 'one order rounds on its own');
+  -- Every row carries the amount the customer paid, whatever became of the order, so the table
+  -- never shows a zero next to a real order.
+  perform pg_temp.ok((select (x->>'amountCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
+    where x->>'state' = 'open') = 1500, 'an open order shows its amount');
+  perform pg_temp.ok((select (x->>'estimatedCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
+    where x->>'state' = 'open') = 120, 'an open order shows an estimate');
+  perform pg_temp.ok((select (x->>'commissionCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
+    where x->>'state' = 'open') = 0, 'an open order has earned nothing yet');
+  perform pg_temp.ok((select (x->>'amountCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
+    where x->>'state' = 'reversed') = 1000, 'a refunded order still shows its amount');
+  perform pg_temp.ok((select (x->>'amountCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
+    where (x->>'refundedCents')::bigint = 500) = 2000, 'a part refunded order shows the full amount');
+  perform pg_temp.ok((select (x->>'commissionCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
+    where (x->>'refundedCents')::bigint = 500) = 120, 'a part refunded order earns on the rest only');
   perform pg_temp.ok(p->'month'->'tier'->>'id' = 'rising', 'this month is the starting tier');
   perform pg_temp.ok((p->'rules'->>'payoutMinCents')::int = 5000 and (p->'rules'->>'holdDays')::int = 30,
     'the rules travel with the payload');
@@ -306,12 +353,74 @@ do $$ declare c public.creators; a jsonb; m jsonb; begin
   a := public.admin_creator_dto(c);
   m := public.creator_portal_money(c.id, pg_catalog.clock_timestamp());
   perform pg_temp.ok((a->>'earnedCents')::bigint = (m->>'earnedCents')::bigint, 'earned matches the admin screen');
-  perform pg_temp.ok((a->>'owedCents')::bigint = (m->>'availableCents')::bigint + (m->>'pendingCents')::bigint,
-    'owed is what is available plus what is pending');
+  -- Owed on the admin screen is earned and unpaid, which is available plus the part still held.
+  -- The open order estimate is deliberately outside this equality: it was never earned.
+  perform pg_temp.ok((a->>'owedCents')::bigint = (m->>'availableCents')::bigint + (m->>'heldCents')::bigint,
+    'owed is what is available plus what is held');
   perform pg_temp.ok((select pg_catalog.count(*) from pg_catalog.jsonb_array_elements(m->'months') x
     where (x->>'commissionCents')::bigint <> public.creator_month_commission(c.id, pg_catalog.to_date(x->>'month','YYYY-MM'))) = 0,
     'every month equals creator_month_commission');
 end $$;
+
+-- ---- money back before an order ever completed ------------------------------------------------
+
+-- Rolled back again so the payout checks below keep the fixture above.
+savepoint reversed_before_completion;
+do $$
+declare v_creator uuid; v_now timestamptz := pg_catalog.clock_timestamp(); o_r uuid; o_v uuid; o_x uuid;
+begin
+  select id into v_creator from public.creators where code='ALEXGG';
+  insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) values
+   ('7e000000-0000-4000-8000-000000000008','authenticated','authenticated','cp-viewer4@example.invalid','{}','{}'),
+   ('7e000000-0000-4000-8000-000000000009','authenticated','authenticated','cp-viewer5@example.invalid','{}','{}');
+  insert into public.profiles(id,name) values
+   ('7e000000-0000-4000-8000-000000000008','Viewer Four'),
+   ('7e000000-0000-4000-8000-000000000009','Viewer Five') on conflict (id) do nothing;
+  -- A queued order refunded, an order in progress voided, and a cancelled order whose release has
+  -- not landed on the payment row yet.
+  o_r := pg_temp.order_at('7e000000-0000-4000-8000-000000000008', 3000, v_now, false);
+  update public.order_payments set state='refunded' where order_id=o_r;
+  o_v := pg_temp.order_at('7e000000-0000-4000-8000-000000000009', 4000, v_now, false);
+  update public.orders set status='in_progress' where id=o_v;
+  update public.order_payments set state='voided' where order_id=o_v;
+  o_x := pg_temp.order_at('7e000000-0000-4000-8000-000000000003', 500, v_now, false);
+  update public.orders set status='cancelled' where id=o_x;
+  insert into public.customer_referrals(customer_id,creator_id,code,first_order_id,attributed_at) values
+   ('7e000000-0000-4000-8000-000000000008', v_creator, 'ALEXGG', o_r, v_now),
+   ('7e000000-0000-4000-8000-000000000009', v_creator, 'ALEXGG', o_v, v_now);
+  insert into public.order_referrals(order_id,creator_id,customer_id,amount_eur_cents,attributed_at) values
+   (o_r, v_creator, '7e000000-0000-4000-8000-000000000008', 3000, v_now),
+   (o_v, v_creator, '7e000000-0000-4000-8000-000000000009', 4000, v_now),
+   (o_x, v_creator, '7e000000-0000-4000-8000-000000000003', 500, v_now);
+end $$;
+do $$ declare p jsonb; m jsonb; c public.creators; a jsonb; begin
+  perform pg_temp.login('7e000000-0000-4000-8000-000000000002');
+  p := public.creator_portal();
+  m := p->'money';
+  -- 3000 refunded and 4000 voided before completion, at this month's 8%, on top of the 120 the
+  -- old month lost to a refund.
+  perform pg_temp.ok((m->>'reversedCents')::bigint = 680,
+    'money back before completion is reversed: ' || (m->>'reversedCents'));
+  perform pg_temp.ok((m->>'earnedCents')::bigint = 674, 'a reversal before completion changes nothing earned');
+  perform pg_temp.ok((m->>'openCents')::bigint = 120, 'a refunded order is no longer an open estimate');
+  perform pg_temp.ok((m->>'openOrders')::int = 1, 'only the untouched order is still open');
+  perform pg_temp.ok((m->>'pendingCents')::bigint = 523, 'pending ignores what went back');
+  perform pg_temp.ok((select pg_catalog.count(*) from pg_catalog.jsonb_array_elements(p->'orders') x
+    where x->>'state' = 'reversed') = 3, 'three reversed orders');
+  perform pg_temp.ok((select pg_catalog.count(*) from pg_catalog.jsonb_array_elements(p->'orders') x
+    where x->>'state' = 'cancelled') = 1, 'a cancelled order whose payment still stands is cancelled');
+  perform pg_temp.ok((select (x->>'amountCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
+    where x->>'state' = 'cancelled') = 500, 'a cancelled order still shows its amount');
+  perform pg_temp.ok((select (x->>'amountCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
+    where (x->>'amountCents')::bigint = 4000) = 4000, 'a voided order still shows its amount');
+  -- The admin screen still agrees: both reconciliations are completed orders only.
+  select * into c from public.creators where code='ALEXGG';
+  a := public.admin_creator_dto(c);
+  perform pg_temp.ok((a->>'earnedCents')::bigint = (m->>'earnedCents')::bigint, 'earned still matches the admin screen');
+  perform pg_temp.ok((a->>'owedCents')::bigint = (m->>'availableCents')::bigint + (m->>'heldCents')::bigint,
+    'owed is still available plus held');
+end $$;
+rollback to savepoint reversed_before_completion;
 
 -- A paid month leaves the available balance and shows up in the payout history.
 do $$ declare c uuid; v_month date; begin
@@ -324,7 +433,9 @@ do $$ declare c uuid; v_month date; begin
 end $$;
 select pg_temp.ok((public.creator_portal()->'money'->>'availableCents')::bigint = 0, 'a paid month is no longer available');
 select pg_temp.ok((public.creator_portal()->'money'->>'paidCents')::bigint = 351, 'paid is what the payout recorded');
-select pg_temp.ok((public.creator_portal()->'money'->>'pendingCents')::bigint = 323, 'only the unpaid month stays pending');
+select pg_temp.ok((public.creator_portal()->'money'->>'heldCents')::bigint = 323, 'only the unpaid month stays held');
+select pg_temp.ok((public.creator_portal()->'money'->>'pendingCents')::bigint = 443,
+  'pending is the unpaid month plus the open order');
 select pg_temp.ok(public.creator_portal()->'payouts'->0->>'reference' = 'W-CP-1'
   and (public.creator_portal()->'payouts'->0->>'amountCents')::bigint = 351, 'the payout history shows the transfer');
 
