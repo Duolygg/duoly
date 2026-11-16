@@ -970,7 +970,7 @@
   align-items: center;
   gap: 8px;
   /* Bright enough to clear 4.5:1 even where a white header shows through. */
-  color: #efe8fa;
+  color: #fff;
   font-size: 13px;
   font-weight: 500;
   line-height: 16px;
