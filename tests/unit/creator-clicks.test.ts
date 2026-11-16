@@ -6,6 +6,9 @@ import {
   shouldCountClick,
 } from '../../src/server/creators/clicks';
 import { creatorApplicationBody } from '../../src/server/creators/inbox';
+import { waitUntil } from '@vercel/functions';
+
+vi.mock('@vercel/functions', () => ({ waitUntil: vi.fn() }));
 
 /**
  * The aggregate click counter. It is the one creator number that is counted without any consent,
@@ -34,6 +37,23 @@ describe('creator link clicks', () => {
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/\/\/[^\n]*/g, '');
     expect(code).not.toMatch(/consent|cookie|headers|ip\b|user_id/i);
+  });
+  it('keeps a pending database write alive after the response without awaiting it', async () => {
+    vi.mocked(waitUntil).mockClear();
+    let finish!: () => void;
+    const pending = new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    expect(
+      countCreatorLinkClick(
+        new URL('https://duoly.gg/?ref=LIFETIME'),
+        'GET',
+        () => pending,
+      ),
+    ).toBe('LIFETIME');
+    expect(waitUntil).toHaveBeenCalledWith(expect.any(Promise));
+    finish();
+    await pending;
   });
   it('ignores pages without a code, bad codes, API paths and other methods', () => {
     const counter = vi.fn(async () => undefined);

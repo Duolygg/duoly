@@ -1,3 +1,4 @@
+import { waitUntil } from '@vercel/functions';
 import { normalizeRefCode } from '../../contracts/creators';
 import { adminFor, paymentsConfig } from '../payments/config';
 
@@ -54,7 +55,13 @@ export function countCreatorLinkClick(
   const code = normalizeRefCode(url.searchParams.get('ref'));
   if (!code || !shouldCountClick(code, now)) return null;
   try {
-    void Promise.resolve(counter(code)).catch(() => undefined);
+    const pending = Promise.resolve(counter(code)).catch(() => undefined);
+    try {
+      // Serverless may stop work after returning a response unless its lifetime is registered.
+      waitUntil(pending);
+    } catch {
+      /* Local requests have no Vercel lifetime context. The promise is already running. */
+    }
   } catch {
     /* A click counter must never reach the visitor. */
   }
