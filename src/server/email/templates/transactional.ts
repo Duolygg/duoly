@@ -766,6 +766,96 @@ export function payout(data: PayoutData, site: string): EmailContent {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Creators
+
+export interface CreatorApprovedData {
+  firstName: string;
+  code: string;
+}
+
+/** "You're in": the code, both links and the way to the dashboard. */
+export function creatorApproved(
+  data: CreatorApprovedData,
+  site: string,
+): EmailContent {
+  const short = `${site.replace(/\/$/, '')}/${data.code.toLowerCase()}`;
+  return {
+    subject: 'You’re in! Welcome to the Duoly Creator Program',
+    preheader: `Your code is ${data.code}. Here is your link, your stream kit and where you see what you earn.`,
+    eyebrow: 'You’re in',
+    title: 'Welcome to the program,',
+    titleAccent: `${data.firstName}.`,
+    hero: 'brand',
+    blocks: [
+      {
+        type: 'paragraph',
+        text: 'Your creator application was approved. Your code works right away, and your viewers get 10% off their first order with it.',
+      },
+      {
+        type: 'code',
+        code: data.code,
+        caption: `Your link: ${short}`,
+      },
+      {
+        type: 'stats',
+        items: [
+          {
+            label: 'Your commission',
+            value: '8 to 12%',
+            caption: 'by orders a month',
+            tone: 'safe',
+          },
+          {
+            label: 'Your viewers',
+            value: '10% off',
+            caption: 'their first order',
+            tone: 'info',
+          },
+          {
+            label: 'Payouts',
+            value: 'Monthly',
+            caption: 'from €50',
+            tone: 'gold',
+          },
+        ],
+      },
+      {
+        type: 'list',
+        title: 'What to do next',
+        items: [
+          {
+            title: 'Open your dashboard',
+            text: 'Your links, a QR code, what your code earns and your payout details live there.',
+          },
+          {
+            title: 'Copy the stream kit',
+            text: 'Chat commands, panel text, logos and the disclosure templates in English and German.',
+          },
+          {
+            title: 'Add your payout details',
+            text: 'We need them before the first payout, with the self billing agreement or your own invoice.',
+          },
+        ],
+      },
+      {
+        type: 'button',
+        label: 'Open your creator dashboard',
+        url: join(site, '/creators/dashboard'),
+        secondary: { label: 'Program rules', url: join(site, '/creators') },
+      },
+      {
+        type: 'note',
+        tone: 'info',
+        title: 'Say that it is advertising',
+        text: 'Mark your code and links as advertising, in the language you post in. The dashboard has a template you can copy.',
+      },
+    ],
+    reason:
+      'You’re getting this because your Duoly creator application was approved.',
+  };
+}
+
+// ---------------------------------------------------------------------------------------------
 // Support
 
 export interface SupportHandoffData {

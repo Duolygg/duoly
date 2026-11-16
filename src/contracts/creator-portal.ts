@@ -159,6 +159,42 @@ export type CreatorPayoutDetails = z.infer<typeof CreatorPayoutDetailsSchema>;
 
 export const CreatorPortalRangeSchema = z.enum(CREATOR_RANGES);
 
+/**
+ * POST /api/admin/creator-applications: approve (with the code the admin may have edited) or
+ * reject with a reason the creator sees. One command per request, like the other admin endpoints.
+ */
+export const AdminCreatorDecisionSchema = z
+  .object({
+    csrf,
+    action: z.literal('decide'),
+    id: z.uuid(),
+    approve: z.boolean(),
+    code: z
+      .string()
+      .trim()
+      .max(40)
+      .transform((value) => value.toUpperCase())
+      .optional(),
+    reason: z.string().trim().max(300).optional(),
+  })
+  .strict()
+  .refine((value) => value.approve || !!value.reason, {
+    message: 'Add a reason. The creator sees it.',
+    path: ['reason'],
+  });
+export type AdminCreatorDecision = z.infer<typeof AdminCreatorDecisionSchema>;
+
+/** Analytics buckets for an application, with nothing personal in them. */
+export const CREATOR_AUDIENCE_BUCKETS: Record<
+  (typeof CREATOR_AUDIENCES)[number],
+  string
+> = {
+  'Under 1K': 'under_1k',
+  '1K to 10K': '1k_to_10k',
+  '10K to 100K': '10k_to_100k',
+  '100K+': 'over_100k',
+};
+
 export type CreatorTierView = {
   id: string;
   name: string;
