@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { AnimationEncoder, composeFrames, parseGif } from '../../src/lib/gif';
 
 /*
