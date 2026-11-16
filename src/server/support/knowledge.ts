@@ -71,6 +71,13 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     text: 'On your first visit the cookie banner lets you choose: only necessary cookies, or also analytics, marketing and creator referral cookies, each on its own. Analytics only runs if you allow it. You can change your choice anytime under “Cookie settings” in the footer; the privacy page explains every cookie.',
   },
   {
+    id: 'creators',
+    roles: ALL,
+    match:
+      /creator|streamer program|influencer|affiliate|partner program|ref(erral)? (code|link)|promo code|discount code|coupon/,
+    text: 'Creator program (/creators): streamers, YouTubers and TikTokers apply on /creators with their channel link, no follower minimum; Duoly reviews each application and replies within a few days. Approved creators get a personal code and link (duoly.gg/CODE or duoly.gg/?ref=CODE). Viewers get 10% off their first Duoly order with the code: type it in the Creator code field at checkout, or open the creator link and allow creator link cookies. It only works on a first order, does not stack with PRO, and does not apply to Twitch streaming bookings or free coaching. Creators earn 8% of every order their viewers place for 12 months (10% from 25 orders a month, 12% from 100), paid monthly once they have earned at least €50.',
+  },
+  {
     id: 'apply',
     roles: ALL,
     match: /become|apply|work for|join (the )?team|be a teammate|hiring/,

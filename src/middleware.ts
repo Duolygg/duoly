@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import { captureReferral } from './server/referrals';
+import { creatorShortLink } from './server/creators/short-link';
 import { trackRequest } from './server/analytics/client';
 
 // Baseline protections, not a complete script-source CSP.
@@ -23,7 +24,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
     trackRequest(context, null, 'creator_link_landed', {
       referral_consent: true,
     });
-  const response = await next();
+  let response = await next();
+  // Creator short links (duoly.gg/CODE): only paths no page answers, only active codes.
+  const shortLink = await creatorShortLink(
+    context.url,
+    context.request?.method,
+    response.status,
+  );
+  if (shortLink)
+    response = new Response(null, {
+      status: 302,
+      headers: { Location: shortLink, 'Cache-Control': 'no-store' },
+    });
   // Private API and auth endpoints may choose the stricter no-referrer policy. Pages never do:
   // a page served with no-referrer makes browsers send `Origin: null` on its form posts
   // (sign-in, sign-out, Connect Discord), which the CSRF origin check rightly rejects.
