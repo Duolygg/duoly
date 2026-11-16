@@ -15,7 +15,7 @@ type Claimed = { bucket: string; path: string };
 
 const BUCKETS = new Set(['avatars', 'profile-headers', 'trophy-proofs']);
 const PATH =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{16}\.(webp|jpg)$/;
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{16}\.(webp|jpg|gif)$/;
 
 export async function drainStorageCleanup(
   db: SupabaseClient,

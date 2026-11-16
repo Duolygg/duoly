@@ -12,7 +12,7 @@ export const EmailSchema = z
   .pipe(z.email());
 /** Avatars uploaded through /api/me/profile (public Supabase Storage bucket). */
 export const UPLOADED_AVATAR =
-  /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/avatars\/[0-9a-f-]{36}\/[0-9a-f]{16}\.(webp|jpg)$/;
+  /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/avatars\/[0-9a-f-]{36}\/[0-9a-f]{16}\.(webp|jpg|gif)$/;
 export const ProfileUpdateSchema = z
   .object({
     name: z

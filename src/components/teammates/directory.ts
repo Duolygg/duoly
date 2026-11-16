@@ -48,7 +48,7 @@ function safeImage(src: string): string {
   if (/^\/assets\/[\w/-]+(\.[\w-]+)*\.(png|webp|jpg|jpeg|svg)$/.test(src))
     return src;
   if (
-    /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/avatars\/[0-9a-f-]+\/[0-9a-f]{16}\.(webp|jpg)$/.test(
+    /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/avatars\/[0-9a-f-]+\/[0-9a-f]{16}\.(webp|jpg|gif)$/.test(
       src,
     )
   )

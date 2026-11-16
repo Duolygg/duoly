@@ -1,5 +1,5 @@
 import { trackRequest } from '../analytics/client';
-import { decodeAvatar, storeAvatar } from './avatar';
+import { MAX_AVATAR_DATA_URL, decodeAvatar, storeAvatar } from './avatar';
 import { afterLogin } from './after-login';
 import type { APIContext, APIRoute } from 'astro';
 import {
@@ -184,8 +184,11 @@ export const getProfile: APIRoute = async (context) => {
   }
 };
 export const saveProfile: APIRoute = async (context) => {
-  // Room for one cropped 256×256 avatar as a data URL.
-  const { account, body, failure } = await mutation(context, 160_000);
+  // Room for one cropped avatar as a data URL: an animated GIF is the biggest.
+  const { account, body, failure } = await mutation(
+    context,
+    MAX_AVATAR_DATA_URL + 20_000,
+  );
   if (failure || !body) return failure!;
   if (!account.client)
     return account.json({ error: 'Sign in to update your profile.' }, 401);

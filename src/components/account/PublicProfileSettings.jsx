@@ -17,6 +17,12 @@ import {
   loadHeaderImage,
 } from './header-image';
 import { canvasReady, releasePicked } from './crop-image';
+import {
+  HEADER_GIF_MAX_BYTES,
+  HEADER_GIF_STEPS,
+  encodeAnimatedCrop,
+  readAnimatedGif,
+} from './animated-image';
 import ImageCropper from './ImageCropper';
 import GameCards from './GameCards';
 import './public-profile-settings.css';
@@ -284,6 +290,13 @@ export default class PublicProfileSettings extends React.Component {
     try {
       const pick = await loadHeaderImage(file);
       if (this.unmounted) return releasePicked(pick);
+      /* An animated GIF keeps moving: the strip is cut from every frame when it is saved. */
+      try {
+        pick.gif = await readAnimatedGif(file);
+      } catch {
+        pick.gif = null;
+      }
+      if (this.unmounted) return releasePicked(pick);
       this.clearPick({ pick });
     } catch (e) {
       if (!this.unmounted) this.setState({ headerError: e.message });
@@ -293,25 +306,55 @@ export default class PublicProfileSettings extends React.Component {
     const pick = this.state.pick;
     if (!pick || !area) return;
     this.setState({ headerBusy: true, headerError: '', headerNote: '' });
-    // Safari cannot encode WebP from a canvas and hands back a PNG; JPEG works everywhere.
     let encoded;
-    try {
-      encoded = encodeHeaderCrop(pick.image, area);
-    } catch {
-      return this.setState({
-        headerBusy: false,
-        headerError:
-          'This browser could not prepare the picture. Try a smaller JPG or PNG.',
-      });
+    if (pick.gif) {
+      // Every frame is cut and written again; that takes a moment for a long GIF.
+      this.setState({ headerProgress: 0 });
+      try {
+        encoded = await encodeAnimatedCrop(
+          pick.gif,
+          area,
+          HEADER_GIF_STEPS,
+          HEADER_GIF_MAX_BYTES,
+          {
+            onProgress: (headerProgress) =>
+              !this.unmounted && this.setState({ headerProgress }),
+            cancelled: () => this.unmounted || this.state.pick !== pick,
+          },
+        );
+      } catch {
+        encoded = { ok: false, reason: 'format' };
+      }
+      if (this.unmounted || this.state.pick !== pick) return;
+      this.setState({ headerProgress: null });
+      if (!encoded.ok)
+        return this.setState({
+          headerBusy: false,
+          headerError:
+            encoded.reason === 'format'
+              ? 'This browser could not prepare the GIF. Try another browser, or a JPG or PNG.'
+              : `That GIF stays over ${Math.round(HEADER_GIF_MAX_BYTES / (1024 * 1024))} MB even made smaller. Try a shorter one.`,
+        });
+    } else {
+      // Safari cannot encode WebP from a canvas and hands back a PNG; JPEG works everywhere.
+      try {
+        encoded = encodeHeaderCrop(pick.image, area);
+      } catch {
+        return this.setState({
+          headerBusy: false,
+          headerError:
+            'This browser could not prepare the picture. Try a smaller JPG or PNG.',
+        });
+      }
+      if (!encoded.ok)
+        return this.setState({
+          headerBusy: false,
+          headerError:
+            encoded.reason === 'format'
+              ? 'This browser could not save the picture. Try another browser.'
+              : 'That picture stays over 300 KB even at low quality. Try one with less fine detail.',
+        });
     }
-    if (!encoded.ok)
-      return this.setState({
-        headerBusy: false,
-        headerError:
-          encoded.reason === 'format'
-            ? 'This browser could not save the picture. Try another browser.'
-            : 'That picture stays over 300 KB even at low quality. Try one with less fine detail.',
-      });
     try {
       const data = await request('/api/teammate/profile-header', {
         method: 'POST',
@@ -376,7 +419,7 @@ export default class PublicProfileSettings extends React.Component {
             so this one steps aside rather than saying the same thing twice. */}
         {pick ? null : (
           <p className="pp-help">
-            Your header is shown on your public profile.
+            Your header is shown on your public profile. A GIF keeps moving.
           </p>
         )}
         {this.state.headerError || this.state.headerPreviewError ? (
@@ -397,7 +440,11 @@ export default class PublicProfileSettings extends React.Component {
             maxStageHeight={420}
             label="Header crop"
             saveLabel="Save header"
-            busyLabel="Saving…"
+            busyLabel={
+              this.state.headerProgress == null
+                ? 'Saving…'
+                : `Preparing GIF… ${Math.round(this.state.headerProgress * 100)}%`
+            }
             cancelLabel="Cancel"
             busy={headerBusy}
             onPreview={(area) => this.showArt({ box: area })}

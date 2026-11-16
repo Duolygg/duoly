@@ -3,7 +3,7 @@
  * site, or the photo the teammate uploaded themselves.
  *
  * Uploads live in the public `avatars` bucket, one folder per account, 256x256 cropped WebP or
- * JPEG, written only by the server after it checked the real file signature
+ * JPEG (or an animated GIF up to 256x256), written only by the server after it checked the real file signature
  * (20261023150000_avatar_uploads.sql, src/server/auth/avatar.ts).
  *
  * Two rules, in two places, so a face on a profile is always that teammate's own upload:
@@ -23,9 +23,9 @@
 const MASCOT = /^\/assets\/avatars\/avatar-(?:[1-9]|10)\.png$/;
 /** Other art that ships in /public/assets/avatars, as the schema has always allowed. */
 const SITE_ART = /^\/assets\/avatars\/[a-zA-Z0-9/_-]+\.(?:webp|png|jpg)$/;
-/** One uploaded file: <user id>/<16 hex>.webp|jpg under the public avatars bucket. */
+/** One uploaded file: <user id>/<16 hex>.webp|jpg|gif under the public avatars bucket. */
 const UPLOAD_PATH =
-  /^\/storage\/v1\/object\/public\/avatars\/[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\/[0-9a-f]{16}\.(?:webp|jpg)$/;
+  /^\/storage\/v1\/object\/public\/avatars\/[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\/[0-9a-f]{16}\.(?:webp|jpg|gif)$/;
 
 /** This deployment's own Supabase origin, or null when there is no usable one. */
 export function avatarStorageOrigin(

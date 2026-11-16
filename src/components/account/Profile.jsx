@@ -17,6 +17,12 @@ import {
   pickFileError,
   releasePicked,
 } from './crop-image';
+import {
+  AVATAR_GIF_MAX_BYTES,
+  AVATAR_GIF_STEPS,
+  encodeAnimatedCrop,
+  readAnimatedGif,
+} from './animated-image';
 import TrophySettings from './TrophySettings';
 import LanguagePicker from './LanguagePicker';
 import { LANGUAGES_MAX } from '../../contracts/account';
@@ -77,6 +83,8 @@ export default class Profile extends React.Component {
       crop: null,
       /** The frame the cropper is showing right now, so the preview card can follow it. */
       cropArea: null,
+      /** 0 to 1 while an animated GIF is being cut frame by frame, else null. */
+      cropProgress: null,
       /** What the header block wants the preview card's banner to show, if anything. */
       headerArt: null,
     };
@@ -128,6 +136,13 @@ export default class Profile extends React.Component {
     try {
       const picked = await loadPickedImage(file);
       if (this.unmounted) return releasePicked(picked);
+      /* An animated GIF keeps moving: the crop is cut from every frame when it is saved. */
+      try {
+        picked.gif = await readAnimatedGif(file);
+      } catch {
+        picked.gif = null;
+      }
+      if (this.unmounted) return releasePicked(picked);
       this.closeCrop({ crop: picked });
     } catch (e) {
       if (!this.unmounted) this.setState({ error: e.message });
@@ -137,14 +152,16 @@ export default class Profile extends React.Component {
   /** Leaves the cropper and lets go of the picked file. */
   closeCrop(patch) {
     releasePicked(this.state.crop);
-    this.setState({ crop: null, cropArea: null, ...patch });
+    this.setState({ crop: null, cropArea: null, cropProgress: null, ...patch });
   }
 
   /** Turns the chosen frame into the 256 by 256 picture the save sends. */
   saveCrop(area) {
+    const crop = this.state.crop;
+    if (crop?.gif) return this.saveAnimatedCrop(crop, area);
     let encoded;
     try {
-      encoded = encodeAvatar(this.state.crop.image, area);
+      encoded = encodeAvatar(crop.image, area);
     } catch {
       return this.setState({
         error:
@@ -157,6 +174,38 @@ export default class Profile extends React.Component {
           encoded.reason === 'format'
             ? 'This browser could not save the picture. Try another browser.'
             : `That picture stays over ${Math.round(AVATAR_MAX_BYTES / 1024)} KB even at low quality. Try one with less fine detail.`,
+      });
+    this.closeCrop({ upload: encoded.url, error: '' });
+  }
+
+  /** The same crop cut from every frame of an animated GIF, so the picture keeps moving. */
+  async saveAnimatedCrop(crop, area) {
+    if (this.state.cropProgress !== null) return;
+    this.setState({ cropProgress: 0, error: '' });
+    let encoded;
+    try {
+      encoded = await encodeAnimatedCrop(
+        crop.gif,
+        area,
+        AVATAR_GIF_STEPS,
+        AVATAR_GIF_MAX_BYTES,
+        {
+          onProgress: (cropProgress) =>
+            !this.unmounted && this.setState({ cropProgress }),
+          cancelled: () => this.unmounted || this.state.crop !== crop,
+        },
+      );
+    } catch {
+      encoded = { ok: false, reason: 'format' };
+    }
+    if (this.unmounted || this.state.crop !== crop) return;
+    if (!encoded.ok)
+      return this.setState({
+        cropProgress: null,
+        error:
+          encoded.reason === 'format'
+            ? 'This browser could not prepare the GIF. Try another browser, or a JPG or PNG.'
+            : `That GIF stays over ${Math.round(AVATAR_GIF_MAX_BYTES / (1024 * 1024))} MB even made smaller. Try a shorter one.`,
       });
     this.closeCrop({ upload: encoded.url, error: '' });
   }
@@ -746,7 +795,7 @@ export default class Profile extends React.Component {
                   <p style={help}>
                     {this.props.accountOnly && !this.props.allowUpload
                       ? 'Choose one of the avatars below. Uploads are not available yet.'
-                      : 'JPG, PNG or WebP. You choose the part that shows.'}
+                      : 'JPG, PNG, WebP or GIF. You choose the part that shows, and a GIF keeps moving.'}
                   </p>
                 )}
                 {s.crop ? (
@@ -764,6 +813,8 @@ export default class Profile extends React.Component {
                       label="Profile picture crop"
                       previews={AVATAR_PREVIEWS}
                       saveLabel="Use this picture"
+                      busy={s.cropProgress !== null}
+                      busyLabel={`Preparing GIF… ${Math.round((s.cropProgress || 0) * 100)}%`}
                       cancelLabel="Cancel"
                       onPreview={(area) => this.setState({ cropArea: area })}
                       onSave={(area) => this.saveCrop(area)}

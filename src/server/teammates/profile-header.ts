@@ -1,22 +1,47 @@
 import { createHash } from 'node:crypto';
 import { supportService } from '../support/store';
+import { parseGif } from '../../lib/gif';
 
 export const MAX_HEADER_BYTES = 300 * 1024;
+/**
+ * An animated GIF header, cut frame by frame in the browser (src/components/account/animated-image.ts,
+ * HEADER_GIF_MAX_BYTES), to a 3:1 strip from 600 by 200 to 1500 by 500.
+ */
+export const MAX_HEADER_GIF_BYTES = 2560 * 1024;
+/** Room for the largest GIF as a data URL; the header endpoint reads a body this big. */
+export const MAX_HEADER_DATA_URL = Math.ceil(MAX_HEADER_GIF_BYTES / 3) * 4 + 32;
 export type DecodedHeader =
   | { bytes: Buffer; ext: 'webp'; type: 'image/webp' }
-  | { bytes: Buffer; ext: 'jpg'; type: 'image/jpeg' };
+  | { bytes: Buffer; ext: 'jpg'; type: 'image/jpeg' }
+  | { bytes: Buffer; ext: 'gif'; type: 'image/gif' };
 
 /**
- * WebP, or JPEG for browsers that cannot encode WebP from a canvas (Safari). The file
- * signature decides, never the MIME label.
+ * WebP, or JPEG for browsers that cannot encode WebP from a canvas (Safari), or an animated GIF.
+ * The file signature decides, never the MIME label.
  */
 export function decodeHeader(dataUrl: unknown): DecodedHeader | null {
-  if (typeof dataUrl !== 'string' || dataUrl.length > 409_624) return null;
-  const match = /^data:image\/(webp|jpeg);base64,([A-Za-z0-9+/]+={0,2})$/.exec(
-    dataUrl,
-  );
+  if (typeof dataUrl !== 'string' || dataUrl.length > MAX_HEADER_DATA_URL)
+    return null;
+  const match =
+    /^data:image\/(webp|jpeg|gif);base64,([A-Za-z0-9+/]+={0,2})$/.exec(dataUrl);
   if (!match) return null;
   const bytes = Buffer.from(match[2]!, 'base64');
+  if (match[1] === 'gif') {
+    if (
+      bytes.length < 64 ||
+      bytes.length > MAX_HEADER_GIF_BYTES ||
+      bytes.toString('base64') !== match[2]
+    )
+      return null;
+    const gif = parseGif(bytes, 1);
+    return gif &&
+      gif.width === gif.height * 3 &&
+      gif.height >= 200 &&
+      gif.height <= 500
+      ? { bytes, ext: 'gif', type: 'image/gif' }
+      : null;
+  }
+  if (dataUrl.length > 409_624) return null;
   const webp =
     bytes.subarray(0, 4).toString('ascii') === 'RIFF' &&
     bytes.subarray(8, 12).toString('ascii') === 'WEBP';
@@ -38,7 +63,7 @@ function objectPath(url: string, userId: string): string | null {
   const path = new URL(url).pathname.split('/profile-headers/')[1];
   return path &&
     path.startsWith(userId + '/') &&
-    /^[0-9a-f-]{36}\/[0-9a-f]{16}\.(webp|jpg)$/.test(path)
+    /^[0-9a-f-]{36}\/[0-9a-f]{16}\.(webp|jpg|gif)$/.test(path)
     ? path
     : null;
 }

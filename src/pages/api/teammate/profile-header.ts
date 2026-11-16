@@ -3,6 +3,7 @@ import { accountContext } from '../../../server/auth/context';
 import { readBoundedBody, verifyCsrf } from '../../../server/auth/security';
 import { publicProfilesEnabled } from '../../../server/teammates/public-profiles';
 import {
+  MAX_HEADER_DATA_URL,
   decodeHeader,
   storeHeader,
   NO_PROFILE,
@@ -22,7 +23,10 @@ export const ALL: APIRoute = async (context) => {
     }
     let body: Record<string, unknown>;
     try {
-      body = await readBoundedBody(context.request, 410_000);
+      body = await readBoundedBody(
+        context.request,
+        MAX_HEADER_DATA_URL + 1_000,
+      );
     } catch {
       return account.json({ error: 'Invalid or oversized request.' }, 400);
     }

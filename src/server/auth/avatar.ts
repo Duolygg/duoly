@@ -1,23 +1,41 @@
 import { createHash } from 'node:crypto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { parseGif } from '../../lib/gif';
 
 /** Largest avatar we store: the browser crops to 256×256 (~20 KB WebP). */
 export const MAX_AVATAR_BYTES = 96 * 1024;
+/**
+ * An animated GIF avatar, cut frame by frame in the browser (src/components/account/animated-image.ts,
+ * AVATAR_GIF_MAX_BYTES), to a square from 128 to 256 pixels.
+ */
+export const MAX_AVATAR_GIF_BYTES = 1024 * 1024;
+/** Room for the largest GIF as a data URL; /api/me/profile reads a body this big. */
+export const MAX_AVATAR_DATA_URL = Math.ceil(MAX_AVATAR_GIF_BYTES / 3) * 4 + 32;
 
 export type DecodedAvatar = {
   bytes: Buffer;
-  ext: 'webp' | 'jpg';
+  ext: 'webp' | 'jpg' | 'gif';
   type: string;
 };
 
 /** Pure: validates a data URL from the profile cropper by its real file signature. */
 export function decodeAvatar(dataUrl: unknown): DecodedAvatar | null {
-  if (typeof dataUrl !== 'string' || dataUrl.length > 140_000) return null;
-  const match = /^data:image\/(webp|jpeg);base64,([A-Za-z0-9+/]+={0,2})$/.exec(
-    dataUrl,
-  );
+  if (typeof dataUrl !== 'string' || dataUrl.length > MAX_AVATAR_DATA_URL)
+    return null;
+  const match =
+    /^data:image\/(webp|jpeg|gif);base64,([A-Za-z0-9+/]+={0,2})$/.exec(dataUrl);
   if (!match) return null;
   const bytes = Buffer.from(match[2]!, 'base64');
+  if (match[1] === 'gif') {
+    if (bytes.length < 64 || bytes.length > MAX_AVATAR_GIF_BYTES) return null;
+    const gif = parseGif(bytes, 1);
+    return gif &&
+      gif.width === gif.height &&
+      gif.width >= 128 &&
+      gif.width <= 256
+      ? { bytes, ext: 'gif', type: 'image/gif' }
+      : null;
+  }
   if (bytes.length < 64 || bytes.length > MAX_AVATAR_BYTES) return null;
   const webp =
     bytes.subarray(0, 4).toString('ascii') === 'RIFF' &&

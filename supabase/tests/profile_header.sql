@@ -28,7 +28,9 @@ insert into public.teammate_order_access(user_id,approved_games)
  values ('9e000000-0000-4000-8000-000000000001',array['lol']);
 update public.teammate_public_profiles set slug='header-fixture' where user_id='9e000000-0000-4000-8000-000000000001';
 select pg_temp.ok(exists(select 1 from storage.buckets where id='profile-headers' and public
- and file_size_limit=307200 and allowed_mime_types=array['image/webp','image/jpeg']),'public bounded webp bucket');
+ and file_size_limit=2621440 and allowed_mime_types=array['image/webp','image/jpeg','image/gif']),'public bounded webp, jpeg and gif bucket (20261116120000)');
+select pg_temp.ok(exists(select 1 from storage.buckets where id='avatars' and public
+ and file_size_limit=1048576 and allowed_mime_types=array['image/webp','image/jpeg','image/gif']),'avatar bucket takes animated gifs (20261116120000)');
 select pg_temp.ok(public.public_teammate_profile('header-fixture')->'header'='null'::jsonb,'absent header is null');
 update public.teammate_public_profiles set header_image=
  'https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.webp'
@@ -41,6 +43,23 @@ do $$ begin
     where slug='header-fixture';
   update public.teammate_public_profiles set header_image=null where slug='header-fixture';
   raise notice 'ok: a JPEG header (Safari fallback) is accepted';
+end $$;
+do $$ begin
+  update public.teammate_public_profiles
+    set header_image='https://example.supabase.co/storage/v1/object/public/profile-headers/9e000000-0000-4000-8000-000000000001/0123456789abcdef.gif'
+    where slug='header-fixture';
+  perform pg_temp.ok(public.public_teammate_profile('header-fixture')->>'header' like '%/0123456789abcdef.gif','animated gif header returned');
+  update public.teammate_public_profiles set header_image=null where slug='header-fixture';
+end $$;
+do $$ begin
+  update public.profiles
+    set image='https://example.supabase.co/storage/v1/object/public/avatars/9e000000-0000-4000-8000-000000000001/0123456789abcdef.gif'
+    where id='9e000000-0000-4000-8000-000000000001';
+  perform pg_temp.ok(public.public_teammate_profile('header-fixture')->>'avatar' like '%/0123456789abcdef.gif','animated gif avatar returned');
+  perform pg_temp.ok(public.storage_cleanup_path(
+    'https://example.supabase.co/storage/v1/object/public/avatars/9e000000-0000-4000-8000-000000000001/0123456789abcdef.gif',
+    'avatars','9e000000-0000-4000-8000-000000000001')='9e000000-0000-4000-8000-000000000001/0123456789abcdef.gif','gif avatar queues for cleanup');
+  update public.profiles set image='' where id='9e000000-0000-4000-8000-000000000001';
 end $$;
 do $$ declare bad text; begin
  foreach bad in array array[
