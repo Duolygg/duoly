@@ -51,7 +51,7 @@ const SALES = [
   ['lumi', 'Duo Apex ×3'],
 ];
 const PLATFORMS = ['Twitch', 'YouTube', 'TikTok', 'Kick', 'Instagram', 'Other'];
-const SIZES = ['Under 1K', '1K – 10K', '10K – 100K', '100K+'];
+const SIZES = ['Under 1K', '1K to 10K', '10K to 100K', '100K+'];
 const FAQ = [
   [
     'Who can join?',
@@ -61,7 +61,7 @@ const FAQ = [
     'How do I earn?',
     'You get your own code and link. Every time a viewer books with it, you earn ' +
       CREATOR.tiers[0].commission +
-      '–' +
+      ' to ' +
       CREATOR.tiers[2].commission +
       '% of the order, and keep earning on their orders for ' +
       CREATOR.attributionMonths +
@@ -102,7 +102,7 @@ export default class Creators extends React.Component {
         email: '',
         platform: 'Twitch',
         channel: '',
-        size: '1K – 10K',
+        size: '1K to 10K',
         game: 'lol',
         message: '',
         website: '',
@@ -332,7 +332,7 @@ export default class Creators extends React.Component {
                 <div className="cr-facts">
                   <span>
                     <strong>
-                      {CREATOR.tiers[0].commission}–
+                      {CREATOR.tiers[0].commission} to{' '}
                       {CREATOR.tiers[2].commission}%
                     </strong>
                     commission
