@@ -50,6 +50,8 @@ insert into public.account_roles(user_id,role) values
  ('7e000000-0000-4000-8000-000000000001','admin'),
  ('7e000000-0000-4000-8000-000000000005','teammate')
 on conflict (user_id) do update set role = excluded.role;
+-- The creators section is not in the default admin sections; owners see every section.
+update public.account_roles set owner = true where user_id = '7e000000-0000-4000-8000-000000000001';
 
 -- ---- structure and grants ----------------------------------------------------------------------
 
