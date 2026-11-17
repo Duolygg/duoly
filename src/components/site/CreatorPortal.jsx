@@ -347,8 +347,8 @@ function Hero({ creator, site }) {
           <Copy value={query} label="Copy link" />
         </div>
         <p className="cp-note">
-          Both links do the same thing. The short one is easier to say out loud,
-          the other one works where a path is rewritten.
+          Both links do the same thing. Say the short one on stream; use the
+          long one if a site shortens or changes your link.
         </p>
         <a
           className="lg-btn ghost"
@@ -468,9 +468,7 @@ function Payouts({ payouts }) {
                     <td style={{ textAlign: 'right', color: '#fff' }}>
                       {eur(payout.amountCents)}
                     </td>
-                    <td style={{ textTransform: 'capitalize' }}>
-                      {payout.method}
-                    </td>
+                    <td>{METHOD_LABELS[payout.method] ?? payout.method}</td>
                     <td>{payout.reference}</td>
                     <td>{dayLabel(payout.paidAt)}</td>
                   </tr>
@@ -604,9 +602,8 @@ function PayoutDetails({ details, csrf, onSaved }) {
                   className={'ct-topic' + (form.method === method ? ' on' : '')}
                   aria-pressed={form.method === method ? 'true' : 'false'}
                   onClick={() => setForm({ ...form, method })}
-                  style={{ textTransform: 'capitalize' }}
                 >
-                  {method}
+                  {METHOD_LABELS[method] ?? method}
                 </button>
               ))}
             </div>
@@ -621,7 +618,7 @@ function PayoutDetails({ details, csrf, onSaved }) {
                 placeholder="IBAN, Wise, PayPal or Payoneer address"
               />
             </label>
-            <label className="ct-field">
+            <label className="ct-field wide">
               <span>
                 VAT ID <em>· optional</em>
               </span>
@@ -695,6 +692,13 @@ function PayoutDetails({ details, csrf, onSaved }) {
     </section>
   );
 }
+
+const METHOD_LABELS = {
+  bank: 'Bank',
+  wise: 'Wise',
+  paypal: 'PayPal',
+  payoneer: 'Payoneer',
+};
 
 function StreamKit({ kit }) {
   return (

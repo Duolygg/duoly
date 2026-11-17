@@ -285,3 +285,16 @@
   color: #8e84ab;
   font-size: 14px;
 }
+/* Form fields stay inside their card (the shared .ct-field input is width 100% plus padding). */
+.cp-card .ct-field input,
+.cp-card .ct-field textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.cp-grid.two {
+  align-items: start;
+}
+.cp-kit + h3,
+.cp-kit + .cp-kit {
+  margin-top: 22px;
+}
