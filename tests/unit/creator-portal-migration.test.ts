@@ -44,6 +44,30 @@ describe('the creator portal migration', () => {
     expect(replaced).toEqual(['public.checkout_intent_attribute']);
     expect(migration).toMatch(/self-referral guard/i);
   });
+  it('builds the attribution replacement on the latest definition (team orders)', () => {
+    const latest = readdirSync('supabase/migrations')
+      .filter((f) => f !== NAME && f.endsWith('.sql'))
+      .sort()
+      .filter((f) =>
+        readFileSync(`supabase/migrations/${f}`, 'utf8').includes(
+          'function public.checkout_intent_attribute()',
+        ),
+      )
+      .pop();
+    expect(latest).toBe('20261106190000_team_orders.sql');
+    const body = section(
+      'create or replace function public.checkout_intent_attribute()',
+      'revoke all on function public.checkout_intent_attribute()',
+    );
+    expect(body).toContain('if new.free_coaching then return null; end if;');
+    expect(body).toContain('public.order_teams t where t.id = v_order.team_id');
+    expect(body).toContain('o.team_id is distinct from v_order.team_id');
+    expect(body).toContain(
+      'values (new.order_id, v_ref.creator_id, new.customer_id, v_amount)',
+    );
+    expect(body).toContain('c.user_id <> new.customer_id');
+  });
+
   it('keeps every new table unreadable without an RPC', () => {
     for (const table of [
       'creator_applications',

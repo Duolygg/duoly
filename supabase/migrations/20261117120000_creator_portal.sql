@@ -172,22 +172,26 @@ end $$;
 
 -- ---- self-referral guard -----------------------------------------------------------------------
 
--- Replaces the latest definition from 20261025110000_creator_referrals.sql. Only change: an order
--- whose customer is the creator's own account is never attributed and never counted, in both
--- directions (the creator's own first order, and later orders of a customer who became a creator).
+-- Replaces the latest definition, from 20261106190000_team_orders.sql (free coaching skipped,
+-- team amount, team first-order rule all kept). Only change: an order whose customer is the
+-- creator's own account is never attributed and never counted, in both directions (the creator's
+-- own first order, and later orders of a customer who became a creator).
 create or replace function public.checkout_intent_attribute() returns trigger
 language plpgsql security definer set search_path = '' as $$
-declare v_ref public.customer_referrals; v_order public.orders;
+declare v_ref public.customer_referrals; v_order public.orders; v_amount integer;
 begin
   if new.status <> 'paid' or old.status = 'paid' or new.order_id is null then return null; end if;
+  if new.free_coaching then return null; end if;
   begin
     select o.* into v_order from public.orders as o where o.id = new.order_id;
+    v_amount := coalesce((select t.amount_eur_cents from public.order_teams t where t.id = v_order.team_id), v_order.amount_eur_cents);
     select r.* into v_ref from public.customer_referrals as r where r.customer_id = new.customer_id;
     if v_ref.customer_id is null and new.creator_id is not null
        and exists (select 1 from public.creators as c
                     where c.id = new.creator_id and c.code = new.ref_code and c.active
                       and (c.user_id is null or c.user_id <> new.customer_id))
-       and not exists (select 1 from public.orders as o where o.customer_id = new.customer_id and o.id <> new.order_id) then
+       and not exists (select 1 from public.orders as o where o.customer_id = new.customer_id and o.id <> new.order_id
+                         and o.team_id is distinct from v_order.team_id) then
       insert into public.customer_referrals(customer_id, creator_id, code, first_order_id)
         values (new.customer_id, new.creator_id, new.ref_code, new.order_id)
         on conflict (customer_id) do nothing;
@@ -197,7 +201,7 @@ begin
        and not exists (select 1 from public.creators as c
                         where c.id = v_ref.creator_id and c.user_id = new.customer_id) then
       insert into public.order_referrals(order_id, creator_id, customer_id, amount_eur_cents)
-        values (new.order_id, v_ref.creator_id, new.customer_id, v_order.amount_eur_cents)
+        values (new.order_id, v_ref.creator_id, new.customer_id, v_amount)
         on conflict (order_id) do nothing;
     end if;
   exception when others then
