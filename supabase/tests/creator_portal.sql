@@ -246,12 +246,12 @@ begin
   o_b := pg_temp.order_at('7e000000-0000-4000-8000-000000000004', 2020, v_recent, true);
   insert into public.customer_referrals(customer_id,creator_id,code,first_order_id,attributed_at)
     values ('7e000000-0000-4000-8000-000000000004', v_creator, 'ALEXGG', o_b, v_recent);
-  -- An older month, all past the 30 day hold: 1887 counted, 2000 with 500 refunded, 1000 refunded
-  -- in full, and 1000 held back by an open report.
+  -- An older month, all past the 30 day hold: 1887 and 1500 counted, 1000 refunded in full, and
+  -- 1000 held back by an open report. (Refund credits always carry the full order amount, so there
+  -- is no partial refund to model.)
   o_c := pg_temp.order_at('7e000000-0000-4000-8000-000000000003', 1000, v_old, true);
   update public.order_payments set state='refunded' where order_id=o_c;
-  o_d := pg_temp.order_at('7e000000-0000-4000-8000-000000000003', 2000, v_old, true);
-  insert into public.refund_credits(order_id,amount_eur_cents) values (o_d, 500);
+  o_d := pg_temp.order_at('7e000000-0000-4000-8000-000000000003', 1500, v_old, true);
   o_g := pg_temp.order_at('7e000000-0000-4000-8000-000000000003', 1000, v_old, true);
   insert into public.order_reports(id,order_id,assignment_id,customer_id,teammate_id,type,description,status)
     select pg_catalog.gen_random_uuid(), o_g, a.id, '7e000000-0000-4000-8000-000000000003',
@@ -265,7 +265,7 @@ begin
   insert into public.order_referrals(order_id,creator_id,customer_id,amount_eur_cents,attributed_at) values
     (o_a, v_creator, '7e000000-0000-4000-8000-000000000003', 1887, v_old),
     (o_c, v_creator, '7e000000-0000-4000-8000-000000000003', 1000, v_old),
-    (o_d, v_creator, '7e000000-0000-4000-8000-000000000003', 2000, v_old),
+    (o_d, v_creator, '7e000000-0000-4000-8000-000000000003', 1500, v_old),
     (o_g, v_creator, '7e000000-0000-4000-8000-000000000003', 1000, v_old),
     (o_b, v_creator, '7e000000-0000-4000-8000-000000000004', 2020, v_recent),
     (o_h, v_creator, '7e000000-0000-4000-8000-000000000004', 2020, v_recent),
@@ -307,7 +307,7 @@ do $$ declare p jsonb; m jsonb; s jsonb; begin
   perform pg_temp.ok((m->>'earnedCents')::bigint = 674, 'earned is both months: ' || (m->>'earnedCents'));
   perform pg_temp.ok((m->>'earnedCents')::bigint = (m->>'availableCents')::bigint + (m->>'heldCents')::bigint,
     'earned is available plus held, and never includes an estimate');
-  perform pg_temp.ok((m->>'reversedCents')::bigint = 120, 'reversed is the refunded order and the refunded part: ' || (m->>'reversedCents'));
+  perform pg_temp.ok((m->>'reversedCents')::bigint = 80, 'reversed is the refunded order: ' || (m->>'reversedCents'));
   perform pg_temp.ok((m->>'paidCents')::bigint = 0, 'nothing paid yet');
   perform pg_temp.ok((m->>'thresholdCents')::bigint = 5000, 'the threshold is EUR 50');
   -- Month level rounding: two orders of 2020 are 161.6 cents each, 162 when rounded one by one,
@@ -345,10 +345,8 @@ do $$ declare p jsonb; m jsonb; s jsonb; begin
     where x->>'state' = 'open') = 0, 'an open order has earned nothing yet');
   perform pg_temp.ok((select (x->>'amountCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
     where x->>'state' = 'reversed') = 1000, 'a refunded order still shows its amount');
-  perform pg_temp.ok((select (x->>'amountCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
-    where (x->>'refundedCents')::bigint = 500) = 2000, 'a part refunded order shows the full amount');
   perform pg_temp.ok((select (x->>'commissionCents')::bigint from pg_catalog.jsonb_array_elements(p->'orders') x
-    where (x->>'refundedCents')::bigint = 500) = 120, 'a part refunded order earns on the rest only');
+    where x->>'state' = 'available' and (x->>'amountCents')::bigint = 1500) = 120, 'a completed order earns 8%');
   perform pg_temp.ok(p->'month'->'tier'->>'id' = 'rising', 'this month is the starting tier');
   perform pg_temp.ok((p->'rules'->>'payoutMinCents')::int = 5000 and (p->'rules'->>'holdDays')::int = 30,
     'the rules travel with the payload');
@@ -404,9 +402,9 @@ do $$ declare p jsonb; m jsonb; c public.creators; a jsonb; begin
   perform pg_temp.login('7e000000-0000-4000-8000-000000000002');
   p := public.creator_portal();
   m := p->'money';
-  -- 3000 refunded and 4000 voided before completion, at this month's 8%, on top of the 120 the
+  -- 3000 refunded and 4000 voided before completion, at this month's 8%, on top of the 80 the
   -- old month lost to a refund.
-  perform pg_temp.ok((m->>'reversedCents')::bigint = 680,
+  perform pg_temp.ok((m->>'reversedCents')::bigint = 640,
     'money back before completion is reversed: ' || (m->>'reversedCents'));
   perform pg_temp.ok((m->>'earnedCents')::bigint = 674, 'a reversal before completion changes nothing earned');
   perform pg_temp.ok((m->>'openCents')::bigint = 120, 'a refunded order is no longer an open estimate');
