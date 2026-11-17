@@ -212,6 +212,7 @@ select pg_temp.logout();
 create function pg_temp.order_at(p_customer uuid, p_amount integer, p_when timestamptz, p_complete boolean)
 returns uuid language plpgsql as $$
 declare o uuid := pg_catalog.gen_random_uuid(); a uuid := pg_catalog.gen_random_uuid();
+  i uuid := pg_catalog.gen_random_uuid();
 begin
   insert into public.orders(id,customer_id,game,service,title,units,unit,region,ign,customer_name,
     amount_eur_cents,booking_fx,payout_usd_cents,created_at,queued_at)
@@ -222,8 +223,12 @@ begin
     update public.orders set status='completed',assigned_teammate_id='7e000000-0000-4000-8000-000000000005',
       current_assignment_id=a,accepted_at=p_when,completed_at=p_when where id=o;
   end if;
-  insert into public.order_payments(order_id,amount_minor,currency,amount_eur_cents,payment_method_type,state)
-    values (o,p_amount,'eur',p_amount,'card','captured');
+  insert into public.checkout_intents(id,customer_id,game,service,title,units,unit,region,ign,amount_eur_cents,
+    payout_usd_cents,booking_fx,expires_at)
+    values (i,p_customer,'lol','duo','Duo Pro',1,'game','EUW','Fixture',p_amount,600,1.08,p_when + interval '1 hour');
+  insert into public.order_payments(order_id,intent_id,stripe_payment_intent_id,amount_minor,currency,
+    amount_eur_cents,payment_method_type,state,settle)
+    values (o,i,'pi_cp'||pg_catalog.replace(i::text,'-',''),p_amount,'eur',p_amount,'card','captured','none');
   return o;
 end $$;
 
