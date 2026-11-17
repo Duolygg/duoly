@@ -5,7 +5,12 @@ vi.mock('../../src/client/order-chat', () => ({
   sendChat: vi.fn(),
   setTyping: vi.fn(),
 }));
-afterEach(() => vi.clearAllMocks());
+afterEach(() => {
+  vi.clearAllMocks();
+  vi.restoreAllMocks();
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+});
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Teammate, { FEATURES } from '../../src/components/teammate/Teammate.jsx';
@@ -13,6 +18,8 @@ import Leaderboard from '../../src/components/teammate/Leaderboard.jsx';
 const id = '11111111-1111-4111-8111-111111111111',
   assignmentId = '22222222-2222-4222-8222-222222222222';
 function desk() {
+  if (typeof document === 'undefined')
+    vi.stubGlobal('document', { hidden: false });
   const c = new Teammate({
     csrf: 'token',
     discordLinked: true,
@@ -35,6 +42,111 @@ function desk() {
   };
   return instance;
 }
+it('shares ordinary check-ins with the presence coordinator', async () => {
+  const c = desk();
+  c._presence = { checkIn: vi.fn() };
+  c.postCheckIn = vi.fn();
+  await c.checkIn();
+  expect(c._presence.checkIn).toHaveBeenCalledTimes(1);
+  expect(c.postCheckIn).not.toHaveBeenCalled();
+});
+it('polls only on an offline to online presence transition', () => {
+  const c = desk();
+  c.poll = vi.fn();
+  c.state.online = false;
+  c.applyPresence({ online: true, afkIn: 14400 });
+  c.applyPresence({ online: true, afkIn: 14390 });
+  expect(c.poll).toHaveBeenCalledTimes(1);
+});
+it('polls healthy visible desks every 10 seconds and hidden desks every 30 seconds', async () => {
+  vi.useFakeTimers();
+  vi.stubGlobal('document', { hidden: false });
+  const c = desk();
+  c.state.online = true;
+  c.post = vi
+    .fn()
+    .mockResolvedValue({ ok: true, data: { queue: [], mine: null } });
+  await c.poll();
+  for (let i = 0; i < 6; i++) {
+    await vi.advanceTimersByTimeAsync(5000);
+    await c.poll();
+  }
+  expect(c.post).toHaveBeenCalledTimes(4);
+  vi.stubGlobal('document', { hidden: true });
+  await vi.advanceTimersByTimeAsync(10000);
+  await c.poll();
+  for (let i = 0; i < 6; i++) {
+    await vi.advanceTimersByTimeAsync(5000);
+    await c.poll();
+  }
+  expect(c.post).toHaveBeenCalledTimes(5);
+  await vi.advanceTimersByTimeAsync(20000);
+  await c.poll();
+  expect(c.post).toHaveBeenCalledTimes(6);
+});
+it('restores visible polling within 10 seconds of the last hidden read', async () => {
+  vi.useFakeTimers();
+  vi.stubGlobal('document', { hidden: true });
+  const c = desk();
+  c.state.online = true;
+  c.post = vi
+    .fn()
+    .mockResolvedValue({ ok: true, data: { queue: [], mine: null } });
+  await c.poll();
+  await vi.advanceTimersByTimeAsync(5000);
+  vi.stubGlobal('document', { hidden: false });
+  await c.poll();
+  expect(c.post).toHaveBeenCalledTimes(1);
+  await vi.advanceTimersByTimeAsync(5000);
+  await c.poll();
+  expect(c.post).toHaveBeenCalledTimes(2);
+});
+it.each([401, 403, 404])(
+  'stops denied desk polling after %s even for forced readbacks',
+  async (status) => {
+    vi.useFakeTimers();
+    vi.stubGlobal('document', { hidden: false });
+    const c = desk();
+    c.state.online = true;
+    c.post = vi.fn().mockResolvedValue({ ok: false, status, data: {} });
+    await c.poll();
+    await vi.advanceTimersByTimeAsync(120000);
+    await c.poll();
+    await c.poll(true);
+    expect(c.post).toHaveBeenCalledTimes(1);
+    expect(c.state.readError).toBe(true);
+  },
+);
+it.each(['response', 'network'])(
+  'backs off %s failures and resets on success',
+  async (kind) => {
+    vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    vi.stubGlobal('document', { hidden: false });
+    const c = desk();
+    c.state.online = true;
+    c.post =
+      kind === 'response'
+        ? vi.fn().mockResolvedValue({ ok: false, status: 503, data: {} })
+        : vi.fn().mockRejectedValue(new Error('network'));
+    await c.poll();
+    await c.poll();
+    expect(c.post).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(5000);
+    await c.poll();
+    await vi.advanceTimersByTimeAsync(5000);
+    await c.poll();
+    expect(c.post).toHaveBeenCalledTimes(2);
+    await vi.advanceTimersByTimeAsync(5000);
+    c.post.mockResolvedValue({ ok: true, data: { queue: [], mine: null } });
+    await c.poll();
+    expect(c._deskFailures).toBe(0);
+    await vi.advanceTimersByTimeAsync(10000);
+    await c.poll();
+    expect(c.post).toHaveBeenCalledTimes(4);
+  },
+);
+
 it('uses neutral customer avatars when the privacy-safe DTO has no image or preview avatar index', () => {
   const c = desk();
   c.state.queue = [
@@ -159,13 +271,13 @@ it.each(['503', 'network', 'malformed', 'readback failure'])(
     expect(c.state.loaded).toBe(false);
     expect(c.state.queue).toEqual([]);
     expect(c.renderVals().showFeed).toBe(false);
-    // Failed/denied reads do not release the mutation lock.
+    // Failed reads do not release the mutation lock. Denial requires a reload.
     c.state.online = true;
-    for (const status of [503, 403]) {
+    for (const status of [503]) {
       c._fetch = vi.fn(async () =>
         Response.json({ error: 'unavailable' }, { status }),
       );
-      await c.poll();
+      await c.poll(true);
       await c.accept(second);
       expect(c._fetch.mock.calls.map(([path]: [string]) => path)).toEqual([
         '/api/desk',
@@ -173,7 +285,7 @@ it.each(['503', 'network', 'malformed', 'readback failure'])(
     }
     let resolve!: (response: Response) => void;
     c._fetch = vi.fn(() => new Promise<Response>((r) => (resolve = r)));
-    const reading = c.poll();
+    const reading = c.poll(true);
     await c.accept(second);
     expect(c._fetch.mock.calls.map(([path]: [string]) => path)).toEqual([
       '/api/desk',
@@ -395,7 +507,7 @@ it('loads the eligible server queue only while online without client game prefer
   c._fetch = vi.fn(async () =>
     Response.json({ error: 'denied' }, { status: 403 }),
   );
-  await c.poll();
+  await c.poll(true);
   expect(c.state.queue).toEqual([]);
   expect(c.state.notice).toContain('access');
   expect(c.renderVals().waiting).toBe(false);

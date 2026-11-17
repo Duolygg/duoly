@@ -97,7 +97,7 @@ export function createDeskPresence(options) {
   } = options;
   const peers = new Map();
   let lastBeat = 0;
-  let lastTry = 0;
+  let lastTry = -Infinity;
   let lastShared = 0;
   let remoteActive = 0;
   let stopped = false;
@@ -203,6 +203,16 @@ export function createDeskPresence(options) {
 
   return {
     id,
+    /** Share the host and watchdog attempt gate, including when requests fail. */
+    checkIn(at = now()) {
+      if (
+        !channel ||
+        leaderOf(peers, id, at) === id ||
+        at - lastBeat > BEAT_FRESH_MS
+      )
+        return checkInNow();
+      return Promise.resolve();
+    },
     /** Only the leader posts, unless no leader's answer has arrived for a while. */
     mayCheckIn(at = now()) {
       if (!channel) return true;

@@ -106,6 +106,50 @@ beforeEach(() => {
   clock = Date.parse('2026-11-12T12:00:00.000Z');
 });
 
+describe('shared host and watchdog gate', () => {
+  it('limits failed host ticks and watchdog attempts to one heartbeat cadence', async () => {
+    const bus = browser();
+    const leader = openTab(bus, 'a', undefined, false);
+    const follower = openTab(bus, 'b');
+    for (let seconds = 0; seconds < 60; seconds += 2) {
+      if (seconds % 10 === 0) await leader.tab.checkIn();
+      if (seconds % 4 === 0) {
+        follower.tab.activity(clock);
+        leader.runWatchdog();
+      }
+      await settle();
+      clock += 2000;
+    }
+    expect(leader.posts).toBe(6);
+    leader.tab.stop();
+    follower.tab.stop();
+  });
+  it('shares the in-flight gate without BroadcastChannel and permits the first check at time zero', async () => {
+    let release!: () => void;
+    let posts = 0;
+    clock = 0;
+    const tab = createDeskPresence({
+      now,
+      makeChannel: () => null,
+      checkIn: async () => {
+        posts += 1;
+        await new Promise<void>((resolve) => {
+          release = resolve;
+        });
+      },
+    });
+    const pending = tab.checkIn();
+    clock += PRESENCE_MS;
+    await tab.checkIn();
+    expect(posts).toBe(1);
+    release();
+    await pending;
+    tab.stop();
+    await tab.checkIn();
+    expect(posts).toBe(1);
+  });
+});
+
 describe('who leads', () => {
   it('is the lowest live id, which every tab works out on its own', () => {
     const peers = new Map([

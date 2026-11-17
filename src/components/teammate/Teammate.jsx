@@ -200,7 +200,7 @@ const GREEN = '#5EEAA8';
 
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 // Orders come from the one shared queue on the server (lib/orders.js); every dashboard polls it.
-const POLL_MS = 3000;
+const POLL_MS = 5000;
 const PRESENCE_MS = 10000;
 // Trust level history (sample): orders completed before this session, deposit currently held, saved vs Rookie rate
 // Earnings, trust level, rating and the leaderboard come from the server's earnings ledger
@@ -674,7 +674,7 @@ export default class Teammate extends React.Component {
    * itself.
    */
   async checkIn() {
-    if (this._presence && !this._presence.mayCheckIn()) return;
+    if (this._presence) return this._presence.checkIn();
     await this.postCheckIn();
   }
   async postCheckIn() {
@@ -701,6 +701,7 @@ export default class Teammate extends React.Component {
     if (data.online) {
       const afkWarning = data.afkIn != null && data.afkIn <= AFK_WARN_SECONDS;
       if (afkWarning) showAfkWarning(data.afkIn);
+      const wasOnline = this.state.online;
       this.setState(
         {
           online: true,
@@ -708,7 +709,9 @@ export default class Teammate extends React.Component {
           forced: null,
           afkWarning,
         },
-        () => this.poll(),
+        () => {
+          if (!wasOnline) this.poll();
+        },
       );
     } else if (this.state.online || data.forcedOffline) {
       this._seen = null;
@@ -840,6 +843,11 @@ export default class Teammate extends React.Component {
   }
   // Check in with the server: says we're online and fetches the shared queue.
   async poll(force = false) {
+    const now = Date.now();
+    const nextPollAt = this._deskFailures
+      ? this._nextDeskPollAt
+      : (this._lastDeskPollAt ?? -Infinity) + (document.hidden ? 30000 : 10000);
+    if (this._deskDenied || (!force && now < nextPollAt)) return;
     if (
       this.props.admin ||
       this.state.needDiscord ||
@@ -850,6 +858,7 @@ export default class Teammate extends React.Component {
     )
       return;
     this._polling = true;
+    this._lastDeskPollAt = now;
     const generation = this._generation || 0;
     try {
       const { ok, status, data } = await this.post('/api/desk');
@@ -860,6 +869,8 @@ export default class Teammate extends React.Component {
       )
         return;
       if (!ok) {
+        this._deskDenied = [401, 403, 404].includes(status);
+        this.backoffDeskPoll();
         if ([401, 403, 404].includes(status)) this.clearPrivateAssignment();
         this.setState({
           readError: true,
@@ -874,6 +885,7 @@ export default class Teammate extends React.Component {
         });
         return;
       }
+      this._deskFailures = 0;
       this._acceptReadback = false;
       const fresh = this.state.online
         ? newEligibleOrders(this._seen, data.queue, this.state.access, {
@@ -924,6 +936,8 @@ export default class Teammate extends React.Component {
         });
       }
     } catch {
+      if (this._disposed || generation !== (this._generation || 0)) return;
+      this.backoffDeskPoll();
       if (!this._disposed)
         this.setState({
           loaded: false,
@@ -934,6 +948,17 @@ export default class Teammate extends React.Component {
     } finally {
       this._polling = false;
     }
+  }
+  backoffDeskPoll() {
+    this._deskFailures = (this._deskFailures || 0) + 1;
+    this._nextDeskPollAt =
+      Date.now() +
+      Math.min(
+        60000,
+        5000 *
+          2 ** Math.min(this._deskFailures - 1, 4) *
+          (1 + Math.random() * 0.2),
+      );
   }
   clearPrivateAssignment() {
     this.clearChatTimers();

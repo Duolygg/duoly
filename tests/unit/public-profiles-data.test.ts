@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
+let {
   loadPublicProfile,
   loadTeammateCards,
   loadIndexableProfiles,
   fixturesEnabled,
   productionRuntime,
-} from '../../src/server/teammates/public-profiles';
+} = await import('../../src/server/teammates/public-profiles');
 import {
   fixtureCards,
   fixtureIndexable,
@@ -19,7 +19,15 @@ vi.mock('../../src/server/auth/config', () => ({
     publishableKey: 'public-test',
   }),
 }));
-beforeEach(() => {
+beforeEach(async () => {
+  vi.resetModules();
+  ({
+    loadPublicProfile,
+    loadTeammateCards,
+    loadIndexableProfiles,
+    fixturesEnabled,
+    productionRuntime,
+  } = await import('../../src/server/teammates/public-profiles'));
   vi.unstubAllEnvs();
   vi.stubEnv('PUBLIC_PROFILE_FIXTURES', 'false');
   rpc.mockReset();
