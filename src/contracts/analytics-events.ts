@@ -173,6 +173,14 @@ export const SERVER_EVENT_CATALOGUE = {
     platform: ['claude', 'chatgpt', 'gemini', 'perplexity', 'mistral', 'other'],
   },
   creator_link_landed: { referral_consent: 'bool' },
+  // Creator portal (25-creator-portal-spec.md). Buckets only: no code, channel, name or email.
+  creator_applied: {
+    platform: ['twitch', 'youtube', 'tiktok', 'kick', 'instagram', 'other'],
+    audience: ['under_1k', '1k_to_10k', '10k_to_100k', 'over_100k'],
+    game: 'slug',
+  },
+  creator_approved: {},
+  creator_dashboard_viewed: {},
   review_submitted: { rating: 'int', tag_count: 'int', has_tip: 'bool' },
   user_logged_in: {
     method: ['password', 'discord', 'google', 'email', 'magic_link', 'other'],

@@ -30,6 +30,8 @@ import {
 } from './access';
 import { AdminPriorityCommandSchema, tierById } from '../../contracts/priority';
 import { AdminCreatorCommandSchema } from '../../contracts/creators';
+import { AdminCreatorDecisionSchema } from '../../contracts/creator-portal';
+import { sendCreatorApproved } from '../creators/notify';
 import { AdminPayoutCommandSchema } from '../../contracts/payouts';
 import { customerUsdRate, eurToUsd } from '../fx';
 import { referralsEnabled } from '../referrals';
@@ -475,6 +477,47 @@ export const creators = adminRoute(
           p_id: body.creatorId as string,
           p_active: body.active as boolean,
         });
+      },
+    },
+  ],
+  ['creators'],
+);
+
+/**
+ * Admin, Creators, Applications: the queue of creator applications, approve with the code the
+ * admin may have edited, or reject with a reason the creator reads on their dashboard
+ * (20261117120000). The approval email is sent after the decision and never fails it.
+ */
+export const creatorApplications = adminRoute(
+  (client) =>
+    (
+      client.rpc as unknown as (
+        fn: string,
+        args?: Record<string, unknown>,
+      ) => Rpc
+    )('admin_creator_applications'),
+  [
+    {
+      schema: AdminCreatorDecisionSchema as unknown as Command['schema'],
+      call: (client, body) =>
+        (
+          client.rpc as unknown as (
+            fn: string,
+            args: Record<string, unknown>,
+          ) => Rpc
+        )('admin_decide_creator_application', {
+          p_id: body.id as string,
+          p_approve: body.approve as boolean,
+          p_code: (body.code as string | undefined) ?? '',
+          p_reason: (body.reason as string | undefined) ?? '',
+        }),
+      after: async (data, _body, context) => {
+        const approved = data.approved as
+          { email: string; name: string; code: string } | undefined;
+        if (!approved) return;
+        await sendCreatorApproved(approved).catch(() => undefined);
+        // No creator id, name or code on the event: an approval happened, that is all.
+        trackRequest(context, null, 'creator_approved');
       },
     },
   ],

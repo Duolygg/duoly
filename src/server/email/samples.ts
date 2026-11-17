@@ -107,6 +107,7 @@ export const samples: {
     total: usd(42036),
     heldNow: { amount: usd(3957), releases: '6 Nov' },
   },
+  creator_approved: { firstName: 'Alex', code: 'ALEX10' },
   support_handoff: {
     requesterName: 'Lea',
     requesterRole: 'Customer',

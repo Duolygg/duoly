@@ -98,6 +98,10 @@ export const transactionalEmails = {
     trigger: 'Weekly payout marked paid or put on hold',
     build: t.payout,
   },
+  creator_approved: {
+    trigger: 'Admin approved a creator application',
+    build: t.creatorApproved,
+  },
   support_handoff: {
     trigger: 'Sparky handed a conversation to a human',
     build: (data: t.SupportHandoffData) => t.supportHandoff(data),

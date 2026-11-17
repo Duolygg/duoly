@@ -58,6 +58,63 @@ No code, creator name or customer input is sent to analytics. No migration is ne
 The code can be checked or removed before continuing; the payment page uses the final
 server-priced checkout intent and does not mutate existing Stripe sessions.
 
+## Creator portal (migration 20261117120000)
+
+A creator now applies on /creators with a Duoly account, and sees everything about themselves on
+**/creators/dashboard**. Admin work shrinks to approve, pay and review. Spec:
+`ai-agents-research/25-creator-portal-spec.md`.
+
+**Applying.** The form keeps Fabian's fields and adds the requested code (3 to 20 letters or
+numbers, checked live), country, an 18 or older confirmation and acceptance of the published
+creator terms (`src/content/creator-terms.ts`, version 2026-11-17, stored with the time on the
+application). Signed-out visitors get the existing sign-in popup first, because the application
+belongs to an account. One open application per account, and a rejected applicant can apply again
+30 days after the decision. The support inbox still gets every application.
+
+**Codes.** A code is reserved while an application is open, through a partial unique index plus an
+advisory lock, so two accounts cannot both take one. Words the site answers itself (`blog`, `pro`,
+`terms`, …) are refused, because duoly.gg/CODE only redirects on a path no page answers. The list
+lives in `src/contracts/creator-portal.ts` and in `public.creator_reserved_code()`, and a unit test
+keeps the two equal.
+
+**Admin.** Admin, Creators shows the queue: channel link, platform, audience, country and message,
+approve with the requested code or an edited one, or reject with a reason the creator reads on
+their dashboard. Both decisions are written to the admin log, and an approval sends the "You're in"
+email with the code, the links and the way to the dashboard.
+
+**Money, and how it reconciles.** The dashboard reads one function, `creator_portal()`, which
+answers for `auth.uid()` only.
+
+- **Earned** is the completed-order figure the admin screen shows. The month tier comes from
+  `public.creator_tier()` and the month total is the same round half up expression
+  `admin_creator_dto()` and `creator_month_commission()` use, so admin and creator always agree.
+  `supabase/tests/creator_portal.sql` asserts that equality.
+- **Available** is the part of an unpaid month that is past the 30 day hold and not blocked by an
+  open report or Stripe dispute (`payout_order_blocked`).
+- **Pending** is the rest: the hold, plus an estimate at this month's tier for orders that are
+  still being played. The dashboard labels that estimate as one, because it is not earned yet.
+- **Paid** is what `creator_payouts` recorded. A month marked paid leaves the available balance,
+  exactly like the admin screen's owed figure.
+- **Reversed** is commission lost to refunds, voids and chargebacks, including orders that never
+  reached a commission month.
+
+**Link clicks** are an aggregate counter per code and day (`creator_link_clicks`): no IP, no
+cookie, no user id, nothing about the visitor. They are counted whatever the visitor chose in the
+cookie banner, because the row is a code, a day and a number; the referral cookie itself stays
+consent gated. Counting happens on the landing with a valid `?ref=` code, which is where both
+paths end up, since the short link redirects there. The write is never awaited.
+
+**Self-referral.** `checkout_intent_attribute()` is replaced (the one function this migration
+replaces) so an order whose customer is the creator's own account never attributes and never
+counts, in both directions. Existing attribution rows stay immutable.
+
+**Known gap.** `admin_creator_payout_pay()` (20261025250000) still only checks the €50 unpaid
+total: it does not look at the 30 day hold or at `payout_order_blocked`, so an admin can mark a
+whole month paid while the dashboard still shows part of that month as held. The creator numbers
+stay correct either way (a paid month leaves the available balance). Decide between treating it as
+a manual admin policy, or adding the guard in a follow-up migration; this release does not change
+that function, because the portal migration replaces only the attribution trigger.
+
 ## Safe deploy order
 
 1. Apply `supabase/migrations/20261025110000_creator_referrals.sql` through the reviewed migration release process while the existing application is still live. The migration only adds schema and does not replace existing functions.

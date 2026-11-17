@@ -1,0 +1,160 @@
+---
+// Local preview of /creators/dashboard with sample data, for looking at the states that need a
+// real creator account. Development only: 404 on any built site, and nothing here touches the
+// database. ?state=creator (default), applied, rejected or none.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import CreatorPortal from '../../components/site/CreatorPortal.jsx';
+
+if (!import.meta.env.DEV) return Astro.rewrite('/404');
+
+const state = ['creator', 'applied', 'rejected', 'none'].includes(
+  Astro.url.searchParams.get('state') ?? '',
+)
+  ? Astro.url.searchParams.get('state')!
+  : 'creator';
+const now = Date.now();
+const day = 86_400_000;
+const rules = {
+  months: 12,
+  payoutMinCents: 5000,
+  holdDays: 30,
+  viewerDiscount: 10,
+  tiers: [
+    { id: 'rising', name: 'Rising', from: 0, commission: 8 },
+    { id: 'partner', name: 'Partner', from: 25, commission: 10 },
+    { id: 'elite', name: 'Elite', from: 100, commission: 12 },
+  ],
+};
+const application = {
+  id: 'preview',
+  code: 'ALEX10',
+  name: 'Alex Rivera',
+  email: 'alex@example.com',
+  platform: 'Twitch',
+  channel: 'twitch.tv/alexrivera',
+  audience: '1K to 10K',
+  game: 'lol',
+  country: 'Austria',
+  message: 'I stream ranked every evening, mostly League and Valorant.',
+  termsVersion: '2026-11-17',
+  termsAcceptedAt: now - 2 * day,
+  status: state === 'rejected' ? 'rejected' : 'applied',
+  reason: state === 'rejected' ? 'Your channel has no gaming content yet.' : '',
+  createdAt: now - 2 * day,
+  decidedAt: state === 'rejected' ? now - day : null,
+};
+const order = (days: number, amount: number, extra: object) => ({
+  at: now - days * day,
+  game: 'lol',
+  title: 'Duo Pro, 3 games',
+  amountCents: amount,
+  commissionCents: Math.round((amount * 8) / 100),
+  commission: 8,
+  refundedCents: 0,
+  estimatedCents: 0,
+  state: 'available',
+  ...extra,
+});
+const sample: Record<string, unknown> = {
+  now,
+  status: state,
+  rules,
+  application: state === 'none' ? null : application,
+  canReapplyAt: state === 'rejected' ? now + 29 * day : null,
+  canApply: state === 'none',
+  creator: {
+    code: 'ALEX10',
+    name: 'Alex Rivera',
+    channel: 'twitch.tv/alexrivera',
+    active: true,
+    since: now - 120 * day,
+  },
+  month: {
+    month: new Date(now).toISOString().slice(0, 7),
+    orders: 18,
+    tier: { id: 'rising', name: 'Rising', commission: 8 },
+  },
+  stats: {
+    '7d': {
+      clicks: 412,
+      customers: 6,
+      orders: 9,
+      revenueCents: 16830,
+      commissionCents: 1346,
+    },
+    '30d': {
+      clicks: 1884,
+      customers: 21,
+      orders: 34,
+      revenueCents: 64120,
+      commissionCents: 5130,
+    },
+    all: {
+      clicks: 9120,
+      customers: 96,
+      orders: 184,
+      revenueCents: 342880,
+      commissionCents: 27430,
+    },
+  },
+  money: {
+    pendingCents: 1840,
+    heldCents: 1240,
+    openCents: 600,
+    openOrders: 3,
+    availableCents: 5230,
+    paidCents: 12900,
+    reversedCents: 310,
+    earnedCents: 19370,
+    thresholdCents: 5000,
+    months: [
+      {
+        month: new Date(now).toISOString().slice(0, 7),
+        orders: 18,
+        baseCents: 33940,
+        commission: 8,
+        commissionCents: 2715,
+        availableCents: 1475,
+        paid: false,
+      },
+    ],
+  },
+  orders: [
+    order(1, 1887, { state: 'open', commissionCents: 0, estimatedCents: 151 }),
+    order(3, 2499, { state: 'pending' }),
+    order(40, 1887, {}),
+    order(44, 2000, {
+      state: 'reversed',
+      commissionCents: 0,
+      refundedCents: 2000,
+    }),
+    order(70, 2499, { state: 'paid' }),
+  ],
+  payouts: [
+    {
+      month: '2026-10',
+      amountCents: 7430,
+      method: 'wise',
+      reference: 'W-2026-10-ALEX10',
+      paidAt: now - 12 * day,
+    },
+    {
+      month: '2026-09',
+      amountCents: 5470,
+      method: 'bank',
+      reference: 'SEPA-2026-09-114',
+      paidAt: now - 43 * day,
+    },
+  ],
+  details: null,
+};
+---
+
+<SiteLayout title="Creator dashboard preview | Duoly" csrf="preview">
+  <CreatorPortal
+    initial={sample}
+    csrf="preview"
+    origin="https://duoly.gg"
+    client:load
+  />
+</SiteLayout>
