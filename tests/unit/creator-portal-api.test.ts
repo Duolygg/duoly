@@ -30,14 +30,8 @@ vi.mock('../../src/server/analytics/client', () => ({
   serverAnalyticsEnabled: () => false,
 }));
 
-const {
-  apply,
-  codeCheck,
-  payoutDetails,
-  portal,
-  qr,
-  allowCreatorApplyCheck,
-} = await import('../../src/server/creators/portal');
+const { apply, codeCheck, payoutDetails, portal, qr, allowCreatorApplyCheck } =
+  await import('../../src/server/creators/portal');
 const { creatorApplications } = await import('../../src/server/admin/handlers');
 
 const csrf = 'csrf-token';

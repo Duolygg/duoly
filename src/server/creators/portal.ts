@@ -39,7 +39,8 @@ const call = (
   fn: string,
   args?: Record<string, unknown>,
 ): Rpc => {
-  const rpc = client.rpc as unknown as (
+  // Bound: supabase-js rpc reads `this`, so a detached copy throws (tests/unit/rpc-binding).
+  const rpc = client.rpc.bind(client) as unknown as (
     name: string,
     values?: Record<string, unknown>,
   ) => Rpc;
