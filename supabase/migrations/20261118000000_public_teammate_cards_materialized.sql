@@ -31,6 +31,7 @@ AS $function$
 $function$
 ;
 
+revoke all on function public.public_teammate_cards(text, int, text) from public, anon, authenticated, service_role;
 grant execute on function public.public_teammate_cards(text, int, text) to anon, authenticated;
 
 commit;

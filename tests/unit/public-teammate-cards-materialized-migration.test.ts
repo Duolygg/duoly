@@ -13,5 +13,8 @@ it('materializes public profile documents once before card projection', () => {
   expect(sql).toMatch(/from profile_docs p/i);
   expect(sql).toMatch(/STABLE SECURITY DEFINER/i);
   expect(sql).toMatch(/SET search_path TO ''/i);
+  expect(sql).toMatch(
+    /revoke all on function public\.public_teammate_cards\(text, int, text\) from public, anon, authenticated, service_role/i,
+  );
   expect(sql).toContain('to anon, authenticated');
 });
