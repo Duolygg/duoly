@@ -373,6 +373,7 @@ end $$;
 savepoint reversed_before_completion;
 do $$
 declare v_creator uuid; v_now timestamptz := pg_catalog.clock_timestamp(); o_r uuid; o_v uuid; o_x uuid;
+  v_assign uuid := pg_catalog.gen_random_uuid();
 begin
   select id into v_creator from public.creators where code='ALEXGG';
   insert into auth.users(id,aud,role,email,raw_user_meta_data,raw_app_meta_data) values
@@ -386,10 +387,13 @@ begin
   o_r := pg_temp.order_at('7e000000-0000-4000-8000-000000000008', 3000, v_now, false);
   update public.order_payments set state='refunded' where order_id=o_r;
   o_v := pg_temp.order_at('7e000000-0000-4000-8000-000000000009', 4000, v_now, false);
-  update public.orders set status='in_progress' where id=o_v;
+  insert into public.order_assignments(id,order_id,teammate_id,accepted_at)
+    values (v_assign,o_v,'7e000000-0000-4000-8000-000000000005',v_now);
+  update public.orders set status='in_progress',assigned_teammate_id='7e000000-0000-4000-8000-000000000005',
+    current_assignment_id=v_assign,accepted_at=v_now where id=o_v;
   update public.order_payments set state='voided' where order_id=o_v;
   o_x := pg_temp.order_at('7e000000-0000-4000-8000-000000000003', 500, v_now, false);
-  update public.orders set status='cancelled' where id=o_x;
+  update public.orders set status='cancelled',cancelled_at=v_now,cancel_reason='customer_cancelled' where id=o_x;
   insert into public.customer_referrals(customer_id,creator_id,code,first_order_id,attributed_at) values
    ('7e000000-0000-4000-8000-000000000008', v_creator, 'ALEXGG', o_r, v_now),
    ('7e000000-0000-4000-8000-000000000009', v_creator, 'ALEXGG', o_v, v_now);
