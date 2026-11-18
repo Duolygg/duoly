@@ -202,11 +202,13 @@ const firstName = (name: string) => name.trim().split(/\s+/)[0] || 'Duoly team';
 export async function conversationView(
   service: SupabaseClient,
   conversation: ConversationRow | null,
+  teamSnapshot?:
+    Awaited<ReturnType<typeof supportTeam>> | ReturnType<typeof supportTeam>,
 ) {
   if (!conversation) return null;
   const [rows, team] = await Promise.all([
     messages(service, conversation.id),
-    supportTeam(service),
+    teamSnapshot ?? supportTeam(service),
   ]);
   const agent =
     team.find((member) => member.id === conversation.claimed_by) ?? null;

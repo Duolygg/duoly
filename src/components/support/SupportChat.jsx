@@ -76,6 +76,7 @@ export default class SupportChat extends React.Component {
     }
   }
   componentWillUnmount() {
+    this._disposed = true;
     clearTimeout(this._t);
     window.removeEventListener('duoly:chat', this.openFromPage);
     window.removeEventListener('scroll', this.teaserOnScroll);
@@ -129,6 +130,7 @@ export default class SupportChat extends React.Component {
     if (!this.state.open) this.toggle();
   };
   schedule() {
+    if (this._disposed) return;
     clearTimeout(this._t);
     const c = this.state.data && this.state.data.conversation;
     const human = c && (c.status === 'waiting' || c.status === 'open');

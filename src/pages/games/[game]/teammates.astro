@@ -11,6 +11,7 @@ import '../../../components/teammates/profiles.css';
 import '../../../components/teammates/directory.css';
 import { gameBySlug } from '../../../site/games';
 import { pageViewer } from '../../../site/viewer';
+import { accountContext } from '../../../server/auth/context';
 import {
   publicProfilesEnabled,
   fixturesEnabled,
@@ -26,10 +27,11 @@ if (!publicProfilesEnabled() || !game) {
   Astro.response.status = 404;
   return Astro.rewrite('/404');
 }
+const account = accountContext(Astro.request, Astro.cookies);
 const [data, { viewer, csrf }, saved, live] = await Promise.all([
   directoryData(Astro.url.searchParams, game),
-  pageViewer(Astro),
-  loadSavedSlugs(Astro),
+  pageViewer(Astro, account),
+  loadSavedSlugs(Astro, account),
   homeLive(),
 ]);
 Astro.response.headers.set('Cache-Control', 'no-store');

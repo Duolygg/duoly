@@ -7,12 +7,14 @@ import { accountContext } from '../server/auth/context';
  * right account menu. Call it in page frontmatter (cookies must be set before
  * streaming starts). Never throws: a failure renders the signed-out header.
  */
-export async function pageViewer(Astro: AstroGlobal): Promise<{
+export async function pageViewer(
+  Astro: AstroGlobal,
+  account = accountContext(Astro.request, Astro.cookies),
+): Promise<{
   viewer: Viewer | undefined;
   csrf: string;
   currency?: string | null;
 }> {
-  const account = accountContext(Astro.request, Astro.cookies);
   if (!account.config) return { viewer: undefined, csrf: '' };
   try {
     const identity = await account.identity();

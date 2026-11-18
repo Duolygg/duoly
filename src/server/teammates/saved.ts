@@ -11,9 +11,12 @@ import { fixturesEnabled } from './public-profiles';
 
 const slugs = z.array(z.string().max(64)).max(200);
 
-export async function loadSavedSlugs(Astro: AstroGlobal): Promise<string[]> {
+export async function loadSavedSlugs(
+  Astro: AstroGlobal,
+  sharedAccount?: ReturnType<typeof accountContext>,
+): Promise<string[]> {
   if (fixturesEnabled()) return [];
-  const account = accountContext(Astro.request, Astro.cookies);
+  const account = sharedAccount ?? accountContext(Astro.request, Astro.cookies);
   if (!account.config || !account.client) return [];
   try {
     const identity = await account.identity();

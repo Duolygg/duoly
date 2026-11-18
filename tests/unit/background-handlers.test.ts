@@ -717,7 +717,7 @@ describe('the presence port counts fresh presence only', () => {
   });
 
   /**
-   * Only what `onlineTeammates` reads: a `count` over public.teammate_presence that applies the
+   * Only what `onlineTeammates` reads: an existence read over public.teammate_presence that applies the
    * filters it asks for. `fails` answers the way an unreadable table does.
    */
   function presenceDb(
@@ -734,11 +734,14 @@ describe('the presence port counts fresh presence only', () => {
         asked.push(column);
         return answer(left.filter((it) => (it[column] ?? '') > value));
       },
+      limit(n: number) {
+        return answer(left.slice(0, n));
+      },
       then: (resolve: (result: unknown) => void) =>
         resolve(
           fails
-            ? { count: null, error: { message: 'presence is unreadable' } }
-            : { count: left.length, error: null },
+            ? { data: null, error: { message: 'presence is unreadable' } }
+            : { data: left, error: null },
         ),
     });
     const db = {
@@ -768,6 +771,11 @@ describe('the presence port counts fresh presence only', () => {
       'online=true',
       'last_seen_at',
     ]);
+  });
+
+  it('only needs one of many fresh rows', async () => {
+    const { db } = presenceDb([row('a', true, 1000), row('b', true, 2000)]);
+    expect(await count(db)).toBe(1);
   });
 
   it('uses the same 20 s window as the role sync', async () => {

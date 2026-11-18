@@ -93,9 +93,11 @@ async function payload(
   conversation: ConversationRow | null,
   suggest?: string[],
 ) {
+  // One fresh team snapshot per payload, not two identical sets of three queries.
+  const teamRead = supportTeam(service);
   const [view, team] = await Promise.all([
-    conversationView(service, conversation),
-    supportTeam(service),
+    conversationView(service, conversation, teamRead),
+    teamRead,
   ]);
   return {
     csrf: account.csrf(),
