@@ -52,7 +52,7 @@ it('ships only the six audited functions with unchanged contracts and exact prop
     index,
     [signature, returns, language, digest],
   ] of functions.entries()) {
-    const statement = statements[index];
+    const statement = statements[index] ?? '';
     expect(statement).toContain(
       `CREATE OR REPLACE FUNCTION public.${signature}\n RETURNS ${returns}\n LANGUAGE ${language}\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$`,
     );
