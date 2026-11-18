@@ -10,64 +10,98 @@
 
 User-agent: *
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 # OpenAI: GPTBot trains models, ChatGPT-User fetches pages a user asked about,
 # OAI-SearchBot indexes for ChatGPT search.
 User-agent: GPTBot
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 # Anthropic: ClaudeBot trains models, Claude-User fetches pages for a user,
 # Claude-SearchBot indexes for Claude search. anthropic-ai is the legacy token.
 User-agent: ClaudeBot
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: Claude-User
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 # Perplexity: PerplexityBot indexes, Perplexity-User fetches on request.
 User-agent: PerplexityBot
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: Perplexity-User
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 # Gemini and Apple Intelligence training opt-ins. These tokens control AI training
 # only; blocking them would not remove Duoly from Google Search or Siri.
 User-agent: Google-Extended
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 # Bingbot powers the Bing index that Copilot and ChatGPT search read from.
 User-agent: Bingbot
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 # Other AI and social crawlers. Bytespider (ByteDance) and CCBot (Common Crawl)
 # collect bulk training data: change these two to "Disallow: /" to opt out of that
 # without touching anything else in this file.
 User-agent: Bytespider
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: CCBot
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: FacebookBot
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 User-agent: Amazonbot
 Allow: /
+Disallow: /teammates?
+Disallow: /games/*/teammates?
 
 Sitemap: https://duoly.gg/sitemap.xml

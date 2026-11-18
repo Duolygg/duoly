@@ -326,6 +326,7 @@ const tickerSet = recentShown.length
         <div class="md-popover md-popover-games">
           <a
             class:list={['md-option', { 'is-current': !game }]}
+            rel="nofollow"
             href={href({ game: null })}
             aria-current={!game ? 'true' : undefined}
           >
@@ -345,6 +346,7 @@ const tickerSet = recentShown.length
           {data.tiles.map((t) => (
             <a
               class:list={['md-option', { 'is-current': game?.id === t.id }]}
+              rel="nofollow"
               href={href({ game: t.id })}
               aria-current={game?.id === t.id ? 'true' : undefined}
             >
@@ -367,6 +369,7 @@ const tickerSet = recentShown.length
 
       <a
         class:list={['md-toggle', { 'is-on': f.online }]}
+        rel="nofollow"
         href={href({ online: !f.online })}
         role="switch"
         aria-checked={f.online ? 'true' : 'false'}
@@ -415,6 +418,7 @@ const tickerSet = recentShown.length
                 {data.languages.map((l) => (
                   <a
                     class:list={['md-chip', { 'is-on': f.lang === l.value }]}
+                    rel="nofollow"
                     href={href({ lang: f.lang === l.value ? null : l.value })}
                     aria-current={f.lang === l.value ? 'true' : undefined}
                   >
@@ -432,6 +436,7 @@ const tickerSet = recentShown.length
                 {data.styles.map((s) => (
                   <a
                     class:list={['md-chip', { 'is-on': f.style === s.value }]}
+                    rel="nofollow"
                     href={href({ style: f.style === s.value ? null : s.value })}
                     aria-current={f.style === s.value ? 'true' : undefined}
                   >
@@ -445,6 +450,7 @@ const tickerSet = recentShown.length
           <div class="md-filter-group md-filter-switches">
             <a
               class:list={['md-filter-switch', { 'is-on': f.coaching }]}
+              rel="nofollow"
               href={href({ coaching: !f.coaching })}
               role="switch"
               aria-checked={f.coaching ? 'true' : 'false'}
@@ -462,6 +468,7 @@ const tickerSet = recentShown.length
             </a>
             <a
               class:list={['md-filter-switch', { 'is-on': f.verified }]}
+              rel="nofollow"
               href={href({ verified: !f.verified })}
               role="switch"
               aria-checked={f.verified ? 'true' : 'false'}
@@ -478,6 +485,7 @@ const tickerSet = recentShown.length
             </a>
             <a
               class:list={['md-filter-switch', { 'is-on': f.gg }]}
+              rel="nofollow"
               href={href({ gg: !f.gg })}
               role="switch"
               aria-checked={f.gg ? 'true' : 'false'}
@@ -531,6 +539,7 @@ const tickerSet = recentShown.length
           {SORTS.map((s) => (
             <a
               class:list={['md-option', { 'is-current': f.sort === s.id }]}
+              rel="nofollow"
               href={href({ sort: s.id })}
               aria-current={f.sort === s.id ? 'true' : undefined}
             >
@@ -563,6 +572,7 @@ const tickerSet = recentShown.length
         {chips.map((c) => (
           <a
             class="md-active-chip"
+            rel="nofollow"
             href={c.href}
             aria-label={`Remove ${c.label}`}
           >
@@ -579,6 +589,7 @@ const tickerSet = recentShown.length
         ))}
         <a
           class="md-clear"
+          rel="nofollow"
           href={
             game
               ? href({
@@ -640,6 +651,7 @@ const tickerSet = recentShown.length
     <div class="md-games-track">
       <a
         class:list={['md-tile', { 'is-current': !game }]}
+        rel="nofollow"
         href={href({ game: null })}
         aria-current={!game ? 'true' : undefined}
       >
@@ -663,6 +675,7 @@ const tickerSet = recentShown.length
             'md-tile',
             { 'is-current': game?.id === t.id, 'is-empty': t.total === 0 },
           ]}
+          rel="nofollow"
           href={href({ game: t.id })}
           aria-current={game?.id === t.id ? 'true' : undefined}
         >
@@ -769,6 +782,7 @@ const tickerSet = recentShown.length
           <div class="md-more">
             <a
               class="tp-button tp-ghost"
+              rel="nofollow"
               href={`${href()}${href().includes('?') ? '&' : '?'}show=all#results`}
               data-more
             >

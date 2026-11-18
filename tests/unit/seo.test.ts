@@ -212,7 +212,11 @@ it('allows crawlers to read page-level indexing policies', () => {
     }
   }
   expect(robots).toContain('Sitemap: https://duoly.gg/sitemap.xml\n');
-  expect(groups.get('*')).toEqual(['Allow: /']);
+  expect(groups.get('*')).toEqual([
+    'Allow: /',
+    'Disallow: /teammates?',
+    'Disallow: /games/*/teammates?',
+  ]);
   // Every AI crawler, AI search bot and Bing has its own group saying the same thing.
   for (const agent of [
     'GPTBot',
@@ -232,7 +236,7 @@ it('allows crawlers to read page-level indexing policies', () => {
     'FacebookBot',
     'Amazonbot',
   ])
-    expect(groups.get(agent), agent).toEqual(['Allow: /']);
+    expect(groups.get(agent), agent).toEqual(groups.get('*'));
   // Keep every group identical, so no crawler escapes a rule meant for all of them.
   for (const [agent, rules] of groups)
     expect(rules, agent).toEqual(groups.get('*'));

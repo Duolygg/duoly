@@ -200,7 +200,7 @@ const GREEN = '#5EEAA8';
 
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 // Orders come from the one shared queue on the server (lib/orders.js); every dashboard polls it.
-const POLL_MS = 3000;
+const POLL_MS = 10000;
 const PRESENCE_MS = 10000;
 // Trust level history (sample): orders completed before this session, deposit currently held, saved vs Rookie rate
 // Earnings, trust level, rating and the leaderboard come from the server's earnings ledger
@@ -589,7 +589,7 @@ export default class Teammate extends React.Component {
       );
     this._tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
     // worker-driven, so a background tab keeps its heartbeat inside the 20 s timeout (desk-keeper)
-    this._stopPoll = backgroundTicker(POLL_MS, () => this.poll());
+    this._stopPoll = backgroundTicker(POLL_MS, () => this.poll(false, true));
     this._stopPresence = backgroundTicker(PRESENCE_MS, () => this.checkIn());
     // Not for an admin looking at the desk or for the design preview: those never check in, so a
     // coordinator there would join the roster as a leader that never beats.
@@ -674,7 +674,7 @@ export default class Teammate extends React.Component {
    * itself.
    */
   async checkIn() {
-    if (this._presence && !this._presence.mayCheckIn()) return;
+    if (this._presence) return this._presence.checkIn();
     await this.postCheckIn();
   }
   async postCheckIn() {
@@ -701,6 +701,7 @@ export default class Teammate extends React.Component {
     if (data.online) {
       const afkWarning = data.afkIn != null && data.afkIn <= AFK_WARN_SECONDS;
       if (afkWarning) showAfkWarning(data.afkIn);
+      const wasOnline = this.state.online;
       this.setState(
         {
           online: true,
@@ -708,7 +709,9 @@ export default class Teammate extends React.Component {
           forced: null,
           afkWarning,
         },
-        () => this.poll(),
+        () => {
+          if (!wasOnline) this.poll();
+        },
       );
     } else if (this.state.online || data.forcedOffline) {
       this._seen = null;
@@ -839,7 +842,15 @@ export default class Teammate extends React.Component {
     return GAMES.filter((g) => a.games.includes(g.id));
   }
   // Check in with the server: says we're online and fetches the shared queue.
-  async poll(force = false) {
+  async poll(force = false, scheduled = false) {
+    const now = Date.now();
+    const nextPollAt = this._deskFailures
+      ? this._nextDeskPollAt
+      : (this._lastDeskPollAt ?? -Infinity) + (document.hidden ? 30000 : 10000);
+    // A visible scheduler tick already supplies the 10-second cadence. Do not
+    // skip it because an online transition happened just after the previous tick.
+    const throttled = this._deskFailures || !scheduled || document.hidden;
+    if (this._deskDenied || (!force && throttled && now < nextPollAt)) return;
     if (
       this.props.admin ||
       this.state.needDiscord ||
@@ -850,6 +861,7 @@ export default class Teammate extends React.Component {
     )
       return;
     this._polling = true;
+    this._lastDeskPollAt = now;
     const generation = this._generation || 0;
     try {
       const { ok, status, data } = await this.post('/api/desk');
@@ -860,6 +872,8 @@ export default class Teammate extends React.Component {
       )
         return;
       if (!ok) {
+        this._deskDenied = [401, 403, 404].includes(status);
+        this.backoffDeskPoll();
         if ([401, 403, 404].includes(status)) this.clearPrivateAssignment();
         this.setState({
           readError: true,
@@ -874,6 +888,7 @@ export default class Teammate extends React.Component {
         });
         return;
       }
+      this._deskFailures = 0;
       this._acceptReadback = false;
       const fresh = this.state.online
         ? newEligibleOrders(this._seen, data.queue, this.state.access, {
@@ -924,6 +939,8 @@ export default class Teammate extends React.Component {
         });
       }
     } catch {
+      if (this._disposed || generation !== (this._generation || 0)) return;
+      this.backoffDeskPoll();
       if (!this._disposed)
         this.setState({
           loaded: false,
@@ -934,6 +951,17 @@ export default class Teammate extends React.Component {
     } finally {
       this._polling = false;
     }
+  }
+  backoffDeskPoll() {
+    this._deskFailures = (this._deskFailures || 0) + 1;
+    this._nextDeskPollAt =
+      Date.now() +
+      Math.min(
+        60000,
+        5000 *
+          2 ** Math.min(this._deskFailures - 1, 4) *
+          (1 + Math.random() * 0.2),
+      );
   }
   clearPrivateAssignment() {
     this.clearChatTimers();

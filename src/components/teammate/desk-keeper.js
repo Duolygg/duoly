@@ -321,8 +321,7 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
   });
 
   async function checkIn() {
-    if (!presence.mayCheckIn()) return;
-    await postCheckIn();
+    await presence.checkIn();
   }
 
   const activity = () => {
@@ -352,7 +351,8 @@ export function startDeskKeeper({ csrf, fetcher, location = window.location }) {
   window.addEventListener('pagehide', leaving);
 
   async function loadSettings(now) {
-    if (settings && now - settingsAt < SETTINGS_MS) return;
+    if (now - settingsAt < SETTINGS_MS) return;
+    settingsAt = now; // Failed settings reads must not retry every queue tick.
     try {
       const res = await api('/api/queue-settings');
       if (!res.ok) return;

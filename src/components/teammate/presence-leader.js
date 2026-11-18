@@ -96,8 +96,8 @@ export function createDeskPresence(options) {
     ticker,
   } = options;
   const peers = new Map();
-  let lastBeat = 0;
-  let lastTry = 0;
+  let lastBeat = -Infinity;
+  let lastTry = -Infinity;
   let lastShared = 0;
   let remoteActive = 0;
   let stopped = false;
@@ -128,7 +128,11 @@ export function createDeskPresence(options) {
    */
   const checkInNow = async () => {
     const at = now();
-    if (stopped || busy || at - lastTry < PRESENCE_MS) return;
+    // Worker ticks can arrive a few milliseconds early. After a successful beat,
+    // allow that jitter rather than skipping a whole 10-second heartbeat tick.
+    // Failed attempts still use the full interval to prevent retry amplification.
+    const cadence = lastBeat >= lastTry ? PRESENCE_MS - 250 : PRESENCE_MS;
+    if (stopped || busy || at - lastTry < cadence) return;
     lastTry = at;
     busy = true;
     try {
@@ -203,6 +207,16 @@ export function createDeskPresence(options) {
 
   return {
     id,
+    /** Share the host and watchdog attempt gate, including when requests fail. */
+    checkIn(at = now()) {
+      if (
+        !channel ||
+        leaderOf(peers, id, at) === id ||
+        at - lastBeat > BEAT_FRESH_MS
+      )
+        return checkInNow();
+      return Promise.resolve();
+    },
     /** Only the leader posts, unless no leader's answer has arrived for a while. */
     mayCheckIn(at = now()) {
       if (!channel) return true;

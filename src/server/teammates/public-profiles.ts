@@ -23,7 +23,37 @@ import {
 } from './public-profile-schemas';
 import { withDisplayLabels } from './profile-labels';
 
+// Cache public directory datasets only, never viewer-specific or authenticated reads.
+const directoryCache = new Map<string, { value: unknown; until: number }>();
+const directoryPending = new Map<string, Promise<unknown>>();
 async function readRpc(
+  fn: string,
+  args?: Record<string, unknown>,
+): Promise<unknown> {
+  if (!['public_teammate_cards', 'public_teammate_indexable'].includes(fn))
+    return readRpcUncached(fn, args);
+  const key = JSON.stringify([fn, args]);
+  const cached = directoryCache.get(key);
+  if (cached && cached.until > Date.now()) return cached.value;
+  const pending = directoryPending.get(key);
+  if (pending) return pending;
+  const task = readRpcUncached(fn, args)
+    .then((value) => {
+      if (directoryCache.size >= 128)
+        directoryCache.delete(directoryCache.keys().next().value!);
+      // Do not serve stale cards after an unpublish or administrative hide.
+      directoryCache.set(key, {
+        value,
+        until: Date.now() + (value === null ? 5000 : 30000),
+      });
+      return value;
+    })
+    .finally(() => directoryPending.delete(key));
+  directoryPending.set(key, task);
+  return task;
+}
+
+async function readRpcUncached(
   fn: string,
   args?: Record<string, unknown>,
 ): Promise<unknown> {

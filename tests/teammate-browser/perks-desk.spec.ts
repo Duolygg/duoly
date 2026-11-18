@@ -126,7 +126,8 @@ test('picked for you: badge, bell, Pass and toast', async ({ page }) => {
     .first()
     .dispatchEvent('click');
   const row = page.locator('li[data-picked="true"]');
-  await expect(row).toBeVisible({ timeout: 10_000 });
+  // The next healthy desk snapshot is on the 10-second scheduler.
+  await expect(row).toBeVisible({ timeout: 15_000 });
   await expect(row).toContainText('Play again');
   await expect(row).toContainText(
     'Your customer wants another round with you. Only you can take this for a minute.',
