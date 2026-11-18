@@ -124,6 +124,25 @@ describe('shared host and watchdog gate', () => {
     leader.tab.stop();
     follower.tab.stop();
   });
+  it('tolerates a slightly early healthy timer tick without skipping a heartbeat', async () => {
+    const leader = openTab(browser(), 'a');
+    await leader.tab.checkIn();
+    clock += PRESENCE_MS - 1;
+    await leader.tab.checkIn();
+    expect(leader.posts).toBe(2);
+    leader.tab.stop();
+  });
+  it('keeps the full failure gate even when a timer tick arrives slightly early', async () => {
+    const leader = openTab(browser(), 'a', undefined, false);
+    await leader.tab.checkIn();
+    clock += PRESENCE_MS - 1;
+    await leader.tab.checkIn();
+    expect(leader.posts).toBe(1);
+    clock += 1;
+    await leader.tab.checkIn();
+    expect(leader.posts).toBe(2);
+    leader.tab.stop();
+  });
   it('shares the in-flight gate without BroadcastChannel and permits the first check at time zero', async () => {
     let release!: () => void;
     let posts = 0;

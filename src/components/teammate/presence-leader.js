@@ -96,7 +96,7 @@ export function createDeskPresence(options) {
     ticker,
   } = options;
   const peers = new Map();
-  let lastBeat = 0;
+  let lastBeat = -Infinity;
   let lastTry = -Infinity;
   let lastShared = 0;
   let remoteActive = 0;
@@ -128,7 +128,11 @@ export function createDeskPresence(options) {
    */
   const checkInNow = async () => {
     const at = now();
-    if (stopped || busy || at - lastTry < PRESENCE_MS) return;
+    // Worker ticks can arrive a few milliseconds early. After a successful beat,
+    // allow that jitter rather than skipping a whole 10-second heartbeat tick.
+    // Failed attempts still use the full interval to prevent retry amplification.
+    const cadence = lastBeat >= lastTry ? PRESENCE_MS - 250 : PRESENCE_MS;
+    if (stopped || busy || at - lastTry < cadence) return;
     lastTry = at;
     busy = true;
     try {
