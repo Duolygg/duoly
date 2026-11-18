@@ -253,7 +253,7 @@ describe('POST /api/internal/timer', () => {
         ],
         order_streamer_bookings: [],
       },
-      { discord_order_posts_due: [{ id: ORDER }] },
+      { discord_order_post_due: [{ id: ORDER }] },
     ).client;
     const response = await post(firePayload());
     expect(response.status).toBe(200);

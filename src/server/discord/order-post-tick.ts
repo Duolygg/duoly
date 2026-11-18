@@ -263,7 +263,7 @@ interface ToClose {
 }
 
 export interface OrderPostStore {
-  due(afterSeconds: number): Promise<DueOrder[]>;
+  due(afterSeconds: number, orderId?: string): Promise<DueOrder[]>;
   claim(
     order: string,
     queueKey: string,
@@ -293,10 +293,14 @@ export function supabaseOrderPostStore(
     return data as unknown;
   };
   return {
-    due: async (afterSeconds) =>
-      ((await rpc('discord_order_posts_due', {
-        p_after_seconds: afterSeconds,
-      })) ?? []) as DueOrder[],
+    due: async (afterSeconds, orderId) =>
+      ((await rpc(
+        orderId ? 'discord_order_post_due' : 'discord_order_posts_due',
+        {
+          p_after_seconds: afterSeconds,
+          ...(orderId ? { p_order_id: orderId } : {}),
+        },
+      )) ?? []) as DueOrder[],
     claim: async (order, queueKey, channel) =>
       ((await rpc('discord_order_post_claim', {
         p_order_id: order,

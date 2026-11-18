@@ -130,7 +130,8 @@ export function timerPorts(db: SupabaseClient, site: string): TimerPorts {
     },
 
     orderDue: async (ref) => {
-      const { data, error } = await db.rpc('discord_order_posts_due', {
+      const { data, error } = await db.rpc('discord_order_post_due', {
+        p_order_id: ref,
         p_after_seconds: Math.round(ORDER_POST_DELAY_MS / 1000),
       });
       if (error) failed('read due orders', error);
@@ -149,8 +150,7 @@ export function timerPorts(db: SupabaseClient, site: string): TimerPorts {
       return runOrderPosts(config, site, {
         store: {
           ...store,
-          due: async (after) =>
-            (await store.due(after)).filter((order) => order.id === ref),
+          due: async (after) => store.due(after, ref),
           toClose: async () => [],
         },
       });
@@ -181,17 +181,18 @@ export function timerPorts(db: SupabaseClient, site: string): TimerPorts {
     },
 
     eligibleAnalytics: async () => {
-      const { count, error } = await db
+      const { data, error } = await db
         .from('analytics_outbox')
-        .select('id', { count: 'exact', head: true })
+        .select('id')
         .is('sent_at', null)
         .is('failed_at', null)
         .or(
           `claimed_until.is.null,claimed_until.lte.${new Date().toISOString()}`,
-        );
+        )
+        .limit(1);
       // Same direction as background_overdue(): an unreadable predicate reads as work to do.
       if (error) return 1;
-      return count ?? 0;
+      return Array.isArray(data) && data.length > 0 ? 1 : 0;
     },
 
     drainAnalytics: async () => {
@@ -209,15 +210,16 @@ export function timerPorts(db: SupabaseClient, site: string): TimerPorts {
       // a heartbeat hours old. The 20 s window is the same rule `presenceFresh` and the `roles` SQL
       // predicate apply, so the timer and the role sync always agree on who is online.
       const since = new Date(Date.now() - PRESENCE_STALE_MS).toISOString();
-      const { count, error } = await db
+      const { data, error } = await db
         .from('teammate_presence')
-        .select('user_id', { count: 'exact', head: true })
+        .select('user_id')
         .eq('online', true)
-        .gt('last_seen_at', since);
+        .gt('last_seen_at', since)
+        .limit(1);
       // Nobody fresh ends the timer after one sync; the next online event registers it again. An
       // unreadable read is treated the same way on purpose, so a broken query cannot re-arm forever.
       if (error) return 0;
-      return count ?? 0;
+      return Array.isArray(data) && data.length > 0 ? 1 : 0;
     },
 
     syncRoles: async () => {

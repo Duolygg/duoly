@@ -19,8 +19,11 @@ import { renderPricingMarkdown } from '../server/seo/pricing-md';
  */
 export const prerender = false;
 
+// Bundled catalog data is immutable for this deployment. Keep a fresh Response per request.
+let cachedBody: string | undefined;
+
 export const GET: APIRoute = () =>
-  new Response(renderPricingMarkdown(), {
+  new Response((cachedBody ??= renderPricingMarkdown()), {
     headers: {
       // text/plain, not text/markdown: browsers render the first and download
       // the second, and this page is meant to be read.

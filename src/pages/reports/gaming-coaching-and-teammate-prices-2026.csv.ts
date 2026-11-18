@@ -14,8 +14,11 @@ import { renderReportCsv } from '../../server/seo/price-report';
  */
 export const prerender = false;
 
+// Bundled catalog data is immutable for this deployment. Keep a fresh Response per request.
+let cachedBody: string | undefined;
+
 export const GET: APIRoute = () =>
-  new Response(renderReportCsv(), {
+  new Response((cachedBody ??= renderReportCsv()), {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',
       'Content-Disposition':

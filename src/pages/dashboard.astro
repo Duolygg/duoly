@@ -24,21 +24,15 @@ if (identity && identity.viewer.role !== 'customer')
 for (const [name, value] of account.headers)
   Astro.response.headers.set(name, value);
 const csrf = account.csrf();
-// Duoly PRO card state (null while PRO_ENABLED is off).
-const pro = identity
-  ? await loadProView(account.client, identity.viewer.role)
-  : null;
+// Independent read models share the already-validated request client.
+const [pro, preload, { cur, usdRate }] = await Promise.all([
+  identity ? loadProView(account.client, identity.viewer.role) : null,
+  identity
+    ? loadDashboardPreload(account.client)
+    : { history: null, live: undefined },
+  viewerCurrency(Astro.cookies, identity?.profile.currency),
+]);
 const proWelcome = Astro.url.searchParams.get('pro') === 'welcome';
-// The balance, counts and open order, read while rendering, so the dashboard never starts at
-// $0.00 and 0 orders and then jumps to the real figures.
-const preload = identity
-  ? await loadDashboardPreload(account.client)
-  : { history: null, live: undefined };
-// Same currency as the homepage: the account's, then the one picked (or auto-detected) here.
-const { cur, usdRate } = await viewerCurrency(
-  Astro.cookies,
-  identity?.profile.currency,
-);
 ---
 
 {identity ? (

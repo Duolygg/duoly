@@ -63,6 +63,15 @@ begin
   if due::text ~* '(secret|0664|customer|ign|note|country)' then raise exception 'post facts leak customer data: %', due; end if;
   if (due->0->>'payoutUsdCents')::int <> 1086 or due->0->>'rank' <> 'Gold 3' or not (due->0->>'voice')::boolean
      or due->0->>'cancelsAt' is null then raise exception 'post facts incomplete: %', due->0; end if;
+  -- the one-order read is exactly the full sweep narrowed to that order, for every fixture order
+  if exists (
+    select 1 from public.orders o where o.id::text like 'd4200000-0000-4000-8000-%'
+       and public.discord_order_post_due(o.id, 100) is distinct from coalesce((
+         select pg_catalog.jsonb_agg(e order by ord) from pg_catalog.jsonb_array_elements(due) with ordinality as x(e, ord)
+          where e->>'id' = o.id::text), '[]'::jsonb)
+  ) then raise exception 'scoped due read differs from the full sweep'; end if;
+  if pg_catalog.jsonb_array_length(public.discord_order_post_due('d4200000-0000-4000-8000-000000000001', 100)) <> 1 then
+    raise exception 'scoped due read missed a due order'; end if;
 
   -- claim A once, never twice
   select o.queued_at into q from public.orders o where o.id = 'd4200000-0000-4000-8000-000000000001';
@@ -209,6 +218,9 @@ end $$;
 -- Permissions
 do $$
 begin
+  if has_function_privilege('anon','public.discord_order_post_due(uuid,integer)','execute')
+     or has_function_privilege('authenticated','public.discord_order_post_due(uuid,integer)','execute') then
+    raise exception 'scoped due read is not service only'; end if;
   if has_function_privilege('anon','public.discord_order_posts_due(integer)','execute')
      or has_function_privilege('authenticated','public.discord_order_post_claim(uuid,timestamptz,text)','execute')
      or has_function_privilege('authenticated','public.discord_order_posts_to_close()','execute')

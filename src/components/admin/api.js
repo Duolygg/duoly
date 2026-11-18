@@ -25,14 +25,31 @@ export function adminApi(csrf) {
       };
     return { ok: true, data: body };
   }
+  // In-flight only: every completed read is followed by a fresh authorized request.
+  const reads = new Map();
+  const get = (path) => {
+    if (reads.has(path)) return reads.get(path);
+    const pending = request(path, { method: 'GET' }).finally(() => {
+      if (reads.get(path) === pending) reads.delete(path);
+    });
+    reads.set(path, pending);
+    return pending;
+  };
   return {
-    get: (path) => request(path, { method: 'GET' }),
-    post: (path, body) =>
-      request(path, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...body, csrf }),
-      }),
+    get,
+    post: async (path, body) => {
+      // Any command can affect another endpoint's data. Never reuse reads across it.
+      reads.clear();
+      try {
+        return await request(path, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...body, csrf }),
+        });
+      } finally {
+        reads.clear();
+      }
+    },
   };
 }
 

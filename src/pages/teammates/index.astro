@@ -5,6 +5,7 @@ import '../../components/teammates/profiles.css';
 import '../../components/teammates/directory.css';
 import { SITE_GAMES } from '../../site/games';
 import { pageViewer } from '../../site/viewer';
+import { accountContext } from '../../server/auth/context';
 import {
   publicProfilesEnabled,
   fixturesEnabled,
@@ -19,10 +20,11 @@ if (!publicProfilesEnabled()) return Astro.rewrite('/404');
    /games/<game>/teammates, which is where the game menu and tiles now point. */
 const requested = Astro.url.searchParams.get('game');
 const game = SITE_GAMES.find((g) => g.id === requested || g.slug === requested);
+const account = accountContext(Astro.request, Astro.cookies);
 const [data, { viewer, csrf }, saved, live] = await Promise.all([
   directoryData(Astro.url.searchParams, game),
-  pageViewer(Astro),
-  loadSavedSlugs(Astro),
+  pageViewer(Astro, account),
+  loadSavedSlugs(Astro, account),
   homeLive(),
 ]);
 Astro.response.headers.set('Cache-Control', 'no-store');

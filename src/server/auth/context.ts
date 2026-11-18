@@ -99,7 +99,7 @@ export function accountContext(request: Request, cookies: AstroCookies) {
     next.set('Content-Type', 'application/json; charset=utf-8');
     return new Response(JSON.stringify(body), { status, headers: next });
   };
-  const identity = async (): Promise<{
+  const loadIdentity = async (): Promise<{
     viewer: Viewer;
     profile: Profile;
     discord: DiscordLink | null;
@@ -195,6 +195,16 @@ export function accountContext(request: Request, cookies: AstroCookies) {
         })
       : null;
     return { viewer, profile, discord };
+  };
+  // Share only overlapping reads on this explicitly shared request context.
+  // Clear on both success and failure: later reads may follow account mutations.
+  let identityInFlight: ReturnType<typeof loadIdentity> | undefined;
+  const identity = (): ReturnType<typeof loadIdentity> => {
+    if (!identityInFlight)
+      identityInFlight = loadIdentity().finally(() => {
+        identityInFlight = undefined;
+      });
+    return identityInFlight;
   };
   return {
     config,
