@@ -84,6 +84,19 @@ it('polls healthy visible desks every 10 seconds and hidden desks every 30 secon
   await c.poll();
   expect(c.post).toHaveBeenCalledTimes(6);
 });
+it('does not miss the next scheduled visible poll after going online between ticks', async () => {
+  vi.useFakeTimers();
+  vi.stubGlobal('document', { hidden: false });
+  const c = desk();
+  c.state.online = true;
+  c.post = vi
+    .fn()
+    .mockResolvedValue({ ok: true, data: { queue: [], mine: null } });
+  await c.poll();
+  await vi.advanceTimersByTimeAsync(9750);
+  await c.poll(false, true);
+  expect(c.post).toHaveBeenCalledTimes(2);
+});
 it('restores visible polling within 10 seconds of the last hidden read', async () => {
   vi.useFakeTimers();
   vi.stubGlobal('document', { hidden: true });
@@ -113,6 +126,7 @@ it.each([401, 403, 404])(
     await vi.advanceTimersByTimeAsync(120000);
     await c.poll();
     await c.poll(true);
+    await c.poll(false, true);
     expect(c.post).toHaveBeenCalledTimes(1);
     expect(c.state.readError).toBe(true);
   },
@@ -130,7 +144,7 @@ it.each(['response', 'network'])(
         ? vi.fn().mockResolvedValue({ ok: false, status: 503, data: {} })
         : vi.fn().mockRejectedValue(new Error('network'));
     await c.poll();
-    await c.poll();
+    await c.poll(false, true);
     expect(c.post).toHaveBeenCalledTimes(1);
     await vi.advanceTimersByTimeAsync(5000);
     await c.poll();

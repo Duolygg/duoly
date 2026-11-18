@@ -200,7 +200,7 @@ const GREEN = '#5EEAA8';
 
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 // Orders come from the one shared queue on the server (lib/orders.js); every dashboard polls it.
-const POLL_MS = 5000;
+const POLL_MS = 10000;
 const PRESENCE_MS = 10000;
 // Trust level history (sample): orders completed before this session, deposit currently held, saved vs Rookie rate
 // Earnings, trust level, rating and the leaderboard come from the server's earnings ledger
@@ -589,7 +589,7 @@ export default class Teammate extends React.Component {
       );
     this._tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
     // worker-driven, so a background tab keeps its heartbeat inside the 20 s timeout (desk-keeper)
-    this._stopPoll = backgroundTicker(POLL_MS, () => this.poll());
+    this._stopPoll = backgroundTicker(POLL_MS, () => this.poll(false, true));
     this._stopPresence = backgroundTicker(PRESENCE_MS, () => this.checkIn());
     // Not for an admin looking at the desk or for the design preview: those never check in, so a
     // coordinator there would join the roster as a leader that never beats.
@@ -842,12 +842,15 @@ export default class Teammate extends React.Component {
     return GAMES.filter((g) => a.games.includes(g.id));
   }
   // Check in with the server: says we're online and fetches the shared queue.
-  async poll(force = false) {
+  async poll(force = false, scheduled = false) {
     const now = Date.now();
     const nextPollAt = this._deskFailures
       ? this._nextDeskPollAt
       : (this._lastDeskPollAt ?? -Infinity) + (document.hidden ? 30000 : 10000);
-    if (this._deskDenied || (!force && now < nextPollAt)) return;
+    // A visible scheduler tick already supplies the 10-second cadence. Do not
+    // skip it because an online transition happened just after the previous tick.
+    const throttled = this._deskFailures || !scheduled || document.hidden;
+    if (this._deskDenied || (!force && throttled && now < nextPollAt)) return;
     if (
       this.props.admin ||
       this.state.needDiscord ||
