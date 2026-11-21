@@ -269,6 +269,9 @@ const faq: [string, string][] = [
                     {game.hubPath && (
                       <a href={game.hubPath}>{game.name} page</a>
                     )}
+                    {game.coachingPath && (
+                      <a href={game.coachingPath}>{game.name} coaching</a>
+                    )}
                   </th>
                 </tr>
                 {groupsOf(game).map((group) => (
