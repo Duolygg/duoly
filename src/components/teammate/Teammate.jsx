@@ -2545,7 +2545,7 @@ export default class Teammate extends React.Component {
           >
             <div
               style={{
-                maxWidth: '1240px',
+                maxWidth: 'var(--page-max, 1240px)',
                 margin: '0 auto',
                 padding: '10px 24px',
                 display: 'flex',
@@ -2837,7 +2837,7 @@ export default class Teammate extends React.Component {
             v.admin
               ? {}
               : {
-                  maxWidth: '1240px',
+                  maxWidth: 'var(--page-max, 1240px)',
                   margin: '0 auto',
                   padding: '32px 24px 80px',
                 }

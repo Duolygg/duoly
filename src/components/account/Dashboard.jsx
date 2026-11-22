@@ -721,7 +721,7 @@ export default class Dashboard extends React.Component {
         >
           <div
             style={{
-              maxWidth: '1240px',
+              maxWidth: 'var(--page-max, 1240px)',
               margin: '0 auto',
               padding: '10px 24px',
               display: 'flex',
@@ -1011,7 +1011,7 @@ export default class Dashboard extends React.Component {
 
         <main
           style={{
-            maxWidth: '1240px',
+            maxWidth: 'var(--page-max, 1240px)',
             margin: '0 auto',
             padding: '40px 24px 80px',
           }}

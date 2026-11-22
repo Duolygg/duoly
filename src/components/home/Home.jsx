@@ -1964,7 +1964,7 @@ export default class Home extends React.Component {
             className="dl-head"
             style={{
               position: 'relative',
-              maxWidth: '1240px',
+              maxWidth: 'var(--page-max, 1240px)',
               margin: '0 auto',
               padding: '10px 24px',
               display: 'flex',
@@ -2560,7 +2560,7 @@ export default class Home extends React.Component {
           <section
             aria-labelledby="hero-h"
             style={{
-              maxWidth: '1240px',
+              maxWidth: 'var(--page-max, 1240px)',
               margin: '0 auto',
               padding: '56px 24px 40px',
               display: 'flex',
@@ -3014,7 +3014,11 @@ export default class Home extends React.Component {
             </div>
           ) : null}
           <div
-            style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 24px' }}
+            style={{
+              maxWidth: 'var(--page-max, 1240px)',
+              margin: '0 auto',
+              padding: '0 24px',
+            }}
           >
             <section
               id="games"

@@ -1,6 +1,6 @@
 /* Existing EmptyDashboard/Dashboard/QueueRoom palette and typography. */
 .customer-orders {
-  max-width: 1240px;
+  max-width: var(--page-max, 1240px);
   margin: auto;
   padding: 40px 24px 64px;
   overflow-wrap: anywhere;

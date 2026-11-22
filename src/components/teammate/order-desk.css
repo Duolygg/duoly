@@ -1,5 +1,5 @@
 .teammate-desk {
-  max-width: 1240px;
+  max-width: var(--page-max, 1240px);
   margin: 0 auto;
   padding: 40px 24px 64px;
   color: #f3eeff;

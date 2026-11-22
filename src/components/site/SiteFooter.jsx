@@ -94,7 +94,7 @@ export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
     >
       <div
         style={{
-          maxWidth: '1240px',
+          maxWidth: 'var(--page-max, 1240px)',
           margin: '0 auto',
           padding: '40px 24px 0',
         }}
@@ -235,7 +235,7 @@ export default function SiteFooter({ bottomSpace = 64, topSpace = 0 }) {
       </div>
       <div
         style={{
-          maxWidth: '1240px',
+          maxWidth: 'var(--page-max, 1240px)',
           margin: '0 auto',
           padding: '40px 24px ' + bottomSpace + 'px',
           display: 'flex',

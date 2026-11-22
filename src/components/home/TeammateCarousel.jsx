@@ -6,9 +6,9 @@
 import BundledImage from '../shared/BundledImage';
 import React from 'react';
 
-// One loop holds at least this many cards (5 × 288px is wider than the 1240px page), so a short
+// One loop holds at least this many cards (7 × 288px is wider than the widest 2000px page), so a short
 // list repeats and the strip never shows a gap; the track holds two loops and slides by one.
-const LOOP_CARDS = 5;
+const LOOP_CARDS = 7;
 // pixels per second, the same calm pace whatever the number of cards
 const SPEED = 32;
 const CARD_PX = 288;

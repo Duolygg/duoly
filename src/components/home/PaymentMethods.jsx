@@ -52,9 +52,9 @@ function Tile({ method }) {
   );
 }
 
-// One loop of a row is at least this many tiles (12 × 108px ≈ the 1240px page width), so a short
+// One loop of a row is at least this many tiles (19 × 108px is wider than the widest 2000px page), so a short
 // row never shows a gap; the track holds two loops and slides by one.
-const LOOP_TILES = 12;
+const LOOP_TILES = 19;
 
 function Row({ methods, label, reverse }) {
   const perLoop = Math.max(1, Math.ceil(LOOP_TILES / methods.length));

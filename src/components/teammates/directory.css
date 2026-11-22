@@ -104,7 +104,7 @@
   z-index: 10;
   display: flex;
   align-items: stretch;
-  max-width: 1180px;
+  max-width: var(--page-max-inset, 1180px);
   margin: 0 auto;
   padding: 6px;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -836,7 +836,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  max-width: 1180px;
+  max-width: var(--page-max-inset, 1180px);
   margin: 12px auto 0;
 }
 .md-active-chip {
