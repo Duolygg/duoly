@@ -35,6 +35,10 @@
   padding-top: 24px;
   padding-bottom: 8px;
 }
+/* The directory is a browsing grid: it takes the full page width; only a single profile stays at 1448px. */
+.tp-page.tp-directory {
+  width: min(calc(var(--page-max, 1240px) + 8px), calc(100% - 80px));
+}
 .tp-page *,
 .tp-row * {
   box-sizing: border-box;
