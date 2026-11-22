@@ -1611,7 +1611,7 @@ export default class QueueRoom extends React.Component {
       >
         <header
           style={{
-            maxWidth: '1180px',
+            maxWidth: 'var(--page-max-inset, 1180px)',
             margin: '0 auto',
             padding: '14px 20px',
             display: 'flex',
@@ -1673,7 +1673,7 @@ export default class QueueRoom extends React.Component {
 
         <main
           style={{
-            maxWidth: '1180px',
+            maxWidth: 'var(--page-max-inset, 1180px)',
             margin: '0 auto',
             padding: '8px 20px 48px',
           }}
