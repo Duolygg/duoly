@@ -108,6 +108,7 @@ function writePreview(outDir: string): void {
     application_approved: 'Teammates',
     application_declined: 'Teammates',
     payout: 'Teammates',
+    creator_approved: 'Creators',
     support_handoff: 'Support',
     support_reply: 'Support',
   };

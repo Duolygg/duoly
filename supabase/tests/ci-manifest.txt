@@ -22,6 +22,7 @@ suite chat_flag_audit.sql
 # skip completion_run.py compatibility entrypoint delegates to manifest runner; not a second suite
 # skip connect_payouts.sql historical 10 USD minimum fixture expects four scheduled lines; latest minimum is 25 USD
 # skip creator_referrals.sql after adding explicit admin sections, unchanged existing-customer-attribution assertion still fails on latest schema; requires current referral eligibility fixture port
+suite creator_portal.sql
 suite discord_links.sql
 suite discord_order_posts.sql
 suite discord_role_sync.sql

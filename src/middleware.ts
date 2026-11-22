@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import { captureReferral } from './server/referrals';
+import { countCreatorLinkClick } from './server/creators/clicks';
 import { creatorShortLink } from './server/creators/short-link';
 import { trackRequest } from './server/analytics/client';
 
@@ -24,6 +25,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     trackRequest(context, null, 'creator_link_landed', {
       referral_consent: true,
     });
+  // The creator's own click counter: an aggregate number per code and day, counted whatever the
+  // visitor chose in the banner, never awaited. Short links end up here too, through their 302.
+  countCreatorLinkClick(context.url, context.request?.method);
   let response = await next();
   // Creator short links (duoly.gg/CODE): only paths no page answers, only active codes.
   const shortLink = await creatorShortLink(

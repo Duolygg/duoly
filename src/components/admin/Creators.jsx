@@ -53,6 +53,21 @@ export function creatorRow(c) {
     })),
   };
 }
+/**
+ * Server application -> screen shape (times in ms, one open flag). The application DTO already
+ * sends milliseconds, unlike the creator rows, which carry timestamps.
+ */
+const atMs = (value) =>
+  typeof value === 'number' ? value : value ? Date.parse(value) : null;
+export function applicationRow(a) {
+  return {
+    ...a,
+    createdAt: atMs(a.createdAt),
+    decidedAt: atMs(a.decidedAt),
+    open: a.status === 'applied',
+  };
+}
+
 /** Server attributed order -> screen shape. Counts once completed and not refunded. */
 export function referralOrder(o) {
   const refunded = ['refunded', 'voided'].includes(o.payment);
@@ -78,6 +93,9 @@ export default class Creators extends React.Component {
     this.state = {
       creators: [],
       orders: [],
+      applications: [],
+      appsLoaded: false,
+      appsError: '',
       loaded: false,
       error: '',
       referralsEnabled: null,
@@ -89,9 +107,48 @@ export default class Creators extends React.Component {
   }
   componentDidMount() {
     this.load();
+    this.loadApplications();
     this.props.api.get('/api/admin/settings').then((r) => {
       if (r.ok) this.setState({ referralsEnabled: !!r.data.referralsEnabled });
     });
+  }
+  async loadApplications() {
+    const r = await this.props.api.get('/api/admin/creator-applications');
+    if (!r.ok)
+      return this.setState({
+        appsError: r.error || 'Couldn’t load applications.',
+        appsLoaded: true,
+      });
+    this.setState({
+      applications: (r.data.applications || []).map(applicationRow),
+      appsError: '',
+      appsLoaded: true,
+    });
+  }
+  /** Approve with the code in the dialog (the requested one by default), or reject with a reason. */
+  async decide(application, approve, value) {
+    this.setState({ busy: application.id });
+    const r = await this.props.api.post('/api/admin/creator-applications', {
+      action: 'decide',
+      id: application.id,
+      approve,
+      code: approve ? String(value || '').trim() : undefined,
+      reason: approve ? undefined : String(value || '').trim(),
+    });
+    this.setState({ busy: '' });
+    if (!r.ok)
+      return this.props.toast(r.error || 'Couldn’t save that.', 'warn');
+    await this.loadApplications();
+    if (approve) await this.load();
+    this.props.log();
+    this.props.toast(
+      approve
+        ? 'Approved ' +
+            application.name +
+            ' with code ' +
+            (r.data.creator ? r.data.creator.code : application.code)
+        : 'Rejected ' + application.name + '.',
+    );
   }
   async load() {
     const r = await this.props.api.get('/api/admin/creators');
@@ -184,6 +241,194 @@ export default class Creators extends React.Component {
     }));
     this.props.log();
     this.props.toast('Marked ' + monthLabel(month.month) + ' commission paid.');
+  }
+
+  renderApplications() {
+    const s = this.state;
+    const open = s.applications.filter((a) => a.open);
+    const decided = s.applications.filter((a) => !a.open).slice(0, 10);
+    const label = { fontSize: '12.5px', color: C.dim };
+    return (
+      <section aria-labelledby="cr-apps" style={{ ...card, padding: '18px' }}>
+        <h2 id="cr-apps" style={h2}>
+          Applications
+        </h2>
+        <p style={{ margin: '4px 0 12px', fontSize: '13px', color: C.dim }}>
+          Creators apply on /creators with a Duoly account. Approving creates
+          the code and emails them; rejecting shows your reason on their
+          dashboard, and they can apply again after 30 days.
+        </p>
+        {!s.appsLoaded ? (
+          <p style={{ margin: '0', color: C.dim }}>Loading applications…</p>
+        ) : s.appsError ? (
+          <p role="alert" style={{ margin: '0', color: C.red }}>
+            {s.appsError}
+          </p>
+        ) : !open.length ? (
+          <p style={{ margin: '0', color: C.dim }}>
+            No open applications right now.
+          </p>
+        ) : (
+          <div style={{ display: 'grid', gap: '10px' }}>
+            {open.map((a) => (
+              <div
+                key={a.id}
+                style={{
+                  border: '1px solid ' + C.line,
+                  borderRadius: '14px',
+                  padding: '14px',
+                  display: 'grid',
+                  gap: '8px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                    alignItems: 'baseline',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'ui-monospace, Consolas, monospace',
+                      color: C.accent,
+                      fontWeight: '700',
+                    }}
+                  >
+                    {a.code}
+                  </span>
+                  <span style={{ color: C.white, fontWeight: '600' }}>
+                    {a.name}
+                  </span>
+                  <span style={label}>
+                    {a.platform} · {a.audience} · {a.country} ·{' '}
+                    {a.createdAt ? dateOnly(a.createdAt) : ''}
+                  </span>
+                </div>
+                <div style={label}>
+                  <a
+                    href={
+                      /^https?:\/\//i.test(a.channel)
+                        ? a.channel
+                        : 'https://' + a.channel
+                    }
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    style={{ color: C.accent }}
+                  >
+                    {a.channel}
+                  </a>
+                  {' · '}
+                  {a.email}
+                </div>
+                {a.message ? (
+                  <p
+                    style={{
+                      margin: '0',
+                      fontSize: '13.5px',
+                      color: C.text,
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    {a.message}
+                  </p>
+                ) : null}
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    disabled={s.busy === a.id}
+                    style={btn('primary')}
+                    onClick={() =>
+                      this.props.ask({
+                        title: 'Approve ' + a.name + '?',
+                        body: 'This creates the code, links it to their account and emails them. Codes cannot be changed afterwards.',
+                        confirm: 'Approve',
+                        field: {
+                          label: 'Creator code',
+                          value: a.code,
+                          placeholder: 'YOURNAME10',
+                          required: true,
+                        },
+                        onConfirm: (value) => this.decide(a, true, value),
+                      })
+                    }
+                  >
+                    Approve
+                  </button>
+                  <button
+                    type="button"
+                    disabled={s.busy === a.id}
+                    style={btn('danger')}
+                    onClick={() =>
+                      this.props.ask({
+                        title: 'Reject ' + a.name + '?',
+                        body: 'They see this reason on their dashboard and can apply again after 30 days.',
+                        confirm: 'Reject',
+                        kind: 'danger',
+                        field: {
+                          label: 'Reason',
+                          placeholder: 'What they would need to change',
+                          required: true,
+                        },
+                        onConfirm: (value) => this.decide(a, false, value),
+                      })
+                    }
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {decided.length ? (
+          <div className="ops-table-wrap" style={{ marginTop: '14px' }}>
+            <table className="ops-table" style={{ minWidth: '560px' }}>
+              <thead>
+                <tr>
+                  <th style={th}>Code</th>
+                  <th style={th}>Creator</th>
+                  <th style={th}>Decision</th>
+                  <th style={th}>By</th>
+                  <th style={th}>Reason</th>
+                </tr>
+              </thead>
+              <tbody>
+                {decided.map((a) => (
+                  <tr key={a.id}>
+                    <td style={{ ...td, color: C.accent }}>{a.code}</td>
+                    <td style={td}>{a.name}</td>
+                    <td style={td}>
+                      <span
+                        style={pill(
+                          a.status === 'approved' ? 'Active' : 'Blocked',
+                        )}
+                      >
+                        {a.status === 'approved' ? 'Approved' : 'Rejected'}
+                      </span>
+                      <span
+                        style={{
+                          display: 'block',
+                          fontSize: '12px',
+                          color: C.faint,
+                        }}
+                      >
+                        {a.decidedAt ? dateOnly(a.decidedAt) : ''}
+                      </span>
+                    </td>
+                    <td style={td}>{a.decidedBy || ''}</td>
+                    <td style={{ ...td, whiteSpace: 'normal' }}>
+                      {a.reason || ''}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+      </section>
+    );
   }
 
   renderForm() {
@@ -383,7 +628,13 @@ export default class Creators extends React.Component {
     const totalOwed = s.creators.reduce((n, c) => n + c.owed, 0);
     const totalEarned = s.creators.reduce((n, c) => n + c.earned, 0);
     const customers = s.creators.reduce((n, c) => n + c.customers, 0);
+    const openApps = s.applications.filter((a) => a.open).length;
     const kpis = [
+      [
+        'Open applications',
+        String(openApps),
+        openApps ? 'waiting for a decision' : 'nothing to review',
+      ],
       ['Creators', String(s.creators.filter((c) => c.active).length), 'active'],
       ['Referred customers', String(customers), 'all codes'],
       [
@@ -434,6 +685,8 @@ export default class Creators extends React.Component {
             </div>
           ))}
         </div>
+
+        {this.renderApplications()}
 
         {this.renderForm()}
 

@@ -9,6 +9,11 @@ import SupportChat from '../support/SupportChat';
 import { LegalFooter, Icon } from './LegalPage.jsx';
 import { GAMES } from '../../design-reference/lib/games';
 import { CREATOR, tierFor } from '../../design-reference/lib/creators';
+import { creatorCodeIssue } from '../../contracts/creator-portal';
+import {
+  CREATOR_TERMS,
+  CREATOR_TERMS_VERSION,
+} from '../../content/creator-terms';
 
 // /creators: the creator program landing page. Numbers come from lib/creators.js; the application goes
 // to the support inbox (app/api/contact, topic "creator"). Styles: .cr-* in app/globals.css.
@@ -51,6 +56,40 @@ const SALES = [
   ['lumi', 'Duo Apex ×3'],
 ];
 const PLATFORMS = ['Twitch', 'YouTube', 'TikTok', 'Kick', 'Instagram', 'Other'];
+// The two confirmations under the form. Inline, so the shared design stylesheet stays untouched.
+const AGREE = {
+  marginTop: '18px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '10px',
+};
+const AGREE_ROW = {
+  display: 'flex',
+  gap: '10px',
+  alignItems: 'flex-start',
+  fontSize: '13.5px',
+  fontWeight: 500,
+  color: '#CFC4EA',
+};
+const BOX = {
+  width: '18px',
+  height: '18px',
+  minHeight: 0,
+  marginTop: '2px',
+  accentColor: '#D6BBFF',
+};
+const TERMS_GRID = {
+  marginTop: '28px',
+  display: 'grid',
+  gap: '12px',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+};
+const TERMS_CARD = {
+  borderRadius: '18px',
+  border: '1px solid rgba(196,170,255,.12)',
+  background: 'rgba(9,4,20,.5)',
+  padding: '16px 18px',
+};
 const SIZES = ['Under 1K', '1K to 10K', '10K to 100K', '100K+'];
 const FAQ = [
   [
@@ -98,15 +137,21 @@ export default class Creators extends React.Component {
       orders: 40,
       faq: 0,
       f: {
-        name: '',
-        email: '',
+        name: (props.me && props.me.name) || '',
+        email: (props.me && props.me.email) || '',
         platform: 'Twitch',
         channel: '',
         size: '1K to 10K',
         game: 'lol',
         message: '',
         website: '',
+        code: '',
+        country: '',
+        adult: false,
+        terms: false,
       },
+      // The live code check: null while nothing was typed, then the answer from the server.
+      code: null,
       sending: false,
       sent: false,
       error: '',
@@ -131,6 +176,7 @@ export default class Creators extends React.Component {
   componentWillUnmount() {
     clearInterval(this._chat);
     clearInterval(this._sale);
+    clearTimeout(this._code);
   }
   setF = (k) => (e) =>
     this.setState({
@@ -140,7 +186,54 @@ export default class Creators extends React.Component {
     });
   pickF = (k, v) => () =>
     this.setState({ f: { ...this.state.f, [k]: v }, error: '', field: '' });
+  toggleF = (k) => (e) =>
+    this.setState({
+      f: { ...this.state.f, [k]: e.target.checked },
+      error: '',
+      field: '',
+    });
 
+  // The requested code, checked while it is typed. The shape is checked here, the availability
+  // on the server (signed in only, so codes stay unlistable).
+  setCode = (e) => {
+    const code = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    this.setState({ f: { ...this.state.f, code }, error: '', field: '' });
+    clearTimeout(this._code);
+    if (!code) return this.setState({ code: null });
+    const issue = creatorCodeIssue(code);
+    if (issue)
+      return this.setState({ code: { available: false, reason: issue } });
+    this.setState({ code: { checking: true } });
+    this._code = setTimeout(() => this.checkCode(code), 400);
+  };
+  async checkCode(code) {
+    try {
+      const r = await fetch('/api/creators/code/available', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csrf: this.props.csrf, code }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (this.state.f.code !== code) return;
+      if (!r.ok)
+        return this.setState({
+          code: {
+            available: false,
+            reason: j.error || 'Could not check that code.',
+          },
+        });
+      this.setState({
+        code: { available: !!j.available, reason: j.reason || '' },
+      });
+    } catch {
+      this.setState({ code: null });
+    }
+  }
+
+  /**
+   * The application now goes to /api/creators/apply, which stores it and still tells the support
+   * inbox. Signing in happens first, in the popup, so there is always an account behind it.
+   */
   apply = async (e) => {
     e.preventDefault();
     const f = this.state.f;
@@ -150,28 +243,46 @@ export default class Creators extends React.Component {
         error: 'Add a link to your channel so we can check it out.',
         field: 'channel',
       });
+    const codeIssue = creatorCodeIssue(f.code);
+    if (codeIssue) return this.setState({ error: codeIssue, field: 'code' });
+    if (this.state.code && this.state.code.available === false)
+      return this.setState({
+        error: this.state.code.reason || 'Pick another code.',
+        field: 'code',
+      });
+    if (f.country.trim().length < 2)
+      return this.setState({
+        error: 'Add the country you live in.',
+        field: 'country',
+      });
+    if (!f.adult)
+      return this.setState({
+        error: 'Confirm that you are 18 or older.',
+        field: 'adult',
+      });
+    if (!f.terms)
+      return this.setState({
+        error: 'Accept the creator terms to apply.',
+        field: 'terms',
+      });
     this.setState({ sending: true, error: '', field: '' });
-    const game = (GAMES.find((g) => g.id === f.game) || {}).name || f.game;
-    const message =
-      'Creator application\nPlatform: ' +
-      f.platform +
-      '\nChannel: ' +
-      f.channel.trim() +
-      '\nAudience: ' +
-      f.size +
-      '\nMain game: ' +
-      game +
-      (f.message.trim() ? '\n\n' + f.message.trim() : '');
     try {
-      const r = await fetch('/api/contact', {
+      const r = await fetch('/api/creators/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           csrf: this.props.csrf,
           name: f.name,
           email: f.email,
-          topic: 'creator',
-          message,
+          platform: f.platform,
+          channel: f.channel.trim(),
+          audience: f.size,
+          game: f.game,
+          country: f.country.trim(),
+          code: f.code,
+          message: f.message.trim(),
+          adult: true,
+          terms: CREATOR_TERMS_VERSION,
           website: f.website,
         }),
       });
@@ -590,9 +701,39 @@ export default class Creators extends React.Component {
                     <h2 className="cr-h3">Application sent!</h2>
                     <p>
                       Thanks, {f.name.split(' ')[0]}. We’ll check out your
-                      channel and get back to you at {f.email}. You can also
-                      follow up in the chat bubble on Duoly.
+                      channel and get back to you at {f.email}. You can follow
+                      it on your creator dashboard.
                     </p>
+                    <a href="/creators/dashboard" className="lg-btn">
+                      Open your dashboard{' '}
+                      <Icon name="arrow" size={16} stroke={2.4} />
+                    </a>
+                  </div>
+                ) : this.props.status === 'creator' ||
+                  this.props.status === 'applied' ||
+                  this.props.status === 'rejected' ? (
+                  <div className="ct-sent" role="status">
+                    <span className="ct-sent-icon">
+                      <Icon name="check" size={30} stroke={3} />
+                    </span>
+                    <h2 className="cr-h3">
+                      {this.props.status === 'creator'
+                        ? 'You are a Duoly creator'
+                        : this.props.status === 'applied'
+                          ? 'Your application is with us'
+                          : 'You applied before'}
+                    </h2>
+                    <p>
+                      {this.props.status === 'creator'
+                        ? 'Your code, your links, what you earn and your payout details are on your dashboard.'
+                        : this.props.status === 'applied'
+                          ? 'We reply within a few days. Your dashboard shows what you sent us.'
+                          : 'Your dashboard shows the reason and when you can apply again.'}
+                    </p>
+                    <a href="/creators/dashboard" className="lg-btn">
+                      Open your dashboard{' '}
+                      <Icon name="arrow" size={16} stroke={2.4} />
+                    </a>
                   </div>
                 ) : this.props.closed ? (
                   <ClosedNotice
@@ -659,6 +800,43 @@ export default class Creators extends React.Component {
                           }
                         />
                       </label>
+                      <label className="ct-field">
+                        <span>The code you want</span>
+                        <input
+                          type="text"
+                          value={f.code}
+                          onChange={this.setCode}
+                          maxLength={20}
+                          placeholder="YOURNAME10"
+                          autoComplete="off"
+                          style={{ textTransform: 'uppercase' }}
+                          aria-invalid={s.field === 'code' ? 'true' : 'false'}
+                          aria-describedby="cr-code-state"
+                        />
+                        <em id="cr-code-state" aria-live="polite">
+                          {!s.code
+                            ? '3 to 20 letters or numbers'
+                            : s.code.checking
+                              ? 'Checking…'
+                              : s.code.available
+                                ? f.code + ' is free'
+                                : s.code.reason}
+                        </em>
+                      </label>
+                      <label className="ct-field">
+                        <span>Country</span>
+                        <input
+                          type="text"
+                          value={f.country}
+                          onChange={this.setF('country')}
+                          maxLength={56}
+                          placeholder="Austria"
+                          autoComplete="country-name"
+                          aria-invalid={
+                            s.field === 'country' ? 'true' : 'false'
+                          }
+                        />
+                      </label>
                     </div>
                     <fieldset className="ct-topics">
                       <legend>Audience size</legend>
@@ -720,31 +898,93 @@ export default class Creators extends React.Component {
                         className="ct-hp"
                       />
                     </div>
+                    <div style={AGREE}>
+                      <label style={AGREE_ROW}>
+                        <input
+                          type="checkbox"
+                          style={BOX}
+                          checked={f.adult}
+                          onChange={this.toggleF('adult')}
+                          aria-invalid={s.field === 'adult' ? 'true' : 'false'}
+                        />
+                        <span>I am 18 or older.</span>
+                      </label>
+                      <label style={AGREE_ROW}>
+                        <input
+                          type="checkbox"
+                          style={BOX}
+                          checked={f.terms}
+                          onChange={this.toggleF('terms')}
+                          aria-invalid={s.field === 'terms' ? 'true' : 'false'}
+                        />
+                        <span>
+                          I accept the <a href="#terms">creator terms</a>{' '}
+                          (version {CREATOR_TERMS_VERSION}).
+                        </span>
+                      </label>
+                    </div>
                     {s.error ? (
                       <div className="ct-error" role="alert">
                         {s.error}
                       </div>
                     ) : null}
-                    <button
-                      type="submit"
-                      className="lg-btn big cr-submit"
-                      disabled={s.sending}
-                    >
-                      {s.sending ? (
-                        <span className="ct-spin" aria-hidden="true" />
-                      ) : null}
-                      {s.sending ? 'Sending…' : 'Send application'}
-                      {s.sending ? null : (
+                    {this.props.signedIn ? (
+                      <button
+                        type="submit"
+                        className="lg-btn big cr-submit"
+                        disabled={s.sending}
+                      >
+                        {s.sending ? (
+                          <span className="ct-spin" aria-hidden="true" />
+                        ) : null}
+                        {s.sending ? 'Sending…' : 'Send application'}
+                        {s.sending ? null : (
+                          <Icon name="arrow" size={17} stroke={2.4} />
+                        )}
+                      </button>
+                    ) : (
+                      <a href="/?signin=1" className="lg-btn big cr-submit">
+                        Sign in to apply{' '}
                         <Icon name="arrow" size={17} stroke={2.4} />
-                      )}
-                    </button>
+                      </a>
+                    )}
                     <p className="ct-fine">
-                      We use your details only to review your application.{' '}
+                      {this.props.signedIn
+                        ? 'We use your details only to review your application. '
+                        : 'You apply with your Duoly account, so you can follow it on your dashboard. '}
                       <a href="/privacy">Privacy Policy</a>
                     </p>
                   </form>
                 )}
               </div>
+            </div>
+          </section>
+
+          <section id="terms" className="cr-sec">
+            <span className="cr-eyebrow">Creator terms</span>
+            <h2 className="cr-h2">The deal, in plain words.</h2>
+            <p className="cr-lead">
+              Version {CREATOR_TERMS_VERSION}. You accept this version when you
+              apply, and we store it with the date, so a later version never
+              changes what you agreed to.
+            </p>
+            <div style={TERMS_GRID}>
+              {CREATOR_TERMS.map((section) => (
+                <div key={section.title} style={TERMS_CARD}>
+                  <strong style={{ color: '#FFFFFF', fontSize: '15px' }}>
+                    {section.title}
+                  </strong>
+                  <p
+                    style={{
+                      margin: '6px 0 0',
+                      color: '#A79DC4',
+                      fontSize: '14px',
+                    }}
+                  >
+                    {section.text}
+                  </p>
+                </div>
+              ))}
             </div>
           </section>
         </main>
