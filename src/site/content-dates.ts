@@ -401,3 +401,6 @@ export function lastmodProblem(
     return `lastmod ${declared} is older than the previous change to the same copy (${previous}), so it was not updated when the copy changed on ${landed}. Set it to the day you wrote the copy`;
   return undefined;
 }
+// 21 November 2026: every game row on /pricing that has a coaching page now
+// links it, next to the game page link.
+CONTENT_UPDATED['/pricing'] = '2026-11-21';

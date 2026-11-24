@@ -4,6 +4,7 @@ import { calculateQuote } from '../pricing';
 import { seatRule } from '../../contracts/seats';
 import { SITE_GAMES } from '../../site/games';
 import { FINISHED_HUB_SLUGS } from '../../content/hub-pages';
+import { COACHING_SLUGS } from '../../site/seo';
 import { cleanCopy, formatPrice, offerSelection } from './offers';
 
 /**
@@ -109,6 +110,8 @@ export interface GamePrices {
   readonly slug: string;
   /** The game's own page, only when its copy is finished and indexable. */
   readonly hubPath?: string;
+  /** The game's coaching page, only for the games that have one. */
+  readonly coachingPath?: string;
   readonly rows: readonly PriceRow[];
 }
 
@@ -156,6 +159,9 @@ export const PRICE_TABLE: readonly GamePrices[] = SITE_GAMES.map((game) => {
     slug: game.slug,
     ...(FINISHED_HUB_SLUGS.includes(game.slug)
       ? { hubPath: `/games/${game.slug}` }
+      : {}),
+    ...((COACHING_SLUGS as readonly string[]).includes(game.slug)
+      ? { coachingPath: `/games/${game.slug}/coaching` }
       : {}),
     rows: ordered.map((mode) => rowFor(game.id, mode)),
   };
