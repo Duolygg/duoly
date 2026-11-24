@@ -68,18 +68,17 @@ const offer = heroOffer(game.id, offers[0]!.id, offers, {
   coach: true,
 });
 /**
- * Sibling coaching pages, as one ring through what a player is practicing:
+ * Sibling coaching pages, in one order through what a player is practicing:
  * tactical shooters, then the battle royale and sandbox end, then the arcade
  * and strategy games, then the MOBAs, the MMO and the hero shooters, wrapping
  * back to Valorant.
  *
- * Every page lists the two games before it and the two after it, so every page
- * is also listed by exactly four others. That symmetry is the point: the five
- * newest coaching pages were bolted onto an eleven-game ring and ended up with
- * four or five inbound links each, under the six the build now requires
- * (scripts/seo-built.test.mjs). A ring cannot develop that gap again, because
- * adding a game to RELATED_RING gives it four inbound links and four outbound
- * ones in the same edit.
+ * Every page lists every other coaching page, nearest neighbours first, so a
+ * new game added to RELATED_RING is linked from all of them in the same edit.
+ * The list used to stop at two games either side, which left each coaching
+ * page with seven or eight inbound links while Search Console was already
+ * showing them for "tft coaching", "dota 2 coaching" and "cs2 coach". The
+ * build still requires at least six (scripts/seo-built.test.mjs).
  */
 const RELATED_RING = [
   'valorant',
@@ -100,9 +99,17 @@ const RELATED_RING = [
 ];
 const relatedFor = (slug: string) => {
   const index = RELATED_RING.indexOf(slug);
+  if (index < 0) return [];
+  // Alternate outwards (next, previous, two on, two back) so the closest
+  // genres lead the list on every page.
   const at = (step: number) =>
     RELATED_RING[(index + step + RELATED_RING.length) % RELATED_RING.length]!;
-  return index < 0 ? [] : [at(1), at(2), at(-1), at(-2)];
+  const ordered: string[] = [];
+  for (let step = 1; ordered.length < RELATED_RING.length - 1; step += 1)
+    for (const slug of [at(step), at(-step)])
+      if (!ordered.includes(slug) && ordered.length < RELATED_RING.length - 1)
+        ordered.push(slug);
+  return ordered;
 };
 const descriptions: Record<string, string> = {
   valorant: `Valorant coaching ${summary.toLowerCase()}. Choose live Play and Learn, VOD Review or Aim and Crosshair. Set a goal and book your coach on Duoly.`,

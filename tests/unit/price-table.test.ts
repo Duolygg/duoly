@@ -19,6 +19,7 @@ import { ranksOf } from '../../src/design-reference/lib/ranks.js';
 import { seatRule } from '../../src/contracts/seats';
 import { SITE_GAMES } from '../../src/site/games';
 import { FINISHED_HUB_SLUGS } from '../../src/content/hub-pages';
+import { COACHING_SLUGS } from '../../src/site/seo';
 import {
   BOOKING_PARAMS,
   parseBookingPreferences,
@@ -86,6 +87,18 @@ describe('the shape of the /pricing table', () => {
       const positions = game.rows.map((row) => order.indexOf(row.category));
       expect(positions).toEqual([...positions].sort((a, b) => a - b));
     }
+  });
+
+  it('links a coaching page for exactly the games that have one', () => {
+    for (const game of PRICE_TABLE)
+      expect(game.coachingPath, game.slug).toBe(
+        (COACHING_SLUGS as readonly string[]).includes(game.slug)
+          ? `/games/${game.slug}/coaching`
+          : undefined,
+      );
+    expect(PRICE_TABLE.filter((game) => game.coachingPath)).toHaveLength(
+      COACHING_SLUGS.length,
+    );
   });
 
   it('links a game page only where the copy is finished', () => {
