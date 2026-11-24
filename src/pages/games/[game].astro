@@ -1,4 +1,5 @@
 ---
+import { publicProfilesEnabled } from '../../server/teammates/public-profiles';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageIntro from '../../components/site/PageIntro.astro';
 import Hub from '../../components/seo/Hub.astro';
@@ -111,6 +112,11 @@ const title = hubCopy
           <a href={`/games/${game.slug}/coaching`}>
             {game.name} coaching services and prices
           </a>
+        </p>
+      )}
+      {publicProfilesEnabled() && (
+        <p>
+          <a href={`/games/${game.slug}/teammates`}>{game.name} teammates</a>
         </p>
       )}
       <p>

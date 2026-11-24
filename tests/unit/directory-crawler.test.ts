@@ -14,7 +14,7 @@ it('blocks only query variants of directories in every robots group', () => {
     expect(group).toContain('Allow: /');
   }
 });
-it('marks directory facet links and active chips nofollow without changing profile links', () => {
+it('reserves nofollow for query destinations, including removal of the last filter', () => {
   const source = readFileSync(
     'src/components/teammates/Directory.astro',
     'utf8',
@@ -24,5 +24,14 @@ it('marks directory facet links and active chips nofollow without changing profi
     /href=\{(?:href\(|c\.href|`\$\{href\()/.test(link),
   );
   expect(facets.length).toBeGreaterThan(10);
-  for (const link of facets) expect(link).toContain('rel="nofollow"');
+  for (const link of facets) {
+    if (link.includes('show=all')) expect(link).toContain('rel="nofollow"');
+    else
+      expect(link.replace(/\s+/g, '')).toMatch(
+        /rel=\{.*?\.includes\('\?'\)\?'nofollow':undefined\}/,
+      );
+  }
+  const clear = links.find((link) => link.includes('class="md-clear"'));
+  expect(clear).toContain('href={base}');
+  expect(clear).not.toContain('nofollow');
 });

@@ -1,4 +1,5 @@
 ---
+import { publicProfilesEnabled } from '../../server/teammates/public-profiles';
 import Breadcrumbs from './Breadcrumbs.astro';
 import SeoHero from './SeoHero.astro';
 import Prices from './Prices.astro';
@@ -157,6 +158,9 @@ const withLines = (group: ReturnType<typeof hubOffers>['teammate']) =>
   <nav class="related" aria-label="Related pages">
     <h2>Guides and sessions for {game.name}</h2>
     <div class="chips">
+      {publicProfilesEnabled() && (
+        <a href={`/games/${game.slug}/teammates`}>{game.name} teammates</a>
+      )}
       {intentLink && <a href={intentLink.href}>{intentLink.anchor}</a>}
       {lessons[game.slug] && (
         <a href={`/games/${game.slug}/coaching`}>

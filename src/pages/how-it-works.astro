@@ -8,6 +8,7 @@ import ClosingCta from '../components/seo/ClosingCta.astro';
 import '../components/seo/seo.css';
 import '../components/seo/official.css';
 import { pageViewer } from '../site/viewer';
+import { proEnabled } from '../server/pro/config';
 import { CONTENT_DATES, hubChips, serializeJsonLd } from '../site/seo';
 import { faqSchema } from '../server/seo/offers';
 import { howToSchema, officialPageSchema } from '../server/seo/official';
@@ -188,6 +189,14 @@ const faq: [string, string][] = [
       ]}
       note={`Prices as of ${pricesLabel}.`}
     />
+
+    {proEnabled() && (
+      <p>
+        Book individual sessions without a subscription, or explore the optional{' '}
+        <a href="/pro">Duoly PRO membership</a> for regular players. Sign in to
+        see your membership options.
+      </p>
+    )}
 
     <section aria-labelledby="book-h">
       <h2 id="book-h">How does booking a teammate on Duoly work?</h2>
