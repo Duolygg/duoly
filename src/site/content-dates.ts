@@ -342,6 +342,9 @@ for (const path of [
 for (const path of ['/terms', '/privacy', '/trust-and-safety'])
   CONTENT_UPDATED[path] = '2026-11-15';
 
+// The booking explainer gained a contextual link to the optional PRO membership.
+CONTENT_UPDATED['/how-it-works'] = '2026-11-24';
+
 /** What git knows about the last two changes to one page's copy. */
 export type ContentHistory = {
   /** Committer date (`YYYY-MM-DD`) of the newest commit that touched the copy. */
