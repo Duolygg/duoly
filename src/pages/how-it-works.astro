@@ -11,7 +11,7 @@ import { pageViewer } from '../site/viewer';
 import { proEnabled } from '../server/pro/config';
 import { CONTENT_DATES, hubChips, serializeJsonLd } from '../site/seo';
 import { faqSchema } from '../server/seo/offers';
-import { howToSchema, officialPageSchema } from '../server/seo/official';
+import { articlePageSchema, howToSchema } from '../server/seo/official';
 import { BUSINESS_LOCATION } from '../site/entity';
 import {
   COACHING_PRICE,
@@ -421,10 +421,12 @@ const faq: [string, string][] = [
     slot="head"
     type="application/ld+json"
     set:html={serializeJsonLd(
-      officialPageSchema(
+      articlePageSchema(
         path,
+        'How Duoly works',
         title,
         description,
+        '2026-11-09',
         CONTENT_DATES[path]!,
         Astro.site!,
       ),

@@ -30,6 +30,48 @@ export function officialPageSchema(
   };
 }
 
+/**
+ * An Article node for an owned page that is written and dated like an article
+ * (the comparisons, /how-it-works and /trust-and-safety). It replaces the bare
+ * WebPage node on those pages, keeps the same url, name and isPartOf, and adds
+ * what article crawlers look for: headline, both dates, author, publisher and
+ * an image. Author and publisher are the company, never a person.
+ */
+export function articlePageSchema(
+  path: string,
+  headline: string,
+  name: string,
+  description: string,
+  datePublished: string,
+  dateModified: string,
+  site: URL,
+) {
+  const url = new URL(path, site).href;
+  // A reference to the one Organization on the homepage, with just enough
+  // inline (name, url) for a reader that does not follow the @id.
+  const duoly = {
+    '@type': 'Organization',
+    '@id': new URL('/#organization', site).href,
+    name: 'Duoly',
+    url: site.href,
+  };
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    url,
+    mainEntityOfPage: url,
+    headline,
+    name,
+    description,
+    datePublished,
+    dateModified,
+    image: new URL('/og/duoly.jpg', site).href,
+    isPartOf: { '@id': new URL('/#website', site).href },
+    author: duoly,
+    publisher: duoly,
+  };
+}
+
 export interface HowToStep {
   readonly name: string;
   readonly text: string;

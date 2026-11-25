@@ -3,7 +3,11 @@ import { describe, expect, it } from 'vitest';
 
 import { INDEXABLE_PATHS } from '../../src/site/seo';
 import { CONTENT_SOURCES, CONTENT_UPDATED } from '../../src/site/content-dates';
-import { howToSchema, officialPageSchema } from '../../src/server/seo/official';
+import {
+  articlePageSchema,
+  howToSchema,
+  officialPageSchema,
+} from '../../src/server/seo/official';
 import { renderLlms } from '../../src/server/seo/llms';
 import { TERMS, PRIVACY } from '../../src/design-reference/lib/legal';
 import {
@@ -252,4 +256,33 @@ describe('the structured data of the official pages', () => {
       expect(questions, path).toBeGreaterThanOrEqual(5);
     },
   );
+});
+
+describe('articlePageSchema', () => {
+  const site = new URL('https://duoly.gg');
+  it('publishes an Article with both dates, an image and Duoly as author', () => {
+    const node = articlePageSchema(
+      '/compare/e-pal',
+      'Duoly vs E-Pal',
+      'Duoly vs E-Pal: Prices, Fees and Refunds | Duoly',
+      'Compared from first-party pages',
+      '2026-11-08',
+      '2026-11-10',
+      site,
+    );
+    expect(node['@type']).toBe('Article');
+    expect(node.headline).toBe('Duoly vs E-Pal');
+    expect(node.mainEntityOfPage).toBe('https://duoly.gg/compare/e-pal');
+    expect(node.datePublished).toBe('2026-11-08');
+    expect(node.dateModified).toBe('2026-11-10');
+    expect(node.image).toBe('https://duoly.gg/og/duoly.jpg');
+    expect(node.author).toEqual({
+      '@type': 'Organization',
+      '@id': 'https://duoly.gg/#organization',
+      name: 'Duoly',
+      url: 'https://duoly.gg/',
+    });
+    expect(node.publisher).toEqual(node.author);
+    expect(node.isPartOf).toEqual({ '@id': 'https://duoly.gg/#website' });
+  });
 });

@@ -407,3 +407,15 @@ export function lastmodProblem(
 // 21 November 2026: every game row on /pricing that has a coaching page now
 // links it, next to the game page link.
 CONTENT_UPDATED['/pricing'] = '2026-11-21';
+// 25 November 2026: the comparisons, /how-it-works and /trust-and-safety publish
+// an Article node (headline, both dates, image, Duoly as author) in place of the
+// bare WebPage, and the /developers/mcp TechArticle gained its publisher and image.
+for (const path of [
+  '/compare/e-pal',
+  '/compare/metafy',
+  '/compare/queueup',
+  '/how-it-works',
+  '/trust-and-safety',
+  '/developers/mcp',
+])
+  CONTENT_UPDATED[path] = '2026-11-25';

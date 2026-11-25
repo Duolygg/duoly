@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { articlePageSchema } from '../../server/seo/official';
 import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
 import CompareTable from '../../components/seo/CompareTable.astro';
 import Faq from '../../components/seo/Faq.astro';
@@ -56,15 +57,15 @@ const faqItems: [string, string][] = [
     'Not yet. Duoly is new and has no public review volume to show, which is worth knowing before you compare. Metafy partner profiles carry scores, and Metafy states its creators have collectively earned over USD 10,000,000.',
   ],
 ];
-const webPage = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  url: new URL(path, Astro.site!).href,
-  name: title,
+const webPage = articlePageSchema(
+  path,
+  'Duoly vs Metafy',
+  title,
   description,
-  dateModified: CHECKED,
-  isPartOf: { '@id': new URL('/#website', Astro.site!).href },
-};
+  '2026-11-09',
+  CHECKED,
+  Astro.site!,
+);
 ---
 
 <SiteLayout
