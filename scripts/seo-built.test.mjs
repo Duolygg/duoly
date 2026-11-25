@@ -344,9 +344,12 @@ test('E-Pal comparison page is factual, dated and internally linked', () => {
   assert(html.includes('/games/valorant'));
   assert(html.includes('/developers/mcp'));
   assert(!/epal\.gg[^"'\s]*\.(png|svg|jpg)/i.test(html), 'no E-Pal imagery');
-  const webPage = page.schemas.find((s) => s['@type'] === 'WebPage');
+  const webPage = page.schemas.find((s) => s['@type'] === 'Article');
   assert.equal(webPage.url, 'https://duoly.gg/compare/e-pal');
   assert.equal(webPage.dateModified, '2026-11-08');
+  assert.equal(webPage.headline, 'Duoly vs E-Pal');
+  assert.equal(webPage.author.name, 'Duoly');
+  assert(webPage.datePublished && webPage.image);
   assert(
     !page.schemas.some(
       (s) => s['@type'] === 'AggregateRating' || s['@type'] === 'Review',
@@ -393,9 +396,11 @@ for (const [slug, rival, host] of [
       ).test(html),
       `${path}: no ${rival} imagery`,
     );
-    const webPage = page.schemas.find((s) => s['@type'] === 'WebPage');
+    const webPage = page.schemas.find((s) => s['@type'] === 'Article');
     assert.equal(webPage.url, `https://duoly.gg${path}`);
     assert.equal(webPage.dateModified, '2026-11-09');
+    assert.equal(webPage.author.name, 'Duoly');
+    assert(webPage.headline && webPage.datePublished && webPage.image);
     const faq = page.schemas.find((s) => s['@type'] === 'FAQPage');
     assert(faq && faq.mainEntity.length >= 5, 'FAQPage questions');
     for (const question of faq.mainEntity) {
