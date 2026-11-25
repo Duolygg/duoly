@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { articlePageSchema } from '../../server/seo/official';
 import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
 import CompareTable from '../../components/seo/CompareTable.astro';
 import Faq from '../../components/seo/Faq.astro';
@@ -57,15 +58,15 @@ const faqItems: [string, string][] = [
     'No. Duoly is new and has no public review volume yet, which is worth knowing before you compare. The QueueUp Valorant page displays 4.9 out of 5 from 621 or more reviews and about 4,423 sessions coached, though those are figures for the whole site rather than for Valorant alone.',
   ],
 ];
-const webPage = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  url: new URL(path, Astro.site!).href,
-  name: title,
+const webPage = articlePageSchema(
+  path,
+  'Duoly vs QueueUp',
+  title,
   description,
-  dateModified: CHECKED,
-  isPartOf: { '@id': new URL('/#website', Astro.site!).href },
-};
+  '2026-11-09',
+  CHECKED,
+  Astro.site!,
+);
 ---
 
 <SiteLayout

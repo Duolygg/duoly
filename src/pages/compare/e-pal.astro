@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { articlePageSchema } from '../../server/seo/official';
 import Breadcrumbs from '../../components/seo/Breadcrumbs.astro';
 import '../../components/seo/seo.css';
 import { gameBySlug } from '../../site/games';
@@ -40,15 +41,15 @@ const word = {
   unknown: 'Not stated',
 } as const;
 const { price, unitPrice, discountPercent } = comparisonExample;
-const schema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  url: new URL(path, Astro.site!).href,
-  name: title,
+const schema = articlePageSchema(
+  path,
+  'Duoly vs E-Pal',
+  title,
   description,
-  dateModified: CHECKED,
-  isPartOf: { '@id': new URL('/#website', Astro.site!).href },
-};
+  '2026-11-08',
+  CHECKED,
+  Astro.site!,
+);
 ---
 
 <SiteLayout

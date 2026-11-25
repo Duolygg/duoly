@@ -9,7 +9,7 @@ import '../components/seo/official.css';
 import { pageViewer } from '../site/viewer';
 import { CONTENT_DATES, hubChips, serializeJsonLd } from '../site/seo';
 import { faqSchema } from '../server/seo/offers';
-import { officialPageSchema } from '../server/seo/official';
+import { articlePageSchema } from '../server/seo/official';
 import { BUSINESS, BUSINESS_LOCATION } from '../site/entity';
 import { SUPPORT_EMAIL } from '../site/nav';
 import { GAME_OWNERS } from '../design-reference/lib/games';
@@ -366,10 +366,12 @@ const faq: [string, string][] = [
     slot="head"
     type="application/ld+json"
     set:html={serializeJsonLd(
-      officialPageSchema(
+      articlePageSchema(
         path,
+        'Duoly trust and safety',
         title,
         description,
+        '2026-11-09',
         CONTENT_DATES[path]!,
         Astro.site!,
       ),
